@@ -1,0 +1,9 @@
+# Based on Rails 0.10.0 .htaccess (www.rubyonrails.com)
+
+# Redirect all requests not available on the filesystem to Cake
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ dispatch.php?url=$1 [QSA,L]
+
+# In case Cake experiences terminal errors
+ErrorDocument 500 500.html
