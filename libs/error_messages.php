@@ -114,7 +114,7 @@ define ('ERROR_CANT_GET_ORIGINAL_IMAGE', '[Image] Couln\'t load original image %
   * Enter description here...
   *
   */
-define ('ERROR_404', "The requested URL /%s was not found on this server (%s).");
+define ('ERROR_404', "The requested address /%s was not found on this server."); // second %s contains short error message
 
 /**
   * Enter description here...

@@ -61,51 +61,56 @@ class Router extends Object {
   *
   * @var unknown_type
   */
-    var $routes = array();
+	var $routes = array();
 
 /**
   * Enter description here...
   *
   */
-    function __construct () {
-        parent::__construct();
-    }
-
+	function __construct () {
+		parent::__construct();
+	}
+	
 /**
   * Enter description here...
   *
   * @param unknown_type $route
   * @param unknown_type $default
   */
-    function connect ($route, $default=null) {
-        $parsed = $names = array ();
+	function connect ($route, $default=null) {
+		$parsed = $names = array ();
 
-        $r = null;
-        if ($route == '' || $route == '/') {
-            $this->routes[] = array('/^[\/]*$/', array(), $default);
-        }
-        else {
-            if (@preg_match_all('|(?:/([^/]+))|', $route, $r)) {
+		$r = null;
+		if (($route == '') || ($route == '/')) {
+			$regexp = '/^[\/]*$/';
+			$this->routes[] = array($route, $regexp, array(), $default);
+		}
+		else {
+			$elements = array();
+			foreach (explode('/', $route) as $element)
+				if (trim($element)) $elements[] = $element;
 
-                foreach ($r[1] as $element) {
-                    if (preg_match('/^:(.+)$/', $element, $r)) {
-                        $parsed[] = '(?:\/([^\/]+))?';
-                        $names[] = $r[1];
-                    }
-                    elseif (preg_match('/^\*$/', $element, $r)) {
-                        $parsed[] = '(.*)';
-                    }
-                    else {
-                        $parsed[] = '/'.$element;
-                    }
-                }
-                $regexp = '#^'.join('', $parsed).'$#';
+			if (!count($elements))
+				return false;
 
-                $this->routes[] = array($regexp,$names,$default);
-            }
-        }
+			foreach ($elements as $element) {
+				if (preg_match('/^:(.+)$/', $element, $r)) {
+						$parsed[] = '(?:\/([^\/]+))?';
+					   $names[] = $r[1];
+					}
+					elseif (preg_match('/^\*$/', $element, $r)) {
+						$parsed[] = '/(.*)';
+					}
+					else {
+						$parsed[] = '/'.$element;
+					}
+				}
+				$regexp = '#^'.join('', $parsed).'[\/]*$#';
+			$this->routes[] = array($route, $regexp, $names, $default);
+			}
 
-    }
+		return $this->routes;
+	}
 
 /**
   * Enter description here...
@@ -113,40 +118,60 @@ class Router extends Object {
   * @param unknown_type $url
   * @return unknown
   */
-    function parse ($url) {
-        $out = array();
-        $r = null;
+	function parse ($url) {
+		$out = array();
+		$r = null;
 
-        foreach ($this->routes as $route) {
-            list($regexp,$names,$defaults) = $route;
+		$default_route = array(
+			'/:controller/:action/* (default)',
+			"#^(?:\/(?:([a-z0-9_\-]+)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
+			array('controller', 'action'),
+			array()
+		);
 
-            if (@preg_match($regexp, $url, $r)) {
+		$this->routes[] = $default_route;
 
-                array_shift($r);
-                $ii = 0;
-                foreach ($r as $found) {
-                    if (isset($names[$ii]))
-                    $out[$names[$ii]] = $found;
-                    elseif (preg_match_all('/(?:\/([^\/]+))/', $found, $r)) {
-                        $out['pass'] = $r[1];
-                    }
-                    $ii++;
-                }
+		foreach ($this->routes as $route) {
+			list($route, $regexp, $names, $defaults) = $route;
 
-                if (is_array($defaults)) {
-                    foreach ($defaults as $name => $value) {
-                        if (preg_match('/[a-zA-Z_\-]/', $name))
-                        $out[$name] = $value;
-                        else
-                        $out['pass'][] = $value;
-                    }
-                }
-                break;
-            }
-        }
+			if (preg_match($regexp, $url, $r)) {
+				// remove the first element, which is the url
+				array_shift($r);
 
-        return $out;
-    }
+				// hack, pre-fill the default route names
+				foreach ($names as $name)
+					$out[$name] = null;
+
+				$ii = 0;
+
+				if (is_array($defaults)) {
+					foreach ($defaults as $name=>$value) {
+						if (preg_match('#[a-z_\-]#i', $name))
+							$out[$name] = $value;
+						else
+							$out['pass'][] = $value;
+					}
+				}
+
+				foreach ($r as $found) {
+					// if $found is a named url element (i.e. ':action')
+					if (isset($names[$ii])) {
+						$out[$names[$ii]] = $found;
+					}
+					// unnamed elements go in as 'pass'
+					else {
+						$pass = new NeatArray(explode('/', $found));
+						$pass->cleanup();
+						$out['pass'] = $pass->value;
+					}
+					$ii++;
+				}
+				break;
+			}
+		}
+
+		return $out;
+	}
 }
 
 ?>

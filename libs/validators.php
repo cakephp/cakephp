@@ -61,12 +61,12 @@ define('VALID_EMAIL', '/^([a-z0-9][a-z0-9_\-\.\+]*)@([a-z0-9][a-z0-9\.\-]{0,63}\
   * Enter description here...
   *
   */
-define('VALID_TAG', '/[a-z_]+/i');
+define('VALID_TAG', '/[^\ ]+/i');
 
 /**
   * Enter description here...
   *
   */
-define('VALID_TAGS', '/[a-z_ ]+/i');
+define('VALID_TAGS', '/.+/i');
 
 ?>

@@ -29,30 +29,30 @@
   * Example usage:
   *
   * <code>
-  *	require('dbo.php');
-  *
-  *	// create and connect the object
-  *	$db = new DBO(array(
-  *		'host'=>'localhost',
-  *		'login'=>'username',
-  *		'password'=>'password',
-  *		'database'=>'database'));
-  *
-  *	// read the whole query result array (of rows)
-  *	$all_rows = $db->all("SELECT a,b,c FROM table");
-  *
-  *	// read the first row with debugging on
-  *	$first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
-  *
-  *	// emulate the usual MySQL way of reading query results
-  *	if ($db->q("SELECT a,b,c FROM table")) {
-  *		while ( $row = $db->farr() ) {
-  *			print $row['a'].$row['b'].$row['c'];
-  *		}
-  *	}
-  *	
-  *	// show a log of all queries, sorted by execution time
-  *	$db->show_log(TRUE);
+	require('dbo_mysql.php'); // or 'dbo_postgres.php'
+
+	// create and connect the object
+	$db = new DBO_MySQL(array( // or 'DBO_Postgres'
+		'host'=>'localhost',
+		'login'=>'username',
+		'password'=>'password',
+		'database'=>'database'));
+
+	// read the whole query result array (of rows)
+	$all_rows = $db->all("SELECT a,b,c FROM table");
+
+	// read the first row with debugging on
+	$first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
+
+	// emulate the usual way of reading query results
+	if ($db->query("SELECT a,b,c FROM table")) {
+		while ( $row = $db->farr() ) {
+			print $row['a'].$row['b'].$row['c'];
+		}
+	}
+	
+	// show a log of all queries, sorted by execution time
+	$db->showLog(TRUE);
   * </code>
   *
   * @filesource 
@@ -87,6 +87,14 @@ uses('object');
   *
   */
 class DBO extends Object {
+	
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  * @access public
+  */
+	var $connected=FALSE;
 
 /**
   * Enter description here...
@@ -94,7 +102,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
-    var $connected=FALSE;
+	var $debug=FALSE;
 
 /**
   * Enter description here...
@@ -102,7 +110,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
-    var $debug=FALSE;
+	var $error=NULL;
 
 /**
   * Enter description here...
@@ -110,7 +118,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
-    var $error=NULL;
+	var $affected=NULL;
 
 /**
   * Enter description here...
@@ -118,7 +126,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
-    var $insert_id=NULL;
+	var $numRows=NULL;
 
 /**
   * Enter description here...
@@ -126,15 +134,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
-    var $affected=NULL;
-
-/**
-  * Enter description here...
-  *
-  * @var unknown_type
-  * @access public
-  */
-    var $took=NULL;
+	var $took=NULL;
 
 /**
   * Enter description here...
@@ -158,7 +158,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access private
   */
-    var $_queries_cnt=0;
+    var $_queriesCnt=0;
 
 /**
   * Enter description here...
@@ -166,7 +166,7 @@ class DBO extends Object {
   * @var unknown_type
   * @access private
   */
-    var $_queries_time=NULL;
+    var $_queriesTime=NULL;
 
 /**
   * Enter description here...
@@ -174,7 +174,20 @@ class DBO extends Object {
   * @var unknown_type
   * @access private
   */
-    var $_queries_log=array();
+	var $_queriesLog=array();
+
+	// specific for each database, implemented in db drivers
+	function connect ($config)		{ die('Please implement DBO::connect() first.'); }
+	function disconnect ()			{ die('Please implement DBO::disconnect() first.'); }
+	function execute ($sql)			{ die('Please implement DBO::execute() first.'); }
+	function fetchRow ($result)	{ die('Please implement DBO::fetchRow() first.'); }
+	function tables()					{ die('Please implement DBO::tables() first.'); }
+	function fields ($table_name) { die('Please implement DBO::fields() first.'); }
+	function prepare ($data)		{ die('Please implement DBO::prepare() first.'); }
+	function lastError ()			{ die('Please implement DBO::lastError() first.'); }
+	function lastAffected ()		{ die('Please implement DBO::lastAffected() first.'); }
+	function lastNumRows ($result){ die('Please implement DBO::lastNumRows() first.'); }
+	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
 
 /**
   * Enter description here...
@@ -183,12 +196,11 @@ class DBO extends Object {
   * @param unknown_type $DEBUG
   * @return unknown
   */
-    function __construct($config=NULL,$DEBUG=FALSE) {
-        $this->debug = $DEBUG;
-        if ($DEBUG > 1) register_shutdown_function( array( &$this, "show_log" ) );
-        parent::__construct();
-        Return $this->connect($config);
-    }
+	function __construct ($config=NULL) {
+		$this->debug = DEBUG > 1;
+		parent::__construct();
+		return $this->connect($config);
+	}
 
 /**
   * Enter description here...
@@ -201,84 +213,53 @@ class DBO extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $config
-  * @return unknown
-  */
-    function connect($config) {
-        if($config) {
-            $this->config = $config;
-
-            $this->_conn = @mysql_pconnect($config['host'],$config['login'],$config['password']);
-            #			$this->_conn = @mysql_connect($config['host'],$config['login'],$config['password']);
-        }
-        $this->connected = $this->_conn? TRUE: FALSE;
-
-        if($this->connected)
-        Return @mysql_select_db($config['database'], $this->_conn);
-        else
-        die('Could not connect to DB.');
-    }
-
-/**
-  * Enter description here...
-  *
   * @param unknown_type $db_name
   * @return unknown
   */
-    function use_db ($db_name) {
-        return $this->q("USE {$db_name}");
-    }
+	function useDb ($db_name) {
+		return $this->query("USE {$db_name}");
+	}
 
 /**
   * Enter description here...
   *
   */
-    function close() {
-        @mysql_close();
-        showLog();
-        $this->_conn = NULL;
-        $this->connected = NULL;
-    }
+	function close () {
+		if ($this->debug) $this->showLog();
+		$this->disconnect();
+		$this->_conn = NULL;
+		$this->connected = false;
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $q
-  * @param unknown_type $DEBUG
-  * @param unknown_type $log
+  * @param unknown_type $sql
   * @return unknown
   */
-    function q($q,$DEBUG=FALSE,$log=TRUE) {
-        Return $this->query($q,$DEBUG,$log);
-    }
+	function rawQuery ($sql) {
+		$this->took = $this->error = $this->numRows = false;
+		return $this->execute($sql);
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $q
-  * @param unknown_type $DEBUG
-  * @param unknown_type $log
+  * @param unknown_type $sql
   * @return unknown
   */
-    function query($q,$DEBUG=FALSE,$log=TRUE) {
-        $t = getMicrotime();
+	function query($sql) {
+	  $t = getMicrotime();
+	  $this->_result = $this->execute($sql);
+	  $this->affected = $this->lastAffected();
+	  $this->took = round((getMicrotime()-$t)*1000, 0);
+	  $this->error = $this->lastError();
+	  $this->numRows = $this->lastNumRows($this->_result);
+	  $this->logQuery($sql);
+	  if ($this->debug) $this->showQuery($sql);
 
-        if($log){
-            $this->_result = @mysql_query($q);
-            $this->took = round((getmicrotime()-$t)*1000, 0);
-            $this->error = mysql_errno()? mysql_errno().': '.mysql_error(): NULL;
-            $this->insert_id = @mysql_insert_id();
-            $this->affected = @mysql_affected_rows();
-            $this->num_rows = @mysql_num_rows($this->_result);
-            $this->_log_query($q);
-
-            if($this->debug || $DEBUG) $this->_show_query($q);
-
-            Return $this->error? FALSE: $this->_result;
-        }
-        else
-        Return @mysql_query($q);
-    }
+	  return $this->error? false: $this->_result;
+	}
 
 /**
   * Enter description here...
@@ -287,86 +268,48 @@ class DBO extends Object {
   * @param unknown_type $type
   * @return unknown
   */
-    function farr($results,$type=MYSQL_BOTH) {
-        return mysql_fetch_array($results,$type);
-    }
+	function farr ($res=false) {
+		return $this->fetchRow($res? $res: $this->_result);
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $q
-  * @param unknown_type $DEBUG
-  * @param unknown_type $type
+  * @param unknown_type $sql
   * @return unknown
   */
-    function one($q,$DEBUG=FALSE,$type=MYSQL_BOTH) {
-        Return $this->query($q,$DEBUG)? mysql_fetch_array($this->_result, $type): FALSE;
-    }
+	function one ($sql) {
+		return $this->query($sql)? $this->farr(): false;
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $q
-  * @param unknown_type $DEBUG
+  * @param unknown_type $sql
   * @return unknown
   */
-    function all($q,$DEBUG=FALSE) {
-        if($this->query($q,$DEBUG)) {
-            $out=NULL;
-            while($item = mysql_fetch_assoc($this->_result))
-            $out[] = $item;
-
-            Return $out;
-        }
-        else {
-            Return FALSE;
-        }
-    }
+	function all ($sql) {
+		if($this->query($sql)) {
+			$out=array();
+			while($item = $this->farr()) $out[] = $item;
+			return $out;
+		}
+		else {
+			return false;
+		}
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $name
-  * @param unknown_type $q
-  * @param unknown_type $DEBUG
-  * @param unknown_type $type
+  * @param unknown_type $sql
   * @return unknown
   */
-    function field($name, $q, $DEBUG=FALSE, $type=MYSQL_BOTH) {
-        $data = $this->one($q, $DEBUG, $type);
-        return empty($data[$name])? false: $data[$name];
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function tables() {
-        $result = mysql_list_tables($this->config['database']);
-
-        if (!$result) {
-            trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
-            exit;
-        }
-        else {
-            $tables = array();
-            while ($line = mysql_fetch_array($result)) {
-                $tables[] = $line[0];
-            }
-            return $tables;
-        }
-    }
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $table_name
-  * @return unknown
-  */
-    function fields ($table_name) {
-        return $this->all("DESC {$table_name}");
-    }
+	function field ($name, $sql) {
+		$data = $this->one($sql);
+		return empty($data[$name])? false: $data[$name];
+	}
 
 /**
   * Enter description here...
@@ -375,114 +318,76 @@ class DBO extends Object {
   * @param unknown_type $sql
   * @return unknown
   */
-    function has_any($table, $sql='1=1') {
-        $out = $this->one("SELECT COUNT(*) AS count FROM {$table} WHERE {$sql}");
-        return is_array($out)? $out['count']: FALSE;
-    }
+	function hasAny($table, $sql) {
+		$out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
+		return is_array($out)? $out['count']: false;
+	}
 
 /**
   * Enter description here...
   *
   * @return unknown
   */
-    function is_connected() {
-        Return $this->connected;
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function last_insert_id() {
-        Return $this->insert_id;
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function last_affected() {
-        Return $this->affected;
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function last_num_rows() {
-        Return $this->num_rows;
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function last_error() {
-        return $this->error;
-    }
+	function isConnected() {
+		return $this->connected;
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $sorted
   */
-    function show_log($sorted=FALSE) {
-        $log = $sorted?
-        sortByKey($this->_queries_log, 'took', 'desc', SORT_NUMERIC):
-        $this->_queries_log;
+	function showLog($sorted=false) {
+		$log = $sorted?
+			sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
+			$this->_queriesLog;
 
-        print("<table border=1>\n<tr><th colspan=7>{$this->_queries_cnt} queries took {$this->_queries_time} ms</th></tr>\n");
-        print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
+		print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} queries took {$this->_queriesTime} ms</th></tr>\n");
+		print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
 
-        foreach($log AS $k=>$i) {
-            print("<tr><td>".($k+1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['num_rows']}</td><td align='right'>{$i['took']}</td></tr>\n");
-        }
+		foreach($log AS $k=>$i) {
+			print("<tr><td>".($k+1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['numRows']}</td><td align='right'>{$i['took']}</td></tr>\n");
+		}
 
-        print("</table>\n");
-    }
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $q
-  */
-    function _log_query($q) {
-        $this->_queries_cnt++;
-        $this->_queries_time += $this->took;
-        $this->_queries_log[] = array(
-        'query'=>$q,
-        'error'=>$this->error,
-        'affected'=>$this->affected,
-        'num_rows'=>$this->num_rows,
-        'took'=>$this->took
-        );
-
-
-        if ($this->error && function_exists('logError'))
-        logError("Query: {$q} RETURNS ERROR {$this->error}");
-    }
+		print("</table>\n");
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $q
   */
-    function _show_query($q) {
-        $error = $this->error;
+	function logQuery($sql) {
+		$this->_queriesCnt++;
+		$this->_queriesTime += $this->took;
+		$this->_queriesLog[] = array(
+			'query'=>$sql,
+			'error'=>$this->error,
+			'affected'=>$this->affected,
+			'numRows'=>$this->numRows,
+			'took'=>$this->took
+			);
 
-        if ($this->debug || $error) {
-            print("<p style=\"text-align:left\"><b>Query:</b> {$q} <small>[Aff:{$this->affected} Num:{$this->num_rows} Took:{$this->took}ms]</small>");
-            if($error) {
-                print("<br /><span style=\"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
-            }
-            print('</p>');
-        }
-    }
+		if ($this->error)
+			false; // shouldn't we be logging errors somehow?
+	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $q
+  */
+	function showQuery($sql) {
+		$error = $this->error;
+
+		if ($this->debug || $error) {
+			print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
+			if($error) {
+				print("<br /><span style=\"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
+			}
+			print('</p>');
+		}
+	}
 }
 
 ?>

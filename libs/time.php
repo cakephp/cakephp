@@ -62,10 +62,10 @@ class Time extends Object {
   * @param unknown_type $date_string
   * @return unknown
   */
-    function nice ($date_string=null) {
-        $date = $date_string? strtotime($date_string): time();
-        return date("D, M jS Y, H:i", $date);
-    }
+	function nice ($date_string=null) {
+		$date = $date_string? strtotime($date_string): time();
+		return date("D, M jS Y, H:i", $date);
+	}
 
 /**
   * Enter description here...
@@ -73,28 +73,18 @@ class Time extends Object {
   * @param unknown_type $date_string
   * @return unknown
   */
-    function nice_short ($date_string=null) {
-        $date = $date_string? Time::fromString($date_string): time();
+	function niceShort ($date_string=null) {
+		$date = $date_string? Time::fromString($date_string): time();
 
-        $y = Time::isThisYear($date)? '': ' Y';
+		$y = Time::isThisYear($date)? '': ' Y';
 
-        if (Time::isToday($date))
-        return "Today, ".date("H:i", $date);
-        elseif (Time::wasYesterday($date))
-        return "Yesterday, ".date("H:i", $date);
-        else
-        return date("M jS{$y}, H:i", $date);
-    }
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $date
-  * @return unknown
-  */
-    function isToday ($date) {
-        return date('Y-m-d', $date) == date('Y-m-d', time());
-    }
+		if (Time::isToday($date)) 
+			return "Today, ".date("H:i", $date);
+		elseif (Time::wasYesterday($date))
+			return "Yesterday, ".date("H:i", $date);
+		else
+			return date("M jS{$y}, H:i", $date);
+	}
 
 /**
   * Enter description here...
@@ -102,9 +92,9 @@ class Time extends Object {
   * @param unknown_type $date
   * @return unknown
   */
-    function isThisYear ($date) {
-        return date('Y', $date) == date('Y', time());
-    }
+	function isToday ($date) {
+		return date('Y-m-d', $date) == date('Y-m-d', time());
+	}
 
 /**
   * Enter description here...
@@ -112,9 +102,19 @@ class Time extends Object {
   * @param unknown_type $date
   * @return unknown
   */
-    function wasYesterday ($date) {
-        return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-    }
+	function isThisYear ($date) {
+		return date('Y', $date) == date('Y', time());
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $date
+  * @return unknown
+  */
+	function wasYesterday ($date) {
+		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
+	}
 
 /**
   * Enter description here...
@@ -122,10 +122,9 @@ class Time extends Object {
   * @param unknown_type $date_string
   * @return unknown
   */
-    function fromString ($date_string) {
-        return strtotime($date_string);
-    }
-
+	function fromString ($date_string) {
+		return strtotime($date_string);
+	}
 }
 
 ?>

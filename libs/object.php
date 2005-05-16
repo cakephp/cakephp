@@ -53,19 +53,18 @@ class Object {
   *
   * @return Object
   */
-    function Object() {
-        $args= func_get_args();
-        call_user_func_array(array(&$this, '__construct'), $args);
-    }
+	function Object() {
+		$args= func_get_args();
+		call_user_func_array(array(&$this, '__construct'), $args);
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $args
   */
-    function __construct($args=NULL) {
-    }
-
+	function __construct($args=NULL) {
+	}
 }
 
 ?>

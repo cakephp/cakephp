@@ -61,24 +61,49 @@ class Folder extends Object {
   *
   * @var unknown_type
   */
-    var $path = null;
+	var $path = null;
 
 /**
   * Enter description here...
   *
   * @var unknown_type
   */
-    var $sort = false;
+	var $sort = false;
 
 /**
   * Enter description here...
   *
   * @param unknown_type $path
   */
-    function __construct ($path) {
-        $this->path = $path . (preg_match('#\/$#', $path)? '': '/');
-        parent::__construct();
-    }
+	function __construct ($path=false) {
+		if (empty($path)) $path = getcwd();
+		$this->cd($path);
+   }	
+
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
+	function pwd () {
+		return $this->path;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $desired_path
+  * @return unknown
+  */
+	function cd ($desired_path) {
+		$desired_path = realpath($desired_path);
+		$new_path = Folder::isAbsolute($desired_path)? 
+			$desired_path: 
+			Folder::addPathElement($this->path, $desired_path);
+
+		return is_dir($new_path)? $this->path = $new_path: false;
+	}
+
 
 /**
   * Enter description here...
@@ -86,29 +111,68 @@ class Folder extends Object {
   * @param unknown_type $sort
   * @return unknown
   */
-    function ls($sort=true) {
-        if ($dir = opendir($this->path)) {
-            $dirs = $files = array();
-            while (false !== ($n = readdir($dir))) {
-                if (!preg_match('#^\.+$#', $n)) {
-                    if (is_dir($this->path.$n))
-                    $dirs[] = $n;
-                    else
-                    $files[] = $n;
-                }
-            }
+	function ls($sort=true) {
+		if ($dir = opendir($this->path)) {
+			$dirs = $files = array();
+			while (false !== ($n = readdir($dir))) {
+				if (!preg_match('#^\.+$#', $n)) {
+					if (is_dir($this->addPathElement($this->path, $n)))
+						$dirs[] = $n;
+					else 
+						$files[] = $n;
+				}
+			}
 
-            if ($sort || $this->sort) {
-                sort($dirs);
-                sort($files);
-            }
+			if ($sort || $this->sort) {
+				sort($dirs);
+				sort($files);
+			}
 
-            return array($dirs,$files);
-        }
-        else {
-            return false;
-        }
-    }
+			return array($dirs,$files);
+		}
+		else {
+			return false;
+
+		}
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $pattern
+  * @return unknown
+  */
+	function findRecursive ($pattern='.*') {
+		$starts_on = $this->path;
+		$out = $this->_findRecursive($pattern);
+		$this->cd($starts_on);
+		return $out;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $pattern
+  * @return unknown
+  */
+	function _findRecursive ($pattern) {
+		list($dirs, $files) = $this->ls();
+
+		$found = array();
+		foreach ($files as $file) {
+			if (preg_match("/^{$pattern}$/i", $file)) {
+				$found[] = $this->addPathElement($this->path, $file);
+			}
+		}
+
+		$start = $this->path;
+		foreach ($dirs as $dir) {
+			$this->cd($this->addPathElement($start, $dir));
+			$found = array_merge($found, $this->findRecursive($pattern));
+		}
+
+		return $found;
+	}
 
 /**
   * Enter description here...
@@ -116,11 +180,60 @@ class Folder extends Object {
   * @param unknown_type $path
   * @return unknown
   */
-    function cd ($path) {
-        $new_path = preg('#^/#', $path)? $path: $this->path.$path;
-        return is_dir($new_path)? $this->path = $new_path: false;
-    }
+	function isWindowsPath ($path) {
+		return preg_match('#^[A-Z]:\\\#i', $path)? true: false;
+	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @return unknown
+  */
+	function isAbsolute ($path) {
+		return preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @return unknown
+  */
+	function isSlashTerm ($path) {
+		return preg_match('#[\\\/]$#', $path)? true: false;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @return unknown
+  */
+	function correctSlashFor ($path) {
+		return Folder::isWindowsPath($path)? '\\': '/';
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @return unknown
+  */
+	function slashTerm ($path) {
+		return $path . (Folder::isSlashTerm($path)? null: Folder::correctSlashFor($path));
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @param unknown_type $element
+  * @return unknown
+  */
+	function addPathElement ($path, $element) {
+		return Folder::slashTerm($path).$element;
+	}
 }
 
 ?>

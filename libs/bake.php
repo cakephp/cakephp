@@ -90,37 +90,50 @@ class Bake extends Object {
   *
   * @var unknown_type
   */
-    var $model_template = "<?PHP
-
-class %s extends AppModel {
-}
-
-?>
-";
+    var $dont_ask = false;
 
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @param unknown_type $type
+  * @return unknown
   */
-    var $action_template = "
-	function %s () {
+	function template ($type) {
+		switch ($type) {
+			case 'model': return "<?PHP\n\nclass %s extends AppModel {\n}\n\n?>";
+			case 'action': return "\n\tfunction %s () {\n\t}\n";
+			case 'ctrl': return "<?PHP\n\nclass %s extends %s {\n%s\n}\n\n?>";
+			case 'helper': return "<?PHP\n\nclass %s extends AppController {\n}\n\n?>";
+			case 'test': return '<?PHP
+
+class %sTest extends TestCase {
+	var $abc;
+
+	// called before the tests
+	function setUp() {
+		$this->abc = new %s ();
 	}
-";
 
-/**
-  * Enter description here...
-  *
-  * @var unknown_type
-  */
-    var $controller_template = "<?PHP
-
-class %s extends AppController {
-%s
+	// called after the tests
+	function tearDown() {
+		unset($this->abc);
+	}
+	
+/*
+	function testFoo () {
+		$result = $this->abc->Foo();
+		$expected = \'\';
+		$this->assertEquals($result, $expected);
+	}
+*/
 }
 
-?>
-";
+?>';
+			default:
+				return false;
+		}
+	}
+
 
 /**
   * Enter description here...
@@ -128,48 +141,48 @@ class %s extends AppController {
   * @param unknown_type $type
   * @param unknown_type $names
   */
-    function __construct ($type, $names) {
+	function __construct ($type, $names) {
 
-        $this->stdin = fopen('php://stdin', 'r');
-        $this->stdout = fopen('php://stdout', 'w');
-        $this->stderr = fopen('php://stderr', 'w');
+		$this->stdin = fopen('php://stdin', 'r');
+		$this->stdout = fopen('php://stdout', 'w');
+		$this->stderr = fopen('php://stderr', 'w');
 
-        switch ($type) {
+		switch ($type) {
 
-            case 'model':
-            case 'models':
-            foreach ($names as $model_name)
-            $this->create_model($model_name);
-            break;
+			case 'model':
+			case 'models':
+				foreach ($names as $model_name)
+					$this->newModel($model_name);
+			break;
 
-            case 'controller':
-            case 'ctrl':
-            $controller = array_shift($names);
+			case 'controller':
+			case 'ctrl':
+				$controller = array_shift($names);
 
-            $add_actions = array();
-            foreach ($names as $action) {
-                $add_actions[] = $action;
-                $this->create_view($controller, $action);
-            }
+				$add_actions = array();
+				foreach ($names as $action) {
+					$add_actions[] = $action;
+					$this->newView($controller, $action);
+				}
 
-            $this->create_controller($controller, $add_actions);
-            break;
+				$this->newController($controller, $add_actions);
+			break;
 
-            case 'view':
-            case 'views':
-            $r = null;
-            foreach ($names as $model_name) {
-                if (preg_match('/^([a-z0-9_]+(?:\/[a-z0-9_]+)*)\/([a-z0-9_]+)$/i', $model_name, $r)) {
-                    $this->create_view($r[1], $r[2]);
-                }
-            }
-            break;
-        }
+			case 'view':
+			case 'views':
+				$r = null;
+				foreach ($names as $model_name) {
+					if (preg_match('/^([a-z0-9_]+(?:\/[a-z0-9_]+)*)\/([a-z0-9_]+)$/i', $model_name, $r)) {
+						$this->newView($r[1], $r[2]);
+					}
+				}
+			break;
+		}
 
-        if (!$this->actions)
-        fwrite($this->stderr, "Nothing to do, quitting.\n");
-
-    }
+		if (!$this->actions)
+			fwrite($this->stderr, "Nothing to do, quitting.\n");
+				
+	}
 
 /**
   * Enter description here...
@@ -177,39 +190,41 @@ class %s extends AppController {
   * @param unknown_type $controller
   * @param unknown_type $name
   */
-    function create_view ($controller, $name) {
-        $dir = Inflector::underscore($controller);
-        $this->create_dir(VIEWS.$dir);
-        $this->create_file(VIEWS.$dir.'/'.strtolower($name).'.thtml', '');
-        $this->actions++;
-    }
+	function newView ($controller, $name) {
+		$dir = Inflector::underscore($controller);
+		$this->createDir(VIEWS.$dir);
+		$fn = VIEWS.$dir.'/'.strtolower($name).'.thtml';
+		$this->createFile($fn, '');
+		$this->actions++;
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $name
-  * @param unknown_type $actions
+  * @param unknown_type $controller
+  * @param array $actions
   */
-    function create_controller ($name, $actions=array()) {
-        $class_name = Inflector::camelize($name).'Controller';
-        $content = array();
-        foreach ($actions as $action)
-        $content[] = sprintf($this->action_template, ($action));
-
-        $this->create_file($this->controller_fn($name), sprintf($this->controller_template, $class_name, join('', $content)));
-        $this->actions++;
-    }
+	function newController ($name, $actions=array()) {
+		$this->makeController($name, $actions);
+		$this->makeControllerTest($name);
+		$this->makeHelper($name);
+		$this->makeHelperTest($name);
+		$this->actions++;
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $name
+  * @param unknown_type $controller
+  * @param array $actions
+  * @return unknown
   */
-    function create_model ($name) {
-        $class_name = Inflector::camelize($name);
-        $this->create_file($this->model_fn($name), sprintf($this->model_template, $class_name));
-        $this->actions++;
-    }
+	function makeController ($name, $actions) {
+		$ctrl = $this->makeControllerName($name);
+		$helper = $this->makeHelperName($name);
+		$body = sprintf($this->template('ctrl'), $ctrl, $helper, join('', $this->getActions($actions)));
+		return $this->createFile($this->makeControllerFn($name), $body);
+	}
 
 /**
   * Enter description here...
@@ -217,19 +232,141 @@ class %s extends AppController {
   * @param unknown_type $name
   * @return unknown
   */
-    function model_fn ($name) {
-        return MODELS.Inflector::underscore($name).'.php';
-    }
-    
+	function makeControllerName ($name) {
+		return Inflector::camelize($name).'Controller';
+	}
+
 /**
   * Enter description here...
   *
   * @param unknown_type $name
   * @return unknown
   */
-    function controller_fn ($name) {
-        return CONTROLLERS.Inflector::underscore($name).'_controller.php';
-    }
+	function makeControllerFn ($name) {
+		return CONTROLLERS.Inflector::underscore($name).'_controller.php';
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function makeControllerTest ($name) {
+		$fn = CONTROLLER_TESTS.Inflector::underscore($name).'_controller_test.php';
+		$body = $this->getTestBody($this->makeControllerName($name));
+		return $this->createFile($fn, $body);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function makeHelper ($name) {
+		$body = sprintf($this->template('helper'), $this->makeHelperName($name));
+		return $this->createFile($this->makeHelperFn($name), $body);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function makeHelperName ($name) {
+		return Inflector::camelize($name).'Helper';
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $controller
+  * @param array $actions
+  * @return unknown
+  */
+	function makeHelperFn ($name) {
+		return HELPERS.Inflector::underscore($name).'_helper.php';
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function makeHelperTest ($name) {
+		$fn = HELPER_TESTS.Inflector::underscore($name).'_helper_test.php';
+		$body = $this->getTestBody($this->makeHelperName($name));
+		return $this->createFile($fn, $body);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $as
+  * @return unknown
+  */
+	function getActions ($as) {
+		$out = array();
+		foreach ($as as $a)
+			$out[] = sprintf($this->template('action'), $a);
+		return $out;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $class
+  * @return unknown
+  */
+	function getTestBody ($class) {
+		return sprintf($this->template('test'), $class, $class);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  */
+	function newModel ($name) {
+		$this->createFile($this->getModelFn($name), sprintf($this->template('model'), $this->getModelName($name)));
+		$this->makeModelTest ($name);
+		$this->actions++;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function getModelFn ($name) {
+		return MODELS.Inflector::underscore($name).'.php';
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function makeModelTest ($name) {
+		$fn = MODEL_TESTS.Inflector::underscore($name).'_test.php';
+		$body = $this->getTestBody($this->getModelName($name));
+		return $this->createFile($fn, $body);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $name
+  * @return unknown
+  */
+	function getModelName ($name) {
+		return Inflector::camelize($name);
+	}
 
 /**
   * Enter description here...
@@ -238,48 +375,60 @@ class %s extends AppController {
   * @param unknown_type $contents
   * @return unknown
   */
-    function create_file ($path, $contents) {
+	function createFile ($path, $contents) {
 
-        if (is_file($path)) {
-            fwrite($this->stdout, "File {$path} exists, overwrite? (y/N) ");
-            $key = fgets($this->stdin);
+		if (is_file($path) && !$this->dont_ask) {
+			fwrite($this->stdout, "File {$path} exists, overwrite? (yNaq) "); 
+			$key = fgets($this->stdin);
+			
+			if (preg_match("/^q/", $key)) {
+				exit;
+			}
+			if (preg_match("/^n/", $key)) {
+				fwrite($this->stdout, "Skip   {$path}\n");
+				return false;
+			}
+			if (preg_match("/^a/", $key)) {
+				$this->dont_ask = true;
+			}
+		}
 
-            if (preg_match("/^q/", $key)) {
-                exit;
-            }
-            if (!preg_match("/^y/", $key)) {
-                fwrite($this->stdout, "Skip   {$path}\n");
-                return false;
-            }
-        }
-
-        if ($f = fopen($path, 'w')) {
-            fwrite($f, $contents);
-            fclose($f);
-            fwrite($this->stdout, "Wrote   {$path}\n");
-            return true;
-        }
-        else {
-            fwrite($this->stderr, "Error! Couldn't open {$path} for writing.\n");
-            return false;
-        }
-    }
+		if ($f = fopen($path, 'w')) {
+			fwrite($f, $contents);
+			fclose($f);
+			fwrite($this->stdout, "Wrote   {$path}\n");
+//			debug ("Wrote {$path}");
+			return true;
+		}
+		else {
+			fwrite($this->stderr, "Error! Couldn't open {$path} for writing.\n");
+//			debug ("Error! Couldn't open {$path} for writing.");
+			return false;
+		}
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $path
+  * @return unknown
   */
-    function create_dir ($path) {
-        if (!is_dir($path)) {
-            if (mkdir($path)) {
-                fwrite($this->stdout, "Created {$path}\n");
-            }
-            else {
-                fwrite($this->stderr, "Error! Couldn't create dir {$path}\n");
-            }
-        }
-    }
+	function createDir ($path) {
+		if (is_dir($path))
+			return true;
+
+		if (mkdir($path)) {
+			fwrite($this->stdout, "Created {$path}\n");
+//			debug ("Created {$path}");
+			return true;
+		}
+		else {
+			fwrite($this->stderr, "Error! Couldn't create dir {$path}\n");
+//			debug ("Error! Couldn't create dir {$path}");
+			return false;
+		}
+	}
+
 }
 
 ?>

@@ -39,82 +39,32 @@
   *
   */
 
-
 ## DIRECTORY LAYOUT
-/**
-  * Enter description here...
-  *
-  */
-define ('ROOT',	'../');
-/**
-  * Enter description here...
-  *
-  */
-define ('APP',			ROOT.'app/');
-/**
-  * Enter description here...
-  *
-  */
-define ('MODELS',			APP.'models/');
-/**
-  * Enter description here...
-  *
-  */
-define ('CONTROLLERS',	APP.'controllers/');
-/**
-  * Enter description here...
-  *
-  */
-define ('VIEWS',			APP.'views/');
-/**
-  * Enter description here...
-  *
-  */
-define ('CONFIGS',	ROOT.'config/');
-/**
-  * Enter description here...
-  *
-  */
-define ('LIBS',		ROOT.'libs/');
-/**
-  * Enter description here...
-  *
-  */
-define ('PUBLIC',		ROOT.'public/');
+require ('../config/paths.php');
 
-## STARTUP
 /**
-  * Enter description here...
-  *
+  * Startup
   */
 require (LIBS.'basics.php');
-uses ('dispatcher', 'dbo');
+
+uses ('dispatcher');
 uses_config();
 uses_database();
-uses_tags();
+uses_tag_generator();
 
-## LOAD MODELS & CONTROLLERS
-##
 load_models ();
 load_controllers ();
 
-## START SESSION
-##
 session_start();
 
 ## RUN THE SCRIPT
-##
 $url = empty($_GET['url'])? null: $_GET['url'];
 $DISPATCHER = new Dispatcher ();
 $DISPATCHER->dispatch($url);
 
-## PRINT TIMING
-##
+if ($DB) $DB->close();
 
-/**
-  * Enter description here...
-  *
-  */
-if (DEBUG) echo "<!-- ". round(getmicrotime() - $TIME_START, 2) ."s -->";
+## CLEANUP
+if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
 
 ?>

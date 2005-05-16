@@ -37,65 +37,15 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   *
   */
-## DIRECTORIES
-##
-/**
-  * Enter description here...
-  *
-  */
-define ('ROOT', '../');
 
-/**
-  * Enter description here...
-  *
-  */
-define ('APP', ROOT.'app/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('MODELS', APP.'models/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('CONTROLLERS', APP.'controllers/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('VIEWS', APP.'views/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('CONFIGS', ROOT.'config/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('LIBS', ROOT.'libs/');
-
-/**
-  * Enter description here...
-  *
-  */
-define ('PUBLIC', ROOT.'public/');
-
-## LOAD LIBRARIES
-##
+## START-UP
+require ('../config/paths.php');
 require (LIBS.'basics.php');
 uses ('bake');
-#load_libs ();
 
-$script_name = array_shift($argv);
-$action = array_shift($argv);
+$waste = array_shift($argv);
+$product = array_shift($argv);
 
-$bake = new Bake ($action, $argv);
+$bake = new Bake ($product, $argv);
 
 ?>

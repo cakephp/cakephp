@@ -111,50 +111,61 @@ class Controller extends Template {
   * Enter description here...
   *
   */
-    function __construct () {
-        global $DB;
+	function __construct () {
+		global $DB;
 
-        $r = null;
-        if (!preg_match('/(.*)Controller/i', get_class($this), $r))
-        die("Controller::__construct() : Can't get or parse my own class name, exiting.");
+		$r = null;
+		if (!preg_match('/(.*)Controller/i', get_class($this), $r))
+			die("Controller::__construct() : Can't get or parse my own class name, exiting.");
 
-        $this->name = strtolower($r[1]);
+		$this->name = strtolower($r[1]);
 
-        if ($this->uses === false) {
-            if (!$DB)
-            die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
+		$model_class = Inflector::singularize($this->name);
+		if (($this->uses === false) && class_exists($model_class)) {
+			if (!$DB)
+				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
 
-            $model_class = Inflector::singularize($this->name);
-            if (class_exists($model_class))
-            $this->$model_class = new $model_class ();
-        }
-        elseif ($this->uses) {
-            if (!$DB)
-            die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
+			$this->$model_class = new $model_class ();
+		}
+		elseif ($this->uses) {
+			if (!$DB)
+				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
 
-            $uses = is_array($this->uses)? $this->uses: array($this->uses);
+			$uses = is_array($this->uses)? $this->uses: array($this->uses);
 
-            foreach ($uses as $model_name) {
-                $model_class = ucfirst(strtolower($model_name));
-                if (class_exists($model_class))
-                $this->$model_name = new $model_name (false);
-                else
-                die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
-            }
-        }
+			foreach ($uses as $model_name) {
+				$model_class = ucfirst(strtolower($model_name));
+				if (class_exists($model_class))
+					$this->$model_name = new $model_name (false);
+				else
+					die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
+			}
+		}
 
-        parent::__construct();
-    }
+		parent::__construct();
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $url
   */
-    function redirect ($url) {
-        $this->auto_render = false;
-        header ('Location: '.$this->base.$url);
-    }
+	function redirect ($url) {
+		$this->auto_render = false;
+		header ('Location: '.$this->base.$url);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $action
+  */
+	function setAction ($action) {
+		$this->action = $action;
+
+		$args = func_get_args();
+		call_user_func_array(array(&$this, $action), $args);
+	}
 
 /**
   * Enter description here...
@@ -162,17 +173,17 @@ class Controller extends Template {
   * @param unknown_type $url
   * @return unknown
   */
-    function url_for ($url=null) {
-        if (empty($url)) {
-            return $this->base.'/'.strtolower($this->params['controller']).'/'.strtolower($this->params['action']);
-        }
-        elseif ($url[0] == '/') {
-            return $this->base . $url;
-        }
-        else {
-            return $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
-        }
-    }
+	function urlFor ($url=null) {
+		if (empty($url)) {
+			return $this->base.'/'.strtolower($this->params['controller']).'/'.strtolower($this->params['action']);
+		}
+		elseif ($url[0] == '/') {
+			return $this->base . $url;
+		}
+		else {
+			return $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
+		}
+	}
 
 /**
   * Enter description here...
@@ -182,19 +193,19 @@ class Controller extends Template {
   * @param unknown_type $insert_after
   * @return unknown
   */
-    function parse_html_options ($options, $insert_before=' ', $insert_after=null) {
-        if (is_array($options)) {
-            $out = array();
-            foreach ($options as $k=>$v) {
-                $out[] = "{$k}=\"{$v}\"";
-            }
-            $out = join(' ', $out);
-            return $out? $insert_before.$out.$insert_after: null;
-        }
-        else {
-            return $options? $insert_before.$options.$insert_after: null;
-        }
-    }
+	function parseHtmlOptions ($options, $insert_before=' ', $insert_after=null) {
+		if (is_array($options)) {
+			$out = array();
+			foreach ($options as $k=>$v) {
+				$out[] = "{$k}=\"{$v}\"";
+			}
+			$out = join(' ', $out);
+			return $out? $insert_before.$out.$insert_after: null;
+		}
+		else {
+			return $options? $insert_before.$options.$insert_after: null;
+		}
+	}
 
 /**
   * Enter description here...
@@ -202,13 +213,13 @@ class Controller extends Template {
   * @param unknown_type $title
   * @param unknown_type $url
   * @param unknown_type $html_options
-  * @param unknown_type $confirm
+  * @param unknown_type $confirm_message
   * @return unknown
   */
-    function link_to ($title, $url, $html_options=null, $confirm=false) {
-        $confirm? $html_options['onClick'] = "return confirm('{$confirm}')": null;
-        return sprintf(TAG_LINK, $this->url_for($url), $this->parse_html_options($html_options), $title);
-    }
+	function linkTo ($title, $url, $html_options=null, $confirm_message=false) {
+		$confirm_message? $html_options['onClick'] = "return confirm('{$confirm_message}')": null;
+		return sprintf(TAG_LINK, $this->UrlFor($url), $this->parseHtmlOptions($html_options), $title);
+	}
 
 /**
   * Enter description here...
@@ -218,10 +229,10 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function link_out ($title, $url=null, $html_options=null) {
-        $url = $url? $url: $title;
-        return sprintf(TAG_LINK, $url, $this->parse_html_options($html_options), $title);
-    }
+	function linkOut ($title, $url=null, $html_options=null) {
+		$url = $url? $url: $title;
+		return sprintf(TAG_LINK, $url, $this->parseHtmlOptions($html_options), $title);
+	}
 
 /**
   * Enter description here...
@@ -231,13 +242,13 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function form_tag ($target=null, $type='post', $html_options=null) {
-        $html_options['action'] = $this->url_for($target);
-        $html_options['method'] = $type=='get'? 'get': 'post';
-        $type == 'file'? $html_options['enctype'] = 'multipart/form-data': null;
+	function formTag ($target=null, $type='post', $html_options=null) {
+		$html_options['action'] = $this->UrlFor($target);
+		$html_options['method'] = $type=='get'? 'get': 'post';
+		$type == 'file'? $html_options['enctype'] = 'multipart/form-data': null;
 
-        return sprintf(TAG_FORM, $this->parse_html_options($html_options, ''));
-    }
+		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, ''));
+	}
 
 /**
   * Enter description here...
@@ -246,10 +257,10 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function submit_tag ($caption='Submit', $html_options=null) {
-        $html_options['value'] = $caption;
-        return sprintf(TAG_SUBMIT, $this->parse_html_options($html_options, '', ' '));
-    }
+	function submitTag ($caption='Submit', $html_options=null) {
+		$html_options['value'] = $caption;
+		return sprintf(TAG_SUBMIT, $this->parseHtmlOptions($html_options, '', ' '));
+	}
 
 /**
   * Enter description here...
@@ -259,12 +270,26 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function input_tag ($tag_name, $size=20, $html_options=null) {
-        $html_options['size'] = $size;
-        $html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tag_value($tag_name);
-        $this->tag_is_invalid($tag_name)? $html_options['class'] = 'form_error': null;
-        return sprintf(TAG_INPUT, $tag_name, $this->parse_html_options($html_options, '', ' '));
-    }
+	function inputTag ($tag_name, $size=20, $html_options=null) {
+		$html_options['size'] = $size;
+		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
+		$this->tagIsInvalid($tag_name)? $html_options['class'] = 'form_error': null;
+		return sprintf(TAG_INPUT, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $tag_name
+  * @param unknown_type $size
+  * @param unknown_type $html_options
+  * @return unknown
+  */
+	function passwordTag ($tag_name, $size=20, $html_options=null) {
+		$html_options['size'] = $size;
+		empty($html_options['value'])? $html_options['value'] = $this->tagValue($tag_name): null;
+		return sprintf(TAG_PASSWORD, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+	}
 
 /**
   * Enter description here...
@@ -274,24 +299,10 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function hidden_tag ($tag_name, $value=null, $html_options=null) {
-        $html_options['value'] = $value? $value: $this->tag_value($tag_name);
-        return sprintf(TAG_HIDDEN, $tag_name, $this->parse_html_options($html_options, '', ' '));
-    }
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $tag_name
-  * @param unknown_type $size
-  * @param unknown_type $html_options
-  * @return unknown
-  */
-    function password_tag ($tag_name, $size=20, $html_options=null) {
-        $html_options['size'] = $size;
-        $html_options['value'] = $value? $value: $this->tag_value($tag_name);
-        return sprintf(TAG_PASSWORD, $tag_name, $this->parse_html_options($html_options, '', ' '));
-    }
+	function hiddenTag ($tag_name, $value=null, $html_options=null) {
+		$html_options['value'] = $value? $value: $this->tagValue($tag_name);
+		return sprintf(TAG_HIDDEN, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+	}
 
 /**
   * Enter description here...
@@ -300,9 +311,9 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function file_tag ($tag_name, $html_options=null) {
-        return sprintf(TAG_FILE, $tag_name, $this->parse_html_options($html_options, '', ' '));
-    }
+	function fileTag ($tag_name, $html_options=null) {
+		return sprintf(TAG_FILE, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+	}
 
 /**
   * Enter description here...
@@ -313,12 +324,12 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function area_tag ($tag_name, $cols=60, $rows=10, $html_options=null) {
-        $value = $value? $value: $this->tag_value($tag_name);
-        $html_options['cols'] = $cols;
-        $html_options['rows'] = $rows;
-        return sprintf(TAG_AREA, $tag_name, $this->parse_html_options($html_options, ' '), $value);
-    }
+	function areaTag ($tag_name, $cols=60, $rows=10, $html_options=null) {
+		$value = empty($html_options['value'])? $this->tagValue($tag_name): empty($html_options['value']);
+		$html_options['cols'] = $cols;
+		$html_options['rows'] = $rows;
+		return sprintf(TAG_AREA, $tag_name, $this->parseHtmlOptions($html_options, ' '), $value);
+	}
 
 /**
   * Enter description here...
@@ -328,11 +339,11 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function checkbox_tag ($tag_name, $title=null, $html_options=null) {
-        $this->tag_value($tag_name)? $html_options['checked'] = 'checked ': null;
-        $title = $title? $title: ucfirst($tag_name);
-        return sprintf(TAG_CHECKBOX, $tag_name, $tag_name, $tag_name, $this->parse_html_options($html_options, '', ' '), $title);
-    }
+	function checkboxTag ($tag_name, $title=null, $html_options=null) {
+		$this->tagValue($tag_name)? $html_options['checked'] = 'checked': null;
+		$title = $title? $title: ucfirst($tag_name);
+		return sprintf(TAG_CHECKBOX, $tag_name, $tag_name, $tag_name, $this->parseHtmlOptions($html_options, '', ' '), $title); 
+	}
 
 /**
   * Enter description here...
@@ -343,19 +354,20 @@ class Controller extends Template {
   * @param unknown_type $html_options
   * @return unknown
   */
-    function radio_tags ($tag_name, $options, $inbetween=null, $html_options=null) {
-        $value = isset($html_options['value'])? $html_options['value']: $this->tag_value($tag_name);
-        $out = array();
-        foreach ($options as $opt_value=>$opt_title) {
-            $options_here = array('value' => $opt_value);
-            $opt_value==$value? $options_here['checked'] = 'checked': null;
-            $parsed_options = $this->parse_html_options(array_merge($html_options, $options_here), '', ' ');
-            $individual_tag_name = "{$tag_name}_{$opt_value}";
-            $out[] = sprintf(TAG_RADIOS, $individual_tag_name, $tag_name, $individual_tag_name, $parsed_options, $opt_title);
-        }
-
-        return join($inbetween, $out);
-    }
+	function radioTags ($tag_name, $options, $inbetween=null, $html_options=null) {
+		$value = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
+		$out = array();
+		foreach ($options as $opt_value=>$opt_title) {
+			$options_here = array('value' => $opt_value);
+			$opt_value==$value? $options_here['checked'] = 'checked': null;
+			$parsed_options = $this->parseHtmlOptions(array_merge($html_options, $options_here), '', ' ');
+			$individual_tag_name = "{$tag_name}_{$opt_value}";
+			$out[] = sprintf(TAG_RADIOS, $individual_tag_name, $tag_name, $individual_tag_name, $parsed_options, $opt_title);
+		}
+		
+		$out = join($inbetween, $out);
+		return $out? $out: null;
+	}
 
 /**
   * Enter description here...
@@ -366,20 +378,35 @@ class Controller extends Template {
   * @param unknown_type $inner_options
   * @return unknown
   */
-    function select_tag ($tag_name, $options, $outer_options=null, $inner_options=null) {
-        $selected = isset($html_options['value'])? $html_options['value']: $this->tag_value($tag_name);
-        $select[] = sprintf(TAG_SELECT_START, $tag_name, $this->parse_html_options($outer_options));
-        $select[] = sprintf(TAG_SELECT_EMPTY, $this->parse_html_options($inner_options));
+	function selectTag ($tag_name, $options, $outer_options=null, $inner_options=null) { 
+		if (!is_array($options) || !count($options))
+			return null;
+		$selected = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
+		$select[] = sprintf(TAG_SELECT_START, $tag_name, $this->parseHtmlOptions($outer_options));
+		$select[] = sprintf(TAG_SELECT_EMPTY, $this->parseHtmlOptions($inner_options));
+	
+		foreach ($options as $name=>$title) {
+			$options_here = $selected==$name? array_merge($inner_options, array('selected'=>'selected')): $inner_options;
+			$select[] = sprintf(TAG_SELECT_OPTION, $name, $this->parseHtmlOptions($options_here), $title);
+		} 
 
-        foreach ($options as $name=>$title) {
-            $options_here = $selected==$name? array_merge($inner_options, array('selected'=>'selected')): $inner_options;
-            $select[] = sprintf(TAG_SELECT_OPTION, $name, $this->parse_html_options($options_here), $title);
-        }
+		$select[] = sprintf(TAG_SELECT_END);
 
-        $select[] = sprintf(TAG_SELECT_END);
+		return implode("\n", $select); 
+	}
 
-        return implode("\n", $select);
-    }
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  * @param unknown_type $alt
+  * @param unknown_type $html_options
+  * @return unknown
+  */
+	function imageTag ($path, $alt=null, $html_options=null) {
+		$url = "{$this->base}/images/{$path}";
+		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, '', ' '));
+	}
 
 /**
   * Enter description here...
@@ -389,15 +416,15 @@ class Controller extends Template {
   * @param unknown_type $th_options
   * @return unknown
   */
-    function table_headers ($names, $tr_options=null, $th_options=null) {
-        $args = func_get_args();
+	function tableHeaders ($names, $tr_options=null, $th_options=null) {
+		$args = func_get_args();
 
-        $out = array();
-        foreach ($names as $arg)
-        $out[] = sprintf(TAG_TABLE_HEADER, $this->parse_html_options($th_options), $arg);
+		$out = array();
+		foreach ($names as $arg)
+			$out[] = sprintf(TAG_TABLE_HEADER, $this->parseHtmlOptions($th_options), $arg);
 
-        return sprintf(TAG_TABLE_HEADERS, $this->parse_html_options($tr_options), join(' ', $out));
-    }
+		return sprintf(TAG_TABLE_HEADERS, $this->parseHtmlOptions($tr_options), join(' ', $out));
+	}
 
 /**
   * Enter description here...
@@ -407,32 +434,23 @@ class Controller extends Template {
   * @param unknown_type $td_options
   * @return unknown
   */
-    function table_cells ($data, $tr_options=null, $td_options=null) {
-        if (empty($data[0]) || !is_array($data[0]))
-        $data = array($data);
+	function tableCells ($data, $odd_tr_options=null, $even_tr_options=null) {
+		if (empty($data[0]) || !is_array($data[0]))
+			$data = array($data);
 
-        foreach ($data as $line) {
-            $cells_out = array();
-            foreach ($line as $cell) $cells_out[] = sprintf(TAG_TABLE_CELL, $this->parse_html_options($td_options), $cell);
-            $out[] = join(' ', $cells_out);
-        }
+		$count=0;
+		foreach ($data as $line) {
+			$count++;
+			$cells_out = array();
+			foreach ($line as $cell)
+				$cells_out[] = sprintf(TAG_TABLE_CELL, null, $cell);
 
-        return sprintf(TAG_TABLE_ROW, $this->parse_html_options($tr_options), join("\n", $out));
-    }
+			$options = $this->parseHtmlOptions($count%2? $odd_tr_options: $even_tr_options);
+			$out[] = sprintf(TAG_TABLE_ROW, $options, join(' ', $cells_out));
+		}
 
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $name
-  * @param unknown_type $alt
-  * @param unknown_type $html_options
-  * @return unknown
-  */
-    function image_tag ($name, $alt=null, $html_options=null) {
-        $url = "{$this->base}/images/{$name}";
-        return sprintf(TAG_IMAGE, $url, $alt, $this->parse_html_options($html_options, '', ' '));
-    }
-
+		return join("\n", $out);
+	}
 
 
 /**
@@ -441,19 +459,38 @@ class Controller extends Template {
   * @param unknown_type $tag_name
   * @return unknown
   */
-    function tag_value ($tag_name) {
-        return isset($this->params['data'][$tag_name])? $this->params['data'][$tag_name]: null;
-    }
+	function tagValue ($tag_name) {
+		return isset($this->params['data'][$tag_name])? $this->params['data'][$tag_name]: false;
+	}
 
 /**
   * Enter description here...
   *
-  * @param unknown_type $field
   * @return unknown
   */
-    function tag_is_invalid ($field) {
-        return !empty($this->validation_errors[$field]);
-    }
+	function validate () {
+		$args = func_get_args();
+		$errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
+
+		return count($errors);
+	}
+
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
+	function validateErrors () {
+		$objects = func_get_args();
+		if (!count($objects)) return false;
+
+		$errors = array();
+		foreach ($objects as $object) {
+			$errors = array_merge($errors, $object->invalidFields());
+		}
+
+		return $this->validation_errors = (count($errors)? $errors: false);
+	}
 
 /**
   * Enter description here...
@@ -462,9 +499,19 @@ class Controller extends Template {
   * @param unknown_type $text
   * @return unknown
   */
-    function validation_error ($field, $text) {
-        return $this->tag_is_invalid($field)? sprintf(SHORT_ERROR_MESSAGE, $text): null;
-    }
+	function tagErrorMsg ($field, $text) {
+		return $this->tagIsInvalid($field)? sprintf(SHORT_ERROR_MESSAGE, $text): null;
+	}
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $field
+  * @return unknown
+  */
+	function tagIsInvalid ($field) {
+		return !empty($this->validation_errors[$field]);
+	}
 
 
 
@@ -474,41 +521,29 @@ class Controller extends Template {
   * @param unknown_type $name
   * @param unknown_type $link
   */
-    function add_crumb ($name, $link) {
-        $this->_crumbs[] = array ($name, $link);
-    }
+	function addCrumb ($name, $link) {
+		$this->_crumbs[] = array ($name, $link);
+	}
 
 /**
   * Enter description here...
   *
   * @return unknown
   */
-    function get_crumbs () {
+	function getCrumbs () {
 
-        if (count($this->_crumbs)) {
+		if (count($this->_crumbs)) {
 
-            $out = array("<a href=\"{$this->base}\">START</a>");
-            foreach ($this->_crumbs as $crumb) {
-                $out[] = "<a href=\"{$this->base}{$crumb[1]}\">{$crumb[0]}</a>";
-            }
-
-            return join(' &raquo; ', $out);
-        }
-        else
-        return null;
-    }
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $action
-  */
-    function set_action ($action) {
-        $this->action = $action;
-
-        $args = func_get_args();
-        call_user_func_array(array(&$this, $action), $args);
-    }
+			$out = array("<a href=\"{$this->base}\">START</a>");
+			foreach ($this->_crumbs as $crumb) {
+				$out[] = "<a href=\"{$this->base}{$crumb[1]}\">{$crumb[0]}</a>";
+			}
+		
+			return join(' &raquo; ', $out);
+		}
+		else
+			return null;
+	}
 
 /**
   * Enter description here...
@@ -517,39 +552,10 @@ class Controller extends Template {
   * @param unknown_type $name
   * @param unknown_type $message
   */
-    function error ($code, $name, $message) {
-        header ("HTTP/1.0 {$code} {$name}");
-        print ($this->_do_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function validates () {
-        $args = func_get_args();
-        $errors = call_user_func_array(array(&$this, 'validation_errors'), $args);
-
-        return count($errors);
-    }
-
-/**
-  * Enter description here...
-  *
-  * @return unknown
-  */
-    function validation_errors () {
-        $objects = func_get_args();
-        if (!count($objects)) return false;
-
-        $errors = array();
-        foreach ($objects as $object) {
-            $errors = array_merge($errors, $object->invalid_fields());
-        }
-
-        return $this->validation_errors = (count($errors)? $errors: false);
-    }
+	function error ($code, $name, $message) {
+		header ("HTTP/1.0 {$code} {$name}");
+		print ($this->_do_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
+	}
 }
 
 ?>

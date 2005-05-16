@@ -44,11 +44,11 @@
   *
   */
 function load_libs () {
-    foreach (list_modules(LIBS) as $lib) {
-        if ($lib != 'basics') {
-            include_once (LIBS.$lib.'.php');
-        }
-    }
+	foreach (list_modules(LIBS) as $lib) {
+		if ($lib != 'basics') {
+			include_once (LIBS.$lib.'.php');
+		}
+	}
 }
 
 /**
@@ -56,10 +56,10 @@ function load_libs () {
   *
   */
 function load_models () {
-    require (APP.'app_model.php');
-    foreach (list_modules(MODELS) as $model) {
-        require (MODELS.$model.'.php');
-    }
+	require (APP.'app_model.php');
+	foreach (list_modules(MODELS) as $model) {
+		require (MODELS.$model.'.php');
+	}
 }
 
 /**
@@ -67,10 +67,15 @@ function load_models () {
   *
   */
 function load_controllers () {
-    require (APP.'app_controller.php');
-    foreach (list_modules(CONTROLLERS) as $controller) {
-        require (CONTROLLERS.$controller.'.php');
-    }
+	require (APP.'app_controller.php');
+
+	foreach (list_modules(HELPERS) as $helper) {
+		require (HELPERS.$helper.'.php');
+	}
+
+	foreach (list_modules(CONTROLLERS) as $controller) {
+		require (CONTROLLERS.$controller.'.php');
+	}
 }
 
 /**
@@ -81,23 +86,23 @@ function load_controllers () {
   * @return unknown
   */
 function list_modules($path, $sort=true) {
-    if ($d = opendir($path)) {
-        $out = array();
-        $r = null;
-        while (false !== ($fn = readdir($d))) {
-            if (preg_match('#^(.+)\.php$#', $fn, $r)) {
-                $out[] = $r[1];
-            }
-        }
-        if ($sort || $this->sort) {
-            sort($out);
-        }
+	if ($d = opendir($path)) {
+		$out = array();
+		$r = null;
+		while (false !== ($fn = readdir($d))) {
+			if (preg_match('#^(.+)\.php$#', $fn, $r)) {
+				$out[] = $r[1];
+			}
+		}
+		if ($sort || $this->sort) {
+			sort($out);
+		}
 
-        return $out;
-    }
-    else {
-        return false;
-    }
+		return $out;
+	}
+	else {
+		return false;
+	}
 }
 
 /**
@@ -105,30 +110,60 @@ function list_modules($path, $sort=true) {
   *
   */
 function uses_config () {
-    global $TIME_START;
+	global $TIME_START;
 
-    require (CONFIGS.'core.php');
+	require (CONFIGS.'core.php');
 }
 
 /**
   * Enter description here...
   *
   */
-function uses_database () {
-    global $DB;
+function uses_database ($level='devel') {
+	global $DB;
 
-    if (file_exists(CONFIGS.'database.php')) {
-        require (CONFIGS.'database.php');
-        $DB = new DBO ($DATABASE_CONFIG['devel'], DEBUG > 1);
-    }
+	if ($config = loadDatabaseConfig($level)) {
+
+		$db_driver_class = 'DBO_'.$config['driver'];
+		$db_driver_fn = LIBS.strtolower($db_driver_class.'.php');
+
+ 		if (file_exists($db_driver_fn)) {
+			uses (strtolower($db_driver_class));
+			$DB = new $db_driver_class ($config);
+		}
+		else {
+			 die('Specified ('.$config['driver'].') database driver not found.');
+		}
+	}
+}
+
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
+function loadDatabaseConfig ($level='devel') {
+	if (file_exists(CONFIGS.'database.php'))
+		require (CONFIGS.'database.php');
+
+	if (empty($DATABASE_CONFIG))
+		 return false;
+
+	if (empty($DATABASE_CONFIG[$level]))
+		 return false;
+
+	if (!is_array($DATABASE_CONFIG[$level]))
+		 return false;
+
+	return $DATABASE_CONFIG[$level];
 }
 
 /**
   * Enter description here...
   *
   */
-function uses_tags () {
-    require (CONFIGS.'tags.php');
+function uses_tag_generator () {
+	require (CONFIGS.'tags.php');
 }
 
 /**
@@ -136,10 +171,10 @@ function uses_tags () {
   *
   */
 function uses () {
-    $args = func_get_args();
-    foreach ($args as $arg) {
-        require_once (LIBS.$arg.'.php');
-    }
+	$args = func_get_args();
+	foreach ($args as $arg) {
+		require_once (LIBS.$arg.'.php');
+	}
 }
 
 /**
@@ -149,12 +184,12 @@ function uses () {
   * @param unknown_type $show_html
   */
 function debug($var = FALSE, $show_html = false) {
-    if (DEBUG) {
-        print "\n<pre>\n";
-        if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
-        print_r($var);
-        print "\n</pre>\n";
-    }
+	if (DEBUG) {
+		print "\n<pre>\n";
+		if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
+		print_r($var);
+		print "\n</pre>\n";
+	}
 }
 
 
@@ -165,10 +200,10 @@ if (!function_exists('getMicrotime')) {
   *
   * @return unknown
   */
-    function getMicrotime() {
-        list($usec, $sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec);
-    }
+	function getMicrotime() {
+		list($usec, $sec) = explode(" ", microtime());
+		return ((float)$usec + (float)$sec);
+	}
 }
 if (!function_exists('sortByKey')) {
 /**
@@ -180,27 +215,52 @@ if (!function_exists('sortByKey')) {
   * @param unknown_type $type
   * @return unknown
   */
-    function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) {
+	function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) {
 
-        if( is_array($array) ) {
+		if( is_array($array) ) {
 
-            foreach( $array AS $key => $val )
-            $sa[$key] = $val[$sortby];
+			foreach( $array AS $key => $val )
+			$sa[$key] = $val[$sortby];
 
-            if( $order == 'asc' )
-            asort($sa, $type);
-            else
-            arsort($sa, $type);
+			if( $order == 'asc' )
+			asort($sa, $type);
+			else
+			arsort($sa, $type);
 
-            foreach( $sa as $key=>$val )
-            $out[] = $array[$key];
+			foreach( $sa as $key=>$val )
+			$out[] = $array[$key];
 
-            Return $out;
+			Return $out;
 
-        }
-        else
-        Return null;
-    }
+		}
+		else
+		Return null;
+	}
+}
+
+if (!function_exists('array_combine')) {
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $a1
+  * @param unknown_type $a2
+  * @return unknown
+  */
+	function array_combine($a1, $a2) {
+		$a1 = array_values($a1);
+		$a2 = array_values($a2);
+
+		if (count($a1) != count($a2)) return false; // different lenghts
+		if (count($a1) <= 0) return false; // arrays are the same and both are empty
+		
+		$output = array();
+		
+		for ($i = 0; $i < count($a1); $i++) {
+			$output[$a1[$i]] = $a2[$i];
+		}
+		
+		return $output;
+	}
 }
 
 /**
@@ -220,9 +280,9 @@ class neatArray {
   * @param unknown_type $value
   * @return neatArray
   */
-    function neatArray ($value) {
-        $this->value = $value;
-    }
+	function neatArray ($value) {
+		$this->value = $value;
+	}
 
 /**
   * Enter description here...
@@ -231,16 +291,30 @@ class neatArray {
   * @param unknown_type $value
   * @return unknown
   */
-    function find_in ($field_name, $value) {
-        $out = false;
-        foreach ($this->value as $k=>$v) {
-            if (isset($v[$field_name]) && ($v[$field_name] == $value)) {
-                $out[$k] = $v;
-            }
-        }
+	function findIn ($field_name, $value) {
+		$out = false;
+		foreach ($this->value as $k=>$v) {
+			if (isset($v[$field_name]) && ($v[$field_name] == $value)) {
+				$out[$k] = $v;
+			}
+		}
 
-        return $out;
-    }
+		return $out;
+	}
+
+/**
+  * Enter description here...
+  *
+  */
+	function cleanup () {
+		$out = is_array($this->value)? array(): null;
+		foreach ($this->value as $k=>$v) {
+			if ($v) {
+				$out[$k] = $v;
+			}
+		}
+		$this->value = $out;
+	}
 }
 
 ?>

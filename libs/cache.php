@@ -61,38 +61,38 @@ class Cache extends Model {
   *
   * @var unknown_type
   */
-    var $id = null;
+	var $id = null;
 
 /**
   * Enter description here...
   *
   * @var unknown_type
   */
-    var $data = null;
+	var $data = null;
 
 /**
   * Enter description here...
   *
   * @var unknown_type
   */
-    var $for_caching = null;
+	var $for_caching = null;
 
 /**
   * Enter description here...
   *
   * @var unknown_type
   */
-    var $use_table = 'cache';
+	var $use_table = 'cache';
 
 /**
   * Enter description here...
   *
   * @param unknown_type $id
   */
-    function __construct ($id) {
-        $this->id = (md5($id));
-        parent::__construct($this->id);
-    }
+	function __construct ($id) {
+		$this->id = (md5($id));
+		parent::__construct($this->id);
+	}
 
 /**
   * Enter description here...
@@ -100,10 +100,10 @@ class Cache extends Model {
   * @param unknown_type $id
   * @return unknown
   */
-    function id ($id=null) {
-        if (!$id) return $this->id;
-        return ($this->id = $id);
-    }
+	function id ($id=null) {
+		if (!$id) return $this->id;
+		return ($this->id = $id);
+	}
 
 /**
   * Enter description here...
@@ -112,50 +112,50 @@ class Cache extends Model {
   * @param unknown_type $keep_for
   * @return unknown
   */
-    function remember ($content, $keep_for=CACHE_PAGES_FOR) {
-        $data = addslashes($this->for_caching.$content);
-        $expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
-        return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
-    }
+	function remember ($content, $keep_for=CACHE_PAGES_FOR) {
+		$data = addslashes($this->for_caching.$content);
+		$expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
+		return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
+	}
 
 /**
   * Enter description here...
   *
   * @return unknown
   */
-    function restore () {
-        if (empty($this->data['data']))
-        return $this->find("id='{$this->id}' AND expire>NOW()");
-
-        return $this->data['data'];
-    }
+	function restore () {
+		if (empty($this->data['data']))
+			return $this->find("id='{$this->id}' AND expire>NOW()");
+		
+		return $this->data['data'];
+	}
 
 /**
   * Enter description here...
   *
   * @return unknown
   */
-    function has () {
-        return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
-    }
+	function has () {
+		return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
+	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $string
   */
-    function append ($string) {
-        $this->for_caching .= $string;
-    }
+	function append ($string) {
+		$this->for_caching .= $string;
+	}
 
 /**
   * Enter description here...
   *
   * @return unknown
   */
-    function clear () {
-        return $this->query("DELETE FROM {$this->use_table}");
-    }
+	function clear () {
+		return $this->query("DELETE FROM {$this->use_table}");
+	}
 }
 
 ?>
