@@ -201,7 +201,7 @@ class %sTest extends TestCase {
 /**
   * Enter description here...
   *
-  * @param unknown_type $controller
+  * @param unknown_type $name
   * @param array $actions
   */
 	function newController ($name, $actions=array()) {
@@ -215,7 +215,7 @@ class %sTest extends TestCase {
 /**
   * Enter description here...
   *
-  * @param unknown_type $controller
+  * @param unknown_type $name
   * @param array $actions
   * @return unknown
   */
@@ -282,8 +282,7 @@ class %sTest extends TestCase {
 /**
   * Enter description here...
   *
-  * @param unknown_type $controller
-  * @param array $actions
+  * @param unknown_type $name
   * @return unknown
   */
 	function makeHelperFn ($name) {
