@@ -31,7 +31,7 @@
   * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
   * @package cake
   * @subpackage cake.libs
-  * @since Cake v 1.0.0.0
+  * @since Cake v 1.0.0.114
   * @version $Revision: 114 $
   * @modifiedby $LastChangedBy: pies $
   * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
@@ -51,7 +51,7 @@ uses('object', 'dbo');
   *
   * @package cake
   * @subpackage cake.libs
-  * @since Cake v 0.2.9
+  * @since Cake v 1.0.0.114
   *
   */
 class DBO_Postgres extends DBO {
