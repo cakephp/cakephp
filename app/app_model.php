@@ -15,7 +15,8 @@
 
 /**
   * Purpose: AppModel
-  * Enter description here...
+  * This file is application-wide model file. You can put all 
+  * application-wide model-related methods here.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -31,8 +32,8 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Add your application-wide methods in the class below, your models
+  * will be inheriting them.
   *
   * @package cake
   * @subpackage cake.app

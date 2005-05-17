@@ -14,7 +14,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Enter description here...
+  * This file collects requests if no mod_rewrite is avilable and / is used 
+  * instead of /public/ as a web root.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -29,9 +30,9 @@
   */
 
 /**
-  * Enter description here...
-  *
-  */
+ * We need to redefine some constants and variables, so that Cake knows it is
+ * working without mod_rewrite.
+ */
 define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
 define ('ROOT', dirname($_SERVER['SCRIPT_FILENAME']).'/');
 

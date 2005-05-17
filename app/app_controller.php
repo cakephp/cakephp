@@ -15,7 +15,8 @@
 
 /**
   * Purpose: AppController
-  * Enter description here...
+  * This file is application-wide controller file. You can put all 
+  * application-wide controller-related methods here.
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -31,8 +32,8 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Add your application-wide methods in the class below, your controllers 
+  * will be inheriting them.
   *
   * @package cake
   * @subpackage cake.app
