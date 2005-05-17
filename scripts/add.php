@@ -39,6 +39,9 @@
   */
 
 ## START-UP
+/**
+  * START-UP
+  */
 require ('../config/paths.php');
 require (LIBS.'basics.php');
 uses ('bake');

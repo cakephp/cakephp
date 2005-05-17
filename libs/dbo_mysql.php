@@ -1,14 +1,67 @@
 <?PHP
-/*
- * Name: DBO/MySQL
- * Author: Michal Tatarynowicz (tatarynowicz@gmail.com)
- * Licence: Public Domain
-*/
+//////////////////////////////////////////////////////////////////////////
+// + $Id: basics.php 114 2005-05-16 23:14:37Z pies $
+// +------------------------------------------------------------------+ //
+// + Cake <https://developers.nextco.com/cake/>                       + //
+// + Copyright: (c) 2005 Cake Authors/Developers                      + //
+// +                                                                  + //
+// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
+// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
+// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
+// +                                                                  + //
+// +------------------------------------------------------------------+ //
+// + Licensed under The MIT License                                   + //
+// + Redistributions of files must retain the above copyright notice. + //
+// + You may not use this file except in compliance with the License. + //
+// +                                                                  + //
+// + You may obtain a copy of the License at:                         + //
+// + License page: http://www.opensource.org/licenses/mit-license.php + //
+// +------------------------------------------------------------------+ //
+//////////////////////////////////////////////////////////////////////////
+
+/**
+  * Purpose: DBO_MySQL
+  * Enter description here...
+  * 
+  * @filesource 
+  * @author Michal Tatarynowicz <tatarynowicz@gmail.com>
+  * @author Larry E. Masters aka PhpNut <nut@phpnut.com>
+  * @author Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+  * @copyright Copyright (c) 2005, Cake Authors/Developers
+  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 0.2.9
+  * @version $Revision: 114 $
+  * @modifiedby $LastChangedBy: pies $
+  * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
+  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+  *
+  */
+
+/**
+  * Enter description here...
+  *
+  */
 
 uses('object', 'dbo');
-
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 0.2.9
+  *
+  */
 class DBO_MySQL extends DBO {
 	
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $config
+  * @return unknown
+  */
 	function connect ($config) {
 		if($config) {
 			$this->config = $config;
@@ -22,18 +75,40 @@ class DBO_MySQL extends DBO {
 			die('Could not connect to DB.');
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function disconnect () {
 		return mysql_close();
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $sql
+  * @return unknown
+  */
 	function execute ($sql) {
 		return mysql_query($sql);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $res
+  * @return unknown
+  */
 	function fetchRow ($res) {
 		return mysql_fetch_array($res);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function tables () {
 		$result = mysql_list_tables($this->config['database']);
 
@@ -50,6 +125,12 @@ class DBO_MySQL extends DBO {
 		}
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $table_name
+  * @return unknown
+  */
 	function fields ($table_name) {
 		$data = $this->all("DESC {$table_name}");
 		$fields = false;
@@ -60,22 +141,48 @@ class DBO_MySQL extends DBO {
 		return $fields;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $data
+  * @return unknown
+  */
 	function prepare ($data) {
 		return "'".str_replace("'", "\\'", $data)."'";
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastError () {
 		return mysql_errno()? mysql_errno().': '.mysql_error(): null;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastAffected () {
 		return $this->_result? mysql_affected_rows(): false;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastNumRows () {
 		return $this->_result? @mysql_num_rows($this->_result): false;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastInsertId() {
 		Return mysql_insert_id();
 	}

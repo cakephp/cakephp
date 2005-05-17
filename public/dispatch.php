@@ -39,7 +39,9 @@
   *
   */
 
-## DIRECTORY LAYOUT
+/**
+  * DIRECTORY LAYOUT
+  */
 require ('../config/paths.php');
 
 /**

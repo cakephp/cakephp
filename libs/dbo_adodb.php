@@ -1,14 +1,66 @@
 <?PHP
-/*
- * Name: DBO/ADO
- * Author: Michal Tatarynowicz (tatarynowicz@gmail.com),  Giovanni Degani
- * Licence: Public Domain
-*/
+//////////////////////////////////////////////////////////////////////////
+// + $Id: basics.php 114 2005-05-16 23:14:37Z pies $
+// +------------------------------------------------------------------+ //
+// + Cake <https://developers.nextco.com/cake/>                       + //
+// + Copyright: (c) 2005 Cake Authors/Developers                      + //
+// +                                                                  + //
+// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
+// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
+// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
+// +                                                                  + //
+// +------------------------------------------------------------------+ //
+// + Licensed under The MIT License                                   + //
+// + Redistributions of files must retain the above copyright notice. + //
+// + You may not use this file except in compliance with the License. + //
+// +                                                                  + //
+// + You may obtain a copy of the License at:                         + //
+// + License page: http://www.opensource.org/licenses/mit-license.php + //
+// +------------------------------------------------------------------+ //
+//////////////////////////////////////////////////////////////////////////
 
+/**
+  * Purpose: DBO_AdoDB
+  * Basic Cake functionalities.
+  * 
+  * @filesource 
+  * @author Michal Tatarynowicz <tatarynowicz@gmail.com>
+  * @author Larry E. Masters aka PhpNut <nut@phpnut.com>
+  * @author Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+  * @copyright Copyright (c) 2005, Cake Authors/Developers
+  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 0.2.9
+  * @version $Revision: 114 $
+  * @modifiedby $LastChangedBy: pies $
+  * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
+  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+  *
+  */
+
+/**
+  * Enter description here...
+  *
+  */
 require_once(VENDORS.'adodb/adodb.inc.php');
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 0.2.9
+  *
+  */
 class DBO_AdoDB extends DBO {
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $config
+  */
 	function connect ($config) {
 		if($this->config = $config) {
 			if(isset($this->config['driver'])) {
@@ -23,18 +75,40 @@ class DBO_AdoDB extends DBO {
 			die('Could not connect to DB.');
 	}
 	
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function disconnect () {
 		return $this->_adodb->close();
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $sql
+  * @return unknown
+  */
 	function execute ($sql) {
 		return $this->_adodb->execute($sql);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $res
+  * @return unknown
+  */
 	function fetchRow ($res) {
 		return $res->FetchRow();
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function tables() {
 		$tables = $this->_adodb->MetaTables('TABLES');
 
@@ -45,6 +119,12 @@ class DBO_AdoDB extends DBO {
 		return $tables;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $table_name
+  * @return unknown
+  */
 	function fields ($table_name) {
 		$data = $this->_adodb->MetaColumns($table_name);
 		$fields = false;
@@ -55,20 +135,44 @@ class DBO_AdoDB extends DBO {
 		return $fields;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $data
+  */
 	function prepare ($data)		{ die('Please implement DBO::prepare() first.'); }
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastError () {
 		return $this->_adodb->ErrorMsg();
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastAffected ()		{
 		return $this->_adodb->Affected_Rows(); 
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function lastNumRows () {
 		 return $this->_result? $this->_result->RecordCount(): false;
 	}
 
+/**
+  * Enter description here...
+  *
+  */
 	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
 /*
 

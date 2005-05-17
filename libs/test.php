@@ -1,84 +1,184 @@
-<?php
-//
-// PHP framework for testing, based on the design of "JUnit".
-//
-// Written by Fred Yankowski <fred@ontosys.com>
-//            OntoSys, Inc  <http://www.OntoSys.com>
-//
-// Changes by Michal Tatarynowicz <tatarynowicz@gmail.com>
-//
-// $Id: test.php 113 2005-05-16 22:53:41Z pies $
+<?PHP
+////////////////////////////////////////////////////////////////////////// //
+// + $Id: dispatcher.php 114 2005-05-16 23:14:37Z pies $
+// +---------------------------------------------------------------------+ //
+// + PHP framework for testing, based on the design of "JUnit".          + //
+// + Copyright (c) 2000 Fred Yankowski                                   + //
+// +                                                                     + //
+// + Written by Fred Yankowski <fred@ontosys.com>                        + //
+// +            OntoSys, Inc  <http://www.OntoSys.com>                   + //
+// +                                                                     + //
+// + Changes by Michal Tatarynowicz <tatarynowicz@gmail.com>             + //
+// +---------------------------------------------------------------------+ //
+// + Permission is hereby granted, free of charge, to any person         + //
+// + obtaining a copy of this software and associated documentation      + //
+// + files (the "Software"), to deal in the Software without             + //
+// + restriction, including without limitation the rights to use, copy,  + //
+// + modify, merge, publish, distribute, sublicense, and/or sell copies  + //
+// + of the Software, and to permit persons to whom the Software is      + //
+// + furnished to do so, subject to the following conditions:            + //
+// +                                                                     + //
+// + The above copyright notice and this permission notice shall be      + //
+// + included in all copies or substantial portions of the Software.     + //
+// +                                                                     + //
+// + THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,     + //
+// + EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  + //
+// + MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND               + //
+// + NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS + //
+// + BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN  + //
+// + ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN   + //
+// + CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE    + //
+// + SOFTWARE.                                                           + //
+/////////////////////////////////////////////////////////////////////////////
 
-// Copyright (c) 2000 Fred Yankowski
+/**
+  * Purpose: PHP framework for testing, based on the design of "JUnit".
+  *
+  * @filesource 
+  * @author Fred Yankowski
+  * @copyright Copyright (c) 2000 Fred Yankowski
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  * @version $Revision: 114 $
+  * @modifiedby $LastChangedBy: pies $
+  * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
+  *
+  */
 
-// Permission is hereby granted, free of charge, to any person
-// obtaining a copy of this software and associated documentation
-// files (the "Software"), to deal in the Software without
-// restriction, including without limitation the rights to use, copy,
-// modify, merge, publish, distribute, sublicense, and/or sell copies
-// of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
-// BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-// CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
+/**
+  * Enter description here...
+  *
+  */
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
 		E_CORE_ERROR | E_CORE_WARNING);
 
-/*
-interface Test {
-	function run(&$aTestResult);
-	function countTestCases();
-}
-*/
+//
+//interface Test {
+//	function run(&$aTestResult);
+//	function countTestCases();
+//}
 
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $msg
+  */
 function trace($msg) {
 	return;
 	print($msg);
 	flush();
 }
-
+/**
+  * Enter description here...
+  *
+  */
 if (phpversion() >= '4') {
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $errno
+  * @param unknown_type $errstr
+  * @param unknown_type $errfile
+  * @param unknown_type $errline
+  */
 	  function PHPUnit_error_handler($errno, $errstr, $errfile, $errline) {
 	global $PHPUnit_testRunning;
 	$PHPUnit_testRunning[0]->fail("<B>PHP ERROR:</B> ".$errstr." <B>in</B> ".$errfile." <B>at line</B> ".$errline);
 	  }
 }
-
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestException {
 	  /* Emulate a Java exception, sort of... */
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $message;
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $type;
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $message
+  * @param unknown_type $type
+  * @return TestException
+  */
 	function TestException($message, $type = 'FAILURE') {
 	  $this->message = $message;
 	  $this->type = $type;
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getMessage() {
 	  return $this->message;
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getType() {
 	  return $this->type;
 	}
 }
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class Assert {
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $boolean
+  * @param unknown_type $message
+  */
 	function assert($boolean, $message=0) {
 	  if (! $boolean)
 		$this->fail($message);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $expected
+  * @param unknown_type $actual
+  * @param unknown_type $message
+  * @return unknown
+  */
 	function asEq ($expected, $actual, $message=0) {
 		return $this->assertEquals($expected, $actual, $message);
 	}
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $expected
+  * @param unknown_type $actual
+  * @param unknown_type $message
+  */
 	function assertEquals($expected, $actual, $message=0) {
 		if (gettype($expected) != gettype($actual)) {
 			$this->failNotEquals($expected, $actual, "expected", $message);
@@ -118,12 +218,26 @@ class Assert {
 		}
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $regexp
+  * @param unknown_type $actual
+  * @param unknown_type $message
+  */
 	function assertRegexp($regexp, $actual, $message=false) {
 	  if (! preg_match($regexp, $actual)) {
 		$this->failNotEquals($regexp, $actual, "pattern", $message);
 	  }
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $string0
+  * @param unknown_type $string1
+  * @param unknown_type $message
+  */
 	function assertEqualsMultilineStrings($string0, $string1,
 	$message="") {
 	  $lines0 = split("\n",$string0);
@@ -139,11 +253,22 @@ class Assert {
 	  }
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $fn
+  */
 	function assertFileExists ($fn) {
 		if (!file_exists($fn))
 			$this->failNotEquals($fn, "file not found", "file expected");
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $fn
+  * @param unknown_type $str
+  */
 	function assertFileContains ($fn, $str) {
 		if (file_exists($fn)) {
 			$lines = file($fn);
@@ -156,17 +281,33 @@ class Assert {
 			$this->failNotEquals($fn, 'file doesn\'t exist', 'expected');
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $path
+  */
 	function assertDirExists ($path) {
 		if (!is_dir($path))
 			$this->failNotEquals($path, "directory not found", "expected");
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $value
+  */
 	function assertTrue ($value) {
 		if (!$value)
 			$this->failNotEquals($value, true, "expected");
 	}
 
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $value
+  * @return unknown
+  */
 	function _formatValue ($value) {
 		
 		if (is_object($value) && method_exists($value, "toString")) {
@@ -185,6 +326,13 @@ class Assert {
 		return array($valueStr, gettype($value));
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $value
+  * @param unknown_type $class
+  * @return unknown
+  */
 	function _old_formatValue($value, $class="") {
 		$translateValue = $value;
 		if (phpversion() >= '4.0.0') {
@@ -217,6 +365,14 @@ class Assert {
 	}
 
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $expected
+  * @param unknown_type $actual
+  * @param unknown_type $expected_label
+  * @param unknown_type $message
+  */
 	function failNotEquals ($expected, $actual, $expected_label, $message=null) {
 		$out = array(
 			'message'=>$message,
@@ -228,6 +384,14 @@ class Assert {
 		$this->fail($out);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $expected
+  * @param unknown_type $actual
+  * @param unknown_type $expected_label
+  * @param unknown_type $message
+  */
 	function old_failNotEquals($expected, $actual, $expected_label, $message=0) {
 	  // Private function for reporting failure to match.
 	  $str = $message ? ($message . ' ') : '';
@@ -240,21 +404,62 @@ class Assert {
 	}
 }
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestCase extends Assert /* implements Test */ {
 	/* Defines context for running tests.  Specific context -- such as
 	   instance variables, global variables, global state -- is defined
 	   by creating a subclass that specializes the setUp() and
 	   tearDown() methods.  A specific test is defined by a subclass
 	   that specializes the runTest() method. */
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fName;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fClassName;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fResult;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fExceptions = array();
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return TestCase
+ */
 	function TestCase($name) {
 	  $this->fName = $name;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $testResult
+ * @return unknown
+ */
 	function run($testResult=0) {
 	  /* Run this single test, by calling the run() method of the
 		 TestResult object which will in turn call the runBare() method
@@ -271,6 +476,11 @@ class TestCase extends Assert /* implements Test */ {
 	  return $testResult;
 	}
 	
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function classname() {
 	  if (isset($this->fClassName)) {
 		return $this->fClassName;
@@ -279,10 +489,19 @@ class TestCase extends Assert /* implements Test */ {
 	  }
 	}
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function countTestCases() {
 	  return 1;
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function runTest() {
 
 		if (version_compare(phpversion(), '4') >= 0) {
@@ -310,10 +529,18 @@ class TestCase extends Assert /* implements Test */ {
 		}
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function setUp() /* expect override */ {
 	  //print("TestCase::setUp()<br>\n");
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function tearDown() /* possible override */ {
 	  //print("TestCase::tearDown()<br>\n");
 	}
@@ -321,11 +548,21 @@ class TestCase extends Assert /* implements Test */ {
 	////////////////////////////////////////////////////////////////
 
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+  */
 	function _createResult() /* protected */ {
 	  /* override this to use specialized subclass of TestResult */
 	  return new TestResult;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $message
+ */
 	function fail($message=0) {
 	  //printf("TestCase::fail(%s)<br>\n", ($message) ? $message : '');
 	  /* JUnit throws AssertionFailedError here.  We just record the
@@ -333,6 +570,11 @@ class TestCase extends Assert /* implements Test */ {
 	  $this->fExceptions[] = new TestException(&$message, 'FAILURE');
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $message
+ */
 	function error($message) {
 	  /* report error that requires correction in the test script
 		 itself, or (heaven forbid) in this testing infrastructure */
@@ -340,6 +582,11 @@ class TestCase extends Assert /* implements Test */ {
 	  $this->fResult->stop();	// [does not work]
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function failed() {
 		reset($this->fExceptions);
 		while (list($key, $exception) = each($this->fExceptions)) {
@@ -348,6 +595,11 @@ class TestCase extends Assert /* implements Test */ {
 		}
 		return false;
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function errored() {
 		reset($this->fExceptions);
 		while (list($key, $exception) = each($this->fExceptions)) {
@@ -357,14 +609,28 @@ class TestCase extends Assert /* implements Test */ {
 		return false;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getExceptions() {
 	  return $this->fExceptions;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function name() {
 	  return $this->fName;
 	}
 
+/**
+  * Enter description here...
+  *
+  */
 	function runBare() {
 	  $this->setup();
 	  $this->runTest();
@@ -373,12 +639,37 @@ class TestCase extends Assert /* implements Test */ {
 }
 
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestSuite /* implements Test */ {
 	/* Compose a set of Tests (instances of TestCase or TestSuite), and
 	   run them all. */
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fTests = array();
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fClassname;
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $classname
+  * @return TestSuite
+  */
 	function TestSuite($classname=false) {
 	  // Find all methods of the given class whose name starts with
 	  // "test" and add them to the test suite.
@@ -439,11 +730,21 @@ class TestSuite /* implements Test */ {
 	  }
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function addTest($test) {
 	  /* Add TestCase or TestSuite to this TestSuite */
 	  $this->fTests[] = $test;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $testResult
+  */
 	function run(&$testResult) {
 	  /* Run all TestCases and TestSuites comprising this TestSuite,
 		 accumulating results in the given TestResult object. */
@@ -455,6 +756,11 @@ class TestSuite /* implements Test */ {
 	  }
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function countTestCases() {
 	  /* Number of TestCases comprising this TestSuite (including those
 		 in any constituent TestSuites) */
@@ -468,57 +774,159 @@ class TestSuite /* implements Test */ {
 }
 
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestFailure {
 	/* Record failure of a single TestCase, associating it with the
 	   exception that occurred */
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fFailedTestName;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fException;
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  * @param unknown_type $exception
+  * @return TestFailure
+  */
 	function TestFailure(&$test, &$exception) {
 	  $this->fFailedTestName = $test->name();
 	  $this->fException = $exception;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getExceptions() {
 		// deprecated
 		return array($this->fException);
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getException() {
 		return $this->fException;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getTestName() {
 	  return $this->fFailedTestName;
 	}
 }
 
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestResult {
 	/* Collect the results of running a set of TestCases. */
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fFailures = array();
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fErrors = array();
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fRunTests = 0;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $fStop = false;
 
+/**
+  * Enter description here...
+  *
+  * @return TestResult
+  */
 	function TestResult() { }
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function _endTest($test) /* protected */ {
 		/* specialize this for end-of-test action, such as progress
 	 reports  */
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  * @param unknown_type $exception
+  */
 	function addError($test, $exception) {
 		$this->fErrors[] = new TestFailure(&$test, &$exception);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  * @param unknown_type $exception
+  */
 	function addFailure($test, $exception) {
 		$this->fFailures[] = new TestFailure(&$test, &$exception);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function getFailures() {
 	  return $this->fFailures;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function run($test) {
 	  /* Run a single TestCase in the context of this TestResult */
 	  $this->_startTest($test);
@@ -540,49 +948,111 @@ class TestResult {
 	  $this->_endTest($test);
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function countTests() {
 	  return $this->fRunTests;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function shouldStop() {
 	  return $this->fStop;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function _startTest($test) /* protected */ {
 		/* specialize this for start-of-test actions */
 	}
 
+/**
+  * Enter description here...
+  *
+  */
 	function stop() {
 	  /* set indication that the test sequence should halt */
 	  $fStop = true;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function errorCount() {
 		return count($this->fErrors);
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function failureCount() {
 		return count($this->fFailures);
 	}
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function countFailures() {
 		// deprecated
 		return $this->failureCount();
 	}
 }
 
-
-
-
-
-
-
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class ResultDataMiner extends TestResult {
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $tests = null;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $total_tests = 0;
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  */
 	var $total_errors = 0;
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function _startTest($test) {
 	}
 
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $test
+  */
 	function _endTest($test) {
 		$class_name = $test->classname();
 		if (preg_match('/^(.*)test$/i', $class_name, $r))
@@ -607,14 +1077,34 @@ class ResultDataMiner extends TestResult {
 		if ($test->failed()) $this->total_errors++;
 	}
 
+/**
+  * Enter description here...
+  *
+  * @return unknown
+  */
 	function report () {
 		return array('tests'=>$this->total_tests, 'errors'=>$this->total_errors, 'details'=>$this->tests);
 	}
 
 }
 
+/**
+  * Enter description here...
+  *
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 1.0.0.0
+  *
+  */
 class TestRunner {
 	/* Run a suite of tests and report results. */
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $suite
+  * @return unknown
+  */
 	function run($suite) {
 		$result = new ResultDataMiner;
 		$suite->run($result);
