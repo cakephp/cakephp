@@ -14,8 +14,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: routes.php
-  * Enter description here...
+  * In this file, you set up routes to your controllers and their actions.
+  * Routes are very important mechanism that allows you to freely connect 
+  * different urls to chosen controllers and their actions (functions).
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -32,14 +33,15 @@
   */
 
 /**
-  * Homepage
-  *
-  */
+ * Here, we are connecting '/' (base path) to controller called 'Pages', and
+ * its action called 'index' - note there are no additional params passed.
+ */
 $Route->connect ('/', array('controller'=>'Pages', 'action'=>'index'));
+
 /**
-  * Tests
-  *
-  */
+ * Here we connect url '/test' to our test controller. This is helpfull in
+ * developement.
+ */
 $Route->connect ('/test', array('controller'=>'Tests', 'action'=>'test_all'));
 
 ?>
