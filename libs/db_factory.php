@@ -1,4 +1,17 @@
 <?PHP
+//////////////////////////////////////////////////////////////////////////
+// + $Id: $
+// +------------------------------------------------------------------+ //
+// + Cake <https://developers.nextco.com/cake/>                       + //
+// + Copyright: (c) 2005, Cake Authors/Developers                     + //
+// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
+// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
+// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
+// +------------------------------------------------------------------+ //
+// + Licensed under The MIT License                                   + //
+// + Redistributions of files must retain the above copyright notice. + //
+// + See: http://www.opensource.org/licenses/mit-license.php          + //
+//////////////////////////////////////////////////////////////////////////
 /**
   * Purpose: DbFactory
   * 
@@ -6,14 +19,12 @@
   * Creates DBO-descendant objects from a given db connection configuration
   *
   * @filesource 
-  * @author Michal Tatarynowicz <tatarynowicz@gmail.com>
-  * @author Larry E. Masters aka PhpNut <nut@phpnut.com>
-  * @author Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+  * @author Cake Authors/Developers
   * @copyright Copyright (c) 2005, Cake Authors/Developers
   * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @version $Revision: 113 $
-  * @modifiedby $LastChangedBy: pies $
-  * @lastmodified $Date: 2005-05-17 00:53:41 +0200 (Tue, 17 May 2005) $
+  * @version $Revision: $
+  * @modifiedby $LastChangedBy: $
+  * @lastmodified $Date: $
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   *
   */

@@ -17,7 +17,6 @@
   * Purpose: AppModel
   * Enter description here...
   * 
-  *
   * @filesource 
   * @author Cake Authors/Developers
   * @copyright Copyright (c) 2005, Cake Authors/Developers
