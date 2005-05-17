@@ -269,7 +269,7 @@ class Model extends Object {
   */
 	function load_info () {
 		if (empty($this->_table_info))
-			$this->_table_info = new neatArray($this->db->fields($this->table));
+			$this->_table_info = new NeatArray($this->db->fields($this->table));
 	}
 
 /**

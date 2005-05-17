@@ -272,15 +272,15 @@ if (!function_exists('array_combine')) {
   * @since Cake v 0.2.9
   *
   */
-class neatArray {
+class NeatArray {
 
 /**
   * Enter description here...
   *
   * @param unknown_type $value
-  * @return neatArray
+  * @return NeatArray
   */
-	function neatArray ($value) {
+	function NeatArray ($value) {
 		$this->value = $value;
 	}
 
