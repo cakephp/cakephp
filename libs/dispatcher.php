@@ -128,7 +128,7 @@ class Dispatcher extends Object {
 		// EXECUTE THE REQUESTED ACTION
 		call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
 
-		if ($controller->auto_render)
+		if ($controller->autoRender)
 			$controller->render();
 
 		if (CACHE_PAGES) $Cache->remember(null);
@@ -191,7 +191,7 @@ class Dispatcher extends Object {
   * @param unknown_type $name
   * @param unknown_type $message
   */
- 	function error ($code, $name, $message) {
+	function error ($code, $name, $message) {
 		$controller = new Controller ($this);
 		$controller->base = $this->base;
 		$controller->error($code, $name, $message);
@@ -203,7 +203,7 @@ class Dispatcher extends Object {
   * @param unknown_type $url
   * @param unknown_type $message
   */
- 	function error404 ($url, $message) {
+	function error404 ($url, $message) {
 		$this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
 	}
 

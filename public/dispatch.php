@@ -49,7 +49,7 @@ require ('../config/paths.php');
   */
 require (LIBS.'basics.php');
 
-uses ('dispatcher');
+uses ('dispatcher', 'db_factory');
 uses_config();
 uses_database();
 uses_tag_generator();

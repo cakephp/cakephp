@@ -135,8 +135,10 @@ class Controller extends Template {
 
 			foreach ($uses as $model_name) {
 				$model_class = ucfirst(strtolower($model_name));
-				if (class_exists($model_class))
-					$this->$model_name = new $model_name (false);
+
+				if (class_exists($model_class)) {
+					$this->$model_name = new $model_class (false);
+				}
 				else
 					die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
 			}
@@ -151,7 +153,7 @@ class Controller extends Template {
   * @param unknown_type $url
   */
 	function redirect ($url) {
-		$this->auto_render = false;
+		$this->autoRender = false;
 		header ('Location: '.$this->base.$url);
 	}
 

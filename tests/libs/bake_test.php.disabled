@@ -1,0 +1,66 @@
+<?PHP
+
+uses ('test', 'bake', 'inflector');
+
+class BakeTest extends TestCase {
+	var $abc;
+	var $test_name = "TheOriginalAcmeFoobars";
+	var $model_test_name = "AcmeFoobar";
+
+	// called before the test functions will be executed
+	function setUp() {
+		$fn = Inflector::underscore($this->test_name);
+		$mfn = Inflector::underscore($this->model_test_name);
+
+		$this->expected_files = array(
+			VIEWS.$fn.'/foo.thtml',
+			VIEWS.$fn.'/bar.thtml',
+			VIEWS.$fn.'/baz.thtml',
+			CONTROLLERS.$fn.'_controller.php',
+			HELPERS.$fn.'_helper.php',
+			CONTROLLER_TESTS.$fn.'_controller_test.php',
+			HELPER_TESTS.$fn.'_helper_test.php',
+			MODEL_TESTS.$mfn.'_test.php'
+		);
+		$this->test_fn = $fn;
+	}
+
+	// called after the test functions are executed
+	function tearDown() {
+		foreach ($this->expected_files as $expected_file)
+			$this->assertTrue(unlink($expected_file));
+
+		rmdir(VIEWS.$this->test_fn);
+		unset($this->abc);
+	}
+
+
+	function testBake () {
+		// run the baking procedure
+		$this->abc = new Bake ('ctrl', array($this->test_name, 'foo', 'bar', 'baz'));
+		$this->abc = new Bake ('model', array($this->model_test_name));
+	
+		// test if all expected files exist
+		foreach ($this->expected_files as $expected_file)
+			$this->assertFileExists($expected_file);
+
+		// test controller content
+		// there has to be a better way of doing this
+		$fn = CONTROLLER_TESTS.$this->test_fn.'_controller_test.php';
+		$this->assertFileContains($fn, "class {$this->test_name}ControllerTest extends TestCase");
+
+		// test if view directory exists
+		$this->assertDirExists(VIEWS.$this->test_fn);
+	}
+
+
+/*
+	function test () {
+		$result = $this->abc->();
+		$expected = '';
+		$this->assertEquals($result, $expected);
+	}
+*/
+}
+
+?>

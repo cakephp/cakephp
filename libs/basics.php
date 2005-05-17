@@ -122,19 +122,7 @@ function uses_config () {
 function uses_database ($level='devel') {
 	global $DB;
 
-	if ($config = loadDatabaseConfig($level)) {
-
-		$db_driver_class = 'DBO_'.$config['driver'];
-		$db_driver_fn = LIBS.strtolower($db_driver_class.'.php');
-
- 		if (file_exists($db_driver_fn)) {
-			uses (strtolower($db_driver_class));
-			$DB = new $db_driver_class ($config);
-		}
-		else {
-			 die('Specified ('.$config['driver'].') database driver not found.');
-		}
-	}
+	$DB = DbFactory::make(loadDatabaseConfig($level));
 }
 
 /**
@@ -173,7 +161,7 @@ function uses_tag_generator () {
 function uses () {
 	$args = func_get_args();
 	foreach ($args as $arg) {
-		require_once (LIBS.$arg.'.php');
+		require_once (LIBS.strtolower($arg).'.php');
 	}
 }
 

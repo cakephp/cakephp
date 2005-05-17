@@ -160,7 +160,6 @@ class Model extends Object {
 		$table_name = $this->use_table? $this->use_table: Inflector::tableize(get_class($this));
 		$this->use_table ($table_name);
 		parent::__construct();
-
 		$this->create_links();
 	}
 
@@ -481,22 +480,22 @@ class Model extends Object {
   * Enter description here...
   *
   * @param unknown_type $conditions
-  * @param unknown_type $fields
   * @return unknown
   */
-	function findAllThreaded ($conditions=null, $fields=null) {
-		return $this->_doThread($this->findAll($conditions, $fields), null);
+	function findCount ($conditions) {
+		list($data) = $this->findAll($conditions, 'COUNT(id) AS count');
+		return $data['count'];
 	}
 
 /**
   * Enter description here...
   *
   * @param unknown_type $conditions
+  * @param unknown_type $fields
   * @return unknown
   */
-	function findCount ($conditions) {
-		list($data) = $this->findAll($conditions, 'COUNT(id) AS count');
-		return $data['count'];
+	function findAllThreaded ($conditions=null, $fields=null, $sort=null) {
+		return $this->_doThread($this->findAll($conditions, $fields, $sort), null);
 	}
 
 /**
@@ -512,7 +511,7 @@ class Model extends Object {
 		for ($ii=0; $ii<sizeof($data); $ii++) {
 			if ($data[$ii]['parent_id'] == $root) {
 				$tmp = $data[$ii];
-				$tmp['children'] = isset($data[$ii]['id'])? $this->_do_thread($data, $data[$ii]['id']): null;
+				$tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
 				$out[] = $tmp;
 			}
 		}

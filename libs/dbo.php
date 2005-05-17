@@ -110,6 +110,14 @@ class DBO extends Object {
   * @var unknown_type
   * @access public
   */
+	var $fullDebug=FALSE;
+
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  * @access public
+  */
 	var $error=NULL;
 
 /**
@@ -197,7 +205,8 @@ class DBO extends Object {
   * @return unknown
   */
 	function __construct ($config=NULL) {
-		$this->debug = DEBUG > 1;
+		$this->debug = DEBUG > 0;
+		$this->fullDebug = DEBUG > 1;
 		parent::__construct();
 		return $this->connect($config);
 	}
@@ -206,9 +215,9 @@ class DBO extends Object {
   * Enter description here...
   *
   */
-    function __destructor() {
-        $this->close();
-    }
+	function __destructor () {
+		$this->close();
+	}
 
 /**
   * Enter description here...
@@ -225,7 +234,7 @@ class DBO extends Object {
   *
   */
 	function close () {
-		if ($this->debug) $this->showLog();
+		if ($this->fullDebug) $this->showLog();
 		$this->disconnect();
 		$this->_conn = NULL;
 		$this->connected = false;
@@ -249,16 +258,17 @@ class DBO extends Object {
   * @return unknown
   */
 	function query($sql) {
-	  $t = getMicrotime();
-	  $this->_result = $this->execute($sql);
-	  $this->affected = $this->lastAffected();
-	  $this->took = round((getMicrotime()-$t)*1000, 0);
-	  $this->error = $this->lastError();
-	  $this->numRows = $this->lastNumRows($this->_result);
-	  $this->logQuery($sql);
-	  if ($this->debug) $this->showQuery($sql);
+		$t = getMicrotime();
+		$this->_result = $this->execute($sql);
+		$this->affected = $this->lastAffected();
+		$this->took = round((getMicrotime()-$t)*1000, 0);
+		$this->error = $this->lastError();
+		$this->numRows = $this->lastNumRows($this->_result);
+		$this->logQuery($sql);
+		if (($this->debug && $this->error) || ($this->fullDebug))
+			$this->showQuery($sql);
 
-	  return $this->error? false: $this->_result;
+		return $this->error? false: $this->_result;
 	}
 
 /**
@@ -335,6 +345,19 @@ class DBO extends Object {
 /**
   * Enter description here...
   *
+  * @return unknown
+  */
+	function prepareArray($data) {
+		$out = null;
+		foreach ($data as $key=>$item) {
+			$out[$key] = $this->prepare($item);
+		}
+		return $out;
+	}
+
+/**
+  * Enter description here...
+  *
   * @param unknown_type $sorted
   */
 	function showLog($sorted=false) {
@@ -379,6 +402,9 @@ class DBO extends Object {
   */
 	function showQuery($sql) {
 		$error = $this->error;
+
+		if (strlen($sql)>200 && !$this->fullDebug)
+			$sql = substr($sql, 0, 200) .'[...]';
 
 		if ($this->debug || $error) {
 			print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");

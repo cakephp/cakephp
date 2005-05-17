@@ -21,7 +21,7 @@
 
 /**
   * Purpose: DBO_AdoDB
-  * Basic Cake functionalities.
+  * AdoDB layer for DBO
   * 
   * @filesource 
   * @author Michal Tatarynowicz <tatarynowicz@gmail.com>

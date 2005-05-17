@@ -21,7 +21,7 @@
 
 /**
   * Purpose: DBO_MySQL
-  * Enter description here...
+  * MySQL layer for DBO
   * 
   * @filesource 
   * @author Michal Tatarynowicz <tatarynowicz@gmail.com>
@@ -148,7 +148,7 @@ class DBO_MySQL extends DBO {
   * @return unknown
   */
 	function prepare ($data) {
-		return "'".str_replace("'", "\\'", $data)."'";
+		return "'".mysql_real_escape_string($data)."'";
 	}
 
 /**

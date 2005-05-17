@@ -100,6 +100,7 @@ class Bake extends Object {
   */
 	function template ($type) {
 		switch ($type) {
+			case 'view': return "%s";
 			case 'model': return "<?PHP\n\nclass %s extends AppModel {\n}\n\n?>";
 			case 'action': return "\n\tfunction %s () {\n\t}\n";
 			case 'ctrl': return "<?PHP\n\nclass %s extends %s {\n%s\n}\n\n?>";
@@ -192,9 +193,10 @@ class %sTest extends TestCase {
   */
 	function newView ($controller, $name) {
 		$dir = Inflector::underscore($controller);
+		$path = "{$dir}/".strtolower($name).".thtml";
 		$this->createDir(VIEWS.$dir);
-		$fn = VIEWS.$dir.'/'.strtolower($name).'.thtml';
-		$this->createFile($fn, '');
+		$fn = VIEWS.$path;
+		$this->createFile($fn, sprintf($this->template('view'), "<p>Edit <b>app/views/{$path}</b> to change this message.</p>"));
 		$this->actions++;
 	}
 
@@ -380,15 +382,18 @@ class %sTest extends TestCase {
 			fwrite($this->stdout, "File {$path} exists, overwrite? (yNaq) "); 
 			$key = fgets($this->stdin);
 			
-			if (preg_match("/^q/", $key)) {
+			if (preg_match("/^q$/", $key)) {
+				fwrite($this->stdout, "Quitting.\n");
 				exit;
 			}
-			if (preg_match("/^n/", $key)) {
+			elseif (preg_match("/^a$/", $key)) {
+				$this->dont_ask = true;
+			}
+			elseif (preg_match("/^y$/", $key)) {
+			}
+			else {
 				fwrite($this->stdout, "Skip   {$path}\n");
 				return false;
-			}
-			if (preg_match("/^a/", $key)) {
-				$this->dont_ask = true;
 			}
 		}
 

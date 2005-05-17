@@ -132,7 +132,6 @@ class Folder extends Object {
 		}
 		else {
 			return false;
-
 		}
 	}
 

@@ -78,7 +78,7 @@ class Template extends Object {
   * @var unknown_type
   * @access public
   */
-	var $auto_render = true;
+	var $autoRender = true;
 
 /**
   * Enter description here...
@@ -86,7 +86,7 @@ class Template extends Object {
   * @var unknown_type
   * @access public
   */
-	var $auto_layout = true;
+	var $autoLayout = true;
 
 /**
   * Enter description here...
@@ -163,8 +163,8 @@ class Template extends Object {
   * @param unknown_type $time
   */
 	function flash ($message, $url, $time=1) {
-		$this->auto_render = false;
-		$this->auto_layout = false;
+		$this->autoRender = false;
+		$this->autoLayout = false;
 
 		$this->set('url', $this->base.$url);
 		$this->set('message', $message);
@@ -181,7 +181,7 @@ class Template extends Object {
   * @param unknown_type $file
   */
 	function render ($action=null, $layout=null, $file=null) {
-		$this->auto_render = false;
+		$this->autoRender = false;
 
 		if (!$action) $action = $this->action;
 		if ($layout) $this->set_layout($layout);
@@ -197,8 +197,10 @@ class Template extends Object {
 		$out = $this->_do_render($view_fn, $this->_view_vars, 0);
 
 		if ($out !== false) {
-			if ($this->layout && $this->auto_layout) $out = $this->render_layout($out);
-			if (CACHE_PAGES) $this->cache->append($out);
+			if ($this->layout && $this->autoLayout) 
+				$out = $this->render_layout($out);
+			if (CACHE_PAGES) 
+				$this->cache->append($out);
 			print $out;
 		}
 		else {
@@ -270,7 +272,6 @@ class Template extends Object {
 		$BASE = $this->base;
 		$params = &$this->params;
 		$page_title = $this->_page_title;
-		$data = empty($this->data)? false: $this->data;
 		ob_start(); # start caching output (eval outputs directly so we need to cache)
 		
 		# include the template

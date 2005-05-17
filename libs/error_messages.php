@@ -42,6 +42,12 @@
   * Enter description here...
   *
   */
+define ('ERROR_UNKNOWN_DATABASE_DRIVER', '[DbFactory] Specified database driver (%s) not found');
+
+/**
+  * Enter description here...
+  *
+  */
 define ('ERROR_NO_CONTROLLER_SET', '[Dispatcher] No default controller, can\'t continue, check routes config');
 
 /**
