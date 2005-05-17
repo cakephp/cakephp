@@ -43,7 +43,6 @@
   * @version $Revision$
   * @modifiedby $LastChangedBy$
   * @lastmodified $Date$
-  *
   */
 
 /**
