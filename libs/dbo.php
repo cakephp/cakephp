@@ -23,30 +23,30 @@
   * Example usage:
   *
   * <code>
-	require('dbo_mysql.php'); // or 'dbo_postgres.php'
-
-	// create and connect the object
-	$db = new DBO_MySQL(array( // or 'DBO_Postgres'
-		'host'=>'localhost',
-		'login'=>'username',
-		'password'=>'password',
-		'database'=>'database'));
-
-	// read the whole query result array (of rows)
-	$all_rows = $db->all("SELECT a,b,c FROM table");
-
-	// read the first row with debugging on
-	$first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
-
-	// emulate the usual way of reading query results
-	if ($db->query("SELECT a,b,c FROM table")) {
-		while ( $row = $db->farr() ) {
-			print $row['a'].$row['b'].$row['c'];
-		}
-	}
-	
-	// show a log of all queries, sorted by execution time
-	$db->showLog(TRUE);
+  * require('dbo_mysql.php'); // or 'dbo_postgres.php'
+  *
+  * // create and connect the object
+  * $db = new DBO_MySQL(array( // or 'DBO_Postgres'
+  *    'host'=>'localhost',
+  *    'login'=>'username',
+  *    'password'=>'password',
+  *    'database'=>'database'));
+  *
+  *  // read the whole query result array (of rows)
+  * $all_rows = $db->all("SELECT a,b,c FROM table");
+  *
+  *  // read the first row with debugging on
+  *  $first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
+  *
+  *  // emulate the usual way of reading query results
+  *  if ($db->query("SELECT a,b,c FROM table")) {
+  *    while ( $row = $db->farr() ) {
+  *        print $row['a'].$row['b'].$row['c'];
+  *  }
+  * }
+  *
+  * // show a log of all queries, sorted by execution time
+  * $db->showLog(TRUE);
   * </code>
   *
   * @filesource 

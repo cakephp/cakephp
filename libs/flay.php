@@ -20,9 +20,7 @@
   * Test with $flay = new Flay(); $flay->test();
   *
   * @filesource 
-  * @author Michal Tatarynowicz <tatarynowicz@gmail.com>
-  * @author Larry E. Masters aka PhpNut <nut@phpnut.com>
-  * @author Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+  * @author Cake Authors/Developers
   * @copyright Copyright (c) 2005, Cake Authors/Developers
   * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
   * @package cake
