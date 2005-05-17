@@ -14,8 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: core.php
-  * Enter description here...
+  * In this file you set up your database connection details.
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -31,9 +30,9 @@
   */
 
 /**
-  * Enter description here...
+  * Database configuration array. You can configure multiple connections.
   *
-  * @var unknown_type $DATABASE_CONFIG
+  * @var array $DATABASE_CONFIG
   */
 $DATABASE_CONFIG = array(
 	'devel' => array(

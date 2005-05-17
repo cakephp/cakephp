@@ -14,8 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: Paths
-  * Enter description here...
+  * In this file you set paths to different directories used by Cake.
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -31,84 +30,83 @@
   */
 
 /**
-  * If index.php file is used instead of an .htaccess file
-  * or if user can not set the web root to use the public
-  * directory we will define ROOT there otherwise we set it
-  * here
-  *
-  */
+ * If index.php file is used instead of an .htaccess file
+ * or if user can not set the web root to use the public
+ * directory we will define ROOT there otherwise we set it
+ * here
+ */
 if( !defined('ROOT') ){
 	define ('ROOT',	'../');
 }
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the application directory.
+ */
 define ('APP',			ROOT.'app/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the application models directory.
+ */
 define ('MODELS',			APP.'models/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the application controllers directory.
+ */
 define ('CONTROLLERS',	APP.'controllers/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the application helpers directory.
+ */
 define ('HELPERS',		APP.'helpers/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the application views directory.
+ */
 define ('VIEWS',			APP.'views/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the configuration files directory.
+ */
 define ('CONFIGS',	ROOT.'config/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the libs directory.
+ */
 define ('LIBS',		ROOT.'libs/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the public directory.
+ */
 define ('PUBLIC',		ROOT.'public/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the tests directory.
+ */
 define ('TESTS',		ROOT.'tests/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the vendors directory.
+ */
 define ('VENDORS',	ROOT.'vendors/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the controller test directory.
+ */
 define ('CONTROLLER_TESTS',TESTS.'app/controllers/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the helpers test directory.
+ */
 define ('HELPER_TESTS',		TESTS.'app/helpers/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the models test directory.
+ */
 define ('MODEL_TESTS',		TESTS.'app/models/');
+
 /**
-  * Enter description here...
-  *
-  */
+ * Path to the lib test directory.
+ */
 define ('LIB_TESTS',		TESTS.'libs/')
 
 ?>

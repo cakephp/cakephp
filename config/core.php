@@ -14,8 +14,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: core.php
-  * Enter description here...
+  * This is core configuration file. Use it to configure core behaviour of
+  * Cake.
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -30,36 +30,32 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
-// Debugging level
-// 0: production, 1: development, 2: full debug with sql
 /**
-  * Enter description here...
-  *
-  */
+ * Set debug level here:
+ * - 0: production
+ * - 1: development
+ * - 2: full debug with sql
+ */
 define ('DEBUG', 0);
 
-// Full-page caching
 /**
-  * Enter description here...
-  *
-  */
+ * Page cacheing setting.
+ */
 define ('CACHE_PAGES', false);
-// Cache lifetime in seconds, 0 for debugging, -1 for eternity,
+
 /**
-  * Enter description here...
-  *
-  */
+ * Cache lifetime in seconds, 0 for debugging, -1 for eternity.
+ */
 define ('CACHE_PAGES_FOR', -1);
 
-
 /**
-  * Advanced configuration
-  */
-// Debug options
-if (DEBUG) {
-	error_reporting(E_ALL);
-	ini_set('error_reporting', E_ALL);
-	$TIME_START = getmicrotime();
+ * Set any extra debug options here.
+ */
+if (DEBUG)
+{
+    error_reporting(E_ALL);
+    ini_set('error_reporting', E_ALL);
+    $TIME_START = getmicrotime();
 }
 
 ?>
