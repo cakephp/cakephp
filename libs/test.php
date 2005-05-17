@@ -1,6 +1,6 @@
 <?PHP
 ////////////////////////////////////////////////////////////////////////// //
-// + $Id: dispatcher.php 114 2005-05-16 23:14:37Z pies $
+// + $Id$
 // +---------------------------------------------------------------------+ //
 // + PHP framework for testing, based on the design of "JUnit".          + //
 // + Copyright (c) 2000 Fred Yankowski                                   + //
@@ -40,9 +40,9 @@
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.0
-  * @version $Revision: 114 $
-  * @modifiedby $LastChangedBy: pies $
-  * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
+  * @version $Revision$
+  * @modifiedby $LastChangedBy$
+  * @lastmodified $Date$
   *
   */
 

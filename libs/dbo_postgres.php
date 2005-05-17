@@ -1,6 +1,6 @@
 <?PHP
 //////////////////////////////////////////////////////////////////////////
-// + $Id: basics.php 114 2005-05-16 23:14:37Z pies $
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake <https://developers.nextco.com/cake/>                       + //
 // + Copyright: (c) 2005 Cake Authors/Developers                      + //
@@ -32,9 +32,9 @@
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.114
-  * @version $Revision: 114 $
-  * @modifiedby $LastChangedBy: pies $
-  * @lastmodified $Date: 2005-05-16 18:14:37 -0500 (Mon, 16 May 2005) $
+  * @version $Revision$
+  * @modifiedby $LastChangedBy$
+  * @lastmodified $Date$
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   *
   */

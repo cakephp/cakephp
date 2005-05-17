@@ -1,6 +1,6 @@
 <?PHP
 //////////////////////////////////////////////////////////////////////////
-// + $Id: index.php 109 2005-05-16 00:52:42Z phpnut $
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake <https://developers.nextco.com/cake/>                       + //
 // + Copyright: (c) 2005 Cake Authors/Developers                      + //
@@ -32,9 +32,9 @@
   * @package cake
   * @subpackage cake.config
   * @since Cake v 0.2.9
-  * @version $Revision: 115 $
-  * @modifiedby $LastChangedBy: phpnut $
-  * @lastmodified $Date: 2005-05-16 18:47:54 -0500 (Mon, 16 May 2005) $
+  * @version $Revision$
+  * @modifiedby $LastChangedBy$
+  * @lastmodified $Date$
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   *
   */
