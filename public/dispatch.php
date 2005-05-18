@@ -14,39 +14,39 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: Dispatch
-  * The main "loop"
-  * 
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.public
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * Purpose: Dispatch
+ * The main "loop"
+ * 
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.public
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 /**
-  * DIRECTORY LAYOUT
-  */
+ * DIRECTORY LAYOUT
+ */
 require ('../config/paths.php');
 
 /**
-  * Startup
-  */
+ * Startup
+ */
 require (LIBS.'basics.php');
 
 uses ('dispatcher', 'db_factory');
-uses_config();
-uses_database();
-uses_tag_generator();
+usesConfig();
+usesDatabase();
+usesTagGenerator();
 
-load_models ();
-load_controllers ();
+loadModels ();
+loadControllers ();
 
 session_start();
 

@@ -14,29 +14,30 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: Basics
-  * Basic Cake functionalities.
-  * 
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.libs
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  *
-  */
+ * Basic Cake functionalities.
+ * 
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.libs
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ */
 
 /**
-  * Enter description here...
-  *
-  */
-function load_libs () {
-	foreach (list_modules(LIBS) as $lib) {
+ * Loads all libs from LIBS directory.
+ *
+ * @uses listModules()
+ * @uses LIBS
+ */
+function loadLibs () {
+	foreach (listModules(LIBS) as $lib) {
 		if ($lib != 'basics') {
 			include_once (LIBS.$lib.'.php');
 		}
@@ -44,40 +45,47 @@ function load_libs () {
 }
 
 /**
-  * Enter description here...
-  *
-  */
-function load_models () {
+ * Loads all models.
+ *
+ * @uses listModules()
+ * @uses APP
+ * @uses MODELS
+ */
+function loadModels () {
 	require (APP.'app_model.php');
-	foreach (list_modules(MODELS) as $model) {
+	foreach (listModules(MODELS) as $model) {
 		require (MODELS.$model.'.php');
 	}
 }
 
 /**
-  * Enter description here...
-  *
-  */
-function load_controllers () {
+ * Loads all controllers.
+ *
+ * @uses APP
+ * @uses listModules()
+ * @uses HELPERS
+ * @uses CONTROLLERS
+ */
+function loadControllers () {
 	require (APP.'app_controller.php');
 
-	foreach (list_modules(HELPERS) as $helper) {
+	foreach (listModules(HELPERS) as $helper) {
 		require (HELPERS.$helper.'.php');
 	}
 
-	foreach (list_modules(CONTROLLERS) as $controller) {
+	foreach (listModules(CONTROLLERS) as $controller) {
 		require (CONTROLLERS.$controller.'.php');
 	}
 }
 
 /**
-  * Enter description here...
-  *
-  * @param unknown_type $path
-  * @param unknown_type $sort
-  * @return unknown
-  */
-function list_modules($path, $sort=true) {
+ * Lists all .php files from a given path.
+ *
+ * @param string $path
+ * @param boolean $sort
+ * @return array
+ */
+function listModules($path, $sort=true) {
 	if ($d = opendir($path)) {
 		$out = array();
 		$r = null;
@@ -98,30 +106,37 @@ function list_modules($path, $sort=true) {
 }
 
 /**
-  * Enter description here...
-  *
-  */
-function uses_config () {
+ * Loads core config.
+ *
+ * @uses $TIME_START
+ * @uses CONFIGS
+ */
+function usesConfig () {
 	global $TIME_START;
 
 	require (CONFIGS.'core.php');
 }
 
 /**
-  * Enter description here...
-  *
-  */
-function uses_database ($level='devel') {
+ * Loads database connection identified by $level.
+ *
+ * @param string $level
+ * @uses $DB
+ * @uses DbFactory::make()
+ * @uses loadDatabaseConfig()
+ */
+function usesDatabase ($level='devel') {
 	global $DB;
 
 	$DB = DbFactory::make(loadDatabaseConfig($level));
 }
 
 /**
-  * Enter description here...
-  *
-  * @return unknown
-  */
+ * Loads database configuration identified by $level from CONFIGS/database.php.
+ *
+ * @param string $level
+ * @return mixed
+ */
 function loadDatabaseConfig ($level='devel') {
 	if (file_exists(CONFIGS.'database.php'))
 		require (CONFIGS.'database.php');
@@ -139,17 +154,24 @@ function loadDatabaseConfig ($level='devel') {
 }
 
 /**
-  * Enter description here...
-  *
-  */
-function uses_tag_generator () {
+ * Loads tags configuration from CONFIGS/tags.php.
+ *
+ * @uses CONFIGS
+ */
+function usesTagGenerator () {
 	require (CONFIGS.'tags.php');
 }
 
 /**
-  * Enter description here...
-  *
-  */
+ * Loads component/components from LIBS.
+ *
+ * Example:
+ * <code>
+ * uses('inflector', 'object');
+ * </code>
+ *
+ * @uses LIBS
+ */
 function uses () {
 	$args = func_get_args();
 	foreach ($args as $arg) {
@@ -158,12 +180,12 @@ function uses () {
 }
 
 /**
-  * Enter description here...
-  *
-  * @param unknown_type $var
-  * @param unknown_type $show_html
-  */
-function debug($var = FALSE, $show_html = false) {
+ * Setup a debug point.
+ *
+ * @param boolean $var
+ * @param boolean $show_html
+ */
+function debug($var = false, $show_html = false) {
 	if (DEBUG) {
 		print "\n<pre>\n";
 		if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
@@ -176,10 +198,10 @@ function debug($var = FALSE, $show_html = false) {
 if (!function_exists('getMicrotime')) {
 
 /**
-  * Enter description here...
-  *
-  * @return unknown
-  */
+ * Returns microtime for execution time checking.
+ *
+ * @return integer
+ */
 	function getMicrotime() {
 		list($usec, $sec) = explode(" ", microtime());
 		return ((float)$usec + (float)$sec);
@@ -187,14 +209,14 @@ if (!function_exists('getMicrotime')) {
 }
 if (!function_exists('sortByKey')) {
 /**
-  * Enter description here...
-  *
-  * @param unknown_type $array
-  * @param unknown_type $sortby
-  * @param unknown_type $order
-  * @param unknown_type $type
-  * @return unknown
-  */
+ * Sorts given $array by key $sortby.
+ *
+ * @param array $array
+ * @param string $sortby
+ * @param string $order
+ * @param integer $type
+ * @return mixed
+ */
 	function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) {
 
 		if( is_array($array) ) {
@@ -210,22 +232,23 @@ if (!function_exists('sortByKey')) {
 			foreach( $sa as $key=>$val )
 			$out[] = $array[$key];
 
-			Return $out;
+			return $out;
 
 		}
 		else
-		Return null;
+		return null;
 	}
 }
 
 if (!function_exists('array_combine')) {
 /**
-  * Enter description here...
-  *
-  * @param unknown_type $a1
-  * @param unknown_type $a2
-  * @return unknown
-  */
+ * Combines given identical arrays by using the first array's values as keys,
+ * and second one's values as values.
+ *
+ * @param array $a1
+ * @param array $a2
+ * @return mixed Outputs either combined array or false.
+ */
 	function array_combine($a1, $a2) {
 		$a1 = array_values($a1);
 		$a2 = array_values($a2);
@@ -235,7 +258,7 @@ if (!function_exists('array_combine')) {
 		
 		$output = array();
 		
-		for ($i = 0; $i < count($a1); $i++) {
+		for ($i = 0, $c = count($a1); $i < $c; $i++) {
 			$output[$a1[$i]] = $a2[$i];
 		}
 		
@@ -244,37 +267,45 @@ if (!function_exists('array_combine')) {
 }
 
 /**
-  * Enter description here...
-  *
-  *
-  * @package cake
-  * @subpackage cake.libs
-  * @since Cake v 0.2.9
-  *
-  */
+ * Class used for internal manipulation with recordsets (?).
+ *
+ * @package cake
+ * @subpackage cake.libs
+ * @since Cake v 0.2.9
+ */
 class NeatArray {
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $value
-  * @return NeatArray
-  */
+	/**
+	 * Value of NeatArray.
+	 *
+	 * @var array
+	 * @access public
+	 */
+    var $value;
+    
+	/**
+	 * Constructor.
+	 *
+	 * @param array $value
+	 * @access public
+	 * @uses NeatArray::value
+	 */
 	function NeatArray ($value) {
 		$this->value = $value;
 	}
 
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $field_name
-  * @param unknown_type $value
-  * @return unknown
-  */
-	function findIn ($field_name, $value) {
+	/**
+	 * Checks wheter $fieldName with $value exists in this NeatArray object.
+	 *
+	 * @param string $fieldName
+	 * @param string $value
+	 * @return mixed
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	function findIn ($fieldName, $value) {
 		$out = false;
 		foreach ($this->value as $k=>$v) {
-			if (isset($v[$field_name]) && ($v[$field_name] == $value)) {
+			if (isset($v[$fieldName]) && ($v[$fieldName] == $value)) {
 				$out[$k] = $v;
 			}
 		}
@@ -282,14 +313,19 @@ class NeatArray {
 		return $out;
 	}
 
-/**
-  * Enter description here...
-  *
-  */
-	function cleanup () {
+	/**
+	 * Checks if $this->value is array, and removes all empty elements.
+	 *
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	function cleanup ()
+	{
 		$out = is_array($this->value)? array(): null;
-		foreach ($this->value as $k=>$v) {
-			if ($v) {
+		foreach ($this->value as $k=>$v)
+		{
+			if ($v)
+			{
 				$out[$k] = $v;
 			}
 		}
