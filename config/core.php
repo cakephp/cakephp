@@ -14,21 +14,21 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * This is core configuration file. Use it to configure core behaviour of
-  * Cake.
-  *
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.config
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * This is core configuration file. Use it to configure core behaviour of
+ * Cake.
+ *
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.config
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 /**
  * Set debug level here:

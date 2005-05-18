@@ -14,20 +14,20 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * In this file you set paths to different directories used by Cake.
-  *
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.config
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * In this file you set paths to different directories used by Cake.
+ *
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.config
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 /**
  * If index.php file is used instead of an .htaccess file

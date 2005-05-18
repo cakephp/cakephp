@@ -14,32 +14,31 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: AppController
-  * This file is application-wide controller file. You can put all 
-  * application-wide controller-related methods here.
-  *
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.app
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * This file is application-wide controller file. You can put all 
+ * application-wide controller-related methods here.
+ *
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.app
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 /**
-  * Add your application-wide methods in the class below, your controllers 
-  * will be inheriting them.
-  *
-  * @package cake
-  * @subpackage cake.app
-  * @since Cake v 0.2.9
-  *
-  */
+ * Add your application-wide methods in the class below, your controllers 
+ * will be inheriting them.
+ *
+ * @package cake
+ * @subpackage cake.app
+ * @since Cake v 0.2.9
+ *
+ */
 class AppController extends Controller {
 }
 
