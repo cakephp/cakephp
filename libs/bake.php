@@ -43,46 +43,46 @@ uses('object', 'inflector');
  * @subpackage cake.libs
  * @since Cake v 0.2.9
  */
-class Bake extends Object {
-
-		/**
-		 * Standard input stream (php://stdin).
-		 *
-		 * @var resource
-		 * @access private
-		 */
+class Bake extends Object
+{
+	/**
+	 * Standard input stream (php://stdin).
+	 *
+	 * @var resource
+	 * @access private
+	 */
 	var $stdin = null;
 
-		/**
-		 * Standard output stream (php://stdout).
-		 *
-		 * @var resource
-		 * @access private
-		 */
+	/**
+	 * Standard output stream (php://stdout).
+	 *
+	 * @var resource
+	 * @access private
+	 */
 	var $stdout = null;
 
 	/**
-		 * Standard error stream (php://stderr).
-		 *
-		 * @var resource
-		 * @access private
-		 */
+	 * Standard error stream (php://stderr).
+	 *
+	 * @var resource
+	 * @access private
+	 */
 	var $stderr = null;
 
 	/**
-		 * Counts taken actions.
-		 *
-		 * @var integer
-		 * @access private
-		 */
+	 * Counts taken actions.
+	 *
+	 * @var integer
+	 * @access private
+	 */
 	var $actions = null;
 
 	/**
-		 * Decides wether to overwrite existing files without asking.
-		 *
-		 * @var boolean
-		 * @access private
-		 */
+	 * Decides wether to overwrite existing files without asking.
+	 *
+	 * @var boolean
+	 * @access private
+	 */
 	var $dontAsk = false;
 
 	/**
