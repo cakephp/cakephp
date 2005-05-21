@@ -75,7 +75,7 @@ class Object {
   * @param string $msg
   * @param string $type
   */
-	function log ($msg, LOG_ERROR) {
+	function log ($msg, $type=LOG_ERROR) {
 		if (!$this->_log)
 			$this->_log = new Log ();
 	
