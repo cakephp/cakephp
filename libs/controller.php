@@ -402,6 +402,32 @@ class Controller extends Template {
 		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, '', ' '));
 	}
 
+
+/**
+  * Returns a CSS link meta-tag
+  *
+  * @param string $path
+  * @param string $rel
+  * @param array $html_options
+  * @return string
+  */
+	function cssTag ($path, $rel='stylesheet', $html_options=null) {
+		$url = "{$this->base}/css/{$path}.css";
+		return sprintf(TAG_CSS, $rel, $url, $this->parseHtmlOptions($html_options, '', ' '));
+	}
+
+
+/**
+  * Returns a charset meta-tag
+  *
+  * @param string $charset
+  * @return string
+  */
+	function charsetTag ($charset) {
+		return sprintf(TAG_CHARSET, $charset);
+	}
+
+
 /**
   * Enter description here...
   *
@@ -480,10 +506,10 @@ class Controller extends Template {
 
 		$errors = array();
 		foreach ($objects as $object) {
-			$errors = array_merge($errors, $object->invalidFields());
+			$errors = array_merge($errors, $object->invalidFields($object->data));
 		}
 
-		return $this->validation_errors = (count($errors)? $errors: false);
+		return $this->validationErrors = (count($errors)? $errors: false);
 	}
 
 /**
@@ -494,7 +520,12 @@ class Controller extends Template {
   * @return unknown
   */
 	function tagErrorMsg ($field, $text) {
-		return $this->tagIsInvalid($field)? sprintf(SHORT_ERROR_MESSAGE, $text): null;
+		if ($error = $this->tagIsInvalid($field)) {
+			return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
+		}
+		else {
+			return null;
+		}
 	}
 
 /**
@@ -504,7 +535,7 @@ class Controller extends Template {
   * @return unknown
   */
 	function tagIsInvalid ($field) {
-		return !empty($this->validation_errors[$field]);
+		return empty($this->validationErrors[$field])? 0: $this->validationErrors[$field];
 	}
 
 
@@ -548,7 +579,7 @@ class Controller extends Template {
   */
 	function error ($code, $name, $message) {
 		header ("HTTP/1.0 {$code} {$name}");
-		print ($this->_do_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
+		print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
 	}
 }
 

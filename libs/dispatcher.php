@@ -65,6 +65,7 @@ class Dispatcher extends Object {
   *
   */
 	function __construct () {
+		$this->base = $this->baseUrl();
 		parent::__construct();
 	}
 
@@ -77,39 +78,34 @@ class Dispatcher extends Object {
 	function dispatch ($url) {
 		global $_POST, $_GET, $_FILES, $_SESSION;
 
-		if (CACHE_PAGES) {
-			$Cache = new Cache($url);
-			if ($Cache->has()) return print $Cache->restore();
-		}
-
-		$this->base = $this->parseBaseUrl();
 		$params = $this->parseParams($url);
 
-		// if no controller set
+		// die if no controller set
 		if (empty($params['controller']))
 			$this->errorNoController($url);
 
-		$controller_class = ucfirst($params['controller']).'Controller';
+		$ctrl_name = ucfirst($params['controller']);
+		$ctrl_class = $ctrl_name.'Controller';
 
 		// if specified controller class doesn't exist
-		if (!class_exists($controller_class))
-			$this->errorUnknownController($url, $controller_class);
+		if (!loadController($ctrl_name) || !class_exists($ctrl_class))
+			$this->errorUnknownController($url, $ctrl_name);
 
-		$controller = new $controller_class ($this);
+		$controller = new $ctrl_class ($this);
 		$controller->cache = &$Cache;
 		$controller->base = $this->base;
 
 		// if action is not set, and the default Controller::index() method doesn't exist 
 		if (empty($params['action'])) {
-			if (!method_exists($controller, 'index'))
-				$this->errorNoAction($url);
-			else
+			if (method_exists($controller, 'index'))
 				$params['action'] = 'index';
+			else
+				$this->errorNoAction($url);
 		}
 
 		// if the requested action doesn't exist
 		if (!method_exists($controller, $params['action']))
-			$this->errorUnknownAction($url, $controller_class, $params['action']);
+			$this->errorUnknownAction($url, $ctrl_class, $params['action']);
 
 		$controller->params = $params;
 		$controller->action = $params['action'];
@@ -121,8 +117,6 @@ class Dispatcher extends Object {
 
 		if ($controller->autoRender)
 			$controller->render();
-
-		if (CACHE_PAGES) $Cache->remember(null);
 
 		return $params;
 	}
@@ -157,7 +151,7 @@ class Dispatcher extends Object {
   *
   * @return unknown
   */
-	function parseBaseUrl () {
+	function baseUrl () {
 		global $_SERVER;
 
 		//non mod_rewrite use:

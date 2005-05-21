@@ -1,7 +1,5 @@
 <IfModule mod_rewrite.c>
     RewriteEngine on
     RewriteRule	^$	public/	[L]
-
-    #RewriteCond	%{REQUEST_URI}	!^/cake$
     RewriteRule	(.*)	public/$1	[L]
 </IfModule>

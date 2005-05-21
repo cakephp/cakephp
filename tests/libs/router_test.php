@@ -48,14 +48,15 @@ class RouterTest extends TestCase {
 			'/foo/baz/' => array('controller'=>'Foo', 'action'=>'baz'),
 			'/foo/foo+bar' => array('pass'=>array('foo+bar'), 'controller'=>'Foo', 'action'=>'dodo'),
 			'/foobar/' => array('controller'=>'Foobar', 'action'=>'bar'),
-			'/foo/bar/baz' => array('pass'=>array('bar', 'baz'), 'controller'=>'Foo', 'action'=>'dodo'),
+			'/foo/bar/baz' => array('controller'=>'Foo', 'action'=>'dodo', 'pass'=>array('bar', 'baz')),
 			'/one/two/three/' => array('controller'=>'one', 'action'=>'two', 'pass'=>array('three')),
-			'/foo' => array('controller'=>'foo','action'=>null),
+			'/ruburb' => array('controller'=>'ruburb','action'=>null),
 			'???' => array()
 		);
 
 		foreach ($tests as $test=>$expected) {
-			$this->asEq($this->abc->parse($test), $expected);
+			$tested = $this->abc->parse($test);
+			$this->asEq($tested, $expected);
 		}
 	}
 

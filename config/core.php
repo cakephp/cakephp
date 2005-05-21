@@ -38,24 +38,4 @@
  */
 define ('DEBUG', 0);
 
-/**
- * Page cacheing setting.
- */
-define ('CACHE_PAGES', false);
-
-/**
- * Cache lifetime in seconds, 0 for debugging, -1 for eternity.
- */
-define ('CACHE_PAGES_FOR', -1);
-
-/**
- * Set any extra debug options here.
- */
-if (DEBUG)
-{
-    error_reporting(E_ALL);
-    ini_set('error_reporting', E_ALL);
-    $TIME_START = getmicrotime();
-}
-
 ?>

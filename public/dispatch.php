@@ -30,32 +30,36 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-/**
- * DIRECTORY LAYOUT
- */
-require ('../config/paths.php');
+session_start();
 
 /**
- * Startup
- */
-require (LIBS.'basics.php');
+  * Get Cake's root directory
+  */
+define ('DS', DIRECTORY_SEPARATOR);
+define ('ROOT', substr(__FILE__, 0, strrpos(dirname(__FILE__), DS)+1));
 
-uses ('dispatcher', 'db_factory');
-usesConfig();
-usesDatabase();
-usesTagGenerator();
+/**
+  * Directory layout and basic functions
+  */
+require (ROOT.'config/core.php');
+require (ROOT.'config/paths.php');
+require (ROOT.'libs/basics.php');
+
+DEBUG? error_reporting(E_ALL): error_reporting(0);
+
+$TIME_START = getMicrotime();
+
+uses ('folder', 'dispatcher', 'dbo_factory');
+config ('tags', 'database');
+
+$DB = DboFactory::make('devel');
 
 loadModels ();
-loadControllers ();
-
-session_start();
 
 ## RUN THE SCRIPT
 $url = empty($_GET['url'])? null: $_GET['url'];
 $DISPATCHER = new Dispatcher ();
 $DISPATCHER->dispatch($url);
-
-if ($DB) $DB->close();
 
 ## CLEANUP
 if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";

@@ -90,7 +90,7 @@ class Router extends Object {
 					   $names[] = $r[1];
 					}
 					elseif (preg_match('/^\*$/', $element, $r)) {
-						$parsed[] = '/(.*)';
+						$parsed[] = '(?:\/(.*))?';
 					}
 					else {
 						$parsed[] = '/'.$element;
@@ -126,6 +126,7 @@ class Router extends Object {
 			list($route, $regexp, $names, $defaults) = $route;
 
 			if (preg_match($regexp, $url, $r)) {
+				// $this->log($url.' matched '.$regexp, 'note');
 				// remove the first element, which is the url
 				array_shift($r);
 

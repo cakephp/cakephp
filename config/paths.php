@@ -42,71 +42,73 @@ if( !defined('ROOT') ){
 /**
  * Path to the application directory.
  */
-define ('APP',			ROOT.'app/');
+define ('APP',			ROOT.'app'.DS);
 
 /**
  * Path to the application models directory.
  */
-define ('MODELS',			APP.'models/');
+define ('MODELS',			APP.'models'.DS);
 
 /**
  * Path to the application controllers directory.
  */
-define ('CONTROLLERS',	APP.'controllers/');
+define ('CONTROLLERS',	APP.'controllers'.DS);
 
 /**
  * Path to the application helpers directory.
  */
-define ('HELPERS',		APP.'helpers/');
+define ('HELPERS',		APP.'helpers'.DS);
 
 /**
  * Path to the application views directory.
  */
-define ('VIEWS',			APP.'views/');
+define ('VIEWS',			APP.'views'.DS);
 
 /**
  * Path to the configuration files directory.
  */
-define ('CONFIGS',	ROOT.'config/');
+define ('CONFIGS',	ROOT.'config'.DS);
 
 /**
  * Path to the libs directory.
  */
-define ('LIBS',		ROOT.'libs/');
+define ('LIBS',		ROOT.'libs'.DS);
+define ('LOGS',		ROOT.'logs'.DS);
+define ('MODULES',	ROOT.'modules'.DS);
 
 /**
  * Path to the public directory.
  */
-define ('PUBLIC',		ROOT.'public/');
+define ('PUBLIC',		ROOT.'public'.DS);
 
 /**
  * Path to the tests directory.
  */
-define ('TESTS',		ROOT.'tests/');
+define ('TESTS',		ROOT.'tests'.DS);
 
 /**
  * Path to the vendors directory.
  */
-define ('VENDORS',	ROOT.'vendors/');
+define ('VENDORS',	ROOT.'vendors'.DS);
 
 /**
  * Path to the controller test directory.
  */
-define ('CONTROLLER_TESTS',TESTS.'app/controllers/');
+define ('CONTROLLER_TESTS',TESTS.'app'.DS.'controllers'.DS);
 
 /**
  * Path to the helpers test directory.
  */
-define ('HELPER_TESTS',		TESTS.'app/helpers/');
+define ('HELPER_TESTS',		TESTS.'app'.DS.'helpers'.DS);
 
 /**
  * Path to the models test directory.
  */
-define ('MODEL_TESTS',		TESTS.'app/models/');
+define ('MODEL_TESTS',		TESTS.'app'.DS.'models'.DS);
 
 /**
  * Path to the lib test directory.
  */
-define ('LIB_TESTS',		TESTS.'libs/')
+define ('LIB_TESTS',		TESTS.'libs'.DS);
 
 ?>

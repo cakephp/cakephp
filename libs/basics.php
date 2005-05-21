@@ -31,20 +31,6 @@
  */
 
 /**
- * Loads all libs from LIBS directory.
- *
- * @uses listModules()
- * @uses LIBS
- */
-function loadLibs () {
-	foreach (listModules(LIBS) as $lib) {
-		if ($lib != 'basics') {
-			include_once (LIBS.$lib.'.php');
-		}
-	}
-}
-
-/**
  * Loads all models.
  *
  * @uses listModules()
@@ -53,8 +39,8 @@ function loadLibs () {
  */
 function loadModels () {
 	require (APP.'app_model.php');
-	foreach (listModules(MODELS) as $model) {
-		require (MODELS.$model.'.php');
+	foreach (listClasses(MODELS) as $model_fn) {
+		require (MODELS.$model_fn);
 	}
 }
 
@@ -69,97 +55,52 @@ function loadModels () {
 function loadControllers () {
 	require (APP.'app_controller.php');
 
-	foreach (listModules(HELPERS) as $helper) {
+	foreach (listClasses(HELPERS) as $helper) {
 		require (HELPERS.$helper.'.php');
 	}
 
-	foreach (listModules(CONTROLLERS) as $controller) {
+	foreach (listClasses(CONTROLLERS) as $controller) {
 		require (CONTROLLERS.$controller.'.php');
 	}
 }
 
 /**
- * Lists all .php files from a given path.
- *
- * @param string $path
- * @param boolean $sort
- * @return array
- */
-function listModules($path, $sort=true) {
-	if ($d = opendir($path)) {
-		$out = array();
-		$r = null;
-		while (false !== ($fn = readdir($d))) {
-			if (preg_match('#^(.+)\.php$#', $fn, $r)) {
-				$out[] = $r[1];
-			}
-		}
-		if ($sort || $this->sort) {
-			sort($out);
-		}
+  * Loads a controller and it's helper libraries
+  *
+  * @param string $name
+  * @return boolean
+  */
+function loadController ($name) {
+	$controller_fn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
+	$helper_fn = HELPERS.Inflector::underscore($name).'_helper.php';
 
-		return $out;
+	require(APP.'app_controller.php');
+
+	if (file_exists($helper_fn))
+		require($helper_fn);
+	
+	return file_exists($controller_fn)? require($controller_fn): false;
+}
+
+/**
+  * Lists PHP files in a specified directory
+  *
+  * @param string $path
+  * @return array
+  */
+function listClasses($path) {
+	$modules = new Folder($path);
+	return $modules->find('(.+)\.php');
+}
+
+/**
+  * Loads configuration files
+  */
+function config () {
+	$args = func_get_args();
+	foreach ($args as $arg) {
+		require_once (CONFIGS.$arg.'.php');
 	}
-	else {
-		return false;
-	}
-}
-
-/**
- * Loads core config.
- *
- * @uses $TIME_START
- * @uses CONFIGS
- */
-function usesConfig () {
-	global $TIME_START;
-
-	require (CONFIGS.'core.php');
-}
-
-/**
- * Loads database connection identified by $level.
- *
- * @param string $level
- * @uses $DB
- * @uses DbFactory::make()
- * @uses loadDatabaseConfig()
- */
-function usesDatabase ($level='devel') {
-	global $DB;
-
-	$DB = DbFactory::make(loadDatabaseConfig($level));
-}
-
-/**
- * Loads database configuration identified by $level from CONFIGS/database.php.
- *
- * @param string $level
- * @return mixed
- */
-function loadDatabaseConfig ($level='devel') {
-	if (file_exists(CONFIGS.'database.php'))
-		require (CONFIGS.'database.php');
-
-	if (empty($DATABASE_CONFIG))
-		 return false;
-
-	if (empty($DATABASE_CONFIG[$level]))
-		 return false;
-
-	if (!is_array($DATABASE_CONFIG[$level]))
-		 return false;
-
-	return $DATABASE_CONFIG[$level];
-}
-
-/**
- * Loads tags configuration from CONFIGS/tags.php.
- *
- * @uses CONFIGS
- */
-function usesTagGenerator () {
-	require (CONFIGS.'tags.php');
 }
 
 /**
@@ -252,13 +193,15 @@ if (!function_exists('array_combine')) {
 	function array_combine($a1, $a2) {
 		$a1 = array_values($a1);
 		$a2 = array_values($a2);
+		$c1 = count($a1);
+		$c2 = count($a2);
 
-		if (count($a1) != count($a2)) return false; // different lenghts
-		if (count($a1) <= 0) return false; // arrays are the same and both are empty
+		if ($c1 != $c2) return false; // different lenghts
+		if ($c1 <= 0) return false; // arrays are the same and both are empty
 		
 		$output = array();
 		
-		for ($i = 0, $c = count($a1); $i < $c; $i++) {
+		for ($i = 0; $i < $c1; $i++) {
 			$output[$a1[$i]] = $a2[$i];
 		}
 		
@@ -267,7 +210,7 @@ if (!function_exists('array_combine')) {
 }
 
 /**
- * Class used for internal manipulation with recordsets (?).
+ * Class used for internal manipulation of multiarrays (arrays of arrays)
  *
  * @package cake
  * @subpackage cake.libs
@@ -319,13 +262,10 @@ class NeatArray {
 	 * @access public
 	 * @uses NeatArray::value
 	 */
-	function cleanup ()
-	{
+	function cleanup () {
 		$out = is_array($this->value)? array(): null;
-		foreach ($this->value as $k=>$v)
-		{
-			if ($v)
-			{
+		foreach ($this->value as $k=>$v) {
+			if ($v) {
 				$out[$k] = $v;
 			}
 		}

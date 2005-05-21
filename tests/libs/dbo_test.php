@@ -1,6 +1,6 @@
 <?php
 
-uses ('test', 'db_factory');
+uses ('test', 'dbo_factory');
 
 class DboTest extends TestCase {
 	var $abc;
@@ -14,7 +14,7 @@ class DboTest extends TestCase {
 	// this function is defined in PHPUnit_TestCase and overwritten
 	// here
 	function setUp() {
-		$this->abc = DbFactory::make(loadDatabaseConfig('test'));
+		$this->abc = DboFactory::make('test');
 		$this->createTemporaryTable();
 	}
 

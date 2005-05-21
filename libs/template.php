@@ -108,7 +108,7 @@ class Template extends Object {
   *
   * @param unknown_type $layout
   */
-	function set_layout ($layout) {
+	function setLayout ($layout) {
 		$this->layout = $layout;
 	}
 
@@ -120,7 +120,7 @@ class Template extends Object {
   * @return unknown
   */
 	function set($one, $two=null) {
-		return $this->_set_array(is_array($one)? $one: array($one=>$two));
+		return $this->_setArray(is_array($one)? $one: array($one=>$two));
 	}
 
 /**
@@ -128,7 +128,7 @@ class Template extends Object {
   *
   * @param unknown_type $value
   */
-	function set_title ($value) {
+	function setTitle ($value) {
 		$this->_page_title = $value;
 	}
 
@@ -137,10 +137,10 @@ class Template extends Object {
   *
   * @param unknown_type $data
   */
-	function _set_array($data) {
+	function _setArray($data) {
 		foreach ($data as $name => $value) {
 			if ($name == 'title')
-				$this->set_title ($value);
+				$this->setTitle ($value);
 			else
 				$this->_view_vars[$name] = $value;
 		}
@@ -161,7 +161,7 @@ class Template extends Object {
 		$this->set('message', $message);
 		$this->set('time', $time);
 
-		$this->render(null,false,VIEWS.'layouts/flash.thtml');
+		$this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
 	}
 
 /**
@@ -175,9 +175,9 @@ class Template extends Object {
 		$this->autoRender = false;
 
 		if (!$action) $action = $this->action;
-		if ($layout) $this->set_layout($layout);
+		if ($layout) $this->setLayout($layout);
 
-		$view_fn = $file? $file: $this->_get_view_fn($action);
+		$view_fn = $file? $file: $this->_getViewFn($action);
 
 		if (!is_file($view_fn)) {
 			DEBUG? trigger_error (sprintf(ERROR_NO_VIEW, $action, $view_fn), E_USER_ERROR)
@@ -185,17 +185,15 @@ class Template extends Object {
 			die();
 		}
 
-		$out = $this->_do_render($view_fn, $this->_view_vars, 0);
+		$out = $this->_render($view_fn, $this->_view_vars, 0);
 
 		if ($out !== false) {
 			if ($this->layout && $this->autoLayout) 
-				$out = $this->render_layout($out);
-			if (CACHE_PAGES) 
-				$this->cache->append($out);
+				$out = $this->renderLayout($out);
 			print $out;
 		}
 		else {
-			$out = $this->_do_render($view_fn, $this->_view_vars, false);
+			$out = $this->_render($view_fn, $this->_view_vars, false);
 			trigger_error (sprintf(ERROR_IN_VIEW, $view_fn, $out), E_USER_ERROR);
 		}
 	}
@@ -206,18 +204,18 @@ class Template extends Object {
   * @param unknown_type $content_for_layout
   * @return unknown
   */
-	function render_layout ($content_for_layout) {
-		$layout_fn = $this->_get_layout_fn();
+	function renderLayout ($content_for_layout) {
+		$layout_fn = $this->_getLayoutFn();
 
 		$data_for_layout = array_merge($this->_view_vars, array(
 			'title_for_layout'=>$this->_page_title !== false? $this->_page_title: ucfirst($this->name),
 			'content_for_layout'=>$content_for_layout));
 
 		if (is_file($layout_fn)) {
-			$out = $this->_do_render($layout_fn, $data_for_layout);
+			$out = $this->_render($layout_fn, $data_for_layout);
 
 			if ($out === false) {
-				$out = $this->_do_render($layout_fn, $data_for_layout, false);
+				$out = $this->_render($layout_fn, $data_for_layout, false);
 				trigger_error (sprintf(ERROR_IN_LAYOUT, $layout_fn, $out), E_USER_ERROR);
 				return false;
 			}
@@ -236,8 +234,8 @@ class Template extends Object {
   *
   * @return unknown
   */
-	function _get_layout_fn() {
-		return VIEWS."layouts/{$this->layout}.thtml";
+	function _getLayoutFn() {
+		return VIEWS."layouts".DS."{$this->layout}.thtml";
 	}
 
 /**
@@ -246,8 +244,8 @@ class Template extends Object {
   * @param unknown_type $action
   * @return unknown
   */
-	function _get_view_fn($action) {
-		return VIEWS.$this->name."/{$action}.thtml";
+	function _getViewFn($action) {
+		return VIEWS.$this->name.DS."{$action}.thtml";
 	}
 
 /**
@@ -258,7 +256,7 @@ class Template extends Object {
   * @param unknown_type $___play_safe
   * @return unknown
   */
-	function _do_render($___view_fn, $___data_for_view, $___play_safe = true) {
+	function _render($___view_fn, $___data_for_view, $___play_safe = true) {
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
 		$BASE = $this->base;
 		$params = &$this->params;
@@ -281,7 +279,7 @@ class Template extends Object {
   * @param unknown_type $length
   * @return unknown
   */
-	function trim_to ($string, $length) {
+	function trimTo ($string, $length) {
 		return substr($string, 0, $length).(strlen($string)>$length? '..': null);
 	}
 }

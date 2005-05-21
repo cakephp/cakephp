@@ -126,6 +126,27 @@ class Folder extends Object {
 		}
 	}
 
+
+/**
+  * Finds all matching files in a directory
+  *
+  * @param string $pattern
+  * @return unknown
+  */
+	function find ($regexp_pattern='.*') {
+		list($dirs, $files) = $this->ls();
+
+		$found = array();
+		foreach ($files as $file) {
+			if (preg_match("/^{$regexp_pattern}$/i", $file)) {
+				$found[] = $file;
+			}
+		}
+
+		return $found;
+	}
+
+
 /**
   * Enter description here...
   *

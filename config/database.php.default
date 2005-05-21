@@ -30,27 +30,30 @@
  */
 
 /**
- * Database configuration array. You can configure multiple connections.
- *
- * @var array $DATABASE_CONFIG
+ * Database configuration class.
+ * You can specify multiple configurations for production, development and testing.
  */
-$DATABASE_CONFIG = array(
-	'devel' => array(
-		'driver'   => 'mysql',
-		'host'     => 'localhost',
-		'login'    => 'login',
-		'password' => 'password',
-		'database' => 'database'
-	),
+class DATABASE_CONFIG {
 
-	'test' => array(
-		'driver'   => 'mysql',
-		'host'     => 'localhost',
-		'login'    => 'login',
-		'password' => 'password',
-		'database' => 'database'
-	),
+	function devel () {
+		return array(
+			'driver'   => 'mysql',
+			'host'     => 'localhost',
+			'login'    => 'www',
+			'password' => '',
+			'database' => 'project_name'
+		);
+	}
 
-);
+	function test () {
+		return array(
+			'driver'   => 'mysql',
+			'host'     => 'localhost',
+			'login'    => 'www-test',
+			'password' => '',
+			'database' => 'project_name-test'
+		);
+	}
+}
 
 ?>

@@ -60,4 +60,10 @@ define('VALID_TAG', '/[^\ ]+/i');
   */
 define('VALID_TAGS', '/.+/i');
 
+/**
+  * Enter description here...
+  *
+  */
+define('VALID_YEAR', '/^[12][0-9]{3}$/');
+
 ?>

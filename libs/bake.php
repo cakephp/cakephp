@@ -42,9 +42,9 @@ uses('object', 'inflector');
  * @package cake
  * @subpackage cake.libs
  * @since Cake v 0.2.9
- */
-class Bake extends Object
-{
+  */
+class Bake extends Object {
+
 	/**
 	 * Standard input stream (php://stdin).
 	 *
@@ -455,16 +455,16 @@ class %sTest extends TestCase {
 
 		if (is_file($path) && !$this->dontAsk) {
 			fwrite($this->stdout, "File {$path} exists, overwrite? (yNaq) "); 
-			$key = fgets($this->stdin);
+			$key = trim(fgets($this->stdin));
 			
-			if (preg_match("/^q$/", $key)) {
+			if ($key=='q') {
 				fwrite($this->stdout, "Quitting.\n");
 				exit;
 			}
-			elseif (preg_match("/^a$/", $key)) {
-				$this->dontAsk = true;
+			elseif ($key=='a') {
+				$this->dont_ask = true;
 			}
-			elseif (preg_match("/^y$/", $key)) {
+			elseif ($key=='y') {
 			}
 			else {
 				fwrite($this->stdout, "Skip   {$path}\n");

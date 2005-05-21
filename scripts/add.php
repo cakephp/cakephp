@@ -33,7 +33,10 @@
 /**
   * START-UP
   */
-require ('../config/paths.php');
+define ('DS', DIRECTORY_SEPARATOR);
+define ('ROOT', substr(__FILE__, 0, strrpos(dirname(__FILE__), DS)+1));
+
+require (ROOT.'config'.DS.'paths.php');
 require (LIBS.'basics.php');
 uses ('bake');
 

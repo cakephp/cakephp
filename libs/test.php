@@ -48,20 +48,6 @@
 /**
   * Enter description here...
   *
-  */
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-		E_CORE_ERROR | E_CORE_WARNING);
-
-//
-//interface Test {
-//	function run(&$aTestResult);
-//	function countTestCases();
-//}
-
-
-/**
-  * Enter description here...
-  *
   * @param unknown_type $msg
   */
 function trace($msg) {
@@ -304,8 +290,8 @@ class Assert {
 /**
   * Enter description here...
   *
-  * @param unknown_type $value
-  * @return unknown
+  * @param mixed $value
+  * @return string
   */
 	function _formatValue ($value) {
 		
@@ -323,44 +309,6 @@ class Assert {
 		}
 		
 		return array($valueStr, gettype($value));
-	}
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $value
-  * @param unknown_type $class
-  * @return unknown
-  */
-	function _old_formatValue($value, $class="") {
-		$translateValue = $value;
-		if (phpversion() >= '4.0.0') {
-	  if (is_object($value)) {
-		  if (method_exists($value, "toString") ) {
-		  $translateValue = $value->toString();
-		  }
-		  else {
-		  $translateValue = serialize($value);
-		  }
-	  }
-	  else if (is_array($value)) {
-		  $translateValue = serialize($value);
-	  }
-		}
-		$htmlValue = "<code class=\"$class\">" . htmlspecialchars($translateValue) . "</code>";
-		if (phpversion() >= '4.0.0') {
-			if (is_bool($value)) {
-				$htmlValue = $value ? "<i>true</i>" : "<i>false</i>";
-			}
-			elseif (phpversion() >= '4.0.4' && is_null($value)) {
-				$htmlValue = "<i>null</i>";
-			}
-			$htmlValue .= "&nbsp;&nbsp;&nbsp;<span class=\"typeinfo\">";
-			$htmlValue .= " type:" . gettype($value);
-			$htmlValue .= is_object($value) ? ", class:" . get_class($value) : "";
-			$htmlValue .= "</span>";
-		}
-		return $htmlValue;
 	}
 
 

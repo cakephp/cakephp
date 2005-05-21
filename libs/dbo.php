@@ -264,7 +264,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a single row of results from the _last_ query
   *
   * @param unknown_type $results
   * @param unknown_type $type
@@ -275,7 +275,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a single row of results for a _given_ query
   *
   * @param unknown_type $sql
   * @return unknown
@@ -285,7 +285,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns all result rows for a given query
   *
   * @param unknown_type $sql
   * @return unknown

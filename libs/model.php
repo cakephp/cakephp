@@ -136,7 +136,14 @@ class Model extends Object {
 	var $validate = array();
 
 /**
-  * Enter description here...
+  * Append entries for validation as ('field_name' => '/^perl_compat_regexp$/') that has to match with preg_match()
+  * validate with Model::validate()
+  * @var unknown_type
+  */
+	var $validationErrors = null;
+
+/**
+  * Constructor binds the Model's database table
   *
   * @param unknown_type $id
   */
@@ -149,16 +156,16 @@ class Model extends Object {
 			$this->id = $id;
 
 		$table_name = $this->use_table? $this->use_table: Inflector::tableize(get_class($this));
-		$this->use_table ($table_name);
+		$this->useTable ($table_name);
 		parent::__construct();
-		$this->create_links();
+		$this->createLinks();
 	}
 
 /**
   * Enter description here...
   *
   */
-	function create_links () {
+	function createLinks () {
 		if (!empty($this->hasMany))
 			$this->_hasMany = explode(',', $this->hasMany);
 		
@@ -178,8 +185,8 @@ class Model extends Object {
 	function relink () {
 		foreach ($this->_hasMany as $model) {
 			$name = Inflector::singularize($model);
-			$this->$name->clear_links();
-			$this->$name->link_many_to_one(get_class($this), $this->id);
+			$this->$name->clearLinks();
+			$this->$name->linkManyToOne(get_class($this), $this->id);
 		}
 	}
 
@@ -189,7 +196,7 @@ class Model extends Object {
   * @param unknown_type $model_name
   * @param unknown_type $value
   */
-	function link_many_to_one ($model_name, $value=null) {
+	function linkManyToOne ($model_name, $value=null) {
 		$table_name = Inflector::tableize($model_name);
 		$field_name = Inflector::singularize($table_name).'_id';
 		$this->_one_to_many[] = array($table_name, $field_name, $value);
@@ -199,7 +206,7 @@ class Model extends Object {
   * Enter description here...
   *
   */
-	function clear_links () {
+	function clearLinks () {
 		$this->_one_to_many = array();
 	}
 
@@ -208,14 +215,14 @@ class Model extends Object {
   *
   * @param unknown_type $table_name
   */
-	function use_table ($table_name) {
+	function useTable ($table_name) {
 		if (!in_array($table_name, $this->db->tables())) {
 			trigger_error (sprintf(ERROR_NO_MODEL_TABLE, get_class($this), $table_name), E_USER_ERROR);
 			die();
 		}
 		else {
 			$this->table = $table_name;
-			$this->load_info();
+			$this->loadInfo();
 		}
 	}
 
@@ -228,15 +235,17 @@ class Model extends Object {
   * @return unknown
   */
 	function set ($one, $two=null) {
+		$this->validationErrors = null;
 		$data = is_array($one)? $one: array($one=>$two);
 
 		foreach ($data as $n => $v) {
-			if (!$this->has_field($n)) {
+/*
+			if (!$this->hasField($n)) {
 				DEBUG? 
 					trigger_error(sprintf(ERROR_NO_FIELD_IN_MODEL_DB, $n, $this->table), E_USER_ERROR):
 					trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
 			}
-
+*/
 			$n == 'id'? $this->id = $v: $this->data[$n] = $v;
 		}
 
@@ -248,7 +257,7 @@ class Model extends Object {
   *
   * @param unknown_type $id
   */
-	function set_id ($id) {
+	function setId ($id) {
 		$this->id = $id;
 		$this->relink();
 	}
@@ -257,7 +266,7 @@ class Model extends Object {
   * Enter description here...
   *
   */
-	function load_info () {
+	function loadInfo () {
 		if (empty($this->_table_info))
 			$this->_table_info = new NeatArray($this->db->fields($this->table));
 	}
@@ -268,7 +277,8 @@ class Model extends Object {
   * @param unknown_type $name
   * @return unknown
   */
-	function has_field ($name) {
+	function hasField ($name) {
+		if (empty($this->_table_info)) $this->loadInfo();
 		return $this->_table_info->findIn('name', $name);
 	}
 
@@ -280,6 +290,7 @@ class Model extends Object {
   * @return array of values
   */
 	function read ($fields=null) {
+		$this->validationErrors = null;
 		return $this->id? $this->find("id = '{$this->id}'", $fields): false;
 	}
 
@@ -303,28 +314,41 @@ class Model extends Object {
 	}
 
 /**
+  * saves a single field to the db
+  *
+  * @param string $name
+  * @param mixed $value
+  * @return success
+  */
+	function saveField($name, $value) {
+		return $this->save(array($name=>$value), false);
+	}
+
+/**
   * saves model data to the db
   *
   * @param array $data
   * @return success
   */
-	function save ($data=null) {
+	function save ($data=null, $validate=true) {
 		if ($data) $this->set($data);
 
-		if (!$this->validates())
+		if ($validate && !$this->validates())
 			return false;
 
 		$fields = $values = array();
 		foreach ($this->data as $n=>$v) {
-			$fields[] = $n;
-			$values[] = $this->db->prepare($v);
+			if ($this->hasField($n)) {
+				$fields[] = $n;
+				$values[] = $this->db->prepare($v);
+			}
 		}
 
-		if (empty($this->id) && $this->has_field('created')) {
+		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) {
 			$fields[] = 'created';
 			$values[] = date("'Y-m-d H:i:s'");
 		}
-		if ($this->has_field('modified')) {
+		if ($this->hasField('modified') && !in_array('modified', $fields)) {
 			$fields[] = 'modified';
 			$values[] = 'NOW()';
 		}
@@ -396,6 +420,17 @@ class Model extends Object {
 	function exists () {
 		return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
 	}
+
+
+/**
+  * checks for existance of a record with specified conditions
+  *
+  * @return true if such record exists
+  */
+	function hasAny ($sql_conditions=null) {
+		return $this->db->hasAny($this->table, $sql_conditions);
+	}
+
 
 /**
   * reads a single row 
@@ -542,7 +577,7 @@ class Model extends Object {
   * @return unknown
   */
 	function validates ($data=null) {
-		$errors = count($this->invalidFields($data));
+		$errors = count($this->invalidFields($data? $data: $this->data));
 		
 		return $errors == 0;
 	}
@@ -567,16 +602,18 @@ class Model extends Object {
 		if (!isset($this->validate))
 			return true;
 
+		if (is_array($this->validationErrors))
+			return $this->validationErrors;
+
 		$data = ($data? $data: (isset($this->data)? $this->data: array()));
 		$errors = array();
 
 		foreach ($this->validate as $field_name=>$validator) {
-			if (isset($data[$field_name])) {
-				if (!preg_match($validator, $data[$field_name]))
+			if (!isset($data[$field_name]) || !preg_match($validator, $data[$field_name]))
 					$errors[$field_name] = 1;
-			}
 		}
 
+		$this->validationErrors = $errors;
 		return $errors;
 	}
 
