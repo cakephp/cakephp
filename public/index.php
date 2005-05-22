@@ -1,4 +1,4 @@
-<?php
+<?PHP
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
@@ -14,24 +14,54 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Enter description here...
-  * 
-  * @filesource 
-  * @author Cake Authors/Developers
-  * @copyright Copyright (c) 2005, Cake Authors/Developers
-  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.public
-  * @since Cake v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * Purpose: Dispatch
+ * The main "loop"
+ * 
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.public
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+
+session_start();
 
 /**
-  * Enter description here...
-  *
+  * Get Cake's root directory
   */
-header ('dispatch.php?url='.ltrim($_SERVER['PATH_INFO'],'/'));
+define ('DS', DIRECTORY_SEPARATOR);
+define ('ROOT', dirname(dirname(__FILE__)).DS);
+
+/**
+  * Directory layout and basic functions
+  */
+require (ROOT.'config/core.php');
+require (ROOT.'config/paths.php');
+require (ROOT.'libs/basics.php');
+
+DEBUG? error_reporting(E_ALL): error_reporting(0);
+
+$TIME_START = getMicrotime();
+
+uses ('folder', 'dispatcher', 'dbo_factory');
+config ('tags', 'database');
+
+$DB = DboFactory::make('devel');
+
+loadModels ();
+
+## RUN THE SCRIPT
+$url = empty($_GET['url'])? null: $_GET['url'];
+$DISPATCHER = new Dispatcher ();
+$DISPATCHER->dispatch($url);
+
+## CLEANUP
+if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
+
 ?>

@@ -26,22 +26,25 @@ class DboFactoryTest extends TestCase {
 
 
 	function testMake () {
-		$output = $this->abc->make('test');
-		$this->assertTrue(is_object($output));
+		if (class_exists(DATABASE_CONFIG)) {
 
-		$config = DATABASE_CONFIG::test();
-		if (preg_match('#^(adodb)_.*$#i', $config['driver'], $res)) {
-			$desired_driver_name = $res[1];
+			$output = $this->abc->make('test');
+			$this->assertTrue(is_object($output));
+
+			$config = DATABASE_CONFIG::test();
+			if (preg_match('#^(adodb)_.*$#i', $config['driver'], $res)) {
+				$desired_driver_name = $res[1];
+			}
+			else
+				$desired_driver_name = $config['driver'];
+
+			$desired_class_name = 'dbo_'.strtolower($desired_driver_name);
+			$output_class_name = is_object($output)? get_class($output): false;
+
+			$this->assertEquals($output_class_name, $desired_class_name);
+
+			$this->assertTrue($output->connected);
 		}
-		else
-			$desired_driver_name = $config['driver'];
-
-		$desired_class_name = 'dbo_'.strtolower($desired_driver_name);
-		$output_class_name = is_object($output)? get_class($output): false;
-
-		$this->assertEquals($output_class_name, $desired_class_name);
-
-		$this->assertTrue($output->connected);
 	}
 
 // this test expect an E_USER_ERROR to occur during it's run

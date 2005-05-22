@@ -266,8 +266,7 @@ class DBO extends Object {
 /**
   * Returns a single row of results from the _last_ query
   *
-  * @param unknown_type $results
-  * @param unknown_type $type
+  * @param resource $res
   * @return unknown
   */
 	function farr ($res=false) {
@@ -302,7 +301,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a single field of the first of query results for a given sql query
   *
   * @param unknown_type $name
   * @param unknown_type $sql
@@ -314,7 +313,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Checks if the specified table contains any record matching specified SQL
   *
   * @param unknown_type $table
   * @param unknown_type $sql

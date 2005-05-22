@@ -99,7 +99,13 @@ function listClasses($path) {
 function config () {
 	$args = func_get_args();
 	foreach ($args as $arg) {
-		require_once (CONFIGS.$arg.'.php');
+		if (file_exists(CONFIGS.$arg.'.php')) {
+			require_once (CONFIGS.$arg.'.php');
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }
 

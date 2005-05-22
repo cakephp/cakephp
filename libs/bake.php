@@ -149,6 +149,9 @@ class %sTest extends TestCase {
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
 
+		// Output directory name
+		fwrite($this->stderr, "\n".substr(ROOT,0,strlen(ROOT)-1).":\n".str_repeat('-',strlen(ROOT)+1)."\n");
+
 		switch ($type) {
 
 			case 'model':
@@ -201,10 +204,10 @@ class %sTest extends TestCase {
 	 */
 	function newView ($controller, $name) {
 		$dir = Inflector::underscore($controller);
-		$path = "{$dir}/".strtolower($name).".thtml";
+		$path = $dir.DS.strtolower($name).".thtml";
 		$this->createDir(VIEWS.$dir);
 		$fn = VIEWS.$path;
-		$this->createFile($fn, sprintf($this->template('view'), "<p>Edit <b>app/views/{$path}</b> to change this message.</p>"));
+		$this->createFile($fn, sprintf($this->template('view'), "<p>Edit <b>app".DS."views".DS."{$path}</b> to change this message.</p>"));
 		$this->actions++;
 	}
 
@@ -452,11 +455,12 @@ class %sTest extends TestCase {
 	 * @uses Bake::stderr
 	 */
 	function createFile ($path, $contents) {
+		$shortPath = str_replace(ROOT,null,$path);
 
 		if (is_file($path) && !$this->dontAsk) {
-			fwrite($this->stdout, "File {$path} exists, overwrite? (yNaq) "); 
+			fwrite($this->stdout, "File {$shortPath} exists, overwrite? (yNaq) "); 
 			$key = trim(fgets($this->stdin));
-			
+
 			if ($key=='q') {
 				fwrite($this->stdout, "Quitting.\n");
 				exit;
@@ -467,7 +471,7 @@ class %sTest extends TestCase {
 			elseif ($key=='y') {
 			}
 			else {
-				fwrite($this->stdout, "Skip   {$path}\n");
+				fwrite($this->stdout, "Skip   {$shortPath}\n");
 				return false;
 			}
 		}
@@ -475,12 +479,12 @@ class %sTest extends TestCase {
 		if ($f = fopen($path, 'w')) {
 			fwrite($f, $contents);
 			fclose($f);
-			fwrite($this->stdout, "Wrote   {$path}\n");
+			fwrite($this->stdout, "Wrote   {$shortPath}\n");
 //			debug ("Wrote {$path}");
 			return true;
 		}
 		else {
-			fwrite($this->stderr, "Error! Couldn't open {$path} for writing.\n");
+			fwrite($this->stderr, "Error! Couldn't open {$shortPath} for writing.\n");
 //			debug ("Error! Couldn't open {$path} for writing.");
 			return false;
 		}
@@ -499,13 +503,15 @@ class %sTest extends TestCase {
 		if (is_dir($path))
 			return true;
 
+		$shortPath = str_replace(ROOT, null, $path);
+
 		if (mkdir($path)) {
-			fwrite($this->stdout, "Created {$path}\n");
+			fwrite($this->stdout, "Created {$shortPath}\n");
 //			debug ("Created {$path}");
 			return true;
 		}
 		else {
-			fwrite($this->stderr, "Error! Couldn't create dir {$path}\n");
+			fwrite($this->stderr, "Error! Couldn't create dir {$shortPath}\n");
 //			debug ("Error! Couldn't create dir {$path}");
 			return false;
 		}

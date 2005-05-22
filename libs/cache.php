@@ -39,11 +39,9 @@ uses('model');
 /**
   * Enter description here...
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class Cache extends Model {
 

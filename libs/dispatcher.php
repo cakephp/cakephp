@@ -35,7 +35,7 @@
  * Dispatches the request, creating aproppriate models and controllers.
  */
 
-uses('error_messages', 'object', 'router', 'cache', 'controller');
+uses('error_messages', 'object', 'router', 'controller');
 
 /**
   * Enter description here...
@@ -163,10 +163,10 @@ class Dispatcher extends Object {
 		// if document root ends with 'public', it's probably correctly set
 		$r = null;
 		if (!ereg('/^.*/public(\/)?$/', $doc_root))
-			return preg_match('/^(.*)\/public\/dispatch\.php$/', $script_name, $r)? $r[1]: false;
+			return preg_match('/^(.*)\/public\/index\.php$/', $script_name, $r)? $r[1]: false;
 		// document root is probably not set to Cake 'public' dir
 		else
-			return preg_match('/^(.*)\/dispatch\.php$/', $script_name, $r)? $r[1]: false;
+			return preg_match('/^(.*)\/index\.php$/', $script_name, $r)? $r[1]: false;
 	}
 
 /**

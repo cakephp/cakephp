@@ -27,7 +27,7 @@ class FolderTest extends TestCase {
 
 	function testLs () {
 		$result = $this->abc->ls();
-		$expected = array(array('css', 'files', 'img'),array('.htaccess', '500.html', 'dispatch.php'));
+		$expected = array(array('css', 'files', 'img'),array('.htaccess', '500.html', 'index.php', 'index_no_mod_rewrite.php'));
 		$this->assertEquals($result, $expected);
 	}
 
@@ -48,8 +48,8 @@ class FolderTest extends TestCase {
 	}
 
 	function testFindRecursive () {
-		$result = $this->abc->findRecursive('.*\.php');
-		$expected = array(Folder::addPathElement($this->abc->pwd(), 'dispatch.php'));
+		$result = $this->abc->findRecursive('.*ex\.php');
+		$expected = array(Folder::addPathElement($this->abc->pwd(), 'index.php'));
 		$this->assertEquals($result, $expected);
 	}
 

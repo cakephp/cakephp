@@ -36,6 +36,6 @@
  * - 1: development
  * - 2: full debug with sql
  */
-define ('DEBUG', 0);
+define ('DEBUG', 1);
 
 ?>

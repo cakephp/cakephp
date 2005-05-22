@@ -8,6 +8,8 @@
 
 <body>
 
+<h1><?=$title_for_layout?></h1>
+
 <?=$content_for_layout?>
 
 </body>

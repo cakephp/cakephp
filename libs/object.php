@@ -31,6 +31,16 @@ uses('log');
   * @lastmodified $Date$
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
+
+uses('log');
+
+/**
+  * Enter description here...
+  *
+  * @package cake
+  * @subpackage cake.libs
+  * @since Cake v 0.2.9
+  */
 class Object {
 
 /**

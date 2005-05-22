@@ -22,10 +22,14 @@ class DboTest extends TestCase {
 	// this function is defined in PHPUnit_TestCase and overwritten
 	// here
 	function tearDown() {
+		if (!$this->abc) return false;
+
 		$this->dropTemporaryTable();
 	}
 
 	function createTemporaryTable () {
+		if (!$this->abc) return false;
+
 		if ($this->abc->config['driver'] == 'postgres')
 			$sql = 'CREATE TABLE __test (id serial NOT NULL, body CHARACTER VARYING(255))';
 		else
@@ -35,10 +39,14 @@ class DboTest extends TestCase {
 	}
 
 	function dropTemporaryTable () {
+		if (!$this->abc) return false;
+
 		return $this->abc->query("DROP TABLE __test");
 	}
 
 	function testHasImplementation () {
+		if (!$this->abc) return false;
+
 		$functions = array(
 			 'connect',
 			 'disconnect',
@@ -59,15 +67,21 @@ class DboTest extends TestCase {
 	}
 
 	function testConnectivity () {
+		if (!$this->abc) return false;
+
 		$this->assertTrue($this->abc->connected);
 	}
 
 	function testFields () {
+		if (!$this->abc) return false;
+
 		$fields = $this->abc->fields('__test');
 		$this->assertEquals(count($fields), 2, 'equals');
 	}
 
 	function testTables () {
+		if (!$this->abc) return false;
+
 		$this->assertTrue(in_array('__test', $this->abc->tables()));
 	}
 }

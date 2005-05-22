@@ -12,16 +12,17 @@
 // + Redistributions of files must retain the above copyright notice. + //
 // + See: http://www.opensource.org/licenses/mit-license.php          + //
 //////////////////////////////////////////////////////////////////////////
+
 /**
-  * Purpose: DbFactory
+  * Enter description here...
   * 
-  * Description:
-  * Creates DBO-descendant objects from a given db connection configuration
-  *
   * @filesource 
   * @author Cake Authors/Developers
   * @copyright Copyright (c) 2005, Cake Authors/Developers
   * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+  * @package cake
+  * @subpackage cake.public
+  * @since Cake v 0.2.9
   * @version $Revision$
   * @modifiedby $LastChangedBy$
   * @lastmodified $Date$
@@ -29,48 +30,8 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Re-routes the request to dispatch.php
   */
-uses('object');
-
-/**
-  * Enter description here...
-  *
-  * @package cake
-  * @subpackage cake.libs
-  * @since Cake v 1.0.0.0
-  *
-  */
-class DboFactory extends Object {
-
-	function make ($activeConfig) {
-		if (!class_exists('DATABASE_CONFIG')) return false;
-
-		$config = DATABASE_CONFIG::$activeConfig();
-
-		// special case for AdoDB -- driver name in the form of 'adodb_drivername'
-		if (preg_match('#^adodb_(.*)$#i', $config['driver'], $res)) {
-			uses('DBO_AdoDB');
-			$config['driver'] = $res[1];
-			$conn = new DBO_AdoDB($config);
-			return $conn;
-		}
-		// regular, Cake-native db drivers
-		else {
-			$db_driver_class = 'DBO_'.$config['driver'];
-			$db_driver_fn = LIBS.strtolower($db_driver_class.'.php');
-
-			if (file_exists($db_driver_fn)) {
-				uses(strtolower($db_driver_class));
-				return new $db_driver_class ($config);
-			}
-			else {
-				trigger_error (ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
-				return false;
-			}
-		}
-	}
-}
-
+include('dispatch.php')
+// header ('dispatch.php?url='.ltrim($_SERVER['PATH_INFO'],'/'));
 ?>

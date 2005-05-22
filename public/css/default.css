@@ -1,0 +1,57 @@
+BODY {
+font-size:.9em;
+}
+
+BODY, INPUT, TEXTAREA {
+font-family:sans-serif;
+}
+
+H1 {
+font-size:2.1em;
+text-align:center;
+}
+
+H2 {
+font-size:1.8em;
+}
+
+H3 {
+font-size:1.5em;
+}
+
+P {
+font-size:1em;
+margin-bottom:.5em;
+}
+
+A {
+white-space:nowrap;
+text-decoration:underline;
+}
+
+CODE, PRE {
+font-family:monospace;
+font-size:1.1em !important;
+font-size:.95em;
+color:#44A;
+margin:0;
+}
+
+CODE {
+color:#227;
+white-space:nowrap;
+margin:0 .2em;
+}
+
+PRE {
+margin-left:1em;
+}
+
+ACRONYM {
+border-bottom:1px dotted;
+}
+
+HR {
+height:0;
+border-top:1px solid #AAA;
+}

@@ -1,0 +1,91 @@
+<html>
+<head>
+<style type="text/css"><!--
+
+BODY {
+font:normal .9em Arial,sans-serif;
+color:Black;
+}
+TABLE {
+margin-left:3em;
+border-collapse:collapse;
+border:2px solid #DDD;
+}
+TH, TD {
+font:normal .8em Tahoma, sans-serif;
+}
+TH {
+text-align:left;
+padding:.4em .3em .1em .3em;
+}
+TH B {
+font:bold 1.2em Arial,sans-serif;
+}
+TD {
+padding:.1em .55em;
+}
+TR.fail TD {
+font-weight:bold;
+color:#FFF;
+background-color:#F31;
+}
+TR.info TD {
+background-color:#F8F8F8;
+padding:.5em 1em .5em 2em;
+}
+TR.info .ok {
+	color:Green;
+}
+TR.info .not {
+	color:Red;
+}
+TR.info EM {
+	color:Gray;
+	font-style:normal;
+}
+TR.unkn TD {
+background-color:#FF0;
+}
+TR.pass TD, TR.expected TD {
+color:Green;
+}
+
+CODE {
+font-size:1.2em;
+}
+CODE.expected {
+color: green; 
+}
+CODE.actual {
+color: red; 
+}
+.typeinfo {
+color: gray;
+}
+
+
+.box {
+font-size:3em;
+text-align:center;
+margin-top:1em;
+}
+.box B {
+color:#FFF;
+padding:.3em .6em;
+background-color:#BBB;
+}
+#ok B {
+background-color:#82AF15;
+}
+#error B {
+background-color:#C2361B;
+}
+
+--></style>
+
+<body>
+
+<?=$content_for_layout?>
+
+</body>
+</html>

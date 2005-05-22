@@ -36,12 +36,18 @@
  * Here, we are connecting '/' (base path) to controller called 'Pages', and
  * its action called 'index' - note there are no additional params passed.
  */
-$Route->connect ('/', array('controller'=>'Pages', 'action'=>'index'));
+$Route->connect ('/', array('controller'=>'Pages', 'action'=>'view', 'home'));
 
 /**
  * Here we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
 $Route->connect ('/test', array('controller'=>'Tests', 'action'=>'test_all'));
+
+/**
+ * Now we connect the rest of Pages controller's urls
+ * This needs to be the last one, as it takes in any and all remaining urls
+ */
+$Route->connect ('/*', array('controller'=>'Pages', 'action'=>'view'));
 
 ?>

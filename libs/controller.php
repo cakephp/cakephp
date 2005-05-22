@@ -36,7 +36,6 @@
 
 /**
   * Enter description here...
-  *
   */
 uses('model', 'template', 'inflector');
 

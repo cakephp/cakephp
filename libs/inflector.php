@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
@@ -34,18 +34,15 @@
 
 /**
   * Enter description here...
-  *
   */
 uses('object');
 
 /**
   * Enter description here...
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class Inflector extends Object {
 	
