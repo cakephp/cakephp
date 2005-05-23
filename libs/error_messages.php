@@ -45,6 +45,12 @@ define ('ERROR_NO_CONTROLLER_SET', '[Dispatcher] No default controller, can\'t c
   * Enter description here...
   *
   */
+define ('ERROR_NO_ACTION_SET', '[Dispatcher] No default action, can\'t continue, check routes config');
+
+/**
+  * Enter description here...
+  *
+  */
 define ('ERROR_UNKNOWN_CONTROLLER', '[Dispatcher] Specified controller "%s" doesn\'t exist, create it first');
 
 /**

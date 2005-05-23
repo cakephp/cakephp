@@ -78,8 +78,11 @@ class Flay extends Object {
   * @param unknown_type $text
   * @return unknown
   */
-	function toHtml ($text=null) {
+	function toHtml ($text=null, $stripTags=false) {
 		$text = $text? $text: $this->text;
+
+		if ($stripTags)
+			$text = strip_tags($text);
 
 		// trim whitespace and disable all HTML
 		$text = str_replace('<', '&lt;', str_replace('>', '&gt;', trim($text)));

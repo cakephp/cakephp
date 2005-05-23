@@ -325,7 +325,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Checks if it's connected to the database
   *
   * @return unknown
   */
@@ -334,7 +334,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Prepares an array of data values by quoting them etc.
   *
   * @return unknown
   */

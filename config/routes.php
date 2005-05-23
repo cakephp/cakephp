@@ -48,6 +48,6 @@ $Route->connect ('/test', array('controller'=>'Tests', 'action'=>'test_all'));
  * Now we connect the rest of Pages controller's urls
  * This needs to be the last one, as it takes in any and all remaining urls
  */
-$Route->connect ('/*', array('controller'=>'Pages', 'action'=>'view'));
+$Route->connect ('/pages/*', array('controller'=>'Pages', 'action'=>'view'));
 
 ?>

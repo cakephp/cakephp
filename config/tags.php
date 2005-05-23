@@ -125,4 +125,14 @@ define('TAG_TABLE_CELL',	'<td%s>%s</td>');
  */
 define('TAG_TABLE_ROW',		'<tr%s>%s</tr>');
 
+/**
+ * Tag template for a CSS meta-tag. 
+ */
+define('TAG_CSS',          '<link rel="%s" type="text/css" href="%s" />');
+
+/**
+ * Tag template for a charset meta-tag. 
+ */
+define('TAG_CHARSET',      '<meta http-equiv="Content-Type" content="text/html; charset=%s" />');
+
 ?>

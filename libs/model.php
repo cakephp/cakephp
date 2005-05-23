@@ -263,12 +263,14 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Reads table info (column names and types) from the db
   *
+  * @return array
   */
 	function loadInfo () {
 		if (empty($this->_table_info))
 			$this->_table_info = new NeatArray($this->db->fields($this->table));
+		return $this->_table_info;
 	}
 
 /**

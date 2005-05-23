@@ -238,7 +238,7 @@ class NeatArray {
 	 * @access public
 	 * @uses NeatArray::value
 	 */
-	function NeatArray ($value) {
+	function NeatArray ($value=array()) {
 		$this->value = $value;
 	}
 
@@ -277,6 +277,73 @@ class NeatArray {
 		}
 		$this->value = $out;
 	}
+
+
+	/**
+	 * Adds elements from the supplied array to itself.
+	 *
+	 * @param string $array
+	 * @return bool
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	 function add ($value) {
+		 return ($this->value = $this->plus($value))? true: false;
+	 }
+
+
+	/**
+	 * Returns itself merged with supplied array.
+	 *
+	 * @param string $array
+	 * @return array
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	 function plus ($value) {
+		 return array_merge($this->value, (is_array($value)? $value: array($value)));
+	 }
+
+	/**
+	 * Counts repeating words.
+	 *
+	 * @param int $sortedBy 1 sorts by values, 2 by keys, default null (no sort)
+	 * @return array
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	function totals ($sortedBy=1,$reverse=true) {
+		$out = array();
+		foreach ($this->value as $val)
+			isset($out[$val])? $out[$val]++: $out[$val] = 1;
+
+		if ($sortedBy == 1) {
+			$reverse? arsort($out, SORT_NUMERIC): asort($out, SORT_NUMERIC);
+		}
+		
+		if ($sortedBy == 2) {
+			$reverse? krsort($out, SORT_STRING): ksort($out, SORT_STRING);
+		}
+
+		return $out;
+	}
+
+	function filter ($with) {
+		return $this->value = array_filter($this->value, $with);
+	}
+
+	/**
+	 * Passes each of it's values thrue a specified function or method.
+	 *
+	 * @return array
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	function walk ($with) {
+		array_walk($this->value, $with);
+		return $this->value;
+	}
+
 }
 
 ?>

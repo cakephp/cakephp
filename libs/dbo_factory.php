@@ -33,6 +33,7 @@
   *
   */
 uses('object');
+config('database');
 
 /**
   * Enter description here...
