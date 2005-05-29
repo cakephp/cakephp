@@ -14,8 +14,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * This file collects requests if no mod_rewrite is avilable and / is used 
-  * instead of /public/ as a web root.
+ *  This file collects requests if:
+ *    - no mod_rewrite is avilable or .htaccess files are not supported
+ *    - /public is not set as a web root.
  * 
  * @filesource 
  * @author Cake Authors/Developers
@@ -28,20 +29,21 @@
  * @lastmodified $Date$
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
-  * Get Cake's root directory
-  */
+ *  Get Cake's root directory
+ */
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(__FILE__).DS);
 
 /**
- * We need to redefine some constants and variables, so that Cake knows it is
- * working without mod_rewrite.
+ *  We need to redefine some constants and variables, so that Cake knows it is
+ *  working without mod_rewrite.
  */
 define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
 
 $_GET['url']  = ltrim($_SERVER['PATH_INFO'],'/');
 
-require (ROOT.'public/dispatch.php');
+require (ROOT.'public/index.php');
 
 ?>

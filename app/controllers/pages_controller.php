@@ -2,7 +2,7 @@
 
 class PagesController extends PagesHelper {
 
-	function view () {
+	function display () {
 
 		if (!func_num_args())
 			$this->redirect('/');

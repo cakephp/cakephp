@@ -147,10 +147,13 @@ class Model extends Object {
   *
   * @param unknown_type $id
   */
-	function __construct ($id=false) {
+	function __construct ($id=false, $db=null) {
 		global $DB;
 
-		$this->db = &$DB;
+		if ($db)
+			$this->db = $db;
+		else
+			$this->db = &$DB;
 
 		if ($id) 
 			$this->id = $id;
@@ -302,7 +305,11 @@ class Model extends Object {
   * @param string $name
   * @return field contents
   */
-	function field ($name) {
+	function field ($name, $conditions=null) {
+		if ($conditions) {
+			$data = $this->find($conditions);
+			return $data[$name];
+		}
 		if (isset($this->data[$name]))
 			return $this->data[$name];
 		else {

@@ -101,10 +101,10 @@ function config () {
 	foreach ($args as $arg) {
 		if (file_exists(CONFIGS.$arg.'.php')) {
 			require_once (CONFIGS.$arg.'.php');
-			return true;
+			if (count($args) == 1) return true;
 		}
 		else {
-			return false;
+			if (count($args) == 1) return false;
 		}
 	}
 }
@@ -305,7 +305,7 @@ class NeatArray {
 	 }
 
 	/**
-	 * Counts repeating words.
+	 * Counts repeating strings and returns an array of totals.
 	 *
 	 * @param int $sortedBy 1 sorts by values, 2 by keys, default null (no sort)
 	 * @return array
@@ -342,6 +342,49 @@ class NeatArray {
 	function walk ($with) {
 		array_walk($this->value, $with);
 		return $this->value;
+	}
+
+	/**
+	 * Extracts a value from all array items
+	 *
+	 * @return array
+	 * @access public
+	 * @uses NeatArray::value
+	 */
+	function extract ($name) {
+		$out = array();
+		foreach ($this->value as $val) {
+			if (isset($val[$name]))
+				$out[] = $val[$name];
+		}
+		return $out;
+	}
+
+	function unique () {
+		return array_unique($this->value);
+	}
+
+	function makeUnique () {
+		return $this->value = array_unique($this->value);
+	}
+
+	function joinWith ($his, $onMine, $onHis=null) {
+		if (empty($onHis)) $onHis = $onMine;
+
+		$his = new NeatArray($his);
+
+		$out = array();
+		foreach ($this->value as $key=>$val) {
+			if ($fromHis = $his->findIn($onHis, $val[$onMine])) {
+				list($fromHis) = array_values($fromHis);
+				$out[$key] = array_merge($val, $fromHis);
+			}
+			else {
+				$out[$key] = $val;
+			}
+		}
+
+		return $this->value = $out;
 	}
 
 }

@@ -84,7 +84,7 @@ class Dispatcher extends Object {
 		if (empty($params['controller']))
 			$this->errorNoController($url);
 
-		$ctrl_name = ucfirst($params['controller']);
+		$ctrl_name = Inflector::camelize($params['controller']);
 		$ctrl_class = $ctrl_name.'Controller';
 
 		// if specified controller class doesn't exist
@@ -162,11 +162,11 @@ class Dispatcher extends Object {
 
 		// if document root ends with 'public', it's probably correctly set
 		$r = null;
-		if (!ereg('/^.*/public(\/)?$/', $doc_root))
-			return preg_match('/^(.*)\/public\/index\.php$/', $script_name, $r)? $r[1]: false;
-		// document root is probably not set to Cake 'public' dir
-		else
+		if (ereg('/^.*/public(\/)?$/', $doc_root))
 			return preg_match('/^(.*)\/index\.php$/', $script_name, $r)? $r[1]: false;
+		else
+			// document root is probably not set to Cake 'public' dir
+			return preg_match('/^(.*)\/public\/index\.php$/', $script_name, $r)? $r[1]: false;
 	}
 
 /**

@@ -177,17 +177,49 @@ class DBO extends Object {
 	var $_queriesLog=array();
 
 	// specific for each database, implemented in db drivers
-	function connect ($config)		{ die('Please implement DBO::connect() first.'); }
-	function disconnect ()			{ die('Please implement DBO::disconnect() first.'); }
-	function execute ($sql)			{ die('Please implement DBO::execute() first.'); }
-	function fetchRow ($result)	{ die('Please implement DBO::fetchRow() first.'); }
-	function tables()					{ die('Please implement DBO::tables() first.'); }
-	function fields ($table_name) { die('Please implement DBO::fields() first.'); }
-	function prepare ($data)		{ die('Please implement DBO::prepare() first.'); }
-	function lastError ()			{ die('Please implement DBO::lastError() first.'); }
-	function lastAffected ()		{ die('Please implement DBO::lastAffected() first.'); }
-	function lastNumRows ($result){ die('Please implement DBO::lastNumRows() first.'); }
-	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
+	function connect ($config) {
+		die('Please implement DBO::connect() first.');
+	}
+
+	function disconnect () {
+		die('Please implement DBO::disconnect() first.');
+	}
+
+	function execute ($sql) {
+		die('Please implement DBO::execute() first.');
+	}
+
+	function fetchRow ($result) {
+		die('Please implement DBO::fetchRow() first.');
+	}
+
+	function tables() {
+		die('Please implement DBO::tables() first.');
+	}
+
+	function fields ($table_name) {
+		die('Please implement DBO::fields() first.');
+	}
+
+	function prepare ($data) {
+		die('Please implement DBO::prepare() first.');
+	}
+
+	function lastError ($result) {
+		die('Please implement DBO::lastError() first.');
+	}
+
+	function lastAffected () {
+		die('Please implement DBO::lastAffected() first.');
+	}
+
+	function lastNumRows ($result) {
+		die('Please implement DBO::lastNumRows() first.');
+	}
+
+	function lastInsertId () {
+		die('Please implement DBO::lastInsertId() first.');
+	}
 
 /**
   * Enter description here...

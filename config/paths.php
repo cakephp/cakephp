@@ -65,6 +65,18 @@ define ('HELPERS',         APP.'helpers'.DS);
 define ('VIEWS',      	   APP.'views'.DS);
 
 /**
+ * Path to the application view layouts directory.
+ */
+define ('LAYOUTS',             APP.'views'.DS.'layouts'.DS);
+
+/**
+ * Path to the application view elements directory.
+ * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
+ * and are not linked to a particular layout (like polls, footers and so on)
+ */
+define ('ELEMENTS',            APP.'views'.DS.'elements'.DS);
+
+/**
  * Path to the configuration files directory.
  */
 define ('CONFIGS',     ROOT.'config'.DS);

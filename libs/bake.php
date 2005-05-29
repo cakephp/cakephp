@@ -203,6 +203,7 @@ class %sTest extends TestCase {
 	 * @uses Bake::actions Adds one action for each run.
 	 */
 	function newView ($controller, $name) {
+		$controller = Inflector::pluralize($controller);
 		$dir = Inflector::underscore($controller);
 		$path = $dir.DS.strtolower($name).".thtml";
 		$this->createDir(VIEWS.$dir);
@@ -218,6 +219,7 @@ class %sTest extends TestCase {
 	 * @param string $name
 	 * @param array $actions
 	 * @access private
+	 * @uses Inflector::pluralize()
 	 * @uses Bake::makeController()
 	 * @uses Bake::makeControllerTest()
 	 * @uses Bake::makeHelper()
@@ -225,6 +227,7 @@ class %sTest extends TestCase {
 	 * @uses Bake::actions Adds one action for each run.
 	 */
 	function newController ($name, $actions=array()) {
+	    $name = Inflector::pluralize($name);
 		$this->makeController($name, $actions);
 		$this->makeControllerTest($name);
 		$this->makeHelper($name);

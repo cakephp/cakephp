@@ -37,7 +37,7 @@
 /**
   * Enter description here...
   */
-uses('model', 'template', 'inflector');
+uses('model', 'template', 'inflector', 'folder');
 
 /**
   * Enter description here...
@@ -110,6 +110,7 @@ class Controller extends Template {
 			die("Controller::__construct() : Can't get or parse my own class name, exiting.");
 
 		$this->name = strtolower($r[1]);
+		$this->viewpath = Inflector::underscore($r[1]);
 
 		$model_class = Inflector::singularize($this->name);
 		if (($this->uses === false) && class_exists($model_class)) {
@@ -243,6 +244,41 @@ class Controller extends Template {
 		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, ''));
 	}
 
+/**
+  * Creates a generic html tag (no content)
+  * 
+  * Examples:
+  * * <i>tag("br") => <br /></i>
+  * * <i>tag("input", array("type" => "text")) => <input type="text" /></i>
+  *
+  * @param string $name name of element
+  * @param array $options html options
+  * @param bool $open is the tag open or closed (default closed "/>")
+  * @return string html tag
+  */	
+      function tag($name, $options=null, $open=false) {
+		$tag = "<$name ". $this->parseHtmlOptions($options);
+		$tag .= $open? ">" : " />";
+		return $tag;
+      }
+
+/**
+  * Creates a generic html tag with content
+  * 
+  * Examples:
+  * * <i>content_tag("p", "Hello world!") => <p>Hello world!</p></i>
+  * * <i>content_tag("div", content_tag("p", "Hello world!"), array("class" => "strong")) => </i>
+  *   <i><div class="strong"><p>Hello world!</p></div></i>
+  *
+  * @param string $name name of element
+  * @param array $options html options
+  * @param bool $open is the tag open or closed (default closed "/>")
+  * @return string html tag
+  */	
+      function contentTag($name, $content, $options=null) {
+		return "<$name ". $this->parseHtmlOptions($options). ">$content</$name>";
+      }
+      
 /**
   * Enter description here...
   *
@@ -426,7 +462,26 @@ class Controller extends Template {
 		return sprintf(TAG_CHARSET, $charset);
 	}
 
+/**
+  * Returns a javascript script tag
+  *
+  * @param string $script the javascript
+  * @return string
+  */
+	function javascriptTag ($script) {
+		return sprintf(TAG_JAVASCRIPT, $script);
+	}
 
+/**
+  * Returns a javascript include tag
+  *
+  * @param string $url url to javascript file.
+  * @return string
+  */
+	function javascriptIncludeTag ($url) {
+		return sprintf(TAG_JAVASCRIPT_INCLUDE, $this->base.$url);
+	}
+	
 /**
   * Enter description here...
   *
@@ -471,6 +526,29 @@ class Controller extends Template {
 		return join("\n", $out);
 	}
 
+/**
+  * Generates a nested <UL> tree from an array
+  *
+  * @param array $data
+  * @param array $htmlOptions
+  * @param string $bodyKey
+  * @param childrenKey $bodyKey
+  * @return string
+  */
+	function guiListTree ($data, $htmlOptions=null, $bodyKey='body', $childrenKey='children') {
+		$out = "<ul".$this->parseHtmlOptions($htmlOptions).">\n";
+
+		foreach ($data as $item) {
+			$out .= "<li>{$item[$bodyKey]}</li>\n";
+			if (isset($item[$childrenKey]) && is_array($item[$childrenKey]) && count($item[$childrenKey])) {
+				$out .= $this->guiListTree($item[$childrenKey], $htmlOptions, $bodyKey, $childrenKey);
+			}
+		}
+
+		$out .= "</ul>\n";
+
+		return $out;
+	}
 
 /**
   * Enter description here...

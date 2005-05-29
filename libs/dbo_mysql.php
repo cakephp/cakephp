@@ -41,7 +41,7 @@
   *
   */
 
-uses('object', 'dbo');
+uses('dbo');
 /**
   * Enter description here...
   *

@@ -32,13 +32,11 @@
 
 /**
   * Enter description here...
-  *
   */
 
 uses('object', 'dbo');
 /**
   * Enter description here...
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -147,7 +145,7 @@ class DBO_Postgres extends DBO {
   * @return unknown
   */
 	function prepare ($data) {
-		return "'".str_replace('"', '\"', str_replace('$', '$', $data))."'";
+		return "'".pg_escape_string($data)."'";
 	}
 
 /**

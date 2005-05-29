@@ -135,4 +135,14 @@ define('TAG_CSS',          '<link rel="%s" type="text/css" href="%s" />');
  */
 define('TAG_CHARSET',      '<meta http-equiv="Content-Type" content="text/html; charset=%s" />');
 
+/**
+ * Tag template for inline JavaScript
+ */
+define('TAG_JAVASCRIPT', '<script language="javascript" type="text/javascript">%s</script>');
+
+/**
+ * Tag template for included JavaScript
+ */
+define('TAG_JAVASCRIPT_INCLUDE', '<script language="javascript" type="text/javascript" src="%s"></script>');
+
 ?>

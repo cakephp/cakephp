@@ -110,12 +110,86 @@ class Time extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $date_string
+  * @param string $date_string
   * @return unknown
   */
 	function fromString ($date_string) {
 		return strtotime($date_string);
 	}
+
+/**
+  * Formats date for Atom RSS feeds
+  *
+  * @param datetime $date
+  * @return string
+  */
+	function toRss ($date) {
+		return date('Y-m-d', $date).'T'.date('H:i:s', $date).'Z';
+	}
+
+/**     
+ *      This function returns either a relative date or a formatted date depending
+ *      on the difference between the current datetime and the datetime passed.
+ *      $datetime should be in a <i>strtotime<i/i> parsable format like MySQL datetime.
+ *      
+ *      Relative dates look something like this:
+ *          3 weeks, 4 days ago
+ *	    15 seconds ago
+ *      Formatted dates look like this:
+ *          on 02/18/2004
+ *      
+ *      The function includes 'ago' or 'on' and assumes you'll properly add a word
+ *      like 'Posted ' before the function output.
+ *      
+ * @param $datetimne	time in strtotime parsable format
+ * @return	 string	relative time string.
+ */
+
+	function timeAgoInWords ($datetime) {
+
+	    $in_seconds=strtotime($datetime);
+	    $diff = time()-$in_seconds;
+	    $months = floor($diff/2419200);
+	    $diff -= $months*2419200;
+	    $weeks = floor($diff/604800);
+	    $diff -= $weeks*604800;
+	    $days = floor($diff/86400);
+	    $diff -= $days*86400;
+	    $hours = floor($diff/3600);
+	    $diff -= $hours*3600;
+	    $minutes = floor($diff/60);
+	    $diff -= $minutes*60;
+	    $seconds = $diff;
+	
+	    if ($months>0) {
+	        // over a month old, just show date (mm/dd/yyyy format)
+	        return 'on '.date("j/n/Y", $in_seconds);
+	    } else {
+	        $relative_date='';
+	        if ($weeks>0) {
+	            // weeks and days
+	            $relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
+	            $relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
+	        } elseif ($days>0) {
+	            // days and hours
+	            $relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
+	            $relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
+	        } elseif ($hours>0) {
+	            // hours and minutes
+	            $relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
+	            $relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
+	        } elseif ($minutes>0) {
+	            // minutes only
+	            $relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
+	        } else {
+	            // seconds only
+	            $relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
+	        }
+	    }
+	    // show relative date and add proper verbiage
+	    return $relative_date.' ago';
+	}
+	
 }
 
 ?>

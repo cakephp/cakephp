@@ -208,7 +208,7 @@ class Template extends Object {
 		$layout_fn = $this->_getLayoutFn();
 
 		$data_for_layout = array_merge($this->_view_vars, array(
-			'title_for_layout'=>$this->_page_title !== false? $this->_page_title: ucfirst($this->name),
+			'title_for_layout'=>$this->_page_title !== false? $this->_page_title: Inflector::humanize($this->viewpath),
 			'content_for_layout'=>$content_for_layout));
 
 		if (is_file($layout_fn)) {
@@ -230,6 +230,21 @@ class Template extends Object {
 	}
 
 /**
+  * Renders a piece of PHP with provided params and returns HTML, XML, or any other string.
+  *
+  * @param unknown_type $content_for_layout
+  * @return unknown
+  */
+	function renderElement ($name, $params=array()) {
+		$fn = ELEMENTS.$name.'.thtml';
+
+		if (!file_exists($fn))
+			return "(Error rendering {$name})";
+
+		return $this->_render($fn, $params);
+	}
+
+/**
   * Enter description here...
   *
   * @return unknown
@@ -245,7 +260,7 @@ class Template extends Object {
   * @return unknown
   */
 	function _getViewFn($action) {
-		return VIEWS.$this->name.DS."{$action}.thtml";
+		return VIEWS.$this->viewpath.DS."{$action}.thtml";
 	}
 
 /**
