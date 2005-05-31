@@ -45,11 +45,6 @@ require (ROOT.'config/core.php');
 require (ROOT.'config/paths.php');
 require (ROOT.'libs/basics.php');
 
-/* for older versions of php */
-// ini_set("include_path", ROOT.'vendors/pear' . PATH_SEPARATOR . ini_get("include_path"));
-// require_once ('PHP/Compat.php');
-// $components = PHP_Compat::loadVersion();
-
 DEBUG? error_reporting(E_ALL): error_reporting(0);
 
 $TIME_START = getMicrotime();
