@@ -50,21 +50,21 @@ class Folder extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var string
   */
 	var $path = null;
 
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   */
 	var $sort = false;
 
 /**
-  * Enter description here...
+  * Constructor.
   *
-  * @param unknown_type $path
+  * @param string $path
   */
 	function __construct ($path=false) {
 		if (empty($path)) $path = getcwd();
@@ -72,19 +72,19 @@ class Folder extends Object {
    }	
 
 /**
-  * Enter description here...
+  * Return current path.
   *
-  * @return unknown
+  * @return string Current path
   */
 	function pwd () {
 		return $this->path;
 	}
 
 /**
-  * Enter description here...
+  * Change directory to $desired_path.
   *
-  * @param unknown_type $desired_path
-  * @return unknown
+  * @param string $desired_path Path to the directory to change to
+  * @return string The new path. Returns false on failure
   */
 	function cd ($desired_path) {
 		$desired_path = realpath($desired_path);
@@ -97,10 +97,11 @@ class Folder extends Object {
 
 
 /**
-  * Enter description here...
+  * Returns an array of the contents of the current directory, or false on failure. 
+  * The returned array holds two arrays: one of dirs and one of files.
   *
-  * @param unknown_type $sort
-  * @return unknown
+  * @param boolean $sort
+  * @return array
   */
 	function ls($sort=true) {
 		if ($dir = opendir($this->path)) {
@@ -128,10 +129,10 @@ class Folder extends Object {
 
 
 /**
-  * Finds all matching files in a directory
+  * Returns an array of all matching files in current directory
   *
-  * @param string $pattern
-  * @return unknown
+  * @param string $pattern Preg_match pattern (Defaults to: .*)
+  * @return array
   */
 	function find ($regexp_pattern='.*') {
 		list($dirs, $files) = $this->ls();
@@ -148,10 +149,10 @@ class Folder extends Object {
 
 
 /**
-  * Enter description here...
+  * Returns an array of all matching files in and below current directory
   *
-  * @param unknown_type $pattern
-  * @return unknown
+  * @param string $pattern Preg_match pattern (Defaults to: .*)
+  * @return array Files matching $pattern
   */
 	function findRecursive ($pattern='.*') {
 		$starts_on = $this->path;
@@ -161,10 +162,10 @@ class Folder extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Private helper function for findRecursive.
   *
-  * @param unknown_type $pattern
-  * @return unknown
+  * @param string $pattern
+  * @return array Files matching pattern
   */
 	function _findRecursive ($pattern) {
 		list($dirs, $files) = $this->ls();
@@ -186,61 +187,61 @@ class Folder extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given $path is a Windows path.
   *
-  * @param unknown_type $path
-  * @return unknown
+  * @param string $path Path to check
+  * @return boolean 
   */
 	function isWindowsPath ($path) {
 		return preg_match('#^[A-Z]:\\\#i', $path)? true: false;
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given $path is an absolute path.
   *
-  * @param unknown_type $path
-  * @return unknown
+  * @param string $path Path to check
+  * @return boolean 
   */
 	function isAbsolute ($path) {
 		return preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
   *
-  * @param unknown_type $path
-  * @return unknown
+  * @param string $path Path to check
+  * @return boolean
   */
 	function isSlashTerm ($path) {
 		return preg_match('#[\\\/]$#', $path)? true: false;
 	}
 
 /**
-  * Enter description here...
+  * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
   *
-  * @param unknown_type $path
-  * @return unknown
+  * @param string $path Path to check
+  * @return string Set of slashes ("\\" or "/")
   */
 	function correctSlashFor ($path) {
 		return Folder::isWindowsPath($path)? '\\': '/';
 	}
 
 /**
-  * Enter description here...
+  * Returns $path with added terminating slash (corrected for Windows or other OS).
   *
-  * @param unknown_type $path
-  * @return unknown
+  * @param string $path Path to check
+  * @return string
   */
 	function slashTerm ($path) {
 		return $path . (Folder::isSlashTerm($path)? null: Folder::correctSlashFor($path));
 	}
 
 /**
-  * Enter description here...
+  * Returns $path with $element added, with correct slash in-between.
   *
-  * @param unknown_type $path
-  * @param unknown_type $element
-  * @return unknown
+  * @param string $path
+  * @param string $element
+  * @return string
   */
 	function addPathElement ($path, $element) {
 		return Folder::slashTerm($path).$element;

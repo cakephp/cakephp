@@ -58,20 +58,20 @@ class Object {
 	}
 
 /**
-  * Class constructor, overriden in descendant classes
+  * Class constructor, overriden in descendant classes.
   */
 	function __construct() {
 	}
 
 /**
-  * Class destructor, overriden in descendant classes
+  * Class destructor, overriden in descendant classes.
   */
 	function __destruct() {
 	}
 
 /**
-  * Object-to-string conversion
-  * Each class can override it as necessary
+  * Object-to-string conversion.
+  * Each class can override it as necessary.
   *
   * @return string this class' name
   */
@@ -80,9 +80,9 @@ class Object {
 	}
 
 /**
-  * API for logging events
+  * API for logging events.
   *
-  * @param string $msg
+  * @param string $msg Log message
   * @param string $type
   */
 	function log ($msg, $type=LOG_ERROR) {

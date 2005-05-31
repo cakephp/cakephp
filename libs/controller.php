@@ -51,7 +51,7 @@ uses('model', 'template', 'inflector', 'folder');
 class Controller extends Template {
     
 /**
-  * Enter description here...
+  * Name of the controller.
   *
   * @var unknown_type
   * @access public
@@ -75,7 +75,7 @@ class Controller extends Template {
     var $action = null;
 
 /**
-  * Enter description here...
+  * This Controller's Model.
   *
   * @var unknown_type
   * @access public
@@ -99,7 +99,7 @@ class Controller extends Template {
     var $_crumbs = array();
 
 /**
-  * Enter description here...
+  * Constructor. 
   *
   */
 	function __construct () {
@@ -140,7 +140,7 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Redirects to given $url, after turning off $this->autoRender.
   *
   * @param unknown_type $url
   */
@@ -162,30 +162,32 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an URL for a combination of controller and action.
   *
-  * @param unknown_type $url
-  * @return unknown
+  * @param string $url
+  * @return string Full constructed URL as a string.
   */
 	function urlFor ($url=null) {
 		if (empty($url)) {
-			return $this->base.'/'.strtolower($this->params['controller']).'/'.strtolower($this->params['action']);
+			$out = $this->base.'/'.strtolower($this->params['controller']).'/'.strtolower($this->params['action']);
 		}
 		elseif ($url[0] == '/') {
-			return $this->base . $url;
+			$out = $this->base . $url;
 		}
 		else {
-			return $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
+			$out = $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
 		}
+
+		return ereg_replace('&([^a])', '&amp;\1', $out);
 	}
 
 /**
-  * Enter description here...
+  * Returns a space-separated string with items of the $options array.
   *
-  * @param unknown_type $options
-  * @param unknown_type $insert_before
+  * @param array $options Array of HTML options.
+  * @param string $insert_before
   * @param unknown_type $insert_after
-  * @return unknown
+  * @return string
   */
 	function parseHtmlOptions ($options, $insert_before=' ', $insert_after=null) {
 		if (is_array($options)) {
@@ -202,13 +204,13 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an HTML link to $url for given $title, optionally using $html_options and $confirm_message (for "flash").
   *
-  * @param unknown_type $title
-  * @param unknown_type $url
-  * @param unknown_type $html_options
-  * @param unknown_type $confirm_message
-  * @return unknown
+  * @param string $title The content of the A tag.
+  * @param string $url
+  * @param array $html_options Array of HTML options.
+  * @param string $confirm_message Message to be shown in "flash".
+  * @return string
   */
 	function linkTo ($title, $url, $html_options=null, $confirm_message=false) {
 		$confirm_message? $html_options['onClick'] = "return confirm('{$confirm_message}')": null;
@@ -216,12 +218,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an external HTML link to $url for given $title, optionally using $html_options.
   *
-  * @param unknown_type $title
-  * @param unknown_type $url
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $title
+  * @param string $url
+  * @param array $html_options
+  * @return string
   */
 	function linkOut ($title, $url=null, $html_options=null) {
 		$url = $url? $url: $title;
@@ -229,32 +231,31 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an HTML FORM element. 
   *
-  * @param unknown_type $target
-  * @param unknown_type $type
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $target URL for the FORM's ACTION attribute.
+  * @param string $type FORM type (POST/GET).
+  * @param array $html_options
+  * @return string An formatted opening FORM tag.
   */
 	function formTag ($target=null, $type='post', $html_options=null) {
 		$html_options['action'] = $this->UrlFor($target);
 		$html_options['method'] = $type=='get'? 'get': 'post';
 		$type == 'file'? $html_options['enctype'] = 'multipart/form-data': null;
-
 		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, ''));
 	}
 
 /**
-  * Creates a generic html tag (no content)
+  * Returns a generic HTML tag (no content). 
   * 
   * Examples:
   * * <i>tag("br") => <br /></i>
   * * <i>tag("input", array("type" => "text")) => <input type="text" /></i>
   *
-  * @param string $name name of element
-  * @param array $options html options
-  * @param bool $open is the tag open or closed (default closed "/>")
-  * @return string html tag
+  * @param string $name Name of HTML element
+  * @param array $options HTML options
+  * @param bool $open Is the tag open or closed? (defaults to closed "/>")
+  * @return string The formatted HTML tag
   */	
       function tag($name, $options=null, $open=false) {
 		$tag = "<$name ". $this->parseHtmlOptions($options);
@@ -263,28 +264,28 @@ class Controller extends Template {
       }
 
 /**
-  * Creates a generic html tag with content
+  * Returns a generic HTML tag with content.
   * 
   * Examples:
   * * <i>content_tag("p", "Hello world!") => <p>Hello world!</p></i>
   * * <i>content_tag("div", content_tag("p", "Hello world!"), array("class" => "strong")) => </i>
   *   <i><div class="strong"><p>Hello world!</p></div></i>
   *
-  * @param string $name name of element
-  * @param array $options html options
-  * @param bool $open is the tag open or closed (default closed "/>")
-  * @return string html tag
+  * @param string $name Name of HTML element
+  * @param array $options HTML options
+  * @param bool $open Is the tag open or closed? (defaults to closed "/>")
+  * @return string The formatted HTML tag
   */	
       function contentTag($name, $content, $options=null) {
 		return "<$name ". $this->parseHtmlOptions($options). ">$content</$name>";
       }
       
 /**
-  * Enter description here...
+  * Returns a formatted SUBMIT button for HTML FORMs.
   *
-  * @param unknown_type $caption
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $caption Text on SUBMIT button
+  * @param array $html_options HTML options
+  * @return string The formatted SUBMIT button
   */
 	function submitTag ($caption='Submit', $html_options=null) {
 		$html_options['value'] = $caption;
@@ -292,12 +293,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted INPUT tag for HTML FORMs.
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $size
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name Name attribute for INPUT element
+  * @param int $size Size attribute for INPUT element
+  * @param array $html_options
+  * @return string The formatted INPUT element
   */
 	function inputTag ($tag_name, $size=20, $html_options=null) {
 		$html_options['size'] = $size;
@@ -307,12 +308,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an INPUT element with type="password".
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $size
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param int $size
+  * @param array $html_options
+  * @return string
   */
 	function passwordTag ($tag_name, $size=20, $html_options=null) {
 		$html_options['size'] = $size;
@@ -321,12 +322,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an INPUT element with type="hidden".
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $value
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param string $value
+  * @param array $html_options
+  * @return string
   */
 	function hiddenTag ($tag_name, $value=null, $html_options=null) {
 		$html_options['value'] = $value? $value: $this->tagValue($tag_name);
@@ -334,24 +335,24 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an INPUT element with type="file".
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param array $html_options
+  * @return string
   */
 	function fileTag ($tag_name, $html_options=null) {
 		return sprintf(TAG_FILE, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
 	}
 
 /**
-  * Enter description here...
+  * Returns a TEXTAREA element.
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $cols
-  * @param unknown_type $rows
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param int $cols
+  * @param int $rows
+  * @param array $html_options
+  * @return string
   */
 	function areaTag ($tag_name, $cols=60, $rows=10, $html_options=null) {
 		$value = empty($html_options['value'])? $this->tagValue($tag_name): empty($html_options['value']);
@@ -361,12 +362,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns an INPUT element with type="checkbox". Checkedness is to be passed as string "checked" with the key "checked" in the $html_options array.
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $title
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param string $title
+  * @param array $html_options
+  * @return string
   */
 	function checkboxTag ($tag_name, $title=null, $html_options=null) {
 		$this->tagValue($tag_name)? $html_options['checked'] = 'checked': null;
@@ -375,13 +376,13 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a set of radio buttons. 
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $options
-  * @param unknown_type $inbetween
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $tag_name
+  * @param array $options Array of options to select from
+  * @param string $inbetween String to separate options. See PHP's implode() function
+  * @param array $html_options
+  * @return string
   */
 	function radioTags ($tag_name, $options, $inbetween=null, $html_options=null) {
 		$value = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
@@ -399,13 +400,13 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a SELECT element, 
   *
-  * @param unknown_type $tag_name
-  * @param unknown_type $options
-  * @param unknown_type $outer_options
-  * @param unknown_type $inner_options
-  * @return unknown
+  * @param string $tag_name Name attribute of the SELECT
+  * @param array $options Array of the OPTION elements to be used in the SELECT element
+  * @param array $outer_options Array of HTML options for the opening SELECT element
+  * @param array $inner_options 
+  * @return string Formatted SELECT element
   */
 	function selectTag ($tag_name, $options, $outer_options=null, $inner_options=null) { 
 		if (!is_array($options) || !count($options))
@@ -425,12 +426,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted IMG element.
   *
-  * @param unknown_type $path
-  * @param unknown_type $alt
-  * @param unknown_type $html_options
-  * @return unknown
+  * @param string $path Path to the image file
+  * @param string $alt ALT attribute for the IMG tag
+  * @param array $html_options
+  * @return string Formatted IMG tag
   */
 	function imageTag ($path, $alt=null, $html_options=null) {
 		$url = "{$this->base}/images/{$path}";
@@ -439,12 +440,12 @@ class Controller extends Template {
 
 
 /**
-  * Returns a CSS link meta-tag
+  * Returns a LINK element for CSS stylesheets.
   *
-  * @param string $path
-  * @param string $rel
+  * @param string $path Path to CSS file
+  * @param string $rel Rel attribute. Defaults to "stylesheet".
   * @param array $html_options
-  * @return string
+  * @return string Formatted LINK element.
   */
 	function cssTag ($path, $rel='stylesheet', $html_options=null) {
 		$url = "{$this->base}/css/{$path}.css";
@@ -463,19 +464,19 @@ class Controller extends Template {
 	}
 
 /**
-  * Returns a javascript script tag
+  * Returns a JavaScript script tag.
   *
-  * @param string $script the javascript
-  * @return string
+  * @param string $script The JavaScript to be wrapped in SCRIPT tags.
+  * @return string The full SCRIPT element, with the JavaScript inside it.
   */
 	function javascriptTag ($script) {
 		return sprintf(TAG_JAVASCRIPT, $script);
 	}
 
 /**
-  * Returns a javascript include tag
+  * Returns a JavaScript include tag
   *
-  * @param string $url url to javascript file.
+  * @param string $url URL to JavaScript file.
   * @return string
   */
 	function javascriptIncludeTag ($url) {
@@ -483,12 +484,12 @@ class Controller extends Template {
 	}
 	
 /**
-  * Enter description here...
+  * Returns a row of formatted and named TABLE headers.
   *
-  * @param unknown_type $names
-  * @param unknown_type $tr_options
-  * @param unknown_type $th_options
-  * @return unknown
+  * @param array $names
+  * @param array $tr_options
+  * @param array $th_options
+  * @return string
   */
 	function tableHeaders ($names, $tr_options=null, $th_options=null) {
 		$args = func_get_args();
@@ -501,12 +502,12 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted string of table rows (TR's with TD's in them).
   *
-  * @param unknown_type $data
-  * @param unknown_type $tr_options
-  * @param unknown_type $td_options
-  * @return unknown
+  * @param array $data Array of table data
+  * @param array $tr_options HTML options for TR elements
+  * @param array $td_options HTML options for TD elements
+  * @return string
   */
 	function tableCells ($data, $odd_tr_options=null, $even_tr_options=null) {
 		if (empty($data[0]) || !is_array($data[0]))
@@ -527,7 +528,7 @@ class Controller extends Template {
 	}
 
 /**
-  * Generates a nested <UL> tree from an array
+  * Generates a nested <UL> (unordered list) tree from an array
   *
   * @param array $data
   * @param array $htmlOptions
@@ -551,19 +552,19 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns value of $tag_name. False is the tag does not exist.
   *
-  * @param unknown_type $tag_name
-  * @return unknown
+  * @param string $tag_name
+  * @return unknown Value of the named tag.
   */
 	function tagValue ($tag_name) {
 		return isset($this->params['data'][$tag_name])? $this->params['data'][$tag_name]: false;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of errors in a submitted FORM.
   *
-  * @return unknown
+  * @return int Number of errors
   */
 	function validate () {
 		$args = func_get_args();
@@ -573,9 +574,9 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Validates a FORM according to the rules set up in the Model.
   *
-  * @return unknown
+  * @return int Number of errors
   */
 	function validateErrors () {
 		$objects = func_get_args();
@@ -590,11 +591,11 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted error message for given FORM field, NULL if no errors.
   *
-  * @param unknown_type $field
-  * @param unknown_type $text
-  * @return unknown
+  * @param string $field
+  * @param string $text
+  * @return string If there are errors this method returns an error message, else NULL. 
   */
 	function tagErrorMsg ($field, $text) {
 		if ($error = $this->tagIsInvalid($field)) {
@@ -606,7 +607,7 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
   *
   * @param unknown_type $field
   * @return unknown
@@ -618,19 +619,19 @@ class Controller extends Template {
 
 
 /**
-  * Enter description here...
+  * Adds $name and $link to the breadcrumbs array.
   *
-  * @param unknown_type $name
-  * @param unknown_type $link
+  * @param string $name Text for link
+  * @param string $link URL for link
   */
 	function addCrumb ($name, $link) {
 		$this->_crumbs[] = array ($name, $link);
 	}
 
 /**
-  * Enter description here...
+  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
   *
-  * @return unknown
+  * @return string Formatted &raquo;-separated list of breadcrumb links. Returns NULL if $this->_crumbs is empty.
   */
 	function getCrumbs () {
 
@@ -648,16 +649,341 @@ class Controller extends Template {
 	}
 
 /**
-  * Enter description here...
+  * Displays an error page to the user. Uses layouts/error.html to render the page.
   *
-  * @param unknown_type $code
-  * @param unknown_type $name
-  * @param unknown_type $message
+  * @param int $code Error code (for instance: 404)
+  * @param string $name Name of the error (for instance: Not Found)
+  * @param string $message Error message
   */
 	function error ($code, $name, $message) {
 		header ("HTTP/1.0 {$code} {$name}");
 		print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
 	}
+
+/**
+  * Returns link to javascript function
+  * 
+  * Returns a link that'll trigger a javascript function using the 
+  * onclick handler and return false after the fact.
+  * 
+  * Examples:
+  * <code>
+  *   linkToFunction("Greeting", "alert('Hello world!')");
+  *   linkToFunction(imageTag("delete"), "if confirm('Really?'){ do_delete(); }");
+  * </code>
+  *
+  * @param string $title title of link
+  * @param string $func javascript function to be called on click
+  * @param array $html_options html options for link
+  * @return string html code for link to javascript function
+  */
+	function linkToFunction ($title, $func, $html_options=null) {
+		$html_options['onClick'] = "$func; return false;";
+		return $this->linkTo($title, '#', $html_options);
+	}
+
+/**
+  * Returns link to remote action
+  * 
+  * Returns a link to a remote action defined by <i>options[url]</i> 
+  * (using the urlFor format) that's called in the background using 
+  * XMLHttpRequest. The result of that request can then be inserted into a
+  * DOM object whose id can be specified with <i>options[update]</i>. 
+  * Usually, the result would be a partial prepared by the controller with
+  * either renderPartial or renderPartialCollection. 
+  *
+  * Examples:
+  * <code>
+  *  linkToRemote("Delete this post", 
+  *  		array("update" => "posts", "url" => "delete/{$postid->id}"));
+  *  linkToRemote(imageTag("refresh"), 
+  *		array("update" => "emails", "url" => "list_emails" ));
+  * </code>
+  *
+  * By default, these remote requests are processed asynchronous during 
+  * which various callbacks can be triggered (for progress indicators and
+  * the likes).
+  *
+  * Example:
+  * <code>
+  *   linkToRemote (word,
+  *       array("url" => "undo", "n" => word_counter),
+  *       array("complete" => "undoRequestCompleted(request)"));
+  * </code> 
+  *
+  * The callbacks that may be specified are:
+  *
+  * - <i>loading</i>::       Called when the remote document is being 
+  *                           loaded with data by the browser.
+  * - <i>loaded</i>::        Called when the browser has finished loading
+  *                           the remote document.
+  * - <i>interactive</i>::   Called when the user can interact with the 
+  *                           remote document, even though it has not 
+  *                           finished loading.
+  * - <i>complete</i>::      Called when the XMLHttpRequest is complete.
+  *
+  * If you for some reason or another need synchronous processing (that'll
+  * block the browser while the request is happening), you can specify 
+  * <i>options[type] = synchronous</i>.
+  *
+  * You can customize further browser side call logic by passing
+  * in Javascript code snippets via some optional parameters. In
+  * their order of use these are:
+  *
+  * - <i>confirm</i>::      Adds confirmation dialog.
+  * -<i>condition</i>::    Perform remote request conditionally
+  *                          by this expression. Use this to
+  *                          describe browser-side conditions when
+  *                          request should not be initiated.
+  * - <i>before</i>::       Called before request is initiated.
+  * - <i>after</i>::        Called immediately after request was
+  *  		             initiated and before <i>loading</i>.
+  *
+  * @param string $title title of link
+  * @param array $options options for javascript function
+  * @param array $html_options options for link
+  * @return string html code for link to remote action
+  */
+  	function linkToRemote ($title, $options=null, $html_options=null) {
+		return $this->linkToFunction($title, $this->remoteFunction($options), $html_options);
+	}
+	
+/**
+  * Creates javascript function for remote AJAX call
+  * 
+  * This function creates the javascript needed to make a remote call 
+  * it is primarily used as a helper for linkToRemote.
+  * 
+  * @see linkToRemote() for docs on options parameter.
+  *
+  * @param array $options options for javascript 
+  * @return string html code for link to remote action
+  */
+     	function remoteFunction ($options=null) {
+		$javascript_options = $this->__optionsForAjax($options);
+		$func = isset($options['update'])? 
+			"new Ajax.Updater('{$options['update']}', " :
+			"new Ajax.Request(";
+		
+		$func .= "'" . $this->urlFor($options['url']) . "'";
+		$func .= ", $javascript_options)";
+		
+		if (isset($options['before']))
+			$func .= "{$options['before']}; $function";
+		if (isset($options['after']))
+			$func .= "$func; {$options['before']};";
+		if (isset($options['condition']))
+			$func .= "if ({$options['condition']}) { $func; }";
+		if (isset($options['confirm']))
+			$func .= "if (confirm('" . $this->escapeJavascript($options['confirm']) . "')) { $func; }";
+			
+		return $func;
+	}
+
+/**
+  * Escape carrier returns and single and double quotes for Javascript segments. 
+  * 
+  * @param string $javascript string that might have javascript elements
+  * @return string escaped string
+  */	
+      function escapeJavascript ($javascript) {
+		$javascript = str_replace(array("\r\n","\n","\r"),'\n', $javascript);
+		$javascript = str_replace(array('"', "'"), array('\"', "\\'"), $javascript);
+		return $javascript;
+      }
+      
+/**
+  * Periodically call remote url via AJAX. 
+  * 
+  * Periodically calls the specified url (<i>options[url]</i>) every <i>options[frequency]</i> seconds (default is 10).
+  * Usually used to update a specified div (<i>options[update]</i>) with the results of the remote call.
+  * The options for specifying the target with url and defining callbacks is the same as linkToRemote.
+  *
+  * @param array $options callback options
+  * @return string javascript code
+  */	
+      function periodicallyCallRemote ($options=null) {
+		$frequency = (isset($options['frequency']))? $options['frequency'] : 10;
+		$code = "new PeriodicalExecuter(function() {" . $this->remote_function($options) . "}, $frequency)";
+		return $this->javascriptTag($code);
+      }
+
+/**
+  * Returns form tag that will submit using Ajax.
+  * 
+  * Returns a form tag that will submit using XMLHttpRequest in the background instead of the regular 
+  * reloading POST arrangement. Even though it's using Javascript to serialize the form elements, the form submission 
+  * will work just like a regular submission as viewed by the receiving side (all elements available in params).
+  * The options for specifying the target with :url and defining callbacks is the same as link_to_remote.
+  *
+  * @param array $options callback options
+  * @return string javascript code
+  */	
+      function formRemoteTag ($options=null) {
+		$options['form'] = true;
+		$options['html']['onsubmit']=$this->remoteFunction($options) . "; return false;";
+		return $this->tag("form", $options['html'], true);
+      }
+     
+/**
+  * Returns a button input tag that will submit using Ajax
+  * 
+  * Returns a button input tag that will submit form using XMLHttpRequest in the background instead of regular
+  * reloading POST arrangement. <i>options</i> argument is the same as in <i>form_remote_tag</i>
+  *
+  * @param string $name input button name
+  * @param string $value input button value
+  * @param array $options callback options
+  * @return string ajaxed input button
+  */ 
+	function submitToRemote ($name, $value, $options = null) {
+		$options['with'] = 'Form.serialize(this.form)';
+		$options['html']['type'] = 'button';
+		$options['html']['onclick'] = $this->remoteFunction($options)."; return false;";
+		$options['html']['name'] = $name;
+		$options['html']['value'] = $value;
+		return $this->tag("input", $options['html'], false);
+	}
+	
+       
+/**
+  * Includes the Prototype Javascript library (and anything else) inside a single script tag
+  * 
+  * Note: The recommended approach is to copy the contents of
+  * lib/javascripts/ into your application's
+  * public/javascripts/ directory, and use @see javascriptIncludeTag() to 
+  * create remote script links.
+  * @return string script with all javascript in /javascripts folder
+  */ 
+	function defineJavascriptFunctions () {
+		$dir = VENDORS."/javascript";
+		$folder = new Folder($dir);
+		$files = $folder->find('.*\.js');
+
+		$javascript = '';
+		foreach($files as $file) {
+			if (substr($file, -3)=='.js') {
+				$javascript .= file_get_contents("$dir/$file") . "\n\n";
+			}
+		}
+		return $this->javascriptTag($javascript);
+	}
+      
+/**
+  * Observe field and call ajax on change.
+  * 
+  * Observes the field with the DOM ID specified by <i>field_id</i> and makes
+  * an Ajax when its contents have changed.
+  * 
+  * Required +options+ are:
+  * - <i>frequency</i>:: The frequency (in seconds) at which changes to
+  *                       this field will be detected.
+  * - <i>url</i>::       @see urlFor() -style options for the action to call
+  *                       when the field has changed.
+  * 
+  * Additional options are:
+  * - <i>update</i>::    Specifies the DOM ID of the element whose 
+  *                       innerHTML should be updated with the
+  *                       XMLHttpRequest response text.
+  * - <i>with</i>::      A Javascript expression specifying the
+  *                       parameters for the XMLHttpRequest. This defaults
+  *                       to Form.Element.serialize('$field_id'), which can be
+  *                       accessed from params['form']['field_id'].
+  *
+  * Additionally, you may specify any of the options documented in
+  * @see linkToRemote().
+  *
+  * @param string $field_id DOM ID of field to observe
+  * @param array $options ajax options
+  * @return string ajax script
+  */ 
+	function observeField ($field_id, $options = null) {
+		if (!isset($options['with']))
+			$options['with'] = "Form.Element.serialize('$field_id')";
+		return $this->__buildObserver('Form.Element.Observer', $field_id, $options);
+	}
+
+/**
+  * Observe entire form and call ajax on change.
+  * 
+  * Like @see observeField(), but operates on an entire form identified by the
+  * DOM ID <b>form_id</b>. <b>options</b> are the same as <b>observe_field</b>, except 
+  * the default value of the <i>with</i> option evaluates to the
+  * serialized (request string) value of the form.
+  *
+  * @param string $field_id DOM ID of field to observe
+  * @param array $options ajax options
+  * @return string ajax script
+  */ 
+  	function observeForm ($field_id, $options = null) {
+		//i think this is a rails bug... should be set
+		if (!isset($options['with']))
+			$options['with'] = 'Form.serialize(this.form)';
+			
+		return $this->__buildObserver('Form.Observer', $field_id, $options);
+	}
+
+
+/**
+  * Javascript helper function (private).
+  *
+  */
+	function __optionsForAjax ($options) {
+	     	$js_options = $this->__buildCallbacks($options);
+	        $js_options['asynchronous'] = 'true';
+	        if (isset($options['type'])) {
+	        	if ($options['type'] == 'synchronous')
+				$js_options['asynchronous'] = 'false';
+		}
+	        if (isset($options['method']))
+	        	$js_options['method'] = $this->__methodOptionToString($options['method']);
+		if (isset($options['position']))
+	        	$js_options['insertion'] = "Insertion." . Inflector::camelize($options['position']);
+		
+	        if (isset($options['form'])) {
+	          $js_options['parameters'] = 'Form.serialize(this)';
+	        } elseif (isset($options['with'])) {
+	          $js_options['parameters'] = $options['with'];
+	        }
+	        
+		$out = array();
+		foreach ($js_options as $k => $v) {
+			$out[] = "$k:$v";
+		}
+		$out = join(', ', $out);
+	        $out = '{' . $out . '}';
+	        return $out;
+	}
+
+     
+	function __methodOptionToString ($method) {
+		return (is_string($method) && !$method[0]=="'")? $method : "'$method'";
+	}
+      
+	function __buildObserver ($klass, $name, $options=null) {
+      		if(!isset($options['with']) && isset($options['update'])) {
+      			$options['with'] = 'value';
+      		}
+		$callback = $this->remoteFunction($options);
+		$javascript = "new $klass('$name', ";
+		$javascript .= "{$options['frequency']}, function(element, value) {";
+		$javascript .= "$callback})";
+		return $this->javascriptTag($javascript);
+	}
+            
+	function __buildCallbacks($options) {
+		$actions= array('uninitialized', 'loading', 'loaded', 'interactive', 'complete');
+        	$callbacks=array();
+        	foreach($actions as $callback) {
+        		if(isset($options[$callback])) {
+				$name = 'on' . ucfirst($callback);
+				$code = $options[$callback];
+				$callbacks[$name] = "function(request){".$code."}";
+			}
+        	}
+		return $callbacks;
+	}
+
 }
 
 ?>

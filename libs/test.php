@@ -46,9 +46,9 @@
   */
 
 /**
-  * Enter description here...
+  * Outputs given string.
   *
-  * @param unknown_type $msg
+  * @param string $msg
   */
 function trace($msg) {
 	return;
@@ -63,10 +63,10 @@ if (phpversion() >= '4') {
 /**
   * Enter description here...
   *
-  * @param unknown_type $errno
-  * @param unknown_type $errstr
-  * @param unknown_type $errfile
-  * @param unknown_type $errline
+  * @param unknown_type $errno Error number
+  * @param string $errstr Error string
+  * @param unknown_type $errfile Error filename
+  * @param unknown_type $errline Error on line
   */
 	  function PHPUnit_error_handler($errno, $errstr, $errfile, $errline) {
 	global $PHPUnit_testRunning;
@@ -85,22 +85,22 @@ if (phpversion() >= '4') {
 class TestException {
 	  /* Emulate a Java exception, sort of... */
 /**
-  * Enter description here...
+  * Message of the exception
   *
-  * @var unknown_type
+  * @var string
   */
 	var $message;
 /**
- * Enter description here...
+ * Type of exception
  *
- * @var unknown_type
+ * @var string
  */
 	var $type;
 /**
-  * Enter description here...
+  * Constructor.
   *
-  * @param unknown_type $message
-  * @param unknown_type $type
+  * @param string $message
+  * @param string $type
   * @return TestException
   */
 	function TestException($message, $type = 'FAILURE') {
@@ -108,17 +108,17 @@ class TestException {
 	  $this->type = $type;
 	}
 /**
-  * Enter description here...
+  * Returns the exception's message.
   *
-  * @return unknown
+  * @return string Message of exception
   */
 	function getMessage() {
 	  return $this->message;
 	}
 /**
-  * Enter description here...
+  * Returns the exception's type.
   *
-  * @return unknown
+  * @return string Type of exception
   */
 	function getType() {
 	  return $this->type;
@@ -138,8 +138,8 @@ class Assert {
 /**
   * Enter description here...
   *
-  * @param unknown_type $boolean
-  * @param unknown_type $message
+  * @param boolean $boolean
+  * @param string $message
   */
 	function assert($boolean, $message=0) {
 	  if (! $boolean)
@@ -204,10 +204,10 @@ class Assert {
 	}
 
 /**
-  * Enter description here...
+  * Assert regular expression
   *
-  * @param unknown_type $regexp
-  * @param unknown_type $actual
+  * @param string $regexp
+  * @param string $actual
   * @param unknown_type $message
   */
 	function assertRegexp($regexp, $actual, $message=false) {

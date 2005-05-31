@@ -51,19 +51,19 @@ class Flay extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var string
   */
 	var $text = null;
 
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   */
 	var $allow_html = false;
 
 /**
-  * Enter description here...
+  * Constructor.
   *
   * @param unknown_type $text
   */
@@ -73,10 +73,12 @@ class Flay extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns $text translated to HTML using the Flay syntax. 
   *
-  * @param unknown_type $text
-  * @return unknown
+  * @param string $text Text to format
+  * @param boolean $bare 
+  * @param boolean $allowHtml Set this to trim whitespace and disable all HTML
+  * @return string Formatted text
   */
 	function toHtml ($text=null, $bare=false, $allowHtml=false) {
 

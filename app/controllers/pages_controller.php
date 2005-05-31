@@ -2,6 +2,9 @@
 
 class PagesController extends PagesHelper {
 
+/**
+ *  Displays a view
+ */
 	function display () {
 
 		if (!func_num_args())

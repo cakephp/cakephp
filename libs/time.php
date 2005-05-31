@@ -61,7 +61,7 @@ class Time extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $date_string
+  * @param string $date_string Datetime string
   * @return unknown
   */
 	function niceShort ($date_string=null) {
@@ -78,40 +78,40 @@ class Time extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given datetime string is today.
   *
-  * @param unknown_type $date
-  * @return unknown
+  * @param string $date Datetime string
+  * @return boolean True if datetime string is today
   */
 	function isToday ($date) {
 		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given datetime string is within current year.
   *
-  * @param unknown_type $date
-  * @return unknown
+  * @param string $date Datetime string
+  * @return boolean True if datetime string is within current year
   */
 	function isThisYear ($date) {
 		return date('Y', $date) == date('Y', time());
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given datetime string was yesterday.
   *
-  * @param unknown_type $date
-  * @return unknown
+  * @param string $date Datetime string
+  * @return boolean True if datetime string was yesterday
   */
 	function wasYesterday ($date) {
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
 
 /**
-  * Enter description here...
+  * Returns a Unix timestamp from a textual datetime description. Wrapper for PHP function strtotime().
   *
-  * @param string $date_string
-  * @return unknown
+  * @param string $date_string Datetime string to be represented as a Unix timestamp
+  * @return int Unix timestamp
   */
 	function fromString ($date_string) {
 		return strtotime($date_string);
@@ -134,15 +134,15 @@ class Time extends Object {
  *      
  *      Relative dates look something like this:
  *          3 weeks, 4 days ago
- *	    15 seconds ago
+ *          15 seconds ago
  *      Formatted dates look like this:
  *          on 02/18/2004
  *      
  *      The function includes 'ago' or 'on' and assumes you'll properly add a word
  *      like 'Posted ' before the function output.
  *      
- * @param $datetimne	time in strtotime parsable format
- * @return	 string	relative time string.
+ * @param $datetime	Time in strtotime parsable format
+ * @return string Relative time string.
  */
 
 	function timeAgoInWords ($datetime) {

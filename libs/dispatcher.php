@@ -32,7 +32,7 @@
 
 /**
  * Description:
- * Dispatches the request, creating aproppriate models and controllers.
+ * Dispatches the request, creating appropriate models and controllers.
  */
 
 uses('error_messages', 'object', 'router', 'controller');
@@ -48,7 +48,7 @@ uses('error_messages', 'object', 'router', 'controller');
   */
 class Dispatcher extends Object {
 /**
-  * Enter description here...
+  * Base URL
   *
   * @var unknown_type
   */
@@ -56,12 +56,12 @@ class Dispatcher extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var array
   */
 	var $passed_args = array();
 
 /**
-  * Enter description here...
+  * Constructor.
   *
   */
 	function __construct () {
@@ -72,7 +72,7 @@ class Dispatcher extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $url
+  * @param string $url
   * @return unknown
   */
 	function dispatch ($url) {
@@ -122,10 +122,10 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
   *
-  * @param unknown_type $from_url
-  * @return unknown
+  * @param string $from_url
+  * @return array Parameters found in POST and GET.
   */
 	function parseParams ($from_url) {
 		global $_POST, $_FILES;
@@ -147,9 +147,9 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a base URL.
   *
-  * @return unknown
+  * @return string
   */
 	function baseUrl () {
 		global $_SERVER;
@@ -170,11 +170,11 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Displays an error page (e.g. 404 Not found).
   *
-  * @param unknown_type $code
-  * @param unknown_type $name
-  * @param unknown_type $message
+  * @param int $code Error code (e.g. 404)
+  * @param string $name Name of the error message (e.g. Not found)
+  * @param string $message
   */
 	function error ($code, $name, $message) {
 		$controller = new Controller ($this);
@@ -183,7 +183,7 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Convenience method to display a 404 page.
   *
   * @param unknown_type $url
   * @param unknown_type $message
@@ -193,9 +193,9 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * If DEBUG is set, this displays a 404 error with the message that no controller is set. If DEBUG is not set, nothing happens.
   *
-  * @param unknown_type $url
+  * @param string $url
   */
 	function errorNoController ($url) {
 		DEBUG?
@@ -205,10 +205,10 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * If DEBUG is set, this displays a 404 error with the message that the asked-for controller does not exist. If DEBUG is not set, nothing happens.
   *
-  * @param unknown_type $url
-  * @param unknown_type $controller_class
+  * @param string $url
+  * @param string $controller_class
   */
 	function errorUnknownController ($url, $controller_class) {
 		DEBUG? 
@@ -218,9 +218,9 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * If DEBUG is set, this displays a 404 error with the message that no action is set. If DEBUG is not set, nothing happens.
   *
-  * @param unknown_type $url
+  * @param string $url
   */
 	function errorNoAction ($url) {
 		DEBUG? 
@@ -230,11 +230,11 @@ class Dispatcher extends Object {
 	}
 
 /**
-  * Enter description here...
+  * If DEBUG is set, this displays a 404 error with the message that no such action exists. If DEBUG is not set, nothing happens.
   *
-  * @param unknown_type $url
-  * @param unknown_type $controller_class
-  * @param unknown_type $action
+  * @param string $url
+  * @param string $controller_class
+  * @param string $action
   */
 	function errorUnknownAction ($url,$controller_class, $action) {
 		DEBUG? 

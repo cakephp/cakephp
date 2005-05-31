@@ -46,9 +46,9 @@ uses('object', 'dbo');
 class DBO_Postgres extends DBO {
 	
 /**
-  * Enter description here...
+  * Connects to the database using options in the given configuration array.
   *
-  * @param unknown_type $config
+  * @param array $config Configuration array for connecting
   * @return unknown
   */
 	function connect ($config) {
@@ -66,7 +66,7 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Disconnects from database.
   *
   * @return unknown
   */
@@ -75,9 +75,9 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Executes given SQL statement.
   *
-  * @param unknown_type $sql
+  * @param string $sql
   * @return unknown
   */
 	function execute ($sql) {
@@ -85,7 +85,7 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns a row from given resultset.
   *
   * @param unknown_type $res
   * @return unknown
@@ -95,9 +95,9 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
-  * @return unknown
+  * @return array Array of tablenames in the database
   */
 	function tables () {
 		$sql = "SELECT a.relname AS name
@@ -120,10 +120,10 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of the fields in given table name.
   *
-  * @param unknown_type $table_name
-  * @return unknown
+  * @param string $table_name Name of database table to inspect
+  * @return array Fields in table. Keys are name and type
   */
 	function fields ($table_name) {
 		$sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$table_name}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
@@ -139,47 +139,47 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns a quoted and escaped string of $data for use in an SQL statement.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param string $data String to be prepared for use in an SQL statement
+  * @return string Quoted and escaped
   */
 	function prepare ($data) {
 		return "'".pg_escape_string($data)."'";
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted error message from previous database operation.
   *
-  * @return unknown
+  * @return string Error message
   */
 	function lastError () {
 		return pg_last_error()? pg_last_error(): null;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
   *
-  * @return unknown
+  * @return int Number of affected rows
   */
 	function lastAffected () {
 		return $this->_result? pg_affected_rows($this->_result): false;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of rows in previous resultset. If no previous resultset exists, this returns false.
   *
-  * @return unknown
+  * @return int
   */
 	function lastNumRows () {
 		return $this->_result? pg_num_rows($this->_result): false;
 	}
 
 /**
-  * Enter description here...
+  * Returns the ID generated from the previous INSERT operation.
   *
-  * @param unknown_type $table
-  * @param unknown_type $field
+  * @param string $table Name of the database table
+  * @param string $field Name of the ID database field. Defaults to "id"
   * @return unknown
   */
 	function lastInsertId ($table, $field='id') {

@@ -46,35 +46,35 @@ uses('model');
 class Cache extends Model {
 
 /**
-  * Enter description here...
+  * Identifier. Either an MD5 string or NULL.
   *
   * @var unknown_type
   */
 	var $id = null;
 
 /**
-  * Enter description here...
+  * Content container for cache data.
   *
   * @var unknown_type
   */
 	var $data = null;
 
 /**
-  * Enter description here...
+  * Content to be cached.
   *
   * @var unknown_type
   */
 	var $for_caching = null;
 
 /**
-  * Enter description here...
+  * Name of the database table used for caching.
   *
   * @var unknown_type
   */
 	var $use_table = 'cache';
 
 /**
-  * Enter description here...
+  * Constructor. Generates an md5'ed id for internal use. Calls the constructor on Model as well.
   *
   * @param unknown_type $id
   */
@@ -84,7 +84,7 @@ class Cache extends Model {
 	}
 
 /**
-  * Enter description here...
+  * Returns this object's id after setting it. If no $id is given then $this->id is returned.
   *
   * @param unknown_type $id
   * @return unknown
@@ -95,10 +95,10 @@ class Cache extends Model {
 	}
 
 /**
-  * Enter description here...
+  * Save $content in cache for $keep_for seconds.
   *
-  * @param unknown_type $content
-  * @param unknown_type $keep_for
+  * @param string $content Content to keep in cache.
+  * @param int $keep_for Number of seconds to keep data in cache.
   * @return unknown
   */
 	function remember ($content, $keep_for=CACHE_PAGES_FOR) {
@@ -108,11 +108,11 @@ class Cache extends Model {
 	}
 
 /**
-  * Enter description here...
+  * Returns content from the Cache object itself, if the Cache object has a non-empty data property. Else from the database cache.
   *
   * @return unknown
   */
-	function restore () {
+	function restore() {
 		if (empty($this->data['data']))
 			return $this->find("id='{$this->id}' AND expire>NOW()");
 		
@@ -120,29 +120,29 @@ class Cache extends Model {
 	}
 
 /**
-  * Enter description here...
+  * Returns true if the cache data property has current (non-stale) content for given id.
   *
-  * @return unknown
+  * @return boolean
   */
-	function has () {
+	function has() {
 		return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
 	}
 
 /**
-  * Enter description here...
+  * Appends $string to the for_caching property of the Cache object.
   *
-  * @param unknown_type $string
+  * @param string $string
   */
-	function append ($string) {
+	function append($string) {
 		$this->for_caching .= $string;
 	}
 
 /**
-  * Enter description here...
+  * Clears the cache database table.
   *
   * @return unknown
   */
-	function clear () {
+	function clear() {
 		return $this->query("DELETE FROM {$this->use_table}");
 	}
 }

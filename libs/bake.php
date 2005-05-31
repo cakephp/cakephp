@@ -70,7 +70,7 @@ class Bake extends Object {
 	var $stderr = null;
 
 	/**
-	 * Counts taken actions.
+	 * Counts actions taken.
 	 *
 	 * @var integer
 	 * @access private
@@ -78,7 +78,7 @@ class Bake extends Object {
 	var $actions = null;
 
 	/**
-	 * Decides wether to overwrite existing files without asking.
+	 * Decides whether to overwrite existing files without asking.
 	 *
 	 * @var boolean
 	 * @access private
@@ -86,7 +86,7 @@ class Bake extends Object {
 	var $dontAsk = false;
 
 	/**
-	 * Returns template for file generator.
+	 * Returns code template for PHP file generator.
 	 *
 	 * @param string $type
 	 * @return string
@@ -195,8 +195,8 @@ class %sTest extends TestCase {
 	 * @param string $controller
 	 * @param string $name
 	 * @access private
-	 * @uses Inflector::underscore() Underscores directory' name.
-	 * @uses Bake::createDir() Creates new directory in views, depending on the controller's name.
+	 * @uses Inflector::underscore() Underscores directory's name.
+	 * @uses Bake::createDir() Creates new directory in views dir, named after the controller.
 	 * @uses VIEWS
 	 * @uses Bake::createFile() Creates view file.
 	 * @uses Bake::template() Collects view template.
@@ -358,7 +358,7 @@ class %sTest extends TestCase {
 	}
 
 	/**
-	 * Returns array of actions' templates.
+	 * Returns an array of actions' templates.
 	 *
 	 * @param array $as
 	 * @return array
@@ -373,7 +373,7 @@ class %sTest extends TestCase {
 	}
 
 	/**
-	 * Returns test template for defined class.
+	 * Returns a test template for given class.
 	 *
 	 * @param string $class
 	 * @return string
@@ -403,7 +403,7 @@ class %sTest extends TestCase {
 	}
 
 	/**
-	 * Returns underscored name for model's file.
+	 * Returns an underscored filename for a model.
 	 *
 	 * @param string $name
 	 * @return string

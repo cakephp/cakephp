@@ -47,7 +47,7 @@ uses('object');
 class Inflector extends Object {
 	
 /**
-  * Enter description here...
+  * Constructor.
   *
   */
 	function __construct () {
@@ -55,10 +55,10 @@ class Inflector extends Object {
 	}
 	
 /**
-  * Enter description here...
+  * Return $word in plural form.
   *
-  * @param unknown_type $word
-  * @return unknown
+  * @param string $word Word in singular
+  * @return string Word in plural
   */
 	function pluralize ($word) {
 		$plural_rules = array(
@@ -86,10 +86,10 @@ class Inflector extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Return $word in singular form.
   *
-  * @param unknown_type $word
-  * @return unknown
+  * @param string $word Word in plural
+  * @return string Word in singular
   */
 	function singularize ($word) {
 		$singular_rules = array(
@@ -119,20 +119,20 @@ class Inflector extends Object {
 	}
 	
 /**
-  * Enter description here...
+  * Returns given $lower_case_and_underscored_word as a camelCased word.
   *
-  * @param unknown_type $lower_case_and_underscored_word
-  * @return unknown
+  * @param string $lower_case_and_underscored_word Word to camelize
+  * @return string Camelized word. likeThis.
   */
 	function camelize($lower_case_and_underscored_word) {
 		return str_replace(" ","",ucwords(str_replace("_"," ",$lower_case_and_underscored_word)));
 	}    
 
 /**
-  * Enter description here...
+  * Returns an underscore-syntaxed ($like_this_dear_reader) version of the $camel_cased_word.
   *
-  * @param unknown_type $camel_cased_word
-  * @return unknown
+  * @param string $camel_cased_word Camel-cased word to be "underscorized"
+  * @return string Underscore-syntaxed version of the $camel_cased_word
   */
 	function underscore($camel_cased_word) {
 		$camel_cased_word = preg_replace('/([A-Z]+)([A-Z])/','\1_\2',$camel_cased_word);
@@ -140,40 +140,42 @@ class Inflector extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a human-readable string from $lower_case_and_underscored_word,
+  * by replacing underscores with a space, and by upper-casing the initial characters.
   *
-  * @param unknown_type $lower_case_and_underscored_word
-  * @return unknown
+  * @param string $lower_case_and_underscored_word String to be made more readable
+  * @return string Human-readable string
   */
 	function humanize($lower_case_and_underscored_word) {
 		return ucwords(str_replace("_"," ",$lower_case_and_underscored_word));
 	}    
 
 /**
-  * Enter description here...
+  * Returns corresponding table name for given $class_name.
   *
-  * @param unknown_type $class_name
-  * @return unknown
+  * @param string $class_name Name of class to get database table name for
+  * @return string Name of the database table for given class
   */
 	function tableize($class_name) {
 		return Inflector::pluralize(Inflector::underscore($class_name));
 	}
 
 /**
-  * Enter description here...
+  * Returns Cake class name ("Post" for the database table "posts".) for given database table.
   *
-  * @param unknown_type $table_name
-  * @return unknown
+  * @param string $table_name Name of database table to get class name for
+  * @return string
   */
 	function classify($table_name) {
 		return $this->camelize($this->singularize($table_name));
 	}
 
 /**
-  * Enter description here...
+  * Returns $class_name in underscored form, with "_id" tacked on at the end. 
+  * This is for use in dealing with the database.
   *
-  * @param unknown_type $class_name
-  * @return unknown
+  * @param string $class_name
+  * @return string
   */
 	function foreignKey($class_name) {
 		return $this->underscore($class_name) . "_id";

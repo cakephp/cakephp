@@ -4,6 +4,9 @@ uses('test', 'folder', 'inflector');
 
 class TestsController extends TestsHelper {
 
+/**
+ *  Runs all library and application tests
+ */
 	function test_all () {
 
 		$this->layout = 'test';

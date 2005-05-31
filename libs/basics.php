@@ -65,7 +65,7 @@ function loadControllers () {
 }
 
 /**
-  * Loads a controller and it's helper libraries
+  * Loads a controller and its helper libraries.
   *
   * @param string $name
   * @return boolean
@@ -83,7 +83,7 @@ function loadController ($name) {
 }
 
 /**
-  * Lists PHP files in a specified directory
+  * Lists PHP files in given directory.
   *
   * @param string $path
   * @return array
@@ -143,7 +143,6 @@ function debug($var = false, $show_html = false) {
 
 
 if (!function_exists('getMicrotime')) {
-
 /**
  * Returns microtime for execution time checking.
  *
@@ -154,13 +153,14 @@ if (!function_exists('getMicrotime')) {
 		return ((float)$usec + (float)$sec);
 	}
 }
+
 if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortby.
  *
  * @param array $array
  * @param string $sortby
- * @param string $order
+ * @param string $order Sort order asc/desc (ascending or descending).
  * @param integer $type
  * @return mixed
  */
@@ -190,7 +190,7 @@ if (!function_exists('sortByKey')) {
 if (!function_exists('array_combine')) {
 /**
  * Combines given identical arrays by using the first array's values as keys,
- * and second one's values as values.
+ * and the second one's values as values. (Implemented for back-compatibility with PHP4.)
  *
  * @param array $a1
  * @param array $a2
@@ -216,7 +216,7 @@ if (!function_exists('array_combine')) {
 }
 
 /**
- * Class used for internal manipulation of multiarrays (arrays of arrays)
+ * Class used for internal manipulation of multiarrays (arrays of arrays).
  *
  * @package cake
  * @subpackage cake.libs
@@ -232,7 +232,7 @@ class NeatArray {
     var $value;
     
 	/**
-	 * Constructor.
+	 * Constructor. Defaults to an empty array.
 	 *
 	 * @param array $value
 	 * @access public
@@ -243,7 +243,7 @@ class NeatArray {
 	}
 
 	/**
-	 * Checks wheter $fieldName with $value exists in this NeatArray object.
+	 * Checks whether $fieldName with $value exists in this NeatArray object.
 	 *
 	 * @param string $fieldName
 	 * @param string $value
@@ -282,7 +282,7 @@ class NeatArray {
 	/**
 	 * Adds elements from the supplied array to itself.
 	 *
-	 * @param string $array
+	 * @param string $value 
 	 * @return bool
 	 * @access public
 	 * @uses NeatArray::value
@@ -293,9 +293,9 @@ class NeatArray {
 
 
 	/**
-	 * Returns itself merged with supplied array.
+	 * Returns itself merged with given array.
 	 *
-	 * @param string $array
+	 * @param array $value Array to add to NeatArray.
 	 * @return array
 	 * @access public
 	 * @uses NeatArray::value
@@ -307,7 +307,7 @@ class NeatArray {
 	/**
 	 * Counts repeating strings and returns an array of totals.
 	 *
-	 * @param int $sortedBy 1 sorts by values, 2 by keys, default null (no sort)
+	 * @param int $sortedBy A value of 1 sorts by values, a value of 2 sorts by keys. Defaults to null (no sorting).
 	 * @return array
 	 * @access public
 	 * @uses NeatArray::value
@@ -333,7 +333,7 @@ class NeatArray {
 	}
 
 	/**
-	 * Passes each of it's values thrue a specified function or method.
+	 * Passes each of its values through a specified function or method. Think of PHP's array_walk.
 	 *
 	 * @return array
 	 * @access public
@@ -345,7 +345,7 @@ class NeatArray {
 	}
 
 	/**
-	 * Extracts a value from all array items
+	 * Extracts a value from all array items.
 	 *
 	 * @return array
 	 * @access public

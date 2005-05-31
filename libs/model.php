@@ -15,8 +15,8 @@
 
 /**
   * Purpose: Model
-  * DBO-backed object data model, loosly based on RoR (www.rubyonrails.com).
-  * Automatically selects db table name based on pluralized lowercase object class name
+  * DBO-backed object data model, loosely based on RoR (www.rubyonrails.com).
+  * Automatically selects a database table name based on a pluralized lowercase object class name
   * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
   * The table is required to have at least 'id auto_increment', 'created datetime', 
   * and 'modified datetime' fields
@@ -63,9 +63,9 @@ class Model extends Object {
 	var $parent = false;
 
 /**
-  * Enter description here...
+  * Custom database table name
   *
-  * @var unknown_type
+  * @var string
   * @access public
   */
 	var $use_table = false;
@@ -81,13 +81,13 @@ class Model extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var array
   * @access public
   */
 	var $data = array();
 
 /**
-  * Enter description here...
+  * Table name for this Model.
   *
   * @var unknown_type
   * @access public
@@ -95,9 +95,9 @@ class Model extends Object {
 	var $table = false;
 	// private
 /**
-  * Enter description here...
+  * Table metadata
   *
-  * @var unknown_type
+  * @var array
   * @access private
   */
 	var $_table_info = null;
@@ -105,7 +105,7 @@ class Model extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var array
   * @access private
   */
 	var $_oneToMany = array();
@@ -113,15 +113,15 @@ class Model extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var array
   * @access private
   */
 	var $_oneToOne = array();
 
 /**
-  * Enter description here...
+  * Array of other Models this Model references in a hasMany relationship. 
   *
-  * @var unknown_type
+  * @var array
   * @access private
   */
 	var $_hasMany = array();
@@ -182,7 +182,9 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Updates the many-to-one links, by emptying the links list, and linkManyToOne again.
+  *
+  * @see linkManyToOne()
   *
   */
 	function relink () {
@@ -194,10 +196,12 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Creates a many-to-one link for given $model_name. 
+  * First it gets Inflector to derive a table name and a foreign key field name.
+  * Then, these are stored in the Model.
   *
-  * @param unknown_type $model_name
-  * @param unknown_type $value
+  * @param string $model_name Name of model to link to
+  * @param unknown_type $value Defaults to NULL.
   */
 	function linkManyToOne ($model_name, $value=null) {
 		$table_name = Inflector::tableize($model_name);
@@ -206,7 +210,7 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Removes all one-to-many links to other Models.
   *
   */
 	function clearLinks () {
@@ -231,10 +235,15 @@ class Model extends Object {
 
 
 /**
-  * Enter description here...
+  * This function does two things: 1) it scans the array $one for they key 'id',
+  * and if that's found, it sets the current id to the value of $one[id].
+  * For all other keys than 'id' the keys and values of $one are copied to the 'data' property of this object.
+  * 2) Returns an array with all of $one's keys and values.
+  * (Alternative indata: two strings, which are mangled to 
+  * a one-item, two-dimensional array using $one for a key and $two as its value.)
   *
-  * @param unknown_type $one
-  * @param unknown_type $two
+  * @param mixed $one Array or string.
+  * @param string $two Optional string
   * @return unknown
   */
 	function set ($one, $two=null) {
@@ -256,9 +265,9 @@ class Model extends Object {
     }
 
 /**
-  * Enter description here...
+  * Sets current id to given $id.
   *
-  * @param unknown_type $id
+  * @param int $id Id
   */
 	function setId ($id) {
 		$this->id = $id;
@@ -266,7 +275,7 @@ class Model extends Object {
 	}
 
 /**
-  * Reads table info (column names and types) from the db
+  * Returns an array of table metadata (column names and types) from the database.
   *
   * @return array
   */
@@ -277,9 +286,10 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns true if given field name exists in this Model's database table.
+  * Starts by pre-caching the metadata into the private property table_info if that is not already set. 
   *
-  * @param unknown_type $name
+  * @param string $name Name of table to look in
   * @return unknown
   */
 	function hasField ($name) {
@@ -288,7 +298,7 @@ class Model extends Object {
 	}
 
 /**
-  * reads a list of fields from the db
+  * Returns a list of fields from the database
   *
   * @param string $fields
   * @param array $fields
@@ -300,9 +310,10 @@ class Model extends Object {
 	}
 
 /**
-  * reads a field from a record
+  * Returns contents of a field in a query matching given conditions.
   *
-  * @param string $name
+  * @param string $name Name of field to get
+  * @param string $conditions SQL conditions (defaults to NULL)
   * @return field contents
   */
 	function field ($name, $conditions=null) {
@@ -323,10 +334,10 @@ class Model extends Object {
 	}
 
 /**
-  * saves a single field to the db
+  * Saves a single field to the database.
   *
-  * @param string $name
-  * @param mixed $value
+  * @param string $name Name of the table field
+  * @param mixed $value Value of the field
   * @return success
   */
 	function saveField($name, $value) {
@@ -334,9 +345,10 @@ class Model extends Object {
 	}
 
 /**
-  * saves model data to the db
+  * Saves model data to the database.
   *
   * @param array $data
+  * @param boolean $validate
   * @return success
   */
 	function save ($data=null, $validate=true) {
@@ -396,20 +408,21 @@ class Model extends Object {
 	}
 
 /**
-  * deletes a record
+  * Synonym for del().
   *
   * @param mixed $id
-  * @return success
+  * @see function del
+  * @return boolean True on success
   */
 	function remove ($id=null) {
 		return $this->del($id);
 	}
 
 /**
-  * Enter description here...
+  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
   *
-  * @param unknown_type $id
-  * @return unknown
+  * @param mixed $id Id of database record to delete
+  * @return boolean True on success
   */
 	function del ($id=null) {
 		if ($id) $this->id = $id;
@@ -422,9 +435,9 @@ class Model extends Object {
 	}
 
 /**
-  * checks for existance of a record with set id
+  * Returns true if a record with set id exists.
   *
-  * @return true if such record exists
+  * @return boolean True if such a record exists
   */
 	function exists () {
 		return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
@@ -432,38 +445,61 @@ class Model extends Object {
 
 
 /**
-  * checks for existance of a record with specified conditions
+  * Returns true if a record that meets given conditions exists
   *
-  * @return true if such record exists
+  * @return boolean True if such a record exists
   */
-	function hasAny ($sql_conditions=null) {
+	function hasAny ($sql_conditions = null) {
 		return $this->db->hasAny($this->table, $sql_conditions);
 	}
 
 
 /**
-  * reads a single row 
+  * Return a single row as a resultset array.
   *
-  * @param string $conditions
-  * @param string $fields
-  * @return array of fields
+  * @param string $conditions SQL conditions
+  * @param mixed $fields Either a single string of a field name, or an array of field names
+  * @return array Array of records
   */
 	function find ($conditions = null, $fields = null) {
 		$data = $this->findAll($conditions, $fields, null, 1);
 		return empty($data[0])? false: $data[0];
 	}
 
-/**
-  * returns specified fields from db records matching conditions
+/** parses conditions array (or just passes it if it's a string)
+  * @return string
   *
-  * @param string $conditions
-  * @param string $fields
-  * @param string $order
-  * @param int $limit
-  * @param int $page
-  * @return array of records
+  */
+	function parseConditions ($conditions) {
+		if (is_string($conditions)) {
+			return $conditions;
+		}
+		elseif (is_array($conditions)) {
+			$out = array();
+			foreach ($conditions as $key=>$value) {
+				$out[] = "{$key}=".($value===null? 'null': $this->db->prepare($value));
+			}
+			return join(' and ', $out);
+		}
+		else {
+			return null;
+		}
+	}
+
+/**
+  * Returns a resultset array with specified fields from database matching given conditions.
+  *
+  * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
+  * @param mixed $fields Either a single string of a field name, or an array of field names
+  * @param string $order SQL ORDER BY conditions (e.g. "DESC" or "ASC")
+  * @param int $limit SQL LIMIT clause, for calculating items per page
+  * @param int $page Page number
+  * @return array Array of records
   */
 	function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) {
+		
+		$conditions = $this->parseConditions($conditions);
+
 		if (is_array($fields))
 			$f = $fields;
 		elseif ($fields)
@@ -501,21 +537,20 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of all rows for given SQL statement.
   *
-  * @param unknown_type $sql
-  * @param unknown_type $debug
-  * @return unknown
+  * @param string $sql SQL query
+  * @return array
   */
-	function findBySql ($sql, $debug=0) {
-		return $this->db->all($sql, $debug);
+	function findBySql ($sql) {
+		return $this->db->all($sql);
 	}
 
 /**
-  * Enter description here...
+  * Returns number of rows matching given SQL condition. 
   *
-  * @param unknown_type $conditions
-  * @return unknown
+  * @param string $conditions SQL conditions (WHERE clause conditions)
+  * @return int Number of matching rows
   */
 	function findCount ($conditions) {
 		list($data) = $this->findAll($conditions, 'COUNT(id) AS count');
@@ -525,7 +560,7 @@ class Model extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $conditions
+  * @param string $conditions SQL conditions (WHERE clause conditions)
   * @param unknown_type $fields
   * @return unknown
   */
@@ -536,9 +571,9 @@ class Model extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $data
-  * @param unknown_type $root
-  * @return unknown
+  * @param unknown_type $data 
+  * @param unknown_type $root NULL or id for root node of operation
+  * @return array
   */
 	function _doThread ($data, $root) {
 		$out = array();
@@ -555,12 +590,13 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
+  * which is useful when creating paged lists.
   *
-  * @param unknown_type $conditions
+  * @param string $conditions SQL conditions for matching rows
   * @param unknown_type $field
   * @param unknown_type $value
-  * @return unknown
+  * @return array Array with keys "prev" and "next" that holds the id's
   */
 	function findNeighbours ($conditions, $field, $value) {
 		list($prev) = $this->findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
@@ -570,20 +606,20 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a resultset for given SQL statement.
   *
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return array Resultset
   */
 	function query ($sql) {
 		return $this->db->query($sql);
 	}
 
 /**
-  * Enter description here...
+  * Returns true if all fields pass validation.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param array $data POST data
+  * @return boolean True if there are no errors
   */
 	function validates ($data=null) {
 		$errors = count($this->invalidFields($data? $data: $this->data));
@@ -592,20 +628,20 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of invalid fields.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param array $data Posted data
+  * @return array Array of invalid fields
   */
 	function invalidFields ($data=null) {
 		return $this->_invalidFields($data);
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of invalid fields.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param array $data 
+  * @return array Array of invalid fields
   */
 	function _invalidFields ($data=null) {
 		if (!isset($this->validate))

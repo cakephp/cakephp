@@ -31,38 +31,22 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Not empty.
   */
 define('VALID_NOT_EMPTY', '/.+/');
 
 /**
-  * Enter description here...
-  *
+  * Numbers [0-9] only.
   */
 define('VALID_NUMBER', '/^[0-9]+$/');
 
 /**
-  * Enter description here...
-  *
+  * A valid email address.
   */
 define('VALID_EMAIL', '/^([a-z0-9][a-z0-9_\-\.\+]*)@([a-z0-9][a-z0-9\.\-]{0,63}\.[a-z]{2,3})$/i');
 
 /**
-  * Enter description here...
-  *
-  */
-define('VALID_TAG', '/[^\ ]+/i');
-
-/**
-  * Enter description here...
-  *
-  */
-define('VALID_TAGS', '/.+/i');
-
-/**
-  * Enter description here...
-  *
+  * A valid year (1000-2999).
   */
 define('VALID_YEAR', '/^[12][0-9]{3}$/');
 

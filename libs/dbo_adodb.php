@@ -31,7 +31,7 @@
   */
 
 /**
-  * Enter description here...
+  * Include AdoDB files.
   *
   */
 require_once(VENDORS.'adodb/adodb.inc.php');
@@ -48,9 +48,9 @@ require_once(VENDORS.'adodb/adodb.inc.php');
 class DBO_AdoDB extends DBO {
 
 /**
-  * Enter description here...
+  * Connects to the database using options in the given configuration array.
   *
-  * @param unknown_type $config
+  * @param array $config Configuration array for connecting
   */
 	function connect ($config) {
 		if($this->config = $config) {
@@ -67,7 +67,7 @@ class DBO_AdoDB extends DBO {
 	}
 	
 /**
-  * Enter description here...
+  * Disconnects from database.
   *
   * @return unknown
   */
@@ -76,9 +76,9 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Executes given SQL statement.
   *
-  * @param unknown_type $sql
+  * @param string $sql
   * @return unknown
   */
 	function execute ($sql) {
@@ -86,9 +86,9 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Return a row from given resultset.
   *
-  * @param unknown_type $res
+  * @param unknown_type $res Resultset
   * @return unknown
   */
 	function fetchRow ($res) {
@@ -96,7 +96,7 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
   * @return unknown
   */
@@ -111,10 +111,10 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of the fields in given table name.
   *
-  * @param unknown_type $table_name
-  * @return unknown
+  * @param string $table_name Name of database table to inspect
+  * @return array Fields in table. Keys are name and type
   */
 	function fields ($table_name) {
 		$data = $this->_adodb->MetaColumns($table_name);
@@ -127,14 +127,14 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * To be implemented
   *
   * @param unknown_type $data
   */
 	function prepare ($data)		{ die('Please implement DBO::prepare() first.'); }
 
 /**
-  * Enter description here...
+  * Returns last SQL error message.
   *
   * @return unknown
   */
@@ -143,25 +143,25 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns number of affected rows
   *
-  * @return unknown
+  * @return int
   */
 	function lastAffected ()		{
 		return $this->_adodb->Affected_Rows(); 
 	}
 
 /**
-  * Enter description here...
+  * Returns number of rows in resultset of the last database operation.
   *
-  * @return unknown
+  * @return int Number of rows in resultset
   */
 	function lastNumRows () {
 		 return $this->_result? $this->_result->RecordCount(): false;
 	}
 
 /**
-  * Enter description here...
+  * To be implemented
   *
   */
 	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }

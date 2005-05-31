@@ -81,9 +81,9 @@ uses('object');
 class DBO extends Object {
 	
 /**
-  * Enter description here...
+  * Are we connected to the database?
   *
-  * @var unknown_type
+  * @var boolean
   * @access public
   */
 	var $connected=FALSE;
@@ -91,7 +91,7 @@ class DBO extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   * @access public
   */
 	var $debug=FALSE;
@@ -99,7 +99,7 @@ class DBO extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   * @access public
   */
 	var $fullDebug=FALSE;
@@ -113,7 +113,7 @@ class DBO extends Object {
 	var $error=NULL;
 
 /**
-  * Enter description here...
+  * String to hold how many rows were affected by the last SQL operation.
   *
   * @var unknown_type
   * @access public
@@ -121,15 +121,15 @@ class DBO extends Object {
 	var $affected=NULL;
 
 /**
-  * Enter description here...
+  * Number of rows in current resultset
   *
-  * @var unknown_type
+  * @var int
   * @access public
   */
 	var $numRows=NULL;
 
 /**
-  * Enter description here...
+  * Time the last query took
   *
   * @var unknown_type
   * @access public
@@ -153,7 +153,7 @@ class DBO extends Object {
     var $_result=NULL;
 
 /**
-  * Enter description here...
+  * Queries count.
   *
   * @var unknown_type
   * @access private
@@ -161,7 +161,7 @@ class DBO extends Object {
     var $_queriesCnt=0;
 
 /**
-  * Enter description here...
+  * Total duration of all queries.
   *
   * @var unknown_type
   * @access private
@@ -222,10 +222,9 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Constructor. Sets the level of debug for dbo (fullDebug or debug). 
   *
-  * @param unknown_type $config
-  * @param unknown_type $DEBUG
+  * @param array $config
   * @return unknown
   */
 	function __construct ($config=NULL) {
@@ -236,7 +235,7 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Destructor. Closes connection to the database.
   *
   */
 	function __destructor () {
@@ -244,17 +243,17 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a string with a USE [databasename] SQL statement.
   *
-  * @param unknown_type $db_name
-  * @return unknown
+  * @param string $db_name Name of database to use
+  * @return unknown Result of the query
   */
 	function useDb ($db_name) {
 		return $this->query("USE {$db_name}");
 	}
 
 /**
-  * Enter description here...
+  * Disconnects database, kills the connection and says the connection is closed, and if DEBUG is turned on, the log for this object is shown.
   *
   */
 	function close () {
@@ -265,9 +264,9 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Executes given SQL statement.
   *
-  * @param unknown_type $sql
+  * @param string $sql SQL statement
   * @return unknown
   */
 	function rawQuery ($sql) {
@@ -276,9 +275,11 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Queries the database with given SQL statement, and obtains some metadata about the result 
+  * (rows affected, timing, any errors, number of rows in resultset). The query is also logged. 
+  * If DEBUG is set, the log is shown all the time, else it is only shown on errors.
   *
-  * @param unknown_type $sql
+  * @param string $sql
   * @return unknown
   */
 	function query($sql) {
@@ -296,30 +297,31 @@ class DBO extends Object {
 	}
 
 /**
-  * Returns a single row of results from the _last_ query
+  * Returns a single row of results from the _last_ SQL query.
   *
   * @param resource $res
-  * @return unknown
+  * @return array A single row of results
   */
 	function farr ($res=false) {
 		return $this->fetchRow($res? $res: $this->_result);
 	}
 
 /**
-  * Returns a single row of results for a _given_ query
+  * Returns a single row of results for a _given_ SQL query.
   *
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return array A single row of results
   */
 	function one ($sql) {
 		return $this->query($sql)? $this->farr(): false;
 	}
 
 /**
-  * Returns all result rows for a given query
+  * Returns an array of all result rows for a given SQL query. 
+  * Returns false if no rows matched.
   *
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return array Array of resultset rows, or false if no rows matched
   */
 	function all ($sql) {
 		if($this->query($sql)) {
@@ -333,10 +335,10 @@ class DBO extends Object {
 	}
 
 /**
-  * Returns a single field of the first of query results for a given sql query
+  * Returns a single field of the first of query results for a given SQL query, or false if empty.
   *
-  * @param unknown_type $name
-  * @param unknown_type $sql
+  * @param string $name Name of the field
+  * @param string $sql SQL query
   * @return unknown
   */
 	function field ($name, $sql) {
@@ -347,9 +349,9 @@ class DBO extends Object {
 /**
   * Checks if the specified table contains any record matching specified SQL
   *
-  * @param unknown_type $table
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $table Name of table to look in
+  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
+  * @return boolean True if the table has a matching record, else false
   */
 	function hasAny($table, $sql) {
 		$out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
@@ -359,16 +361,16 @@ class DBO extends Object {
 /**
   * Checks if it's connected to the database
   *
-  * @return unknown
+  * @return boolean True if the database is connected, else false
   */
 	function isConnected() {
 		return $this->connected;
 	}
 
 /**
-  * Prepares an array of data values by quoting them etc.
+  * Prepares an array of data values by quoting and escaping them.
   *
-  * @return unknown
+  * @return array Array of prepared data
   */
 	function prepareArray($data) {
 		$out = null;
@@ -379,9 +381,9 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Outputs the contents of the log.
   *
-  * @param unknown_type $sorted
+  * @param boolean $sorted
   */
 	function showLog($sorted=false) {
 		$log = $sorted?
@@ -399,9 +401,9 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Log given SQL query.
   *
-  * @param unknown_type $q
+  * @param string $sql SQL statement
   */
 	function logQuery($sql) {
 		$this->_queriesCnt++;
@@ -419,9 +421,10 @@ class DBO extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Output information about an SQL query. The SQL statement, number of rows in resultset, 
+  * and execution time in microseconds. If the query fails, and error is output instead.
   *
-  * @param unknown_type $q
+  * @param string $sql
   */
 	function showQuery($sql) {
 		$error = $this->error;
