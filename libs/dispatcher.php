@@ -38,7 +38,7 @@
 uses('error_messages', 'object', 'router', 'controller');
 
 /**
-  * Enter description here...
+  * Dispatches the request, creating appropriate models and controllers.
   *
   *
   * @package cake

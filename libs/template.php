@@ -37,7 +37,8 @@
 uses('object');
 
 /**
-  * Enter description here...
+  * Templating for Controller class. Takes care of rendering views.
+  * 
   *
   *
   * @package cake
@@ -58,7 +59,7 @@ class Template extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var string
   * @access public
   */
 	var $layout = 'default';
@@ -66,7 +67,7 @@ class Template extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   * @access public
   */
 	var $autoRender = true;
@@ -74,15 +75,15 @@ class Template extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   * @access public
   */
 	var $autoLayout = true;
 
 /**
-  * Enter description here...
+  * Variables for the view
   *
-  * @var unknown_type
+  * @var array
   * @access private
   */
 	var $_view_vars = array();
@@ -90,13 +91,13 @@ class Template extends Object {
 /**
   * Enter description here...
   *
-  * @var unknown_type
+  * @var boolean
   * @access private
   */
 	var $_page_title = false;
 
 /**
-  * Enter description here...
+  * Constructor. 
   *
   */
 	function __construct () {
@@ -115,8 +116,8 @@ class Template extends Object {
 /**
   * Enter description here...
   *
-  * @param unknown_type $one
-  * @param unknown_type $two
+  * @param mixed $one An array of POST data. (Or: a string of a single POST datum.)
+  * @param string $two Value in case $one is a string (which then works as the key).
   * @return unknown
   */
 	function set($one, $two=null) {
@@ -124,18 +125,18 @@ class Template extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Set the title element of the page.
   *
-  * @param unknown_type $value
+  * @param string $pageTitle Text for the title
   */
-	function setTitle ($value) {
-		$this->_page_title = $value;
+	function setTitle ($pageTitle) {
+		$this->_page_title = $pageTitle;
 	}
 
 /**
-  * Enter description here...
+  * Sets data for this view. Will set title is the key "title" is in given $data array.
   *
-  * @param unknown_type $data
+  * @param array $data Array of 
   */
 	function _setArray($data) {
 		foreach ($data as $name => $value) {
@@ -147,11 +148,11 @@ class Template extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Displays a flash message. A flash message is feedback to the user that displays after editing actions, among other things.
   *
-  * @param unknown_type $message
-  * @param unknown_type $url
-  * @param unknown_type $time
+  * @param string $message Text to display to the user
+  * @param string $url URL fragment
+  * @param int $time Display time, in seconds
   */
 	function flash ($message, $url, $time=1) {
 		$this->autoRender = false;
@@ -165,11 +166,12 @@ class Template extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Render view for given action and layout. If $file is given, that is used 
+  * for a view filename (e.g. customFunkyView.thtml).
   *
-  * @param unknown_type $action
-  * @param unknown_type $layout
-  * @param unknown_type $file
+  * @param string $action Name of action to render for
+  * @param string $layout 
+  * @param string $file Custom filename for view
   */
 	function render ($action=null, $layout=null, $file=null) {
 		$this->autoRender = false;
@@ -199,10 +201,10 @@ class Template extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Enter description here... Renders a layout. Returns output from _render(). Returns false on error.
   *
-  * @param unknown_type $content_for_layout
-  * @return unknown
+  * @param string $content_for_layout Content to render in a view
+  * @return string Rendered output
   */
 	function renderLayout ($content_for_layout) {
 		$layout_fn = $this->_getLayoutFn();
@@ -230,10 +232,11 @@ class Template extends Object {
 	}
 
 /**
-  * Renders a piece of PHP with provided params and returns HTML, XML, or any other string.
+  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
   *
-  * @param unknown_type $content_for_layout
-  * @return unknown
+  * @param string $name Name of template file
+  * @param array $params Array of data for rendered view 
+  * @return string Rendered output
   */
 	function renderElement ($name, $params=array()) {
 		$fn = ELEMENTS.$name.'.thtml';
@@ -245,31 +248,32 @@ class Template extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns layout filename for this template as a string.
   *
-  * @return unknown
+  * @return string Filename for layout file (.thtml).
   */
 	function _getLayoutFn() {
 		return VIEWS."layouts".DS."{$this->layout}.thtml";
 	}
 
 /**
-  * Enter description here...
+  * Returns filename of given action's template file (.thtml) as a string.
   *
-  * @param unknown_type $action
-  * @return unknown
+  * @param string $action Controller action to find template filename for
+  * @return string Template filename
   */
 	function _getViewFn($action) {
 		return VIEWS.$this->viewpath.DS."{$action}.thtml";
 	}
 
 /**
-  * Enter description here...
+  * Renders and returns output for given view filename with its 
+  * array of data.
   *
-  * @param unknown_type $___view_fn
-  * @param unknown_type $___data_for_view
-  * @param unknown_type $___play_safe
-  * @return unknown
+  * @param string $___view_fn Filename of the view
+  * @param array $___data_for_view Data to include in rendered view
+  * @param boolean $___play_safe If set to false, the include() of the $__view_fn is done without suppressing output of errors
+  * @return string Rendered output
   */
 	function _render($___view_fn, $___data_for_view, $___play_safe = true) {
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
@@ -288,11 +292,11 @@ class Template extends Object {
 	}
 
 /**
-  * trims a string to a specified length adding elipsis '..' if necessary
+  * Returns given string trimmed to given length, adding an elipsis '..' if necessary.
   *
-  * @param unknown_type $string
-  * @param unknown_type $length
-  * @return unknown
+  * @param string $string String to trim
+  * @param int $length Length of returned string, excluding ellipsis
+  * @return string Trimmed string
   */
 	function trimTo ($string, $length) {
 		return substr($string, 0, $length).(strlen($string)>$length? '..': null);

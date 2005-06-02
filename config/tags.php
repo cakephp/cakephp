@@ -36,17 +36,17 @@
 define('TAG_LINK', '<a href="%s"%s>%s</a>');
 
 /**
- * Tag template for openning form tag. 
+ * Tag template for opening form tag. 
  */
 define('TAG_FORM', '<form %s>');
 
 /**
- * Tag template for an input tag. 
+ * Tag template for an input type='text' tag. 
  */
 define('TAG_INPUT',			'<input name="data[%s]" %s/>');
 
 /**
- * Tag template for a hidden tag. 
+ * Tag template for an input type='hidden' tag. 
  */
 define('TAG_HIDDEN',			'<input type="hidden" name="data[%s]" %s/>');
 
@@ -56,17 +56,17 @@ define('TAG_HIDDEN',			'<input type="hidden" name="data[%s]" %s/>');
 define('TAG_AREA',			'<textarea name="data[%s]"%s>%s</textarea>');
 
 /**
- * Tag template for a checkbox input tag. 
+ * Tag template for a input type='checkbox ' tag. 
  */
 define('TAG_CHECKBOX',		'<label for="tag_%s"><input type="checkbox" name="data[%s]" id="tag_%s" %s/>%s</label>');
 
 /**
- * Tag template for a radio input tag. 
+ * Tag template for a input type='radio' tag. 
  */
 define('TAG_RADIOS', 		'<label for="tag_%s"><input type="radio" name="data[%s]" id="tag_%s" %s/>%s</label>');
 
 /**
- * Tag template for a select openning tag. 
+ * Tag template for a select opening tag. 
  */
 define('TAG_SELECT_START', '<select name="data[%s]"%s>');
 
@@ -96,7 +96,7 @@ define('TAG_PASSWORD',		'<input type="password" name="data[%s]" %s/>');
 define('TAG_FILE',			'<input type="file" name="%s" %s/>');
 
 /**
- * Tag template for a submit tag. 
+ * Tag template for a submit button tag. 
  */
 define('TAG_SUBMIT',			'<input type="submit" %s/>');
 
@@ -126,7 +126,7 @@ define('TAG_TABLE_CELL',	'<td%s>%s</td>');
 define('TAG_TABLE_ROW',		'<tr%s>%s</tr>');
 
 /**
- * Tag template for a CSS meta-tag. 
+ * Tag template for a CSS link tag. 
  */
 define('TAG_CSS',          '<link rel="%s" type="text/css" href="%s" />');
 
@@ -136,12 +136,12 @@ define('TAG_CSS',          '<link rel="%s" type="text/css" href="%s" />');
 define('TAG_CHARSET',      '<meta http-equiv="Content-Type" content="text/html; charset=%s" />');
 
 /**
- * Tag template for inline JavaScript
+ * Tag template for inline JavaScript.
  */
 define('TAG_JAVASCRIPT', '<script language="javascript" type="text/javascript">%s</script>');
 
 /**
- * Tag template for included JavaScript
+ * Tag template for included JavaScript.
  */
 define('TAG_JAVASCRIPT_INCLUDE', '<script language="javascript" type="text/javascript" src="%s"></script>');
 

@@ -33,20 +33,20 @@
  */
 
 /**
- * Here, we are connecting '/' (base path) to controller called 'Pages', 
- * its action called 'display', and we pass a param to select the view file 
- * to use (in this case, /app/views/pages/home.thtml)...
+ * Here we are connecting '/' (base path) to a controller called 'Pages', 
+ * and its action called 'display'. We pass a parameter to select the view file 
+ * to use (in this case, /app/views/pages/home.thtml).
  */
 $Route->connect ('/', array('controller'=>'Pages', 'action'=>'display', 'home'));
 
 /**
- * ...and connect the rest of 'Pages' controller's urls.
+ * ...and connect the rest of 'Pages' controller's URLs.
  */
 $Route->connect ('/pages/*', array('controller'=>'Pages', 'action'=>'display'));
 
 /**
- * Then we connect url '/test' to our test controller. This is helpfull in
- * developement.
+ * Then we connect url '/test' to our test controller. This is helpful in
+ * development.
  */
 $Route->connect ('/test', array('controller'=>'Tests', 'action'=>'test_all'));
 

@@ -15,7 +15,7 @@
 
 /**
   * Purpose: Router
-  * Parses the request URL into controller, action, and params
+  * Parses the request URL into controller, action, and parameters.
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -37,7 +37,7 @@
 uses('object');
 
 /**
-  * Enter description here...
+  * Parses the request URL into controller, action, and parameters.
   *
   *
   * @package cake
@@ -48,14 +48,14 @@ uses('object');
 class Router extends Object {
 
 /**
-  * Enter description here...
+  * Array of routes
   *
-  * @var unknown_type
+  * @var array
   */
 	var $routes = array();
 
 /**
-  * Enter description here...
+  * Constructor.
   *
   */
 	function __construct () {
@@ -63,10 +63,12 @@ class Router extends Object {
 	}
 	
 /**
-  * Enter description here...
+  * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
   *
-  * @param unknown_type $route
-  * @param unknown_type $default
+  * @param string $route An empty string, or a route string "/"
+  * @param array $default NULL or an array describing the default route
+  * @see routes
+  * @return array Array of routes
   */
 	function connect ($route, $default=null) {
 		$parsed = $names = array ();
@@ -104,10 +106,10 @@ class Router extends Object {
 	}
 
 /**
-  * Enter description here...
+  * TODO: Better description. Returns an array of routes.
   *
-  * @param unknown_type $url
-  * @return unknown
+  * @param string $url URL to be parsed 
+  * @return array 
   */
 	function parse ($url) {
 		$out = array();

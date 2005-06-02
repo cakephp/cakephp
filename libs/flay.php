@@ -39,7 +39,7 @@
 uses('object');
 
 /**
-  * Enter description here...
+  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax. 
   *
   *
   * @package cake

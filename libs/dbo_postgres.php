@@ -36,7 +36,7 @@
 
 uses('object', 'dbo');
 /**
-  * Enter description here...
+  * PostgreSQL layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs

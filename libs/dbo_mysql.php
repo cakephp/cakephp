@@ -43,7 +43,7 @@
 
 uses('dbo');
 /**
-  * Enter description here...
+  * MySQL layer for DBO.
   *
   *
   * @package cake
@@ -167,7 +167,8 @@ class DBO_MySQL extends DBO {
 	}
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists, this returns false.
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
   *
   * @return int Number of rows
   */

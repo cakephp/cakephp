@@ -37,7 +37,7 @@
 uses ('object');
 
 /**
-  * Enter description here...
+  * Time related functions, formatting for dates etc.
   *
   *
   * @package cake
@@ -48,10 +48,10 @@ uses ('object');
 class Time extends Object {
 
 /**
-  * Enter description here...
+  * Returns a formatted date string for given Datetime string.
   *
-  * @param unknown_type $date_string
-  * @return unknown
+  * @param string $date_string Datetime string
+  * @return string Formatted date string
   */
 	function nice ($date_string=null) {
 		$date = $date_string? strtotime($date_string): time();
@@ -59,10 +59,14 @@ class Time extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted descriptive date string for given datetime string.
+  * If the given date is today, the returned string could be "Today, 16:54".
+  * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
+  * If $date_string's year is the current year, the returned string does not
+  * include mention of the year.
   *
   * @param string $date_string Datetime string
-  * @return unknown
+  * @return string Described, relative date string
   */
 	function niceShort ($date_string=null) {
 		$date = $date_string? Time::fromString($date_string): time();
@@ -108,7 +112,7 @@ class Time extends Object {
 	}
 
 /**
-  * Returns a Unix timestamp from a textual datetime description. Wrapper for PHP function strtotime().
+  * Returns a Unix timestamp for a datetime string. Wrapper for PHP function strtotime().
   *
   * @param string $date_string Datetime string to be represented as a Unix timestamp
   * @return int Unix timestamp
@@ -118,19 +122,19 @@ class Time extends Object {
 	}
 
 /**
-  * Formats date for Atom RSS feeds
+  * Returns a date formatted for Atom RSS feeds.
   *
-  * @param datetime $date
-  * @return string
+  * @param string $date Datetime string
+  * @return string Formatted date string
   */
 	function toRss ($date) {
 		return date('Y-m-d', $date).'T'.date('H:i:s', $date).'Z';
 	}
 
 /**     
- *      This function returns either a relative date or a formatted date depending
- *      on the difference between the current datetime and the datetime passed.
- *      $datetime should be in a <i>strtotime<i/i> parsable format like MySQL datetime.
+ *      Returns either a relative date or a formatted date depending
+ *      on the difference between the current time and given datetime.
+ *      $datetime should be in a <i>strtotime</i>-parsable format like MySQL datetime.
  *      
  *      Relative dates look something like this:
  *          3 weeks, 4 days ago
@@ -138,10 +142,10 @@ class Time extends Object {
  *      Formatted dates look like this:
  *          on 02/18/2004
  *      
- *      The function includes 'ago' or 'on' and assumes you'll properly add a word
+ *      The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  *      like 'Posted ' before the function output.
  *      
- * @param $datetime	Time in strtotime parsable format
+ * @param $datetime	Time in strtotime-parsable format
  * @return string Relative time string.
  */
 

@@ -38,7 +38,10 @@ class Log {
 		return $log = fopen($fn, 'a+') && fwrite($log, $out) && fclose($log);
 	}
 }
-
+/**
+  * Error constant. Used for differentiating error logging and debugging.
+  *
+  */
 define ('LOG_ERROR', 2);
 
 ?>

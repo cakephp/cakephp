@@ -4,19 +4,19 @@
 
 <h2>Introducing Cake</h2>
 
-<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what I use at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already layed out, and it's different from what most people use. From what I've experienced, great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in the C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use Pear and Pecl libraries &ndash; they don't usually re-use their code. And I was one of them. (<?=$this->linkOut('continued...','http://sputnik.pl/docs/intro')?>)</p>
+<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what I use at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what I've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use PEAR and PECL libraries &ndash; they don't usually re-use their code. And I was one of them. (<?=$this->linkOut('continued...','http://sputnik.pl/docs/intro')?>)</p>
 
 <h2>Features</h2>
 
 <p><ul>
 <li>compatibile with PHP4 and PHP5</li>
 <li>supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for database and simplified querying so you shouldn't need to write SQL for basic operations (although <em>some</em> familiarity with SQL is strongly recommended)</li>
-<li>request dispatcher with good looking, custom URLs</li>
+<li>request dispatcher with good-looking, custom URLs</li>
 <li>fast, flexible templating (PHP syntax with helper methods)</li>
 <li>works from a website subdirectory, with very little Apache configuration involved (requires <code>.htaccess</code> files and <code>mod_rewrite</code> to work; these are available on most web servers)</li>
 </ul></p>
 
-<p>Cake is in it's early infancy, but it works and I'm using it on a few projects. Currently the Dispatcher is working, the Model has <acronym title="Create, Read, Update, Delete">CRUD</acronym> functionality but with no joins between tables yet. The Controller is working and has the most basic functions (including <code>render()</code> for templating).</p>
+<p>Cake is in its early infancy, but it works and I'm using it on a few projects. Currently the Dispatcher is working, the Model has <acronym title="Create, Read, Update, Delete">CRUD</acronym> functionality but with no joins between tables yet. The Controller is working and has most basic functions (including <code>render()</code> for templating).</p>
 
 <h2>Getting involved</h2>
 

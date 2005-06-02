@@ -74,7 +74,7 @@ if (phpversion() >= '4') {
 	  }
 }
 /**
-  * Enter description here...
+  * Exception class for testing
   *
   *
   * @package cake
@@ -126,7 +126,7 @@ class TestException {
 }
 
 /**
-  * Enter description here...
+  * Asserts for Unit Testing
   *
   *
   * @package cake
@@ -587,7 +587,7 @@ class TestCase extends Assert /* implements Test */ {
 
 
 /**
-  * Enter description here...
+  * Test Suite for Unit Testing.
   *
   *
   * @package cake
@@ -722,7 +722,7 @@ class TestSuite /* implements Test */ {
 
 
 /**
-  * Enter description here...
+  * Test Failure for Unit Testing
   *
   *
   * @package cake
@@ -788,7 +788,7 @@ class TestFailure {
 
 
 /**
-  * Enter description here...
+  * Test Result for Unit Testing
   *
   *
   * @package cake
@@ -959,7 +959,7 @@ class TestResult {
 }
 
 /**
-  * Enter description here...
+  * Mines data from test results. Used for Unit Testing.
   *
   *
   * @package cake
@@ -975,15 +975,15 @@ class ResultDataMiner extends TestResult {
   */
 	var $tests = null;
 /**
-  * Enter description here...
+  * Total number of tests
   *
-  * @var unknown_type
+  * @var int
   */
 	var $total_tests = 0;
 /**
-  * Enter description here...
+  * Total number of errors
   *
-  * @var unknown_type
+  * @var int
   */
 	var $total_errors = 0;
 
@@ -1025,9 +1025,9 @@ class ResultDataMiner extends TestResult {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array with total number of performed tests, total number of errors, and details of the tests.
   *
-  * @return unknown
+  * @return array Array with information on how the tests went. 
   */
 	function report () {
 		return array('tests'=>$this->total_tests, 'errors'=>$this->total_errors, 'details'=>$this->tests);
@@ -1036,7 +1036,7 @@ class ResultDataMiner extends TestResult {
 }
 
 /**
-  * Enter description here...
+  * Test Runner for Unit Testing.
   *
   *
   * @package cake
@@ -1045,9 +1045,8 @@ class ResultDataMiner extends TestResult {
   *
   */
 class TestRunner {
-	/* Run a suite of tests and report results. */
 /**
-  * Enter description here...
+  * Run a suite of tests and report results.
   *
   * @param unknown_type $suite
   * @return unknown

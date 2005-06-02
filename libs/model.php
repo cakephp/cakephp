@@ -44,7 +44,11 @@
 uses('object', 'validators', 'inflector');
 
 /**
-  * Enter description here...
+  * DBO-backed object data model, loosely based on RoR (www.rubyonrails.com).
+  * Automatically selects a database table name based on a pluralized lowercase object class name
+  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
+  * The table is required to have at least 'id auto_increment', 'created datetime', 
+  * and 'modified datetime' fields.
   *
   *
   * @package cake
@@ -79,7 +83,7 @@ class Model extends Object {
 	var $id = false;
 
 /**
-  * Enter description here...
+  * Container for the data that this model gets from persistent storage (the database).
   *
   * @var array
   * @access public
@@ -89,7 +93,7 @@ class Model extends Object {
 /**
   * Table name for this Model.
   *
-  * @var unknown_type
+  * @var string
   * @access public
   */
 	var $table = false;
@@ -103,7 +107,7 @@ class Model extends Object {
 	var $_table_info = null;
 
 /**
-  * Enter description here...
+  * Array of other Models this Model references in a one-to-many relationship. 
   *
   * @var array
   * @access private
@@ -111,7 +115,7 @@ class Model extends Object {
 	var $_oneToMany = array();
 
 /**
-  * Enter description here...
+  * Array of other Models this Model references in a one-to-one relationship. 
   *
   * @var array
   * @access private
@@ -119,7 +123,7 @@ class Model extends Object {
 	var $_oneToOne = array();
 
 /**
-  * Array of other Models this Model references in a hasMany relationship. 
+  * Array of other Models this Model references in a has-many relationship. 
   *
   * @var array
   * @access private
@@ -131,29 +135,27 @@ class Model extends Object {
   *
   * append entries for validation as ('field_name' => '/^perl_compat_regexp$/') that has to match with preg_match()
   * validate with Model::validate()
-  * @var unknown_type
+  * @var array
   */
 	var $validate = array();
 
 /**
   * Append entries for validation as ('field_name' => '/^perl_compat_regexp$/') that has to match with preg_match()
   * validate with Model::validate()
-  * @var unknown_type
+  * @var array
   */
 	var $validationErrors = null;
 
 /**
-  * Constructor binds the Model's database table
+  * Constructor. Binds the Model's database table to the object.
   *
   * @param unknown_type $id
+  * @param unknown_type $db Database connection object.
   */
 	function __construct ($id=false, $db=null) {
 		global $DB;
 
-		if ($db)
-			$this->db = $db;
-		else
-			$this->db = &$DB;
+		$this->db = $db? $db: &$DB;
 
 		if ($id) 
 			$this->id = $id;
@@ -165,7 +167,9 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Creates has-many relationships, and then call relink.
+  *
+  * @see relink()
   *
   */
 	function createLinks () {
@@ -182,7 +186,7 @@ class Model extends Object {
 	}
 
 /**
-  * Updates the many-to-one links, by emptying the links list, and linkManyToOne again.
+  * Updates this model's many-to-one links, by emptying the links list, and then linkManyToOne again.
   *
   * @see linkManyToOne()
   *
@@ -218,9 +222,9 @@ class Model extends Object {
 	}
 
 /**
-  * Enter description here...
+  * Sets a custom table for your controller class. Used by your controller to select a database table.
   *
-  * @param unknown_type $table_name
+  * @param string $table_name Name of the custom table
   */
 	function useTable ($table_name) {
 		if (!in_array($table_name, $this->db->tables())) {
@@ -242,8 +246,8 @@ class Model extends Object {
   * (Alternative indata: two strings, which are mangled to 
   * a one-item, two-dimensional array using $one for a key and $two as its value.)
   *
-  * @param mixed $one Array or string.
-  * @param string $two Optional string
+  * @param mixed $one Array or string of data
+  * @param string $two Value string for the alternative indata method
   * @return unknown
   */
 	function set ($one, $two=null) {
@@ -265,7 +269,7 @@ class Model extends Object {
     }
 
 /**
-  * Sets current id to given $id.
+  * Sets current Model id to given $id.
   *
   * @param int $id Id
   */
@@ -277,7 +281,7 @@ class Model extends Object {
 /**
   * Returns an array of table metadata (column names and types) from the database.
   *
-  * @return array
+  * @return array Array of table metadata
   */
 	function loadInfo () {
 		if (empty($this->_table_info))
@@ -287,10 +291,10 @@ class Model extends Object {
 
 /**
   * Returns true if given field name exists in this Model's database table.
-  * Starts by pre-caching the metadata into the private property table_info if that is not already set. 
+  * Starts by loading the metadata into the private property table_info if that is not already set. 
   *
   * @param string $name Name of table to look in
-  * @return unknown
+  * @return boolean
   */
 	function hasField ($name) {
 		if (empty($this->_table_info)) $this->loadInfo();
@@ -300,9 +304,8 @@ class Model extends Object {
 /**
   * Returns a list of fields from the database
   *
-  * @param string $fields
-  * @param array $fields
-  * @return array of values
+  * @param mixed $fields String of single fieldname, or an array of fieldnames.
+  * @return array Array of database fields
   */
 	function read ($fields=null) {
 		$this->validationErrors = null;
@@ -338,7 +341,7 @@ class Model extends Object {
   *
   * @param string $name Name of the table field
   * @param mixed $value Value of the field
-  * @return success
+  * @return boolean True on success save
   */
 	function saveField($name, $value) {
 		return $this->save(array($name=>$value), false);
@@ -347,9 +350,9 @@ class Model extends Object {
 /**
   * Saves model data to the database.
   *
-  * @param array $data
+  * @param array $data Data to save. 
   * @param boolean $validate
-  * @return success
+  * @return boolean success
   */
 	function save ($data=null, $validate=true) {
 		if ($data) $this->set($data);

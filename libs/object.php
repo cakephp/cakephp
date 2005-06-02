@@ -46,7 +46,7 @@ class Object {
 /**
   * A hack to support __construct() on PHP 4
   * Hint: descendant classes have no PHP4 class_name() constructors,
-  * so this one gets called first and calls the top-layer __construct()
+  * so this constructor gets called first and calls the top-layer __construct()
   * which (if present) should call parent::__construct()
   *
   * @return Object
@@ -58,13 +58,13 @@ class Object {
 	}
 
 /**
-  * Class constructor, overriden in descendant classes.
+  * Class constructor, overridden in descendant classes.
   */
 	function __construct() {
 	}
 
 /**
-  * Class destructor, overriden in descendant classes.
+  * Class destructor, overridden in descendant classes.
   */
 	function __destruct() {
 	}
@@ -73,7 +73,7 @@ class Object {
   * Object-to-string conversion.
   * Each class can override it as necessary.
   *
-  * @return string this class' name
+  * @return string This name of this class
   */
 	function toString () {
 		return get_class($this);
@@ -83,7 +83,7 @@ class Object {
   * API for logging events.
   *
   * @param string $msg Log message
-  * @param string $type
+  * @param int $type Error type constant. Defined in /libs/log.php.
   */
 	function log ($msg, $type=LOG_ERROR) {
 		if (!$this->_log)

@@ -30,49 +30,49 @@
  */
 
 /**
- * If index.php file is used instead of an .htaccess file
- * or if user can not set the web root to use the public
- * directory we will define ROOT there otherwise we set it
- * here
+ * If the index.php file is used instead of an .htaccess file
+ * or if the user can not set the web root to use the public
+ * directory we will define ROOT there, otherwise we set it
+ * here.
  */
 if( !defined('ROOT') ){
 	define ('ROOT',   '../');
 }
 
 /**
- * Path to the application directory.
+ * Path to the application's directory.
  */
 define ('APP',         ROOT.'app'.DS);
 
 /**
- * Path to the application models directory.
+ * Path to the application's models directory.
  */
 define ('MODELS',          APP.'models'.DS);
 
 /**
- * Path to the application controllers directory.
+ * Path to the application's controllers directory.
  */
 define ('CONTROLLERS',     APP.'controllers'.DS);
 
 /**
- * Path to the application helpers directory.
+ * Path to the application's helpers directory.
  */
 define ('HELPERS',         APP.'helpers'.DS);
 
 /**
- * Path to the application views directory.
+ * Path to the application's views directory.
  */
 define ('VIEWS',      	   APP.'views'.DS);
 
 /**
- * Path to the application view layouts directory.
+ * Path to the application's view's layouts directory.
  */
 define ('LAYOUTS',             APP.'views'.DS.'layouts'.DS);
 
 /**
- * Path to the application view elements directory.
+ * Path to the application's view's elements directory.
  * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
- * and are not linked to a particular layout (like polls, footers and so on)
+ * and are not linked to a particular layout (like polls, footers and so on).
  */
 define ('ELEMENTS',            APP.'views'.DS.'elements'.DS);
 
@@ -122,7 +122,7 @@ define ('CONTROLLER_TESTS',TESTS.'app'.DS.'controllers'.DS);
 define ('HELPER_TESTS',   	TESTS.'app'.DS.'helpers'.DS);
 
 /**
- * Path to the models test directory.
+ * Path to the models' test directory.
  */
 define ('MODEL_TESTS',   	TESTS.'app'.DS.'models'.DS);
 

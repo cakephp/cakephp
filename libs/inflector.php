@@ -16,7 +16,7 @@
 /**
   * Purpose: Inflector
   * I'm trying to port RoR Inflector class here.
-  * Inflector pluralizes and singularizes english nouns.
+  * Inflector pluralizes and singularizes English nouns.
   * Test with $i = new Inflector(); $i->test();
   *
   * @filesource 
@@ -38,7 +38,9 @@
 uses('object');
 
 /**
-  * Enter description here...
+  * This is a port of Ruby on Rails' Inflector class.
+  * Inflector pluralizes and singularizes English nouns.
+  * Test with $i = new Inflector(); $i->test();
   *
   * @package cake
   * @subpackage cake.libs

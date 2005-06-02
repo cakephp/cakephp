@@ -32,16 +32,19 @@
 
 /**
   * Not empty.
+  *
   */
 define('VALID_NOT_EMPTY', '/.+/');
 
 /**
   * Numbers [0-9] only.
+  *
   */
 define('VALID_NUMBER', '/^[0-9]+$/');
 
 /**
   * A valid email address.
+  *
   */
 define('VALID_EMAIL', '/^([a-z0-9][a-z0-9_\-\.\+]*)@([a-z0-9][a-z0-9\.\-]{0,63}\.[a-z]{2,3})$/i');
 

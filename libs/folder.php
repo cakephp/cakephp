@@ -37,7 +37,7 @@
 uses('object');
 
 /**
-  * Enter description here...
+  * Folder structure browser, lists folders and files.
   *
   *
   * @package cake
