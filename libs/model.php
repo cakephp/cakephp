@@ -150,17 +150,25 @@ class Model extends Object {
   * Constructor. Binds the Model's database table to the object.
   *
   * @param unknown_type $id
+  * @param string $table Database table to use.
   * @param unknown_type $db Database connection object.
   */
-	function __construct ($id=false, $db=null) {
+	function __construct ($id=false, $table=null, $db=null) {
 		global $DB;
 
-		$this->db = $db? $db: &$DB;
+		if ($db) 
+		{
+			$this->db = $db;
+		}
+		else 
+		{
+			$this->db = &$DB;	
+		}
 
 		if ($id) 
 			$this->id = $id;
 
-		$table_name = $this->use_table? $this->use_table: Inflector::tableize(get_class($this));
+		$table_name = $table? $table: ($this->use_table? $this->use_table: Inflector::tableize(get_class($this)));
 		$this->useTable ($table_name);
 		parent::__construct();
 		$this->createLinks();

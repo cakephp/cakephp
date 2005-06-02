@@ -176,6 +176,17 @@ class DBO extends Object {
   */
 	var $_queriesLog=array();
 
+/**
+  * Maximum number of items in query log, to prevent query log taking over
+  * too much memory on large amounts of queries -- we've had problems at 
+  * ~6000 queries.
+  *
+  * @var int Maximum number of queries in the queries log.
+  * @access private
+  */
+	var $_queriesLogMax=200;
+ 
+
 	// specific for each database, implemented in db drivers
 	function connect ($config) {
 		die('Please implement DBO::connect() first.');
@@ -408,6 +419,7 @@ class DBO extends Object {
 	function logQuery($sql) {
 		$this->_queriesCnt++;
 		$this->_queriesTime += $this->took;
+
 		$this->_queriesLog[] = array(
 			'query'=>$sql,
 			'error'=>$this->error,
@@ -415,6 +427,10 @@ class DBO extends Object {
 			'numRows'=>$this->numRows,
 			'took'=>$this->took
 			);
+
+		if (count($this->_queriesLog) > $this->_queriesLogMax) {
+			array_pop($this->_queriesLog);
+		}
 
 		if ($this->error)
 			false; // shouldn't we be logging errors somehow?

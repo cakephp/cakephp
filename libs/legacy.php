@@ -40,25 +40,6 @@ if (version_compare(phpversion(), '5.0') < 0) {
 }
 
 
-// needed for old Plog v2
-//
-function old_lib ($name) {
-	old_libs ($name);
-}
-
-function old_libs () {
-	if (count($lib_names = func_get_args())) {
-		foreach ($lib_names as $lib_name) {
-			require (OLD_LIBS.$lib_name.'.php');
-		}
-
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 /**
  * Replace file_get_contents()
  *

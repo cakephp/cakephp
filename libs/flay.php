@@ -151,9 +151,9 @@ class Flay extends Object {
 							$line = str_replace($url, "<a href=\"{$url}\">{$url}</a>", $line);
 						}
 					}
-					if (preg_match_all("#(www\.[^ ]+)#", $line, $urls)) {
+					if (preg_match_all("#(www\.[^\n\%\ ]+[^\n\%\,\.\ ])#", $line, $urls)) {
 						foreach ($urls[1] as $url) {
-							$line = str_replace($url, "<a href=\"{$url}\">{$url}</a>", $line);
+							$line = str_replace($url, "<a href=\"http://{$url}\">{$url}</a>", $line);
 						}
 					}
 							

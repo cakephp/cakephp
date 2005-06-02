@@ -387,6 +387,21 @@ class NeatArray {
 		return $this->value = $out;
 	}
 
+	function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children') {
+		$out = array();
+
+		for ($ii=0; $ii<sizeof($this->value); $ii++) {
+			if ($this->value[$ii][$parentIdKey] == $root) {
+				$tmp = $this->value[$ii];
+				$tmp[$childrenKey] = isset($this->value[$ii][$idKey])? 
+					$this->threaded($this->value[$ii][$idKey], $idKey, $parentIdKey, $childrenKey): 
+					null;
+				$out[] = $tmp;
+			}
+		}
+		
+		return $out;
+	}
 }
 
 ?>
