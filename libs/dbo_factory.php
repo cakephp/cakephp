@@ -45,6 +45,12 @@ config('database');
   */
 class DboFactory extends Object {
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $activeConfig
+ * @return unknown
+ */
 	function make ($activeConfig) {
 		if (!class_exists('DATABASE_CONFIG')) return false;
 
