@@ -111,7 +111,7 @@ class Controller extends Template {
 
 		$this->name = strtolower($r[1]);
 		$this->viewpath = Inflector::underscore($r[1]);
-
+		
 		$model_class = Inflector::singularize($this->name);
 		if (($this->uses === false) && class_exists($model_class)) {
 			if (!$DB)
@@ -403,20 +403,26 @@ class Controller extends Template {
   * Returns a SELECT element, 
   *
   * @param string $tag_name Name attribute of the SELECT
-  * @param array $options Array of the OPTION elements to be used in the SELECT element
-  * @param array $outer_options Array of HTML options for the opening SELECT element
-  * @param array $inner_options 
+  * @param array $option_elements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
+  * @param array $select_attr Array of HTML options for the opening SELECT element
+  * @param array $option_attr Array of HTML options for the enclosed OPTION elements 
   * @return string Formatted SELECT element
   */
-	function selectTag ($tag_name, $options, $outer_options=null, $inner_options=null) { 
-		if (!is_array($options) || !count($options))
+	function selectTag ($tag_name, $option_elements, $selected=null, $select_attr=null, $option_attr=null) 
+	{
+		if (!is_array($option_elements) || !count($option_elements))
 			return null;
-		$selected = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
-		$select[] = sprintf(TAG_SELECT_START, $tag_name, $this->parseHtmlOptions($outer_options));
-		$select[] = sprintf(TAG_SELECT_EMPTY, $this->parseHtmlOptions($inner_options));
-	
-		foreach ($options as $name=>$title) {
-			$options_here = $selected==$name? array_merge($inner_options, array('selected'=>'selected')): $inner_options;
+
+		$select[] = sprintf(TAG_SELECT_START, $tag_name, $this->parseHtmlOptions($select_attr));
+		$select[] = sprintf(TAG_SELECT_EMPTY, $this->parseHtmlOptions($option_attr));
+
+		foreach ($option_elements as $name=>$title) 
+		{
+			$options_here = $option_attr;
+			
+			if ($selected == $name) 
+				$options_here['selected'] = 'selected';
+			
 			$select[] = sprintf(TAG_SELECT_OPTION, $name, $this->parseHtmlOptions($options_here), $title);
 		} 
 
@@ -491,9 +497,8 @@ class Controller extends Template {
   * @param array $th_options
   * @return string
   */
-	function tableHeaders ($names, $tr_options=null, $th_options=null) {
-		$args = func_get_args();
-
+	function tableHeaders ($names, $tr_options=null, $th_options=null) 
+	{
 		$out = array();
 		foreach ($names as $arg)
 			$out[] = sprintf(TAG_TABLE_HEADER, $this->parseHtmlOptions($th_options), $arg);
@@ -597,11 +602,16 @@ class Controller extends Template {
   * @param string $text
   * @return string If there are errors this method returns an error message, else NULL. 
   */
-	function tagErrorMsg ($field, $text) {
-		if ($error = $this->tagIsInvalid($field)) {
+	function tagErrorMsg ($field, $text) 
+	{
+		$error = $this->tagIsInvalid($field);	
+		
+		if (0 == $error) 
+		{
 			return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
 		}
-		else {
+		else 
+		{
 			return null;
 		}
 	}
@@ -759,23 +769,24 @@ class Controller extends Template {
   * @param array $options options for javascript 
   * @return string html code for link to remote action
   */
-     	function remoteFunction ($options=null) {
+	function remoteFunction ($options=null) 
+	{
 		$javascript_options = $this->__optionsForAjax($options);
-		$func = isset($options['update'])? 
-			"new Ajax.Updater('{$options['update']}', " :
-			"new Ajax.Request(";
+		$func = isset($options['update'])
+			? "new Ajax.Updater('{$options['update']}', " 
+			: "new Ajax.Request(";
 		
 		$func .= "'" . $this->urlFor($options['url']) . "'";
 		$func .= ", $javascript_options)";
 		
 		if (isset($options['before']))
-			$func .= "{$options['before']}; $function";
+			$func = "{$options['before']}; $func";
 		if (isset($options['after']))
-			$func .= "$func; {$options['before']};";
+			$func = "$func; {$options['before']};";
 		if (isset($options['condition']))
-			$func .= "if ({$options['condition']}) { $func; }";
+			$func = "if ({$options['condition']}) { $func; }";
 		if (isset($options['confirm']))
-			$func .= "if (confirm('" . $this->escapeJavascript($options['confirm']) . "')) { $func; }";
+			$func = "if (confirm('" . $this->escapeJavascript($options['confirm']) . "')) { $func; }";
 			
 		return $func;
 	}

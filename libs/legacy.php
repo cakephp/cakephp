@@ -53,7 +53,7 @@ if (version_compare(phpversion(), '5.0') < 0) {
  * @require     PHP 4.0.0 (user_error)
  */
 if (!function_exists('file_get_contents')) {
-    function file_get_contents($filename, $incpath = false, $resource_context = null)
+    function file_get_contents($filename, $incpath = false)
     {
         if (false === $fh = fopen($filename, 'rb', $incpath)) {
             user_error('file_get_contents() failed to open stream: No such file or directory',

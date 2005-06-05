@@ -13,8 +13,6 @@
 // + See: http://www.opensource.org/licenses/mit-license.php          + //
 //////////////////////////////////////////////////////////////////////////
 
-uses('log');
-
 /**
   * Purpose: Object
   * Allows for __construct to be used in PHP4.
@@ -51,7 +49,11 @@ class Object {
   *
   * @return Object
   */
-	function Object() {
+	function Object() 
+	{
+		global $DB;
+		
+		$this->db =& $DB;
 		$args = func_get_args();
 		register_shutdown_function(array(&$this, '__destruct'));
 		call_user_func_array(array(&$this, '__construct'), $args);

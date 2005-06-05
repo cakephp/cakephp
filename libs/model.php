@@ -518,7 +518,7 @@ class Model extends Object {
 		else
 			$f = array('*');
 
-		$condtions = $this->db->prepare($conditions);
+		$conditions = $this->db->prepare($conditions);
 			
 		$joins = $whers = array();
 

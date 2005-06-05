@@ -15,7 +15,7 @@
 
 /**
  * Creates controller, model, view files, and the required directories on demand.
- * Used by /scripts/add.php.
+ * Used by /scripts/bake.php.
  *
  * @filesource 
  * @author Cake Authors/Developers

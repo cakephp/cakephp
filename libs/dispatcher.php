@@ -78,6 +78,7 @@ class Dispatcher extends Object {
 	function dispatch ($url) {
 		global $_POST, $_GET, $_FILES, $_SESSION;
 
+		/* @var $params array */
 		$params = $this->parseParams($url);
 
 		// die if no controller set
@@ -87,31 +88,39 @@ class Dispatcher extends Object {
 		$ctrl_name = Inflector::camelize($params['controller']);
 		$ctrl_class = $ctrl_name.'Controller';
 
-		// if specified controller class doesn't exist
+		/**
+		 * Find out if the specified controller exists, and die if not.
+		 */
 		if (!loadController($ctrl_name) || !class_exists($ctrl_class))
 			$this->errorUnknownController($url, $ctrl_name);
 
-		$controller = new $ctrl_class ($this);
-		$controller->cache = &$Cache;
-		$controller->base = $this->base;
+		$ctrl_methods = get_class_methods($ctrl_class);
+		$ctrl_vars = get_class_vars($ctrl_class);
 
-		// if action is not set, and the default Controller::index() method doesn't exist 
-		if (empty($params['action'])) {
-			if (method_exists($controller, 'index'))
-				$params['action'] = 'index';
-			else
-				$this->errorNoAction($url);
+		/**
+		 * If _no_action_is set, check if the default action, index() exists. If it doesn't, die.
+		 */
+		if (empty($params['action']) && in_array('index', $ctrl_methods))
+		{
+			$params['action'] = 'index';
+		}
+		else {
+			$this->errorNoAction($url);
 		}
 
-		// if the requested action doesn't exist
-		if (!method_exists($controller, $params['action']))
+		/**
+		 * Check if the specified action really exists. 
+		 */
+		if (!in_array($params['action'], $ctrl_methods))
+		{
 			$this->errorUnknownAction($url, $ctrl_class, $params['action']);
+		}
 
 		$controller->params = $params;
 		$controller->action = $params['action'];
 		$controller->data = empty($params['data'])? null: $params['data'];
-		$controller->passed_args = empty($params['pass'])? null: $params['pass'];			
-
+		$controller->passed_args = empty($params['pass'])? null: $params['pass'];
+		
 		// EXECUTE THE REQUESTED ACTION
 		call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
 

@@ -19,9 +19,8 @@
 // +------------------------------------------------------------------+ //
 //////////////////////////////////////////////////////////////////////////
 
-/*
- * Name: DBO/Pear
- * Pear::DB layer for DBO
+/**
+  * Pear::DB layer for DBO.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -37,14 +36,12 @@
   */
 
 /**
-  * Enter description here...
+  * Include DBO.
   *
   */
-
 uses('dbo');
 /**
-  * Enter description here...
-  *
+  * Pear::DB layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs
@@ -54,48 +51,47 @@ uses('dbo');
 class DBO_Pear extends DBO {
 
 /**
-  * Enter description here...
+  * Connects to the database using options in the given configuration array.
   *
-  * @param unknown_type $config
-  * @return unknown
+  * @param array $config Configuration array for connecting
   */
 	function connect ($config) {
 		die('Please implement DBO::connect() first.');
 	}
 
 /**
-  * Enter description here...
+  * Disconnects from database.
   *
-  * @return unknown
+  * @return boolean True if the database could be disconnected, else false
   */
 	function disconnect () {
 		die('Please implement DBO::disconnect() first.');
 	}
 
 /**
-  * Enter description here...
+  * Executes given SQL statement.
   *
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return resource Result resource identifier
   */
 	function execute ($sql) {
 		return $this->_pear->query($sql);
 	}
 
 /**
-  * Enter description here...
+  * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res
-  * @return unknown
+  * @param unknown_type $res Resultset
+  * @return array The fetched row as an array
   */
 	function fetchRow ($result) {
 		return $result->fetchRow(DB_FETCHMODE_ASSOC);
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
-  * @return unknown
+  * @return array Array of tablenames in the database
   */
 	function tables () {  // POSTGRESQL ONLY! PEAR:DB DOESN'T SUPPORT LISTING TABLES
 		$sql = "SELECT a.relname AS name
@@ -118,10 +114,10 @@ class DBO_Pear extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of the fields in given table name.
   *
-  * @param unknown_type $table_name
-  * @return unknown
+  * @param string $table_name Name of database table to inspect
+  * @return array Fields in table. Keys are name and type
   */
 	function fields ($table_name) {
 		$data = $this->_pear->tableInfo($table_name);
@@ -134,37 +130,38 @@ class DBO_Pear extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns a quoted and escaped string of $data for use in an SQL statement.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param string $data String to be prepared for use in an SQL statement
+  * @return string Quoted and escaped
   */
-	function prepare ($data) {
+	function prepareValue ($data) {
 		return $this->_pear->quoteSmart($data);
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted error message from previous database operation.
   *
-  * @return unknown
+  * @return string Error message
   */
 	function lastError () {
 		return PEAR::isError($this->_result)? $this->_result->getMessage(): null;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
   *
-  * @return unknown
+  * @return int Number of affected rows
   */
 	function lastAffected () {
 		return $this->_pear->affectedRows();
 	}
 
 /**
-  * Enter description here...
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
   *
-  * @return unknown
+  * @return int Number of rows
   */
 	function lastNumRows ($result) {
 		if (method_exists($result, 'numRows'))
@@ -174,9 +171,10 @@ class DBO_Pear extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Returns the ID generated from the previous INSERT operation.
   *
-  * @return unknown
+  * @param string $table Name of the database table
+  * @return int 
   */
 	function lastInsertId ($table) {
 		return $this->field('id', "SELECT MAX(id) FROM {$table}");

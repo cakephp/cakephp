@@ -178,8 +178,8 @@ class DBO extends Object {
 
 /**
   * Maximum number of items in query log, to prevent query log taking over
-  * too much memory on large amounts of queries -- we've had problems at 
-  * ~6000 queries.
+  * too much memory on large amounts of queries -- I we've had problems at 
+  * >6000 queries on one system.
   *
   * @var int Maximum number of queries in the queries log.
   * @access private
@@ -210,10 +210,6 @@ class DBO extends Object {
 
 	function fields ($table_name) {
 		die('Please implement DBO::fields() first.');
-	}
-
-	function prepare ($data) {
-		die('Please implement DBO::prepare() first.');
 	}
 
 	function lastError ($result) {
@@ -272,6 +268,23 @@ class DBO extends Object {
 		$this->disconnect();
 		$this->_conn = NULL;
 		$this->connected = false;
+	}
+
+/**
+ * Prepares a value, or an array of values for database queries by quoting and escaping them.
+ *
+ * @param mixed $data A value or an array of values to prepare.
+ * @return mixed Prepared value or array of values.
+ */
+	function prepare ($data) {
+		if (!is_array($data))
+			$data = array($data);
+		
+		$out = null;
+		foreach ($data as $key=>$item) {
+			$out[$key] = $this->prepareValue($item);
+		}
+		return $out;
 	}
 
 /**
@@ -376,19 +389,6 @@ class DBO extends Object {
   */
 	function isConnected() {
 		return $this->connected;
-	}
-
-/**
-  * Prepares an array of data values by quoting and escaping them.
-  *
-  * @return array Array of prepared data
-  */
-	function prepareArray($data) {
-		$out = null;
-		foreach ($data as $key=>$item) {
-			$out[$key] = $this->prepare($item);
-		}
-		return $out;
 	}
 
 /**

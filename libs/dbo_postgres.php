@@ -14,8 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: DBO_Postgres
-  * Enter description here...
+  * PostgreSQL layer for DBO.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -31,10 +30,11 @@
   */
 
 /**
-  * Enter description here...
+  * Include DBO.
+  *
   */
+uses('dbo');
 
-uses('object', 'dbo');
 /**
   * PostgreSQL layer for DBO.
   *
@@ -49,7 +49,6 @@ class DBO_Postgres extends DBO {
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
-  * @return unknown
   */
 	function connect ($config) {
 		if($config) {
@@ -68,7 +67,7 @@ class DBO_Postgres extends DBO {
 /**
   * Disconnects from database.
   *
-  * @return unknown
+  * @return boolean True if the database could be disconnected, else false
   */
 	function disconnect () {
 		return pg_close($this->_conn);
@@ -77,8 +76,8 @@ class DBO_Postgres extends DBO {
 /**
   * Executes given SQL statement.
   *
-  * @param string $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return resource Result resource identifier
   */
 	function execute ($sql) {
 		return pg_query($this->_conn, $sql);
@@ -144,7 +143,7 @@ class DBO_Postgres extends DBO {
   * @param string $data String to be prepared for use in an SQL statement
   * @return string Quoted and escaped
   */
-	function prepare ($data) {
+	function prepareValue ($data) {
 		return "'".pg_escape_string($data)."'";
 	}
 
@@ -167,9 +166,10 @@ class DBO_Postgres extends DBO {
 	}
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists, this returns false.
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
   *
-  * @return int
+  * @return int Number of rows
   */
 	function lastNumRows () {
 		return $this->_result? pg_num_rows($this->_result): false;

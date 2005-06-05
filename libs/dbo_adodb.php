@@ -15,7 +15,7 @@
 
 /**
   * Purpose: DBO_AdoDB
-  * AdoDB layer for DBO
+  * AdoDB layer for DBO.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -37,8 +37,7 @@
 require_once(VENDORS.'adodb/adodb.inc.php');
 
 /**
-  * Enter description here...
-  *
+  * AdoDB layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs
@@ -69,7 +68,7 @@ class DBO_AdoDB extends DBO {
 /**
   * Disconnects from database.
   *
-  * @return unknown
+  * @return boolean True if the database could be disconnected, else false
   */
 	function disconnect () {
 		return $this->_adodb->close();
@@ -78,18 +77,18 @@ class DBO_AdoDB extends DBO {
 /**
   * Executes given SQL statement.
   *
-  * @param string $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return resource Result resource identifier
   */
 	function execute ($sql) {
 		return $this->_adodb->execute($sql);
 	}
 
 /**
-  * Return a row from given resultset.
+  * Returns a row from given resultset as an array .
   *
   * @param unknown_type $res Resultset
-  * @return unknown
+  * @return array The fetched row as an array
   */
 	function fetchRow ($res) {
 		return $res->FetchRow();
@@ -98,7 +97,7 @@ class DBO_AdoDB extends DBO {
 /**
   * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
-  * @return unknown
+  * @return array Array of tablenames in the database
   */
 	function tables() {
 		$tables = $this->_adodb->MetaTables('TABLES');
@@ -127,42 +126,49 @@ class DBO_AdoDB extends DBO {
 	}
 
 /**
-  * To be implemented
+  * Returns a quoted and escaped string of $data for use in an SQL statement.
   *
-  * @param unknown_type $data
+  * @param string $data String to be prepared for use in an SQL statement
+  * @return string Quoted and escaped
+  *
+  * :TODO: To be implemented.
   */
-	function prepare ($data)		{ die('Please implement DBO::prepare() first.'); }
+	function prepareValue ($data)		{ die('Please implement DBO::prepare() first.'); }
 
 /**
-  * Returns last SQL error message.
+  * Returns a formatted error message from previous database operation.
   *
-  * @return unknown
+  * @return string Error message
   */
 	function lastError () {
 		return $this->_adodb->ErrorMsg();
 	}
 
 /**
-  * Returns number of affected rows
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
   *
-  * @return int
+  * @return int Number of affected rows
   */
 	function lastAffected ()		{
 		return $this->_adodb->Affected_Rows(); 
 	}
 
 /**
-  * Returns number of rows in resultset of the last database operation.
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
   *
-  * @return int Number of rows in resultset
+  * @return int Number of rows
   */
 	function lastNumRows () {
 		 return $this->_result? $this->_result->RecordCount(): false;
 	}
 
 /**
-  * To be implemented
+  * Returns the ID generated from the previous INSERT operation.
   *
+  * @return int 
+  *
+  * :TODO: To be implemented.
   */
 	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
 }

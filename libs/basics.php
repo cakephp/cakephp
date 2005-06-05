@@ -30,6 +30,8 @@
  *
  */
 
+uses('neat_array');
+
 /**
  * Loads all models.
  *
@@ -107,6 +109,8 @@ function config () {
 			if (count($args) == 1) return false;
 		}
 	}
+	
+	return true;
 }
 
 /**
@@ -119,10 +123,21 @@ function config () {
  *
  * @uses LIBS
  */
-function uses () {
+function uses ()
+{
+	global $loaded;
+
+	if (!is_array($loaded))
+	$loaded = array();
+	
 	$args = func_get_args();
-	foreach ($args as $arg) {
-		require_once (LIBS.strtolower($arg).'.php');
+	foreach ($args as $arg) 
+	{
+		if (0 == in_array($arg, $loaded))
+		{
+			require_once(LIBS.strtolower($arg).'.php');
+			$loaded[] = $arg;
+		}
 	}
 }
 
@@ -143,7 +158,6 @@ function debug($var = false, $show_html = false) {
 
 
 if (!function_exists('getMicrotime')) {
-
 /**
  * Returns microtime for execution time checking.
  *
@@ -154,6 +168,7 @@ if (!function_exists('getMicrotime')) {
 		return ((float)$usec + (float)$sec);
 	}
 }
+
 if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortby.
@@ -212,229 +227,6 @@ if (!function_exists('array_combine')) {
 		}
 		
 		return $output;
-	}
-}
-
-/**
- * Class used for internal manipulation of multiarrays (arrays of arrays).
- *
- * @package cake
- * @subpackage cake.libs
- * @since Cake v 0.2.9
- */
-class NeatArray {
-	
-/**
- * Value of NeatArray.
- *
- * @var array
- * @access public
- */
-    var $value;
-    
-/**
- * Constructor. Defaults to an empty array.
- *
- * @param array $value
- * @access public
- * @uses NeatArray::value
- */
-	function NeatArray ($value=array()) {
-		$this->value = $value;
-	}
-
-/**
- * Checks whether $fieldName with $value exists in this NeatArray object.
- *
- * @param string $fieldName
- * @param string $value
- * @return mixed
- * @access public
- * @uses NeatArray::value
- */
-	function findIn ($fieldName, $value) {
-		$out = false;
-		foreach ($this->value as $k=>$v) {
-			if (isset($v[$fieldName]) && ($v[$fieldName] == $value)) {
-				$out[$k] = $v;
-			}
-		}
-
-		return $out;
-	}
-
-/**
- * Checks if $this->value is array, and removes all empty elements.
- *
- * @access public
- * @uses NeatArray::value
- */
-	function cleanup () {
-		$out = is_array($this->value)? array(): null;
-		foreach ($this->value as $k=>$v) {
-			if ($v) {
-				$out[$k] = $v;
-			}
-		}
-		$this->value = $out;
-	}
-
-
-/**
- * Adds elements from the supplied array to itself.
- *
- * @param string $value 
- * @return bool
- * @access public
- * @uses NeatArray::value
- */
-	 function add ($value) {
-		 return ($this->value = $this->plus($value))? true: false;
-	 }
-
-
-/**
- * Returns itself merged with given array.
- *
- * @param array $value Array to add to NeatArray.
- * @return array
- * @access public
- * @uses NeatArray::value
- */
-	 function plus ($value) {
-		 return array_merge($this->value, (is_array($value)? $value: array($value)));
-	 }
-
-/**
- * Counts repeating strings and returns an array of totals.
- *
- * @param int $sortedBy A value of 1 sorts by values, a value of 2 sorts by keys. Defaults to null (no sorting).
- * @return array
- * @access public
- * @uses NeatArray::value
- */
-	function totals ($sortedBy=1,$reverse=true) {
-		$out = array();
-		foreach ($this->value as $val)
-			isset($out[$val])? $out[$val]++: $out[$val] = 1;
-
-		if ($sortedBy == 1) {
-			$reverse? arsort($out, SORT_NUMERIC): asort($out, SORT_NUMERIC);
-		}
-		
-		if ($sortedBy == 2) {
-			$reverse? krsort($out, SORT_STRING): ksort($out, SORT_STRING);
-		}
-
-		return $out;
-	}
-	
-/**
- * Enter description here...
- *
- * @param unknown_type $with
- * @return unknown
- */
-	function filter ($with) {
-		return $this->value = array_filter($this->value, $with);
-	}
-
-/**
- * Passes each of its values through a specified function or method. Think of PHP's array_walk.
- *
- * @return array
- * @access public
- * @uses NeatArray::value
- */
-	function walk ($with) {
-		array_walk($this->value, $with);
-		return $this->value;
-	}
-
-/**
- * Extracts a value from all array items.
- *
- * @return array
- * @access public
- * @uses NeatArray::value
- */
-	function extract ($name) {
-		$out = array();
-		foreach ($this->value as $val) {
-			if (isset($val[$name]))
-				$out[] = $val[$name];
-		}
-		return $out;
-	}
-
-/**
-* Enter description here...
- *
- * @return unknown
- */
-	function unique () {
-		return array_unique($this->value);
-	}
-
-/**
- * Enter description here...
- *
- * @return unknown
- */
-	function makeUnique () {
-		return $this->value = array_unique($this->value);
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $his
- * @param unknown_type $onMine
- * @param unknown_type $onHis
- * @return unknown
- */
-	function joinWith ($his, $onMine, $onHis=null) {
-		if (empty($onHis)) $onHis = $onMine;
-
-		$his = new NeatArray($his);
-
-		$out = array();
-		foreach ($this->value as $key=>$val) {
-			if ($fromHis = $his->findIn($onHis, $val[$onMine])) {
-				list($fromHis) = array_values($fromHis);
-				$out[$key] = array_merge($val, $fromHis);
-			}
-			else {
-				$out[$key] = $val;
-			}
-		}
-
-		return $this->value = $out;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $root
- * @param unknown_type $idKey
- * @param unknown_type $parentIdKey
- * @param unknown_type $childrenKey
- * @return unknown
- */
-	function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children') {
-		$out = array();
-
-		for ($ii=0; $ii<sizeof($this->value); $ii++) {
-			if ($this->value[$ii][$parentIdKey] == $root) {
-				$tmp = $this->value[$ii];
-				$tmp[$childrenKey] = isset($this->value[$ii][$idKey])? 
-					$this->threaded($this->value[$ii][$idKey], $idKey, $parentIdKey, $childrenKey): 
-					null;
-				$out[] = $tmp;
-			}
-		}
-		
-		return $out;
 	}
 }
 

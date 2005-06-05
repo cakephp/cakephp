@@ -20,7 +20,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: DBO_MySQL
   * MySQL layer for DBO
   * 
   * @filesource 
@@ -37,14 +36,13 @@
   */
 
 /**
-  * Enter description here...
+  * Include DBO.
   *
   */
 
 uses('dbo');
 /**
   * MySQL layer for DBO.
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -144,7 +142,7 @@ class DBO_MySQL extends DBO {
   * @param string $data String to be prepared for use in an SQL statement
   * @return string Quoted and escaped
   */
-	function prepare ($data) {
+	function prepareValue ($data) {
 		return "'".mysql_real_escape_string($data)."'";
 	}
 
@@ -179,6 +177,7 @@ class DBO_MySQL extends DBO {
 /**
   * Returns the ID generated from the previous INSERT operation.
   *
+  * @param string $table Name of the database table
   * @return int 
   */
 	function lastInsertId() {

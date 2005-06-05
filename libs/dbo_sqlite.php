@@ -72,38 +72,38 @@ class DBO_SQLite extends DBO {
 	}
 
 /**
-  * Enter description here...
+  * Disconnects from database.
   *
-  * @return unknown
+  * @return boolean True if the database could be disconnected, else false
   */
 	function disconnect () {
 		return sqlite_close($this->_conn);
 	}
 
 /**
-  * Enter description here...
+  * Executes given SQL statement.
   *
-  * @param unknown_type $sql
-  * @return unknown
+  * @param string $sql SQL statement
+  * @return resource Result resource identifier
   */
 	function execute ($sql) {
 		return sqlite_query($this->_conn, $sql);
 	}
 
 /**
-  * Enter description here...
+  * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res
-  * @return unknown
+  * @param unknown_type $res Resultset
+  * @return array The fetched row as an array
   */
 	function fetchRow ($res) {
 		return sqlite_fetch_array($res);
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
-  * @return unknown
+  * @return array Array of tablenames in the database
   */
 	function tables () {
 		$result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
@@ -122,10 +122,10 @@ $this->_conn
 	}
 
 /**
-  * Enter description here...
+  * Returns an array of the fields in given table name.
   *
-  * @param unknown_type $table_name
-  * @return unknown
+  * @param string $table_name Name of database table to inspect
+  * @return array Fields in table. Keys are name and type
   */
 	function fields ($table_name)
 	{
@@ -139,46 +139,47 @@ $this->_conn
 	}
 
 /**
-  * Enter description here...
+  * Returns a quoted and escaped string of $data for use in an SQL statement.
   *
-  * @param unknown_type $data
-  * @return unknown
+  * @param string $data String to be prepared for use in an SQL statement
+  * @return string Quoted and escaped
   */
-	function prepare ($data) {
+	function prepareValue ($data) {
 		return "'".sqlite_escape_string($data)."'";
 	}
 
 /**
-  * Enter description here...
+  * Returns a formatted error message from previous database operation.
   *
-  * @return unknown
+  * @return string Error message
   */
 	function lastError () {
 		return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
   *
-  * @return unknown
+  * @return int Number of affected rows
   */
 	function lastAffected () {
 		return $this->_result? sqlite_changes($this->_conn): false;
 	}
 
 /**
-  * Enter description here...
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
   *
-  * @return unknown
+  * @return int Number of rows in resultset
   */
 	function lastNumRows () {
 		return $this->_result? sqlite_num_rows($this->_result): false;
 	}
 
 /**
-  * Enter description here...
+  * Returns the ID generated from the previous INSERT operation.
   *
-  * @return unknown
+  * @return int 
   */
 	function lastInsertId() {
 		Return sqlite_last_insert_rowid($this->_conn);
