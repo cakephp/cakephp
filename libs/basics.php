@@ -143,6 +143,7 @@ function debug($var = false, $show_html = false) {
 
 
 if (!function_exists('getMicrotime')) {
+
 /**
  * Returns microtime for execution time checking.
  *
@@ -153,7 +154,6 @@ if (!function_exists('getMicrotime')) {
 		return ((float)$usec + (float)$sec);
 	}
 }
-
 if (!function_exists('sortByKey')) {
 /**
  * Sorts given $array by key $sortby.
@@ -223,34 +223,35 @@ if (!function_exists('array_combine')) {
  * @since Cake v 0.2.9
  */
 class NeatArray {
-	/**
-	 * Value of NeatArray.
-	 *
-	 * @var array
-	 * @access public
-	 */
+	
+/**
+ * Value of NeatArray.
+ *
+ * @var array
+ * @access public
+ */
     var $value;
     
-	/**
-	 * Constructor. Defaults to an empty array.
-	 *
-	 * @param array $value
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Constructor. Defaults to an empty array.
+ *
+ * @param array $value
+ * @access public
+ * @uses NeatArray::value
+ */
 	function NeatArray ($value=array()) {
 		$this->value = $value;
 	}
 
-	/**
-	 * Checks whether $fieldName with $value exists in this NeatArray object.
-	 *
-	 * @param string $fieldName
-	 * @param string $value
-	 * @return mixed
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Checks whether $fieldName with $value exists in this NeatArray object.
+ *
+ * @param string $fieldName
+ * @param string $value
+ * @return mixed
+ * @access public
+ * @uses NeatArray::value
+ */
 	function findIn ($fieldName, $value) {
 		$out = false;
 		foreach ($this->value as $k=>$v) {
@@ -262,12 +263,12 @@ class NeatArray {
 		return $out;
 	}
 
-	/**
-	 * Checks if $this->value is array, and removes all empty elements.
-	 *
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Checks if $this->value is array, and removes all empty elements.
+ *
+ * @access public
+ * @uses NeatArray::value
+ */
 	function cleanup () {
 		$out = is_array($this->value)? array(): null;
 		foreach ($this->value as $k=>$v) {
@@ -279,39 +280,39 @@ class NeatArray {
 	}
 
 
-	/**
-	 * Adds elements from the supplied array to itself.
-	 *
-	 * @param string $value 
-	 * @return bool
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Adds elements from the supplied array to itself.
+ *
+ * @param string $value 
+ * @return bool
+ * @access public
+ * @uses NeatArray::value
+ */
 	 function add ($value) {
 		 return ($this->value = $this->plus($value))? true: false;
 	 }
 
 
-	/**
-	 * Returns itself merged with given array.
-	 *
-	 * @param array $value Array to add to NeatArray.
-	 * @return array
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Returns itself merged with given array.
+ *
+ * @param array $value Array to add to NeatArray.
+ * @return array
+ * @access public
+ * @uses NeatArray::value
+ */
 	 function plus ($value) {
 		 return array_merge($this->value, (is_array($value)? $value: array($value)));
 	 }
 
-	/**
-	 * Counts repeating strings and returns an array of totals.
-	 *
-	 * @param int $sortedBy A value of 1 sorts by values, a value of 2 sorts by keys. Defaults to null (no sorting).
-	 * @return array
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Counts repeating strings and returns an array of totals.
+ *
+ * @param int $sortedBy A value of 1 sorts by values, a value of 2 sorts by keys. Defaults to null (no sorting).
+ * @return array
+ * @access public
+ * @uses NeatArray::value
+ */
 	function totals ($sortedBy=1,$reverse=true) {
 		$out = array();
 		foreach ($this->value as $val)
@@ -327,30 +328,36 @@ class NeatArray {
 
 		return $out;
 	}
-
+	
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $with
+ * @return unknown
+ */
 	function filter ($with) {
 		return $this->value = array_filter($this->value, $with);
 	}
 
-	/**
-	 * Passes each of its values through a specified function or method. Think of PHP's array_walk.
-	 *
-	 * @return array
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Passes each of its values through a specified function or method. Think of PHP's array_walk.
+ *
+ * @return array
+ * @access public
+ * @uses NeatArray::value
+ */
 	function walk ($with) {
 		array_walk($this->value, $with);
 		return $this->value;
 	}
 
-	/**
-	 * Extracts a value from all array items.
-	 *
-	 * @return array
-	 * @access public
-	 * @uses NeatArray::value
-	 */
+/**
+ * Extracts a value from all array items.
+ *
+ * @return array
+ * @access public
+ * @uses NeatArray::value
+ */
 	function extract ($name) {
 		$out = array();
 		foreach ($this->value as $val) {
@@ -360,14 +367,32 @@ class NeatArray {
 		return $out;
 	}
 
+/**
+* Enter description here...
+ *
+ * @return unknown
+ */
 	function unique () {
 		return array_unique($this->value);
 	}
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function makeUnique () {
 		return $this->value = array_unique($this->value);
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $his
+ * @param unknown_type $onMine
+ * @param unknown_type $onHis
+ * @return unknown
+ */
 	function joinWith ($his, $onMine, $onHis=null) {
 		if (empty($onHis)) $onHis = $onMine;
 
@@ -387,6 +412,15 @@ class NeatArray {
 		return $this->value = $out;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $root
+ * @param unknown_type $idKey
+ * @param unknown_type $parentIdKey
+ * @param unknown_type $childrenKey
+ * @return unknown
+ */
 	function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children') {
 		$out = array();
 
