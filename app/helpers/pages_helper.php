@@ -8,7 +8,15 @@
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////
 
-class PagesHelper extends AppController {
+/**
+ * In this file you can extend the PagesController.
+ *
+ * @package cake
+ * @subpackage cake.app
+ */
+
+class PagesHelper extends AppController 
+{
 }
 
 ?>

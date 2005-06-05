@@ -13,7 +13,10 @@
  * application-wide controller-related methods here.
  *
  * Add your application-wide methods in the class below, your controllers 
- * will be inheriting them.
+ * will inherit them.
+ * 
+ * @package cake
+ * @subpackage cake.app
  */
 
 class AppController extends Controller {

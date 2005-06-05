@@ -12,6 +12,9 @@ class PagesController extends PagesHelper {
 
 /**
  *  Displays a view
+ *
+ * @package cake
+ * @subpackage cake.app
  */
 	function display () {
 

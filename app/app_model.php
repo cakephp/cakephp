@@ -13,7 +13,10 @@
  * application-wide model-related methods here.
  * 
  * Add your application-wide methods in the class below, your models
- * will be inheriting them.
+ * will inherit them.
+ * 
+ * @package cake
+ * @subpackage cake.app
  */
 
 class AppModel extends Model {

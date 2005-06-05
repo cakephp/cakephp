@@ -10,6 +10,9 @@
 
 /**
  * In this file you set up your database connection details.
+ * 
+ * @package cake
+ * @subpackage cake.config
  */
 
 /**

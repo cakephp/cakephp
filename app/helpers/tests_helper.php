@@ -8,7 +8,15 @@
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////
 
-class TestsHelper extends AppController {
+/**
+ * In this file you can extend the TestsController.
+ *
+ * @package cake
+ * @subpackage cake.app
+ */
+
+class TestsHelper extends AppController
+{
 }
 
 ?>
