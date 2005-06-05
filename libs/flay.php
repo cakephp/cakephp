@@ -189,10 +189,24 @@ class Flay extends Object {
 		return $out;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $string
+ * @return unknown
+ */
 	function extractWords ($string) {
 		return preg_split('/[\s,\.:\/="!\(\)<>~\[\]]+/', $string);
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $words
+ * @param unknown_type $string
+ * @param unknown_type $max_snippets
+ * @return unknown
+ */
 	function markedSnippets ($words, $string, $max_snippets=5) {
 
 		$string = strip_tags($string);
@@ -214,6 +228,13 @@ class Flay extends Object {
 		return Flay::colorMark($words, $snips);
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $words
+ * @param unknown_type $string
+ * @return unknown
+ */
 	function colorMark($words, $string) {
 		$colors = array('yl','gr','rd','bl','fu','cy');
 
@@ -226,10 +247,24 @@ class Flay extends Object {
 		return $string;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $text
+ * @return unknown
+ */
 	function toClean ($text) {
 		return strip_tags(html_entity_decode($text, ENT_QUOTES));
 	}
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $text
+ * @param unknown_type $length
+ * @param unknown_type $elipsis
+ * @return unknown
+ */
 	function fragment ($text, $length, $elipsis='...') {
 		$soft=$length-5;
 		$hard=$length+5;
