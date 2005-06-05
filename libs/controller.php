@@ -102,8 +102,9 @@ class Controller extends Template {
   * Constructor. 
   *
   */
-	function __construct () {
-		global $DB;
+	function __construct ($params=null)
+	{
+		$this->params = $params;
 
 		$r = null;
 		if (!preg_match('/(.*)Controller/i', get_class($this), $r))
@@ -113,26 +114,30 @@ class Controller extends Template {
 		$this->viewpath = Inflector::underscore($r[1]);
 		
 		$model_class = Inflector::singularize($this->name);
-		if (($this->uses === false) && class_exists($model_class)) {
-			if (!$DB)
-				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
-
+		
+		if (class_exists($model_class) && $this->db && ($this->uses === false)) 
+		{
 			$this->$model_class = new $model_class ();
 		}
-		elseif ($this->uses) {
+		elseif ($this->uses) 
+		{
 			if (!$DB)
 				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
 
 			$uses = is_array($this->uses)? $this->uses: array($this->uses);
 
-			foreach ($uses as $model_name) {
+			foreach ($uses as $model_name) 
+			{
 				$model_class = ucfirst(strtolower($model_name));
 
-				if (class_exists($model_class)) {
+				if (class_exists($model_class)) 
+				{
 					$this->$model_name = new $model_class (false);
 				}
-				else
+				else 
+				{
 					die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
+				}
 			}
 		}
 

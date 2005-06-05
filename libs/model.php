@@ -518,8 +518,6 @@ class Model extends Object {
 		else
 			$f = array('*');
 
-		$conditions = $this->db->prepare($conditions);
-			
 		$joins = $whers = array();
 
 		foreach ($this->_oneToMany as $rule) {

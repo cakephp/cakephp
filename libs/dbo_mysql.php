@@ -95,8 +95,8 @@ class DBO_MySQL extends DBO {
   * @param unknown_type $res Resultset
   * @return array The fetched row as an array
   */
-	function fetchRow ($res) {
-		return mysql_fetch_array($res);
+	function fetchRow ($res, $assoc=false) {
+		return mysql_fetch_array($res, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
 	}
 
 /**

@@ -1,6 +1,7 @@
 <?php
 
 uses ('test', 'dbo_factory');
+config ('database');
 
 class DboFactoryTest extends TestCase {
 	var $abc;
@@ -25,9 +26,10 @@ class DboFactoryTest extends TestCase {
    }
 
 
-	function testMake () {
-		if (class_exists(DATABASE_CONFIG)) {
-
+	function testMake () 
+	{
+		if (class_exists(DATABASE_CONFIG)) 
+		{
 			$output = $this->abc->make('test');
 			$this->assertTrue(is_object($output));
 

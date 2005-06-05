@@ -36,7 +36,13 @@ class NeatArray {
 	 * @access public
 	 * @uses NeatArray::value
 	 */
-	function findIn ($fieldName, $value) {
+	function findIn ($fieldName, $value) 
+	{
+		if (!is_array($this->value))
+		{
+			return false;
+		}
+			
 		$out = false;
 		foreach ($this->value as $k=>$v) {
 			if (isset($v[$fieldName]) && ($v[$fieldName] == $value)) {

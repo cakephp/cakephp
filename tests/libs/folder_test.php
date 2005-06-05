@@ -27,7 +27,7 @@ class FolderTest extends TestCase {
 
 	function testLs () {
 		$result = $this->abc->ls();
-		$expected = array(array('css', 'files', 'img'),array('.htaccess', '500.html', 'index.php', 'index_no_mod_rewrite.php'));
+		$expected = array(array('.svn', 'css', 'files', 'img', 'js'),array('.htaccess', '500.html', 'index.php'));
 		$this->assertEquals($result, $expected);
 	}
 

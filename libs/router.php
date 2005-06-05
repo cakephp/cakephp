@@ -111,11 +111,20 @@ class Router extends Object {
   * @param string $url URL to be parsed 
   * @return array 
   */
-	function parse ($url) {
+	function parse ($url) 
+	{
+		// An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
+		// Here's the fix.
+		if ($url && ('/' != $url[0]))
+		{
+			$url = '/'.$url;
+		}
+		
 		$out = array();
 		$r = null;
 
-		$default_route = array(
+		$default_route = array
+		(
 			'/:controller/:action/* (default)',
 			"#^(?:\/(?:([a-z0-9_\-]+)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
 			array('controller', 'action'),
@@ -124,10 +133,12 @@ class Router extends Object {
 
 		$this->routes[] = $default_route;
 
-		foreach ($this->routes as $route) {
+		foreach ($this->routes as $route) 
+		{
 			list($route, $regexp, $names, $defaults) = $route;
 
-			if (preg_match($regexp, $url, $r)) {
+			if (preg_match($regexp, $url, $r)) 
+			{
 				// $this->log($url.' matched '.$regexp, 'note');
 				// remove the first element, which is the url
 				array_shift($r);
@@ -138,8 +149,10 @@ class Router extends Object {
 
 				$ii = 0;
 
-				if (is_array($defaults)) {
-					foreach ($defaults as $name=>$value) {
+				if (is_array($defaults)) 
+				{
+					foreach ($defaults as $name=>$value) 
+					{
 						if (preg_match('#[a-z_\-]#i', $name))
 							$out[$name] = $value;
 						else
@@ -149,11 +162,13 @@ class Router extends Object {
 
 				foreach ($r as $found) {
 					// if $found is a named url element (i.e. ':action')
-					if (isset($names[$ii])) {
+					if (isset($names[$ii])) 
+					{
 						$out[$names[$ii]] = $found;
 					}
 					// unnamed elements go in as 'pass'
-					else {
+					else 
+					{
 						$pass = new NeatArray(explode('/', $found));
 						$pass->cleanup();
 						$out['pass'] = $pass->value;
@@ -163,7 +178,6 @@ class Router extends Object {
 				break;
 			}
 		}
-
 		return $out;
 	}
 }

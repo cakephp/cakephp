@@ -35,8 +35,11 @@ session_start();
 /**
   * Get Cake's root directory
   */
-define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(__FILE__)).DS);
+if (!defined('DS'))
+	define ('DS', DIRECTORY_SEPARATOR);
+
+if (!defined('ROOT'))
+	define ('ROOT', dirname(dirname(__FILE__)).DS);
 
 /**
   * Directory layout and basic functions

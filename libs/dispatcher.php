@@ -100,14 +100,18 @@ class Dispatcher extends Object {
 		/**
 		 * If _no_action_is set, check if the default action, index() exists. If it doesn't, die.
 		 */
-		if (empty($params['action']) && in_array('index', $ctrl_methods))
+		if (empty($params['action']))
 		{
-			$params['action'] = 'index';
+			if (in_array('index', $ctrl_methods))
+			{
+				$params['action'] = 'index';
+			}
+			else 
+			{
+				$this->errorNoAction($url);
+			}
 		}
-		else {
-			$this->errorNoAction($url);
-		}
-
+		
 		/**
 		 * Check if the specified action really exists. 
 		 */
@@ -116,7 +120,8 @@ class Dispatcher extends Object {
 			$this->errorUnknownAction($url, $ctrl_class, $params['action']);
 		}
 
-		$controller->params = $params;
+		$controller = new $ctrl_class ($params); 
+		$controller->base = $this->base; 
 		$controller->action = $params['action'];
 		$controller->data = empty($params['data'])? null: $params['data'];
 		$controller->passed_args = empty($params['pass'])? null: $params['pass'];
@@ -142,7 +147,7 @@ class Dispatcher extends Object {
 		// load routes config
 		$Route = new Router();
 		require CONFIGS.'routes.php';
-		$params = $Route->parse ('/'.$from_url);
+		$params = $Route->parse ($from_url);
 
 		// add submitted form data
 		$params['form'] = $_POST;

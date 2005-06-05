@@ -181,8 +181,8 @@ class ControllerTest extends TestCase {
 	}
 
 	function testSelectTag () {
-		$result = $this->abc->selectTag('tofu', array('m'=>'male', 'f'=>'female'), array('class'=>'Outer'), array('class'=>'Inner', 'id'=>'FooID'));
-		$expected = '<select name="data[tofu]" class="Outer">'."\n".'<option value="" class="Inner" id="FooID"></option>'."\n".'<option value="m" class="Inner" id="FooID">male</option>'."\n".'<option value="f" class="Inner" id="FooID">female</option>'."\n".'</select>';
+		$result = $this->abc->selectTag('tofu', array('m'=>'male', 'f'=>'female'), 'f', array('class'=>'Outer'), array('class'=>'Inner', 'id'=>'FooID'));
+		$expected = '<select name="data[tofu]" class="Outer">'."\n".'<option value="" class="Inner" id="FooID"></option>'."\n".'<option value="m" class="Inner" id="FooID">male</option>'."\n".'<option value="f" class="Inner" id="FooID" selected="selected">female</option>'."\n".'</select>';
 		$this->assertEquals($result, $expected);
 
 		$result = $this->abc->selectTag('tofu', array());

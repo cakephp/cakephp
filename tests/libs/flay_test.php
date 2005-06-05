@@ -29,7 +29,7 @@ class FlayTest extends TestCase {
 		$tests_to_html = array(
 			array(
 			'text'=>"",
-			'html'=>""
+			'html'=>false
 			),
 			array(
 			'text'=>"This is a text.",
@@ -69,7 +69,7 @@ class FlayTest extends TestCase {
 			),
 			array(
 			'text'=>"Now auto-link an url such as http://sputnik.pl or www.robocik-malowany.com/dupa[4] - or any other.",
-			'html'=>"<p>Now auto-link an url such as <a href=\"http://sputnik.pl\">http://sputnik.pl</a> or <a href=\"www.robocik-malowany.com/dupa[4]\">www.robocik-malowany.com/dupa[4]</a> &ndash; or any other.</p>\n"
+			'html'=>"<p>Now auto-link an url such as <a href=\"http://sputnik.pl\">http://sputnik.pl</a> or <a href=\"http://www.robocik-malowany.com/dupa[4]\">www.robocik-malowany.com/dupa[4]</a> &ndash; or any other.</p>\n"
 			),
 			array(
 			'text'=>"===This be centered===",

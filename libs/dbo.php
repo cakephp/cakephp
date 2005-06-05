@@ -276,15 +276,21 @@ class DBO extends Object {
  * @param mixed $data A value or an array of values to prepare.
  * @return mixed Prepared value or array of values.
  */
-	function prepare ($data) {
-		if (!is_array($data))
-			$data = array($data);
-		
-		$out = null;
-		foreach ($data as $key=>$item) {
-			$out[$key] = $this->prepareValue($item);
+	function prepare ($data) 
+	{
+		if (is_string($data))
+		{
+			return $this->prepareValue($data);
 		}
-		return $out;
+		else 
+		{
+			$out = null;
+			foreach ($data as $key=>$item) 
+			{
+				$out[$key] = $this->prepareValue($item);
+			}
+			return $out;
+		}
 	}
 
 /**
@@ -326,8 +332,8 @@ class DBO extends Object {
   * @param resource $res
   * @return array A single row of results
   */
-	function farr ($res=false) {
-		return $this->fetchRow($res? $res: $this->_result);
+	function farr ($res=false, $assoc=false) {
+		return $this->fetchRow($res? $res: $this->_result, $assoc);
 	}
 
 /**
@@ -350,7 +356,10 @@ class DBO extends Object {
 	function all ($sql) {
 		if($this->query($sql)) {
 			$out=array();
-			while($item = $this->farr()) $out[] = $item;
+			while ($item = $this->farr(null, true)) 
+			{
+				$out[] = $item;
+			}
 			return $out;
 		}
 		else {

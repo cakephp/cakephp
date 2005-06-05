@@ -47,7 +47,6 @@ if (version_compare(phpversion(), '5.0') < 0) {
  * @package     PHP_Compat
  * @link        http://php.net/function.file_get_contents
  * @author      Aidan Lister <aidan@php.net>
- * @version     $Revision$
  * @internal    resource_context is not supported
  * @since       PHP 5
  * @require     PHP 4.0.0 (user_error)
