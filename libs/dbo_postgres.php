@@ -31,7 +31,6 @@
 
 /**
   * Include DBO.
-  *
   */
 uses('dbo');
 
@@ -41,7 +40,6 @@ uses('dbo');
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.114
-  *
   */
 class DBO_Postgres extends DBO {
 	
@@ -49,6 +47,7 @@ class DBO_Postgres extends DBO {
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
+  * @return True if successfully connected.
   */
 	function connect ($config) {
 		if($config) {
@@ -98,7 +97,7 @@ class DBO_Postgres extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tables () {
+	function tablesList () {
 		$sql = "SELECT a.relname AS name
          FROM pg_class a, pg_user b
          WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'

@@ -14,7 +14,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: DBO_AdoDB
   * AdoDB layer for DBO.
   * 
   * @filesource 
@@ -32,7 +31,6 @@
 
 /**
   * Include AdoDB files.
-  *
   */
 require_once(VENDORS.'adodb/adodb.inc.php');
 
@@ -42,7 +40,6 @@ require_once(VENDORS.'adodb/adodb.inc.php');
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class DBO_AdoDB extends DBO {
 
@@ -99,7 +96,7 @@ class DBO_AdoDB extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tables() {
+	function tablesList() {
 		$tables = $this->_adodb->MetaTables('TABLES');
 
 		if (!sizeof($tables)>0) {

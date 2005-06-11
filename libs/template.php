@@ -38,8 +38,6 @@ uses('object');
 
 /**
   * Templating for Controller class. Takes care of rendering views.
-  * 
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -97,27 +95,19 @@ class Template extends Object {
 	var $_page_title = false;
 
 /**
-  * Constructor. 
+  * Choose the layout to be used when rendering.
   *
-  */
-	function __construct () {
-		parent::__construct();
-	}
-
-/**
-  * Enter description here...
-  *
-  * @param unknown_type $layout
+  * @param string $layout
   */
 	function setLayout ($layout) {
 		$this->layout = $layout;
 	}
 
 /**
-  * Enter description here...
+  * Saves a variable to use inside a template.
   *
-  * @param mixed $one An array of POST data. (Or: a string of a single POST datum.)
-  * @param string $two Value in case $one is a string (which then works as the key).
+  * @param mixed $one A string or an array of data.
+  * @param string $two Value in case $one is a string (which then works as the key), otherwise unused.
   * @return unknown
   */
 	function set($one, $two=null) {
@@ -275,7 +265,8 @@ class Template extends Object {
   * @param boolean $___play_safe If set to false, the include() of the $__view_fn is done without suppressing output of errors
   * @return string Rendered output
   */
-	function _render($___view_fn, $___data_for_view, $___play_safe = true) {
+	function _render($___view_fn, $___data_for_view, $___play_safe = true) 
+	{
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
 		$BASE = $this->base;
 		$params = &$this->params;

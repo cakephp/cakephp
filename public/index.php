@@ -42,17 +42,23 @@ if (!defined('ROOT'))
 	define ('ROOT', dirname(dirname(__FILE__)).DS);
 
 /**
-  * Directory layout and basic functions
+  * Configuration, directory layout and standard libraries
   */
 require (ROOT.'config/core.php');
 require (ROOT.'config/paths.php');
+require (ROOT.'libs/log.php');
+require (ROOT.'libs/object.php');
+require (ROOT.'libs/neat_array.php');
+require (ROOT.'libs/inflector.php');
 require (ROOT.'libs/basics.php');
+require (ROOT.'libs/folder.php');
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);
 
 $TIME_START = getMicrotime();
 
-uses ('folder', 'dispatcher', 'dbo_factory');
+uses ('dispatcher', 'dbo_factory');
+
 config ('tags', 'database');
 
 $DB = DboFactory::make('devel');

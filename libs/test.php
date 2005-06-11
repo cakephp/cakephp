@@ -76,7 +76,6 @@ if (phpversion() >= '4') {
 /**
   * Exception class for testing
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.0
@@ -127,7 +126,6 @@ class TestException {
 
 /**
   * Asserts for Unit Testing
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -589,7 +587,6 @@ class TestCase extends Assert /* implements Test */ {
 /**
   * Test Suite for Unit Testing.
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.0
@@ -724,7 +721,6 @@ class TestSuite /* implements Test */ {
 /**
   * Test Failure for Unit Testing
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.0
@@ -789,7 +785,6 @@ class TestFailure {
 
 /**
   * Test Result for Unit Testing
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -961,7 +956,6 @@ class TestResult {
 /**
   * Mines data from test results. Used for Unit Testing.
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 1.0.0.0
@@ -1037,7 +1031,6 @@ class ResultDataMiner extends TestResult {
 
 /**
   * Test Runner for Unit Testing.
-  *
   *
   * @package cake
   * @subpackage cake.libs

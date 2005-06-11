@@ -37,7 +37,6 @@
 
 /**
   * Include DBO.
-  *
   */
 
 uses('dbo');
@@ -47,7 +46,6 @@ uses('dbo');
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class DBO_MySQL extends DBO {
 	
@@ -104,7 +102,7 @@ class DBO_MySQL extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tables () {
+	function tablesList () {
 		$result = mysql_list_tables($this->config['database']);
 
 		if (!$result) {
@@ -177,7 +175,6 @@ class DBO_MySQL extends DBO {
 /**
   * Returns the ID generated from the previous INSERT operation.
   *
-  * @param string $table Name of the database table
   * @return int 
   */
 	function lastInsertId() {

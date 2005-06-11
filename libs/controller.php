@@ -112,7 +112,7 @@ class Controller extends Template {
 
 		$this->name = strtolower($r[1]);
 		$this->viewpath = Inflector::underscore($r[1]);
-		
+
 		$model_class = Inflector::singularize($this->name);
 		
 		if (class_exists($model_class) && $this->db && ($this->uses === false)) 
@@ -224,6 +224,7 @@ class Controller extends Template {
 
 /**
   * Returns an external HTML link to $url for given $title, optionally using $html_options.
+  * The ereg_replace is to replace the '&' in the URL into &amp; for XHTML purity.
   *
   * @param string $title
   * @param string $url
@@ -232,7 +233,7 @@ class Controller extends Template {
   */
 	function linkOut ($title, $url=null, $html_options=null) {
 		$url = $url? $url: $title;
-		return sprintf(TAG_LINK, $url, $this->parseHtmlOptions($html_options), $title);
+		return sprintf(TAG_LINK, ereg_replace('&([^a])', '&amp;\1', $url), $this->parseHtmlOptions($html_options), $title);
 	}
 
 /**
@@ -247,6 +248,7 @@ class Controller extends Template {
 		$html_options['action'] = $this->UrlFor($target);
 		$html_options['method'] = $type=='get'? 'get': 'post';
 		$type == 'file'? $html_options['enctype'] = 'multipart/form-data': null;
+
 		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, ''));
 	}
 
@@ -630,8 +632,6 @@ class Controller extends Template {
 	function tagIsInvalid ($field) {
 		return empty($this->validationErrors[$field])? 0: $this->validationErrors[$field];
 	}
-
-
 
 /**
   * Adds $name and $link to the breadcrumbs array.

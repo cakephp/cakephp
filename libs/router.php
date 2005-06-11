@@ -30,15 +30,10 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
-/**
-  * Enter description here...
-  *
-  */
 uses('object');
 
 /**
   * Parses the request URL into controller, action, and parameters.
-  *
   *
   * @package cake
   * @subpackage cake.libs
@@ -53,14 +48,6 @@ class Router extends Object {
   * @var array
   */
 	var $routes = array();
-
-/**
-  * Constructor.
-  *
-  */
-	function __construct () {
-		parent::__construct();
-	}
 	
 /**
   * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
@@ -178,6 +165,7 @@ class Router extends Object {
 				break;
 			}
 		}
+
 		return $out;
 	}
 }

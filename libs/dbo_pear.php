@@ -37,16 +37,15 @@
 
 /**
   * Include DBO.
-  *
   */
 uses('dbo');
+
 /**
   * Pear::DB layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class DBO_Pear extends DBO {
 
@@ -54,6 +53,7 @@ class DBO_Pear extends DBO {
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
+  * @return unknown
   */
 	function connect ($config) {
 		die('Please implement DBO::connect() first.');
@@ -93,7 +93,7 @@ class DBO_Pear extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tables () {  // POSTGRESQL ONLY! PEAR:DB DOESN'T SUPPORT LISTING TABLES
+	function tablesList () {  // POSTGRESQL ONLY! PEAR:DB DOESN'T SUPPORT LISTING TABLES
 		$sql = "SELECT a.relname AS name
          FROM pg_class a, pg_user b
          WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
@@ -144,8 +144,10 @@ class DBO_Pear extends DBO {
   *
   * @return string Error message
   */
-	function lastError () {
-		return PEAR::isError($this->_result)? $this->_result->getMessage(): null;
+	function lastError ($result=null) {
+		if (!$result) $result = $this->_result;
+
+		return PEAR::isError($result)? $result->getMessage(): null;
 	}
 
 /**

@@ -40,13 +40,12 @@ uses('error_messages', 'object', 'router', 'controller');
 /**
   * Dispatches the request, creating appropriate models and controllers.
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class Dispatcher extends Object {
+
 /**
   * Base URL
   *
@@ -75,7 +74,8 @@ class Dispatcher extends Object {
   * @param string $url
   * @return unknown
   */
-	function dispatch ($url) {
+	function dispatch ($url) 
+	{
 		global $_POST, $_GET, $_FILES, $_SESSION;
 
 		/* @var $params array */
@@ -141,12 +141,13 @@ class Dispatcher extends Object {
   * @param string $from_url
   * @return array Parameters found in POST and GET.
   */
-	function parseParams ($from_url) {
+	function parseParams ($from_url) 
+	{
 		global $_POST, $_FILES;
 
 		// load routes config
 		$Route = new Router();
-		require CONFIGS.'routes.php';
+		include CONFIGS.'routes.php';
 		$params = $Route->parse ($from_url);
 
 		// add submitted form data

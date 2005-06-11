@@ -30,8 +30,6 @@
  *
  */
 
-uses('neat_array');
-
 /**
  * Loads all models.
  *
@@ -80,7 +78,7 @@ function loadController ($name) {
 
 	if (file_exists($helper_fn))
 		require($helper_fn);
-	
+
 	return file_exists($controller_fn)? require($controller_fn): false;
 }
 
@@ -90,7 +88,8 @@ function loadController ($name) {
   * @param string $path
   * @return array
   */
-function listClasses($path) {
+function listClasses($path) 
+{
 	$modules = new Folder($path);
 	return $modules->find('(.+)\.php');
 }
@@ -102,7 +101,7 @@ function config () {
 	$args = func_get_args();
 	foreach ($args as $arg) {
 		if (file_exists(CONFIGS.$arg.'.php')) {
-			require_once (CONFIGS.$arg.'.php');
+			include (CONFIGS.$arg.'.php');
 			if (count($args) == 1) return true;
 		}
 		else {
@@ -118,7 +117,7 @@ function config () {
  *
  * Example:
  * <code>
- * uses('inflector', 'object');
+ * uses('flay', 'time');
  * </code>
  *
  * @uses LIBS
@@ -147,8 +146,10 @@ function uses ()
  * @param boolean $var
  * @param boolean $show_html
  */
-function debug($var = false, $show_html = false) {
-	if (DEBUG) {
+function debug($var = false, $show_html = false) 
+{
+	if (DEBUG) 
+	{
 		print "\n<pre>\n";
 		if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
 		print_r($var);
@@ -157,7 +158,8 @@ function debug($var = false, $show_html = false) {
 }
 
 
-if (!function_exists('getMicrotime')) {
+if (!function_exists('getMicrotime')) 
+{
 /**
  * Returns microtime for execution time checking.
  *
@@ -181,24 +183,24 @@ if (!function_exists('sortByKey')) {
  */
 	function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) {
 
-		if( is_array($array) ) {
+		if (is_array($array)) {
 
-			foreach( $array AS $key => $val )
+			foreach ($array as $key => $val)
 			$sa[$key] = $val[$sortby];
 
-			if( $order == 'asc' )
-			asort($sa, $type);
+			if ($order == 'asc')
+				asort($sa, $type);
 			else
-			arsort($sa, $type);
+				arsort($sa, $type);
 
-			foreach( $sa as $key=>$val )
-			$out[] = $array[$key];
+			foreach ($sa as $key=>$val)
+				$out[] = $array[$key];
 
 			return $out;
 
 		}
 		else
-		return null;
+			return null;
 	}
 }
 

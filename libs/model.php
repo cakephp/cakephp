@@ -39,7 +39,6 @@
 
 /**
   * Enter description here...
-  *
   */
 uses('object', 'validators', 'inflector');
 
@@ -50,13 +49,13 @@ uses('object', 'validators', 'inflector');
   * The table is required to have at least 'id auto_increment', 'created datetime', 
   * and 'modified datetime' fields.
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
   *
   */
-class Model extends Object {
+class Model extends Object 
+{
     
 /**
   * Enter description here...
@@ -153,17 +152,11 @@ class Model extends Object {
   * @param string $table Database table to use.
   * @param unknown_type $db Database connection object.
   */
-	function __construct ($id=false, $table=null, $db=null) {
+	function __construct ($id=false, $table=null, $db=null) 
+	{
 		global $DB;
 
-		if ($db) 
-		{
-			$this->db = $db;
-		}
-		else 
-		{
-			$this->db = &$DB;	
-		}
+		$this->db = $db? $db: $DB;
 
 		if ($id) 
 			$this->id = $id;
@@ -178,13 +171,14 @@ class Model extends Object {
   * Creates has-many relationships, and then call relink.
   *
   * @see relink()
-  *
   */
-	function createLinks () {
+	function createLinks () 
+	{
 		if (!empty($this->hasMany))
 			$this->_hasMany = explode(',', $this->hasMany);
 		
-		foreach ($this->_hasMany as $model_name) {
+		foreach ($this->_hasMany as $model_name) 
+		{
 			// todo fix strip the model name
 			$model_name = Inflector::singularize($model_name);
 			$this->$model_name = new $model_name();
@@ -197,10 +191,11 @@ class Model extends Object {
   * Updates this model's many-to-one links, by emptying the links list, and then linkManyToOne again.
   *
   * @see linkManyToOne()
-  *
   */
-	function relink () {
-		foreach ($this->_hasMany as $model) {
+	function relink () 
+	{
+		foreach ($this->_hasMany as $model) 
+		{
 			$name = Inflector::singularize($model);
 			$this->$name->clearLinks();
 			$this->$name->linkManyToOne(get_class($this), $this->id);
@@ -215,7 +210,8 @@ class Model extends Object {
   * @param string $model_name Name of model to link to
   * @param unknown_type $value Defaults to NULL.
   */
-	function linkManyToOne ($model_name, $value=null) {
+	function linkManyToOne ($model_name, $value=null) 
+	{
 		$table_name = Inflector::tableize($model_name);
 		$field_name = Inflector::singularize($table_name).'_id';
 		$this->_one_to_many[] = array($table_name, $field_name, $value);
@@ -225,7 +221,8 @@ class Model extends Object {
   * Removes all one-to-many links to other Models.
   *
   */
-	function clearLinks () {
+	function clearLinks () 
+	{
 		$this->_one_to_many = array();
 	}
 
@@ -234,12 +231,15 @@ class Model extends Object {
   *
   * @param string $table_name Name of the custom table
   */
-	function useTable ($table_name) {
-		if (!in_array($table_name, $this->db->tables())) {
+	function useTable ($table_name) 
+	{
+		if (!in_array(strtolower($table_name), $this->db->tables())) 
+		{
 			trigger_error (sprintf(ERROR_NO_MODEL_TABLE, get_class($this), $table_name), E_USER_ERROR);
 			die();
 		}
-		else {
+		else
+		{
 			$this->table = $table_name;
 			$this->loadInfo();
 		}
@@ -258,11 +258,13 @@ class Model extends Object {
   * @param string $two Value string for the alternative indata method
   * @return unknown
   */
-	function set ($one, $two=null) {
+	function set ($one, $two=null) 
+	{
 		$this->validationErrors = null;
 		$data = is_array($one)? $one: array($one=>$two);
 
-		foreach ($data as $n => $v) {
+		foreach ($data as $n => $v) 
+		{
 /*
 			if (!$this->hasField($n)) {
 				DEBUG? 
@@ -281,7 +283,8 @@ class Model extends Object {
   *
   * @param int $id Id
   */
-	function setId ($id) {
+	function setId ($id) 
+	{
 		$this->id = $id;
 		$this->relink();
 	}
@@ -291,7 +294,8 @@ class Model extends Object {
   *
   * @return array Array of table metadata
   */
-	function loadInfo () {
+	function loadInfo () 
+	{
 		if (empty($this->_table_info))
 			$this->_table_info = new NeatArray($this->db->fields($this->table));
 		return $this->_table_info;
@@ -304,7 +308,8 @@ class Model extends Object {
   * @param string $name Name of table to look in
   * @return boolean
   */
-	function hasField ($name) {
+	function hasField ($name) 
+	{
 		if (empty($this->_table_info)) $this->loadInfo();
 		return $this->_table_info->findIn('name', $name);
 	}
@@ -315,7 +320,8 @@ class Model extends Object {
   * @param mixed $fields String of single fieldname, or an array of fieldnames.
   * @return array Array of database fields
   */
-	function read ($fields=null) {
+	function read ($fields=null) 
+	{
 		$this->validationErrors = null;
 		return $this->id? $this->find("id = '{$this->id}'", $fields): false;
 	}
@@ -327,18 +333,25 @@ class Model extends Object {
   * @param string $conditions SQL conditions (defaults to NULL)
   * @return field contents
   */
-	function field ($name, $conditions=null) {
-		if ($conditions) {
+	function field ($name, $conditions=null) 
+	{
+		if ($conditions) 
+		{
 			$data = $this->find($conditions);
 			return $data[$name];
 		}
-		if (isset($this->data[$name]))
+		elseif (isset($this->data[$name]))
+		{
 			return $this->data[$name];
-		else {
-			if ($this->id && $data = $this->read($name)) {
+		}
+		else 
+		{
+			if ($this->id && $data = $this->read($name)) 
+			{
 				return isset($data[$name])? $data[$name]: false;
 			}
-			else {
+			else 
+			{
 				return false;
 			}
 		}
@@ -351,7 +364,8 @@ class Model extends Object {
   * @param mixed $value Value of the field
   * @return boolean True on success save
   */
-	function saveField($name, $value) {
+	function saveField($name, $value) 
+	{
 		return $this->save(array($name=>$value), false);
 	}
 
@@ -362,57 +376,75 @@ class Model extends Object {
   * @param boolean $validate
   * @return boolean success
   */
-	function save ($data=null, $validate=true) {
+	function save ($data=null, $validate=true) 
+	{
 		if ($data) $this->set($data);
 
 		if ($validate && !$this->validates())
 			return false;
 
 		$fields = $values = array();
-		foreach ($this->data as $n=>$v) {
-			if ($this->hasField($n)) {
+		foreach ($this->data as $n=>$v) 
+		{
+			if ($this->hasField($n)) 
+			{
 				$fields[] = $n;
 				$values[] = $this->db->prepare($v);
 			}
 		}
 
-		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) {
+		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
+		{
 			$fields[] = 'created';
 			$values[] = date("'Y-m-d H:i:s'");
 		}
-		if ($this->hasField('modified') && !in_array('modified', $fields)) {
+		if ($this->hasField('modified') && !in_array('modified', $fields)) 
+		{
 			$fields[] = 'modified';
 			$values[] = 'NOW()';
 		}
 
-		if(count($fields)){
+		if(count($fields))
+		{
 			if($this->id){
 				$sql = array();
-				foreach (array_combine($fields, $values) as $field=>$value) {
+				foreach (array_combine($fields, $values) as $field=>$value) 
+				{
 					$sql[] = $field.'='.$value;
 				}
-				if($this->db->query("UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'") && $this->db->lastAffected()){
+				
+				$sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
+				
+				if ($this->db->query($sql) && $this->db->lastAffected())
+				{
 					$this->data = false;
 					return true;
 				}
-				else {
+				else 
+				{
 					return $this->db->hasAny($this->table, "id = '{$this->id}'");
 				}
 			}
-			else {
+			else 
+			{
 				$fields = join(',', $fields);
 				$values = join(',', $values);
 
-				if($this->db->query("INSERT INTO {$this->table} ({$fields}) VALUES ({$values})")) {
+				$sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
+
+				if($this->db->query($sql)) 
+				{
 					$this->id = $this->db->lastInsertId($this->table, 'id');
 					return true;
 				}
-				else {
+				else 
+				{
 					return false;
 				}
 			}
 		}
-		else {
+		else 
+		{
 			return false;
 		}
 
@@ -425,7 +457,8 @@ class Model extends Object {
   * @see function del
   * @return boolean True on success
   */
-	function remove ($id=null) {
+	function remove ($id=null) 
+	{
 		return $this->del($id);
 	}
 
@@ -435,9 +468,11 @@ class Model extends Object {
   * @param mixed $id Id of database record to delete
   * @return boolean True on success
   */
-	function del ($id=null) {
+	function del ($id=null) 
+	{
 		if ($id) $this->id = $id;
-		if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) {
+		if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
+		{
 			$this->id = false;
 			return true;
 		}
@@ -450,7 +485,8 @@ class Model extends Object {
   *
   * @return boolean True if such a record exists
   */
-	function exists () {
+	function exists () 
+	{
 		return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
 	}
 
@@ -460,7 +496,8 @@ class Model extends Object {
   *
   * @return boolean True if such a record exists
   */
-	function hasAny ($sql_conditions = null) {
+	function hasAny ($sql_conditions = null) 
+	{
 		return $this->db->hasAny($this->table, $sql_conditions);
 	}
 
@@ -472,7 +509,8 @@ class Model extends Object {
   * @param mixed $fields Either a single string of a field name, or an array of field names
   * @return array Array of records
   */
-	function find ($conditions = null, $fields = null) {
+	function find ($conditions = null, $fields = null) 
+	{
 		$data = $this->findAll($conditions, $fields, null, 1);
 		return empty($data[0])? false: $data[0];
 	}
@@ -481,18 +519,23 @@ class Model extends Object {
   * @return string
   *
   */
-	function parseConditions ($conditions) {
-		if (is_string($conditions)) {
+	function parseConditions ($conditions) 
+	{
+		if (is_string($conditions)) 
+		{
 			return $conditions;
 		}
-		elseif (is_array($conditions)) {
+		elseif (is_array($conditions)) 
+		{
 			$out = array();
-			foreach ($conditions as $key=>$value) {
+			foreach ($conditions as $key=>$value) 
+			{
 				$out[] = "{$key}=".($value===null? 'null': $this->db->prepare($value));
 			}
 			return join(' and ', $out);
 		}
-		else {
+		else 
+		{
 			return null;
 		}
 	}
@@ -507,7 +550,8 @@ class Model extends Object {
   * @param int $page Page number
   * @return array Array of records
   */
-	function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) {
+	function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
+	{
 		
 		$conditions = $this->parseConditions($conditions);
 
@@ -520,7 +564,8 @@ class Model extends Object {
 
 		$joins = $whers = array();
 
-		foreach ($this->_oneToMany as $rule) {
+		foreach ($this->_oneToMany as $rule) 
+		{
 			list($table, $field, $value) = $rule;
 			$joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
 			$whers[] = "{$this->table}.{$field} = '{$value}'";
@@ -551,7 +596,8 @@ class Model extends Object {
   * @param string $sql SQL query
   * @return array
   */
-	function findBySql ($sql) {
+	function findBySql ($sql) 
+	{
 		return $this->db->all($sql);
 	}
 
@@ -561,7 +607,8 @@ class Model extends Object {
   * @param string $conditions SQL conditions (WHERE clause conditions)
   * @return int Number of matching rows
   */
-	function findCount ($conditions) {
+	function findCount ($conditions)
+	{
 		list($data) = $this->findAll($conditions, 'COUNT(id) AS count');
 		return $data['count'];
 	}
@@ -573,7 +620,8 @@ class Model extends Object {
   * @param unknown_type $fields
   * @return unknown
   */
-	function findAllThreaded ($conditions=null, $fields=null, $sort=null) {
+	function findAllThreaded ($conditions=null, $fields=null, $sort=null) 
+	{
 		return $this->_doThread($this->findAll($conditions, $fields, $sort), null);
 	}
 
@@ -584,11 +632,14 @@ class Model extends Object {
   * @param unknown_type $root NULL or id for root node of operation
   * @return array
   */
-	function _doThread ($data, $root) {
+	function _doThread ($data, $root) 
+	{
 		$out = array();
 		
-		for ($ii=0; $ii<sizeof($data); $ii++) {
-			if ($data[$ii]['parent_id'] == $root) {
+		for ($ii=0; $ii<sizeof($data); $ii++) 
+		{
+			if ($data[$ii]['parent_id'] == $root) 
+			{
 				$tmp = $data[$ii];
 				$tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
 				$out[] = $tmp;
@@ -607,7 +658,8 @@ class Model extends Object {
   * @param unknown_type $value
   * @return array Array with keys "prev" and "next" that holds the id's
   */
-	function findNeighbours ($conditions, $field, $value) {
+	function findNeighbours ($conditions, $field, $value) 
+	{
 		list($prev) = $this->findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
 		list($next) = $this->findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
 		
@@ -620,7 +672,8 @@ class Model extends Object {
   * @param string $sql SQL statement
   * @return array Resultset
   */
-	function query ($sql) {
+	function query ($sql) 
+	{
 		return $this->db->query($sql);
 	}
 
@@ -630,7 +683,8 @@ class Model extends Object {
   * @param array $data POST data
   * @return boolean True if there are no errors
   */
-	function validates ($data=null) {
+	function validates ($data=null)
+	{
 		$errors = count($this->invalidFields($data? $data: $this->data));
 		
 		return $errors == 0;
@@ -642,7 +696,8 @@ class Model extends Object {
   * @param array $data Posted data
   * @return array Array of invalid fields
   */
-	function invalidFields ($data=null) {
+	function invalidFields ($data=null) 
+	{
 		return $this->_invalidFields($data);
 	}
 
@@ -652,7 +707,8 @@ class Model extends Object {
   * @param array $data 
   * @return array Array of invalid fields
   */
-	function _invalidFields ($data=null) {
+	function _invalidFields ($data=null) 
+	{
 		if (!isset($this->validate))
 			return true;
 
@@ -662,7 +718,8 @@ class Model extends Object {
 		$data = ($data? $data: (isset($this->data)? $this->data: array()));
 		$errors = array();
 
-		foreach ($this->validate as $field_name=>$validator) {
+		foreach ($this->validate as $field_name=>$validator) 
+		{
 			if (!isset($data[$field_name]) || !preg_match($validator, $data[$field_name]))
 					$errors[$field_name] = 1;
 		}

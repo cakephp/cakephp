@@ -30,8 +30,6 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
-uses('log');
-
 /**
   * Enter description here...
   *
@@ -39,7 +37,8 @@ uses('log');
   * @subpackage cake.libs
   * @since Cake v 0.2.9
   */
-class Object {
+class Object 
+{
 
 /**
   * A hack to support __construct() on PHP 4

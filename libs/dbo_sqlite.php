@@ -99,7 +99,7 @@ class DBO_SQLite extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tables () {
+	function tablesList () {
 		$result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
 $this->_conn
 		if (!$result) {

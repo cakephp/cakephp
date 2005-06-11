@@ -23,7 +23,7 @@
   * Example usage:
   *
   * <code>
-  * require('dbo_mysql.php'); // or 'dbo_postgres.php'
+  * require_once('dbo_mysql.php'); // or 'dbo_postgres.php'
   *
   * // create and connect the object
   * $db = new DBO_MySQL(array( // or 'DBO_Postgres'
@@ -186,7 +186,6 @@ class DBO extends Object {
   */
 	var $_queriesLogMax=200;
  
-
 	// specific for each database, implemented in db drivers
 	function connect ($config) {
 		die('Please implement DBO::connect() first.');
@@ -204,12 +203,16 @@ class DBO extends Object {
 		die('Please implement DBO::fetchRow() first.');
 	}
 
-	function tables() {
+	function tablesList() {
 		die('Please implement DBO::tables() first.');
 	}
 
 	function fields ($table_name) {
 		die('Please implement DBO::fields() first.');
+	}
+
+	function prepareField ($data) {
+		die('Please implement DBO::prepareField() first.');
 	}
 
 	function lastError ($result) {
@@ -278,11 +281,7 @@ class DBO extends Object {
  */
 	function prepare ($data) 
 	{
-		if (is_string($data))
-		{
-			return $this->prepareValue($data);
-		}
-		else 
+		if (is_array($data))
 		{
 			$out = null;
 			foreach ($data as $key=>$item) 
@@ -291,8 +290,18 @@ class DBO extends Object {
 			}
 			return $out;
 		}
+		else 
+		{
+			return $this->prepareValue($data);
+		}
 	}
 
+	function tables()
+	{
+		return array_map('strtolower', $this->tablesList());
+	}
+	
+	
 /**
   * Executes given SQL statement.
   *
@@ -312,7 +321,8 @@ class DBO extends Object {
   * @param string $sql
   * @return unknown
   */
-	function query($sql) {
+	function query($sql) 
+	{
 		$t = getMicrotime();
 		$this->_result = $this->execute($sql);
 		$this->affected = $this->lastAffected();

@@ -33,11 +33,6 @@
   */
 
 /**
-  * Enter description here...
-  */
-uses('object');
-
-/**
   * This is a port of Ruby on Rails' Inflector class.
   * Inflector pluralizes and singularizes English nouns.
   * Test with $i = new Inflector(); $i->test();
@@ -46,7 +41,8 @@ uses('object');
   * @subpackage cake.libs
   * @since Cake v 0.2.9
   */
-class Inflector extends Object {
+class Inflector extends Object 
+{
 	
 /**
   * Constructor.
@@ -168,8 +164,9 @@ class Inflector extends Object {
   * @param string $table_name Name of database table to get class name for
   * @return string
   */
-	function classify($table_name) {
-		return $this->camelize($this->singularize($table_name));
+	function classify($table_name)
+	{
+		return Inflector::camelize(Inflector::singularize($table_name));
 	}
 
 /**
@@ -179,9 +176,49 @@ class Inflector extends Object {
   * @param string $class_name
   * @return string
   */
-	function foreignKey($class_name) {
-		return $this->underscore($class_name) . "_id";
+	function foreignKey($class_name)
+	{
+		return Inflector::underscore($class_name) . "_id";
 	} 
+	
+	function toControllerFilename($name)
+	{
+		return CONTROLLERS.Inflector::underscore($name).'.php';
+	}
+	
+	function toHelperFilename($name)
+	{
+		return HELPERS.Inflector::underscore($name).'.php';
+	}
+	
+	function toFullName($name, $correct)
+	{
+		if (strstr($name, '_') && (strtolower($name) == $name))
+		{
+			return Inflector::camelize($name);
+		}
+	
+		if (preg_match("/^(.*)({$correct})$/i", $name, $reg))
+		{
+			if ($reg[2] == $correct)
+			{
+				return $name;
+			}
+			else 
+			{
+				return ucfirst($reg[1].$correct);
+			}
+		}
+		else 
+		{
+			return ucfirst($name.$correct);
+		}
+	}
+	
+	function toLibraryFilename ($name)
+	{
+		return LIBS.Inflector::underscore($name).'.php';
+	}
 }
 
 ?>

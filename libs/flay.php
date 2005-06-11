@@ -16,8 +16,6 @@
 /**
   * Purpose: Flay
   * Text-to-html parser, similar to Textile or RedCloth, only with somehow different syntax. 
-  * See Flay::test() for examples.
-  * Test with $flay = new Flay(); $flay->test();
   *
   * @filesource 
   * @author Cake Authors/Developers
@@ -34,20 +32,19 @@
 
 /**
   * Enter description here...
-  *
   */
 uses('object');
 
 /**
   * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax. 
   *
-  *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
-class Flay extends Object {
+
+class Flay extends Object
+{
 /**
   * Enter description here...
   *
@@ -146,13 +143,17 @@ class Flay extends Object {
 				if (!$bare) {
 					// guess links
 					$urls = null;
-					if (preg_match_all("#((?:http|https|ftp|nntp)://[^ ]+)#", $line, $urls)) {
-						foreach ($urls[1] as $url) {
+					if (preg_match_all("#((?:http|https|ftp|nntp)://[^ ]+)#", $line, $urls)) 
+					{
+						foreach ($urls[1] as $url) 
+						{
 							$line = str_replace($url, "<a href=\"{$url}\">{$url}</a>", $line);
 						}
 					}
-					if (preg_match_all("#(www\.[^\n\%\ ]+[^\n\%\,\.\ ])#", $line, $urls)) {
-						foreach ($urls[1] as $url) {
+					if (preg_match_all("#(www\.[^\n\%\ ]+[^\n\%\,\.\ ])#", $line, $urls))
+					{
+						foreach ($urls[1] as $url) 
+						{
 							$line = str_replace($url, "<a href=\"http://{$url}\">{$url}</a>", $line);
 						}
 					}

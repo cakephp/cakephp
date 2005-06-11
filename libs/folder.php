@@ -31,14 +31,7 @@
   */
 
 /**
-  * Enter description here...
-  *
-  */
-uses('object');
-
-/**
   * Folder structure browser, lists folders and files.
-  *
   *
   * @package cake
   * @subpackage cake.libs
