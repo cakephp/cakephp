@@ -44,24 +44,28 @@ if (!defined('ROOT'))
 /**
   * Configuration, directory layout and standard libraries
   */
-require (ROOT.'config/core.php');
-require (ROOT.'config/paths.php');
-require (ROOT.'libs/log.php');
-require (ROOT.'libs/object.php');
-require (ROOT.'libs/neat_array.php');
-require (ROOT.'libs/inflector.php');
-require (ROOT.'libs/basics.php');
-require (ROOT.'libs/folder.php');
+require_once (ROOT.'config/core.php');
+require_once (ROOT.'config/paths.php');
+require_once (ROOT.'libs/log.php');
+require_once (ROOT.'libs/object.php');
+require_once (ROOT.'libs/neat_array.php');
+require_once (ROOT.'libs/inflector.php');
+require_once (ROOT.'libs/basics.php');
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);
 
 $TIME_START = getMicrotime();
 
-uses ('dispatcher', 'dbo_factory');
+uses('folder');
+uses('dispatcher');
+uses('dbo_factory');
 
 config ('tags', 'database');
 
-$DB = DboFactory::make('devel');
+if (class_exists('DATABASE_CONFIG'))
+{
+	$DB = DboFactory::make('devel');
+}
 
 loadModels ();
 

@@ -100,7 +100,11 @@ function listClasses($path)
 function config () {
 	$args = func_get_args();
 	foreach ($args as $arg) {
-		if (file_exists(CONFIGS.$arg.'.php')) {
+		if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
+		{
+			include_once(CONFIGS.$arg.'.php');
+		}
+		elseif (file_exists(CONFIGS.$arg.'.php')) {
 			include (CONFIGS.$arg.'.php');
 			if (count($args) == 1) return true;
 		}
@@ -124,19 +128,20 @@ function config () {
  */
 function uses ()
 {
-	global $loaded;
-
-	if (!is_array($loaded))
-	$loaded = array();
-	
 	$args = func_get_args();
 	foreach ($args as $arg) 
 	{
-		if (0 == in_array($arg, $loaded))
-		{
-			require_once(LIBS.strtolower($arg).'.php');
-			$loaded[] = $arg;
-		}
+		require_once(LIBS.strtolower($arg).'.php');
+	}
+}
+
+
+function vendor($name)
+{
+	$args = func_get_args();
+	foreach ($args as $arg) 
+	{
+		require_once(VENDORS.$arg.'.php');
 	}
 }
 

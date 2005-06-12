@@ -32,7 +32,7 @@
   * Enter description here...
   *
   */
-uses('object');
+uses('object', 'dbo');
 config('database');
 
 /**
@@ -56,20 +56,27 @@ class DboFactory extends Object {
 
 		$config = DATABASE_CONFIG::$activeConfig();
 
-		// special case for AdoDB -- driver name in the form of 'adodb_drivername'
-		if (preg_match('#^adodb_(.*)$#i', $config['driver'], $res)) {
-			uses('DBO_AdoDB');
+		// special case for AdoDB -- driver name in the form of 'adodb-drivername'
+		if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res)) {
+			uses('dbo/dbo_adodb');
 			$config['driver'] = $res[1];
 			$conn = new DBO_AdoDB($config);
+			return $conn;
+		}
+		// special case for PEAR:DB -- driver name in the form of 'pear-drivername'
+		elseif (preg_match('#^pear[\-_](.*)$#i', $config['driver'], $res)) {
+			uses('dbo/dbo_pear');
+			$config['driver'] = $res[1];
+			$conn = new DBO_Pear($config);
 			return $conn;
 		}
 		// regular, Cake-native db drivers
 		else {
 			$db_driver_class = 'DBO_'.$config['driver'];
-			$db_driver_fn = LIBS.strtolower($db_driver_class.'.php');
+			$db_driver_fn = LIBS.strtolower('dbo'.DS.$db_driver_class.'.php');
 
 			if (file_exists($db_driver_fn)) {
-				uses(strtolower($db_driver_class));
+				uses(strtolower('dbo'.DS.$db_driver_class));
 				return new $db_driver_class ($config);
 			}
 			else {

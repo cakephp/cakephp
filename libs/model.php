@@ -575,17 +575,20 @@ class Model extends Object
 		$whers = count($whers)? '('.join(' AND ', $whers).')': null;
 		$conditions .= ($conditions && $whers? ' AND ': null).$whers;
 
-		$offset_str = $page > 1? " OFFSET ".$page*$limit: "";
-		$limit_str = $limit? " LIMIT {$limit}": "";
+		$offset = $page > 1? $page*$limit: 0;
+		$limit = $limit? $limit: '-1';
 
-		$data = $this->db->all(
+		$limit_str = $this->db->selectLimit($limit, $offset);
+		
+		$sql = 
 			"SELECT "
 			.join(', ', $f)
 			." FROM {$this->table} {$joins}"
 			.($conditions? " WHERE {$conditions}":null)
 			.($order? " ORDER BY {$order}": null)
-			.$limit_str
-			.$offset_str);
+			.$limit_str;
+
+		$data = $this->db->all($sql);			
 
 		return $data;
 	}

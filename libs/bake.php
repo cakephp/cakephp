@@ -203,7 +203,7 @@ class %sTest extends TestCase {
 	 * @uses Bake::actions Adds one action for each run.
 	 */
 	function newView ($controller, $name) {
-		$controller = Inflector::pluralize($controller);
+//		$controller = Inflector::pluralize($controller);
 		$dir = Inflector::underscore($controller);
 		$path = $dir.DS.strtolower($name).".thtml";
 		$this->createDir(VIEWS.$dir);
@@ -227,7 +227,7 @@ class %sTest extends TestCase {
 	 * @uses Bake::actions Adds one action for each run.
 	 */
 	function newController ($name, $actions=array()) {
-	    $name = Inflector::pluralize($name);
+//	    $name = Inflector::pluralize($name);
 		$this->makeController($name, $actions);
 		$this->makeControllerTest($name);
 		$this->makeHelper($name);

@@ -14,8 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: DBO_SQLite
-  * SQLite layer for DBO
+  * PostgreSQL layer for DBO.
   * 
   * @filesource 
   * @author Cake Authors/Developers
@@ -23,7 +22,7 @@
   * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
   * @package cake
   * @subpackage cake.libs
-  * @since Cake v 0.9.0
+  * @since Cake v 1.0.0.114
   * @version $Revision$
   * @modifiedby $LastChangedBy$
   * @lastmodified $Date$
@@ -31,38 +30,37 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Include DBO.
   */
-
 uses('dbo');
+
 /**
-  * SQLite layer for DBO.
+  * PostgreSQL layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs
-  * @since Cake v 0.9.0
-  *
+  * @since Cake v 1.0.0.114
   */
-class DBO_SQLite extends DBO {
+class DBO_Postgres extends DBO {
 	
 /**
-  * We are connecting to the database, and using config['host'] as a filename.
+  * Connects to the database using options in the given configuration array.
   *
-  * @param array $config
-  * @return mixed
+  * @param array $config Configuration array for connecting
+  * @return True if successfully connected.
   */
 	function connect ($config) {
 		if($config) {
 			$this->config = $config;
-			$this->_conn = sqlite_open($config['host']);
+			$this->_conn = pg_pconnect("host={$config['host']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
 		}
-		$this->connected = $this->_conn ? true: false;
+		$this->connected = $this->_conn? true: false;
 
-		if($this->connected==false)
-			die('Could not connect to DB.');
+		if($this->connected)
+			return true;
 		else
-			return $this->_conn;
+			die('Could not connect to DB.');
+
 	}
 
 /**
@@ -71,7 +69,7 @@ class DBO_SQLite extends DBO {
   * @return boolean True if the database could be disconnected, else false
   */
 	function disconnect () {
-		return sqlite_close($this->_conn);
+		return pg_close($this->_conn);
 	}
 
 /**
@@ -81,17 +79,17 @@ class DBO_SQLite extends DBO {
   * @return resource Result resource identifier
   */
 	function execute ($sql) {
-		return sqlite_query($this->_conn, $sql);
+		return pg_query($this->_conn, $sql);
 	}
 
 /**
-  * Returns a row from given resultset as an array .
+  * Returns a row from given resultset.
   *
-  * @param unknown_type $res Resultset
-  * @return array The fetched row as an array
+  * @param unknown_type $res
+  * @return unknown
   */
 	function fetchRow ($res) {
-		return sqlite_fetch_array($res);
+		 return pg_fetch_array($res);
 	}
 
 /**
@@ -100,17 +98,21 @@ class DBO_SQLite extends DBO {
   * @return array Array of tablenames in the database
   */
 	function tablesList () {
-		$result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-$this->_conn
+		$sql = "SELECT a.relname AS name
+         FROM pg_class a, pg_user b
+         WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
+         AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
+         AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname));";
+
+		$result = $this->all($sql);
+
 		if (!$result) {
-			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
+			trigger_error(ERROR_NO_TABLE_LIST, E_USER_ERROR);
 			exit;
 		}
 		else {
 			$tables = array();
-			while ($line = sqlite_fetch_array($result)) {
-				$tables[] = $line[0];
-			}
+			foreach ($result as $item) $tables[] = $item['name'];
 			return $tables;
 		}
 	}
@@ -121,13 +123,15 @@ $this->_conn
   * @param string $table_name Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-	function fields ($table_name)
-	{
+	function fields ($table_name) {
+		$sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$table_name}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
+		
 		$fields = false;
-		$cols = sqlite_fetch_column_types($table_name, $this->_conn, SQLITE_ASSOC);
-
-		foreach ($cols as $column => $type)
-			$fields[] = array('name'=>$column, 'type'=>$type);
+		foreach ($this->all($sql) as $field) {
+			$fields[] = array(
+				'name' => $field['attname'],
+				'type' => $field['typname']);
+		}
 
 		return $fields;
 	}
@@ -139,16 +143,29 @@ $this->_conn
   * @return string Quoted and escaped
   */
 	function prepareValue ($data) {
-		return "'".sqlite_escape_string($data)."'";
+		return "'".pg_escape_string($data)."'";
 	}
 
+	
+	/**
+	 * Returns a limit statement in the correct format for the particular database.
+	 *
+	 * @param int $limit Limit of results returned
+	 * @param int $offset Offset from which to start results
+	 * @return string SQL limit/offset statement
+	 */
+	function selectLimit ($limit, $offset=null)
+	{
+		return "LIMIT {$limit}".($offset? " OFFSET {$offset}": null);
+	}
+	
 /**
   * Returns a formatted error message from previous database operation.
   *
   * @return string Error message
   */
 	function lastError () {
-		return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
+		return pg_last_error()? pg_last_error(): null;
 	}
 
 /**
@@ -157,28 +174,32 @@ $this->_conn
   * @return int Number of affected rows
   */
 	function lastAffected () {
-		return $this->_result? sqlite_changes($this->_conn): false;
+		return $this->_result? pg_affected_rows($this->_result): false;
 	}
 
 /**
   * Returns number of rows in previous resultset. If no previous resultset exists, 
   * this returns false.
   *
-  * @return int Number of rows in resultset
+  * @return int Number of rows
   */
 	function lastNumRows () {
-		return $this->_result? sqlite_num_rows($this->_result): false;
+		return $this->_result? pg_num_rows($this->_result): false;
 	}
 
 /**
   * Returns the ID generated from the previous INSERT operation.
   *
-  * @return int 
+  * @param string $table Name of the database table
+  * @param string $field Name of the ID database field. Defaults to "id"
+  * @return unknown
   */
-	function lastInsertId() {
-		Return sqlite_last_insert_rowid($this->_conn);
+	function lastInsertId ($table, $field='id') {
+		$sql = "SELECT CURRVAL('{$table}_{$field}_seq') AS max";
+		$res = $this->rawQuery($sql);
+		$data = $this->fetchRow($res);
+		return $data['max'];
 	}
-
 }
 
 ?>

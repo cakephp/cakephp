@@ -89,6 +89,14 @@ class DBO extends Object {
 	var $connected=FALSE;
 
 /**
+  * Connection configuration.
+  *
+  * @var array
+  * @access public
+  */
+	var $config=FALSE;
+
+/**
   * Enter description here...
   *
   * @var boolean
@@ -186,50 +194,6 @@ class DBO extends Object {
   */
 	var $_queriesLogMax=200;
  
-	// specific for each database, implemented in db drivers
-	function connect ($config) {
-		die('Please implement DBO::connect() first.');
-	}
-
-	function disconnect () {
-		die('Please implement DBO::disconnect() first.');
-	}
-
-	function execute ($sql) {
-		die('Please implement DBO::execute() first.');
-	}
-
-	function fetchRow ($result) {
-		die('Please implement DBO::fetchRow() first.');
-	}
-
-	function tablesList() {
-		die('Please implement DBO::tables() first.');
-	}
-
-	function fields ($table_name) {
-		die('Please implement DBO::fields() first.');
-	}
-
-	function prepareField ($data) {
-		die('Please implement DBO::prepareField() first.');
-	}
-
-	function lastError ($result) {
-		die('Please implement DBO::lastError() first.');
-	}
-
-	function lastAffected () {
-		die('Please implement DBO::lastAffected() first.');
-	}
-
-	function lastNumRows ($result) {
-		die('Please implement DBO::lastNumRows() first.');
-	}
-
-	function lastInsertId () {
-		die('Please implement DBO::lastInsertId() first.');
-	}
 
 /**
   * Constructor. Sets the level of debug for dbo (fullDebug or debug). 

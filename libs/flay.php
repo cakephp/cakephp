@@ -160,14 +160,42 @@ class Flay extends Object
 							
 					// re-parse links
 					if (count($links)) {
+						
 						for ($ii=0; $ii<count($links); $ii++) {
 
-							if (preg_match('#\.(jpg|jpeg|gif|png)$#', $links[$ii]))
-								$with = "<img src=\"{$links[$ii]}\" alt=\"\" />";
-							elseif (preg_match('#^([^\]\ ]+)(?: ([^\]]+))?$#', $links[$ii], $regs))
-								$with = "<a href=\"{$regs[1]}\" target=\"_blank\">".(isset($regs[2])? $regs[2]: $regs[1])."</a>";
+							if (preg_match("#^(http|https|ftp|nntp)://#", $links[$ii]))
+							{
+								$prefix = null;
+							}
+							else 
+							{
+								$prefix = 'http://';
+							}
+							
+							if (preg_match('#^[^\ ]+\.(jpg|jpeg|gif|png)$#', $links[$ii]))
+							{
+								$with = "<img src=\"{$prefix}{$links[$ii]}\" alt=\"\" />";
+							}
+							elseif (preg_match('#^([^\]\ ]+)(?:\ ([^\]]+))?$#', $links[$ii], $regs))
+							{
+								if (isset($regs[2]))
+								{
+									if (preg_match('#\.(jpg|jpeg|gif|png)$#', $regs[2]))
+										$body = "<img src=\"{$prefix}{$regs[2]}\" alt=\"\" />";
+									else
+										$body = $regs[2];
+	
+								}
+								else 
+								{
+									$body = $links[$ii];
+								}
+									$with = "<a href=\"{$prefix}{$regs[1]}\" target=\"_blank\">{$body}</a>";
+							}
 							else
-								$with = $links[$ii];
+							{
+								$with = $prefix.$links[$ii];
+							}
 
 							$line = str_replace("%LINK{$ii}%", $with, $line);
 						}

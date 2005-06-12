@@ -92,7 +92,7 @@ class Template extends Object {
   * @var boolean
   * @access private
   */
-	var $_page_title = false;
+	var $pageTitle = false;
 
 /**
   * Choose the layout to be used when rendering.
@@ -120,7 +120,7 @@ class Template extends Object {
   * @param string $pageTitle Text for the title
   */
 	function setTitle ($pageTitle) {
-		$this->_page_title = $pageTitle;
+		$this->pageTitle = $pageTitle;
 	}
 
 /**
@@ -200,7 +200,7 @@ class Template extends Object {
 		$layout_fn = $this->_getLayoutFn();
 
 		$data_for_layout = array_merge($this->_view_vars, array(
-			'title_for_layout'=>$this->_page_title !== false? $this->_page_title: Inflector::humanize($this->viewpath),
+			'title_for_layout'=>$this->pageTitle !== false? $this->pageTitle: Inflector::humanize($this->viewpath),
 			'content_for_layout'=>$content_for_layout));
 
 		if (is_file($layout_fn)) {
@@ -270,7 +270,7 @@ class Template extends Object {
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
 		$BASE = $this->base;
 		$params = &$this->params;
-		$page_title = $this->_page_title;
+		$page_title = $this->pageTitle;
 		ob_start(); # start caching output (eval outputs directly so we need to cache)
 		
 		# include the template
