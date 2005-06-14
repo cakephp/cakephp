@@ -14,7 +14,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
-  * Purpose: DBO_SQLite
   * SQLite layer for DBO
   * 
   * @filesource 
@@ -31,38 +30,39 @@
   */
 
 /**
-  * Enter description here...
-  *
+  * Include DBO.
   */
-
 uses('dbo');
+
 /**
   * SQLite layer for DBO.
   *
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.9.0
-  *
   */
-class DBO_SQLite extends DBO {
-	
+class DBO_SQLite extends DBO 
+{
+
 /**
-  * We are connecting to the database, and using config['host'] as a filename.
+  * Connects to the database using config['host'] as a filename.
   *
-  * @param array $config
+  * @param array $config Configuration array for connecting
   * @return mixed
   */
-	function connect ($config) {
-		if($config) {
+	function connect ($config) 
+	{
+		if ($config) 
+		{
 			$this->config = $config;
 			$this->_conn = sqlite_open($config['host']);
 		}
-		$this->connected = $this->_conn ? true: false;
+		$this->connected = $this->_conn? true: false;
 
-		if($this->connected==false)
-			die('Could not connect to DB.');
-		else
+		if($this->connected)
 			return $this->_conn;
+		else
+			die('Could not connect to DB.');
 	}
 
 /**
@@ -70,7 +70,8 @@ class DBO_SQLite extends DBO {
   *
   * @return boolean True if the database could be disconnected, else false
   */
-	function disconnect () {
+	function disconnect () 
+	{
 		return sqlite_close($this->_conn);
 	}
 
@@ -80,18 +81,19 @@ class DBO_SQLite extends DBO {
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-	function execute ($sql) {
+	function execute ($sql) 
+	{
 		return sqlite_query($this->_conn, $sql);
 	}
 
 /**
   * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res Resultset
   * @return array The fetched row as an array
   */
-	function fetchRow ($res) {
-		return sqlite_fetch_array($res);
+	function fetchRow () 
+	{
+		return sqlite_fetch_array($this->_result);
 	}
 
 /**
@@ -99,16 +101,20 @@ class DBO_SQLite extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tablesList () {
+	function tablesList () 
+	{
 		$result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
-$this->_conn
-		if (!$result) {
+
+		if (!$result) 
+		{
 			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
 			exit;
 		}
-		else {
+		else 
+		{
 			$tables = array();
-			while ($line = sqlite_fetch_array($result)) {
+			while ($line = sqlite_fetch_array($result)) 
+			{
 				$tables[] = $line[0];
 			}
 			return $tables;
@@ -138,8 +144,50 @@ $this->_conn
   * @param string $data String to be prepared for use in an SQL statement
   * @return string Quoted and escaped
   */
-	function prepareValue ($data) {
+	function prepareValue ($data)
+	{
 		return "'".sqlite_escape_string($data)."'";
+	}
+
+/**
+  * Returns a formatted error message from previous database operation.
+  *
+  * @return string Error message
+  */
+	function lastError () 
+	{
+		return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
+	}
+
+/**
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+  *
+  * @return int Number of affected rows
+  */
+	function lastAffected ()
+	{
+		return $this->_result? sqlite_changes($this->_conn): false;
+	}
+
+/**
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
+  *
+  * @return int Number of rows in resultset
+  */
+	function lastNumRows () 
+	{
+		return $this->_result? sqlite_num_rows($this->_result): false;
+	}
+
+/**
+  * Returns the ID generated from the previous INSERT operation.
+  *
+  * @return int 
+  */
+	function lastInsertId () 
+	{
+		return sqlite_last_insert_rowid($this->_conn);
 	}
 
 	/**
@@ -152,44 +200,7 @@ $this->_conn
 	function selectLimit ($limit, $offset=null)
 	{
 		// :TODO: Please verify this with SQLite, untested.
-		return "LIMIT {$limit}".($offset? " OFFSET {$offset}": null);
-	}
-	
-/**
-  * Returns a formatted error message from previous database operation.
-  *
-  * @return string Error message
-  */
-	function lastError () {
-		return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
-	}
-
-/**
-  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
-  *
-  * @return int Number of affected rows
-  */
-	function lastAffected () {
-		return $this->_result? sqlite_changes($this->_conn): false;
-	}
-
-/**
-  * Returns number of rows in previous resultset. If no previous resultset exists, 
-  * this returns false.
-  *
-  * @return int Number of rows in resultset
-  */
-	function lastNumRows () {
-		return $this->_result? sqlite_num_rows($this->_result): false;
-	}
-
-/**
-  * Returns the ID generated from the previous INSERT operation.
-  *
-  * @return int 
-  */
-	function lastInsertId() {
-		Return sqlite_last_insert_rowid($this->_conn);
+		return " LIMIT {$limit}".($offset? " OFFSET {$offset}": null);
 	}
 
 }

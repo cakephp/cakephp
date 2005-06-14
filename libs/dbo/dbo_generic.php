@@ -44,31 +44,31 @@ class DBO_generic extends DBO
 	{
 	}
 
-	function fetchRow ($result) 
+	function fetchRow () 
 	{
 	}
 
-	function tablesList() 
+	function tablesList () 
 	{
 	}
 
-	function fields ($table_name) 
+	function fields ($table_name)
 	{
 	}
 
-	function prepareValue ($data) 
+	function prepareValue ($data)
 	{
 	}
 
-	function lastError ($result) 
+	function lastError () 
 	{
 	}
 
-	function lastAffected () 
+	function lastAffected ()
 	{
 	}
 
-	function lastNumRows ($result) 
+	function lastNumRows () 
 	{
 	}
 
@@ -76,7 +76,7 @@ class DBO_generic extends DBO
 	{
 	}
 	
-	function selectLimit ($limit, $offset)
+	function selectLimit ($limit, $offset=null)
 	{
 	}
 

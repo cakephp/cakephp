@@ -234,7 +234,7 @@ class Template extends Object {
 		if (!file_exists($fn))
 			return "(Error rendering {$name})";
 
-		return $this->_render($fn, $params);
+		return $this->_render($fn, array_merge($this->_view_vars, $params));
 	}
 
 /**

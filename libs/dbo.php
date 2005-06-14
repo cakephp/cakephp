@@ -265,7 +265,6 @@ class DBO extends Object {
 		return array_map('strtolower', $this->tablesList());
 	}
 	
-	
 /**
   * Executes given SQL statement.
   *
@@ -306,8 +305,16 @@ class DBO extends Object {
   * @param resource $res
   * @return array A single row of results
   */
-	function farr ($res=false, $assoc=false) {
-		return $this->fetchRow($res? $res: $this->_result, $assoc);
+	function farr ($assoc=false) 
+	{
+		if ($assoc === false)
+		{
+			return $this->fetchRow();
+		}
+		else
+		{
+			return $this->fetchRow($assoc);
+		}
 	}
 
 /**

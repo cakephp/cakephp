@@ -264,11 +264,13 @@ class Flay extends Object
  * @param unknown_type $string
  * @return unknown
  */
-	function colorMark($words, $string) {
+	function colorMark($words, $string) 
+	{
 		$colors = array('yl','gr','rd','bl','fu','cy');
 
 		$nextColorIndex = 0;
-		foreach ($words as $word) {
+		foreach ($words as $word) 
+		{
 			$string = preg_replace("/({$word})/i", '<em class="'.$colors[$nextColorIndex%count($colors)]."\">\\1</em>", $string);
 			$nextColorIndex++;
 		}
@@ -282,7 +284,8 @@ class Flay extends Object
  * @param unknown_type $text
  * @return unknown
  */
-	function toClean ($text) {
+	function toClean ($text) 
+	{
 		return strip_tags(html_entity_decode($text, ENT_QUOTES));
 	}
 

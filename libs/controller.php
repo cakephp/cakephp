@@ -75,17 +75,9 @@ class Controller extends Template {
     var $action = null;
 
 /**
-  * This Controller's Model.
+  * An array of names of models the particular controller wants to use.
   *
-  * @var unknown_type
-  * @access public
-  */
-    var $use_model = null;
-
-/**
-  * Enter description here...
-  *
-  * @var unknown_type
+  * @var mixed A single name as a string or a list of names as an array.
   * @access private
   */
     var $uses = false;
@@ -194,16 +186,25 @@ class Controller extends Template {
   * @param unknown_type $insert_after
   * @return string
   */
-	function parseHtmlOptions ($options, $insert_before=' ', $insert_after=null) {
-		if (is_array($options)) {
+	function parseHtmlOptions ($options, $exclude=null, $insert_before=' ', $insert_after=null) 
+	{
+		if (!is_array($exclude)) $exclude = array();
+
+		if (is_array($options)) 
+		{
 			$out = array();
-			foreach ($options as $k=>$v) {
-				$out[] = "{$k}=\"{$v}\"";
+			foreach ($options as $k=>$v) 
+			{
+				if (!in_array($k, $exclude))
+				{
+					$out[] = "{$k}=\"{$v}\"";
+				}
 			}
 			$out = join(' ', $out);
 			return $out? $insert_before.$out.$insert_after: null;
 		}
-		else {
+		else 
+		{
 			return $options? $insert_before.$options.$insert_after: null;
 		}
 	}
@@ -249,7 +250,7 @@ class Controller extends Template {
 		$html_options['method'] = $type=='get'? 'get': 'post';
 		$type == 'file'? $html_options['enctype'] = 'multipart/form-data': null;
 
-		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, ''));
+		return sprintf(TAG_FORM, $this->parseHtmlOptions($html_options, null, ''));
 	}
 
 /**
@@ -296,7 +297,7 @@ class Controller extends Template {
   */
 	function submitTag ($caption='Submit', $html_options=null) {
 		$html_options['value'] = $caption;
-		return sprintf(TAG_SUBMIT, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_SUBMIT, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 /**
@@ -311,7 +312,7 @@ class Controller extends Template {
 		$html_options['size'] = $size;
 		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
 		$this->tagIsInvalid($tag_name)? $html_options['class'] = 'form_error': null;
-		return sprintf(TAG_INPUT, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_INPUT, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 /**
@@ -325,7 +326,7 @@ class Controller extends Template {
 	function passwordTag ($tag_name, $size=20, $html_options=null) {
 		$html_options['size'] = $size;
 		empty($html_options['value'])? $html_options['value'] = $this->tagValue($tag_name): null;
-		return sprintf(TAG_PASSWORD, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_PASSWORD, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 /**
@@ -338,7 +339,7 @@ class Controller extends Template {
   */
 	function hiddenTag ($tag_name, $value=null, $html_options=null) {
 		$html_options['value'] = $value? $value: $this->tagValue($tag_name);
-		return sprintf(TAG_HIDDEN, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_HIDDEN, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 /**
@@ -349,7 +350,7 @@ class Controller extends Template {
   * @return string
   */
 	function fileTag ($tag_name, $html_options=null) {
-		return sprintf(TAG_FILE, $tag_name, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_FILE, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 /**
@@ -365,7 +366,7 @@ class Controller extends Template {
 		$value = empty($html_options['value'])? $this->tagValue($tag_name): empty($html_options['value']);
 		$html_options['cols'] = $cols;
 		$html_options['rows'] = $rows;
-		return sprintf(TAG_AREA, $tag_name, $this->parseHtmlOptions($html_options, ' '), $value);
+		return sprintf(TAG_AREA, $tag_name, $this->parseHtmlOptions($html_options, null, ' '), $value);
 	}
 
 /**
@@ -379,7 +380,7 @@ class Controller extends Template {
 	function checkboxTag ($tag_name, $title=null, $html_options=null) {
 		$this->tagValue($tag_name)? $html_options['checked'] = 'checked': null;
 		$title = $title? $title: ucfirst($tag_name);
-		return sprintf(TAG_CHECKBOX, $tag_name, $tag_name, $tag_name, $this->parseHtmlOptions($html_options, '', ' '), $title); 
+		return sprintf(TAG_CHECKBOX, $tag_name, $tag_name, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '), $title); 
 	}
 
 /**
@@ -397,7 +398,7 @@ class Controller extends Template {
 		foreach ($options as $opt_value=>$opt_title) {
 			$options_here = array('value' => $opt_value);
 			$opt_value==$value? $options_here['checked'] = 'checked': null;
-			$parsed_options = $this->parseHtmlOptions(array_merge($html_options, $options_here), '', ' ');
+			$parsed_options = $this->parseHtmlOptions(array_merge($html_options, $options_here), null, '', ' ');
 			$individual_tag_name = "{$tag_name}_{$opt_value}";
 			$out[] = sprintf(TAG_RADIOS, $individual_tag_name, $tag_name, $individual_tag_name, $parsed_options, $opt_title);
 		}
@@ -447,11 +448,52 @@ class Controller extends Template {
   * @return string Formatted IMG tag
   */
 	function imageTag ($path, $alt=null, $html_options=null) {
-		$url = "{$this->base}/images/{$path}";
-		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, '', ' '));
+		$url = $this->base.IMAGES.$path;
+		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
+	/**
+	 * Returns a mailto: link.
+	 *
+	 * @param string $title Title of the link, or the e-mail address (if the same)
+	 * @param string $email E-mail address if different from title
+	 * @param array $options
+	 * @return string Formatted A tag
+	 */
+	function linkEmail($title, $email=null, $options=null)
+	{
+		// if no $email, then title contains the email.
+		if (empty($email)) $email = $title;
+		
+		// does the address contain extra attributes?
+		preg_match('!^(.*)(\?.*)$!', $email, $match);
 
+		// plaintext
+		if (empty($options['encode']) || !empty($match[2]))
+		{
+			return sprintf(TAG_MAILTO, $email, $this->parseHtmlOptions($options), $title);
+		}
+		// encoded to avoid spiders
+		else
+		{
+			$email_encoded = null;
+	        for ($ii=0; $ii < strlen($email); $ii++) {
+	            if(preg_match('!\w!',$email[$ii])) {
+	                $email_encoded .= '%' . bin2hex($email[$ii]);
+	            } else {
+	                $email_encoded .= $email[$ii];
+	            }
+	        }
+	        
+	        $title_encoded = null;
+	        for ($ii=0; $ii < strlen($title); $ii++) {
+	            $title_encoded .= '&#x' . bin2hex($title[$ii]).';';
+	        }
+	
+			return sprintf(TAG_MAILTO, $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
+		}
+	}
+	
 /**
   * Returns a LINK element for CSS stylesheets.
   *
@@ -462,9 +504,8 @@ class Controller extends Template {
   */
 	function cssTag ($path, $rel='stylesheet', $html_options=null) {
 		$url = "{$this->base}/css/{$path}.css";
-		return sprintf(TAG_CSS, $rel, $url, $this->parseHtmlOptions($html_options, '', ' '));
+		return sprintf(TAG_CSS, $rel, $url, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
-
 
 /**
   * Returns a charset meta-tag

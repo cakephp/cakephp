@@ -88,6 +88,11 @@ define ('MODULES',     ROOT.'modules'.DS);
 define ('PUBLIC',      ROOT.'public'.DS);
 
 /**
+ * Web path to the public images directory.
+ */
+define ('IMAGES',          '/img/');
+
+/**
  * Path to the tests directory.
  */
 define ('TESTS',       ROOT.'tests'.DS);

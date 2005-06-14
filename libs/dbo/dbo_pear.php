@@ -30,12 +30,11 @@
   */
 
 /**
-  * Include required libraries.
+  * Create an include path required Pear libraries.
   */
 uses('dbo');
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . PEAR);
 vendor('Pear/DB');
-
 
 /**
   * Pear::DB layer for DBO.
@@ -58,7 +57,7 @@ class DBO_Pear extends DBO
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
-  * @return unknown
+  * @return boolean True if the database could be connected, else false
   */
 	function connect ($config) 
 	{
@@ -72,10 +71,7 @@ class DBO_Pear extends DBO
 		
 		$this->_pear =& DB::connect($dsn, $options);
 
-		if (PEAR::isError($this->_pear))
-		{
-			die('Could not connect to the database.');
-		}
+		return !(PEAR::isError($this->_pear));
 	}
 
 /**
@@ -102,12 +98,11 @@ class DBO_Pear extends DBO
 /**
   * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res Resultset
   * @return array The fetched row as an array
   */
-	function fetchRow ($result) 
+	function fetchRow () 
 	{
-		return $result->fetchRow(DB_FETCHMODE_ASSOC);
+		return $this->_result->fetchRow(DB_FETCHMODE_ASSOC);
 	}
 
 /**
@@ -168,7 +163,7 @@ class DBO_Pear extends DBO
   * @param string $table_name Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-	function fields ($table_name) 
+	function fields ($table_name)
 	{
 		$data = $this->_pear->tableInfo($table_name);
 		$fields = false;
@@ -190,29 +185,14 @@ class DBO_Pear extends DBO
 		return $this->_pear->quoteSmart($data);
 	}
 
-	
-	/**
-	 * Returns a limit statement in the correct format for the particular database.
-	 *
-	 * @param int $limit Limit of results returned
-	 * @param int $offset Offset from which to start results
-	 * @return string SQL limit/offset statement
-	 */
-	function selectLimit ($limit, $offset='0')
-	{
-		return $this->_pear->modifyLimitQuery('', $offset, $limit);
-	}
-	
 /**
   * Returns a formatted error message from previous database operation.
   *
   * @return string Error message
   */
-	function lastError ($result=null) 
+	function lastError () 
 	{
-		if (!$result) $result = $this->_result;
-
-		return PEAR::isError($result)? $result->getMessage(): null;
+		return PEAR::isError($this->_result)? $this->_result->getMessage(): null;
 	}
 
 /**
@@ -220,7 +200,7 @@ class DBO_Pear extends DBO
   *
   * @return int Number of affected rows
   */
-	function lastAffected () 
+	function lastAffected ()
 	{
 		return $this->_pear->affectedRows();
 	}
@@ -229,12 +209,12 @@ class DBO_Pear extends DBO
   * Returns number of rows in previous resultset. If no previous resultset exists, 
   * this returns false.
   *
-  * @return int Number of rows
+  * @return int Number of rows in resultset
   */
-	function lastNumRows ($result) 
+	function lastNumRows () 
 	{
-		if (method_exists($result, 'numRows'))
-			return $result->numRows();
+		if (method_exists($this->_result, 'numRows'))
+			return $this->_result->numRows();
 		else
 			return false;
 	}
@@ -250,6 +230,18 @@ class DBO_Pear extends DBO
 		return $this->field('id', "SELECT MAX(id) FROM {$table}");
 	}
 
+	/**
+	 * Returns a limit statement in the correct format for the particular database.
+	 *
+	 * @param int $limit Limit of results returned
+	 * @param int $offset Offset from which to start results
+	 * @return string SQL limit/offset statement
+	 */
+	function selectLimit ($limit, $offset='0')
+	{
+		return ' '.$this->_pear->modifyLimitQuery('', $offset, $limit);
+	}
+	
 }
 
 ?>

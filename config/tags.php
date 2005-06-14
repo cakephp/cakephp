@@ -22,6 +22,11 @@
 define('TAG_LINK', '<a href="%s"%s>%s</a>');
 
 /**
+ * Tag template for a mailto: link. 
+ */
+define('TAG_MAILTO', '<a href="mailto:%s"%s>%s</a>');
+
+/**
  * Tag template for opening form tag. 
  */
 define('TAG_FORM', '<form %s>');

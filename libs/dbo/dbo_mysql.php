@@ -3,20 +3,14 @@
 // + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake <https://developers.nextco.com/cake/>                       + //
-// + Copyright: (c) 2005 Cake Authors/Developers                      + //
-// +                                                                  + //
+// + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
 // +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
-// +                                                                  + //
 // +------------------------------------------------------------------+ //
 // + Licensed under The MIT License                                   + //
 // + Redistributions of files must retain the above copyright notice. + //
-// + You may not use this file except in compliance with the License. + //
-// +                                                                  + //
-// + You may obtain a copy of the License at:                         + //
-// + License page: http://www.opensource.org/licenses/mit-license.php + //
-// +------------------------------------------------------------------+ //
+// + See: http://www.opensource.org/licenses/mit-license.php          + //
 //////////////////////////////////////////////////////////////////////////
 
 /**
@@ -38,8 +32,8 @@
 /**
   * Include DBO.
   */
-
 uses('dbo');
+
 /**
   * MySQL layer for DBO.
   *
@@ -47,23 +41,26 @@ uses('dbo');
   * @subpackage cake.libs
   * @since Cake v 0.2.9
   */
-class DBO_MySQL extends DBO {
-	
+class DBO_MySQL extends DBO
+{
+
 /**
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
   * @return boolean True if the database could be connected, else false
   */
-	function connect ($config) {
-		if($config) {
+	function connect ($config) 
+	{
+		if ($config) 
+		{
 			$this->config = $config;
 			$this->_conn = mysql_pconnect($config['host'],$config['login'],$config['password']);
 		}
 		$this->connected = $this->_conn? true: false;
 
 		if($this->connected)
-			Return mysql_select_db($config['database'], $this->_conn);
+			return mysql_select_db($config['database'], $this->_conn);
 		else
 			die('Could not connect to DB.');
 	}
@@ -73,7 +70,8 @@ class DBO_MySQL extends DBO {
   *
   * @return boolean True if the database could be disconnected, else false
   */
-	function disconnect () {
+	function disconnect () 
+	{
 		return mysql_close();
 	}
 
@@ -81,20 +79,22 @@ class DBO_MySQL extends DBO {
   * Executes given SQL statement.
   *
   * @param string $sql SQL statement
-  * @return resource MySQL result resource identifier
+  * @return resource Result resource identifier
   */
-	function execute ($sql) {
+	function execute ($sql) 
+	{
 		return mysql_query($sql);
 	}
 
 /**
   * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res Resultset
+  * @param bool $assoc Associative array only, or both?
   * @return array The fetched row as an array
   */
-	function fetchRow ($res, $assoc=false) {
-		return mysql_fetch_array($res, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
+	function fetchRow ($assoc=false) 
+	{
+		return mysql_fetch_array($this->_result, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
 	}
 
 /**
@@ -102,16 +102,20 @@ class DBO_MySQL extends DBO {
   *
   * @return array Array of tablenames in the database
   */
-	function tablesList () {
+	function tablesList () 
+	{
 		$result = mysql_list_tables($this->config['database']);
 
-		if (!$result) {
+		if (!$result) 
+		{
 			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
 			exit;
 		}
-		else {
+		else 
+		{
 			$tables = array();
-			while ($line = mysql_fetch_array($result)) {
+			while ($line = mysql_fetch_array($result))
+			{
 				$tables[] = $line[0];
 			}
 			return $tables;
@@ -124,12 +128,13 @@ class DBO_MySQL extends DBO {
   * @param string $table_name Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-	function fields ($table_name) {
-		$data = $this->all("DESC {$table_name}");
+	function fields ($table_name)
+	{
 		$fields = false;
+		$cols = $this->all("DESC {$table_name}");
 
-		foreach ($data as $item)
-			$fields[] = array('name'=>$item['Field'], 'type'=>$item['Type']);
+		foreach ($cols as $column)
+			$fields[] = array('name'=>$column['Field'], 'type'=>$column['Type']);
 
 		return $fields;
 	}
@@ -140,11 +145,52 @@ class DBO_MySQL extends DBO {
   * @param string $data String to be prepared for use in an SQL statement
   * @return string Quoted and escaped
   */
-	function prepareValue ($data) {
+	function prepareValue ($data)
+	{
 		return "'".mysql_real_escape_string($data)."'";
 	}
 
-	
+/**
+  * Returns a formatted error message from previous database operation.
+  *
+  * @return string Error message with error number
+  */
+	function lastError () 
+	{
+		return mysql_errno()? mysql_errno().': '.mysql_error(): null;
+	}
+
+/**
+  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+  *
+  * @return int Number of affected rows
+  */
+	function lastAffected ()
+	{
+		return $this->_result? mysql_affected_rows(): false;
+	}
+
+/**
+  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * this returns false.
+  *
+  * @return int Number of rows in resultset
+  */
+	function lastNumRows () 
+	{
+		return $this->_result? @mysql_num_rows($this->_result): false;
+	}
+
+/**
+  * Returns the ID generated from the previous INSERT operation.
+  *
+  * @return int 
+  */
+	function lastInsertId () 
+	{
+		return mysql_insert_id();
+	}
+
 	/**
 	 * Returns a limit statement in the correct format for the particular database.
 	 *
@@ -154,44 +200,7 @@ class DBO_MySQL extends DBO {
 	 */
 	function selectLimit ($limit, $offset=null)
 	{
-		return "LIMIT {$limit}".($offset? "{$offset}": null);
-	}
-	
-/**
-  * Returns a formatted error message from previous database operation.
-  *
-  * @return string Error message with error number
-  */
-	function lastError () {
-		return mysql_errno()? mysql_errno().': '.mysql_error(): null;
-	}
-
-/**
-  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
-  *
-  * @return int Number of affected rows
-  */
-	function lastAffected () {
-		return $this->_result? mysql_affected_rows(): false;
-	}
-
-/**
-  * Returns number of rows in previous resultset. If no previous resultset exists, 
-  * this returns false.
-  *
-  * @return int Number of rows
-  */
-	function lastNumRows () {
-		return $this->_result? @mysql_num_rows($this->_result): false;
-	}
-
-/**
-  * Returns the ID generated from the previous INSERT operation.
-  *
-  * @return int 
-  */
-	function lastInsertId() {
-		return mysql_insert_id();
+		return " LIMIT {$limit}".($offset? "{$offset}": null);
 	}
 
 }

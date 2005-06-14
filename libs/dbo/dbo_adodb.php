@@ -67,7 +67,7 @@ class DBO_AdoDB extends DBO
 		if(!$this->connected)
 			die('Could not connect to DB.');
 	}
-	
+
 /**
   * Disconnects from database.
   *
@@ -92,12 +92,11 @@ class DBO_AdoDB extends DBO
 /**
   * Returns a row from given resultset as an array .
   *
-  * @param unknown_type $res Resultset
   * @return array The fetched row as an array
   */
-	function fetchRow ($res) 
+	function fetchRow () 
 	{
-		return $res->FetchRow();
+		return $this->_result->FetchRow();
 	}
 
 /**
@@ -105,7 +104,7 @@ class DBO_AdoDB extends DBO
   *
   * @return array Array of tablenames in the database
   */
-	function tablesList() 
+	function tablesList () 
 	{
 		$tables = $this->_adodb->MetaTables('TABLES');
 
@@ -122,7 +121,7 @@ class DBO_AdoDB extends DBO
   * @param string $table_name Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-	function fields ($table_name) 
+	function fields ($table_name)
 	{
 		$data = $this->_adodb->MetaColumns($table_name);
 		$fields = false;
@@ -146,27 +145,12 @@ class DBO_AdoDB extends DBO
 		return $this->_adodb->Quote($data);
 	}
 
-	
-	/**
-	 * Returns a limit statement in the correct format for the particular database.
-	 *
-	 * @param int $limit Limit of results returned
-	 * @param int $offset Offset from which to start results
-	 * @return string SQL limit/offset statement
-	 */
-	function selectLimit ($limit, $offset=null)
-	{
-		return "LIMIT {$limit}".($offset? "{$offset}": null);
-		// please change to whatever select your database accepts
-		// adodb doesn't allow us to get the correct limit string out of it
-	}
-	
 /**
   * Returns a formatted error message from previous database operation.
   *
   * @return string Error message
   */
- 	function lastError () 
+	function lastError () 
 	{
 		return $this->_adodb->ErrorMsg();
 	}
@@ -185,7 +169,7 @@ class DBO_AdoDB extends DBO
   * Returns number of rows in previous resultset. If no previous resultset exists, 
   * this returns false.
   *
-  * @return int Number of rows
+  * @return int Number of rows in resultset
   */
 	function lastNumRows () 
 	{
@@ -200,6 +184,21 @@ class DBO_AdoDB extends DBO
   * :TODO: To be implemented.
   */
 	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
+
+	/**
+	 * Returns a limit statement in the correct format for the particular database.
+	 *
+	 * @param int $limit Limit of results returned
+	 * @param int $offset Offset from which to start results
+	 * @return string SQL limit/offset statement
+	 */
+	function selectLimit ($limit, $offset=null)
+	{
+		return " LIMIT {$limit}".($offset? "{$offset}": null);
+		// please change to whatever select your database accepts
+		// adodb doesn't allow us to get the correct limit string out of it
+	}
+
 }
 
 ?>

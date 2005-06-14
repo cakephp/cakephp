@@ -33,8 +33,8 @@
 session_start();
 
 /**
-  * Get Cake's root directory
-  */
+ * Get Cake's root directory
+ */
 if (!defined('DS'))
 	define ('DS', DIRECTORY_SEPARATOR);
 
@@ -65,9 +65,8 @@ config ('tags', 'database');
 if (class_exists('DATABASE_CONFIG'))
 {
 	$DB = DboFactory::make('devel');
+	loadModels ();
 }
-
-loadModels ();
 
 ## RUN THE SCRIPT
 $url = empty($_GET['url'])? null: $_GET['url'];
