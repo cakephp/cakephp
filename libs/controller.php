@@ -48,8 +48,8 @@ uses('model', 'template', 'inflector', 'folder');
   * @since Cake v 0.2.9
   *
   */
-class Controller extends Template {
-    
+class Controller extends Template 
+{
 /**
   * Name of the controller.
   *
@@ -58,6 +58,13 @@ class Controller extends Template {
   */
     var $name = null;
 
+/**
+  * Stores the current URL (for links etc.)
+  *
+  * @var string Current URL
+  */
+	var $here = null;
+    
 /**
   * Enter description here...
   *
@@ -113,7 +120,7 @@ class Controller extends Template {
 		}
 		elseif ($this->uses) 
 		{
-			if (!$DB)
+			if (!$this->db)
 				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
 
 			$uses = is_array($this->uses)? $this->uses: array($this->uses);
@@ -164,14 +171,18 @@ class Controller extends Template {
   * @param string $url
   * @return string Full constructed URL as a string.
   */
-	function urlFor ($url=null) {
-		if (empty($url)) {
-			$out = $this->base.'/'.strtolower($this->params['controller']).'/'.strtolower($this->params['action']);
+	function urlFor ($url=null) 
+	{
+		if (empty($url)) 
+		{
+			return $this->here;
 		}
-		elseif ($url[0] == '/') {
+		elseif ($url[0] == '/') 
+		{
 			$out = $this->base . $url;
 		}
-		else {
+		else 
+		{
 			$out = $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
 		}
 
@@ -377,7 +388,8 @@ class Controller extends Template {
   * @param array $html_options
   * @return string
   */
-	function checkboxTag ($tag_name, $title=null, $html_options=null) {
+	function checkboxTag ($tag_name, $title=null, $html_options=null) 
+	{
 		$this->tagValue($tag_name)? $html_options['checked'] = 'checked': null;
 		$title = $title? $title: ucfirst($tag_name);
 		return sprintf(TAG_CHECKBOX, $tag_name, $tag_name, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '), $title); 
@@ -486,8 +498,9 @@ class Controller extends Template {
 	        }
 	        
 	        $title_encoded = null;
-	        for ($ii=0; $ii < strlen($title); $ii++) {
-	            $title_encoded .= '&#x' . bin2hex($title[$ii]).';';
+	        for ($ii=0; $ii < strlen($title); $ii++) 
+	        {
+	        	$title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii])? '&#x' . bin2hex($title[$ii]).';': $title[$ii];
 	        }
 	
 			return sprintf(TAG_MAILTO, $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);

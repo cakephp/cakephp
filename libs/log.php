@@ -29,19 +29,43 @@
   * @lastmodified $Date$
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
-class Log {
-
-	function write($type, $msg) {
-		$out = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\r\n";
+class Log
+{
+	function write($type, $msg)
+	{
+		$out = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
 		$fn = LOGS.$type.'.log';
 
-		return $log = fopen($fn, 'a+') && fwrite($log, $out) && fclose($log);
+		if (!($log = fopen($fn, 'a')))
+		{
+			print ("[Log] Could not open {$fn}!");
+			return false;
+		}
+			
+		if (!fwrite($log, $out))
+			return false;
+			
+		if (!fclose($log))
+			return false;
+		
+		return true;
 	}
 }
+
 /**
   * Error constant. Used for differentiating error logging and debugging.
   *
   */
 define ('LOG_ERROR', 2);
+
+/**
+  * Shortcut.
+  */
+function LogError ($message)
+{
+	$bad = array("\n", "\r", "\t");
+	$good = ' ';
+	Log::write('error', str_replace($bad, $good, $message));
+}
 
 ?>

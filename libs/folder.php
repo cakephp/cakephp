@@ -36,7 +36,6 @@
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
 class Folder extends Object {
     
@@ -97,7 +96,9 @@ class Folder extends Object {
   * @return array
   */
 	function ls($sort=true) {
-		if ($dir = opendir($this->path)) {
+		$dir = opendir($this->path);
+
+		if ($dir) {
 			$dirs = $files = array();
 			while (false !== ($n = readdir($dir))) {
 				if (!preg_match('#^\.+$#', $n)) {
@@ -127,12 +128,20 @@ class Folder extends Object {
   * @param string $pattern Preg_match pattern (Defaults to: .*)
   * @return array
   */
-	function find ($regexp_pattern='.*') {
-		list($dirs, $files) = $this->ls();
+	function find ($regexp_pattern='.*') 
+	{
+		$data = $this->ls();
+		
+		if (!is_array($data))
+			return array();
+		
+		list($dirs, $files) = $data;
 
 		$found = array();
-		foreach ($files as $file) {
-			if (preg_match("/^{$regexp_pattern}$/i", $file)) {
+		foreach ($files as $file) 
+		{
+			if (preg_match("/^{$regexp_pattern}$/i", $file)) 
+			{
 				$found[] = $file;
 			}
 		}

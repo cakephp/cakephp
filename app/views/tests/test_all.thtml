@@ -1,4 +1,4 @@
-<?PHP if ($success) { ?>
+<?php /* if ($success) { ?>
 <p class="box" id="ok"><b>PASSED</b></p>
 <?PHP } else { ?>
 <p class="box" id="error"><b>FAILED</b></p>
@@ -6,24 +6,25 @@
 
 <table>
 <?PHP foreach ($results as $r) {
-$performed = $r['result']['tests'];	
+$performed = $r['result']['tests'];
 if ($performed||1) {
 ?>
 <tr><th><b><?=$r['name']?></b> <?=$performed?> test<?=$performed==1?'':'s'?></th></tr>
 <?PHP if ($r['result']['tests']) {
-	foreach ($r['result']['details'] as $detail) { 
-		if ($detail['failed']) { ?>
+foreach ($r['result']['details'] as $detail) {
+if ($detail['failed']) { ?>
 <tr class="fail"><td><?=$r['name']?>::<?=$detail['method']?></td></tr>
-			<?PHP foreach ($detail['errors'] as $error) { ?>
+<?PHP foreach ($detail['errors'] as $error) { ?>
 <tr class="info"><td>
 <span class="ok"><?=$error['expected'][0]?></span> <em><?=$error['expected'][1]?></em><br />
 <span class="not"><?=$error['actual'][0]?></span> <em><?=$error['actual'][1]?></em>
 </td></tr>
-<?PHP 
-			} 
-		}
-		else { ?>
+<?PHP
+}
+}
+else { ?>
 <tr class="pass"><td><?=$r['name']?>::<?=$detail['method']?></td></tr>
 
 <?PHP } } } } } ?>
 </table>
+<?php */ ?>

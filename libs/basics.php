@@ -135,7 +135,6 @@ function uses ()
 	}
 }
 
-
 function vendor($name)
 {
 	$args = func_get_args();

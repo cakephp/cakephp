@@ -42,9 +42,9 @@ uses('object');
   * @package cake
   * @subpackage cake.libs
   * @since Cake v 0.2.9
-  *
   */
-class Template extends Object {
+class Template extends Object 
+{
     
 /**
   * Enter description here...

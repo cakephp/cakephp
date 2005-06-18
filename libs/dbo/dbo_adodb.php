@@ -58,11 +58,16 @@ class DBO_AdoDB extends DBO
   */
 	function connect ($config) 
 	{
-		$this->config = $config;
+		if ($this->config = $config)
+		{
+			if (isset($config['driver']))
+			{
+				$this->_adodb = NewADOConnection($config['driver']);
 
-		$this->_adodb = NewADOConnection($config['driver']);
-		$adodb =& $this->_adodb;
-		$this->connected = $adodb->Connect($config['host'], $config['login'], $config['password'], $config['database']);
+				$adodb =& $this->_adodb;
+				$this->connected = $adodb->Connect($config['host'], $config['login'], $config['password'], $config['database']);
+			}
+		}
 
 		if(!$this->connected)
 			die('Could not connect to DB.');

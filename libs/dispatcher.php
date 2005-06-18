@@ -78,7 +78,6 @@ class Dispatcher extends Object {
 	{
 		global $_POST, $_GET, $_FILES, $_SESSION;
 
-		/* @var $params array */
 		$params = $this->parseParams($url);
 
 		// die if no controller set
@@ -120,8 +119,9 @@ class Dispatcher extends Object {
 			$this->errorUnknownAction($url, $ctrl_class, $params['action']);
 		}
 
-		$controller = new $ctrl_class ($params); 
+		$controller = new $ctrl_class ($params);
 		$controller->base = $this->base; 
+		$controller->here = $this->base.'/'.$url;
 		$controller->action = $params['action'];
 		$controller->data = empty($params['data'])? null: $params['data'];
 		$controller->passed_args = empty($params['pass'])? null: $params['pass'];

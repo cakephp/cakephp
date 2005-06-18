@@ -21,7 +21,8 @@
  * directory we will define ROOT there, otherwise we set it
  * here.
  */
-if( !defined('ROOT') ){
+if(!defined('ROOT'))
+{
 	define ('ROOT',   '../');
 }
 
@@ -88,9 +89,9 @@ define ('MODULES',     ROOT.'modules'.DS);
 define ('PUBLIC',      ROOT.'public'.DS);
 
 /**
- * Web path to the public images directory.
+ * Path to the scripts direcotry.
  */
-define ('IMAGES',          '/img/');
+define('SCRIPTS',      ROOT.'scripts'.DS);
 
 /**
  * Path to the tests directory.
@@ -128,5 +129,10 @@ define ('VENDORS',     ROOT.'vendors'.DS);
  * without setting the include_path PHP variable.
  */
 define ('PEAR',            VENDORS.'Pear'.DS);
+
+/**
+ * Web path to the public images directory.
+ */
+define ('IMAGES',          '/img/');
 
 ?>

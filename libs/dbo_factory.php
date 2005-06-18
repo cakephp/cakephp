@@ -32,7 +32,7 @@
   * Enter description here...
   *
   */
-uses('object', 'dbo');
+uses('object');
 config('database');
 
 /**
@@ -43,21 +43,24 @@ config('database');
   * @since Cake v 1.0.0.0
   *
   */
-class DboFactory extends Object {
-
+class DboFactory extends Object
+{
 /**
  * Enter description here...
  *
  * @param unknown_type $activeConfig
  * @return unknown
  */
-	function make ($activeConfig) {
-		if (!class_exists('DATABASE_CONFIG')) return false;
+	function make($activeConfig)
+	{
+		if (!class_exists('DATABASE_CONFIG'))
+			return false;
 
 		$config = DATABASE_CONFIG::$activeConfig();
 
 		// special case for AdoDB -- driver name in the form of 'adodb-drivername'
-		if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res)) {
+		if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res))
+		{
 			uses('dbo/dbo_adodb');
 			$config['driver'] = $res[1];
 			$conn = new DBO_AdoDB($config);
@@ -71,16 +74,19 @@ class DboFactory extends Object {
 			return $conn;
 		}
 		// regular, Cake-native db drivers
-		else {
+		else
+		{
 			$db_driver_class = 'DBO_'.$config['driver'];
 			$db_driver_fn = LIBS.strtolower('dbo'.DS.$db_driver_class.'.php');
 
-			if (file_exists($db_driver_fn)) {
+			if (file_exists($db_driver_fn))
+			{
 				uses(strtolower('dbo'.DS.$db_driver_class));
 				return new $db_driver_class ($config);
 			}
-			else {
-				trigger_error (ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
+			else
+			{
+				trigger_error(ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
 				return false;
 			}
 		}
