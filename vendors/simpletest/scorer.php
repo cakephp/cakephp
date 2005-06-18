@@ -372,7 +372,9 @@
          *    @static
          */
         function inCli() {
-            return php_sapi_name() == 'cli';
+        	$method = getenv('REQUEST_METHOD');
+        	return empty($method);
+            // return php_sapi_name() == 'cli';
         }
     }
 ?>

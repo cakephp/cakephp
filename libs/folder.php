@@ -30,6 +30,8 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
+uses('object');
+
 /**
   * Folder structure browser, lists folders and files.
   *
