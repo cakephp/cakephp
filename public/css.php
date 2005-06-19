@@ -1,6 +1,7 @@
 <?PHP
 
 require(ROOT.'config'.DS.'paths.php');
+require(LIBS.'basics.php');
 require(LIBS.'file.php');
 require(LIBS.'legacy.php');
 
@@ -27,8 +28,7 @@ function write_css_cache ($path, $content)
 	return $cache->write($content);
 }
 
-
-if (!preg_match('|^ccss/([a-z0-9\/\-\\\]+\.[a-z0-9]+)$|i', $url, $regs)) 
+if (preg_match('|\.\.|', $url) || !preg_match('|^ccss/(.+)$|i', $url, $regs)) 
 	die('Wrong file name.');
 
 $filename = 'css/'.$regs[1];
@@ -62,7 +62,7 @@ else
 
 header("Date: ".date("D, j M Y G:i:s ", $templateModified).'GMT');
 header("Content-Type: text/css");
-header("Expires: ".date("D, j M Y G:i:s T", time()+24*60*60));
+header("Expires: ".date("D, j M Y G:i:s T", time()+DAY));
 header("Cache-Control: cache"); // HTTP/1.1
 header("Pragma: cache"); // HTTP/1.0
 print $output;

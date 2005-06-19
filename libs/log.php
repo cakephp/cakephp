@@ -45,7 +45,7 @@ class Log
 
 /**
   * Error constant. Used for differentiating error logging and debugging.
-  *
+  * Currently PHP supports LOG_DEBUG
   */
 define ('LOG_ERROR', 2);
 
