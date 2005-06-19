@@ -239,11 +239,11 @@ class ControllerTest extends UnitTestCase
 	function testImageTag()
 	{
 		$result   = $this->controller->imageTag('foo.gif');
-		$expected = '<img src="/ease'.IMAGES.'foo.gif" alt="" />';
+		$expected = '<img src="/ease'.IMAGES_URL.'foo.gif" alt="" />';
 		$this->assertEqual($result, $expected);
 
 		$result   = $this->controller->imageTag('bar/baz.gif', 'Foobar', array('class'=>'Zet'));
-		$expected = '<img src="/ease'.IMAGES.'bar/baz.gif" alt="Foobar" class="Zet" />';
+		$expected = '<img src="/ease'.IMAGES_URL.'bar/baz.gif" alt="Foobar" class="Zet" />';
 		$this->assertEqual($result, $expected);
 	}
 

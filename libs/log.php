@@ -29,26 +29,17 @@
   * @lastmodified $Date$
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
+uses('file');
+
 class Log
 {
 	function write($type, $msg)
 	{
-		$out = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
-		$fn = LOGS.$type.'.log';
+		$filename = LOGS.$type.'.log';
+		$output = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
 
-		if (!($log = fopen($fn, 'a')))
-		{
-			print ("[Log] Could not open {$fn}!");
-			return false;
-		}
-			
-		if (!fwrite($log, $out))
-			return false;
-			
-		if (!fclose($log))
-			return false;
-		
-		return true;
+		$log = new File($filename);
+		return $log->append($output);
 	}
 }
 

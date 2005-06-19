@@ -460,7 +460,7 @@ class Controller extends Template
   * @return string Formatted IMG tag
   */
 	function imageTag ($path, $alt=null, $html_options=null) {
-		$url = $this->base.IMAGES.$path;
+		$url = $this->base.IMAGES_URL.$path;
 		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
@@ -516,7 +516,7 @@ class Controller extends Template
   * @return string Formatted LINK element.
   */
 	function cssTag ($path, $rel='stylesheet', $html_options=null) {
-		$url = "{$this->base}/css/{$path}.css";
+		$url = "{$this->base}/".(COMPRESS_CSS? 'c': '')."css/{$path}.css";
 		return sprintf(TAG_CSS, $rel, $url, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 

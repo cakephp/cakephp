@@ -24,4 +24,11 @@
  */
 define ('DEBUG', 1);
 
+/**
+ * Compress output CSS (removing comments, whitespace, repeating tags etc.)
+ * This requires a /var/cache directory to be writable by the web server (caching).
+ * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
+ */
+define ('COMPRESS_CSS', false);
+
 ?>

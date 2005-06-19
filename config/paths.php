@@ -89,6 +89,11 @@ define ('MODULES',     ROOT.'modules'.DS);
 define ('PUBLIC',      ROOT.'public'.DS);
 
 /**
+ * Path to the public directory.
+ */
+define ('CSS',             PUBLIC.'css'.DS);
+
+/**
  * Path to the scripts direcotry.
  */
 define('SCRIPTS',      ROOT.'scripts'.DS);
@@ -119,6 +124,16 @@ define ('MODEL_TESTS',     TESTS.'app'.DS.'models'.DS);
 define ('LIB_TESTS',       TESTS.'libs'.DS);
 
 /**
+ * Path to the temporary files directory.
+ */
+define ('TMP',     ROOT.'tmp'.DS);
+
+/**
+ * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
+ */
+define('CACHE', TMP.'cache'.DS);
+
+/**
  * Path to the vendors directory.
  */
 define ('VENDORS',     ROOT.'vendors'.DS);
@@ -130,9 +145,20 @@ define ('VENDORS',     ROOT.'vendors'.DS);
  */
 define ('PEAR',            VENDORS.'Pear'.DS);
 
+
+/**
+ *  Full url prefix
+ */
+define('FULL_BASE_URL', 'http://'.$_SERVER['HTTP_HOST']);
+
 /**
  * Web path to the public images directory.
  */
-define ('IMAGES',          '/img/');
+define ('IMAGES_URL',          '/img/');
+
+/**
+ * Web path to the CSS files directory.
+ */
+define ('CSS_URL',            '/css/');
 
 ?>
