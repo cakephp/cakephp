@@ -7,10 +7,10 @@
 </head>
 
 <body>
-
-<h1><?=$title_for_layout?></h1>
-
-<?=$content_for_layout?>
-
+<div id="container">
+  <div id="content">
+    <?=$content_for_layout?>
+  </div>
+</div>
 </body>
 </html>

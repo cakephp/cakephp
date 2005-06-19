@@ -163,30 +163,108 @@ class Template extends Object
   * @param string $layout 
   * @param string $file Custom filename for view
   */
-	function render ($action=null, $layout=null, $file=null) {
+	function render ($action=null, $layout=null, $file=null) 
+	{
+		if (isset($this->hasRendered) && $this->hasRendered) 
+		{
+			return true;
+		} 
+		else 
+		{
+			$this->hasRendered = false;
+		}
+		
 		$this->autoRender = false;
-
+		
 		if (!$action) $action = $this->action;
 		if ($layout) $this->setLayout($layout);
-
+		
+		//$isFatal = isset($this->isFatal) ? $this->isFatal : false;
+		
 		$view_fn = $file? $file: $this->_getViewFn($action);
-
-		if (!is_file($view_fn)) {
-			DEBUG? trigger_error (sprintf(ERROR_NO_VIEW, $action, $view_fn), E_USER_ERROR)
-			: $this->error('404', 'Not found', sprintf(ERROR_404, '', "missing view \"{$action}\""));
-			die();
+		
+		if (!is_file($view_fn)) 
+		{
+			if (strtolower(get_class($this)) == 'template') 
+			{
+				return array('action' => $action, 'layout' => $layout, 'view_fn' => $view_fn);
+			}  
+			
+			// check to see if the missing view is due to a custom missing_action
+			if (strpos($action, 'missing_action') !== false) 
+			{
+				$error_action = 'missing_action';
+			} 
+			else 
+			{
+				$error_action = 'missing_view';
+			}
+			
+			
+			// check for controller-level view handler 
+			foreach(array($this->name, 'errors') as $view_dir) 
+			{
+				$missing_view_fn = VIEWS.$view_dir.DS.$error_action.'.thtml';
+				$missing_view_exists = is_file($missing_view_fn);
+				if ($missing_view_exists)  
+				{
+					break;
+				}
+			}
+			
+			if (strpos($action, 'missing_view') === false) 
+			{
+				$controller =& $this;
+				$controller->missing_view = $view_fn;
+				$controller->action       = $action;
+				call_user_func_array(array(&$controller, 'missing_view'), empty($params['pass'])? null: $params['pass']);
+				$isFatal = isset($this->isFatal) ? $this->isFatal : false;
+				if (!$isFatal) 
+				{
+					$view_fn = $missing_view_fn;
+				}    
+			} 
+			else 
+			{
+				$missing_view_exists = false;
+			}
+			
+			if (!$missing_view_exists || $isFatal) 
+			{
+				// app/errors/missing_view.thtml view is missing!
+				if (DEBUG)
+				{
+					trigger_error (sprintf(ERROR_NO_VIEW, $action, $view_fn), E_USER_ERROR);
+				}
+				else 
+				{
+					$this->error('404', 'Not found', sprintf(ERROR_404, '', "missing view \"{$action}\""));
+				}
+	
+				die();                  
+			}
 		}
+		
+		if ($view_fn && !$this->hasRendered) 
+		{
+			$out = $this->_render($view_fn, $this->_view_vars, 0);
+			if ($out !== false) 
+			{
+				if ($this->layout && $this->autoLayout) 
+				{
+					$out = $this->renderLayout($out);
+				}		
 
-		$out = $this->_render($view_fn, $this->_view_vars, 0);
-
-		if ($out !== false) {
-			if ($this->layout && $this->autoLayout) 
-				$out = $this->renderLayout($out);
-			print $out;
-		}
-		else {
-			$out = $this->_render($view_fn, $this->_view_vars, false);
-			trigger_error (sprintf(ERROR_IN_VIEW, $view_fn, $out), E_USER_ERROR);
+				print $out;
+				$this->hasRendered = true;
+			}
+			else 
+			{
+				$out = $this->_render($view_fn, $this->_view_vars, false);
+				trigger_error (sprintf(ERROR_IN_VIEW, $view_fn, $out), E_USER_ERROR);
+			}
+			
+			return true;
 		}
 	}
 

@@ -1,0 +1,22 @@
+<h1>Missing action</h1>
+
+<p class="error">You are seeing this error because the action <em><?=$this->missing_action;?></em> 
+  is not defined in controller <em><?=Inflector::camelize($this->name);?></em>
+</p>  
+
+
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_action.thtml</code>
+view file, a user-customizable error page for handling invalid action dispatches.</span>
+</p>
+
+
+<p>
+<strong>Error</strong>: Unable to execute action <em><?=$this->missing_action;?></em> on
+<em><?=Inflector::camelize($this->name);?></em>
+</p>
+
+<h2>Controller dump:</h2>
+<pre>
+<? print_r($this); ?>
+</pre>

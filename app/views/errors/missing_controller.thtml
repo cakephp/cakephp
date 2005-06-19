@@ -1,0 +1,20 @@
+<h1>Missing controller</h1>
+
+<p class="error">You are seeing this error because controller <em><?=$this->missing_controller;?></em>
+  could not be found.
+</p> 
+
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_controller.thtml</code>
+view file, a user-customizable error page for handling invalid controller dispatches.</span>
+</p>
+
+<p>
+<strong>Fatal</strong>: Unable to load controller <em><?=$this->missing_controller;?></em>
+</p>
+
+
+<h2>Controller dump:</h2>
+<pre>
+<? print_r($this); ?>
+</pre>

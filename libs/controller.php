@@ -142,6 +142,24 @@ class Controller extends Template
 
 		parent::__construct();
 	}
+	
+  function missing_controller()
+  {
+      $this->autoRender = false;
+      $this->render('../errors/missing_controller');
+  }
+  
+  function missing_action()
+  {
+      $this->autoRender = false;
+      $this->render('../errors/missing_action');
+  }
+  
+  function missing_view()
+  {
+      $this->autoRender = false;
+      $this->render('../errors/missing_view');
+  }	
 
 /**
   * Redirects to given $url, after turning off $this->autoRender.

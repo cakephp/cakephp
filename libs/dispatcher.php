@@ -34,6 +34,12 @@
  * Description:
  * Dispatches the request, creating appropriate models and controllers.
  */
+ 
+define('DISPATCH_NO_CONTROLLER',      'missing_controller');
+define('DISPATCH_UNKNOWN_CONTROLLER', 'missing_controller');
+define('DISPATCH_NO_ACTION',          'missing_action');
+define('DISPATCH_UNKNOWN_ACTION',     'missing_action');
+define('DISPATCHER_UNKNOWN_VIEW',     'missing_view');
 
 uses('error_messages', 'object', 'router', 'controller');
 
@@ -44,7 +50,8 @@ uses('error_messages', 'object', 'router', 'controller');
   * @subpackage cake.libs
   * @since Cake v 0.2.9
   */
-class Dispatcher extends Object {
+class Dispatcher extends Object 
+{
 
 /**
   * Base URL
@@ -61,11 +68,26 @@ class Dispatcher extends Object {
 
 /**
   * Constructor.
-  *
   */
-	function __construct () {
+	function __construct () 
+	{
 		$this->base = $this->baseUrl();
 		parent::__construct();
+	}
+
+
+/**
+  * Enter description here...
+  *
+  * @param unknown_type $url
+  * @return unknown
+  */
+	function dispatch($url) 
+	{
+		$params = $this->parseParams($url);
+		$result = $this->invoke($url);
+		
+		return $result === true? $params: array();
 	}
 
 /**
@@ -74,65 +96,101 @@ class Dispatcher extends Object {
   * @param string $url
   * @return unknown
   */
-	function dispatch ($url) 
+	function invoke ($url) 
 	{
 		global $_POST, $_GET, $_FILES, $_SESSION;
+  		
+	    $params = $this->parseParams($url);
+	    $missing_controller = false;
+	    $missing_action     = false;
+	    $missing_view       = false;
 
-		$params = $this->parseParams($url);
+  		if (empty($params['controller'])) 
+  		{
+			$missing_controller = true;
+  		}
+  		else 
+  		{
+      		$ctrl_name = Inflector::camelize($params['controller']);
+      		$ctrl_class = $ctrl_name.'Controller';
+        	
+      		if (!loadController($ctrl_name) || !class_exists($ctrl_class)) 
+      		{
+				$missing_controller = true;
+			}
+		}
 
-		// die if no controller set
-		if (empty($params['controller']))
-			$this->errorNoController($url);
-
-		$ctrl_name = Inflector::camelize($params['controller']);
-		$ctrl_class = $ctrl_name.'Controller';
-
-		/**
-		 * Find out if the specified controller exists, and die if not.
-		 */
-		if (!loadController($ctrl_name) || !class_exists($ctrl_class))
-			$this->errorUnknownController($url, $ctrl_name);
-
-		$ctrl_methods = get_class_methods($ctrl_class);
-		$ctrl_vars = get_class_vars($ctrl_class);
-
-		/**
-		 * If _no_action_is set, check if the default action, index() exists. If it doesn't, die.
-		 */
-		if (empty($params['action']))
+		if ($missing_controller) 
 		{
-			if (in_array('index', $ctrl_methods))
+			$ctrl_class       = 'AppController';
+			$controller       = new $ctrl_class($this);
+			$params['action'] = 'missing_controller';
+			$controller->missing_controller = $params['controller'];
+		}
+		else 
+		{
+			// create controller
+			$controller = new $ctrl_class($this);
+		}
+
+		// if action is not set, and the default Controller::index() method doesn't exist 
+		if (empty($params['action'])) 
+		{
+			if (method_exists($controller, 'index')) 
 			{
 				$params['action'] = 'index';
-			}
+			} 
 			else 
 			{
-				$this->errorNoAction($url);
+				$missing_action = true;
 			}
 		}
-		
-		/**
-		 * Check if the specified action really exists. 
-		 */
-		if (!in_array($params['action'], $ctrl_methods))
+
+		// if the requested action doesn't exist
+		if (!method_exists($controller, $params['action'])) 
 		{
-			$this->errorUnknownAction($url, $ctrl_class, $params['action']);
+			$missing_action = true;
+		}
+		
+		if ($missing_action) 
+		{
+			$controller->missing_action = $params['action'];
+			$params['action'] = 'missing_action';
+		}
+ 		
+		// initialize the controller
+		$controller->base        = $this->base;
+		$controller->here        = $this->base.'/'.$url;
+		$controller->params      = $params;
+		$controller->action      = $params['action'];
+		$controller->data        = empty($params['data'])? null: $params['data'];
+		$controller->passed_args = empty($params['pass'])? null: $params['pass'];		
+  
+  		// EXECUTE THE REQUESTED ACTION
+  		call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+
+  		$isFatal = isset($controller->isFatal) ? $controller->isFatal : false;
+      
+		if ($isFatal) 
+		{
+			switch($params['action']) 
+			{
+				case 'missing_controller': 
+					$this->errorUnknownController($url, $ctrl_name);
+				break;
+
+				case 'missing_action':
+					$this->errorUnknownAction($url, $ctrl_class, $controller->missing_action);
+				break;
+			}
+		}
+  
+		if ($controller->autoRender) 
+		{
+			$controller->render();
 		}
 
-		$controller = new $ctrl_class ($params);
-		$controller->base = $this->base; 
-		$controller->here = $this->base.'/'.$url;
-		$controller->action = $params['action'];
-		$controller->data = empty($params['data'])? null: $params['data'];
-		$controller->passed_args = empty($params['pass'])? null: $params['pass'];
-		
-		// EXECUTE THE REQUESTED ACTION
-		call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
-
-		if ($controller->autoRender)
-			$controller->render();
-
-		return $params;
+		return true;
 	}
 
 /**
@@ -166,7 +224,8 @@ class Dispatcher extends Object {
   *
   * @return string
   */
-	function baseUrl () {
+	function baseUrl () 
+	{
 		global $_SERVER;
 
 		//non mod_rewrite use:
@@ -191,7 +250,8 @@ class Dispatcher extends Object {
   * @param string $name Name of the error message (e.g. Not found)
   * @param string $message
   */
-	function error ($code, $name, $message) {
+	function error ($code, $name, $message) 
+	{
 		$controller = new Controller ($this);
 		$controller->base = $this->base;
 		$controller->error($code, $name, $message);
@@ -203,7 +263,8 @@ class Dispatcher extends Object {
   * @param unknown_type $url
   * @param unknown_type $message
   */
-	function error404 ($url, $message) {
+	function error404 ($url, $message) 
+	{
 		$this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
 	}
 
@@ -212,7 +273,8 @@ class Dispatcher extends Object {
   *
   * @param string $url
   */
-	function errorNoController ($url) {
+	function errorNoController ($url) 
+	{
 		DEBUG?
 			trigger_error (ERROR_NO_CONTROLLER_SET, E_USER_ERROR): 
 			$this->error404($url, "no controller set");
@@ -225,7 +287,8 @@ class Dispatcher extends Object {
   * @param string $url
   * @param string $controller_class
   */
-	function errorUnknownController ($url, $controller_class) {
+	function errorUnknownController ($url, $controller_class) 
+	{
 		DEBUG? 
 			trigger_error (sprintf(ERROR_UNKNOWN_CONTROLLER, $controller_class), E_USER_ERROR): 
 			$this->error404($url, "missing controller \"{$controller_class}\"");
@@ -237,7 +300,8 @@ class Dispatcher extends Object {
   *
   * @param string $url
   */
-	function errorNoAction ($url) {
+	function errorNoAction ($url) 
+	{
 		DEBUG? 
 			trigger_error (ERROR_NO_ACTION_SET, E_USER_ERROR):
 			$this->error404(sprintf(ERROR_404, $url, "no action set"));
@@ -251,7 +315,8 @@ class Dispatcher extends Object {
   * @param string $controller_class
   * @param string $action
   */
-	function errorUnknownAction ($url,$controller_class, $action) {
+	function errorUnknownAction ($url,$controller_class, $action) 
+	{
 		DEBUG? 
 			trigger_error (sprintf(ERROR_NO_ACTION, $action, $controller_class), E_USER_ERROR): 
 			$this->error404($url, "missing controller \"{$controller_class}\"");

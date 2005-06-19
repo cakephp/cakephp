@@ -1,4 +1,4 @@
-<h2>Cake works!</h2>
+<h1>Cake works!</h1>
 
 <p>Your installation of Cake is functional. Edit <code>/app/views/pages/home.thtml</code> to change the contents of this page.</p>
 
@@ -8,13 +8,13 @@
 
 <h2>Features</h2>
 
-<p><ul>
+<ul>
 <li>compatibile with PHP4 and PHP5</li>
 <li>supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for database and simplified querying so you shouldn't need to write SQL for basic operations (although <em>some</em> familiarity with SQL is strongly recommended)</li>
 <li>request dispatcher with good-looking, custom URLs</li>
 <li>fast, flexible templating (PHP syntax with helper methods)</li>
 <li>works from a website subdirectory, with very little Apache configuration involved (requires <code>.htaccess</code> files and <code>mod_rewrite</code> to work; these are available on most web servers)</li>
-</ul></p>
+</ul>
 
 <p>Cake is in its early infancy, but it works and I'm using it on a few projects. Currently the Dispatcher is working, the Model has <acronym title="Create, Read, Update, Delete">CRUD</acronym> functionality but with no joins between tables yet. The Controller is working and has most basic functions (including <code>render()</code> for templating).</p>
 
@@ -22,6 +22,6 @@
 
 <p><b>NEW! <?=$this->linkOut('My Amazon Wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?></b> for when you'll want to show your appreciation.</p>
 
-<p><?=$this->linkOut('Cake PHP Google Group','http://groups-beta.google.com/group/cake-php')?> &middot; <?=$this->linkOut('Cake Wiki (temporary)','http://cake.bplusf.net/')?> &middot; <?=$this->linkOut('Cake TRAC (SVN repository, etc.)','https://developers.nextco.com/cake')?><a href=""></a></p>
+<p><?=$this->linkOut('Cake PHP Google Group','http://groups-beta.google.com/group/cake-php')?> &middot; <?=$this->linkOut('Cake Wiki (temporary)','http://cake.bplusf.net/')?> &middot; <?=$this->linkOut('Cake TRAC (SVN repository, etc.)','https://developers.nextco.com/cake')?></p>
 
 <p>See <?=$this->linkOut('Cake website','http://sputnik.pl/cake')?> for more information.</p>

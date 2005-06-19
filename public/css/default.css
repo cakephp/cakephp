@@ -1,5 +1,5 @@
 BODY {
-font-size:.9em;
+font-size: 76%;
 }
 
 BODY, INPUT, TEXTAREA {
@@ -8,15 +8,28 @@ font-family:sans-serif;
 
 H1 {
 font-size:2.1em;
-text-align:center;
+color: #fff;
+text-align: left;
+position: absolute;
+padding-left: 15%;
+top: 0.35em;
+left: 0;
+height: 4em;
 }
 
 H2 {
 font-size:1.7em;
+color: #383;
 }
 
 H3 {
 font-size:1.4em;
+color: #553;
+}
+
+H4 {
+font-size:1.15em;
+color: #338;
 }
 
 P {
@@ -27,6 +40,10 @@ margin-bottom:.5em;
 A {
 white-space:nowrap;
 text-decoration:underline;
+}
+
+A:HOVER {
+background-color:#EEE;
 }
 
 CODE, PRE {
@@ -54,4 +71,40 @@ border-bottom:1px dotted;
 HR {
 height:0;
 border-top:1px solid #AAA;
+}
+
+
+#container {
+margin: 0 auto;
+border-top: solid 5em #69c;
+color: #333;
+font: normal 1.1em Verdana;
+padding: 0 15%;
+}
+
+#content {
+padding-top: 1em;
+width: 100%;
+text-align: left;
+line-height: 170%;
+}
+
+.notice {
+padding: 1em;
+background: #ffd;
+border: solid 2px #eeb;
+display: block;
+font-family: Verdana;
+}
+
+.tip {
+background: #efe;
+padding: 1em;
+border: solid 2px #cdc;
+}
+
+.error {
+background: #fee;
+padding: 1em;
+border: solid 2px #dcc;
 }
