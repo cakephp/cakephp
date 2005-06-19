@@ -272,7 +272,7 @@ class Model extends Object
 					trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
 			}
 */
-			$n == 'id'? $this->id = $v: $this->data[$n] = $v;
+			$n == 'id'? $this->setId($v): $this->data[$n] = $v;
 		}
 
 		return $data;

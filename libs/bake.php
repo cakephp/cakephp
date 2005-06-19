@@ -95,11 +95,11 @@ class Bake extends Object {
 	function template ($type) {
 		switch ($type) {
 			case 'view': return "%s";
-			case 'model': return "<?PHP\n\nclass %s extends AppModel {\n}\n\n?>";
+			case 'model': return "<?php\n\nclass %s extends AppModel {\n}\n\n?>";
 			case 'action': return "\n\tfunction %s () {\n\t}\n";
-			case 'ctrl': return "<?PHP\n\nclass %s extends %s {\n%s\n}\n\n?>";
-			case 'helper': return "<?PHP\n\nclass %s extends AppController {\n}\n\n?>";
-			case 'test': return '<?PHP
+			case 'ctrl': return "<?php\n\nclass %s extends %s {\n%s\n}\n\n?>";
+			case 'helper': return "<?php\n\nclass %s extends AppController {\n}\n\n?>";
+			case 'test': return '<?php
 
 class %sTest extends TestCase {
 	var $abc;
