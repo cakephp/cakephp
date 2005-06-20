@@ -7,9 +7,9 @@
  * @subpackage cake.libs
  * @since Cake v 0.2.9
  */
-class NeatArray {
+class Narray {
 	/**
-	 * Value of NeatArray.
+	 * Value of Narray.
 	 *
 	 * @var array
 	 * @access public
@@ -21,20 +21,20 @@ class NeatArray {
 	 *
 	 * @param array $value
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
-	function NeatArray ($value=array()) {
+	function Narray ($value=array()) {
 		$this->value = $value;
 	}
 
 	/**
-	 * Checks whether $fieldName with $value exists in this NeatArray object.
+	 * Finds and returns records with $fieldName equal $value from this Narray.
 	 *
 	 * @param string $fieldName
 	 * @param string $value
 	 * @return mixed
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	function findIn ($fieldName, $value) 
 	{
@@ -44,8 +44,10 @@ class NeatArray {
 		}
 			
 		$out = false;
-		foreach ($this->value as $k=>$v) {
-			if (isset($v[$fieldName]) && ($v[$fieldName] == $value)) {
+		foreach ($this->value as $k=>$v) 
+		{
+			if (isset($v[$fieldName]) && ($v[$fieldName] == $value)) 
+			{
 				$out[$k] = $v;
 			}
 		}
@@ -57,7 +59,7 @@ class NeatArray {
 	 * Checks if $this->value is array, and removes all empty elements.
 	 *
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	function cleanup () {
 		$out = is_array($this->value)? array(): null;
@@ -75,7 +77,7 @@ class NeatArray {
 	 * @param string $value 
 	 * @return bool
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	 function add ($value) {
 		 return ($this->value = $this->plus($value))? true: false;
@@ -84,10 +86,10 @@ class NeatArray {
 	/**
 	 * Returns itself merged with given array.
 	 *
-	 * @param array $value Array to add to NeatArray.
+	 * @param array $value Array to add to Narray.
 	 * @return array
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	 function plus ($value) {
 		 return array_merge($this->value, (is_array($value)? $value: array($value)));
@@ -99,7 +101,7 @@ class NeatArray {
 	 * @param int $sortedBy A value of 1 sorts by values, a value of 2 sorts by keys. Defaults to null (no sorting).
 	 * @return array
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	function totals ($sortedBy=1,$reverse=true) {
 		$out = array();
@@ -132,7 +134,7 @@ class NeatArray {
 	 *
 	 * @return array
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	function walk ($with) {
 		array_walk($this->value, $with);
@@ -154,7 +156,7 @@ class NeatArray {
 	 *
 	 * @return array
 	 * @access public
-	 * @uses NeatArray::value
+	 * @uses Narray::value
 	 */
 	function extract ($name) {
 		$out = array();
@@ -191,7 +193,7 @@ class NeatArray {
 	 *     $alice = array('id'=>'1', 'name'=>'Alice');
 	 *     $bob   = array('id'=>'2', 'name'=>'Bob');
 	 *
-	 *     $users = new NeatArray(array($alice, $bob));
+	 *     $users = new Narray(array($alice, $bob));
 	 * 
 	 *     $born = array
 	 *         ( 
@@ -219,7 +221,7 @@ class NeatArray {
 	function joinWith ($his, $onMine, $onHis=null) {
 		if (empty($onHis)) $onHis = $onMine;
 
-		$his = new NeatArray($his);
+		$his = new Narray($his);
 
 		$out = array();
 		foreach ($this->value as $key=>$val) {
@@ -259,6 +261,11 @@ class NeatArray {
 		
 		return $out;
 	}
+}
+
+// for backwards-compatibility, remove in 2008
+class NeatArray extends Narray 
+{
 }
 
 ?>

@@ -86,12 +86,12 @@ define ('MODULES',     ROOT.'modules'.DS);
 /**
  * Path to the public directory.
  */
-define ('WWW_ROOT',      ROOT.'public'.DS);
+define ('WWW_ROOT',    ROOT.'public'.DS);
 
 /**
  * Path to the public directory.
  */
-define ('CSS',             WWW_ROOT.'css'.DS);
+define ('CSS',            WWW_ROOT.'css'.DS);
 
 /**
  * Path to the scripts direcotry.

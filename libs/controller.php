@@ -16,7 +16,6 @@
 /**
  * Purpose: Controller
  * Application controller (controllers are where you put all the actual code) 
- * based on RoR (www.rubyonrails.com).
  * Provides basic functionality, such as rendering views (aka displaying templates).
  * Automatically selects model name from on singularized object class name 
  * and creates the model object if proper class exists.

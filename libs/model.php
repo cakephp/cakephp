@@ -297,7 +297,7 @@ class Model extends Object
 	function loadInfo () 
 	{
 		if (empty($this->_table_info))
-			$this->_table_info = new NeatArray($this->db->fields($this->table));
+			$this->_table_info = new Narray($this->db->fields($this->table));
 		return $this->_table_info;
 	}
 
@@ -337,6 +337,7 @@ class Model extends Object
 	{
 		if ($conditions) 
 		{
+			$conditions = $this->parseConditions($conditions);
 			$data = $this->find($conditions);
 			return $data[$name];
 		}
@@ -552,7 +553,6 @@ class Model extends Object
   */
 	function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
 	{
-		
 		$conditions = $this->parseConditions($conditions);
 
 		if (is_array($fields))
@@ -576,9 +576,10 @@ class Model extends Object
 		$conditions .= ($conditions && $whers? ' AND ': null).$whers;
 
 		$offset = $page > 1? $page*$limit: 0;
-		$limit = $limit? $limit: '-1';
 
-		$limit_str = $this->db->selectLimit($limit, $offset);
+		$limit_str = $limit
+			? $this->db->selectLimit($limit, $offset)
+			: '';
 		
 		$sql = 
 			"SELECT "

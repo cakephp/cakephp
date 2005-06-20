@@ -85,6 +85,19 @@ class Time extends Object {
 	function isToday ($date) {
 		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
+	
+	function daysAsSql ($begin, $end, $field_name)
+	{
+		$begin = date('Y-m-d', $begin).' 00:00:00';
+		$end   = date('Y-m-d', $end).  ' 23:59:59';
+		
+		return "($field_name >= '$begin') AND ($field_name <= '$end')";
+	}
+	
+	function dayAsSql ($date, $field_name)
+	{
+		return Time::daysAsSql($date, $date, $field_name);
+	}
 
 /**
   * Returns true if given datetime string is within current year.

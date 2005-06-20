@@ -48,9 +48,11 @@ define('YEAR',  365 * DAY);
  * @uses APP
  * @uses MODELS
  */
-function loadModels () {
+function loadModels () 
+{
 	require (APP.'app_model.php');
-	foreach (listClasses(MODELS) as $model_fn) {
+	foreach (listClasses(MODELS) as $model_fn) 
+	{
 		require (MODELS.$model_fn);
 	}
 }
@@ -63,14 +65,17 @@ function loadModels () {
  * @uses HELPERS
  * @uses CONTROLLERS
  */
-function loadControllers () {
+function loadControllers () 
+{
 	require (APP.'app_controller.php');
 
-	foreach (listClasses(HELPERS) as $helper) {
+	foreach (listClasses(HELPERS) as $helper) 
+	{
 		require (HELPERS.$helper.'.php');
 	}
 
-	foreach (listClasses(CONTROLLERS) as $controller) {
+	foreach (listClasses(CONTROLLERS) as $controller) 
+	{
 		require (CONTROLLERS.$controller.'.php');
 	}
 }
@@ -81,7 +86,8 @@ function loadControllers () {
   * @param string $name
   * @return boolean
   */
-function loadController ($name) {
+function loadController ($name) 
+{
 	$controller_fn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
 	$helper_fn = HELPERS.Inflector::underscore($name).'_helper.php';
 
@@ -108,18 +114,22 @@ function listClasses($path)
 /**
   * Loads configuration files
   */
-function config () {
+function config () 
+{
 	$args = func_get_args();
-	foreach ($args as $arg) {
+	foreach ($args as $arg) 
+	{
 		if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
 		{
 			include_once(CONFIGS.$arg.'.php');
 		}
-		elseif (file_exists(CONFIGS.$arg.'.php')) {
+		elseif (file_exists(CONFIGS.$arg.'.php')) 
+		{
 			include (CONFIGS.$arg.'.php');
 			if (count($args) == 1) return true;
 		}
-		else {
+		else 
+		{
 			if (count($args) == 1) return false;
 		}
 	}
@@ -180,13 +190,15 @@ if (!function_exists('getMicrotime'))
  *
  * @return integer
  */
-	function getMicrotime() {
+	function getMicrotime() 
+	{
 		list($usec, $sec) = explode(" ", microtime());
 		return ((float)$usec + (float)$sec);
 	}
 }
 
-if (!function_exists('sortByKey')) {
+if (!function_exists('sortByKey')) 
+{
 /**
  * Sorts given $array by key $sortby.
  *
@@ -196,30 +208,31 @@ if (!function_exists('sortByKey')) {
  * @param integer $type
  * @return mixed
  */
-	function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) {
-
-		if (is_array($array)) {
-
-			foreach ($array as $key => $val)
-			$sa[$key] = $val[$sortby];
-
-			if ($order == 'asc')
-				asort($sa, $type);
-			else
-				arsort($sa, $type);
-
-			foreach ($sa as $key=>$val)
-				$out[] = $array[$key];
-
-			return $out;
-
-		}
-		else
+	function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) 
+	{
+		if (!is_array($array))
 			return null;
+
+		foreach ($array as $key => $val)
+		{
+			$sa[$key] = $val[$sortby];
+		}
+
+		$order == 'asc'
+			? asort($sa, $type)
+			: arsort($sa, $type);
+
+		foreach ($sa as $key=>$val)
+		{
+			$out[] = $array[$key];
+		}
+
+		return $out;
 	}
 }
 
-if (!function_exists('array_combine')) {
+if (!function_exists('array_combine')) 
+{
 /**
  * Combines given identical arrays by using the first array's values as keys,
  * and the second one's values as values. (Implemented for back-compatibility with PHP4.)
@@ -228,18 +241,20 @@ if (!function_exists('array_combine')) {
  * @param array $a2
  * @return mixed Outputs either combined array or false.
  */
-	function array_combine($a1, $a2) {
+	function array_combine($a1, $a2) 
+	{
 		$a1 = array_values($a1);
 		$a2 = array_values($a2);
 		$c1 = count($a1);
 		$c2 = count($a2);
 
 		if ($c1 != $c2) return false; // different lenghts
-		if ($c1 <= 0) return false; // arrays are the same and both are empty
+		if ($c1 <= 0)   return false; // arrays are the same and both are empty
 		
 		$output = array();
 		
-		for ($i = 0; $i < $c1; $i++) {
+		for ($i = 0; $i < $c1; $i++) 
+		{
 			$output[$a1[$i]] = $a2[$i];
 		}
 		

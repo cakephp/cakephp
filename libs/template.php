@@ -1022,7 +1022,9 @@ class Template extends Object
 	function remoteFunction ($options=null)
 	{
 		$javascript_options = $this->__optionsForAjax($options);
-		$func = isset($options['update']) ? "new Ajax.Updater('{$options['update']}', " : "new Ajax.Request(";
+		$func = isset($options['update'])
+			? "new Ajax.Updater('{$options['update']}', " 
+			: "new Ajax.Request(";
 
 		$func .= "'" . $this->urlFor($options['url']) . "'";
 		$func .= ", $javascript_options)";

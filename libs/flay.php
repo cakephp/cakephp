@@ -288,6 +288,11 @@ class Flay extends Object
 	{
 		return strip_tags(html_entity_decode($text, ENT_QUOTES));
 	}
+	
+	function toParsedAndClean ($text)
+	{
+		return Flay::toClean(Flay::toHtml($text));
+	}
 
 /**
  * Enter description here...

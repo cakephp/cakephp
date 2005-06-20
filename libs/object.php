@@ -42,6 +42,13 @@ uses('log');
 class Object 
 {
 
+	/**
+	 * Database connection, if available.
+	 *
+	 * @var DBO
+	 */
+	var $db = null;
+	
 /**
   * A hack to support __construct() on PHP 4
   * Hint: descendant classes have no PHP4 class_name() constructors,

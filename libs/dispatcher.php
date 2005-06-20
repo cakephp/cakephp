@@ -75,11 +75,10 @@ class Dispatcher extends Object
 		parent::__construct();
 	}
 
-
 /**
   * Enter description here...
   *
-  * @param unknown_type $url
+  * @param string $url
   * @return unknown
   */
 	function dispatch($url) 
