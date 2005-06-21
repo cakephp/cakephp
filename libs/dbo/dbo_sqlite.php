@@ -205,8 +205,7 @@ class DBO_SQLite extends DBO
 	 */
 	function selectLimit($limit, $offset=null)
 	{
-		// :TODO: Please verify this with SQLite, untested.
-		return " LIMIT {$limit}".($offset? " OFFSET {$offset}": null);
+		return " LIMIT {$limit}".($offset? ", {$offset}": null);
 	}
 
 }
