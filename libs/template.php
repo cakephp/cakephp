@@ -1120,29 +1120,13 @@ class Template extends Object
 
 
 	/**
-	 * Includes the Prototype Javascript library (and anything else) inside a single script tag
-	 * 
-	 * Note: The recommended approach is to copy the contents of
-	 * lib/javascripts/ into your application's
-	 * public/javascripts/ directory, and use @see javascriptIncludeTag() to 
-	 * create remote script links.
-	 * @return string script with all javascript in /javascripts folder
+	 * Includes the Prototype Javascript library (in /vendors/javascript/prototype.js).
+	 *
+	 * @return string Javascript include tag for prototype library.
 	 */ 
-	function defineJavascriptFunctions ()
+	function defineJavascriptFunctions()
 	{
-		$dir = VENDORS."/javascript";
-		$folder = new Folder($dir);
-		$files = $folder->find('.*\.js');
-
-		$javascript = '';
-		foreach($files as $file)
-		{
-			if (substr($file, -3)=='.js')
-			{
-				$javascript .= file_get_contents("$dir/$file") . "\n\n";
-			}
-		}
-		return $this->javascriptTag($javascript);
+		return $this->javascriptIncludeTag('/js/vendors.php?file=prototype.js');
 	}
 
 	/**
