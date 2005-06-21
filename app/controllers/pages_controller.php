@@ -1,4 +1,4 @@
-<?PHP
+<?php
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
@@ -8,16 +8,17 @@
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////
 
-class PagesController extends PagesHelper {
-
-/**
- *  Displays a view
- *
- * @package cake
- * @subpackage cake.app
- */
-	function display () {
-
+class PagesController extends PagesHelper
+{
+	var $helpers = array('html', 'ajax');
+	/**
+	 * Displays a view
+	 *
+	 * @package cake
+	 * @subpackage cake.app
+	 */
+	function display()
+	{
 		if (!func_num_args())
 			$this->redirect('/');
 

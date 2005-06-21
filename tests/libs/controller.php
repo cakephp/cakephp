@@ -262,7 +262,7 @@ class ControllerTest extends UnitTestCase
 	{
 		$this->controller->addCrumb('Foo', '/bar/foo');
 		$result   = $this->controller->getCrumbs();
-		$expected = '<a href="/ease">START</a> &raquo; <a href="/ease/bar/foo">Foo</a>';
+		$expected = '<a href="/ease">START</a>&raquo;<a href="/ease/bar/foo">Foo</a>';
 		$this->assertEqual($result, $expected);
 	}
 }

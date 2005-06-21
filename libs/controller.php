@@ -84,9 +84,17 @@ class Controller extends Template
 	 * An array of names of models the particular controller wants to use.
 	 *
 	 * @var mixed A single name as a string or a list of names as an array.
-	 * @access private
+	 * @access protected
 	 */
 	var $uses = false;
+
+	/**
+	 * An array of names of built-in helpers to include.
+	 *
+	 * @var mixed A single name as a string or a list of names as an array.
+	 * @access protected
+	 */
+	var $helpers = array('html');
 
 	/**
 	 * Constructor. 
@@ -98,7 +106,9 @@ class Controller extends Template
 
 		$r = null;
 		if (!preg_match('/(.*)Controller/i', get_class($this), $r))
-		die("Controller::__construct() : Can't get or parse my own class name, exiting.");
+		{
+			die("Controller::__construct() : Can't get or parse my own class name, exiting.");
+		}
 
 		$this->name = strtolower($r[1]);
 		$this->viewpath = Inflector::underscore($r[1]);
@@ -134,22 +144,22 @@ class Controller extends Template
 		parent::__construct();
 	}
 
-	function missing_controller()
+	function missingController()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missing_controller');
+		$this->render('../errors/missingController');
 	}
 
-	function missing_action()
+	function missingAction()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missing_action');
+		$this->render('../errors/missingAction');
 	}
 
-	function missing_view()
+	function missingView()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missing_view');
+		$this->render('../errors/missingView');
 	}
 
 	/**

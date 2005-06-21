@@ -80,7 +80,7 @@ class Template extends Object
 	 * @var array
 	 * @access private
 	 */
-	var $_view_vars = array();
+	var $_viewVars = array();
 
 	/**
 	 * Enter description here...
@@ -103,7 +103,7 @@ class Template extends Object
 	 *
 	 * @param string $layout
 	 */
-	function setLayout ($layout)
+	function setLayout($layout)
 	{
 		$this->layout = $layout;
 	}
@@ -125,7 +125,7 @@ class Template extends Object
 	 *
 	 * @param string $pageTitle Text for the title
 	 */
-	function setTitle ($pageTitle)
+	function setTitle($pageTitle)
 	{
 		$this->pageTitle = $pageTitle;
 	}
@@ -140,9 +140,9 @@ class Template extends Object
 		foreach ($data as $name => $value)
 		{
 			if ($name == 'title')
-			$this->setTitle ($value);
+			$this->setTitle($value);
 			else
-			$this->_view_vars[$name] = $value;
+			$this->_viewVars[$name] = $value;
 		}
 	}
 
@@ -153,7 +153,7 @@ class Template extends Object
 	 * @param string $url URL fragment
 	 * @param int $time Display time, in seconds
 	 */
-	function flash ($message, $url, $time=1)
+	function flash($message, $url, $time=1)
 	{
 		$this->autoRender = false;
 		$this->autoLayout = false;
@@ -173,7 +173,7 @@ class Template extends Object
 	 * @param string $layout 
 	 * @param string $file Custom filename for view
 	 */
-	function render ($action=null, $layout=null, $file=null)
+	function render($action=null, $layout=null, $file=null)
 	{
 		if (isset($this->hasRendered) && $this->hasRendered)
 		{
@@ -191,60 +191,59 @@ class Template extends Object
 
 		//$isFatal = isset($this->isFatal) ? $this->isFatal : false;
 
-		$view_fn = $file? $file: $this->_getViewFn($action);
+		$viewFn = $file? $file: $this->_getViewFn($action);
 
-		if (!is_file($view_fn))
+		if (!is_file($viewFn))
 		{
 			if (strtolower(get_class($this)) == 'template')
 			{
-				return array('action' => $action, 'layout' => $layout, 'view_fn' => $view_fn);
+				return array('action' => $action, 'layout' => $layout, 'viewFn' => $viewFn);
 			}
 
-			// check to see if the missing view is due to a custom missing_action
-			if (strpos($action, 'missing_action') !== false)
+			// check to see if the missing view is due to a custom missingAction
+			if (strpos($action, 'missingAction') !== false)
 			{
-				$error_action = 'missing_action';
+				$errorAction = 'missingAction';
 			}
 			else
 			{
-				$error_action = 'missing_view';
+				$errorAction = 'missingView';
 			}
-
 
 			// check for controller-level view handler
 			foreach(array($this->name, 'errors') as $view_dir)
 			{
-				$missing_view_fn = VIEWS.$view_dir.DS.$error_action.'.thtml';
-				$missing_view_exists = is_file($missing_view_fn);
-				if ($missing_view_exists)
+				$missingViewFn = VIEWS.$view_dir.DS.Inflector::underscore($errorAction).'.thtml';
+				$missingViewExists = is_file($missingViewFn);
+				if ($missingViewExists)
 				{
 					break;
 				}
 			}
 
-			if (strpos($action, 'missing_view') === false)
+			if (strpos($action, 'missingView') === false)
 			{
 				$controller = $this;
-				$controller->missing_view = $view_fn;
-				$controller->action       = $action;
-				call_user_func_array(array(&$controller, 'missing_view'), empty($params['pass'])? null: $params['pass']);
+				$controller->missingView = $viewFn;
+				$controller->action      = $action;
+				call_user_func_array(array(&$controller, 'missingView'), empty($params['pass'])? null: $params['pass']);
 				$isFatal = isset($this->isFatal) ? $this->isFatal : false;
 				if (!$isFatal)
 				{
-					$view_fn = $missing_view_fn;
+					$viewFn = $missingViewFn;
 				}
 			}
 			else
 			{
-				$missing_view_exists = false;
+				$missingViewExists = false;
 			}
 
-			if (!$missing_view_exists || $isFatal)
+			if (!$missingViewExists || $isFatal)
 			{
-				// app/errors/missing_view.thtml view is missing!
+				// app/view/errors/missing_view.thtml view is missing!
 				if (DEBUG)
 				{
-					trigger_error (sprintf(ERROR_NO_VIEW, $action, $view_fn), E_USER_ERROR);
+					trigger_error(sprintf(ERROR_NO_VIEW, $action, $viewFn), E_USER_ERROR);
 				}
 				else
 				{
@@ -255,9 +254,9 @@ class Template extends Object
 			}
 		}
 
-		if ($view_fn && !$this->hasRendered)
+		if ($viewFn && !$this->hasRendered)
 		{
-			$out = $this->_render($view_fn, $this->_view_vars, 0);
+			$out = $this->_render($viewFn, $this->_viewVars, 0);
 			if ($out !== false)
 			{
 				if ($this->layout && $this->autoLayout)
@@ -270,8 +269,8 @@ class Template extends Object
 			}
 			else
 			{
-				$out = $this->_render($view_fn, $this->_view_vars, false);
-				trigger_error (sprintf(ERROR_IN_VIEW, $view_fn, $out), E_USER_ERROR);
+				$out = $this->_render($viewFn, $this->_viewVars, false);
+				trigger_error(sprintf(ERROR_IN_VIEW, $viewFn, $out), E_USER_ERROR);
 			}
 
 			return true;
@@ -284,11 +283,11 @@ class Template extends Object
 	 * @param string $content_for_layout Content to render in a view
 	 * @return string Rendered output
 	 */
-	function renderLayout ($content_for_layout)
+	function renderLayout($content_for_layout)
 	{
 		$layout_fn = $this->_getLayoutFn();
 
-		$data_for_layout = array_merge($this->_view_vars, array(
+		$data_for_layout = array_merge($this->_viewVars, array(
 		'title_for_layout'=>$this->pageTitle !== false? $this->pageTitle: Inflector::humanize($this->viewpath),
 		'content_for_layout'=>$content_for_layout));
 
@@ -297,7 +296,7 @@ class Template extends Object
 
 			if ($out === false) {
 				$out = $this->_render($layout_fn, $data_for_layout, false);
-				trigger_error (sprintf(ERROR_IN_LAYOUT, $layout_fn, $out), E_USER_ERROR);
+				trigger_error(sprintf(ERROR_IN_LAYOUT, $layout_fn, $out), E_USER_ERROR);
 				return false;
 			}
 			else {
@@ -305,7 +304,7 @@ class Template extends Object
 			}
 		}
 		else {
-			trigger_error (sprintf(ERROR_NO_LAYOUT, $this->layout, $layout_fn), E_USER_ERROR);
+			trigger_error(sprintf(ERROR_NO_LAYOUT, $this->layout, $layout_fn), E_USER_ERROR);
 			return false;
 		}
 	}
@@ -317,14 +316,14 @@ class Template extends Object
 	 * @param array $params Array of data for rendered view 
 	 * @return string Rendered output
 	 */
-	function renderElement ($name, $params=array())
+	function renderElement($name, $params=array())
 	{
 		$fn = ELEMENTS.$name.'.thtml';
 
 		if (!file_exists($fn))
 		return "(Error rendering {$name})";
 
-		return $this->_render($fn, array_merge($this->_view_vars, $params));
+		return $this->_render($fn, array_merge($this->_viewVars, $params));
 	}
 
 	/**
@@ -345,20 +344,49 @@ class Template extends Object
 	 */
 	function _getViewFn($action)
 	{
-		return VIEWS.$this->viewpath.DS."{$action}.thtml";
+		$action = Inflector::underscore($action);
+		$viewFn = VIEWS.$this->viewpath.DS."{$action}.thtml";
+		$viewPath = explode(DS, $viewFn);
+		
+		$i = array_search('..', $viewPath);
+		
+		unset($viewPath[$i-1]);
+		unset($viewPath[$i]);
+		
+		return '/'.implode('/', $viewPath);
 	}
 
 	/**
 	 * Renders and returns output for given view filename with its 
 	 * array of data.
 	 *
-	 * @param string $___view_fn Filename of the view
+	 * @param string $___viewFn Filename of the view
 	 * @param array $___data_for_view Data to include in rendered view
-	 * @param boolean $___play_safe If set to false, the include() of the $__view_fn is done without suppressing output of errors
+	 * @param boolean $___play_safe If set to false, the include() of the $__viewFn is done without suppressing output of errors
 	 * @return string Rendered output
 	 */
-	function _render($___view_fn, $___data_for_view, $___play_safe = true)
+	function _render($___viewFn, $___data_for_view, $___play_safe = true)
 	{
+		/**
+		 * Fetching helpers
+		 */
+		if ($this->helpers !== false)
+		{
+			foreach ($this->helpers as $helper)
+			{
+				$helperFn = LIBS.'helpers'.DS.Inflector::underscore($helper).'.php';
+				$helperCn = ucfirst($helper).'Helper';
+				if (is_file($helperFn))
+				{
+					require_once $helperFn;						
+					if(class_exists($helperCn)===true);
+					{
+						${$helper} = new $helperCn;
+					}
+				}
+			}
+		}
+		
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
 		/**
 		 * Local template variables.
@@ -375,13 +403,17 @@ class Template extends Object
 		/**
 		 * Include the template.
 		 */
-		$___play_safe? @include($___view_fn): include($___view_fn);
+		$___play_safe? @include($___viewFn): include($___viewFn);
 
 		$out = ob_get_clean();
 
 		return $out;
 	}
 
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	
 	/**
 	 * Returns given string trimmed to given length, adding an elipsis '..' if necessary.
 	 *
@@ -389,7 +421,7 @@ class Template extends Object
 	 * @param int $length Length of returned string, excluding ellipsis
 	 * @return string Trimmed string
 	 */
-	function trimTo ($string, $length)
+	function trimTo($string, $length)
 	{
 		return substr($string, 0, $length).(strlen($string)>$length? '..': null);
 	}
@@ -400,7 +432,7 @@ class Template extends Object
 	 * @param string $url
 	 * @return string Full constructed URL as a string.
 	 */
-	function urlFor ($url=null)
+	function urlFor($url=null)
 	{
 		if (empty($url))
 		{
@@ -426,7 +458,7 @@ class Template extends Object
 	 * @param unknown_type $insert_after
 	 * @return string
 	 */
-	function parseHtmlOptions ($options, $exclude=null, $insert_before=' ', $insert_after=null)
+	function parseHtmlOptions($options, $exclude=null, $insert_before=' ', $insert_after=null)
 	{
 		if (!is_array($exclude)) $exclude = array();
 
@@ -458,7 +490,7 @@ class Template extends Object
 	 * @param string $confirm_message Message to be shown in "flash".
 	 * @return string
 	 */
-	function linkTo ($title, $url, $html_options=null, $confirm_message=false)
+	function linkTo($title, $url, $html_options=null, $confirm_message=false)
 	{
 		$confirm_message? $html_options['onClick'] = "return confirm('{$confirm_message}')": null;
 		return sprintf(TAG_LINK, $this->UrlFor($url), $this->parseHtmlOptions($html_options), $title);
@@ -473,7 +505,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function linkOut ($title, $url=null, $html_options=null)
+	function linkOut($title, $url=null, $html_options=null)
 	{
 		$url = $url? $url: $title;
 		return sprintf(TAG_LINK, ereg_replace('&([^a])', '&amp;\1', $url), $this->parseHtmlOptions($html_options), $title);
@@ -487,7 +519,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string An formatted opening FORM tag.
 	 */
-	function formTag ($target=null, $type='post', $html_options=null)
+	function formTag($target=null, $type='post', $html_options=null)
 	{
 		$html_options['action'] = $this->UrlFor($target);
 		$html_options['method'] = $type=='get'? 'get': 'post';
@@ -540,7 +572,7 @@ class Template extends Object
 	 * @param array $html_options HTML options
 	 * @return string The formatted SUBMIT button
 	 */
-	function submitTag ($caption='Submit', $html_options=null)
+	function submitTag($caption='Submit', $html_options=null)
 	{
 		$html_options['value'] = $caption;
 		return sprintf(TAG_SUBMIT, $this->parseHtmlOptions($html_options, null, '', ' '));
@@ -554,7 +586,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string The formatted INPUT element
 	 */
-	function inputTag ($tag_name, $size=20, $html_options=null)
+	function inputTag($tag_name, $size=20, $html_options=null)
 	{
 		$html_options['size'] = $size;
 		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
@@ -570,7 +602,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function passwordTag ($tag_name, $size=20, $html_options=null)
+	function passwordTag($tag_name, $size=20, $html_options=null)
 	{
 		$html_options['size'] = $size;
 		empty($html_options['value'])? $html_options['value'] = $this->tagValue($tag_name): null;
@@ -585,7 +617,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function hiddenTag ($tag_name, $value=null, $html_options=null)
+	function hiddenTag($tag_name, $value=null, $html_options=null)
 	{
 		$html_options['value'] = $value? $value: $this->tagValue($tag_name);
 		return sprintf(TAG_HIDDEN, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
@@ -598,7 +630,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function fileTag ($tag_name, $html_options=null)
+	function fileTag($tag_name, $html_options=null)
 	{
 		return sprintf(TAG_FILE, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
@@ -612,7 +644,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function areaTag ($tag_name, $cols=60, $rows=10, $html_options=null)
+	function areaTag($tag_name, $cols=60, $rows=10, $html_options=null)
 	{
 		$value = empty($html_options['value'])? $this->tagValue($tag_name): empty($html_options['value']);
 		$html_options['cols'] = $cols;
@@ -628,7 +660,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function checkboxTag ($tag_name, $title=null, $html_options=null)
+	function checkboxTag($tag_name, $title=null, $html_options=null)
 	{
 		$this->tagValue($tag_name)? $html_options['checked'] = 'checked': null;
 		$title = $title? $title: ucfirst($tag_name);
@@ -644,7 +676,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string
 	 */
-	function radioTags ($tag_name, $options, $inbetween=null, $html_options=null)
+	function radioTags($tag_name, $options, $inbetween=null, $html_options=null)
 	{
 		$value = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
 		$out = array();
@@ -670,7 +702,7 @@ class Template extends Object
 	 * @param array $option_attr Array of HTML options for the enclosed OPTION elements 
 	 * @return string Formatted SELECT element
 	 */
-	function selectTag ($tag_name, $option_elements, $selected=null, $select_attr=null, $option_attr=null)
+	function selectTag($tag_name, $option_elements, $selected=null, $select_attr=null, $option_attr=null)
 	{
 		if (!is_array($option_elements) || !count($option_elements))
 		return null;
@@ -701,7 +733,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string Formatted IMG tag
 	 */
-	function imageTag ($path, $alt=null, $html_options=null)
+	function imageTag($path, $alt=null, $html_options=null)
 	{
 		$url = $this->base.IMAGES_URL.$path;
 		return sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($html_options, null, '', ' '));
@@ -764,7 +796,7 @@ class Template extends Object
 	 * @param array $html_options
 	 * @return string Formatted LINK element.
 	 */
-	function cssTag ($path, $rel='stylesheet', $html_options=null)
+	function cssTag($path, $rel='stylesheet', $html_options=null)
 	{
 		$url = "{$this->base}/".(COMPRESS_CSS? 'c': '')."css/{$path}.css";
 		return sprintf(TAG_CSS, $rel, $url, $this->parseHtmlOptions($html_options, null, '', ' '));
@@ -776,7 +808,7 @@ class Template extends Object
 	 * @param string $charset
 	 * @return string
 	 */
-	function charsetTag ($charset)
+	function charsetTag($charset)
 	{
 		return sprintf(TAG_CHARSET, $charset);
 	}
@@ -787,7 +819,7 @@ class Template extends Object
 	 * @param string $script The JavaScript to be wrapped in SCRIPT tags.
 	 * @return string The full SCRIPT element, with the JavaScript inside it.
 	 */
-	function javascriptTag ($script)
+	function javascriptTag($script)
 	{
 		return sprintf(TAG_JAVASCRIPT, $script);
 	}
@@ -798,7 +830,7 @@ class Template extends Object
 	 * @param string $url URL to JavaScript file.
 	 * @return string
 	 */
-	function javascriptIncludeTag ($url)
+	function javascriptIncludeTag($url)
 	{
 		return sprintf(TAG_JAVASCRIPT_INCLUDE, $this->base.$url);
 	}
@@ -811,7 +843,7 @@ class Template extends Object
 	 * @param array $th_options
 	 * @return string
 	 */
-	function tableHeaders ($names, $tr_options=null, $th_options=null)
+	function tableHeaders($names, $tr_options=null, $th_options=null)
 	{
 		$out = array();
 		foreach ($names as $arg)
@@ -830,7 +862,7 @@ class Template extends Object
 	 * @param array $td_options HTML options for TD elements
 	 * @return string
 	 */
-	function tableCells ($data, $odd_tr_options=null, $even_tr_options=null)
+	function tableCells($data, $odd_tr_options=null, $even_tr_options=null)
 	{
 		if (empty($data[0]) || !is_array($data[0]))
 		{
@@ -863,7 +895,7 @@ class Template extends Object
 	 * @param childrenKey $bodyKey
 	 * @return string
 	 */
-	function guiListTree ($data, $htmlOptions=null, $bodyKey='body', $childrenKey='children')
+	function guiListTree($data, $htmlOptions=null, $bodyKey='body', $childrenKey='children')
 	{
 		$out = "<ul".$this->parseHtmlOptions($htmlOptions).">\n";
 
@@ -887,7 +919,7 @@ class Template extends Object
 	 * @param string $name Text for link
 	 * @param string $link URL for link
 	 */
-	function addCrumb ($name, $link)
+	function addCrumb($name, $link)
 	{
 		$this->_crumbs[] = array ($name, $link);
 	}
@@ -898,7 +930,7 @@ class Template extends Object
 	 * @param string $separator Text to separate crumbs.
 	 * @return string Formatted -separated list of breadcrumb links. Returns NULL if $this->_crumbs is empty.
 	 */
-	function getCrumbs ($separator = '&raqo;')
+	function getCrumbs($separator = '&raquo;')
 	{
 
 		if (count($this->_crumbs))
@@ -918,6 +950,10 @@ class Template extends Object
 		}
 	}
 
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	
 	/**
 	 * Returns link to javascript function
 	 * 
@@ -935,7 +971,7 @@ class Template extends Object
 	 * @param array $html_options html options for link
 	 * @return string html code for link to javascript function
 	 */
-	function linkToFunction ($title, $func, $html_options=null)
+	function linkToFunction($title, $func, $html_options=null)
 	{
 		$html_options['onClick'] = "$func; return false;";
 		return $this->linkTo($title, '#', $html_options);
@@ -1003,7 +1039,7 @@ class Template extends Object
 	 * @param array $html_options options for link
 	 * @return string html code for link to remote action
 	 */
-	function linkToRemote ($title, $options=null, $html_options=null)
+	function linkToRemote($title, $options=null, $html_options=null)
 	{
 		return $this->linkToFunction($title, $this->remoteFunction($options), $html_options);
 	}
@@ -1019,7 +1055,7 @@ class Template extends Object
 	 * @param array $options options for javascript 
 	 * @return string html code for link to remote action
 	 */
-	function remoteFunction ($options=null)
+	function remoteFunction($options=null)
 	{
 		$javascript_options = $this->__optionsForAjax($options);
 		$func = isset($options['update'])
@@ -1055,7 +1091,7 @@ class Template extends Object
 	 * @param string $javascript string that might have javascript elements
 	 * @return string escaped string
 	 */	
-	function escapeJavascript ($javascript)
+	function escapeJavascript($javascript)
 	{
 		$javascript = str_replace(array("\r\n","\n","\r"),'\n', $javascript);
 		$javascript = str_replace(array('"', "'"), array('\"', "\\'"), $javascript);
@@ -1072,7 +1108,7 @@ class Template extends Object
 	 * @param array $options callback options
 	 * @return string javascript code
 	 */	
-	function periodicallyCallRemote ($options=null)
+	function periodicallyCallRemote($options=null)
 	{
 		$frequency = (isset($options['frequency']))? $options['frequency'] : 10;
 		$code = "new PeriodicalExecuter(function() {" . $this->remote_function($options) . "}, $frequency)";
@@ -1090,7 +1126,7 @@ class Template extends Object
 	 * @param array $options callback options
 	 * @return string javascript code
 	 */	
-	function formRemoteTag ($options=null)
+	function formRemoteTag($options=null)
 	{
 		$options['form'] = true;
 		$options['html']['onsubmit']=$this->remoteFunction($options) . "; return false;";
@@ -1108,7 +1144,7 @@ class Template extends Object
 	 * @param array $options callback options
 	 * @return string ajaxed input button
 	 */ 
-	function submitToRemote ($name, $value, $options = null)
+	function submitToRemote($name, $value, $options = null)
 	{
 		$options['with'] = 'Form.serialize(this.form)';
 		$options['html']['type'] = 'button';
@@ -1126,7 +1162,7 @@ class Template extends Object
 	 */ 
 	function defineJavascriptFunctions()
 	{
-		return $this->javascriptIncludeTag('/js/vendors.php?file=prototype.js');
+		return $this->javascriptIncludeTag(DS.'js'.DS.'vendors.php?file=prototype.js');
 	}
 
 	/**
@@ -1157,7 +1193,7 @@ class Template extends Object
 	 * @param array $options ajax options
 	 * @return string ajax script
 	 */ 
-	function observeField ($field_id, $options = null)
+	function observeField($field_id, $options = null)
 	{
 		if (!isset($options['with']))
 		{
@@ -1178,7 +1214,7 @@ class Template extends Object
 	 * @param array $options ajax options
 	 * @return string ajax script
 	 */ 
-	function observeForm ($field_id, $options = null)
+	function observeForm($field_id, $options = null)
 	{
 		//i think this is a rails bug... should be set
 		if (!isset($options['with']))
@@ -1194,7 +1230,7 @@ class Template extends Object
 	 * Javascript helper function (private).
 	 *
 	 */
-	function __optionsForAjax ($options)
+	function __optionsForAjax($options)
 	{
 		$js_options = $this->__buildCallbacks($options);
 		$js_options['asynchronous'] = 'true';
@@ -1234,12 +1270,12 @@ class Template extends Object
 	}
 
 
-	function __methodOptionToString ($method)
+	function __methodOptionToString($method)
 	{
 		return (is_string($method) && !$method[0]=="'")? $method : "'$method'";
 	}
 
-	function __buildObserver ($klass, $name, $options=null)
+	function __buildObserver($klass, $name, $options=null)
 	{
 		if(!isset($options['with']) && isset($options['update']))
 		{

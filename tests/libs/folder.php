@@ -19,16 +19,24 @@ class FolderTest extends UnitTestCase
 	function setUp()
 	{
 		$this->testDir = ROOT.'tmp'.DS.'tests';
-		
-		touch($this->testDir.DS.'.htaccess');
-		if (!is_dir($this->testDir.DS.'dir1'))
-			mkdir($this->testDir.DS.'dir1');
-		touch($this->testDir.DS.'dir1'.DS.'test1.php');
-		if (!is_dir($this->testDir.DS.'dir2'))
-			mkdir($this->testDir.DS.'dir2');
 
+		touch($this->testDir.DS.'.htaccess');
+		chmod($this->testDir.DS.'.htaccess', 0777);
+		if (!is_dir($this->testDir.DS.'dir1'))
+		{
+			mkdir($this->testDir.DS.'dir1', 0777);
+		}
+		touch($this->testDir.DS.'dir1'.DS.'test1.php');
+		chmod($this->testDir.DS.'dir1'.DS.'test1.php', 0777);
+
+		if (!is_dir($this->testDir.DS.'dir2'))
+		{
+			mkdir($this->testDir.DS.'dir2', 0777);
+		}
 		touch($this->testDir.DS.'dir2'.DS.'test2.php');
-		
+		chmod($this->testDir.DS.'dir2'.DS.'test2.php', 0777);
+
+
 		$this->folder = new Folder($this->testDir);
 	}
 
@@ -37,16 +45,13 @@ class FolderTest extends UnitTestCase
 	// here
 	function tearDown()
 	{
-		unset($this->folder);
-
 		unlink($this->testDir.DS.'.htaccess');
 		unlink($this->testDir.DS.'dir1'.DS.'test1.php');
-		if (is_dir($this->testDir.DS.'dir1'))
-			rmdir($this->testDir.DS.'dir1');
 		unlink($this->testDir.DS.'dir2'.DS.'test2.php');
-		if (is_dir($this->testDir.DS.'dir2'))
-			rmdir($this->testDir.DS.'dir2');
-		
+
+		rmdir($this->testDir.DS.'dir1');
+		rmdir($this->testDir.DS.'dir2');
+
 		unset($this->folder);
 	}
 
@@ -55,8 +60,8 @@ class FolderTest extends UnitTestCase
 	{
 		$result = $this->folder->ls();
 		$expected = array (
-						array('.svn', 'dir1', 'dir2'),
-						array('.htaccess')
+		array('.svn', 'dir1', 'dir2'),
+		array('.htaccess')
 		);
 
 		$this->assertEqual($result, $expected, "List directories and files from test dir");
@@ -78,7 +83,7 @@ class FolderTest extends UnitTestCase
 		//THIS ONE IS HACKED... why do i need to give a full path to this method?
 		$this->folder->cd($this->testDir.DS.'dir1');
 		$result = $this->folder->pwd();
-		
+
 		$this->assertEqual($result, Folder::addPathElement($this->testDir, 'dir1'), 'Change directory to dir1');
 	}
 
@@ -86,7 +91,7 @@ class FolderTest extends UnitTestCase
 	{
 		$result = $this->folder->findRecursive('.*\.php');
 		$expected = array(Folder::addPathElement($this->folder->pwd().DS.'dir1', 'test1.php'), Folder::addPathElement($this->folder->pwd().DS.'dir2', 'test2.php'));
-		
+
 		$this->assertEqual($result, $expected, 'Find .php files');
 	}
 

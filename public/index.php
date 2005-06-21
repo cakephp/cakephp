@@ -38,49 +38,51 @@ session_start();
  * Get Cake's root directory
  */
 if (!defined('DS'))
-	define ('DS', DIRECTORY_SEPARATOR);
+{
+	define('DS', DIRECTORY_SEPARATOR);
+}
 
 if (!defined('ROOT'))
-	define ('ROOT', dirname(dirname(__FILE__)).DS);
+{
+	define('ROOT', dirname(dirname(__FILE__)).DS);
+}
 
 if (strpos($url, 'ccss/') === 0)
 {
-	include(ROOT.'public'.DS.'css.php');
+	include ROOT.'public'.DS.'css.php';
 	die;
 }
 	
 /**
-  * Configuration, directory layout and standard libraries
-  */
-require_once (ROOT.'config/core.php');
-require_once (ROOT.'config/paths.php');
-require_once (ROOT.'libs/basics.php');
-require_once (ROOT.'libs/log.php');
-require_once (ROOT.'libs/object.php');
-require_once (ROOT.'libs/narray.php');
-require_once (ROOT.'libs/inflector.php');
+ * Configuration, directory layout and standard libraries
+ */
+require_once ROOT.'config/core.php';
+require_once ROOT.'config/paths.php';
+require_once ROOT.'libs/basics.php';
+require_once ROOT.'libs/log.php';
+require_once ROOT.'libs/object.php';
+require_once ROOT.'libs/narray.php';
+require_once ROOT.'libs/inflector.php';
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);
 
 $TIME_START = getMicrotime();
 
-uses('folder');
-uses('dispatcher');
-uses('dbo_factory');
+uses('folder', 'dispatcher', 'dbo_factory');
 
-config ('tags', 'database');
+config('tags', 'database');
 
 if (class_exists('DATABASE_CONFIG'))
 {
 	$DB = DboFactory::make('devel');
-	loadModels ();
+	loadModels();
 }
 
-## RUN THE SCRIPT
+//RUN THE SCRIPT
 $DISPATCHER = new Dispatcher ();
 $DISPATCHER->dispatch($url);
 
-## CLEANUP
+//CLEANUP
 if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
 
 ?>

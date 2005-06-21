@@ -1,6 +1,6 @@
 <h1>Missing controller</h1>
 
-<p class="error">You are seeing this error because controller <em><?=$this->missing_controller;?></em>
+<p class="error">You are seeing this error because controller <em><?=$this->missingController;?></em>
   could not be found.
 </p> 
 
@@ -10,7 +10,7 @@ view file, a user-customizable error page for handling invalid controller dispat
 </p>
 
 <p>
-<strong>Fatal</strong>: Unable to load controller <em><?=$this->missing_controller;?></em>
+<strong>Fatal</strong>: Unable to load controller <em><?=$this->missingController;?></em>
 </p>
 
 

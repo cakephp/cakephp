@@ -1,6 +1,6 @@
 <h1>Missing view</h1>
 
-<p class="error">You are seeing this error because the view <em><?=$this->missing_view;?></em> 
+<p class="error">You are seeing this error because the view <em><?=$this->missingView;?></em> 
   for action <em><?=$this->params['action'];?></em> 
   in controller <em><?=Inflector::camelize($this->name);?></em> could not be found.
 </p> 
@@ -11,7 +11,7 @@ view file, a user-customizable error page for handling missing/invalid views dur
 </p>
 
 <p>
-<strong>Fatal</strong>: Unable to load view file <em><?=$this->missing_view;?></em> for
+<strong>Fatal</strong>: Unable to load view file <em><?=$this->missingView;?></em> for
 action <em><?=$this->params['controller'];?>::<?=$this->params['action'];?></em>
 </p>
 
