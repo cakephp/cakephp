@@ -2,8 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pl" xml:lang="pl">
 <head>
 	<title><?=$title_for_layout?></title>
-	<?=$this->charsetTag('UTF-8')?>
-	<?=$this->cssTag('default')?>
+	<?=$html->charsetTag('UTF-8')?>
+	<?=$html->cssTag('default')?>
 </head>
 
 <body>

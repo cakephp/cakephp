@@ -16,7 +16,9 @@ view file, a user-customizable error page for handling invalid action dispatches
 <em><?=Inflector::camelize($this->name);?></em>
 </p>
 
+<?if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
 <? print_r($this); ?>
 </pre>
+<?endif?>

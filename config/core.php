@@ -22,7 +22,7 @@
  * - 1: development
  * - 2: full debug with sql
  */
-define ('DEBUG', 1);
+define ('DEBUG', 0);
 
 /**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)

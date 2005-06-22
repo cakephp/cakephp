@@ -15,8 +15,9 @@ view file, a user-customizable error page for handling missing/invalid views dur
 action <em><?=$this->params['controller'];?>::<?=$this->params['action'];?></em>
 </p>
 
-
+<?if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
 <? print_r($this); ?>
 </pre>
+<?endif?>

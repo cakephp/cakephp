@@ -4,7 +4,7 @@
 
 <h2>Introducing Cake</h2>
 
-<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what I use at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what I've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use PEAR and PECL libraries &ndash; they don't usually re-use their code. And I was one of them. (<?=$this->linkOut('continued...','http://sputnik.pl/docs/intro')?>)</p>
+<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what I use at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what I've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use PEAR and PECL libraries &ndash; they don't usually re-use their code. And I was one of them. (<?=$html->linkOut('continued...','http://sputnik.pl/docs/intro')?>)</p>
 
 <h2>Features</h2>
 
@@ -20,8 +20,8 @@
 
 <h2>Getting involved</h2>
 
-<p><b>NEW! <?=$this->linkOut('My Amazon Wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?></b> for when you'll want to show your appreciation.</p>
+<p><b>NEW! <?=$html->linkOut('My Amazon Wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?></b> for when you'll want to show your appreciation.</p>
 
-<p><?=$this->linkOut('Cake PHP Google Group','http://groups-beta.google.com/group/cake-php')?> &middot; <?=$this->linkOut('Cake Wiki (temporary)','http://cake.bplusf.net/')?> &middot; <?=$this->linkOut('Cake TRAC (SVN repository, etc.)','https://developers.nextco.com/cake')?></p>
+<p><?=$html->linkOut('Cake PHP Google Group','http://groups-beta.google.com/group/cake-php')?> &middot; <?=$html->linkOut('Cake Wiki (temporary)','http://cake.bplusf.net/')?> &middot; <?=$html->linkOut('Cake TRAC (SVN repository, etc.)','https://developers.nextco.com/cake')?></p>
 
-<p>See <?=$this->linkOut('Cake website','http://sputnik.pl/cake')?> for more information.</p>
+<p>See <?=$html->linkOut('Cake website','http://sputnik.pl/cake')?> for more information.</p>
