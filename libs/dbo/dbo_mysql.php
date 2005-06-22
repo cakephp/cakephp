@@ -200,7 +200,7 @@ class DBO_MySQL extends DBO
 	 */
 	function selectLimit ($limit, $offset=null)
 	{
-		return " LIMIT {$limit}".($offset? "{$offset}": null);
+		return $limit? " LIMIT {$limit}".($offset? "{$offset}": null): null;
 	}
 
 }

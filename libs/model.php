@@ -333,12 +333,12 @@ class Model extends Object
   * @param string $conditions SQL conditions (defaults to NULL)
   * @return field contents
   */
-	function field ($name, $conditions=null) 
+	function field ($name, $conditions=null, $order=null) 
 	{
 		if ($conditions) 
 		{
 			$conditions = $this->parseConditions($conditions);
-			$data = $this->find($conditions);
+			$data = $this->find($conditions, $name, $order);
 			return $data[$name];
 		}
 		elseif (isset($this->data[$name]))
@@ -497,9 +497,9 @@ class Model extends Object
   *
   * @return boolean True if such a record exists
   */
-	function hasAny ($sql_conditions = null) 
+	function hasAny ($conditions = null) 
 	{
-		return $this->db->hasAny($this->table, $sql_conditions);
+		return $this->findCount($conditions);
 	}
 
 
@@ -508,11 +508,12 @@ class Model extends Object
   *
   * @param string $conditions SQL conditions
   * @param mixed $fields Either a single string of a field name, or an array of field names
+  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
   * @return array Array of records
   */
-	function find ($conditions = null, $fields = null) 
+	function find ($conditions = null, $fields = null, $order = null) 
 	{
-		$data = $this->findAll($conditions, $fields, null, 1);
+		$data = $this->findAll($conditions, $fields, $order, 1);
 		return empty($data[0])? false: $data[0];
 	}
 
@@ -546,7 +547,7 @@ class Model extends Object
   *
   * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
   * @param mixed $fields Either a single string of a field name, or an array of field names
-  * @param string $order SQL ORDER BY conditions (e.g. "DESC" or "ASC")
+  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
   * @param int $limit SQL LIMIT clause, for calculating items per page
   * @param int $page Page number
   * @return array Array of records
@@ -613,8 +614,8 @@ class Model extends Object
   */
 	function findCount ($conditions)
 	{
-		list($data) = $this->findAll($conditions, 'COUNT(id) AS count');
-		return $data['count'];
+		list($data) = $this->findAll($conditions, 'COUNT(*) AS count');
+		return isset($data['count'])? $data['count']: false;
 	}
 
 /**

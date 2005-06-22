@@ -102,6 +102,8 @@ class Controller extends Template
 	 */
 	function __construct ($params=null)
 	{
+		parent::__construct();
+
 		$this->params = $params;
 
 		$r = null;
@@ -140,26 +142,24 @@ class Controller extends Template
 				}
 			}
 		}
-
-		parent::__construct();
 	}
 
 	function missingController()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missingController');
+		$this->render('../errors/missing_controller');
 	}
 
 	function missingAction()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missingAction');
+		$this->render('../errors/missing_action');
 	}
 
 	function missingView()
 	{
 		$this->autoRender = false;
-		$this->render('../errors/missingView');
+		$this->render('../errors/missing_view');
 	}
 
 	/**

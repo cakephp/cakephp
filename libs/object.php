@@ -33,7 +33,7 @@
 uses('log');
 
 /**
- * Object class, allowing __construct and __destruct.
+ * Object class, allowing __construct and __destruct in PHP4.
  *
  * @package cake
  * @subpackage cake.libs
