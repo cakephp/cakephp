@@ -22,7 +22,7 @@
  * @copyright Copyright (c) 2005, Cake Authors/Developers
  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
  * @package cake
- * @subpackage cake.libs
+ * @subpackage cake.libs.helpers
  * @since Cake v 0.2.9
  * @version $Revision$
  * @modifiedby $LastChangedBy$
@@ -30,8 +30,31 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+/**
+ * Html helper library.
+ *
+ * @package cake
+ * @subpackage cake.libs.helpers
+ * @since Cake v 0.9.1
+ *
+ */
 class HtmlHelper
 {
+	/**
+	 * Breadcrumbs.
+	 *
+	 * @var array
+	 * @access private
+	 */
+	var $_crumbs = array();
+
+	
+	var $base = null;
+	var $here = null;
+	var $params = array();
+	var $action = null;
+	var $data = null;
+	
 	/**
 	 * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
 	 *
@@ -51,21 +74,19 @@ class HtmlHelper
 	 * @param string $url
 	 * @return string Full constructed URL as a string.
 	 */
-	function url($url=null)
+	function urlFor($url=null)
 	{
-		global $controller;
-
 		if (empty($url))
 		{
-			return $controller->here;
+			return $this->here;
 		}
 		elseif ($url[0] == '/')
 		{
-			$out = $controller->base . $url;
+			$out = $this->base . $url;
 		}
 		else
 		{
-			$out = $controller->base . '/' . strtolower($controller->params['controller']) . '/' . $url;
+			$out = $this->base . '/' . strtolower($this->params['controller']) . '/' . $url;
 		}
 
 		return ereg_replace('&([^a])', '&amp;\1', $out);
@@ -101,7 +122,7 @@ class HtmlHelper
 			return $options? $insert_before.$options.$insert_after: null;
 		}
 	}
-	
+
 	/**
 	 * Returns an HTML link to $url for given $title, optionally using $html_options and $confirm_message (for "flash").
 	 *
@@ -114,7 +135,7 @@ class HtmlHelper
 	function linkTo($title, $url, $html_options=null, $confirm_message=false)
 	{
 		$confirm_message? $html_options['onClick'] = "return confirm('{$confirm_message}')": null;
-		return sprintf(TAG_LINK, $this->url($url), $this->parseHtmlOptions($html_options), $title);
+		return sprintf(TAG_LINK, $this->urlFor($url), $this->parseHtmlOptions($html_options), $title);
 	}
 
 	/**
@@ -131,7 +152,7 @@ class HtmlHelper
 		$url = $url? $url: $title;
 		return sprintf(TAG_LINK, ereg_replace('&([^a])', '&amp;\1', $url), $this->parseHtmlOptions($html_options), $title);
 	}
-	
+
 	/**
 	 * Returns an HTML FORM element. 
 	 *
@@ -374,7 +395,7 @@ class HtmlHelper
 		if (empty($email)) $email = $title;
 
 		$match = array();
-		
+
 		// does the address contain extra attributes?
 		preg_match('!^(.*)(\?.*)$!', $email, $match);
 
@@ -408,7 +429,7 @@ class HtmlHelper
 			return sprintf(TAG_MAILTO, $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
 		}
 	}
-	
+
 	/**
 	 * Returns a LINK element for CSS stylesheets.
 	 *
@@ -571,6 +592,80 @@ class HtmlHelper
 		}
 	}
 
+	/**
+	 * Returns value of $tag_name. False is the tag does not exist.
+	 *
+	 * @param string $tag_name
+	 * @return unknown Value of the named tag.
+	 */
+	function tagValue ($tag_name)
+	{
+		return isset($this->params['data'][$tag_name])? $this->params['data'][$tag_name]: false;
+	}
+
+	/**
+	 * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
+	 *
+	 * @param unknown_type $field
+	 * @return unknown
+	 */
+	function tagIsInvalid ($field)
+	{
+		return empty($this->validationErrors[$field])? 0: $this->validationErrors[$field];
+	}
+
+	/**
+	 * Returns number of errors in a submitted FORM.
+	 *
+	 * @return int Number of errors
+	 */
+	function validate ()
+	{
+		$args = func_get_args();
+		$errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
+
+		return count($errors);
+	}
+
+	/**
+	 * Validates a FORM according to the rules set up in the Model.
+	 *
+	 * @return int Number of errors
+	 */
+	function validateErrors ()
+	{
+		$objects = func_get_args();
+		if (!count($objects)) return false;
+
+		$errors = array();
+		foreach ($objects as $object)
+		{
+			$errors = array_merge($errors, $object->invalidFields($object->data));
+		}
+
+		return $this->validationErrors = (count($errors)? $errors: false);
+	}
+
+	/**
+	 * Returns a formatted error message for given FORM field, NULL if no errors.
+	 *
+	 * @param string $field
+	 * @param string $text
+	 * @return string If there are errors this method returns an error message, else NULL. 
+	 */
+	function tagErrorMsg ($field, $text)
+	{
+		$error = $this->tagIsInvalid($field);
+
+		if (0 == $error)
+		{
+			return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
+		}
+		else
+		{
+			return null;
+		}
+	}
 }
 
 ?>

@@ -91,14 +91,6 @@ class Template extends Object
 	var $pageTitle = false;
 
 	/**
-	 * Enter description here...
-	 *
-	 * @var unknown_type
-	 * @access private
-	 */
-	var $_crumbs = array();
-
-	/**
 	 * Choose the layout to be used when rendering.
 	 *
 	 * @param string $layout
@@ -278,7 +270,7 @@ class Template extends Object
 	}
 
 	/**
-	 * Enter description here... Renders a layout. Returns output from _render(). Returns false on error.
+	 * Renders a layout. Returns output from _render(). Returns false on error.
 	 *
 	 * @param string $content_for_layout Content to render in a view
 	 * @return string Rendered output
@@ -382,6 +374,11 @@ class Template extends Object
 					if(class_exists($helperCn)===true);
 					{
 						${$helper} = new $helperCn;
+						${$helper}->base   = $this->base;
+						${$helper}->here   = $this->here;
+						${$helper}->params = $this->params;
+						${$helper}->action = $this->action;
+						${$helper}->data   = $this->data;
 					}
 				}
 			}
@@ -412,19 +409,6 @@ class Template extends Object
 
 	
 	///////////////////////////////////////////////////////////////////////////
-	
-	
-	/**
-	 * Returns given string trimmed to given length, adding an elipsis '..' if necessary.
-	 *
-	 * @param string $string String to trim
-	 * @param int $length Length of returned string, excluding ellipsis
-	 * @return string Trimmed string
-	 */
-	function trimTo($string, $length)
-	{
-		return substr($string, 0, $length).(strlen($string)>$length? '..': null);
-	}
 
 	/**
 	 * Returns an URL for a combination of controller and action.
