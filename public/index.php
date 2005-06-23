@@ -68,13 +68,15 @@ DEBUG? error_reporting(E_ALL): error_reporting(0);
 
 $TIME_START = getMicrotime();
 
-uses('folder', 'dispatcher', 'dbo_factory');
+//uses('folder', 'dispatcher', 'dbo_factory');
+uses('folder', 'dispatcher', 'dbo');
 
 config('tags', 'database');
 
 if (class_exists('DATABASE_CONFIG'))
 {
-	$DB = DboFactory::make('devel');
+	$db = DBO::getInstance('default');
+	//$DB = DboFactory::make('devel');
 	loadModels();
 }
 

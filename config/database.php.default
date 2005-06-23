@@ -19,27 +19,23 @@
  * Database configuration class.
  * You can specify multiple configurations for production, development and testing.
  */
-class DATABASE_CONFIG {
+class DATABASE_CONFIG
+{
+	var $default = array(
+	'driver'   => 'mysql',
+	'host'     => 'localhost',
+	'login'    => 'www',
+	'password' => '',
+	'database' => 'project_name'
+	);
 
-	function devel () {
-		return array(
-			'driver'   => 'mysql',
-			'host'     => 'localhost',
-			'login'    => 'www',
-			'password' => '',
-			'database' => 'project_name'
-		);
-	}
-
-	function test () {
-		return array(
-			'driver'   => 'mysql',
-			'host'     => 'localhost',
-			'login'    => 'www-test',
-			'password' => '',
-			'database' => 'project_name-test'
-		);
-	}
+	var $test = array(
+	'driver'   => 'mysql',
+	'host'     => 'localhost',
+	'login'    => 'www-test',
+	'password' => '',
+	'database' => 'project_name-test'
+	);
 }
 
 ?>

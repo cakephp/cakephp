@@ -117,14 +117,19 @@ class Controller extends Template
 
 		$model_class = Inflector::singularize($this->name);
 
-		if (class_exists($model_class) && $this->db && ($this->uses === false))
+		//Is this needed?
+		$this->db = DBO::getInstance();
+
+		if (class_exists($model_class) && ($this->uses === false))
 		{
-			$this->$model_class = new $model_class ();
+			$this->$model_class = new $model_class();
 		}
 		elseif ($this->uses)
 		{
 			if (!$this->db)
-			die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
+			{
+				die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
+			}
 
 			$uses = is_array($this->uses)? $this->uses: array($this->uses);
 
