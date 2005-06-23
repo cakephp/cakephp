@@ -12,7 +12,7 @@ class DboFactoryTest extends UnitTestCase
 		$this->UnitTestCase('DBO Factory test');
 	}
 
-	// called before the test functions will be executed
+/*	// called before the test functions will be executed
 	// this function is defined in PHPUnit_TestCase and overwritten
 	// here
 	function setUp()
@@ -62,7 +62,7 @@ class DboFactoryTest extends UnitTestCase
 	//	function testBadConfig() {
 	//		$output = $this->dboFactory->make(null);
 	//		$this->assertTrue($output === false);
-	//	}
+	//	}*/
 }
 
 ?>

@@ -17,7 +17,7 @@ class DboTest extends UnitTestCase
 	// here
 	function setUp()
 	{
-		$this->dbo = DboFactory::make('test');
+		$this->dbo = DBO::getInstance('test');
 		
 		$this->createTemporaryTable();
 	}
