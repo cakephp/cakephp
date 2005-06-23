@@ -118,7 +118,7 @@ class Controller extends Template
 		$model_class = Inflector::singularize($this->name);
 
 		//Is this needed?
-		$this->db = DBO::getInstance();
+		$this->db = DboFactory::getInstance();
 
 		if (class_exists($model_class) && ($this->uses === false))
 		{

@@ -154,7 +154,7 @@ class Model extends Object
  */
 	function __construct ($id=false, $table=null, $db=null) 
 	{
-		$this->db = $db? $db: DBO::getInstance();
+		$this->db = $db? $db: DboFactory::getInstance();
 
 		if ($id)
 		{
