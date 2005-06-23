@@ -151,21 +151,18 @@ class Controller extends Template
 
 	function missingController()
 	{
-		$this->autoRender = false;
 		//We are simulating action call below, this is not a filename!
 		$this->render('../errors/missingController');
 	}
 
 	function missingAction()
 	{
-		$this->autoRender = false;
 		//We are simulating action call below, this is not a filename!
 		$this->render('../errors/missingAction');
 	}
 
 	function missingView()
 	{
-		$this->autoRender = false;
 		//We are simulating action call below, this is not a filename!
 		$this->render('../errors/missingView');
 	}
