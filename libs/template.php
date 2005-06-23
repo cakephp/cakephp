@@ -329,7 +329,7 @@ class Template extends Object
 	}
 
 	/**
-	 * Returns filename of given action's template file (.thtml) as a string.
+	 * Returns filename of given action's template file (.thtml) as a string. CamelCased action names will be under_scored! This means that you can have LongActionNames that refer to long_action_names.thtml views.
 	 *
 	 * @param string $action Controller action to find template filename for
 	 * @return string Template filename
@@ -339,12 +339,12 @@ class Template extends Object
 		$action = Inflector::underscore($action);
 		$viewFn = VIEWS.$this->viewpath.DS."{$action}.thtml";
 		$viewPath = explode(DS, $viewFn);
-		
+
 		$i = array_search('..', $viewPath);
-		
+
 		unset($viewPath[$i-1]);
 		unset($viewPath[$i]);
-		
+
 		return '/'.implode('/', $viewPath);
 	}
 
@@ -370,7 +370,7 @@ class Template extends Object
 				$helperCn = ucfirst($helper).'Helper';
 				if (is_file($helperFn))
 				{
-					require_once $helperFn;						
+					require_once $helperFn;
 					if(class_exists($helperCn)===true);
 					{
 						${$helper} = new $helperCn;
@@ -383,7 +383,7 @@ class Template extends Object
 				}
 			}
 		}
-		
+
 		extract($___data_for_view, EXTR_SKIP); # load all view variables
 		/**
 		 * Local template variables.
@@ -391,11 +391,11 @@ class Template extends Object
 		$BASE = $this->base;
 		$params = &$this->params;
 		$page_title = $this->pageTitle;
-		
+
 		/**
 		 * Start caching output (eval outputs directly so we need to cache).
 		 */
-		ob_start(); 
+		ob_start();
 
 		/**
 		 * Include the template.
@@ -407,7 +407,7 @@ class Template extends Object
 		return $out;
 	}
 
-	
+
 	///////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -737,7 +737,7 @@ class Template extends Object
 		if (empty($email)) $email = $title;
 
 		$match = array();
-		
+
 		// does the address contain extra attributes?
 		preg_match('!^(.*)(\?.*)$!', $email, $match);
 
@@ -934,10 +934,10 @@ class Template extends Object
 		}
 	}
 
-	
+
 	///////////////////////////////////////////////////////////////////////////
-	
-	
+
+
 	/**
 	 * Returns link to javascript function
 	 * 
@@ -1043,8 +1043,8 @@ class Template extends Object
 	{
 		$javascript_options = $this->__optionsForAjax($options);
 		$func = isset($options['update'])
-			? "new Ajax.Updater('{$options['update']}', " 
-			: "new Ajax.Request(";
+		? "new Ajax.Updater('{$options['update']}', "
+		: "new Ajax.Request(";
 
 		$func .= "'" . $this->urlFor($options['url']) . "'";
 		$func .= ", $javascript_options)";
