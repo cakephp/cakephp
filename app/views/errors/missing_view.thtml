@@ -18,6 +18,9 @@ action <em><?=$this->params['controller'];?>::<?=$this->params['action'];?></em>
 <?if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<? print_r($this); ?>
+<? 
+unset($this->db);
+print_r($this); 
+?>
 </pre>
 <?endif?>

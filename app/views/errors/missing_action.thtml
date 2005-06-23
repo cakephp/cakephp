@@ -19,6 +19,9 @@ view file, a user-customizable error page for handling invalid action dispatches
 <?if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<? print_r($this); ?>
+<? 
+unset($this->db);
+print_r($this); 
+?>
 </pre>
 <?endif?>
