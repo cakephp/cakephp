@@ -79,9 +79,12 @@ if (class_exists('DATABASE_CONFIG'))
 }
 
 //RUN THE SCRIPT
-$DISPATCHER = new Dispatcher ();
-$DISPATCHER->dispatch($url);
-
+	if($_GET['url'] === 'favicon.ico')
+	{
+	}else{
+		$DISPATCHER = new Dispatcher ();
+		$DISPATCHER->dispatch($url);
+	}
 //CLEANUP
 if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
 
