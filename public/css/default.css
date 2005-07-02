@@ -8,13 +8,15 @@ font-family:sans-serif;
 
 H1 {
 font-size:2.1em;
+color: #69c;
+/* This causes some big problems in FF.
 color: #fff;
 text-align: left;
 position: absolute;
 padding-left: 15%;
 top: 0.35em;
 left: 0;
-height: 4em;
+height: 4em;*/
 }
 
 H2 {
@@ -76,7 +78,8 @@ border-top:1px solid #AAA;
 
 #container {
 margin: 0 auto;
-border-top: solid 5em #69c;
+/* This causes some big problems in FF.
+border-top: solid 5em #69c;*/
 color: #333;
 font: normal 1.1em Verdana;
 padding: 0 15%;
