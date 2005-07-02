@@ -37,7 +37,7 @@
 /**
  * Enter description here...
  */
-uses('model', 'template', 'inflector', 'folder');
+uses('model', 'inflector', 'folder', 'view');
 
 /**
  * Enter description here...
@@ -47,7 +47,7 @@ uses('model', 'template', 'inflector', 'folder');
  * @since Cake v 0.2.9
  *
  */
-class Controller extends Template
+class Controller extends Object
 {
 	/**
 	 * Name of the controller.
@@ -96,6 +96,66 @@ class Controller extends Template
 	 */
 	var $helpers = array('html');
 
+	var $viewPath;
+
+	/**
+	 * Variables for the view
+	 *
+	 * @var array
+	 * @access private
+	 */
+	var $_viewVars = array();
+
+	/**
+	 * Enter description here...
+	 *
+	 * @var boolean
+	 * @access private
+	 */
+	var $pageTitle = false;
+
+	/**
+	 * An array of model objects.
+	 *
+	 * @var array Array of model objects.
+	 * @access public
+	 */
+	var $models = array();
+
+
+	/**
+	 * Enter description here...
+	 *
+	 * @var unknown_type
+	 * @access public
+	 */
+	var $base = null;
+
+	/**
+	 * Enter description here...
+	 *
+	 * @var string
+	 * @access public
+	 */
+	var $layout = 'default';
+
+	/**
+	 * Enter description here...
+	 *
+	 * @var boolean
+	 * @access public
+	 */
+	var $autoRender = true;
+
+	/**
+	 * Enter description here...
+	 *
+	 * @var boolean
+	 * @access public
+	 */
+	var $autoLayout = true;
+
+
 	/**
 	 * Constructor. 
 	 *
@@ -113,7 +173,7 @@ class Controller extends Template
 		}
 
 		$this->name = strtolower($r[1]);
-		$this->viewpath = Inflector::underscore($r[1]);
+		$this->viewPath = Inflector::underscore($r[1]);
 
 		$model_class = Inflector::singularize($this->name);
 
@@ -122,7 +182,7 @@ class Controller extends Template
 
 		if (class_exists($model_class) && ($this->uses === false))
 		{
-			$this->$model_class = new $model_class();
+			$this->models[$model_class] = new $model_class();
 		}
 		elseif ($this->uses)
 		{
@@ -139,7 +199,7 @@ class Controller extends Template
 
 				if (class_exists($model_class))
 				{
-					$this->$model_name = new $model_class (false);
+					$this->models[$model_name] = new $model_class(false);
 				}
 				else
 				{
@@ -147,6 +207,97 @@ class Controller extends Template
 				}
 			}
 		}
+	}
+
+	/**
+	 * Redirects to given $url, after turning off $this->autoRender.
+	 *
+	 * @param unknown_type $url
+	 */
+	function redirect ($url)
+	{
+		$this->autoRender = false;
+		header ('Location: '.$this->base.$url);
+	}
+
+	/**
+	 * Saves a variable to use inside a template.
+	 *
+	 * @param mixed $one A string or an array of data.
+	 * @param string $two Value in case $one is a string (which then works as the key), otherwise unused.
+	 * @return unknown
+	 */
+	function set($one, $two=null)
+	{
+		return $this->_setArray(is_array($one)? $one: array($one=>$two));
+	}
+
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $action
+	 */
+	function setAction ($action)
+	{
+		$this->action = $action;
+
+		$args = func_get_args();
+		call_user_func_array(array(&$this, $action), $args);
+	}
+
+	/**
+	 * Returns number of errors in a submitted FORM.
+	 *
+	 * @return int Number of errors
+	 */
+	function validate ()
+	{
+		$args = func_get_args();
+		$errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
+
+		return count($errors);
+	}
+
+	/**
+	 * Validates a FORM according to the rules set up in the Model.
+	 *
+	 * @return int Number of errors
+	 */
+	function validateErrors ()
+	{
+		$objects = func_get_args();
+		if (!count($objects)) return false;
+
+		$errors = array();
+		foreach ($objects as $object)
+		{
+			$errors = array_merge($errors, $object->invalidFields($object->data));
+		}
+
+		return $this->validationErrors = (count($errors)? $errors: false);
+	}
+
+	function render($action=null, $layout=null, $file=null)
+	{
+		$v = new View();
+		$v->_viewVars  = $this->_viewVars;
+		$v->action     = $this->action;
+		$v->autoLayout = $this->autoLayout;
+		$v->autoRender = $this->autoRender;
+		$v->base       = $this->base;
+		$v->helpers    = $this->helpers;
+		$v->here       = $this->here;
+		$v->layout     = $this->layout;
+		$v->models     = $this->models;
+		$v->name       = $this->name;
+		$v->pageTitle  = $this->pageTitle;
+		$v->parent     = $this->parent;
+		$v->viewPath   = $this->viewPath;
+
+		$v->params     = $this->params;
+		$v->data       = $this->data;
+		//$this->view = $v;
+		return  $v->render($action, $layout, $file);
 	}
 
 	function missingController()
@@ -167,41 +318,43 @@ class Controller extends Template
 		$this->render('../errors/missingView');
 	}
 
+	//		/**
+	//		 * Displays an error page to the user. Uses layouts/error.html to render the page.
+	//		 *
+	//		 * @param int $code Error code (for instance: 404)
+	//		 * @param string $name Name of the error (for instance: Not Found)
+	//		 * @param string $message Error message
+	//		 */
+	//		function error ($code, $name, $message)
+	//		{
+	//			header ("HTTP/1.0 {$code} {$name}");
+	//			print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
+	//		}
+
 	/**
-	 * Redirects to given $url, after turning off $this->autoRender.
+	 * Sets data for this view. Will set title if the key "title" is in given $data array.
 	 *
-	 * @param unknown_type $url
+	 * @param array $data Array of 
 	 */
-	function redirect ($url)
+	function _setArray($data)
 	{
-		$this->autoRender = false;
-		header ('Location: '.$this->base.$url);
+		foreach ($data as $name => $value)
+		{
+			if ($name == 'title')
+			$this->_setTitle($value);
+			else
+			$this->_viewVars[$name] = $value;
+		}
 	}
 
 	/**
-	 * Enter description here...
+	 * Set the title element of the page.
 	 *
-	 * @param unknown_type $action
+	 * @param string $pageTitle Text for the title
 	 */
-	function setAction ($action)
+	function _setTitle($pageTitle)
 	{
-		$this->action = $action;
-
-		$args = func_get_args();
-		call_user_func_array(array(&$this, $action), $args);
-	}
-
-	/**
-	 * Displays an error page to the user. Uses layouts/error.html to render the page.
-	 *
-	 * @param int $code Error code (for instance: 404)
-	 * @param string $name Name of the error (for instance: Not Found)
-	 * @param string $message Error message
-	 */
-	function error ($code, $name, $message)
-	{
-		header ("HTTP/1.0 {$code} {$name}");
-		print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
+		$this->pageTitle = $pageTitle;
 	}
 
 }
