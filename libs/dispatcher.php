@@ -150,7 +150,7 @@ class Dispatcher extends Object
 		$controller->params      = $params;
 		$controller->action      = $params['action'];
 		$controller->data        = empty($params['data'])? null: $params['data'];
-		//$controller->passed_args = empty($params['pass'])? null: $params['pass'];
+		$controller->passed_args = empty($params['pass'])? null: $params['pass'];
 
 		// EXECUTE THE REQUESTED ACTION
 		call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);

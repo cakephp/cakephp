@@ -279,25 +279,25 @@ class Controller extends Object
 
 	function render($action=null, $layout=null, $file=null)
 	{
-		$v = new View();
-		$v->_viewVars  = $this->_viewVars;
-		$v->action     = $this->action;
-		$v->autoLayout = $this->autoLayout;
-		$v->autoRender = $this->autoRender;
-		$v->base       = $this->base;
-		$v->helpers    = $this->helpers;
-		$v->here       = $this->here;
-		$v->layout     = $this->layout;
-		$v->models     = $this->models;
-		$v->name       = $this->name;
-		$v->pageTitle  = $this->pageTitle;
-		$v->parent     = $this->parent;
-		$v->viewPath   = $this->viewPath;
-
-		$v->params     = $this->params;
-		$v->data       = $this->data;
-		//$this->view = $v;
-		return  $v->render($action, $layout, $file);
+		
+		$view =& View::getInstance();
+		$view->_viewVars  =& $this->_viewVars;
+		$view->action     =& $this->action;
+		$view->autoLayout =& $this->autoLayout;
+		$view->autoRender =& $this->autoRender;
+		$view->base       =& $this->base;
+		$view->helpers    =& $this->helpers;
+		$view->here       =& $this->here;
+		$view->layout     =& $this->layout;
+		$view->models     =& $this->models;
+		$view->name       =& $this->name;
+		$view->pageTitle  =& $this->pageTitle;
+		$view->parent     =& $this->parent;
+		$view->viewPath   =& $this->viewPath;
+		$view->params     =& $this->params;
+		$view->data       =& $this->data;
+		
+		return  $view->render($action, $layout, $file);
 	}
 
 	function missingController()

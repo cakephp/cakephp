@@ -155,13 +155,16 @@ class View extends Object
 	var $hasRendered = null;
 
 	var $modelsLoaded = false;
+	
+	function View(){
+	}
 
 	function getInstance()
 	{
 		static $instance;
 		if (!isset($instance))
 		{
-			$instance = array(new View());
+			$instance[0] =& new View();
 		}
 		return $instance[0];
 	}
@@ -195,6 +198,8 @@ class View extends Object
 	 */
 	function render($action=null, $layout=null, $file=null)
 	{
+
+
 		if ($this->modelsLoaded!==true)
 		{
 			foreach ($this->models as $modelName => $model)
@@ -202,9 +207,12 @@ class View extends Object
 				$this->$modelName = $model;
 			}
 		}
-
+		// What is reason for these being the same?
 		if (isset($this->hasRendered) && $this->hasRendered)
 		{
+		//echo "<pre>";
+		//print_r($this);
+		//echo "</pre>";
 			return true;
 		}
 		else
