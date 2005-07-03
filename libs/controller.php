@@ -356,7 +356,18 @@ class Controller extends Object
 	{
 		$this->pageTitle = $pageTitle;
 	}
+	
+	function flash($message, $url, $time=1)
+	{
+		$this->autoRender = false;
+		$this->autoLayout = false;
 
+		$this->set('url', $this->base.$url);
+		$this->set('message', $message);
+		$this->set('time', $time);
+
+		$this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
+	}
 }
 
 ?>
