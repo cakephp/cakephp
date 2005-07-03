@@ -279,7 +279,6 @@ class Controller extends Object
 
 	function render($action=null, $layout=null, $file=null)
 	{
-		
 		$view =& View::getInstance();
 		$view->_viewVars  =& $this->_viewVars;
 		$view->action     =& $this->action;
@@ -295,8 +294,15 @@ class Controller extends Object
 		$view->parent     =& $this->parent;
 		$view->viewPath   =& $this->viewPath;
 		$view->params     =& $this->params;
-		$view->data       =& $this->data;
 		
+		foreach ($this->models as $key => $value)
+		{
+		   if(!empty($this->models[$key]->validationErrors))
+		   {
+		      $view->validationErrors[$key] =& $this->models[$key]->validationErrors;
+		   }
+		}
+
 		return  $view->render($action, $layout, $file);
 	}
 

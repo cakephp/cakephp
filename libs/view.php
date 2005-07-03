@@ -480,6 +480,7 @@ class View extends Object
 						${$helper}->params = $this->params;
 						${$helper}->action = $this->action;
 						${$helper}->data   = $this->data;
+						${$helper}->validationErrors   = $this->validationErrors;
 					}
 				}
 			}

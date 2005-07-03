@@ -230,10 +230,12 @@ class HtmlHelper
 	 */
 	function inputTag($tag_name, $size=20, $html_options=null)
 	{
+	   $elements = explode("/", $tag_name);
+	   
 		$html_options['size'] = $size;
-		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($tag_name);
-		$this->tagIsInvalid($tag_name)? $html_options['class'] = 'form_error': null;
-		return sprintf(TAG_INPUT, $tag_name, $this->parseHtmlOptions($html_options, null, '', ' '));
+		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($elements[1]);
+		$this->tagIsInvalid($elements[0],$elements[1])? $html_options['class'] = 'form_error': null;
+		return sprintf(TAG_INPUT, $elements[1], $this->parseHtmlOptions($html_options, null, '', ' '));
 	}
 
 	/**
@@ -609,9 +611,9 @@ class HtmlHelper
 	 * @param unknown_type $field
 	 * @return unknown
 	 */
-	function tagIsInvalid ($field)
+	function tagIsInvalid ($model, $field)
 	{
-		return empty($this->validationErrors[$field])? 0: $this->validationErrors[$field];
+		return empty($this->validationErrors[$model][$field])? 0: $this->validationErrors[$model][$field];
 	}
 
 	/**
@@ -649,15 +651,16 @@ class HtmlHelper
 	/**
 	 * Returns a formatted error message for given FORM field, NULL if no errors.
 	 *
+	 * @param string $name
 	 * @param string $field
 	 * @param string $text
 	 * @return string If there are errors this method returns an error message, else NULL. 
 	 */
 	function tagErrorMsg ($field, $text)
 	{
-		$error = $this->tagIsInvalid($field);
-
-		if (0 == $error)
+	   $elements = explode("/", $field);
+	   $error = 1;
+		if ($error == $this->tagIsInvalid($elements[0], $elements[1]))
 		{
 			return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
 		}
