@@ -225,14 +225,15 @@ class HtmlHelper
 	 * Returns a formatted INPUT tag for HTML FORMs.
 	 *
 	 * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param int $size Size attribute for INPUT element
 	 * @param array $htmlOptions 
 	 * @return string The formatted INPUT element
 	 */
-	function inputTag($tagName, $htmlOptions=null)
+	function inputTag($tagName,  $size=20, $htmlOptions=null)
 	{
 		if (strpos($tagName, '/') !== false)
 		{
-			list($model, $field) = explode("/", $tag_name);
+			list($model, $field) = explode("/", $tagName);
 		}
 		else
 		{
