@@ -296,11 +296,14 @@ class Controller extends Object
 		$view->params     =& $this->params;
 		$view->data       =& $this->data;
 		
-		foreach ($this->models as $key => $value)
+		if(!empty($this->models))
 		{
-		   if(!empty($this->models[$key]->validationErrors))
+		   foreach ($this->models as $key => $value)
 		   {
-		      $view->validationErrors[$key] =& $this->models[$key]->validationErrors;
+		      if(!empty($this->models[$key]->validationErrors))
+		      {
+		         $view->validationErrors[$key] =& $this->models[$key]->validationErrors;
+		      }
 		   }
 		}
 
