@@ -32,5 +32,5 @@
 	<li><?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.</li>
 </ul>
 
-<p>Soon there will be oficial <?=$html->linkOut('Cake PHP website','http://cakphp.org/')?>, so stay tuned.</p>
+<p>Soon there will be oficial <?=$html->linkOut('Cake PHP website','http://www.cakephp.org/')?>, so stay tuned.</p>
 <p>Also see Cake PHP's original authors <?=$html->linkOut('Amazon wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?> if you want to show appreciation for his work on the project.</p>
