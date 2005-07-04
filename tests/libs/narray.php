@@ -1,15 +1,15 @@
 <?php
 
-uses('narray');
+uses('neat_array');
 
-class NarrayTest extends UnitTestCase
+class NeatArrayTest extends UnitTestCase
 {
-	var $narray;
+	var $neatArray;
 
 	// constructor of the test suite
-	function NarrayTest()
+	function NeatArrayTest()
 	{
-		$this->UnitTestCase('Narray test');
+		$this->UnitTestCase('NeatArray test');
 	}
 
 	// called before the test functions will be executed
@@ -17,7 +17,7 @@ class NarrayTest extends UnitTestCase
 	// here
 	function setUp()
 	{
-		$this->narray = new Narray();
+		$this->neatArray = new NeatArray();
 	}
 
 	// called after the test functions are executed
@@ -25,7 +25,7 @@ class NarrayTest extends UnitTestCase
 	// here
 	function tearDown()
 	{
-		unset($this->narray);
+		unset($this->neatArray);
 	}
 
 
@@ -36,7 +36,7 @@ class NarrayTest extends UnitTestCase
 		$c = array('foo'=>' bar',  'i-am'=>'c');
 		$d = array('foo'=>'bar',   'i-am'=>'d');
 		
-		$n = new Narray(array($a, $b, $c, $d));
+		$n = new NeatArray(array($a, $b, $c, $d));
 
 		$result = $n->findIn('foo', ' bar ');
 		$expected = array(0=>$a);

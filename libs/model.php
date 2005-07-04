@@ -297,7 +297,7 @@ class Model extends Object
 	function loadInfo () 
 	{
 		if (empty($this->_table_info))
-			$this->_table_info = new Narray($this->db->fields($this->table));
+			$this->_table_info = new NeatArray($this->db->fields($this->table));
 		return $this->_table_info;
 	}
 

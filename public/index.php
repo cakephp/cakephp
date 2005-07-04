@@ -69,7 +69,7 @@ require_once ROOT.'config/paths.php';
 require_once ROOT.'libs/basics.php';
 require_once ROOT.'libs/log.php';
 require_once ROOT.'libs/object.php';
-require_once ROOT.'libs/narray.php';
+require_once ROOT.'libs/neat_array.php';
 require_once ROOT.'libs/inflector.php';
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);

@@ -30,7 +30,7 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
-uses('object', 'narray');
+uses('object', 'neat_array');
 
 /**
   * Parses the request URL into controller, action, and parameters.
@@ -156,7 +156,7 @@ class Router extends Object {
 					// unnamed elements go in as 'pass'
 					else 
 					{
-						$pass = new Narray(explode('/', $found));
+						$pass = new NeatArray(explode('/', $found));
 						$pass->cleanup();
 						$out['pass'] = $pass->value;
 					}
