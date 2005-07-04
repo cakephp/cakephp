@@ -210,9 +210,6 @@ class View extends Object
 		// What is reason for these being the same?
 		if (isset($this->hasRendered) && $this->hasRendered)
 		{
-			//echo "<pre>";
-			//print_r($this);
-			//echo "</pre>";
 			return true;
 		}
 		else
