@@ -12,12 +12,12 @@
  * Purpose:
  * 
  * @filesource 
- * @author Cake Authors/Developers
+ * @author CakePHP Authors/Developers
  * @copyright Copyright (c) 2005, Cake Authors/Developers
  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
  * @package cake
  * @subpackage cake.public
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  * @version $Revision$
  * @modifiedby $LastChangedBy$
  * @lastmodified $Date$

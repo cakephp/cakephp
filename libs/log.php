@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 // + $Id $
 // +------------------------------------------------------------------+ //
-// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
@@ -18,12 +18,12 @@
   * Logs messages to text files.
   *
   * @filesource 
-  * @author Cake Authors/Developers
+  * @author CakePHP Authors/Developers
   * @copyright Copyright (c) 2005, Cake Authors/Developers
   * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
   * @package cake
   * @subpackage cake.libs
-  * @since Cake v 1.0.0.0
+  * @since CakePHP v 1.0.0.0
   * @version $Revision$
   * @modifiedby $LastChangedBy$
   * @lastmodified $Date$

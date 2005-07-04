@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
-// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // +------------------------------------------------------------------+ //
 // + Licensed under The MIT License                                   + //
@@ -13,9 +13,9 @@
  * @filesource 
  * @package cake
  * @subpackage cake.app.controllers
- * @version $Revision:$
- * @modifiedby $LastChangedBy:$
- * @lastmodified $Date:$
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
  */
 
 /**

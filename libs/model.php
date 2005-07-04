@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
-// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
@@ -25,12 +25,12 @@
  *   - schema-related cross-table ($has_one, $has_many, $belongs_to)
  *
  * @filesource 
- * @author Cake Authors/Developers
+ * @author CakePHP Authors/Developers
  * @copyright Copyright (c) 2005, Cake Authors/Developers
  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
  * @subpackage cake.libs
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  * @version $Revision$
  * @modifiedby $LastChangedBy$
  * @lastmodified $Date$
@@ -51,7 +51,7 @@ uses('object', 'validators', 'inflector');
  *
  * @package cake
  * @subpackage cake.libs
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  *
  */
 class Model extends Object 

@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
-// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
@@ -21,12 +21,12 @@
  * and creates the model object if proper class exists.
  * 
  * @filesource 
- * @author Cake Authors/Developers
+ * @author CakePHP Authors/Developers
  * @copyright Copyright (c) 2005, Cake Authors/Developers
  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
  * @subpackage cake.libs
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  * @version $Revision$
  * @modifiedby $LastChangedBy$
  * @lastmodified $Date$
@@ -44,7 +44,7 @@ uses('model', 'inflector', 'folder', 'view');
  *
  * @package cake
  * @subpackage cake.libs
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  *
  */
 class Controller extends Object

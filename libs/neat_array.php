@@ -5,7 +5,7 @@
  *
  * @package cake
  * @subpackage cake.libs
- * @since Cake v 0.2.9
+ * @since CakePHP v 0.2.9
  */
 class NeatArray {
 	/**
