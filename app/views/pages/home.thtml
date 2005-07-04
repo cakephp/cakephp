@@ -1,27 +1,36 @@
-<h1>Cake works!</h1>
+<h1>Cake PHP works!</h1>
 
-<p>Your installation of Cake is functional. Edit <code>/app/views/pages/home.thtml</code> to change the contents of this page.</p>
+<p>Your installation of Cake PHP is functional. Edit <code>/app/views/pages/home.thtml</code> to change the contents of this page.</p>
 
-<h2>Introducing Cake</h2>
+<h2>Introducing Cake PHP</h2>
 
-<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what I use at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what I've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use PEAR and PECL libraries &ndash; they don't usually re-use their code. And I was one of them. (<?=$html->linkOut('continued...','http://sputnik.pl/docs/intro')?>)</p>
+<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what It's original author, Michal uses at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what We've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use <?=$html->linkOut('PEAR', 'http://pear.php.net')?> and <?=$html->linkOut('PECL', 'http://pecl.php.net')?> libraries &ndash; they don't usually re-use their code.</p>
+
+<p>Cake PHP builds on a concept introduced in <?=$html->linkOut('Ruby on Rails', 'http://rubyonrails.com')?> &ndash; it enables rapid developement of feature-rich websites.</p>
 
 <h2>Features</h2>
 
 <ul>
-<li>compatibile with PHP4 and PHP5</li>
-<li>supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for database and simplified querying so you shouldn't need to write SQL for basic operations (although <em>some</em> familiarity with SQL is strongly recommended)</li>
-<li>request dispatcher with good-looking, custom URLs</li>
-<li>fast, flexible templating (PHP syntax with helper methods)</li>
-<li>works from a website subdirectory, with very little Apache configuration involved (requires <code>.htaccess</code> files and <code>mod_rewrite</code> to work; these are available on most web servers)</li>
+	<li>Compatibile with PHP4 and PHP5.</li>
+	<li>Supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for databases.</li>
+	<li>Pretty URL's that work with and without mod_rewrite.</li>
+	<li>Fast, flexible templating (PHP syntax with helper methods).</li>
+	<li>Suported database-types: MySQL, PostgreSQL and SQLIte</li>
+	<li>Suported webservers: Apache (others will most likely also work)</li>
 </ul>
 
-<p>Cake is in its early infancy, but it works and I'm using it on a few projects. Currently the Dispatcher is working, the Model has <acronym title="Create, Read, Update, Delete">CRUD</acronym> functionality but with no joins between tables yet. The Controller is working and has most basic functions (including <code>render()</code> for templating).</p>
+<p>Cake is still in its early infancy, but we are proceeding in good direction &ndash; table joins will most probably get added in 0.9.3 release, and better support for user-defined settings is also underway.</p>
 
 <h2>Getting involved</h2>
 
-<p><b>NEW! <?=$html->linkOut('My Amazon Wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?></b> for when you'll want to show your appreciation.</p>
+<p>Cake PHP needs you! We have already quiet active user base, but we are allways open to new bug reports or feature ideas!</p>
 
-<p><?=$html->linkOut('Cake PHP Google Group','http://groups-beta.google.com/group/cake-php')?> &middot; <?=$html->linkOut('Cake Wiki (temporary)','http://cake.bplusf.net/')?> &middot; <?=$html->linkOut('Cake TRAC (SVN repository, etc.)','https://developers.nextco.com/cake')?></p>
+<ul>
+	<li><?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.</li>
+	<li><?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.</li>
+	<li><?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.</li>
+	<li><?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.</li>
+</ul>
 
-<p>See <?=$html->linkOut('Cake website','http://sputnik.pl/cake')?> for more information.</p>
+<p>Soon there will be oficial <?=$html->linkOut('Cake PHP website','http://cakphp.org/')?>, so stay tuned.</p>
+<p>Also see Cake PHP's original authors <?=$html->linkOut('Amazon wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?> if you want to show appreciation for his work on the project.</p>

@@ -479,8 +479,8 @@ class View extends Object
 						${$helper}->here   = $this->here;
 						${$helper}->params = $this->params;
 						${$helper}->action = $this->action;
-						${$helper}->data   = $this->data;
-						${$helper}->validationErrors   = $this->validationErrors;
+						//${$helper}->data   = $this->data;
+						//${$helper}->validationErrors   = $this->validationErrors;
 					}
 				}
 			}
