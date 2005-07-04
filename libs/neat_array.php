@@ -263,9 +263,6 @@ class NeatArray {
 	}
 }
 
-// for backwards-compatibility, remove in 2008
-class NeatArray extends NeatArray 
-{
-}
+
 
 ?>
