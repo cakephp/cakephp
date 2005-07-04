@@ -9,10 +9,20 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
+ *
+ * @filesource 
+ * @package cake
+ * @subpackage cake.app.helpers
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy:$
+ * @lastmodified $Date:$
+ */
+
+/**
  * In this file you can extend the PagesController.
  *
  * @package cake
- * @subpackage cake.app
+ * @subpackage cake.app.helpers
  */
 
 class PagesHelper extends AppController 

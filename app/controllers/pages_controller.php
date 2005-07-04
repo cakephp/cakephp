@@ -8,23 +8,54 @@
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////
 
-class PagesController extends PagesHelper
-{
+
+/**
+ *
+ * @filesource 
+ * @package cake
+ * @subpackage cake.app.controllers
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy:$
+ * @lastmodified $Date:$
+ */
+
+/**
+ * This file is application-wide controller file. You can put all 
+ * application-wide controller-related methods here.
+ *
+ * Add your application-wide methods in the class below, your controllers 
+ * will inherit them.
+ * 
+ * @package cake
+ * @subpackage cake.app.controllers
+ */
+class PagesController extends PagesHelper{
+   
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+*/
 	var $helpers = array('html', 'ajax');
-	/**
-	 * Displays a view
-	 *
-	 * @package cake
-	 * @subpackage cake.app
-	 */
+	
+
+/**
+ * Displays a view
+ *
+ */
 	function display()
 	{
 		if (!func_num_args())
+		{
 			$this->redirect('/');
+		}
 
 		$path = func_get_args();
+		
 		if (!count($path))
+		{
 			$this->redirect('/');
+		}
 
 		$this->set('page', $path[0]);
 		$this->set('subpage', empty($path[1])? null: $path[1]);

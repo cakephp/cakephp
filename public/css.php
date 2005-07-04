@@ -54,12 +54,12 @@ function make_clean_css ($path, $name)
 }
 
 /**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $path
-	 * @param unknown_type $content
-	 * @return unknown
-	 */
+ * Enter description here...
+ *
+ * @param unknown_type $path
+ * @param unknown_type $content
+ * @return unknown
+ */
 function write_css_cache ($path, $content)
 {
 	if (!is_dir(dirname($path)))

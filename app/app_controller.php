@@ -9,6 +9,16 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
+ *
+ * @filesource 
+ * @package cake
+ * @subpackage cake.app
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy:$
+ * @lastmodified $Date:$
+ */
+
+/**
  * This file is application-wide controller file. You can put all 
  * application-wide controller-related methods here.
  *

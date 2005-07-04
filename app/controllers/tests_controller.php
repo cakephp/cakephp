@@ -8,13 +8,26 @@
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////
 
+/**
+ *
+ * @filesource 
+ * @package cake
+ * @subpackage cake.app.controllers
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy:$
+ * @lastmodified $Date:$
+ */
+
+/**
+ * 
+ * @package cake
+ * @subpackage cake.app.controllers
+ */
 class TestsController extends TestsHelper {
 
 /**
  * Runs all library and application tests
  *
- * @package cake
- * @subpackage cake.app
  */
 	function test_all () 
 	{

@@ -9,6 +9,16 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
+ *
+ * @filesource 
+ * @package cake
+ * @subpackage cake.app
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy:$
+ * @lastmodified $Date:$
+ */
+
+/**
  * This file is application-wide model file. You can put all 
  * application-wide model-related methods here.
  * 
