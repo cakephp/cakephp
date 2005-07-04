@@ -21,7 +21,7 @@
   * @copyright Copyright (c) 2005, CakePHP Authors/Developers
   * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 0.2.9
   * @version $Revision$
   * @modifiedby $LastChangedBy$
@@ -40,7 +40,7 @@ vendor('Pear/DB');
   * Pear::DB layer for DBO.
   *
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 0.2.9
   */
 class DBO_Pear extends DBO
@@ -50,6 +50,7 @@ class DBO_Pear extends DBO
 	 * PEAR::DB object with which we connect.
 	 *
 	 * @var DB The connection object.
+	 * @access private
 	 */
 	var $_pear = null;
 

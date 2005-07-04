@@ -170,6 +170,7 @@ class Folder extends Object {
   *
   * @param string $pattern
   * @return array Files matching pattern
+  * @access private
   */
 	function _findRecursive ($pattern) {
 		list($dirs, $files) = $this->ls();

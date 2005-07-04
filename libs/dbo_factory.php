@@ -18,15 +18,18 @@
  * Description:
  * Creates DBO-descendant objects from a given db connection configuration
  *
- * @filesource 
- * @author CakePHP Authors/Developers
- * @copyright Copyright (c) 2005, CakePHP Authors/Developers
- * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
- * @version $Revision$
- * @modifiedby $LastChangedBy$
- * @lastmodified $Date$
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
- */
+  * @filesource 
+  * @author CakePHP Authors/Developers
+  * @copyright Copyright (c) 2005, CakePHP Authors/Developers
+  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
+  * @package cake
+  * @subpackage cake.libs.dbo
+  * @since CakePHP v 0.2.9
+  * @version $Revision$
+  * @modifiedby $LastChangedBy$
+  * @lastmodified $Date$
+  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+  */
 
 /**
  * Enter description here...
@@ -39,7 +42,7 @@ config('database');
  * Enter description here...
  *
  * @package cake
- * @subpackage cake.libs
+ * @subpackage cake.libs.dbo
  * @since CakePHP v 1.0.0.0
  *
  */

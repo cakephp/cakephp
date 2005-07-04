@@ -345,6 +345,7 @@ class Controller extends Object
 	 * Sets data for this view. Will set title if the key "title" is in given $data array.
 	 *
 	 * @param array $data Array of 
+	 * @access private
 	 */
 	function _setArray($data)
 	{
@@ -361,6 +362,7 @@ class Controller extends Object
 	 * Set the title element of the page.
 	 *
 	 * @param string $pageTitle Text for the title
+	 * @access private
 	 */
 	function _setTitle($pageTitle)
 	{

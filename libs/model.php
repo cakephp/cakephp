@@ -636,6 +636,7 @@ class Model extends Object
  * @param unknown_type $data 
  * @param unknown_type $root NULL or id for root node of operation
  * @return array
+ * @access private
  */
 	function _doThread ($data, $root) 
 	{
@@ -711,6 +712,7 @@ class Model extends Object
  *
  * @param array $data 
  * @return array Array of invalid fields
+ * @access private
  */
 	function _invalidFields ($data=null) 
 	{

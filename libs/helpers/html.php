@@ -531,7 +531,7 @@ class HtmlHelper
 	}
 
 	/**
-	 * Generates a nested <UL> (unordered list) tree from an array
+	 * Generates a nested <UL> </UL> (unordered list) tree from an array
 	 *
 	 * @param array $data
 	 * @param array $htmlOptions

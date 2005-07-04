@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////////////
-// + $Id:$
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
@@ -21,11 +21,11 @@
  * @copyright Copyright (c) 2005, CakePHP Authors/Developers
  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
- * @subpackage cake.tests.libs
+ * @subpackage cake.tests.libs.helpers
  * @since CakePHP v 0.2.9
- * @version $Revision:$
+ * @version $Revision$
  * @modifiedby $LastChangedBy$
- * @lastmodified $Date:$
+ * @lastmodified $Date$
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
  */
@@ -38,7 +38,7 @@ uses('helpers/html');
  * Enter description here...
  *
  * @package cake
- * @subpackage cake.tests.libs
+ * @subpackage cake.tests.libs.helpers
  * @since CakePHP v .9
  *
  */
@@ -392,10 +392,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
-	/**
-	 * Enter description here...
-	 *
-	 */
+/**
+ * Enter description here...
+ *
+ */
 	function testGetCrumbs()
 	{
 		$this->html->addCrumb('Foo', '/bar/foo');

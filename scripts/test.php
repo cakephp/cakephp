@@ -85,13 +85,25 @@ foreach ($testsFolder->findRecursive('.*\.php') as $test)
 
 /**
  * Better formatting of HTML reporter.
+ * @package cake
+ * @subpackage cake.scripts
  */
 class CakeHtmlReporter extends HtmlReporter
 {
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function _getCss()
 	{
 		return '.error { margin: 10px 0px; border: 1px solid #d7d4c7; padding: 4px; } .fail { color: red; font-weight: bold; } pre { background-color: lightgray; } .msg { margin-top: 5px; } body { font-family: Verdana; font-size: small; }';
 	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $message
+ */
 	function paintFail($message)
 	{
 		print '<div class="error">';
@@ -102,6 +114,11 @@ class CakeHtmlReporter extends HtmlReporter
 		print '<div class="msg">' . $this->_htmlEntities($message) . "</div>\n";
 		print '</div>';
 	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $message
+ */
 	function paintException($message)
 	{
 		print '<div class="error">';

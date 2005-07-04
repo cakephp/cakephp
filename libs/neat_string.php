@@ -32,7 +32,9 @@
 
 /**
  * Enter description here...
- *
+ * @package cake
+ * @subpackage cake.libs
+ * @since CakePHP v 0.2.9
  * @static 
  */
 class NeatString{

@@ -30,12 +30,18 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+/**
+ * Add Description
+ */
 define('DISPATCH_NO_CONTROLLER',      'missingController');
 define('DISPATCH_UNKNOWN_CONTROLLER', 'missingController');
 define('DISPATCH_NO_ACTION',          'missingAction');
 define('DISPATCH_UNKNOWN_ACTION',     'missingAction');
 define('DISPATCHER_UNKNOWN_VIEW',     'missingView');
 
+/**
+ * Add Description
+ */
 uses('error_messages', 'object', 'router', 'controller');
 
 /**

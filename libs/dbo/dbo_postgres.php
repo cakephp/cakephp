@@ -21,7 +21,7 @@
   * @copyright Copyright (c) 2005, CakePHP Authors/Developers
   * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 1.0.0.114
   * @version $Revision$
   * @modifiedby $LastChangedBy$
@@ -38,7 +38,7 @@ uses('dbo');
   * PostgreSQL layer for DBO.
   *
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 1.0.0.114
   */
 class DBO_Postgres extends DBO 

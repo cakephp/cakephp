@@ -31,6 +31,9 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 
+/**
+ * Enter description here...
+ */
 if (version_compare(phpversion(), '5.0') < 0) {
     eval('
     function clone($object) {
@@ -40,18 +43,21 @@ if (version_compare(phpversion(), '5.0') < 0) {
 }
 
 
+
+if (!function_exists('file_get_contents')) {
 /**
  * Replace file_get_contents()
  *
- * @category    PHP
- * @package     PHP_Compat
  * @link        http://php.net/function.file_get_contents
  * @author      Aidan Lister <aidan@php.net>
  * @internal    resource_context is not supported
  * @since       PHP 5
- * @require     PHP 4.0.0 (user_error)
+ * require     PHP 4.0.0 (user_error)
+ *
+ * @param unknown_type $filename
+ * @param unknown_type $incpath
+ * @return unknown
  */
-if (!function_exists('file_get_contents')) {
     function file_get_contents($filename, $incpath = false)
     {
         if (false === $fh = fopen($filename, 'rb', $incpath)) {

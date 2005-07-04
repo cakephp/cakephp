@@ -1,34 +1,89 @@
 <?php
+//////////////////////////////////////////////////////////////////////////
+// + $Id$
+// +------------------------------------------------------------------+ //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
+// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
+// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
+// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
+// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
+// +------------------------------------------------------------------+ //
+// + Licensed under The MIT License                                   + //
+// + Redistributions of files must retain the above copyright notice. + //
+// + See: http://www.opensource.org/licenses/mit-license.php          + //
+//////////////////////////////////////////////////////////////////////////
 
+/**
+ * 
+ * 
+ * @filesource 
+ * @author CakePHP Authors/Developers
+ * @copyright Copyright (c) 2005, CakePHP Authors/Developers
+ * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.tests.libs
+ * @since CakePHP v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ */
+
+/**
+ * 
+ */
 uses('neat_array');
-
+/**
+ * Enter description here...
+ *
+ * @package cake
+ * @subpackage cake.tests.libs
+ * @since CakePHP v .9
+ *
+ */
 class NeatArrayTest extends UnitTestCase
 {
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $neatArray;
 
-	// constructor of the test suite
+/**
+ * Enter description here...
+ *
+ * @return NeatArrayTest
+ */
 	function NeatArrayTest()
 	{
 		$this->UnitTestCase('NeatArray test');
 	}
 
-	// called before the test functions will be executed
-	// this function is defined in PHPUnit_TestCase and overwritten
-	// here
+/**
+ * Enter description here...
+ *
+ */
 	function setUp()
 	{
 		$this->neatArray = new NeatArray();
 	}
 
-	// called after the test functions are executed
-	// this function is defined in PHPUnit_TestCase and overwritten
-	// here
+/**
+ * Enter description here...
+ *
+ */
 	function tearDown()
 	{
 		unset($this->neatArray);
 	}
 
 
+/**
+ * Enter description here...
+ *
+ */
 	function testInArray()
 	{
 		$a = array('foo'=>' bar ', 'i-am'=>'a');

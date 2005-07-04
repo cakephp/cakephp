@@ -21,7 +21,7 @@
   * @copyright Copyright (c) 2005, CakePHP Authors/Developers
   * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 0.2.9
   * @version $Revision$
   * @modifiedby $LastChangedBy$
@@ -38,7 +38,7 @@ require_once(VENDORS.'adodb/adodb.inc.php');
   * AdoDB layer for DBO.
   *
   * @package cake
-  * @subpackage cake.libs
+  * @subpackage cake.libs.dbo
   * @since CakePHP v 0.2.9
   */
 class DBO_AdoDB extends DBO 
@@ -48,6 +48,7 @@ class DBO_AdoDB extends DBO
 	 * ADOConnection object with which we connect.
 	 *
 	 * @var ADOConnection The connection object.
+	 * @access private
 	 */
 	var $_adodb = null;
 

@@ -421,6 +421,7 @@ class View extends Object
 	 *
 	 * @param string $action Controller action to find template filename for
 	 * @return string Template filename
+	 * @access private
 	 */
 	function _getViewFileName($action)
 	{
@@ -440,6 +441,7 @@ class View extends Object
 	 * Returns layout filename for this template as a string.
 	 *
 	 * @return string Filename for layout file (.thtml).
+	 * @access private
 	 */
 	function _getLayoutFileName()
 	{
@@ -454,6 +456,7 @@ class View extends Object
 	 * @param array $___data_for_view Data to include in rendered view
 	 * @param boolean $___play_safe If set to false, the include() of the $__viewFn is done without suppressing output of errors
 	 * @return string Rendered output
+	 * @access private
 	 */
 	function _render($___viewFn, $___data_for_view, $___play_safe = true)
 	{
