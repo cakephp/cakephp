@@ -39,11 +39,19 @@ session_start();
  */
 if (!defined('DS'))
 {
+/**
+ * Enter description here...
+ *
+ */
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
 if (!defined('ROOT'))
 {
+/**
+ * Enter description here...
+ *
+ */
 	define('ROOT', dirname(dirname(__FILE__)).DS);
 }
 

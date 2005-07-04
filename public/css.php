@@ -1,10 +1,44 @@
-<?PHP
+<?php
+//////////////////////////////////////////////////////////////////////////
+// + $Id$
+// +------------------------------------------------------------------+ //
+// +------------------------------------------------------------------+ //
+// + Licensed                                                         + //
+// +                                                                  + //
+// +                                                                  + //
+//////////////////////////////////////////////////////////////////////////
 
+/**
+ * Purpose:
+ * 
+ * @filesource 
+ * @author Cake Authors/Developers
+ * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.public
+ * @since Cake v 0.2.9
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+
+/**
+ * Enter description here...
+ */
 require(ROOT.'config'.DS.'paths.php');
 require(LIBS.'basics.php');
 require(LIBS.'file.php');
 require(LIBS.'legacy.php');
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $path
+ * @param unknown_type $name
+ * @return unknown
+ */
 function make_clean_css ($path, $name)
 {
 	require_once(VENDORS.'csspp'.DS.'csspp.php');
@@ -19,6 +53,13 @@ function make_clean_css ($path, $name)
 	return $output;
 }
 
+/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $path
+	 * @param unknown_type $content
+	 * @return unknown
+	 */
 function write_css_cache ($path, $content)
 {
 	if (!is_dir(dirname($path)))
