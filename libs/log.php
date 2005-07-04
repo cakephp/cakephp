@@ -30,9 +30,23 @@
   * @license http://www.opensource.org/licenses/mit-license.php The MIT License
   */
 uses('file');
-
+    
+/**
+ * Enter description here...
+ *
+ * @package cake
+ * @subpackage cake.libs
+ * @since CakePHP v 0.2.9
+ */
 class Log
 {
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $type
+ * @param unknown_type $msg
+ * @return unknown
+ */
 	function write($type, $msg)
 	{
 		$filename = LOGS.$type.'.log';
