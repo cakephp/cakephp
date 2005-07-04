@@ -155,7 +155,7 @@ class View extends Object
 	var $hasRendered = null;
 
 	var $modelsLoaded = false;
-	
+
 	function View(){
 	}
 
@@ -210,9 +210,9 @@ class View extends Object
 		// What is reason for these being the same?
 		if (isset($this->hasRendered) && $this->hasRendered)
 		{
-		//echo "<pre>";
-		//print_r($this);
-		//echo "</pre>";
+			//echo "<pre>";
+			//print_r($this);
+			//echo "</pre>";
 			return true;
 		}
 		else
@@ -474,13 +474,16 @@ class View extends Object
 					require_once $helperFn;
 					if(class_exists($helperCn)===true);
 					{
-						${$helper} = new $helperCn;
-						${$helper}->base   = $this->base;
-						${$helper}->here   = $this->here;
-						${$helper}->params = $this->params;
-						${$helper}->action = $this->action;
-						//${$helper}->data   = $this->data;
-						//${$helper}->validationErrors   = $this->validationErrors;
+						${$helper}                       = new $helperCn;
+						${$helper}->base                 = $this->base;
+						${$helper}->here                 = $this->here;
+						${$helper}->params               = $this->params;
+						${$helper}->action               = $this->action;
+						${$helper}->data                 = $this->data;
+						if(!empty($this->validationErrors))
+						{
+							${$helper}->validationErrors = $this->validationErrors;
+						}
 					}
 				}
 			}

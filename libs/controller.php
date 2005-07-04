@@ -294,6 +294,7 @@ class Controller extends Object
 		$view->parent     =& $this->parent;
 		$view->viewPath   =& $this->viewPath;
 		$view->params     =& $this->params;
+		$view->data       =& $this->data;
 		
 		foreach ($this->models as $key => $value)
 		{
