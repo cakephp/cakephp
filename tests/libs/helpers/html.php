@@ -1,17 +1,70 @@
 <?php
+//////////////////////////////////////////////////////////////////////////
+// + $Id:$
+// +------------------------------------------------------------------+ //
+// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
+// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
+// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
+// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
+// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
+// +------------------------------------------------------------------+ //
+// + Licensed under The MIT License                                   + //
+// + Redistributions of files must retain the above copyright notice. + //
+// + See: http://www.opensource.org/licenses/mit-license.php          + //
+//////////////////////////////////////////////////////////////////////////
 
+/**
+ * 
+ * 
+ * @filesource 
+ * @author CakePHP Authors/Developers
+ * @copyright Copyright (c) 2005, CakePHP Authors/Developers
+ * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package cake
+ * @subpackage cake.tests.libs
+ * @since CakePHP v 0.2.9
+ * @version $Revision:$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date:$
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ *
+ */
+
+/**
+ * Basic defines
+ */
 uses('helpers/html');
-
+/**
+ * Enter description here...
+ *
+ * @package cake
+ * @subpackage cake.tests.libs
+ * @since CakePHP v .9
+ *
+ */
 class HtmlHelperTest extends UnitTestCase
 {
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $html;
 
-	// constructor of the test suite
+
+/**
+ * constructor of the test suite
+ *
+ */
 	function ControllerTest()
 	{
 		$this->UnitTestCase('Html helper test');
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function setUp()
 	{
 		$this->html = new HtmlHelper();
@@ -29,11 +82,19 @@ class HtmlHelperTest extends UnitTestCase
 		$this->html->passed_args = null;
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function tearDown()
 	{
 		unset($this->html);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testTrim()
 	{
 		$expected = 'Long ...';
@@ -41,6 +102,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($expected, $result);
 	}
 	
+/**
+ * Enter description here...
+ *
+ */
 	function testUrlFor()
 	{
 		$result   = $this->html->urlFor('/foo/bar');
@@ -56,6 +121,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testParseHtmlOptions()
 	{
 		$result   = $this->html->parseHtmlOptions(null);
@@ -79,6 +148,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testLinkTo()
 	{
 		$result   = $this->html->linkTo('Testing �', '/test/ok', array('style'=>'color:Red'), 'Sure?');
@@ -90,6 +163,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testLinkOut()
 	{
 		$result   = $this->html->linkOut('Sputnik.pl', 'http://www.sputnik.pl/', array('style'=>'color:Red'));
@@ -101,6 +178,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testFormTag()
 	{
 		$result   = $this->html->formTag();
@@ -116,6 +197,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testSubmitTag()
 	{
 		$result   = $this->html->submitTag();
@@ -127,6 +212,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testInputTag()
 	{
 		$result   = $this->html->inputTag('foo');
@@ -138,6 +227,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testPasswordTag()
 	{
 		$result   = $this->html->passwordTag('foo');
@@ -149,6 +242,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testHiddenTag()
 	{
 		$result   = $this->html->hiddenTag('foo');
@@ -164,6 +261,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testFileTag()
 	{
 		$result   = $this->html->fileTag('bar', array('class'=>'Foo', 'disabled'=>'1'));
@@ -171,6 +272,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testAreaTag()
 	{
 		$result   = $this->html->areaTag('foo');
@@ -182,6 +287,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testCheckboxTag()
 	{
 		$result   = $this->html->checkboxTag('bar');
@@ -193,6 +302,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testRadioTags()
 	{
 		$result   = $this->html->radioTags('foo', array('foo'=>'Foo', 'bar'=>'Bar'), '---', array('class'=>'Foo'));
@@ -204,6 +317,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testSelectTag()
 	{
 		$result   = $this->html->selectTag('tofu', array('m'=>'male', 'f'=>'female'), 'm', array('class'=>'Outer'), array('class'=>'Inner', 'id'=>'FooID'));
@@ -215,6 +332,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testTableHeaders()
 	{
 		$result   = $this->html->tableHeaders(array('One', 'Two', 'Three'));
@@ -226,6 +347,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testTableCells()
 	{
 		$result   = $this->html->tableCells(array('Foo', 'Bar'));
@@ -237,6 +362,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testImageTag()
 	{
 		$result   = $this->html->imageTag('foo.gif');
@@ -248,6 +377,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * Enter description here...
+ *
+ */
 	function testTagValue()
 	{
 		$result   = $this->html->tagValue('foo');
@@ -259,6 +392,10 @@ class HtmlHelperTest extends UnitTestCase
 		$this->assertEqual($result, $expected);
 	}
 
+	/**
+	 * Enter description here...
+	 *
+	 */
 	function testGetCrumbs()
 	{
 		$this->html->addCrumb('Foo', '/bar/foo');

@@ -13,7 +13,7 @@
  * 
  * @filesource 
  * @author CakePHP Authors/Developers
- * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @copyright Copyright (c) 2005, CakePHP Authors/Developers
  * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
  * @package cake
  * @subpackage cake.public

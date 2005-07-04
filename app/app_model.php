@@ -3,7 +3,7 @@
 // + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
-// + Copyright: (c) 2005, Cake Authors/Developers                     + //
+// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
 // +------------------------------------------------------------------+ //
 // + Licensed under The MIT License                                   + //
 //////////////////////////////////////////////////////////////////////////

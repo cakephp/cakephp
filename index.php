@@ -3,7 +3,7 @@
 // + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
-// + Copyright: (c) 2005, Cake Authors/Developers                     + //
+// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
 // +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
@@ -20,7 +20,7 @@
  * 
  * @filesource 
  * @author CakePHP Authors/Developers
- * @copyright Copyright (c) 2005, Cake Authors/Developers
+ * @copyright Copyright (c) 2005, CakePHP Authors/Developers
  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
  * @since CakePHP v 0.2.9
