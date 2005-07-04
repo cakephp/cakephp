@@ -48,13 +48,13 @@ class HtmlHelper
 	 */
 	var $_crumbs = array();
 
-	
+
 	var $base = null;
 	var $here = null;
 	var $params = array();
 	var $action = null;
 	var $data = null;
-	
+
 	/**
 	 * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
 	 *
@@ -193,9 +193,10 @@ class HtmlHelper
 	 * Returns a generic HTML tag with content.
 	 * 
 	 * Examples:
-	 * * <i>content_tag("p", "Hello world!") => <p>Hello world!</p></i>
-	 * * <i>content_tag("div", content_tag("p", "Hello world!"), array("class" => "strong")) => </i>
-	 *   <i><div class="strong"><p>Hello world!</p></div></i>
+	 * <code>
+	 * content_tag("p", "Hello world!") => <p>Hello world!</p>
+	 * content_tag("div", content_tag("p", "Hello world!"), array("class" => "strong")) => <div class="strong"><p>Hello world!</p></div>
+	 * </code>
 	 *
 	 * @param string $name Name of HTML element
 	 * @param array $options HTML options
@@ -223,19 +224,24 @@ class HtmlHelper
 	/**
 	 * Returns a formatted INPUT tag for HTML FORMs.
 	 *
-	 * @param string $tag_name Name attribute for INPUT element
-	 * @param int $size Size attribute for INPUT element
-	 * @param array $html_options
+	 * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param array $htmlOptions 
 	 * @return string The formatted INPUT element
 	 */
-	function inputTag($tag_name, $size=20, $html_options=null)
+	function inputTag($tagName, $htmlOptions=null)
 	{
-	   $elements = explode("/", $tag_name);
-	   
-		$html_options['size'] = $size;
-		$html_options['value'] = isset($html_options['value'])? $html_options['value']: $this->tagValue($elements[1]);
-		$this->tagIsInvalid($elements[0],$elements[1])? $html_options['class'] = 'form_error': null;
-		return sprintf(TAG_INPUT, $elements[1], $this->parseHtmlOptions($html_options, null, '', ' '));
+		if (strpos($tagName, '/') !== false)
+		{
+			list($model, $field) = explode("/", $tag_name);
+		}
+		else
+		{
+			$field = $tagName;
+		}
+
+		$htmlOptions['value'] = isset($htmlOptions['value'])? $htmlOptions['value']: $this->tagValue($field);
+		$this->tagIsInvalid($model,$field)? $htmlOptions['class'] = 'form_error': null;
+		return sprintf(TAG_INPUT, $field, $this->parseHtmlOptions($htmlOptions, null, '', ' '));
 	}
 
 	/**
@@ -531,7 +537,7 @@ class HtmlHelper
 	}
 
 	/**
-	 * Generates a nested <UL> </UL> (unordered list) tree from an array
+	 * Generates a nested unordered list tree from an array.
 	 *
 	 * @param array $data
 	 * @param array $htmlOptions
@@ -651,15 +657,15 @@ class HtmlHelper
 	/**
 	 * Returns a formatted error message for given FORM field, NULL if no errors.
 	 *
-	 * @param string $name
-	 * @param string $field
+	 * @param string $field  If field is to be used for CRUD, this should be modelName/fieldName
 	 * @param string $text
 	 * @return string If there are errors this method returns an error message, else NULL. 
 	 */
 	function tagErrorMsg ($field, $text)
 	{
-	   $elements = explode("/", $field);
-	   $error = 1;
+		$elements = explode("/", $field);
+		$error = 1;
+		
 		if ($error == $this->tagIsInvalid($elements[0], $elements[1]))
 		{
 			return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
