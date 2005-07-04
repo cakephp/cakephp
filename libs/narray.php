@@ -1,4 +1,4 @@
-<?PHP
+<?php
 
 /**
  * Class used for internal manipulation of multiarrays (arrays of arrays).

@@ -1,8 +1,8 @@
-<?PHP
+<?php
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
-// + Cake <https://developers.nextco.com/cake/>                       + //
+// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // +------------------------------------------------------------------+ //
 // + Licensed under The MIT License                                   + //

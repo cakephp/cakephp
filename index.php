@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 // + $Id$
 // +------------------------------------------------------------------+ //
-// + Cake <https://developers.nextco.com/cake/>                       + //
+// + CakePHP : Rapid Development Framework <http://www.cakephp.org/>  + //
 // + Copyright: (c) 2005, Cake Authors/Developers                     + //
 // + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
 // +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
@@ -21,7 +21,7 @@
  * @filesource 
  * @author Cake Authors/Developers
  * @copyright Copyright (c) 2005, Cake Authors/Developers
- * @link https://developers.nextco.com/cake/wiki/Authors Authors/Developers
+ * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
  * @since Cake v 0.2.9
  * @version $Revision$
