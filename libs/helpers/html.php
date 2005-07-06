@@ -295,13 +295,16 @@ class HtmlHelper
 	 * @param array $html_options
 	 * @return string
 	 */
-	function areaTag($tag_name, $cols=60, $rows=10, $html_options=null)
-	{
-		$value = empty($html_options['value'])? $this->tagValue($tag_name): empty($html_options['value']);
-		$html_options['cols'] = $cols;
-		$html_options['rows'] = $rows;
-		return sprintf(TAG_AREA, $tag_name, $this->parseHtmlOptions($html_options, null, ' '), $value);
-	}
+   function areaTag($tag_name, $cols=60, $rows=10, $html_options=null)
+   {
+      $elements = explode("/", $tag_name);
+      
+      $value = empty($html_options['value'])? $this->tagValue($elements[1]): empty($html_options['value']);
+      $html_options['cols'] = $cols;
+      $html_options['rows'] = $rows;
+      $this->tagIsInvalid($elements[0],$elements[1])? $html_options['class'] = 'form_error': null;
+      return sprintf(TAG_AREA, $elements[1], $this->parseHtmlOptions($html_options, null, ' '), $value);
+   }
 
 	/**
 	 * Returns an INPUT element with type="checkbox". Checkedness is to be passed as string "checked" with the key "checked" in the $html_options array.
