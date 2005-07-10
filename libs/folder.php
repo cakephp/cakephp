@@ -46,33 +46,33 @@ class Folder extends Object {
   *
   * @var string
   */
-	var $path = null;
+   var $path = null;
 
 /**
   * Enter description here...
   *
   * @var boolean
   */
-	var $sort = false;
+   var $sort = false;
 
 /**
   * Constructor.
   *
   * @param string $path
   */
-	function __construct ($path=false) {
-		if (empty($path)) $path = getcwd();
-		$this->cd($path);
-   }	
+   function __construct ($path=false) {
+      if (empty($path)) $path = getcwd();
+      $this->cd($path);
+   }   
 
 /**
   * Return current path.
   *
   * @return string Current path
   */
-	function pwd () {
-		return $this->path;
-	}
+   function pwd () {
+      return $this->path;
+   }
 
 /**
   * Change directory to $desired_path.
@@ -80,14 +80,14 @@ class Folder extends Object {
   * @param string $desired_path Path to the directory to change to
   * @return string The new path. Returns false on failure
   */
-	function cd ($desired_path) {
-		$desired_path = realpath($desired_path);
-		$new_path = Folder::isAbsolute($desired_path)? 
-			$desired_path: 
-			Folder::addPathElement($this->path, $desired_path);
+   function cd ($desired_path) {
+      $desired_path = realpath($desired_path);
+      $new_path = Folder::isAbsolute($desired_path)? 
+         $desired_path: 
+         Folder::addPathElement($this->path, $desired_path);
 
-		return is_dir($new_path)? $this->path = $new_path: false;
-	}
+      return is_dir($new_path)? $this->path = $new_path: false;
+   }
 
 
 /**
@@ -97,31 +97,31 @@ class Folder extends Object {
   * @param boolean $sort
   * @return array
   */
-	function ls($sort=true) {
-		$dir = opendir($this->path);
+   function ls($sort=true) {
+      $dir = opendir($this->path);
 
-		if ($dir) {
-			$dirs = $files = array();
-			while (false !== ($n = readdir($dir))) {
-				if (!preg_match('#^\.+$#', $n)) {
-					if (is_dir($this->addPathElement($this->path, $n)))
-						$dirs[] = $n;
-					else 
-						$files[] = $n;
-				}
-			}
+      if ($dir) {
+         $dirs = $files = array();
+         while (false !== ($n = readdir($dir))) {
+            if (!preg_match('#^\.+$#', $n)) {
+               if (is_dir($this->addPathElement($this->path, $n)))
+                  $dirs[] = $n;
+               else 
+                  $files[] = $n;
+            }
+         }
 
-			if ($sort || $this->sort) {
-				sort($dirs);
-				sort($files);
-			}
+         if ($sort || $this->sort) {
+            sort($dirs);
+            sort($files);
+         }
 
-			return array($dirs,$files);
-		}
-		else {
-			return false;
-		}
-	}
+         return array($dirs,$files);
+      }
+      else {
+         return false;
+      }
+   }
 
 
 /**
@@ -130,26 +130,26 @@ class Folder extends Object {
   * @param string $pattern Preg_match pattern (Defaults to: .*)
   * @return array
   */
-	function find ($regexp_pattern='.*') 
-	{
-		$data = $this->ls();
-		
-		if (!is_array($data))
-			return array();
-		
-		list($dirs, $files) = $data;
+   function find ($regexp_pattern='.*') 
+   {
+      $data = $this->ls();
+      
+      if (!is_array($data))
+         return array();
+      
+      list($dirs, $files) = $data;
 
-		$found = array();
-		foreach ($files as $file) 
-		{
-			if (preg_match("/^{$regexp_pattern}$/i", $file)) 
-			{
-				$found[] = $file;
-			}
-		}
+      $found = array();
+      foreach ($files as $file) 
+      {
+         if (preg_match("/^{$regexp_pattern}$/i", $file)) 
+         {
+            $found[] = $file;
+         }
+      }
 
-		return $found;
-	}
+      return $found;
+   }
 
 
 /**
@@ -158,12 +158,12 @@ class Folder extends Object {
   * @param string $pattern Preg_match pattern (Defaults to: .*)
   * @return array Files matching $pattern
   */
-	function findRecursive ($pattern='.*') {
-		$starts_on = $this->path;
-		$out = $this->_findRecursive($pattern);
-		$this->cd($starts_on);
-		return $out;
-	}
+   function findRecursive ($pattern='.*') {
+      $starts_on = $this->path;
+      $out = $this->_findRecursive($pattern);
+      $this->cd($starts_on);
+      return $out;
+   }
 
 /**
   * Private helper function for findRecursive.
@@ -172,24 +172,24 @@ class Folder extends Object {
   * @return array Files matching pattern
   * @access private
   */
-	function _findRecursive ($pattern) {
-		list($dirs, $files) = $this->ls();
+   function _findRecursive ($pattern) {
+      list($dirs, $files) = $this->ls();
 
-		$found = array();
-		foreach ($files as $file) {
-			if (preg_match("/^{$pattern}$/i", $file)) {
-				$found[] = $this->addPathElement($this->path, $file);
-			}
-		}
+      $found = array();
+      foreach ($files as $file) {
+         if (preg_match("/^{$pattern}$/i", $file)) {
+            $found[] = $this->addPathElement($this->path, $file);
+         }
+      }
 
-		$start = $this->path;
-		foreach ($dirs as $dir) {
-			$this->cd($this->addPathElement($start, $dir));
-			$found = array_merge($found, $this->findRecursive($pattern));
-		}
+      $start = $this->path;
+      foreach ($dirs as $dir) {
+         $this->cd($this->addPathElement($start, $dir));
+         $found = array_merge($found, $this->findRecursive($pattern));
+      }
 
-		return $found;
-	}
+      return $found;
+   }
 
 /**
   * Returns true if given $path is a Windows path.
@@ -197,9 +197,9 @@ class Folder extends Object {
   * @param string $path Path to check
   * @return boolean 
   */
-	function isWindowsPath ($path) {
-		return preg_match('#^[A-Z]:\\\#i', $path)? true: false;
-	}
+   function isWindowsPath ($path) {
+      return preg_match('#^[A-Z]:\\\#i', $path)? true: false;
+   }
 
 /**
   * Returns true if given $path is an absolute path.
@@ -207,9 +207,9 @@ class Folder extends Object {
   * @param string $path Path to check
   * @return boolean 
   */
-	function isAbsolute ($path) {
-		return preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
-	}
+   function isAbsolute ($path) {
+      return preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
+   }
 
 /**
   * Returns true if given $path ends in a slash (i.e. is slash-terminated).
@@ -217,9 +217,9 @@ class Folder extends Object {
   * @param string $path Path to check
   * @return boolean
   */
-	function isSlashTerm ($path) {
-		return preg_match('#[\\\/]$#', $path)? true: false;
-	}
+   function isSlashTerm ($path) {
+      return preg_match('#[\\\/]$#', $path)? true: false;
+   }
 
 /**
   * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
@@ -227,9 +227,9 @@ class Folder extends Object {
   * @param string $path Path to check
   * @return string Set of slashes ("\\" or "/")
   */
-	function correctSlashFor ($path) {
-		return Folder::isWindowsPath($path)? '\\': '/';
-	}
+   function correctSlashFor ($path) {
+      return Folder::isWindowsPath($path)? '\\': '/';
+   }
 
 /**
   * Returns $path with added terminating slash (corrected for Windows or other OS).
@@ -237,9 +237,9 @@ class Folder extends Object {
   * @param string $path Path to check
   * @return string
   */
-	function slashTerm ($path) {
-		return $path . (Folder::isSlashTerm($path)? null: Folder::correctSlashFor($path));
-	}
+   function slashTerm ($path) {
+      return $path . (Folder::isSlashTerm($path)? null: Folder::correctSlashFor($path));
+   }
 
 /**
   * Returns $path with $element added, with correct slash in-between.
@@ -248,9 +248,9 @@ class Folder extends Object {
   * @param string $element
   * @return string
   */
-	function addPathElement ($path, $element) {
-		return Folder::slashTerm($path).$element;
-	}
+   function addPathElement ($path, $element) {
+      return Folder::slashTerm($path).$element;
+   }
 }
 
 ?>

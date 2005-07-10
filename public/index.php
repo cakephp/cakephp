@@ -43,7 +43,7 @@ if (!defined('DS'))
  * Enter description here...
  *
  */
-	define('DS', DIRECTORY_SEPARATOR);
+   define('DS', DIRECTORY_SEPARATOR);
 }
 
 if (!defined('ROOT'))
@@ -52,15 +52,15 @@ if (!defined('ROOT'))
  * Enter description here...
  *
  */
-	define('ROOT', dirname(dirname(__FILE__)).DS);
+   define('ROOT', dirname(dirname(__FILE__)).DS);
 }
 
 if (strpos($url, 'ccss/') === 0)
 {
-	include ROOT.'public'.DS.'css.php';
-	die;
+   include ROOT.'public'.DS.'css.php';
+   die;
 }
-	
+   
 /**
  * Configuration, directory layout and standard libraries
  */
@@ -82,17 +82,17 @@ config('tags', 'database');
 
 if (class_exists('DATABASE_CONFIG'))
 {
-	$DB = DboFactory::getInstance('default');
-	loadModels();
+   $DB = DboFactory::getInstance('default');
+   loadModels();
 }
 
 //RUN THE SCRIPT
-	if($_GET['url'] === 'favicon.ico')
-	{
-	}else{
-		$DISPATCHER = new Dispatcher ();
-		$DISPATCHER->dispatch($url);
-	}
+   if($url === 'favicon.ico')
+   {
+   }else{
+      $DISPATCHER = new Dispatcher ();
+      $DISPATCHER->dispatch($url);
+   }
 //CLEANUP
 if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
 

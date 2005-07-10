@@ -34,32 +34,32 @@ define('TAG_FORM', '<form %s>');
 /**
  * Tag template for an input type='text' tag. 
  */
-define('TAG_INPUT',			'<input name="data[%s]" %s/>');
+define('TAG_INPUT',         '<input name="data[%s][%s]" %s/>');
 
 /**
  * Tag template for an input type='hidden' tag. 
  */
-define('TAG_HIDDEN',			'<input type="hidden" name="data[%s]" %s/>');
+define('TAG_HIDDEN',         '<input type="hidden" name="data[%s][%s]" %s/>');
 
 /**
  * Tag template for a textarea tag. 
  */
-define('TAG_AREA',			'<textarea name="data[%s]"%s>%s</textarea>');
+define('TAG_AREA',         '<textarea name="data[%s][%s]"%s>%s</textarea>');
 
 /**
  * Tag template for a input type='checkbox ' tag. 
  */
-define('TAG_CHECKBOX',		'<label for="tag_%s"><input type="checkbox" name="data[%s]" id="tag_%s" %s/>%s</label>');
+define('TAG_CHECKBOX',      '<label for="tag_%s"><input type="checkbox" name="data[%s][%s]" id="tag_%s" %s/>%s</label>');
 
 /**
  * Tag template for a input type='radio' tag. 
  */
-define('TAG_RADIOS', 		'<label for="tag_%s"><input type="radio" name="data[%s]" id="tag_%s" %s/>%s</label>');
+define('TAG_RADIOS',       '<label for="tag_%s"><input type="radio" name="data[%s][%s]" id="tag_%s" %s/>%s</label>');
 
 /**
  * Tag template for a select opening tag. 
  */
-define('TAG_SELECT_START', '<select name="data[%s]"%s>');
+define('TAG_SELECT_START', '<select name="data[%s][%s]"%s>');
 
 /**
  * Tag template for an empty select option tag. 
@@ -74,32 +74,32 @@ define('TAG_SELECT_OPTION','<option value="%s"%s>%s</option>');
 /**
  * Tag template for a closing select tag. 
  */
-define('TAG_SELECT_END',	'</select>');
+define('TAG_SELECT_END',   '</select>');
 
 /**
  * Tag template for a password tag. 
  */
-define('TAG_PASSWORD',		'<input type="password" name="data[%s]" %s/>');
+define('TAG_PASSWORD',      '<input type="password" name="data[%s][%s]" %s/>');
 
 /**
  * Tag template for a file input tag. 
  */
-define('TAG_FILE',			'<input type="file" name="%s" %s/>');
+define('TAG_FILE',         '<input type="file" name="%s" %s/>');
 
 /**
  * Tag template for a submit button tag. 
  */
-define('TAG_SUBMIT',			'<input type="submit" %s/>');
+define('TAG_SUBMIT',         '<input type="submit" %s/>');
 
 /**
  * Tag template for an image tag. 
  */
-define('TAG_IMAGE',			'<img src="%s" alt="%s" %s/>');
+define('TAG_IMAGE',         '<img src="%s" alt="%s" %s/>');
 
 /**
  * Tag template for a table header tag. 
  */
-define('TAG_TABLE_HEADER',	'<th%s>%s</th>');
+define('TAG_TABLE_HEADER',   '<th%s>%s</th>');
 
 /**
  * Tag template for table headers row tag. 
@@ -109,12 +109,12 @@ define('TAG_TABLE_HEADERS','<tr%s>%s</tr>');
 /**
  * Tag template for a table cell tag. 
  */
-define('TAG_TABLE_CELL',	'<td%s>%s</td>');
+define('TAG_TABLE_CELL',   '<td%s>%s</td>');
 
 /**
  * Tag template for a table row tag. 
  */
-define('TAG_TABLE_ROW',		'<tr%s>%s</tr>');
+define('TAG_TABLE_ROW',      '<tr%s>%s</tr>');
 
 /**
  * Tag template for a CSS link tag. 

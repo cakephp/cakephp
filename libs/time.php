@@ -48,10 +48,10 @@ class Time extends Object {
   * @param string $date_string Datetime string
   * @return string Formatted date string
   */
-	function nice ($date_string=null) {
-		$date = $date_string? strtotime($date_string): time();
-		return date("D, M jS Y, H:i", $date);
-	}
+   function nice ($date_string=null) {
+      $date = $date_string? strtotime($date_string): time();
+      return date("D, M jS Y, H:i", $date);
+   }
 
 /**
   * Returns a formatted descriptive date string for given datetime string.
@@ -63,18 +63,18 @@ class Time extends Object {
   * @param string $date_string Datetime string
   * @return string Described, relative date string
   */
-	function niceShort ($date_string=null) {
-		$date = $date_string? Time::fromString($date_string): time();
+   function niceShort ($date_string=null) {
+      $date = $date_string? Time::fromString($date_string): time();
 
-		$y = Time::isThisYear($date)? '': ' Y';
+      $y = Time::isThisYear($date)? '': ' Y';
 
-		if (Time::isToday($date)) 
-			return "Today, ".date("H:i", $date);
-		elseif (Time::wasYesterday($date))
-			return "Yesterday, ".date("H:i", $date);
-		else
-			return date("M jS{$y}, H:i", $date);
-	}
+      if (Time::isToday($date)) 
+         return "Today, ".date("H:i", $date);
+      elseif (Time::wasYesterday($date))
+         return "Yesterday, ".date("H:i", $date);
+      else
+         return date("M jS{$y}, H:i", $date);
+   }
 
 /**
   * Returns true if given datetime string is today.
@@ -82,22 +82,22 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string is today
   */
-	function isToday ($date) {
-		return date('Y-m-d', $date) == date('Y-m-d', time());
-	}
-	
-	function daysAsSql ($begin, $end, $field_name)
-	{
-		$begin = date('Y-m-d', $begin).' 00:00:00';
-		$end   = date('Y-m-d', $end).  ' 23:59:59';
-		
-		return "($field_name >= '$begin') AND ($field_name <= '$end')";
-	}
-	
-	function dayAsSql ($date, $field_name)
-	{
-		return Time::daysAsSql($date, $date, $field_name);
-	}
+   function isToday ($date) {
+      return date('Y-m-d', $date) == date('Y-m-d', time());
+   }
+   
+   function daysAsSql ($begin, $end, $field_name)
+   {
+      $begin = date('Y-m-d', $begin).' 00:00:00';
+      $end   = date('Y-m-d', $end).  ' 23:59:59';
+      
+      return "($field_name >= '$begin') AND ($field_name <= '$end')";
+   }
+   
+   function dayAsSql ($date, $field_name)
+   {
+      return Time::daysAsSql($date, $date, $field_name);
+   }
 
 /**
   * Returns true if given datetime string is within current year.
@@ -105,9 +105,9 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string is within current year
   */
-	function isThisYear ($date) {
-		return date('Y', $date) == date('Y', time());
-	}
+   function isThisYear ($date) {
+      return date('Y', $date) == date('Y', time());
+   }
 
 /**
   * Returns true if given datetime string was yesterday.
@@ -115,9 +115,9 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string was yesterday
   */
-	function wasYesterday ($date) {
-		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-	}
+   function wasYesterday ($date) {
+      return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
+   }
 
 /**
   * Returns a Unix timestamp from a textual datetime description. Wrapper for PHP function strtotime().
@@ -125,9 +125,9 @@ class Time extends Object {
   * @param string $date_string Datetime string to be represented as a Unix timestamp
   * @return int Unix timestamp
   */
-	function fromString ($date_string) {
-		return strtotime($date_string);
-	}
+   function fromString ($date_string) {
+      return strtotime($date_string);
+   }
 
 /**
   * Returns a date formatted for Atom RSS feeds.
@@ -135,9 +135,9 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return string Formatted date string
   */
-	function toAtom ($date) {
-		return date('Y-m-d\TH:i:s\Z', $date);
-	}
+   function toAtom ($date) {
+      return date('Y-m-d\TH:i:s\Z', $date);
+   }
 
 /**
   * Formats date for RSS feeds
@@ -145,9 +145,9 @@ class Time extends Object {
   * @param datetime $date Datetime string
   * @return string Formatted date string
   */
-	function toRSS ($date) {
-		return date('D, d M Y H:i:s O', $date);
-	}
+   function toRSS ($date) {
+      return date('D, d M Y H:i:s O', $date);
+   }
 
 /**     
  * Returns either a relative date or a formatted date depending
@@ -163,55 +163,55 @@ class Time extends Object {
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  *      like 'Posted ' before the function output.
  *      
- * @param $datetime	Time in strtotime-parsable format
+ * @param $datetime   Time in strtotime-parsable format
  * @return string Relative time string.
  */
 
-	function timeAgoInWords ($datetime)
-	{
-		$in_seconds=strtotime($datetime);
-		$diff = time()-$in_seconds;
-		$months = floor($diff/2419200);
-		$diff -= $months*2419200;
-		$weeks = floor($diff/604800);
-		$diff -= $weeks*604800;
-		$days = floor($diff/86400);
-		$diff -= $days*86400;
-		$hours = floor($diff/3600);
-		$diff -= $hours*3600;
-		$minutes = floor($diff/60);
-		$diff -= $minutes*60;
-		$seconds = $diff;
-	
-		if ($months>0) {
-			// over a month old, just show date (mm/dd/yyyy format)
-			return 'on '.date("j/n/Y", $in_seconds);
-		} else {
-			$relative_date='';
-			if ($weeks>0) {
-				// weeks and days
-				$relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
-				$relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
-			} elseif ($days>0) {
-				// days and hours
-				$relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
-				$relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
-			} elseif ($hours>0) {
-				// hours and minutes
-				$relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
-				$relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
-			} elseif ($minutes>0) {
-				// minutes only
-				$relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
-			} else {
-				// seconds only
-				$relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
-			}
-		}
-		// show relative date and add proper verbiage
-		return $relative_date.' ago';
-	}
-	
+   function timeAgoInWords ($datetime)
+   {
+      $in_seconds=strtotime($datetime);
+      $diff = time()-$in_seconds;
+      $months = floor($diff/2419200);
+      $diff -= $months*2419200;
+      $weeks = floor($diff/604800);
+      $diff -= $weeks*604800;
+      $days = floor($diff/86400);
+      $diff -= $days*86400;
+      $hours = floor($diff/3600);
+      $diff -= $hours*3600;
+      $minutes = floor($diff/60);
+      $diff -= $minutes*60;
+      $seconds = $diff;
+   
+      if ($months>0) {
+         // over a month old, just show date (mm/dd/yyyy format)
+         return 'on '.date("j/n/Y", $in_seconds);
+      } else {
+         $relative_date='';
+         if ($weeks>0) {
+            // weeks and days
+            $relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
+            $relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
+         } elseif ($days>0) {
+            // days and hours
+            $relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
+            $relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
+         } elseif ($hours>0) {
+            // hours and minutes
+            $relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
+            $relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
+         } elseif ($minutes>0) {
+            // minutes only
+            $relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
+         } else {
+            // seconds only
+            $relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
+         }
+      }
+      // show relative date and add proper verbiage
+      return $relative_date.' ago';
+   }
+   
 }
 
 ?>

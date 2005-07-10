@@ -1,29 +1,29 @@
 <?php
-    /**
-     *	base include file for SimpleTest
-     *	@package	SimpleTest
-     *	@subpackage	WebTester
-     *	@version	$Id$
-     */
+ /**
+  *   base include file for SimpleTest
+  *   @package   SimpleTest
+  *   @subpackage   WebTester
+  *   @version   $Id$
+  */
 
-    /**
-     *    Bundle of GET/POST parameters. Can include
-     *    repeated parameters.
-	 *    @package SimpleTest
-	 *    @subpackage WebTester
-     */
+ /**
+  *    Bundle of GET/POST parameters. Can include
+  *    repeated parameters.
+ *    @package SimpleTest
+ *    @subpackage WebTester
+  */
     class SimpleFormEncoding {
         var $_request;
         var $_x;
         var $_y;
         
-        /**
-         *    Starts empty.
-         *    @param array $query/SimpleQueryString  Hash of parameters.
-         *                                           Multiple values are
-         *                                           as lists on a single key.
-         *    @access public
-         */
+     /**
+      *    Starts empty.
+      *    @param array $query/SimpleQueryString  Hash of parameters.
+      *                                           Multiple values are
+      *                                           as lists on a single key.
+      *    @access public
+      */
         function SimpleFormEncoding($query = false) {
             if (! $query) {
                 $query = array();
@@ -33,12 +33,12 @@
             $this->merge($query);
         }
         
-        /**
-         *    Adds a parameter to the query.
-         *    @param string $key            Key to add value to.
-         *    @param string/array $value    New data.
-         *    @access public
-         */
+     /**
+      *    Adds a parameter to the query.
+      *    @param string $key            Key to add value to.
+      *    @param string/array $value    New data.
+      *    @access public
+      */
         function add($key, $value) {
             if ($value === false) {
                 return;
@@ -55,12 +55,12 @@
             }
         }
         
-        /**
-         *    Adds a set of parameters to this query.
-         *    @param array/SimpleQueryString $query  Multiple values are
-         *                                           as lists on a single key.
-         *    @access public
-         */
+     /**
+      *    Adds a set of parameters to this query.
+      *    @param array/SimpleQueryString $query  Multiple values are
+      *                                           as lists on a single key.
+      *    @access public
+      */
         function merge($query) {
             if (is_object($query)) {
                 foreach ($query->getKeys() as $key) {
@@ -76,13 +76,13 @@
             }
         }
         
-        /**
-         *    Sets image coordinates. Set to false to clear
-         *    them.
-         *    @param integer $x    Horizontal position.
-         *    @param integer $y    Vertical position.
-         *    @access public
-         */
+     /**
+      *    Sets image coordinates. Set to false to clear
+      *    them.
+      *    @param integer $x    Horizontal position.
+      *    @param integer $y    Vertical position.
+      *    @access public
+      */
         function setCoordinates($x = false, $y = false) {
             if (($x === false) || ($y === false)) {
                 $this->_x = $this->_y = false;
@@ -92,31 +92,31 @@
             $this->_y = (integer)$y;
         }
         
-        /**
-         *    Accessor for horizontal image coordinate.
-         *    @return integer        X value.
-         *    @access public
-         */
+     /**
+      *    Accessor for horizontal image coordinate.
+      *    @return integer        X value.
+      *    @access public
+      */
         function getX() {
             return $this->_x;
         }
          
-        /**
-         *    Accessor for vertical image coordinate.
-         *    @return integer        Y value.
-         *    @access public
-         */
+     /**
+      *    Accessor for vertical image coordinate.
+      *    @return integer        Y value.
+      *    @access public
+      */
         function getY() {
             return $this->_y;
         }
         
-        /**
-         *    Accessor for single value.
-         *    @return string/array    False if missing, string
-         *                            if present and array if
-         *                            multiple entries.
-         *    @access public
-         */
+     /**
+      *    Accessor for single value.
+      *    @return string/array    False if missing, string
+      *                            if present and array if
+      *                            multiple entries.
+      *    @access public
+      */
         function getValue($key) {
             if (! isset($this->_request[$key])) {
                 return false;
@@ -127,21 +127,21 @@
             }
         }
         
-        /**
-         *    Accessor for key list.
-         *    @return array        List of keys present.
-         *    @access public
-         */
+     /**
+      *    Accessor for key list.
+      *    @return array        List of keys present.
+      *    @access public
+      */
         function getKeys() {
             return array_keys($this->_request);
         }
         
-        /**
-         *    Renders the query string as a URL encoded
-         *    request part.
-         *    @return string        Part of URL.
-         *    @access public
-         */
+     /**
+      *    Renders the query string as a URL encoded
+      *    request part.
+      *    @return string        Part of URL.
+      *    @access public
+      */
         function asString() {
             $statements = array();
             foreach ($this->_request as $key => $values) {

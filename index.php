@@ -46,43 +46,41 @@ define ('BASE_URL', $_SERVER['SCRIPT_NAME'].'?url=');
  * As mod_rewrite (or .htaccess files) is not working, we need to take care
  * of what would normally be rewrited, i.e. the static files in /public
  */
-if (empty($_GET['url']) || ($_GET['url'] == '/'))
-{
-	require (ROOT.'public/index.php');
-}
-else
-{
-	$elements = explode('/index.php?url=', $_SERVER['REQUEST_URI']);
-	$base = $elements[0].'/public';
-	$path = $elements[1];
-	
-	$filename = ROOT.'public'.str_replace('/', DS, $path);
-	$url = $base.$path;
+   if (empty($_GET['url']) || ($_GET['url'] == '/'))
+   {
+      require (ROOT.'public/index.php');
+   }
+   else
+   {
+      $elements = explode('/index.php?url=', $_SERVER['REQUEST_URI']);
+      $base = $elements[0].'/public';
+      $path = $elements[1];
+      
+      $filename = ROOT.'public'.str_replace('/', DS, $path);
+      $url = $base.$path;
 
-	if (file_exists($filename))
-	{
-		if (preg_match('/^.*\.([a-z]+)$/i', $filename, $ext))
-		{
-			switch ($ext[1])
-			{
-				case 'jpg':
-				case 'jpeg':
-					header('Content-type: image/jpeg');
-				break;
-				
-				case 'css':
-					header('Content-type: text/css');
-			}
-		}
-		
-		print (file_get_contents($filename));
-		die();
-	}
-	else 
-	{
-		require (ROOT.'public/index.php');
-	}
-}
-
-
+      if (file_exists($filename))
+      {
+         if (preg_match('/^.*\.([a-z]+)$/i', $filename, $ext))
+         {
+            switch ($ext[1])
+            {
+               case 'jpg':
+               case 'jpeg':
+                  header('Content-type: image/jpeg');
+               break;
+               
+               case 'css':
+                  header('Content-type: text/css');
+            }
+         }
+         
+         print (file_get_contents($filename));
+         die();
+      }
+      else 
+      {
+         require (ROOT.'public/index.php');
+      }
+   }
 ?>

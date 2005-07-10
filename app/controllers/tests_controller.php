@@ -29,11 +29,11 @@ class TestsController extends TestsHelper {
  * Runs all library and application tests
  *
  */
-	function test_all () 
-	{
-		$this->layout = null;
-		require_once SCRIPTS.'test.php';
-	}
+   function test_all () 
+   {
+      $this->layout = null;
+      require_once SCRIPTS.'test.php';
+   }
 }
 
 ?>

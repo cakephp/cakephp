@@ -63,7 +63,7 @@ class Model extends Object
  * @var unknown_type
  * @access public
  */
-	var $parent = false;
+   var $parent = false;
 
 /**
  * Custom database table name
@@ -71,7 +71,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-	var $use_table = false;
+   var $use_table = false;
 
 /**
  * Enter description here...
@@ -79,7 +79,7 @@ class Model extends Object
  * @var unknown_type
  * @access public
  */
-	var $id = false;
+   var $id = false;
 
 /**
  * Container for the data that this model gets from persistent storage (the database).
@@ -87,7 +87,7 @@ class Model extends Object
  * @var array
  * @access public
  */
-	var $data = array();
+   var $data = array();
 
 /**
  * Table name for this Model.
@@ -95,15 +95,24 @@ class Model extends Object
  * @var string
  * @access public
  */
-	var $table = false;
-	// private
+   var $table = false;
+   // private
 /**
  * Table metadata
  *
  * @var array
  * @access private
  */
-	var $_table_info = null;
+   var $_table_info = null;
+   
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  * @access private
+  */
+	var $_hasOne = array();
+
 
 /**
  * Array of other Models this Model references in a one-to-many relationship. 
@@ -111,7 +120,7 @@ class Model extends Object
  * @var array
  * @access private
  */
-	var $_oneToMany = array();
+   var $_oneToMany = array();
 
 /**
  * Array of other Models this Model references in a one-to-one relationship. 
@@ -119,7 +128,7 @@ class Model extends Object
  * @var array
  * @access private
  */
-	var $_oneToOne = array();
+   var $_oneToOne = array();
 
 /**
  * Array of other Models this Model references in a has-many relationship. 
@@ -127,7 +136,7 @@ class Model extends Object
  * @var array
  * @access private
  */
-	var $_hasMany = array();
+   var $_hasMany = array();
 
 /**
  * Enter description here...
@@ -136,14 +145,21 @@ class Model extends Object
  * validate with Model::validate()
  * @var array
  */
-	var $validate = array();
+   var $validate = array();
 
 /**
  * Append entries for validation as ('field_name' => '/^perl_compat_regexp$/') that has to match with preg_match()
  * validate with Model::validate()
  * @var array
  */
-	var $validationErrors = null;
+   var $validationErrors = null;
+
+/**
+  * 
+  * @var unknown_type
+  * @access private
+  */
+	var $_count;
 
 /**
  * Constructor. Binds the Model's database table to the object.
@@ -152,55 +168,196 @@ class Model extends Object
  * @param string $table Database table to use.
  * @param unknown_type $db Database connection object.
  */
-	function __construct ($id=false, $table=null, $db=null) 
+   function __construct ($id=false, $table=null, $db=null) 
+   {
+      $this->db = $db? $db: DboFactory::getInstance();
+   
+      if ($id)
+      {
+         $this->id = $id;
+      }
+
+      $table_name = $table? $table: ($this->use_table? $this->use_table: Inflector::tableize(get_class($this)));
+      $this->useTable ($table_name);
+      parent::__construct();
+      $this->createLinks();
+   }
+
+/**
+ * Creates association relationships.
+ *
+ */
+	function createLinks()
 	{
-		$this->db = $db? $db: DboFactory::getInstance();
+	   if (!empty($this->hasOne))
+	   {
+	      $this->_hasOneLink();
+	   }
+	}
 
-		if ($id)
-		{
-			$this->id = $id;
-		}
-
-		$table_name = $table? $table: ($this->use_table? $this->use_table: Inflector::tableize(get_class($this)));
-		$this->useTable ($table_name);
-		parent::__construct();
-		$this->createLinks();
+	
+	function _resetCount()
+	{
+	   return $this->_count = 0;
 	}
 
 /**
- * Creates has-many relationships, and then call relink.
+ * Enter description here...
  *
- * @see relink()
+ * @access private
  */
-	function createLinks () 
-	{
-		if (!empty($this->hasMany))
-			$this->_hasMany = explode(',', $this->hasMany);
+   function _hasOneLink()
+   {
+      if(is_array($this->hasOne))
+      {
+         if (count($this->id) > 1)
+         {
+            $this->_count++;
+         }
+         else
+         {
+            $this->_count = false;	
+         }
+         
+         foreach ($this->hasOne as $association => $associationValue)
+         {
+            $className = $association;
+            $classCreated = false;
+            
+            foreach ($associationValue as $option => $optionValue)
+            {
+               if (($option === 'className') && ($classCreated === false))
+               {
+                  $className = $optionValue;
+               }
+               
+               if ($classCreated === false)
+               {
+                  $this->$className = new $className();	
+                  $classCreated = true;
+                  $this->_hasOne = array($association,$className);
+               }
+               
+               switch($option)
+               {
+                  case 'conditions':
+                        $modelConditions = $this->table .'To'. $association . 'Conditions';
+                        $conditions = $optionValue;
+                        $this->$modelConditions = $conditions;
+                  unset($modelConditions);
+                  break;
+                  
+                  case 'order':
+                        $modelOrder = $this->table .'To'. $association . 'Order';
+                        $order = $optionValue;
+                        $this->$modelOrder = $order;
+                  unset($modelOrder);
+                  break;
+                  
+                  case 'dependent':
+                        $modelDependent = $this->table .'To'. $association . 'Dependent';
+                        $dependent = $optionValue;
+                        $this->$modelDependent = $dependent;
+                  unset($modelDependent);
+                  break;
+                  
+                  case 'foreignKey':
+                  $modelForeignKey = $this->table .'To'. $association . 'ForeignKey';
+                  $foreignKey = $optionValue;
+                  $this->$modelForeignKey = $foreignKey;
+                  unset($modelForeignKey);
+                  break;
+               }
+            }
+            
+            $this->_constructAssociatedModels($className , 'One');
+            unset($className);
+            
+            if (!count($this->id) > 1)
+            {
+               $this->_resetCount();
+            }
+         }
+      }
+      else
+      {
+         $this->_resetCount();
+         if (count($this->id) > 1)
+         {
+            $this->_count++;
+         }
+         else
+         {
+            $this->_count = false;	
+         }
+				
+				$association = explode(',', $this->hasOne);
+				foreach ($association as $modelName) {
+					$this->_constructAssociatedModels($modelName , 'One');
+				}
+			}	
+	}
+
+
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $className
+ * @param unknown_type $type
+ * @param unknown_type $settings
+ * @access private
+ */
+   function _constructAssociatedModels($className, $type = false, $settings = false)
+   {
+      $modelName = Inflector::singularize($className);
+      
+      switch($type)
+      {
+         
+         case 'One':
+         $this->linkOneToOne($modelName, $this->id[$this->_count++]);
+         $joinedHas = 'joinedHasOne';
+         break;
+         
+         default:
+         //nothing
+         break;
+      }
+      
+      if(!is_a($this->$className, $className))
+      {
+         $this->$className = new $className();
+         
+      }
+      $this->{$joinedHas}[] = $this->$className;
+      $this->relink();
+   }
+   
+/**
+ * Updates this model's association links, by emptying the links list, and then link"*Association Type" again.
+ *
+ */
+	function relink () {
 		
-		foreach ($this->_hasMany as $model_name) 
-		{
-			// todo fix strip the model name
-			$model_name = Inflector::singularize($model_name);
-			$this->$model_name = new $model_name();
-		}
-
-		$this->relink();
+			if(!empty($this->id)){
+				$i = 1;
+			}
+			
+			foreach ($this->_hasOne as $table) {
+				if(is_array($table)){
+					$names[] = explode(',', $table);
+				} else {
+					$names[0] = $table;
+					$names[1] = $table;
+				}
+				$className = $names[1];
+				$tableName = Inflector::singularize($names[0]);
+				$this->$className->clearLinks();
+				$this->$className->linkOneToOne($tableName, $this->id[$i]);
+			}
 	}
 
-/**
- * Updates this model's many-to-one links, by emptying the links list, and then linkManyToOne again.
- *
- * @see linkManyToOne()
- */
-	function relink () 
-	{
-		foreach ($this->_hasMany as $model) 
-		{
-			$name = Inflector::singularize($model);
-			$this->$name->clearLinks();
-			$this->$name->linkManyToOne(get_class($this), $this->id);
-		}
-	}
 
 /**
  * Creates a many-to-one link for given $model_name. 
@@ -210,40 +367,65 @@ class Model extends Object
  * @param string $model_name Name of model to link to
  * @param unknown_type $value Defaults to NULL.
  */
-	function linkManyToOne ($model_name, $value=null) 
-	{
-		$table_name = Inflector::tableize($model_name);
-		$field_name = Inflector::singularize($table_name).'_id';
-		$this->_one_to_many[] = array($table_name, $field_name, $value);
-	}
+   function linkManyToOne ($model_name, $value=null) 
+   {
+      $table_name = Inflector::tableize($model_name);
+      $field_name = Inflector::singularize($table_name).'_id';
+      $this->_one_to_many[] = array($table_name, $field_name, $value);
+   }
+   
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $tableName
+ * @param unknown_type $value
+ */
+   function linkOneToOne ($tableName, $value=null) 
+   {
+
+      $tableName = Inflector::tableize($tableName);
+      $fieldKey = $this->table .'To'. Inflector::singularize($tableName) . 'ForeignKey';
+      
+      if(!empty($this->$fieldKey))
+      {
+         $field_name = $this->$fieldKey;
+      }
+      else
+      {
+         $field_name = Inflector::singularize($tableName).'_id';
+      }
+      $this->_oneToOne[] = array($tableName, $field_name, $value);
+   }
 
 /**
  * Removes all one-to-many links to other Models.
  *
  */
-	function clearLinks () 
-	{
-		$this->_one_to_many = array();
-	}
+   function clearLinks()
+   {
+      $this->_oneToMany = array();
+      $this->_oneToOne = array();
+   }
+
 
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $table_name Name of the custom table
  */
-	function useTable ($table_name) 
-	{
-		if (!in_array(strtolower($table_name), $this->db->tables())) 
-		{
-			trigger_error (sprintf(ERROR_NO_MODEL_TABLE, get_class($this), $table_name), E_USER_ERROR);
-			die();
-		}
-		else
-		{
-			$this->table = $table_name;
-			$this->loadInfo();
-		}
-	}
+   function useTable ($table_name) 
+   {
+      if (!in_array(strtolower($table_name), $this->db->tables())) 
+      {
+         trigger_error (sprintf(ERROR_NO_MODEL_TABLE, get_class($this), $table_name), E_USER_ERROR);
+         die();
+      }
+      else
+      {
+         $this->table = $table_name;
+         $this->loadInfo();
+      }
+   }
 
 
 /**
@@ -258,24 +440,33 @@ class Model extends Object
  * @param string $two Value string for the alternative indata method
  * @return unknown
  */
-	function set ($one, $two=null) 
-	{
-		$this->validationErrors = null;
-		$data = is_array($one)? $one: array($one=>$two);
+   function set ($one, $two=null) 
+   {
+      $this->validationErrors = null;
+      $data = is_array($one)? $one: array($one=>$two);
 
-		foreach ($data as $n => $v) 
-		{
+      foreach ($data as $n => $v) 
+      {
 /*
-			if (!$this->hasField($n)) {
-				DEBUG? 
-					trigger_error(sprintf(ERROR_NO_FIELD_IN_MODEL_DB, $n, $this->table), E_USER_ERROR):
-					trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
-			}
+         if (!$this->hasField($n)) {
+            DEBUG? 
+               trigger_error(sprintf(ERROR_NO_FIELD_IN_MODEL_DB, $n, $this->table), E_USER_ERROR):
+               trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
+         }
 */
-			$n == 'id'? $this->setId($v): $this->data[$n] = $v;
-		}
+         //$n == 'id'? $this->setId($v): $this->data[$n] = $v;
 
-		return $data;
+         foreach ($v as $x => $y){
+         			//$x == 'id'? $this->id = $y: $this->data[$n][$x] = $y;
+         			if($x == 'id')
+         			{
+         			$this->id = $y;
+         			}
+         		$this->data[$n][$x] = $y;	
+         			
+         }
+      }
+      return $data;
     }
 
 /**
@@ -283,23 +474,23 @@ class Model extends Object
  *
  * @param int $id Id
  */
-	function setId ($id) 
-	{
-		$this->id = $id;
-		$this->relink();
-	}
+   function setId ($id) 
+   {
+      $this->id = $id;
+      $this->relink();
+   }
 
 /**
  * Returns an array of table metadata (column names and types) from the database.
  *
  * @return array Array of table metadata
  */
-	function loadInfo () 
-	{
-		if (empty($this->_table_info))
-			$this->_table_info = new NeatArray($this->db->fields($this->table));
-		return $this->_table_info;
-	}
+   function loadInfo () 
+   {
+      if (empty($this->_table_info))
+         $this->_table_info = new NeatArray($this->db->fields($this->table));
+      return $this->_table_info;
+   }
 
 /**
  * Returns true if given field name exists in this Model's database table.
@@ -308,11 +499,11 @@ class Model extends Object
  * @param string $name Name of table to look in
  * @return boolean
  */
-	function hasField ($name) 
-	{
-		if (empty($this->_table_info)) $this->loadInfo();
-		return $this->_table_info->findIn('name', $name);
-	}
+   function hasField ($name) 
+   {
+      if (empty($this->_table_info)) $this->loadInfo();
+      return $this->_table_info->findIn('name', $name);
+   }
 
 /**
  * Returns a list of fields from the database
@@ -320,11 +511,13 @@ class Model extends Object
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
  * @return array Array of database fields
  */
-	function read ($fields=null) 
-	{
-		$this->validationErrors = null;
-		return $this->id? $this->find("id = '{$this->id}'", $fields): false;
-	}
+   function read ($fields=null) 
+   {
+      $this->validationErrors = null;
+      //return $this->id? $this->find("id = '{$this->id}'", $fields): false;
+      return $this->id? $this->find("$this->table.id = '{$this->id[0]}'", $fields): false;
+
+   }
 
 /**
  * Returns contents of a field in a query matching given conditions.
@@ -333,30 +526,30 @@ class Model extends Object
  * @param string $conditions SQL conditions (defaults to NULL)
  * @return field contents
  */
-	function field ($name, $conditions=null, $order=null) 
-	{
-		if ($conditions) 
-		{
-			$conditions = $this->parseConditions($conditions);
-			$data = $this->find($conditions, $name, $order);
-			return $data[$name];
-		}
-		elseif (isset($this->data[$name]))
-		{
-			return $this->data[$name];
-		}
-		else 
-		{
-			if ($this->id && $data = $this->read($name)) 
-			{
-				return isset($data[$name])? $data[$name]: false;
-			}
-			else 
-			{
-				return false;
-			}
-		}
-	}
+   function field ($name, $conditions=null, $order=null) 
+   {
+      if ($conditions) 
+      {
+         $conditions = $this->parseConditions($conditions);
+         $data = $this->find($conditions, $name, $order);
+         return $data[$name];
+      }
+      elseif (isset($this->data[$name]))
+      {
+         return $this->data[$name];
+      }
+      else 
+      {
+         if ($this->id && $data = $this->read($name)) 
+         {
+            return isset($data[$name])? $data[$name]: false;
+         }
+         else 
+         {
+            return false;
+         }
+      }
+   }
 
 /**
  * Saves a single field to the database.
@@ -365,10 +558,10 @@ class Model extends Object
  * @param mixed $value Value of the field
  * @return boolean True on success save
  */
-	function saveField($name, $value) 
-	{
-		return $this->save(array($name=>$value), false);
-	}
+   function saveField($name, $value) 
+   {
+      return $this->save(array($name=>$value), false);
+   }
 
 /**
  * Saves model data to the database.
@@ -377,79 +570,94 @@ class Model extends Object
  * @param boolean $validate
  * @return boolean success
  */
-	function save ($data=null, $validate=true) 
-	{
-		if ($data) $this->set($data);
+   function save ($data=null, $validate=true) 
+   {
 
-		if ($validate && !$this->validates())
-			return false;
+      if ($data) $this->set($data);
 
-		$fields = $values = array();
-		foreach ($this->data as $n=>$v) 
-		{
-			if ($this->hasField($n)) 
-			{
-				$fields[] = $n;
-				$values[] = $this->db->prepare($v);
-			}
-		}
+      if ($validate && !$this->validates())
+         return false;
 
-		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
-		{
-			$fields[] = 'created';
-			$values[] = date("'Y-m-d H:i:s'");
-		}
-		if ($this->hasField('modified') && !in_array('modified', $fields)) 
-		{
-			$fields[] = 'modified';
-			$values[] = 'NOW()';
-		}
+      $fields = $values = array();
+   
+      foreach ($this->data as $n=>$v)
+      {
+         foreach ($v as $x => $y)
+         {
+      
+         if ($this->hasField($x)) 
+         {
+            $fields[] = $x;
+            $values[] = $this->db->prepare($y);
+         }
+      }
+      }
+      
+      if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
+      {
+         $fields[] = 'created';
+         $values[] = date("'Y-m-d H:i:s'");
+      }
+      if ($this->hasField('modified') && !in_array('modified', $fields)) 
+      {
+         $fields[] = 'modified';
+         $values[] = 'NOW()';
+      }
+      
+      $out = $this->db->one("SELECT COUNT(*) AS count FROM {$this->table} WHERE id = '{$this->id}'");
 
-		if(count($fields))
-		{
-			if($this->id){
-				$sql = array();
-				foreach (array_combine($fields, $values) as $field=>$value) 
-				{
-					$sql[] = $field.'='.$value;
-				}
-				
-				$sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
-				
-				if ($this->db->query($sql) && $this->db->lastAffected())
-				{
-					$this->data = false;
-					return true;
-				}
-				else 
-				{
-					return $this->db->hasAny($this->table, "id = '{$this->id}'");
-				}
-			}
-			else 
-			{
-				$fields = join(',', $fields);
-				$values = join(',', $values);
+      if(empty($out[0]['count']))
+      {
+         $this->id = false;
+      }
+         
 
-				$sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
+      if(count($fields))
+      {
+         if(!empty($this->id)){
 
-				if($this->db->query($sql)) 
-				{
-					$this->id = $this->db->lastInsertId($this->table, 'id');
-					return true;
-				}
-				else 
-				{
-					return false;
-				}
-			}
-		}
-		else 
-		{
-			return false;
-		}
+            $sql = array();
+            foreach (array_combine($fields, $values) as $field=>$value) 
+            {
+               $sql[] = $field.'='.$value;
+            }
+            
+            $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
+            
+            if ($this->db->query($sql) && $this->db->lastAffected())
+            {
+               $this->data = false;
+               return true;
+            }
+            else 
+            {
+               return $this->db->hasAny($this->table, "id = '{$this->id}'");
+            }
+         }
+         else 
+         {
+            $fields = join(',', $fields);
+            $values = join(',', $values);
 
-	}
+            $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
+
+            if($this->db->query($sql)) 
+            {
+               $this->id = $this->db->lastInsertId($this->table, 'id');
+               return true;
+            }
+            else 
+            {
+               return false;
+            }
+         }
+      }
+      else 
+      {
+         return false;
+      }
+
+   }
 
 /**
  * Synonym for del().
@@ -458,10 +666,10 @@ class Model extends Object
  * @see function del
  * @return boolean True on success
  */
-	function remove ($id=null) 
-	{
-		return $this->del($id);
-	}
+   function remove ($id=null) 
+   {
+      return $this->del($id);
+   }
 
 /**
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
@@ -469,27 +677,27 @@ class Model extends Object
  * @param mixed $id Id of database record to delete
  * @return boolean True on success
  */
-	function del ($id=null) 
-	{
-		if ($id) $this->id = $id;
-		if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
-		{
-			$this->id = false;
-			return true;
-		}
-		else
-			return false;
-	}
+   function del ($id=null) 
+   {
+      if ($id) $this->id = $id;
+      if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
+      {
+         $this->id = false;
+         return true;
+      }
+      else
+         return false;
+   }
 
 /**
  * Returns true if a record with set id exists.
  *
  * @return boolean True if such a record exists
  */
-	function exists () 
-	{
-		return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
-	}
+   function exists () 
+   {
+      return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
+   }
 
 
 /**
@@ -497,10 +705,10 @@ class Model extends Object
  *
  * @return boolean True if such a record exists
  */
-	function hasAny ($conditions = null) 
-	{
-		return $this->findCount($conditions);
-	}
+   function hasAny ($conditions = null) 
+   {
+      return $this->findCount($conditions);
+   }
 
 
 /**
@@ -511,36 +719,36 @@ class Model extends Object
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @return array Array of records
  */
-	function find ($conditions = null, $fields = null, $order = null) 
-	{
-		$data = $this->findAll($conditions, $fields, $order, 1);
-		return empty($data[0])? false: $data[0];
-	}
+   function find ($conditions = null, $fields = null, $order = null) 
+   {
+      $data = $this->findAll($conditions, $fields, $order, 1);
+      return empty($data[0])? false: $data[0];
+   }
 
 /** parses conditions array (or just passes it if it's a string)
  * @return string
  *
  */
-	function parseConditions ($conditions) 
-	{
-		if (is_string($conditions)) 
-		{
-			return $conditions;
-		}
-		elseif (is_array($conditions)) 
-		{
-			$out = array();
-			foreach ($conditions as $key=>$value) 
-			{
-				$out[] = "{$key}=".($value===null? 'null': $this->db->prepare($value));
-			}
-			return join(' and ', $out);
-		}
-		else 
-		{
-			return null;
-		}
-	}
+   function parseConditions ($conditions) 
+   {
+      if (is_string($conditions)) 
+      {
+         return $conditions;
+      }
+      elseif (is_array($conditions)) 
+      {
+         $out = array();
+         foreach ($conditions as $key=>$value) 
+         {
+            $out[] = "{$key}=".($value===null? 'null': $this->db->prepare($value));
+         }
+         return join(' and ', $out);
+      }
+      else 
+      {
+         return null;
+      }
+   }
 
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
@@ -552,48 +760,56 @@ class Model extends Object
  * @param int $page Page number
  * @return array Array of records
  */
-	function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
-	{
-		$conditions = $this->parseConditions($conditions);
+   function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
+   {
+      $conditions = $this->parseConditions($conditions);
 
-		if (is_array($fields))
-			$f = $fields;
-		elseif ($fields)
-			$f = array($fields);
-		else
-			$f = array('*');
+      if (is_array($fields))
+         $f = $fields;
+      elseif ($fields)
+         $f = array($fields);
+      else
+         $f = array('*');
 
-		$joins = $whers = array();
+      $joins = $whers = array();
+      
+      foreach ($this->_oneToOne as $rule)
+      {
 
-		foreach ($this->_oneToMany as $rule) 
-		{
-			list($table, $field, $value) = $rule;
-			$joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
-			$whers[] = "{$this->table}.{$field} = '{$value}'";
-		}
+         list($table, $field, $value) = $rule;
+         $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
+         if(empty($this->id))
+         {
+            $whers[] = "{$table}.id != 'NULL'";
+         }
+         else{
+            $whers[] = "{$this->table}.{$field} = '{$value}'";
+         }
+      }
 
-		$joins = count($joins)? join(' ', $joins): null;
-		$whers = count($whers)? '('.join(' AND ', $whers).')': null;
-		$conditions .= ($conditions && $whers? ' AND ': null).$whers;
 
-		$offset = $page > 1? $page*$limit: 0;
+      $joins = count($joins)? join(' ', $joins): null;
+      $whers = count($whers)? '('.join(' AND ', $whers).')': null;
+      $conditions .= ($conditions && $whers? ' AND ': null).$whers;
 
-		$limit_str = $limit
-			? $this->db->selectLimit($limit, $offset)
-			: '';
-		
-		$sql = 
-			"SELECT "
-			.join(', ', $f)
-			." FROM {$this->table} {$joins}"
-			.($conditions? " WHERE {$conditions}":null)
-			.($order? " ORDER BY {$order}": null)
-			.$limit_str;
+      $offset = $page > 1? $page*$limit: 0;
 
-		$data = $this->db->all($sql);			
+      $limit_str = $limit
+         ? $this->db->selectLimit($limit, $offset)
+         : '';
+      
+      $sql = 
+         "SELECT "
+         .join(', ', $f)
+         ." FROM {$this->table} {$joins}"
+         .($conditions? " WHERE {$conditions}":null)
+         .($order? " ORDER BY {$order}": null)
+         .$limit_str;
 
-		return $data;
-	}
+      $data = $this->db->all($sql);         
+
+      return $data;
+   }
 
 /**
  * Returns an array of all rows for given SQL statement.
@@ -601,10 +817,10 @@ class Model extends Object
  * @param string $sql SQL query
  * @return array
  */
-	function findBySql ($sql) 
-	{
-		return $this->db->all($sql);
-	}
+   function findBySql ($sql) 
+   {
+      return $this->db->all($sql);
+   }
 
 /**
  * Returns number of rows matching given SQL condition. 
@@ -612,11 +828,11 @@ class Model extends Object
  * @param string $conditions SQL conditions (WHERE clause conditions)
  * @return int Number of matching rows
  */
-	function findCount ($conditions)
-	{
-		list($data) = $this->findAll($conditions, 'COUNT(*) AS count');
-		return isset($data['count'])? $data['count']: false;
-	}
+   function findCount ($conditions)
+   {
+      list($data) = $this->findAll($conditions, 'COUNT(*) AS count');
+      return isset($data['count'])? $data['count']: false;
+   }
 
 /**
  * Enter description here...
@@ -625,10 +841,10 @@ class Model extends Object
  * @param unknown_type $fields
  * @return unknown
  */
-	function findAllThreaded ($conditions=null, $fields=null, $sort=null) 
-	{
-		return $this->_doThread($this->findAll($conditions, $fields, $sort), null);
-	}
+   function findAllThreaded ($conditions=null, $fields=null, $sort=null) 
+   {
+      return $this->_doThread($this->findAll($conditions, $fields, $sort), null);
+   }
 
 /**
  * Enter description here...
@@ -638,22 +854,22 @@ class Model extends Object
  * @return array
  * @access private
  */
-	function _doThread ($data, $root) 
-	{
-		$out = array();
-		
-		for ($ii=0; $ii<sizeof($data); $ii++) 
-		{
-			if ($data[$ii]['parent_id'] == $root) 
-			{
-				$tmp = $data[$ii];
-				$tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
-				$out[] = $tmp;
-			}
-		}
-		
-		return $out;
-	}
+   function _doThread ($data, $root) 
+   {
+      $out = array();
+      
+      for ($ii=0; $ii<sizeof($data); $ii++) 
+      {
+         if ($data[$ii]['parent_id'] == $root) 
+         {
+            $tmp = $data[$ii];
+            $tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
+            $out[] = $tmp;
+         }
+      }
+      
+      return $out;
+   }
 
 /**
  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
@@ -664,13 +880,13 @@ class Model extends Object
  * @param unknown_type $value
  * @return array Array with keys "prev" and "next" that holds the id's
  */
-	function findNeighbours ($conditions, $field, $value) 
-	{
-		list($prev) = $this->findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
-		list($next) = $this->findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
-		
-		return array('prev'=>$prev['id'], 'next'=>$next['id']);
-	}
+   function findNeighbours ($conditions, $field, $value) 
+   {
+      list($prev) = $this->findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
+      list($next) = $this->findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
+      
+      return array('prev'=>$prev['id'], 'next'=>$next['id']);
+   }
 
 /**
  * Returns a resultset for given SQL statement.
@@ -678,10 +894,10 @@ class Model extends Object
  * @param string $sql SQL statement
  * @return array Resultset
  */
-	function query ($sql) 
-	{
-		return $this->db->query($sql);
-	}
+   function query ($sql) 
+   {
+      return $this->db->query($sql);
+   }
 
 /**
  * Returns true if all fields pass validation.
@@ -689,12 +905,12 @@ class Model extends Object
  * @param array $data POST data
  * @return boolean True if there are no errors
  */
-	function validates ($data=null)
-	{
-		$errors = count($this->invalidFields($data? $data: $this->data));
-		
-		return $errors == 0;
-	}
+   function validates ($data=null)
+   {
+      $errors = count($this->invalidFields($data? $data: $this->data));
+      
+      return $errors == 0;
+   }
 
 /**
  * Returns an array of invalid fields.
@@ -702,10 +918,10 @@ class Model extends Object
  * @param array $data Posted data
  * @return array Array of invalid fields
  */
-	function invalidFields ($data=null) 
-	{
-		return $this->_invalidFields($data);
-	}
+   function invalidFields ($data=null) 
+   {
+      return $this->_invalidFields($data);
+   }
 
 /**
  * Returns an array of invalid fields.
@@ -714,26 +930,27 @@ class Model extends Object
  * @return array Array of invalid fields
  * @access private
  */
-	function _invalidFields ($data=null) 
-	{
-		if (!isset($this->validate))
-			return true;
+   function _invalidFields ($data=null) 
+   {
+      if (!isset($this->validate))
+         return true;
 
-		if (is_array($this->validationErrors))
-			return $this->validationErrors;
+      if (is_array($this->validationErrors))
+         return $this->validationErrors;
 
-		$data = ($data? $data: (isset($this->data)? $this->data: array()));
-		$errors = array();
-
-		foreach ($this->validate as $field_name=>$validator) 
-		{
-			if (!isset($data[$field_name]) || !preg_match($validator, $data[$field_name]))
-					$errors[$field_name] = 1;
-		}
-
-		$this->validationErrors = $errors;
-		return $errors;
-	}
+      $data = ($data? $data: (isset($this->data)? $this->data: array()));
+      $errors = array();
+      foreach ($this->data as $table => $field)
+      {
+         foreach ($this->validate as $field_name=>$validator) 
+         {
+            if (!isset($data[$table][$field_name]) || !preg_match($validator, $data[$table][$field_name]))
+            $errors[$field_name] = 1;
+         }
+         $this->validationErrors = $errors;
+         return $errors;
+      }
+   }
 
 }
 

@@ -31,7 +31,7 @@
 
 if(is_file('../../vendors/javascript/'.$_GET['file']))
 {
-	readfile('../../vendors/javascript/'.$_GET['file']);
+   readfile('../../vendors/javascript/'.$_GET['file']);
 }
 
 ?>

@@ -43,46 +43,46 @@ require_once(VENDORS.'adodb/adodb.inc.php');
   */
 class DBO_AdoDB extends DBO 
 {
-	
-	/**
-	 * ADOConnection object with which we connect.
-	 *
-	 * @var ADOConnection The connection object.
-	 * @access private
-	 */
-	var $_adodb = null;
+   
+/**
+ * ADOConnection object with which we connect.
+ *
+ * @var ADOConnection The connection object.
+ * @access private
+ */
+   var $_adodb = null;
 
 /**
   * Connects to the database using options in the given configuration array.
   *
   * @param array $config Configuration array for connecting
   */
-	function connect ($config) 
-	{
-		if ($this->config = $config)
-		{
-			if (isset($config['driver']))
-			{
-				$this->_adodb = NewADOConnection($config['driver']);
+   function connect ($config) 
+   {
+      if ($this->config = $config)
+      {
+         if (isset($config['driver']))
+         {
+            $this->_adodb = NewADOConnection($config['driver']);
 
-				$adodb =& $this->_adodb;
-				$this->connected = $adodb->Connect($config['host'], $config['login'], $config['password'], $config['database']);
-			}
-		}
+            $adodb =& $this->_adodb;
+            $this->connected = $adodb->Connect($config['host'], $config['login'], $config['password'], $config['database']);
+         }
+      }
 
-		if(!$this->connected)
-			die('Could not connect to DB.');
-	}
+      if(!$this->connected)
+         die('Could not connect to DB.');
+   }
 
 /**
   * Disconnects from database.
   *
   * @return boolean True if the database could be disconnected, else false
   */
-	function disconnect () 
-	{
-		return $this->_adodb->close();
-	}
+   function disconnect () 
+   {
+      return $this->_adodb->close();
+   }
 
 /**
   * Executes given SQL statement.
@@ -90,36 +90,36 @@ class DBO_AdoDB extends DBO
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-	function execute ($sql) 
-	{
-		return $this->_adodb->execute($sql);
-	}
+   function execute ($sql) 
+   {
+      return $this->_adodb->execute($sql);
+   }
 
 /**
   * Returns a row from given resultset as an array .
   *
   * @return array The fetched row as an array
   */
-	function fetchRow () 
-	{
-		return $this->_result->FetchRow();
-	}
+   function fetchRow () 
+   {
+      return $this->_result->FetchRow();
+   }
 
 /**
   * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
   *
   * @return array Array of tablenames in the database
   */
-	function tablesList () 
-	{
-		$tables = $this->_adodb->MetaTables('TABLES');
+   function tablesList () 
+   {
+      $tables = $this->_adodb->MetaTables('TABLES');
 
-		if (!sizeof($tables)>0) {
-			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
-			exit;
-		}
-		return $tables;
-	}
+      if (!sizeof($tables)>0) {
+         trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
+         exit;
+      }
+      return $tables;
+   }
 
 /**
   * Returns an array of the fields in given table name.
@@ -127,16 +127,16 @@ class DBO_AdoDB extends DBO
   * @param string $table_name Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-	function fields ($table_name)
-	{
-		$data = $this->_adodb->MetaColumns($table_name);
-		$fields = false;
+   function fields ($table_name)
+   {
+      $data = $this->_adodb->MetaColumns($table_name);
+      $fields = false;
 
-		foreach ($data as $item)
-			$fields[] = array('name'=>$item->name, 'type'=>$item->type);
+      foreach ($data as $item)
+         $fields[] = array('name'=>$item->name, 'type'=>$item->type);
 
-		return $fields;
-	}
+      return $fields;
+   }
 
 /**
   * Returns a quoted and escaped string of $data for use in an SQL statement.
@@ -146,30 +146,30 @@ class DBO_AdoDB extends DBO
   *
   * :TODO: To be implemented.
   */
-	function prepareValue ($data)		
-	{
-		return $this->_adodb->Quote($data);
-	}
+   function prepareValue ($data)      
+   {
+      return $this->_adodb->Quote($data);
+   }
 
 /**
   * Returns a formatted error message from previous database operation.
   *
   * @return string Error message
   */
-	function lastError () 
-	{
-		return $this->_adodb->ErrorMsg();
-	}
+   function lastError () 
+   {
+      return $this->_adodb->ErrorMsg();
+   }
 
 /**
   * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
   *
   * @return int Number of affected rows
   */
-	function lastAffected ()
-	{
-		return $this->_adodb->Affected_Rows(); 
-	}
+   function lastAffected ()
+   {
+      return $this->_adodb->Affected_Rows(); 
+   }
 
 /**
   * Returns number of rows in previous resultset. If no previous resultset exists, 
@@ -177,10 +177,10 @@ class DBO_AdoDB extends DBO
   *
   * @return int Number of rows in resultset
   */
-	function lastNumRows () 
-	{
-		 return $this->_result? $this->_result->RecordCount(): false;
-	}
+   function lastNumRows () 
+   {
+       return $this->_result? $this->_result->RecordCount(): false;
+   }
 
 /**
   * Returns the ID generated from the previous INSERT operation.
@@ -189,21 +189,21 @@ class DBO_AdoDB extends DBO
   *
   * :TODO: To be implemented.
   */
-	function lastInsertId ()		{ die('Please implement DBO::lastInsertId() first.'); }
+   function lastInsertId ()      { die('Please implement DBO::lastInsertId() first.'); }
 
-	/**
-	 * Returns a limit statement in the correct format for the particular database.
-	 *
-	 * @param int $limit Limit of results returned
-	 * @param int $offset Offset from which to start results
-	 * @return string SQL limit/offset statement
-	 */
-	function selectLimit ($limit, $offset=null)
-	{
-		return " LIMIT {$limit}".($offset? "{$offset}": null);
-		// please change to whatever select your database accepts
-		// adodb doesn't allow us to get the correct limit string out of it
-	}
+/**
+ * Returns a limit statement in the correct format for the particular database.
+ *
+ * @param int $limit Limit of results returned
+ * @param int $offset Offset from which to start results
+ * @return string SQL limit/offset statement
+ */
+   function selectLimit ($limit, $offset=null)
+   {
+      return " LIMIT {$limit}".($offset? "{$offset}": null);
+      // please change to whatever select your database accepts
+      // adodb doesn't allow us to get the correct limit string out of it
+   }
 
 }
 

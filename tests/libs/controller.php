@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////////////
-// + $Id:$
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
@@ -23,9 +23,9 @@
  * @package cake
  * @subpackage cake.tests.libs
  * @since CakePHP v 0.2.9
- * @version $Revision:$
+ * @version $Revision$
  * @modifiedby $LastChangedBy$
- * @lastmodified $Date:$
+ * @lastmodified $Date$
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
  */
@@ -50,7 +50,7 @@ class ControllerTest extends UnitTestCase
  *
  * @var unknown_type
  */
-	var $controller;
+   var $controller;
 
 
 /**
@@ -58,10 +58,10 @@ class ControllerTest extends UnitTestCase
  *
  * @return ControllerTest
  */
-	function ControllerTest()
-	{
-		$this->UnitTestCase('Controller test');
-	}
+   function ControllerTest()
+   {
+      $this->UnitTestCase('Controller test');
+   }
 
 
 /**
@@ -70,31 +70,31 @@ class ControllerTest extends UnitTestCase
  * here
  *
  */
-	function setUp()
-	{
-		$this->controller = new Controller();
-		$this->controller->base = '/ease';
+   function setUp()
+   {
+      $this->controller = new Controller();
+      $this->controller->base = '/ease';
 
-		$data = array('foo'=>'foo_value', 'foobar'=>'foobar_value', 'tofu'=>'1');
-		$params = array('controller'=>'Test', 'action'=>'test_action', 'data'=>$data);
-		$here = '/cake/test';
-		$this->controller->params = $params;
-		$this->controller->data = $data;
-		$this->controller->here = $here;
+      $data = array('foo'=>'foo_value', 'foobar'=>'foobar_value', 'tofu'=>'1');
+      $params = array('controller'=>'Test', 'action'=>'test_action', 'data'=>$data);
+      $here = '/cake/test';
+      $this->controller->params = $params;
+      $this->controller->data = $data;
+      $this->controller->here = $here;
 
-		$this->controller->action = $this->controller->params['action'];
-		$this->controller->passed_args = null;
-	}
+      $this->controller->action = $this->controller->params['action'];
+      $this->controller->passed_args = null;
+   }
 
 /**
  * called after the test functions are executed
  * this function is defined in PHPUnit_TestCase and overwritten
  * here
  */
-	function tearDown()
-	{
-		unset($this->controller);
-	}
+   function tearDown()
+   {
+      unset($this->controller);
+   }
 }
 
 ?>

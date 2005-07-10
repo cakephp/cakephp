@@ -34,14 +34,14 @@ background-color:#F8F8F8;
 padding:.5em 1em .5em 2em;
 }
 TR.info .ok {
-	color:Green;
+   color:Green;
 }
 TR.info .not {
-	color:Red;
+   color:Red;
 }
 TR.info EM {
-	color:Gray;
-	font-style:normal;
+   color:Gray;
+   font-style:normal;
 }
 TR.unkn TD {
 background-color:#FF0;

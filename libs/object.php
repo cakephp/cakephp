@@ -41,71 +41,71 @@ uses('log');
  */
 class Object
 {
-	/**
-	 * Database connection, if available.
-	 *
-	 * @var DBO
-	 */
-	var $db = null;
+/**
+ * Database connection, if available.
+ *
+ * @var DBO
+ */
+   var $db = null;
 
-	/**
-	 * A hack to support __construct() on PHP 4
-	 * Hint: descendant classes have no PHP4 class_name() constructors,
-	 * so this constructor gets called first and calls the top-layer __construct()
-	 * which (if present) should call parent::__construct()
-	 *
-	 * @return Object
-	 */
-	function Object()
-	{
-		$this->db =& DboFactory::getInstance();
-		$args = func_get_args();
-		register_shutdown_function(array(&$this, '__destruct'));
-		call_user_func_array(array(&$this, '__construct'), $args);
-	}
+/**
+ * A hack to support __construct() on PHP 4
+ * Hint: descendant classes have no PHP4 class_name() constructors,
+ * so this constructor gets called first and calls the top-layer __construct()
+ * which (if present) should call parent::__construct()
+ *
+ * @return Object
+ */
+   function Object()
+   {
+      $this->db =& DboFactory::getInstance();
+      $args = func_get_args();
+      register_shutdown_function(array(&$this, '__destruct'));
+      call_user_func_array(array(&$this, '__construct'), $args);
+   }
 
-	/**
-	 * Class constructor, overridden in descendant classes.
-	 */
-	function __construct() {}
+/**
+ * Class constructor, overridden in descendant classes.
+ */
+   function __construct() {}
 
-	/**
-	 * Class destructor, overridden in descendant classes.
-	 */
-	function __destruct() {}
+/**
+ * Class destructor, overridden in descendant classes.
+ */
+   function __destruct() {}
 
-	/**
-	 * Object-to-string conversion.
-	 * Each class can override it as necessary.
-	 *
-	 * @return string This name of this class
-	 */
-	function toString()
-	{
-		return get_class($this);
-	}
+/**
+ * Object-to-string conversion.
+ * Each class can override it as necessary.
+ *
+ * @return string This name of this class
+ */
+   function toString()
+   {
+      return get_class($this);
+   }
 
-	/**
-	 * API for logging events.
-	 *
-	 * @param string $msg Log message
-	 * @param int $type Error type constant. Defined in /libs/log.php.
-	 */
-	function log ($msg, $type=LOG_ERROR)
-	{
-		if (!$this->_log)
-		{
-			$this->_log = new Log ();
-		}
+/**
+ * API for logging events.
+ *
+ * @param string $msg Log message
+ * @param int $type Error type constant. Defined in /libs/log.php.
+ */
+   function log ($msg, $type=LOG_ERROR)
+   {
+      if (!$this->_log)
+      {
+         $this->_log = new Log ();
+      }
 
-		switch ($type)
-		{
-			case LOG_DEBUG:
-				return $this->_log->write('debug', $msg);
-			default:
-				return $this->_log->write('error', $msg);
-		}
-	}
+      switch ($type)
+      {
+         case LOG_DEBUG:
+            return $this->_log->write('debug', $msg);
+         default:
+            return $this->_log->write('error', $msg);
+      }
+   }
 }
 
 ?>

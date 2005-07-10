@@ -23,7 +23,7 @@
  */
 if(!defined('ROOT'))
 {
-	define ('ROOT',   '../');
+   define ('ROOT',   '../');
 }
 
 /**

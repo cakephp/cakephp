@@ -21,21 +21,21 @@
  */
 class DATABASE_CONFIG
 {
-	var $default = array(
-	'driver'   => 'mysql',
-	'host'     => 'localhost',
-	'login'    => 'www',
-	'password' => '',
-	'database' => 'project_name'
-	);
+   var $default = array(
+   'driver'   => 'mysql',
+   'host'     => 'localhost',
+   'login'    => 'www',
+   'password' => '',
+   'database' => 'project_name'
+   );
 
-	var $test = array(
-	'driver'   => 'mysql',
-	'host'     => 'localhost',
-	'login'    => 'www-test',
-	'password' => '',
-	'database' => 'project_name-test'
-	);
+   var $test = array(
+   'driver'   => 'mysql',
+   'host'     => 'localhost',
+   'login'    => 'www-test',
+   'password' => '',
+   'database' => 'project_name-test'
+   );
 }
 
 ?>

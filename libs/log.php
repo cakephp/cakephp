@@ -47,14 +47,14 @@ class Log
  * @param unknown_type $msg
  * @return unknown
  */
-	function write($type, $msg)
-	{
-		$filename = LOGS.$type.'.log';
-		$output = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
+   function write($type, $msg)
+   {
+      $filename = LOGS.$type.'.log';
+      $output = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
 
-		$log = new File($filename);
-		return $log->append($output);
-	}
+      $log = new File($filename);
+      return $log->append($output);
+   }
 }
 
 /**
@@ -68,9 +68,9 @@ define ('LOG_ERROR', 2);
   */
 function LogError ($message)
 {
-	$bad = array("\n", "\r", "\t");
-	$good = ' ';
-	Log::write('error', str_replace($bad, $good, $message));
+   $bad = array("\n", "\r", "\t");
+   $good = ' ';
+   Log::write('error', str_replace($bad, $good, $message));
 }
 
 ?>

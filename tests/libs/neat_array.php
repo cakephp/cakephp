@@ -49,66 +49,66 @@ class NeatArrayTest extends UnitTestCase
  *
  * @var unknown_type
  */
-	var $neatArray;
+   var $neatArray;
 
 /**
  * Enter description here...
  *
  * @return NeatArrayTest
  */
-	function NeatArrayTest()
-	{
-		$this->UnitTestCase('NeatArray test');
-	}
+   function NeatArrayTest()
+   {
+      $this->UnitTestCase('NeatArray test');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function setUp()
-	{
-		$this->neatArray = new NeatArray();
-	}
+   function setUp()
+   {
+      $this->neatArray = new NeatArray();
+   }
 
 /**
  * Enter description here...
  *
  */
-	function tearDown()
-	{
-		unset($this->neatArray);
-	}
+   function tearDown()
+   {
+      unset($this->neatArray);
+   }
 
 
 /**
  * Enter description here...
  *
  */
-	function testInArray()
-	{
-		$a = array('foo'=>' bar ', 'i-am'=>'a');
-		$b = array('foo'=>'bar ',  'i-am'=>'b');
-		$c = array('foo'=>' bar',  'i-am'=>'c');
-		$d = array('foo'=>'bar',   'i-am'=>'d');
-		
-		$n = new NeatArray(array($a, $b, $c, $d));
+   function testInArray()
+   {
+      $a = array('foo'=>' bar ', 'i-am'=>'a');
+      $b = array('foo'=>'bar ',  'i-am'=>'b');
+      $c = array('foo'=>' bar',  'i-am'=>'c');
+      $d = array('foo'=>'bar',   'i-am'=>'d');
+      
+      $n = new NeatArray(array($a, $b, $c, $d));
 
-		$result = $n->findIn('foo', ' bar ');
-		$expected = array(0=>$a);
-		$this->assertEqual($result, $expected);
+      $result = $n->findIn('foo', ' bar ');
+      $expected = array(0=>$a);
+      $this->assertEqual($result, $expected);
 
-		$result = $n->findIn('foo', 'bar ');
-		$expected = array(1=>$b);
-		$this->assertEqual($result, $expected);
+      $result = $n->findIn('foo', 'bar ');
+      $expected = array(1=>$b);
+      $this->assertEqual($result, $expected);
 
-		$result = $n->findIn('foo', ' bar');
-		$expected = array(2=>$c);
-		$this->assertEqual($result, $expected);
+      $result = $n->findIn('foo', ' bar');
+      $expected = array(2=>$c);
+      $this->assertEqual($result, $expected);
 
-		$result = $n->findIn('foo', 'bar');
-		$expected = array(3=>$d);
-		$this->assertEqual($result, $expected);
-	}
+      $result = $n->findIn('foo', 'bar');
+      $expected = array(3=>$d);
+      $this->assertEqual($result, $expected);
+   }
 
 }
 

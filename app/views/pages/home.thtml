@@ -11,12 +11,12 @@
 <h2>Features</h2>
 
 <ul>
-	<li>Compatibile with PHP4 and PHP5.</li>
-	<li>Supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for databases.</li>
-	<li>Pretty URL's that work with and without mod_rewrite.</li>
-	<li>Fast, flexible templating (PHP syntax with helper methods).</li>
-	<li>Suported database-types: MySQL, PostgreSQL and SQLIte</li>
-	<li>Suported webservers: Apache (others will most likely also work)</li>
+   <li>Compatibile with PHP4 and PHP5.</li>
+   <li>Supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for databases.</li>
+   <li>Pretty URL's that work with and without mod_rewrite.</li>
+   <li>Fast, flexible templating (PHP syntax with helper methods).</li>
+   <li>Suported database-types: MySQL, PostgreSQL and SQLIte</li>
+   <li>Suported webservers: Apache (others will most likely also work)</li>
 </ul>
 
 <p>Cake is still in its early infancy, but we are proceeding in good direction &ndash; table joins will most probably get added in 0.9.3 release, and better support for user-defined settings is also underway.</p>
@@ -26,10 +26,10 @@
 <p>Cake PHP needs you! We have already quiet active user base, but we are allways open to new bug reports or feature ideas!</p>
 
 <ul>
-	<li><?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.</li>
-	<li><?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.</li>
-	<li><?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.</li>
-	<li><?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.</li>
+   <li><?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.</li>
+   <li><?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.</li>
+   <li><?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.</li>
+   <li><?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.</li>
 </ul>
 
 <p>Soon there will be oficial <?=$html->linkOut('Cake PHP website','http://www.cakephp.org/')?>, so stay tuned.</p>

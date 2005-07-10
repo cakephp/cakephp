@@ -49,111 +49,111 @@ class InflectorTest extends UnitTestCase
  *
  * @var unknown_type
  */
-	var $inflector;
+   var $inflector;
 
 /**
  * Enter description here...
  *
  * @return InflectorTest
  */
-	function InflectorTest()
-	{
-		$this->UnitTestCase('Inflector test');
-	}
+   function InflectorTest()
+   {
+      $this->UnitTestCase('Inflector test');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function setUp()
-	{
-		$this->inflector = new Inflector();
-	}
+   function setUp()
+   {
+      $this->inflector = new Inflector();
+   }
 
 /**
  * Enter description here...
  *
  */
-	function tearDown()
-	{
-		unset($this->inflector);
-	}
+   function tearDown()
+   {
+      unset($this->inflector);
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testPluralizeSingularize()
-	{
-		$singulars = array(
-		'search', 'switch', 'fix', 'box', 'process', 'address', 'query', 'ability',
-		'agency', 'half', 'safe', 'wife', 'basis', 'diagnosis', 'datum', 'medium',
-		'person', 'salesperson', 'man', 'woman', 'spokesman', 'child', 'page', 'robot');
-		$plurals = array(
-		'searches', 'switches', 'fixes', 'boxes', 'processes', 'addresses', 'queries', 'abilities',
-		'agencies', 'halves', 'saves', 'wives', 'bases', 'diagnoses', 'data', 'media',
-		'people', 'salespeople', 'men', 'women', 'spokesmen', 'children', 'pages', 'robots');
+   function testPluralizeSingularize()
+   {
+      $singulars = array(
+      'search', 'switch', 'fix', 'box', 'process', 'address', 'query', 'ability',
+      'agency', 'half', 'safe', 'wife', 'basis', 'diagnosis', 'datum', 'medium',
+      'person', 'salesperson', 'man', 'woman', 'spokesman', 'child', 'page', 'robot');
+      $plurals = array(
+      'searches', 'switches', 'fixes', 'boxes', 'processes', 'addresses', 'queries', 'abilities',
+      'agencies', 'halves', 'saves', 'wives', 'bases', 'diagnoses', 'data', 'media',
+      'people', 'salespeople', 'men', 'women', 'spokesmen', 'children', 'pages', 'robots');
 
-		foreach (array_combine($singulars, $plurals) as $singular => $plural)
-		{
-			$this->assertEqual($this->inflector->pluralize($singular), $plural);
-			$this->assertEqual($this->inflector->singularize($plural), $singular);
-		}
-	}
-
-/**
- * Enter description here...
- *
- */
-	function testCamelize()
-	{
-		$this->assertEqual($this->inflector->camelize('foo_bar_baz'), 'FooBarBaz');
-	}
+      foreach (array_combine($singulars, $plurals) as $singular => $plural)
+      {
+         $this->assertEqual($this->inflector->pluralize($singular), $plural);
+         $this->assertEqual($this->inflector->singularize($plural), $singular);
+      }
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testUnderscore()
-	{
-		$this->assertEqual($this->inflector->underscore('FooBarBaz'), 'foo_bar_baz');
-	}
+   function testCamelize()
+   {
+      $this->assertEqual($this->inflector->camelize('foo_bar_baz'), 'FooBarBaz');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testHumanize()
-	{
-		$this->assertEqual($this->inflector->humanize('foo_bar_baz'), 'Foo Bar Baz');
-	}
+   function testUnderscore()
+   {
+      $this->assertEqual($this->inflector->underscore('FooBarBaz'), 'foo_bar_baz');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testTableize()
-	{
-		$this->assertEqual($this->inflector->tableize('Bar'), 'bars');
-	}
+   function testHumanize()
+   {
+      $this->assertEqual($this->inflector->humanize('foo_bar_baz'), 'Foo Bar Baz');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testClassify()
-	{
-		$this->assertEqual($this->inflector->classify('bars'), 'Bar');
-	}
+   function testTableize()
+   {
+      $this->assertEqual($this->inflector->tableize('Bar'), 'bars');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function testForeignKey()
-	{
-		$this->assertEqual($this->inflector->foreignKey('Bar'), 'bar_id');
-	}
+   function testClassify()
+   {
+      $this->assertEqual($this->inflector->classify('bars'), 'Bar');
+   }
+
+/**
+ * Enter description here...
+ *
+ */
+   function testForeignKey()
+   {
+      $this->assertEqual($this->inflector->foreignKey('Bar'), 'bar_id');
+   }
 }
 
 ?>

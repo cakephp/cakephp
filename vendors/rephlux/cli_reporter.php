@@ -30,9 +30,9 @@ class CLIReporter extends SimpleReporter {
         $this->faildetail_separator = $separator;
     }
 
-    /**
-     * Return a formatted faildetail for printing.
-     */
+ /**
+  * Return a formatted faildetail for printing.
+  */
     function &_paintTestFailDetail(&$message) {
         $buffer = '';
         $faildetail = $this->getTestList();
@@ -42,26 +42,26 @@ class CLIReporter extends SimpleReporter {
         return $buffer;
     }
 
-    /**
-     * Paint fail faildetail to STDERR.
-     */
+ /**
+  * Paint fail faildetail to STDERR.
+  */
     function paintFail($message) {
         parent::paintFail($message);
         echo 'FAIL' . $this->faildetail_separator . $this->_paintTestFailDetail($message);
     }
 
-    /**
-     * Paint exception faildetail to STDERR.
-     */
+ /**
+  * Paint exception faildetail to STDERR.
+  */
     function paintException($message) {
         parent::paintException($message);
         echo 'EXCEPTION' . $this->faildetail_separator . $this->_paintTestFailDetail($message);
     }
 
-    /**
-     * Paint a footer with test case name, timestamp, counts of fails and
-     * exceptions.
-     */
+ /**
+  * Paint a footer with test case name, timestamp, counts of fails and
+  * exceptions.
+  */
     function paintFooter($test_name) {
         $buffer = $this->getTestCaseProgress() . '/' .
             $this->getTestCaseCount() . ' test cases complete: ';

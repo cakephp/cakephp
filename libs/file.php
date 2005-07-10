@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////////////
-// + $Id:$
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
@@ -24,9 +24,9 @@
  * @package cake
  * @subpackage cake.libs
  * @since CakePHP v 0.2.9
- * @version $Revision:$
- * @modifiedby $LastChangedBy:$
- * @lastmodified $Date:$
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -44,40 +44,40 @@ class File
  *
  * @var unknown_type
  */
-	var $path = null;
-	
+   var $path = null;
+   
 /**
  * Enter description here...
  *
  * @param unknown_type $path
  * @return File
  */
-	function File ($path)
-	{
-		$this->path = $path;
-	}
-	
+   function File ($path)
+   {
+      $this->path = $path;
+   }
+   
 /**
  * Enter description here...
  *
  * @return unknown
  */
-	function read ()
-	{
-		return file_get_contents($this->path);
-	}
-	
+   function read ()
+   {
+      return file_get_contents($this->path);
+   }
+   
 /**
  * Enter description here...
  *
  * @param unknown_type $data
  * @return unknown
  */
-	function append ($data)
-	{
-		return $this->write($data, 'a');
-	}
-	
+   function append ($data)
+   {
+      return $this->write($data, 'a');
+   }
+   
 /**
  * Enter description here...
  *
@@ -85,22 +85,22 @@ class File
  * @param unknown_type $mode
  * @return unknown
  */
-	function write ($data, $mode = 'w')
-	{
-		if (!($handle = fopen($this->path, $mode)))
-		{
-			print ("[File] Could not open {$this->path} with mode $mode!");
-			return false;
-		}
-			
-		if (!fwrite($handle, $data))
-			return false;
-			
-		if (!fclose($handle))
-			return false;
-		
-		return true;
-	}
+   function write ($data, $mode = 'w')
+   {
+      if (!($handle = fopen($this->path, $mode)))
+      {
+         print ("[File] Could not open {$this->path} with mode $mode!");
+         return false;
+      }
+         
+      if (!fwrite($handle, $data))
+         return false;
+         
+      if (!fclose($handle))
+         return false;
+      
+      return true;
+   }
 }
 
 ?>

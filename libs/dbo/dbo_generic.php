@@ -40,107 +40,107 @@
 class DBO_generic extends DBO 
 {
 
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $config
-	 */
-	function connect ($config) 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $config
+ */
+   function connect ($config) 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function disconnect () 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function disconnect () 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $sql
-	 */
-	function execute ($sql) 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $sql
+ */
+   function execute ($sql) 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function fetchRow () 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function fetchRow () 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function tablesList () 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function tablesList () 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $table_name
-	 */
-	function fields ($table_name)
-	{
-	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $table_name
+ */
+   function fields ($table_name)
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $data
-	 */
-	function prepareValue ($data)
-	{
-	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ */
+   function prepareValue ($data)
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function lastError () 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function lastError () 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function lastAffected ()
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function lastAffected ()
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function lastNumRows () 
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function lastNumRows () 
+   {
+   }
 
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function lastInsertId () 
-	{
-	}
-	
-	/**
-	 * Enter description here...
-	 *
-	 * @param unknown_type $limit
-	 * @param unknown_type $offset
-	 */
-	function selectLimit ($limit, $offset=null)
-	{
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function lastInsertId () 
+   {
+   }
+   
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $limit
+ * @param unknown_type $offset
+ */
+   function selectLimit ($limit, $offset=null)
+   {
+   }
 
 }
 

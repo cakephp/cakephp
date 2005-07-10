@@ -47,8 +47,8 @@ class Router extends Object {
   *
   * @var array
   */
-	var $routes = array();
-	
+   var $routes = array();
+   
 /**
   * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
   *
@@ -57,40 +57,40 @@ class Router extends Object {
   * @see routes
   * @return array Array of routes
   */
-	function connect ($route, $default=null) {
-		$parsed = $names = array ();
+   function connect ($route, $default=null) {
+      $parsed = $names = array ();
 
-		$r = null;
-		if (($route == '') || ($route == '/')) {
-			$regexp = '/^[\/]*$/';
-			$this->routes[] = array($route, $regexp, array(), $default);
-		}
-		else {
-			$elements = array();
-			foreach (explode('/', $route) as $element)
-				if (trim($element)) $elements[] = $element;
+      $r = null;
+      if (($route == '') || ($route == '/')) {
+         $regexp = '/^[\/]*$/';
+         $this->routes[] = array($route, $regexp, array(), $default);
+      }
+      else {
+         $elements = array();
+         foreach (explode('/', $route) as $element)
+            if (trim($element)) $elements[] = $element;
 
-			if (!count($elements))
-				return false;
+         if (!count($elements))
+            return false;
 
-			foreach ($elements as $element) {
-				if (preg_match('/^:(.+)$/', $element, $r)) {
-						$parsed[] = '(?:\/([^\/]+))?';
-					   $names[] = $r[1];
-					}
-					elseif (preg_match('/^\*$/', $element, $r)) {
-						$parsed[] = '(?:\/(.*))?';
-					}
-					else {
-						$parsed[] = '/'.$element;
-					}
-				}
-				$regexp = '#^'.join('', $parsed).'[\/]*$#';
-			$this->routes[] = array($route, $regexp, $names, $default);
-			}
+         foreach ($elements as $element) {
+            if (preg_match('/^:(.+)$/', $element, $r)) {
+                  $parsed[] = '(?:\/([^\/]+))?';
+                  $names[] = $r[1];
+               }
+               elseif (preg_match('/^\*$/', $element, $r)) {
+                  $parsed[] = '(?:\/(.*))?';
+               }
+               else {
+                  $parsed[] = '/'.$element;
+               }
+            }
+            $regexp = '#^'.join('', $parsed).'[\/]*$#';
+         $this->routes[] = array($route, $regexp, $names, $default);
+         }
 
-		return $this->routes;
-	}
+      return $this->routes;
+   }
 
 /**
   * TODO: Better description. Returns an array of routes.
@@ -98,76 +98,76 @@ class Router extends Object {
   * @param string $url URL to be parsed 
   * @return array 
   */
-	function parse ($url) 
-	{
-		// An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
-		// Here's the fix.
-		if ($url && ('/' != $url[0]))
-		{
-			$url = '/'.$url;
-		}
-		
-		$out = array();
-		$r = null;
+   function parse ($url) 
+   {
+      // An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
+      // Here's the fix.
+      if ($url && ('/' != $url[0]))
+      {
+         $url = '/'.$url;
+      }
+      
+      $out = array();
+      $r = null;
 
-		$default_route = array
-		(
-			'/:controller/:action/* (default)',
-			"#^(?:\/(?:([a-z0-9_\-]+)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
-			array('controller', 'action'),
-			array()
-		);
+      $default_route = array
+      (
+         '/:controller/:action/* (default)',
+         "#^(?:\/(?:([a-z0-9_\-]+)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
+         array('controller', 'action'),
+         array()
+      );
 
-		$this->routes[] = $default_route;
+      $this->routes[] = $default_route;
 
-		foreach ($this->routes as $route) 
-		{
-			list($route, $regexp, $names, $defaults) = $route;
+      foreach ($this->routes as $route) 
+      {
+         list($route, $regexp, $names, $defaults) = $route;
 
-			if (preg_match($regexp, $url, $r)) 
-			{
-				// $this->log($url.' matched '.$regexp, 'note');
-				// remove the first element, which is the url
-				array_shift($r);
+         if (preg_match($regexp, $url, $r)) 
+         {
+            // $this->log($url.' matched '.$regexp, 'note');
+            // remove the first element, which is the url
+            array_shift($r);
 
-				// hack, pre-fill the default route names
-				foreach ($names as $name)
-					$out[$name] = null;
+            // hack, pre-fill the default route names
+            foreach ($names as $name)
+               $out[$name] = null;
 
-				$ii = 0;
+            $ii = 0;
 
-				if (is_array($defaults)) 
-				{
-					foreach ($defaults as $name=>$value) 
-					{
-						if (preg_match('#[a-z_\-]#i', $name))
-							$out[$name] = $value;
-						else
-							$out['pass'][] = $value;
-					}
-				}
+            if (is_array($defaults)) 
+            {
+               foreach ($defaults as $name=>$value) 
+               {
+                  if (preg_match('#[a-z_\-]#i', $name))
+                     $out[$name] = $value;
+                  else
+                     $out['pass'][] = $value;
+               }
+            }
 
-				foreach ($r as $found) {
-					// if $found is a named url element (i.e. ':action')
-					if (isset($names[$ii])) 
-					{
-						$out[$names[$ii]] = $found;
-					}
-					// unnamed elements go in as 'pass'
-					else 
-					{
-						$pass = new NeatArray(explode('/', $found));
-						$pass->cleanup();
-						$out['pass'] = $pass->value;
-					}
-					$ii++;
-				}
-				break;
-			}
-		}
+            foreach ($r as $found) {
+               // if $found is a named url element (i.e. ':action')
+               if (isset($names[$ii])) 
+               {
+                  $out[$names[$ii]] = $found;
+               }
+               // unnamed elements go in as 'pass'
+               else 
+               {
+                  $pass = new NeatArray(explode('/', $found));
+                  $pass->cleanup();
+                  $out['pass'] = $pass->value;
+               }
+               $ii++;
+            }
+            break;
+         }
+      }
 
-		return $out;
-	}
+      return $out;
+   }
 }
 
 ?>

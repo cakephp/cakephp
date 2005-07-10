@@ -48,80 +48,80 @@ config('database');
  */
 class DboFactory extends Object
 {
-	/**
-	 * A semi-singelton. Returns actual instance, or creates a new one with given config.
-	 *
-	 * @param string $config Name of key of $dbConfig array to be used.
-	 * @return mixed
-	 */
-	function getInstance($config = null)
-	{
-		static $instance;
+/**
+ * A semi-singelton. Returns actual instance, or creates a new one with given config.
+ *
+ * @param string $config Name of key of $dbConfig array to be used.
+ * @return mixed
+ */
+   function getInstance($config = null)
+   {
+      static $instance;
 
-		if (!isset($instance))
-		{
-			if ($config == null)
-			{
-				return false;
-			}
+      if (!isset($instance))
+      {
+         if ($config == null)
+         {
+            return false;
+         }
 
-			$configs = get_class_vars('DATABASE_CONFIG');
-			$config  = $configs[$config];
+         $configs = get_class_vars('DATABASE_CONFIG');
+         $config  = $configs[$config];
 
-			// special case for AdoDB -- driver name in the form of 'adodb-drivername'
-			if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res))
-			{
-				uses('dbo/dbo_adodb');
-				$config['driver'] = $res[1];
+         // special case for AdoDB -- driver name in the form of 'adodb-drivername'
+         if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res))
+         {
+            uses('dbo/dbo_adodb');
+            $config['driver'] = $res[1];
 
-				$instance = array(DBO_AdoDB($config));
-			}
-			// special case for PEAR:DB -- driver name in the form of 'pear-drivername'
-			elseif (preg_match('#^pear[\-_](.*)$#i', $config['driver'], $res))
-			{
-				uses('dbo/dbo_pear');
-				$config['driver'] = $res[1];
+            $instance = array(DBO_AdoDB($config));
+         }
+         // special case for PEAR:DB -- driver name in the form of 'pear-drivername'
+         elseif (preg_match('#^pear[\-_](.*)$#i', $config['driver'], $res))
+         {
+            uses('dbo/dbo_pear');
+            $config['driver'] = $res[1];
 
-				$instance = array(new DBO_Pear($config));
-			}
-			// regular, Cake-native db drivers
-			else
-			{
-				$db_driver_class = 'DBO_'.$config['driver'];
-				$db_driver_fn = LIBS.strtolower('dbo'.DS.$db_driver_class.'.php');
+            $instance = array(new DBO_Pear($config));
+         }
+         // regular, Cake-native db drivers
+         else
+         {
+            $db_driver_class = 'DBO_'.$config['driver'];
+            $db_driver_fn = LIBS.strtolower('dbo'.DS.$db_driver_class.'.php');
 
-				if (file_exists($db_driver_fn))
-				{
-					uses(strtolower('dbo'.DS.$db_driver_class));
-					$instance = array(new $db_driver_class($config));
-				}
-				else
-				{
-					trigger_error(ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
-					return false;
-				}
-			}
-		}
+            if (file_exists($db_driver_fn))
+            {
+               uses(strtolower('dbo'.DS.$db_driver_class));
+               $instance = array(new $db_driver_class($config));
+            }
+            else
+            {
+               trigger_error(ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
+               return false;
+            }
+         }
+      }
 
-		return $instance[0];
-	}
+      return $instance[0];
+   }
 
-	/**
-	 * Sets config to use. If there is already a connection, close it first.
-	 *
-	 * @param string $configName Name of the config array key to use.
-	 * @return mixed
-	 */
-	function setConfig($config)
-	{
-		$db = DboFactory::getInstance();
-		if ($db->isConnected() === true)
-		{
-			$db->close();
-		}
+/**
+ * Sets config to use. If there is already a connection, close it first.
+ *
+ * @param string $configName Name of the config array key to use.
+ * @return mixed
+ */
+   function setConfig($config)
+   {
+      $db = DboFactory::getInstance();
+      if ($db->isConnected() === true)
+      {
+         $db->close();
+      }
 
-		return $this->getInstance($config);
-	}
+      return $this->getInstance($config);
+   }
 }
 
 ?>

@@ -42,63 +42,63 @@ uses('object');
 class Template extends Object
 {
 
-	/**
-	 * Enter description here...
-	 *
-	 * @var unknown_type
-	 * @access public
-	 */
-	var $base = null;
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ * @access public
+ */
+   var $base = null;
 
-	/**
-	 * Enter description here...
-	 *
-	 * @var string
-	 * @access public
-	 */
-	var $layout = 'default';
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
+   var $layout = 'default';
 
-	/**
-	 * Enter description here...
-	 *
-	 * @var boolean
-	 * @access public
-	 */
-	var $autoRender = true;
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ * @access public
+ */
+   var $autoRender = true;
 
-	/**
-	 * Enter description here...
-	 *
-	 * @var boolean
-	 * @access public
-	 */
-	var $autoLayout = true;
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ * @access public
+ */
+   var $autoLayout = true;
 
-	/**
-	 * Variables for the view
-	 *
-	 * @var array
-	 * @access private
-	 */
-	var $_viewVars = array();
+/**
+ * Variables for the view
+ *
+ * @var array
+ * @access private
+ */
+   var $_viewVars = array();
 
-	/**
-	 * Enter description here...
-	 *
-	 * @var boolean
-	 * @access private
-	 */
-	var $pageTitle = false;
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ * @access private
+ */
+   var $pageTitle = false;
 
-	/**
-	 * Set the title element of the page.
-	 *
-	 * @param string $pageTitle Text for the title
-	 */
-	function setTitle($pageTitle)
-	{
-		$this->pageTitle = $pageTitle;
-	}
+/**
+ * Set the title element of the page.
+ *
+ * @param string $pageTitle Text for the title
+ */
+   function setTitle($pageTitle)
+   {
+      $this->pageTitle = $pageTitle;
+   }
 
 
 }

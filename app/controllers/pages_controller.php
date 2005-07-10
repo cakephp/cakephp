@@ -36,32 +36,32 @@ class PagesController extends PagesHelper{
  *
  * @var unknown_type
 */
-	var $helpers = array('html', 'ajax');
-	
+   var $helpers = array('html', 'ajax');
+   
 
 /**
  * Displays a view
  *
  */
-	function display()
-	{
-		if (!func_num_args())
-		{
-			$this->redirect('/');
-		}
+   function display()
+   {
+      if (!func_num_args())
+      {
+         $this->redirect('/');
+      }
 
-		$path = func_get_args();
-		
-		if (!count($path))
-		{
-			$this->redirect('/');
-		}
+      $path = func_get_args();
+      
+      if (!count($path))
+      {
+         $this->redirect('/');
+      }
 
-		$this->set('page', $path[0]);
-		$this->set('subpage', empty($path[1])? null: $path[1]);
-		$this->set('title', ucfirst($path[count($path)-1]));
-		$this->render(join('/', $path));
-	}
+      $this->set('page', $path[0]);
+      $this->set('subpage', empty($path[1])? null: $path[1]);
+      $this->set('title', ucfirst($path[count($path)-1]));
+      $this->render(join('/', $path));
+   }
 
 }
 

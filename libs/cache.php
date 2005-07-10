@@ -50,38 +50,38 @@ class Cache extends Model {
   *
   * @var unknown_type
   */
-	var $id = null;
+   var $id = null;
 
 /**
   * Content container for cache data.
   *
   * @var unknown_type
   */
-	var $data = null;
+   var $data = null;
 
 /**
   * Content to be cached.
   *
   * @var unknown_type
   */
-	var $for_caching = null;
+   var $for_caching = null;
 
 /**
   * Name of the database table used for caching.
   *
   * @var unknown_type
   */
-	var $use_table = 'cache';
+   var $use_table = 'cache';
 
 /**
   * Constructor. Generates an md5'ed id for internal use. Calls the constructor on Model as well.
   *
   * @param unknown_type $id
   */
-	function __construct ($id) {
-		$this->id = (md5($id));
-		parent::__construct($this->id);
-	}
+   function __construct ($id) {
+      $this->id = (md5($id));
+      parent::__construct($this->id);
+   }
 
 /**
   * Returns this object's id after setting it. If no $id is given then $this->id is returned.
@@ -89,10 +89,10 @@ class Cache extends Model {
   * @param unknown_type $id
   * @return unknown
   */
-	function id ($id=null) {
-		if (!$id) return $this->id;
-		return ($this->id = $id);
-	}
+   function id ($id=null) {
+      if (!$id) return $this->id;
+      return ($this->id = $id);
+   }
 
 /**
   * Save $content in cache for $keep_for seconds.
@@ -101,50 +101,50 @@ class Cache extends Model {
   * @param int $keep_for Number of seconds to keep data in cache.
   * @return unknown
   */
-	function remember ($content, $keep_for=CACHE_PAGES_FOR) {
-		$data = addslashes($this->for_caching.$content);
-		$expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
-		return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
-	}
+   function remember ($content, $keep_for=CACHE_PAGES_FOR) {
+      $data = addslashes($this->for_caching.$content);
+      $expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
+      return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
+   }
 
 /**
   * Returns content from the Cache object itself, if the Cache object has a non-empty data property. Else from the database cache.
   *
   * @return unknown
   */
-	function restore() {
-		if (empty($this->data['data']))
-			return $this->find("id='{$this->id}' AND expire>NOW()");
-		
-		return $this->data['data'];
-	}
+   function restore() {
+      if (empty($this->data['data']))
+         return $this->find("id='{$this->id}' AND expire>NOW()");
+      
+      return $this->data['data'];
+   }
 
 /**
   * Returns true if the cache data property has current (non-stale) content for given id.
   *
   * @return boolean
   */
-	function has() {
-		return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
-	}
+   function has() {
+      return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
+   }
 
 /**
   * Appends $string to the for_caching property of the Cache object.
   *
   * @param string $string
   */
-	function append($string) {
-		$this->for_caching .= $string;
-	}
+   function append($string) {
+      $this->for_caching .= $string;
+   }
 
 /**
   * Clears the cache database table.
   *
   * @return unknown
   */
-	function clear() {
-		return $this->query("DELETE FROM {$this->use_table}");
-	}
+   function clear() {
+      return $this->query("DELETE FROM {$this->use_table}");
+   }
 }
 
 ?>

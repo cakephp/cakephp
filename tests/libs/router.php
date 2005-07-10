@@ -49,82 +49,82 @@ class RouterTest extends UnitTestCase
  *
  * @var unknown_type
  */
-	var $router;
+   var $router;
 
 /**
  * Enter description here...
  *
  * @return RouterTest
  */
-	function RouterTest()
-	{
-		$this->UnitTestCase('Router test');
-	}
+   function RouterTest()
+   {
+      $this->UnitTestCase('Router test');
+   }
 
 /**
  * Enter description here...
  *
  */
-	function setUp()
-	{
-		$this->router = new Router();
-	}
+   function setUp()
+   {
+      $this->router = new Router();
+   }
 
 /**
  * Enter description here...
  *
  */
-	function tearDown()
-	{
-		unset($this->router);
-	}
-
-
-/**
- * Enter description here...
- *
- */
-	function _testConnect()
-	{
-		$tests = array(
-		'/' => array('controller'=>'Foo', 'action'=>'bar'),
-		'/foo/baz' => array('controller'=>'Foo', 'action'=>'baz'),
-		'/foo/*' => array('controller'=>'Foo', 'action'=>'dodo'),
-		'/foobar' => array('controller'=>'Foobar', 'action'=>'bar'),
-		);
-
-		foreach ($tests as $route=>$data)
-		$this->router->connect ($route, $data);
-	}
+   function tearDown()
+   {
+      unset($this->router);
+   }
 
 
 /**
  * Enter description here...
  *
  */
-	function testParse ()
-	{
+   function _testConnect()
+   {
+      $tests = array(
+      '/' => array('controller'=>'Foo', 'action'=>'bar'),
+      '/foo/baz' => array('controller'=>'Foo', 'action'=>'baz'),
+      '/foo/*' => array('controller'=>'Foo', 'action'=>'dodo'),
+      '/foobar' => array('controller'=>'Foobar', 'action'=>'bar'),
+      );
 
-		$this->_testConnect();
+      foreach ($tests as $route=>$data)
+      $this->router->connect ($route, $data);
+   }
 
-		$tests = array(
-		'' => array('controller'=>'Foo', 'action'=>'bar'),
-		'/' => array('controller'=>'Foo', 'action'=>'bar'),
-		'/foo/baz/' => array('controller'=>'Foo', 'action'=>'baz'),
-		'/foo/foo+bar' => array('pass'=>array('foo+bar'), 'controller'=>'Foo', 'action'=>'dodo'),
-		'/foobar/' => array('controller'=>'Foobar', 'action'=>'bar'),
-		'/foo/bar/baz' => array('controller'=>'Foo', 'action'=>'dodo', 'pass'=>array('bar', 'baz')),
-		'/one/two/three/' => array('controller'=>'one', 'action'=>'two', 'pass'=>array('three')),
-		'/ruburb' => array('controller'=>'ruburb','action'=>null),
-		'???' => array()
-		);
 
-		foreach ($tests as $test=>$expected)
-		{
-			$tested = $this->router->parse($test);
-			$this->assertEqual($tested, $expected);
-		}
-	}
+/**
+ * Enter description here...
+ *
+ */
+   function testParse ()
+   {
+
+      $this->_testConnect();
+
+      $tests = array(
+      '' => array('controller'=>'Foo', 'action'=>'bar'),
+      '/' => array('controller'=>'Foo', 'action'=>'bar'),
+      '/foo/baz/' => array('controller'=>'Foo', 'action'=>'baz'),
+      '/foo/foo+bar' => array('pass'=>array('foo+bar'), 'controller'=>'Foo', 'action'=>'dodo'),
+      '/foobar/' => array('controller'=>'Foobar', 'action'=>'bar'),
+      '/foo/bar/baz' => array('controller'=>'Foo', 'action'=>'dodo', 'pass'=>array('bar', 'baz')),
+      '/one/two/three/' => array('controller'=>'one', 'action'=>'two', 'pass'=>array('three')),
+      '/ruburb' => array('controller'=>'ruburb','action'=>null),
+      '???' => array()
+      );
+
+      foreach ($tests as $test=>$expected)
+      {
+         $tested = $this->router->parse($test);
+         $this->assertEqual($tested, $expected);
+      }
+   }
 }
 
 ?>
