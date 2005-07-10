@@ -379,7 +379,7 @@ class DBO extends Object
    function hasAny($table, $sql)
    {
       $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
-      return is_array($out)? $out['count']: false;
+      return is_array($out)? $out[0]['count']: false;
    }
 
 /**

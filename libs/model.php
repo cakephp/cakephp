@@ -325,10 +325,9 @@ class Model extends Object
          break;
       }
       
-      if(!is_a($this->$className, $className))
+      if(!isset($this->$className))
       {
-         $this->$className = new $className();
-         
+            $this->$className = new $className();
       }
       $this->{$joinedHas}[] = $this->$className;
       $this->relink();
@@ -603,15 +602,10 @@ class Model extends Object
          $fields[] = 'modified';
          $values[] = 'NOW()';
       }
-      
-      $out = $this->db->one("SELECT COUNT(*) AS count FROM {$this->table} WHERE id = '{$this->id}'");
-
-      if(empty($out[0]['count']))
+      if(!$this->exists())
       {
          $this->id = false;
       }
-         
-
       if(count($fields))
       {
          if(!empty($this->id)){
