@@ -87,7 +87,7 @@ if (class_exists('DATABASE_CONFIG'))
 }
 
 //RUN THE SCRIPT
-   if($url === 'favicon.ico')
+   if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
    {
    }else{
       $DISPATCHER = new Dispatcher ();

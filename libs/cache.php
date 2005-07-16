@@ -78,7 +78,8 @@ class Cache extends Model {
   *
   * @param unknown_type $id
   */
-   function __construct ($id) {
+   function __construct ($id) 
+   {
       $this->id = (md5($id));
       parent::__construct($this->id);
    }
@@ -89,7 +90,8 @@ class Cache extends Model {
   * @param unknown_type $id
   * @return unknown
   */
-   function id ($id=null) {
+   function id ($id=null) 
+   {
       if (!$id) return $this->id;
       return ($this->id = $id);
    }
@@ -101,7 +103,8 @@ class Cache extends Model {
   * @param int $keep_for Number of seconds to keep data in cache.
   * @return unknown
   */
-   function remember ($content, $keep_for=CACHE_PAGES_FOR) {
+   function remember ($content, $keep_for=CACHE_PAGES_FOR) 
+   {
       $data = addslashes($this->for_caching.$content);
       $expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
       return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
@@ -112,7 +115,8 @@ class Cache extends Model {
   *
   * @return unknown
   */
-   function restore() {
+   function restore() 
+   {
       if (empty($this->data['data']))
          return $this->find("id='{$this->id}' AND expire>NOW()");
       
@@ -124,7 +128,8 @@ class Cache extends Model {
   *
   * @return boolean
   */
-   function has() {
+   function has() 
+   {
       return is_array($this->data = $this->find("id='{$this->id}' AND expire>NOW()"));
    }
 
@@ -133,7 +138,8 @@ class Cache extends Model {
   *
   * @param string $string
   */
-   function append($string) {
+   function append($string) 
+   {
       $this->for_caching .= $string;
    }
 
@@ -142,7 +148,8 @@ class Cache extends Model {
   *
   * @return unknown
   */
-   function clear() {
+   function clear() 
+   {
       return $this->query("DELETE FROM {$this->use_table}");
    }
 }

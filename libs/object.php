@@ -67,12 +67,16 @@ class Object
 /**
  * Class constructor, overridden in descendant classes.
  */
-   function __construct() {}
+   function __construct() 
+   {
+   }
 
 /**
  * Class destructor, overridden in descendant classes.
  */
-   function __destruct() {}
+   function __destruct() 
+   {
+   }
 
 /**
  * Object-to-string conversion.

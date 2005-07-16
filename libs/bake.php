@@ -92,8 +92,10 @@ class Bake extends Object {
  * @return string
  * @access private
  */
-   function template ($type) {
-      switch ($type) {
+   function template ($type) 
+   {
+      switch ($type) 
+      {
          case 'view': return "%s";
          case 'model': return "<?php\n\nclass %s extends AppModel {\n}\n\n?>";
          case 'action': return "\n\tfunction %s () {\n\t}\n";
@@ -105,17 +107,20 @@ class %sTest extends TestCase {
    var $abc;
 
    // called before the tests
-   function setUp() {
+   function setUp() 
+   {
       $this->abc = new %s ();
    }
 
    // called after the tests
-   function tearDown() {
+   function tearDown() 
+   {
       unset($this->abc);
    }
    
 /*
-   function testFoo () {
+   function testFoo () 
+   {
       $result = $this->abc->Foo();
       $expected = \'\';
       $this->assertEquals($result, $expected);
@@ -143,7 +148,8 @@ class %sTest extends TestCase {
  * @uses Bake::newView() Depending on the case, can create a new view.
  * @uses Bake::newController() Depending on the case, can create a new controller.
  */
-   function __construct ($type, $names) {
+   function __construct ($type, $names) 
+   {
 
       $this->stdin = fopen('php://stdin', 'r');
       $this->stdout = fopen('php://stdout', 'w');
@@ -152,7 +158,8 @@ class %sTest extends TestCase {
       // Output directory name
       fwrite($this->stderr, "\n".substr(ROOT,0,strlen(ROOT)-1).":\n".str_repeat('-',strlen(ROOT)+1)."\n");
 
-      switch ($type) {
+      switch ($type) 
+      {
 
          case 'model':
          case 'models':
@@ -165,7 +172,8 @@ class %sTest extends TestCase {
             $controller = array_shift($names);
 
             $add_actions = array();
-            foreach ($names as $action) {
+            foreach ($names as $action) 
+            {
                $add_actions[] = $action;
                $this->newView($controller, $action);
             }
@@ -176,8 +184,10 @@ class %sTest extends TestCase {
          case 'view':
          case 'views':
             $r = null;
-            foreach ($names as $model_name) {
-               if (preg_match('/^([a-z0-9_]+(?:\/[a-z0-9_]+)*)\/([a-z0-9_]+)$/i', $model_name, $r)) {
+            foreach ($names as $model_name) 
+            {
+               if (preg_match('/^([a-z0-9_]+(?:\/[a-z0-9_]+)*)\/([a-z0-9_]+)$/i', $model_name, $r)) 
+               {
                   $this->newView($r[1], $r[2]);
                }
             }
@@ -202,7 +212,8 @@ class %sTest extends TestCase {
  * @uses Bake::template() Collects view template.
  * @uses Bake::actions Adds one action for each run.
  */
-   function newView ($controller, $name) {
+   function newView ($controller, $name) 
+   {
 //      $controller = Inflector::pluralize($controller);
       $dir = Inflector::underscore($controller);
       $path = $dir.DS.strtolower($name).".thtml";
@@ -226,7 +237,8 @@ class %sTest extends TestCase {
  * @uses Bake::makeHelperTest()
  * @uses Bake::actions Adds one action for each run.
  */
-   function newController ($name, $actions=array()) {
+   function newController ($name, $actions=array()) 
+   {
 //       $name = Inflector::pluralize($name);
       $this->makeController($name, $actions);
       $this->makeControllerTest($name);
@@ -249,7 +261,8 @@ class %sTest extends TestCase {
  * @uses Bake::createFile() Creates controller's file.
  * @uses Bake::makeControllerFn() Underscored name for controller's filename.
  */
-   function makeController ($name, $actions) {
+   function makeController ($name, $actions) 
+   {
       $ctrl = $this->makeControllerName($name);
       $helper = $this->makeHelperName($name);
       $body = sprintf($this->template('ctrl'), $ctrl, $helper, join('', $this->getActions($actions)));
@@ -264,7 +277,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Inflector::camelize CamelCase for controller name.
  */
-   function makeControllerName ($name) {
+   function makeControllerName ($name) 
+   {
       return Inflector::camelize($name).'Controller';
    }
 
@@ -276,7 +290,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Inflector::underscore() Underscore for controller's file name.
  */
-   function makeControllerFn ($name) {
+   function makeControllerFn ($name) 
+   {
       return CONTROLLERS.Inflector::underscore($name).'_controller.php';
    }
 
@@ -292,7 +307,8 @@ class %sTest extends TestCase {
  * @uses Bake::makeControllerName()
  * @uses Bake::createFile()
  */
-   function makeControllerTest ($name) {
+   function makeControllerTest ($name) 
+   {
       $fn = CONTROLLER_TESTS.Inflector::underscore($name).'_controller_test.php';
       $body = $this->getTestBody($this->makeControllerName($name));
       return $this->createFile($fn, $body);
@@ -309,7 +325,8 @@ class %sTest extends TestCase {
  * @uses Bake::createFile()
  * @uses Bake::makeHelperFn()
  */
-   function makeHelper ($name) {
+   function makeHelper ($name) 
+   {
       $body = sprintf($this->template('helper'), $this->makeHelperName($name));
       return $this->createFile($this->makeHelperFn($name), $body);
    }
@@ -322,7 +339,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Inflector::camelize()
  */
-   function makeHelperName ($name) {
+   function makeHelperName ($name) 
+   {
       return Inflector::camelize($name).'Helper';
    }
 
@@ -335,7 +353,8 @@ class %sTest extends TestCase {
  * @uses HELPERS
  * @uses Inflector::underscore()
  */
-   function makeHelperFn ($name) {
+   function makeHelperFn ($name) 
+   {
       return HELPERS.Inflector::underscore($name).'_helper.php';
    }
 
@@ -351,7 +370,8 @@ class %sTest extends TestCase {
  * @uses Bake::makeHelperName()
  * @uses Bake::createFile()
  */
-   function makeHelperTest ($name) {
+   function makeHelperTest ($name) 
+   {
       $fn = HELPER_TESTS.Inflector::underscore($name).'_helper_test.php';
       $body = $this->getTestBody($this->makeHelperName($name));
       return $this->createFile($fn, $body);
@@ -365,7 +385,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Bake::template()
  */
-   function getActions ($as) {
+   function getActions ($as) 
+   {
       $out = array();
       foreach ($as as $a)
          $out[] = sprintf($this->template('action'), $a);
@@ -380,7 +401,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Bake::template()
  */
-   function getTestBody ($class) {
+   function getTestBody ($class) 
+   {
       return sprintf($this->template('test'), $class, $class);
    }
 
@@ -396,7 +418,8 @@ class %sTest extends TestCase {
  * @uses Bake::makeModelTest()
  * @uses Bake::actions
  */
-   function newModel ($name) {
+   function newModel ($name) 
+   {
       $this->createFile($this->getModelFn($name), sprintf($this->template('model'), $this->getModelName($name)));
       $this->makeModelTest ($name);
       $this->actions++;
@@ -411,7 +434,8 @@ class %sTest extends TestCase {
  * @uses MODELS
  * @uses Inflector::underscore()
  */
-   function getModelFn ($name) {
+   function getModelFn ($name) 
+   {
       return MODELS.Inflector::underscore($name).'.php';
    }
 
@@ -427,7 +451,8 @@ class %sTest extends TestCase {
  * @uses Bake::getModelName()
  * @uses Bake::createFile()
  */
-   function makeModelTest ($name) {
+   function makeModelTest ($name) 
+   {
       $fn = MODEL_TESTS.Inflector::underscore($name).'_test.php';
       $body = $this->getTestBody($this->getModelName($name));
       return $this->createFile($fn, $body);
@@ -441,7 +466,8 @@ class %sTest extends TestCase {
  * @access private
  * @uses Inflector::camelize()
  */
-   function getModelName ($name) {
+   function getModelName ($name)
+   {
       return Inflector::camelize($name);
    }
 
@@ -457,36 +483,44 @@ class %sTest extends TestCase {
  * @uses Bake::stdout
  * @uses Bake::stderr
  */
-   function createFile ($path, $contents) {
+   function createFile ($path, $contents) 
+   {
       $shortPath = str_replace(ROOT,null,$path);
 
-      if (is_file($path) && !$this->dontAsk) {
+      if (is_file($path) && !$this->dontAsk) 
+      {
          fwrite($this->stdout, "File {$shortPath} exists, overwrite? (yNaq) "); 
          $key = trim(fgets($this->stdin));
 
-         if ($key=='q') {
+         if ($key=='q') 
+         {
             fwrite($this->stdout, "Quitting.\n");
             exit;
          }
-         elseif ($key=='a') {
+         elseif ($key=='a') 
+         {
             $this->dont_ask = true;
          }
-         elseif ($key=='y') {
+         elseif ($key=='y') 
+         {
          }
-         else {
+         else 
+         {
             fwrite($this->stdout, "Skip   {$shortPath}\n");
             return false;
          }
       }
 
-      if ($f = fopen($path, 'w')) {
+      if ($f = fopen($path, 'w')) 
+      {
          fwrite($f, $contents);
          fclose($f);
          fwrite($this->stdout, "Wrote   {$shortPath}\n");
 //         debug ("Wrote {$path}");
          return true;
       }
-      else {
+      else 
+      {
          fwrite($this->stderr, "Error! Couldn't open {$shortPath} for writing.\n");
 //         debug ("Error! Couldn't open {$path} for writing.");
          return false;
@@ -502,18 +536,21 @@ class %sTest extends TestCase {
  * @uses Bake::stdin
  * @uses Bake::stdout
  */
-   function createDir ($path) {
+   function createDir ($path) 
+   {
       if (is_dir($path))
          return true;
 
       $shortPath = str_replace(ROOT, null, $path);
 
-      if (mkdir($path)) {
+      if (mkdir($path)) 
+      {
          fwrite($this->stdout, "Created {$shortPath}\n");
 //         debug ("Created {$path}");
          return true;
       }
-      else {
+      else 
+      {
          fwrite($this->stderr, "Error! Couldn't create dir {$shortPath}\n");
 //         debug ("Error! Couldn't create dir {$path}");
          return false;

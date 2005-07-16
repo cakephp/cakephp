@@ -39,11 +39,13 @@
  *  $first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
  *
  *  // emulate the usual way of reading query results
- *  if ($db->query("SELECT a,b,c FROM table")) {
- *    while ( $row = $db->farr() ) {
- *        print $row['a'].$row['b'].$row['c'];
+ *  if ($db->query("SELECT a,b,c FROM table")) 
+ *	{
+ *  	while ( $row = $db->farr() ) 
+ *	  	{
+ *      	print $row['a'].$row['b'].$row['c'];
+ *  	}
  *  }
- * }
  *
  * // show a log of all queries, sorted by execution time
  * $db->showLog(TRUE);

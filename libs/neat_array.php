@@ -52,7 +52,8 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-   function NeatArray ($value=array()) {
+   function NeatArray ($value=array()) 
+   {
       $this->value = $value;
    }
 
@@ -90,10 +91,13 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-   function cleanup () {
+   function cleanup () 
+   {
       $out = is_array($this->value)? array(): null;
-      foreach ($this->value as $k=>$v) {
-         if ($v) {
+      foreach ($this->value as $k=>$v) 
+      {
+         if ($v) 
+         {
             $out[$k] = $v;
          }
       }
@@ -108,7 +112,8 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-    function add ($value) {
+    function add ($value) 
+    {
        return ($this->value = $this->plus($value))? true: false;
     }
 
@@ -120,7 +125,8 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-    function plus ($value) {
+    function plus ($value) 
+    {
        return array_merge($this->value, (is_array($value)? $value: array($value)));
     }
 
@@ -132,16 +138,21 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-   function totals ($sortedBy=1,$reverse=true) {
+   function totals ($sortedBy=1,$reverse=true) 
+   {
       $out = array();
       foreach ($this->value as $val)
+      {
          isset($out[$val])? $out[$val]++: $out[$val] = 1;
+      }
 
-      if ($sortedBy == 1) {
+      if ($sortedBy == 1) 
+      {
          $reverse? arsort($out, SORT_NUMERIC): asort($out, SORT_NUMERIC);
       }
       
-      if ($sortedBy == 2) {
+      if ($sortedBy == 2) 
+      {
          $reverse? krsort($out, SORT_STRING): ksort($out, SORT_STRING);
       }
 
@@ -154,7 +165,8 @@ class NeatArray {
  * @param unknown_type $with
  * @return unknown
  */
-   function filter ($with) {
+   function filter ($with) 
+   {
       return $this->value = array_filter($this->value, $with);
    }
 
@@ -165,7 +177,8 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-   function walk ($with) {
+   function walk ($with) 
+   {
       array_walk($this->value, $with);
       return $this->value;
    }
@@ -193,9 +206,11 @@ class NeatArray {
  * @access public
  * @uses NeatArray::value
  */
-   function extract ($name) {
+   function extract ($name) 
+   {
       $out = array();
-      foreach ($this->value as $val) {
+      foreach ($this->value as $val) 
+      {
          if (isset($val[$name]))
             $out[] = $val[$name];
       }
@@ -207,7 +222,8 @@ class NeatArray {
  *
  * @return array
  */
-   function unique () {
+   function unique () 
+   {
       return array_unique($this->value);
    }
 
@@ -216,7 +232,8 @@ class NeatArray {
  *
  * @return array
  */
-   function makeUnique () {
+   function makeUnique () 
+   {
       return $this->value = array_unique($this->value);
    }
 
@@ -253,18 +270,25 @@ class NeatArray {
  * @return array
  */
 
-   function joinWith ($his, $onMine, $onHis=null) {
-      if (empty($onHis)) $onHis = $onMine;
+   function joinWith ($his, $onMine, $onHis=null) 
+   {
+      if (empty($onHis))
+      {
+      	$onHis = $onMine;
+      }
 
       $his = new NeatArray($his);
 
       $out = array();
-      foreach ($this->value as $key=>$val) {
-         if ($fromHis = $his->findIn($onHis, $val[$onMine])) {
+      foreach ($this->value as $key=>$val) 
+      {
+         if ($fromHis = $his->findIn($onHis, $val[$onMine])) 
+         {
             list($fromHis) = array_values($fromHis);
             $out[$key] = array_merge($val, $fromHis);
          }
-         else {
+         else 
+         {
             $out[$key] = $val;
          }
       }
@@ -281,11 +305,14 @@ class NeatArray {
  * @param unknown_type $childrenKey
  * @return unknown
  */
-   function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children') {
+   function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children') 
+   {
       $out = array();
 
-      for ($ii=0; $ii<sizeof($this->value); $ii++) {
-         if ($this->value[$ii][$parentIdKey] == $root) {
+      for ($ii=0; $ii<sizeof($this->value); $ii++) 
+      {
+         if ($this->value[$ii][$parentIdKey] == $root) 
+         {
             $tmp = $this->value[$ii];
             $tmp[$childrenKey] = isset($this->value[$ii][$idKey])? 
                $this->threaded($this->value[$ii][$idKey], $idKey, $parentIdKey, $childrenKey): 

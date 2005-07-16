@@ -48,7 +48,8 @@ class Inflector extends Object
   * Constructor.
   *
   */
-   function __construct () {
+   function __construct () 
+   {
       parent::__construct();
    }
    
@@ -58,7 +59,8 @@ class Inflector extends Object
   * @param string $word Word in singular
   * @return string Word in plural
   */
-   function pluralize ($word) {
+   function pluralize ($word) 
+   {
       $plural_rules = array(
          '/(x|ch|ss|sh)$/'         => '\1es',       # search, switch, fix, box, process, address
          '/series$/'               => '\1series',
@@ -74,8 +76,10 @@ class Inflector extends Object
          '/$/'                     => 's'
       );
 
-      foreach ($plural_rules as $rule => $replacement) {
-         if (preg_match($rule, $word)) {
+      foreach ($plural_rules as $rule => $replacement) 
+      {
+         if (preg_match($rule, $word)) 
+         {
             return preg_replace($rule, $replacement, $word);
          }
       }
@@ -108,8 +112,10 @@ class Inflector extends Object
          '/s$/'                  => ''
       );
 
-      foreach ($singular_rules as $rule => $replacement) {
-         if (preg_match($rule, $word)) {
+      foreach ($singular_rules as $rule => $replacement) 
+      {
+         if (preg_match($rule, $word)) 
+         {
             return preg_replace($rule, $replacement, $word);
          }
       }
@@ -123,7 +129,8 @@ class Inflector extends Object
   * @param string $lower_case_and_underscored_word Word to camelize
   * @return string Camelized word. likeThis.
   */
-   function camelize($lower_case_and_underscored_word) {
+   function camelize($lower_case_and_underscored_word) 
+   {
       return str_replace(" ","",ucwords(str_replace("_"," ",$lower_case_and_underscored_word)));
    }    
 
@@ -133,7 +140,8 @@ class Inflector extends Object
   * @param string $camel_cased_word Camel-cased word to be "underscorized"
   * @return string Underscore-syntaxed version of the $camel_cased_word
   */
-   function underscore($camel_cased_word) {
+   function underscore($camel_cased_word) 
+   {
       $camel_cased_word = preg_replace('/([A-Z]+)([A-Z])/','\1_\2',$camel_cased_word);
       return strtolower(preg_replace('/([a-z])([A-Z])/','\1_\2',$camel_cased_word));
    }
@@ -145,7 +153,8 @@ class Inflector extends Object
   * @param string $lower_case_and_underscored_word String to be made more readable
   * @return string Human-readable string
   */
-   function humanize($lower_case_and_underscored_word) {
+   function humanize($lower_case_and_underscored_word) 
+   {
       return ucwords(str_replace("_"," ",$lower_case_and_underscored_word));
    }    
 
@@ -155,7 +164,8 @@ class Inflector extends Object
   * @param string $class_name Name of class to get database table name for
   * @return string Name of the database table for given class
   */
-   function tableize($class_name) {
+   function tableize($class_name) 
+   {
       return Inflector::pluralize(Inflector::underscore($class_name));
    }
 

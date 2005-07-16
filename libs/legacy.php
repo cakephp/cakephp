@@ -34,9 +34,11 @@
 /**
  * Enter description here...
  */
-if (version_compare(phpversion(), '5.0') < 0) {
+if (version_compare(phpversion(), '5.0') < 0) 
+{
     eval('
-    function clone($object) {
+    function clone($object) 
+    {
       return $object;
     }
     ');
@@ -44,7 +46,8 @@ if (version_compare(phpversion(), '5.0') < 0) {
 
 
 
-if (!function_exists('file_get_contents')) {
+if (!function_exists('file_get_contents')) 
+{
 /**
  * Replace file_get_contents()
  *
@@ -60,18 +63,22 @@ if (!function_exists('file_get_contents')) {
  */
     function file_get_contents($filename, $incpath = false)
     {
-        if (false === $fh = fopen($filename, 'rb', $incpath)) {
+        if (false === $fh = fopen($filename, 'rb', $incpath)) 
+        {
             user_error('file_get_contents() failed to open stream: No such file or directory',
                 E_USER_WARNING);
             return false;
         }
 
         clearstatcache();
-        if ($fsize = @filesize($filename)) {
+        if ($fsize = @filesize($filename)) 
+        {
             $data = fread($fh, $fsize);
-        } else {
+        } else 
+        {
             $data = '';
-            while (!feof($fh)) {
+            while (!feof($fh)) 
+            {
                 $data .= fread($fh, 8192);
             }
         }

@@ -40,7 +40,8 @@ uses ('object');
   * @since CakePHP v 0.2.9
   *
   */
-class Time extends Object {
+class Time extends Object 
+{
 
 /**
   * Returns a formatted date string for given Datetime string.
@@ -48,7 +49,8 @@ class Time extends Object {
   * @param string $date_string Datetime string
   * @return string Formatted date string
   */
-   function nice ($date_string=null) {
+   function nice ($date_string=null) 
+   {
       $date = $date_string? strtotime($date_string): time();
       return date("D, M jS Y, H:i", $date);
    }
@@ -63,17 +65,24 @@ class Time extends Object {
   * @param string $date_string Datetime string
   * @return string Described, relative date string
   */
-   function niceShort ($date_string=null) {
+   function niceShort ($date_string=null) 
+   {
       $date = $date_string? Time::fromString($date_string): time();
 
       $y = Time::isThisYear($date)? '': ' Y';
 
       if (Time::isToday($date)) 
+      {
          return "Today, ".date("H:i", $date);
+      }
       elseif (Time::wasYesterday($date))
+      {
          return "Yesterday, ".date("H:i", $date);
+      }
       else
+      {
          return date("M jS{$y}, H:i", $date);
+      }
    }
 
 /**
@@ -82,7 +91,8 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string is today
   */
-   function isToday ($date) {
+   function isToday ($date) 
+   {
       return date('Y-m-d', $date) == date('Y-m-d', time());
    }
    
@@ -105,7 +115,8 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string is within current year
   */
-   function isThisYear ($date) {
+   function isThisYear ($date) 
+   {
       return date('Y', $date) == date('Y', time());
    }
 
@@ -115,7 +126,8 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return boolean True if datetime string was yesterday
   */
-   function wasYesterday ($date) {
+   function wasYesterday ($date) 
+   {
       return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
    }
 
@@ -125,7 +137,8 @@ class Time extends Object {
   * @param string $date_string Datetime string to be represented as a Unix timestamp
   * @return int Unix timestamp
   */
-   function fromString ($date_string) {
+   function fromString ($date_string) 
+   {
       return strtotime($date_string);
    }
 
@@ -135,7 +148,8 @@ class Time extends Object {
   * @param string $date Datetime string
   * @return string Formatted date string
   */
-   function toAtom ($date) {
+   function toAtom ($date) 
+   {
       return date('Y-m-d\TH:i:s\Z', $date);
    }
 
@@ -145,7 +159,8 @@ class Time extends Object {
   * @param datetime $date Datetime string
   * @return string Formatted date string
   */
-   function toRSS ($date) {
+   function toRSS ($date) 
+   {
       return date('D, d M Y H:i:s O', $date);
    }
 
@@ -183,27 +198,39 @@ class Time extends Object {
       $diff -= $minutes*60;
       $seconds = $diff;
    
-      if ($months>0) {
+      if ($months>0) 
+      {
          // over a month old, just show date (mm/dd/yyyy format)
          return 'on '.date("j/n/Y", $in_seconds);
-      } else {
+      } 
+      else 
+      {
          $relative_date='';
-         if ($weeks>0) {
+         if ($weeks>0) 
+         {
             // weeks and days
             $relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
             $relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
-         } elseif ($days>0) {
+         } 
+         elseif ($days>0) 
+         {
             // days and hours
             $relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
             $relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
-         } elseif ($hours>0) {
+         } 
+         elseif ($hours>0) 
+         {
             // hours and minutes
             $relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
             $relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
-         } elseif ($minutes>0) {
+         } 
+         elseif ($minutes>0) 
+         {
             // minutes only
             $relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
-         } else {
+         } 
+         else 
+         {
             // seconds only
             $relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
          }

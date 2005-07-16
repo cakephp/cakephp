@@ -193,6 +193,10 @@ class Model extends Object
 	   {
 	      $this->_hasOneLink();
 	   }
+	   if (!empty($this->hasMany))
+	   {
+	      return $this->_hasManyLinks();
+	   }
 	}
 
 	
@@ -292,12 +296,80 @@ class Model extends Object
          }
 				
 				$association = explode(',', $this->hasOne);
-				foreach ($association as $modelName) {
+				foreach ($association as $modelName) 
+				{
 					$this->_constructAssociatedModels($modelName , 'One');
 				}
 			}	
 	}
 
+	
+	function _hasManyLinks()
+	{
+	   if(is_array($this->hasMany))
+	   {
+	      $this->_resetCount();
+	      
+	      foreach ($this->hasMany as $association => $associationValue)
+	      {
+	         $className = $association;
+	         $this->_hasMany = array($className,$association);
+	         
+	         foreach ($associationValue as $option => $optionValue)
+	         {
+	            switch ($option)
+	            {
+	               case 'className':
+	                 //$this->__joinedHasMany[$count][$this->table]['className'] = $optionValue;
+	                 //$this->__joinedHasMany[$count][$this->table]['association'] = $association;
+	               break;
+	               
+	               case 'conditions':
+	                 //$this->__joinedHasMany[$count][$this->table]['conditions'] = $optionValue;
+	               break;
+	               
+	               case 'order':
+	                 //$this->__joinedHasMany[$count][$this->table]['order'] = $optionValue;
+	               break;
+	               
+	               case 'foreignKey':
+   	               $modelForeignKey = $this->table .'To'. $className . 'ForeignKey';
+   	               $foreignKey = $optionValue;
+   	               $this->$modelForeignKey = $foreignKey;
+   	               unset($modelForeignKey);
+	               break;
+	               
+	               case 'dependent':
+	               //$this->__joinedHasMany[$count][$this->table]['dependent'] = $optionValue;
+	               break;
+	               
+	               case 'exclusive':
+	               //$this->__joinedHasMany[$count][$this->table]['exclusive'] = $optionValue;
+	               break;
+	               
+	               case 'finderSql':
+	               //$this->__joinedHasMany[$count][$this->table]['finderSql'] = $optionValue;
+	               break;
+	               
+	               case 'counterSql':
+	               //$this->__joinedHasMany[$count][$this->table]['counterSql'] = $optionValue;
+	               break;
+	            }
+	         }
+	         $this->linkManyToOne($className, $this->id[$this->_count]);
+	      }
+	   }
+	   else
+	   {
+	      $this->_hasMany = explode(',', $this->hasMany);
+	      $this->_resetCount();
+	      
+	      foreach ($this->_hasMany as $modelName)
+	      {
+	         $this->_constructAssociatedModels($modelName , 'Many');
+	      }
+	   }
+	}
 
 
 /**
@@ -320,6 +392,11 @@ class Model extends Object
          $joinedHas = 'joinedHasOne';
          break;
          
+         case 'Many':
+         $this->linkManyToOne($modelName, $this->id[$this->_count++]);
+         $joinedHas = 'joinedHasMany';
+         break;
+
          default:
          //nothing
          break;
@@ -327,7 +404,7 @@ class Model extends Object
       
       if(!isset($this->$className))
       {
-            $this->$className = new $className();
+            $this->$className = &new $className();
       }
       $this->{$joinedHas}[] = $this->$className;
       $this->relink();
@@ -337,16 +414,22 @@ class Model extends Object
  * Updates this model's association links, by emptying the links list, and then link"*Association Type" again.
  *
  */
-	function relink () {
+	function relink () 
+	{
 		
-			if(!empty($this->id)){
+			if(!empty($this->id))
+			{
 				$i = 1;
 			}
 			
-			foreach ($this->_hasOne as $table) {
-				if(is_array($table)){
+			foreach ($this->_hasOne as $table) 
+			{
+				if(is_array($table))
+				{
 					$names[] = explode(',', $table);
-				} else {
+				} 
+				else 
+				{
 					$names[0] = $table;
 					$names[1] = $table;
 				}
@@ -354,6 +437,22 @@ class Model extends Object
 				$tableName = Inflector::singularize($names[0]);
 				$this->$className->clearLinks();
 				$this->$className->linkOneToOne($tableName, $this->id[$i]);
+			}
+			foreach ($this->_hasMany as $table)
+			{
+			   if(is_array($table))
+			   {
+			      $names[] = explode(',', $table);
+			   }
+			   else
+			   {
+			      $names[0] = $table;
+			      $names[1] = $table;
+			   }
+			   $className = $names[1];
+			   $tableName = Inflector::singularize($names[0]);
+			   $this->clearLinks();
+			   $this->linkManyToOne($tableName, $this->id[0]);
 			}
 	}
 
@@ -366,11 +465,20 @@ class Model extends Object
  * @param string $model_name Name of model to link to
  * @param unknown_type $value Defaults to NULL.
  */
-   function linkManyToOne ($model_name, $value=null) 
+   function linkManyToOne ($tableName, $value=null) 
    {
-      $table_name = Inflector::tableize($model_name);
-      $field_name = Inflector::singularize($table_name).'_id';
-      $this->_one_to_many[] = array($table_name, $field_name, $value);
+      $tableName = Inflector::tableize($tableName);
+      $fieldKey = $this->table .'To'. Inflector::singularize($tableName) . 'ForeignKey';
+
+      if(!empty($this->$fieldKey))
+      {
+         $field_name = $this->$fieldKey;
+      }
+      else
+      {
+         $field_name = Inflector::singularize($this->table).'_id';
+      }
+		$this->_oneToMany[] = array($tableName, $field_name, $value);
    }
    
 /**
@@ -447,7 +555,8 @@ class Model extends Object
       foreach ($data as $n => $v) 
       {
 /*
-         if (!$this->hasField($n)) {
+         if (!$this->hasField($n)) 
+         {
             DEBUG? 
                trigger_error(sprintf(ERROR_NO_FIELD_IN_MODEL_DB, $n, $this->table), E_USER_ERROR):
                trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
@@ -455,7 +564,8 @@ class Model extends Object
 */
          //$n == 'id'? $this->setId($v): $this->data[$n] = $v;
 
-         foreach ($v as $x => $y){
+         foreach ($v as $x => $y)
+         {
          			//$x == 'id'? $this->id = $y: $this->data[$n][$x] = $y;
          			if($x == 'id')
          			{
@@ -486,8 +596,10 @@ class Model extends Object
  */
    function loadInfo () 
    {
-      if (empty($this->_table_info))
+      if (empty($this->_table_info)) 
+      {
          $this->_table_info = new NeatArray($this->db->fields($this->table));
+      }
       return $this->_table_info;
    }
 
@@ -500,7 +612,10 @@ class Model extends Object
  */
    function hasField ($name) 
    {
-      if (empty($this->_table_info)) $this->loadInfo();
+      if (empty($this->_table_info))
+      { 
+      	$this->loadInfo();
+      }
       return $this->_table_info->findIn('name', $name);
    }
 
@@ -572,10 +687,15 @@ class Model extends Object
    function save ($data=null, $validate=true) 
    {
 
-      if ($data) $this->set($data);
+   	  if ($data) 
+      { 
+      	 $this->set($data);
+      }
 
       if ($validate && !$this->validates())
+      {
          return false;
+      }
 
       $fields = $values = array();
    
@@ -584,12 +704,12 @@ class Model extends Object
          foreach ($v as $x => $y)
          {
       
-         if ($this->hasField($x)) 
-         {
-            $fields[] = $x;
-            $values[] = $this->db->prepare($y);
-         }
-      }
+         	if ($this->hasField($x)) 
+         	{
+            	$fields[] = $x;
+            	$values[] = $this->db->prepare($y);
+         	}
+      	 }
       }
       
       if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
@@ -608,7 +728,8 @@ class Model extends Object
       }
       if(count($fields))
       {
-         if(!empty($this->id)){
+         if(!empty($this->id))
+         {
 
             $sql = array();
             foreach (array_combine($fields, $values) as $field=>$value) 
@@ -673,14 +794,19 @@ class Model extends Object
  */
    function del ($id=null) 
    {
-      if ($id) $this->id = $id;
+      if ($id)
+      { 
+      	 $this->id = $id;
+      }
       if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
       {
          $this->id = false;
          return true;
       }
       else
+      {
          return false;
+      }
    }
 
 /**
@@ -759,28 +885,25 @@ class Model extends Object
       $conditions = $this->parseConditions($conditions);
 
       if (is_array($fields))
+      {
          $f = $fields;
+      }
       elseif ($fields)
+      {
          $f = array($fields);
+      }
       else
+      {
          $f = array('*');
+      }
 
       $joins = $whers = array();
       
       foreach ($this->_oneToOne as $rule)
       {
-
          list($table, $field, $value) = $rule;
          $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
-         if(empty($this->id))
-         {
-            $whers[] = "{$table}.id != 'NULL'";
-         }
-         else{
-            $whers[] = "{$this->table}.{$field} = '{$value}'";
-         }
       }
-
 
       $joins = count($joins)? join(' ', $joins): null;
       $whers = count($whers)? '('.join(' AND ', $whers).')': null;
@@ -800,8 +923,29 @@ class Model extends Object
          .($order? " ORDER BY {$order}": null)
          .$limit_str;
 
-      $data = $this->db->all($sql);         
-
+      $data = $this->db->all($sql);
+      
+      if(!empty($this->_oneToMany))
+      {
+         $datacheck = $data;
+         foreach ($this->_oneToMany as $rule)
+         {
+            $count = 0;
+            list($table, $field, $value) = $rule;
+            foreach ($datacheck as $key => $value1)
+            {
+               foreach ($value1 as $key2 => $value2)
+               {
+                  $select = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = {$value2['id']}");
+                  $data2 = array_merge_recursive($data[$count],$select);
+                  $data1[$count] = $data2;
+               }
+               $count++;
+            }
+            $data = $data1;
+            $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
+         }
+      }
       return $data;
    }
 
@@ -927,11 +1071,15 @@ class Model extends Object
    function _invalidFields ($data=null) 
    {
       if (!isset($this->validate))
+      {
          return true;
+      }
 
       if (is_array($this->validationErrors))
+      {
          return $this->validationErrors;
-
+      }
+         
       $data = ($data? $data: (isset($this->data)? $this->data: array()));
       $errors = array();
       foreach ($this->data as $table => $field)
@@ -939,7 +1087,9 @@ class Model extends Object
          foreach ($this->validate as $field_name=>$validator) 
          {
             if (!isset($data[$table][$field_name]) || !preg_match($validator, $data[$table][$field_name]))
-            $errors[$field_name] = 1;
+            {
+            	$errors[$field_name] = 1;
+            }
          }
          $this->validationErrors = $errors;
          return $errors;

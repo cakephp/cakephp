@@ -57,38 +57,48 @@ class Router extends Object {
   * @see routes
   * @return array Array of routes
   */
-   function connect ($route, $default=null) {
+   function connect ($route, $default=null) 
+   {
       $parsed = $names = array ();
 
       $r = null;
-      if (($route == '') || ($route == '/')) {
+      if (($route == '') || ($route == '/')) 
+      {
          $regexp = '/^[\/]*$/';
          $this->routes[] = array($route, $regexp, array(), $default);
       }
-      else {
+      else 
+      {
          $elements = array();
          foreach (explode('/', $route) as $element)
+         {
             if (trim($element)) $elements[] = $element;
-
-         if (!count($elements))
-            return false;
-
-         foreach ($elements as $element) {
-            if (preg_match('/^:(.+)$/', $element, $r)) {
-                  $parsed[] = '(?:\/([^\/]+))?';
-                  $names[] = $r[1];
-               }
-               elseif (preg_match('/^\*$/', $element, $r)) {
-                  $parsed[] = '(?:\/(.*))?';
-               }
-               else {
-                  $parsed[] = '/'.$element;
-               }
-            }
-            $regexp = '#^'.join('', $parsed).'[\/]*$#';
-         $this->routes[] = array($route, $regexp, $names, $default);
          }
 
+         if (!count($elements))
+         {
+            return false;
+         }
+
+         foreach ($elements as $element) 
+         {
+            if (preg_match('/^:(.+)$/', $element, $r)) 
+            {
+            	$parsed[] = '(?:\/([^\/]+))?';
+            	$names[] = $r[1];
+            }
+            elseif (preg_match('/^\*$/', $element, $r)) 
+            {
+            	$parsed[] = '(?:\/(.*))?';
+            }
+            else 
+            {
+            	$parsed[] = '/'.$element;
+            }
+         }
+         $regexp = '#^'.join('', $parsed).'[\/]*$#';
+         $this->routes[] = array($route, $regexp, $names, $default);
+      }
       return $this->routes;
    }
 
@@ -117,9 +127,19 @@ class Router extends Object {
          array('controller', 'action'),
          array()
       );
+      
+      $admin_route = array
+      (
+         '/:controller/:admin/:action/* (default)',
+         "#^(?:\/(?:([a-z0-9_\-]+)(?:\/(admin)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?)?))[\/]*$#",
+         array('controller', 'admin', 'action'),
+         array()
+      );
 
+
+      $this->routes[] = $admin_route;
       $this->routes[] = $default_route;
-
+      
       foreach ($this->routes as $route) 
       {
          list($route, $regexp, $names, $defaults) = $route;
@@ -141,13 +161,18 @@ class Router extends Object {
                foreach ($defaults as $name=>$value) 
                {
                   if (preg_match('#[a-z_\-]#i', $name))
+                  {
                      $out[$name] = $value;
+                  }
                   else
+                  {
                      $out['pass'][] = $value;
+                  }
                }
             }
 
-            foreach ($r as $found) {
+            foreach ($r as $found) 
+            {
                // if $found is a named url element (i.e. ':action')
                if (isset($names[$ii])) 
                {
