@@ -10,9 +10,9 @@ This README will be updated
 
 for now visit:
 
-https://developers.nextco.com/cake/
+https://trac.cakephp.org/
 
 OR:
 
-http://sputnik.pl/cake/
+https://www.cakephp.org/
  
