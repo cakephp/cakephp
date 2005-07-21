@@ -3,7 +3,8 @@
 <head>
    <title><?=$title_for_layout?></title>
    <?=$html->charsetTag('UTF-8')?>
-   <?=$html->cssTag('default')?>
+   <?=$html->cssTag('default')?>  
+   <?=$html->cssTag('forms')?>
 </head>
 
 <body>

@@ -42,7 +42,7 @@ define('DISPATCHER_UNKNOWN_VIEW',     'missingView');
 /**
  * Add Description
  */
-uses('error_messages', 'object', 'router', 'controller');
+uses('error_messages', 'object', 'router', 'controller', 'scaffold');
 
 /**
  * Dispatches the request, creating appropriate models and controllers.
@@ -134,6 +134,20 @@ class Dispatcher extends Object
          }
          else
          {
+            // Check to see if controller is scaffolded		
+            $classVars = get_class_vars($ctrlClass);
+            foreach ($classVars as $name => $value)
+            {
+               if($name === 'scaffold')
+               {
+                  if (empty($params['action'])) 
+                  {
+                     $params['action'] = 'index';
+                  }
+                  $this->scaffoldView($url, $ctrlClass, $params);
+                  exit;
+               }
+            }
             $missingAction = true;
          }
       }
@@ -141,6 +155,16 @@ class Dispatcher extends Object
       // if the requested action doesn't exist
       if (!method_exists($controller, $params['action']))
       {
+         // Check to see if controller is scaffolded	
+         $classVars = get_class_vars($ctrlClass);
+         foreach ($classVars as $name => $value)
+         {
+            if($name === 'scaffold')
+            {
+               $this->scaffoldView($url, $ctrlClass, $params);
+               exit;
+            }
+         }
          $missingAction = true;
       }
 
@@ -318,6 +342,71 @@ class Dispatcher extends Object
       $this->error404($url, "missing controller \"{$controller_class}\"");
       exit;
    }
-}
 
+/**
+  * When now methods are present in a controller
+  * scaffoldView is used to call default Scaffold methods if:
+  * <code>
+  * var $scaffold;
+  * </code>
+  * is placed in the controller class definition
+  *
+  * @param string $url
+  * @param string $controller_class
+  * @param array $params
+  * @since Cake v 1.0.0.172
+  */
+   function scaffoldView ($url, $controller_class, $params)
+   {
+      if($params['action'] === 'index'  || $params['action'] === 'list' ||
+         $params['action'] === 'show'   || $params['action'] === 'new' || 
+         $params['action'] === 'create' || $params['action'] === 'edit' ||  
+         $params['action'] === 'update' || $params['action'] === 'destroy')
+         {
+            $scaffolding = new Scaffold($controller_class, $params);
+            $scaffolding->base = $this->base;
+            $scaffolding->constructClasses($params);
+            
+            switch ($params['action'])
+            {
+               case 'index':
+               $scaffolding->showScaffoldIndex($params);
+               break;
+               
+               case 'show':
+               $scaffolding->showScaffoldShow($params);
+               break;
+			
+               case 'list':
+               $scaffolding->showScaffoldList($params);
+               break;
+   					
+               case 'new':
+               $scaffolding->showScaffoldNew($params);
+               break;
+               
+               case 'edit':
+               $scaffolding->showScaffoldEdit($params);
+               break;
+   								
+               case 'create':
+               $scaffolding->scaffoldCreate($params);
+               break;
+   			
+               case 'update':
+               $scaffolding->scaffoldUpdate($params);
+               break;
+   			
+               case 'destroy':
+               $scaffolding->scaffoldDestroy($params);
+               break;
+            }
+         } 
+         else
+         {
+            $this->errorUnknownAction($url, $controller_class, $params['action']);
+         }
+         exit;
+   }
+}
 ?>

@@ -1,0 +1,95 @@
+BODY {
+font-size:.9em;
+}
+
+BODY, INPUT, TEXTAREA {
+font-family:sans-serif;
+}
+
+H1 {
+font-size:2.1em;
+text-align:center;
+}
+
+H2 {
+font-size:1.8em;
+}
+
+H3 {
+font-size:1.5em;
+}
+
+P {
+font-size:1em;
+margin-bottom:.5em;
+}
+
+A {
+white-space:nowrap;
+text-decoration:underline;
+}
+
+CODE, PRE {
+font-family:monospace;
+font-size:1.1em !important;
+font-size:.95em;
+color:#44A;
+margin:0;
+}
+
+CODE {
+color:#227;
+white-space:nowrap;
+margin:0 .2em;
+}
+
+PRE {
+margin-left:1em;
+}
+
+ACRONYM {
+border-bottom:1px dotted;
+}
+
+HR {
+height:0;
+border-top:1px solid #AAA;
+}
+
+
+/*table code */
+table.inav {
+	width: 100%;
+	border: 1px solid #686E74;
+	margin: 1em 0 2em 0;
+	background-color: #fff;
+}
+table.inav th {
+	background-color: #ccc;
+	text-align: left;
+	border-top: 1px solid #fff;
+	border-right: 1px solid #666;
+	border-bottom: 1px solid #666;
+	padding:3px;
+}
+table.inav tr td {
+	padding:2px 0;
+	border-right: 1px solid #ccc;
+}
+table.inav tr td {
+	background: #fff;
+	padding:2px 0;
+	border-right: 1px solid #ccc;
+}
+table.inav tr.or td {
+	background: #EBF4FD;
+}
+/* lists */
+ul.actions li {
+display:inline;
+border-right:1px solid #333;
+}
+ul.actions li a {
+	color: #FF0000;
+	padding:0 5px;
+}

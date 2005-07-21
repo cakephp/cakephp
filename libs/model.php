@@ -15,7 +15,7 @@
 
 /**
  * Purpose: Model
- * DBO-backed object data model, loosely based on RoR (www.rubyonrails.com).
+ * DBO-backed object data model, loosely based on RoR concepts (www.rubyonrails.com).
  * Automatically selects a database table name based on a pluralized lowercase object class name
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment', 'created datetime', 
@@ -43,7 +43,7 @@
 uses('object', 'validators', 'inflector');
 
 /**
- * DBO-backed object data model, loosely based on RoR (www.rubyonrails.com).
+ * DBO-backed object data model, loosely based on RoR concepts (www.rubyonrails.com).
  * Automatically selects a database table name based on a pluralized lowercase object class name
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment', 'created datetime', 
@@ -96,7 +96,7 @@ class Model extends Object
  * @access public
  */
    var $table = false;
-   // private
+
 /**
  * Table metadata
  *
@@ -113,7 +113,15 @@ class Model extends Object
   */
 	var $_hasOne = array();
 
-
+/**
+  * Enter description here...
+  *
+  * @var unknown_type
+  * @access private
+  */
+	var $_belongsTo = array();
+	
+	
 /**
  * Array of other Models this Model references in a one-to-many relationship. 
  *
@@ -189,22 +197,124 @@ class Model extends Object
  */
 	function createLinks()
 	{
+	   if (!empty($this->belongsTo))
+	   {
+	      return $this->_belongsToLink();
+	   }
+
 	   if (!empty($this->hasOne))
 	   {
 	      $this->_hasOneLink();
-	   }
-	   if (!empty($this->hasMany))
-	   {
-	      return $this->_hasManyLinks();
-	   }
+		}
+		if (!empty($this->hasMany))
+		{
+		   return $this->_hasManyLinks();
+		}
+		
+		if (!empty($this->hasAndBelongsToMany))
+		{
+		   return $this->_hasAndBelongsToManyLinks();
+		}
 	}
 
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
+   function _belongsToLink()
+   {
+      if(is_array($this->belongsTo))
+      {
+         if (count($this->id) > 1)
+         {
+            $this->_count++;
+         }
+         else
+         {
+            $this->_count = false;	
+         }
+         
+         foreach ($this->belongsTo as $association => $associationValue)
+         {
+            $className = $association;
+            $classCreated = false;
+            
+            foreach ($associationValue as $option => $optionValue)
+            {
+               if (($option === 'className') && ($classCreated === false))
+               {
+                  $className = $optionValue;
+               }
+               
+               if ($classCreated === false)
+               {
+                  $this->$className = &new $className();	
+                  $classCreated = true;
+                  $this->_belongsTo = array($association,$className);
+               }
+               
+               switch($option)
+               {
+                  case 'conditions':
+                        $modelConditions = $this->table .'To'. $association . 'Conditions';
+                        $conditions = $optionValue;
+                        $this->$modelConditions = $conditions;
+                  unset($modelConditions);
+                  break;
+                  
+                  case 'order':
+                        $modelOrder = $this->table .'To'. $association . 'Order';
+                        $order = $optionValue;
+                        $this->$modelOrder = $order;
+                  unset($modelOrder);
+                  break;
+                  
+                  case 'foreignKey':
+                  $modelForeignKey = $this->table .'To'. $association . 'ForeignKey';
+                  $foreignKey = $optionValue;
+                  $this->$modelForeignKey = $foreignKey;
+                  unset($modelForeignKey);
+                  break;
+                  
+                  case 'counterCache':
+                  $modelCounterCache= $this->table .'To'. $association . 'counterCache';
+                  $counterCache = $optionValue;
+                  $this->$modelCounterCache = $counterCache;
+                  unset($modelCounterCache);
+                  break; 
+               }
+            }
+            
+            $this->_constructAssociatedModels($className , 'Belongs');
+            unset($className);
+            
+            if (!count($this->id) > 1)
+            {
+               $this->_resetCount();
+            }
+         }
+      }
+      else
+      {
+         $this->_resetCount();
+         if (count($this->id) > 1)
+         {
+            $this->_count++;
+         }
+         else
+         {
+            $this->_count = false;	
+         }
+				
+				$association = explode(',', $this->belongsTo);
+				foreach ($association as $modelName) 
+				{
+					$this->_constructAssociatedModels($modelName , 'Belongs');
+				}
+			}	
+	}
 	
-	function _resetCount()
-	{
-	   return $this->_count = 0;
-	}
-
 /**
  * Enter description here...
  *
@@ -304,6 +414,10 @@ class Model extends Object
 	}
 
 	
+/**
+ * Enter description here...
+ *
+ */
 	function _hasManyLinks()
 	{
 	   if(is_array($this->hasMany))
@@ -313,7 +427,7 @@ class Model extends Object
 	      foreach ($this->hasMany as $association => $associationValue)
 	      {
 	         $className = $association;
-	         $this->_hasMany = array($className,$association);
+	         $this->_hasMany = array($association,$className);
 	         
 	         foreach ($associationValue as $option => $optionValue)
 	         {
@@ -356,22 +470,49 @@ class Model extends Object
 	               break;
 	            }
 	         }
-	         $this->linkManyToOne($className, $this->id[$this->_count]);
+	         $this->linkAssociation('Many', $className, $this->id[$this->_count]);
 	      }
 	   }
 	   else
-	   {
-	      $this->_hasMany = explode(',', $this->hasMany);
-	      $this->_resetCount();
-	      
-	      foreach ($this->_hasMany as $modelName)
-	      {
-	         $this->_constructAssociatedModels($modelName , 'Many');
-	      }
-	   }
+      {
+         $this->_resetCount();
+         if (count($this->id) > 1)
+         {
+            $this->_count++;
+         }
+         else
+         {
+            $this->_count = false;	
+         }
+				
+				$association = explode(',', $this->hasMany);
+				foreach ($association as $modelName) 
+				{
+					$this->linkAssociation('Many', $modelName, $this->id[$this->_count]);;
+				}
+			}
 	}
 
-
+   function _hasAndBelongsToManyLinks()
+   {
+      if(is_array($this->hasAndBelongsToMany))
+      {
+      }
+      else
+      {
+         $this->_hasAndBelongsToMany = explode(',', $this->hasAndBelongsToMany);
+      }
+   }
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
+	function _resetCount()
+	{
+	   return $this->_count = 0;
+	}
+	
 /**
  * Enter description here...
  *
@@ -380,138 +521,208 @@ class Model extends Object
  * @param unknown_type $settings
  * @access private
  */
-   function _constructAssociatedModels($className, $type = false, $settings = false)
+   function _constructAssociatedModels($className, $type, $settings = false)
    {
       $modelName = Inflector::singularize($className);
       
       switch($type)
       {
-         
+         case 'Belongs':
+         $joinedHas = 'joinedBelongsTo';
+         break;
+
          case 'One':
-         $this->linkOneToOne($modelName, $this->id[$this->_count++]);
          $joinedHas = 'joinedHasOne';
          break;
-         
+
          case 'Many':
-         $this->linkManyToOne($modelName, $this->id[$this->_count++]);
          $joinedHas = 'joinedHasMany';
+         break;
+
+         case 'ManyTo':
+         $joinedHas = 'joinedHasAndBelongs';
          break;
 
          default:
          //nothing
          break;
       }
+      $this->linkAssociation($type, $modelName, $this->id[$this->_count]);
       
       if(!isset($this->$className))
       {
-            $this->$className = &new $className();
+         $this->$className = new $className();
       }
       $this->{$joinedHas}[] = $this->$className;
-      $this->relink();
+      $this->relink($type);
    }
    
+   
+
 /**
  * Updates this model's association links, by emptying the links list, and then link"*Association Type" again.
  *
+ * @param unknown_type $type
  */
-	function relink () 
+	function relink ($type) 
 	{
-		
-			if(!empty($this->id))
-			{
-				$i = 1;
-			}
-			
-			foreach ($this->_hasOne as $table) 
-			{
-				if(is_array($table))
-				{
-					$names[] = explode(',', $table);
-				} 
-				else 
-				{
-					$names[0] = $table;
-					$names[1] = $table;
-				}
-				$className = $names[1];
-				$tableName = Inflector::singularize($names[0]);
-				$this->$className->clearLinks();
-				$this->$className->linkOneToOne($tableName, $this->id[$i]);
-			}
-			foreach ($this->_hasMany as $table)
-			{
-			   if(is_array($table))
-			   {
-			      $names[] = explode(',', $table);
-			   }
-			   else
-			   {
-			      $names[0] = $table;
-			      $names[1] = $table;
-			   }
-			   $className = $names[1];
-			   $tableName = Inflector::singularize($names[0]);
-			   $this->clearLinks();
-			   $this->linkManyToOne($tableName, $this->id[0]);
-			}
+	    switch ($type)
+	    {
+	       case 'Belongs':
+	           foreach ($this->_belongsTo as $table) 
+	           {
+	              if(is_array($table))
+	              {
+	                 $names[] = explode(',', $table);
+	              } 
+	              else 
+	              {
+	                 $names[0] = $table;
+	                 $names[1] = $table;
+	              }
+	              $className = $names[1];
+	              $tableName = Inflector::singularize($names[0]);
+	              $this->$className->clearLinks($type);
+	              $this->$className->linkAssociation($type, $tableName, $this->id);
+	           }
+	       break;
+	       
+	       case 'One':
+	           foreach ($this->_hasOne as $table) 
+	           {
+	              if(is_array($table))
+	              {
+	                 $names[] = explode(',', $table);
+	              } 
+	              else 
+	              {
+	                 $names[0] = $table;
+	                 $names[1] = $table;
+	              }
+	              $className = $names[1];
+	              $tableName = Inflector::singularize($names[0]);
+	              $this->$className->clearLinks($type);
+	              $this->$className->linkAssociation($type, $tableName, $this->id);
+	           }
+	       break;
+	       
+	       case 'Many':
+	           foreach ($this->_hasMany as $table)
+	           {
+	              if(is_array($table))
+	              {
+	                 $names[] = explode(',', $table);
+	              }
+	              else
+	              {
+			         $names[0] = $table;
+			         $names[1] = $table;
+	              }
+	              $className = $names[1];
+	              $tableName = Inflector::singularize($names[0]);
+	              $this->clearLinks($type);
+	              $this->linkAssociation($type, $tableName, $this->id[0]);
+	           }
+	       break;
+
+          case 'ManyTo':
+               foreach ($this->_manyToMany as $table)
+               {
+                  if(is_array($table))
+                  {
+                     $names[] = explode(',', $table);
+                  }
+                  else
+                  {
+                     $names[0] = $table;
+                     $names[1] = $table;
+                  }
+                  $className = $names[1];
+                  $tableName = Inflector::singularize($names[0]);
+                  $this->clearLinks($type);
+                  $this->linkAssociation($type, $tableName, $this->id[0]);
+               }
+	       break;
+	    }
 	}
 
-
-/**
- * Creates a many-to-one link for given $model_name. 
- * First it gets Inflector to derive a table name and a foreign key field name.
- * Then, these are stored in the Model.
- *
- * @param string $model_name Name of model to link to
- * @param unknown_type $value Defaults to NULL.
- */
-   function linkManyToOne ($tableName, $value=null) 
-   {
-      $tableName = Inflector::tableize($tableName);
-      $fieldKey = $this->table .'To'. Inflector::singularize($tableName) . 'ForeignKey';
-
-      if(!empty($this->$fieldKey))
-      {
-         $field_name = $this->$fieldKey;
-      }
-      else
-      {
-         $field_name = Inflector::singularize($this->table).'_id';
-      }
-		$this->_oneToMany[] = array($tableName, $field_name, $value);
-   }
-   
+	
 /**
  * Enter description here...
  *
+ * @param unknown_type $type
  * @param unknown_type $tableName
  * @param unknown_type $value
  */
-   function linkOneToOne ($tableName, $value=null) 
+   function linkAssociation ($type, $tableName, $value=null) 
    {
-
       $tableName = Inflector::tableize($tableName);
       $fieldKey = $this->table .'To'. Inflector::singularize($tableName) . 'ForeignKey';
-      
+
       if(!empty($this->$fieldKey))
       {
          $field_name = $this->$fieldKey;
       }
       else
       {
-         $field_name = Inflector::singularize($tableName).'_id';
+         if ($type === 'Belongs' || $type === 'One')
+         {
+            $field_name = Inflector::singularize($tableName).'_id';
+         }
+         else
+         {
+            $field_name = Inflector::singularize($this->table).'_id';
+         }
       }
-      $this->_oneToOne[] = array($tableName, $field_name, $value);
-   }
 
+      switch ($type)
+      {
+         case 'Belongs':
+         
+         $this->_belongsToOther[] = array($tableName, $field_name, $value);
+         break;
+
+         case 'One':
+         //$field_name = Inflector::singularize($tableName).'_id';
+         $this->_oneToOne[] = array($tableName, $field_name, $value);
+         break;
+
+         case 'Many':
+         
+         $this->_oneToMany[] = array($tableName, $field_name, $value);
+         break;
+
+         case 'ManyTo':
+         
+         $this->_manyToMany = array();
+         break;
+      }
+   }
+   
 /**
- * Removes all one-to-many links to other Models.
+ * Removes all oassociation links to other Models.
  *
  */
-   function clearLinks()
+   function clearLinks($type)
    {
-      $this->_oneToMany = array();
-      $this->_oneToOne = array();
+      switch ($type)
+      {
+         case 'Belongs':
+         $this->_belongsToOther = array();
+         break;
+
+         case 'One':
+         $this->_oneToOne = array();
+         break;
+
+         case 'Many':
+         $this->_oneToMany = array();
+         break;
+
+         case 'ManyTo':
+         $this->_manyToMany = array();
+         break;
+      }
    }
 
 
@@ -586,7 +797,26 @@ class Model extends Object
    function setId ($id) 
    {
       $this->id = $id;
-      $this->relink();
+      
+      if(!empty($this->_belongsToOther))
+      {
+         $this->relink('Belongs');
+      }
+      
+      if(!empty($this->_oneToOne))
+      {
+         $this->relink('One');
+      }
+      
+      if(!empty($this->_oneToMany))
+      {
+         $this->relink('Many');
+      }
+      
+      if(!empty($this->_manyToMany))
+      {
+         $this->relink('ManyTo');
+      }
    }
 
 /**
@@ -899,12 +1129,24 @@ class Model extends Object
 
       $joins = $whers = array();
       
-      foreach ($this->_oneToOne as $rule)
+      if(!empty($this->_oneToOne))
       {
-         list($table, $field, $value) = $rule;
-         $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
+         foreach ($this->_oneToOne as $rule)
+         {
+            list($table, $field, $value) = $rule;
+            $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
+         }
       }
-
+      
+      if(!empty($this->_belongsToOther))
+      {
+         foreach ($this->_belongsToOther as $rule)
+         {
+            list($table, $field, $value) = $rule;
+            $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
+         }
+      }
+      
       $joins = count($joins)? join(' ', $joins): null;
       $whers = count($whers)? '('.join(' AND ', $whers).')': null;
       $conditions .= ($conditions && $whers? ' AND ': null).$whers;

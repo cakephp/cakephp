@@ -88,6 +88,11 @@ class View extends Object
  */
    var $helpers = array('html');
 
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
    var $viewPath;
 
 /**
@@ -147,18 +152,39 @@ class View extends Object
  */
    var $autoLayout = true;
 
-
-
-
-
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
    var $params;
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
    var $hasRendered = null;
 
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
    var $modelsLoaded = false;
 
+/**
+ * Enter description here...
+ *
+ * @return View
+ */
    function View(){
    }
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
    function getInstance()
    {
       static $instance;
@@ -392,18 +418,30 @@ class View extends Object
    }
 
 
+/**
+ * Enter description here...
+ *
+ */
    function missingController()
    {
       //We are simulating action call below, this is not a filename!
       $this->render('../errors/missingController');
    }
 
+/**
+ * Enter description here...
+ *
+ */
    function missingAction()
    {
       //We are simulating action call below, this is not a filename!
       $this->render('../errors/missingAction');
    }
 
+/**
+ * Enter description here...
+ *
+ */
    function missingView()
    {
       //We are simulating action call below, this is not a filename!
@@ -445,8 +483,17 @@ class View extends Object
  */
    function _getLayoutFileName()
    {
-      return VIEWS."layouts".DS."{$this->layout}.thtml";
-   }
+		if(file_exists(VIEWS."layouts".DS."{$this->layout}.thtml")){
+	   return VIEWS."layouts".DS."{$this->layout}.thtml";
+		}
+		elseif(file_exists(LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS."{$this->layout}.thtml")){
+		   return LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS."{$this->layout}.thtml";
+		}
+		else{//Let allows setting path to other layouts??
+		 return;
+		}
+	}
+   
 
 /**
  * Renders and returns output for given view filename with its 

@@ -1,0 +1,102 @@
+<h1>Editing <?php echo Inflector::camelize($this->name); ?></h1>
+<?php echo $html->formTag('/'.$this->viewPath.'/update');?>
+	<table cellspacing="0" class="inav">
+		<tr>
+         <th>Column Type</th>
+         <th>Column Name</th>
+         <th>Value</th>
+		</tr>
+<?php
+	$model = Inflector::pluralize($this->name);
+	$table = Inflector::singularize($this->name);
+	$evenNum = 1;
+   $css = false;
+   
+	foreach ($this->$table->_table_info as $tables) {
+		$columnCount = 0;
+		foreach ($tables as $tabl) {
+			foreach ($this->_viewVars as $names)  {?>
+<?php 
+
+		if ($evenNum % 2 == 0 ){
+			$css = ' class="or"';
+		}else{
+			$css = false;
+		}
+		$evenNum++;
+		?> 
+	
+<?php echo "<tr$css>";?>		
+			<td> <?php echo $tabl['type'];?> </td>
+			<td> <?php echo $tabl['name'];?> </td>
+			<td><?php echo $names[$table][$tabl['name']]?></td>
+		</tr>
+<?php 
+			}
+			$columnCount++;
+		}
+	}
+?>
+	</table>
+<?php 
+if(!empty($this->$table->joinedHasOne)){?>	
+
+	<table cellspacing="0" class="inav">
+	
+		<tr>
+		<th> </th>
+			<th>Joined Table</th>
+		<th> </th>
+		</tr>
+		<tr>
+         <th>Column Type</th>
+         <th>Column Name</th>
+         <th>Value</th>
+		</tr>
+<?php
+
+	$joinedCount = count($this->$table->joinedHasOne);
+	$count = $columnCount;
+	$evenNum = 1;
+   $css = false;
+	
+		for ($i = 0; $i <= $joinedCount-1; $i++) {
+			foreach ($this->$table->joinedHasOne[$i]->_table_info as $tab) {
+				foreach($tab as $test){
+?>	
+		
+<?php 
+
+		if ($evenNum % 2 == 0 ){
+			$css = ' class="or"';
+		}else{
+			$css = false;
+		}
+		$evenNum++;
+		?> 
+	
+<?php echo "<tr$css>";?>
+			<td> <?php echo $test['type'];?> </td>
+			<td> <?php echo $test['name'];?> </td>
+			<td><?php echo $names[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']]?></td>
+		</tr>
+<?php
+
+		$count++;
+				}
+			}
+		}		
+?>
+	</table>
+	<?php }?>
+	
+	
+	<table cellspacing="0" class="inav">
+		<br /><?php echo $html->submitTag('Save')?></p>
+		</form>
+		<tr>
+			<td>
+				<?php echo $html->linkTo('<span style="color: red;">Back</span>', "/{$this->viewPath}/list/")?>
+			</td>
+		</tr>
+	</table>

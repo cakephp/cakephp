@@ -96,6 +96,14 @@ class Time extends Object
       return date('Y-m-d', $date) == date('Y-m-d', time());
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $begin
+ * @param unknown_type $end
+ * @param unknown_type $field_name
+ * @return unknown
+ */
    function daysAsSql ($begin, $end, $field_name)
    {
       $begin = date('Y-m-d', $begin).' 00:00:00';
@@ -104,6 +112,13 @@ class Time extends Object
       return "($field_name >= '$begin') AND ($field_name <= '$end')";
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $date
+ * @param unknown_type $field_name
+ * @return unknown
+ */
    function dayAsSql ($date, $field_name)
    {
       return Time::daysAsSql($date, $date, $field_name);

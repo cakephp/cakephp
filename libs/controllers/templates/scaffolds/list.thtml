@@ -1,0 +1,105 @@
+<h1>Listing <?php echo Inflector::humanize($this->name); ?></h1>
+	<table cellspacing="0" class="inav">
+		<tr>
+<?php
+	$model = Inflector::pluralize($this->name);
+	$table = Inflector::singularize($this->name);
+	
+	foreach ($this->$table->_table_info as $tables) {
+		
+		
+		foreach ($tables as $tabl) {
+			$tableHeader = Inflector::humanize($tabl['name']);
+			
+?>
+			<th><?php echo	$tableHeader;?></th>	
+<?php
+		}
+	}
+if(!empty($this->$table->joinedHasOne)){
+
+echo"			<th>Joined Table Actions</th>";
+}
+
+if(!empty($this->$table->_hasMany)){
+
+echo"			<th>Has Many ";
+		for ($i = 0; $i <= count($this->$table->_hasMany)-1; $i++) {
+			echo Inflector::humanize($this->$table->_hasMany[$i]);
+		}
+ echo "</th>";
+} ?>		
+			
+			<th>Actions for <?php echo Inflector::humanize($this->name);?></th>
+  		</tr>
+  		
+<?php 
+   $evenNum = 1;
+   $css = false;
+	foreach ($this->$table->findAll() as $columns){ 
+		if ($evenNum % 2 == 0 ){
+			$css = ' class="or"';
+		}else{
+			$css = false;
+		}
+		$evenNum++;
+		?> 
+	
+<?php echo "<tr$css>";?>
+		<?php foreach ($tables as $tabl) {?>
+    		<td><?php echo $columns[$table][$tabl['name']]?></td>
+<?php 
+		}
+		if(!empty($this->$table->joinedHasOne)){echo"			<td>";?>
+<?php 
+	$joinedCount = count($this->$table->joinedHasOne);
+
+		for ($i = 0; $i <= $joinedCount-1; $i++) {
+			foreach ($this->$table->joinedHasOne[$i]->_table_info as $tab) {
+				foreach($tab as $test){
+					if($test['name'] === 'id'){
+						echo $html->linkTo('<span style="color: red;">Edit: <b>'. Inflector::humanize(Inflector::singularize($this->$table->joinedHasOne[$i]->table)) .'</b></span>',"/{$this->$table->joinedHasOne[$i]->table}/edit/{$columns[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']]}");
+						echo '<br /><b>' . Inflector::humanize($test['name']) .':</b> ' . $columns[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']] .'<br />';
+					} else{
+						echo '<b>' . Inflector::humanize($test['name']) .':</b> ' . $columns[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']] .'<br />';
+					}
+				}
+			}
+		}
+	}
+   
+if(!empty($this->$table->joinedHasOne)){ echo"			</td>";}?>
+
+<?php if(!empty($this->$table->_hasMany)){ echo"			<td>";?>
+<?php
+	for ($i = 0; $i <= count($this->$table->_hasMany)-1; $i++) {
+		for ($ia = 0; $ia <= count($columns)-2; $ia++) {
+			foreach ($this->$table->joinedHasMany[0] as $tab) {
+				foreach($tab as $test){
+					if($test['name'] === 'id'){
+						echo $html->linkTo('<span style="color: red;">Edit: <b>'. Inflector::humanize(Inflector::singularize($this->$table->_hasMany[$i])) .'</b></span>',"/{$this->$table->_hasMany[$i]}/edit/{$columns[$ia][Inflector::singularize($this->$table->_hasMany[$i])][$test['name']]}");
+						echo '<br /><b>' . Inflector::humanize($test['name']) .':</b> ' . $columns[$ia][Inflector::singularize($this->$table->_hasMany[$i])][$test['name']] .'<br />';
+					} else{
+						echo '<b>' . Inflector::humanize($test['name']) .':</b> ' . $columns[$ia][Inflector::singularize($this->$table->_hasMany[$i])][$test['name']] .'<br />';
+					}
+				}
+			}
+		}
+	}
+}
+
+   
+if(!empty($this->$table->hasMany)){ echo"			</td>";}?>
+
+    		<td><?php echo $html->linkTo('<span style="color: red;">Show</span>', "/{$this->viewPath}/show/{$columns[Inflector::singularize($this->name)]['id']}")?>
+        		 <?php echo $html->linkTo('<span style="color: red;">Edit</span>',"/{$this->viewPath}/edit/{$columns[Inflector::singularize($this->name)]['id']}")?>
+       		 <?php echo $html->linkTo('<span style="color: red;">Destroy</span>',"/{$this->viewPath}/destroy/{$columns[Inflector::singularize($this->name)]['id']}")?>
+    		</td>
+    	</tr>
+<?php } ?>
+	</table>
+	<table>
+		<tr>
+			<td colspan="3"><?php echo $html->linkTo('Add New '.Inflector::humanize(Inflector::singularize($this->viewPath)).'', "/{$this->viewPath}/new/") ?></td>
+		</tr>
+	</table>

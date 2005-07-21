@@ -192,16 +192,35 @@ class Inflector extends Object
       return Inflector::underscore($class_name) . "_id";
    } 
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return unknown
+ */
    function toControllerFilename($name)
    {
       return CONTROLLERS.Inflector::underscore($name).'.php';
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return unknown
+    */
    function toHelperFilename($name)
    {
       return HELPERS.Inflector::underscore($name).'.php';
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @param unknown_type $correct
+ * @return unknown
+ */
    function toFullName($name, $correct)
    {
       if (strstr($name, '_') && (strtolower($name) == $name))
@@ -226,6 +245,12 @@ class Inflector extends Object
       }
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return unknown
+ */
    function toLibraryFilename ($name)
    {
       return LIBS.Inflector::underscore($name).'.php';
