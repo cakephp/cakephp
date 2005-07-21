@@ -1,6 +1,6 @@
 <?php
 //////////////////////////////////////////////////////////////////////////
-// + $Id: $
+// + $Id$
 // +------------------------------------------------------------------+ //
 // + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
 // + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
@@ -23,9 +23,9 @@
  * @package cake
  * @subpackage cake.libs.helpers
  * @since CakePHP v 0.9.2
- * @version $Revision: $
- * @modifiedby $LastChangedBy: $
- * @lastmodified $Date: $
+ * @version $Revision$
+ * @modifiedby $LastChangedBy$
+ * @lastmodified $Date$
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  *
  */
