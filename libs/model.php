@@ -201,20 +201,18 @@ class Model extends Object
 	   {
 	      return $this->_belongsToLink();
 	   }
-
 	   if (!empty($this->hasOne))
 	   {
 	      $this->_hasOneLink();
-		}
-		if (!empty($this->hasMany))
-		{
-		   return $this->_hasManyLinks();
-		}
-		
-		if (!empty($this->hasAndBelongsToMany))
-		{
-		   return $this->_hasAndBelongsToManyLinks();
-		}
+	   }
+	   if (!empty($this->hasMany))
+	   {
+	      return $this->_hasManyLinks();
+	   }
+	   if (!empty($this->hasAndBelongsToMany))
+	   {
+	      return $this->_hasAndBelongsToManyLinks();
+	   }
 	}
 
 /**
@@ -528,19 +526,19 @@ class Model extends Object
       switch($type)
       {
          case 'Belongs':
-         $joinedHas = 'joinedBelongsTo';
+         $joined = 'joinedBelongsTo';
          break;
 
          case 'One':
-         $joinedHas = 'joinedHasOne';
+         $joined = 'joinedHasOne';
          break;
 
          case 'Many':
-         $joinedHas = 'joinedHasMany';
+         $joined = 'joinedHasMany';
          break;
 
          case 'ManyTo':
-         $joinedHas = 'joinedHasAndBelongs';
+         $joined = 'joinedHasAndBelongs';
          break;
 
          default:
@@ -553,7 +551,7 @@ class Model extends Object
       {
          $this->$className = new $className();
       }
-      $this->{$joinedHas}[] = $this->$className;
+      $this->{$joined}[] = $this->$className;
       $this->relink($type);
    }
    
@@ -678,22 +676,18 @@ class Model extends Object
       switch ($type)
       {
          case 'Belongs':
-         
          $this->_belongsToOther[] = array($tableName, $field_name, $value);
          break;
 
          case 'One':
-         //$field_name = Inflector::singularize($tableName).'_id';
          $this->_oneToOne[] = array($tableName, $field_name, $value);
          break;
 
          case 'Many':
-         
          $this->_oneToMany[] = array($tableName, $field_name, $value);
          break;
 
          case 'ManyTo':
-         
          $this->_manyToMany = array();
          break;
       }
