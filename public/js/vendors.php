@@ -29,7 +29,7 @@
  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-if(is_file('../../vendors/javascript/'.$_GET['file']))
+if(is_file('../../vendors/javascript/'.$_GET['file']) && (preg_match('/(.+)\\.js/', $_GET['file'])))
 {
    readfile('../../vendors/javascript/'.$_GET['file']);
 }
