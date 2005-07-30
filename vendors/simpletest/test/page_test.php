@@ -456,19 +456,47 @@
         }
     }
 
-    class TestOfForms extends UnitTestCase {
+    class TestOfFormsCreatedFromEventStream extends UnitTestCase {
         
-        function testButtons() {
+        function testFormCanBeSubmitted() {
+            $page = &new SimplePage(new MockSimpleHttpResponse($this));
+            $page->acceptFormStart(
+                    new SimpleFormTag(array('method' => 'GET', 'action' => 'here.php')));
+            $page->AcceptTag(
+                    new SimpleSubmitTag(array('type' => 'submit', 'name' => 's')));
+            $page->acceptFormEnd();
+            $form = &$page->getFormBySubmitLabel('Submit');
+            $this->assertEqual(
+                    $form->submitButton(new SimpleByLabel('Submit')),
+                    new SimpleGetEncoding(array('s' => 'Submit')));
+        }
+        
+        function testInputFieldCanBeReadBack() {
             $page = &new SimplePage(new MockSimpleHttpResponse($this));
             $page->acceptFormStart(
                     new SimpleFormTag(array("method" => "GET", "action" => "here.php")));
             $page->AcceptTag(
+                    new SimpleTextTag(array("type" => "text", "name" => "a", "value" => "A")));
+            $page->AcceptTag(
                     new SimpleSubmitTag(array("type" => "submit", "name" => "s")));
             $page->acceptFormEnd();
-            $form = &$page->getFormBySubmitLabel("Submit");
-            $this->assertEqual(
-                    $form->submitButtonByLabel("Submit"),
-                    new SimpleFormEncoding(array("s" => "Submit")));
+            $this->assertEqual($page->getFieldByName('a'), 'A');
+        }
+        
+        function testInputFieldCanBeReadBackByLabel() {
+            $label = &new SimpleLabelTag(array());
+            $page = &new SimplePage(new MockSimpleHttpResponse($this));
+            $page->acceptFormStart(
+                    new SimpleFormTag(array("method" => "GET", "action" => "here.php")));
+            $page->acceptLabelStart($label);
+            $label->addContent('l');
+            $page->AcceptTag(
+                    new SimpleTextTag(array("type" => "text", "name" => "a", "value" => "A")));
+            $page->acceptLabelEnd();
+            $page->AcceptTag(
+                    new SimpleSubmitTag(array("type" => "submit", "name" => "s")));
+            $page->acceptFormEnd();
+            $this->assertEqual($page->getField('l'), 'A');
         }
     }
 
@@ -476,7 +504,8 @@
         
         function &parse($response) {
             $builder = &new SimplePageBuilder();
-            return $builder->parse($response);
+            $page = &$builder->parse($response);
+            return $page;
         }
         
         function testEmptyPage() {
@@ -522,7 +551,6 @@
         function testTitle() {
             $response = &new MockSimpleHttpResponse($this);
             $response->setReturnValue('getContent', '<html><head><title>Me</title></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertEqual($page->getTitle(), 'Me');
         }
@@ -532,7 +560,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><head><Title> <b>Me&amp;Me </TITLE></b></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertEqual($page->getTitle(), "Me&Me");
         }
@@ -543,9 +570,8 @@
                     '<html><head><form>' .
                     '<input type="text" name="here" value="Hello">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertEqual($page->getField('here'), "Hello");
+            $this->assertEqual($page->getFieldByName('here'), "Hello");
         }
         
         function testUnclosedForm() {
@@ -554,9 +580,8 @@
                     '<html><head><form>' .
                     '<input type="text" name="here" value="Hello">' .
                     '</head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertEqual($page->getField('here'), "Hello");
+            $this->assertEqual($page->getFieldByName('here'), "Hello");
         }
         
         function testEmptyFrameset() {
@@ -564,7 +589,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><frameset></frameset></html>');
-            
             $page = &$this->parse($response);
             $this->assertTrue($page->hasFrames());
             $this->assertIdentical($page->getFrameset(), array());
@@ -604,7 +628,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><frameset><frame></frameset></html>');
-            
             $page = &$this->parse($response);
             $this->assertTrue($page->hasFrames());
             $this->assertIdentical($page->getFrameset(), array());
@@ -630,7 +653,8 @@
         
         function testNamedFrames() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><frameset>' .
+            $response->setReturnValue('getContent',
+                    '<html><frameset>' .
                     '<frame src="a.html">' .
                     '<frame name="_one" src="b.html">' .
                     '<frame src="c.html">' .
@@ -652,7 +676,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><head><form><input type="submit"></form></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertNull($page->getFormBySubmitLabel('submit'));
             $this->assertIsA($page->getFormBySubmitName('submit'), 'SimpleForm');
@@ -664,7 +687,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><head><FORM><INPUT TYPE="SUBMIT"></FORM></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertIsA($page->getFormBySubmitName('submit'), 'SimpleForm');
             $this->assertIsA($page->getFormBySubmitLabel('Submit'), 'SimpleForm');
@@ -672,10 +694,10 @@
         
         function testFindFormByImage() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<input type="image" id=100 alt="Label" name="me">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertIsA($page->getFormByImageLabel('Label'), 'SimpleForm');
             $this->assertIsA($page->getFormByImageName('me'), 'SimpleForm');
@@ -684,10 +706,10 @@
         
         function testFindFormByButtonTag() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<button type="submit" name="b" value="B">BBB</button>' .
                     '</form></head></html>');
-
             $page = &$this->parse($response);
             $this->assertNull($page->getFormBySubmitLabel('b'));
             $this->assertNull($page->getFormBySubmitLabel('B'));
@@ -700,7 +722,6 @@
             $response->setReturnValue(
                     'getContent',
                     '<html><head><form id="55"><input type="submit"></form></head></html>');
-            
             $page = &$this->parse($response);
             $this->assertNull($page->getFormById(54));
             $this->assertIsA($page->getFormById(55), 'SimpleForm');
@@ -708,85 +729,155 @@
         
         function testReadingTextField() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<input type="text" name="a">' .
                     '<input type="text" name="b" value="bbb" id=3>' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertNull($page->getField('missing'));
-            $this->assertIdentical($page->getField('a'), '');
-            $this->assertIdentical($page->getField('b'), 'bbb');
+            $this->assertNull($page->getFieldByName('missing'));
+            $this->assertIdentical($page->getFieldByName('a'), '');
+            $this->assertIdentical($page->getFieldByName('b'), 'bbb');
         }
         
         function testReadingTextFieldIsCaseInsensitive() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><FORM>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><FORM>' .
                     '<INPUT TYPE="TEXT" NAME="a">' .
                     '<INPUT TYPE="TEXT" NAME="b" VALUE="bbb" id=3>' .
                     '</FORM></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertNull($page->getField('missing'));
-            $this->assertIdentical($page->getField('a'), '');
-            $this->assertIdentical($page->getField('b'), 'bbb');
+            $this->assertNull($page->getFieldByName('missing'));
+            $this->assertIdentical($page->getFieldByName('a'), '');
+            $this->assertIdentical($page->getFieldByName('b'), 'bbb');
         }
         
         function testSettingTextField() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<input type="text" name="a">' .
                     '<input type="text" name="b" id=3>' .
                     '<input type="submit">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertTrue($page->setField('a', 'aaa'));
-            $this->assertEqual($page->getField('a'), 'aaa');
+            $this->assertTrue($page->setFieldByName('a', 'aaa'));
+            $this->assertEqual($page->getFieldByName('a'), 'aaa');
             $this->assertTrue($page->setFieldById(3, 'bbb'));
             $this->assertEqual($page->getFieldById(3), 'bbb');
-            $this->assertFalse($page->setField('z', 'zzz'));
-            $this->assertNull($page->getField('z'));
+            $this->assertFalse($page->setFieldByName('z', 'zzz'));
+            $this->assertNull($page->getFieldByName('z'));
+        }
+        
+        function testSettingTextFieldByEnclosingLabel() {
+            $response = &new MockSimpleHttpResponse($this);
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
+                    '<label>Stuff' .
+                    '<input type="text" name="a" value="A">' .
+                    '</label>' .
+                    '</form></head></html>');
+            $page = &$this->parse($response);
+            $this->assertEqual($page->getFieldByName('a'), 'A');
+            $this->assertEqual($page->getField('Stuff'), 'A');
+            $this->assertTrue($page->setField('Stuff', 'aaa'));
+            $this->assertEqual($page->getField('Stuff'), 'aaa');
+        }
+        
+        function testGettingTextFieldByEnclosingLabelWithConflictingOtherFields() {
+            $response = &new MockSimpleHttpResponse($this);
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
+                    '<label>Stuff' .
+                    '<input type="text" name="a" value="A">' .
+                    '</label>' .
+                    '<input type="text" name="b" value="B">' .
+                    '</form></head></html>');
+            $page = &$this->parse($response);
+            $this->assertEqual($page->getFieldByName('a'), 'A');
+            $this->assertEqual($page->getFieldByName('b'), 'B');
+            $this->assertEqual($page->getField('Stuff'), 'A');
+        }
+        
+        function testSettingTextFieldByExternalLabel() {
+            $response = &new MockSimpleHttpResponse($this);
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
+                    '<label for="aaa">Stuff</label>' .
+                    '<input id="aaa" type="text" name="a" value="A">' .
+                    '</form></head></html>');
+            $page = &$this->parse($response);
+            $this->assertEqual($page->getField('Stuff'), 'A');
+            $this->assertTrue($page->setField('Stuff', 'aaa'));
+            $this->assertEqual($page->getField('Stuff'), 'aaa');
         }
         
         function testReadingTextArea() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<textarea name="a">aaa</textarea>' .
                     '<input type="submit">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertEqual($page->getField('a'), 'aaa');
+            $this->assertEqual($page->getFieldByName('a'), 'aaa');
         }
         
         function testSettingTextArea() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<textarea name="a">aaa</textarea>' .
                     '<input type="submit">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertTrue($page->setField('a', 'AAA'));
-            $this->assertEqual($page->getField('a'), 'AAA');
+            $this->assertTrue($page->setFieldByName('a', 'AAA'));
+            $this->assertEqual($page->getFieldByName('a'), 'AAA');
         }
         
         function testSettingSelectionField() {
             $response = &new MockSimpleHttpResponse($this);
-            $response->setReturnValue('getContent', '<html><head><form>' .
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
                     '<select name="a">' .
                     '<option>aaa</option>' .
                     '<option selected>bbb</option>' .
                     '</select>' .
                     '<input type="submit">' .
                     '</form></head></html>');
-            
             $page = &$this->parse($response);
-            $this->assertEqual($page->getField('a'), 'bbb');
-            $this->assertFalse($page->setField('a', 'ccc'));
-            $this->assertTrue($page->setField('a', 'aaa'));
-            $this->assertEqual($page->getField('a'), 'aaa');
+            $this->assertEqual($page->getFieldByName('a'), 'bbb');
+            $this->assertFalse($page->setFieldByName('a', 'ccc'));
+            $this->assertTrue($page->setFieldByName('a', 'aaa'));
+            $this->assertEqual($page->getFieldByName('a'), 'aaa');
+        }
+        
+        function testSettingSelectionFieldByEnclosingLabel() {
+            $response = &new MockSimpleHttpResponse($this);
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
+                    '<label>Stuff' .
+                    '<select name="a"><option selected>A</option><option>B</option></select>' .
+                    '</label>' .
+                    '</form></head></html>');
+            $page = &$this->parse($response);
+            $this->assertEqual($page->getField('Stuff'), 'A');
+            $this->assertTrue($page->setField('Stuff', 'B'));
+            $this->assertEqual($page->getField('Stuff'), 'B');
+        }
+        
+        function testSettingRadioButonByEnclosingLabel() {
+            $response = &new MockSimpleHttpResponse($this);
+            $response->setReturnValue('getContent',
+                    '<html><head><form>' .
+                    '<label>A<input type="radio" name="r" value="a" checked></label>' .
+                    '<label>B<input type="radio" name="r" value="b"></label>' .
+                    '</form></head></html>');
+            $page = &$this->parse($response);
+            $this->assertEqual($page->getField('A'), 'a');
+            $this->assertTrue($page->setField('B', 'b'));
+            $this->assertEqual($page->getField('B'), 'b');
         }
     }
 ?>

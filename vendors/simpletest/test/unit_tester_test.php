@@ -1,6 +1,9 @@
 <?php
     // $Id$
     
+    class ReferenceForTesting {
+    }
+    
     class TestOfUnitTester extends UnitTestCase {
         
         function testAssertTrueReturnsAssertionAsBoolean() {
@@ -23,6 +26,30 @@
             $this->assertIsA($this, 'UnitTestCase');
             $this->assertNotA($this, 'WebTestCase');
         }
+        
+        function testReferenceAssertionOnObjects() {
+            $a = &new ReferenceForTesting();
+            $b = &$a;
+            $this->assertReference($a, $b);
+        }
+        
+        function testReferenceAssertionOnScalars() {
+            $a = 25;
+            $b = &$a;
+            $this->assertReference($a, $b);
+        }
+        
+        function testCloneOnObjects() {
+            $a = &new ReferenceForTesting();
+            $b = &new ReferenceForTesting();
+            $this->assertCopy($a, $b);
+        }
+        
+        function testCloneOnScalars() {
+            $a = 25;
+            $b = 25;
+            $this->assertCopy($a, $b);
+        }
     }
     
     class JBehaveStyleRunner extends SimpleRunner {
@@ -38,7 +65,8 @@
     class TestOfJBehaveStyleRunner extends UnitTestCase {
         
         function &_createRunner(&$reporter) {
-            return new JBehaveStyleRunner($this, $reporter);
+            $runner = &new JBehaveStyleRunner($this, $reporter);
+            return $runner;
         }
         
         function testFail() {

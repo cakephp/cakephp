@@ -561,6 +561,14 @@
             $this->assertTrue($this->_parser->acceptStartToken(">", LEXER_EXIT));
         }
         
+        function testSimpleLabelStart() {
+            $this->_parser->parse("");
+            $this->_listener->expectOnce("startElement", array("label", array()));
+            $this->_listener->setReturnValue("startElement", true);
+            $this->assertTrue($this->_parser->acceptStartToken("<label", LEXER_ENTER));
+            $this->assertTrue($this->_parser->acceptStartToken(">", LEXER_EXIT));
+        }
+        
         function testLinkStart() {
             $this->_parser->parse("");
             $this->_listener->expectOnce("startElement", array("a", array("href" => "here.html")));

@@ -65,6 +65,14 @@
             $this->assertIdentical($expectation->test(' a : AB '), false);
         }
         
+        function testHeaderValueWithColons() {
+            $expectation = new HttpHeaderExpectation('a', 'A:B:C');
+            $this->assertIdentical($expectation->test('a: A'), false);
+            $this->assertIdentical($expectation->test('a: A:B'), false);
+            $this->assertIdentical($expectation->test('a: A:B:C'), true);
+            $this->assertIdentical($expectation->test('a: A:B:C:D'), false);
+        }
+        
         function testMultilineSearch() {
             $expectation = new HttpHeaderExpectation('a', 'A');
             $this->assertIdentical($expectation->test("aa: A\r\nb: B\r\nc: C"), false);
@@ -128,6 +136,14 @@
             $this->assertIdentical($expectation->test('Wanted'), true);
             $this->assertIdentical($expectation->test('wanted'), false);
             $this->assertIdentical($expectation->test('the wanted text is here'), false);
+        }
+    }
+    
+    class TestOfGenericAssertionsInWebTester extends WebTestCase {
+        
+        function testEquality() {
+            $this->assertEqual('a', 'a');
+            $this->assertNotEqual('a', 'A');
         }
     }
 ?>

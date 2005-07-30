@@ -2,6 +2,9 @@
     // $Id$
     
     require_once(dirname(__FILE__) . '/../tag.php');
+    require_once(dirname(__FILE__) . '/../encoding.php');
+    
+    Mock::generate('SimpleMultipartEncoding');
     
     class TestOfTag extends UnitTestCase {
         
@@ -58,9 +61,15 @@
     class TestOfWidget extends UnitTestCase {
         
         function testTextEmptyDefault() {
-            $tag = &new SimpleTextTag(array('' => 'text'));
+            $tag = &new SimpleTextTag(array('type' => 'text'));
             $this->assertIdentical($tag->getDefault(), '');
             $this->assertIdentical($tag->getValue(), '');
+        }
+        
+        function testSettingOfExternalLabel() {
+            $tag = &new SimpleTextTag(array('type' => 'text'));
+            $tag->setLabel('it');
+            $this->assertTrue($tag->isLabel('it'));
         }
         
         function testTextDefault() {
@@ -393,6 +402,19 @@
             $this->assertTrue($group->isId('i1'));
             $this->assertTrue($group->isId('i2'));
         }
+        
+        function testIsLabelMatchesAnyWidgetInSet() {
+            $group = &new SimpleRadioGroup();
+            $button1 = &new SimpleRadioButtonTag(array('value' => 'A'));
+            $button1->setLabel('one');
+            $group->addWidget($button1);
+            $button2 = &new SimpleRadioButtonTag(array('value' => 'B'));
+            $button2->setLabel('two');
+            $group->addWidget($button2);
+            $this->assertFalse($group->isLabel('three'));
+            $this->assertTrue($group->isLabel('one'));
+            $this->assertTrue($group->isLabel('two'));
+        }
     }
     
     class TestOfTagGroup extends UnitTestCase {
@@ -457,6 +479,41 @@
             $this->assertFalse($group->isId(0));
             $this->assertTrue($group->isId(1));
             $this->assertTrue($group->isId(2));
+        }
+    }
+    
+    class TestOfUploadWidget extends UnitTestCase {
+        
+        function testValueIsFilePath() {
+            $upload = &new SimpleUploadTag(array('name' => 'a'));
+            $upload->setValue(dirname(__FILE__) . '/support/upload_sample.txt');
+            $this->assertEqual($upload->getValue(), dirname(__FILE__) . '/support/upload_sample.txt');
+        }
+        
+        function testSubmitsFileContents() {
+            $encoding = &new MockSimpleMultipartEncoding($this);
+            $encoding->expectOnce('attach', array(
+                    'a',
+                    'Sample for testing file upload',
+                    'upload_sample.txt'));
+            $upload = &new SimpleUploadTag(array('name' => 'a'));
+            $upload->setValue(dirname(__FILE__) . '/support/upload_sample.txt');
+            $upload->write($encoding);
+            $encoding->tally();
+        }
+    }
+    
+    class TestOfLabelTag extends UnitTestCase {
+        
+        function testLabelShouldHaveAnEndTag() {
+            $label = &new SimpleLabelTag(array());
+            $this->assertTrue($label->expectEndTag());
+        }
+        
+        function testContentIsTextOnly() {
+            $label = &new SimpleLabelTag(array());
+            $label->addContent('Here <tag>are</tag> words');
+            $this->assertEqual($label->getText(), 'Here are words');
         }
     }
 ?>

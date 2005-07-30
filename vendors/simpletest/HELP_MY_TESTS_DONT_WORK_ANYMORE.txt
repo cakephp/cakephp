@@ -3,7 +3,45 @@ Simple Test interface changes
 Because the SimpleTest tool set is still evolving it is likely that tests
 written with earlier versions will fail with the newest ones. The most
 dramatic changes are in the alpha releases. Here is a list of possible
-problems...
+problems and their fixes...
+
+No class WantedPatternExpectation
+---------------------------------
+This was deprecated in 1.0.1alpha in favour of the simpler
+name PatternExpectation.
+
+No class NoUnwantedPatternExpectation
+-------------------------------------
+This was deprecated in 1.0.1alpha in favour of the simpler
+name NoPatternExpectation.
+
+No method assertNoUnwantedPattern()
+-----------------------------------
+This has been renamed to assertNoPattern() in 1.0.1alpha and
+the old form is deprecated.
+
+No method assertWantedPattern()
+-------------------------------
+This has been renamed to assertPattern() in 1.0.1alpha and
+the old form is deprecated.
+
+No method assertExpectation()
+-----------------------------
+This was renamed as assert() in 1.0.1alpha and the old form
+has been deprecated.
+
+No class WildcardExpectation
+----------------------------
+This was a mostly internal class for the mock objects. It was
+renamed AnythingExpectation to bring it closer to JMock and
+NMock in version 1.0.1alpha.
+
+Missing UnitTestCase::assertErrorPattern()
+------------------------------------------
+This method is deprecated for version 1.0.1 onwards.
+This method has been subsumed by assertError() that can now
+take an expectation. Simply pass a PatternExpectation
+into assertError() to simulate the old behaviour.
 
 No HTML when matching page elements
 -----------------------------------
@@ -29,7 +67,9 @@ My custom test case ignored by tally()
 --------------------------------------
 The _assertTrue method has had it's signature changed due to a bug
 in the PHP 5.0.1 release. You must now use getTest() from within
-that method to get the test case.
+that method to get the test case. Mock compatibility with other
+unit testers is now deprecated as of 1.0.1alpha as PEAR::PHUnit2
+should soon have mock support of it's own.
 
 Broken code extending SimpleRunner
 ----------------------------------

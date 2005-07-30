@@ -10,6 +10,11 @@
             return $this->_mock_shell;
         }
         
+        function testGenericEquality() {
+            $this->assertEqual('a', 'a');
+            $this->assertNotEqual('a', 'A');
+        }
+        
         function testExitCode() {
             $this->_mock_shell = &new MockSimpleShell($this);
             $this->_mock_shell->setReturnValue('execute', 0);

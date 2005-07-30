@@ -10,10 +10,9 @@
         function testGet() {
             $browser = &new SimpleBrowser();
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
-            
             $this->assertTrue($browser->get('http://www.lastcraft.com/test/network_confirm.php'));
-            $this->assertWantedPattern('/target for the SimpleTest/', $browser->getContent());
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/', $browser->getContent());
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/', $browser->getContent());
             $this->assertEqual($browser->getTitle(), 'Simple test target file');
             $this->assertEqual($browser->getResponseCode(), 200);
             $this->assertEqual($browser->getMimeType(), 'text/html');
@@ -23,8 +22,8 @@
             $browser = &new SimpleBrowser();
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
             $this->assertTrue($browser->post('http://www.lastcraft.com/test/network_confirm.php'));
-            $this->assertWantedPattern('/target for the SimpleTest/', $browser->getContent());
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/', $browser->getContent());
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/', $browser->getContent());
         }
         
         function testAbsoluteLinkFollowing() {
@@ -32,7 +31,7 @@
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
             $browser->get('http://www.lastcraft.com/test/link_confirm.php');
             $this->assertTrue($browser->clickLink('Absolute'));
-            $this->assertWantedPattern('/target for the SimpleTest/', $browser->getContent());
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
         }
         
         function testRelativeLinkFollowing() {
@@ -40,7 +39,15 @@
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
             $browser->get('http://www.lastcraft.com/test/link_confirm.php');
             $this->assertTrue($browser->clickLink('Relative'));
-            $this->assertWantedPattern('/target for the SimpleTest/', $browser->getContent());
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
+        }
+        
+        function testUnifiedClickLinkClicking() {
+            $browser = &new SimpleBrowser();
+            $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
+            $browser->get('http://www.lastcraft.com/test/link_confirm.php');
+            $this->assertTrue($browser->click('Relative'));
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
         }
         
         function testIdLinkFollowing() {
@@ -48,7 +55,7 @@
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
             $browser->get('http://www.lastcraft.com/test/link_confirm.php');
             $this->assertTrue($browser->clickLinkById(1));
-            $this->assertWantedPattern('/target for the SimpleTest/', $browser->getContent());
+            $this->assertPattern('/target for the SimpleTest/', $browser->getContent());
         }
         
         function testCookieReading() {
@@ -65,22 +72,29 @@
             $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
             $browser->get('http://www.lastcraft.com/test/form.html');
             $this->assertTrue($browser->clickSubmit('Go!'));
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/', $browser->getContent());
-            $this->assertWantedPattern('/go=\[Go!\]/', $browser->getContent());
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/', $browser->getContent());
+            $this->assertPattern('/go=\[Go!\]/', $browser->getContent());
+        }
+        
+        function testUnifiedClickCanSubmit() {
+            $browser = &new SimpleBrowser();
+            $browser->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
+            $browser->get('http://www.lastcraft.com/test/form.html');
+            $this->assertTrue($browser->click('Go!'));
+            $this->assertPattern('/go=\[Go!\]/', $browser->getContent());
         }
     }
     
     class TestOfLiveFetching extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
         
         function testGet() {
             $this->assertTrue($this->get('http://www.lastcraft.com/test/network_confirm.php'));
-            $this->assertTrue($this->getUrl() == 'http://www.lastcraft.com/test/network_confirm.php');
-            $this->assertWantedPattern('/target for the SimpleTest/');
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertEqual($this->getUrl(), 'http://www.lastcraft.com/test/network_confirm.php');
+            $this->assertWantedText('target for the SimpleTest');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertTitle('Simple test target file');
             $this->assertResponse(200);
             $this->assertMime('text/html');
@@ -98,18 +112,18 @@
         function testPost() {
             $this->assertTrue($this->post('http://www.lastcraft.com/test/network_confirm.php'));
             $this->assertWantedText('target for the SimpleTest');
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/');
         }
         
         function testGetWithData() {
             $this->get('http://www.lastcraft.com/test/network_confirm.php', array("a" => "aaa"));
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[aaa]');
         }
         
         function testPostWithData() {
             $this->post('http://www.lastcraft.com/test/network_confirm.php', array("a" => "aaa"));
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/');
             $this->assertWantedText('a=[aaa]');
         }
         
@@ -153,14 +167,13 @@
     }
     
     class TestOfLivePageLinkingWithMinimalLinks extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
         
         function testClickToExplicitelyNamedSelfReturns() {
             $this->get('http://www.lastcraft.com/test/front_controller_style/a_page.php');
-            $this->assertTrue($this->getUrl() == 'http://www.lastcraft.com/test/front_controller_style/a_page.php');
+            $this->assertEqual($this->getUrl(), 'http://www.lastcraft.com/test/front_controller_style/a_page.php');
             $this->assertTitle('Simple test page with links');
             $this->clickLink('Self');
             $this->assertTitle('Simple test page with links');
@@ -206,7 +219,6 @@
     }
     
     class TestOfLiveFrontControllerEmulation extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -239,16 +251,16 @@
             $this->get('http://www.lastcraft.com/test/front_controller_style/');
             $this->clickLink('Empty query');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/Simple test front controller/');
-            $this->assertWantedPattern('/raw get data.*?\[\].*?get data/si');
+            $this->assertPattern('/Simple test front controller/');
+            $this->assertPattern('/raw get data.*?\[\].*?get data/si');
         }
         
         function testJumpToUnnamedPageWithEmptyLink() {
             $this->get('http://www.lastcraft.com/test/front_controller_style/');
             $this->clickLink('Empty link');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/Simple test front controller/');
-            $this->assertWantedPattern('/raw get data.*?\[\].*?get data/si');
+            $this->assertPattern('/Simple test front controller/');
+            $this->assertPattern('/raw get data.*?\[\].*?get data/si');
         }
         
         function testJumpBackADirectoryLevel() {
@@ -294,7 +306,6 @@
     }
     
     class TestOfLiveHeaders extends WebTestCase {
-       
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -309,7 +320,6 @@
     }
      
     class TestOfLiveRedirects extends WebTestCase {
-       
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -356,21 +366,23 @@
     }
     
     class TestOfLiveCookies extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
         
         function testCookieSetting() {
-            $this->setCookie('a', 'Test cookie a', 'www.lastcraft.com');
-            $this->setCookie('b', 'Test cookie b', 'www.lastcraft.com', 'test');
+            $this->setCookie('a', 'Test cookie a');
+            $this->setCookie('b', 'Test cookie b', 'www.lastcraft.com');
+            $this->setCookie('c', 'Test cookie c', 'www.lastcraft.com', 'test');
             $this->get('http://www.lastcraft.com/test/network_confirm.php');
-            $this->assertWantedPattern('/Test cookie a/');
-            $this->assertWantedPattern('/Test cookie b/');
+            $this->assertPattern('/Test cookie a/');
+            $this->assertPattern('/Test cookie b/');
+            $this->assertPattern('/Test cookie c/');
             $this->assertCookie('a');
             $this->assertCookie('b', 'Test cookie b');
             $this->assertTrue($this->getCookie('a') == 'Test cookie a');
             $this->assertTrue($this->getCookie('b') == 'Test cookie b');
+            $this->assertTrue($this->getCookie('c') == 'Test cookie c');
         }
         
         function testCookieReading() {
@@ -387,43 +399,42 @@
             $this->assertCookie('day_cookie', 'C');
         }
         
-        function testTimedCookieExpiry() {
+        function testTimedCookieExpiryWith100SecondMargin() {
             $this->get('http://www.lastcraft.com/test/set_cookies.php');
             $this->ageCookies(3600);
-            $this->restart(time() + 60);    // Includes a 60 sec. clock drift margin.
+            $this->restart(time() + 100);
             $this->assertNoCookie('session_cookie');
             $this->assertNoCookie('hour_cookie');
             $this->assertCookie('day_cookie', 'C');
         }
         
-        function testOfClockOverDrift() {
+        function testNoClockOverDriftBy100Seconds() {
             $this->get('http://www.lastcraft.com/test/set_cookies.php');
-            $this->restart(time() + 160);        // Allows sixty second drift.
+            $this->restart(time() + 200);
             $this->assertNoCookie(
                     'short_cookie',
-                    '%s->Please check your computer clock setting if you are not using NTP');
+                    '%s -> Please check your computer clock setting if you are not using NTP');
         }
         
-        function testOfClockUnderDrift() {
+        function testNoClockUnderDriftBy100Seconds() {
             $this->get('http://www.lastcraft.com/test/set_cookies.php');
-            $this->restart(time() + 40);         // Allows sixty second drift.
+            $this->restart(time() + 0);
             $this->assertCookie(
                     'short_cookie',
                     'B',
-                    '%s->Please check your computer clock setting if you are not using NTP');
+                    '%s -> Please check your computer clock setting if you are not using NTP');
         }
         
         function testCookiePath() {
             $this->get('http://www.lastcraft.com/test/set_cookies.php');
-            $this->assertNoCookie("path_cookie", "D");
+            $this->assertNoCookie('path_cookie', 'D');
             $this->get('./path/show_cookies.php');
-            $this->assertWantedPattern('/path_cookie/');
-            $this->assertCookie("path_cookie", "D");
+            $this->assertPattern('/path_cookie/');
+            $this->assertCookie('path_cookie', 'D');
         }
     }
     
     class TestOfLiveForms extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -431,21 +442,21 @@
         function testSimpleSubmit() {
             $this->get('http://www.lastcraft.com/test/form.html');
             $this->assertTrue($this->clickSubmit('Go!'));
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/');
             $this->assertWantedText('go=[Go!]');
         }
         
         function testDefaultFormValues() {
             $this->get('http://www.lastcraft.com/test/form.html');
-            $this->assertField('a', '');
-            $this->assertField('b', 'Default text');
-            $this->assertField('c', '');
-            $this->assertField('d', 'd1');
-            $this->assertField('e', false);
-            $this->assertField('f', 'on');
-            $this->assertField('g', 'g3');
-            $this->assertField('h', 2);
-            $this->assertField('go', 'Go!');
+            $this->assertFieldByName('a', '');
+            $this->assertFieldByName('b', 'Default text');
+            $this->assertFieldByName('c', '');
+            $this->assertFieldByName('d', 'd1');
+            $this->assertFieldByName('e', false);
+            $this->assertFieldByName('f', 'on');
+            $this->assertFieldByName('g', 'g3');
+            $this->assertFieldByName('h', 2);
+            $this->assertFieldByName('go', 'Go!');
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('go=[Go!]');
             $this->assertWantedText('a=[]');
@@ -457,16 +468,16 @@
             $this->assertWantedText('g=[g3]');
         }
         
-        function testFormSubmissionByLabel() {
+        function testFormSubmissionByButtonLabel() {
             $this->get('http://www.lastcraft.com/test/form.html');
-            $this->setField('a', 'aaa');
-            $this->setField('b', 'bbb');
-            $this->setField('c', 'ccc');
-            $this->setField('d', 'D2');
-            $this->setField('e', 'on');
-            $this->setField('f', false);
-            $this->setField('g', 'g2');
-            $this->setField('h', 1);
+            $this->setFieldByName('a', 'aaa');
+            $this->setFieldByName('b', 'bbb');
+            $this->setFieldByName('c', 'ccc');
+            $this->setFieldByName('d', 'D2');
+            $this->setFieldByName('e', 'on');
+            $this->setFieldByName('f', false);
+            $this->setFieldByName('g', 'g2');
+            $this->setFieldByName('h', 1);
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('a=[aaa]');
             $this->assertWantedText('b=[bbb]');
@@ -486,11 +497,12 @@
         
         function testFormSubmissionByName() {
             $this->get('http://www.lastcraft.com/test/form.html');
+            $this->setFieldByName('a', 'A');
             $this->assertTrue($this->clickSubmitByName('go'));
-            $this->assertWantedText('go=[Go!]');
+            $this->assertWantedText('a=[A]');
         }
         
-        function testFormSubmissionByNameAndadditionalParameters() {
+        function testFormSubmissionByNameAndAdditionalParameters() {
             $this->get('http://www.lastcraft.com/test/form.html');
             $this->assertTrue($this->clickSubmitByName('go', array('add' => 'A')));
             $this->assertWantedText('go=[Go!]');
@@ -510,21 +522,77 @@
             $this->assertFieldById(3, '');
             $this->assertFieldById(4, 'd1');
             $this->assertFieldById(5, false);
+            $this->assertFieldById(6, 'on');
+            $this->assertFieldById(8, 'g3');
+            $this->assertFieldById(11, 2);
             $this->setFieldById(1, 'aaa');
             $this->setFieldById(2, 'bbb');
             $this->setFieldById(3, 'ccc');
             $this->setFieldById(4, 'D2');
             $this->setFieldById(5, 'on');
+            $this->setFieldById(6, false);
+            $this->setFieldById(8, 'g2');
+            $this->setFieldById(11, 'H1');
             $this->assertTrue($this->clickSubmitById(99));
             $this->assertWantedText('a=[aaa]');
             $this->assertWantedText('b=[bbb]');
             $this->assertWantedText('c=[ccc]');
             $this->assertWantedText('d=[d2]');
             $this->assertWantedText('e=[on]');
+            $this->assertNoUnwantedText('f=[');
+            $this->assertWantedText('g=[g2]');
+            $this->assertWantedText('h=[1]');
             $this->assertWantedText('go=[Go!]');
         }
         
-        function testImageSubmissionByLabel() {
+        function testFormSubmissionWithLabels() {
+            $this->get('http://www.lastcraft.com/test/form.html');
+            $this->assertField('Text A', '');
+            $this->assertField('Text B', 'Default text');
+            $this->assertField('Text area C', '');
+            $this->assertField('Selection D', 'd1');
+            $this->assertField('Checkbox E', false);
+            $this->assertField('Checkbox F', 'on');
+            $this->assertField('3', 'g3');
+            $this->assertField('Selection H', 2);
+            $this->setField('Text A', 'aaa');
+            $this->setField('Text B', 'bbb');
+            $this->setField('Text area C', 'ccc');
+            $this->setField('Selection D', 'D2');
+            $this->setField('Checkbox E', 'on');
+            $this->setField('Checkbox F', false);
+            $this->setField('2', 'g2');
+            $this->setField('Selection H', 'H1');
+            $this->assertTrue($this->clickSubmit('Go!'));
+            $this->assertWantedText('a=[aaa]');
+            $this->assertWantedText('b=[bbb]');
+            $this->assertWantedText('c=[ccc]');
+            $this->assertWantedText('d=[d2]');
+            $this->assertWantedText('e=[on]');
+            $this->assertNoUnwantedText('f=[');
+            $this->assertWantedText('g=[g2]');
+            $this->assertWantedText('h=[1]');
+            $this->assertWantedText('go=[Go!]');
+        }
+        
+        function testFormSubmissionWithMixedPostAndGet() {
+            $this->get('http://www.lastcraft.com/test/form_with_mixed_post_and_get.html');
+            $this->setFieldByName('a', 'A');
+            $this->assertTrue($this->clickSubmit('Go!'));
+            $this->assertWantedText('a=[A]');
+            $this->assertWantedText('x=[X]');
+            $this->assertWantedText('y=[Y]');
+        }
+        
+        function testFormSubmissionWithoutAction() {
+            $this->get('http://www.lastcraft.com/test/form_without_action.php?test=test');
+            $this->assertWantedText('_GET : [test]');
+            $this->assertTrue($this->clickSubmit('Submit Post With Empty Action'));
+            $this->assertWantedText('_GET : [test]');
+            $this->assertWantedText('_POST : [test]');
+        }
+
+		function testImageSubmissionByLabel() {
             $this->get('http://www.lastcraft.com/test/form.html');
             $this->assertTrue($this->clickImage('Image go!', 10, 12));
             $this->assertWantedText('go_x=[10]');
@@ -554,39 +622,74 @@
         function testButtonSubmissionByLabel() {
             $this->get('http://www.lastcraft.com/test/form.html');
             $this->assertTrue($this->clickSubmit('Button go!', 10, 12));
-            $this->assertWantedPattern('/go=\[ButtonGo\]/s');
+            $this->assertPattern('/go=\[ButtonGo\]/s');
         }
         
         function testSelfSubmit() {
             $this->get('http://www.lastcraft.com/test/self_form.php');
-            $this->assertNoUnwantedPattern('/<p>submitted<\/p>/i');
-            $this->assertNoUnwantedPattern('/<p>wrong form<\/p>/i');
-            $this->assertTitle('Test of form self submission');
+            $this->assertNoUnwantedText('[Submitted]');
+            $this->assertNoUnwantedText('[Wrong form]');
             $this->assertTrue($this->clickSubmit());
-            $this->assertWantedPattern('/<p>submitted<\/p>/i');
-            $this->assertNoUnwantedPattern('/<p>wrong form<\/p>/i');
+            $this->assertWantedText('[Submitted]');
+            $this->assertNoUnwantedText('[Wrong form]');
             $this->assertTitle('Test of form self submission');
+        }
+        
+        function testSelfSubmitWithParameters() {
+            $this->get('http://www.lastcraft.com/test/self_form.php');
+            $this->setFieldByName('visible', 'Resent');
+            $this->assertTrue($this->clickSubmit());
+            $this->assertWantedText('[Resent]');
         }
         
         function testSettingOfBlankOption() {
             $this->get('http://www.lastcraft.com/test/form.html');
-            $this->assertTrue($this->setField('d', ''));
+            $this->assertTrue($this->setFieldByName('d', ''));
             $this->clickSubmit('Go!');
             $this->assertWantedText('d=[]');
+        }
+        
+        function testSendingMultipartFormDataEncodedForm() {
+            $this->get('http://www.lastcraft.com/test/form_data_encoded_form.html');
+            $this->assertField('Text A', '');
+            $this->assertField('Text B', 'Default text');
+            $this->assertField('Text area C', '');
+            $this->assertField('Selection D', 'd1');
+            $this->assertField('Checkbox E', false);
+            $this->assertField('Checkbox F', 'on');
+            $this->assertField('3', 'g3');
+            $this->assertField('Selection H', 2);
+            $this->setField('Text A', 'aaa');
+            $this->setField('Text B', 'bbb');
+            $this->setField('Text area C', 'ccc');
+            $this->setField('Selection D', 'D2');
+            $this->setField('Checkbox E', 'on');
+            $this->setField('Checkbox F', false);
+            $this->setField('2', 'g2');
+            $this->setField('Selection H', 'H1');
+            $this->assertTrue($this->clickSubmit('Go!'));
+            $this->assertWantedText('a=[aaa]');
+            $this->assertWantedText('b=[bbb]');
+            $this->assertWantedText('c=[ccc]');
+            $this->assertWantedText('d=[d2]');
+            $this->assertWantedText('e=[on]');
+            $this->assertNoUnwantedText('f=[');
+            $this->assertWantedText('g=[g2]');
+            $this->assertWantedText('h=[1]');
+            $this->assertWantedText('go=[Go!]');
         }
     }
     
     class TestOfLiveMultiValueWidgets extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
         
         function testDefaultFormValueSubmission() {
             $this->get('http://www.lastcraft.com/test/multiple_widget_form.html');
-            $this->assertField('a', array('a2', 'a3'));
-            $this->assertField('b', array('b2', 'b3'));
-            $this->assertField('c[]', array('c2', 'c3'));
+            $this->assertFieldByName('a', array('a2', 'a3'));
+            $this->assertFieldByName('b', array('b2', 'b3'));
+            $this->assertFieldByName('c[]', array('c2', 'c3'));
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('a=[a2, a3]');
             $this->assertWantedText('b=[b2, b3]');
@@ -595,23 +698,35 @@
         
         function testSubmittingMultipleValues() {
             $this->get('http://www.lastcraft.com/test/multiple_widget_form.html');
-            $this->setField('a', array('a1', 'a4'));
-            $this->assertField('a', array('a1', 'a4'));
-            $this->assertField('a', array('a4', 'a1'));
-            $this->setField('b', array('b1', 'b4'));
-            $this->assertField('b', array('b1', 'b4'));
-            $this->setField('c[]', array('c1', 'c4'));
+            $this->setFieldByName('a', array('a1', 'a4'));
+            $this->assertFieldByName('a', array('a1', 'a4'));
+            $this->assertFieldByName('a', array('a4', 'a1'));
+            $this->setFieldByName('b', array('b1', 'b4'));
+            $this->assertFieldByName('b', array('b1', 'b4'));
+            $this->setFieldByName('c[]', array('c1', 'c4'));
             $this->assertField('c[]', array('c1', 'c4'));
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('a=[a1, a4]');
             $this->assertWantedText('b=[b1, b4]');
             $this->assertWantedText('c=[c1, c4]');
         }
-        
+          
+        function testSubmittingMultipleValuesByLabel() {
+            $this->get('http://www.lastcraft.com/test/multiple_widget_form.html');
+            $this->setField('Multiple selection A', array('a1', 'a4'));
+            $this->assertField('Multiple selection A', array('a1', 'a4'));
+            $this->assertField('Multiple selection A', array('a4', 'a1'));
+            $this->setField('multiple selection C', array('c1', 'c4'));
+            $this->assertField('multiple selection C', array('c1', 'c4'));
+            $this->assertTrue($this->clickSubmit('Go!'));
+            $this->assertWantedText('a=[a1, a4]');
+            $this->assertWantedText('c=[c1, c4]');
+        }
+      
         function testSavantStyleHiddenFieldDefaults() {
             $this->get('http://www.lastcraft.com/test/savant_style_form.html');
-            $this->assertField('a', array('a0'));
-            $this->assertField('b', array('b0'));
+            $this->assertFieldByName('a', array('a0'));
+            $this->assertFieldByName('b', array('b0'));
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('a=[a0]');
             $this->assertWantedText('b=[b0]');
@@ -619,8 +734,8 @@
         
         function testSavantStyleHiddenDefaultsAreOverridden() {
             $this->get('http://www.lastcraft.com/test/savant_style_form.html');
-            $this->assertTrue($this->setField('a', array('a1')));
-            $this->assertTrue($this->setField('b', 'b1'));
+            $this->assertTrue($this->setFieldByName('a', array('a1')));
+            $this->assertTrue($this->setFieldByName('b', 'b1'));
             $this->assertTrue($this->clickSubmit('Go!'));
             $this->assertWantedText('a=[a1]');
             $this->assertWantedText('b=[b1]');
@@ -638,19 +753,55 @@
         }
     }
     
-    class TestOfLiveHistoryNavigation extends WebTestCase {
+    class TestOfFileUploads extends WebTestCase {
+        function setUp() {
+            $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
+        }
+
+        function testSingleFileUpload() {
+            $this->get('http://www.lastcraft.com/test/upload_form.html');
+            $this->assertTrue($this->setField('Content:',
+                    dirname(__FILE__) . '/support/upload_sample.txt'));
+            $this->assertField('Content:', dirname(__FILE__) . '/support/upload_sample.txt');
+            $this->click('Go!');
+            $this->assertWantedText('Sample for testing file upload');
+        }
         
+        function testMultipleFileUpload() {
+            $this->get('http://www.lastcraft.com/test/upload_form.html');
+            $this->assertTrue($this->setField('Content:',
+                    dirname(__FILE__) . '/support/upload_sample.txt'));
+            $this->assertTrue($this->setField('Supplemental:',
+                    dirname(__FILE__) . '/support/supplementary_upload_sample.txt'));
+            $this->assertField('Supplemental:',
+                    dirname(__FILE__) . '/support/supplementary_upload_sample.txt');
+            $this->click('Go!');
+            $this->assertWantedText('Sample for testing file upload');
+            $this->assertWantedText('Some more text content');
+        }
+        
+        function testBinaryFileUpload() {
+            $this->get('http://www.lastcraft.com/test/upload_form.html');
+            $this->assertTrue($this->setField('Content:',
+                    dirname(__FILE__) . '/support/latin1_sample'));
+            $this->click('Go!');
+            $this->assertWantedText(
+                    implode('', file(dirname(__FILE__) . '/support/latin1_sample')));
+        }
+    }
+    
+    class TestOfLiveHistoryNavigation extends WebTestCase {        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
         
         function testRetry() {
             $this->get('http://www.lastcraft.com/test/cookie_based_counter.php');
-            $this->assertWantedPattern('/count: 1/i');
+            $this->assertPattern('/count: 1/i');
             $this->retry();
-            $this->assertWantedPattern('/count: 2/i');
+            $this->assertPattern('/count: 2/i');
             $this->retry();
-            $this->assertWantedPattern('/count: 3/i');
+            $this->assertPattern('/count: 3/i');
         }
         
         function testOfBackButton() {
@@ -667,10 +818,10 @@
         function testGetRetryResubmitsData() {
             $this->assertTrue($this->get(
                     'http://www.lastcraft.com/test/network_confirm.php?a=aaa'));
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[aaa]');
             $this->retry();
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[aaa]');
         }
         
@@ -678,10 +829,10 @@
             $this->assertTrue($this->get(
                     'http://www.lastcraft.com/test/network_confirm.php',
                     array('a' => 'aaa')));
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[aaa]');
             $this->retry();
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[aaa]');
         }
         
@@ -689,26 +840,25 @@
             $this->assertTrue($this->post(
                     'http://www.lastcraft.com/test/network_confirm.php',
                     array('a' => 'aaa')));
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/');
             $this->assertWantedText('a=[aaa]');
             $this->retry();
-            $this->assertWantedPattern('/Request method.*?<dd>POST<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>POST<\/dd>/');
             $this->assertWantedText('a=[aaa]');
         }
         
         function testGetRetryResubmitsRepeatedData() {
             $this->assertTrue($this->get(
                     'http://www.lastcraft.com/test/network_confirm.php?a=1&a=2'));
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[1, 2]');
             $this->retry();
-            $this->assertWantedPattern('/Request method.*?<dd>GET<\/dd>/');
+            $this->assertPattern('/Request method.*?<dd>GET<\/dd>/');
             $this->assertWantedText('a=[1, 2]');
         }
     }
     
     class TestOfLiveAuthentication extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -724,11 +874,32 @@
             $this->assertResponse(200);
         }
         
+        function testTrailingSlashImpliedWithinRealm() {
+            $this->get('http://www.lastcraft.com/test/protected/');
+            $this->authenticate('test', 'secret');
+            $this->assertResponse(200);
+            $this->get('http://www.lastcraft.com/test/protected');
+            $this->assertResponse(200);
+        }
+        
+        function testTrailingSlashImpliedSettingRealm() {
+            $this->get('http://www.lastcraft.com/test/protected');
+            $this->authenticate('test', 'secret');
+            $this->assertResponse(200);
+            $this->get('http://www.lastcraft.com/test/protected/');
+            $this->assertResponse(200);
+        }
+        
         function testEncodedAuthenticationFetchesPage() {
             $this->get('http://test:secret@www.lastcraft.com/test/protected/');
             $this->assertResponse(200);
         }
-        
+
+        function testEncodedAuthenticationFetchesPageAfterTrailingSlashRedirect() {
+            $this->get('http://test:secret@www.lastcraft.com/test/protected');
+            $this->assertResponse(200);
+        }
+
         function testRealmExtendsToWholeDirectory() {
             $this->get('http://www.lastcraft.com/test/protected/1.html');
             $this->authenticate('test', 'secret');
@@ -744,6 +915,12 @@
             $this->assertTitle('Simple test target file');
         }
         
+        function testRedirectKeepsEncodedAuthentication() {
+            $this->get('http://test:secret@www.lastcraft.com/test/protected/local_redirect.php');
+            $this->assertResponse(200);
+            $this->assertTitle('Simple test target file');
+        }
+        
         function testSessionRestartLosesAuthentication() {
             $this->get('http://www.lastcraft.com/test/protected/');
             $this->authenticate('test', 'secret');
@@ -755,7 +932,6 @@
     }
     
     class TestOfLoadingFrames extends WebTestCase {
-        
         function setUp() {
             $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
         }
@@ -881,7 +1057,7 @@
         
         function testJumpToNamedPageReplacesJustThatFrame() {
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
-            $this->assertWantedPattern('/Simple test front controller/');
+            $this->assertPattern('/Simple test front controller/');
             $this->clickLink('Index');
             $this->assertResponse(200);
             $this->assertWantedText('[action=index]');
@@ -910,30 +1086,30 @@
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
             $this->clickLink('Empty query');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/Simple test front controller/');
-            $this->assertWantedPattern('/raw get data.*?\[\].*?get data/si');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/Simple test front controller/');
+            $this->assertPattern('/raw get data.*?\[\].*?get data/si');
+            $this->assertPattern('/Count: 1/');
         }
         
         function testJumpToUnnamedPageWithEmptyLinkReplacesJustThatFrame() {
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
             $this->clickLink('Empty link');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/Simple test front controller/');
-            $this->assertWantedPattern('/raw get data.*?\[\].*?get data/si');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/Simple test front controller/');
+            $this->assertPattern('/raw get data.*?\[\].*?get data/si');
+            $this->assertPattern('/Count: 1/');
         }
         
         function testJumpBackADirectoryLevelReplacesJustThatFrame() {
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
             $this->clickLink('Down one');
-            $this->assertWantedPattern('/index of \/test/i');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/index of \/test/i');
+            $this->assertPattern('/Count: 1/');
         }
         
         function testSubmitToNamedPageReplacesJustThatFrame() {
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
-            $this->assertWantedPattern('/Simple test front controller/');
+            $this->assertPattern('/Simple test front controller/');
             $this->clickSubmit('Index');
             $this->assertResponse(200);
             $this->assertWantedText('[action=Index]');
@@ -967,8 +1143,8 @@
         function testSubmitBackADirectoryLevelReplacesJustThatFrame() {
             $this->get('http://www.lastcraft.com/test/messy_frameset.html');
             $this->clickSubmit('Down one');
-            $this->assertWantedPattern('/index of \/test/i');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/index of \/test/i');
+            $this->assertPattern('/Count: 1/');
         }
         
         function testTopLinkExitsFrameset() {
@@ -988,6 +1164,9 @@
     }
     
     class TestOfFrameAuthentication extends WebTestCase {
+        function setUp() {
+            $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
+        }
         
         function testUnauthenticatedFrameSendsChallenge() {
             $this->get('http://www.lastcraft.com/test/protected/');
@@ -1029,28 +1208,31 @@
     }
     
     class TestOfNestedFrames extends WebTestCase {
+        function setUp() {
+            $this->addHeader('User-Agent: SimpleTest ' . SimpleTestOptions::getVersion());
+        }
         
         function testCanNavigateToSpecificContent() {
             $this->get('http://www.lastcraft.com/test/nested_frameset.html');
             $this->assertTitle('Nested frameset for testing of SimpleTest');
             
-            $this->assertWantedPattern('/This is frame A/');
-            $this->assertWantedPattern('/This is frame B/');
-            $this->assertWantedPattern('/Simple test front controller/');
+            $this->assertPattern('/This is frame A/');
+            $this->assertPattern('/This is frame B/');
+            $this->assertPattern('/Simple test front controller/');
             $this->assertLink('2');
             $this->assertLink('Set one to 2');
-            $this->assertWantedPattern('/Count: 1/');
-            $this->assertWantedPattern('/r=rrr/');
+            $this->assertPattern('/Count: 1/');
+            $this->assertPattern('/r=rrr/');
             
             $this->setFrameFocus('pair');
-            $this->assertWantedPattern('/This is frame A/');
-            $this->assertWantedPattern('/This is frame B/');
-            $this->assertNoUnwantedPattern('/Simple test front controller/');
+            $this->assertPattern('/This is frame A/');
+            $this->assertPattern('/This is frame B/');
+            $this->assertNoPattern('/Simple test front controller/');
             $this->assertNoLink('2');
             
             $this->setFrameFocus('aaa');
-            $this->assertWantedPattern('/This is frame A/');
-            $this->assertNoUnwantedPattern('/This is frame B/');
+            $this->assertPattern('/This is frame A/');
+            $this->assertNoPattern('/This is frame B/');
             
             $this->clearFrameFocus();
             $this->assertResponse(200);
@@ -1058,28 +1240,28 @@
             $this->assertResponse(200);
             $this->setFrameFocus('Front controller');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/Simple test front controller/');
+            $this->assertPattern('/Simple test front controller/');
             $this->assertNoLink('2');
         }
         
         function testReloadingFramesetPage() {
             $this->get('http://www.lastcraft.com/test/nested_frameset.html');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/Count: 1/');
             $this->retry();
-            $this->assertWantedPattern('/Count: 2/');
+            $this->assertPattern('/Count: 2/');
             $this->retry();
-            $this->assertWantedPattern('/Count: 3/');
+            $this->assertPattern('/Count: 3/');
         }
         
         function testRetryingNestedPageOnlyRetriesThatSet() {
             $this->get('http://www.lastcraft.com/test/nested_frameset.html');
-            $this->assertWantedPattern('/Count: 1/');
+            $this->assertPattern('/Count: 1/');
             $this->setFrameFocus('messy');
             $this->retry();
-            $this->assertWantedPattern('/Count: 2/');
+            $this->assertPattern('/Count: 2/');
             $this->setFrameFocus('Counter');
             $this->retry();
-            $this->assertWantedPattern('/Count: 3/');
+            $this->assertPattern('/Count: 3/');
             
             $this->clearFrameFocus();
             $this->setFrameFocus('messy');
@@ -1087,7 +1269,7 @@
             $this->retry();
             
             $this->clearFrameFocus();
-            $this->assertWantedPattern('/Count: 3/');
+            $this->assertPattern('/Count: 3/');
         }
         
         function testAuthenticatingNestedPage() {
@@ -1100,7 +1282,7 @@
             
             $this->authenticate('test', 'secret');
             $this->assertResponse(200);
-            $this->assertWantedPattern('/A target for the SimpleTest test suite/');
+            $this->assertPattern('/A target for the SimpleTest test suite/');
         }
     }
 ?>

@@ -24,7 +24,6 @@
         
         function testEmptyHistoryHasFalseContents() {
             $history = &new SimpleBrowserHistory();
-            $this->assertIdentical($history->getMethod(), false);
             $this->assertIdentical($history->getUrl(), false);
             $this->assertIdentical($history->getParameters(), false);
         }
@@ -38,130 +37,107 @@
         function testCurrentTargetAccessors() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.here.com/'),
-                    new SimpleFormEncoding());
-            $this->assertIdentical($history->getMethod(), 'GET');
+                    new SimpleGetEncoding());
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.here.com/'));
-            $this->assertIdentical($history->getParameters(), new SimpleFormEncoding());
+            $this->assertIdentical($history->getParameters(), new SimpleGetEncoding());
         }
         
         function testSecondEntryAccessors() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'POST',
                     new SimpleUrl('http://www.second.com/'),
-                    new SimpleFormEncoding(array('a' => 1)));
-            $this->assertIdentical($history->getMethod(), 'POST');
+                    new SimplePostEncoding(array('a' => 1)));
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.second.com/'));
             $this->assertIdentical(
                     $history->getParameters(),
-                    new SimpleFormEncoding(array('a' => 1)));
+                    new SimplePostEncoding(array('a' => 1)));
         }
         
         function testGoingBackwards() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'POST',
                     new SimpleUrl('http://www.second.com/'),
-                    new SimpleFormEncoding(array('a' => 1)));
+                    new SimplePostEncoding(array('a' => 1)));
             $this->assertTrue($history->back());
-            $this->assertIdentical($history->getMethod(), 'GET');
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.first.com/'));
-            $this->assertIdentical($history->getParameters(), new SimpleFormEncoding());
+            $this->assertIdentical($history->getParameters(), new SimpleGetEncoding());
         }
         
         function testGoingBackwardsOffBeginning() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $this->assertFalse($history->back());
-            $this->assertIdentical($history->getMethod(), 'GET');
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.first.com/'));
-            $this->assertIdentical($history->getParameters(), new SimpleFormEncoding());
+            $this->assertIdentical($history->getParameters(), new SimpleGetEncoding());
         }
         
         function testGoingForwardsOffEnd() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $this->assertFalse($history->forward());
-            $this->assertIdentical($history->getMethod(), 'GET');
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.first.com/'));
-            $this->assertIdentical($history->getParameters(), new SimpleFormEncoding());
+            $this->assertIdentical($history->getParameters(), new SimpleGetEncoding());
         }
         
         function testGoingBackwardsAndForwards() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'POST',
                     new SimpleUrl('http://www.second.com/'),
-                    new SimpleFormEncoding(array('a' => 1)));
+                    new SimplePostEncoding(array('a' => 1)));
             $this->assertTrue($history->back());
             $this->assertTrue($history->forward());
-            $this->assertIdentical($history->getMethod(), 'POST');
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.second.com/'));
             $this->assertIdentical(
                     $history->getParameters(),
-                    new SimpleFormEncoding(array('a' => 1)));
+                    new SimplePostEncoding(array('a' => 1)));
         }
         
         function testNewEntryReplacesNextOne() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'POST',
                     new SimpleUrl('http://www.second.com/'),
-                    new SimpleFormEncoding(array('a' => 1)));
+                    new SimplePostEncoding(array('a' => 1)));
             $history->back();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.third.com/'),
-                    new SimpleFormEncoding());
-            $this->assertIdentical($history->getMethod(), 'GET');
+                    new SimpleGetEncoding());
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.third.com/'));
-            $this->assertIdentical($history->getParameters(), new SimpleFormEncoding());
+            $this->assertIdentical($history->getParameters(), new SimpleGetEncoding());
         }
         
         function testNewEntryDropsFutureEntries() {
             $history = &new SimpleBrowserHistory();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.first.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.second.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.third.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $history->back();
             $history->back();
             $history->recordEntry(
-                    'GET',
                     new SimpleUrl('http://www.fourth.com/'),
-                    new SimpleFormEncoding());
+                    new SimpleGetEncoding());
             $this->assertIdentical($history->getUrl(), new SimpleUrl('http://www.fourth.com/'));
             $this->assertFalse($history->forward());
             $history->back();
@@ -247,17 +223,17 @@
         
         function testFormHandling() {
             $page = &new MockSimplePage($this);
-            $page->setReturnValue('getField', 'Value');
-            $page->expectOnce('getField', array('key'));
-            $page->expectOnce('setField', array('key', 'Value'));
+            $page->setReturnValue('getFieldByName', 'Value');
+            $page->expectOnce('getFieldByName', array('key'));
+            $page->expectOnce('setFieldByName', array('key', 'Value'));
             $page->setReturnValue('getFieldById', 'Id value');
             $page->expectOnce('getFieldById', array(99));
             $page->expectOnce('setFieldById', array(99, 'Id value'));
 
             $browser = &$this->loadPage($page);
-            $this->assertEqual($browser->getField('key'), 'Value');            
+            $this->assertEqual($browser->getFieldByName('key'), 'Value');            
             $this->assertEqual($browser->getFieldById(99), 'Id value');            
-            $browser->setField('key', 'Value');
+            $browser->setFieldByName('key', 'Value');
             $browser->setFieldById(99, 'Id value');
             
             $page->tally();
@@ -280,11 +256,11 @@
             $agent->expectArgumentsAt(
                     0,
                     'fetchResponse',
-                    array('GET', new SimpleUrl('http://this.com/page.html'), false));
+                    array(new SimpleUrl('http://this.com/page.html'), new SimpleGetEncoding()));
             $agent->expectArgumentsAt(
                     1,
                     'fetchResponse',
-                    array('GET', new SimpleUrl('http://this.com/new.html'), false));
+                    array(new SimpleUrl('http://this.com/new.html'), new SimpleGetEncoding()));
             $agent->expectCallCount('fetchResponse', 2);
             
             $page = &new MockSimplePage($this);
@@ -306,13 +282,13 @@
             $agent->expectArgumentsAt(
                     0,
                     'fetchResponse',
-                    array('GET', new SimpleUrl('http://this.com/page.html'), false));
+                    array(new SimpleUrl('http://this.com/page.html'), new SimpleGetEncoding()));
             $target = new SimpleUrl('http://this.com/new.html');
             $target->setTarget('missing');
             $agent->expectArgumentsAt(
                     1,
                     'fetchResponse',
-                    array('GET', $target, false));
+                    array($target, new SimpleGetEncoding()));
             $agent->expectCallCount('fetchResponse', 2);
             
             $parsed_url = new SimpleUrl('http://this.com/new.html');
@@ -351,7 +327,7 @@
             $agent->expectArgumentsAt(
                     1,
                     'fetchResponse',
-                    array('GET', new SimpleUrl('1.html'), false));
+                    array(new SimpleUrl('1.html'), new SimpleGetEncoding()));
             $agent->expectCallCount('fetchResponse', 2);
             
             $page = &new MockSimplePage($this);
@@ -371,9 +347,8 @@
             $agent = &new MockSimpleUserAgent($this);
             $agent->setReturnReference('fetchResponse', new MockSimpleHttpResponse($this));
             $agent->expectArgumentsAt(1, 'fetchResponse', array(
-                    'GET',
                     new SimpleUrl('http://this.com/link.html'),
-                    false));
+                    new SimpleGetEncoding()));
             $agent->expectCallCount('fetchResponse', 2);
             
             $page = &new MockSimplePage($this);
@@ -405,16 +380,15 @@
             $agent = &new MockSimpleUserAgent($this);
             $agent->setReturnReference('fetchResponse', new MockSimpleHttpResponse($this));
             $agent->expectArgumentsAt(1, 'fetchResponse', array(
-                    'POST',
                     new SimpleUrl('http://this.com/handler.html'),
-                    new SimpleFormEncoding(array('a' => 'A'))));
+                    new SimplePostEncoding(array('a' => 'A'))));
             $agent->expectCallCount('fetchResponse', 2);
             
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitButtonByLabel', new SimpleFormEncoding(array('a' => 'A')));
-            $form->expectOnce('submitButtonByLabel', array('Go', false));
+            $form->setReturnValue('submitButton', new SimplePostEncoding(array('a' => 'A')));
+            $form->expectOnce('submitButton', array(new SimpleByLabel('Go'), false));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormBySubmitLabel', $form);
@@ -434,15 +408,14 @@
             $agent = &new MockSimpleUserAgent($this);
             $agent->setReturnReference('fetchResponse', new MockSimpleHttpResponse($this));
             $agent->expectArgumentsAt(1,  'fetchResponse', array(
-                    'GET',
                     new SimpleUrl('http://this.com/page.html'),
-                    new SimpleFormEncoding(array('a' => 'A'))));
+                    new SimpleGetEncoding(array('a' => 'A'))));
             $agent->expectCallCount('fetchResponse', 2);
             
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/page.html'));
             $form->setReturnValue('getMethod', 'get');
-            $form->setReturnValue('submitButtonByLabel', new SimpleFormEncoding(array('a' => 'A')));
+            $form->setReturnValue('submitButton', new SimpleGetEncoding(array('a' => 'A')));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormBySubmitLabel', $form);
@@ -466,7 +439,7 @@
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitButtonByName', new SimpleFormEncoding(array('a' => 'A')));
+            $form->setReturnValue('submitButton', new SimplePostEncoding(array('a' => 'A')));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormBySubmitName', $form);
@@ -487,8 +460,8 @@
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitButtonById', new SimpleFormEncoding(array('a' => 'A')));
-            $form->expectOnce('submitButtonById', array(99, false));
+            $form->setReturnValue('submitButton', new SimplePostEncoding(array('a' => 'A')));
+            $form->expectOnce('submitButton', array(new SimpleById(99), false));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormBySubmitId', $form);
@@ -510,8 +483,8 @@
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitImageByLabel', new SimpleFormEncoding(array('a' => 'A')));
-            $form->expectOnce('submitImageByLabel', array('Go!', 10, 11, false));
+            $form->setReturnValue('submitImage', new SimplePostEncoding(array('a' => 'A')));
+            $form->expectOnce('submitImage', array(new SimpleByLabel('Go!'), 10, 11, false));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormByImageLabel', $form);
@@ -533,8 +506,8 @@
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitImageByName', new SimpleFormEncoding(array('a' => 'A')));
-            $form->expectOnce('submitImageByName', array('a', 10, 11, false));
+            $form->setReturnValue('submitImage', new SimplePostEncoding(array('a' => 'A')));
+            $form->expectOnce('submitImage', array(new SimpleByName('a'), 10, 11, false));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormByImageName', $form);
@@ -556,8 +529,8 @@
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submitImageById', new SimpleFormEncoding(array('a' => 'A')));
-            $form->expectOnce('submitImageById', array(99, 10, 11, false));
+            $form->setReturnValue('submitImage', new SimplePostEncoding(array('a' => 'A')));
+            $form->expectOnce('submitImage', array(new SimpleById(99), 10, 11, false));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormByImageId', $form);
@@ -576,15 +549,14 @@
             $agent = &new MockSimpleUserAgent($this);
             $agent->setReturnReference('fetchResponse', new MockSimpleHttpResponse($this));
             $agent->expectArgumentsAt(1, 'fetchResponse', array(
-                    'POST',
                     new SimpleUrl('http://this.com/handler.html'),
-                    new SimpleFormEncoding(array('a' => 'A'))));
+                    new SimplePostEncoding(array('a' => 'A'))));
             $agent->expectCallCount('fetchResponse', 2);
             
             $form = &new MockSimpleForm($this);
             $form->setReturnValue('getAction', new SimpleUrl('http://this.com/handler.html'));
             $form->setReturnValue('getMethod', 'post');
-            $form->setReturnValue('submit', new SimpleFormEncoding(array('a' => 'A')));
+            $form->setReturnValue('submit', new SimplePostEncoding(array('a' => 'A')));
             
             $page = &new MockSimplePage($this);
             $page->setReturnReference('getFormById', $form);
@@ -616,7 +588,7 @@
                 $response = &new MockSimpleHttpResponse($this);
                 $response->setReturnValue('getUrl', $url);
                 $response->setReturnValue('getContent', $raw);
-                $agent->setReturnReference('fetchResponse', $response, array('*', $url, '*'));
+                $agent->setReturnReference('fetchResponse', $response, array($url, '*'));
             }
             return $agent;
         }

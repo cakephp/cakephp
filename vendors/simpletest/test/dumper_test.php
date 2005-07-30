@@ -40,46 +40,46 @@
         
         function testDescribeNull() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/null/i', $dumper->describeValue(null));
+            $this->assertPattern('/null/i', $dumper->describeValue(null));
         }
         
         function testDescribeBoolean() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/boolean/i', $dumper->describeValue(true));
-            $this->assertWantedPattern('/true/i', $dumper->describeValue(true));
-            $this->assertWantedPattern('/false/i', $dumper->describeValue(false));
+            $this->assertPattern('/boolean/i', $dumper->describeValue(true));
+            $this->assertPattern('/true/i', $dumper->describeValue(true));
+            $this->assertPattern('/false/i', $dumper->describeValue(false));
         }
         
         function testDescribeString() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/string/i', $dumper->describeValue('Hello'));
-            $this->assertWantedPattern('/Hello/', $dumper->describeValue('Hello'));
+            $this->assertPattern('/string/i', $dumper->describeValue('Hello'));
+            $this->assertPattern('/Hello/', $dumper->describeValue('Hello'));
         }
         
         function testDescribeInteger() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/integer/i', $dumper->describeValue(35));
-            $this->assertWantedPattern('/35/', $dumper->describeValue(35));
+            $this->assertPattern('/integer/i', $dumper->describeValue(35));
+            $this->assertPattern('/35/', $dumper->describeValue(35));
         }
         
         function testDescribeFloat() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/float/i', $dumper->describeValue(0.99));
-            $this->assertWantedPattern('/0\.99/', $dumper->describeValue(0.99));
+            $this->assertPattern('/float/i', $dumper->describeValue(0.99));
+            $this->assertPattern('/0\.99/', $dumper->describeValue(0.99));
         }
         
         function testDescribeArray() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern('/array/i', $dumper->describeValue(array(1, 4)));
-            $this->assertWantedPattern('/2/i', $dumper->describeValue(array(1, 4)));
+            $this->assertPattern('/array/i', $dumper->describeValue(array(1, 4)));
+            $this->assertPattern('/2/i', $dumper->describeValue(array(1, 4)));
         }
         
         function testDescribeObject() {
             $dumper = new SimpleDumper();
-            $this->assertWantedPattern(
+            $this->assertPattern(
                     '/object/i',
                     $dumper->describeValue(new DumperDummy()));
-            $this->assertWantedPattern(
+            $this->assertPattern(
                     '/DumperDummy/i',
                     $dumper->describeValue(new DumperDummy()));
         }

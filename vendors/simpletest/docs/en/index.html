@@ -195,11 +195,11 @@ $test-&gt;run(new HtmlReporter());</strong>
                     <div style="padding: 8px; margin-top: 1em; background-color: green; color: white;">1/1 test cases complete.
                     <strong>2</strong> passes and <strong>0</strong> fails.</div>
                 </div>
-            And if you get this...
+				And if you get this...
                 <div class="demo">
                     <b>Fatal error</b>:  Failed opening required '../classes/log.php' (include_path='') in <b>/home/marcus/projects/lastcraft/tutorial_tests/Log/tests/log_test.php</b> on line <b>7</b>
                 </div>
-            it means you're missing the <em>classes/Log.php</em> file that could look like...
+				it means you're missing the <em>classes/Log.php</em> file that could look like...
 <pre>
 &lt;?php
 class Log {
@@ -207,8 +207,8 @@ class Log {
         function Log($file_path) {
         }
 
-      function message() {
-      }
+		function message() {
+		}
 }
 ?&gt;;
 </pre>

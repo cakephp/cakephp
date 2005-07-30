@@ -2,133 +2,186 @@
     // $Id$
     
     require_once(dirname(__FILE__) . '/../url.php');
+    require_once(dirname(__FILE__) . '/../socket.php');
     
-    class FormEncodingTestCase extends UnitTestCase {
+    Mock::generate('SimpleSocket');
+    
+    class TestOfEncodedParts extends UnitTestCase {
         
-        function testEmpty() {
-            $encoding = &new SimpleFormEncoding();
+        function testFormEncodedAsKeyEqualsValue() {
+            $pair = new SimpleEncodedPair('a', 'A');
+            $this->assertEqual($pair->asRequest(), 'a=A');
+        }
+        
+        function testMimeEncodedAsHeadersAndContent() {
+            $pair = new SimpleEncodedPair('a', 'A');
+            $this->assertEqual(
+                    $pair->asMime(),
+                    "Content-Disposition: form-data; name=\"a\"\r\n\r\nA");
+        }
+        
+        function testAttachmentEncodedAsHeadersWithDispositionAndContent() {
+            $part = new SimpleAttachment('a', 'A', 'aaa.txt');
+            $this->assertEqual(
+                    $part->asMime(),
+                    "Content-Disposition: form-data; name=\"a\"; filename=\"aaa.txt\"\r\n" .
+                            "Content-Type: text/plain\r\n\r\nA");
+        }
+    }
+    
+    class TestOfEncoding extends UnitTestCase {
+        var $_content_so_far;
+        
+        function write($content) {
+            $this->_content_so_far .= $content;
+        }
+        
+        function clear() {
+            $this->_content_so_far = '';
+        }
+        
+        function assertWritten($encoding, $content, $message = '%s') {
+            $this->clear();
+            $encoding->writeTo($this);
+            $this->assertIdentical($this->_content_so_far, $content, $message);
+        }
+        
+        function testGetEmpty() {
+            $encoding = &new SimpleGetEncoding();
             $this->assertIdentical($encoding->getValue('a'), false);
-            $this->assertIdentical($encoding->getKeys(), array());
-            $this->assertIdentical($encoding->asString(), '');
+            $this->assertIdentical($encoding->asUrlRequest(), '');
+        }
+        
+        function testPostEmpty() {
+            $encoding = &new SimplePostEncoding();
+            $this->assertIdentical($encoding->getValue('a'), false);
+            $this->assertWritten($encoding, '');
         }
         
         function testPrefilled() {
-            $encoding = &new SimpleFormEncoding(array('a' => 'aaa'));
+            $encoding = &new SimplePostEncoding(array('a' => 'aaa'));
             $this->assertIdentical($encoding->getValue('a'), 'aaa');
-            $this->assertIdentical($encoding->getKeys(), array('a'));
-            $this->assertIdentical($encoding->asString(), 'a=aaa');
+            $this->assertWritten($encoding, 'a=aaa');
         }
         
         function testPrefilledWithObject() {
-            $encoding = &new SimpleFormEncoding(new SimpleFormEncoding(array('a' => 'aaa')));
+            $encoding = &new SimplePostEncoding(new SimpleEncoding(array('a' => 'aaa')));
             $this->assertIdentical($encoding->getValue('a'), 'aaa');
-            $this->assertIdentical($encoding->getKeys(), array('a'));
-            $this->assertIdentical($encoding->asString(), 'a=aaa');
+            $this->assertWritten($encoding, 'a=aaa');
         }
         
         function testMultiplePrefilled() {
-            $encoding = &new SimpleFormEncoding(array('a' => array('a1', 'a2')));
+            $encoding = &new SimplePostEncoding(array('a' => array('a1', 'a2')));
             $this->assertIdentical($encoding->getValue('a'), array('a1', 'a2'));
-            $this->assertIdentical($encoding->asString(), 'a=a1&a=a2');
+            $this->assertWritten($encoding, 'a=a1&a=a2');
         }
         
         function testSingleParameter() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', 'Hello');
             $this->assertEqual($encoding->getValue('a'), 'Hello');
-            $this->assertIdentical($encoding->asString(), 'a=Hello');
+            $this->assertWritten($encoding, 'a=Hello');
         }
         
         function testFalseParameter() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', false);
             $this->assertEqual($encoding->getValue('a'), false);
-            $this->assertIdentical($encoding->asString(), '');
+            $this->assertWritten($encoding, '');
         }
         
         function testUrlEncoding() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', 'Hello there!');
-            $this->assertIdentical($encoding->asString(), 'a=Hello+there%21');
+            $this->assertWritten($encoding, 'a=Hello+there%21');
         }
         
         function testMultipleParameter() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', 'Hello');
             $encoding->add('b', 'Goodbye');
-            $this->assertIdentical($encoding->asString(), 'a=Hello&b=Goodbye');
+            $this->assertWritten($encoding, 'a=Hello&b=Goodbye');
         }
         
         function testEmptyParameters() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', '');
             $encoding->add('b', '');
-            $this->assertIdentical($encoding->asString(), 'a=&b=');
+            $this->assertWritten($encoding, 'a=&b=');
         }
         
         function testRepeatedParameter() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', 'Hello');
             $encoding->add('a', 'Goodbye');
             $this->assertIdentical($encoding->getValue('a'), array('Hello', 'Goodbye'));
-            $this->assertIdentical($encoding->asString(), 'a=Hello&a=Goodbye');
-        }
-        
-        function testDefaultCoordinatesAreUnset() {
-            $encoding = &new SimpleFormEncoding();
-            $this->assertIdentical($encoding->getX(), false);
-            $this->assertIdentical($encoding->getY(), false);
-        }
-        
-        function testSettingCoordinates() {
-            $encoding = &new SimpleFormEncoding();
-            $encoding->setCoordinates('32', '45');
-            $this->assertIdentical($encoding->getX(), 32);
-            $this->assertIdentical($encoding->getY(), 45);
-            $this->assertIdentical($encoding->asString(), '?32,45');
-        }
-        
-        function testClearingCordinates() {
-            $encoding = &new SimpleFormEncoding();
-            $encoding->setCoordinates('32', '45');
-            $encoding->setCoordinates();
-            $this->assertIdentical($encoding->getX(), false);
-            $this->assertIdentical($encoding->getY(), false);
+            $this->assertWritten($encoding, 'a=Hello&a=Goodbye');
         }
         
         function testAddingLists() {
-            $encoding = &new SimpleFormEncoding();
+            $encoding = &new SimplePostEncoding();
             $encoding->add('a', array('Hello', 'Goodbye'));
             $this->assertIdentical($encoding->getValue('a'), array('Hello', 'Goodbye'));
-            $this->assertIdentical($encoding->asString(), 'a=Hello&a=Goodbye');
+            $this->assertWritten($encoding, 'a=Hello&a=Goodbye');
         }
         
         function testMergeInHash() {
-            $encoding = &new SimpleFormEncoding(array('a' => 'A1', 'b' => 'B'));
+            $encoding = &new SimpleGetEncoding(array('a' => 'A1', 'b' => 'B'));
             $encoding->merge(array('a' => 'A2'));
             $this->assertIdentical($encoding->getValue('a'), array('A1', 'A2'));
             $this->assertIdentical($encoding->getValue('b'), 'B');
         }
         
         function testMergeInObject() {
-            $encoding = &new SimpleFormEncoding(array('a' => 'A1', 'b' => 'B'));
-            $encoding->merge(new SimpleFormEncoding(array('a' => 'A2')));
+            $encoding = &new SimpleGetEncoding(array('a' => 'A1', 'b' => 'B'));
+            $encoding->merge(new SimpleEncoding(array('a' => 'A2')));
             $this->assertIdentical($encoding->getValue('a'), array('A1', 'A2'));
             $this->assertIdentical($encoding->getValue('b'), 'B');
         }
         
-        function testMergeInObjectWithCordinates() {
-            $incoming = new SimpleFormEncoding(array('a' => 'A2'));
-            $incoming->setCoordinates(25, 24);
-            
-            $encoding = &new SimpleFormEncoding(array('a' => 'A1'));
-            $encoding->setCoordinates(1, 2);
-            $encoding->merge($incoming);
-            
-            $this->assertIdentical($encoding->getValue('a'), array('A1', 'A2'));
-            $this->assertIdentical($encoding->getX(), 25);
-            $this->assertIdentical($encoding->getY(), 24);
-            $this->assertIdentical($encoding->asString(), 'a=A1&a=A2?25,24');
+        function testPrefilledMultipart() {
+            $encoding = &new SimpleMultipartEncoding(array('a' => 'aaa'), 'boundary');
+            $this->assertIdentical($encoding->getValue('a'), 'aaa');
+            $this->assertwritten($encoding,
+                    "--boundary\r\n" .
+                    "Content-Disposition: form-data; name=\"a\"\r\n" .
+                    "\r\n" .
+                    "aaa\r\n" .
+                    "--boundary--\r\n");
+        }
+        
+        function testAttachment() {
+            $encoding = &new SimpleMultipartEncoding(array(), 'boundary');
+            $encoding->attach('a', 'aaa', 'aaa.txt');
+            $this->assertIdentical($encoding->getValue('a'), 'aaa.txt');
+            $this->assertwritten($encoding,
+                    "--boundary\r\n" .
+                    "Content-Disposition: form-data; name=\"a\"; filename=\"aaa.txt\"\r\n" .
+                    "Content-Type: text/plain\r\n" .
+                    "\r\n" .
+                    "aaa\r\n" .
+                    "--boundary--\r\n");
+        }
+    }
+    
+    class TestOfFormHeaders extends UnitTestCase {
+        
+        function testEmptyEncodingWritesZeroContentLength() {
+            $socket = &new MockSimpleSocket($this);
+            $socket->expectArgumentsAt(0, 'write', array("Content-Length: 0\r\n"));
+            $socket->expectArgumentsAt(1, 'write', array("Content-Type: application/x-www-form-urlencoded\r\n"));
+            $encoding = &new SimplePostEncoding();
+            $encoding->writeHeadersTo($socket);
+            $socket->tally();
+        }
+        
+        function testEmptyMultipartEncodingWritesEndBoundaryContentLength() {
+            $socket = &new MockSimpleSocket($this);
+            $socket->expectArgumentsAt(0, 'write', array("Content-Length: 14\r\n"));
+            $socket->expectArgumentsAt(1, 'write', array("Content-Type: multipart/form-data, boundary=boundary\r\n"));
+            $encoding = &new SimpleMultipartEncoding(array(), 'boundary');
+            $encoding->writeHeadersTo($socket);
+            $socket->tally();
         }
     }
 ?>

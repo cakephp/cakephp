@@ -3,12 +3,12 @@
     
     require_once(dirname(__FILE__) . '/../expectation.php');
     
-    class TestOfWildcardExpectation extends UnitTestCase {
+    class TestOfAnythingExpectation extends UnitTestCase {
         
         function testSimpleInteger() {
-            $expectation = new WildcardExpectation();
+            $expectation = new AnythingExpectation();
             $this->assertTrue($expectation->test(33));
-            $this->assertWantedPattern(
+            $this->assertPattern(
                     '/matches.*33/i',
                     $expectation->testMessage(33));
         }
@@ -45,8 +45,8 @@
             $this->assertFalse($expectation->test(array()));
         }
         
-        function testWildcardExpectations() {
-            $expectation = new ParametersExpectation(array(new WildcardExpectation()));
+        function testAnythingExpectations() {
+            $expectation = new ParametersExpectation(array(new AnythingExpectation()));
             $this->assertFalse($expectation->test(array()));
             $this->assertIdentical($expectation->test(array(null)), true);
             $this->assertIdentical($expectation->test(array(13)), true);
@@ -54,7 +54,7 @@
         
         function testOtherExpectations() {
             $expectation = new ParametersExpectation(
-                    array(new WantedPatternExpectation('/hello/i')));
+                    array(new PatternExpectation('/hello/i')));
             $this->assertFalse($expectation->test(array('Goodbye')));
             $this->assertTrue($expectation->test(array('hello')));
             $this->assertTrue($expectation->test(array('Hello')));
@@ -68,7 +68,7 @@
         
         function testLongList() {
             $expectation = new ParametersExpectation(
-                    array("0", 0, new WildcardExpectation(), false));
+                    array("0", 0, new AnythingExpectation(), false));
             $this->assertTrue($expectation->test(array("0", 0, 37, false)));
             $this->assertFalse($expectation->test(array("0", 0, 37, true)));
             $this->assertFalse($expectation->test(array("0", 0, 37)));
@@ -106,7 +106,7 @@
         
         function testWildcard() {
             $map = new CallMap();
-            $map->addValue(array(new WildcardExpectation(), 1, 3), "Fred");
+            $map->addValue(array(new AnythingExpectation(), 1, 3), "Fred");
             $this->assertTrue($map->isMatch(array(2, 1, 3)));
             $this->assertEqual($map->findFirstMatch(array(2, 1, 3)), "Fred");
         }
@@ -125,7 +125,7 @@
             $map->addValue(array(1, 3), "1, 3");
             $map->addValue(array(1), "1");
             $map->addValue(array(1, 4), "1, 4");
-            $map->addValue(array(new WildcardExpectation()), "Any");
+            $map->addValue(array(new AnythingExpectation()), "Any");
             $map->addValue(array(2), "2");
             $map->addValue("", "Default");
             $map->addValue(array(), "None");
@@ -149,6 +149,10 @@
         
         function anotherMethod() {
             return true;
+        }
+        
+        function __get($key) {
+            return $key;
         }
     }
     
@@ -385,7 +389,7 @@
             $mock->setReturnValue(
                     "aMethod",
                     "aaa",
-                    array(new wantedPatternExpectation('/hello/i')));
+                    array(new PatternExpectation('/hello/i')));
             $this->assertIdentical($mock->aMethod('Hello'), "aaa");
             $this->assertNull($mock->aMethod('Goodbye'));
         }
@@ -407,6 +411,23 @@
             $this->assertReference($mock->aMethod(), $object);
             $this->assertNull($mock->aMethod());
             $this->swallowErrors();
+        }
+    }
+    
+    class TestOfSpecialMethods extends UnitTestCase {
+        
+        function testReturnFromSpecialMethod() {
+            $mock = &new MockDummy($this);
+            $mock->setReturnValue('__get', '1st Return', array('first'));
+            $mock->setReturnValue('__get', '2nd Return', array('second'));
+            
+            $this->assertEqual($mock->__get('first'), '1st Return');
+            $this->assertEqual($mock->__get('second'), '2nd Return');
+            
+            if (phpversion() >= 5) {
+                $this->assertEqual($mock->first, $mock->__get('first'));
+                $this->assertEqual($mock->second, $mock->__get('second'));
+            }
         }
     }
     

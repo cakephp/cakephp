@@ -1,6 +1,5 @@
 <?php
-    // $Id$
-    
+    // $Id: real_sites_test.php,v 1.17 2005/05/29 18:37:26 lastcraft Exp 
     require_once(dirname(__FILE__) . '/../web_tester.php');
 
     class LiveSitesTestCase extends WebTestCase {
@@ -20,10 +19,10 @@
             $this->assertTitle('SourceForge.net: Search');
             $this->assertTrue($this->clickLink('SimpleTest'));
             $this->clickLink('statistics');
-            $this->assertWantedPattern('/Statistics for the past 7 days/');
-            $this->assertTrue($this->setField('report', 'Monthly'));
-            $this->clickSubmit('Change Stats View');
-            $this->assertWantedPattern('/Statistics for the past \d+ months/');
+            $this->assertWantedText('SimpleTest: Statistics');
+            $this->assertTrue($this->setField('mode', 'All Time'));
+            $this->clickSubmit('Change View');
+            $this->assertWantedText('Mar 2003');
         }
     }
 ?>

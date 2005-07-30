@@ -8,7 +8,7 @@
         function testEcho() {
             $shell = &new SimpleShell();
             $this->assertIdentical($shell->execute('echo Hello'), 0);
-            $this->assertWantedPattern('/Hello/', $shell->getOutput());
+            $this->assertPattern('/Hello/', $shell->getOutput());
         }
         
         function testBadCommand() {

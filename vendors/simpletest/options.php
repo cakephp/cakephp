@@ -1,139 +1,131 @@
 <?php
- /**
-  *   base include file for SimpleTest
-  *   @package   SimpleTest
-  *   @version   $Id$
-  */
+    /**
+     *	base include file for SimpleTest
+     *	@package	SimpleTest
+     *	@version	$Id$
+     */
     
- /**
-  *    Static global directives and options.
-  *     @package   SimpleTest
-  */
+    /**
+     *    Static global directives and options.
+     *	  @package	SimpleTest
+     */
     class SimpleTestOptions {
         
-     /**
-      *    Reads the SimpleTest version from the release file.
-      *    @return string        Version string.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    Reads the SimpleTest version from the release file.
+         *    @return string        Version string.
+         *    @static
+         *    @access public
+         */
         function getVersion() {
             $content = file(dirname(__FILE__) . '/VERSION');
             return trim($content[0]);
         }
         
-     /**
-      *    Sets the name of a test case to ignore, usually
-      *    because the class is an abstract case that should
-      *    not be run.
-      *    @param string $class        Add a class to ignore.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    Sets the name of a test case to ignore, usually
+         *    because the class is an abstract case that should
+         *    not be run.
+         *    @param string $class        Add a class to ignore.
+         *    @static
+         *    @access public
+         */
         function ignore($class) {
             $registry = &SimpleTestOptions::_getRegistry();
             $registry['IgnoreList'][] = strtolower($class);
         }
         
-     /**
-      *    Test to see if a test case is in the ignore
-      *    list.
-      *    @param string $class        Class name to test.
-      *    @return boolean             True if should not be run.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Test to see if a test case is in the ignore
+         *    list.
+         *    @param string $class        Class name to test.
+         *    @return boolean             True if should not be run.
+         *    @access public
+         *    @static
+         */
         function isIgnored($class) {
             $registry = &SimpleTestOptions::_getRegistry();
             return in_array(strtolower($class), $registry['IgnoreList']);
         }
         
-     /**
-      *    The base class name is settable here. This is the
-      *    class that a new stub will inherited from.
-      *    To modify the generated stubs simply extend the
-      *    SimpleStub class and set it's name
-      *    with this method before any stubs are generated.
-      *    @param string $stub_base     Server stub class to use.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    The base class name is settable here. This is the
+         *    class that a new stub will inherited from.
+         *    To modify the generated stubs simply extend the
+         *    SimpleStub class and set it's name
+         *    with this method before any stubs are generated.
+         *    @param string $stub_base     Server stub class to use.
+         *    @static
+         *    @access public
+         */
         function setStubBaseClass($stub_base) {
             $registry = &SimpleTestOptions::_getRegistry();
             $registry['StubBaseClass'] = $stub_base;
         }
         
-     /**
-      *    Accessor for the currently set stub base class.
-      *    @return string        Class name to inherit from.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    Accessor for the currently set stub base class.
+         *    @return string        Class name to inherit from.
+         *    @static
+         *    @access public
+         */
         function getStubBaseClass() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['StubBaseClass'];
         }
         
-     /**
-      *    The base class name is settable here. This is the
-      *    class that a new mock will inherited from.
-      *    To modify the generated mocks simply extend the
-      *    SimpleMock class and set it's name
-      *    with this method before any mocks are generated.
-      *    @param string $mock_base        Mock base class to use.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    The base class name is settable here. This is the
+         *    class that a new mock will inherited from.
+         *    To modify the generated mocks simply extend the
+         *    SimpleMock class and set it's name
+         *    with this method before any mocks are generated.
+         *    @param string $mock_base        Mock base class to use.
+         *    @static
+         *    @access public
+         */
         function setMockBaseClass($mock_base) {
             $registry = &SimpleTestOptions::_getRegistry();
             $registry['MockBaseClass'] = $mock_base;
         }
         
-     /**
-      *    Accessor for the currently set mock base class.
-      *    @return string           Class name to inherit from.
-      *    @static
-      *    @access public
-      */
+        /**
+         *    Accessor for the currently set mock base class.
+         *    @return string           Class name to inherit from.
+         *    @static
+         *    @access public
+         */
         function getMockBaseClass() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['MockBaseClass'];
         }
         
-     /**
-      *    Adds additional mock code.
-      *    @param string $code    Extra code that can be added
-      *                           to the partial mocks for
-      *                           extra functionality. Useful
-      *                           when a test tool has overridden
-      *                           the mock base classes.
-      *    @access public
-      */
+        /**
+         *    @deprecated
+         */
         function addPartialMockCode($code = '') {
             $registry = &SimpleTestOptions::_getRegistry();
             $registry['AdditionalPartialMockCode'] = $code;
         }
         
-     /**
-      *    Accessor for additional partial mock code.
-      *    @return string       Extra code.
-      *    @access public
-      */
+        /**
+         *    @deprecated
+         */
         function getPartialMockCode() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['AdditionalPartialMockCode'];
         }
         
-     /**
-      *    Sets proxy to use on all requests for when
-      *    testing from behind a firewall. Set host
-      *    to false to disable. This will take effect
-      *    if there are no other proxy settings.
-      *    @param string $proxy     Proxy host as URL.
-      *    @param string $username  Proxy username for authentication.
-      *    @param string $password  Proxy password for authentication.
-      *    @access public
-      */
+        /**
+         *    Sets proxy to use on all requests for when
+         *    testing from behind a firewall. Set host
+         *    to false to disable. This will take effect
+         *    if there are no other proxy settings.
+         *    @param string $proxy     Proxy host as URL.
+         *    @param string $username  Proxy username for authentication.
+         *    @param string $password  Proxy password for authentication.
+         *    @access public
+         */
         function useProxy($proxy, $username = false, $password = false) {
             $registry = &SimpleTestOptions::_getRegistry();
             $registry['DefaultProxy'] = $proxy;
@@ -141,42 +133,42 @@
             $registry['DefaultProxyPassword'] = $password;
         }
         
-     /**
-      *    Accessor for default proxy host.
-      *    @return string       Proxy URL.
-      *    @access public
-      */
+        /**
+         *    Accessor for default proxy host.
+         *    @return string       Proxy URL.
+         *    @access public
+         */
         function getDefaultProxy() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['DefaultProxy'];
         }
         
-     /**
-      *    Accessor for default proxy username.
-      *    @return string    Proxy username for authentication.
-      *    @access public
-      */
+        /**
+         *    Accessor for default proxy username.
+         *    @return string    Proxy username for authentication.
+         *    @access public
+         */
         function getDefaultProxyUsername() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['DefaultProxyUsername'];
         }
         
-     /**
-      *    Accessor for default proxy password.
-      *    @return string    Proxy password for authentication.
-      *    @access public
-      */
+        /**
+         *    Accessor for default proxy password.
+         *    @return string    Proxy password for authentication.
+         *    @access public
+         */
         function getDefaultProxyPassword() {
             $registry = &SimpleTestOptions::_getRegistry();
             return $registry['DefaultProxyPassword'];
         }
         
-     /**
-      *    Accessor for global registry of options.
-      *    @return hash           All stored values.
-      *    @access private
-      *    @static
-      */
+        /**
+         *    Accessor for global registry of options.
+         *    @return hash           All stored values.
+         *    @access private
+         *    @static
+         */
         function &_getRegistry() {
             static $registry = false;
             if (! $registry) {
@@ -185,12 +177,12 @@
             return $registry;
         }
         
-     /**
-      *    Constant default values.
-      *    @return hash       All registry defaults.
-      *    @access private
-      *    @static
-      */
+        /**
+         *    Constant default values.
+         *    @return hash       All registry defaults.
+         *    @access private
+         *    @static
+         */
         function _getDefaults() {
             return array(
                     'StubBaseClass' => 'SimpleStub',
@@ -203,22 +195,38 @@
         }
     }
     
- /**
-  *  Static methods for compatibility between different
-  *  PHP versions.
-  *  @package   SimpleTest
-  */
+    /**
+     *  Static methods for compatibility between different
+     *  PHP versions.
+     *  @package	SimpleTest
+     */
     class SimpleTestCompatibility {
+    	
+    	/**
+    	 *	  Creates a copy whether in PHP5 or PHP4.
+    	 *	  @param object $object		Thing to copy.
+    	 *	  @return object			A copy.
+    	 *	  @access public
+    	 *	  @static
+    	 */
+    	function copy($object) {
+            if (version_compare(phpversion(), '5') >= 0) {
+            	eval('$copy = clone $object;');
+            	return $copy;
+            }
+            return $object;
+    	}
         
-     /**
-      *    Identity test. Drops back to equality + types for PHP5
-      *    objects as the === operator counts as the
-      *    stronger reference constraint.
-      *    @param mixed $first    Test subject.
-      *    @param mixed $second   Comparison object.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Identity test. Drops back to equality + types for PHP5
+         *    objects as the === operator counts as the
+         *    stronger reference constraint.
+         *    @param mixed $first    Test subject.
+         *    @param mixed $second   Comparison object.
+         *	  @return boolean		 True if identical.
+         *    @access public
+         *    @static
+         */
         function isIdentical($first, $second) {
             if ($first != $second) {
                 return false;
@@ -229,13 +237,14 @@
             return ($first === $second);
         }
         
-     /**
-      *    Recursive type test.
-      *    @param mixed $first    Test subject.
-      *    @param mixed $second   Comparison object.
-      *    @access private
-      *    @static
-      */
+        /**
+         *    Recursive type test.
+         *    @param mixed $first    Test subject.
+         *    @param mixed $second   Comparison object.
+         *	  @return boolean		 True if same type.
+         *    @access private
+         *    @static
+         */
         function _isIdenticalType($first, $second) {
             if (gettype($first) != gettype($second)) {
                 return false;
@@ -254,13 +263,14 @@
             return true;
         }
         
-     /**
-      *    Recursive type test for each element of an array.
-      *    @param mixed $first    Test subject.
-      *    @param mixed $second   Comparison object.
-      *    @access private
-      *    @static
-      */
+        /**
+         *    Recursive type test for each element of an array.
+         *    @param mixed $first    Test subject.
+         *    @param mixed $second   Comparison object.
+         *	  @return boolean		 True if identical.
+         *    @access private
+         *    @static
+         */
         function _isArrayOfIdenticalTypes($first, $second) {
             if (array_keys($first) != array_keys($second)) {
                 return false;
@@ -276,33 +286,42 @@
             return true;
         }
         
-     /**
-      *    Test for two variables being aliases.
-      *    @param mixed $first    Test subject.
-      *    @param mixed $second   Comparison object.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Test for two variables being aliases.
+         *    @param mixed $first    Test subject.
+         *    @param mixed $second   Comparison object.
+         *	  @return boolean		 True if same.
+         *    @access public
+         *    @static
+         */
         function isReference(&$first, &$second) {
             if (version_compare(phpversion(), '5', '>=')
-              && is_object($first)) {
-              return ($first === $second);
-           }
-           $temp = $first;
+	    	    && is_object($first)) {
+	    	    return ($first === $second);
+	        }
+	        if (is_object($first) && is_object($second)) {
+                $id = uniqid("test");
+                $first->$id = true;
+                $is_ref = isset($second->$id);
+                unset($first->$id);
+                return $is_ref;
+	        }
+	        $temp = $first;
             $first = uniqid("test");
             $is_ref = ($first === $second);
             $first = $temp;
             return $is_ref;
         }
         
-     /**
-      *    Test to see if an object is a member of a
-      *    class hiearchy.
-      *    @param object $object    Object to test.
-      *    @param string $class     Root name of hiearchy.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Test to see if an object is a member of a
+         *    class hiearchy.
+         *    @param object $object    Object to test.
+         *    @param string $class     Root name of hiearchy.
+         *	  @return boolean		   True if class in hiearchy.
+         *    @access public
+         *    @static
+         */
         function isA($object, $class) {
             if (version_compare(phpversion(), '5') >= 0) {
                 if (! class_exists($class, false)) {
@@ -318,28 +337,13 @@
                     or (is_subclass_of($object, $class)));
         }
         
-     /**
-      *    Autoload safe version of class_exists().
-      *    @param string $class        Name of class to look for.
-      *    @return boolean             True if class is defined.
-      *    @access public
-      *    @static
-      */
-        function classExists($class) {
-            if (version_compare(phpversion(), '5') >= 0) {
-                return class_exists($class, false);
-            } else {
-                return class_exists($class);
-            }
-        }
-        
-     /**
-      *    Sets a socket timeout for each chunk.
-      *    @param resource $handle    Socket handle.
-      *    @param integer $timeout    Limit in seconds.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Sets a socket timeout for each chunk.
+         *    @param resource $handle    Socket handle.
+         *    @param integer $timeout    Limit in seconds.
+         *    @access public
+         *    @static
+         */
         function setTimeout($handle, $timeout) {
             if (function_exists('stream_set_timeout')) {
                 stream_set_timeout($handle, $timeout, 0);
@@ -350,12 +354,12 @@
             }
         }
         
-     /**
-      *    Gets the current stack trace topmost first.
-      *    @return array        List of stack frames.
-      *    @access public
-      *    @static
-      */
+        /**
+         *    Gets the current stack trace topmost first.
+         *    @return array        List of stack frames.
+         *    @access public
+         *    @static
+         */
         function getStackTrace() {
             if (function_exists('debug_backtrace')) {
                 return array_reverse(debug_backtrace());

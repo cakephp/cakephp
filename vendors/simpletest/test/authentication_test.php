@@ -38,6 +38,14 @@
                     new SimpleUrl('http://www.here.com/pathmore/hello.html')));
         }
         
+        function testInsideWithMissingTrailingSlash() {
+            $realm = &new SimpleRealm(
+                    'Basic',
+                    new SimpleUrl('http://www.here.com/path/'));
+            $this->assertTrue($realm->isWithin(
+                    new SimpleUrl('http://www.here.com/path')));
+        }
+        
         function testDifferentPageNameStillInside() {
             $realm = &new SimpleRealm(
                     'Basic',

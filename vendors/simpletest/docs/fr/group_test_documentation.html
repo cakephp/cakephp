@@ -219,15 +219,15 @@
 ?&gt;
 </pre>
                 Comme les sc&eacute;narios de test normaux, un <span class="new_code">GroupTest</span> peut &ecirc;tre charg&eacute; avec la m&eacute;thode <span class="new_code">GroupTest::addTestFile()</span>.
-<pre>   
-&lt;?php   
-    define('RUNNER', true);   
-        
-    $test = &amp;new BigGroupTest('Big group');<strong>   
-    $test-&gt;addTestFile('file_group_test.php');   
-    $test-&gt;addTestFile(...);</strong>   
-    $test-&gt;run(new HtmlReporter());   
-?&gt;   
+<pre>	
+&lt;?php	
+    define('RUNNER', true);	
+ 	 	
+    $test = &amp;new BigGroupTest('Big group');<strong>	
+    $test-&gt;addTestFile('file_group_test.php');	
+    $test-&gt;addTestFile(...);</strong>	
+    $test-&gt;run(new HtmlReporter());	
+?&gt;	
 </pre>
             </p>
         
