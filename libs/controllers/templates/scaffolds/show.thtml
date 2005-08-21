@@ -38,13 +38,53 @@
 ?>
 </ul>
 
+<!--hasOne relationships -->
 <?php
    $objModel = $registry->getObject($modelName);
+
+   foreach ($objModel->_oneToOne as $relation)
+   {
+      list($table, $field, $value) = $relation;
+      $otherModelName = Inflector::singularize($table);
+
+      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2>";
+      echo "<dl>";
+      if( isset($data[$otherModelName]) && is_array($data[$otherModelName]) ) 
+      {
+         foreach( $data[$otherModelName] as $field=>$value )
+         {
+            echo "<dt>".Inflector::humanize($field)."</dt>";
+            if( isset($value) )
+            {
+               echo "<dd>".$value."</dd>";
+            } else {
+               echo "<dd>&nbsp;</dd>";
+            }
+         }   
+         
+      }
+      echo "</dl>";
+      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/edit/{$data[$otherModelName]['id']}")."</li></ul>";
+   }
+?>
+
+<!-- HAS MANY AND HASANDBELONGSTOMANY -->
+<?php
+   $relations = array();
    foreach( $objModel->_oneToMany as $relation ) 
    {
-   
-      $count = 0;
+      $relations[] = $relation;
+   } // end loop through onetomany relations.
+
+   foreach( $objModel->_manyToMany as $relation ) 
+   {
+      $relations[] = $relation;
+   } // end loop through manytomany relations.
+
+   foreach( $relations as $relation )
+   {
       list($table, $field, $value) = $relation;
+      $count = 0;
       $otherModelName = Inflector::singularize($table);
 
       echo "<div class='related'><H2>Related ".Inflector::humanize($table)."</H2>";
@@ -90,6 +130,8 @@
 
    echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/new/")."</li>";
  //  echo "<li>".$html->linkTo( "View ".Inflector::humanize($table), "/".Inflector::underscore($table)."/list/".$modelName."/".$data[$modelName]['id'])."</li>";
-   } // end loop through onetomany relations.
 ?>
 </ul></div>
+
+<?php    } //  end loop through relations
+?>

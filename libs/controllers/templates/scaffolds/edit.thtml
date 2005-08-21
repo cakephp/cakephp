@@ -6,7 +6,7 @@ uses('helpers/form');
 	echo $html->formTag('/'.$this->name.'/update');
 
 	echo $form->generateFields( $html, $fieldNames );
-
+   
 	echo $form->generateSubmitDiv( $html, 'Save' )
 
 ?>

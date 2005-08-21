@@ -413,7 +413,7 @@ class HtmlHelper extends Helper
     {
         $url = $this->base.IMAGES_URL.$path;
         $alt = $htmlAttributes['alt'];
-        return $this->output(sprintf(TAG_IMAGE, $url, $alt, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+        return $this->output(sprintf($this->tags['image'], $url, $alt, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
     }
 
     /**
@@ -1003,8 +1003,12 @@ class HtmlHelper extends Helper
             $options_here = $optionAttr;
 
             if ($selected == $name)
-            $options_here['selected'] = 'selected';
-
+            {
+               $options_here['selected'] = 'selected';
+            } else if ( is_array($selected) && array_key_exists($name, $selected) )
+            {
+               $options_here['selected'] = 'selected';
+            }
             $select[] = sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($options_here), $title);
         }
 

@@ -496,7 +496,9 @@ class Controller extends Object
 
 	    //  get all of the column names.
 	    $classRegistry = ClassRegistry::getInstance();
-	    foreach ($classRegistry->getObject($table)->_table_info as $tables)
+	    $objRegistryModel = $classRegistry->getObject($table);
+	    
+	    foreach ($objRegistryModel->_table_info as $tables)
 	    {
 	        foreach ($tables as $tabl)
 	        {
@@ -528,8 +530,8 @@ class Controller extends Object
 	          $fieldNames[ $tabl['name']]['tagName'] = $table.'/'.$tabl['name'];
 
 	         //  Now, find out if this is a required field.
-	         $validationFields = $classRegistry->getObject($table)->validate;
-	         
+	         //$validationFields = $classRegistry->getObject($table)->validate;
+	         $validationFields = $objRegistryModel->validate;
 	         if( isset( $validationFields[ $tabl['name'] ] ) )
 	         {
 	            //  Now, we know that this field has some validation set.
@@ -601,6 +603,8 @@ class Controller extends Object
                  break;
                  case "int":
                  case "decimal":
+                 case "float":
+                 case "double":
                  {
                      //BUGBUG:  Need a better way to determine if this field is an auto increment foreign key.
                      //  If it is a number, and it is a foreign key, we'll make a HUGE assumption that it is an auto increment field.
@@ -665,6 +669,7 @@ class Controller extends Object
                case "date":
                case "datetime":
                {
+                  if( 0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8) )
                   $fieldNames[ $tabl['name']]['type'] = $type;
                } 
                break;
@@ -675,7 +680,46 @@ class Controller extends Object
 
 	         } // end switch
          }
+   	    // now, add any necessary hasAndBelongsToMany list boxes
+   	    //  loop through the many to many relations to make a list box.
+      	foreach( $objRegistryModel->_manyToMany as $relation ) 
+         {
+            list($tableName, $field, $value, $joinTable, $key1, $key2) = $relation;
+
+            $otherModelName = Inflector::singularize($tableName);
+            $otherModel = new $otherModelName();
+            
+            if( $doCreateOptions ) 
+              {
+                  $otherDisplayField = $otherModel->getDisplayField();
+                  $fieldNames[$tableName]['model'] = $tableName;
+                  $fieldNames[$tableName]['prompt'] = "Related ".Inflector::humanize($tableName);
+                  $fieldNames[$tableName]['type'] = "selectMultiple";
+                  $fieldNames[$tableName]['tagName'] = $tableName;
+                  
+                  foreach( $otherModel->findAll() as $pass )
+                  {
+                      foreach( $pass as $key=>$value ) 
+                      {
+                          if( $key == $otherModelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) ) 
+                          {
+                              $fieldNames[$tableName]['options'][$value['id']] = $value[$otherDisplayField];
+                          }
+                      }
+                  }
+                  if( isset( $data[$tableName] ) )
+                  {
+                    foreach( $data[$tableName] as $row )
+                    {
+                       $fieldNames[$tableName]['selected'][$row['id']] = $row['id'];
+                    }
+                  }
+              }
+         } // end loop through manytomany relations.
 	    }
+	    
+
+	    
       return $fieldNames;
 	}    
 }

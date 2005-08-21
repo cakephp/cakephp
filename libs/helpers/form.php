@@ -295,7 +295,7 @@ class FormHelper
 		return $this->divTag( $divClass, $divTagInside );
 
 	}	
-	
+
 	function generateSubmitDiv($html, $displayText, $htmlOptions = null)
 	{
 		return $this->divTag( 'submit', $html->submitTag( $displayText, $htmlOptions) );
@@ -340,7 +340,13 @@ class FormHelper
    				$strFormFields = $strFormFields.$this->generateInputDiv( $html, $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
    				break;
    				case "select";
+   				case "selectMultiple";
    				{
+   				   if( "selectMultiple" == $field['type'] )
+   				   {
+   				      $field['selectAttr']['multiple'] = 'multiple';
+   				      $field['selectAttr']['class'] = 'selectMultiple';
+   				   }
    				   //  If the selected attribute has not been set, initialize it to null.
    				   if( !isset( $field['selected'] ) )
    				     $field['selected'] = null;
