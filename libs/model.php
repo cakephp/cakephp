@@ -1,57 +1,54 @@
-<?php 
-//////////////////////////////////////////////////////////////////////////
-// + $Id$
-// +------------------------------------------------------------------+ //
-// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
-// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
-// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
-// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
-// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
-// +------------------------------------------------------------------+ //
-// + Licensed under The MIT License                                   + //
-// + Redistributions of files must retain the above copyright notice. + //
-// + See: http://www.opensource.org/licenses/mit-license.php          + //
-//////////////////////////////////////////////////////////////////////////
+<?php
+/* SVN FILE: $Id$ */
 
 /**
- * Purpose: Model
- * DBO-backed object data model, loosely based on RoR concepts (www.rubyonrails.com).
- * Automatically selects a database table name based on a pluralized lowercase object class name
- * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
- * The table is required to have at least 'id auto_increment', 'created datetime', 
- * and 'modified datetime' fields
+ * Short description for file.
+ * 
+ * Long description for file
  *
- * To do:
- *   - schema-related cross-table ($has_one, $has_many, $belongs_to)
+ * PHP versions 4 and 5
+ *
+ * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c) 2005, CakePHP Authors/Developers
+ *
+ * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
+ *            Larry E. Masters aka PhpNut <nut@phpnut.com>
+ *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ *
+ *  Licensed under The MIT License
+ *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource 
- * @author CakePHP Authors/Developers
- * @copyright Copyright (c) 2005, CakePHP Authors/Developers
- * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
- * @package cake
- * @subpackage cake.libs
- * @since CakePHP v 0.2.9
- * @version $Revision$
- * @modifiedby $LastChangedBy$
+ * @author       CakePHP Authors/Developers
+ * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
+ * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package      cake
+ * @subpackage   cake.libs
+ * @since        CakePHP v 0.2.9
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 /**
  * Enter description here...
  */
-uses('object', 'validators', 'inflector');
+uses('object',  'class_registry', 'validators', 'inflector');
+
 
 /**
+ * Short description for class
+ *
  * DBO-backed object data model, loosely based on RoR concepts (www.rubyonrails.com).
  * Automatically selects a database table name based on a pluralized lowercase object class name
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment', 'created datetime', 
  * and 'modified datetime' fields.
  *
- * @package cake
+ * @package    cake
  * @subpackage cake.libs
- * @since CakePHP v 0.2.9
+ * @since      CakePHP v 0.2.9
  *
  */
 class Model extends Object 
@@ -104,34 +101,31 @@ class Model extends Object
  * @access private
  */
    var $_table_info = null;
+	
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $_belongsTo = array();
    
 /**
-  * Enter description here...
-  *
-  * @var unknown_type
-  * @access private
-  */
-	var $_hasOne = array();
-
-/**
-  * Enter description here...
-  *
-  * @var unknown_type
-  * @access private
-  */
-	var $_belongsTo = array();
-	
-	
-/**
- * Array of other Models this Model references in a one-to-many relationship. 
+ * Array of other Models this Model references in a belongsTo (one-to-one) relationship. 
  *
  * @var array
  * @access private
  */
-   var $_oneToMany = array();
+   var $_belongsToOther = array();
 
 /**
- * Array of other Models this Model references in a one-to-one relationship. 
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $_hasOne = array();
+   
+/**
+ * Array of other Models this Model references in a hasOne (one-to-one) relationship. 
  *
  * @var array
  * @access private
@@ -139,12 +133,33 @@ class Model extends Object
    var $_oneToOne = array();
 
 /**
- * Array of other Models this Model references in a has-many relationship. 
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $_hasMany = array();
+   
+/**
+ * Array of other Models this Model references in a hasMany (one-to-many) relationship. 
  *
  * @var array
  * @access private
  */
-   var $_hasMany = array();
+   var $_oneToMany = array();
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $_hasAndBelongsToMany = array();
+/**
+ * Array of other Models this Model references in a hasAndBelongsToMany (many-to-many) relationship. 
+ *
+ * @var array
+ * @access private
+ */
+   var $_manyToMany  = array();
 
 /**
  * Enter description here...
@@ -162,13 +177,28 @@ class Model extends Object
  */
    var $validationErrors = null;
 
-/**
-  * 
-  * @var unknown_type
-  * @access private
-  */
-	var $_count;
 
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+	var $classRegistry;
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $persistent = null;
+   
+/**
+ * Prefix for tables in model.
+ *
+ * @var string
+ */
+   var $tablePrefix = null;
+   
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -179,6 +209,8 @@ class Model extends Object
    function __construct ($id=false, $table=null, $db=null) 
    {
       $this->db = $db? $db: DboFactory::getInstance();
+      $this->classRegistry = ClassRegistry::getInstance();
+      $this->classRegistry->addObject(get_class($this), $this);
    
       if ($id)
       {
@@ -186,7 +218,11 @@ class Model extends Object
       }
 
       $table_name = $table? $table: ($this->use_table? $this->use_table: Inflector::tableize(get_class($this)));
-      $this->useTable ($table_name);
+      //Table Prefix Hack - Check to see if the function exists.
+	  if (in_array('settableprefix', get_class_methods(get_class($this)))) $this->setTablePrefix();
+      // Table Prefix Hack - Get the prefix for this view.
+	  $this->tablePrefix? $this->useTable($this->tablePrefix.$table_name): $this->useTable ($table_name);
+	  //$this->useTable ($table_name);
       parent::__construct();
       $this->createLinks();
    }
@@ -197,22 +233,22 @@ class Model extends Object
  */
 	function createLinks()
 	{
-	   if (!empty($this->belongsTo))
-	   {
-	      return $this->_belongsToLink();
-	   }
-	   if (!empty($this->hasOne))
-	   {
-	      $this->_hasOneLink();
-	   }
-	   if (!empty($this->hasMany))
-	   {
-	      return $this->_hasManyLinks();
-	   }
-	   if (!empty($this->hasAndBelongsToMany))
-	   {
-	      return $this->_hasAndBelongsToManyLinks();
-	   }
+	    if (!empty($this->belongsTo))
+	    {
+	        $this->_belongsToLink();
+	    }
+	    if (!empty($this->hasOne))
+	    {
+	        $this->_hasOneLink();
+	    }
+	    if (!empty($this->hasMany))
+	    {
+	        $this->_hasManyLinks();
+	    }
+	    if (!empty($this->hasAndBelongsToMany))
+	    {
+	        $this->_hasAndBelongsToManyLinks();
+	    }
 	}
 
 /**
@@ -224,15 +260,7 @@ class Model extends Object
    {
       if(is_array($this->belongsTo))
       {
-         if (count($this->id) > 1)
-         {
-            $this->_count++;
-         }
-         else
-         {
-            $this->_count = false;	
-         }
-         
+
          foreach ($this->belongsTo as $association => $associationValue)
          {
             $className = $association;
@@ -247,9 +275,8 @@ class Model extends Object
                
                if ($classCreated === false)
                {
-                  $this->$className = &new $className();	
+                  $this->_constructAssociatedModels($className , 'Belongs');
                   $classCreated = true;
-                  $this->_belongsTo = array($association,$className);
                }
                
                switch($option)
@@ -283,35 +310,24 @@ class Model extends Object
                   break; 
                }
             }
-            
-            $this->_constructAssociatedModels($className , 'Belongs');
+            //$this->_belongsTo = array($className,$association);
+            $this->linkAssociation('Belongs', $className, $this->id);
+            $this->relink('Belongs');
             unset($className);
-            
-            if (!count($this->id) > 1)
-            {
-               $this->_resetCount();
-            }
          }
       }
       else
       {
-         $this->_resetCount();
-         if (count($this->id) > 1)
-         {
-            $this->_count++;
-         }
-         else
-         {
-            $this->_count = false;	
-         }
-				
-				$association = explode(',', $this->belongsTo);
-				foreach ($association as $modelName) 
-				{
-					$this->_constructAssociatedModels($modelName , 'Belongs');
-				}
-			}	
-	}
+          $association = explode(',', $this->belongsTo);
+          foreach ($association as $modelName) 
+          {
+             // $this->_belongsTo = array($modelName,$modelName);
+              $this->_constructAssociatedModels($modelName , 'Belongs');
+              $this->linkAssociation('Belongs', $modelName, $this->id);
+              $this->relink('Belongs');
+          }
+      }
+   }
 	
 /**
  * Enter description here...
@@ -321,16 +337,7 @@ class Model extends Object
    function _hasOneLink()
    {
       if(is_array($this->hasOne))
-      {
-         if (count($this->id) > 1)
-         {
-            $this->_count++;
-         }
-         else
-         {
-            $this->_count = false;	
-         }
-         
+      { 
          foreach ($this->hasOne as $association => $associationValue)
          {
             $className = $association;
@@ -345,9 +352,8 @@ class Model extends Object
                
                if ($classCreated === false)
                {
-                  $this->$className = new $className();	
+                  $this->_constructAssociatedModels($className , 'One');
                   $classCreated = true;
-                  $this->_hasOne = array($association,$className);
                }
                
                switch($option)
@@ -381,35 +387,24 @@ class Model extends Object
                   break;
                }
             }
-            
-            $this->_constructAssociatedModels($className , 'One');
+           // $this->_hasOne = array($className,$association);
+            $this->linkAssociation('One', $className, $this->id);
+            $this->relink('One');
             unset($className);
-            
-            if (!count($this->id) > 1)
-            {
-               $this->_resetCount();
-            }
          }
       }
       else
       {
-         $this->_resetCount();
-         if (count($this->id) > 1)
-         {
-            $this->_count++;
-         }
-         else
-         {
-            $this->_count = false;	
-         }
-				
-				$association = explode(',', $this->hasOne);
-				foreach ($association as $modelName) 
-				{
-					$this->_constructAssociatedModels($modelName , 'One');
-				}
-			}	
-	}
+          $association = explode(',', $this->hasOne);
+          foreach ($association as $modelName) 
+          {
+             // $this->_hasOne = array($modelName,$modelName);
+              $this->_constructAssociatedModels($modelName , 'One');
+              $this->linkAssociation('One', $modelName, $this->id);
+              $this->relink('One');
+          }
+      }
+   }
 
 	
 /**
@@ -420,22 +415,25 @@ class Model extends Object
 	{
 	   if(is_array($this->hasMany))
 	   {
-	      $this->_resetCount();
-	      
 	      foreach ($this->hasMany as $association => $associationValue)
 	      {
-	         $className = $association;
-	         $this->_hasMany = array($association,$className);
-	         
+            $className = $association;
+            $classCreated = false;
+
 	         foreach ($associationValue as $option => $optionValue)
 	         {
+	            if (($option === 'className') && ($classCreated === false))
+	            {
+                  $className = $optionValue;
+               }
+               
+               if ($classCreated === false)
+               {
+                  $this->_constructAssociatedModels($className , 'Many');	
+                  $classCreated = true;
+               }
 	            switch ($option)
 	            {
-	               case 'className':
-	                 //$this->__joinedHasMany[$count][$this->table]['className'] = $optionValue;
-	                 //$this->__joinedHasMany[$count][$this->table]['association'] = $association;
-	               break;
-	               
 	               case 'conditions':
 	                 //$this->__joinedHasMany[$count][$this->table]['conditions'] = $optionValue;
 	               break;
@@ -468,29 +466,29 @@ class Model extends Object
 	               break;
 	            }
 	         }
-	         $this->linkAssociation('Many', $className, $this->id[$this->_count]);
+	        // $this->_hasMany = array($className,$association);
+	         $this->linkAssociation('Many', $className, $this->id);
+	         $this->relink('Many');
+	         unset($className);
 	      }
 	   }
 	   else
-      {
-         $this->_resetCount();
-         if (count($this->id) > 1)
-         {
-            $this->_count++;
-         }
-         else
-         {
-            $this->_count = false;	
-         }
-				
-				$association = explode(',', $this->hasMany);
-				foreach ($association as $modelName) 
-				{
-					$this->linkAssociation('Many', $modelName, $this->id[$this->_count]);;
-				}
-			}
+	   {
+	       $association = explode(',', $this->hasMany);
+	       foreach ($association as $modelName) 
+	       {
+	         //  $this->_hasMany = array($modelName,$modelName);
+	           $this->_constructAssociatedModels($modelName , 'Many');
+	           $this->linkAssociation('Many', $modelName, $this->id);
+	           $this->relink('Many');  
+	       }
+	   }
 	}
 
+/**
+ * Enter description here...
+ *
+ */
    function _hasAndBelongsToManyLinks()
    {
       if(is_array($this->hasAndBelongsToMany))
@@ -498,19 +496,19 @@ class Model extends Object
       }
       else
       {
-         $this->_hasAndBelongsToMany = explode(',', $this->hasAndBelongsToMany);
+         //$this->_hasAndBelongsToMany = explode(',', $this->hasAndBelongsToMany);
+         
+	       $association = explode(',', $this->hasAndBelongsToMany);
+	       foreach ($association as $modelName) 
+	       {
+	         //  $this->_hasAndBelongsToMany = array($modelName,$modelName);
+	           $this->_constructAssociatedModels($modelName , 'ManyTo');
+	           $this->linkAssociation('ManyTo', $modelName, $this->id);
+	           $this->relink('ManyTo');  
+	       }
       }
    }
-/**
- * Enter description here...
- *
- * @return unknown
- */
-	function _resetCount()
-	{
-	   return $this->_count = 0;
-	}
-	
+
 /**
  * Enter description here...
  *
@@ -519,9 +517,10 @@ class Model extends Object
  * @param unknown_type $settings
  * @access private
  */
-   function _constructAssociatedModels($className, $type, $settings = false)
+   function _constructAssociatedModels($modelName, $type, $settings = false)
    {
-      $modelName = Inflector::singularize($className);
+      $modelName = Inflector::singularize($modelName);
+      $collectionKey = strtolower($modelName);
       
       switch($type)
       {
@@ -545,17 +544,18 @@ class Model extends Object
          //nothing
          break;
       }
-      $this->linkAssociation($type, $modelName, $this->id[$this->_count]);
       
-      if(!isset($this->$className))
+      if(!$this->classRegistry->isKeySet($collectionKey))
       {
-         $this->$className = new $className();
+          $this->$modelName =& new $modelName();
       }
-      $this->{$joined}[] = $this->$className;
-      $this->relink($type);
+      else
+      {
+          $this->$modelName =& $this->classRegistry->getObject($collectionKey); 
+      }
+      
+      $this->{$joined}[] =& $this->$modelName;
    }
-   
-   
 
 /**
  * Updates this model's association links, by emptying the links list, and then link"*Association Type" again.
@@ -564,87 +564,80 @@ class Model extends Object
  */
 	function relink ($type) 
 	{
-	    switch ($type)
+	    if(!empty($this->_belongsTo))
 	    {
-	       case 'Belongs':
-	           foreach ($this->_belongsTo as $table) 
-	           {
-	              if(is_array($table))
-	              {
-	                 $names[] = explode(',', $table);
-	              } 
-	              else 
-	              {
-	                 $names[0] = $table;
-	                 $names[1] = $table;
-	              }
-	              $className = $names[1];
-	              $tableName = Inflector::singularize($names[0]);
-	              $this->$className->clearLinks($type);
-	              $this->$className->linkAssociation($type, $tableName, $this->id);
-	           }
-	       break;
-	       
-	       case 'One':
-	           foreach ($this->_hasOne as $table) 
-	           {
-	              if(is_array($table))
-	              {
-	                 $names[] = explode(',', $table);
-	              } 
-	              else 
-	              {
-	                 $names[0] = $table;
-	                 $names[1] = $table;
-	              }
-	              $className = $names[1];
-	              $tableName = Inflector::singularize($names[0]);
-	              $this->$className->clearLinks($type);
-	              $this->$className->linkAssociation($type, $tableName, $this->id);
-	           }
-	       break;
-	       
-	       case 'Many':
-	           foreach ($this->_hasMany as $table)
-	           {
-	              if(is_array($table))
-	              {
-	                 $names[] = explode(',', $table);
-	              }
-	              else
-	              {
-			         $names[0] = $table;
-			         $names[1] = $table;
-	              }
-	              $className = $names[1];
+	        foreach ($this->_belongsTo as $table) 
+	        {
+	            if(is_array($table))
+	            {
+	                $names[0] = $table[0];
+	            } 
+	            else 
+	            {
+	                $names[0] = $table;
+	            }
+	            $tableName = Inflector::singularize($names[0]);
+	            $this->clearLinks($type);
+	            $this->linkAssociation($type, $tableName, $this->id);
+	        }
+	    }
+	    
+	    if(!empty($this->_hasOne))
+	    {
+	        foreach ($this->_hasOne as $table) 
+	        {
+	            if(is_array($table))
+	            {
+	                $names[0] = $table[0];
+	            } 
+	            else 
+	            {
+	                $names[0] = $table;
+	            }
+	            $tableName = Inflector::singularize($names[0]);
+	            $this->clearLinks($type);
+	            $this->linkAssociation($type, $tableName, $this->id);
+	        }
+	    }
+	    
+	    if(!empty($this->_hasMany))
+	    {
+	        foreach ($this->_hasMany as $table)
+	        {
+	            if(is_array($table))
+	            {
+	                $names[0] = $table[0];
+	            }
+	            else
+	            {
+	                $names[0] = $table;
+	            }
 	              $tableName = Inflector::singularize($names[0]);
 	              $this->clearLinks($type);
-	              $this->linkAssociation($type, $tableName, $this->id[0]);
-	           }
-	       break;
-
-          case 'ManyTo':
-               foreach ($this->_manyToMany as $table)
-               {
-                  if(is_array($table))
-                  {
-                     $names[] = explode(',', $table);
-                  }
-                  else
+	              $this->linkAssociation($type, $tableName, $this->id);
+	        }
+	    }
+	    
+	    if(!empty($this->_hasAndBelongsToMany))
+	    {
+	        foreach ($this->_hasAndBelongsToMany as $table)
+	        {
+	            if(is_array($table))
+	            {
+	                 $names[0] = $table[0];
+	            }
+	            else
                   {
                      $names[0] = $table;
-                     $names[1] = $table;
                   }
-                  $className = $names[1];
                   $tableName = Inflector::singularize($names[0]);
                   $this->clearLinks($type);
-                  $this->linkAssociation($type, $tableName, $this->id[0]);
-               }
-	       break;
+                  $this->linkAssociation($type, $tableName, $this->id);
+	        }
 	    }
 	}
+	   
 
-	
 /**
  * Enter description here...
  *
@@ -663,9 +656,13 @@ class Model extends Object
       }
       else
       {
-         if ($type === 'Belongs' || $type === 'One')
+         if ($type === 'Belongs')
          {
             $field_name = Inflector::singularize($tableName).'_id';
+         }
+         elseif ($type === 'One')
+         {
+            $field_name = Inflector::singularize($this->table).'_id';
          }
          else
          {
@@ -673,6 +670,8 @@ class Model extends Object
          }
       }
 
+      
+      
       switch ($type)
       {
          case 'Belongs':
@@ -688,7 +687,22 @@ class Model extends Object
          break;
 
          case 'ManyTo':
-         $this->_manyToMany = array();
+         
+         //$joinKey = $this->table .'To'. Inflector::singularize($tableName) . 'joinTable';
+         //if(!empty($this->$joinKey))
+         //{
+         //     $joinTable = $this->$joinKey;
+         //}
+         //else
+         //{
+             $tableSort[0] = $this->table;
+             $tableSort[1] = $tableName;
+             sort($tableSort);
+             $joinTable = $tableSort[0] . '_' . $tableSort[1];
+             $key1 = Inflector::singularize($this->table) . '_id';
+             $key2 = Inflector::singularize($tableName) . '_id';
+        // }
+         $this->_manyToMany[]  = array($tableName, $field_name, $value, $joinTable, $key1, $key2);
          break;
       }
    }
@@ -699,24 +713,24 @@ class Model extends Object
  */
    function clearLinks($type)
    {
-      switch ($type)
-      {
-         case 'Belongs':
+      //switch ($type)
+      //{
+       //  case 'Belongs':
          $this->_belongsToOther = array();
-         break;
+       //  break;
 
-         case 'One':
+       //  case 'One':
          $this->_oneToOne = array();
-         break;
+       //  break;
 
-         case 'Many':
+       //  case 'Many':
          $this->_oneToMany = array();
-         break;
+       //  break;
 
-         case 'ManyTo':
+       //  case 'ManyTo':
          $this->_manyToMany = array();
-         break;
-      }
+       //  break;
+     // }
    }
 
 
@@ -898,7 +912,7 @@ class Model extends Object
  */
    function saveField($name, $value) 
    {
-      return $this->save(array($name=>$value), false);
+      return Model::save(array($name=>$value), false);
    }
 
 /**
@@ -1065,7 +1079,7 @@ class Model extends Object
  */
    function find ($conditions = null, $fields = null, $order = null) 
    {
-      $data = $this->findAll($conditions, $fields, $order, 1);
+      $data = Model::findAll($conditions, $fields, $order, 1);
       return empty($data[0])? false: $data[0];
    }
 
@@ -1106,41 +1120,44 @@ class Model extends Object
  */
    function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
    {
-      $conditions = $this->parseConditions($conditions);
+       $conditions = $this->parseConditions($conditions);
+       
+       if (is_array($fields))
+       {
+           $f = $fields;
+       }
+       elseif ($fields)
+       {
+           $f = array($fields);
+       }
+       else
+       {
+           $f = array('*');
+       }
+       
+       $joins = $whers = array();
+       
+       if(!empty($this->_oneToOne))
+       {
+           
+           foreach ($this->_oneToOne as $rule)
+           {
+               list($table, $field, $value) = $rule;
+               $joins[] = "JOIN {$table} ON {$table}.{$field} = {$this->table}.id";
+        
+           }
+       }
+       
+       if(!empty($this->_belongsToOther))
+       {
 
-      if (is_array($fields))
-      {
-         $f = $fields;
-      }
-      elseif ($fields)
-      {
-         $f = array($fields);
-      }
-      else
-      {
-         $f = array('*');
-      }
-
-      $joins = $whers = array();
-      
-      if(!empty($this->_oneToOne))
-      {
-         foreach ($this->_oneToOne as $rule)
-         {
-            list($table, $field, $value) = $rule;
-            $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
-         }
-      }
-      
-      if(!empty($this->_belongsToOther))
-      {
-         foreach ($this->_belongsToOther as $rule)
-         {
-            list($table, $field, $value) = $rule;
-            $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
-         }
-      }
-      
+           foreach ($this->_belongsToOther as $rule)
+           {
+               list($table, $field, $value) = $rule;
+               $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
+           }
+       }
+       
       $joins = count($joins)? join(' ', $joins): null;
       $whers = count($whers)? '('.join(' AND ', $whers).')': null;
       $conditions .= ($conditions && $whers? ' AND ': null).$whers;
@@ -1160,29 +1177,101 @@ class Model extends Object
          .$limit_str;
 
       $data = $this->db->all($sql);
-      
-      if(!empty($this->_oneToMany))
-      {
-         $datacheck = $data;
-         foreach ($this->_oneToMany as $rule)
-         {
-            $count = 0;
-            list($table, $field, $value) = $rule;
-            foreach ($datacheck as $key => $value1)
-            {
-               foreach ($value1 as $key2 => $value2)
+       
+       
+       if(!empty($this->_oneToMany))
+       {
+           
+           $datacheck = $data;
+           $original = $data;
+           foreach ($this->_oneToMany as $rule)
+           {
+               $count = 0;
+               list($table, $field, $value) = $rule;
+               
+               foreach ($datacheck as $key => $value1)
                {
-                  $select = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = {$value2['id']}");
-                  $data2 = array_merge_recursive($data[$count],$select);
-                  $data1[$count] = $data2;
+                   foreach ($value1 as $key2 => $value2)
+                   {
+                       $select[$table] = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = '{$value2['id']}'");
+                       if( is_array($select[$table]) && ($select[$table] != null))
+                       {
+                          $newKey = Inflector::singularize($table);
+                           foreach ($select[$table] as $key => $value)
+                           {
+                               $select1[$table][$key] = $value[$newKey];
+                           }
+                           
+                           $merged = array_merge_recursive($data[$count],$select1);
+                           $newdata[$count] = $merged;
+                           unset ($select1);
+                       }
+                       
+                       if(!empty($newdata[$count]))
+                       {
+                           $original[$count] = $newdata[$count];
+                       }
+                   }
+                   $count++;
                }
-               $count++;
-            }
-            $data = $data1;
-            $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
-         }
-      }
-      return $data;
+               $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
+           }
+           
+           if(!empty($original))
+           {
+               $data = $original;
+           }
+       }
+
+       if(!empty($this->_manyToMany))
+       {
+           $datacheck = $data;
+           $original = $data;
+           foreach ($this->_manyToMany as $rule)
+           {
+               $count = 0;
+               list($table, $field, $value, $joineTable, $joinKey1, $JoinKey2) = $rule;
+               
+               foreach ($datacheck as $key => $value1)
+               {
+                   foreach ($value1 as $key2 => $value2)
+                   {
+                       if(!empty ($value2['id']))
+                       {
+                       $select[$table] = $this->db->all("SELECT * FROM {$table} 
+                                                         JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
+                                                         AND {$joineTable}.{$JoinKey2} = {$table} .id");
+                       }
+                       if( is_array($select[$table]) && ($select[$table] != null))
+                       {
+                          $newKey = Inflector::singularize($table);
+                           foreach ($select[$table] as $key => $value)
+                           {
+                               $select1[$table][$key] = $value[$newKey];
+                           }
+                           
+                           $merged = array_merge_recursive($data[$count],$select1);
+                           $newdata[$count] = $merged;
+                           unset ($select1);
+                       }
+                       
+                       if(!empty($newdata[$count]))
+                       {
+                           $original[$count] = $newdata[$count];
+                       }
+                   }
+                   $count++;
+               }
+               $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
+           }
+           
+           if(!empty($original))
+           {
+               $data = $original;
+           }
+       }
+             
+       return $data;
    }
 
 /**
@@ -1204,7 +1293,7 @@ class Model extends Object
  */
    function findCount ($conditions)
    {
-      list($data) = $this->findAll($conditions, 'COUNT(*) AS count');
+      list($data) = Model::findAll($conditions, 'COUNT(*) AS count');
       return isset($data['count'])? $data['count']: false;
    }
 
@@ -1217,7 +1306,7 @@ class Model extends Object
  */
    function findAllThreaded ($conditions=null, $fields=null, $sort=null) 
    {
-      return $this->_doThread($this->findAll($conditions, $fields, $sort), null);
+      return $this->_doThread(Model::findAll($conditions, $fields, $sort), null);
    }
 
 /**
@@ -1256,8 +1345,8 @@ class Model extends Object
  */
    function findNeighbours ($conditions, $field, $value) 
    {
-      list($prev) = $this->findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
-      list($next) = $this->findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
+      list($prev) = Model::findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
+      list($next) = Model::findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
       
       return array('prev'=>$prev['id'], 'next'=>$next['id']);
    }
@@ -1331,7 +1420,41 @@ class Model extends Object
          return $errors;
       }
    }
+   
+   
+/**
+ * This function determines whether or not a string is a foreign key
+ *
+ * @param string $field Returns true if the input string ends in "_id"
+ * @return True if the input string ends in "_id", else false.
+ */
+	function isForeignKey( $field ) {
+	   //  get the length of the field.
+	   $length = strlen( $field );
+	   
+	   //  if a reverse search for the string _id reveals that this string appears three characters from the end, then this is a foreign key.
+	   if( strrpos( $field, "_id" ) == $length - 3 ) {
+	     return true;
+	   }
+	   return false;
+	}
+	
+	function getDisplayField()
+	{
+	   //  $displayField defaults to 'name'
+	   $dispField = 'name';
 
+	   //  If the $displayField variable is set in this model, use it.
+	   if( isset( $this->displayField ) ) {
+	      $dispField = $this->displayField;
+	   }
+
+	   //  And if the display field does not exist in the table info structure, use the ID field.
+	   if( false == $this->hasField( $dispField ) )
+	     $dispField = 'id';
+
+	   return $dispField;
+	}
 }
 
 ?>

@@ -1,36 +1,29 @@
-<h1>Cake PHP works!</h1>
+<h1>CakePHP <em>Works!</em></h1><br/>
+<hr/>
+Your database configuration file is <?= file_exists(CONFIGS.'database.php') ? 'present.'. $filePresent = ' ' : 'not present.';?><br/>
+<? $db = DboFactory::getInstance(); ?>
+<? if (!empty($filePresent)):?>
+Cake <?=$db->connected ? "is able to" : "is not able to" ?> connect to the database.
+<?endif?>
+<hr/>
+<br/>
+<h2>Editing <em>this Page</em></h2>
+<p>
+To change the content of this page, edit <code>/app/views/pages/home.thtml</code>. To change it's layout, edit <code>/app/views/layouts/default.thtml</code>. You can also edit the CSS styles for this page at <code>/public/css/default.css</code>.
+</p><br/>
 
-<p>Your installation of Cake PHP is functional. Edit <code>/app/views/pages/home.thtml</code> to change the contents of this page.</p>
+<h2>Introducing <em>Cake</em></h2>
 
-<h2>Introducing Cake PHP</h2>
+<p>Cake is a rapid development framework for PHP: a structure of libraries, classes and run-time infrastructure for programmers creating web applications. Our primary goal is to enable you to work in a structured and rapid manner within a framework - without loss of flexibility. </p><br/>
+<p>Tired of repeating yourself? Ever copy and pasted code? Want to get your app in production quicker? Cake is for you. </p><br/>
 
-<p>Cake is a structure of libraries, classes and run-time infrastructure for PHP programmers. It's also what It's original author, Michal uses at work. It's based on certain conventions, so you may find it rigid at first. The directory structure is already laid out, and it's different from what most people use. From what We've experienced, a great many PHP programmers start as web- or graphic-designers, i.e. they are not university-educated programmers as many in C++ and Java-land. They invent their own, peculiar ways of solving problems and stick to them. Perhaps that's why so few people use <?=$html->linkOut('PEAR', 'http://pear.php.net')?> and <?=$html->linkOut('PECL', 'http://pecl.php.net')?> libraries &ndash; they don't usually re-use their code.</p>
-
-<p>Cake PHP builds on a concept introduced in <?=$html->linkOut('Ruby on Rails', 'http://rubyonrails.com')?> &ndash; it enables rapid developement of feature-rich websites.</p>
-
-<h2>Features</h2>
-
-<ul>
-   <li>Compatibile with PHP4 and PHP5.</li>
-   <li>Supplies integrated <acronym title="Create, Read, Update, Delete">CRUD</acronym> for databases.</li>
-   <li>Pretty URL's that work with and without mod_rewrite.</li>
-   <li>Fast, flexible templating (PHP syntax with helper methods).</li>
-   <li>Suported database-types: MySQL, PostgreSQL and SQLIte</li>
-   <li>Suported webservers: Apache (others will most likely also work)</li>
-</ul>
-
-<p>Cake is still in its early infancy, but we are proceeding in good direction &ndash; table joins will most probably get added in 0.9.3 release, and better support for user-defined settings is also underway.</p>
-
-<h2>Getting involved</h2>
-
-<p>Cake PHP needs you! We have already quiet active user base, but we are allways open to new bug reports or feature ideas!</p>
-
-<ul>
-   <li><?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.</li>
-   <li><?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.</li>
-   <li><?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.</li>
-   <li><?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.</li>
-</ul>
-
-<p>Soon there will be oficial <?=$html->linkOut('Cake PHP website','http://www.cakephp.org/')?>, so stay tuned.</p>
-<p>Also see Cake PHP's original authors <?=$html->linkOut('Amazon wishlish','http://www.amazon.com/gp/registry/registry.html?id=NODP8QT6LFTO')?> if you want to show appreciation for his work on the project.</p>
+<h2>Get <em>Involved</em></h2>
+<p>Cake PHP needs you! We have an active user base and are always open to new bug reports or feature ideas!</p><br/>
+<?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.<br/>
+<?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.<br/>
+<?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.<br/>
+<?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.<br/>
+#cakephp on irc.euirc.net for quick help<br/>
+</p>
+<br/>
+<p>Cake 0.9.2</p>

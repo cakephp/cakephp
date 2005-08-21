@@ -4,13 +4,14 @@
 	<title><?=$title_for_layout?></title>
 	<?=$html->charsetTag('UTF-8')?>
 	<?=$html->cssTag('scaffold')?>
+	<?=$html->cssTag('forms')?>
 </head>
 
 <body>
-
+<div id="container">
 <h1><?=$title_for_layout?></h1>
 
 <?=$content_for_layout?>
-
+</div>
 </body>
 </html>

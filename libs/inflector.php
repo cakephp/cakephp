@@ -1,46 +1,46 @@
 <?php
-//////////////////////////////////////////////////////////////////////////
-// + $Id$
-// +------------------------------------------------------------------+ //
-// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
-// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
-// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
-// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
-// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
-// +------------------------------------------------------------------+ //
-// + Licensed under The MIT License                                   + //
-// + Redistributions of files must retain the above copyright notice. + //
-// + See: http://www.opensource.org/licenses/mit-license.php          + //
-//////////////////////////////////////////////////////////////////////////
+/* SVN FILE: $Id$ */
 
 /**
-  * Purpose: Inflector
-  * I'm trying to port RoR Inflector class here.
-  * Inflector pluralizes and singularizes English nouns.
-  * Test with $i = new Inflector(); $i->test();
-  *
-  * @filesource 
-  * @author CakePHP Authors/Developers
-  * @copyright Copyright (c) 2005, CakePHP Authors/Developers
-  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
-  * @package cake
-  * @subpackage cake.libs
-  * @since CakePHP v 0.2.9
-  * @version $Revision$
-  * @modifiedby $LastChangedBy$
-  * @lastmodified $Date$
-  * @license http://www.opensource.org/licenses/mit-license.php The MIT License
-  */
+ * Short description for file.
+ * 
+ * Long description for file
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c) 2005, CakePHP Authors/Developers
+ *
+ * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
+ *            Larry E. Masters aka PhpNut <nut@phpnut.com>
+ *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ *
+ *  Licensed under The MIT License
+ *  Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource 
+ * @author       CakePHP Authors/Developers
+ * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
+ * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package      cake
+ * @subpackage   cake.libs
+ * @since        CakePHP v 0.2.9
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
+ * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
 
 /**
-  * This is a port of Ruby on Rails' Inflector class.
-  * Inflector pluralizes and singularizes English nouns.
-  * Test with $i = new Inflector(); $i->test();
-  *
-  * @package cake
-  * @subpackage cake.libs
-  * @since CakePHP v 0.2.9
-  */
+ * Short description for class
+ *
+ * Inflector pluralizes and singularizes English nouns.
+ * Test with $i = new Inflector(); $i->test();
+ *
+ * @package    cake
+ * @subpackage cake.libs
+ * @since      CakePHP v 0.2.9
+ */
 class Inflector extends Object 
 {
    
@@ -62,20 +62,28 @@ class Inflector extends Object
    function pluralize ($word) 
    {
       $plural_rules = array(
-         '/(x|ch|ss|sh)$/'         => '\1es',       # search, switch, fix, box, process, address
-         '/series$/'               => '\1series',
-         '/([^aeiouy]|qu)ies$/'   => '\1y',
-         '/([^aeiouy]|qu)y$/'      => '\1ies',      # query, ability, agency
-         '/(?:([^f])fe|([lr])f)$/' => '\1\2ves', # half, safe, wife
-         '/sis$/'                  => 'ses',        # basis, diagnosis
-         '/([ti])um$/'            => '\1a',        # datum, medium
-         '/person$/'               => 'people',     # person, salesperson
-         '/man$/'                  => 'men',        # man, woman, spokesman
-         '/child$/'               => 'children',   # child
-         '/s$/'                  => 's',          # no change (compatibility)
-         '/$/'                     => 's'
+      	'/^(ox)$/'              => '\1\2en',	    # ox
+      	'/([m|l])ouse$/'          => '\1ice',	    # mouse, louse
+      	'/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
+        '/(x|ch|ss|sh)$/'         =>  '\1es',       # search, switch, fix, box, process, address
+        '/([^aeiouy]|qu)ies$/'    =>  '\1y',
+        '/([^aeiouy]|qu)y$/'      =>  '\1ies',      # query, ability, agency
+        '/(hive)$/'               =>  '\1s',        # archive, hive
+        '/(?:([^f])fe|([lr])f)$/' =>  '\1\2ves',    # half, safe, wife
+        '/sis$/'                  =>  'ses',        # basis, diagnosis
+        '/([ti])um$/'             =>  '\1a',        # datum, medium
+        '/(p)erson$/'             =>  '\1eople',    # person, salesperson
+        '/(m)an$/'                =>  '\1en',       # man, woman, spokesman
+        '/(c)hild$/'              =>  '\1hildren',  # child
+      	'/(buffal|tomat)o$/'      =>  '\1\2oes',    # buffalo, tomato
+      	'/(bu)s$/'                =>  '\1\2ses',    # bus
+        '/(alias)/'               =>  '\1es',       # alias
+      	'/(octop|vir)us$/'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
+      	'/(ax|cri|test)is$/'      =>  '\1es',       # axis, crisis 
+        '/s$/'                    =>  's',          # no change (compatibility)
+        '/$/'                     => 's'
       );
-
+      
       foreach ($plural_rules as $rule => $replacement) 
       {
          if (preg_match($rule, $word)) 
@@ -84,7 +92,7 @@ class Inflector extends Object
          }
       }
       
-      return false;
+      return $word;//false;
    }
 
 /**
@@ -96,20 +104,33 @@ class Inflector extends Object
    function singularize ($word)
    {
       $singular_rules = array(
-         '/(x|ch|ss)es$/'         => '\1',
-         '/movies$/'               => 'movie',
-         '/series$/'               => 'series',
-         '/([^aeiouy]|qu)ies$/'  => '\1y',
-         '/([lr])ves$/'            => '\1f',
-         '/([^f])ves$/'            => '\1fe',
-         '/(analy|ba|diagno|parenthe|progno|synop|the)ses$/' => '\1sis',
-         '/([ti])a$/'            => '\1um',
-         '/people$/'               => 'person',
-         '/men$/'                  => 'man',
-         '/status$/'               => 'status',
-         '/children$/'            => 'child',
-         '/news$/'               => 'news',
-         '/s$/'                  => ''
+        '/(matr)ices$/'         =>'\1ix',
+      	'/(vert|ind)ices$/'     => '\1ex',
+      	'/^(ox)en/'             => '\1',
+      	'/(alias)es$/'          => '\1',
+      	'/([octop|vir])i$/'     => '\1us',
+      	'/(cris|ax|test)es$/'   => '\1is',
+      	'/(shoe)s$/'            => '\1',
+      	'/(o)es$/'              => '\1',
+      	'/(bus)es$/'            => '\1',
+      	'/([m|l])ice$/'         => '\1ouse',
+        '/(x|ch|ss|sh)es$/'     => '\1',
+        '/(m)ovies$/'           => '\1\2ovie',
+        '/(s)eries$/'           => '\1\2eries',
+        '/([^aeiouy]|qu)ies$/'  => '\1y',
+        '/([lr])ves$/'          => '\1f',
+        '/(tive)s$/'            => '\1',
+        '/(hive)s$/'            => '\1',
+        '/([^f])ves$/'          => '\1fe',
+        '/(^analy)ses$/'        => '\1sis',
+        '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/' => '\1\2sis',
+        '/([ti])a$/'            => '\1um',
+        '/(p)eople$/'           => '\1\2erson',
+        '/(m)en$/'              => '\1an',
+        '/(s)tatus$/'           => '\1\2tatus',
+        '/(c)hildren$/'         => '\1\2hild',
+        '/(n)ews$/'             => '\1\2ews',
+        '/s$/'                  => ''
       );
 
       foreach ($singular_rules as $rule => $replacement) 

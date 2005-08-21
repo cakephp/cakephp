@@ -1,93 +1,95 @@
 <?php
-	$model = Inflector::pluralize($this->name);
-	$table = Inflector::singularize($this->name);
-	$evenNum = 1;
-   $css = false;
-   ?>
+   $modelName = Inflector::singularize($this->name);
+   $registry = ClassRegistry::getInstance();
 
-<h1>Showing <?php echo Inflector::camelize($this->name); ?></h1>
-	<table cellspacing="0" class="inav">
-		<tr>
-         <th>Field</th>
-         <th>Value</th>
-<?php
-if(!empty($this->$table->joinedHasOne)){
-
-echo"			<th>Joined Table</th>";
-}
-	?>	
-
-         
-		</tr>
-<?php
-		foreach ($this->$table->_table_info as $tables) {
-			$columnCount = 0;
-			
-			foreach ($tables as $tabl) {
-				$tableName[] = $tabl['name'];
-				
-				foreach ($this->_viewVars as $names)  {
-					
-						?>
-						
-<?php 
-
-
-		if ($evenNum % 2 == 0 ){
-			$css = ' class="or"';
-		}else{
-			$css = false;
-		}
-		$evenNum++;
-		?> 
-	
-<?php echo "<tr$css>";?>
-		<td><?php echo Inflector::humanize($tableName[$columnCount]);?></td>
-		<td><?php echo $names[$table][$tabl['name']]?></td>
-		
-<?php 
-				}
-				$columnCount++;
-			}
-		}
- ?>
-</tr>
-<?php
-if(!empty($this->$table->joinedHasOne)){?>
-<tr>
-		<td></td>
-		<td></td>
-		<td>
-<?php 
-
-	$joinedCount = count($this->$table->joinedHasOne);
-	$count = $columnCount;
-	
-	for ($i = 0; $i <= $joinedCount-1; $i++) {
-		foreach ($this->$table->joinedHasOne[$i]->_table_info as $tab) {
-			foreach($tab as $test){
-				if($test['name'] === 'id'){
-					echo $html->linkTo('<span style="color: red;">Edit: <b>'. Inflector::humanize(Inflector::singularize($this->$table->joinedHasOne[$i]->table)) .'</b></span>',"/{$this->$table->joinedHasOne[$i]->table}/edit/{$names[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']]}");
-					echo '<br /><b>' . Inflector::humanize($test['name']) .':</b> ' . $names[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']];
-				} else{
-					echo '<br /><b>' . Inflector::humanize($test['name']) .':</b> ' . $names[Inflector::singularize($this->$table->joinedHasOne[$i]->table)][$test['name']];
-				}
-				$count++;
-			}
-			echo '<br />';
-		}
-	}
 ?>
-			</td>
- 		</tr>
- 	</table>
-	<?php }?>
- 	<table cellspacing="0" class="inav">
-		<tr>
-			<td>
-				<?php echo $html->linkTo('<span style="color: red;">Back</span>', "/{$this->viewPath}/list/")?>
-				<?php echo $html->linkTo('<span style="color: red;">Edit</span>',"/{$this->viewPath}/edit/{$names[Inflector::singularize($this->name)]['id']}")?>
-				<?php echo $html->linkTo('<span style="color: red;">Destroy</span>',"/{$this->viewPath}/destroy/{$names[Inflector::singularize($this->name)]['id']}")?>
-			</td>
-		</tr>
-	</table>
+<dl>
+<?php foreach( $fieldNames as $field=>$value ) {
+      echo "<dt>".$value['prompt']."</dt>";
+      if( isset( $value['foreignKey'] ) ) {
+         $otherModelObject = $registry->getObject($value['model']);
+         $displayField = $otherModelObject->getDisplayField();
+         $displayText = $data[$value['model']][ $displayField ];
+         echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelName][ $field ] )."</dd>";
+      } else {
+         //  this is just a plain old field.
+         if( isset($data[$modelName][$field]) )
+         {
+            echo "<dd>".$data[$modelName][$field]."</dd>";
+         } else {
+            echo "<dd>&nbsp;</dd>";
+         }
+      }   
+   } 
+?>
+
+</dl>
+<ul class='actions'>
+<?php
+   echo "<li>".$html->linkTo('Edit '.Inflector::humanize($modelName), '/'.$this->viewPath.'/edit/'.$data[$modelName]['id'])."</li>";
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelName]['id'])."</li>";
+
+   foreach( $fieldNames as $field=>$value ) { 
+      if( isset( $value['foreignKey'] ) )
+      {
+         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[Inflector::singularize($params['controller'])][$field] )."</li>";
+      }
+  }
+?>
+</ul>
+
+<?php
+   $objModel = $registry->getObject($modelName);
+   foreach( $objModel->_oneToMany as $relation ) 
+   {
+   
+      $count = 0;
+      list($table, $field, $value) = $relation;
+      $otherModelName = Inflector::singularize($table);
+
+      echo "<div class='related'><H2>Related ".Inflector::humanize($table)."</H2>";
+      if( isset($data[$table]) && is_array($data[$table]) ) 
+      {
+?>
+   
+   <table class="inav" cellspacing="0">
+    <tr>   
+<?php      //  Loop through and create the header row.
+         //  find a row that matches this title.
+         $bFound = false;
+         foreach( $data[$table][0] as $column=>$value ) {
+            echo "<th>".Inflector::humanize($column)."</th>";
+         }
+?>
+         <th>Actions</th>
+    </tr>
+<?php
+      //  now find all matching rows
+            foreach( $data[$table] as $row ) 
+            {
+               echo "<tr>";
+               foreach( $row as $column=>$value ) 
+               {
+                  echo "<td>".$value."</td>";
+               }
+?>
+         <td class="listactions"><?php echo $html->linkTo('View',"/".Inflector::underscore($table)."/show/{$row['id']}/")?>
+                      <?php echo $html->linkTo('Edit',"/".Inflector::underscore($table)."/edit/{$row['id']}/")?>
+                     <?php echo $html->linkTo('Delete',"/".Inflector::underscore($table)."/destroy/{$row['id']}/")?>
+         </td>
+<?php
+               echo "</tr>";
+            }
+      }
+?>
+    
+    </table>
+<ul class="actions">
+<?php
+   //  add a link to create a new relation.
+
+   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/new/")."</li>";
+ //  echo "<li>".$html->linkTo( "View ".Inflector::humanize($table), "/".Inflector::underscore($table)."/list/".$modelName."/".$data[$modelName]['id'])."</li>";
+   } // end loop through onetomany relations.
+?>
+</ul></div>

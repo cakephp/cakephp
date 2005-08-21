@@ -205,6 +205,21 @@ form div.submit {
   padding: 0px 0px 0px 140px;
 }
 
+div.submit input {
+        align:center;
+        text-align:center;
+        font-weight: bold;
+        color: #fff;
+        background-color:#3297FC;
+        display:block;
+        float:left;
+        text-decoration: none;
+        border: 1px;
+  width: 215px;
+  padding:6px;
+  margin: 5px;
+
+}
 form div.submit div {
   display: inline;
   float: left;
@@ -306,4 +321,8 @@ form div.notes p, form div small {
 
 form div.wide small {
   margin: 0px 0px 5px 0px;
+}
+
+div.date select {
+  width:auto;
 }

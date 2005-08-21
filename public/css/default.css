@@ -1,113 +1,116 @@
-BODY {
-font-size: 76%;
+body 
+{
+	font:small "Trebuchet MS",Verdana,Arial,Sans-serif;
+	background: #E5EDEC url(../img/bg_fade.gif) bottom left fixed repeat-x; 
 }
 
-BODY, INPUT, TEXTAREA {
-font-family:sans-serif;
+ul{}
+li{}
+
+h1
+{
+	color: #71300F;
+	font-size: 30px;
 }
 
-H1 {
-font-size:2.1em;
-color: #69c;
-/* This causes some big problems in FF.
-color: #fff;
-text-align: left;
-position: absolute;
-padding-left: 15%;
-top: 0.35em;
-left: 0;
-height: 4em;*/
+h1 em {
+	color: #DBA941;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;	
 }
 
-H2 {
-font-size:1.7em;
-color: #383;
+h2
+{
+	color: #71300F;
 }
 
-H3 {
-font-size:1.4em;
-color: #553;
+h2 em {
+	color: #DBA941;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;	
 }
 
-H4 {
-font-size:1.15em;
-color: #338;
+hr
+{
+	border-top: 1px dotted #FF96F3;
+	height: 0px;
 }
 
-P {
-font-size:1em;
-margin-bottom:.5em;
+ul
+{
+	list-style-image: url(../img/red_box.gif);
 }
 
-A {
-white-space:nowrap;
-text-decoration:underline;
+#main 
+{
+	position: absolute;
+	width: 605px;
+	margin-left: -302.5px;
+	left: 50%;
+	top: 0px;
+	background-color: #fff;
+	border-left: 1px solid #516067;
+	border-right: 1px solid #516067;
+	border-bottom: 1px solid #516067;
+	padding: 15px;
 }
 
-A:HOVER {
-background-color:#EEE;
+#header
+{
+	position: relative;
+	top: -15px;
+	left: -15px;
+	width: 635px;
+	height: 131px;
+	background: #fff url(../img/bg_header.gif) repeat-x;
+	margin-bottom: -20px;
 }
 
-CODE, PRE {
-font-family:monospace;
-font-size:1.1em !important;
-font-size:.95em;
-color:#44A;
-margin:0;
+#headerLogo
+{
+	position: absolute;
+	top: 0px;
+	left: -30px;
 }
 
-CODE {
-color:#227;
-white-space:nowrap;
-margin:0 .2em;
+#headerNav
+{
+	position: absolute;
+	right: 15px;
+	top: 63px;
 }
 
-PRE {
-margin-left:1em;
+#headerNav a {
+	padding: 10px;
 }
 
-ACRONYM {
-border-bottom:1px dotted;
+a
+{
+	color: #A20B10;
+	text-decoration: none;	
 }
 
-HR {
-height:0;
-border-top:1px solid #AAA;
+a:hover
+{
+	color: #D33C47;
+	text-decoration: underline;
+	
 }
 
-
-#container {
-margin: 0 auto;
-/* This causes some big problems in FF.
-border-top: solid 5em #69c;*/
-color: #333;
-font: normal 1.1em Verdana;
-padding: 0 15%;
+#footer
+{
+	position: relative;
+	bottom: -15px;
+	left: -15px;
+	width: 615px;
+	background-color: #71300F;
+	color: #fff;
+	font-size: 75%;
+	padding: 10px;
 }
 
-#content {
-padding-top: 1em;
-width: 100%;
-text-align: left;
-line-height: 170%;
-}
-
-.notice {
-padding: 1em;
-background: #ffd;
-border: solid 2px #eeb;
-display: block;
-font-family: Verdana;
-}
-
-.tip {
-background: #efe;
-padding: 1em;
-border: solid 2px #cdc;
-}
-
-.error {
-background: #fee;
-padding: 1em;
-border: solid 2px #dcc;
+.navActive {
+	background-color: #D2D7D8;
 }
