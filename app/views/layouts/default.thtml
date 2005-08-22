@@ -10,6 +10,10 @@
 <body>
 <div id="main">
 <?=$content_for_layout?>
+
+ <p>
+<a id="logo" href="http://www.cakephp.org/" target="_new"><img src="/img/pbcake.gif" width="120" height="28" alt="CakePHP : Rapid Development Framework" /></a>
+</p>
 </div>
 </body>
 </html>

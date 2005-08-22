@@ -695,7 +695,7 @@ class Controller extends Object
                   $fieldNames[$tableName]['model'] = $tableName;
                   $fieldNames[$tableName]['prompt'] = "Related ".Inflector::humanize($tableName);
                   $fieldNames[$tableName]['type'] = "selectMultiple";
-                  $fieldNames[$tableName]['tagName'] = $tableName;
+                  $fieldNames[$tableName]['tagName'] = $otherModelName.'/'.$tableName;
                   
                   foreach( $otherModel->findAll() as $pass )
                   {

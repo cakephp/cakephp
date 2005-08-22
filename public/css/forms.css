@@ -326,3 +326,7 @@ form div.wide small {
 div.date select {
   width:auto;
 }
+
+option {
+padding-left:1em;
+}

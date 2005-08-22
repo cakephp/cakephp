@@ -804,7 +804,7 @@ class Model extends Object
  */
    function setId ($id) 
    {
-      $this->id = $id;
+      $this->id[0] = $id;
       
       if(!empty($this->_belongsToOther))
       {
@@ -866,9 +866,14 @@ class Model extends Object
    function read ($fields=null) 
    {
       $this->validationErrors = null;
-      //return $this->id? $this->find("id = '{$this->id}'", $fields): false;
+      if(is_array($this->id))
+      {
       return $this->id? $this->find("$this->table.id = '{$this->id[0]}'", $fields): false;
-
+      }
+      else
+      {
+      return $this->id? $this->find("id = '{$this->id}'", $fields): false;
+      }
    }
 
 /**
@@ -936,19 +941,44 @@ class Model extends Object
       }
 
       $fields = $values = array();
-   
+      
+      if(count($this->data) > 1)
+      {
+          $weHaveMulti = true;
+          $count = 0;
+          $joined = false;
+      }
+      else 
+      {
+          $weHaveMulti = false;
+      }
+          
+
       foreach ($this->data as $n=>$v)
       {
+        if(isset($weHaveMulti) && $count > 0)
+        {
+            $joined = array($v);
+        }
+        else
+        {
          foreach ($v as $x => $y)
          {
-      
-         	if ($this->hasField($x)) 
-         	{
-            	$fields[] = $x;
-            	$values[] = $this->db->prepare($y);
-         	}
-      	 }
+             if ($this->hasField($x)) 
+             {
+                 $fields[] = $x;
+                 $values[] = $this->db->prepare($y);
+                 if($x == 'id' && !is_numeric($y))
+                 {
+                     $newID = $y;
+                 }
+             }
+         }
+         
+         $count++;
+        }
       }
+      
       
       if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
       {
@@ -976,9 +1006,13 @@ class Model extends Object
             }
             
             $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
-            
-            if ($this->db->query($sql) && $this->db->lastAffected())
+
+            if ($this->db->query($sql)) // && $this->db->lastAffected())
             {
+               if(!empty($joined))
+               {
+                   $this->saveMulti($joined, $this->id);
+               } 
                $this->data = false;
                return true;
             }
@@ -989,6 +1023,7 @@ class Model extends Object
          }
          else 
          {
+
             $fields = join(',', $fields);
             $values = join(',', $values);
 
@@ -997,6 +1032,14 @@ class Model extends Object
             if($this->db->query($sql)) 
             {
                $this->id = $this->db->lastInsertId($this->table, 'id');
+               if(!empty($joined))
+               {
+                   if(!$this->id > 0)
+                   {
+                       $this->id = $newID;
+                   }
+                   $this->saveMulti($joined, $this->id);
+               }   
                return true;
             }
             else 
@@ -1012,6 +1055,49 @@ class Model extends Object
 
    }
 
+/**
+ * Saves model hasAndBelongsToMany data to the database.
+ *
+ * @param array $joined Data to save. 
+ * @param string $id 
+ * @return boolean success
+ */
+   function saveMulti ($joined, $id) 
+   {
+       $sql = array();
+       
+       foreach ($joined as $x => $y)
+       {
+           foreach ($y as $name => $value)
+           {
+               $tableSort[0] = $this->table;
+               $tableSort[1] = $name;
+               sort($tableSort);
+               $joinTable = $tableSort[0] . '_' . $tableSort[1];
+               $key1 = Inflector::singularize($this->table) . '_id';
+               $key2 = Inflector::singularize($name) . '_id';
+               foreach ($value as $update)
+               {
+                   $fields1[] = $key1;
+                   $values1[] = $this->db->prepare($id);
+                   $fields1[] = $key2;
+                   $values1[] = $this->db->prepare($update);
+                   
+                   $fields1 = join(',', $fields1);
+                   $values1 = join(',', $values1);
+                   $joinedSql[] = "INSERT INTO {$joinTable} ({$fields1}) VALUES ({$values1})";
+                   
+                   unset($fields1);
+                   unset($values1);
+               }
+               $this->db->query("DELETE FROM {$joinTable} WHERE $key1 = '{$id}'");
+           }
+           foreach ($joinedSql as $insert){
+               $this->db->query($insert);
+           }
+       }
+   }
+   
 /**
  * Synonym for del().
  *

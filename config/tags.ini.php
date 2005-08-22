@@ -62,6 +62,9 @@ radio = "<input type="radio" name="data[%s][%s]" id="tag_%s"%s/>"
 ; Tag template for a select opening tag.
 selectStart = "<select name="data[%s][%s]"%s>"
 
+; Tag template for a select opening tag.
+selectMultipleStart = "<select name="data[%s][%s][]"%s>"
+
 ; Tag template for an empty select option tag.
 selectEmpty = "<option value=""%s></option>"
 

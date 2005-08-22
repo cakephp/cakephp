@@ -995,13 +995,19 @@ class HtmlHelper extends Helper
         if (!is_array($option_elements) || !count($option_elements))
         return null;
 
-        $select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
+        if( isset($select_attr) && array_key_exists( "multiple", $select_attr) )
+        {
+           $select[] = sprintf($this->tags['selectmultiplestart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
+        }
+        else 
+        {
+           $select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
+        }
         $select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
 
         foreach ($option_elements as $name=>$title)
         {
             $options_here = $optionAttr;
-
             if ($selected == $name)
             {
                $options_here['selected'] = 'selected';
