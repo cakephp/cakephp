@@ -942,10 +942,10 @@ class Model extends Object
 
       $fields = $values = array();
       
+      $count = 0;
       if(count($this->data) > 1)
       {
           $weHaveMulti = true;
-          $count = 0;
           $joined = false;
       }
       else 
@@ -1034,7 +1034,7 @@ class Model extends Object
                $this->id = $this->db->lastInsertId($this->table, 'id');
                if(!empty($joined))
                {
-                   if(!$this->id > 0)
+                   if(!$this->id > 0 && isset($newID))
                    {
                        $this->id = $newID;
                    }
