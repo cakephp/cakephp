@@ -16,7 +16,7 @@
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @author       CakePHP Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
@@ -180,7 +180,7 @@ class HtmlHelper extends Helper
      * If the $url is empty, $title is used instead.
      *
      * @param  string  $title          The content of the "a" tag.
-     * @param  string  $url 
+     * @param  string  $url
      * @param  array   $htmlAttributes Array of HTML attributes.
      * @param  string  $confirmMessage Confirmation message.
      * @param  boolean $return         Wheter this method should return a value
@@ -311,7 +311,7 @@ class HtmlHelper extends Helper
         $this->setFormTag($fieldName);
         $this->tagValue($fieldName)? $htmlAttributes['checked'] = 'checked': null;
         $title = $title? $title: ucfirst($fieldName);
-        return $this->output(sprintf(TAG_CHECKBOX, $this->model, $this->field,
+        return $this->output(sprintf($this->tags['checkbox'], $this->model, $this->field,
         $this->field, $this->field,
         $this->_parseAttributes($htmlAttributes, null, '', ' '), $title), $return);
     }
@@ -347,7 +347,7 @@ class HtmlHelper extends Helper
      */
     function file($fieldName, $htmlAttributes = null, $return = false)
     {
-        return $this->output(sprintf(TAG_FILE, $fieldName,
+        return $this->output(sprintf($this->tags['file'], $fieldName,
         $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
     }
 
@@ -398,7 +398,7 @@ class HtmlHelper extends Helper
         $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
     }
 
-      
+
     /**
      * Returns a formatted IMG element.
      *
@@ -450,8 +450,8 @@ class HtmlHelper extends Helper
      *
      * @param  string  $fieldName      If field is to be used for CRUD, this
      *                                 should be modelName/fieldName.
-     * @param  array   $options        
-     * @param  array   $inbetween      
+     * @param  array   $options
+     * @param  array   $inbetween
      * @param  array   $htmlAttributes Array of HTML attributes.
      * @param  boolean $return         Wheter this method should return a value
      *                                 or output it. This overrides AUTO_OUTPUT.
@@ -470,7 +470,7 @@ class HtmlHelper extends Helper
             $opt_value==$value? $options_here['checked'] = 'checked': null;
             $parsed_options = $this->parseHtmlOptions(array_merge($htmlAttributes, $options_here), null, '', ' ');
             $individual_tag_name = "{$this->field}_{$opt_value}";
-            $out[] = sprintf(TAG_RADIOS, $individual_tag_name, $this->model, $this->field, $individual_tag_name, $parsed_options, $opt_title);
+            $out[] = sprintf($this->tags['radio'], $individual_tag_name, $this->model, $this->field, $individual_tag_name, $parsed_options, $opt_title);
         }
 
         $out = join($inbetween, $out);
@@ -478,32 +478,23 @@ class HtmlHelper extends Helper
     }
 
 
-
-
-
-
-
-
-
-
-
     /**
- * Returns a row of formatted and named TABLE headers.
- *
- * @param array $names
- * @param array $tr_options
- * @param array $th_options
- * @return string
- */
+    * Returns a row of formatted and named TABLE headers.
+    *
+    * @param array $names
+    * @param array $tr_options
+    * @param array $th_options
+    * @return string
+    */
     function tableHeaders($names, $tr_options=null, $th_options=null)
     {
         $out = array();
         foreach ($names as $arg)
         {
-            $out[] = sprintf(TAG_TABLE_HEADER, $this->parseHtmlOptions($th_options), $arg);
+            $out[] = sprintf($this->tags['tableHeader'], $this->parseHtmlOptions($th_options), $arg);
         }
 
-        return sprintf(TAG_TABLE_HEADERS, $this->parseHtmlOptions($tr_options), join(' ', $out));
+        return sprintf($this->tags['tableHeader'], $this->parseHtmlOptions($tr_options), join(' ', $out));
     }
 
     /**
@@ -528,11 +519,11 @@ class HtmlHelper extends Helper
             $cells_out = array();
             foreach ($line as $cell)
             {
-                $cells_out[] = sprintf(TAG_TABLE_CELL, null, $cell);
+                $cells_out[] = sprintf($this->tags['tableCell'], null, $cell);
             }
 
             $options = $this->parseHtmlOptions($count%2? $odd_tr_options: $even_tr_options);
-            $out[] = sprintf(TAG_TABLE_ROW, $options, join(' ', $cells_out));
+            $out[] = sprintf($this->tags['tableRow'], $options, join(' ', $cells_out));
         }
 
         return join("\n", $out);
@@ -604,7 +595,7 @@ class HtmlHelper extends Helper
      *
      * @param string $field  If field is to be used for CRUD, this should be modelName/fieldName
      * @param string $text
-     * @return string If there are errors this method returns an error message, else NULL. 
+     * @return string If there are errors this method returns an error message, else NULL.
      */
     function tagErrorMsg ($field, $text)
     {
@@ -830,7 +821,7 @@ class HtmlHelper extends Helper
         $this->setFormTag($tagName);
         $htmlOptions['value'] = $value? $value: $this->tagValue($tagName);
         return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->parseHtmlOptions($htmlOptions, null, '', ' ')));
-    }  
+    }
     /**
      * @deprecated Name changed to 'image'. Version 0.9.2.
      * @see        HtmlHelper::image()
@@ -865,7 +856,7 @@ class HtmlHelper extends Helper
     //    $htmlAttributes['value'] = $value;
     //    return $this->input($fieldName, $htmlAttributes, $return);
     //}
-    
+
    function inputTag($tagName,  $size=20, $htmlOptions=null)
    {
       $this->setFormTag($tagName);
@@ -876,15 +867,15 @@ class HtmlHelper extends Helper
 
     /**
      * @deprecated Unified with 'link'. Version 0.9.2.
-     * @see HtmlHelper::link()     
+     * @see HtmlHelper::link()
      * @param  string  $title          The content of the "a" tag.
-     * @param  string  $url 
+     * @param  string  $url
      * @param  array   $htmlAttributes Array of HTML attributes.
      * @param  boolean $return         Wheter this method should return a value
      *                                 or output it. This overrides AUTO_OUTPUT.
      * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
      *                 and $return.
-     */ 
+     */
     function linkOut($title, $url = null, $htmlAttributes = null, $return = false)
     {
         return $this->link($title, $url, $htmlAttributes, false, $return);
@@ -892,16 +883,16 @@ class HtmlHelper extends Helper
 
     /**
      * @deprecated Unified with 'link'. Version 0.9.2.
-     * @see HtmlHelper::link()     
+     * @see HtmlHelper::link()
      * @param  string  $title          The content of the "a" tag.
-     * @param  string  $url 
+     * @param  string  $url
      * @param  array   $htmlAttributes Array of HTML attributes.
      * @param  string  $confirmMessage Confirmation message.
      * @param  boolean $return         Wheter this method should return a value
      *                                 or output it. This overrides AUTO_OUTPUT.
      * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
      *                 and $return.
-     */ 
+     */
     function linkTo($title, $url, $htmlAttributes = null, $confirmMessage = false, $return = false)
     {
         return $this->link($title, $url, $htmlAttributes, $confirmMessage, $return);
@@ -915,7 +906,7 @@ class HtmlHelper extends Helper
      * @param  string $insertBefore String to be inserted before options.
      * @param  string $insertAfter  String to be inserted ater options.
      * @return string
-     */    
+     */
     //function parseHtmlOptions($options, $exclude = null, $insertBefore = ' ', $insertAfter = null)
    // {
    //     $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
@@ -943,7 +934,7 @@ class HtmlHelper extends Helper
          return $options? $insert_before.$options.$insert_after: null;
       }
    }
-    
+
     /**
      * @deprecated Name changed to 'password'. Version 0.9.2.
      * @see HtmlHelper::password()
@@ -966,8 +957,8 @@ class HtmlHelper extends Helper
      * @see HtmlHelper::radio()
      * @param  string  $fieldName      If field is to be used for CRUD, this
      *                                 should be modelName/fieldName.
-     * @param  array   $options        
-     * @param  array   $inbetween      
+     * @param  array   $options
+     * @param  array   $inbetween
      * @param  array   $htmlAttributes Array of HTML attributes.
      * @param  boolean $return         Wheter this method should return a value
      *                                 or output it. This overrides AUTO_OUTPUT.
@@ -981,12 +972,12 @@ class HtmlHelper extends Helper
     }
 
     /**
-     * Returns a SELECT element, 
+     * Returns a SELECT element,
      *
      * @param string $fieldName Name attribute of the SELECT
      * @param array $option_elements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
      * @param array $select_attr Array of HTML options for the opening SELECT element
-     * @param array $optionAttr Array of HTML options for the enclosed OPTION elements 
+     * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
      * @return string Formatted SELECT element
      */
     function selectTag($fieldName, $option_elements, $selected=null, $select_attr=null, $optionAttr=null)
@@ -1080,7 +1071,7 @@ class HtmlHelper extends Helper
     *************************************************************************/
 
     /**
-     * Returns an HTML FORM element. 
+     * Returns an HTML FORM element.
      *
      * @param      string $target      URL for the FORM's ACTION attribute.
      * @param      string $type        FORM type (POST/GET).
@@ -1102,7 +1093,7 @@ class HtmlHelper extends Helper
      * Generates a nested unordered list tree from an array.
      *
      * @param      array   $data
-     * @param      array   $htmlAttributes 
+     * @param      array   $htmlAttributes
      * @param      string  $bodyKey
      * @param      string  $childrenKey
      * @param      boolean $return         Wheter this method should return a value
@@ -1152,7 +1143,7 @@ class HtmlHelper extends Helper
         // plaintext
         if (empty($options['encode']) || !empty($match[2]))
         {
-            return sprintf(TAG_MAILTO, $email, $this->parseHtmlOptions($options), $title);
+            return sprintf($this->tags['mailto'], $email, $this->parseHtmlOptions($options), $title);
         }
         // encoded to avoid spiders
         else
@@ -1176,13 +1167,13 @@ class HtmlHelper extends Helper
                 $title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii])? '&#x' . bin2hex($title[$ii]).';': $title[$ii];
             }
 
-            return sprintf(TAG_MAILTO, $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
+            return sprintf($this->tags['mailto'], $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
         }
     }
 
     /**
-     * Returns a generic HTML tag (no content). 
-     * 
+     * Returns a generic HTML tag (no content).
+     *
      * Examples:
      *   + <code>tag("br") => <br /></code>
      *   + <code>tag("input", array("type" => "text")) => <input type="text" /></code>
@@ -1192,7 +1183,7 @@ class HtmlHelper extends Helper
      * @param      bool   $open Is the tag open or closed? (defaults to closed "/>")
      * @return     string The formatted HTML tag
      * @deprecated This seems useless. Version 0.9.2.
-     */   
+     */
     function tag($name, $options=null, $open=false)
     {
         $tag = "<$name ". $this->parseHtmlOptions($options);
@@ -1202,11 +1193,11 @@ class HtmlHelper extends Helper
 
     /**
      * Returns a generic HTML tag with content.
-     * 
+     *
      * Examples:
      * <code>
      * content_tag("p", "Hello world!") => <p>Hello world!</p>
-     * content_tag("div", content_tag("p", "Hello world!"), 
+     * content_tag("div", content_tag("p", "Hello world!"),
      * array("class" => "strong")) => <div class="strong"><p>Hello world!</p></div>
      * </code>
      *
@@ -1215,12 +1206,12 @@ class HtmlHelper extends Helper
      * @param  bool   $open    Is the tag open or closed? (defaults to closed "/>")
      * @return string The formatted HTML tag
      * @deprecated This seems useless. Version 0.9.2.
-     */   
+     */
     function contentTag($name, $content, $options=null)
     {
         return "<$name ". $this->parseHtmlOptions($options). ">$content</$name>";
     }
-    
+
     function dayOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
     {
        $value = isset($value)? $value : $this->tagValue($tagName);
@@ -1280,7 +1271,7 @@ class HtmlHelper extends Helper
        return $option;
     }
 
-    function hourOptionTag( $tagName,$value=null, 
+    function hourOptionTag( $tagName,$value=null,
     $format24Hours = false,
     $selected=null,
     $optionAttr=null )
@@ -1339,7 +1330,7 @@ class HtmlHelper extends Helper
        $optionAttr);
        return $option;
     }
-    
+
     function dateTimeOptionTag( $tagName, $dateFormat = 'DMY', $timeFormat = '12',$selected=null, $optionAttr=null)
     {
        switch ( $dateFormat )

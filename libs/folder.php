@@ -137,6 +137,8 @@ class Folder extends Object {
             sort($dirs);
             sort($files);
          }
+         
+         closedir($dir);
 
          return array($dirs,$files);
       }

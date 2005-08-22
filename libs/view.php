@@ -187,9 +187,9 @@ class View extends Object
    }
 
 /**
- * Enter description here...
+ * Returns a view instance (singleton)
  *
- * @return unknown
+ * @return object
  */
    function getInstance()
    {
@@ -201,24 +201,6 @@ class View extends Object
       return $instance[0];
    }
 
-/**
- * Displays a flash message. A flash message is feedback to the user that displays after editing actions, among other things.
- *
- * @param string $message Text to display to the user
- * @param string $url URL fragment
- * @param int $time Display time, in seconds
- */
-   function flash($message, $url, $time=1)
-   {
-      $this->autoRender = false;
-      $this->autoLayout = false;
-
-      $this->set('url', $this->base.$url);
-      $this->set('message', $message);
-      $this->set('time', $time);
-
-      $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
-   }
 
 /**
  * Render view for given action and layout. If $file is given, that is used 

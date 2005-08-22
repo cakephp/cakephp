@@ -3,7 +3,9 @@
 <head>
 <title><?=$page_title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<?php if(DEBUG == 0) { ?>
 <meta http-equiv="Refresh" content="<?=$time?>;url=<?=$url?>" />
+<?php } ?>
 <style><!--
 P { text-align:center; font:bold 1.1em sans-serif }
 A { color:#444; text-decoration:none }

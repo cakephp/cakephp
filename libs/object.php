@@ -3,7 +3,7 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
@@ -18,7 +18,7 @@
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @author       CakePHP Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
@@ -55,6 +55,13 @@ class Object
    var $db = null;
 
 /**
+ * Log object
+ *
+ * @var object
+ */
+   var $_log = null;
+
+/**
  * A hack to support __construct() on PHP 4
  * Hint: descendant classes have no PHP4 class_name() constructors,
  * so this constructor gets called first and calls the top-layer __construct()
@@ -73,14 +80,14 @@ class Object
 /**
  * Class constructor, overridden in descendant classes.
  */
-   function __construct() 
+   function __construct()
    {
    }
 
 /**
  * Class destructor, overridden in descendant classes.
  */
-   function __destruct() 
+   function __destruct()
    {
    }
 
@@ -103,7 +110,7 @@ class Object
  */
    function log ($msg, $type=LOG_ERROR)
    {
-      if (!$this->_log)
+      if (is_null($this->_log))
       {
          $this->_log = new Log ();
       }

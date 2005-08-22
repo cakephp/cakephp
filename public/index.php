@@ -37,8 +37,6 @@
  */
 $url = empty($_GET['url'])? null: $_GET['url'];
 
-session_start();
-
 /**
  * Get Cake's root directory
  */
@@ -81,6 +79,8 @@ DEBUG? error_reporting(E_ALL): error_reporting(0);
 $TIME_START = getMicrotime();
 
 uses('folder', 'dispatcher', 'dbo_factory');
+
+session_start();
 
 config('database');
 
