@@ -47,12 +47,6 @@ uses('log');
  */
 class Object
 {
-/**
- * Database connection, if available.
- *
- * @var DBO
- */
-   var $db = null;
 
 /**
  * Log object
@@ -71,7 +65,6 @@ class Object
  */
    function Object()
    {
-      $this->db = DboFactory::getInstance();
       $args = func_get_args();
       register_shutdown_function(array(&$this, '__destruct'));
       call_user_func_array(array(&$this, '__construct'), $args);

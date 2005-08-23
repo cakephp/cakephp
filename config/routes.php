@@ -49,6 +49,6 @@ $Route->connect ('/pages/*', array('controller'=>'Pages', 'action'=>'display'));
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
-$Route->connect ('/test', array('controller'=>'Tests', 'action'=>'test_all'));
+$Route->connect ('/test', array('controller'=>'Tests', 'action'=>'index'));
 
 ?>

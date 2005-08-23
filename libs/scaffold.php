@@ -164,9 +164,7 @@ class Scaffold extends Object {
 	{
 	    $model = $this->model;
 	    $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
-		$registry = ClassRegistry::getInstance();
-		$objModel = $registry->getObject( $model );
-		$this->controllerClass->set('data', $objModel->findAll());
+		$this->controllerClass->set('data', $this->controllerClass->models[$this->model]->findAll());
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');		
 	}
 	
@@ -263,7 +261,8 @@ class Scaffold extends Object {
 	function cleanUpDateFields() 
 	{
 	   //  clean up the date fields
-	   foreach( $this->controllerClass->models[$this->model]->_table_info as $table )
+	   $objModel = $this->controllerClass->models[$this->model];
+	   foreach( $objModel->_table_info as $table )
 	   {
 	      foreach ($table as $field) 
 	      {

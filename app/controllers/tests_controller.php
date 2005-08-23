@@ -44,7 +44,7 @@ class TestsController extends TestsHelper {
    function index () 
    {
       $this->layout = null;
-      require_once TESTS.'menu.php';
+      require_once TESTS.'index.php';
    }
 /**
  * Runs all library and application tests

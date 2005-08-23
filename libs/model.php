@@ -208,8 +208,19 @@ class Model extends Object
  */
    function __construct ($id=false, $table=null, $db=null) 
    {
-      $this->db = $db? $db: DboFactory::getInstance();
-      $this->classRegistry = ClassRegistry::getInstance();
+
+      if($db != null)
+      {
+          $this->db =& $db;
+      }
+      else
+      {
+         $dboFactory = DboFactory::getInstance();  
+          $this->db =& $dboFactory ;
+      }
+          
+      
+      $this->classRegistry =& ClassRegistry::getInstance();
       $this->classRegistry->addObject(get_class($this), $this);
    
       if ($id)

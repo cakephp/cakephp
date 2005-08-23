@@ -226,10 +226,10 @@ class Controller extends Object
             $id = $this->params['pass'];
         }
 
-
+        $dboFactory = DboFactory::getInstance($this->useDbConfig);
+        $this->db =& $dboFactory;
+        
         $model_class = Inflector::singularize($this->name);
-
-        $this->db = DboFactory::getInstance($this->useDbConfig);
 
         if (class_exists($model_class) && ($this->uses === false))
         {
@@ -495,7 +495,7 @@ class Controller extends Object
 	    $table = Inflector::singularize($this->name);
 
 	    //  get all of the column names.
-	    $classRegistry = ClassRegistry::getInstance();
+	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject($table);
 	    
 	    foreach ($objRegistryModel->_table_info as $tables)
@@ -573,7 +573,7 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['options'] = array();
                          
                          //  get the list of options from the other model.
-                         $registry = ClassRegistry::getInstance();
+                         $registry =& ClassRegistry::getInstance();
                          $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
                          
                          if( is_object($otherModel) ) 
@@ -620,7 +620,7 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['options'] = array();
                          
                          //  get the list of options from the other model.
-                         $registry = ClassRegistry::getInstance();
+                         $registry =& ClassRegistry::getInstance();
                          $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
                          
                          if( is_object($otherModel) ) 
