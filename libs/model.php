@@ -1526,11 +1526,10 @@ class Model extends Object
  * @return True if the input string ends in "_id", else false.
  */
 	function isForeignKey( $field ) {
-	   //  get the length of the field.
-	   $length = strlen( $field );
-	   
-	   //  if a reverse search for the string _id reveals that this string appears three characters from the end, then this is a foreign key.
-	   if( strrpos( $field, "_id" ) == $length - 3 ) {
+	  
+	   //  search for the string _id reveals that this string appears three characters from the end, then this is a foreign key.
+	   if( substr($field, -3) === '_id' )
+	   {
 	     return true;
 	   }
 	   return false;

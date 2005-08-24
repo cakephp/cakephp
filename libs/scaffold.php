@@ -162,7 +162,6 @@ class Scaffold extends Object {
 	 */
 	function scaffoldList($params)
 	{
-	    $model = $this->model;
 	    $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
 		$this->controllerClass->set('data', $this->controllerClass->models[$this->model]->findAll());
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');		

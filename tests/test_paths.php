@@ -20,8 +20,9 @@
  * @filesource 
  * @author       CakePHP Test Suite Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Test Suite Authors/Developers 
- * @link         https://trac.cakephp.org/wiki/TestSuite/Authors/ Authors/Developers
+ * @link         https://trac.cakephp.org/wiki/Cake/Manual/TestSuite/Authors Authors/Developers
  * @package      test_suite
+ * @subpackage   test_suite.tests_1_x
  * @since        CakePHP Test Suite v 1.0.0.0
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -29,17 +30,10 @@
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
-/** Cake SimpleTest config file
-  *
-  * Set the path to the simpletest package.
-  * The default define:
-  * ('SIMPLE_TEST', '../../../../vendor/simpletest/');
-  * links SimpleTest to each developers sandbox.
-  * 
-  * This must be changed by endusers wishing to run test suite
-  *
-  */
+/**
+ * Path to the simpletest directory.
+ */
+define ('SIMPLE_TEST',VENDORS.'simpletest'.DS);
 
-define('SIMPLE_TEST', '../../../../vendor/simpletest/');
 
 ?>
