@@ -71,6 +71,9 @@ echo $header;
     
     function CakePHPTestSuiteHeader()
     {  
+        $groups = class_exists('Object') ? 'groups' : $_SERVER['PHP_SELF'].'?show=groups';
+        $cases = class_exists('Object') ? 'cases' : $_SERVER['PHP_SELF'].'?show=cases';
+        
         $suiteHeader = <<<EOD
 <div id="main">
 	<div id="header">
@@ -79,11 +82,10 @@ echo $header;
 		<h2>Test Suite v 1.0.0.0</h2>
 		</div>
 	</div>
-	<p><a href='$_SERVER[PHP_SELF]?show=groups'>Test Groups</a>  ||   <a href='$_SERVER[PHP_SELF]?show=cases'>Test Cases</a></p>
+	<p><a href='$groups'>Test Groups</a>  ||   <a href='$cases'>Test Cases</a></p>
 EOD;
 echo $suiteHeader;
     }
-    
     function CakePHPTestSuiteFooter()
     {
         $footer = <<<EOD
@@ -96,11 +98,11 @@ echo $footer;
 CakePHPTestHeader();
 CakePHPTestSuiteHeader();
 
-    if (isset($_GET['show']) && $_GET['show'] == 'cases')
+    if (isset($_GET['cases']))
     {
         CakePHPTestCaseList();
     }
-    elseif (isset($_GET['show']) && $_GET['show'] == 'groups')
+    elseif (isset($_GET['groups']))
     {
         CakePHPTestGroupTestList();
     }

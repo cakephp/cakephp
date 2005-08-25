@@ -162,8 +162,9 @@ class Scaffold extends Object {
 	 */
 	function scaffoldList($params)
 	{
+	    $model = $this->model;
 	    $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
-		$this->controllerClass->set('data', $this->controllerClass->models[$this->model]->findAll());
+		$this->controllerClass->set('data', $this->controllerClass->models[$model]->findAll());
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');		
 	}
 	
@@ -201,7 +202,7 @@ class Scaffold extends Object {
 	function scaffoldCreate($params)
 	{
 	    $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-	    $this->cleanUpDateFields();
+	    $this->cleanUpFields();
 	    
 	    if ($this->controllerClass->models[$this->model]->save($this->controllerClass->params['data']))
 	    {
@@ -223,7 +224,7 @@ class Scaffold extends Object {
 	function scaffoldUpdate($params=array())
 	{
 	   //  clean up the date fields
-      $this->cleanUpDateFields();
+      $this->cleanUpFields();
 	   
 	    $this->controllerClass->models[$this->model]->set($this->controllerClass->params['data']);
 	    if ( $this->controllerClass->models[$this->model]->save())
@@ -257,7 +258,7 @@ class Scaffold extends Object {
 	    }
 	}
 	
-	function cleanUpDateFields() 
+	function cleanUpFields() 
 	{
 	   //  clean up the date fields
 	   $objModel = $this->controllerClass->models[$this->model];
@@ -289,6 +290,18 @@ class Scaffold extends Object {
 	                    $this->controllerClass->params['data'][$this->model][$field['name'].'_year'] );
 	            $newDate = date( 'Y-m-d', $newDate );
 	            $this->controllerClass->params['data'][$this->model][$field['name']] = $newDate;
+	         }
+	         else if( 'tinyint(1)' == $field['type'] )
+	         {
+	            if( isset( $this->controllerClass->params['data'][$this->model][$field['name']]) &&
+	                "on" == $this->controllerClass->params['data'][$this->model][$field['name']] )
+	            {
+	               $this->controllerClass->params['data'][$this->model][$field['name']] = true;
+	            }
+	            else 
+	            {
+	               $this->controllerClass->params['data'][$this->model][$field['name']] = false;
+	            }
 	         }
 	      }
 	   }

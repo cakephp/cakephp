@@ -967,7 +967,7 @@ class Model extends Object
 
       foreach ($this->data as $n=>$v)
       {
-        if(isset($weHaveMulti) && $count > 0)
+        if(isset($weHaveMulti) && $count > 0 && !empty($this->_manyToMany))
         {
             $joined = array($v);
         }
@@ -1333,29 +1333,34 @@ class Model extends Object
                {
                    foreach ($value1 as $key2 => $value2)
                    {
-                       if(!empty ($value2['id']))
-                       {
-                       $select[$table] = $this->db->all("SELECT * FROM {$table} 
-                                                         JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
-                                                         AND {$joineTable}.{$JoinKey2} = {$table} .id");
-                       }
-                       if( is_array($select[$table]) && ($select[$table] != null))
-                       {
-                          $newKey = Inflector::singularize($table);
-                           foreach ($select[$table] as $key => $value)
-                           {
+                      if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
+                      {
+                         if(!empty ($value2['id']))
+                         {
+                            $tmpSQL = "SELECT * FROM {$table}
+                                                            JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
+                                                            AND {$joineTable}.{$JoinKey2} = {$table} .id";
+                            $select[$table] = $this->db->all($tmpSQL);
+                         }
+                         if( is_array($select[$table]) && ($select[$table] != null))
+                         {
+                            $newKey = Inflector::singularize($table);
+                            foreach ($select[$table] as $key => $value)
+                            {
                                $select1[$table][$key] = $value[$newKey];
-                           }
-                           
-                           $merged = array_merge_recursive($data[$count],$select1);
-                           $newdata[$count] = $merged;
-                           unset ($select1);
-                       }
-                       
-                       if(!empty($newdata[$count]))
-                       {
-                           $original[$count] = $newdata[$count];
-                       }
+                            }
+
+                            $merged = array_merge_recursive($data[$count],$select1);
+                            $newdata[$count] = $merged;
+                            unset ($select1);
+                            unset( $select[$table] );
+                         }
+
+                         if(!empty($newdata[$count]))
+                         {
+                            $original[$count] = $newdata[$count];
+                         }
+                      }
                    }
                    $count++;
                }

@@ -170,6 +170,43 @@ class FormHelper
 
 	}
 
+/**
+ * Returns a formatted INPUT tag for HTML FORMs.
+ *
+ * @param HtmlHelper $html The HtmlHelper object which is creating this form.
+ * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
+ * @param string $prompt Text that will appear in the label field.
+ * @param bool $required True if this field is required.
+ * @param string $errorMsg Text that will appear if an error has occurred.
+ * @param int $size Size attribute for INPUT element
+ * @param array $htmlOptions 
+ * @return string The formatted INPUT element
+ */
+	function generateCheckboxDiv($html, $tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null )
+	{
+	   $htmlOptions['class'] = "inputCheckbox";
+		$str = $html->checkbox( $tagName, null, $htmlOptions );
+		$strLabel = $this->labelTag( $tagName, $prompt );
+
+		$divClass = "optional";
+
+		if( $required )
+		$divClass = "required";
+
+		$strError = ""; // initialize the error to empty.
+
+		if( $this->isFieldError( $html, $tagName ) )
+		{
+			// if it was an error that occured, then add the error message, and append " error" to the div tag.
+			$strError = $this->pTag( 'error', $errorMsg );
+			$divClass = sprintf( "%s error", $divClass );
+		}
+		$divTagInside = sprintf( "%s %s %s", $strError, $strLabel, $str );
+
+		return $this->divTag( $divClass, $divTagInside );
+
+	}
+	
 	function generateDate($html, $tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
 		$str = $html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE' );
@@ -337,7 +374,10 @@ class FormHelper
    				{
    				  $field['size'] = 40;
    				}
-   				$strFormFields = $strFormFields.$this->generateInputDiv( $html, $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
+      				$strFormFields = $strFormFields.$this->generateInputDiv( $html, $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
+   				break;
+   				case "checkbox" :
+      				$strFormFields = $strFormFields.$this->generateCheckboxDiv( $html, $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['htmlOptions'] );
    				break;
    				case "select";
    				case "selectMultiple";

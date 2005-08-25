@@ -2,9 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
- * 
- * Long description for file
+ * Base controller class.
  *
  * PHP versions 4 and 5
  *
@@ -18,7 +16,7 @@
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @author       CakePHP Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
@@ -32,7 +30,7 @@
  */
 
 /**
- * Enter description here...
+ * Include files
  */
 uses('model', 'inflector', 'folder', 'view', 'helper');
 
@@ -40,9 +38,9 @@ uses('model', 'inflector', 'folder', 'view', 'helper');
 /**
  * Controller
  *
- * Application controller (controllers are where you put all the actual code) 
+ * Application controller (controllers are where you put all the actual code)
  * Provides basic functionality, such as rendering views (aka displaying templates).
- * Automatically selects model name from on singularized object class name 
+ * Automatically selects model name from on singularized object class name
  * and creates the model object if proper class exists.
  *
  * @package    cake
@@ -115,7 +113,7 @@ class Controller extends Object
     var $_viewVars = array();
 
     /**
-     * Enter description here...
+     * Web page title
      *
      * @var boolean
      * @access private
@@ -140,7 +138,7 @@ class Controller extends Object
     var $base = null;
 
     /**
-     * Enter description here...
+     * Layout file to use (see /app/views/layouts/default.thtml)
      *
      * @var string
      * @access public
@@ -148,7 +146,7 @@ class Controller extends Object
     var $layout = 'default';
 
     /**
-     * Enter description here...
+     * Automatically render the view (the dispatcher checks for this variable before running render())
      *
      * @var boolean
      * @access public
@@ -164,13 +162,13 @@ class Controller extends Object
     var $autoLayout = true;
 
     /**
-     * Enter description here...
+     * Database configuration to use (see /config/database.php)
      *
      * @var string
      * @access public
      */
     var $useDbConfig = 'default';
-    
+
     /**
      * Enter description here...
      *
@@ -180,7 +178,7 @@ class Controller extends Object
     var $beforeFilter = null;
 
     /**
-     * Constructor. 
+     * Constructor.
      *
      */
     function __construct ($params=null)
@@ -205,9 +203,9 @@ class Controller extends Object
 	       else
 	       {
 	           // Run a single before filter
-	       }    
+	       }
 	   }
-        
+
         parent::__construct();
     }
 
@@ -329,7 +327,8 @@ class Controller extends Object
     }
 
     /**
-     * Enter description here...
+     * Gets an instance of the view object & prepares it for rendering the output, then
+     * asks the view to actualy do the job.
      *
      * @param unknown_type $action
      * @param unknown_type $layout
@@ -416,7 +415,7 @@ class Controller extends Object
     /**
      * Sets data for this view. Will set title if the key "title" is in given $data array.
      *
-     * @param array $data Array of 
+     * @param array $data Array of
      * @access private
      */
     function _setArray($data)
@@ -442,11 +441,12 @@ class Controller extends Object
     }
 
     /**
-     * Enter description here...
+     * Shows a message to the user $time seconds, then redirects to $url
+     * Uses flash.thtml as a layout for the messages
      *
-     * @param unknown_type $message
-     * @param unknown_type $url
-     * @param unknown_type $time
+     * @param string $message Message to display to the user
+     * @param string $url Relative URL to redirect to after the time expires
+     * @param int $time Time to show the message
      */
     function flash($message, $url, $time=1)
     {
@@ -459,9 +459,14 @@ class Controller extends Object
 
         $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
     }
-    
+
     /**
-     * Enter description here...
+     * Shows a message to the user $time seconds, then redirects to $url
+     * Uses flash.thtml as a layout for the messages
+     *
+     * @param string $message Message to display to the user
+     * @param string $url URL to redirect to after the time expires
+     * @param int $time Time to show the message
      *
      * @param unknown_type $message
      * @param unknown_type $url
@@ -478,18 +483,18 @@ class Controller extends Object
 
         $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
     }
-    
+
     /**
 	 * This function creates a $fieldNames array for the view to use.
 	 * @todo Map more database field types to html form fields.
 	 * @todo View the database field types from all the supported databases.
 	 *
 	 */
-	function generateFieldNames( $data = null, $doCreateOptions = true  ) 
+	function generateFieldNames( $data = null, $doCreateOptions = true  )
 	{
 	    //  Initialize the list array
 	    $fieldNames = array();
-	    
+
 	    //  figure out what model and table we are working with
 	    $model = Inflector::pluralize($this->name);
 	    $table = Inflector::singularize($this->name);
@@ -497,7 +502,7 @@ class Controller extends Object
 	    //  get all of the column names.
 	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject($table);
-	    
+
 	    foreach ($objRegistryModel->_table_info as $tables)
 	    {
 	        foreach ($tables as $tabl)
@@ -524,7 +529,7 @@ class Controller extends Object
 	         {
 	             $fieldNames[$tabl['name']]['prompt'] = 'Modified';
 	         }
-	         
+
 	         // Now, set up some other attributes that will be useful for auto generating a form.
 	         //tagName is in the format table/field "post/title"
 	          $fieldNames[ $tabl['name']]['tagName'] = $table.'/'.$tabl['name'];
@@ -536,14 +541,14 @@ class Controller extends Object
 	         {
 	            //  Now, we know that this field has some validation set.
 	            //  find out if it is a required field.
-	            if( VALID_NOT_EMPTY == $validationFields[ $tabl['name'] ] ) 
+	            if( VALID_NOT_EMPTY == $validationFields[ $tabl['name'] ] )
 	            {
 	                //  this is a required field.
 	                $fieldNames[$tabl['name']]['required'] = true;
 	                $fieldNames[$tabl['name']]['errorMsg'] = "Required Field";
 	            }
 	         }
-	         
+
 	         //  now, determine what the input type should be for this database field.
 	         $lParenPos = strpos( $tabl['type'], '(');
 	         $rParenPos = strpos( $tabl['type'], ')');
@@ -559,7 +564,7 @@ class Controller extends Object
 	         switch( $type )
 	         {
 	             case "text":
-	             {	                                 
+	             {
 	                 $fieldNames[ $tabl['name']]['type'] = 'area';
 	                 //$fieldNames[ $tabl['name']]['size'] = $fieldLength;
                  }
@@ -571,21 +576,21 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['type'] = 'select';
                          //  This is a foreign key select dropdown box.  now, we have to add the options.
                          $fieldNames[ $tabl['name']]['options'] = array();
-                         
+
                          //  get the list of options from the other model.
                          $registry =& ClassRegistry::getInstance();
                          $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
-                         
-                         if( is_object($otherModel) ) 
+
+                         if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
                                  foreach( $otherModel->findAll() as $pass )
                                  {
-                                     foreach( $pass as $key=>$value ) 
+                                     foreach( $pass as $key=>$value )
                                      {
-                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) ) 
+                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
@@ -595,10 +600,22 @@ class Controller extends Object
                              $fieldNames[ $tabl['name']]['selected'] = $data[$table][$tabl['name']];
                          }
                      }
-                     else 
+                     else
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'input';
                      }
+                 }
+                 break;
+                 case "tinyint":
+                 {
+                    if( $fieldLength > 1 )
+                    {
+                       $fieldNames[ $tabl['name']]['type'] = 'input';
+                    }
+                    else 
+                    {
+                       $fieldNames[ $tabl['name']]['type'] = 'checkbox';
+                    }
                  }
                  break;
                  case "int":
@@ -618,21 +635,21 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['type'] = 'select';
                          //  This is a foreign key select dropdown box.  now, we have to add the options.
                          $fieldNames[ $tabl['name']]['options'] = array();
-                         
+
                          //  get the list of options from the other model.
                          $registry =& ClassRegistry::getInstance();
                          $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
-                         
-                         if( is_object($otherModel) ) 
+
+                         if( is_object($otherModel) )
                          {
-                             if( $doCreateOptions ) 
+                             if( $doCreateOptions )
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
                                  foreach( $otherModel->findAll() as $pass )
                                  {
-                                     foreach( $pass as $key=>$value ) 
+                                     foreach( $pass as $key=>$value )
                                      {
-                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) ) 
+                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
@@ -642,7 +659,7 @@ class Controller extends Object
                              $fieldNames[ $tabl['name']]['selected'] = $data[$table][$tabl['name']];
                          }
                      }
-                     else 
+                     else
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'input';
                      }
@@ -654,10 +671,10 @@ class Controller extends Object
                      $fieldNames[ $tabl['name']]['type'] = 'select';
                      //  This is a foreign key select dropdown box.  now, we have to add the options.
                      $fieldNames[ $tabl['name']]['options'] = array();
-                     
+
                      $enumValues = split(',', $fieldLength );
                      $iCount = 1;
-                     foreach ($enumValues as $enum ) 
+                     foreach ($enumValues as $enum )
                      {
                          $enum = trim( $enum, "'" );
                          $fieldNames[$tabl['name']]['options'][$enum] = $enum;
@@ -671,37 +688,37 @@ class Controller extends Object
                {
                   if( 0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8) )
                   $fieldNames[ $tabl['name']]['type'] = $type;
-               } 
+               }
                break;
                default:
                //sorry, this database field type is not yet set up.
-                  break;	            
+                  break;
 
 
 	         } // end switch
          }
    	    // now, add any necessary hasAndBelongsToMany list boxes
    	    //  loop through the many to many relations to make a list box.
-      	foreach( $objRegistryModel->_manyToMany as $relation ) 
+      	foreach( $objRegistryModel->_manyToMany as $relation )
          {
             list($tableName, $field, $value, $joinTable, $key1, $key2) = $relation;
 
             $otherModelName = Inflector::singularize($tableName);
             $otherModel = new $otherModelName();
-            
-            if( $doCreateOptions ) 
+
+            if( $doCreateOptions )
               {
                   $otherDisplayField = $otherModel->getDisplayField();
                   $fieldNames[$tableName]['model'] = $tableName;
                   $fieldNames[$tableName]['prompt'] = "Related ".Inflector::humanize($tableName);
                   $fieldNames[$tableName]['type'] = "selectMultiple";
                   $fieldNames[$tableName]['tagName'] = $otherModelName.'/'.$tableName;
-                  
+
                   foreach( $otherModel->findAll() as $pass )
                   {
-                      foreach( $pass as $key=>$value ) 
+                      foreach( $pass as $key=>$value )
                       {
-                          if( $key == $otherModelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) ) 
+                          if( $key == $otherModelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                           {
                               $fieldNames[$tableName]['options'][$value['id']] = $value[$otherDisplayField];
                           }
@@ -717,11 +734,11 @@ class Controller extends Object
               }
          } // end loop through manytomany relations.
 	    }
-	    
 
-	    
+
+
       return $fieldNames;
-	}    
+	}
 }
 
 ?>

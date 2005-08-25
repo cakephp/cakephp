@@ -197,12 +197,14 @@ form div input.inputCheckbox, form div input.inputRadio, input.inputCheckbox, in
   background-color: transparent;
   border-width: 0px;
   padding: 0px;
-  margin: 0px 0px 0px 140px;
+  margin: 0px 0px 0px 0px;
 }
 
 form div.submit {
   width: 214px;
   padding: 0px 0px 0px 140px;
+  clear:both;
+  display:block;
 }
 
 div.submit input {
@@ -324,6 +326,10 @@ form div.wide small {
 }
 
 div.date select {
+  width:auto;
+}
+
+select.autoWidth {
   width:auto;
 }
 

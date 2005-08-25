@@ -54,7 +54,7 @@ hidden = "<input type="hidden" name="data[%s][%s]"%s/>"
 textarea = "<textarea name="data[%s][%s]"%s>%s</textarea>"
 
 ; Tag template for a input type='checkbox ' tag. 
-checkbox = "<input type="checkbox" name="data[%s][%s]" id="tag_%s"%s/>"
+checkbox = "<input type="checkbox" name="data[%s][%s]" id="tag_%s" %s/>"
 
 ; Tag template for a input type='radio' tag.
 radio = "<input type="radio" name="data[%s][%s]" id="tag_%s"%s/>"

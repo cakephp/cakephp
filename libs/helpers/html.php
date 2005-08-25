@@ -191,22 +191,32 @@ class HtmlHelper extends Helper
     function link($title, $url = null, $htmlAttributes = null, $confirmMessage = false,
     $return = false)
     {
+        // prepare title for html display
+        $title = htmlspecialchars($title, ENT_QUOTES);
+
         $url = $url? $url: $title;
 
         if ($confirmMessage)
         {
+            // prepare for html display (fix everything except quotes)
+            $confirmMessage = htmlspecialchars($confirmMessage, ENT_NOQUOTES);
+            // fix single quotes
+            $confirmMessage = str_replace("'", "\'", $confirmMessage);
+            // fix double quotes
+            $confirmMessage = str_replace('"', '&quot;', $confirmMessage);
+
             $htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
         }
 
         if (strpos($url, '://'))
         {
             $output = sprintf($this->tags['link'], $url,
-            $this->_parseAttributes($htmlAttributes), $title);
+                      $this->_parseAttributes($htmlAttributes), $title);
         }
         else
         {
             $output = sprintf($this->tags['link'], $this->url($url, true),
-            $this->_parseAttributes($htmlAttributes), $title);
+                $this->_parseAttributes($htmlAttributes), $title);
         }
 
         return $this->output($output, $return);
@@ -393,9 +403,11 @@ class HtmlHelper extends Helper
     function hidden($fieldName, $htmlAttributes = null, $return = false)
     {
         $this->setFormTag($fieldName);
-        $htmlAttributes['value'] = $value? $value: $this->tagValue($fieldName);
+        if(!isset($htmlAttributes['value'])) {
+            $htmlAttributes['value'] = $this->tagValue($fieldName);
+        }
         return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field,
-        $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+            $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
     }
 
 
@@ -976,30 +988,39 @@ class HtmlHelper extends Helper
      *
      * @param string $fieldName Name attribute of the SELECT
      * @param array $option_elements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
+     * @param boolean $show_empty Show/hide the empty select option
      * @param array $select_attr Array of HTML options for the opening SELECT element
      * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
      * @return string Formatted SELECT element
      */
-    function selectTag($fieldName, $option_elements, $selected=null, $select_attr=null, $optionAttr=null)
+    function selectTag($fieldName, $option_elements, $selected=null, $select_attr=null, $optionAttr=null, $show_empty=false)
     {
         $this->setFormTag($fieldName);
-        if (!is_array($option_elements) || !count($option_elements))
-        return null;
+
+        // do not display the select tag if no option elements are avaible
+        if (!is_array($option_elements) || count($option_elements) == 0)
+        {
+            return null;
+        }
 
         if( isset($select_attr) && array_key_exists( "multiple", $select_attr) )
         {
            $select[] = sprintf($this->tags['selectmultiplestart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
         }
-        else 
+        else
         {
            $select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
         }
-        $select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
+
+        if($show_empty == true) 
+        {
+            $select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
+        }
 
         foreach ($option_elements as $name=>$title)
         {
             $options_here = $optionAttr;
-            if ($selected == $name)
+            if (!empty($selected) && ($selected == $name)) 
             {
                $options_here['selected'] = 'selected';
             } else if ( is_array($selected) && array_key_exists($name, $selected) )

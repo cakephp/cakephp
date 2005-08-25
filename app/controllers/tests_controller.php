@@ -46,6 +46,18 @@ class TestsController extends TestsHelper {
       $this->layout = null;
       require_once TESTS.'index.php';
    }
+   
+   function groups () 
+   {
+      $this->layout = null;
+      require_once TESTS.'index.php';
+   }
+   
+   function cases () 
+   {
+      $this->layout = null;
+      require_once TESTS.'index.php';
+   }
 /**
  * Runs all library and application tests
  *
