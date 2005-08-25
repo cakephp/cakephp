@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Templating for Controller class. Takes care of rendering views.
  * 
- * Long description for file
+ * Templating system for Cake.
  *
  * PHP versions 4 and 5
  *
@@ -49,15 +49,15 @@ class Template extends Object
 {
 
 /**
- * Enter description here...
+ * Base URL part
  *
- * @var unknown_type
+ * @var string 
  * @access public
  */
    var $base = null;
 
 /**
- * Enter description here...
+ * Layout name
  *
  * @var string
  * @access public
@@ -65,7 +65,7 @@ class Template extends Object
    var $layout = 'default';
 
 /**
- * Enter description here...
+ * Turns on or off Cake's conventional mode of rendering views. On by default.
  *
  * @var boolean
  * @access public
@@ -73,7 +73,7 @@ class Template extends Object
    var $autoRender = true;
 
 /**
- * Enter description here...
+ * Turns on or off Cake's conventional mode of finding layout files. On by default.
  *
  * @var boolean
  * @access public
@@ -89,7 +89,7 @@ class Template extends Object
    var $_viewVars = array();
 
 /**
- * Enter description here...
+ * Title HTML element of current View.
  *
  * @var boolean
  * @access private

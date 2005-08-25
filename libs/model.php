@@ -1022,7 +1022,7 @@ class Model extends Object
             {
                if(!empty($joined))
                {
-                   $this->saveMulti($joined, $this->id);
+                   $this->_saveMulti($joined, $this->id);
                } 
                $this->data = false;
                return true;
@@ -1049,7 +1049,7 @@ class Model extends Object
                    {
                        $this->id = $newID;
                    }
-                   $this->saveMulti($joined, $this->id);
+                   $this->_saveMulti($joined, $this->id);
                }   
                return true;
             }
@@ -1071,9 +1071,10 @@ class Model extends Object
  *
  * @param array $joined Data to save. 
  * @param string $id 
- * @return boolean success
+ * @return
+ * @access private
  */
-   function saveMulti ($joined, $id) 
+   function _saveMulti ($joined, $id) 
    {
        $sql = array();
        
@@ -1085,27 +1086,27 @@ class Model extends Object
                $tableSort[1] = $name;
                sort($tableSort);
                $joinTable = $tableSort[0] . '_' . $tableSort[1];
-               $key1 = Inflector::singularize($this->table) . '_id';
-               $key2 = Inflector::singularize($name) . '_id';
+               $mainKey = Inflector::singularize($this->table) . '_id';
+               
+               $key[] = $mainKey;
+               $key[] = Inflector::singularize($name) . '_id';
+               $fields = join(',', $key);
+               
                foreach ($value as $update)
                {
-                   $fields1[] = $key1;
-                   $values1[] = $this->db->prepare($id);
-                   $fields1[] = $key2;
-                   $values1[] = $this->db->prepare($update);
+                   $values[] = $this->db->prepare($id);
+                   $values[] = $this->db->prepare($update);
+                   $values = join(',', $values);
+                   $newValue[] = "({$values})";
+                   unset($values);
                    
-                   $fields1 = join(',', $fields1);
-                   $values1 = join(',', $values1);
-                   $joinedSql[] = "INSERT INTO {$joinTable} ({$fields1}) VALUES ({$values1})";
-                   
-                   unset($fields1);
-                   unset($values1);
                }
-               $this->db->query("DELETE FROM {$joinTable} WHERE $key1 = '{$id}'");
+               $this->db->query("DELETE FROM {$joinTable} WHERE $mainKey = '{$id}'");
            }
-           foreach ($joinedSql as $insert){
-               $this->db->query($insert);
-           }
+           
+           $newValue = join(',', $newValue);
+           $this->db->query("INSERT INTO {$joinTable} ({$fields}) VALUES {$newValue}");
+
        }
    }
    
@@ -1528,12 +1529,24 @@ class Model extends Object
  * This function determines whether or not a string is a foreign key
  *
  * @param string $field Returns true if the input string ends in "_id"
- * @return True if the input string ends in "_id", else false.
+ * @return True if the field is a foreign key listed in the belongsTo array.
  */
-	function isForeignKey( $field ) {
-	  
-	   //  search for the string _id reveals that this string appears three characters from the end, then this is a foreign key.
-	   if( substr($field, -3) === '_id' )
+	function isForeignKey( $field ) 
+	{
+      
+	   $foreignKeys = array();
+	   
+	   if(!empty($this->_belongsToOther))
+      {
+      
+        foreach ($this->_belongsToOther as $rule)
+        {
+            list($table, $key, $value) = $rule;
+            $foreignKeys[$key] = $key;
+        }
+      }	   
+
+	   if( array_key_exists($field, $foreignKeys) )
 	   {
 	     return true;
 	   }

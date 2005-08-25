@@ -32,9 +32,9 @@
  */
 
 /**
- * Short description for class.
+ * Abstract DBO class file.
  * 
- * Long description for class
+ * All implementations override this class.
  *
  * @package    cake
  * @subpackage cake.libs.dbo
@@ -44,16 +44,15 @@ class DBO_generic extends DBO
 {
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
- * @param unknown_type $config
  */
    function connect ($config) 
    {
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
  */
    function disconnect () 
@@ -61,24 +60,25 @@ class DBO_generic extends DBO
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
- * @param unknown_type $sql
  */
    function execute ($sql) 
    {
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
+  *
  */
    function fetchRow () 
    {
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
+ *
  *
  */
    function tablesList () 
@@ -86,25 +86,23 @@ class DBO_generic extends DBO
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
- * @param unknown_type $table_name
  */
    function fields ($table_name)
    {
    }
 
 /**
- * Enter description here...
+* Abstract method defined in subclasses. 
  *
- * @param unknown_type $data
  */
    function prepareValue ($data)
    {
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
  */
    function lastError () 
@@ -112,7 +110,7 @@ class DBO_generic extends DBO
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
  */
    function lastAffected ()
@@ -120,7 +118,7 @@ class DBO_generic extends DBO
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
  */
    function lastNumRows () 
@@ -128,7 +126,7 @@ class DBO_generic extends DBO
    }
 
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
  */
    function lastInsertId () 
@@ -136,10 +134,8 @@ class DBO_generic extends DBO
    }
    
 /**
- * Enter description here...
+ * Abstract method defined in subclasses. 
  *
- * @param unknown_type $limit
- * @param unknown_type $offset
  */
    function selectLimit ($limit, $offset=null)
    {

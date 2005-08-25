@@ -37,9 +37,9 @@
 require_once(VENDORS.'adodb/adodb.inc.php');
 
 /**
- * Short description for class.
+ * AdoDB DBO implementation.
  * 
- * Long description for class
+ * Database abstraction implementation for the AdoDB library.
  *
  * @package    cake
  * @subpackage cake.libs.dbo
@@ -149,7 +149,7 @@ class DBO_AdoDB extends DBO
  * @param string $data String to be prepared for use in an SQL statement
  * @return string Quoted and escaped
  *
- * :TODO: To be implemented.
+ * @todo To be implemented.
  */
    function prepareValue ($data)      
    {
@@ -167,7 +167,7 @@ class DBO_AdoDB extends DBO
    }
 
 /**
- * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+ * Returns number of affected rows in previous database operation, or false if no previous operation exists.
  *
  * @return int Number of affected rows
  */
@@ -177,8 +177,7 @@ class DBO_AdoDB extends DBO
    }
 
 /**
- * Returns number of rows in previous resultset. If no previous resultset exists, 
- * this returns false.
+ * Returns number of rows in previous resultset, or false if no previous resultset exists.
  *
  * @return int Number of rows in resultset
  */
@@ -188,20 +187,21 @@ class DBO_AdoDB extends DBO
    }
 
 /**
- * Returns the ID generated from the previous INSERT operation.
+ * To-be-implemented. Returns the ID generated from the previous INSERT operation.
  *
  * @return int 
  *
- * :TODO: To be implemented.
+ * @todo To be implemented.
  */
    function lastInsertId ()      { die('Please implement DBO::lastInsertId() first.'); }
 
 /**
- * Returns a limit statement in the correct format for the particular database.
+ * Returns a LIMIT statement in the correct format for the particular database.
  *
  * @param int $limit Limit of results returned
  * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
+ * @todo Please change output string to whatever select your database accepts. adodb doesn't allow us to get the correct limit string out of it.
  */
    function selectLimit ($limit, $offset=null)
    {

@@ -508,7 +508,7 @@ class Controller extends Object
 	        foreach ($tables as $tabl)
 	        {
 	            //  set up the prompt
-	            if( Model::isForeignKey($tabl['name']) )
+	            if( $objRegistryModel->isForeignKey($tabl['name']) )
 	            {
 	                $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
@@ -619,6 +619,9 @@ class Controller extends Object
                  }
                  break;
                  case "int":
+                 case "smallint":
+                 case "mediumint":
+                 case "bigint":
                  case "decimal":
                  case "float":
                  case "double":

@@ -138,7 +138,7 @@ class DBO_SQLite extends DBO
    function fields($table_name)
    {
       $fields = false;
-      $cols = sqlite_fetch_column_types($table_name, $this->_conn, SQLITE_ASSOC);
+      $cols = sqlite_fetch_column_types($table_name, $this->_conn);
 
       foreach ($cols as $column => $type)
       {

@@ -27,7 +27,8 @@
             foreach( $fieldNames as $field=>$value ) { ?>
                <td>
                   <?php
-                     if( Model::isForeignKey( $field ) ) {
+                     if( isset($value['foreignKey']) ) 
+                     {
                         
                         //  this is a foreign key, figure out what the display field should be for this model.
                        $otherModelName = $value['model'];

@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Time library for Cake.
  * 
- * Long description for file
+ * Methods for handling and formatting date and time information.
  *
  * PHP versions 4 and 5
  *
@@ -37,9 +37,9 @@
 uses ('object');
 
 /**
- * Time related functions, formatting for dates etc.
+ * Time-related functions, formatting for dates etc.
  *
- * Long description for class
+ * The Time class handles and formats date and time information.
  *
  * @package    cake
  * @subpackage cake.libs
@@ -102,12 +102,12 @@ class Time extends Object
    }
    
 /**
- * Enter description here...
+ * Returns SQL for selecting a date range between the datetime pair $begin and $end.
  *
- * @param unknown_type $begin
- * @param unknown_type $end
- * @param unknown_type $field_name
- * @return unknown
+ * @param string $begin Start of date range as a Datetime string 
+ * @param string $end End of date range as a Datetime string 
+ * @param string $field_name Name of database date field
+ * @return string SQL code for selecting the date range
  */
    function daysAsSql ($begin, $end, $field_name)
    {
@@ -118,11 +118,12 @@ class Time extends Object
    }
    
 /**
- * Enter description here...
+ * Returns SQL for selecting a date range that includes the whole day of given datetime string.
  *
- * @param unknown_type $date
- * @param unknown_type $field_name
- * @return unknown
+ * @param string $date Datetime string 
+ * @param string $field_name Name of database date field
+ * @return SQL for selecting the date range of that full day
+ * @see Time::daysAsSql()
  */
    function dayAsSql ($date, $field_name)
    {
@@ -178,6 +179,7 @@ class Time extends Object
   *
   * @param datetime $date Datetime string
   * @return string Formatted date string
+  * @todo Is this for RSS 0.9.2 or RSS 2.0?
   */
    function toRSS ($date) 
    {

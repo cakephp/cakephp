@@ -993,7 +993,7 @@ class HtmlHelper extends Helper
      * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
      * @return string Formatted SELECT element
      */
-    function selectTag($fieldName, $option_elements, $selected=null, $select_attr=null, $optionAttr=null, $show_empty=false)
+    function selectTag($fieldName, $option_elements, $selected=null, $select_attr=null, $optionAttr=null, $showEmpty=true)
     {
         $this->setFormTag($fieldName);
 
@@ -1012,7 +1012,7 @@ class HtmlHelper extends Helper
            $select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($select_attr));
         }
 
-        if($show_empty == true) 
+        if($showEmpty == true) 
         {
             $select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
         }

@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Basic Cake functionalities.
+ * Basic Cake functionality.
  * 
- * Long description for file
+ * Core functions for including other source files, loading models and so forth.
  *
  * PHP versions 4 and 5
  *
@@ -84,8 +84,8 @@ function loadControllers ()
 /**
   * Loads a controller and its helper libraries.
   *
-  * @param string $name
-  * @return boolean
+  * @param string $name Name of controller
+  * @return boolean Success
   */
 function loadController ($name) 
 {
@@ -103,8 +103,8 @@ function loadController ($name)
 /**
   * Lists PHP files in given directory.
   *
-  * @param string $path
-  * @return array
+  * @param string $path Path to scan for files
+  * @return array List of files in directory
   */
 function listClasses($path) 
 {
@@ -114,6 +114,8 @@ function listClasses($path)
 
 /**
   * Loads configuration files
+  *
+  * @return boolean True on success.
   */
 function config () 
 {
@@ -157,6 +159,12 @@ function uses ()
    }
 }
 
+/**
+ * Require given files in the VENDORS directory. Function takes optional number of parameters.
+ *
+ * @param string $name Filename without the .php part.
+ *
+ */
 function vendor($name)
 {
    $args = func_get_args();

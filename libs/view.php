@@ -37,9 +37,9 @@
 uses('object');
 
 /**
- * Short description for class
+ * View, the V in the MVC triad. 
  *
- * Long description for class
+ * Class holding methods for displaying presentation data.
  *
  * @package    cake
  * @subpackage cake.libs
@@ -50,7 +50,7 @@ class View extends Object
 /**
  * Name of the controller.
  *
- * @var unknown_type
+ * @var string Name of controller
  * @access public
  */
    var $name = null;
@@ -73,7 +73,7 @@ class View extends Object
 /**
  * Action to be performed.
  *
- * @var string
+ * @var string Name of action
  * @access public
  */
    var $action = null;
@@ -95,9 +95,9 @@ class View extends Object
    var $helpers = array('html');
 
 /**
- * Enter description here...
+ * Path to View.
  *
- * @var unknown_type
+ * @var string Path to View
  */
    var $viewPath;
 
@@ -110,7 +110,7 @@ class View extends Object
    var $_viewVars = array();
 
 /**
- * Enter description here...
+ * Title HTML element of this View.
  *
  * @var boolean
  * @access private
@@ -125,17 +125,16 @@ class View extends Object
  */
    var $models = array();
 
-
 /**
- * Enter description here...
+ * Path parts for creating links in views.
  *
- * @var unknown_type
+ * @var string Base URL
  * @access public
  */
    var $base = null;
 
 /**
- * Enter description here...
+ * Name of layout to use with this View.
  *
  * @var string
  * @access public
@@ -143,7 +142,7 @@ class View extends Object
    var $layout = 'default';
 
 /**
- * Enter description here...
+ * Turns on or off Cake's conventional mode of rendering views. On by default.
  *
  * @var boolean
  * @access public
@@ -151,7 +150,7 @@ class View extends Object
    var $autoRender = true;
 
 /**
- * Enter description here...
+ * Turns on or off Cake's conventional mode of finding layout files. On by default.
  *
  * @var boolean
  * @access public
@@ -159,27 +158,27 @@ class View extends Object
    var $autoLayout = true;
 
 /**
- * Enter description here...
+ * Array of parameter data
  *
- * @var unknown_type
+ * @var array Parameter data
  */
    var $params;
 /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var boolean
  */
    var $hasRendered = null;
 
 /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var boolean
  */
    var $modelsLoaded = false;
 
 /**
- * Enter description here...
+ * Constructor
  *
  * @return View
  */
@@ -203,7 +202,7 @@ class View extends Object
 
 
 /**
- * Render view for given action and layout. If $file is given, that is used 
+ * Renders view for given action and layout. If $file is given, that is used 
  * for a view filename (e.g. customFunkyView.thtml).
  *
  * @param string $action Name of action to render for
@@ -212,7 +211,6 @@ class View extends Object
  */
    function render($action=null, $layout=null, $file=null)
    {
-
 
       if ($this->modelsLoaded!==true)
       {
@@ -331,8 +329,12 @@ class View extends Object
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
- * @param string $name Name of template file
- * @param array $params Array of data for rendered view 
+ * This realizes the concept of Elements, (or "partial layouts")
+ * and the $params array is used to send data to be used in the 
+ * Element.
+ *
+ * @param string $name Name of template file in the /app/views/elements/ folder
+ * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string Rendered output
  */
    function renderElement($name, $params=array())
@@ -349,8 +351,8 @@ class View extends Object
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
  *
- * @param string $content_for_layout Content to render in a view
- * @return string Rendered output
+ * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
+ * @return string Rendered output, or false on error
  */
    function renderLayout($content_for_layout)
    {
@@ -383,7 +385,7 @@ class View extends Object
    }
 
 /**
- * Choose the layout to be used when rendering.
+ * Set layout to be used when rendering.
  *
  * @param string $layout
  */
@@ -397,7 +399,7 @@ class View extends Object
  *
  * @param int $code Error code (for instance: 404)
  * @param string $name Name of the error (for instance: Not Found)
- * @param string $message Error message
+ * @param string $message Error message as a web page
  */
    function error ($code, $name, $message)
    {
@@ -407,7 +409,7 @@ class View extends Object
 
 
 /**
- * Enter description here...
+ * Renders the Missing Controller web page.
  *
  */
    function missingController()
@@ -417,7 +419,7 @@ class View extends Object
    }
 
 /**
- * Enter description here...
+ * Renders the Missing Action web page.
  *
  */
    function missingAction()
@@ -427,7 +429,7 @@ class View extends Object
    }
 
 /**
- * Enter description here...
+ * Renders the Missing View web page.
  *
  */
    function missingView()
