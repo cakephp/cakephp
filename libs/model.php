@@ -1302,12 +1302,16 @@ class Model extends Object
                            
                            $merged = array_merge_recursive($data[$count],$select1);
                            $newdata[$count] = $merged;
-                           unset ($select1);
+                           //Can not find reason this was added
+                           // If you find something comment your find
+                           // so I can look into it more -PhpNut
+                           //unset ($select1);
                        }
                        
                        if(!empty($newdata[$count]))
                        {
                            $original[$count] = $newdata[$count];
+                           
                        }
                    }
                    $count++;
@@ -1317,6 +1321,7 @@ class Model extends Object
            
            if(!empty($original))
            {
+               
                $data = $original;
            }
        }
@@ -1514,7 +1519,7 @@ class Model extends Object
       {
          foreach ($this->validate as $field_name=>$validator) 
          {
-            if (!isset($data[$table][$field_name]) || !preg_match($validator, $data[$table][$field_name]))
+           if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
             {
             	$errors[$field_name] = 1;
             }

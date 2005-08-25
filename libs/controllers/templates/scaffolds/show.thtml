@@ -13,7 +13,7 @@
          echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelName][ $field ] )."</dd>";
       } else {
          //  this is just a plain old field.
-         if( isset($data[$modelName][$field]) )
+         if( !empty($data[$modelName][$field]) )
          {
             echo "<dd>".$data[$modelName][$field]."</dd>";
          } else {
