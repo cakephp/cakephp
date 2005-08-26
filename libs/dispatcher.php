@@ -233,7 +233,7 @@ class Dispatcher extends Object
       $params['form'] = $_POST;
       if (isset($_POST['data']))
       {
-         $params['data'] = $_POST['data'];
+         $params['data'] = (ini_get('magic_quotes_gpc') == 1) ? $this->stripslashes_deep($_POST['data']) : $_POST['data'];
       }
 
       foreach ($_FILES as $name => $data)
@@ -242,6 +242,16 @@ class Dispatcher extends Object
       }
 
       return $params;
+   }
+
+/**
+ * Recursively strips slashes.
+ *
+ */
+   function stripslashes_deep($val)
+   {
+      return (is_array($val)) ? 
+        array_map(array('Dispatcher','stripslashes_deep'), $val) : stripslashes($val);
    }
 
 /**
