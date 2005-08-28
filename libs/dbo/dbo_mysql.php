@@ -219,9 +219,9 @@ class DBO_MySQL extends DBO
  *
  * @param unknown_type $results
  */
-   function mysqlResultSet($results)
+   function mysqlResultSet(&$results)
    {
-      $this->results = $results;
+      $this->results =& $results;
       $this->map = array();
       $index = 0;
       $num_fields = mysql_num_fields($results);

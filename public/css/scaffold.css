@@ -12,6 +12,9 @@ font-size:2.1em;
 color: #69c;
 }
 h2 {
+margin-top:5px;
+display:block;
+float:left;
 font-size:1.7em;
 color: #383;
 clear: both;
@@ -142,6 +145,12 @@ table tr td {
 }
 table tr.altRow td {
     background: #EBF4FD;
+}
+
+div.related {
+   display:block;
+   float:left;
+   clear:both;
 }
 
 dl {

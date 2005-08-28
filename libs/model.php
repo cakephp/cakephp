@@ -1243,8 +1243,7 @@ class Model extends Object
            foreach ($this->_oneToOne as $rule)
            {
                list($table, $field, $value) = $rule;
-               $joins[] = "JOIN {$table} ON {$table}.{$field} = {$this->table}.id";
-        
+               $joins[] = "LEFT JOIN {$table} ON {$table}.{$field} = {$this->table}.id";
            }
        }
        
@@ -1294,9 +1293,10 @@ class Model extends Object
                    foreach ($value1 as $key2 => $value2)
                    {
                        $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = '{$value2['id']}'");
-                       if( is_array($oneToManySelect[$table]) && ($oneToManySelect[$table] != null))
+                       
+                       if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
                        {
-                          $newKey = Inflector::singularize($table);
+                           $newKey = Inflector::singularize($table);
                            foreach ($oneToManySelect[$table] as $key => $value)
                            {
                                $oneToManySelect1[$table][$key] = $value[$newKey];
@@ -1304,6 +1304,7 @@ class Model extends Object
                            
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
+                           unset( $oneToManySelect[$table] );
                        }
                        
                        if(!empty($newdata[$count]))
@@ -1311,6 +1312,7 @@ class Model extends Object
                            $original[$count] = $newdata[$count];
                        }
                    }
+                   
                    $count++;
                }
                $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
@@ -1344,7 +1346,8 @@ class Model extends Object
                                                             AND {$joineTable}.{$JoinKey2} = {$table} .id";
                             $manyToManySelect[$table] = $this->db->all($tmpSQL);
                          }
-                         if( is_array($manyToManySelect[$table]) && ($manyToManySelect[$table] != null))
+                         
+                         if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
                          {
                             $newKey = Inflector::singularize($table);
                             foreach ($manyToManySelect[$table] as $key => $value)
@@ -1354,7 +1357,9 @@ class Model extends Object
 
                             $merged = array_merge_recursive($data[$count],$manyToManySelect1);
                             $newdata[$count] = $merged;
+                            unset( $manyToManySelect[$table] );
                          }
+                         
 
                          if(!empty($newdata[$count]))
                          {
@@ -1372,7 +1377,7 @@ class Model extends Object
                $data = $original;
            }
        }
-             
+       
        return $data;
    }
 

@@ -10,17 +10,29 @@
          $otherModelObject = $registry->getObject($value['model']);
          $displayField = $otherModelObject->getDisplayField();
          $displayText = $data[$value['model']][ $displayField ];
-         echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelName][ $field ] )."</dd>";
-      } else {
-         //  this is just a plain old field.
-         if( !empty($data[$modelName][$field]) )
-         {
-            echo "<dd>".$data[$modelName][$field]."</dd>";
-         } else {
-            echo "<dd>&nbsp;</dd>";
-         }
+            
+            if( !empty($data[$modelName][$field]))
+            {
+                echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelName][ $field ] )."</dd>";
+            }
+            else
+            {
+                echo "<dd>&nbsp;</dd>";
+            }
+      }
+      else
+      {
+          //  this is just a plain old field.
+          if( !empty($data[$modelName][$field]))
+          {
+              echo "<dd>".$data[$modelName][$field]."</dd>";
+          }
+          else
+          {
+              echo "<dd>&nbsp;</dd>";
+          }
       }   
-   } 
+} 
 ?>
 
 </dl>
@@ -47,14 +59,14 @@
       list($table, $field, $value) = $relation;
       $otherModelName = Inflector::singularize($table);
 
-      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2>";
+      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2><br/><br/>";
       echo "<dl>";
       if( isset($data[$otherModelName]) && is_array($data[$otherModelName]) ) 
       {
          foreach( $data[$otherModelName] as $field=>$value )
          {
             echo "<dt>".Inflector::humanize($field)."</dt>";
-            if( isset($value) )
+            if( !empty($value) )
             {
                echo "<dd>".$value."</dd>";
             } else {
@@ -64,7 +76,7 @@
          
       }
       echo "</dl>";
-      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/edit/{$data[$otherModelName]['id']}")."</li></ul>";
+      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/edit/{$data[$otherModelName]['id']}")."</li></ul></div>";
    }
 ?>
 
@@ -87,7 +99,7 @@
       $count = 0;
       $otherModelName = Inflector::singularize($table);
 
-      echo "<div class='related'><H2>Related ".Inflector::humanize($table)."</H2>";
+      echo "<div class='related'><H2>Related ".Inflector::humanize($table)."</H2><br/><br/>";
       if( isset($data[$table]) && is_array($data[$table]) ) 
       {
 ?>
