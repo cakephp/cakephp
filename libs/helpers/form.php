@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Automatic generation of HTML FORMs from given data.
  * 
- * Long description for file
+ * Used for scaffolding.
  *
  * PHP versions 4 and 5
  *
@@ -60,7 +60,7 @@ define('TAG_FIELDSET', '<fieldset><legend>%s</legend>%s</label>');
 /**
  * Form helper library.
  * 
- * Long description for class
+ * Automatic generation of HTML FORMs from given data.
  *
  * @package    cake
  * @subpackage cake.libs.helpers
@@ -70,22 +70,22 @@ define('TAG_FIELDSET', '<fieldset><legend>%s</legend>%s</label>');
 class FormHelper
 {
 
-/**
- * Constructor which takes an instance of the HtmlHelper class.
- *
- * @param object $htmlHelper  the HtmlHelper object to use as our helper.
- * @return void 
- */
+	/**
+	 * Constructor which takes an instance of the HtmlHelper class.
+	 *
+	 * @param object $htmlHelper  the HtmlHelper object to use as our helper.
+	 * @return void 
+	 */
 	function FormHelper()
 	{
 	}
 
-/**
- * Returns a formatted error message for given FORM field, NULL if no errors.
- *
- * @param string $field  If field is to be used for CRUD, this should be modelName/fieldName
- * @return bool If there are errors this method returns true, else false. 
- */
+	/**
+	 * Returns a formatted error message for given FORM field, NULL if no errors.
+	 *
+	 * @param string $field  	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @return bool 			If there are errors this method returns true, else false. 
+	 */
 	function isFieldError($html, $field )
 	{
 		$error = 1;
@@ -98,54 +98,54 @@ class FormHelper
 		}
 	}
 
-/**
- * Returns a formatted LABEL tag for HTML FORMs.
- *
- * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $text Text that will appear in the label field.
- * @return string The formatted LABEL element
- */
+	/**
+	 * Returns a formatted LABEL element for HTML FORMs.
+	 *
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $text 		Text that will appear in the label field.
+	 * @return string 			The formatted LABEL element
+	 */
 	function labelTag( $tagName, $text )
 	{
 		return sprintf( TAG_LABEL, $tagName, $text );
 	}
 
-/**
- * Returns a formatted DIV tag for HTML FORMs.
- *
- * @param string $class If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $text Text that will appear in the label field.
- * @return string The formatted DIV element
- */
+	/**
+	 * Returns a formatted DIV tag for HTML FORMs.
+	 *
+	 * @param string $class 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $text 		Text that will appear in the label field.
+	 * @return string 			The formatted DIV element
+	 */
 	function divTag( $class, $text )
 	{
 		return sprintf( TAG_DIV, $class, $text );
 	}
 
-/**
- * Returns a formatted P tag with class for HTML FORMs.
- *
- * @param string $class If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $text Text that will appear in the label field.
- * @return string The formatted DIV element
- */
+	/**
+	 * Returns a formatted P tag with class for HTML FORMs.
+	 *
+	 * @param string $class 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $text 		Text that will appear in the label field.
+	 * @return string 			The formatted DIV element
+	 */
 	function pTag( $class, $text )
 	{
 		return sprintf( TAG_P_CLASS, $class, $text );
 	}
 
-/**
- * Returns a formatted INPUT tag for HTML FORMs.
- *
- * @param HtmlHelper $html The HtmlHelper object which is creating this form.
- * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is required.
- * @param string $errorMsg Text that will appear if an error has occurred.
- * @param int $size Size attribute for INPUT element
- * @param array $htmlOptions 
- * @return string The formatted INPUT element
- */
+	/**
+	 * Returns a formatted INPUT tag for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form.
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt 	Text that will appear in the label field.
+	 * @param bool $required 	True if this field is required.
+	 * @param string $errorMsg 	Text that will appear if an error has occurred.
+	 * @param int $size 		Size attribute for INPUT element
+	 * @param array $htmlOptions 
+	 * @return string 			The formatted INPUT element
+	 */
 	function generateInputDiv($html, $tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
 		$str = $html->inputTag( $tagName, $size, $htmlOptions );
@@ -170,18 +170,18 @@ class FormHelper
 
 	}
 
-/**
- * Returns a formatted INPUT tag for HTML FORMs.
- *
- * @param HtmlHelper $html The HtmlHelper object which is creating this form.
- * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is required.
- * @param string $errorMsg Text that will appear if an error has occurred.
- * @param int $size Size attribute for INPUT element
- * @param array $htmlOptions 
- * @return string The formatted INPUT element
- */
+	/**
+	 * Returns a formatted CHECKBOX tag inside a DIV for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form.
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt 	Text that will appear in the label field.
+	 * @param bool $required 	True if this field is required.
+	 * @param string $errorMsg 	Text that will appear if an error has occurred.
+	 * @param int $size 		Size attribute for INPUT element
+	 * @param array $htmlOptions 
+	 * @return string 			The formatted INPUT element
+	 */
 	function generateCheckboxDiv($html, $tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null )
 	{
 	   $htmlOptions['class'] = "inputCheckbox";
@@ -206,7 +206,19 @@ class FormHelper
 		return $this->divTag( $divClass, $divTagInside );
 
 	}
-	
+
+	/**
+	 * Returns a formatted date option element for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form.
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt 	Text that will appear in the label field.
+	 * @param bool $required 	True if this field is required.
+	 * @param string $errorMsg 	Text that will appear if an error has occurred.
+	 * @param int $size 		Size attribute for INPUT element
+	 * @param array $htmlOptions 
+	 * @return string 			The formatted INPUT element
+	 */	
 	function generateDate($html, $tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
 		$str = $html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE' );
@@ -232,6 +244,18 @@ class FormHelper
 		return $this->divTag("date", $requiredDiv);
 	}
 	
+	/**
+	 * Returns a formatted datetime option element for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form.
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt 	Text that will appear in the label field.
+	 * @param bool $required 	True if this field is required.
+	 * @param string $errorMsg 	Text that will appear if an error has occurred.
+	 * @param int $size 		Size attribute for INPUT element
+	 * @param array $htmlOptions 
+	 * @return string 			The formatted datetime option element
+	 */		
 	function generateDateTime($html, $tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
 		$str = $html->dateTimeOptionTag( $tagName, 'MDY' , '12' );
@@ -256,19 +280,20 @@ class FormHelper
 
 		return $this->divTag("date", $requiredDiv);
 	}
-/**
- * Enter description here...
- *
- * @param HtmlHelper $html
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $cols
- * @param unknown_type $rows
- * @param unknown_type $htmlOptions
- * @return unknown
- */
+	
+	/**
+	 * Returns a formatted TEXTAREA inside a DIV for use with HTML forms.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form.
+	 * @param string $tagName	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt	Text that will appear in the label field.
+	 * @param boolean $required	True if this field is required.
+	 * @param string $errorMsg	ext that will appear if an error has occurred.
+	 * @param integer $cols		Number of columns.
+	 * @param integer $rows		Number of rows.
+	 * @param array $htmlOptions
+	 * @return string 			The formatted TEXTAREA element
+	 */
 	function generateAreaDiv($html, $tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null )
 	{
 		$str = $html->areaTag( $tagName, $cols, $rows, $htmlOptions );
@@ -293,22 +318,20 @@ class FormHelper
 
 	}
 	
-/**
- * Returns a formatted SELECT tag for HTML FORMs.
- *
- * @param HtmlHelper $html The HtmlHelper object which is creating this form.
- * @param string $tagName If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $prompt Text that will appear in the label field.
- * @param array $options Options to be contained in SELECT element
- * @param bool $required True if this field is required.
- * @param string $selected Text of the currently selected item
- * @param bool $required True if this field is required.
- * @param bool $required True if this field is required.
- * @param string $errorMsg Text that will appear if an error has occurred.
- * @param array $selectAttr
- * @param array $optionAttr
- * @return string The formatted INPUT element
- */
+	/**
+	 * Returns a formatted SELECT tag for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form
+	 * @param string $tagName 	If field is to be used for CRUD, this should be modelName/fieldName
+	 * @param string $prompt 	Text that will appear in the label field
+	 * @param array $options 	Options to be contained in SELECT element
+	 * @param string $selected 	Text of the currently selected item
+	 * @param array $selectAttr	Array of HTML attributes for the SELECT element
+	 * @param array $optionAttr Array of HTML attributes for the OPTION elements
+	 * @param bool $required 	True if this field is required
+	 * @param string $errorMsg 	Text that will appear if an error has occurred	 
+	 * @return string 			The formatted INPUT element
+	 */
 	function generateSelectDiv($html, $tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null)
 	{
 		$str = $html->selectTag( $tagName, $options, $selected, $selectAttr, $optionAttr );
@@ -332,20 +355,29 @@ class FormHelper
 		return $this->divTag( $divClass, $divTagInside );
 
 	}	
-
+	
+	/**
+	 * Returns a formatted submit widget for HTML FORMs.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form
+	 * @param string $prompt 	Text that will appear on the widget
+	 * @param array $htmlOptions
+	 * @return string 			The formatted submit widget
+	 */
 	function generateSubmitDiv($html, $displayText, $htmlOptions = null)
 	{
 		return $this->divTag( 'submit', $html->submitTag( $displayText, $htmlOptions) );
 
 	}
 
-/**
- * Generates an form to go onto a HtmlHelper object.
- *
- * @param HtmlHelper $html The HtmlHelper object which is creating this form.
- * @param array $fields An array of form field definitions.
- * @return string The completed form specified by the $fields praameter.
- */
+	/**
+	 * Generates an form to go onto a HtmlHelper object.
+	 *
+	 * @param HtmlHelper $html 	The HtmlHelper object which is creating this form
+	 * @param array $fields 	An array of form field definitions
+	 * @param boolean $readOnly	True if the form should be rendered as READONLY
+	 * @return string 			The completed form specified by the $fields parameter
+	 */
 	function generateFields( $html, $fields, $readOnly = false )
 	{
 		$strFormFields = '';

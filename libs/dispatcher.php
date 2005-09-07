@@ -140,7 +140,7 @@ class Dispatcher extends Object
          else
          {
             // Check to see if controller is scaffolded		
-            $classVars = get_class_vars($ctrlClass);
+            $classVars = get_object_vars($controller);
             foreach ($classVars as $name => $value)
             {
                if($name === 'scaffold')
@@ -161,7 +161,7 @@ class Dispatcher extends Object
       if (!method_exists($controller, $params['action']))
       {
          // Check to see if controller is scaffolded	
-         $classVars = get_class_vars($ctrlClass);
+         $classVars = get_object_vars($controller);
          foreach ($classVars as $name => $value)
          {
             if($name === 'scaffold')

@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Creates ready-to-use file skeletons for applications.
  * 
  * Creates controller, model, view files, and the required directories on demand.
  * Used by /scripts/bake.php.
@@ -38,7 +38,7 @@
 uses('object', 'inflector');
 
 /**
- * Short description for class.
+ * Creates ready-to-use file skeletons for applications.
  * 
  * Bake class creates files in configured application directories. This is a
  * base class for /scripts/add.php.

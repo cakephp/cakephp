@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- *  Access Control List.
+ * Access Control List factory class.
  * 
- * Long description for file
+ * Permissions system.
  *
  * PHP versions 4 and 5
  *

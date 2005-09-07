@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Cache
+ * Caching for Cake.
  * 
- * Long description for file
+ * 
  *
  * PHP versions 4 and 5
  *
@@ -39,9 +39,9 @@
 uses('model');
 
 /**
- * Short description for class.
+ * Caching for Cake.
  * 
- * Long description for class
+ * 
  *
  * @package    cake
  * @subpackage cake.libs

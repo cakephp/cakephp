@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- *  Access Control List.
+ * Access Control List.
  * 
- * Long description for file
+ * To-be-implemented.
  *
  * PHP versions 4 and 5
  *
@@ -35,7 +35,7 @@
 /**
  * Access Control List helper library.
  * 
- * Long description for class
+ * To-be-implemented.
  *
  * @package    cake
  * @subpackage cake.libs.helpers
@@ -46,7 +46,7 @@
    {
 
 /**
- * Enter description here...
+ * Helper for Access Control List functionality.
  *
  * @return AclHelper
  */

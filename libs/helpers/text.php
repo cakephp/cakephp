@@ -4,7 +4,7 @@
 /**
  * Text Helper
  * 
- * Long description for file
+ * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * PHP versions 4 and 5
  *
@@ -40,7 +40,7 @@ uses('flay', 'helpers/html');
 /**
  * Text helper library.
  * 
- * Long description for class
+ * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @package    cake
  * @subpackage cake.libs.helpers
@@ -50,7 +50,7 @@ uses('flay', 'helpers/html');
 class TextHelper extends Helper
 {
     /**
-     * Highlights a given phrase in a text
+     * Highlights a given phrase in a text.
      *
      * @param string $text Text to search the phrase in
      * @param string $phrase The phrase that will be searched
@@ -83,7 +83,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Strips all links(<a href=....) of a givent text
+     * Strips given text of all links (<a href=....)
      *
      * @param string $text Text 
      * @return string The text without links
@@ -94,7 +94,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Adds links(<a href=....) to a given text
+     * Adds links (<a href=....) to a given text.
      *
      * @param string $text Text 
      * @param array $htmlOptions Array of HTML options.
@@ -128,7 +128,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Adds email links(<a href="mailto:....) to a givent text
+     * Adds email links (<a href="mailto:....) to a given text.
      *
      * @param string $text Text 
      * @param array $htmlOptions Array of HTML options.
@@ -154,7 +154,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Convert all links and email adresses to Html links.
+     * Convert all links and email adresses to HTML links.
      *
      * @param string $text Text 
      * @param array $htmlOptions Array of HTML options.

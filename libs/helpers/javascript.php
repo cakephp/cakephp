@@ -39,9 +39,9 @@ if(!defined("TAG_JAVASCRIPT_INCLUDE")) {
 }
 
 /**
- * Javascript Helper class for easy use of javascript.
+ * Javascript Helper class for easy use of JavaScript.
  *
- * JavascriptHelper encloses all methods needed while working with javascripts.
+ * JavascriptHelper encloses all methods needed while working with JavaScript.
  *
  * @package    cake
  * @subpackage cake.libs.helpers
@@ -61,7 +61,7 @@ class JavascriptHelper extends Helper
     }
 
     /**
-     * Returns a JavaScript include tag
+     * Returns a JavaScript include tag (LINK element)
      *
      * @param  string $url URL to JavaScript file.
      * @return string
@@ -72,7 +72,7 @@ class JavascriptHelper extends Helper
     }
 
 /**
-  * Escape carrier returns and single and double quotes for Javascript segments. 
+  * Escape carriage returns and single and double quotes for JavaScript segments. 
   * 
   * @param string $script string that might have javascript elements
   * @return string escaped string
@@ -85,7 +85,7 @@ class JavascriptHelper extends Helper
 	}
 
 /**
-  * Attach an event to an element
+  * Attach an event to an element. Used with the Prototype library.
   * 
   * @param string $object Object to be observed
   * @param string $event event to observe
@@ -100,7 +100,7 @@ class JavascriptHelper extends Helper
 
 
 /**
-  * Includes the Prototype Javascript library (and anything else) inside a single script tag
+  * Includes the Prototype Javascript library (and anything else) inside a single script tag.
   * 
   * Note: The recommended approach is to copy the contents of
   * lib/javascripts/ into your application's

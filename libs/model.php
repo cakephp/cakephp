@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Object-relational mapper.
  * 
- * Long description for file
+ * DBO-backed object data model, for mapping database tables to Cake objects.
  *
  * PHP versions 4 and 5
  *
@@ -883,7 +883,7 @@ class Model extends Object
       }
       else
       {
-      return $this->id? $this->find("id = '{$this->id}'", $fields): false;
+      return $this->id? $this->find("$this->table.id = '{$this->id}'", $fields): false;
       }
    }
 
@@ -1292,6 +1292,8 @@ class Model extends Object
                {
                    foreach ($value1 as $key2 => $value2)
                    {
+                       if($key2 === Inflector::singularize($this->table))
+                       {
                        $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = '{$value2['id']}'");
                        
                        if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
@@ -1310,6 +1312,7 @@ class Model extends Object
                        if(!empty($newdata[$count]))
                        {
                            $original[$count] = $newdata[$count];
+                       }
                        }
                    }
                    
@@ -1337,41 +1340,40 @@ class Model extends Object
                {
                    foreach ($value1 as $key2 => $value2)
                    {
-                      if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
-                      {
-                         if(!empty ($value2['id']))
-                         {
-                            $tmpSQL = "SELECT * FROM {$table}
-                                                            JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
-                                                            AND {$joineTable}.{$JoinKey2} = {$table} .id";
-                            $manyToManySelect[$table] = $this->db->all($tmpSQL);
-                         }
-                         
-                         if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
-                         {
-                            $newKey = Inflector::singularize($table);
-                            foreach ($manyToManySelect[$table] as $key => $value)
-                            {
-                               $manyToManySelect1[$table][$key] = $value[$newKey];
-                            }
-
-                            $merged = array_merge_recursive($data[$count],$manyToManySelect1);
-                            $newdata[$count] = $merged;
-                            unset( $manyToManySelect[$table] );
-                         }
-                         
-
-                         if(!empty($newdata[$count]))
-                         {
-                            $original[$count] = $newdata[$count];
-                         }
-                      }
+                       if($key2 === Inflector::singularize($this->table))
+                       {
+                           if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
+                           {
+                               if(!empty ($value2['id']))
+                               {
+                                   $tmpSQL = "SELECT * FROM {$table}
+                                              JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
+                                              AND {$joineTable}.{$JoinKey2} = {$table} .id";
+                                   $manyToManySelect[$table] = $this->db->all($tmpSQL);
+                               }
+                               
+                               if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
+                               {
+                                   $newKey = Inflector::singularize($table);
+                                   foreach ($manyToManySelect[$table] as $key => $value)
+                                   {
+                                       $manyToManySelect1[$table][$key] = $value[$newKey];
+                                   }
+                                   $merged = array_merge_recursive($data[$count],$manyToManySelect1);
+                                   $newdata[$count] = $merged;
+                                   unset( $manyToManySelect[$table] );
+                               }
+                               if(!empty($newdata[$count]))
+                               {
+                                   $original[$count] = $newdata[$count];
+                               }
+                           }
+                       }
                    }
                    $count++;
                }
                $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
            }
-           
            if(!empty($original))
            {
                $data = $original;
@@ -1401,7 +1403,7 @@ class Model extends Object
    function findCount ($conditions)
    {
       list($data) = Model::findAll($conditions, 'COUNT(*) AS count');
-      return isset($data['count'])? $data['count']: false;
+      return isset($data[0]['count'])? $data[0]['count']: false;
    }
 
 /**
@@ -1572,6 +1574,11 @@ class Model extends Object
 	     $dispField = 'id';
 
 	   return $dispField;
+	}
+
+	function getLastInsertID()
+	{
+     return $this->db->lastInsertId($this->table, 'id');
 	}
 }
 

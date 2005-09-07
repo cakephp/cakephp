@@ -2,7 +2,7 @@
 /* SVN FILE: $Id: html.php 578 2005-08-12 04:09:07Z phpnut $ */
 
 /**
- * Html Helper class file.
+ * Time Helper class file.
  *
  * PHP versions 4 and 5
  *
@@ -30,9 +30,9 @@
  */
 
 /**
- * Html Helper class for easy use of html widgets.
+ * Time Helper class for easy use of time data.
  *
- * HtmlHelper encloses all methods needed while working with html pages.
+ * Manipulation of time data.
  *
  * @package    cake
  * @subpackage cake.libs.helpers
@@ -55,28 +55,29 @@ class TimeHelper extends Helper
 	
 	
 	/**
-     * Returns a unix timestamp, given either a unix timestamp or a valid strtotime() date string.
+     * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
      *
      * @param string $date_string Datetime string
      * @return string Formatted date string
      */
-	function fromString ($date_string) {
+	function fromString ($date_string) 
+	{
     	return is_integer($date_string)
            ? $date_string
            : strtotime($date_string);
-
 	}
 
 
 	/**
      * Returns a nicely formatted date string for given Datetime string.
      *
-     * @param string $date_string Datetime string or Unix timestamp
-     * @param  boolean $return Whether this method should return a value
-     *                         or output it. This overrides AUTO_OUTPUT.
-     * @return string Formatted date string
+     * @param string $date_string 	Datetime string or Unix timestamp
+     * @param  boolean $return 		Whether this method should return a value
+     *                         		or output it. This overrides AUTO_OUTPUT.
+     * @return string 				Formatted date string
      */
-	function nice ($date_string=null,$return = false) {
+	function nice ($date_string=null, $return = false) 
+	{
 		$date = $date_string? strtotime($date_string): time();
 		$date = $date_string? $this->fromString($date_string): time();
 		$ret = date("D, M jS Y, H:i", $date);
@@ -87,6 +88,7 @@ class TimeHelper extends Helper
 
 	/**
      * Returns a formatted descriptive date string for given datetime string.
+     *
      * If the given date is today, the returned string could be "Today, 16:54".
      * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
      * If $date_string's year is the current year, the returned string does not
@@ -103,12 +105,18 @@ class TimeHelper extends Helper
 
 		$y = $this->isThisYear($date)? '': ' Y';
 
-		if ($this->isToday($date)) 
+		if ($this->isToday($date))
+		{ 
 			$ret = "Today, ".date("H:i", $date);
+		}
 		elseif ($this->wasYesterday($date))
+		{
 			$ret = "Yesterday, ".date("H:i", $date);
+		}
 		else
+		{
 			$ret = date("M jS{$y}, H:i", $date);
+		}
 			
 		return $this->output($ret, $return);
 	}
@@ -136,6 +144,7 @@ class TimeHelper extends Helper
      *
      * @param string $date_string Datetime string or Unix timestamp
      * @param string $end Datetime string or Unix timestamp
+     * @param string $field_name Name of database field to compare with
      * @param  boolean $return Whether this method should return a value
      *                         or output it. This overrides AUTO_OUTPUT.
      * @return string Partial SQL string.
@@ -158,6 +167,7 @@ class TimeHelper extends Helper
      * occurring on the same day.
      *
      * @param string $date_string Datetime string or Unix timestamp
+     * @param string $field_name Name of database field to compare with
      * @param  boolean $return Whether this method should return a value
      *                         or output it. This overrides AUTO_OUTPUT.
      * @return string Partial SQL string.
@@ -204,7 +214,7 @@ class TimeHelper extends Helper
 	
 	
     /**
-     * Returns a Unix timestamp from a textual datetime description. Wrapper for PHP function strtotime().
+     * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
      *
      * @param string $date_string Datetime string to be represented as a Unix timestamp
      * @param  boolean $return Whether this method should return a value
@@ -285,27 +295,39 @@ class TimeHelper extends Helper
 		$diff -= $minutes*60;
 		$seconds = $diff;
 	
-		if ($months>0) {
+		if ($months>0) 
+		{
 			// over a month old, just show date (mm/dd/yyyy format)
 			$ret = 'on '.date("j/n/Y", $in_seconds);
-		} else {
+		} 
+		else 
+		{
 			$relative_date='';
-			if ($weeks>0) {
+			if ($weeks>0) 
+			{
 				// weeks and days
 				$relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
 				$relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
-			} elseif ($days>0) {
+			} 
+			elseif ($days>0) 
+			{
 				// days and hours
 				$relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
 				$relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
-			} elseif ($hours>0) {
+			} 
+			elseif ($hours>0) 
+			{
 				// hours and minutes
 				$relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
 				$relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
-			} elseif ($minutes>0) {
+			} 
+			elseif ($minutes>0) 
+			{
 				// minutes only
 				$relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
-			} else {
+			} 
+			else 
+			{
 				// seconds only
 				$relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
 			}
@@ -352,7 +374,8 @@ class TimeHelper extends Helper
       $currentTime = floor(time());
       $seconds = ($currentTime - floor($date));
       
-      switch($textInterval) {
+      switch($textInterval) 
+      {
          
          case "seconds":
          case "second":
@@ -406,9 +429,12 @@ class TimeHelper extends Helper
          break;
       }
 
-      if ($timePeriod <= $numInterval) {
+      if ($timePeriod <= $numInterval) 
+      {
         $ret = true;
-      } else {
+      } 
+      else 
+      {
       	$ret = false;
       }
       

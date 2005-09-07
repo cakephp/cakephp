@@ -14,7 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 /**
- * Access Control List.
+ * Access Control List abstract class.
  * 
  * @filesource 
  * @author CakePHP Authors/Developers

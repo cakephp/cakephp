@@ -4,7 +4,7 @@
 /**
  * Number Helper.
  * 
- * Long description for file
+ * Methods to make numbers more readable.
  *
  * PHP versions 4 and 5
  *
@@ -35,6 +35,8 @@
 
 /**
  * Number helper library.
+ *
+ * Methods to make numbers more readable.
  *
  * @package cake
  * @subpackage cake.libs.helpers

@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Pear::DB layer for DBO.
+ * {@link http://pear.php.net/package/DB PEAR::DB} layer for DBO.
  * 
  * Long description for file
  *
@@ -32,14 +32,14 @@
  */
 
 /**
-  * Create an include path required Pear libraries.
+  * Create an include path required PEAR libraries.
   */
 uses('dbo');
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . PEAR);
 vendor('Pear/DB');
 
 /**
- * Short description for class.
+ * {@link http://pear.php.net/package/DB PEAR::DB} layer for DBO.
  * 
  * Long description for class
  *
@@ -114,7 +114,7 @@ class DBO_Pear extends DBO
 
 /**
   * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
-  * :WARNING: :TODO: POSTGRESQL & MYSQL ONLY! Pear::DB doesn't support universal table listing.
+  * :WARNING: :TODO: POSTGRESQL & MYSQL ONLY! PEAR::DB doesn't support universal table listing.
   *
   * @return array Array of tablenames in the database
   */
@@ -221,9 +221,13 @@ class DBO_Pear extends DBO
    function lastNumRows () 
    {
       if (method_exists($this->_result, 'numRows'))
+      {
          return $this->_result->numRows();
+      }
       else
+      {
          return false;
+      }
    }
 
 /**
@@ -246,7 +250,7 @@ class DBO_Pear extends DBO
  */
    function selectLimit ($limit, $offset='0')
    {
-      return ' '.$this->_pear->modifyLimitQuery('', $offset, $limit);
+      return ' ' . $this->_pear->modifyLimitQuery('', $offset, $limit);
    }
    
 }
