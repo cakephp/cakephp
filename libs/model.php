@@ -1306,7 +1306,10 @@ class Model extends Object
                            
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
-                           unset( $oneToManySelect[$table] );
+                           //added fix from Ticket #188
+                           //I had this in code before and removed
+                           // If this cause problems may need to look into it more -PhpNut
+                           unset( $oneToManySelect[$table], $oneToManySelect1);
                        }
                        
                        if(!empty($newdata[$count]))

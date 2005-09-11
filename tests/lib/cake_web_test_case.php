@@ -10,9 +10,14 @@
  *
  * CakePHP Test Suite <https://trac.cakephp.org/wiki/Cake/Manual/TestSuite/>
  * Copyright (c) 2005, CakePHP Test Suite Authors/Developers
+ * Author(s): Larry E. Masters aka PhpNut <phpnut@gmail.com>
  *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Portions modified from WACT Test Suite <http://www.phpwact.org>
+ * Author(s): Harry Fuecks
+ *            Jon Ramsey
+ *            Jason E. Sweat
+ *            Franco Ponticelli
+ *            Lorenzo Alberton
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
@@ -21,8 +26,8 @@
  * @author       CakePHP Test Suite Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Test Suite Authors/Developers 
  * @link         https://trac.cakephp.org/wiki/TestSuite/Authors/ Authors/Developers
- * @package      test_suite
- * @subpackage   test_suite.suite_libs
+ * @package      tests
+ * @subpackage   tests.lib
  * @since        CakePHP Test Suite v 1.0.0.0
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -31,14 +36,18 @@
  */
 
 /**
+ * Short description
+ */
+
+SimpleTestOptions::ignore('CakeWebTestCase');
+
+/**
  * Short description for class.
  * 
- * @package    test_suite
- * @subpackage test_suite.suite_libs
+ * @package    tests
+ * @subpackage tests.lib
  * @since      CakePHP Test Suite v 1.0.0.0
  */
-class TestManager {
-    var $_testExtension = '.test.php';
-    var $_groupExtension = '.group.php';
+class CakeWebTestCase extends WebTestCase {
 }
 ?>
