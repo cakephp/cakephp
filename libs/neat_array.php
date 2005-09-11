@@ -101,7 +101,11 @@ class NeatArray
         $out = is_array($this->value)? array(): null;
         foreach ($this->value as $k=>$v)
         {
-            if ($v)
+            if ($v == "0")
+            {
+                $out[$k] = $v;
+            }
+            elseif ($v)
             {
                 $out[$k] = $v;
             }

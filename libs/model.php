@@ -1306,8 +1306,8 @@ class Model extends Object
                            
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
-                           //added fix from Ticket #188
-                           //I had this in code before and removed
+                           // Added fix from Ticket #188
+                           // I had this in code before and removed
                            // If this cause problems may need to look into it more -PhpNut
                            unset( $oneToManySelect[$table], $oneToManySelect1);
                        }
@@ -1364,7 +1364,9 @@ class Model extends Object
                                    }
                                    $merged = array_merge_recursive($data[$count],$manyToManySelect1);
                                    $newdata[$count] = $merged;
-                                   unset( $manyToManySelect[$table] );
+                                   // I had this in code before and removed
+                                   // If this cause problems may need to look into it more -PhpNut
+                                   unset( $manyToManySelect[$table], $manyToManySelect1 );
                                }
                                if(!empty($newdata[$count]))
                                {
@@ -1373,10 +1375,13 @@ class Model extends Object
                            }
                        }
                    }
+                   
                    $count++;
                }
+               
                $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
            }
+           
            if(!empty($original))
            {
                $data = $original;
