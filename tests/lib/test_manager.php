@@ -91,7 +91,17 @@ class TestManager
         }
         
         $testCases =& $manager->_getTestFileList($testCasePath);
-        $test =& new GroupTest('All Tests');
+        
+        
+        $test =& new GroupTest('All Core Tests');
+        if (isset($_GET['app']))
+        {
+            $test =& new GroupTest('All App Tests');
+        }
+        else
+        {
+           $test =& new GroupTest('All Core Tests');
+        }
         
         foreach ($testCases as $testCase)
         {
@@ -391,12 +401,29 @@ class HtmlTestManager extends TestManager {
             return "<p>No test groups set up!</p>";
         }
         
-        $buffer = "<p>Available test groups:</p>\n<ul>";
-        $buffer .= "<li><a href='" . $manager->getBaseURL() . "?group=all$userApp'>All tests</a></li>\n";
+        if (isset($_GET['app']))
+        {
+            $buffer = "<p>Available App Test Groups:</p>\n<ul>";
+        }
+        else
+        {
+            $buffer = "<p>Available Core Test Groups:</p>\n<ul>";
+        }
+        
+         $buffer .= class_exists('Object')
+            ?   "<li><a href='/tests/?group=all$userApp'>All tests</a></li>\n"
+            :
+                "<li><a href='" . $manager->getBaseURL() . "?group=all$userApp'>All tests</a></li>\n";
+                
         foreach ($groupTests as $groupTest)
         {
-            $buffer .= "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}'>" .
-                        $groupTest . $userApp ."</a></li>\n";
+                        
+         $buffer .= class_exists('Object')
+            ?   "<li><a href='/tests/groups/?group={$groupTest}" . "{$userApp}'>" .
+                $groupTest . "</a></li>\n"
+            :
+                "<li><a href='" . $manager->getBaseURL() . "?group={$groupTest}" . "{$userApp}'>" .
+                $groupTest . "</a></li>\n";
         }
         return $buffer . "</ul>\n";
     }
@@ -414,12 +441,25 @@ class HtmlTestManager extends TestManager {
         if (1 > count($testCases)) {
             return "<p>No test cases set up!</p>";
         }
-        $buffer = "<p>Available test cases:</p>\n<ul>";
+        
+        if (isset($_GET['app']))
+        {
+            $buffer = "<p>Available App Test Cases:</p>\n<ul>";
+        }
+        else
+        {
+            $buffer = "<p>Available Core Test Cases:</p>\n<ul>";
+        }
+        
         foreach ($testCases as $testCaseFile => $testCase)
         {
-            $buffer .= "<li><a href='" . $manager->getBaseURL() .
-                       "?case=" . urlencode($testCase) . $userApp ."'>" .
-                       $testCase . "</a></li>\n";
+         $buffer .= class_exists('Object')
+            ?   "<li><a href='cases?case=" . urlencode($testCase) . $userApp ."'>" .
+                $testCase . "</a></li>\n"
+            :
+                "<li><a href='" . $manager->getBaseURL() .
+                "?case=" . urlencode($testCase) . $userApp ."'>" .
+                $testCase . "</a></li>\n";
         }
         return $buffer . "</ul>\n";
     }

@@ -50,23 +50,18 @@ class TestsController extends TestsHelper {
    function groups () 
    {
       $this->layout = null;
+      $_GET['show'] = 'groups';
       require_once TESTS.'index.php';
+      exit();
    }
    
    function cases () 
    {
       $this->layout = null;
+      $_GET['show'] = 'cases';
       require_once TESTS.'index.php';
+      exit();
    }
-/**
- * Runs all library and application tests
- *
- */
-//   function test_all () 
-//   {
-//      $this->layout = null;
-//      require_once SCRIPTS.'test.php';
-//   }
 }
 
 ?>

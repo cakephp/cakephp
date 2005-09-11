@@ -119,7 +119,11 @@ define('CAKE_TEST_OUTPUT_TEXT',3);
             case CAKE_TEST_OUTPUT_XML:
             break;
             case CAKE_TEST_OUTPUT_HTML:
-                echo "<p><a href='" . $_SERVER['PHP_SELF'] . "'>Run more tests</a></p>";
+                $link = class_exists('Object')
+                    ?   "<p><a href='/tests/'>Run more tests</a></p>\n"
+                    :
+                        "<p><a href='" . $_SERVER['PHP_SELF'] . "'>Run more tests</a></p>\n";
+                echo $link;
             break;
             
             case CAKE_TEST_OUTPUT_TEXT:
