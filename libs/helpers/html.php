@@ -258,7 +258,6 @@ class HtmlHelper extends Helper
 	function password($fieldName, $htmlAttributes = null, $return = false)
 	{
 		$this->setFormTag($fieldName);
-		$htmlAttributes['size'] = $size;
 
 		if (empty($htmlAttributes['value']))
 		{
