@@ -286,14 +286,11 @@ class HtmlHelper extends Helper
 	function textarea($fieldName, $htmlAttributes = null, $return = false)
 	{
 		$this->setFormTag($fieldName);
-
-		if (empty($htmlAttributes['value']))
+		$value = $this->tagValue($fieldName);
+		
+		if(!empty($htmlAttributes['value']) && !$value)
 		{
-			$value = $this->tagValue($fieldName);
-		}
-		else
-		{
-			$value = empty($htmlAttributes['value']);
+		    $value = $htmlAttributes['value'];
 		}
 
 		if ($this->tagIsInvalid($this->model, $this->field))
@@ -761,7 +758,7 @@ class HtmlHelper extends Helper
      * @return     mixed   Either string or boolean value, depends on AUTO_OUTPUT
      *                     and $return.
      */
-	function charsetTag($charset, $return)
+	function charsetTag($charset, $return = false)
 	{
 		return $this->charset($charset, $return);
 	}

@@ -558,11 +558,11 @@ class Model extends Object
       
       if(!$this->classRegistry->isKeySet($collectionKey))
       {
-          $this->$modelName =& new $modelName();
+          $this->{$modelName} =& new $modelName();
       }
       else
       {
-          $this->$modelName =& $this->classRegistry->getObject($collectionKey); 
+          $this->{$modelName} =& $this->classRegistry->getObject($collectionKey); 
       }
       
       $this->{$joined}[] =& $this->$modelName;
@@ -969,7 +969,7 @@ class Model extends Object
       {
         if(isset($weHaveMulti) && $count > 0 && !empty($this->_manyToMany))
         {
-            $joined = array($v);
+            $joined[] = $v;
         }
         else
         {
@@ -1076,8 +1076,6 @@ class Model extends Object
  */
    function _saveMulti ($joined, $id) 
    {
-       $sql = array();
-       
        foreach ($joined as $x => $y)
        {
            foreach ($y as $name => $value)
@@ -1085,28 +1083,40 @@ class Model extends Object
                $tableSort[0] = $this->table;
                $tableSort[1] = $name;
                sort($tableSort);
-               $joinTable = $tableSort[0] . '_' . $tableSort[1];
+               $joinTable[] = $tableSort[0] . '_' . $tableSort[1];
                $mainKey = Inflector::singularize($this->table) . '_id';
                
-               $key[] = $mainKey;
-               $key[] = Inflector::singularize($name) . '_id';
-               $fields = join(',', $key);
+               $keys[] = $mainKey;
+               $keys[] = Inflector::singularize($name) . '_id';
+               $fields[] = join(',', $keys);
+               unset($keys);
                
                foreach ($value as $update)
                {
-                   $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id); 
-                   $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update); 
-                   $values = join(',', $values);
-                   $newValue[] = "({$values})";
-                   unset($values);
-                   
+                   if(!empty($update))
+                   {
+                       $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id); 
+                       $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update); 
+                       $values = join(',', $values);
+                       $newValues[] = "({$values})";
+                       unset($values);
+                   }
                }
-               $this->db->query("DELETE FROM {$joinTable} WHERE $mainKey = '{$id}'");
+               if(!empty($newValues))
+               {
+                   $newValue[] = join(',', $newValues);
+                   unset($newValues);
+               }
            }
-           
-           $newValue = join(',', $newValue);
-           $this->db->query("INSERT INTO {$joinTable} ({$fields}) VALUES {$newValue}");
-
+       }
+       
+       for ($count = 0; $count < count($joinTable); $count++) 
+       {
+           $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+           if(!empty($newValue[$count]))
+           {
+               $this->db->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+           }
        }
    }
    
@@ -1296,37 +1306,45 @@ class Model extends Object
                        {
                        $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = '{$value2['id']}'");
                        
-                       if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
-                       {
-                           $newKey = Inflector::singularize($table);
-                           foreach ($oneToManySelect[$table] as $key => $value)
+                           if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
                            {
-                               $oneToManySelect1[$table][$key] = $value[$newKey];
+                               $newKey = Inflector::singularize($table);
+                               foreach ($oneToManySelect[$table] as $key => $value)
+                               {
+                                   $oneToManySelect1[$table][$key] = $value[$newKey];
+                               }
+                               $merged = array_merge_recursive($data[$count],$oneToManySelect1);
+                               $newdata[$count] = $merged;
+                               unset( $oneToManySelect[$table], $oneToManySelect1);
                            }
-                           
-                           $merged = array_merge_recursive($data[$count],$oneToManySelect1);
-                           $newdata[$count] = $merged;
-                           // Added fix from Ticket #188
-                           // I had this in code before and removed
-                           // If this cause problems may need to look into it more -PhpNut
-                           unset( $oneToManySelect[$table], $oneToManySelect1);
-                       }
-                       
-                       if(!empty($newdata[$count]))
-                       {
-                           $original[$count] = $newdata[$count];
-                       }
+                           if(!empty($newdata[$count]))
+                           {
+                               $original[$count] = $newdata[$count];
+                           }
                        }
                    }
-                   
                    $count++;
+               }
+               if(empty($newValue2) && !empty($original))
+               {
+                   for ($i = 0; $i< count($original); $i++) 
+                   {
+                       $newValue2[$i] = $original[$i];
+                   }
+               }
+               elseif(!empty($original))
+               {
+                   for ($i = 0; $i< count($original); $i++) 
+                   {
+                       $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
+                   }
                }
                $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
            }
-           if(!empty($original))
+           if(!empty($newValue))
            {
-               
-               $data = $original;
+               $data = $newValue;
+               unset($newValue);
            }
        }
 
@@ -1355,39 +1373,47 @@ class Model extends Object
                                    $manyToManySelect[$table] = $this->db->all($tmpSQL);
                                }
                                
-                               if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
-                               {
-                                   $newKey = Inflector::singularize($table);
-                                   foreach ($manyToManySelect[$table] as $key => $value)
-                                   {
-                                       $manyToManySelect1[$table][$key] = $value[$newKey];
-                                   }
-                                   $merged = array_merge_recursive($data[$count],$manyToManySelect1);
-                                   $newdata[$count] = $merged;
-                                   // I had this in code before and removed
-                                   // If this cause problems may need to look into it more -PhpNut
-                                   unset( $manyToManySelect[$table], $manyToManySelect1 );
-                               }
-                               if(!empty($newdata[$count]))
-                               {
-                                   $original[$count] = $newdata[$count];
-                               }
+                                    if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
+                                    {
+                                        $newKey = Inflector::singularize($table);
+                                        foreach ($manyToManySelect[$table] as $key => $value)
+                                        {
+                                            $manyToManySelect1[$table][$key] = $value[$newKey];
+                                        }
+                                        $merged = array_merge_recursive($data[$count],$manyToManySelect1);
+                                        $newdata[$count] = $merged;
+                                        unset( $manyToManySelect[$table], $manyToManySelect1 );
+                                    }
+                                    if(!empty($newdata[$count]))
+                                    {
+                                        $original[$count] = $newdata[$count];
+                                    }
                            }
                        }
                    }
-                   
                    $count++;
                }
-               
+               if(empty($newValue2) && !empty($original))
+               {
+                   for ($i = 0; $i< count($original); $i++) 
+                   {
+                       $newValue2[$i] = $original[$i];
+                   }
+               }
+               elseif(!empty($original))
+               {
+                   for ($i = 0; $i< count($original); $i++) 
+                   {
+                       $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
+                   }
+               }
                $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
            }
-           
-           if(!empty($original))
+           if(!empty($newValue))
            {
-               $data = $original;
+               $data = $newValue;
            }
        }
-       
        return $data;
    }
 
