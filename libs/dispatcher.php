@@ -116,11 +116,9 @@ class Dispatcher extends Object
       }
       else
       {
-         // create controller
          $controller = new $ctrlClass($this);
       }
 
-      // if action is not set, and the default Controller::index() method doesn't exist
       if (empty($params['action']))
       {
          if (method_exists($controller, 'index'))
@@ -129,55 +127,47 @@ class Dispatcher extends Object
          }
          else
          {
-            // Check to see if controller is scaffolded		
-            $classVars = get_object_vars($controller);
-            foreach ($classVars as $name => $value)
-            {
-               if($name === 'scaffold')
-               {
-                  if (empty($params['action'])) 
-                  {
-                     $params['action'] = 'index';
-                  }
-                  $this->scaffoldView($url, $ctrlClass, $params);
-                  exit;
-               }
-            }
             $missingAction = true;
          }
       }
 
-      // if the requested action doesn't exist
       if (!method_exists($controller, $params['action']))
       {
-         // Check to see if controller is scaffolded	
-         $classVars = get_object_vars($controller);
-         foreach ($classVars as $name => $value)
-         {
-            if($name === 'scaffold')
-            {
-               $this->scaffoldView($url, $ctrlClass, $params);
-               exit;
-            }
-         }
          $missingAction = true;
       }
-
-      if ($missingAction)
-      {
-         $controller->missingAction = $params['action'];
-         $params['action'] = 'missingAction';
-      }
-
-      // initialize the controller
+      
       $controller->base        = $this->base;
       $controller->here        = $this->base.'/'.$url;
       $controller->params      = $params;
       $controller->action      = $params['action'];
       $controller->data        = empty($params['data'])? null: $params['data'];
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
+      
+      foreach (get_object_vars($controller) as $name => $value)
+      {
+          if(($name === 'scaffold' && $missingAction === true) 
+              || ($name === 'scaffold' && !empty($params['action'])))
+          {
+              if (!method_exists($controller, $params['action']))
+              { 
+                  if(empty($params['action']))
+                  {
+                      $params['action'] = 'index';
+                  }
+                  $this->scaffoldView($url, $controller, $params);
+                  exit;
+              }
+          }
+      }
+      
       $controller->contructClasses();
-      // EXECUTE THE REQUESTED ACTION
+      
+      if ($missingAction)
+      {
+          $params['action'] = 'missingAction';
+          $controller->missingAction = $params['action'];
+      }
+
       call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
 
       $isFatal = isset($controller->isFatal) ? $controller->isFatal : false;
@@ -376,16 +366,17 @@ class Dispatcher extends Object
   * @param array $params
   * @since Cake v 0.10.0.172
   */
-   function scaffoldView ($url, $controller_class, $params)
+   function scaffoldView ($url, &$controller_class, $params)
    {
-      if($params['action'] === 'index'  || $params['action'] === 'list' ||
+       $isDataBaseSet = DboFactory::getInstance($controller_class->useDbConfig);
+       if(!empty($isDataBaseSet))
+       {
+       if($params['action'] === 'index'  || $params['action'] === 'list' ||
          $params['action'] === 'show'   || $params['action'] === 'new' || 
          $params['action'] === 'create' || $params['action'] === 'edit' ||  
          $params['action'] === 'update' || $params['action'] === 'destroy')
          {
-            $scaffolding = new Scaffold($controller_class, $params);
-            $scaffolding->base = $this->base;
-            $scaffolding->constructClasses($params);
+            $scaffolding =& new Scaffold($controller_class);
             
             switch ($params['action'])
             {
@@ -424,9 +415,14 @@ class Dispatcher extends Object
          } 
          else
          {
-            $this->errorUnknownAction($url, $controller_class, $params['action']);
+            $this->errorUnknownAction($url, get_class($controller_class), $params['action']);
          }
          exit;
+       }
+       else
+       {
+           call_user_func_array(array(&$controller_class, 'missingDatabase'), null);
+       }
    }
 }
 ?>

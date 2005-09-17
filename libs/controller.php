@@ -342,23 +342,7 @@ class Controller extends Object
      */
     function render($action=null, $layout=null, $file=null)
     {
-        $view                =  View::getInstance();
-        $view->_viewVars     =& $this->_viewVars;
-        $view->action        =& $this->action;
-        $view->autoLayout    =& $this->autoLayout;
-        $view->autoRender    =& $this->autoRender;
-        $view->base          =& $this->base;
-        $view->helpers       =& $this->helpers;
-        $view->here          =& $this->here;
-        $view->layout        =& $this->layout;
-        $view->models        =& $this->models;
-        $view->name          =& $this->name;
-        $view->pageTitle     =& $this->pageTitle;
-        $view->parent        =& $this->parent;
-        $view->viewPath      =& $this->viewPath;
-        $view->params        =& $this->params;
-        $view->data          =& $this->data;
-        $view->displayFields =& $this->displayFields;
+        $view =& new View($this);
 
         if(!empty($this->models))
         {
@@ -403,6 +387,12 @@ class Controller extends Object
     {
         //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingView');
+    }
+    
+    function missingDatabase()
+    {
+        //We are simulating action call below, this is not a filename!
+        $this->render('../errors/missingDatabase');
     }
 
     //   /**

@@ -1,0 +1,19 @@
+<h1>Scaffold Requires a Database Connection</h1>
+
+<p class="error">Missing Database Connection
+</p>  
+
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_database.thtml</code>
+view file, a user-customizable error page for handling errors within CakePHP.</span>
+</p>
+
+<?if (DEBUG>1):?>
+<h2>Controller dump:</h2>
+<pre>
+<? 
+unset($this->db);
+print_r($this); 
+?>
+</pre>
+<?endif?>

@@ -780,7 +780,7 @@ class Model extends Object
    function set ($one, $two=null) 
    {
       $this->validationErrors = null;
-      $data = is_array($one)? array($this->table=>$one) : array($one=>$two);
+      $data = is_array($one)? $one : array($one=>$two);
 
       foreach ($data as $n => $v) 
       {

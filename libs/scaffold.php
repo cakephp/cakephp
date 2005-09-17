@@ -105,33 +105,16 @@ class Scaffold extends Object {
 	 * @param string $controller_class Name of controller
 	 * @param array $params
 	 */
-	function __construct($controller_class, $params)
+	function __construct(&$controller_class)
 	{
-		$this->clazz = $controller_class;
-		$this->actionView = $params['action'];
-
-		$r = null;
-		if (!preg_match('/(.*)Controller/i', $this->clazz, $r))
-		{
-			die("Scaffold::__construct() : Can't get or parse class name.");
-		}
-		$this->modelKey = Inflector::underscore(Inflector::singularize($r[1]));
+		$this->controllerClass =& $controller_class;
+		$this->clazz =& $controller_class->name;
+		$this->actionView =& $controller_class->action;
+		$this->modelKey = Inflector::underscore(Inflector::singularize($this->clazz));
 		$this->scaffoldTitle = Inflector::humanize($this->modelKey);
-	}
-
-	/**
-	 * Set up a new class with the given settings.
-	 *
-	 * @param array $params
-	 */
-	function constructClasses($params)
-	{
-		$this->controllerClass = new $this->clazz();
-		$this->controllerClass->base = $this->base;
-		$this->controllerClass->params = $params;
-		$this->controllerClass->contructClasses();
 		$this->controllerClass->layout = 'scaffold';
 		$this->controllerClass->pageTitle = $this->scaffoldTitle;
+		$this->controllerClass->contructClasses();
 	}
 
 	/**

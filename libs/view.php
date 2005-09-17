@@ -175,13 +175,38 @@ class View extends Object
  * @var boolean
  */
    var $modelsLoaded = false;
+   
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ */
+   var $controller = null;
 
 /**
  * Constructor
  *
  * @return View
  */
-   function View(){
+   function View(&$controller)
+   {
+        $this->controller    =& $controller;
+        $this->_viewVars     =& $this->controller->_viewVars;
+        $this->action        =& $this->controller->action;
+        $this->autoLayout    =& $this->controller->autoLayout;
+        $this->autoRender    =& $this->controller->autoRender;
+        $this->base          =& $this->controller->base;
+        $this->helpers       =& $this->controller->helpers;
+        $this->here          =& $this->controller->here;
+        $this->layout        =& $this->controller->layout;
+        $this->models        =& $this->controller->models;
+        $this->name          =& $this->controller->name;
+        $this->pageTitle     =& $this->controller->pageTitle;
+        $this->parent        =& $this->controller->parent;
+        $this->viewPath      =& $this->controller->viewPath;
+        $this->params        =& $this->controller->params;
+        $this->data          =& $this->controller->data;
+        $this->displayFields =& $this->controller->displayFields;
    }
 
 /**
@@ -414,6 +439,7 @@ class View extends Object
    function missingController()
    {
       //We are simulating action call below, this is not a filename!
+      $this->missingController = $this->name;
       $this->render('../errors/missingController');
    }
 
@@ -424,6 +450,7 @@ class View extends Object
    function missingAction()
    {
       //We are simulating action call below, this is not a filename!
+      $this->missingAction = $this->name;
       $this->render('../errors/missingAction');
    }
 
@@ -434,6 +461,7 @@ class View extends Object
    function missingView()
    {
       //We are simulating action call below, this is not a filename!
+      $this->missingView = $this->name;
       $this->render('../errors/missingView');
    }
 
