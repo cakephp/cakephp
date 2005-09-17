@@ -265,7 +265,7 @@ class HtmlHelper extends Helper
 		}
 
 		return $this->output(sprintf($this->tags['password'], $this->model, $this->field,
-		$this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+		$this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
 	}
 
 
@@ -321,7 +321,7 @@ class HtmlHelper extends Helper
 		$this->tagValue($fieldName)? $htmlAttributes['checked'] = 'checked': null;
 		$title = $title? $title: ucfirst($fieldName);
 		return $this->output(sprintf($this->tags['checkbox'], $this->model, $this->field,
-		$this->field, $this->field,
+		$this->field,
 		$this->_parseAttributes($htmlAttributes, null, '', ' '), $title), $return);
 	}
 
@@ -454,7 +454,7 @@ class HtmlHelper extends Helper
 		}
 
 		return $this->output(sprintf($this->tags['input'], $this->model, $this->field,
-		$this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+		$this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
 	}
 
 	/**

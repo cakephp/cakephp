@@ -758,7 +758,7 @@ class Model extends Object
    {
       if (!in_array(strtolower($table_name), $this->db->tables())) 
       {
-         $this->_throwMissingModel($table_name);
+         $this->_throwMissingTable($table_name);
          die();
       }
       else
@@ -1331,6 +1331,10 @@ class Model extends Object
                    {
                        $newValue[$i] = $original[$i];
                    }
+                   if(count($this->_oneToMany < 2))
+                   {
+                       $newValue = $newValue2;
+                   }
                }
                elseif(!empty($original))
                {
@@ -1398,6 +1402,10 @@ class Model extends Object
                    for ($i = 0; $i< count($original); $i++) 
                    {
                        $newValue2[$i] = $original[$i];
+                   }
+                   if(count($this->_manyToMany < 2))
+                   {
+                       $newValue = $newValue2;
                    }
                }
                elseif(!empty($original))
