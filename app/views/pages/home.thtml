@@ -1,10 +1,10 @@
 <h1>CakePHP <em>Works!</em></h1><br/>
 <hr/>
-Your database configuration file is <?= file_exists(CONFIGS.'database.php') ? 'present.'. $filePresent = ' ' : 'not present.';?><br/>
-<? $db = DboFactory::getInstance(); ?>
-<? if (!empty($filePresent)):?>
-Cake <?=$db->connected ? "is able to" : "is not able to" ?> connect to the database.
-<?endif?>
+Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ? 'present.'. $filePresent = ' ' : 'not present.';?><br/>
+<?php $db = DboFactory::getInstance(); ?>
+<?php if (!empty($filePresent)):?>
+Cake <?php echo $db->connected ? "is able to" : "is not able to" ?> connect to the database.
+<?php endif; ?>
 <hr/>
 <br/>
 <h2>Editing <em>this Page</em></h2>
@@ -19,10 +19,10 @@ To change the content of this page, edit <code>/app/views/pages/home.thtml</code
 
 <h2>Get <em>Involved</em></h2>
 <p>Cake PHP needs you! We have an active user base and are always open to new bug reports or feature ideas!</p><br/>
-<?=$html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.<br/>
-<?=$html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.<br/>
-<?=$html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.<br/>
-<?=$html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.<br/>
+<?php echo $html->linkOut('Google Group','http://groups-beta.google.com/group/cake-php')?> &ndash; for public discussions about everything Cake.<br/>
+<?php echo $html->linkOut('Wiki','https://trac.cakephp.org/wiki')?> &ndash; fastest way of getting newest information on Cake PHP.<br/>
+<?php echo $html->linkOut('Report a bug or feature request','https://trac.cakephp.org/newticket')?>.<br/>
+<?php echo $html->linkOut('Roadmap','https://trac.cakephp.org/roadmap')?> &ndash; check our plans for the bright future.<br/>
 #cakephp on irc.euirc.net for quick help<br/>
 </p>
 <br/>

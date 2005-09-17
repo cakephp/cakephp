@@ -3,7 +3,7 @@ uses('helpers/form');
 
 $form = new FormHelper();
 
-	echo $html->formTag('/'.$this->name.'/create');
+	echo $html->formTag('/'.Inflector::underscore($this->name).'/create');
 
 	echo $form->generateFields( $html, $fieldNames );
 

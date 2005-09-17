@@ -116,9 +116,11 @@ class AjaxHelper extends Helper
 	{
 		// mouse click should call our remote function
 		$html_options['onclick'] = $this->remoteFunction($html, $options);
+		
+		$href = (!empty($options['fallback'])) ? $options['fallback'] : '#';
 
 		// generate actual link
-		return $html->link($title, '#', $html_options);
+		return $html->link($title, $href, $html_options);
 	}
 
 	/**
@@ -142,19 +144,20 @@ class AjaxHelper extends Helper
 
 		if (isset($options['before'])) 
 		{
-			$func .= "{$options['before']}; $function";
+			$func = "{$options['before']}; $function";
 		}
 		if (isset($options['after'])) 
 		{
-			$func .= "$func; {$options['before']};";
+			$func = "$func; {$options['before']};";
 		}
 		if (isset($options['condition'])) 
 		{
-			$func .= "if ({$options['condition']}) { $func; }";
+			$func = "if ({$options['condition']}) { $func; }";
 		}
 		if (isset($options['confirm'])) 
 		{
-			$func .= "if (confirm('" . $this->escapeScript($options['confirm']) . "')) { $func; }";
+			$js = new JavascriptHelper;
+			$func = "if (confirm('" . $js->escapeScript($options['confirm']) . "')) { $func; } else { return false; }";
 		}
 		return $func;
 	}

@@ -2,9 +2,8 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Convenience class for handling directories.
  * 
- * Long description for file
  *
  * PHP versions 4 and 5
  *

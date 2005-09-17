@@ -2,9 +2,8 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Convenience class for reading, writing and appending to files.
  * 
- * Long description for file
  *
  * PHP versions 4 and 5
  *
@@ -33,9 +32,8 @@
 
 
 /**
- * Short description for class
+ * Convenience class for reading, writing and appending to files.
  *
- * Long description for class
  *
  * @package    cake
  * @subpackage cake.libs
@@ -44,16 +42,16 @@
 class File
 {
 /**
- * Enter description here...
+ * Path to file
  *
- * @var unknown_type
+ * @var string
  */
    var $path = null;
    
 /**
- * Enter description here...
+ * Constructor
  *
- * @param unknown_type $path
+ * @param string $path
  * @return File
  */
    function File ($path)
@@ -62,9 +60,9 @@ class File
    }
    
 /**
- * Enter description here...
+ * Return the contents of this File as a string.
  *
- * @return unknown
+ * @return string Contents
  */
    function read ()
    {
@@ -72,10 +70,10 @@ class File
    }
    
 /**
- * Enter description here...
+ * Append given data string to this File.
  *
- * @param unknown_type $data
- * @return unknown
+ * @param string $data Data to write
+ * @return boolean Success
  */
    function append ($data)
    {
@@ -83,11 +81,11 @@ class File
    }
    
 /**
- * Enter description here...
+ * Write given data to this File. 
  *
- * @param unknown_type $data
- * @param unknown_type $mode
- * @return unknown
+ * @param string $data	Data to write to this File.
+ * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
+ * @return boolean Success
  */
    function write ($data, $mode = 'w')
    {

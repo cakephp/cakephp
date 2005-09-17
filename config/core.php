@@ -36,6 +36,9 @@
  * - 0: production
  * - 1: development
  * - 2: full debug with sql
+ *
+ * In production, the "flash messages" redirect after a time interval. 
+ * With the other debug levels you get to click the "flash message" to continue.
  */
 define('DEBUG', 1);
 

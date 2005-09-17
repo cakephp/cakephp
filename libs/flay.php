@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Text-to-HTML parser.
  * 
- * Long description for file
+ * Text-to-html parser, similar to {@link http://textism.com/tools/textile/ Textile} or {@link http://www.whytheluckystiff.net/ruby/redcloth/ RedCloth}.
  *
  * PHP versions 4 and 5
  *
@@ -37,7 +37,7 @@
 uses('object');
 
 /**
- * Short description for class
+ * Text-to-HTML parser.
  *
  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax. 
  *
@@ -49,14 +49,14 @@ uses('object');
 class Flay extends Object
 {
 /**
-  * Enter description here...
+  * Text to be parsed.
   *
   * @var string
   */
    var $text = null;
 
 /**
-  * Enter description here...
+  * Set this to allow HTML in the markup.
   *
   * @var boolean
   */
@@ -65,7 +65,7 @@ class Flay extends Object
 /**
   * Constructor.
   *
-  * @param unknown_type $text
+  * @param string $text
   */
    function __construct ($text=null) 
    {
@@ -74,10 +74,10 @@ class Flay extends Object
    }
 
 /**
-  * Returns $text translated to HTML using the Flay syntax. 
+  * Returns given text translated to HTML using the Flay syntax. 
   *
-  * @param string $text Text to format
-  * @param boolean $bare 
+  * @param string $text 	String to format
+  * @param boolean $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
   * @param boolean $allowHtml Set this to trim whitespace and disable all HTML
   * @return string Formatted text
   */
@@ -85,15 +85,21 @@ class Flay extends Object
    {
 
       if (empty($text) && empty($this->text))
+      {
          return false;
+      }
 
       $text = $text? $text: $this->text;
 
       // trim whitespace and disable all HTML
       if ($allowHtml)
+      {
          $text = trim($text);
+      }
       else
+      {
          $text = str_replace('<', '&lt;', str_replace('>', '&gt;', trim($text)));
+      }
 
       if (!$bare) 
       {
@@ -195,9 +201,13 @@ class Flay extends Object
                         if (isset($regs[2]))
                         {
                            if (preg_match('#\.(jpg|jpeg|gif|png)$#', $regs[2]))
+                           {
                               $body = "<img src=\"{$prefix}{$regs[2]}\" alt=\"\" />";
+                           }
                            else
+                           {
                               $body = $regs[2];
+                           }
    
                         }
                         else 
@@ -235,10 +245,10 @@ class Flay extends Object
    }
 
 /**
- * Enter description here...
+ * Return the words of the string as an array.
  *
- * @param unknown_type $string
- * @return unknown
+ * @param string $string
+ * @return array Array of words
  */
    function extractWords ($string) 
    {
@@ -246,12 +256,13 @@ class Flay extends Object
    }
 
 /**
- * Enter description here...
+ * Return given string with words in array colorMarked, up to a number of times (defaults to 5).
  *
- * @param unknown_type $words
- * @param unknown_type $string
- * @param unknown_type $max_snippets
- * @return unknown
+ * @param array $words			Words to look for and markup
+ * @param string $string		String to look in
+ * @param integer $max_snippets	Max number of snippets to extract
+ * @return string
+ * @see colorMark
  */
    function markedSnippets ($words, $string, $max_snippets=5) 
    {
@@ -265,7 +276,9 @@ class Flay extends Object
          if (preg_match_all("/[\s,]+.{0,40}{$word}.{0,40}[\s,]+/i", $rest, $r)) 
          {
             foreach ($r as $result)
+            {
                $rest = str_replace($result, '', $rest);
+            }
             $snips = array_merge($snips, $r[0]);
          }
       }
@@ -275,17 +288,17 @@ class Flay extends Object
       	 $snips = array_slice($snips, 0, $max_snippets);
       }
       $joined = join(' <b>...</b> ', $snips);
-      $snips = $joined? "<b>...</b> {$joined} <b>...</b>": substr($string, 0, 80).'<b>...</b>';
+      $snips = $joined? "<b>...</b> {$joined} <b>...</b>": substr($string, 0, 80) . '<b>...</b>';
 
       return Flay::colorMark($words, $snips);
    }
 
 /**
- * Enter description here...
+ * Returns string with EM elements with color classes added.
  *
- * @param unknown_type $words
- * @param unknown_type $string
- * @return unknown
+ * @param array $words 		Array of words to be colorized
+ * @param string $string 	Text in which the words might be found
+ * @return string 
  */
    function colorMark($words, $string) 
    {
@@ -294,52 +307,58 @@ class Flay extends Object
       $nextColorIndex = 0;
       foreach ($words as $word) 
       {
-         $string = preg_replace("/({$word})/i", '<em class="'.$colors[$nextColorIndex%count($colors)]."\">\\1</em>", $string);
+         $string = preg_replace("/({$word})/i", '<em class="' . $colors[$nextColorIndex%count($colors)] . "\">\\1</em>", $string);
          $nextColorIndex++;
       }
 
       return $string;
    }
-
+	
 /**
- * Enter description here...
+ * Returns given text with tags stripped out.
  *
- * @param unknown_type $text
- * @return unknown
+ * @param string $text
+ * @return string
  */
    function toClean ($text) 
    {
       return strip_tags(html_entity_decode($text, ENT_QUOTES));
    }
    
+/**
+ * Return parsed text with tags stripped out.
+ *
+ * @param string $text
+ * @return string
+ */   
    function toParsedAndClean ($text)
    {
       return Flay::toClean(Flay::toHtml($text));
    }
 
 /**
- * Enter description here...
+ * Return a fragment of a text, up to $length characters long, with an ellipsis after it.
  *
- * @param unknown_type $text
- * @param unknown_type $length
- * @param unknown_type $elipsis
- * @return unknown
+ * @param string $text		Text to be truncated.
+ * @param integer $length	Max length of text.
+ * @param string $ellipsis	Sign to print after truncated text.
+ * @return string
  */
-   function fragment ($text, $length, $elipsis='...') 
+   function fragment ($text, $length, $ellipsis='...') 
    {
-      $soft=$length-5;
-      $hard=$length+5;
-      $rx = '/(.{'.$soft.','.$hard.'})[\s,\.:\/="!\(\)<>~\[\]]+.*/';
+      $soft = $length - 5;
+      $hard = $length + 5;
+      $rx = '/(.{' . $soft . ',' . $hard . '})[\s,\.:\/="!\(\)<>~\[\]]+.*/';
       if (preg_match($rx, $text, $r)) 
       {
          $out = $r[1];
       }
       else 
       {
-         $out = substr($text,0,$length);
+         $out = substr($text, 0, $length);
       }
 
-      $out = $out.(strlen($out)<strlen($text)? $elipsis: null);
+      $out = $out . (strlen($out)<strlen($text)? $ellipsis: null);
       return $out;
    }
 }

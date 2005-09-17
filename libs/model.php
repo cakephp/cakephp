@@ -780,7 +780,7 @@ class Model extends Object
    function set ($one, $two=null) 
    {
       $this->validationErrors = null;
-      $data = is_array($one)? $one: array($one=>$two);
+      $data = is_array($one)? array($this->table=>$one) : array($one=>$two);
 
       foreach ($data as $n => $v) 
       {
@@ -792,21 +792,17 @@ class Model extends Object
                trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
          }
 */
-         //$n == 'id'? $this->setId($v): $this->data[$n] = $v;
-
          foreach ($v as $x => $y)
          {
-         			//$x == 'id'? $this->id = $y: $this->data[$n][$x] = $y;
-         			if($x == 'id')
-         			{
-         			$this->id = $y;
-         			}
-         		$this->data[$n][$x] = $y;	
-         			
+             if($x == 'id')
+             {
+                 $this->id = $y;
+             }
+             $this->data[$n][$x] = $y;	
          }
       }
       return $data;
-    }
+   }
 
 /**
  * Sets current Model id to given $id.
@@ -815,7 +811,7 @@ class Model extends Object
  */
    function setId ($id) 
    {
-      $this->id[0] = $id;
+      $this->id = $id;
       
       if(!empty($this->_belongsToOther))
       {
@@ -1329,7 +1325,7 @@ class Model extends Object
                {
                    for ($i = 0; $i< count($original); $i++) 
                    {
-                       $newValue2[$i] = $original[$i];
+                       $newValue[$i] = $original[$i];
                    }
                }
                elseif(!empty($original))

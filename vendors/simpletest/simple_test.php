@@ -30,7 +30,15 @@
 	 *    @subpackage	UnitTester
      */
     class SimpleTestCase {
+    	/**
+    	  * @var string Name of the test.
+    	  * @access private
+    	  */
         var $_label = false;
+        /**
+          * @var SimpleRunner Test runner.
+          * @access private
+          */
         var $_runner = false;
 
         /**
@@ -536,6 +544,8 @@
          *    Sets the name of the test suite and error message.
          *    @param string $label    Name sent at the start and end
          *                            of the test.
+         *    @param string $error    
+         *                            
          *    @access public
          */
         function BadGroupTest($label, $error) {

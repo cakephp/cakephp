@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Library of array functions for Cake.
  * 
- * Long description for file
+ * Internal use only.
  *
  * PHP versions 4 and 5
  *
@@ -32,7 +32,7 @@
  */
 
 /**
- * Class used for internal manipulation of multiarrays (arrays of arrays).
+ * Class used for internal manipulation of multi-dimensional arrays (arrays of arrays).
  *
  * Long description for class
  *
@@ -63,7 +63,7 @@ class NeatArray
     }
 
     /**
-     * Finds and returns records with $fieldName equal $value from this NeatArray.
+     * Finds and returns records with $fieldName equal to $value from this NeatArray.
      *
      * @param string $fieldName
      * @param string $value
@@ -91,7 +91,7 @@ class NeatArray
     }
 
     /**
-     * Checks if $this->value is array, and removes all empty elements.
+     * Checks if $this->value is an array, and removes all empty elements.
      *
      * @access public
      * @uses NeatArray::value
@@ -114,7 +114,7 @@ class NeatArray
     }
 
     /**
-     * Adds elements from the supplied array to itself.
+     * Adds elements from given array to itself.
      *
      * @param string $value 
      * @return bool
@@ -169,10 +169,10 @@ class NeatArray
     }
 
     /**
-     * Performs an array_filter() on the contents.
+     * Performs an array_filter() on the contents of this NeatArray.
      *
-     * @param unknown_type $with
-     * @return unknown
+     * @param string $with Name of callback function to perform on each element of this NeatArray.
+     * @return array
      */
     function filter ($with)
     {
@@ -180,9 +180,10 @@ class NeatArray
     }
 
     /**
-     * Passes each of its values through a specified function or method. Think of PHP's array_walk.
+     * Passes each of its values through a specified function or method. Think of PHP's {@link http://php.net/array_walk array_walk()}.
      *
-     * @return array
+     * @param string $with Name of callback function
+     * @return array Returns value of NeatArray::value
      * @access public
      * @uses NeatArray::value
      */
@@ -193,10 +194,10 @@ class NeatArray
     }
 
     /**
-     * Enter description here...
+     * Apply $template to all elements of this NeatArray, and return the array itself.
      *
-     * @param unknown_type $template
-     * @return unknown
+     * @param string $template {@link http://php.net/sprintf sprintf()}-compatible string to be applied to all values of this NeatArray.
+     * @return array
      */
     function sprintf($template)
     {
@@ -306,12 +307,13 @@ class NeatArray
 
     /**
      * Enter description here...
+     * @todo Explain this function. almost looks like it creates a tree
      *
-     * @param unknown_type $root
-     * @param unknown_type $idKey
-     * @param unknown_type $parentIdKey
-     * @param unknown_type $childrenKey
-     * @return unknown
+     * @param string $root
+     * @param string $idKey
+     * @param string $parentIdKey
+     * @param string $childrenKey
+     * @return array
      */
     function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children')
     {

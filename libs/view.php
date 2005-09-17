@@ -2,9 +2,8 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Methods for displaying presentation data
  * 
- * Long description for file
  *
  * PHP versions 4 and 5
  *
@@ -63,7 +62,7 @@ class View extends Object
    var $here = null;
 
 /**
- * Enter description here...
+ * Not used. 2005-09
  *
  * @var unknown_type
  * @access public

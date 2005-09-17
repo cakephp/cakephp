@@ -1,5 +1,6 @@
 <?php
    $modelName = Inflector::singularize($this->name);
+   $modelKey = Inflector::underscore($modelName);
    $registry = ClassRegistry::getInstance();
 
 ?>
@@ -11,9 +12,9 @@
          $displayField = $otherModelObject->getDisplayField();
          $displayText = $data[$value['model']][ $displayField ];
             
-            if( !empty($data[$modelName][$field]))
+            if( !empty($data[$modelKey][$field]))
             {
-                echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelName][ $field ] )."</dd>";
+                echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelKey][ $field ] )."</dd>";
             }
             else
             {
@@ -23,9 +24,9 @@
       else
       {
           //  this is just a plain old field.
-          if( !empty($data[$modelName][$field]))
+          if( !empty($data[$modelKey][$field]))
           {
-              echo "<dd>".$data[$modelName][$field]."</dd>";
+              echo "<dd>".$data[$modelKey][$field]."</dd>";
           }
           else
           {
@@ -38,8 +39,8 @@
 </dl>
 <ul class='actions'>
 <?php
-   echo "<li>".$html->linkTo('Edit '.Inflector::humanize($modelName), '/'.$this->viewPath.'/edit/'.$data[$modelName]['id'])."</li>";
-   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelName]['id'])."</li>";
+   echo "<li>".$html->linkTo('Edit '.Inflector::humanize($modelKey), '/'.$this->viewPath.'/edit/'.$data[$modelKey]['id'])."</li>";
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelKey), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
 
    foreach( $fieldNames as $field=>$value ) { 
       if( isset( $value['foreignKey'] ) )

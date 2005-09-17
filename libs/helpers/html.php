@@ -420,12 +420,13 @@ class HtmlHelper extends Helper
      * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
      *                 and $return.
      */
-	function image($path, $htmlAttributes = null, $return = false)
-	{
-		$url = $this->base.IMAGES_URL.$path;
-		$alt = $htmlAttributes['alt'];
-		return $this->output(sprintf($this->tags['image'], $url, $alt, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
-	}
+
+    function image($path, $htmlAttributes = null, $return = false)
+    {
+        $url = $this->base.IMAGES_URL.$path;
+        $alt = isset($htmlAttributes['alt']) ? $htmlAttributes['alt'] : "";
+        return $this->output(sprintf($this->tags['image'], $url, $alt, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+    }
 
 	/**
      * Creates a text input widget.
@@ -531,11 +532,11 @@ class HtmlHelper extends Helper
 			$cells_out = array();
 			foreach ($line as $cell)
 			{
-				$cells_out[] = sprintf($this->tags['tableCell'], null, $cell);
+				$cells_out[] = sprintf($this->tags['tablecell'], null, $cell);
 			}
 
 			$options = $this->parseHtmlOptions($count%2? $odd_tr_options: $even_tr_options);
-			$out[] = sprintf($this->tags['tableRow'], $options, join(' ', $cells_out));
+			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cells_out));
 		}
 
 		return join("\n", $out);

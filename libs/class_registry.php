@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Class collections.
  * 
- * Long description for file
+ * A repository for class objects, each registered with a key.
  *
  * PHP versions 4 and 5
  *
@@ -34,7 +34,9 @@
 /**
  * Class Collections.
  *
- * Long description for class
+ * A repository for class objects, each registered with a key. 
+ * If you try to add an object with the same key twice, nothing will come of it.
+ * If you need a second instance of an object, give it another key.
  *
  * @package    cake
  * @subpackage cake.libs
@@ -44,15 +46,15 @@
    {
  
 /**
- * Enter description here...
+ * Names of classes with their objects.
  *
- * @var unknown_type
+ * @var array
  * @access private
  */
    var $_objects = array();
 
 /**
- * Enter description here...
+ * Return a singleton instance of the ClassRegistry.
  *
  * @return ClassRegistry instance
  */
@@ -67,10 +69,10 @@
    }
    
 /**
- * Enter description here...
+ * Add $object to the registry, associating it with the name $key.
  *
- * @param unknown_type $key
- * @param unknown_type $object
+ * @param string $key 
+ * @param mixed $object
  */
    function addObject($key, &$object)
    {
@@ -83,10 +85,10 @@
    }
    
 /**
- * Enter description here...
+ * Returns true if given key is present in the ClassRegistry.
  *
- * @param unknown_type $key
- * @return unknown
+ * @param string $key 	Key to look for
+ * @return boolean 		Success
  */
    function isKeySet($key)
    {
@@ -95,18 +97,15 @@
    }
 
 /**
- * Enter description here...
+ * Return object which corresponds to given key.
  *
- * @param unknown_type $key
- * @return unknown
+ * @param string $key
+ * @return mixed
  */
    function &getObject($key)
    {
       $key = strtolower($key);
       return $this->_objects[$key];
    }
-
-   
-   }
-   
+}
 ?>

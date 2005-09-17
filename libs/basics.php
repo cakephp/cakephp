@@ -32,7 +32,7 @@
  */
 
 /**
- * Basic defines
+ * Basic defines for timing functions.
  */
 define('SECOND',  1);
 define('MINUTE', 60 * SECOND);
@@ -103,8 +103,8 @@ function loadController ($name)
 /**
   * Lists PHP files in given directory.
   *
-  * @param string $path Path to scan for files
-  * @return array List of files in directory
+  * @param string $path 	Path to scan for files
+  * @return array 			List of files in directory
   */
 function listClasses($path) 
 {
@@ -115,7 +115,7 @@ function listClasses($path)
 /**
   * Loads configuration files
   *
-  * @return boolean True on success.
+  * @return boolean Success
   */
 function config () 
 {
@@ -160,7 +160,7 @@ function uses ()
 }
 
 /**
- * Require given files in the VENDORS directory. Function takes optional number of parameters.
+ * Require given files in the VENDORS directory. Takes optional number of parameters.
  *
  * @param string $name Filename without the .php part.
  *
@@ -175,10 +175,12 @@ function vendor($name)
 }
 
 /**
- * Setup a debug point.
+ * Print out debug information about given variable.
  *
- * @param boolean $var
- * @param boolean $show_html
+ * Only runs if DEBUG level is non-zero.
+ *
+ * @param boolean $var		Variable to show debug information for.
+ * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
  */
 function debug($var = false, $show_html = false) 
 {
@@ -269,6 +271,68 @@ if (!function_exists('array_combine'))
       
       return $output;
    }
+}
+
+function h($text)
+{
+	return htmlspecialchars($text);
+}
+
+
+function a()
+{
+	$args = func_get_args();
+	return $args;
+}
+
+
+function ha()
+{
+	$args = func_get_args();
+
+	for($l=0 ; $l<count($args) ; $l++)
+	{
+		$a[$args[$l]] = $l+1<count($args) ? $args[$l+1] : null;
+		$l++;
+	}
+	return $a;
+}
+
+
+function e($text)
+{
+	echo $text;
+}
+
+function pr($var)
+{
+	if(DEBUG > 0)
+	{
+		echo "<pre>";
+		print_r($var);
+		echo "</pre>";
+	}
+}
+
+function params($p)
+{
+
+	if(!is_array($p) || count($p) == 0)
+	{
+		return null;
+	}
+	else
+	{
+		if(is_array($p[0]) && count($p) == 1)
+		{
+			return $p[0];
+		}
+		else
+		{
+			return $p;
+		}
+	}
+
 }
 
 ?>

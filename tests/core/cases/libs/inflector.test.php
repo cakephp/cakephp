@@ -29,7 +29,7 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
- 
+require_once LIBS.'inflectornew.php';
 /**
  * Short description for class.
  * 
@@ -39,6 +39,7 @@
  */
 class InflectorTest   extends UnitTestCase
 {
+    
 }
 
 ?>

@@ -99,7 +99,7 @@ tableCell = "<td%s>%s</td>"
 tableRow = "<tr%s>%s</tr>"
 
 ; Tag template for a CSS link tag. 
-css = "<link rel="%s" type="text/css" href="%s" />"
+css = "<link rel="%s" type="text/css" href="%s" %s/>"
 
 ; Tag template for a charset meta-tag.
 charset = "<meta http-equiv="Content-Type" content="text/html; charset=%s" />"

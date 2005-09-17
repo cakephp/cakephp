@@ -30,14 +30,6 @@
  */
 
 
-if(!defined("TAG_JAVASCRIPT")) {
-	define("TAG_JAVASCRIPT", '<script type="text/javascript">%s</script>');
-}
-
-if(!defined("TAG_JAVASCRIPT_INCLUDE")) {
-	define("TAG_JAVASCRIPT_INCLUDE", '<script type="text/javascript" src="%s"></script>');
-}
-
 /**
  * Javascript Helper class for easy use of JavaScript.
  *
@@ -57,7 +49,7 @@ class JavascriptHelper extends Helper
      */
     function codeBlock($script)
     {
-        return sprintf(TAG_JAVASCRIPT, $script);
+        return sprintf($this->tags['javascriptBlock'], $script);
     }
 
     /**
@@ -68,7 +60,18 @@ class JavascriptHelper extends Helper
      */
     function link($url)
     {
-        return sprintf(TAG_JAVASCRIPT_INCLUDE, $this->base.$url);
+        return sprintf($this->tags['javascriptLink'], $this->base.$url);
+    }
+
+    /**
+     * Returns a JavaScript include tag for an externally-hosted script
+     *
+     * @param  string $url URL to JavaScript file.
+     * @return string
+     */
+    function linkOut($url)
+    {
+        return sprintf($this->tags['javascriptLink'], $url);
     }
 
 /**

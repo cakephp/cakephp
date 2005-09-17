@@ -144,8 +144,18 @@ class DBO_MySQL extends DBO
       $cols = $this->all("DESC {$table_name}");
 
       foreach ($cols as $column)
+      {
         // $fields[] = array('name'=>$column['Field'], 'type'=>$column['Type']);
-			$fields[] = array('name'=>$column[0]['Field'], 'type'=>$column[0]['Type']);
+        if(isset($column['COLUMNS']) && !isset($column[0]))
+        {
+        	$column[0] = $column['COLUMNS'];
+        }
+
+        if(isset($column[0]))
+        {
+					$fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type']);
+				}
+			}
 
       return $fields;
    }
@@ -211,7 +221,7 @@ class DBO_MySQL extends DBO
  */
    function selectLimit ($limit, $offset=null)
    {
-      return $limit? " LIMIT {$limit}".($offset? "{$offset}": null): null;
+      return $limit? " LIMIT".($offset? " {$offset},": null)." {$limit}": null;
    }
 
 /**

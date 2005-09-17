@@ -2,9 +2,10 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Dispatcher takes the URL information, parses it for paramters and 
+ * tells the involved controllers what to do.
  * 
- * Long description for file
+ * This is the heart of Cake's operation. 
  *
  * PHP versions 4 and 5
  *
@@ -65,7 +66,7 @@ class Dispatcher extends Object
    var $base = false;
 
 /**
- * Fetches base url.
+ * Constructor.
  */
    function __construct()
    {
@@ -73,30 +74,19 @@ class Dispatcher extends Object
       parent::__construct();
    }
 
+
 /**
- * Dispatches the request (action).
+ * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the results (if autoRender is set).
  *
- * @param string $url
- * @return array
+ * If no controller of given name can be found, invoke() shows error messages in 
+ * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called 
+ * Actions).
+ *
+ * @param string $url	URL information to work on.
+ * @return boolean		Success
  */
    function dispatch($url)
    {
-      $params = $this->parseParams($url);
-      $result = $this->invoke($url);
-
-      return $result === true? $params: array();
-   }
-
-/**
- * Enter description here...
- *
- * @param string $url
- * @return unknown
- */
-   function invoke($url)
-   {
-      global $_POST, $_GET, $_FILES, $_SESSION;
-
       $params = $this->parseParams($url);
       $missingController = false;
       $missingAction     = false;
@@ -217,13 +207,11 @@ class Dispatcher extends Object
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
- * @param string $from_url
+ * @param string $from_url	URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
  */
    function parseParams($from_url)
    {
-      global $_POST, $_FILES;
-
       // load routes config
       $Route = new Router();
       include CONFIGS.'routes.php';
@@ -233,7 +221,14 @@ class Dispatcher extends Object
       $params['form'] = $_POST;
       if (isset($_POST['data']))
       {
-         $params['data'] = (ini_get('magic_quotes_gpc') == 1) ? $this->stripslashes_deep($_POST['data']) : $_POST['data'];
+         $params['data'] = (ini_get('magic_quotes_gpc') == 1)?
+         	$this->stripslashes_deep($_POST['data']) : $_POST['data'];
+      }
+      if (isset($_GET))
+      {
+         $params['url'] = $this->urldecode_deep($_GET);
+         $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
+         	$this->stripslashes_deep($params['url']) : $params['url'];
       }
 
       foreach ($_FILES as $name => $data)
@@ -255,13 +250,22 @@ class Dispatcher extends Object
    }
 
 /**
+ * Recursively performs urldecode.
+ *
+ */
+   function urldecode_deep($val)
+   {
+      return (is_array($val)) ? 
+        array_map(array('Dispatcher','urldecode_deep'), $val) : urldecode($val);
+   }
+
+/**
  * Returns a base URL.
  *
- * @return string
+ * @return string	Base URL
  */
    function baseUrl()
    {
-      global $_SERVER;
 
       //non mod_rewrite use:
       if (defined('BASE_URL')) return BASE_URL;
@@ -281,8 +285,8 @@ class Dispatcher extends Object
 /**
  * Displays an error page (e.g. 404 Not found).
  *
- * @param int $code Error code (e.g. 404)
- * @param string $name Name of the error message (e.g. Not found)
+ * @param int $code 	Error code (e.g. 404)
+ * @param string $name 	Name of the error message (e.g. Not found)
  * @param string $message
  */
    function error ($code, $name, $message)
@@ -295,8 +299,8 @@ class Dispatcher extends Object
 /**
  * Convenience method to display a 404 page.
  *
- * @param unknown_type $url
- * @param unknown_type $message
+ * @param string $url 		URL that spawned this message, to be included in the output.
+ * @param string $message 	Message text for the 404 page.
  */
    function error404 ($url, $message)
    {
@@ -304,9 +308,10 @@ class Dispatcher extends Object
    }
 
 /**
- * If DEBUG is set, this displays a 404 error with the message that no controller is set. If DEBUG is not set, nothing happens.
+ * If DEBUG is set, this displays a 404 error with the message that no controller is set. 
+ * If DEBUG is not set, nothing happens.
  *
- * @param string $url
+ * @param string $url	URL that spawned this message, to be included in the output.
  */
    function errorNoController ($url)
    {
@@ -319,7 +324,7 @@ class Dispatcher extends Object
 /**
  * If DEBUG is set, this displays a 404 error with the message that the asked-for controller does not exist. If DEBUG is not set, nothing happens.
  *
- * @param string $url
+ * @param string $url	URL that spawned this message, to be included in the output.
  * @param string $controller_class
  */
    function errorUnknownController ($url, $controller_class)
@@ -333,7 +338,7 @@ class Dispatcher extends Object
 /**
  * If DEBUG is set, this displays a 404 error with the message that no action is set. If DEBUG is not set, nothing happens.
  *
- * @param string $url
+ * @param string $url	URL that spawned this message, to be included in the output.
  */
    function errorNoAction ($url)
    {
@@ -346,7 +351,7 @@ class Dispatcher extends Object
 /**
  * If DEBUG is set, this displays a 404 error with the message that no such action exists. If DEBUG is not set, nothing happens.
  *
- * @param string $url
+ * @param string $url	URL that spawned this message, to be included in the output.
  * @param string $controller_class
  * @param string $action
  */
@@ -359,17 +364,17 @@ class Dispatcher extends Object
    }
 
 /**
-  * When now methods are present in a controller
+  * When methods are now present in a controller
   * scaffoldView is used to call default Scaffold methods if:
   * <code>
   * var $scaffold;
   * </code>
-  * is placed in the controller class definition
+  * is placed in the controller's class definition.
   *
   * @param string $url
   * @param string $controller_class
   * @param array $params
-  * @since Cake v 1.0.0.172
+  * @since Cake v 0.10.0.172
   */
    function scaffoldView ($url, $controller_class, $params)
    {

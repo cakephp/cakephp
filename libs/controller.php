@@ -181,7 +181,7 @@ class Controller extends Object
      * Constructor.
      *
      */
-    function __construct ($params=null)
+    function __construct ()
     {
         // parent::__construct();
         $r = null;
@@ -190,7 +190,7 @@ class Controller extends Object
             die("Controller::__construct() : Can't get or parse my own class name, exiting.");
         }
 
-        $this->name = strtolower($r[1]);
+        $this->name = $r[1];
         $this->viewPath = Inflector::underscore($r[1]);
 
         //Adding Before Filter check
@@ -227,11 +227,15 @@ class Controller extends Object
         $dboFactory = DboFactory::getInstance($this->useDbConfig);
         $this->db =& $dboFactory;
         
-        $model_class = Inflector::singularize($this->name);
+        $match = array(); 
+        preg_match('/(.*)Controller/i', get_class($this), $match);
+        
+        $model_class = Inflector::singularize($match[1]);
+        $modelKey  = strtolower(Inflector::underscore($model_class));
 
         if (class_exists($model_class) && ($this->uses === false))
         {
-            $this->models[$model_class] = new $model_class($id);
+            $this->models[$modelKey] = new $model_class($id);
         }
         elseif ($this->uses)
         {
@@ -245,10 +249,11 @@ class Controller extends Object
             foreach ($uses as $model_name)
             {
                 $model_class = ucfirst(strtolower($model_name));
+                $modelKey  = strtolower(Inflector::underscore($model_class));
 
                 if (class_exists($model_class))
                 {
-                    $this->models[$model_name] = new $model_class($id);
+                    $this->models[$modelKey] = new $model_class($id);
                 }
                 else
                 {
@@ -357,8 +362,9 @@ class Controller extends Object
 
         if(!empty($this->models))
         {
-            foreach ($this->models as $key => $value)
+            foreach ($this->models as $key)
             {
+                $key = Inflector::underscore(get_class($key));
                 if(!empty($this->models[$key]->validationErrors))
                 {
                     $view->validationErrors[$key] =& $this->models[$key]->validationErrors;
@@ -448,14 +454,15 @@ class Controller extends Object
      * @param string $url Relative URL to redirect to after the time expires
      * @param int $time Time to show the message
      */
-    function flash($message, $url, $time=1)
+    function flash($message, $url, $pause=1)
     {
         $this->autoRender = false;
         $this->autoLayout = false;
 
         $this->set('url', $this->base.$url);
         $this->set('message', $message);
-        $this->set('time', $time);
+        $this->set('pause', $pause);
+        $this->set('page_title', $message);
 
         $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
     }
@@ -497,11 +504,11 @@ class Controller extends Object
 
 	    //  figure out what model and table we are working with
 	    $model = Inflector::pluralize($this->name);
-	    $table = Inflector::singularize($this->name);
+	    $table = Inflector::underscore(Inflector::singularize($this->name));
 
 	    //  get all of the column names.
 	    $classRegistry =& ClassRegistry::getInstance();
-	    $objRegistryModel = $classRegistry->getObject($table);
+	    $objRegistryModel = $classRegistry->getObject(Inflector::singularize($model));
 
 	    foreach ($objRegistryModel->_table_info as $tables)
 	    {
@@ -676,7 +683,6 @@ class Controller extends Object
                      $fieldNames[ $tabl['name']]['options'] = array();
 
                      $enumValues = split(',', $fieldLength );
-                     $iCount = 1;
                      foreach ($enumValues as $enum )
                      {
                          $enum = trim( $enum, "'" );
@@ -704,7 +710,7 @@ class Controller extends Object
    	    //  loop through the many to many relations to make a list box.
       	foreach( $objRegistryModel->_manyToMany as $relation )
          {
-            list($tableName, $field, $value, $joinTable, $key1, $key2) = $relation;
+            list($tableName) = $relation;
 
             $otherModelName = Inflector::singularize($tableName);
             $otherModel = new $otherModelName();

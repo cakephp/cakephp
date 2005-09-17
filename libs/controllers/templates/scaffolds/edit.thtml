@@ -3,7 +3,7 @@ uses('helpers/form');
 
    $form = new FormHelper();
 
-	echo $html->formTag('/'.$this->name.'/update');
+	echo $html->formTag('/'.Inflector::underscore($this->name).'/update');
 
 	echo $form->generateFields( $html, $fieldNames );
    
@@ -13,9 +13,10 @@ uses('helpers/form');
 <ul class='actions'>
 <?php
    $modelName = Inflector::singularize($this->name);
-   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelName]['id'])."</li>";
+   $modelKey = Inflector::underscore($modelName);
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
 
-   foreach( $fieldNames as $field=>$value ) { 
+   foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
          echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[Inflector::singularize($params['controller'])][$field] )."</li>";

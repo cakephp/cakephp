@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id:$ */
+/* SVN FILE: $Id$ */
 
 /**
  * Short description for file.

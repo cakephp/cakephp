@@ -444,7 +444,7 @@ class %sTest extends TestCase {
    }
 
 /**
- * Creates a test for a given model.
+ * Creates a test for given model.
  *
  * @param string $name
  * @return boolean

@@ -69,7 +69,7 @@ class Scaffold extends Object {
 	 *
 	 * @var unknown_type
 	 */
-	var $model = null;
+	var $modelKey = null;
 
 	/**
 	 * Enter description here...
@@ -115,8 +115,8 @@ class Scaffold extends Object {
 		{
 			die("Scaffold::__construct() : Can't get or parse class name.");
 		}
-		$this->model = strtolower(Inflector::singularize($r[1]));
-		$this->scaffoldTitle = $r[1];
+		$this->modelKey = Inflector::underscore(Inflector::singularize($r[1]));
+		$this->scaffoldTitle = Inflector::humanize($this->modelKey);
 	}
 
 	/**
@@ -142,6 +142,7 @@ class Scaffold extends Object {
 	 */
 	function scaffoldIndex($params)
 	{
+	    $this->controllerClass->pageTitle = Inflector::humanize(Inflector::pluralize($this->modelKey));
 		return $this->scaffoldList($params);
 	}
 
@@ -152,7 +153,7 @@ class Scaffold extends Object {
 	 */
 	function scaffoldShow($params)
 	{
-		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->model]->read();
+		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->modelKey]->read();
 		$this->controllerClass->set('data', $this->controllerClass->params['data'] );
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames( $this->controllerClass->params['data'], false ) );
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
@@ -165,9 +166,8 @@ class Scaffold extends Object {
 	 */
 	function scaffoldList($params)
 	{
-		$model = $this->model;
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
-		$this->controllerClass->set('data', $this->controllerClass->models[$model]->findAll());
+		$this->controllerClass->set('data', $this->controllerClass->models[$this->modelKey]->findAll());
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
 	}
 
@@ -189,7 +189,7 @@ class Scaffold extends Object {
 	 */
 	function scaffoldEdit($params)
 	{
-		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->model]->read();
+		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->modelKey]->read();
 		//  generate the field names.
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->controllerClass->params['data']) );
 		$this->controllerClass->set('data', $this->controllerClass->params['data']);
@@ -207,14 +207,14 @@ class Scaffold extends Object {
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
 		$this->cleanUpFields();
 
-		if ($this->controllerClass->models[$this->model]->save($this->controllerClass->params['data']))
+		if ($this->controllerClass->models[$this->modelKey]->save($this->controllerClass->params['data']))
 		{
-			$this->controllerClass->flash('Your '.$this->model.' has been saved.', '/'.$this->controllerClass->viewPath );
+			$this->controllerClass->flash('Your '.$this->modelKey.' has been saved.', '/'.Inflector::underscore($this->controllerClass->viewPath) );
 		}
 		else
 		{
 			$this->controllerClass->set('data', $this->controllerClass->params['data']);
-			$this->controllerClass->validateErrors($this->controllerClass->models[$this->model]);
+			$this->controllerClass->validateErrors($this->controllerClass->models[$this->modelKey]);
 			$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
 		}
 	}
@@ -229,14 +229,14 @@ class Scaffold extends Object {
 		//  clean up the date fields
 		$this->cleanUpFields();
 
-		$this->controllerClass->models[$this->model]->set($this->controllerClass->params['data']);
-		if ( $this->controllerClass->models[$this->model]->save())
+		$this->controllerClass->models[$this->modelKey]->set($this->controllerClass->params['data']);
+		if ( $this->controllerClass->models[$this->modelKey]->save())
 		{
-			$this->controllerClass->flash('The '.$this->model.' has been updated.','/'.$this->controllerClass->name);
+			$this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been updated.','/'.Inflector::underscore($this->controllerClass->viewPath));
 		}
 		else
 		{
-			$this->controllerClass->flash('There was an error updating the '.$this->model,'/'.$this->controllerClass->name);
+			$this->controllerClass->flash('There was an error updating the '.Inflector::humanize($this->modelKey),'/'.Inflector::underscore($this->controllerClass->viewPath));
 		}
 	}
 
@@ -249,15 +249,13 @@ class Scaffold extends Object {
 	{
 		$id = $params['pass'][0];
 		//  figure out what model and table we are working with
-		$controllerName = $this->controllerClass->name;
-		$table = Inflector::singularize($controllerName);
-		if ($this->controllerClass->models[$table]->del($id))
+		if ($this->controllerClass->models[$this->modelKey]->del($id))
 		{
-			$this->controllerClass->flash('The '.$table.' with id: '.$id.' has been deleted.', '/'.$controllerName);
+			$this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/'.Inflector::underscore($this->controllerClass->viewPath));
 		}
 		else
 		{
-			$this->controllerClass->flash('There was an error deleting the '.$table.' with the id '.$id, '/'.$controllerName);
+			$this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/'.Inflector::underscore($this->controllerClass->viewPath));
 		}
 	}
 	/**
@@ -268,46 +266,46 @@ class Scaffold extends Object {
 	function cleanUpFields()
 	{
 		//  clean up the date fields
-		$objModel = $this->controllerClass->models[$this->model];
+		$objModel = $this->controllerClass->models[$this->modelKey];
 		foreach( $objModel->_table_info as $table )
 		{
 			foreach ($table as $field)
 			{
-				if( 'date' == $field['type'] && isset($this->controllerClass->params['data'][$this->model][$field['name'].'_year'] ) )
+				if( 'date' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
 				{
 					$newDate = mktime( 0,0,0,
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_month'],
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_day'],
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_year'] );
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
 					$newDate = date( 'Y-m-d', $newDate );
-					$this->controllerClass->params['data'][$this->model][$field['name']] = $newDate;
+					$this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
 				}
-				else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->model][$field['name'].'_year'] ) )
+				else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
 				{
-					$hour = $this->controllerClass->params['data'][$this->model][$field['name'].'_hour'];
-					if( $hour != 12 && 'pm' == $this->controllerClass->params['data'][$this->model][$field['name'].'_meridian'] )
+					$hour = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour'];
+					if( $hour != 12 && 'pm' == $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian'] )
 					{
 						$hour = $hour + 12;
 					}
 					$newDate = mktime( $hour,
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_min'],
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'],
 					0,
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_month'],
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_day'],
-					$this->controllerClass->params['data'][$this->model][$field['name'].'_year'] );
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
+					$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
 					$newDate = date( 'Y-m-d', $newDate );
-					$this->controllerClass->params['data'][$this->model][$field['name']] = $newDate;
+					$this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
 				}
 				else if( 'tinyint(1)' == $field['type'] )
 				{
-					if( isset( $this->controllerClass->params['data'][$this->model][$field['name']]) &&
-					"on" == $this->controllerClass->params['data'][$this->model][$field['name']] )
+					if( isset( $this->controllerClass->params['data'][$this->modelKey][$field['name']]) &&
+					"on" == $this->controllerClass->params['data'][$this->modelKey][$field['name']] )
 					{
-						$this->controllerClass->params['data'][$this->model][$field['name']] = true;
+						$this->controllerClass->params['data'][$this->modelKey][$field['name']] = true;
 					}
 					else
 					{
-						$this->controllerClass->params['data'][$this->model][$field['name']] = false;
+						$this->controllerClass->params['data'][$this->modelKey][$field['name']] = false;
 					}
 				}
 			}
