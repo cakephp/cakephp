@@ -1,6 +1,6 @@
-<h1>Requires a Database Connection</h1>
+<h1>Scaffold Requires a Database Connection</h1>
 
-<p class="error">Missing Database Connection: Model <?php echo $this->controller->missingConnection;?> requires a database connection
+<p class="error">Missing Database Connection: Scaffold Does not work without a database connection
 </p>  
 
 <p>

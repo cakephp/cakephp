@@ -431,29 +431,6 @@ class View extends Object
       print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
    }
 
-
-/**
- * Renders the Missing Controller web page.
- *
- */
-   function missingController()
-   {
-      //We are simulating action call below, this is not a filename!
-      $this->missingController = $this->name;
-      $this->render('../errors/missingController');
-   }
-
-/**
- * Renders the Missing Action web page.
- *
- */
-   function missingAction()
-   {
-      //We are simulating action call below, this is not a filename!
-      $this->missingAction = $this->name;
-      $this->render('../errors/missingAction');
-   }
-
 /**
  * Renders the Missing View web page.
  *

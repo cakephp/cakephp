@@ -1,6 +1,6 @@
 <h1>Missing controller</h1>
-
-<p class="error">You are seeing this error because controller <em><?=$this->missingController;?></em>
+<?php $missing = $this->controller->missingController; ?>
+<p class="error">You are seeing this error because controller <em><?php echo $missing;?></em>
   could not be found.
 </p> 
 
@@ -10,15 +10,21 @@ view file, a user-customizable error page for handling invalid controller dispat
 </p>
 
 <p>
-<strong>Fatal</strong>: Unable to load controller <em><?=$this->missingController;?></em>
+<strong>Fatal</strong>: Unable to load controller <em><?php echo $missing;?></em>
 </p>
-
-<?if (DEBUG>1):?>
+<p>
+<strong>Fatal</strong>: Create Class: 
+</p>
+<p>
+<?php echo "<pre>&lt;?php\n\nclass " . $missing ." extends AppController {\n}\n\n?&gt;</pre>"; ?>
+in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($missing).".php"; ?>
+</p>
+<?php if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<? 
+<?php  
 unset($this->db);
 print_r($this); 
 ?>
 </pre>
-<?endif?>
+<?php endif?>

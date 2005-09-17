@@ -112,6 +112,7 @@ class Dispatcher extends Object
          $ctrlClass        = 'AppController';
          $controller       = new $ctrlClass($this);
          $params['action'] = 'missingController';
+         $params['controller'] = Inflector::camelize($params['controller']."Controller");
          $controller->missingController = $params['controller'];
       }
       else
@@ -415,7 +416,8 @@ class Dispatcher extends Object
          } 
          else
          {
-            $this->errorUnknownAction($url, get_class($controller_class), $params['action']);
+             $controller_class->missingAction = $params['action'];
+             call_user_func_array(array(&$controller_class, 'missingAction'), null);
          }
          exit;
        }

@@ -359,42 +359,59 @@ class Controller extends Object
         return  $view->render($action, $layout, $file);
     }
 
-    /**
-     * Enter description here...
-     *
-     */
-    function missingController()
-    {
-        //We are simulating action call below, this is not a filename!
-        $this->render('../errors/missingController');
-    }
+/**
+ * Renders the Missing Controller web page.
+ *
+ */
+   function missingController()
+   {
+       $this->pageTitle = 'Missing Controller';
+       $this->render('../errors/missingController');
+   }
 
-    /**
-     * Enter description here...
-     *
-     */
-    function missingAction()
-    {
-        //We are simulating action call below, this is not a filename!
-        $this->render('../errors/missingAction');
-    }
-
-    /**
-     * Enter description here...
-     *
-     */
-    function missingView()
-    {
-        //We are simulating action call below, this is not a filename!
-        $this->render('../errors/missingView');
-    }
-    
+/**
+ * Renders the Missing Action web page.
+ *
+ */
+   function missingAction()
+   {
+       $this->pageTitle = 'Missing Method in Controller';
+       $this->render('../errors/missingAction');
+   }
+   
+/**
+ * Renders the Missing Database web page.
+ *
+ */
     function missingDatabase()
     {
+        $this->pageTitle = 'Scaffold Missing Database Connection';
+        //We are simulating action call below, this is not a filename!
+        $this->render('../errors/missingScaffolddb');
+    }
+
+/**
+ * Renders the Missing Table web page.
+ *
+ */
+    function missingTable($table_name)
+    {
+        $this->missingTableName = $table_name;
+        $this->pageTitle = 'Missing Database Table';
+        //We are simulating action call below, this is not a filename!
+        $this->render('../errors/missingTable');
+    }
+    
+/**
+ * Renders the Missing Table web page.
+ *
+ */
+    function missingConnection()
+    {
+        $this->pageTitle = 'Missing Database Connection';
         //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingDatabase');
     }
-
     //   /**
     //    * Displays an error page to the user. Uses layouts/error.html to render the page.
     //    *

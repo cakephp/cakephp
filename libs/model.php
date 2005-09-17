@@ -216,7 +216,11 @@ class Model extends Object
       else
       {
          $dboFactory = DboFactory::getInstance();  
-          $this->db =& $dboFactory ;
+         $this->db =& $dboFactory ;
+         if(empty($this->db))
+         {
+             $this->_throwMissingConnection();
+         }
       }
           
       
@@ -754,7 +758,7 @@ class Model extends Object
    {
       if (!in_array(strtolower($table_name), $this->db->tables())) 
       {
-         trigger_error (sprintf(ERROR_NO_MODEL_TABLE, get_class($this), $table_name), E_USER_ERROR);
+         $this->_throwMissingModel($table_name);
          die();
       }
       else
@@ -924,7 +928,7 @@ class Model extends Object
  */
    function saveField($name, $value) 
    {
-      return Model::save(array($name=>$value), false);
+      return Model::save(array($this->table=>array($name=>$value)), false);
    }
 
 /**
@@ -1609,6 +1613,22 @@ class Model extends Object
 	function getLastInsertID()
 	{
      return $this->db->lastInsertId($this->table, 'id');
+	}
+	
+	function _throwMissingTable($table_name)
+	{
+	    $error = new AppController();
+        $error->missingTable = get_class($this);
+        call_user_func_array(array(&$error, 'missingTable'), $table_name);
+        exit;
+	}
+	
+	function _throwMissingConnection()
+	{
+	    $error = new AppController();
+        $error->missingConnection = get_class($this);
+        call_user_func_array(array(&$error, 'missingConnection'), null);
+        exit;
 	}
 }
 

@@ -1,0 +1,8 @@
+<?php $missing = $this->controller->missingTable;?>
+<h1>Missing Database Table</h1>
+<p class="error">No Database table for model <?php echo $missing;?> (expected "<? echo $this->controller->missingTableName;?>"), create it first.
+</p>  
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_table.thtml</code>
+view file, a user-customizable error page.</span>
+</p>
