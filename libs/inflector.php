@@ -193,12 +193,12 @@ class Inflector extends Object
 /**
   * Returns Cake class name ("Post" for the database table "posts".) for given database table.
   *
-  * @param string $table_name Name of database table to get class name for
+  * @param string $tableName Name of database table to get class name for
   * @return string
   */
-   function classify($table_name)
+   function classify($tableName)
    {
-      return Inflector::camelize(Inflector::singularize($table_name));
+      return Inflector::camelize(Inflector::singularize($tableName));
    }
 
 /**

@@ -89,7 +89,7 @@ class DBO_generic extends DBO
  * Abstract method defined in subclasses. 
  *
  */
-   function fields ($table_name)
+   function fields ($tableName)
    {
    }
 

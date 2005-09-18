@@ -133,12 +133,12 @@ class DBO_Postgres extends DBO
 /**
   * Returns an array of the fields in given table name.
   *
-  * @param string $table_name Name of database table to inspect
+  * @param string $tableName Name of database table to inspect
   * @return array Fields in table. Keys are name and type
   */
-   function fields ($table_name)
+   function fields ($tableName)
    {
-      $sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$table_name}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
+      $sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$tableName}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
       
       $fields = false;
       foreach ($this->all($sql) as $field) {

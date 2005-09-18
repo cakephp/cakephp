@@ -129,12 +129,12 @@ class DBO_AdoDB extends DBO
 /**
  * Returns an array of the fields in given table name.
  *
- * @param string $table_name Name of database table to inspect
+ * @param string $tableName Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-   function fields ($table_name)
+   function fields ($tableName)
    {
-      $data = $this->_adodb->MetaColumns($table_name);
+      $data = $this->_adodb->MetaColumns($tableName);
       $fields = false;
 
       foreach ($data as $item)

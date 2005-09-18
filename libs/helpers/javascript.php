@@ -49,7 +49,7 @@ class JavascriptHelper extends Helper
      */
     function codeBlock($script)
     {
-        return sprintf($this->tags['javascriptBlock'], $script);
+        return sprintf($this->tags['javascriptblock'], $script);
     }
 
     /**
@@ -60,7 +60,7 @@ class JavascriptHelper extends Helper
      */
     function link($url)
     {
-        return sprintf($this->tags['javascriptLink'], $this->base.$url);
+        return sprintf($this->tags['javascriptlink'], $this->base.$url);
     }
 
     /**
@@ -71,7 +71,7 @@ class JavascriptHelper extends Helper
      */
     function linkOut($url)
     {
-        return sprintf($this->tags['javascriptLink'], $url);
+        return sprintf($this->tags['javascriptlink'], $url);
     }
 
 /**

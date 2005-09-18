@@ -161,7 +161,7 @@ class Dispatcher extends Object
           }
       }
       
-      $controller->contructClasses();
+      $controller->constructClasses();
       
       if ($missingAction)
       {

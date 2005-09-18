@@ -68,7 +68,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $use_table = false;
+   var $useTable = false;
 
 /**
  * Enter description here...
@@ -100,7 +100,7 @@ class Model extends Object
  * @var array
  * @access private
  */
-   var $_table_info = null;
+   var $_tableInfo = null;
 	
 /**
  * Enter description here...
@@ -232,12 +232,12 @@ class Model extends Object
          $this->id = $id;
       }
 
-      $table_name = $table? $table: ($this->use_table? $this->use_table: Inflector::tableize(get_class($this)));
+      $tableName = $table? $table: ($this->useTable? $this->useTable: Inflector::tableize(get_class($this)));
       //Table Prefix Hack - Check to see if the function exists.
 	  if (in_array('settableprefix', get_class_methods(get_class($this)))) $this->setTablePrefix();
       // Table Prefix Hack - Get the prefix for this view.
-	  $this->tablePrefix? $this->useTable($this->tablePrefix.$table_name): $this->useTable ($table_name);
-	  //$this->useTable ($table_name);
+	  $this->tablePrefix? $this->useTable($this->tablePrefix.$tableName): $this->useTable ($tableName);
+	  //$this->useTable ($tableName);
       parent::__construct();
       $this->createLinks();
    }
@@ -752,18 +752,18 @@ class Model extends Object
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
- * @param string $table_name Name of the custom table
+ * @param string $tableName Name of the custom table
  */
-   function useTable ($table_name) 
+   function useTable ($tableName) 
    {
-      if (!in_array(strtolower($table_name), $this->db->tables())) 
+      if (!in_array(strtolower($tableName), $this->db->tables())) 
       {
-         $this->_throwMissingTable($table_name);
+         $this->_throwMissingTable($tableName);
          die();
       }
       else
       {
-         $this->table = $table_name;
+         $this->table = $tableName;
          $this->loadInfo();
       }
    }
@@ -845,11 +845,11 @@ class Model extends Object
  */
    function loadInfo () 
    {
-      if (empty($this->_table_info)) 
+      if (empty($this->_tableInfo)) 
       {
-         $this->_table_info = new NeatArray($this->db->fields($this->table));
+         $this->_tableInfo = new NeatArray($this->db->fields($this->table));
       }
-      return $this->_table_info;
+      return $this->_tableInfo;
    }
 
 /**
@@ -861,11 +861,11 @@ class Model extends Object
  */
    function hasField ($name) 
    {
-      if (empty($this->_table_info))
+      if (empty($this->_tableInfo))
       { 
       	$this->loadInfo();
       }
-      return $this->_table_info->findIn('name', $name);
+      return $this->_tableInfo->findIn('name', $name);
    }
 
 /**
@@ -1290,133 +1290,16 @@ class Model extends Object
        
        if(!empty($this->_oneToMany))
        {
-           
-           $datacheck = $data;
-           $original = $data;
-           foreach ($this->_oneToMany as $rule)
-           {
-               $count = 0;
-               list($table, $field, $value) = $rule;
-               
-               foreach ($datacheck as $key => $value1)
-               {
-                   foreach ($value1 as $key2 => $value2)
-                   {
-                       if($key2 === Inflector::singularize($this->table))
-                       {
-                       $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} WHERE ($field)  = '{$value2['id']}'");
-                       
-                           if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
-                           {
-                               $newKey = Inflector::singularize($table);
-                               foreach ($oneToManySelect[$table] as $key => $value)
-                               {
-                                   $oneToManySelect1[$table][$key] = $value[$newKey];
-                               }
-                               $merged = array_merge_recursive($data[$count],$oneToManySelect1);
-                               $newdata[$count] = $merged;
-                               unset( $oneToManySelect[$table], $oneToManySelect1);
-                           }
-                           if(!empty($newdata[$count]))
-                           {
-                               $original[$count] = $newdata[$count];
-                           }
-                       }
-                   }
-                   $count++;
-               }
-               if(empty($newValue2) && !empty($original))
-               {
-                   for ($i = 0; $i< count($original); $i++) 
-                   {
-                       $newValue2[$i] = $original[$i];
-                   }
-                   if(count($this->_oneToMany < 2))
-                   {
-                       $newValue = $newValue2;
-                   }
-               }
-               elseif(!empty($original))
-               {
-                   for ($i = 0; $i< count($original); $i++) 
-                   {
-                       $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
-                   }
-               }
-               $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
-           }
+           $newValue = $this->_findOneToMany($data);  
            if(!empty($newValue))
            {
                $data = $newValue;
-               unset($newValue);
            }
        }
 
        if(!empty($this->_manyToMany))
        {
-           $datacheck = $data;
-           $original = $data;
-           foreach ($this->_manyToMany as $rule)
-           {
-               $count = 0;
-               list($table, $field, $value, $joineTable, $joinKey1, $JoinKey2) = $rule;
-               
-               foreach ($datacheck as $key => $value1)
-               {
-                   foreach ($value1 as $key2 => $value2)
-                   {
-                       if($key2 === Inflector::singularize($this->table))
-                       {
-                           if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
-                           {
-                               if(!empty ($value2['id']))
-                               {
-                                   $tmpSQL = "SELECT * FROM {$table}
-                                              JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
-                                              AND {$joineTable}.{$JoinKey2} = {$table} .id";
-                                   $manyToManySelect[$table] = $this->db->all($tmpSQL);
-                               }
-                               
-                                    if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
-                                    {
-                                        $newKey = Inflector::singularize($table);
-                                        foreach ($manyToManySelect[$table] as $key => $value)
-                                        {
-                                            $manyToManySelect1[$table][$key] = $value[$newKey];
-                                        }
-                                        $merged = array_merge_recursive($data[$count],$manyToManySelect1);
-                                        $newdata[$count] = $merged;
-                                        unset( $manyToManySelect[$table], $manyToManySelect1 );
-                                    }
-                                    if(!empty($newdata[$count]))
-                                    {
-                                        $original[$count] = $newdata[$count];
-                                    }
-                           }
-                       }
-                   }
-                   $count++;
-               }
-               if(empty($newValue2) && !empty($original))
-               {
-                   for ($i = 0; $i< count($original); $i++) 
-                   {
-                       $newValue2[$i] = $original[$i];
-                   }
-                   if(count($this->_manyToMany < 2))
-                   {
-                       $newValue = $newValue2;
-                   }
-               }
-               elseif(!empty($original))
-               {
-                   for ($i = 0; $i< count($original); $i++) 
-                   {
-                       $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
-                   }
-               }
-               $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
-           }
+           $newValue = $this->_findManyToMany($data);
            if(!empty($newValue))
            {
                $data = $newValue;
@@ -1424,7 +1307,145 @@ class Model extends Object
        }
        return $data;
    }
-
+   
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ * @return unknown
+ */
+   function _findOneToMany(&$data)
+   {
+       $datacheck = $data;
+       $original = $data;
+       foreach ($this->_oneToMany as $rule)
+       {
+           $count = 0;
+           list($table, $field, $value) = $rule;
+           foreach ($datacheck as $key => $value1)
+           {
+               foreach ($value1 as $key2 => $value2)
+               {
+                   if($key2 === Inflector::singularize($this->table))
+                   {
+                       $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} 
+                                                  WHERE ($field)  = '{$value2['id']}'");
+                       if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
+                       {
+                           $newKey = Inflector::singularize($table);
+                           foreach ($oneToManySelect[$table] as $key => $value)
+                           {
+                               $oneToManySelect1[$table][$key] = $value[$newKey];
+                           }
+                           $merged = array_merge_recursive($data[$count],$oneToManySelect1);
+                           $newdata[$count] = $merged;
+                           unset( $oneToManySelect[$table], $oneToManySelect1);
+                       }
+                       if(!empty($newdata[$count]))
+                       {
+                           $original[$count] = $newdata[$count];
+                       }
+                   }
+               }
+               $count++;
+           }
+           if(empty($newValue2) && !empty($original))
+           {
+               for ($i = 0; $i< count($original); $i++) 
+               {
+                   $newValue2[$i] = $original[$i];
+               }
+               if(count($this->_oneToMany < 2))
+               {
+                   $newValue = $newValue2;
+               }
+           }
+           elseif(!empty($original))
+           {
+               for ($i = 0; $i< count($original); $i++) 
+               {
+                   $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
+               }
+           }
+           $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
+       }
+       return   $newValue;
+   }
+   
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ * @return unknown
+ */
+   function _findManyToMany(&$data)
+   {
+       $datacheck = $data;
+       $original = $data;
+       foreach ($this->_manyToMany as $rule)
+       {
+           $count = 0;
+           list($table, $field, $value, $joineTable, $joinKey1, $JoinKey2) = $rule;
+           
+           foreach ($datacheck as $key => $value1)
+           {
+               foreach ($value1 as $key2 => $value2)
+               {
+                   if($key2 === Inflector::singularize($this->table))
+                   {
+                       if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
+                       {
+                           if(!empty ($value2['id']))
+                           {
+                               $tmpSQL = "SELECT * FROM {$table}
+                                          JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
+                                          AND {$joineTable}.{$JoinKey2} = {$table} .id";
+                               
+                               $manyToManySelect[$table] = $this->db->all($tmpSQL);
+                           }
+                           if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
+                           {
+                               $newKey = Inflector::singularize($table);
+                               foreach ($manyToManySelect[$table] as $key => $value)
+                               {
+                                   $manyToManySelect1[$table][$key] = $value[$newKey];
+                               }
+                               $merged = array_merge_recursive($data[$count],$manyToManySelect1);
+                               $newdata[$count] = $merged;
+                               unset( $manyToManySelect[$table], $manyToManySelect1 );
+                           }
+                           if(!empty($newdata[$count]))
+                           {
+                               $original[$count] = $newdata[$count];
+                           }
+                       }
+                   }
+               }
+               $count++;
+           }
+           if(empty($newValue2) && !empty($original))
+           {
+               for ($i = 0; $i< count($original); $i++) 
+               {
+                   $newValue2[$i] = $original[$i];
+               }
+               if(count($this->_manyToMany < 2))
+               {
+                   $newValue = $newValue2;
+               }
+           }
+           elseif(!empty($original))
+           {
+               for ($i = 0; $i< count($original); $i++) 
+               {
+                   $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
+               }
+           }
+           $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
+       }
+       return   $newValue;
+   }
+       
 /**
  * Returns an array of all rows for given SQL statement.
  *
@@ -1601,6 +1622,11 @@ class Model extends Object
 	   return false;
 	}
 	
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function getDisplayField()
 	{
 	   //  $displayField defaults to 'name'
@@ -1618,19 +1644,33 @@ class Model extends Object
 	   return $dispField;
 	}
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 	function getLastInsertID()
 	{
      return $this->db->lastInsertId($this->table, 'id');
 	}
 	
-	function _throwMissingTable($table_name)
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $tableName
+ */
+	function _throwMissingTable($tableName)
 	{
 	    $error = new AppController();
         $error->missingTable = get_class($this);
-        call_user_func_array(array(&$error, 'missingTable'), $table_name);
+        call_user_func_array(array(&$error, 'missingTable'), $tableName);
         exit;
 	}
 	
+/**
+ * Enter description here...
+ *
+ */
 	function _throwMissingConnection()
 	{
 	    $error = new AppController();

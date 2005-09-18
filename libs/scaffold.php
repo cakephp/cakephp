@@ -114,7 +114,7 @@ class Scaffold extends Object {
 		$this->scaffoldTitle = Inflector::humanize($this->modelKey);
 		$this->controllerClass->layout = 'scaffold';
 		$this->controllerClass->pageTitle = $this->scaffoldTitle;
-		$this->controllerClass->contructClasses();
+		$this->controllerClass->constructClasses();
 	}
 
 	/**
@@ -250,7 +250,7 @@ class Scaffold extends Object {
 	{
 		//  clean up the date fields
 		$objModel = $this->controllerClass->models[$this->modelKey];
-		foreach( $objModel->_table_info as $table )
+		foreach( $objModel->_tableInfo as $table )
 		{
 			foreach ($table as $field)
 			{

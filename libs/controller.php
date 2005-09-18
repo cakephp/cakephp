@@ -213,7 +213,7 @@ class Controller extends Object
      * Enter description here...
      *
      */
-    function contructClasses(){
+    function constructClasses(){
 
         if(empty($this->params['pass']))
         {
@@ -260,6 +260,28 @@ class Controller extends Object
                     die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
                 }
             }
+        }
+        
+        
+        if (!empty($this->beforeFilter))
+        {
+          if(is_array($this->beforeFilter))
+          {
+              foreach($this->beforeFilter as $filter)
+              {
+                  if(is_callable(array($this,$filter)))
+                  {
+                      $this->$filter();
+                  }
+              }
+          }
+          else
+          {
+              if(is_callable(array($this,$this->beforeFilter)))
+              {
+                  $this->{$this->beforeFilter}();
+              }
+          }
         }
     }
 
@@ -394,9 +416,9 @@ class Controller extends Object
  * Renders the Missing Table web page.
  *
  */
-    function missingTable($table_name)
+    function missingTable($tableName)
     {
-        $this->missingTableName = $table_name;
+        $this->missingTableName = $tableName;
         $this->pageTitle = 'Missing Database Table';
         //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingTable');
@@ -517,7 +539,7 @@ class Controller extends Object
 	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject(Inflector::singularize($model));
 
-	    foreach ($objRegistryModel->_table_info as $tables)
+	    foreach ($objRegistryModel->_tableInfo as $tables)
 	    {
 	        foreach ($tables as $tabl)
 	        {

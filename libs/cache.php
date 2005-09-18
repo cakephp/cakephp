@@ -75,7 +75,7 @@ class Cache extends Model {
       *
       * @var string
       */
-	var $use_table = 'cache';
+	var $useTable = 'cache';
 
 	/**
       * Constructor. Generates an md5'ed id for internal use. Calls the constructor on Model as well.
@@ -111,7 +111,7 @@ class Cache extends Model {
 	{
 		$data = addslashes($this->for_caching.$content);
 		$expire = date("Y-m-d H:i:s",time()+($keep_for>0? $keep_for: 999999999));
-		return $this->query("REPLACE {$this->use_table} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
+		return $this->query("REPLACE {$this->useTable} (id,data,expire) VALUES ('{$this->id}', '{$data}', '{$expire}')");
 	}
 
 	/**
@@ -155,7 +155,7 @@ class Cache extends Model {
       */
 	function clear()
 	{
-		return $this->query("DELETE FROM {$this->use_table}");
+		return $this->query("DELETE FROM {$this->useTable}");
 	}
 }
 

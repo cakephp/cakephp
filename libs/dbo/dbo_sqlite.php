@@ -132,13 +132,13 @@ class DBO_SQLite extends DBO
 	/**
 	 * Returns an array of the fields in given table name.
 	 *
-	 * @param string $table_name 	Name of database table to inspect
+	 * @param string $tableName 	Name of database table to inspect
 	 * @return array 				Fields in table. Keys are name and type
 	 */
-   function fields($table_name)
+   function fields($tableName)
    {
       $fields = false;
-      $cols = sqlite_fetch_column_types($table_name, $this->_conn);
+      $cols = sqlite_fetch_column_types($tableName, $this->_conn);
 
       foreach ($cols as $column => $type)
       {
