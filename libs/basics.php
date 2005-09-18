@@ -54,7 +54,7 @@ function loadModels ()
    require (APP.'app_model.php');
    foreach (listClasses(MODELS) as $model_fn) 
    {
-      require (MODELS.$model_fn);
+      require_once (MODELS.$model_fn);
    }
 }
 
@@ -72,12 +72,12 @@ function loadControllers ()
 
    foreach (listClasses(HELPERS) as $helper) 
    {
-      require (HELPERS.$helper.'.php');
+      require_once (HELPERS.$helper.'.php');
    }
 
    foreach (listClasses(CONTROLLERS) as $controller) 
    {
-      require (CONTROLLERS.$controller.'.php');
+      require_once (CONTROLLERS.$controller.'.php');
    }
 }
 
@@ -92,10 +92,10 @@ function loadController ($name)
    $controller_fn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
    $helper_fn = HELPERS.Inflector::underscore($name).'_helper.php';
 
-   require(APP.'app_controller.php');
+   require_once(APP.'app_controller.php');
 
    if (file_exists($helper_fn))
-      require($helper_fn);
+      require_once($helper_fn);
 
    return file_exists($controller_fn)? require($controller_fn): false;
 }
@@ -128,7 +128,7 @@ function config ()
       }
       elseif (file_exists(CONFIGS.$arg.'.php')) 
       {
-         include (CONFIGS.$arg.'.php');
+         include_once (CONFIGS.$arg.'.php');
          if (count($args) == 1) return true;
       }
       else 

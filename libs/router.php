@@ -140,7 +140,8 @@ class Router extends Object {
          array()
       );
 
-
+      $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
+      $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));
       $this->routes[] = $admin_route;
       $this->routes[] = $default_route;
       

@@ -177,4 +177,10 @@ define ('IMAGES_URL',          '/img/');
  */
 define ('CSS_URL',            '/css/');
 
+/**
+ * Web path to the js files directory.
+ */
+define ('JS_URL',            '/js/');
+
+
 ?>

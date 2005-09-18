@@ -772,9 +772,6 @@ class Controller extends Object
               }
          } // end loop through manytomany relations.
 	    }
-
-
-
       return $fieldNames;
 	}
 }

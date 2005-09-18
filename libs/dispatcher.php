@@ -85,9 +85,9 @@ class Dispatcher extends Object
  * @param string $url	URL information to work on.
  * @return boolean		Success
  */
-   function dispatch($url)
+   function dispatch($url, $additional_params=array())
    {
-      $params = $this->parseParams($url);
+      $params     = array_merge($this->parseParams($url), $additional_params);
       $missingController = false;
       $missingAction     = false;
       $missingView       = false;
@@ -119,22 +119,18 @@ class Dispatcher extends Object
       {
          $controller = new $ctrlClass($this);
       }
-
-      if (empty($params['action']))
+      
+      $classMethods = get_class_methods($controller);
+      $classVars = get_object_vars($controller);
+      
+      if ((empty($params['action'])) && in_array('index', $classMethods))
       {
-         if (method_exists($controller, 'index'))
-         {
-            $params['action'] = 'index';
-         }
-         else
-         {
-            $missingAction = true;
-         }
+          $params['action'] = 'index';
       }
-
-      if (!method_exists($controller, $params['action']))
+      
+      if(!in_array($params['action'], $classMethods))
       {
-         $missingAction = true;
+          $missingAction = true;
       }
       
       $controller->base        = $this->base;
@@ -143,24 +139,22 @@ class Dispatcher extends Object
       $controller->action      = $params['action'];
       $controller->data        = empty($params['data'])? null: $params['data'];
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
-      
-      foreach (get_object_vars($controller) as $name => $value)
+      $controller->viewpath = Inflector::underscore($ctrlName);
+      $controller->autoLayout = !$params['bare'];
+
+      if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true || !empty($params['action'])))
       {
-          if(($name === 'scaffold' && $missingAction === true) 
-              || ($name === 'scaffold' && !empty($params['action'])))
-          {
-              if (!method_exists($controller, $params['action']))
-              { 
-                  if(empty($params['action']))
-                  {
-                      $params['action'] = 'index';
-                  }
-                  $this->scaffoldView($url, $controller, $params);
-                  exit;
+          if(!in_array($params['action'], $classMethods))
+          { 
+              if(empty($params['action']))
+              {
+                  $params['action'] = 'index';
               }
+              $this->scaffoldView($url, $controller, $params);
+              exit;
           }
       }
-      
+
       $controller->constructClasses();
       
       if ($missingAction)
@@ -226,7 +220,8 @@ class Dispatcher extends Object
       {
          $params['form'][$name] = $data;
       }
-
+      
+      $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
       return $params;
    }
 
@@ -273,19 +268,24 @@ class Dispatcher extends Object
       return preg_match('/^(.*)\/public\/index\.php$/', $script_name, $r)? $r[1]: false;
    }
 
+   
 /**
  * Displays an error page (e.g. 404 Not found).
  *
  * @param int $code 	Error code (e.g. 404)
  * @param string $name 	Name of the error message (e.g. Not found)
  * @param string $message
+ * @return unknown
  */
    function error ($code, $name, $message)
-   {
-      $controller = new Controller ($this);
-      $controller->base = $this->base;
-      $controller->error($code, $name, $message);
-   }
+	{
+        $controller = new Controller ($this);
+        $controller->base = $this->base;
+        $controller->autoLayout = false;
+        $controller->set(array('code'=>$code, 'name'=>$name, 'message'=>$message));
+		return $controller->render('layouts/error');
+	}
+
 
 /**
  * Convenience method to display a 404 page.
