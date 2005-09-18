@@ -1329,7 +1329,7 @@ class Model extends Object
                {
                    for ($i = 0; $i< count($original); $i++) 
                    {
-                       $newValue[$i] = $original[$i];
+                       $newValue2[$i] = $original[$i];
                    }
                    if(count($this->_oneToMany < 2))
                    {
