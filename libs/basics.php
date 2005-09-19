@@ -97,7 +97,7 @@ function loadController ($name)
    if (file_exists($helper_fn))
       require_once($helper_fn);
 
-   return file_exists($controller_fn)? require($controller_fn): false;
+   return file_exists($controller_fn)? require_once($controller_fn): false;
 }
 
 /**
