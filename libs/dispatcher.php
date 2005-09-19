@@ -32,17 +32,6 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-
-
-/**
- * Add Description
- */
-define('DISPATCH_NO_CONTROLLER',      'missingController');
-define('DISPATCH_UNKNOWN_CONTROLLER', 'missingController');
-define('DISPATCH_NO_ACTION',          'missingAction');
-define('DISPATCH_UNKNOWN_ACTION',     'missingAction');
-define('DISPATCHER_UNKNOWN_VIEW',     'missingView');
-
 /**
  * Add Description
  */
@@ -74,7 +63,6 @@ class Dispatcher extends Object
       parent::__construct();
    }
 
-
 /**
  * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the results (if autoRender is set).
  *
@@ -85,9 +73,9 @@ class Dispatcher extends Object
  * @param string $url	URL information to work on.
  * @return boolean		Success
  */
-   function dispatch($url, $additional_params=array())
+   function dispatch($url, $additionalParams=array())
    {
-      $params     = array_merge($this->parseParams($url), $additional_params);
+      $params = array_merge($this->parseParams($url), $additionalParams);
       $missingController = false;
       $missingAction     = false;
       $missingView       = false;
@@ -123,7 +111,7 @@ class Dispatcher extends Object
       $classMethods = get_class_methods($controller);
       $classVars = get_object_vars($controller);
       
-      if ((empty($params['action'])) && in_array('index', $classMethods))
+      if (empty($params['action']))
       {
           $params['action'] = 'index';
       }
@@ -142,51 +130,40 @@ class Dispatcher extends Object
       $controller->viewpath = Inflector::underscore($ctrlName);
       $controller->autoLayout = !$params['bare'];
 
-      if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true || !empty($params['action'])))
+      if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
-          if(!in_array($params['action'], $classMethods))
-          { 
-              if(empty($params['action']))
-              {
-                  $params['action'] = 'index';
-              }
-              $this->scaffoldView($url, $controller, $params);
-              exit;
-          }
+          $this->scaffoldView($url, $controller, $params);
+          exit;
       }
 
       $controller->constructClasses();
       
       if ($missingAction)
       {
-          $params['action'] = 'missingAction';
           $controller->missingAction = $params['action'];
+          $params['action'] = 'missingAction';
       }
-
-      call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
-
-      $isFatal = isset($controller->isFatal) ? $controller->isFatal : false;
-
-      if ($isFatal)
-      {
-         switch($params['action'])
-         {
-            case 'missingController':
-            $this->errorUnknownController($url, $ctrlName);
-            break;
-
-            case 'missingAction':
-            $this->errorUnknownAction($url, $ctrlClass, $controller->missingAction);
-            break;
-         }
-      }
-
-      if ($controller->autoRender)
-      {
-         $controller->render();
-      }
-
-      return true;
+      
+      return $this->_invoke($controller, $params );
+   }
+   
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $controller
+ * @param unknown_type $params
+ * @return unknown
+ */
+   function _invoke (&$controller, $params )
+   {
+       
+       $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+       if ($controller->autoRender)
+       {
+           $controller->render();
+           exit;
+       }
+       return $output;
    }
 
 /**
@@ -197,32 +174,31 @@ class Dispatcher extends Object
  */
    function parseParams($from_url)
    {
-      // load routes config
-      $Route = new Router();
-      include CONFIGS.'routes.php';
-      $params = $Route->parse ($from_url);
-
-      // add submitted form data
-      $params['form'] = $_POST;
-      if (isset($_POST['data']))
-      {
-         $params['data'] = (ini_get('magic_quotes_gpc') == 1)?
-         	$this->stripslashes_deep($_POST['data']) : $_POST['data'];
-      }
-      if (isset($_GET))
-      {
-         $params['url'] = $this->urldecode_deep($_GET);
-         $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
-         $this->stripslashes_deep($params['url']) : $params['url'];
-      }
-
-      foreach ($_FILES as $name => $data)
-      {
-         $params['form'][$name] = $data;
-      }
-      
-      $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
-      return $params;
+       // load routes config
+       $Route = new Router();
+       include CONFIGS.'routes.php';
+       $params = $Route->parse ($from_url);
+       
+       // add submitted form data
+       $params['form'] = $_POST;
+       if (isset($_POST['data']))
+       {
+           $params['data'] = (ini_get('magic_quotes_gpc') == 1)?
+           $this->stripslashes_deep($_POST['data']) : $_POST['data'];
+       }
+       if (isset($_GET))
+       {
+           $params['url'] = $this->urldecode_deep($_GET);
+           $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
+           $this->stripslashes_deep($params['url']) : $params['url'];
+       }
+       
+       foreach ($_FILES as $name => $data)
+       {
+           $params['form'][$name] = $data;
+       }
+       $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
+       return $params;
    }
 
 /**
@@ -298,61 +274,6 @@ class Dispatcher extends Object
       $this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
    }
 
-/**
- * If DEBUG is set, this displays a 404 error with the message that no controller is set. 
- * If DEBUG is not set, nothing happens.
- *
- * @param string $url	URL that spawned this message, to be included in the output.
- */
-   function errorNoController ($url)
-   {
-      DEBUG?
-      trigger_error (ERROR_NO_CONTROLLER_SET, E_USER_ERROR):
-      $this->error404($url, "no controller set");
-      exit;
-   }
-
-/**
- * If DEBUG is set, this displays a 404 error with the message that the asked-for controller does not exist. If DEBUG is not set, nothing happens.
- *
- * @param string $url	URL that spawned this message, to be included in the output.
- * @param string $controller_class
- */
-   function errorUnknownController ($url, $controller_class)
-   {
-      DEBUG?
-      trigger_error (sprintf(ERROR_UNKNOWN_CONTROLLER, $controller_class), E_USER_ERROR):
-      $this->error404($url, "missing controller \"{$controller_class}\"");
-      exit;
-   }
-
-/**
- * If DEBUG is set, this displays a 404 error with the message that no action is set. If DEBUG is not set, nothing happens.
- *
- * @param string $url	URL that spawned this message, to be included in the output.
- */
-   function errorNoAction ($url)
-   {
-      DEBUG?
-      trigger_error (ERROR_NO_ACTION_SET, E_USER_ERROR):
-      $this->error404(sprintf(ERROR_404, $url, "no action set"));
-      exit;
-   }
-
-/**
- * If DEBUG is set, this displays a 404 error with the message that no such action exists. If DEBUG is not set, nothing happens.
- *
- * @param string $url	URL that spawned this message, to be included in the output.
- * @param string $controller_class
- * @param string $action
- */
-   function errorUnknownAction ($url,$controller_class, $action)
-   {
-      DEBUG?
-      trigger_error (sprintf(ERROR_NO_ACTION, $action, $controller_class), E_USER_ERROR):
-      $this->error404($url, "missing controller \"{$controller_class}\"");
-      exit;
-   }
 
 /**
   * When methods are now present in a controller
@@ -367,9 +288,9 @@ class Dispatcher extends Object
   * @param array $params
   * @since Cake v 0.10.0.172
   */
-   function scaffoldView ($url, &$controller_class, $params)
+   function scaffoldView ($url, &$controllerClass, $params)
    {
-       $isDataBaseSet = DboFactory::getInstance($controller_class->useDbConfig);
+       $isDataBaseSet = DboFactory::getInstance($controllerClass->useDbConfig);
        if(!empty($isDataBaseSet))
        {
        if($params['action'] === 'index'  || $params['action'] === 'list' ||
@@ -377,7 +298,7 @@ class Dispatcher extends Object
          $params['action'] === 'create' || $params['action'] === 'edit' ||  
          $params['action'] === 'update' || $params['action'] === 'destroy')
          {
-            $scaffolding =& new Scaffold($controller_class);
+            $scaffolding =& new Scaffold($controllerClass);
             
             switch ($params['action'])
             {
@@ -416,14 +337,14 @@ class Dispatcher extends Object
          } 
          else
          {
-             $controller_class->missingAction = $params['action'];
-             call_user_func_array(array(&$controller_class, 'missingAction'), null);
+             $controllerClass->missingAction = $params['action'];
+             call_user_func_array(array(&$controllerClass, 'missingAction'), null);
          }
          exit;
        }
        else
        {
-           call_user_func_array(array(&$controller_class, 'missingDatabase'), null);
+           call_user_func_array(array(&$controllerClass, 'missingDatabase'), null);
        }
    }
 }
