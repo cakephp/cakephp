@@ -1369,7 +1369,10 @@ class Model extends Object
            }
            $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
        }
-       return   $newValue;
+       if(!empty($newValue))
+       {
+           return $newValue;
+       }
    }
    
 /**
@@ -1443,7 +1446,10 @@ class Model extends Object
            }
            $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
        }
-       return   $newValue;
+       if(!empty($newValue))
+       {
+           return $newValue;
+       }
    }
        
 /**

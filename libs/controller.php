@@ -189,22 +189,19 @@ class Controller extends Object
         {
             die("Controller::__construct() : Can't get or parse my own class name, exiting.");
         }
-
-        $this->name = $r[1];
-        $this->viewPath = Inflector::underscore($r[1]);
-
-        //Adding Before Filter check
-	   if (!empty($this->beforeFilter))
-	   {
-	       if(is_array($this->beforeFilter))
-	       {
-	           // If is an array we will use a foreach and run these methods
-	       }
-	       else
-	       {
-	           // Run a single before filter
-	       }
-	   }
+        
+        $classVars = get_class_vars(get_class($this));
+        
+        if(in_array('casedClass', array_keys($classVars)) && !empty($this->casedClass))
+        {
+            $this->name = $this->casedClass;
+            $this->viewPath = Inflector::underscore($this->casedClass);
+        }
+        else
+        {
+            $this->name = $r[1];
+            $this->viewPath = Inflector::underscore($r[1]);  
+        }
 
         parent::__construct();
     }
@@ -227,15 +224,12 @@ class Controller extends Object
         $dboFactory = DboFactory::getInstance($this->useDbConfig);
         $this->db =& $dboFactory;
         
-        $match = array(); 
-        preg_match('/(.*)Controller/i', get_class($this), $match);
-        
-        $model_class = Inflector::singularize($match[1]);
-        $modelKey  = strtolower(Inflector::underscore($model_class));
+        $modelClass = Inflector::singularize($this->name);
+        $modelKey  = strtolower(Inflector::underscore($modelClass));
 
-        if (class_exists($model_class) && ($this->uses === false))
+        if (class_exists($modelClass) && ($this->uses === false))
         {
-            $this->models[$modelKey] = new $model_class($id);
+            $this->models[$modelKey] = new $modelClass($id);
         }
         elseif ($this->uses)
         {
@@ -246,42 +240,41 @@ class Controller extends Object
 
             $uses = is_array($this->uses)? $this->uses: array($this->uses);
 
-            foreach ($uses as $model_name)
+            foreach ($uses as $modelName)
             {
-                $model_class = ucfirst(strtolower($model_name));
-                $modelKey  = strtolower(Inflector::underscore($model_class));
+                $modelClass = ucfirst(strtolower($modelName));
+                $modelKey  = strtolower(Inflector::underscore($modelClass));
 
-                if (class_exists($model_class))
+                if (class_exists($modelClass))
                 {
-                    $this->models[$modelKey] = new $model_class($id);
+                    $this->models[$modelKey] = new $modelClass($id);
                 }
                 else
                 {
-                    die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$model_class}, exiting.");
+                    die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$modelClass}, exiting.");
                 }
             }
         }
         
-        
         if (!empty($this->beforeFilter))
         {
-          if(is_array($this->beforeFilter))
-          {
-              foreach($this->beforeFilter as $filter)
-              {
-                  if(is_callable(array($this,$filter)))
-                  {
-                      $this->$filter();
-                  }
-              }
-          }
-          else
-          {
-              if(is_callable(array($this,$this->beforeFilter)))
-              {
-                  $this->{$this->beforeFilter}();
-              }
-          }
+            if(is_array($this->beforeFilter))
+            {
+                foreach($this->beforeFilter as $filter)
+                {
+                    if(is_callable(array($this,$filter)))
+                    {
+                        $this->$filter();
+                    }
+                }
+            }
+            else
+            {
+                if(is_callable(array($this,$this->beforeFilter)))
+                {
+                    $this->{$this->beforeFilter}();
+                }
+            }
         }
     }
 

@@ -132,7 +132,7 @@ class Dispatcher extends Object
 
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
-          $this->scaffoldView($url, $controller, $params);
+          $scaffolding =& new Scaffold($controller, $params);
           exit;
       }
 
@@ -156,7 +156,6 @@ class Dispatcher extends Object
  */
    function _invoke (&$controller, $params )
    {
-       
        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
        if ($controller->autoRender)
        {
@@ -228,20 +227,21 @@ class Dispatcher extends Object
  */
    function baseUrl()
    {
+       if (defined('BASE_URL'))
+       {
+           return BASE_URL;
+       }
 
-      //non mod_rewrite use:
-      if (defined('BASE_URL')) return BASE_URL;
-
-      $doc_root = $_SERVER['DOCUMENT_ROOT'];
-      $script_name = $_SERVER['PHP_SELF'];
+      $docRoot = $_SERVER['DOCUMENT_ROOT'];
+      $scriptName = $_SERVER['PHP_SELF'];
 
       // if document root ends with 'public', it's probably correctly set
       $r = null;
-      if (ereg('/^.*/public(\/)?$/', $doc_root))
-      return preg_match('/^(.*)\/index\.php$/', $script_name, $r)? $r[1]: false;
+      if (ereg('/^.*/public(\/)?$/', $docRoot))
+      return preg_match('/^(.*)\/index\.php$/', $scriptName, $r)? $r[1]: false;
       else
       // document root is probably not set to Cake 'public' dir
-      return preg_match('/^(.*)\/public\/index\.php$/', $script_name, $r)? $r[1]: false;
+      return preg_match('/^(.*)\/public\/index\.php$/', $scriptName, $r)? $r[1]: false;
    }
 
    
@@ -272,80 +272,6 @@ class Dispatcher extends Object
    function error404 ($url, $message)
    {
       $this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
-   }
-
-
-/**
-  * When methods are now present in a controller
-  * scaffoldView is used to call default Scaffold methods if:
-  * <code>
-  * var $scaffold;
-  * </code>
-  * is placed in the controller's class definition.
-  *
-  * @param string $url
-  * @param string $controller_class
-  * @param array $params
-  * @since Cake v 0.10.0.172
-  */
-   function scaffoldView ($url, &$controllerClass, $params)
-   {
-       $isDataBaseSet = DboFactory::getInstance($controllerClass->useDbConfig);
-       if(!empty($isDataBaseSet))
-       {
-       if($params['action'] === 'index'  || $params['action'] === 'list' ||
-         $params['action'] === 'show'   || $params['action'] === 'new' || 
-         $params['action'] === 'create' || $params['action'] === 'edit' ||  
-         $params['action'] === 'update' || $params['action'] === 'destroy')
-         {
-            $scaffolding =& new Scaffold($controllerClass);
-            
-            switch ($params['action'])
-            {
-               case 'index':
-               $scaffolding->scaffoldIndex($params);
-               break;
-               
-               case 'show':
-               $scaffolding->scaffoldShow($params);
-               break;
-			
-               case 'list':
-               $scaffolding->scaffoldList($params);
-               break;
-   					
-               case 'new':
-               $scaffolding->scaffoldNew($params);
-               break;
-               
-               case 'edit':
-               $scaffolding->scaffoldEdit($params);
-               break;
-   								
-               case 'create':
-               $scaffolding->scaffoldCreate($params);
-               break;
-   			
-               case 'update':
-               $scaffolding->scaffoldUpdate($params);
-               break;
-   			
-               case 'destroy':
-               $scaffolding->scaffoldDestroy($params);
-               break;
-            }
-         } 
-         else
-         {
-             $controllerClass->missingAction = $params['action'];
-             call_user_func_array(array(&$controllerClass, 'missingAction'), null);
-         }
-         exit;
-       }
-       else
-       {
-           call_user_func_array(array(&$controllerClass, 'missingDatabase'), null);
-       }
    }
 }
 ?>

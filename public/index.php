@@ -75,6 +75,10 @@ require_once ROOT.'libs/neat_array.php';
 require_once ROOT.'libs/inflector.php';
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);
+if (DEBUG) 
+{
+    ini_set('display_errors', 1);
+}
 
 $TIME_START = getMicrotime();
 
@@ -97,6 +101,7 @@ if (class_exists('DATABASE_CONFIG'))
       $DISPATCHER->dispatch($url);
    }
 //CLEANUP
-if (DEBUG) echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
-
+if (DEBUG) {
+    echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
+}
 ?>

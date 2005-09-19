@@ -105,17 +105,23 @@ class Scaffold extends Object {
 	 * @param string $controller_class Name of controller
 	 * @param array $params
 	 */
-	function __construct(&$controller_class)
+	function __construct(&$controller, $params)
 	{
-		$this->controllerClass =& $controller_class;
-		$this->clazz =& $controller_class->name;
-		$this->actionView =& $controller_class->action;
+		$this->controllerClass =& $controller;
+		$this->clazz = $controller->name;
+		$this->actionView = $controller->action;
 		$this->modelKey = Inflector::underscore(Inflector::singularize($this->clazz));
 		$this->scaffoldTitle = Inflector::humanize($this->modelKey);
 		$this->controllerClass->layout = 'scaffold';
 		$this->controllerClass->pageTitle = $this->scaffoldTitle;
-		$this->controllerClass->constructClasses();
+		$this->_renderScaffold($params);
 	}
+	
+	function _renderScaffold($params)
+	{
+	    $this->_scaffoldView($params);
+	}
+	
 
 	/**
 	 * Renders the List view as the default action (index).
@@ -123,10 +129,10 @@ class Scaffold extends Object {
 	 * @param array $params
 	 * @return boolean Success
 	 */
-	function scaffoldIndex($params)
+	function _scaffoldIndex($params)
 	{
 	    $this->controllerClass->pageTitle = Inflector::humanize(Inflector::pluralize($this->modelKey));
-		return $this->scaffoldList($params);
+		return $this->_scaffoldList($params);
 	}
 
 	/**
@@ -134,7 +140,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldShow($params)
+	function _scaffoldShow($params)
 	{
 		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->modelKey]->read();
 		$this->controllerClass->set('data', $this->controllerClass->params['data'] );
@@ -147,7 +153,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldList($params)
+	function _scaffoldList($params)
 	{
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
 		$this->controllerClass->set('data', $this->controllerClass->models[$this->modelKey]->findAll());
@@ -159,7 +165,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldNew($params)
+	function _scaffoldNew($params)
 	{
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
 		$this->controllerClass->render($this->actionView, '', LIBS.'controllers'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
@@ -170,7 +176,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldEdit($params)
+	function _scaffoldEdit($params)
 	{
 		$this->controllerClass->params['data'] = $this->controllerClass->models[$this->modelKey]->read();
 		//  generate the field names.
@@ -185,7 +191,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldCreate($params)
+	function _scaffoldCreate($params)
 	{
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
 		$this->cleanUpFields();
@@ -207,10 +213,10 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldUpdate($params=array())
+	function _scaffoldUpdate($params=array())
 	{
 		//  clean up the date fields
-		$this->cleanUpFields();
+		$this->_cleanUpFields();
 
 		$this->controllerClass->models[$this->modelKey]->set($this->controllerClass->params['data']);
 		if ( $this->controllerClass->models[$this->modelKey]->save())
@@ -228,7 +234,7 @@ class Scaffold extends Object {
 	 *
 	 * @param array $params
 	 */
-	function scaffoldDestroy($params=array())
+	function _scaffoldDestroy($params=array())
 	{
 		$id = $params['pass'][0];
 		//  figure out what model and table we are working with
@@ -241,12 +247,91 @@ class Scaffold extends Object {
 			$this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/'.Inflector::underscore($this->controllerClass->viewPath));
 		}
 	}
+	
+/**
+  * When methods are now present in a controller
+  * scaffoldView is used to call default Scaffold methods if:
+  * <code>
+  * var $scaffold;
+  * </code>
+  * is placed in the controller's class definition.
+  *
+  * @param string $url
+  * @param string $controller_class
+  * @param array $params
+  * @since Cake v 0.10.0.172
+  */
+    function _scaffoldView ($params)
+    {
+        $isDataBaseSet = DboFactory::getInstance($this->controllerClass->useDbConfig);
+        if(!empty($isDataBaseSet))
+        {
+            $this->controllerClass->constructClasses();
+            
+            if($params['action'] === 'index'  || $params['action'] === 'list' ||
+               $params['action'] === 'show'   || $params['action'] === 'new' || 
+               $params['action'] === 'create' || $params['action'] === 'edit' ||  
+               $params['action'] === 'update' || $params['action'] === 'destroy')
+            {
+                switch ($params['action'])
+                {
+                    case 'index':
+                        $this->_scaffoldIndex($params);
+                    break;
+                   
+                    case 'show':
+                        $this->_scaffoldShow($params);
+                    break;
+    			
+                    case 'list':
+                        $this->_scaffoldList($params);
+                    break;
+       					
+                    case 'new':
+                        $this->_scaffoldNew($params);
+                    break;
+                   
+                    case 'edit':
+                        $this->_scaffoldEdit($params);
+                    break;
+       								
+                    case 'create':
+                        $this->_scaffoldCreate($params);
+                    break;
+       			
+                    case 'update':
+                        $this->_scaffoldUpdate($params);
+                    break;
+       			
+                    case 'destroy':
+                        $this->_scaffoldDestroy($params);
+                    break;
+                }
+            } 
+            else
+            {
+                $this->controllerClass->layout = 'default';
+                $this->controllerClass->missingAction = $params['action'];
+                call_user_func_array(array($this->controllerClass, 'missingAction'), null);
+                exit;
+            }
+        }
+        else
+        {
+            $this->controllerClass->layout = 'default';
+            call_user_func_array(array($this->controllerClass, 'missingDatabase'), null);
+            exit;
+        }
+    }
+	
+	
+	
 	/**
 	 * Cleans up the date fields of current Model.
 	 * 
 	 *
 	 */
-	function cleanUpFields()
+	function _cleanUpFields()
 	{
 		//  clean up the date fields
 		$objModel = $this->controllerClass->models[$this->modelKey];
