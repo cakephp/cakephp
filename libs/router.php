@@ -127,7 +127,7 @@ class Router extends Object {
       $default_route = array
       (
          '/:controller/:action/* (default)',
-         "#^(?:\/(?:([a-z0-9_\-]+)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
+         "#^(?:\/(?:([a-zA-Z0-9_\-]+)(?:\/([a-zA-Z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
          array('controller', 'action'),
          array()
       );
@@ -135,7 +135,7 @@ class Router extends Object {
       $admin_route = array
       (
          '/:controller/:admin/:action/* (default)',
-         "#^(?:\/(?:([a-z0-9_\-]+)(?:\/(admin)(?:\/([a-z0-9_\-]+)(?:\/(.*))?)?)?))[\/]*$#",
+         "#^(?:\/(?:([a-zA-Z0-9_\-]+)(?:\/(admin)(?:\/([a-zA-Z0-9_\-]+)(?:\/(.*))?)?)?))[\/]*$#",
          array('controller', 'admin', 'action'),
          array()
       );
@@ -165,7 +165,7 @@ class Router extends Object {
             {
                foreach ($defaults as $name=>$value) 
                {
-                  if (preg_match('#[a-z_\-]#i', $name))
+                  if (preg_match('#[a-zA-Z_\-]#i', $name))
                   {
                      $out[$name] = $value;
                   }

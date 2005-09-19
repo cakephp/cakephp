@@ -96,6 +96,47 @@ class Object
    }
 
 /**
+ * 
+ * Allow calling a controllers method from any location
+ * 
+ *
+ * @param unknown_type $url
+ * @param unknown_type $extra
+ * @return unknown
+ */
+    function renderMethod ($url, $extra = array())
+    {
+        $extra = array_merge($extra, array('bare'=>1));
+        
+        $dispatcher =& new Dispatcher();
+        $params = array_merge($dispatcher->parseParams($url), $extra);
+        
+        $ctrlName  = Inflector::camelize($params['controller']);
+        $ctrlClass = $ctrlName.'Controller';
+        
+        if (!loadController($ctrlName) || !class_exists($ctrlClass))
+        {
+            $ctrlClass = 'AppController';
+            $controller =& new $ctrlClass();
+            $params['action'] = 'missingController';
+            $controller->missingController = $params['controller'];
+        }
+        else
+        {
+            $controller =& new $ctrlClass();
+            $classMethods = get_class_methods($controller);
+            
+            if(!in_array($params['action'], $classMethods))
+            {
+                $controller->missingAction = $params['action'];
+                $params['action'] = 'missingAction';
+            }
+        }
+        $return = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+        return $return;
+    }
+    
+/**
  * API for logging events.
  *
  * @param string $msg Log message

@@ -213,7 +213,7 @@ class Dispatcher extends Object
       {
          $params['url'] = $this->urldecode_deep($_GET);
          $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
-         	$this->stripslashes_deep($params['url']) : $params['url'];
+         $this->stripslashes_deep($params['url']) : $params['url'];
       }
 
       foreach ($_FILES as $name => $data)
