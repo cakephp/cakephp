@@ -553,11 +553,6 @@ class View extends Object
       return $out;
    }
    
-    function fetch ($url)
-    {
-        $dispatcher = new Dispatcher();
-        return $dispatcher->dispatch($url, array('bare'=>1));
-    }
 }
 
 ?>

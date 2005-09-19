@@ -39,6 +39,7 @@
  * @subpackage cake.libs.helpers
  * @since      CakePHP v 0.9.2
  */
+
 class JavascriptHelper extends Helper
 {
     /**
@@ -53,14 +54,15 @@ class JavascriptHelper extends Helper
     }
 
     /**
-     * Returns a JavaScript include tag (LINK element)
+     * Returns a JavaScript include tag (SCRIPT element)
      *
      * @param  string $url URL to JavaScript file.
      * @return string
      */
     function link($url)
     {
-        return sprintf($this->tags['javascriptlink'], $this->base.$url);
+    	if(strpos($url, ".") === false) $url .= ".js";
+      return sprintf($this->tags['javascriptlink'], $this->base . JS_URL . $url);
     }
 
     /**
@@ -71,6 +73,7 @@ class JavascriptHelper extends Helper
      */
     function linkOut($url)
     {
+    		if(strpos($url, ".") === false) $url .= ".js";
         return sprintf($this->tags['javascriptlink'], $url);
     }
 

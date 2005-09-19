@@ -1270,8 +1270,8 @@ class Model extends Object
       $joins = count($joins)? join(' ', $joins): null;
       $whers = count($whers)? '('.join(' AND ', $whers).')': null;
       $conditions .= ($conditions && $whers? ' AND ': null).$whers;
-
-      $offset = $page > 1? $page*$limit: 0;
+      
+      $offset = $page > 1? ($page-1) * $limit: 0;
 
       $limit_str = $limit
          ? $this->db->selectLimit($limit, $offset)
