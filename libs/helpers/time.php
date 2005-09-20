@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: html.php 578 2005-08-12 04:09:07Z phpnut $ */
+/* SVN FILE: $Id$ */
 
 /**
  * Time Helper class file.
@@ -23,9 +23,9 @@
  * @package      cake
  * @subpackage   cake.libs.helpers
  * @since        CakePHP v 0.9.1
- * @version      $Revision: 578 $
- * @modifiedby   $LastChangedBy: phpnut $
- * @lastmodified $Date: 2005-08-11 22:09:07 -0600 (Thu, 11 Aug 2005) $
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
