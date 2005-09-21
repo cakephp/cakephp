@@ -535,7 +535,7 @@ class Model extends Object
    function _constructAssociatedModels($modelName, $type, $settings = false)
    {
       $modelName = Inflector::singularize($modelName);
-      $collectionKey = strtolower($modelName);
+      $collectionKey = Inflector::underscore($modelName);
       
       switch($type)
       {

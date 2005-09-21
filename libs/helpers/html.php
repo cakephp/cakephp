@@ -503,10 +503,10 @@ class HtmlHelper extends Helper
 		$out = array();
 		foreach ($names as $arg)
 		{
-			$out[] = sprintf($this->tags['tableHeader'], $this->parseHtmlOptions($th_options), $arg);
+			$out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($th_options), $arg);
 		}
 
-		return sprintf($this->tags['tableHeader'], $this->parseHtmlOptions($tr_options), join(' ', $out));
+		return sprintf($this->tags['tableheader'], $this->parseHtmlOptions($tr_options), join(' ', $out));
 	}
 
 
@@ -1239,8 +1239,8 @@ class HtmlHelper extends Helper
 
 	function dayOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
-		$dayValue = empty($value) ? date('d') : date('d',strtotime( $value ) );
+		$value = isset($value)? $value : $this->tagValue($tagName."_day");
+		$dayValue = empty($value) ? date('d') : $value;
 		$days=array('1'=>'1','2'=>'2','3'=>'3','4'=>'4',
 		'5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9',
 		'10'=>'10','11'=>'11','12'=>'12',
@@ -1257,9 +1257,9 @@ class HtmlHelper extends Helper
 
 	function yearOptionTag( $tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $optionAttr=null)
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
+		$value = isset($value)? $value : $this->tagValue($tagName."_year");
 
-		$yearValue = empty($value) ? date('Y') : date('Y',strtotime( $value ) );
+		$yearValue = empty($value) ? date('Y') : $value;
 
 		$maxYear = is_null($maxYear) ? $yearValue + 10 : $maxYear;
 
@@ -1286,8 +1286,8 @@ class HtmlHelper extends Helper
 
 	function monthOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
-		$monthValue = empty($value) ? date('m') : date('m',strtotime( $value ) );
+		$value = isset($value)? $value : $this->tagValue($tagName."_month");
+		$monthValue = empty($value) ? date('m') : $value ;
 		$months=array('1'=>'January','2'=>'February','3'=>'March',
 		'4'=>'April','5'=>'May','6'=>'June','7'=>'July','8'=>'August',
 		'9'=>'September','10'=>'October','11'=>'November','12'=>'December');
@@ -1301,14 +1301,14 @@ class HtmlHelper extends Helper
 	$selected=null,
 	$optionAttr=null )
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
+		$value = isset($value)? $value : $this->tagValue($tagName."_hour");
 		if ( $format24Hours )
 		{
-			$hourValue = empty($value) ? date('H') : date('H',strtotime( $value ) );
+			$hourValue = empty($value) ? date('H') : $value;
 		}
 		else
 		{
-			$hourValue = empty($value) ? date('g') : date('g',strtotime( $value ) );
+			$hourValue = empty($value) ? date('g') : $value;
 		}
 		if ( $format24Hours )
 		{ $hours = array('0'=>'00','1'=>'01','2'=>'02','3'=>'03','4'=>'04',
@@ -1333,8 +1333,8 @@ class HtmlHelper extends Helper
 
 	function minuteOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
-		$minValue = empty($value) ? date('i') : date('i',strtotime( $value ) );
+		$value = isset($value)? $value : $this->tagValue($tagName."_min");
+		$minValue = empty($value) ? date('i') : $value ;
 		for( $minCount=0; $minCount<61; $minCount++)
 		{
 			$mins[$minCount] = sprintf('%02d', $minCount);
@@ -1347,8 +1347,8 @@ class HtmlHelper extends Helper
 
 	function meridianOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
-		$value = isset($value)? $value : $this->tagValue($tagName);
-		$merValue = empty($value) ? date('a') : date('a',strtotime( $value ) );
+		$value = isset($value)? $value : $this->tagValue($tagName."_meridian");
+		$merValue = empty($value) ? date('a') : $value ;
 		$meridians = array('am'=>'am','pm'=>'pm');
 
 		$option = $this->selectTag($tagName.'_meridian', $meridians, $merValue,
@@ -1379,7 +1379,7 @@ class HtmlHelper extends Helper
 		switch ($timeFormat)
 		{
 			case '24':
-			$opt .= $this->hourOptionTag( $tagName, true ) . ':' . $this->minuteOptionTag( $tagName );
+			$opt .= $this->hourOptionTag( $tagName, null , true ) . ':' . $this->minuteOptionTag( $tagName );
 			break;
 			case '12':
 			$opt .= $this->hourOptionTag( $tagName ) . ':' . $this->minuteOptionTag( $tagName ) . ' ' . $this->meridianOptionTag($tagName);

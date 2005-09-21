@@ -104,8 +104,16 @@ class Object
  * @param unknown_type $extra
  * @return unknown
  */
-    function renderMethod ($url, $extra = array())
+    function requestAction ($url, $extra = array())
     {
+        if(in_array('render', $extra))
+        {
+            $extra['render'] = 0;
+        }
+        else
+        {
+          $extra['render'] = 1; 
+        }
         $extra = array_merge($extra, array('bare'=>1));
         $dispatcher =& new Dispatcher();
         return $dispatcher->dispatch($url, $extra);

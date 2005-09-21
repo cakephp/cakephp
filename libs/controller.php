@@ -211,7 +211,22 @@ class Controller extends Object
      *
      */
     function constructClasses(){
+        
+        if (!empty($this->beforeFilter))
+        {
+            if(is_array($this->beforeFilter))
+            {
+                foreach($this->beforeFilter as $filter)
+                {
 
+                }
+            }
+            else
+            {
+
+            }
+        }
+        
         if(empty($this->params['pass']))
         {
             $id = false;
@@ -252,27 +267,6 @@ class Controller extends Object
                 else
                 {
                     die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$modelClass}, exiting.");
-                }
-            }
-        }
-        
-        if (!empty($this->beforeFilter))
-        {
-            if(is_array($this->beforeFilter))
-            {
-                foreach($this->beforeFilter as $filter)
-                {
-                    if(is_callable(array($this,$filter)))
-                    {
-                        $this->$filter();
-                    }
-                }
-            }
-            else
-            {
-                if(is_callable(array($this,$this->beforeFilter)))
-                {
-                    $this->{$this->beforeFilter}();
                 }
             }
         }

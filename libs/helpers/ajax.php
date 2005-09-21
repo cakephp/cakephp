@@ -158,7 +158,7 @@ class AjaxHelper extends Helper
         }
         if (isset($options['after'])) 
         {
-            $func = "$func; {$options['before']};";
+            $func = "$func; {$options['after']};";
         }
         if (isset($options['condition'])) 
         {

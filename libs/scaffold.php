@@ -194,7 +194,7 @@ class Scaffold extends Object {
 	function _scaffoldCreate($params)
 	{
 		$this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-		$this->cleanUpFields();
+		$this->_cleanUpFields();
 
 		if ($this->controllerClass->models[$this->modelKey]->save($this->controllerClass->params['data']))
 		{

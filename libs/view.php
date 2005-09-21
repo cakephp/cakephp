@@ -438,6 +438,7 @@ class View extends Object
    function missingView()
    {
       //We are simulating action call below, this is not a filename!
+      $this->autoLayout = true;
       $this->missingView = $this->name;
       $this->render('../errors/missingView');
    }

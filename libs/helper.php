@@ -129,22 +129,6 @@ class Helper extends Object
         $this->tags[$keyName]);
     }
     
-    
-/**
- * 
- * Allow calling a controllers method from a helper
- * 
- *
- * @param unknown_type $url
- * @param unknown_type $extra
- * @return unknown
- */
-    function renderMethod ($url, $extra = false)
-    {
-        $dispatcher = new Dispatcher();
-        return $dispatcher->dispatch($url, array('bare'=>1));
-    }
-    
     function readConfigFile ($fileName)
     {
         $fileLineArray = file($fileName);

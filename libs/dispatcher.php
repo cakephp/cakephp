@@ -79,6 +79,12 @@ class Dispatcher extends Object
       $missingController = false;
       $missingAction     = false;
       $missingView       = false;
+      
+      if(!in_array('render', array_keys($params)))
+      {
+          $params['render'] = 0;
+      }
+          
 
       if (empty($params['controller']))
       {
@@ -129,6 +135,7 @@ class Dispatcher extends Object
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
       $controller->viewpath = Inflector::underscore($ctrlName);
       $controller->autoLayout = !$params['bare'];
+      $controller->autoRender = !$params['render'];
 
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
@@ -197,6 +204,7 @@ class Dispatcher extends Object
            $params['form'][$name] = $data;
        }
        $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
+
        return $params;
    }
 
