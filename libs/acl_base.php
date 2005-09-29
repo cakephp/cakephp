@@ -36,26 +36,25 @@ uses('error_messages');
  * Access Control List abstract class. Not to be instantiated. 
  * Subclasses of this class are used by AclHelper to perform ACL checks in Cake.
  *
- * @package cake
+ * @package    cake
  * @subpackage libs
- * @since CakePHP v 0.9.2
+ * @since      CakePHP v 0.9.2
  *
  */
 class AclBase
 {
-   
-   function AclBase()
-   {
-      //No instantiations or constructor calls (even statically)
-      if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase"))
-      {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
-         return NULL;
-      }
-      
-   }
-   
-   function check($aro, $aco) {}
-   
-}   
+    function AclBase()
+    {
+        //No instantiations or constructor calls (even statically)
+        if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase"))
+        {
+            trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
+            return NULL;
+        }
+    }
+
+    function check($aro, $aco)
+    {
+    }
+}
 ?>
