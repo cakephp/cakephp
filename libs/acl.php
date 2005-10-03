@@ -42,19 +42,21 @@
  *
  */
 class Acl
-{
-    /**
-     * Static function used to gain an instance of the correct ACL class.
-     *
-     * @return MyACL
-     */
-    function getACL()
-    {
-        require_once CONFIGS.'core.php';
-        require_once APP.'apis'.DS.ACL_FILENAME;
+{  
+   
+   /**
+    * Static function used to gain an instance of the correct ACL class.
+    *
+    * @return MyACL
+    */
+   function getACL() 
+   {
+      require_once(CONFIGS.'core.php');
+      require_once(APP.'apis'.DS.ACL_FILENAME);
 
-        $myacl = ACL_CLASSNAME;
-        return new $myacl;
-    }
+      $myacl = ACL_CLASSNAME;
+      return new $myacl;
+   }
+
 }
 ?>
