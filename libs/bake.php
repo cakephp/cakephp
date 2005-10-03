@@ -565,5 +565,7 @@ class %sTest extends TestCase
             return false;
         }
     }
+
 }
+
 ?>

@@ -34,13 +34,13 @@
 /**
  * Basic defines for timing functions.
  */
-define('SECOND', 1);
+define('SECOND',  1);
 define('MINUTE', 60 * SECOND);
 define('HOUR',   60 * MINUTE);
 define('DAY',    24 * HOUR);
-define('WEEK',   7 * DAY);
+define('WEEK',    7 * DAY);
 define('MONTH',  30 * DAY);
-define('YEAR',   365 * DAY);
+define('YEAR',  365 * DAY);
 
 /**
  * Loads all models.
@@ -49,13 +49,13 @@ define('YEAR',   365 * DAY);
  * @uses APP
  * @uses MODELS
  */
-function loadModels()
+function loadModels () 
 {
-    require APP.'app_model.php';
-    foreach (listClasses(MODELS) as $model_fn)
-    {
-        require_once MODELS.$model_fn;
-    }
+   require (APP.'app_model.php');
+   foreach (listClasses(MODELS) as $model_fn) 
+   {
+      require_once (MODELS.$model_fn);
+   }
 }
 
 /**
@@ -66,59 +66,50 @@ function loadModels()
  * @uses HELPERS
  * @uses CONTROLLERS
  */
-function loadControllers()
+function loadControllers () 
 {
-    require APP.'app_controller.php';
+   require (APP.'app_controller.php');
 
-    foreach (listClasses(HELPERS) as $helper)
-    {
-        require_once HELPERS.$helper.'.php';
-    }
+   foreach (listClasses(HELPERS) as $helper) 
+   {
+      require_once (HELPERS.$helper.'.php');
+   }
 
-    foreach (listClasses(CONTROLLERS) as $controller)
-    {
-        require_once CONTROLLERS.$controller.'.php';
-    }
+   foreach (listClasses(CONTROLLERS) as $controller) 
+   {
+      require_once (CONTROLLERS.$controller.'.php');
+   }
 }
 
 /**
- * Loads a controller and its helper libraries.
- *
- * @param string $name Name of controller
- * @return boolean Success
- */
-function loadController($name)
+  * Loads a controller and its helper libraries.
+  *
+  * @param string $name Name of controller
+  * @return boolean Success
+  */
+function loadController ($name) 
 {
-    $controllerFn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
-    $helperFn     = HELPERS.Inflector::underscore($name).'_helper.php';
+   $controller_fn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
+   $helper_fn = HELPERS.Inflector::underscore($name).'_helper.php';
 
-    require_once(APP.'app_controller.php');
+   require_once(APP.'app_controller.php');
 
-    if (file_exists($helperFn))
-    {
-        require_once $helperFn;
-    }
+   if (file_exists($helper_fn))
+      require_once($helper_fn);
 
-    if (file_exists($controllerFn))
-    {
-        return require_once $controllerFn;
-    }
-    else
-    {
-        return false;
-    }
+   return file_exists($controller_fn)? require_once($controller_fn): false;
 }
 
 /**
- * Lists PHP files in given directory.
- *
- * @param string $path 	Path to scan for files
- * @return array List of files in directory
- */
-function listClasses($path)
+  * Lists PHP files in given directory.
+  *
+  * @param string $path 	Path to scan for files
+  * @return array 			List of files in directory
+  */
+function listClasses($path) 
 {
-    $modules = new Folder($path);
-    return $modules->find('(.+)\.php');
+   $modules = new Folder($path);
+   return $modules->find('(.+)\.php');
 }
 
 /**
@@ -126,30 +117,27 @@ function listClasses($path)
   *
   * @return boolean Success
   */
-function config()
+function config () 
 {
-    $args = func_get_args();
-    foreach ($args as $arg)
-    {
-        if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
-        {
-            require_once CONFIGS.$arg.'.php';
-        }
-        elseif (file_exists(CONFIGS.$arg.'.php'))
-        {
-            require_once CONFIGS.$arg.'.php';
-
-            if (count($args) == 1)
-            {
-                return true;
-            }
-        }
-        elseif (count($args) == 1)
-        {
-            return false;
-        }
-    }
-    return true;
+   $args = func_get_args();
+   foreach ($args as $arg) 
+   {
+      if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
+      {
+         include_once(CONFIGS.$arg.'.php');
+      }
+      elseif (file_exists(CONFIGS.$arg.'.php')) 
+      {
+         include_once (CONFIGS.$arg.'.php');
+         if (count($args) == 1) return true;
+      }
+      else 
+      {
+         if (count($args) == 1) return false;
+      }
+   }
+   
+   return true;
 }
 
 /**
@@ -162,25 +150,28 @@ function config()
  *
  * @uses LIBS
  */
-function uses()
+function uses ()
 {
-    $args = func_get_args();
-    foreach ($args as $arg)
-    {
-        require_once LIBS.strtolower($arg).'.php';
-    }
+   $args = func_get_args();
+   foreach ($args as $arg) 
+   {
+      require_once(LIBS.strtolower($arg).'.php');
+   }
 }
 
 /**
  * Require given files in the VENDORS directory. Takes optional number of parameters.
+ *
+ * @param string $name Filename without the .php part.
+ *
  */
-function vendor()
+function vendor($name)
 {
-    $args = func_get_args();
-    foreach ($args as $arg)
-    {
-        require_once VENDORS.$arg.'.php';
-    }
+   $args = func_get_args();
+   foreach ($args as $arg) 
+   {
+      require_once(VENDORS.$arg.'.php');
+   }
 }
 
 /**
@@ -191,171 +182,156 @@ function vendor()
  * @param boolean $var		Variable to show debug information for.
  * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
  */
-function debug($var = false, $show_html = false)
+function debug($var = false, $show_html = false) 
 {
-    if (DEBUG)
-    {
-        print "\n<pre>\n";
-        if ($show_html)
-        {
-            $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
-        }
-        print_r($var);
-        print "\n</pre>\n";
-    }
+   if (DEBUG) 
+   {
+      print "\n<pre>\n";
+      if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
+      print_r($var);
+      print "\n</pre>\n";
+   }
 }
 
 
-if (!function_exists('getMicrotime'))
+if (!function_exists('getMicrotime')) 
 {
-    /**
-     * Returns microtime for execution time checking.
-     *
-     * @return integer
-     */
-    function getMicrotime()
-    {
-        list($usec, $sec) = explode(" ", microtime());
-        return ((float)$usec + (float)$sec);
-    }
+/**
+ * Returns microtime for execution time checking.
+ *
+ * @return integer
+ */
+   function getMicrotime() 
+   {
+      list($usec, $sec) = explode(" ", microtime());
+      return ((float)$usec + (float)$sec);
+   }
 }
 
-if (!function_exists('sortByKey'))
+if (!function_exists('sortByKey')) 
 {
-    /**
-     * Sorts given $array by key $sortby.
-     *
-     * @param  array   $array
-     * @param  string  $sortby
-     * @param  string  $order  Sort order asc/desc (ascending or descending).
-     * @param  integer $type
-     * @return mixed
-     */
-    function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC)
-    {
-        if (!is_array($array))
-        {
-            return null;
-        }
+/**
+ * Sorts given $array by key $sortby.
+ *
+ * @param array $array
+ * @param string $sortby
+ * @param string $order Sort order asc/desc (ascending or descending).
+ * @param integer $type
+ * @return mixed
+ */
+   function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) 
+   {
+      if (!is_array($array))
+         return null;
 
-        foreach ($array as $key => $val)
-        {
-            $sa[$key] = $val[$sortby];
-        }
+      foreach ($array as $key => $val)
+      {
+         $sa[$key] = $val[$sortby];
+      }
 
-        if ($order == 'asc')
-        {
-            asort($sa, $type);
-        }
-        else
-        {
-            arsort($sa, $type);
-        }
+      $order == 'asc'
+         ? asort($sa, $type)
+         : arsort($sa, $type);
 
-        foreach ($sa as $key=>$val)
-        {
-            $out[] = $array[$key];
-        }
+      foreach ($sa as $key=>$val)
+      {
+         $out[] = $array[$key];
+      }
 
-        return $out;
-    }
+      return $out;
+   }
 }
 
-if (!function_exists('array_combine'))
+if (!function_exists('array_combine')) 
 {
-    /**
-     * Combines given identical arrays by using the first array's values as keys,
-     * and the second one's values as values. (Implemented for back-compatibility with PHP4.)
-     *
-     * @param  array $a1
-     * @param  array $a2
-     * @return mixed Outputs either combined array or false.
-     */
-    function array_combine($a1, $a2)
-    {
-        $a1 = array_values($a1);
-        $a2 = array_values($a2);
-        $c1 = count($a1);
-        $c2 = count($a2);
+/**
+ * Combines given identical arrays by using the first array's values as keys,
+ * and the second one's values as values. (Implemented for back-compatibility with PHP4.)
+ *
+ * @param array $a1
+ * @param array $a2
+ * @return mixed Outputs either combined array or false.
+ */
+   function array_combine($a1, $a2) 
+   {
+      $a1 = array_values($a1);
+      $a2 = array_values($a2);
+      $c1 = count($a1);
+      $c2 = count($a2);
 
-        if ($c1 != $c2)
-        {
-            // different lenghts
-            return false;
-        }
-        if ($c1 <= 0)
-        {
-            // arrays are the same and both are empty
-            return false;
-        }
-
-        $output = array();
-
-        for ($i = 0; $i < $c1; $i++)
-        {
-            $output[$a1[$i]] = $a2[$i];
-        }
-
-        return $output;
-    }
+      if ($c1 != $c2) return false; // different lenghts
+      if ($c1 <= 0)   return false; // arrays are the same and both are empty
+      
+      $output = array();
+      
+      for ($i = 0; $i < $c1; $i++) 
+      {
+         $output[$a1[$i]] = $a2[$i];
+      }
+      
+      return $output;
+   }
 }
 
 function h($text)
 {
-    return htmlspecialchars($text);
+	return htmlspecialchars($text);
 }
+
 
 function a()
 {
-    $args = func_get_args();
-    return $args;
+	$args = func_get_args();
+	return $args;
 }
+
 
 function ha()
 {
-    $args = func_get_args();
+	$args = func_get_args();
 
-    for ($l=0 ; $l<count($args) ; $l++)
-    {
-        $a[$args[$l]] = $l+1<count($args) ? $args[$l+1] : null;
-        $l++;
-    }
-    return $a;
+	for($l=0 ; $l<count($args) ; $l++)
+	{
+		$a[$args[$l]] = $l+1<count($args) ? $args[$l+1] : null;
+		$l++;
+	}
+	return $a;
 }
+
 
 function e($text)
 {
-    echo $text;
+	echo $text;
 }
 
 function pr($var)
 {
-    if (DEBUG > 0)
-    {
-        echo "<pre>";
-        print_r($var);
-        echo "</pre>";
-    }
+	if(DEBUG > 0)
+	{
+		echo "<pre>";
+		print_r($var);
+		echo "</pre>";
+	}
 }
 
 function params($p)
 {
 
-    if (!is_array($p) || count($p) == 0)
-    {
-        return null;
-    }
-    else
-    {
-        if (is_array($p[0]) && count($p) == 1)
-        {
-            return $p[0];
-        }
-        else
-        {
-            return $p;
-        }
-    }
+	if(!is_array($p) || count($p) == 0)
+	{
+		return null;
+	}
+	else
+	{
+		if(is_array($p[0]) && count($p) == 1)
+		{
+			return $p[0];
+		}
+		else
+		{
+			return $p;
+		}
+	}
 
 }
 
