@@ -35,54 +35,43 @@
 /**
  *  Get Cake's root directory
  */
+define ('APP_DIR', 'app');
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(__FILE__).DS);
 
+require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
+require_once ROOT.APP_DIR.DS.'config'.DS.'paths.php';
+require_once CAKE.'basics.php';
 /**
  *  We need to redefine some constants and variables, so that Cake knows it is
  *  working without mod_rewrite.
  */
-define ('BASE_URL', $_SERVER['SCRIPT_NAME'].'?url=');
+//define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
+
+$uri = setUri();
 
 /**
  * As mod_rewrite (or .htaccess files) is not working, we need to take care
  * of what would normally be rewrited, i.e. the static files in /public
  */
-   if (empty($_GET['url']) || ($_GET['url'] == '/'))
+   if ($uri === '/' || $uri === '/index.php')
    {
-      require (ROOT.'public/index.php');
+       $_GET['url'] = '/';
+       include_once (ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php');
    }
    else
    {
-      $elements = explode('/index.php?url=', $_SERVER['REQUEST_URI']);
-      $base = $elements[0].'/public';
-      $path = $elements[1];
-      
-      $filename = ROOT.'public'.str_replace('/', DS, $path);
-      $url = $base.$path;
+      $elements = explode('/index.php', $uri);
+      if(!empty($elements[1]))
+      {
+          $path = $elements[1];
+      }
+      else
+      {
+          $path = '/';
+      }
+      $_GET['url'] = $path;
 
-      if (file_exists($filename))
-      {
-         if (preg_match('/^.*\.([a-z]+)$/i', $filename, $ext))
-         {
-            switch ($ext[1])
-            {
-               case 'jpg':
-               case 'jpeg':
-                  header('Content-type: image/jpeg');
-               break;
-               
-               case 'css':
-                  header('Content-type: text/css');
-            }
-         }
-         
-         print (file_get_contents($filename));
-         die();
-      }
-      else 
-      {
-         require (ROOT.'public/index.php');
-      }
+          include_once (ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php');
    }
 ?>

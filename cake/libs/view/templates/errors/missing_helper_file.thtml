@@ -1,0 +1,45 @@
+<?php
+  
+  $missingClass = $this->controller->missingHelperClass;
+  $missingFile  = $this->controller->missingHelperFile;
+  
+?>
+<h1>Missing Helper File</h1>
+
+<p class="error">You are seeing this error because the helper file <em><?php echo $missingFile;?></em> 
+  can't be found or doesn't exist
+</p>
+
+
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_helper_file.thtml</code>
+view file, a user-customizable error page for handling non-existent helper files.</span>
+</p>
+
+<p>
+<strong>Fatal</strong>: Create the Class:
+</p>
+<p>
+<?php echo "<pre>&lt;?php\n\nclass " . $missingClass ." extends Helper {\n
+    // Your helper functions here
+    function <em>myHelperFunction</em> ()
+    {
+    }
+}\n?&gt;</pre>"; ?>
+in file : <?php echo "app".DS."views".DS."helpers".DS.$missingFile.".php"; ?>
+</p>
+
+<p>
+<strong>Error</strong>: Unable to load helper file <em><?php echo $missingFile.".php";?></em> in
+<em>View::_loadHelpers</em>
+</p>
+
+<?php if (DEBUG>1):?>
+<h2>Controller dump:</h2>
+<pre>
+<?php  
+unset($this->db);
+print_r($this); 
+?>
+</pre>
+<?php endif?>

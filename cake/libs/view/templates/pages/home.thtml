@@ -1,0 +1,41 @@
+<br/>
+<h1>CakePHP <em>Works!</em></h1>
+<h3 style="background:#DBA941;padding:4px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ? 'present.'. $filePresent = ' ' : 'not present.';?></h3>
+<?php $db = DboFactory::getInstance(); ?>
+<?php if (!empty($filePresent)):?>
+<h3 style="background:#DBA941;padding:4px;">Cake <?php echo $db->connected ? "is able to" : "is not able to" ?> connect to the database.</h3>
+<?php endif; ?>
+<h2>Editing <em>this Page</em></h2>
+<p>
+To change the content of this page, create <code>/app/views/pages/home.thtml</code>. To change it's layout, create <code>/app/views/layouts/default.thtml</code>. You can also add some CSS styles for your pages at <code>/webroot/css/</code>.
+</p>
+<h2>Introducing <em>Cake</em></h2>
+<p>
+Cake is a rapid development framework for PHP which uses commonly known design patterns like
+ActiveRecord, Association Data Mapping, Front Controller and MVC.
+Our primary goal is to provide a structured framework that enables PHP users at all levels 
+to rapidly develop robust web applications, without any loss to flexibility.
+</p>
+<h2><a href="http://cakephp.org/downloads/index/release">What's <em>New</em></a></h2>
+<p>Release 0.10.0_dev with:</p>
+<ul>
+<li>Scaffolding</li>
+<li>Output Types</li>
+<li>Standard Modules (ACL, etc.)</li>
+<li>Associations</li>
+<li>Evolved Directory Structure and API to make your life easier.</li>
+</ul>
+<h2>Getting <em>Involved</em></h2>
+<p>We are always looking for people to help with tutorials, bug requests, and documenation. 
+Best place to get involved is IRC. We will be implementing some contributor guidlines shortly for those of you who would like to code for the project.
+Obviously, everyone and anyone can always make a suggestion, raise a new idea, help us brainstorm, and all that stuff that makes this fun.
+</p>
+<p>
+<b>#cakephp at irc.freenode.net</b>
+&middot;
+<a href="http://groups-beta.google.com/group/cake-php">Cake PHP Google Group</a>
+&middot;
+<a href="https://trac.cakephp.org/">Cake TRAC (Wiki, SVN repository, etc.)</a>  
+</p>
+<br/>
+<p>Cake 0.10.0.x</p>

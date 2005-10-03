@@ -1,0 +1,7 @@
+<?php
+	echo $html->formTag('/'.Inflector::underscore($this->name).'/create');
+
+	echo $form->generateFields( $fieldNames );
+
+	echo $form->generateSubmitDiv( 'Add' )
+?>

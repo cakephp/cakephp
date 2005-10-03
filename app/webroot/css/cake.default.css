@@ -1,0 +1,167 @@
+body 
+{
+	margin: 0;
+	font:small "Trebuchet MS",Verdana,Arial,Sans-serif;
+	background: #F2F5F5 url('../img/cake.bg.body.gif') top center repeat-y;
+}
+
+h1
+{
+	margin: 4px;
+	padding: 0;
+	color: #71300F;
+	font-size: 30px;
+}
+
+h1 em {
+	color: #DBA941;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;	
+}
+
+h2
+{
+	margin-top: 20px;
+	margin-bottom: 6px;
+	padding: 0;
+	color: #71300F;
+}
+
+h2 em {
+	color: #DBA941;
+	font-style: normal;
+	font-weight: bold;
+	font-variant: normal;	
+}
+h3
+{
+	margin-top: 20px;
+	margin-bottom: 6px;
+	color: #71300F;
+}
+acronym
+{
+	border-bottom: 1px dotted #DBA941;
+}
+
+ul
+{
+	font-family: Helvetica;
+	margin-top: 2px;
+	margin-bottom: 6px;
+	padding: 2px 30px;
+}
+ul li
+{
+	list-style-image: url(../img/cake.redbox.gif);
+	padding-bottom: 8px;
+	
+}
+p
+{
+	font-family: Helvetica;
+	margin-top: 2px;
+	margin-left: 4px;
+	margin-bottom: 6px;
+}
+
+#main 
+{
+	width: 752px;
+	margin-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 20px;
+	background-color: #EFF1F1;
+	border-top: 4px solid #fff;
+	/*border-bottom: 1px solid #D2D7D8;*/
+	/*border-top: 1px solid #C9CFD1;
+	border-bottom: 1px solid #C9CFD1;
+	border-left: 1px solid #C9CFD1;
+	border-right: 1px solid #C9CFD1;*/
+}
+
+#header
+{
+	padding: 0px;
+	height: 112px;
+	background: #fff url(../img/cake.bg.header.gif) repeat-x;
+	border-bottom: 1px solid #D2D7D8;
+}
+
+#headerLogo
+{
+	float: left;
+}
+
+#headerNav
+{
+	float: left;
+	margin-top: 56px;
+	margin-left: 10px;
+}
+
+#headerNav a {
+	padding: 4px 10px;
+	font-weight: bold;
+}
+#headerSubNav
+{
+	float: left;
+	margin-top: 12px;
+	margin-left: 10px;
+}
+
+#headerSubNav a {
+	padding: 4px 10px;
+	font-weight: bold;
+}
+#content 
+{
+	margin: 20px 20px;
+	padding: 0px 28px 40px 22px;
+	background-color: #fff;
+	border-top: 1px solid #D2D7D8;
+	border-left: 1px solid #D2D7D8;
+	border-right: 1px solid #D2D7D8;
+	border-bottom: 1px solid #D2D7D8;
+}
+a
+{
+	color: #71300F;
+	text-decoration: none;
+	font-weight: bold;	
+}
+
+a:hover
+{
+	color: #71300F;
+	text-decoration: underline;
+	font-weight: bold;
+}
+
+#footer
+{
+	padding-bottom: 40px;
+	
+}
+
+.active {
+	background-color: #D2D7D8;
+	padding: 10px;
+}
+
+***Please Leave Powered by Cake****/
+ #pb-cake {
+  width: 752px;
+  margin-top: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-right: 6px;
+  text-align: right;
+ }
+ 
+ #pb-cake a{
+  padding: 0;
+ }

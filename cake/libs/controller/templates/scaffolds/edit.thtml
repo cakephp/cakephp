@@ -1,0 +1,23 @@
+<?php
+
+	echo $html->formTag('/'.Inflector::underscore($this->name).'/update');
+
+	echo $form->generateFields( $fieldNames );
+   
+	echo $form->generateSubmitDiv( 'Save' )
+
+?>
+<ul class='actions'>
+<?php
+   $modelName = Inflector::singularize($this->name);
+   $modelKey = Inflector::underscore($modelName);
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
+
+   foreach( $fieldNames as $field => $value ) { 
+      if( isset( $value['foreignKey'] ) )
+      {
+         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[Inflector::singularize($params['controller'])][$field] )."</li>";
+      }
+  }
+?>
+</ul>
