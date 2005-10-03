@@ -245,8 +245,6 @@ class Dispatcher extends Object
       $docRoot = $_SERVER['DOCUMENT_ROOT'];
       $scriptName = $_SERVER['PHP_SELF'];
       
-      //print "base: $base<br>";
-      
 
       // if document root ends with 'webroot', it's probably correctly set
       $r = null;
@@ -272,59 +270,25 @@ class Dispatcher extends Object
       }
       else
       {
-          if(empty($base))
-          {
-        //      print "setUri: ".setUri()."<br>";
+          if(empty($base)){
               $isDir = explode('/', setUri());
-              foreach ($isDir as $xyz)
-              {
-              	if (!empty($xyz))
-              	{
-              		$isDir2[] = $xyz;
-              	}
-              }
-              $isDir = $isDir2;
-              if (isset($isDir[1]))
-              {              	
               $first = $isDir[1];
-              }
-              else
-              {
-              	
-              $first = $isDir[0];
-              }
               $webPath[] = DS.$first.DS;
-              $dir = $docRoot.$first.DS;
-              //$x = 1;
               foreach ($isDir as $dirName)
               {
-                  if (empty($dirName))
-                  {
-                       // continue;
-                  }
-                  //print "<br>$x: $dir<br>";
-                  $dir .= $dirName.DS;
-                  //$x += 1;
-                  if(!empty($dirName) && is_dir($dir))
+                  if(!empty($dirName) && is_dir($docRoot.$first.DS.$dirName))
                   {
                       $webPath[] = $dirName.DS;
                   }
-                  //print "<br>";
-            //      print_r($webPath);
-              //    print "<br>";
               }
               $webroot = implode('', $webPath);
               $base = substr($webroot, 0, -1);
-      
-      //print "base: $base<br>";
           }
           else
           {
               $webroot =setUri();
           } 
           $this->webroot = preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.DS.WEBROOT_DIR.DS;
-        //  print "webrot:".$this->webroot."<br>";
-          
           // document root is probably not set to Cake 'webroot' dir
           if (preg_match('/\\/index.php(\/)?$/i', $scriptName, $r))
           {
@@ -334,8 +298,6 @@ class Dispatcher extends Object
               }
               else
               {
-          //        print "base: $base<br>";
-                  
                   return $base;
               }
           }
