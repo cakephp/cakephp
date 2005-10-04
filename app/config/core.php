@@ -31,19 +31,19 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+/**
+ * If you do not have mod rewrite on your system
+ * or if you prefer to use CakePHP pretty urls.
+ * uncomment the line below.
+ * Note: If you do have mod rewrite but prefer the
+ * CakePHP pretty urls, you also have to remove the
+ * .htaccess files  
+ * release/.htaccess 
+ * release/app/.htaccess  
+ * release/app/webroot/.htaccess 
+ */
+//define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
 
-if(function_exists('apache_get_modules'))
-{
-    $modules = apache_get_modules();
-    if(!in_array('mod_rewrite', $modules) || !is_file('.htaccess'))
-    {
-        define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
-    }
-}
-else
-{
-        define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
-} 
 
 /**
  * Set debug level here:

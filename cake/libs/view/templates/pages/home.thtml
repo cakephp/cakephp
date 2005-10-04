@@ -17,7 +17,7 @@ Our primary goal is to provide a structured framework that enables PHP users at 
 to rapidly develop robust web applications, without any loss to flexibility.
 </p>
 <h2><a href="http://cakephp.org/downloads/index/release">What's <em>New</em></a></h2>
-<p>Release 0.10.0.1073_dev with:</p>
+<p>Release 0.10.0.1076_dev with:</p>
 <ul>
 <li>Scaffolding</li>
 <li>Output Types</li>
