@@ -60,19 +60,19 @@ checkbox = "<input type="checkbox" name="data[%s][%s]" id="tag_%s" %s/>"
 radio = "<input type="radio" name="data[%s][%s]" id="tag_%s"%s/>"
 
 ; Tag template for a select opening tag.
-selectStart = "<select name="data[%s][%s]"%s>"
+selectstart = "<select name="data[%s][%s]"%s>"
 
 ; Tag template for a select opening tag.
-selectMultipleStart = "<select name="data[%s][%s][]"%s>"
+selectmultiplestart = "<select name="data[%s][%s][]"%s>"
 
 ; Tag template for an empty select option tag.
-selectEmpty = "<option value=""%s></option>"
+selectempty = "<option value=""%s></option>"
 
 ; Tag template for a select option tag.
-selectOption = "<option value="%s"%s>%s</option>"
+selectoption = "<option value="%s"%s>%s</option>"
 
 ; Tag template for a closing select tag. 
-selectEnd = "</select>"
+selectend = "</select>"
 
 ; Tag template for a password tag.
 password = "<input type="password" name="data[%s][%s]"%s/>"
@@ -87,16 +87,16 @@ submit = "<input type="submit"%s/>"
 image =" <img src="%s"%s/>"
 
 ; Tag template for a table header tag. 
-tableHeader = "<th%s>%s</th>"
+tableheader = "<th%s>%s</th>"
 
 ; Tag template for table headers row tag.
-tableHeaderRow = "<tr%s>%s</tr>"
+tableheaderrow = "<tr%s>%s</tr>"
 
 ; Tag template for a table cell tag. 
-tableCell = "<td%s>%s</td>"
+tablecell = "<td%s>%s</td>"
 
 ; Tag template for a table row tag. 
-tableRow = "<tr%s>%s</tr>"
+tablerow = "<tr%s>%s</tr>"
 
 ; Tag template for a CSS link tag. 
 css = "<link rel="%s" type="text/css" href="%s" %s/>"
@@ -105,7 +105,7 @@ css = "<link rel="%s" type="text/css" href="%s" %s/>"
 charset = "<meta http-equiv="Content-Type" content="text/html; charset=%s" />"
 
 ; Tag template for inline JavaScript.
-javascriptBlock = "<script type="text/javascript">%s</script>"
+javascriptblock = "<script type="text/javascript">%s</script>"
 
 ; Tag template for included JavaScript.
-javascriptLink = "<script type="text/javascript" src="%s"></script>"
+javascriptlink = "<script type="text/javascript" src="%s"></script>"

@@ -424,8 +424,7 @@ class HtmlHelper extends Helper
     function image($path, $htmlAttributes = null, $return = false)
     {
         $url = $this->webroot.IMAGES_URL.$path;
-        $alt = isset($htmlAttributes['alt']) ? $htmlAttributes['alt'] : "";
-        return $this->output(sprintf($this->tags['image'], $url, $alt, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+        return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
     }
 
 	/**

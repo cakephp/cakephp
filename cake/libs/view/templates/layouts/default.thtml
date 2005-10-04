@@ -1,15 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>CakePHP : a rapid development framework :: <?=$title_for_layout?></title>
-<link REL="SHORTCUT ICON" HREF="favicon.ico" type="image/x-icon">
-<?=$html->charsetTag('UTF-8')?>
-<?=$html->cssTag('cake.default')?>
+<title>CakePHP :: A Rapid Development Framework :: <?php echo $title_for_layout?></title>
+<link REL="SHORTCUT ICON" HREF="img/favicon.ico" type="image/x-icon">
+<?php echo $html->charsetTag('UTF-8')?>
+<?php echo $html->cssTag('cake.default')?>
 </head>
 <body>
 <div id="main">
 	<div id="header">
-		<div id="headerLogo"><?= $html->image('cake.logo.png'); ?></div>
+		<div id="headerLogo"><?php echo  $html->image('cake.logo.png',array('alt'=>"CakePHP :: A Rapid Development Framework")); ?></div>
 		<div id="headerNav">
 			<? 
 				$css_class = ($title_for_layout == 'Home') ? 'active' : '';
@@ -33,11 +33,11 @@
 				$css_class = ($title_for_layout == 'Blog') ? 'active' : '';
 				echo $html->link('Blog', '/',array('class'=>$css_class));
 
-				$css_class = ($title_for_layout == 'Community') ? 'active' : '';
-				echo $html->link('Community', '/',array('class'=>$css_class));
+				$css_class = ($title_for_layout == 'Wiki Community') ? 'active' : '';
+				echo $html->link('Wiki Community', 'http://wiki.cakephp.org',array('class'=>$css_class));
 
 				$css_class = ($title_for_layout == 'Plugins') ? 'active' : '';
-				echo $html->link('Apps & Plugins', '/',array('class'=>$css_class));
+				echo $html->link('Apps & Plugins', 'http://cakeforge.org',array('class'=>$css_class));
 
 				$css_class = ($title_for_layout == 'Cakebin') ? 'active' : '';
 				echo $html->link('Cakebin', 'http://cakephp.org/pastes/',array('class'=>$css_class));
@@ -46,12 +46,19 @@
 		</div>
 	</div>
 	<div id="content">
-  	<?=$content_for_layout?>
+  	<?php echo $content_for_layout?>
 	</div>
 </div>
 <div id="footer" align="center">
   	&copy; 2005 CakePHP ::
   	<a href="https://trac.cakephp.org/wiki/Authors">CakePHP Developers and Authors</a>
+  	<p>CakePHP v 0.10.0.1073_dev</p>
+</div>
+<!---PLEASE LEAVE THE POWERED BY CAKE LOGO------->
+<div id="pb-cake">
+		<a href="http://www.cakephp.org/" target="_new" class="simple">
+			<?php echo $html->image('pbcake.gif',array('width'=>"120",'height'=>"28",'alt'=>"CakePHP :: A Rapid Development Framework", 'border'=>"0"))?>
+		</a>
 </div>
 </body>
 </html>

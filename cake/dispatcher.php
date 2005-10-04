@@ -234,80 +234,80 @@ class Dispatcher extends Object
  *
  * @return string	Base URL
  */
-   function baseUrl()
-   {
+    function baseUrl()
+    {
+       $htaccess = null;
        $base = null;
-      if (defined('BASE_URL'))
-      {
+       $this->webroot = '';
+       if (defined('BASE_URL'))
+       {
            $base = BASE_URL;
-      }
-
-      $docRoot = $_SERVER['DOCUMENT_ROOT'];
-      $scriptName = $_SERVER['PHP_SELF'];
+       }
+       
+       $docRoot = $_SERVER['DOCUMENT_ROOT'];
+       $scriptName = $_SERVER['PHP_SELF'];
       
-
-      // if document root ends with 'webroot', it's probably correctly set
+      // If document root ends with 'webroot', it's probably correctly set
       $r = null;
-      if (preg_match('/\\/'.APP_DIR.'\/'.WEBROOT_DIR.'(\/)?$/i', $docRoot))
+      if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
       {
-          $this->webroot = DS;
-          //return preg_match('/\\/index.php(\/)?$/i', $scriptName, $r)? $base.$r[1]: $base;
-          if (preg_match('/\\/index.php(\/)?$/i', $scriptName, $r))
+          $this->webroot = '/';
+          if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r))
           {
               if(!empty($r[1]))
               {
-                  return  $base.$r[1];
+                  return  $r[1];
               }
-              else
-              {
-                  return $base;
-              }
-          }
-          else
-          {
-              return $base;
           }
       }
       else
       {
-          if(empty($base)){
-              $isDir = explode('/', setUri());
-              $first = $isDir[1];
-              $webPath[] = DS.$first.DS;
-              foreach ($isDir as $dirName)
-              {
-                  if(!empty($dirName) && is_dir($docRoot.$first.DS.$dirName))
-                  {
-                      $webPath[] = $dirName.DS;
-                  }
-              }
-              $webroot = implode('', $webPath);
-              $base = substr($webroot, 0, -1);
-          }
-          else
+          if (defined('BASE_URL'))
           {
               $webroot =setUri();
-          } 
-          $this->webroot = preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.DS.WEBROOT_DIR.DS;
-          // document root is probably not set to Cake 'webroot' dir
-          if (preg_match('/\\/index.php(\/)?$/i', $scriptName, $r))
+              $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
+          }
+          // Document root is probably not set to Cake 'webroot' dir
+          if(APP_DIR === 'app')
           {
-              if(!empty($r[1]))
+              if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
               {
-                  return  $base.$r[1];
+                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
+                  return  $regs[1];
               }
               else
               {
+                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
                   return $base;
               }
           }
           else
           {
+              if (preg_match('/^(.*)\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
+              {
+                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
+                  return  $regs[1];
+              }
+              else
+              {
+                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
+                  return $base;
+              }
+          }
+          //Fallback if all others fail
+          if (preg_match('/^(.*)\\/index\\.php$/', $scriptName, $regs))
+          {
+              !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
+              return  $regs[1];
+          }
+          else
+          {
+              !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
               return $base;
           }
       }
+      return $base;
    }
-
    
 /**
  * Displays an error page (e.g. 404 Not found).

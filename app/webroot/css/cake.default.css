@@ -152,16 +152,15 @@ a:hover
 	padding: 10px;
 }
 
-***Please Leave Powered by Cake****/
- #pb-cake {
-  width: 752px;
-  margin-top: 0px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-right: 6px;
-  text-align: right;
- }
- 
- #pb-cake a{
-  padding: 0;
- }
+/***Please Leave Powered by Cake****/
+#pb-cake {
+	width: 752px;
+	margin-top: 0px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-right: 6px;
+	text-align: right;
+}
+#pb-cake a{
+	padding: 0;
+}

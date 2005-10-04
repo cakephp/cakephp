@@ -39,6 +39,10 @@ if(function_exists('apache_get_modules'))
     {
         define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
     }
+}
+else
+{
+        define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
 } 
 
 /**
