@@ -41,7 +41,7 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
-class Inflector// extends Object 
+class Inflector extends Object 
 {
    
 /**
