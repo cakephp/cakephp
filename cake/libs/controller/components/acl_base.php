@@ -21,8 +21,8 @@
  * @copyright Copyright (c) 2005, CakePHP Authors/Developers
  * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package cake
- * @subpackage cake.libs
- * @since CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.controller.components
+ * @since CakePHP v 0.10.0.1076
  * @version $Revision$
  * @modifiedby $LastChangedBy$
  * @lastmodified $Date$
@@ -34,11 +34,11 @@ uses('error_messages');
 
 /**
  * Access Control List abstract class. Not to be instantiated. 
- * Subclasses of this class are used by AclHelper to perform ACL checks in Cake.
+ * Subclasses of this class are used by AclComponent to perform ACL checks in Cake.
  *
  * @package cake
- * @subpackage libs
- * @since CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.controller.components
+ * @since CakePHP v 0.10.0.1076
  *
  */
 class AclBase

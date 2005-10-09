@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -296,12 +296,23 @@ if (!function_exists('array_combine'))
    }
 }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $text
+ * @return unknown
+ */
 function h($text)
 {
 	return htmlspecialchars($text);
 }
 
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 function a()
 {
 	$args = func_get_args();
@@ -309,6 +320,11 @@ function a()
 }
 
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 function ha()
 {
 	$args = func_get_args();
@@ -322,11 +338,21 @@ function ha()
 }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $text
+ */
 function e($text)
 {
 	echo $text;
 }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $var
+ */
 function pr($var)
 {
 	if(DEBUG > 0)
@@ -337,6 +363,12 @@ function pr($var)
 	}
 }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $p
+ * @return unknown
+ */
 function params($p)
 {
 
@@ -358,6 +390,11 @@ function params($p)
 
 }
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
 function setUri() {
     if (isset($_SERVER['REQUEST_URI']))
     {

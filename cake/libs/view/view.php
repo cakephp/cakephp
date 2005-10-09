@@ -22,8 +22,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
- * @since        CakePHP v 0.2.9
+ * @subpackage   cake.cake.libs.view
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -33,7 +33,7 @@
 /**
   * Enter description here...
   */
-uses('object');
+uses('object', DS.'view'.DS.'helper');
 
 /**
  * View, the V in the MVC triad. 
@@ -41,8 +41,8 @@ uses('object');
  * Class holding methods for displaying presentation data.
  *
  * @package    cake
- * @subpackage cake.libs
- * @since      CakePHP v 0.9.1
+ * @subpackage cake.cake.libs.view
+ * @since      CakePHP v 0.10.0.1076
  */
 class View extends Object
 {
@@ -505,9 +505,9 @@ class View extends Object
  */
    function _getLayoutFileName()
    {
-		if(file_exists(VIEWS."layouts".DS."{$this->layout}.thtml"))
+		if(file_exists(LAYOUTS."{$this->layout}.thtml"))
 		{
-		    $layoutFileName = VIEWS."layouts".DS."{$this->layout}.thtml";
+		    $layoutFileName = LAYOUTS."{$this->layout}.thtml";
 		}
 		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS."{$this->layout}.thtml"))
 		{
@@ -538,7 +538,7 @@ class View extends Object
       if ($this->helpers !== false)
       {
          $loadedHelpers =  array();
-         $loadedHelpers =& $this->_loadHelpers($loadedHelpers, $this->helpers);
+         $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
          
          foreach(array_keys($loadedHelpers) as $helper)
          {
@@ -576,16 +576,23 @@ class View extends Object
       return $out;
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $loaded
+ * @param unknown_type $helpers
+ * @return unknown
+ */
    function &_loadHelpers(&$loaded, $helpers) {
 
      foreach ($helpers as $helper)
      {
         if(in_array($helper, array_keys($loaded)) !== true)
         {
-            $helperFn = VIEWS.'helpers'.DS.Inflector::underscore($helper).'.php';
-            if(file_exists(VIEWS.'helpers'.DS.Inflector::underscore($helper).'.php'))
+            $helperFn = HELPERS.Inflector::underscore($helper).'.php';
+            if(file_exists(HELPERS.Inflector::underscore($helper).'.php'))
             {
-                 $helperFn = VIEWS.'helpers'.DS.Inflector::underscore($helper).'.php';
+                 $helperFn = HELPERS.Inflector::underscore($helper).'.php';
             }
             else if(file_exists(LIBS.'view'.DS.'helpers'.DS.Inflector::underscore($helper).'.php'))
             {
@@ -599,7 +606,7 @@ class View extends Object
              require_once $helperFn;
              if(class_exists($helperCn)===true)
              {
-                ${$helper}                       = new $helperCn;
+                ${$helper}                       =& new $helperCn;
                 ${$helper}->base                 = $this->base;
                 ${$helper}->webroot              = $this->webroot;
                 ${$helper}->here                 = $this->here;
@@ -621,7 +628,7 @@ class View extends Object
              }
              else
              {
-                 $error = new AppController();
+                 $error =& new AppController();
                  $error->autoLayout = true;
                  $error->base = $this->base;
                  call_user_func_array(array(&$error, 'missingHelperClass'), $helper);
@@ -630,7 +637,7 @@ class View extends Object
           }
           else
           {
-            $error = new AppController();
+            $error =& new AppController();
             $error->autoLayout = true;
             $error->base = $this->base;
             call_user_func_array(array(&$error, 'missingHelperFile'), Inflector::underscore($helper));

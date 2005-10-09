@@ -23,8 +23,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
- * @since        Cake v 1.0.0.172
+ * @subpackage   cake.cake.libs.controller
+ * @since        Cake v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -34,7 +34,7 @@
 /**
   * Enter description here...
   */
-uses('/model/model', 'inflector', 'object');
+uses(DS.'model'.DS.'model', 'inflector', 'object');
 
 /**
  * Scaffolding is a set of automatic views, forms and controllers for starting web development work faster.
@@ -45,8 +45,8 @@ uses('/model/model', 'inflector', 'object');
  * scaffolded actions with custom-made ones.
  *
  * @package    cake
- * @subpackage cake.libs
- * @since      Cake v 1.0.0.172
+ * @subpackage cake.cake.libs.controller
+ * @since      Cake v 0.10.0.1076
  */
 class Scaffold extends Object {
 

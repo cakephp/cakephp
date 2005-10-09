@@ -23,8 +23,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.helpers
- * @since        CakePHP v 0.9.2
+ * @subpackage   cake.cake.libs.controller.components
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -37,11 +37,11 @@
  * Looks for ACL implementation class in core config, and returns an instance of that class.
  *
  * @package    cake
- * @subpackage cake.libs
- * @since      CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.controller.components
+ * @since      CakePHP v 0.10.0.1076
  *
  */
-class Acl
+class AclComponent
 {  
    
    /**
@@ -51,8 +51,7 @@ class Acl
     */
    function getACL() 
    {
-      require_once(CONFIGS.'core.php');
-      require_once(APP.'apis'.DS.ACL_FILENAME);
+      require_once(COMPONENTS.ACL_FILENAME);
 
       $myacl = ACL_CLASSNAME;
       return new $myacl;

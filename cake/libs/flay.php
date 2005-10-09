@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -42,7 +42,7 @@ uses('object');
  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax. 
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
 

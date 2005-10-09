@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -38,10 +38,10 @@
  * Test with $i = new Inflector(); $i->test();
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
-class Inflector extends Object 
+class Inflector// extends Object 
 {
    
 /**
@@ -127,7 +127,7 @@ class Inflector extends Object
         '/([ti])a$/'            => '\1um',
         '/(p)eople$/'           => '\1\2erson',
         '/(m)en$/'              => '\1an',
-        '/(s)tatus$/'           => '\1\2tatus',
+        '/(s)tatuses$/'           => '\1\2tatus',
         '/(c)hildren$/'         => '\1\2hild',
         '/(n)ews$/'             => '\1\2ews',
         '/s$/'                  => ''

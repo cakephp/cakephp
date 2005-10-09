@@ -23,8 +23,8 @@
 ; * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
 ; * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
 ; * @package      cake
-; * @subpackage   cake.config
-; * @since        CakePHP v 0.2.9
+; * @subpackage   cake.cake.app.config
+; * @since        CakePHP v 0.10.0.1076
 ; * @version      $Revision$
 ; * @modifiedby   $LastChangedBy$
 ; * @lastmodified $Date$

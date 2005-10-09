@@ -1,11 +1,11 @@
-#!/usr/local/bin/php
 <?php
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Creates ready-to-use file skeletons for applications.
  * 
- * Long description for file
+ * 
+ * Used by /scripts/bake.php.
  *
  * PHP versions 4 and 5
  *
@@ -24,27 +24,12 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.cake.scripts
- * @since        CakePHP v 0.2.9
+ * @subpackage   cake.cake.libs.generator.generators.class_templates.view.templates
+ * @since        CakePHP v TBD
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
-  * START-UP
-  */
-define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(__FILE__)).DS);
-
-require (ROOT.'config'.DS.'paths.php');
-require (LIBS.'basics.php');
-uses ('bake');
-
-$waste = array_shift($argv);
-$product = array_shift($argv);
-
-$bake = new Bake ($product, $argv);
 
 ?>

@@ -23,8 +23,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
- * @since        CakePHP v 0.2.9
+ * @subpackage   cake.cake.libs.model.dbo
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -48,8 +48,8 @@ config('database');
  * Creates DBO-descendant objects from a given db connection configuration
  *
  * @package    cake
- * @subpackage cake.libs.dbo
- * @since      CakePHP v 1.0.0.0
+ * @subpackage cake.cake.libs.model.dbo
+ * @since      CakePHP v 0.10.0.1076
  *
  */
 class DboFactory extends Object

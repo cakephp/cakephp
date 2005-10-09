@@ -21,8 +21,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.helpers
- * @since        CakePHP v 0.9.1
+ * @subpackage   cake.cake.libs.view.helpers
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision: 578 $
  * @modifiedby   $LastChangedBy: phpnut $
  * @lastmodified $Date: 2005-08-11 22:09:07 -0600 (Thu, 11 Aug 2005) $
@@ -35,8 +35,8 @@
  * Manipulation of time data.
  *
  * @package    cake
- * @subpackage cake.libs.helpers
- * @since      CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.view.helpers
+ * @since      CakePHP v 0.10.0.1076
  */
 class TimeHelper extends Helper
 {
@@ -208,6 +208,22 @@ class TimeHelper extends Helper
 	function wasYesterday ($date_string, $return = false) {
 		$date = $this->fromString($date_string);
 		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
+		
+		return $this->output($ret, $return);
+	}	
+	
+	
+    /**
+     * Returns true if given datetime string is tomorrow.
+     *
+     * @param string $date_string Datetime string or Unix timestamp
+     * @param  boolean $return Whether this method should return a value
+     *                         or output it. This overrides AUTO_OUTPUT.
+     * @return boolean True if datetime string was yesterday
+     */
+	function isTomorrow ($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 		
 		return $this->output($ret, $return);
 	}	

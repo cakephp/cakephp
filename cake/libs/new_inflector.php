@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v .0.10.x.x
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -37,7 +37,7 @@
  * Inflector pluralizes and singularizes English words.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v .0.10.x.x
  */
 class Inflector

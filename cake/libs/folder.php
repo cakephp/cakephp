@@ -22,7 +22,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -42,7 +42,7 @@ uses('object');
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
 class Folder extends Object {
@@ -67,7 +67,7 @@ class Folder extends Object {
   * @param string $path
   * @param bollean $path
   */
-   function Folder ($path=false , $create = false)
+   function Folder ($path = false , $create = false, $mode = false)
    {
       if (empty($path))
       {
@@ -76,7 +76,7 @@ class Folder extends Object {
 
       if ( !file_exists( $path ) && $create==true )
       {
-         $this->mkdirr($path);
+          $this->mkdirr($path, $mode);
       }
       $this->cd($path);
    }
@@ -362,10 +362,11 @@ class Folder extends Object {
 
       // Crawl up the directory tree
       $next_pathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
-      if (mkdirr($next_pathname, $mode))
+      if ($this->mkdirr($next_pathname, $mode))
       {
          if (!file_exists($pathname))
          {
+            umask(0);
             return mkdir($pathname, $mode);
          }
       }

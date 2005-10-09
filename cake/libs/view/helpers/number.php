@@ -24,8 +24,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.helpers
- * @since        CakePHP v 0.9.2
+ * @subpackage   cake.cake.libs.view.helpers
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -39,8 +39,8 @@
  * Methods to make numbers more readable.
  *
  * @package cake
- * @subpackage cake.libs.helpers
- * @since CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.view.helpers
+ * @since      CakePHP v 0.10.0.1076
  *
  */
 class NumberHelper extends Helper

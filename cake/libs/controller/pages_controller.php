@@ -24,7 +24,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.app.controllers
+ * @subpackage   cake.cake.libs.controller
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -43,7 +43,7 @@
  * will inherit them.
  * 
  * @package    cake
- * @subpackage cake.app.controllers
+ * @subpackage cake.cake.libs.controller
  */
 class PagesController extends AppController{
    

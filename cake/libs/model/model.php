@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs.model
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -40,14 +40,14 @@ uses('object',  'class_registry', 'validators', 'inflector');
 /**
  * Short description for class
  *
- * DBO-backed object data model, loosely based on RoR concepts (www.rubyonrails.com).
+ * DBO-backed object data model.
  * Automatically selects a database table name based on a pluralized lowercase object class name
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment', 'created datetime', 
  * and 'modified datetime' fields.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs.model
  * @since      CakePHP v 0.2.9
  *
  */
@@ -325,8 +325,8 @@ class Model extends Object
                   break; 
                }
             }
-            //$this->_belongsTo = array($className,$association);
-            $this->linkAssociation('Belongs', $className, $this->id);
+            $className = Inflector::singularize($className);
+            $this->linkAssociation('Belongs', $this->$className->table, $this->id);
             $this->relink('Belongs');
             unset($className);
          }
@@ -336,9 +336,9 @@ class Model extends Object
           $association = explode(',', $this->belongsTo);
           foreach ($association as $modelName) 
           {
-             // $this->_belongsTo = array($modelName,$modelName);
               $this->_constructAssociatedModels($modelName , 'Belongs');
-              $this->linkAssociation('Belongs', $modelName, $this->id);
+              $modelName = Inflector::singularize($modelName);
+              $this->linkAssociation('Belongs', $this->$modelName->table, $this->id);
               $this->relink('Belongs');
           }
       }
@@ -368,6 +368,7 @@ class Model extends Object
                if ($classCreated === false)
                {
                   $this->_constructAssociatedModels($className , 'One');
+                  $className = $this->$className->table;
                   $classCreated = true;
                }
                
@@ -402,8 +403,8 @@ class Model extends Object
                   break;
                }
             }
-           // $this->_hasOne = array($className,$association);
-            $this->linkAssociation('One', $className, $this->id);
+            $className = Inflector::singularize($className);
+            $this->linkAssociation('One', $this->$className->table, $this->id);
             $this->relink('One');
             unset($className);
          }
@@ -413,9 +414,9 @@ class Model extends Object
           $association = explode(',', $this->hasOne);
           foreach ($association as $modelName) 
           {
-             // $this->_hasOne = array($modelName,$modelName);
               $this->_constructAssociatedModels($modelName , 'One');
-              $this->linkAssociation('One', $modelName, $this->id);
+              $modelName = Inflector::singularize($modelName);
+              $this->linkAssociation('One', $this->$modelName->table, $this->id);
               $this->relink('One');
           }
       }
@@ -444,7 +445,7 @@ class Model extends Object
                
                if ($classCreated === false)
                {
-                  $this->_constructAssociatedModels($className , 'Many');	
+                  $this->_constructAssociatedModels($className , 'Many');
                   $classCreated = true;
                }
 	            switch ($option)
@@ -481,8 +482,8 @@ class Model extends Object
 	               break;
 	            }
 	         }
-	        // $this->_hasMany = array($className,$association);
-	         $this->linkAssociation('Many', $className, $this->id);
+	         $className = Inflector::singularize($className);
+	         $this->linkAssociation('Many', $this->$className->table, $this->id);
 	         $this->relink('Many');
 	         unset($className);
 	      }
@@ -492,9 +493,9 @@ class Model extends Object
 	       $association = explode(',', $this->hasMany);
 	       foreach ($association as $modelName) 
 	       {
-	         //  $this->_hasMany = array($modelName,$modelName);
 	           $this->_constructAssociatedModels($modelName , 'Many');
-	           $this->linkAssociation('Many', $modelName, $this->id);
+	           $modelName = Inflector::singularize($modelName);
+	           $this->linkAssociation('Many', $this->$modelName->table, $this->id);
 	           $this->relink('Many');  
 	       }
 	   }
@@ -516,9 +517,9 @@ class Model extends Object
 	       $association = explode(',', $this->hasAndBelongsToMany);
 	       foreach ($association as $modelName) 
 	       {
-	         //  $this->_hasAndBelongsToMany = array($modelName,$modelName);
 	           $this->_constructAssociatedModels($modelName , 'ManyTo');
-	           $this->linkAssociation('ManyTo', $modelName, $this->id);
+	           $modelName = Inflector::singularize($modelName);
+	           $this->linkAssociation('ManyTo', $this->$modelName->table, $this->id);
 	           $this->relink('ManyTo');  
 	       }
       }

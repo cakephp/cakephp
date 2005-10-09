@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -40,7 +40,7 @@ uses('object', 'neat_array');
   * Parses the request URL into controller, action, and parameters.
   *
   * @package    cake
-  * @subpackage cake.libs
+  * @subpackage cake.cake.libs
   * @since      CakePHP v 0.2.9
   *
   */
@@ -127,7 +127,7 @@ class Router extends Object {
       $default_route = array
       (
          '/:controller/:action/* (default)',
-         "#^(?:\/(?:([a-zA-Z0-9_\-]+)(?:\/([a-zA-Z0-9_\-]+)(?:\/(.*))?)?))[\/]*$#",
+         '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/(.*))?)?))[\\/]*$/',
          array('controller', 'action'),
          array()
       );
@@ -135,7 +135,7 @@ class Router extends Object {
       $admin_route = array
       (
          '/:controller/:admin/:action/* (default)',
-         "#^(?:\/(?:([a-zA-Z0-9_\-]+)(?:\/(admin)(?:\/([a-zA-Z0-9_\-]+)(?:\/(.*))?)?)?))[\/]*$#",
+         '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/(admin)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\/(.*))?)?)?))[\/]*$/',
          array('controller', 'admin', 'action'),
          array()
       );

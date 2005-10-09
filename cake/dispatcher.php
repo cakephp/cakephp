@@ -24,7 +24,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -35,7 +35,7 @@
 /**
  * Add Description
  */
-uses('error_messages', 'object', 'router', '/controller/controller', '/controller/scaffold');
+uses('error_messages', 'object', 'router', DS.'controller'.DS.'controller', DS.'controller'.DS.'scaffold');
 
 /**
  * Short description for class.
@@ -43,7 +43,7 @@ uses('error_messages', 'object', 'router', '/controller/controller', '/controlle
  * Dispatches the request, creating appropriate models and controllers.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage   cake.cake
  * @since      CakePHP v 0.2.9
  */
 class Dispatcher extends Object
@@ -59,7 +59,6 @@ class Dispatcher extends Object
  */
    function __construct()
    {
-      $this->base = $this->baseUrl();
       parent::__construct();
    }
 
@@ -75,6 +74,7 @@ class Dispatcher extends Object
  */
    function dispatch($url, $additionalParams=array())
    {
+      $this->base = $this->baseUrl();
       $params = array_merge($this->parseParams($url), $additionalParams);
       $missingController = false;
       $missingAction     = false;
@@ -96,7 +96,15 @@ class Dispatcher extends Object
 
          if (!loadController($ctrlName) || !class_exists($ctrlClass))
          {
-            $missingController = true;
+             if(preg_match('/([\\.]+)/',$ctrlName))
+             {
+                 $this->error404(strtolower($ctrlName),'Was not found on this server');
+                 exit();
+             }
+             else
+             {
+                 $missingController = true;
+             }
          }
       }
 
@@ -319,7 +327,7 @@ class Dispatcher extends Object
  */
    function error ($code, $name, $message)
 	{
-        $controller = new Controller ($this);
+        $controller =& new Controller ($this);
         $controller->base = $this->base;
         $controller->autoLayout = false;
         $controller->set(array('code'=>$code, 'name'=>$name, 'message'=>$message));

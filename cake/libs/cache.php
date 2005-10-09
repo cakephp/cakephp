@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -36,7 +36,7 @@
   * Enter description here...
   *
   */
-uses('model');
+uses(DS.'model'.DS.'model');
 
 /**
  * Caching for Cake.
@@ -44,7 +44,7 @@ uses('model');
  * 
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
 class Cache extends Model {

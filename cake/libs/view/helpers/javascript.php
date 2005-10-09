@@ -21,8 +21,8 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.helpers
- * @since        CakePHP v 0.9.2
+ * @subpackage   cake.cake.libs.view.helpers
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -36,8 +36,8 @@
  * JavascriptHelper encloses all methods needed while working with JavaScript.
  *
  * @package    cake
- * @subpackage cake.libs.helpers
- * @since      CakePHP v 0.9.2
+ * @subpackage cake.cake.libs.view.helpers
+ * @since      CakePHP v 0.10.0.1076
  */
 
 class JavascriptHelper extends Helper
@@ -66,7 +66,7 @@ class JavascriptHelper extends Helper
     function link($url)
     {
       if(strpos($url, ".") === false) $url .= ".js";
-      return sprintf($this->tags['javascriptlink'], $this->base . JS_URL . $url);
+      return sprintf($this->tags['javascriptlink'], $this->webroot . JS_URL . $url);
     }
 
     /**
@@ -160,7 +160,7 @@ class JavascriptHelper extends Helper
   */
 	function includeScript ($script = "")
 	{
-		$dir = substr(JS, 0, strlen(JS) - 1);
+		$dir = $this->webroot . JS_URL;
 		if($script == "") {
 			$files = scandir($dir);
 			$javascript = '';
@@ -168,13 +168,13 @@ class JavascriptHelper extends Helper
 			{
 				if (substr($file, -3) == '.js')
 				{
-					$javascript .= file_get_contents("$dir/$file") . "\n\n";
+					$javascript .= file_get_contents("{$dir}{$file}") . "\n\n";
 				}
 			}
 		}
 		else
 		{
-			$javascript = file_get_contents("$dir/$script.js") . "\n\n";
+			$javascript = file_get_contents("{$dir}$script.js") . "\n\n";
 		}
 		return $this->codeBlock("\n\n" . $javascript);
 	}

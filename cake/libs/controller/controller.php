@@ -21,7 +21,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs.controller
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -32,7 +32,7 @@
 /**
  * Include files
  */
-uses('/model/model', 'inflector', 'folder', '/view/view', '/view/helper');
+uses(DS.'controller'.DS.'component',DS.'model'.DS.'model', 'inflector', 'folder', DS.'view'.DS.'view');
 
 /**
  * Controller
@@ -43,7 +43,7 @@ uses('/model/model', 'inflector', 'folder', '/view/view', '/view/helper');
  * and creates the model object if proper class exists.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs.controller
  * @since      CakePHP v 0.2.9
  *
  */
@@ -175,6 +175,13 @@ class Controller extends Object
      * @access public
      */
     var $beforeFilter = null;
+    
+    /**
+     * Enter description here...
+     *
+     * @var unknown_type
+     */
+    var $components = array();
 
     /**
      * Constructor.
@@ -210,6 +217,11 @@ class Controller extends Object
      *
      */
     function constructClasses(){
+        
+        if (!empty($this->components))
+        {
+            $component =& new Component($this);
+        }
         
         if (!empty($this->beforeFilter))
         {

@@ -24,7 +24,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs.generator
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -44,9 +44,9 @@ uses('object', 'inflector');
  * base class for /scripts/add.php.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage   cake.cake.libs.generator
  * @since      CakePHP v 0.2.9
-  */
+ */
 class Bake extends Object {
 
 /**

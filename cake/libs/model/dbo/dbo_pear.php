@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.dbo
+ * @subpackage   cake.cake.libs.model.dbo
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -44,7 +44,7 @@ vendor('Pear/DB');
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.libs.dbo
+ * @subpackage cake.cake.libs.model.dbo
  * @since      CakePHP v 0.2.9
  */
 class DBO_Pear extends DBO

@@ -21,7 +21,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs.helpers
+ * @subpackage   cake.cake.libs.view.helpers
  * @since        CakePHP v 0.9.1
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -35,7 +35,7 @@
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
  * @package    cake
- * @subpackage cake.libs.helpers
+ * @subpackage cake.cake.libs.view.helpers
  * @since      CakePHP v 0.9.1
  */
 class HtmlHelper extends Helper

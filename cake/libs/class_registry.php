@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.libs
+ * @subpackage   cake.cake.libs
  * @since        CakePHP v 0.9.2
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -39,7 +39,7 @@
  * If you need a second instance of an object, give it another key.
  *
  * @package    cake
- * @subpackage cake.libs
+ * @subpackage cake.cake.libs
  * @since      CakePHP v 0.9.2
  */
    class ClassRegistry

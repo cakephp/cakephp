@@ -23,7 +23,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.config
+ * @subpackage   cake.cake.app.config
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -68,6 +68,11 @@ define ('MODELS',          APP.'models'.DS);
 define ('CONTROLLERS',     APP.'controllers'.DS);
 
 /**
+ * Path to the application's controllers directory.
+ */
+define ('COMPONENTS',     CONTROLLERS.'components'.DS);
+
+/**
  * Path to the application's views directory.
  */
 define ('VIEWS',           APP.'views'.DS);
@@ -80,14 +85,14 @@ define ('HELPERS',         VIEWS.'helpers'.DS);
 /**
  * Path to the application's view's layouts directory.
  */
-define ('LAYOUTS',         APP.'views'.DS.'layouts'.DS);
+define ('LAYOUTS',         VIEWS.'layouts'.DS);
 
 /**
  * Path to the application's view's elements directory.
  * It's supposed to hold pieces of PHP/HTML that are used on multiple pages
  * and are not linked to a particular layout (like polls, footers and so on).
  */
-define ('ELEMENTS',        APP.'views'.DS.'elements'.DS);
+define ('ELEMENTS',        VIEWS.'elements'.DS);
 
 /**
  * Path to the configuration files directory.

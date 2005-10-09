@@ -25,7 +25,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.config
+ * @subpackage   cake.cake.app.config
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -49,6 +49,6 @@ $Route->connect ('/pages/*', array('controller'=>'Pages', 'action'=>'display'));
  * Then we connect url '/test' to our test controller. This is helpfull in
  * developement.
  */
-$Route->connect ('/test', array('controller'=>'Tests', 'action'=>'index'));
+$Route->connect ('/tests', array('controller'=>'Tests', 'action'=>'index'));
 
 ?>
