@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Pluralize and singularize English words.
  * 
- * Long description for file
+ * Used by Cake's naming conventions throughout the framework.
  *
  * PHP versions 4 and 5
  *
@@ -32,9 +32,10 @@
  */
 
 /**
- * Short description for class
+ * Pluralize and singularize English words.
  *
- * Inflector pluralizes and singularizes English nouns.
+ * Inflector pluralizes and singularizes English nouns. 
+ * Used by Cake's naming conventions throughout the framework.
  * Test with $i = new Inflector(); $i->test();
  *
  * @package    cake
@@ -66,7 +67,7 @@ class Inflector extends Object
       	'/([m|l])ouse$/'          => '\1ice',	    # mouse, louse
       	'/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
         '/(x|ch|ss|sh)$/'         =>  '\1es',       # search, switch, fix, box, process, address
-        '/([^aeiouy]|qu)ies$/'    =>  '\1y',
+        //'/([^aeiouy]|qu)ies$/'    =>  '\1y',
         '/([^aeiouy]|qu)y$/'      =>  '\1ies',      # query, ability, agency
         '/(hive)$/'               =>  '\1s',        # archive, hive
         '/(?:([^f])fe|([lr])f)$/' =>  '\1\2ves',    # half, safe, wife
@@ -163,8 +164,8 @@ class Inflector extends Object
   */
    function underscore($camel_cased_word) 
    {
-      $camel_cased_word = preg_replace('/([A-Z]+)([A-Z])/','\1_\2',$camel_cased_word);
-      return strtolower(preg_replace('/([a-z])([A-Z])/','\1_\2',$camel_cased_word));
+      $camel_cased_word = preg_replace('/([A-Z]+)([A-Z])/','\1_\2', $camel_cased_word);
+      return strtolower(preg_replace('/([a-z])([A-Z])/','\1_\2', $camel_cased_word));
    }
 
 /**
@@ -180,7 +181,7 @@ class Inflector extends Object
    }    
 
 /**
-  * Returns corresponding table name for given $class_name.
+  * Returns corresponding table name for given $class_name. ("posts" for the model class "Post").
   *
   * @param string $class_name Name of class to get database table name for
   * @return string Name of the database table for given class
@@ -191,7 +192,7 @@ class Inflector extends Object
    }
 
 /**
-  * Returns Cake class name ("Post" for the database table "posts".) for given database table.
+  * Returns Cake model class name ("Post" for the database table "posts".) for given database table.
   *
   * @param string $tableName Name of database table to get class name for
   * @return string
@@ -203,7 +204,7 @@ class Inflector extends Object
 
 /**
   * Returns $class_name in underscored form, with "_id" tacked on at the end. 
-  * This is for use in dealing with the database.
+  * This is for use in dealing with foreign keys in the database.
   *
   * @param string $class_name
   * @return string
@@ -214,10 +215,10 @@ class Inflector extends Object
    } 
    
 /**
- * Enter description here...
+ * Returns filename for given Cake controller name.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name
+ * @return string
  */
    function toControllerFilename($name)
    {
@@ -225,10 +226,10 @@ class Inflector extends Object
    }
    
 /**
- * Enter description here...
+ * Returns filename for given Cake helper name.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name
+ * @return string
     */
    function toHelperFilename($name)
    {
@@ -236,11 +237,12 @@ class Inflector extends Object
    }
    
 /**
- * Enter description here...
+ * Returns given name as camelized.
  *
- * @param unknown_type $name
- * @param unknown_type $correct
- * @return unknown
+ * @param string $name
+ * @param string $correct 
+ * @return string
+ * @todo Explain this method
  */
    function toFullName($name, $correct)
    {
@@ -267,10 +269,10 @@ class Inflector extends Object
    }
    
 /**
- * Enter description here...
+ * Returns filename for given Cake library name.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name
+ * @return string
  */
    function toLibraryFilename ($name)
    {

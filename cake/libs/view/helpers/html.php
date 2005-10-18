@@ -49,20 +49,20 @@ class HtmlHelper extends Helper
 	*/
 
 	/**
-     * Enter description here...
+     * Base URL
      *
-     * @var unknown_type
+     * @var string
      */
 	var $base   = null;
 
 	/**
-     * Enter description here...
+     * URL to current action.
      *
-     * @var unknown_type
+     * @var string
      */
 	var $here   = null;
 	/**
-     * Enter description here...
+     * Parameter array.
      *
      * @var array
      */
@@ -1236,6 +1236,15 @@ class HtmlHelper extends Helper
 		return "<$name ". $this->parseHtmlOptions($options). ">$content</$name>";
 	}
 
+	/**
+	 * Returns a SELECT element for days.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function dayOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
 		$value = isset($value)? $value : $this->tagValue($tagName."_day");
@@ -1254,6 +1263,17 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a SELECT element for years
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param integer $minYear First year in sequence
+	 * @param integer $maxYear Last year in sequence
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function yearOptionTag( $tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $optionAttr=null)
 	{
 		$value = isset($value)? $value : $this->tagValue($tagName."_year");
@@ -1283,6 +1303,15 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a SELECT element for months.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function monthOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
 		$value = isset($value)? $value : $this->tagValue($tagName."_month");
@@ -1295,6 +1324,16 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a SELECT element for hours.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param boolean $format24Hours True for 24 hours format
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function hourOptionTag( $tagName,$value=null,
 	$format24Hours = false,
 	$selected=null,
@@ -1330,6 +1369,15 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a SELECT element for minutes.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param string $selected Option which is selected. 
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function minuteOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
 		$value = isset($value)? $value : $this->tagValue($tagName."_min");
@@ -1344,6 +1392,15 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a SELECT element for AM or PM.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $value
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string
+	 */
 	function meridianOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
 	{
 		$value = isset($value)? $value : $this->tagValue($tagName."_meridian");
@@ -1355,6 +1412,16 @@ class HtmlHelper extends Helper
 		return $option;
 	}
 
+	/**
+	 * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
+	 *
+	 * @param string $tagName Prefix name for the SELECT element
+	 * @param string $dateFormat DMY, MDY, YMD or NONE.
+	 * @param string $timeFormat 12, 24, NONE
+	 * @param string $selected Option which is selected.
+	 * @param array $optionAttr Attribute array for the option elements.
+	 * @return string The HTML formatted OPTION element
+	 */
 	function dateTimeOptionTag( $tagName, $dateFormat = 'DMY', $timeFormat = '12',$selected=null, $optionAttr=null)
 	{
 		switch ( $dateFormat )

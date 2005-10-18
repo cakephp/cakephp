@@ -33,7 +33,7 @@
  */
 
 /**
- * Enter description here...
+ * Included libraries.
  */
 uses('flay', DS.'view'.DS.'helpers'.DS.'html');
 
@@ -94,9 +94,10 @@ class TextHelper extends Helper
     }
 
     /**
-     * Adds links (<a href=....) to a given text.
+     * Adds links (<a href=....) to a given text, by finding text that begins with
+     * strings like http:// and ftp://.
      *
-     * @param string $text Text 
+     * @param string $text Text to add links to
      * @param array $htmlOptions Array of HTML options.
      * @return string The text with links
      */

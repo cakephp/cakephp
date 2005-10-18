@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
- * 
- * Long description for file
+ * String handling methods.
+ *
+ * Random passwords, splitting strings into arrays, removing Cyrillic characters, stripping whitespace.
  *
  * PHP versions 4 and 5
  *
@@ -32,9 +32,9 @@
  */
 
 /**
- * Short description for class
+ * String handling methods.
  *
- * Long description for class
+ * Random passwords, splitting strings into arrays, removing Cyrillic characters, stripping whitespace.
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -44,10 +44,10 @@
 class NeatString
 {
     /**
-     * Enter description here...
+     * Returns an array with each of the non-empty characters in $string as an element.
      *
-     * @param unknown_type $string
-     * @return unknown
+     * @param string $string
+     * @return array
      */
     function toArray ($string)
     {
@@ -55,10 +55,10 @@ class NeatString
     }
 
     /**
-     * Enter description here...
+     * Returns string with Cyrillic characters translated to Roman ones.
      *
-     * @param unknown_type $string
-     * @return unknown
+     * @param string $string
+     * @return string
      */
     function toRoman ($string)
     {
@@ -69,10 +69,10 @@ class NeatString
     }
 
     /**
-     * Enter description here...
+     * Returns string as lowercase with whitespace removed.
      *
-     * @param unknown_type $string
-     * @return unknown
+     * @param string $string
+     * @return string
      */
     function toCompressed ($string)
     {
@@ -81,11 +81,11 @@ class NeatString
     }
 
     /**
-     * Enter description here...
+     * Returns a random password.
      *
-     * @param unknown_type $length
-     * @param unknown_type $available_chars
-     * @return unknown
+     * @param integer $length Length of generated password
+     * @param string $available_chars List of characters to use in password
+     * @return string Generated password
      */
     function randomPassword ($length, $available_chars = 'ABDEFHKMNPRTWXYABDEFHKMNPRTWXY23456789')
     {

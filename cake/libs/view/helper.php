@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Backend for helpers.
  * 
- * Long description for file
+ * Internal methods for the Helpers.
  *
  * PHP versions 4 and 5
  *
@@ -83,13 +83,13 @@ class Helper extends Object
     }
 
     /**
-     * Decides wheter to output or return a string.
+     * Decides whether to output or return a string.
      *
-     * Based on AUTO_OUTPUT and $return's value, this method decides wheter to
+     * Based on AUTO_OUTPUT and $return's value, this method decides whether to
      * output a string, or return it.
      *
-     * @param  string  $str    String to be outputed or returned.
-     * @param  boolean $return Wheter this method should return a value or
+     * @param  string  $str    String to be output or returned.
+     * @param  boolean $return Whether this method should return a value or
      *                         output it. This overrides AUTO_OUTPUT.
      * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
      *                 and $return.
@@ -130,10 +130,10 @@ class Helper extends Object
     }
     
 /**
- * Enter description here...
+ * Returns an array of settings in given INI file.
  *
- * @param unknown_type $fileName
- * @return unknown
+ * @param string $fileName
+ * @return array
  */
     function readConfigFile ($fileName)
     {

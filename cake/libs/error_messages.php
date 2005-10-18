@@ -4,7 +4,8 @@
 /**
  * Error Messages Defines
  * 
- * Long description for file
+ * Longer, human-readable error messages for Cake operation errors to be displayed
+ * to end-users.
  *
  * PHP versions 4 and 5
  *

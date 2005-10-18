@@ -40,33 +40,102 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v .0.10.x.x
  */
-class Inflector
+class Inflector 
 {
     var $classical = array();
     
-    function __construct() 
-    {
-    }
-   
+    var $pre = '';
+    
+    var $word = '';
+    
+    var $post = '';
+    
+    
+   function &getInstance() {
+       
+       static $instance = array();
+       if (!$instance)
+       {
+           $instance[0] =& new Inflector; 
+       }
+       return $instance[0];
+   }
+    
     function pluralize($text, $type = 'Noun' , $classical = false)
     {
-        $this->classical = $classical;
-        $this->count = count($text);
+        $inflec =& Inflector::getInstance();
+        $inflec->classical = $classical;
+        $inflec->count = strlen($text);
         
-        return $this->_plural.$type($text);
+        if ($inflec->count == 1)
+        {
+            return $text;
+        }
+        if(empty($text))
+        {
+            return;
+        }
+        
+        $inflec->_pre($text);
+        
+        if (empty($inflec->word))
+        {
+            return $text;
+        }
+        
+        $type = '_plural'.$type;
+        $inflected = $inflec->_postProcess($inflec->word,$inflec->$type());
+        return $inflected;
     }
         
     function singularize($text, $type = 'Noun' , $classical = false)
     {
-        $this->classical = $classical;
-        $this->count = count($text);
+        $inflec =& Inflector::getInstance();
+        $inflec->classical = $classical;
+        $inflec->count = count($text);
         
-        return $this->_singular.$type($text);
+        if ($inflec->count == 1)
+        {
+            return $text;
+        }
+        if(empty($text))
+        {
+            return;
+        }
+        
+        return $inflec->_singular.$type($text);
     }
     
-    function _pluralNoun($text)
+    function _pluralNoun()
     {
-        return $pluralText;
+        $inflec =& Inflector::getInstance();
+        
+        require_once('config/nouns.php');
+        
+        $regexPluralUninflected = $inflec->_enclose(join( '|', array_values(array_merge($pluralUninflected,$pluralUninflecteds))));
+        
+        $regexPluralUninflectedHerd = $inflec->_enclose(join( '|', array_values($pluralUninflectedHerd)));
+        
+        $pluralIrregular = array_merge($pluralIrregular,$pluralIrregulars);
+        $regexPluralIrregular = $inflec->_enclose(join( '|', array_keys($pluralIrregular)));
+        
+        if (preg_match('/^('.$regexPluralUninflected.')$/i', $inflec->word, $regs))
+        {
+            return $inflec->word;
+        }
+        
+        if (empty($inflec->classical))
+        {
+            preg_match('/^('.$regexPluralUninflectedHerd.')$/i', $inflec->word, $regs);
+            return $inflec->word;
+        }
+        
+        if (preg_match('/(.*)\\b('.$regexPluralIrregular.')$/i', $inflec->word, $regs))
+        {
+            return $regs[1] . $pluralIrregular[strtolower($regs[2])];
+        }
+
+        return $inflec->word.'s';
     }
     
     function _pluralVerb($text)
@@ -136,7 +205,40 @@ class Inflector
     
     function _enclose($string)
     {
-        return '"(?:'.$string.')"';
+        return '(?:'.$string.')';
     }
+    
+    function _pre($text)
+    {
+        $inflec =& Inflector::getInstance();
+        if (preg_match('/\\A(\\s*)(.+?)(\\s*)\\Z/', $text, $regs))
+        {
+            if (!empty($regs[1]))
+            {
+                $inflec->pre = $regs[1];
+            }
+            
+            if (!empty($regs[2]))
+            {
+                $inflec->word = $regs[2];
+            }
+            
+            if (!empty($regs[3]))
+            {
+                $inflec->post = $regs[3];;
+            }
+        }
+    }
+    
+    function _postProcess($orig, $inflected)
+    {
+        $inflec =& Inflector::getInstance();
+        $inflected = preg_replace('/([^|]+)\\|(.+)/', $inflec->classical ? '${2}' : '${1}', $inflected);
+        
+        return $inflected;
+    }
+
 }
+
+echo Inflector::pluralize('rhinoceros');
 ?>

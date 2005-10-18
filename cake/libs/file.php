@@ -31,7 +31,7 @@
  */
 
 /**
- * Enter description here...
+ * Included libraries.
  *
  */
 uses('object');
@@ -153,10 +153,10 @@ class File extends Object
    }
 
 /**
- * Get the Filesize
+ * Returns the Filesize, either in bytes or in human-readable format.
  *
  * @param boolean $humanReadeble	Data to write to this File.
- * @return string|int filesize as int or as humand readable string
+ * @return string|int filesize as int or as a human-readable string
  */
    function getSize ()
    {
@@ -165,7 +165,7 @@ class File extends Object
    }
 
 /**
- * Get the Fileextension
+ * Returns the File extension.
  *
  * @return string The Fileextension
  */
@@ -188,7 +188,7 @@ class File extends Object
    }
 
 /**
- * Get the Filename
+ * Returns the filename.
  *
  * @return string The Filename
  */
@@ -198,7 +198,7 @@ class File extends Object
    }
 
 /**
- * get the File owner
+ * Returns the File's owner.
  *
  * @return int the Fileowner
  */
@@ -208,7 +208,7 @@ class File extends Object
    }
 
 /**
- * get the File owner
+ * Returns the File group.
  *
  * @return int the Filegroup
  */
@@ -218,9 +218,9 @@ class File extends Object
    }
 
 /**
- * creates the File
+ * Creates the File.
  *
- * @return boolean
+ * @return boolean Success
  */
    function create ()
    {
@@ -245,7 +245,7 @@ class File extends Object
    }
 
 /**
- * deletes the File
+ * Returns true if the File exists.
  *
  * @return boolean
  */
@@ -255,7 +255,7 @@ class File extends Object
    }
 
 /**
- * deletes the File
+ * Deletes the File.
  *
  * @return boolean
  */
@@ -265,7 +265,7 @@ class File extends Object
    }
 
 /**
- * check if the File writable
+ * Returns true if the File is writable.
  *
  * @return boolean
  */
@@ -275,7 +275,7 @@ class File extends Object
    }
 
 /**
- * check if the File executable
+ * Returns true if the File is executable.
  *
  * @return boolean
  */
@@ -285,7 +285,7 @@ class File extends Object
    }
 
 /**
- * check if the File readable
+ * Returns true if the File is readable.
  *
  * @return boolean
  */
@@ -295,7 +295,7 @@ class File extends Object
    }
 
 /**
- * get last access time
+ * Returns last access time.
  *
  * @return int timestamp
  */
@@ -305,7 +305,7 @@ class File extends Object
    }
 
 /**
- * get last access time
+ * Returns last modified time.
  *
  * @return int timestamp
  */
@@ -315,7 +315,7 @@ class File extends Object
    }
 
 /**
- * get the current folder
+ * Returns the current folder.
  *
  * @return Folder
  */
@@ -325,7 +325,7 @@ class File extends Object
    }
 
 /**
- * get the chmod of the File
+ * Returns the "chmod" (permissions) of the File.
  *
  * @return string
  */
@@ -335,7 +335,7 @@ class File extends Object
    }
 
 /**
- * get the chmod of the File
+ * Returns the full path of the File.
  *
  * @return string
  */

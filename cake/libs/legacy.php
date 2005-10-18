@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Backwards compatibility functions.
  * 
  * With this hack you can use clone() in PHP4 code
  * use "clone($object)" not "clone $object"! the former works in both PHP4 and PHP5

@@ -31,7 +31,7 @@
  */
 
 /**
-  * Enter description here...
+  * Included libraries.
   */
 uses('object', DS.'view'.DS.'helper');
 
@@ -163,14 +163,14 @@ class View extends Object
  */
    var $params;
 /**
- * Enter description here...
+ * True when the view has been rendered.
  *
  * @var boolean
  */
    var $hasRendered = null;
 
 /**
- * Enter description here...
+ * True when the Model objects are all loaded.
  *
  * @var boolean
  */
@@ -231,7 +231,7 @@ class View extends Object
  * for a view filename (e.g. customFunkyView.thtml).
  *
  * @param string $action Name of action to render for
- * @param string $layout 
+ * @param string $layout Layout to use
  * @param string $file Custom filename for view
  */
    function render($action=null, $layout=null, $file=null)
@@ -390,7 +390,7 @@ class View extends Object
  * Renders a layout. Returns output from _render(). Returns false on error.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
- * @return string Rendered output, or false on error
+ * @return mixed Rendered output, or false on error
  */
    function renderLayout($content_for_layout)
    {
@@ -423,7 +423,7 @@ class View extends Object
    }
 
 /**
- * Set layout to be used when rendering.
+ * Sets layout to be used when rendering.
  *
  * @param string $layout
  */
@@ -473,7 +473,9 @@ class View extends Object
    function _getViewFileName($action)
    {
        $action = Inflector::underscore($action);
-
+       
+       $viewFileName = VIEWS.$this->viewPath.DS.$action.'.thtml';
+       
        if(file_exists(VIEWS.$this->viewPath.DS.$action.'.thtml'))
        {
            $viewFileName = VIEWS.$this->viewPath.DS.$action.'.thtml';
@@ -576,12 +578,12 @@ class View extends Object
       return $out;
    }
    
-/**
- * Enter description here...
- *
- * @param unknown_type $loaded
- * @param unknown_type $helpers
- * @return unknown
+   /**
+    * Loads helpers, with their dependencies.
+    *
+    * @param array $loaded List of helpers that are already loaded.
+    * @param array $helpers List of helpers to load.
+    * @return array 
  */
    function &_loadHelpers(&$loaded, $helpers) {
 

@@ -361,7 +361,7 @@ class FormHelper extends Helper
 	}
 
 	/**
-	 * Generates an form to go onto a HtmlHelper object.
+	 * Generates a form to go onto a HtmlHelper object.
 	 *
 	 * @param array $fields 	An array of form field definitions
 	 * @param boolean $readOnly	True if the form should be rendered as READONLY

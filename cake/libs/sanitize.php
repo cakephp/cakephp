@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Washes strings from unwanted noise.
  * 
- * Long description for file
+ * Helpful methods to make unsafe strings usable.
  *
  * PHP versions 4 and 5
  *
@@ -34,7 +34,8 @@
 /**
  * Data Sanitization.
  *
- * Long description for class
+ * Removal of alpahnumeric characters, SQL-safe slash-added strings, HTML-friendly strings,
+ * and all of the above on arrays.
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -52,7 +53,7 @@ class Sanitize
  */
 	function paranoid($string)
 	{
-		return preg_replace("/[^a-zA-Z0-9]/", "", $string);
+		return preg_replace( "/[^a-zA-Z0-9]/", "", $string );
 	}
 
 /**
@@ -72,10 +73,10 @@ class Sanitize
    }
 	
 /**
- * Makes the string safe for display as HTML. Renders entities and converts newlines to <br/>.
+ * Returns given string safe for display as HTML. Renders entities and converts newlines to <br/>.
  *
  * @param string $string
- * @param boolean $remove
+ * @param boolean $remove If true, the string is stripped of all HTML tags
  * @return string
  */
    function html($string, $remove = false)
@@ -95,7 +96,7 @@ class Sanitize
    }
 	
 /**
- * Recursively sanitizes an array of data for safe input.
+ * Recursively sanitizes given array of data for safe input.
  *
  * @param mixed $toClean
  * @return mixed
@@ -110,6 +111,7 @@ class Sanitize
  *
  * @param array $toClean
  * @return array
+ * @see cleanArray
  */
    function cleanArrayR(&$toClean) 
    {
@@ -157,7 +159,7 @@ class Sanitize
  */
 	
 /**
- * Method used by cleanArray() to sanitized array nodes.
+ * Method used by cleanArray() to sanitize array nodes.
  *
  * @param string $val
  * @return string

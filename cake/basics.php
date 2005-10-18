@@ -297,10 +297,10 @@ if (!function_exists('array_combine'))
 }
 
 /**
- * Enter description here...
+ * Convenience method for htmlspecialchars.
  *
- * @param unknown_type $text
- * @return unknown
+ * @param string $text
+ * @return string
  */
 function h($text)
 {
@@ -309,9 +309,9 @@ function h($text)
 
 
 /**
- * Enter description here...
+ * Returns an array of all the given parameters, making parameter lists shorter to write.
  *
- * @return unknown
+ * @return array
  */
 function a()
 {
@@ -321,9 +321,10 @@ function a()
 
 
 /**
- * Enter description here...
+ * Hierarchical arrays. 
  *
- * @return unknown
+ * @return array
+ * @todo Explain this method better.
  */
 function ha()
 {
@@ -339,9 +340,9 @@ function ha()
 
 
 /**
- * Enter description here...
+ * Convenience method for echo().
  *
- * @param unknown_type $text
+ * @param string $text String to echo
  */
 function e($text)
 {
@@ -349,9 +350,11 @@ function e($text)
 }
 
 /**
- * Enter description here...
- *
- * @param unknown_type $var
+ * Print_r convenience function, which prints out <PRE> tags around 
+ * the output of given array. Similar to debug().
+ * 
+ * @see debug
+ * @param array $var
  */
 function pr($var)
 {
@@ -364,10 +367,10 @@ function pr($var)
 }
 
 /**
- * Enter description here...
+ * Display parameter
  *
- * @param unknown_type $p
- * @return unknown
+ * @param mixed $p Parameter as string or array
+ * @return string
  */
 function params($p)
 {
@@ -391,9 +394,10 @@ function params($p)
 }
 
 /**
- * Enter description here...
+ * Returns the REQUEST_URI from the server environment, or, failing that, constructs
+ * a new one, using the PHP_SELF constant and other variables.
  *
- * @return unknown
+ * @return string
  */
 function setUri() {
     if (isset($_SERVER['REQUEST_URI']))

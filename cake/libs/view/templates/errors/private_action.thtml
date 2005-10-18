@@ -1,11 +1,10 @@
-#!/usr/local/bin/php
 <?php
-/* SVN FILE: $Id$ */
+/* SVN FILE: $Id:$ */
 
 /**
- * Bake startup script
+ *
  * 
- * Invokes the Bake class with given parameters.
+ *
  *
  * PHP versions 4 and 5
  *
@@ -24,27 +23,18 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.cake.scripts
- * @since        CakePHP v 0.2.9
+ * @subpackage   cake.cake.libs.view.templates.errors
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
-  * START-UP
-  */
-define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(__FILE__)).DS);
-
-require (ROOT.'config'.DS.'paths.php');
-require (LIBS.'basics.php');
-uses ('bake');
-
-$waste = array_shift($argv);
-$product = array_shift($argv);
-
-$bake = new Bake ($product, $argv);
-
 ?>
+<?php $controller = Inflector::camelize($this->name)."Controller"; ?>
+
+<h1>Private Method in <?php echo $controller;?></h1>
+
+<p class="error">You are seeing this error because the action <em><?php echo $this->controller->privateAction;?></em> 
+  should not be accessed directly
+</p>

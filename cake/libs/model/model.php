@@ -1582,7 +1582,7 @@ class Model extends Object
          
       $data = ($data? $data: (isset($this->data)? $this->data: array()));
       $errors = array();
-      foreach ($this->data as $table => $field)
+      foreach ($data as $table => $field)
       {
          foreach ($this->validate as $field_name=>$validator) 
          {

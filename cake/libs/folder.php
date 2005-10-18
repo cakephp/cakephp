@@ -31,7 +31,7 @@
  */
 
 /**
- * Enter description here...
+ * Included libraries.
  *
  */
 uses('object');
@@ -48,14 +48,14 @@ uses('object');
 class Folder extends Object {
 
 /**
-  * Enter description here...
+  * Path to Folder.
   *
   * @var string
   */
    var $path = null;
 
 /**
-  * Enter description here...
+  * Sortedness.
   *
   * @var boolean
   */
@@ -65,7 +65,7 @@ class Folder extends Object {
   * Constructor.
   *
   * @param string $path
-  * @param bollean $path
+  * @param boolean $path
   */
    function Folder ($path = false , $create = false, $mode = false)
    {
@@ -156,7 +156,7 @@ class Folder extends Object {
 
 
 /**
-  * Returns an array of all matching files in current directory
+  * Returns an array of all matching files in current directory.
   *
   * @param string $pattern Preg_match pattern (Defaults to: .*)
   * @return array
@@ -186,7 +186,7 @@ class Folder extends Object {
 
 
 /**
-  * Returns an array of all matching files in and below current directory
+  * Returns an array of all matching files in and below current directory.
   *
   * @param string $pattern Preg_match pattern (Defaults to: .*)
   * @return array Files matching $pattern
@@ -303,7 +303,7 @@ class Folder extends Object {
    }
 
 /**
- * check if the File is in a given CakePath
+ * Returns true if the File is in a given CakePath.
  *
  * @return boolean
  */
@@ -317,7 +317,7 @@ class Folder extends Object {
    }
 
 /**
- * check if the File is in a given Path
+ * Returns true if the File is in given path.
  *
  * @return boolean
  */
@@ -338,7 +338,7 @@ class Folder extends Object {
    }
 
 /**
- * Create a directory structure recursively
+ * Create a directory structure recursively.
  *
  * @author      Aidan Lister <aidan@php.net>
  * @version     1.0.0
@@ -375,7 +375,7 @@ class Folder extends Object {
    }
 
 /**
- * Get the size of a directory.
+ * Returns the size in bytes of this Folder.
  *
  * @author      Aidan Lister <aidan@php.net>
  * @version     1.0.0

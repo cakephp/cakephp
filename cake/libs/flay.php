@@ -32,7 +32,7 @@
  */
 
 /**
-  * Enter description here...
+  * Included libraries.
   */
 uses('object');
 

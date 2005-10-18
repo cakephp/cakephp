@@ -2,9 +2,10 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Object class, allowing __construct and __destruct in PHP4.
  *
- * Long description for file
+ * Also includes methods for logging and the special method RequestAction, 
+ * to call other Controllers' Actions from anywhere.
  *
  * PHP versions 4 and 5
  *
@@ -32,14 +33,15 @@
  */
 
 /**
-  * Enter description here...
+  * Included libraries.
   */
 uses('log');
 
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
- * Long description for class
+ * Also includes methods for logging and the special method RequestAction, 
+ * to call other Controllers' Actions from anywhere.
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -86,9 +88,9 @@ class Object
 
 /**
  * Object-to-string conversion.
- * Each class can override it as necessary.
+ * Each class can override this method as necessary.
  *
- * @return string This name of this class
+ * @return string The name of this class
  */
    function toString()
    {
@@ -96,13 +98,11 @@ class Object
    }
 
 /**
- * 
- * Allow calling a controllers method from any location
- * 
+ * Calls a controller's method from any location. 
  *
- * @param unknown_type $url
- * @param unknown_type $extra
- * @return unknown
+ * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
+ * @param array $extra If array includes the key "render" it sets the AutoRender to true.
+ * @return boolean  Success
  */
     function requestAction ($url, $extra = array())
     {
@@ -114,7 +114,7 @@ class Object
         {
           $extra['render'] = 1; 
         }
-        $extra = array_merge($extra, array('bare'=>1));
+        //$extra = array_merge($extra, array('bare'=>1));
         $dispatcher =& new Dispatcher();
         return $dispatcher->dispatch($url, $extra);
     }

@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Logging.
  * 
- * Long description for file
+ * Log messages to text files.
  *
  * PHP versions 4 and 5
  *
@@ -32,14 +32,12 @@
  */
 
 /**
-  * Enter description here...
+  * Included libraries.
   */
 uses('file');
     
 /**
  * Logs messages to text files
- *
- * Long description for class
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -48,11 +46,11 @@ uses('file');
 class Log
 {
 /**
- * Enter description here...
+ * Writes given message to a log file in the logs directory.
  *
- * @param unknown_type $type
- * @param unknown_type $msg
- * @return unknown
+ * @param string $type Type of log, becomes part of the log's filename 
+ * @param string $msg  Message to log
+ * @return boolean Success
  */
    function write($type, $msg)
    {
@@ -71,7 +69,7 @@ class Log
 define ('LOG_ERROR', 2);
 
 /**
-  * Shortcut.
+  * Shortcut to Log::write.
   */
 function LogError ($message)
 {

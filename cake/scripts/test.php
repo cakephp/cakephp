@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Test reporter for Cake
  * 
- * Long description for file
+ * A test reporter that extends HtmlReporter.
  *
  * PHP versions 4 and 5
  *
@@ -32,10 +32,11 @@
  */
 
 /**
- * Helper function for outputing data. Should be moved somevhere else.
+ * Helper function for outputting data. 
  *
  * @param mixed $data Data to be dumped
  * @return string Dumped data
+ * @todo Should be moved somevhere else.
  */
 function dump($data)
 {
@@ -77,7 +78,7 @@ require_once SIMPLE_TEST.'reporter.php';
 $groupTest = new GroupTest('Cake tests');
 
 /**
- * We need to loop thru tests folder.
+ * We need to loop through the tests folder.
  */
 uses('folder');
 $testsFolder = new Folder(TESTS);
@@ -94,18 +95,18 @@ foreach ($testsFolder->findRecursive('.*\.php') as $test)
 class CakeHtmlReporter extends HtmlReporter
 {
 /**
- * Enter description here...
+ * Returns CSS formatting for the reporter.
  *
- * @return unknown
+ * @return string
  */
    function _getCss()
    {
       return '.error { margin: 10px 0px; border: 1px solid #d7d4c7; padding: 4px; } .fail { color: red; font-weight: bold; } pre { background-color: lightgray; } .msg { margin-top: 5px; } body { font-family: Verdana; font-size: small; }';
    }
 /**
- * Enter description here...
+ * Renders a test failure
  *
- * @param unknown_type $message
+ * @param string $message
  */
    function paintFail($message)
    {
@@ -118,9 +119,9 @@ class CakeHtmlReporter extends HtmlReporter
       print '</div>';
    }
 /**
- * Enter description here...
+ * Renders an exception
  *
- * @param unknown_type $message
+ * @param string $message Message to be rendered
  */
    function paintException($message)
    {

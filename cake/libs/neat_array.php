@@ -180,7 +180,8 @@ class NeatArray
    }
 
    /**
-     * Passes each of its values through a specified function or method. Think of PHP's {@link http://php.net/array_walk array_walk()}.
+     * Passes each of its values through a specified function or method. 
+     * Think of PHP's {@link http://php.net/array_walk array_walk()}.
      *
      * @param string $with Name of callback function
      * @return array Returns value of NeatArray::value

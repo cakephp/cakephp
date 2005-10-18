@@ -229,12 +229,18 @@ class Controller extends Object
             {
                 foreach($this->beforeFilter as $filter)
                 {
-
+                    if(is_callable(array($this,$filter)))
+                    {
+                        $this->$filter();
+                    }
                 }
             }
             else
             {
-
+                if(is_callable(array($this,$this->beforeFilter)))
+                {
+                    $this->{$this->beforeFilter}();
+                }
             }
         }
         
@@ -388,6 +394,7 @@ class Controller extends Object
        $this->autoLayout = true;
        $this->pageTitle = 'Missing Controller';
        $this->render('../errors/missingController');
+       exit();
    }
 
 /**
@@ -399,6 +406,19 @@ class Controller extends Object
        $this->autoLayout = true;
        $this->pageTitle = 'Missing Method in Controller';
        $this->render('../errors/missingAction');
+       exit();
+   }
+   
+/**
+ * Renders the Private Action web page.
+ *
+ */
+   function privateAction()
+   {
+       $this->autoLayout = true;
+       $this->pageTitle = 'Trying to access private method in class';
+       $this->render('../errors/privateAction');
+       exit();
    }
    
 /**
@@ -409,8 +429,8 @@ class Controller extends Object
     {
         $this->autoLayout = true;
         $this->pageTitle = 'Scaffold Missing Database Connection';
-        //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingScaffolddb');
+        exit();
     }
 
 /**
@@ -422,8 +442,8 @@ class Controller extends Object
         $this->autoLayout = true;
         $this->missingTableName = $tableName;
         $this->pageTitle = 'Missing Database Table';
-        //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingTable');
+        exit();
     }
     
 /**
@@ -435,8 +455,8 @@ class Controller extends Object
         $this->missingHelperFile = $file;
         $this->missingHelperClass = Inflector::camelize($file) . "Helper";
         $this->pageTitle = 'Missing Helper File';
-        //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingHelperFile');
+        exit();
     }
     
     
@@ -449,8 +469,8 @@ class Controller extends Object
         $this->missingHelperClass = Inflector::camelize($class) . "Helper";
         $this->missingHelperFile = Inflector::underscore($class);
         $this->pageTitle = 'Missing Helper Class';
-        //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingHelperClass');
+        exit();
     }
     
 /**
@@ -461,8 +481,8 @@ class Controller extends Object
     {
         $this->autoLayout = true;
         $this->pageTitle = 'Missing Database Connection';
-        //We are simulating action call below, this is not a filename!
         $this->render('../errors/missingDatabase');
+        exit();
     }
     //   /**
     //    * Displays an error page to the user. Uses layouts/error.html to render the page.

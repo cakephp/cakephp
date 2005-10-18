@@ -33,7 +33,7 @@
 
 
 /**
-  * Enter description here...
+  * Included libraries.
   *
   */
 uses(DS.'model'.DS.'model');

@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Requests collector.
  * 
  *  This file collects requests if:
  *    - no mod_rewrite is avilable or .htaccess files are not supported
@@ -42,17 +42,13 @@ define ('ROOT', dirname(__FILE__).DS);
 require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
 require_once ROOT.APP_DIR.DS.'config'.DS.'paths.php';
 require_once CAKE.'basics.php';
-/**
- *  We need to redefine some constants and variables, so that Cake knows it is
- *  working without mod_rewrite.
- */
-//define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
+
 
 $uri = setUri();
 
 /**
  * As mod_rewrite (or .htaccess files) is not working, we need to take care
- * of what would normally be rewrited, i.e. the static files in /public
+ * of what would normally be rewritten, i.e. the static files in /public
  */
    if ($uri === '/' || $uri === '/index.php')
    {

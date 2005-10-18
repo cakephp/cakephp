@@ -47,16 +47,46 @@
 class AjaxHelper extends Helper
 {
 
+    /**
+     * Included helpers.
+     *
+     * @var array
+     */
     var $helpers = array('html', 'javascript');
 
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     var $callbacks = array('uninitialized', 'loading', 'loaded', 'interactive', 'complete');
 
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     var $ajaxOptions = array('method','position','form','parameters','evalScripts', 'asynchronous', 'onComplete', 'onUninitialized', 'onLoading', 'onLoaded', 'onInteractive');
 
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     var $dragOptions = array('handle', 'revert', 'constraint', 'change');
     
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     var $dropOptions = array('accept', 'containment', 'overlap', 'greedy', 'hoverclass', 'onHover', 'onDrop');
     
+    /**
+     * Enter description here...
+     *
+     * @var array
+     */
     var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'onUpdate', 'onChange');
     
     
@@ -338,6 +368,12 @@ class AjaxHelper extends Helper
         return $this->javascript->codeBlock("new Draggable('$id'$options);");
     }
 
+    /**
+     * Enter description here...
+     *
+     * @param array $options
+     * @return array
+     */
     function _optionsForDraggable ($options)
     {
         $options = $this->_optionsToString($options, array('handle','constraint'));
@@ -453,6 +489,14 @@ class AjaxHelper extends Helper
         }
     }
 
+    /**
+     * Enter description here... Return JavaScript text for ...
+     *
+     * @param string $klass Name of JavaScript class
+     * @param string $name
+     * @param array $options
+     * @return string Formatted JavaScript
+     */
     function _buildObserver ($klass, $name, $options=null)
     {
         if(!isset($options['with']) && isset($options['update']))
@@ -467,6 +511,12 @@ class AjaxHelper extends Helper
         return $javascript;
     }
 
+    /**
+     * Enter description here... Return JavaScript text for ...
+     *
+     * @param array $options
+     * @return array
+     */
     function _buildCallbacks($options)
     {
         $callbacks = array();

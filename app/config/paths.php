@@ -102,6 +102,11 @@ define ('CONFIGS',     APP.'config'.DS);
 /**
  * Path to the libs directory.
  */
+define ('INFLECTIONS', CAKE.'config'.DS.'inflections'.DS);
+
+/**
+ * Path to the libs directory.
+ */
 define ('LIBS',        CAKE.'libs'.DS);
 
 /**

@@ -33,12 +33,12 @@
  */
 
 /**
- * Add Description
+ * List of helpers to include
  */
 uses('error_messages', 'object', 'router', DS.'controller'.DS.'controller', DS.'controller'.DS.'scaffold');
 
 /**
- * Short description for class.
+ * Dispatcher translates URLs to controller-action-paramter triads.
  * 
  * Dispatches the request, creating appropriate models and controllers.
  *
@@ -79,6 +79,7 @@ class Dispatcher extends Object
       $missingController = false;
       $missingAction     = false;
       $missingView       = false;
+      $privateAction     = false;
       
       if(!in_array('render', array_keys($params)))
       {
@@ -130,6 +131,11 @@ class Dispatcher extends Object
           $params['action'] = 'index';
       }
       
+      if(in_array($params['action'], $classMethods) && strpos($params['action'], '_', 0) === 0)
+      {
+          $privateAction = true;
+      }
+      
       if(!in_array($params['action'], $classMethods))
       {
           $missingAction = true;
@@ -160,15 +166,21 @@ class Dispatcher extends Object
           $params['action'] = 'missingAction';
       }
       
+      if ($privateAction)
+      {
+          $controller->privateAction = $params['action'];
+          $params['action'] = 'privateAction';
+      }
+      
       return $this->_invoke($controller, $params );
    }
    
 /**
- * Enter description here...
+ * Invokes given controller's render action if autoRender option is set. Otherwise the contents of the operation are returned as a string.
  *
- * @param unknown_type $controller
- * @param unknown_type $params
- * @return unknown
+ * @param object $controller
+ * @param array $params
+ * @return string
  */
    function _invoke (&$controller, $params )
    {
@@ -218,7 +230,7 @@ class Dispatcher extends Object
    }
 
 /**
- * Recursively strips slashes.
+ * Recursively strips slashes from given array.
  *
  */
    function stripslashes_deep($val)
@@ -228,7 +240,7 @@ class Dispatcher extends Object
    }
 
 /**
- * Recursively performs urldecode.
+ * Recursively performs urldecode on given array.
  *
  */
    function urldecode_deep($val)
@@ -275,7 +287,6 @@ class Dispatcher extends Object
               $webroot =setUri();
               $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
           }
-          // Document root is probably not set to Cake 'webroot' dir
           if(APP_DIR === 'app')
           {
               if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
@@ -301,17 +312,6 @@ class Dispatcher extends Object
                   !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
                   return $base;
               }
-          }
-          //Fallback if all others fail
-          if (preg_match('/^(.*)\\/index\\.php$/', $scriptName, $regs))
-          {
-              !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
-              return  $regs[1];
-          }
-          else
-          {
-              !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
-              return $base;
           }
       }
       return $base;

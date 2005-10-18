@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Parses the request URL into controller, action, and parameters.
  * 
  * Long description for file
  *
@@ -32,7 +32,7 @@
  */
 
 /**
-  * Enter description here...
+  * Included libraries.
   */
 uses('object', 'neat_array');
 
@@ -56,10 +56,10 @@ class Router extends Object {
 /**
   * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
   *
-  * @param string $route An empty string, or a route string "/"
-  * @param array $default NULL or an array describing the default route
+  * @param string $route    An empty string, or a route string "/"
+  * @param array $default   NULL or an array describing the default route
   * @see routes
-  * @return array Array of routes
+  * @return array           Array of routes
   */
    function connect ($route, $default=null) 
    {
@@ -107,7 +107,8 @@ class Router extends Object {
    }
 
 /**
-  * TODO: Better description. Returns an array of routes.
+  * Parses given URL and returns an array of controllers, action and parameters
+  * taken from that URL. 
   *
   * @param string $url URL to be parsed 
   * @return array 
