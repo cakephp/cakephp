@@ -101,13 +101,6 @@ class Model extends Object
  * @access private
  */
    var $_tableInfo = null;
-	
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $_belongsTo = array();
    
 /**
  * Array of other Models this Model references in a belongsTo (one-to-one) relationship. 
@@ -117,13 +110,7 @@ class Model extends Object
  */
    var $_belongsToOther = array();
 
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $_hasOne = array();
-   
+
 /**
  * Array of other Models this Model references in a hasOne (one-to-one) relationship. 
  *
@@ -132,12 +119,6 @@ class Model extends Object
  */
    var $_oneToOne = array();
 
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $_hasMany = array();
    
 /**
  * Array of other Models this Model references in a hasMany (one-to-many) relationship. 
@@ -147,12 +128,7 @@ class Model extends Object
  */
    var $_oneToMany = array();
 
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $_hasAndBelongsToMany = array();
+
 /**
  * Array of other Models this Model references in a hasAndBelongsToMany (many-to-many) relationship. 
  *
@@ -176,21 +152,6 @@ class Model extends Object
  * @var array
  */
    var $validationErrors = null;
-
-
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $classRegistry;
-
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $persistent = null;
    
 /**
  * Prefix for tables in model.
@@ -200,55 +161,80 @@ class Model extends Object
    var $tablePrefix = null;
    
 /**
+ * Name of the model.
+ *
+ * @var string
+ */
+   var $name = null;
+
+/**
+ * Name of the model.
+ *
+ * @var string
+ */
+   var $currentModel = null;
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $tableToModel = array();
+   
+/**
  * Constructor. Binds the Model's database table to the object.
  *
  * @param unknown_type $id
  * @param string $table Database table to use.
  * @param unknown_type $db Database connection object.
  */
-   function __construct ($id=false, $table=null, $db=null) 
-   {
-
-      if($db != null)
-      {
-          $this->db =& $db;
-      }
-      else
-      {
-         $dboFactory = DboFactory::getInstance();  
-         $this->db =& $dboFactory ;
-         if(empty($this->db))
-         {
-             $this->_throwMissingConnection();
-         }
-      }
-          
-      
-      $this->classRegistry =& ClassRegistry::getInstance();
-      $this->classRegistry->addObject(get_class($this), $this);
-   
-      if ($id)
-      {
-         $this->id = $id;
-      }
-
-      $tableName = $table? $table: ($this->useTable? $this->useTable: Inflector::tableize(get_class($this)));
-      //Table Prefix Hack - Check to see if the function exists.
-	  if (in_array('settableprefix', get_class_methods(get_class($this)))) $this->setTablePrefix();
-      // Table Prefix Hack - Get the prefix for this view.
-	  $this->tablePrefix? $this->useTable($this->tablePrefix.$tableName): $this->useTable ($tableName);
-	  //$this->useTable ($tableName);
-      parent::__construct();
-      $this->createLinks();
-   }
+    function __construct ($id=false, $table=null, $db=null) 
+    {
+        $this->name = get_class($this);
+        $this->currentModel = Inflector::underscore($this->name);     
+        
+        if($db != null)
+        {
+            $this->db =& $db;
+        }
+        else
+        {
+            $dboFactory = DboFactory::getInstance();  
+            $this->db =& $dboFactory ;
+            if(empty($this->db))
+            {
+                $this->_throwMissingConnection();
+            }
+        }
+        
+        $classRegistry =& ClassRegistry::getInstance();
+        $classRegistry->addObject($this->name, $this);
+        
+        if ($id)
+        {
+            $this->id = $id;
+        }
+        
+        $tableName = $table? $table: ($this->useTable? $this->useTable: Inflector::tableize($this->name));
+        
+        if (in_array('settableprefix', get_class_methods($this->name)))
+        {
+            $this->setTablePrefix();
+        }
+        
+        $this->tablePrefix? $this->useTable($this->tablePrefix.$tableName): $this->useTable ($tableName);
+        
+        parent::__construct();
+        $this->createLinks();
+    }
 
 /**
  * Creates association relationships.
  *
  */
-	function createLinks()
-	{
-	    if (!empty($this->belongsTo))
+    function createLinks()
+    {
+        if (!empty($this->belongsTo))
 	    {
 	        $this->_belongsToLink();
 	    }
@@ -271,232 +257,78 @@ class Model extends Object
  *
  * @access private
  */
-   function _belongsToLink()
-   {
-      if(is_array($this->belongsTo))
-      {
-
-         foreach ($this->belongsTo as $association => $associationValue)
-         {
-            $className = $association;
-            $classCreated = false;
-            
-            foreach ($associationValue as $option => $optionValue)
+    function _belongsToLink()
+    {
+        if(is_array($this->belongsTo))
+        {
+            foreach ($this->belongsTo as $association => $associationValue)
             {
-               if (($option === 'className') && ($classCreated === false))
-               {
-                  $className = $optionValue;
-               }
-               
-               if ($classCreated === false)
-               {
-                  $this->_constructAssociatedModels($className , 'Belongs');
-                  $classCreated = true;
-               }
-               
-               switch($option)
-               {
-                  case 'conditions':
-                        $modelConditions = $this->table .'To'. $association . 'Conditions';
-                        $conditions = $optionValue;
-                        $this->$modelConditions = $conditions;
-                  unset($modelConditions);
-                  break;
-                  
-                  case 'order':
-                        $modelOrder = $this->table .'To'. $association . 'Order';
-                        $order = $optionValue;
-                        $this->$modelOrder = $order;
-                  unset($modelOrder);
-                  break;
-                  
-                  case 'foreignKey':
-                  $modelForeignKey = $this->table .'To'. $association . 'ForeignKey';
-                  $foreignKey = $optionValue;
-                  $this->$modelForeignKey = $foreignKey;
-                  unset($modelForeignKey);
-                  break;
-                  
-                  case 'counterCache':
-                  $modelCounterCache= $this->table .'To'. $association . 'counterCache';
-                  $counterCache = $optionValue;
-                  $this->$modelCounterCache = $counterCache;
-                  unset($modelCounterCache);
-                  break; 
-               }
+                $className = $association;
+                $this->_associationSwitch($className, $associationValue, 'Belongs');
             }
-            $className = Inflector::singularize($className);
-            $this->linkAssociation('Belongs', $this->$className->table, $this->id);
-            $this->relink('Belongs');
-            unset($className);
-         }
-      }
-      else
-      {
-          $association = explode(',', $this->belongsTo);
-          foreach ($association as $modelName) 
-          {
-              $this->_constructAssociatedModels($modelName , 'Belongs');
-              $modelName = Inflector::singularize($modelName);
-              $this->linkAssociation('Belongs', $this->$modelName->table, $this->id);
-              $this->relink('Belongs');
-          }
-      }
-   }
+        }
+        else
+        {
+            $association = explode(',', $this->belongsTo);
+            foreach ($association as $className) 
+            {
+                $className = Inflector::singularize($className);
+                $this->_constructAssociatedModels($className , 'Belongs');
+                $this->linkAssociation('Belongs', $className, $this->id);
+            }
+        }
+    }
 	
 /**
  * Enter description here...
  *
  * @access private
  */
-   function _hasOneLink()
-   {
-      if(is_array($this->hasOne))
-      { 
-         foreach ($this->hasOne as $association => $associationValue)
-         {
-            $className = $association;
-            $classCreated = false;
-            
-            foreach ($associationValue as $option => $optionValue)
+    function _hasOneLink()
+    {
+        if(is_array($this->hasOne))
+        {
+            foreach ($this->hasOne as $association => $associationValue)
             {
-               if (($option === 'className') && ($classCreated === false))
-               {
-                  $className = $optionValue;
-               }
-               
-               if ($classCreated === false)
-               {
-                  $this->_constructAssociatedModels($className , 'One');
-                  $className = $this->$className->table;
-                  $classCreated = true;
-               }
-               
-               switch($option)
-               {
-                  case 'conditions':
-                        $modelConditions = $this->table .'To'. $association . 'Conditions';
-                        $conditions = $optionValue;
-                        $this->$modelConditions = $conditions;
-                  unset($modelConditions);
-                  break;
-                  
-                  case 'order':
-                        $modelOrder = $this->table .'To'. $association . 'Order';
-                        $order = $optionValue;
-                        $this->$modelOrder = $order;
-                  unset($modelOrder);
-                  break;
-                  
-                  case 'dependent':
-                        $modelDependent = $this->table .'To'. $association . 'Dependent';
-                        $dependent = $optionValue;
-                        $this->$modelDependent = $dependent;
-                  unset($modelDependent);
-                  break;
-                  
-                  case 'foreignKey':
-                  $modelForeignKey = $this->table .'To'. $association . 'ForeignKey';
-                  $foreignKey = $optionValue;
-                  $this->$modelForeignKey = $foreignKey;
-                  unset($modelForeignKey);
-                  break;
-               }
+                $className = $association;
+                $this->_associationSwitch($className, $associationValue, 'One');
             }
-            $className = Inflector::singularize($className);
-            $this->linkAssociation('One', $this->$className->table, $this->id);
-            $this->relink('One');
-            unset($className);
-         }
-      }
-      else
-      {
-          $association = explode(',', $this->hasOne);
-          foreach ($association as $modelName) 
-          {
-              $this->_constructAssociatedModels($modelName , 'One');
-              $modelName = Inflector::singularize($modelName);
-              $this->linkAssociation('One', $this->$modelName->table, $this->id);
-              $this->relink('One');
-          }
-      }
-   }
+        }
+        else
+        {
+            $association = explode(',', $this->hasOne);
+            foreach ($association as $className) 
+            {
+                $className = Inflector::singularize($className);
+                $this->_constructAssociatedModels($className , 'One');
+                $this->linkAssociation('One', $className, $this->id);
+            }
+        }
+    }
 
-	
 /**
  * Enter description here...
  *
+ * @access private
  */
 	function _hasManyLinks()
 	{
-	   if(is_array($this->hasMany))
-	   {
-	      foreach ($this->hasMany as $association => $associationValue)
-	      {
-            $className = $association;
-            $classCreated = false;
-
-	         foreach ($associationValue as $option => $optionValue)
-	         {
-	            if (($option === 'className') && ($classCreated === false))
-	            {
-                  $className = $optionValue;
-               }
-               
-               if ($classCreated === false)
-               {
-                  $this->_constructAssociatedModels($className , 'Many');
-                  $classCreated = true;
-               }
-	            switch ($option)
-	            {
-	               case 'conditions':
-	                 //$this->__joinedHasMany[$count][$this->table]['conditions'] = $optionValue;
-	               break;
-	               
-	               case 'order':
-	                 //$this->__joinedHasMany[$count][$this->table]['order'] = $optionValue;
-	               break;
-	               
-	               case 'foreignKey':
-   	               $modelForeignKey = $this->table .'To'. $className . 'ForeignKey';
-   	               $foreignKey = $optionValue;
-   	               $this->$modelForeignKey = $foreignKey;
-   	               unset($modelForeignKey);
-	               break;
-	               
-	               case 'dependent':
-	               //$this->__joinedHasMany[$count][$this->table]['dependent'] = $optionValue;
-	               break;
-	               
-	               case 'exclusive':
-	               //$this->__joinedHasMany[$count][$this->table]['exclusive'] = $optionValue;
-	               break;
-	               
-	               case 'finderSql':
-	               //$this->__joinedHasMany[$count][$this->table]['finderSql'] = $optionValue;
-	               break;
-	               
-	               case 'counterSql':
-	               //$this->__joinedHasMany[$count][$this->table]['counterSql'] = $optionValue;
-	               break;
-	            }
-	         }
-	         $className = Inflector::singularize($className);
-	         $this->linkAssociation('Many', $this->$className->table, $this->id);
-	         $this->relink('Many');
-	         unset($className);
-	      }
-	   }
+	    if(is_array($this->hasMany))
+	    {
+	        foreach ($this->hasMany as $association => $associationValue)
+	        {
+	            $className = $association;
+	            $this->_associationSwitch($className, $associationValue, 'Many');
+	        }
+	    }
 	   else
 	   {
 	       $association = explode(',', $this->hasMany);
-	       foreach ($association as $modelName) 
+	       foreach ($association as $className) 
 	       {
-	           $this->_constructAssociatedModels($modelName , 'Many');
-	           $modelName = Inflector::singularize($modelName);
-	           $this->linkAssociation('Many', $this->$modelName->table, $this->id);
-	           $this->relink('Many');  
+	           $className = Inflector::singularize($className);
+	           $this->_constructAssociatedModels($className , 'Many');
+	           $this->linkAssociation('Many', $className, $this->id); 
 	       }
 	   }
 	}
@@ -504,156 +336,188 @@ class Model extends Object
 /**
  * Enter description here...
  *
+ * @access private
  */
-   function _hasAndBelongsToManyLinks()
-   {
-      if(is_array($this->hasAndBelongsToMany))
-      {
-      }
-      else
-      {
-         //$this->_hasAndBelongsToMany = explode(',', $this->hasAndBelongsToMany);
-         
-	       $association = explode(',', $this->hasAndBelongsToMany);
-	       foreach ($association as $modelName) 
-	       {
-	           $this->_constructAssociatedModels($modelName , 'ManyTo');
-	           $modelName = Inflector::singularize($modelName);
-	           $this->linkAssociation('ManyTo', $this->$modelName->table, $this->id);
-	           $this->relink('ManyTo');  
-	       }
-      }
-   }
+    function _hasAndBelongsToManyLinks()
+    {
+        if(is_array($this->hasAndBelongsToMany))
+        {
+            foreach ($this->hasAndBelongsToMany as $association => $associationValue)
+            {
+                $className = $association;
+                $this->_associationSwitch($className, $associationValue, 'ManyTo');
+            }
+        }
+        else
+        {
+            $association = explode(',', $this->hasAndBelongsToMany);
+            foreach ($association as $className) 
+            {
+                $className = Inflector::singularize($className);
+                $this->_constructAssociatedModels($className , 'ManyTo');
+                $this->linkAssociation('ManyTo', $className, $this->id);
+            }
+        }
+    }
+    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $className
+ * @param unknown_type $associationValue
+ * @param unknown_type $type
+ * @access private
+ */
+    function _associationSwitch($className, $associationValue, $type)
+    {
+        $classCreated = false;
+        
+        foreach ($associationValue as $option => $optionValue)
+        {
+            if (($option === 'className') && ($classCreated === false))
+            {
+                $className = $optionValue;
+            }
+            
+            if ($classCreated === false)
+            {
+                $className = Inflector::singularize($className);
+                $this->_constructAssociatedModels($className , $type);
+                $classCreated = true;
+            }
+            
+            switch($option)
+            {
+                case 'associationForeignKey':
+                    $this->{$className}->{$this->currentModel.'_associationforeignkey'} = $optionValue;
+                break;
+                
+                case 'conditions':
+                    $this->{$className}->{$this->currentModel.'_conditions'} = $optionValue;
+                break;
+                
+                case 'counterCache':
+                    $this->{$className}->{$this->currentModel.'_countercache'} = $optionValue;
+                break;
+
+                case 'counterSql':
+                    $this->{$className}->{$this->currentModel.'_countersql'} = $optionValue;
+	            break;
+	               
+	            case 'deleteSql':
+                    $this->{$className}->{$this->currentModel.'_deletesql'} = $optionValue;
+	            break;
+	               
+	            case 'dependent':
+	               $this->{$className}->{$this->currentModel.'_dependent'} = $optionValue;
+	            break;
+
+	            case 'exclusive':
+                    $this->{$className}->{$this->currentModel.'_exclusive'} = $optionValue;
+	            break;
+	               
+	            case 'finderSql':
+                    $this->{$className}->{$this->currentModel.'_findersql'} = $optionValue;
+	            break;
+	               
+	            case 'foreignKey':
+                    $this->{$className}->{$this->currentModel.'_foreignkey'} = $optionValue;
+	            break;
+	               
+	            case 'insertSql':
+                    $this->{$className}->{$this->currentModel.'_insertsql'} = $optionValue;
+	            break;
+	               
+	            case 'joinTable':
+                    $this->{$className}->{$this->currentModel.'_jointable'} = $optionValue;
+	            break;
+	               
+	            case 'order':
+                    $this->{$className}->{$this->currentModel.'_order'} = $optionValue;
+                break;
+                   
+                case 'uniq':
+                    $this->{$className}->{$this->currentModel.'_uniq'} = $optionValue;
+	            break;
+	            
+                case 'fields':
+                    $this->{$className}->{$this->currentModel.'_fields'} = $optionValue;
+	            break;
+               }
+        }
+        $this->linkAssociation($type, $className, $this->id);
+    }
 
 /**
  * Enter description here...
  *
  * @param unknown_type $className
  * @param unknown_type $type
- * @param unknown_type $settings
  * @access private
  */
-   function _constructAssociatedModels($modelName, $type, $settings = false)
-   {
-      $modelName = Inflector::singularize($modelName);
-      $collectionKey = Inflector::underscore($modelName);
-      
-      switch($type)
-      {
-         case 'Belongs':
-         $joined = 'joinedBelongsTo';
-         break;
+    function _constructAssociatedModels($className, $type)
+    {
+        $collectionKey = Inflector::underscore($className);
+        $classRegistry =& ClassRegistry::getInstance();
+        
+        if(!$classRegistry->isKeySet($collectionKey))
+        {
+            $this->{$className} = new $className();
+        }
+        else
+        {
+            $this->{$className} = $classRegistry->getObject($collectionKey); 
+        }
+        
+        switch($type)
+        {
+            case 'Belongs':
+                $this->{$className}->{$this->currentModel.'_conditions'} = null;
+                $this->{$className}->{$this->currentModel.'_order'} = null;
+                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->{$className}->table).'_id';
+                $this->{$className}->{$this->currentModel.'_countercache'} = null;
+            break;
+            
+            case 'One':
+                $this->{$className}->{$this->currentModel.'_conditions'} = null;
+                $this->{$className}->{$this->currentModel.'_order'} = null;
+                $this->{$className}->{$this->currentModel.'_dependent'} = null;
+                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->table).'_id';
+            break;
 
-         case 'One':
-         $joined = 'joinedHasOne';
-         break;
+            case 'Many':
+                $this->{$className}->{$this->currentModel.'_conditions'} = null;
+                $this->{$className}->{$this->currentModel.'_order'} = null;
+                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->table).'_id';
+                $this->{$className}->{$this->currentModel.'_fields'} = '*';
+                $this->{$className}->{$this->currentModel.'_dependent'} = null;
+                $this->{$className}->{$this->currentModel.'_exclusive'} = null;
+                $this->{$className}->{$this->currentModel.'_findersql'} = null;
+                $this->{$className}->{$this->currentModel.'_countersql'} = null;
+            break;
 
-         case 'Many':
-         $joined = 'joinedHasMany';
-         break;
-
-         case 'ManyTo':
-         $joined = 'joinedHasAndBelongs';
-         break;
-
-         default:
-         //nothing
-         break;
-      }
-      
-      if(!$this->classRegistry->isKeySet($collectionKey))
-      {
-          $this->{$modelName} =& new $modelName();
-      }
-      else
-      {
-          $this->{$modelName} =& $this->classRegistry->getObject($collectionKey); 
-      }
-      
-      $this->{$joined}[] =& $this->$modelName;
-   }
-
-/**
- * Updates this model's association links, by emptying the links list, and then link"*Association Type" again.
- *
- * @param unknown_type $type
- */
-	function relink ($type) 
-	{
-	    if(!empty($this->_belongsTo))
-	    {
-	        foreach ($this->_belongsTo as $table) 
-	        {
-	            if(is_array($table))
-	            {
-	                $names[0] = $table[0];
-	            } 
-	            else 
-	            {
-	                $names[0] = $table;
-	            }
-	            $tableName = Inflector::singularize($names[0]);
-	            $this->clearLinks($type);
-	            $this->linkAssociation($type, $tableName, $this->id);
-	        }
-	    }
-	    
-	    if(!empty($this->_hasOne))
-	    {
-	        foreach ($this->_hasOne as $table) 
-	        {
-	            if(is_array($table))
-	            {
-	                $names[0] = $table[0];
-	            } 
-	            else 
-	            {
-	                $names[0] = $table;
-	            }
-	            $tableName = Inflector::singularize($names[0]);
-	            $this->clearLinks($type);
-	            $this->linkAssociation($type, $tableName, $this->id);
-	        }
-	    }
-	    
-	    if(!empty($this->_hasMany))
-	    {
-	        foreach ($this->_hasMany as $table)
-	        {
-	            if(is_array($table))
-	            {
-	                $names[0] = $table[0];
-	            }
-	            else
-	            {
-	                $names[0] = $table;
-	            }
-	              $tableName = Inflector::singularize($names[0]);
-	              $this->clearLinks($type);
-	              $this->linkAssociation($type, $tableName, $this->id);
-	        }
-	    }
-	    
-	    if(!empty($this->_hasAndBelongsToMany))
-	    {
-	        foreach ($this->_hasAndBelongsToMany as $table)
-	        {
-	            if(is_array($table))
-	            {
-	                 $names[0] = $table[0];
-	            }
-	            else
-                  {
-                     $names[0] = $table;
-                  }
-                  $tableName = Inflector::singularize($names[0]);
-                  $this->clearLinks($type);
-                  $this->linkAssociation($type, $tableName, $this->id);
-	        }
-	    }
-	}
+            case 'ManyTo':
+                $tableSort[0] = $this->table;
+                $tableSort[1] = $this->{$className}->table;
+                sort($tableSort);
+                $joinTable = $tableSort[0] . '_' . $tableSort[1];
+                $key1 = Inflector::singularize($this->table) . '_id';
+                $key2 = Inflector::singularize($this->{$className}->table) . '_id';
+                $this->{$className}->{$this->currentModel.'_jointable'} = $joinTable;
+                $this->{$className}->{$this->currentModel.'_fields'} = '*';
+                $this->{$className}->{$this->currentModel.'_foreignkey'} = $key1;
+                $this->{$className}->{$this->currentModel.'_associationforeignkey'} = $key2;
+                $this->{$className}->{$this->currentModel.'_conditions'} = null;
+                $this->{$className}->{$this->currentModel.'_order'} = null;
+                $this->{$className}->{$this->currentModel.'_uniq'} = null;
+                $this->{$className}->{$this->currentModel.'_findersql'} = null;
+                $this->{$className}->{$this->currentModel.'_deletesql'} = null;
+                $this->{$className}->{$this->currentModel.'_insertsql'} = null;
+            break;
+        }
+        $this->tableToModel[$this->{$className}->table] = strtolower($className);
+    }
 	   
-
 /**
  * Enter description here...
  *
@@ -661,113 +525,47 @@ class Model extends Object
  * @param unknown_type $tableName
  * @param unknown_type $value
  */
-   function linkAssociation ($type, $tableName, $value=null) 
-   {
-      $tableName = Inflector::tableize($tableName);
-      $fieldKey = $this->table .'To'. Inflector::singularize($tableName) . 'ForeignKey';
-
-      if(!empty($this->$fieldKey))
-      {
-         $field_name = $this->$fieldKey;
-      }
-      else
-      {
-         if ($type === 'Belongs')
-         {
-            $field_name = Inflector::singularize($tableName).'_id';
-         }
-         elseif ($type === 'One')
-         {
-            $field_name = Inflector::singularize($this->table).'_id';
-         }
-         else
-         {
-            $field_name = Inflector::singularize($this->table).'_id';
-         }
-      }
-
-      
-      
-      switch ($type)
-      {
-         case 'Belongs':
-         $this->_belongsToOther[] = array($tableName, $field_name, $value);
-         break;
-
-         case 'One':
-         $this->_oneToOne[] = array($tableName, $field_name, $value);
-         break;
-
-         case 'Many':
-         $this->_oneToMany[] = array($tableName, $field_name, $value);
-         break;
-
-         case 'ManyTo':
-         
-         //$joinKey = $this->table .'To'. Inflector::singularize($tableName) . 'joinTable';
-         //if(!empty($this->$joinKey))
-         //{
-         //     $joinTable = $this->$joinKey;
-         //}
-         //else
-         //{
-             $tableSort[0] = $this->table;
-             $tableSort[1] = $tableName;
-             sort($tableSort);
-             $joinTable = $tableSort[0] . '_' . $tableSort[1];
-             $key1 = Inflector::singularize($this->table) . '_id';
-             $key2 = Inflector::singularize($tableName) . '_id';
-        // }
-         $this->_manyToMany[]  = array($tableName, $field_name, $value, $joinTable, $key1, $key2);
-         break;
-      }
-   }
+    function linkAssociation ($type, $model, $value=null) 
+    {
+        switch ($type)
+        {
+            case 'Belongs':
+                $this->_belongsToOther[] = array($model, $value);
+            break;
+            
+            case 'One':
+                $this->_oneToOne[] = array($model, $value);
+            break;
+            
+            case 'Many':
+                $this->_oneToMany[] = array($model, $value);
+            break;
+            
+            case 'ManyTo':
+                $this->_manyToMany[]  = array($model, $value);
+            break;
+        }
+    }
    
-/**
- * Removes all oassociation links to other Models.
- *
- */
-   function clearLinks($type)
-   {
-      //switch ($type)
-      //{
-       //  case 'Belongs':
-         $this->_belongsToOther = array();
-       //  break;
-
-       //  case 'One':
-         $this->_oneToOne = array();
-       //  break;
-
-       //  case 'Many':
-         $this->_oneToMany = array();
-       //  break;
-
-       //  case 'ManyTo':
-         $this->_manyToMany = array();
-       //  break;
-     // }
-   }
-
-
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  */
-   function useTable ($tableName) 
-   {
-      if (!in_array(strtolower($tableName), $this->db->tables())) 
-      {
-         $this->_throwMissingTable($tableName);
-         die();
-      }
-      else
-      {
-         $this->table = $tableName;
-         $this->loadInfo();
-      }
-   }
+    function useTable ($tableName) 
+    {
+        if (!in_array(strtolower($tableName), $this->db->tables())) 
+        {
+            $this->_throwMissingTable($tableName);
+            exit();
+        }
+        else
+        {
+            $this->table = $tableName;
+            $this->tableToModel[$this->table] = Inflector::underscore($this->name);
+            $this->loadInfo();
+        }
+    }
 
 
 /**
@@ -782,76 +580,48 @@ class Model extends Object
  * @param string $two Value string for the alternative indata method
  * @return unknown
  */
-   function set ($one, $two=null) 
-   {
-      $this->validationErrors = null;
-      $data = is_array($one)? $one : array($one=>$two);
-
-      foreach ($data as $n => $v) 
-      {
-/*
-         if (!$this->hasField($n)) 
-         {
-            DEBUG? 
-               trigger_error(sprintf(ERROR_NO_FIELD_IN_MODEL_DB, $n, $this->table), E_USER_ERROR):
-               trigger_error('Application error occured, trying to set a field name that doesn\'t exist.', E_USER_WARNING);
-         }
-*/
-         foreach ($v as $x => $y)
-         {
-             if($x == 'id')
-             {
-                 $this->id = $y;
-             }
-             $this->data[$n][$x] = $y;	
-         }
-      }
-      return $data;
-   }
+    function set ($one, $two=null) 
+    {
+        $this->validationErrors = null;
+        $data = is_array($one)? $one : array($one=>$two);
+        
+        foreach ($data as $n => $v) 
+        {
+            foreach ($v as $x => $y)
+            {
+                if($x == 'id')
+                {
+                    $this->id = $y;
+                }
+                $this->data[$n][$x] = $y;	
+            }
+        }
+        return $data;
+    }
 
 /**
  * Sets current Model id to given $id.
  *
  * @param int $id Id
  */
-   function setId ($id) 
-   {
-      $this->id = $id;
-      
-      if(!empty($this->_belongsToOther))
-      {
-         $this->relink('Belongs');
-      }
-      
-      if(!empty($this->_oneToOne))
-      {
-         $this->relink('One');
-      }
-      
-      if(!empty($this->_oneToMany))
-      {
-         $this->relink('Many');
-      }
-      
-      if(!empty($this->_manyToMany))
-      {
-         $this->relink('ManyTo');
-      }
-   }
+    function setId ($id) 
+    {
+        $this->id = $id;
+    }
 
 /**
  * Returns an array of table metadata (column names and types) from the database.
  *
  * @return array Array of table metadata
  */
-   function loadInfo () 
-   {
-      if (empty($this->_tableInfo)) 
-      {
-         $this->_tableInfo = new NeatArray($this->db->fields($this->table));
-      }
-      return $this->_tableInfo;
-   }
+    function loadInfo () 
+    {
+        if (empty($this->_tableInfo)) 
+        {
+            $this->_tableInfo = new NeatArray($this->db->fields($this->table));
+        }
+        return $this->_tableInfo;
+    }
 
 /**
  * Returns true if given field name exists in this Model's database table.
@@ -860,14 +630,14 @@ class Model extends Object
  * @param string $name Name of table to look in
  * @return boolean
  */
-   function hasField ($name) 
-   {
-      if (empty($this->_tableInfo))
-      { 
-      	$this->loadInfo();
-      }
-      return $this->_tableInfo->findIn('name', $name);
-   }
+    function hasField ($name) 
+    {
+        if (empty($this->_tableInfo))
+        { 
+            $this->loadInfo();
+        }
+        return $this->_tableInfo->findIn('name', $name);
+    }
 
 /**
  * Returns a list of fields from the database
@@ -875,18 +645,18 @@ class Model extends Object
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
  * @return array Array of database fields
  */
-   function read ($fields=null) 
-   {
-      $this->validationErrors = null;
-      if(is_array($this->id))
-      {
-      return $this->id? $this->find("$this->table.id = '{$this->id[0]}'", $fields): false;
-      }
-      else
-      {
-      return $this->id? $this->find("$this->table.id = '{$this->id}'", $fields): false;
-      }
-   }
+    function read ($fields=null) 
+    {
+        $this->validationErrors = null;
+        if(is_array($this->id))
+        {
+            return $this->id? $this->find("$this->table.id = '{$this->id[0]}'", $fields): false;
+        }
+        else
+        {
+            return $this->id? $this->find("$this->table.id = '{$this->id}'", $fields): false;
+        }
+    }
 
 /**
  * Returns contents of a field in a query matching given conditions.
@@ -895,30 +665,30 @@ class Model extends Object
  * @param string $conditions SQL conditions (defaults to NULL)
  * @return field contents
  */
-   function field ($name, $conditions=null, $order=null) 
-   {
-      if ($conditions) 
-      {
-         $conditions = $this->parseConditions($conditions);
-         $data = $this->find($conditions, $name, $order);
-         return $data[$name];
-      }
-      elseif (isset($this->data[$name]))
-      {
-         return $this->data[$name];
-      }
-      else 
-      {
-         if ($this->id && $data = $this->read($name)) 
-         {
-            return isset($data[$name])? $data[$name]: false;
-         }
-         else 
-         {
-            return false;
-         }
-      }
-   }
+    function field ($name, $conditions=null, $order=null) 
+    {
+        if ($conditions) 
+        {
+            $conditions = $this->parseConditions($conditions);
+            $data = $this->find($conditions, $name, $order);
+            return $data[$name];
+        }
+        elseif (isset($this->data[$name]))
+        {
+            return $this->data[$name];
+        }
+        else 
+        {
+            if ($this->id && $data = $this->read($name)) 
+            {
+                return isset($data[$name])? $data[$name]: false;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+    }
 
 /**
  * Saves a single field to the database.
@@ -927,10 +697,10 @@ class Model extends Object
  * @param mixed $value Value of the field
  * @return boolean True on success save
  */
-   function saveField($name, $value) 
-   {
-      return Model::save(array($this->table=>array($name=>$value)), false);
-   }
+    function saveField($name, $value) 
+    {
+        return Model::save(array($this->table=>array($name=>$value)), false);
+    }
 
 /**
  * Saves model data to the database.
@@ -939,133 +709,128 @@ class Model extends Object
  * @param boolean $validate
  * @return boolean success
  */
-   function save ($data=null, $validate=true) 
-   {
-
-   	  if ($data) 
-      { 
-      	 $this->set($data);
-      }
-
-      if ($validate && !$this->validates())
-      {
-         return false;
-      }
-
-      $fields = $values = array();
-      
-      $count = 0;
-      if(count($this->data) > 1)
-      {
-          $weHaveMulti = true;
-          $joined = false;
-      }
-      else 
-      {
-          $weHaveMulti = false;
-      }
-          
-
-      foreach ($this->data as $n=>$v)
-      {
-        if(isset($weHaveMulti) && $count > 0 && !empty($this->_manyToMany))
-        {
-            $joined[] = $v;
+    function save ($data=null, $validate=true) 
+    {
+        if ($data) 
+        { 
+            $this->set($data);
         }
-        else
+        
+        if ($validate && !$this->validates())
         {
-         foreach ($v as $x => $y)
-         {
-             if ($this->hasField($x)) 
-             {
-                 $fields[] = $x;
-                 $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($y)) : $this->db->prepare($y); 
-                 if($x == 'id' && !is_numeric($y))
-                 {
-                     $newID = $y;
-                 }
-             }
-         }
-         
-         $count++;
+            return false;
         }
-      }
-      
-      
-      if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
-      {
-         $fields[] = 'created';
-         $values[] = date("'Y-m-d H:i:s'");
-      }
-      if ($this->hasField('modified') && !in_array('modified', $fields)) 
-      {
-         $fields[] = 'modified';
-         $values[] = 'NOW()';
-      }
-      if(!$this->exists())
-      {
-         $this->id = false;
-      }
-      if(count($fields))
-      {
-         if(!empty($this->id))
-         {
-
-            $sql = array();
-            foreach (array_combine($fields, $values) as $field=>$value) 
+        
+        $fields = $values = array();
+        
+        $count = 0;
+        if(count($this->data) > 1)
+        {
+            $weHaveMulti = true;
+            $joined = false;
+        }
+        else 
+        {
+            $weHaveMulti = false;
+        }
+        
+        foreach ($this->data as $n=>$v)
+        {
+            if(isset($weHaveMulti) && $count > 0 && !empty($this->_manyToMany))
             {
-               $sql[] = $field.'='.$value;
+                $joined[] = $v;
             }
-            
-            $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
-
-            if ($this->db->query($sql)) // && $this->db->lastAffected())
+            else
             {
-               if(!empty($joined))
-               {
-                   $this->_saveMulti($joined, $this->id);
-               } 
-               $this->data = false;
-               return true;
+                foreach ($v as $x => $y)
+                {
+                    if ($this->hasField($x)) 
+                    {
+                        $fields[] = $x;
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? 
+                                    $this->db->prepare(stripslashes($y)) : $this->db->prepare($y);
+                                    
+                        if($x == 'id' && !is_numeric($y))
+                        {
+                            $newID = $y;
+                        }
+                    }
+                }
+                $count++;
+            }
+        }
+        
+        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
+        {
+            $fields[] = 'created';
+            $values[] = date("'Y-m-d H:i:s'");
+        }
+        if ($this->hasField('modified') && !in_array('modified', $fields)) 
+        {
+            $fields[] = 'modified';
+            $values[] = 'NOW()';
+        }
+        if(!$this->exists())
+        {
+            $this->id = false;
+        }
+        if(count($fields))
+        {
+            if(!empty($this->id))
+            {
+                $sql = array();
+                foreach (array_combine($fields, $values) as $field=>$value) 
+                {
+                    $sql[] = $field.'='.$value;
+                }
+                
+                $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
+                
+                if ($this->db->query($sql))
+                {
+                    if(!empty($joined))
+                    {
+                        $this->_saveMulti($joined, $this->id);
+                    } 
+                    $this->data = false;
+                    return true;
+                }
+                else 
+                {
+                    return $this->db->hasAny($this->table, "id = '{$this->id}'");
+                }
             }
             else 
             {
-               return $this->db->hasAny($this->table, "id = '{$this->id}'");
+                $fields = join(',', $fields);
+                $values = join(',', $values);
+                
+                $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
+                
+                if($this->db->query($sql)) 
+                {
+                    $this->id = $this->db->lastInsertId($this->table, 'id');
+                    if(!empty($joined))
+                    {
+                        if(!$this->id > 0 && isset($newID))
+                        {
+                            $this->id = $newID;
+                        }
+                        $this->_saveMulti($joined, $this->id);
+                    }   
+                    return true;
+                }
+                else 
+                {
+                    return false;
+                }
             }
-         }
-         else 
-         {
-
-            $fields = join(',', $fields);
-            $values = join(',', $values);
-
-            $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
-
-            if($this->db->query($sql)) 
-            {
-               $this->id = $this->db->lastInsertId($this->table, 'id');
-               if(!empty($joined))
-               {
-                   if(!$this->id > 0 && isset($newID))
-                   {
-                       $this->id = $newID;
-                   }
-                   $this->_saveMulti($joined, $this->id);
-               }   
-               return true;
-            }
-            else 
-            {
-               return false;
-            }
-         }
-      }
-      else 
-      {
-         return false;
-      }
-
-   }
+        }
+        else 
+        {
+            return false;
+        }
+    }
 
 /**
  * Saves model hasAndBelongsToMany data to the database.
@@ -1075,51 +840,47 @@ class Model extends Object
  * @return
  * @access private
  */
-   function _saveMulti ($joined, $id) 
-   {
-       foreach ($joined as $x => $y)
-       {
-           foreach ($y as $name => $value)
-           {
-               $tableSort[0] = $this->table;
-               $tableSort[1] = $name;
-               sort($tableSort);
-               $joinTable[] = $tableSort[0] . '_' . $tableSort[1];
-               $mainKey = Inflector::singularize($this->table) . '_id';
-               
-               $keys[] = $mainKey;
-               $keys[] = Inflector::singularize($name) . '_id';
-               $fields[] = join(',', $keys);
-               unset($keys);
-               
-               foreach ($value as $update)
-               {
-                   if(!empty($update))
-                   {
-                       $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id); 
-                       $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update); 
-                       $values = join(',', $values);
-                       $newValues[] = "({$values})";
-                       unset($values);
-                   }
-               }
-               if(!empty($newValues))
-               {
-                   $newValue[] = join(',', $newValues);
-                   unset($newValues);
-               }
-           }
-       }
-       
-       for ($count = 0; $count < count($joinTable); $count++) 
-       {
-           $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
-           if(!empty($newValue[$count]))
-           {
-               $this->db->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
-           }
-       }
-   }
+    function _saveMulti ($joined, $id) 
+    {
+        foreach ($joined as $x => $y)
+        {
+            foreach ($y as $name => $value)
+            {
+                $joinTable[] = $this->{$name}->{$this->currentModel.'_jointable'};
+                $mainKey = $this->{$name}->{$this->currentModel.'_foreignkey'};
+                $keys[] = $mainKey;
+                $keys[] = $this->{$name}->{$this->currentModel.'_associationforeignkey'};
+                $fields[] = join(',', $keys);
+                unset($keys);
+                
+                foreach ($value as $update)
+                {
+                    if(!empty($update))
+                    {
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id); 
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update); 
+                        $values = join(',', $values);
+                        $newValues[] = "({$values})";
+                        unset($values);
+                    }
+                }
+                if(!empty($newValues))
+                {
+                    $newValue[] = join(',', $newValues);
+                    unset($newValues);
+                }
+            }
+        }
+        
+        for ($count = 0; $count < count($joinTable); $count++) 
+        {
+            $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+            if(!empty($newValue[$count]))
+            {
+                $this->db->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+            }
+        }
+    }
    
 /**
  * Synonym for del().
@@ -1128,10 +889,10 @@ class Model extends Object
  * @see function del
  * @return boolean True on success
  */
-   function remove ($id=null) 
-   {
-      return $this->del($id);
-   }
+    function remove ($id=null) 
+    {
+        return $this->del($id);
+    }
 
 /**
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
@@ -1139,44 +900,42 @@ class Model extends Object
  * @param mixed $id Id of database record to delete
  * @return boolean True on success
  */
-   function del ($id=null) 
-   {
-      if ($id)
-      { 
-      	 $this->id = $id;
-      }
-      if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
-      {
-         $this->id = false;
-         return true;
-      }
-      else
-      {
-         return false;
-      }
-   }
+    function del ($id=null) 
+    {
+        if ($id)
+        { 
+            $this->id = $id;
+        }
+        if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
+        {
+            $this->id = false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 /**
  * Returns true if a record with set id exists.
  *
  * @return boolean True if such a record exists
  */
-   function exists () 
-   {
-      return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
-   }
-
+    function exists () 
+    {
+        return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
+    }
 
 /**
  * Returns true if a record that meets given conditions exists
  *
  * @return boolean True if such a record exists
  */
-   function hasAny ($conditions = null) 
-   {
-      return $this->findCount($conditions);
-   }
-
+    function hasAny ($conditions = null) 
+    {
+        return $this->findCount($conditions);
+    }
 
 /**
  * Return a single row as a resultset array.
@@ -1186,38 +945,38 @@ class Model extends Object
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @return array Array of records
  */
-   function find ($conditions = null, $fields = null, $order = null) 
-   {
-      $data = Model::findAll($conditions, $fields, $order, 1);
-      return empty($data[0])? false: $data[0];
-   }
+    function find ($conditions = null, $fields = null, $order = null) 
+    {
+        $data = Model::findAll($conditions, $fields, $order, 1);
+        return empty($data[0])? false: $data[0];
+    }
 
 /** parses conditions array (or just passes it if it's a string)
  * @return string
  *
  */
-   function parseConditions ($conditions) 
-   {
-      if (is_string($conditions)) 
-      {
-         return $conditions;
-      }
-      elseif (is_array($conditions)) 
-      {
-         $out = array();
-         foreach ($conditions as $key=>$value) 
-         {
-            $slashedValue = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($value)) : $this->db->prepare($value);
-            //Should remove the = below so LIKE and other compares can be used
-            $out[] = "{$key}=".($value===null? 'null': $slashedValue);
-         }
-         return join(' and ', $out);
-      }
-      else 
-      {
-         return null;
-      }
-   }
+    function parseConditions ($conditions) 
+    {
+        if (is_string($conditions)) 
+        {
+            return $conditions;
+        }
+        elseif (is_array($conditions)) 
+        {
+            $out = array();
+            foreach ($conditions as $key=>$value) 
+            {
+                $slashedValue = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($value)) : $this->db->prepare($value);
+                //Should remove the = below so LIKE and other compares can be used
+                $out[] = "{$key}=".($value===null? 'null': $slashedValue);
+            }
+            return join(' and ', $out);
+        }
+        else 
+        {
+            return null;
+        }
+    }
 
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
@@ -1229,85 +988,110 @@ class Model extends Object
  * @param int $page Page number
  * @return array Array of records
  */
-   function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
-   {
-       $conditions = $this->parseConditions($conditions);
+    function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
+    {
+        $conditions = $this->parseConditions($conditions);
+        
+        if (is_array($fields))
+        {
+            $f = $fields;
+        }
+        elseif ($fields)
+        {
+            $f = array($fields);
+        }
+        else
+        {
+            $f = array('*');
+        }
+        
+        $joins = $whers = array();
        
-       if (is_array($fields))
-       {
-           $f = $fields;
-       }
-       elseif ($fields)
-       {
-           $f = array($fields);
-       }
-       else
-       {
-           $f = array('*');
-       }
-       
-       $joins = $whers = array();
-       
-       if(!empty($this->_oneToOne))
-       {
-           
-           foreach ($this->_oneToOne as $rule)
-           {
-               list($table, $field, $value) = $rule;
-               $joins[] = "LEFT JOIN {$table} ON {$table}.{$field} = {$this->table}.id";
-           }
-       }
-       
-       if(!empty($this->_belongsToOther))
-       {
-
-           foreach ($this->_belongsToOther as $rule)
-           {
-               list($table, $field, $value) = $rule;
-               $joins[] = "LEFT JOIN {$table} ON {$this->table}.{$field} = {$table}.id";
-           }
-       }
-       
-      $joins = count($joins)? join(' ', $joins): null;
-      $whers = count($whers)? '('.join(' AND ', $whers).')': null;
-      $conditions .= ($conditions && $whers? ' AND ': null).$whers;
-      
-      $offset = $page > 1? ($page-1) * $limit: 0;
-
-      $limit_str = $limit
-         ? $this->db->selectLimit($limit, $offset)
-         : '';
-      
-      $sql = 
-         "SELECT "
-         .join(', ', $f)
-         ." FROM {$this->table} {$joins}"
-         .($conditions? " WHERE {$conditions}":null)
-         .($order? " ORDER BY {$order}": null)
-         .$limit_str;
-
-      $data = $this->db->all($sql);
-       
-       
-       if(!empty($this->_oneToMany))
-       {
-           $newValue = $this->_findOneToMany($data);  
-           if(!empty($newValue))
-           {
-               $data = $newValue;
-           }
-       }
-
-       if(!empty($this->_manyToMany))
-       {
-           $newValue = $this->_findManyToMany($data);
-           if(!empty($newValue))
-           {
-               $data = $newValue;
-           }
-       }
-       return $data;
-   }
+        if(!empty($this->_oneToOne))
+        {
+            foreach ($this->_oneToOne as $rule)
+            {
+                list($model, $value) = $rule;
+                if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
+                {
+                    $oneToOneConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
+                    $oneToOneOrder = $this->{$model}->{$this->currentModel.'_order'};
+                    
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} ON 
+                                {$this->{$model}->table}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->table}.id"
+                                .($oneToOneConditions? " WHERE {$oneToOneConditions}":null)
+                                .($oneToOneOrder? " ORDER BY {$oneToOneOrder}": null);
+                }
+            }
+        }
+        
+        if(!empty($this->_belongsToOther))
+        {
+            foreach ($this->_belongsToOther as $rule)
+            {
+                list($model, $value) = $rule;               
+                if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
+                {
+                    $belongsToOtherConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
+                    $belongsToOtherOrder = $this->{$model}->{$this->currentModel.'_order'};
+                    
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} ON 
+                                {$this->table}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->{$model}->table}.id"
+                                .($belongsToOtherConditions? " WHERE {$belongsToOtherConditions}":null)
+                                .($belongsToOtherOrder? " ORDER BY {$belongsToOtherOrder}": null);
+                }
+            }
+        }
+        
+        $joins = count($joins)? join(' ', $joins): null;
+        $whers = count($whers)? '('.join(' AND ', $whers).')': null;
+        $conditions .= ($conditions && $whers? ' AND ': null).$whers;
+        
+        $offset = $page > 1? ($page-1) * $limit: 0;
+        
+        $limit_str = $limit
+            ? $this->db->selectLimit($limit, $offset)
+            : '';
+        
+        $sql = "SELECT " .join(', ', $f)
+                ." FROM {$this->table} {$joins}"
+                .($conditions? " WHERE {$conditions}":null)
+                .($order? " ORDER BY {$order}": null)
+                .$limit_str;
+                
+        $data = $this->db->all($sql);
+        
+        if(!empty($this->_oneToMany))
+        {
+            $newValue = $this->_findOneToMany($data);  
+            if(!empty($newValue))
+            {
+                $data = $newValue;
+            }
+        }
+        
+        if(!empty($this->_manyToMany))
+        {
+            $newValue = $this->_findManyToMany($data);
+            if(!empty($newValue))
+            {
+                $data = $newValue;
+            }
+        }
+        
+        foreach ($data as $key => $value)
+        {
+            foreach ($this->tableToModel as $key1 => $value1)
+            {
+                if (isset($data[$key][Inflector::singularize($key1)]))
+                {
+                    $newData[$key][$value1] = $data[$key][Inflector::singularize($key1)];
+                }
+            }
+        }  
+             
+        return $newData;
+    }
    
 /**
  * Enter description here...
@@ -1322,25 +1106,41 @@ class Model extends Object
        foreach ($this->_oneToMany as $rule)
        {
            $count = 0;
-           list($table, $field, $value) = $rule;
+           list($model, $value) = $rule;
+           
            foreach ($datacheck as $key => $value1)
            {
                foreach ($value1 as $key2 => $value2)
                {
                    if($key2 === Inflector::singularize($this->table))
                    {
-                       $oneToManySelect[$table] = $this->db->all("SELECT * FROM {$table} 
-                                                  WHERE ($field)  = '{$value2['id']}'");
-                       if( !empty($oneToManySelect[$table]) && is_array($oneToManySelect[$table]))
+                       if($this->{$model}->{$this->currentModel.'_findersql'})
                        {
-                           $newKey = Inflector::singularize($table);
-                           foreach ($oneToManySelect[$table] as $key => $value)
+                           $tmpSQL = $this->{$model}->{$this->currentModel.'_findersql'};
+                       }
+                       else 
+                       {
+                           $oneToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
+                           $oneToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
+                           
+                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} 
+                                      WHERE ({$this->{$model}->{$this->currentModel.'_foreignkey'}})  = '{$value2['id']}'"
+                                      .($oneToManyConditions? " WHERE {$oneToManyConditions}":null)
+                                      .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
+                       }
+                       
+                       $oneToManySelect[$this->{$model}->table] = $this->db->all($tmpSQL);
+                       
+                       if( !empty($oneToManySelect[$this->{$model}->table]) && is_array($oneToManySelect[$this->{$model}->table]))
+                       {
+                           $newKey = Inflector::singularize($this->{$model}->table);
+                           foreach ($oneToManySelect[$this->{$model}->table] as $key => $value)
                            {
-                               $oneToManySelect1[$table][$key] = $value[$newKey];
+                               $oneToManySelect1[$newKey][$key] = $value[$newKey];
                            }
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
-                           unset( $oneToManySelect[$table], $oneToManySelect1);
+                           unset( $oneToManySelect[$this->{$model}->table], $oneToManySelect1);
                        }
                        if(!empty($newdata[$count]))
                        {
@@ -1364,7 +1164,6 @@ class Model extends Object
                    $newValue[$i]  = array_merge($newValue[$i], $original[$i]);
                }
            }
-           $this->joinedHasMany[] = new NeatArray($this->db->fields($table));
        }
        if(!empty($newValue))
        {
@@ -1385,7 +1184,7 @@ class Model extends Object
        foreach ($this->_manyToMany as $rule)
        {
            $count = 0;
-           list($table, $field, $value, $joineTable, $joinKey1, $JoinKey2) = $rule;
+           list($model, $value) = $rule;
            
            foreach ($datacheck as $key => $value1)
            {
@@ -1393,26 +1192,41 @@ class Model extends Object
                {
                    if($key2 === Inflector::singularize($this->table))
                    {
-                       if( 0 == strncmp($key2, $joinKey1, strlen($key2)) )
+                       if( 0 == strncmp($key2, $this->{$model}->{$this->currentModel.'_foreignkey'}, strlen($key2)) )
                        {
                            if(!empty ($value2['id']))
                            {
-                               $tmpSQL = "SELECT * FROM {$table}
-                                          JOIN {$joineTable} ON {$joineTable}.{$joinKey1} = '$value2[id]' 
-                                          AND {$joineTable}.{$JoinKey2} = {$table} .id";
-                               
-                               $manyToManySelect[$table] = $this->db->all($tmpSQL);
-                           }
-                           if( !empty($manyToManySelect[$table]) && is_array($manyToManySelect[$table]))
-                           {
-                               $newKey = Inflector::singularize($table);
-                               foreach ($manyToManySelect[$table] as $key => $value)
+                               if($this->{$model}->{$this->currentModel.'_findersql'})
                                {
-                                   $manyToManySelect1[$table][$key] = $value[$newKey];
+                                   $tmpSQL = $this->{$model}->{$this->currentModel.'_findersql'};
+                               }
+                               else 
+                               {
+                                   $manyToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
+                                   $manyToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
+                                   
+                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table}
+                                                JOIN {$this->{$model}->{$this->currentModel.'_jointable'}}
+                                                  ON {$this->{$model}->{$this->currentModel.'_jointable'}}.
+                                                     {$this->{$model}->{$this->currentModel.'_foreignkey'}} = '$value2[id]' 
+                                                 AND {$this->{$model}->{$this->currentModel.'_jointable'}}.
+                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = {$this->{$model}->table} .id"
+                                                    .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
+                                                    .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
+                               }
+                               
+                               $manyToManySelect[$this->{$model}->table] = $this->db->all($tmpSQL);
+                           }
+                           if( !empty($manyToManySelect[$this->{$model}->table]) && is_array($manyToManySelect[$this->{$model}->table]))
+                           {
+                               $newKey = Inflector::singularize($this->{$model}->table);
+                               foreach ($manyToManySelect[$this->{$model}->table] as $key => $value)
+                               {
+                                   $manyToManySelect1[$newKey][$key] = $value[$newKey];
                                }
                                $merged = array_merge_recursive($data[$count],$manyToManySelect1);
                                $newdata[$count] = $merged;
-                               unset( $manyToManySelect[$table], $manyToManySelect1 );
+                               unset( $manyToManySelect[$this->{$model}->table], $manyToManySelect1 );
                            }
                            if(!empty($newdata[$count]))
                            {
@@ -1441,7 +1255,6 @@ class Model extends Object
                    $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
                }
            }
-           $this->joinedHasAndBelongs[] = new NeatArray($this->db->fields($table));
        }
        if(!empty($newValue))
        {
@@ -1605,16 +1418,15 @@ class Model extends Object
  */
 	function isForeignKey( $field ) 
 	{
-      
-	   $foreignKeys = array();
+	    $foreignKeys = array();
 	   
 	   if(!empty($this->_belongsToOther))
       {
       
         foreach ($this->_belongsToOther as $rule)
         {
-            list($table, $key, $value) = $rule;
-            $foreignKeys[$key] = $key;
+            list($model, $value) = $rule;
+            $foreignKeys[$this->{$model}->{$this->currentModel.'_foreignkey'}] = $this->{$model}->{$this->currentModel.'_foreignkey'};
         }
       }	   
 
@@ -1665,7 +1477,7 @@ class Model extends Object
 	function _throwMissingTable($tableName)
 	{
 	    $error =& new AppController();
-        $error->missingTable = get_class($this);
+        $error->missingTable = $this->table;
         call_user_func_array(array(&$error, 'missingTable'), $tableName);
         exit;
 	}
@@ -1677,7 +1489,7 @@ class Model extends Object
 	function _throwMissingConnection()
 	{
 	    $error =& new AppController();
-        $error->missingConnection = get_class($this);
+        $error->missingConnection = $this->name;
         call_user_func_array(array(&$error, 'missingConnection'), null);
         exit;
 	}

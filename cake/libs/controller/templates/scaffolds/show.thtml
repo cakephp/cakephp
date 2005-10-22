@@ -34,51 +34,55 @@
 <?php
    $modelName = Inflector::singularize($this->name);
    $modelKey = Inflector::underscore($modelName);
-   $registry = ClassRegistry::getInstance();
+   $registry =& ClassRegistry::getInstance();
+   $objModel = $registry->getObject($modelName);
 
 ?>
 <dl>
-<?php foreach( $fieldNames as $field=>$value ) {
-      echo "<dt>".$value['prompt']."</dt>";
-      if( isset( $value['foreignKey'] ) ) {
-         $otherModelObject = $registry->getObject($value['model']);
-         $displayField = $otherModelObject->getDisplayField();
-         $displayText = $data[$value['model']][ $displayField ];
-            
-            if( !empty($data[$modelKey][$field]))
-            {
-                echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'.$data[$modelKey][ $field ] )."</dd>";
-            }
-            else
-            {
-                echo "<dd>&nbsp;</dd>";
-            }
-      }
-      else
+<?php foreach($fieldNames as $field => $value)
       {
-          //  this is just a plain old field.
-          if( !empty($data[$modelKey][$field]))
+          echo "<dt>".$value['prompt']."</dt>";
+          if(isset($value['foreignKey']))
           {
-              echo "<dd>".$data[$modelKey][$field]."</dd>";
+              $otherModelObject = $registry->getObject($objModel->tableToModel[$value['table']]);
+              $displayField = $otherModelObject->getDisplayField();
+              $displayText = $data[$objModel->tableToModel[$value['table']]][$displayField];
+              
+              if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]))
+              {
+                  echo "<dd>".$html->linkTo($displayText, '/'.Inflector::underscore($value['controller']).'/show/'
+                             .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
+              }
+              else
+              {
+                  echo "<dd>&nbsp;</dd>";
+              }
           }
           else
           {
-              echo "<dd>&nbsp;</dd>";
+              //  this is just a plain old field.
+              if( !empty($data[$objModel->tableToModel[$objModel->table]][$field]))
+              {
+                  echo "<dd>".$data[$objModel->tableToModel[$objModel->table]][$field]."</dd>";
+              }
+              else
+              {
+                  echo "<dd>&nbsp;</dd>";
+              }
           }
-      }   
-} 
+      } 
 ?>
 
 </dl>
 <ul class='actions'>
 <?php
-   echo "<li>".$html->linkTo('Edit '.Inflector::humanize($modelKey), '/'.$this->viewPath.'/edit/'.$data[$modelKey]['id'])."</li>";
-   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelKey), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
+   echo "<li>".$html->linkTo('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/destroy/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
 
-   foreach( $fieldNames as $field=>$value ) { 
+   foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
-         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[Inflector::singularize($params['controller'])][$field] )."</li>";
+         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$objModel->tableToModel[$value['table']]]['id'] )."</li>";
       }
   }
 ?>
@@ -86,12 +90,10 @@
 
 <!--hasOne relationships -->
 <?php
-   $objModel = $registry->getObject($modelName);
-
    foreach ($objModel->_oneToOne as $relation)
    {
       list($table, $field, $value) = $relation;
-      $otherModelName = Inflector::singularize($table);
+      $otherModelName = $objModel->tableToModel[$table];
 
       echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2><br/><br/>";
       echo "<dl>";
@@ -129,12 +131,13 @@
 
    foreach( $relations as $relation )
    {
-      list($table, $field, $value) = $relation;
+      list($model, $value) = $relation;
       $count = 0;
-      $otherModelName = Inflector::singularize($table);
+      $otherModelName = Inflector::singularize($model);
+      $controller = Inflector::pluralize($model);
 
-      echo "<div class='related'><H2>Related ".Inflector::humanize($table)."</H2><br/><br/>";
-      if( isset($data[$table]) && is_array($data[$table]) ) 
+      echo "<div class='related'><H2>Related ".Inflector::humanize($objModel->tableToModel[$objModel->{$model}->table])."</H2><br/><br/>";
+      if( isset($data[$objModel->tableToModel[$objModel->{$model}->table]]) && is_array($data[$objModel->tableToModel[$objModel->{$model}->table]]) ) 
       {
 ?>
    
@@ -143,7 +146,7 @@
 <?php      //  Loop through and create the header row.
          //  find a row that matches this title.
          $bFound = false;
-         foreach( $data[$table][0] as $column=>$value ) {
+         foreach( $data[$objModel->tableToModel[$objModel->{$model}->table]][0] as $column=>$value ) {
             echo "<th>".Inflector::humanize($column)."</th>";
          }
 ?>
@@ -151,7 +154,7 @@
     </tr>
 <?php
       //  now find all matching rows
-            foreach( $data[$table] as $row ) 
+            foreach( $data[$objModel->tableToModel[$objModel->$model->table]] as $row ) 
             {
                echo "<tr>";
                foreach( $row as $column=>$value ) 
@@ -159,9 +162,9 @@
                   echo "<td>".$value."</td>";
                }
 ?>
-         <td class="listactions"><?php echo $html->linkTo('View',"/".Inflector::underscore($table)."/show/{$row['id']}/")?>
-                      <?php echo $html->linkTo('Edit',"/".Inflector::underscore($table)."/edit/{$row['id']}/")?>
-                     <?php echo $html->linkTo('Delete',"/".Inflector::underscore($table)."/destroy/{$row['id']}/")?>
+         <td class="listactions"><?php echo $html->linkTo('View',"/".Inflector::underscore($controller)."/show/{$row['id']}/")?>
+                      <?php echo $html->linkTo('Edit',"/".Inflector::underscore($controller)."/edit/{$row['id']}/")?>
+                     <?php echo $html->linkTo('Delete',"/".Inflector::underscore($controller)."/destroy/{$row['id']}/")?>
          </td>
 <?php
                echo "</tr>";
@@ -174,7 +177,7 @@
 <?php
    //  add a link to create a new relation.
 
-   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/new/")."</li>";
+   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/new/")."</li>";
  //  echo "<li>".$html->linkTo( "View ".Inflector::humanize($table), "/".Inflector::underscore($table)."/list/".$modelName."/".$data[$modelName]['id'])."</li>";
 ?>
 </ul></div>

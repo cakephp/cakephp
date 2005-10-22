@@ -68,11 +68,11 @@
                        $otherModelName = $value['model'];
                        $otherControllerName = $value['controller']; 
                        
-                       $registry = ClassRegistry::getInstance();
-                       $otherModelObject = $registry->getObject( $otherModelName );
+                       $registry =& ClassRegistry::getInstance();
+                       $otherModelObject =& $registry->getObject( $otherModelName );
                        if( is_object($otherModelObject) ) 
                        {
-                          $displayText = $row[$otherModelName][ $otherModelObject->getDisplayField() ];
+                          $displayText = $row[$value['model']][ $otherModelObject->getDisplayField() ];
                        } else{
                           $displayText = $row[$modelKey][$field];
                        }  

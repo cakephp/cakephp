@@ -593,13 +593,15 @@ class Controller extends Object
 	    $fieldNames = array();
 
 	    //  figure out what model and table we are working with
-	    $model = Inflector::pluralize($this->name);
-	    $table = Inflector::underscore(Inflector::singularize($this->name));
+	    $model = Inflector::underscore(Inflector::singularize($this->name));
+	    $table = $this->models[$model]->table;
+	    
 
 	    //  get all of the column names.
 	    $classRegistry =& ClassRegistry::getInstance();
-	    $objRegistryModel = $classRegistry->getObject(Inflector::singularize($model));
+	    $objRegistryModel = $classRegistry->getObject($model);
 
+	    
 	    foreach ($objRegistryModel->_tableInfo as $tables)
 	    {
 	        foreach ($tables as $tabl)
@@ -610,8 +612,9 @@ class Controller extends Object
 	                $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
 	                //  this is a foreign key, also set up the other controller
-	                $fieldNames[ $tabl['name'] ]['model'] = Inflector::singularize($niceName);
-	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($niceName);
+	                $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
+	                $fieldNames[ $tabl['name'] ]['model'] = $this->models[$model]->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->models[$model]->tableToModel[Inflector::pluralize($niceName)]);
 	                $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
 	         }
 	         else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
@@ -629,7 +632,7 @@ class Controller extends Object
 
 	         // Now, set up some other attributes that will be useful for auto generating a form.
 	         //tagName is in the format table/field "post/title"
-	          $fieldNames[ $tabl['name']]['tagName'] = $table.'/'.$tabl['name'];
+	          $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
 
 	         //  Now, find out if this is a required field.
 	         //$validationFields = $classRegistry->getObject($table)->validate;
@@ -676,7 +679,7 @@ class Controller extends Object
 
                          //  get the list of options from the other model.
                          $registry =& ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
+                         $otherModel =& $registry->getObject($fieldNames[ $tabl['name']]['model']);
 
                          if( is_object($otherModel) )
                          {
@@ -738,7 +741,7 @@ class Controller extends Object
 
                          //  get the list of options from the other model.
                          $registry =& ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject($fieldNames[ $tabl['name']]['model']);
+                         $otherModel =& $registry->getObject($fieldNames[ $tabl['name']]['model']);
 
                          if( is_object($otherModel) )
                          {
@@ -756,7 +759,7 @@ class Controller extends Object
                                      }
                                  }
                              }
-                             $fieldNames[ $tabl['name']]['selected'] = $data[$table][$tabl['name']];
+                             $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
                          }
                      }
                      else
