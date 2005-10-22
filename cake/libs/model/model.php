@@ -1331,13 +1331,15 @@ class Model extends Object
  * @param unknown_type $value
  * @return array Array with keys "prev" and "next" that holds the id's
  */
-   function findNeighbours ($conditions, $field, $value) 
-   {
-      list($prev) = Model::findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
-      list($next) = Model::findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
-      
-      return array('prev'=>$prev['id'], 'next'=>$next['id']);
-   }
+    function findNeighbours ($conditions, $field, $value) 
+    {
+        @list($prev) = Model::findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
+        @list($next) = Model::findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
+        
+        $prev = isset($prev) ? $prev: false;
+        $next = isset($next) ? $next: false;
+        return array('prev'=>$prev, 'next'=>$next);
+    }
 
 /**
  * Returns a resultset for given SQL statement.
