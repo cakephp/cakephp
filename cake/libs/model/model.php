@@ -1088,9 +1088,15 @@ class Model extends Object
                     $newData[$key][$value1] = $data[$key][Inflector::singularize($key1)];
                 }
             }
-        }  
-             
-        return $newData;
+        }
+        if (!empty($newData))
+        {
+            return $newData;
+        }
+        else
+        {
+            return $data;
+        }
     }
    
 /**
