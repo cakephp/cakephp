@@ -60,7 +60,7 @@ class DBO_MySQL extends DBO
       if ($config) 
       {
          $this->config = $config;
-         $this->_conn = mysql_pconnect($config['host'],$config['login'],$config['password']);
+         $this->_conn = $config['connect']($config['host'],$config['login'],$config['password']);
       }
       $this->connected = $this->_conn? true: false;
 

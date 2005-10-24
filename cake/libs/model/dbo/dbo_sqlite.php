@@ -59,7 +59,7 @@ class DBO_SQLite extends DBO
       if ($config) 
       {
          $this->config = $config;
-         $this->_conn = sqlite_open($config['file']);
+         $this->_conn = $config['connect']($config['file']);
       }
       $this->connected = $this->_conn? true: false;
 

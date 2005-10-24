@@ -387,7 +387,7 @@ class Scaffold extends Object {
                     $this->controllerClass->params['data'][$modelKey][$field['name'].'_month'],
                     $this->controllerClass->params['data'][$modelKey][$field['name'].'_day'],
                     $this->controllerClass->params['data'][$modelKey][$field['name'].'_year'] );
-                    $newDate = date( 'Y-m-d', $newDate );
+                    $newDate = date( 'Y-m-d H:i:s', $newDate );
                     $this->controllerClass->params['data'][$modelKey][$field['name']] = $newDate;
                 }
                 else if( 'tinyint(1)' == $field['type'] )

@@ -38,27 +38,40 @@
  * @subpackage cake.config
  */
 
+
 /**
  * Database configuration class.
  * You can specify multiple configurations for production, development and testing.
+ *
+ * driver =>
+ * mysql, postgres, sqlite, adodb-drivername, pear-drivername
+ *
+ * connect =>
+ * MySQL set the connect to either mysql_pconnect of mysql_connect
+ * PostgreSQL set the connect to either pg_pconnect of pg_connect
+ * SQLite set the connect to sqlite_popen  sqlite_open
+ *
+ * host =>
+ * the host you connect to the database
+ * MySQL 'localhost' to add a port number use 'localhost:port#'
+ * PostgreSQL 'localhost' to add a port number use 'localhost port=5432'
+ *
  */
 class DATABASE_CONFIG
 {
-   var $default = array(
-   'driver'   => 'mysql',
-   'host'     => 'localhost',
-   'login'    => 'www',
-   'password' => '',
-   'database' => 'project_name'
-   );
+    var $default = array('driver'   => 'mysql',
+                         'connect'  => 'mysql_pconnect',
+                         'host'     => 'localhost',
+                         'login'    => 'user',
+                         'password' => 'password',
+                         'database' => 'project_name' );
 
-   var $test = array(
-   'driver'   => 'mysql',
-   'host'     => 'localhost',
-   'login'    => 'www-test',
-   'password' => '',
-   'database' => 'project_name-test'
-   );
+    var $test   =  array('driver'   => 'mysql',
+                         'connect'  => 'mysql_pconnect',
+                         'host'     => 'localhost',
+                         'login'    => 'user',
+                         'password' => 'password',
+                         'database' => 'project_name-test');
 }
 
 ?>

@@ -59,7 +59,7 @@ class DBO_Postgres extends DBO
       if ($config) 
       {
          $this->config = $config;
-         $this->_conn = pg_pconnect("host={$config['host']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
+         $this->_conn = $config['connect']("host={$config['host']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
       }
       $this->connected = $this->_conn? true: false;
 

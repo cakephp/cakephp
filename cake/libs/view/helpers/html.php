@@ -504,8 +504,7 @@ class HtmlHelper extends Helper
 		{
 			$out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($th_options), $arg);
 		}
-
-		return sprintf($this->tags['tableheader'], $this->parseHtmlOptions($tr_options), join(' ', $out));
+		return sprintf($this->tags['tablerow'], $this->parseHtmlOptions($tr_options), join(' ', $out));
 	}
 
 
