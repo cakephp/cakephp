@@ -200,7 +200,9 @@ class Controller extends Object
         }
         
         $this->viewPath = Inflector::underscore($this->name);
-         parent::__construct();
+        $this->modelClass = Inflector::singularize($this->name);
+        $this->modelKey  = Inflector::underscore($this->modelClass);
+        parent::__construct();
     }
 
     /**
@@ -246,14 +248,11 @@ class Controller extends Object
 
         $dboFactory = DboFactory::getInstance($this->useDbConfig);
         $this->db =& $dboFactory;
-        
-        $modelClass = Inflector::singularize($this->name);
-        $modelKey  = strtolower(Inflector::underscore($modelClass));
 
-        if (class_exists($modelClass) && ($this->uses === false))
+        if (class_exists($this->modelClass) && ($this->uses === false))
         {
-            $this->{$modelClass} =& new $modelClass($id);
-            $this->modelNames[] = $modelClass;
+            $this->{$this->modelClass} =& new $this->modelClass($id);
+            $this->modelNames[] = $this->modelClass;
         }
         elseif ($this->uses)
         {
@@ -264,10 +263,9 @@ class Controller extends Object
 
             $uses = is_array($this->uses)? $this->uses: array($this->uses);
 
-            foreach ($uses as $modelName)
+            foreach ($uses as $modelClass)
             {
-                $modelClass = ucfirst(strtolower($modelName));
-                $modelKey  = strtolower(Inflector::underscore($modelClass));
+                $modelKey  = Inflector::underscore($modelClass);
 
                 if (class_exists($modelClass))
                 {
@@ -367,10 +365,9 @@ class Controller extends Object
         {
             foreach ($this->modelNames as $model)
             {
-                $key = Inflector::underscore($model);
                 if(!empty($this->{$model}->validationErrors))
                 {
-                    $view->validationErrors[$key] =& $this->{$model}->validationErrors;
+                    $view->validationErrors[$this->modelKey] =& $this->{$model}->validationErrors;
                 }
             }
         }
@@ -582,19 +579,14 @@ class Controller extends Object
 	 */
 	function generateFieldNames( $data = null, $doCreateOptions = true  )
 	{
-	    //  Initialize the list array
 	    $fieldNames = array();
-
-	    //  figure out what model and table we are working with
-	    $model = Inflector::singularize($this->name);
-	    $modelKey = Inflector::underscore($model);
+	    
+	    $model = $this->modelClass;
+	    $modelKey = $this->modelKey;
 	    $table = $this->{$model}->table;
 	    
-
-	    //  get all of the column names.
 	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject($modelKey);
-
 	    
 	    foreach ($objRegistryModel->_tableInfo as $tables)
 	    {
@@ -799,7 +791,7 @@ class Controller extends Object
          {
             list($tableName) = $relation;
 
-            $otherModelName = Inflector::singularize($tableName);
+            $otherModelName = Inflector::underscore($tableName);
             $otherModel = new $otherModelName();
 
             if( $doCreateOptions )
@@ -808,7 +800,7 @@ class Controller extends Object
                   $fieldNames[$tableName]['model'] = $tableName;
                   $fieldNames[$tableName]['prompt'] = "Related ".Inflector::humanize($tableName);
                   $fieldNames[$tableName]['type'] = "selectMultiple";
-                  $fieldNames[$tableName]['tagName'] = $otherModelName.'/'.$tableName;
+                  $fieldNames[$tableName]['tagName'] = $otherModelName.'/'.Inflector::underscore($tableName);
 
                   foreach( $otherModel->findAll() as $pass )
                   {

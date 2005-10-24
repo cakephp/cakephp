@@ -276,7 +276,6 @@ class Model extends Object
             $association = explode(',', $this->belongsTo);
             foreach ($association as $className) 
             {
-                $className = Inflector::singularize($className);
                 $this->_constructAssociatedModels($className , 'Belongs');
                 $this->linkAssociation('Belongs', $className, $this->id);
             }
@@ -303,7 +302,6 @@ class Model extends Object
             $association = explode(',', $this->hasOne);
             foreach ($association as $className) 
             {
-                $className = Inflector::singularize($className);
                 $this->_constructAssociatedModels($className , 'One');
                 $this->linkAssociation('One', $className, $this->id);
             }
@@ -330,7 +328,6 @@ class Model extends Object
 	       $association = explode(',', $this->hasMany);
 	       foreach ($association as $className) 
 	       {
-	           $className = Inflector::singularize($className);
 	           $this->_constructAssociatedModels($className , 'Many');
 	           $this->linkAssociation('Many', $className, $this->id); 
 	       }
@@ -357,7 +354,6 @@ class Model extends Object
             $association = explode(',', $this->hasAndBelongsToMany);
             foreach ($association as $className) 
             {
-                $className = Inflector::singularize($className);
                 $this->_constructAssociatedModels($className , 'ManyTo');
                 $this->linkAssociation('ManyTo', $className, $this->id);
             }
@@ -385,7 +381,6 @@ class Model extends Object
             
             if ($classCreated === false)
             {
-                $className = Inflector::singularize($className);
                 $this->_constructAssociatedModels($className , $type);
                 $classCreated = true;
             }

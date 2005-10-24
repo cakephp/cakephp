@@ -95,7 +95,7 @@ class Dispatcher extends Object
          $ctrlName  = Inflector::camelize($params['controller']);
          $ctrlClass = $ctrlName.'Controller';
 
-         if (!loadController($ctrlName) || !class_exists($ctrlClass))
+         if (!loadController($params['controller']) || !class_exists($ctrlClass))
          {
              if(preg_match('/([\\.]+)/',$ctrlName))
              {
@@ -148,7 +148,6 @@ class Dispatcher extends Object
       $controller->action      = $params['action'];
       $controller->data        = empty($params['data'])? null: $params['data'];
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
-      $controller->viewpath = Inflector::underscore($ctrlName);
       $controller->autoLayout = !$params['bare'];
       $controller->autoRender = !$params['render'];
 

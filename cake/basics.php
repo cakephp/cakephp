@@ -98,13 +98,13 @@ function loadControllers ()
   */
 function loadController ($name) 
 {
-      if(file_exists(CONTROLLERS.Inflector::underscore($name).'_controller.php'))
+      if(file_exists(CONTROLLERS.$name.'_controller.php'))
       {
-          $controller_fn = CONTROLLERS.Inflector::underscore($name).'_controller.php';
+          $controller_fn = CONTROLLERS.$name.'_controller.php';
       }
-      elseif(file_exists(LIBS.'controller'.DS.Inflector::underscore($name).'_controller.php'))
+      elseif(file_exists(LIBS.'controller'.DS.$name.'_controller.php'))
       {
-          $controller_fn = LIBS.'controller'.DS.Inflector::underscore($name).'_controller.php';
+          $controller_fn = LIBS.'controller'.DS.$name.'_controller.php';
       }
       else
       {

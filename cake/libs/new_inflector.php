@@ -110,7 +110,7 @@ class Inflector
     {
         $inflec =& Inflector::getInstance();
         
-        require_once('config/nouns.php');
+        require_once(CAKE.'config'.DS.'nouns.php');
         
         $regexPluralUninflected = $inflec->_enclose(join( '|', array_values(array_merge($pluralUninflected,$pluralUninflecteds))));
         
