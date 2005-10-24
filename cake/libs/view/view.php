@@ -168,13 +168,6 @@ class View extends Object
  * @var boolean
  */
    var $hasRendered = null;
-
-/**
- * True when the Model objects are all loaded.
- *
- * @var boolean
- */
-   var $modelsLoaded = false;
    
 /**
  * Enter description here...
@@ -200,7 +193,7 @@ class View extends Object
         $this->helpers       =& $this->controller->helpers;
         $this->here          =& $this->controller->here;
         $this->layout        =& $this->controller->layout;
-        $this->models        =& $this->controller->models;
+        $this->modelNames    =& $this->controller->modelNames;
         $this->name          =& $this->controller->name;
         $this->pageTitle     =& $this->controller->pageTitle;
         $this->parent        =& $this->controller->parent;
@@ -236,16 +229,7 @@ class View extends Object
  */
    function render($action=null, $layout=null, $file=null)
    {
-
-      if ($this->modelsLoaded!==true)
-      {
-         foreach ($this->models as $modelName => $model)
-         {
-            $this->$modelName = $model;
-         }
-      }
-      // What is reason for these being the same?
-      if (isset($this->hasRendered) && $this->hasRendered)
+       if (isset($this->hasRendered) && $this->hasRendered)
       {
          return true;
       }
@@ -514,10 +498,6 @@ class View extends Object
 		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS."{$this->layout}.thtml"))
 		{
 		    $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS."{$this->layout}.thtml";
-		}
-		else if(file_exists(LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS."{$this->layout}.thtml"))
-		{
-		    $layoutFileName = LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS."{$this->layout}.thtml";
 		}
 		return $layoutFileName;
    }

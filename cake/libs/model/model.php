@@ -190,7 +190,11 @@ class Model extends Object
  */
     function __construct ($id=false, $table=null, $db=null) 
     {
-        $this->name = get_class($this);
+        if($this->name === null)
+        {
+            $this->name = get_class($this);
+        }
+        
         $this->currentModel = Inflector::underscore($this->name);     
         
         if($db != null)
@@ -208,7 +212,7 @@ class Model extends Object
         }
         
         $classRegistry =& ClassRegistry::getInstance();
-        $classRegistry->addObject($this->name, $this);
+        $classRegistry->addObject($this->currentModel, $this);
         
         if ($id)
         {

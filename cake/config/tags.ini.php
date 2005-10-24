@@ -33,58 +33,58 @@
 
 
 ; Tag template for a link.
-link = "<a href="%s"%s>%s</a>"
+link = "<a href="%s" %s>%s</a>"
 
 ; Tag template for a mailto: link. 
-mailto = "<a href="mailto:%s"%s>%s</a>"
+mailto = "<a href="mailto:%s" %s>%s</a>"
 
 ; Tag template for opening form tag. 
 form = "<form %s>"
 
 ; Tag template for an input type='text' tag. 
-input = "<input name="data[%s][%s]"%s/>"
+input = "<input name="data[%s][%s]" %s/>"
 
 ; Tag template for an input type='textarea' tag
-textarea = "<textarea name="data[%s][%s]"%s>%s</textarea>"
+textarea = "<textarea name="data[%s][%s]" %s>%s</textarea>"
 
 ; Tag template for an input type='hidden' tag. 
-hidden = "<input type="hidden" name="data[%s][%s]"%s/>"
+hidden = "<input type="hidden" name="data[%s][%s]" %s/>"
 
 ; Tag template for a textarea tag.
-textarea = "<textarea name="data[%s][%s]"%s>%s</textarea>"
+textarea = "<textarea name="data[%s][%s]" %s>%s</textarea>"
 
 ; Tag template for a input type='checkbox ' tag. 
 checkbox = "<input type="checkbox" name="data[%s][%s]" id="tag_%s" %s/>"
 
 ; Tag template for a input type='radio' tag.
-radio = "<input type="radio" name="data[%s][%s]" id="tag_%s"%s/>"
+radio = "<input type="radio" name="data[%s][%s]" id="tag_%s" %s/>"
 
 ; Tag template for a select opening tag.
-selectstart = "<select name="data[%s][%s]"%s>"
+selectstart = "<select name="data[%s][%s]" %s>"
 
 ; Tag template for a select opening tag.
-selectmultiplestart = "<select name="data[%s][%s][]"%s>"
+selectmultiplestart = "<select name="data[%s][%s][]" %s>"
 
 ; Tag template for an empty select option tag.
-selectempty = "<option value=""%s></option>"
+selectempty = "<option value="" %s></option>"
 
 ; Tag template for a select option tag.
-selectoption = "<option value="%s"%s>%s</option>"
+selectoption = "<option value="%s" %s>%s</option>"
 
 ; Tag template for a closing select tag. 
 selectend = "</select>"
 
 ; Tag template for a password tag.
-password = "<input type="password" name="data[%s][%s]"%s/>"
+password = "<input type="password" name="data[%s][%s]" %s/>"
 
 ; Tag template for a file input tag. 
-file = "<input type="file" name="%s"%s/>"
+file = "<input type="file" name="%s" %s/>"
 
 ; Tag template for a submit button tag. 
-submit = "<input type="submit"%s/>"
+submit = "<input type="submit" %s/>"
 
 ; Tag template for an image tag.
-image =" <img src="%s"%s/>"
+image =" <img src="%s" %s/>"
 
 ; Tag template for a table header tag. 
 tableheader = "<th%s>%s</th>"

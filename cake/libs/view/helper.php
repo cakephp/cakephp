@@ -79,7 +79,7 @@ class Helper extends Object
      */
     function Helper()
     {
-        $this->tags = $this->readConfigFile(CONFIGS.'tags.ini.php');
+        $this->tags = $this->readConfigFile(CAKE.'config'.DS.'tags.ini.php');
     }
 
     /**

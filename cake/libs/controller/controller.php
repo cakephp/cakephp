@@ -125,7 +125,7 @@ class Controller extends Object
      * @var array Array of model objects.
      * @access public
      */
-    var $models = array();
+    var $modelNames = array();
 
 
     /**
@@ -189,27 +189,18 @@ class Controller extends Object
      */
     function __construct ()
     {
-        // parent::__construct();
-        $r = null;
-        if (!preg_match('/(.*)Controller/i', get_class($this), $r))
+        if($this->name === null)
         {
-            die("Controller::__construct() : Can't get or parse my own class name, exiting.");
-        }
-        
-        $classVars = get_class_vars(get_class($this));
-        
-        if(in_array('casedClass', array_keys($classVars)) && !empty($this->casedClass))
-        {
-            $this->name = $this->casedClass;
-            $this->viewPath = Inflector::underscore($this->casedClass);
-        }
-        else
-        {
+            $r = null;
+            if (!preg_match('/(.*)Controller/i', get_class($this), $r))
+            {
+                die("Controller::__construct() : Can't get or parse my own class name, exiting.");
+            }
             $this->name = $r[1];
-            $this->viewPath = Inflector::underscore($r[1]);  
         }
-
-        parent::__construct();
+        
+        $this->viewPath = Inflector::underscore($this->name);
+         parent::__construct();
     }
 
     /**
@@ -261,7 +252,8 @@ class Controller extends Object
 
         if (class_exists($modelClass) && ($this->uses === false))
         {
-            $this->models[$modelKey] = new $modelClass($id);
+            $this->{$modelClass} =& new $modelClass($id);
+            $this->modelNames[] = $modelClass;
         }
         elseif ($this->uses)
         {
@@ -279,7 +271,8 @@ class Controller extends Object
 
                 if (class_exists($modelClass))
                 {
-                    $this->models[$modelKey] = new $modelClass($id);
+                    $this->{$modelClass} =& new $modelClass($id);
+                    $this->modelNames[] = $modelClass;
                 }
                 else
                 {
@@ -370,14 +363,14 @@ class Controller extends Object
     {
         $view =& new View($this);
 
-        if(!empty($this->models))
+        if(!empty($this->modelNames))
         {
-            foreach ($this->models as $key)
+            foreach ($this->modelNames as $model)
             {
-                $key = Inflector::underscore(get_class($key));
-                if(!empty($this->models[$key]->validationErrors))
+                $key = Inflector::underscore($model);
+                if(!empty($this->{$model}->validationErrors))
                 {
-                    $view->validationErrors[$key] =& $this->models[$key]->validationErrors;
+                    $view->validationErrors[$key] =& $this->{$model}->validationErrors;
                 }
             }
         }
@@ -593,13 +586,14 @@ class Controller extends Object
 	    $fieldNames = array();
 
 	    //  figure out what model and table we are working with
-	    $model = Inflector::underscore(Inflector::singularize($this->name));
-	    $table = $this->models[$model]->table;
+	    $model = Inflector::singularize($this->name);
+	    $modelKey = Inflector::underscore($model);
+	    $table = $this->{$model}->table;
 	    
 
 	    //  get all of the column names.
 	    $classRegistry =& ClassRegistry::getInstance();
-	    $objRegistryModel = $classRegistry->getObject($model);
+	    $objRegistryModel = $classRegistry->getObject($modelKey);
 
 	    
 	    foreach ($objRegistryModel->_tableInfo as $tables)
@@ -613,8 +607,8 @@ class Controller extends Object
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
 	                //  this is a foreign key, also set up the other controller
 	                $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
-	                $fieldNames[ $tabl['name'] ]['model'] = $this->models[$model]->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
-	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->models[$model]->tableToModel[Inflector::pluralize($niceName)]);
+	                $fieldNames[ $tabl['name'] ]['model'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
 	                $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
 	         }
 	         else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
@@ -632,7 +626,7 @@ class Controller extends Object
 
 	         // Now, set up some other attributes that will be useful for auto generating a form.
 	         //tagName is in the format table/field "post/title"
-	          $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
+	          $fieldNames[ $tabl['name']]['tagName'] = $modelKey.'/'.$tabl['name'];
 
 	         //  Now, find out if this is a required field.
 	         //$validationFields = $classRegistry->getObject($table)->validate;
@@ -759,7 +753,7 @@ class Controller extends Object
                                      }
                                  }
                              }
-                             $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
+                             $fieldNames[ $tabl['name']]['selected'] = $data[$modelKey][$tabl['name']];
                          }
                      }
                      else
