@@ -29,10 +29,19 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
+<h1>New <?php echo Inflector::humanize($this->name)?></h1>
+
 <?php
 	echo $html->formTag('/'.Inflector::underscore($this->name).'/create');
 
 	echo $form->generateFields( $fieldNames );
 
 	echo $form->generateSubmitDiv( 'Add' )
+	
 ?>
+<ul class='actions'>
+<?php
+   echo "<li>".$html->linkTo('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/list')."</li>";
+
+?>
+</ul>

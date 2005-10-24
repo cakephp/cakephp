@@ -77,47 +77,44 @@ p
 #header
 {
 	padding: 0px;
-	height: 112px;
+	height: 114px;
 	background: #fff url("../img/cake.bg.header.gif") repeat-x;
 	border-bottom: 1px solid #D2D7D8;
-	vertical-align: bottom;
-	white-space: normal;
+	margin-bottom: 30px;
+	text-align: right;
 }
-
-#headerLogo
+#header img
 {
 	float: left;
+	vertical-align: middle;
 	border: 0;
 }
-#headerLogo img
-{
-	border: 0;
-}
-#headerNav
+.headerNav
 {
 	float: right;
-	margin-top: 56px;
-	margin-right: 30px;
-	margin-bottom: 12px;
-	font-size: 15px;
+	margin-top: 3px;
+	padding-right: 30px;
+	font-size: 13px;
 	font-weight: bold;
 	color: #71300F;
 }
 
-#headerNav a {
+.headerNav a {
 	padding: 4px 10px;
 }
-#headerNav a:hover {
+.headerNav a:hover {
 	padding: 4px 10px;
-	background-color: #D2D7D8;	
+	background-color: #fff;	
 }
-#headerNav .active {
+.headerNav .active {
 	padding: 4px 10px;
-	background-color: #D2D7D8;
+	background-color: #fff;
 }
 #pageNav {
-	margin-top: 20px;
+	clear: both;
+	margin-top: 0px;
 	margin-right: 30px;
+	margin-left: 30px;
 	text-align: right;
 	font-size: 15px;
 	font-weight: bold;
@@ -148,7 +145,7 @@ p
 {
 	clear: both;
 	margin: 2px 20px 20px 20px;
-	padding: 6px 28px 40px 22px;
+	padding: 20px 28px 40px 22px;
 	background-color: #fff;
 	border-top: 1px solid #D2D7D8;
 	border-left: 1px solid #D2D7D8;

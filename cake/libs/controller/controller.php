@@ -649,6 +649,7 @@ class Controller extends Object
 	         }
 	         switch( $type )
 	         {
+	             
 	             case "text":
 	             {
 	                 $fieldNames[ $tabl['name']]['type'] = 'area';
@@ -664,9 +665,8 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['options'] = array();
 
                          //  get the list of options from the other model.
-                         $registry =& ClassRegistry::getInstance();
-                         $otherModel =& $registry->getObject($fieldNames[ $tabl['name']]['model']);
-
+                         $registry = ClassRegistry::getInstance();
+                         $otherModel = $registry->getObject($fieldNames[$tabl['name']]['model']);
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -726,8 +726,9 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['options'] = array();
 
                          //  get the list of options from the other model.
-                         $registry =& ClassRegistry::getInstance();
-                         $otherModel =& $registry->getObject($fieldNames[ $tabl['name']]['model']);
+                         $registry = ClassRegistry::getInstance();
+
+                         $otherModel = $registry->getObject($fieldNames[$tabl['name']]['model']);
 
                          if( is_object($otherModel) )
                          {
@@ -789,34 +790,34 @@ class Controller extends Object
    	    //  loop through the many to many relations to make a list box.
       	foreach( $objRegistryModel->_manyToMany as $relation )
          {
-            list($tableName) = $relation;
+            list($modelName) = $relation;
 
-            $otherModelName = Inflector::underscore($tableName);
-            $otherModel = new $otherModelName();
+            $modelKey = Inflector::underscore($modelName);
+            $modelObject = new $modelName();
 
             if( $doCreateOptions )
               {
-                  $otherDisplayField = $otherModel->getDisplayField();
-                  $fieldNames[$tableName]['model'] = $tableName;
-                  $fieldNames[$tableName]['prompt'] = "Related ".Inflector::humanize($tableName);
-                  $fieldNames[$tableName]['type'] = "selectMultiple";
-                  $fieldNames[$tableName]['tagName'] = $otherModelName.'/'.Inflector::underscore($tableName);
+                  $otherDisplayField = $modelObject->getDisplayField();
+                  $fieldNames[$modelKey]['model'] = $modelName;
+                  $fieldNames[$modelKey]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
+                  $fieldNames[$modelKey]['type'] = "selectMultiple";
+                  $fieldNames[$modelKey]['tagName'] = $modelKey.'/'.$modelKey;
 
-                  foreach( $otherModel->findAll() as $pass )
+                  foreach( $modelObject->findAll() as $pass )
                   {
                       foreach( $pass as $key=>$value )
                       {
-                          if( $key == $otherModelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                          if( $key == $modelKey && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                           {
-                              $fieldNames[$tableName]['options'][$value['id']] = $value[$otherDisplayField];
+                              $fieldNames[$modelKey]['options'][$value['id']] = $value[$otherDisplayField];
                           }
                       }
                   }
-                  if( isset( $data[$tableName] ) )
+                  if( isset( $data[$modelKey] ) )
                   {
-                    foreach( $data[$tableName] as $row )
+                    foreach( $data[$modelKey] as $row )
                     {
-                       $fieldNames[$tableName]['selected'][$row['id']] = $row['id'];
+                       $fieldNames[$modelKey]['selected'][$row['id']] = $row['id'];
                     }
                   }
               }

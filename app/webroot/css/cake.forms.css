@@ -1,10 +1,11 @@
 /* form.css */
 
 form {
-  font-size: 100%;
-  min-width: 560px;
-  max-width: 620px;
-  width: 590px;
+  margin: 0 4px;
+  font-size: 120%;
+  border-width: 0px 0px 0px 0px;
+  border-style: solid;
+  border-color: #71300F;
 }
 
 form fieldset {
@@ -23,7 +24,7 @@ form fieldset legend {
 }
 
 label {
-  font-size: 100%;
+  font-size: 150%;
 }
 
 label u {
@@ -44,7 +45,6 @@ textarea {
 form div {
   clear: left;
   display: block;
-  width: 354px;
   height: expression('1%');
   margin: 5px 0px 0px 0px;
   padding: 1px 3px;
@@ -85,12 +85,11 @@ form fieldset div.notes p.last {
 
 form div fieldset {
   clear: none;
-  border-width: 1px;
+  border-width: 0px 1px 0px 1px;
   border-style: solid;
   border-color: #666;
   margin: 0px 0px 0px 142px;
   padding: 0px 5px 5px 5px;
-  width: 197px;
 }
 
 form div fieldset legend {
@@ -105,7 +104,9 @@ form div.required fieldset legend {
 form div label {
   display: block;
   float: left;
-  width: 130px;
+  width: 200px;
+  background-color: #f4f4f4; 
+  font-size: 16px;
   padding: 3px 5px;
   margin: 0px 0px 5px 0px;
   text-align: right;
@@ -122,7 +123,6 @@ form div.required label, label.required {
 form div label.labelCheckbox, form div label.labelRadio {
   float: none;
   display: block;
-  width: 200px;
   height: expression('1%');
   margin: 0px 0px 5px 142px;
   text-align: left;
@@ -130,43 +130,14 @@ form div label.labelCheckbox, form div label.labelRadio {
 
 form div fieldset label.labelCheckbox, form div fieldset label.labelRadio {
   margin: 0px 0px 5px 0px;
-  width: 170px;
 }
-
 p.error {
-  background-color: #f00;
-  background-image: url(/images/icon_error.gif);
-  background-repeat: no-repeat;
-  background-position: 3px 3px;
-  color: #ffffff;
-  padding: 3px 3px 5px 27px;
-  border: 1px solid #000;
-  margin: auto 100px;
-}
-
-form div.error {
-  background-color: #ffffe1;
-  background-image: url(/images/required_bg.gif);
-  background-repeat: no-repeat;
-  background-position: top left;
-  color: #666;
-  border: 1px solid #f00;
-}
-
-form div.error p.error {
-  background-image: url(/images/icon_error.gif);
-  background-position: top left;
-  background-color: transparent;
-  border-style: none;
-  font-size: 88%;
-  font-weight: bold;
-  margin: 0px 0px 0px 118px;
-  width: 200px;
-  color: #f00;
+  color: #71300F;
+  background-color: #DBA941;
 }
 
 form div input, form div select, form div textarea {
-  width: 200px;
+   background-color: #f4f4f4;
   padding: 1px 3px;
   margin: 0px 0px 0px 0px;
 }
@@ -189,38 +160,34 @@ form div input.inputCheckbox, form div input.inputRadio, input.inputCheckbox, in
 }
 
 form div.submit {
-  width: 214px;
   padding: 0px 0px 0px 140px;
   clear:both;
   display:block;
 }
 
 div.submit input {
-        text-align:center;
-        font-weight: bold;
-        color: #fff;
-        background-color:#3297FC;
-        display:block;
-        float:left;
-        text-decoration: none;
-        border: 1px;
-  width: 215px;
-  padding:6px;
-  margin: 5px;
-
-}
-form div.submit div {
-  display: inline;
-  float: left;
-  text-align: left;
+  padding: 2px 12px;
+  color: #71300F;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  font-size: 14px;
+  font-weight: bold;
+  text-align:center;
+  text-decoration: none;
   width: auto;
 }
-
-form div input.inputSubmit, form div input.inputButton, input.inputSubmit, input.inputButton {
-  background-color: #cccccc;
-  color: #000000;
+div.submit input:hover {
+  padding: 2px 12px;
+  color: #fff;
+  background-color:#71300F;
+  text-decoration: none;
+  border: 1px solid #666;
+  font-size: 14px;
+  font-weight: bold;
+  text-align:center;
+  text-decoration: none;
   width: auto;
-  padding: 0px 6px;
 }
 
 form div.submit div input.inputSubmit, form div.submit div input.inputButton {

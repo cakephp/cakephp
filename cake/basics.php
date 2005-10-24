@@ -399,23 +399,23 @@ function params($p)
  *
  * @return string
  */
-function setUri() {
-    if (isset($_SERVER['REQUEST_URI']))
+    function setUri()
     {
-        $uri = $_SERVER['REQUEST_URI'];
-    }
-    else
-    {
-        if (isset($_SERVER['argv']))
+        if (isset($_SERVER['REQUEST_URI']))
         {
-            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['argv'][0];
+            $uri = $_SERVER['REQUEST_URI'];
         }
         else
         {
-            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['QUERY_STRING'];
+            if (isset($_SERVER['argv']))
+            {
+                $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['argv'][0];
+            }
+            else
+            {
+                $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['QUERY_STRING'];
+            }
         }
-    }
-    return $uri;
-} 
-
+        return $uri;
+    } 
 ?>

@@ -28,9 +28,13 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-?>
-<?php
 
+    $modelName = Inflector::singularize($this->name);
+    $modelKey = Inflector::underscore($modelName);
+?>
+<h1>Edit <?php echo Inflector::humanize($modelName);?></h1>
+
+<?php
 	echo $html->formTag('/'.Inflector::underscore($this->name).'/update');
 	
 
@@ -41,14 +45,13 @@
 ?>
 <ul class='actions'>
 <?php
-   $modelName = Inflector::singularize($this->name);
-   $modelKey = Inflector::underscore($modelName);
-   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
 
+   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey]['id'])."</li>";
+   echo "<li>".$html->linkTo('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/list')."</li>";
    foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
-         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[Inflector::singularize($params['controller'])][$field] )."</li>";
+         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
       }
   }
 ?>

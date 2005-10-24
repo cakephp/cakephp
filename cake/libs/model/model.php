@@ -845,6 +845,7 @@ class Model extends Object
         {
             foreach ($y as $name => $value)
             {
+                $name = Inflector::camelize($name);
                 $joinTable[] = $this->{$name}->{$this->currentModel.'_jointable'};
                 $mainKey = $this->{$name}->{$this->currentModel.'_foreignkey'};
                 $keys[] = $mainKey;

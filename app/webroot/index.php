@@ -109,8 +109,8 @@ require_once LIBS.'inflector.php';
 
 if (strpos($url, 'ccss/') === 0)
 {
-   include ROOT.'public'.DS.'css.php';
-   die;
+   include WWW_ROOT.DS.'css.php';
+   die();
 }
    
 

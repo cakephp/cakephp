@@ -1,4 +1,18 @@
 /* CSS Document */
+h1
+{
+	padding: 2px 6px;
+	color: #fff;
+	background-color:  #71300F;
+	font-size: 30px;
+}
+h2
+{
+	padding: 1px 6px;
+	color: #fff;
+	background-color:  #71300F;
+	font-size: 24px;
+}
 code, pre {
   color:#44a;
   font-family:monospace;
@@ -26,65 +40,79 @@ li {
 }
 
 .notice {
-  background: #71300F;
-  border: solid 2px #eeb;
-  display: block;
+  color: #71300F;
+  background-color: #DBA941;
   font-family: Verdana;
   padding: 1em;
 }
 .tip {
-  background: #71300F;
-  border: solid 2px #333;
+  color: #71300F;
+  background-color: #DBA941;
   padding: 1em;
 }
-.error {
-  color: #DBA941
-  background: #f4f4f4;
-  border: solid 2px #333;
-  padding: 1em;
-}
+
 ul.actions {
   list-style: none;
-  text-align:right;
+  text-align:left;
   margin:2em 0;
+  padding: 0 0em;
 }
 ul.actions li {
-  border: 1px solid #333;
   margin-left:1em;
-  width:10em;
   list-style: none;
+  display: inline;
 }
 ul.actions li a,  ul.actions li input {
-  background-color:#71300F;
-  border:1px solid #71300F;
-  clear: both;
-  color: #fff;
-  display:block;
+  padding: 2px 12px;
+  color: #71300F;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  line-height: 24px;
+  font-size: 14px;
   font-weight: bold;
   text-align:center;
+  text-decoration: none;
+}
+ul.actions li a:hover {
+  color: #71300F;
+  background-color:#fff;
   text-decoration: none;
 }
 td.listactions {
-  width:17em;
+  width: 14em;
+  text-align: center;
+  white-space: nowrap;
 }
 td.listactions a {
-float: left;
+  
+  padding: 0px 8px;
   text-align:center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #71300F;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  
+}
+td.listactions a:hover {
+  padding: 0px 8px;
+  text-align:center;
+  font-size: 14px;
   font-weight: bold;
   color: #fff;
   background-color:#71300F;
-  display:block;
   text-decoration: none;
-  margin-bottom:3px;
-  margin-right: 3px;
-  border: 1px;
-  width:5em;
+  border: 1px solid #666;
+  white-space: nowrap;
 }
 table {
+  width: 100%;
   background-color: #fff;
   border: 1px solid #333;
   clear:both;
-  margin: 1em 0 2em 0;
+  margin: 0em 0 2em 0;
   white-space: normal;
 }
 th {
@@ -92,13 +120,15 @@ th {
   border-top: 1px solid #fff;
   border-right: 1px solid #666;
   border-bottom: 1px solid #666;
-  text-align: left;
+  text-align: center;
   padding:3px;
 }
 table tr td {
   border-right: 1px solid #ccc;
-  padding:2px 4px;
+  padding:4px 4px;
+  font-size: 12px;
   vertical-align:top;
+  text-align: center;
 }
 table tr.altRow td {
   background: #f4f4f4;

@@ -7,7 +7,7 @@
 <?php echo $html->charset('UTF-8')?>
 <?php echo $html->css('cake.default')?>
 <?php echo $html->css('cake.scaffold')?>
-<?php echo $html->css('cake.form')?>
+<?php echo $html->css('cake.forms')?>
 </head>
 <body>
 <div id="container">
@@ -17,21 +17,21 @@
 				<?php echo $html->image('cake.logo.png', array('alt'=>"CakePHP : Rapid Development Framework")); ?>
 			</a>
 		</div>						
-		<div id="headerNav">
+		<span class="headerNav">
 			<?php
 				$css_class = ($title_for_layout == 'Blog') ? 'active' : '';
-				echo $html->link('CakeBlog', '/',array('class'=>$css_class));
+				echo $html->link('Blog', 'blog',array('class'=>$css_class));
 
-				echo $html->link('CakeWiki', 'http://wiki.cakephp.org',array('class'=>$css_class));
+				echo $html->link('Wiki', 'http://wiki.cakephp.org',array('class'=>$css_class));
 
 				echo $html->link('CakeForge', 'http://cakeforge.org',array('class'=>$css_class));
 
-				echo $html->link('CakeTrac', 'https://trac.cakephp.org',array('class'=>$css_class));
+				echo $html->link('Trac', 'https://trac.cakephp.org',array('class'=>$css_class));
 
 				$css_class = ($title_for_layout == 'Pastes') ? 'active' : '';
 				echo $html->link('CakeBin', 'http://cakephp.org/pastes/',array('class'=>$css_class));
 			?>
-		</div>
+		</class>
 	</div>
 	<div id="pageNav">
 		<?php

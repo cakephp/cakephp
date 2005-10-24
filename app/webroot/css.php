@@ -34,8 +34,9 @@
 /**
  * Enter description here...
  */
-require(ROOT.'config'.DS.'paths.php');
-require(LIBS.'basics.php');
+require_once(CONFIGS.'paths.php');
+require_once(CAKE.'basics.php');
+require_once(LIBS.'folder.php');
 require(LIBS.'file.php');
 require(LIBS.'legacy.php');
 

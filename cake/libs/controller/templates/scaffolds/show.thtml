@@ -30,7 +30,6 @@
  */
 ?>
 
-
 <?php
    $modelName = Inflector::singularize($this->name);
    $modelKey = Inflector::underscore($modelName);
@@ -38,6 +37,8 @@
    $objModel = $registry->getObject($modelName);
 
 ?>
+<h1>Show <?php echo Inflector::humanize($modelName)?></h1>
+
 <dl>
 <?php foreach($fieldNames as $field => $value)
       {
@@ -78,7 +79,8 @@
 <?php
    echo "<li>".$html->linkTo('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
    echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/destroy/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
-
+   echo "<li>".$html->linkTo('List  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/list')."</li>";
+   echo "<li>".$html->linkTo('New  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/new')."</li>";
    foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
@@ -92,10 +94,11 @@
 <?php
    foreach ($objModel->_oneToOne as $relation)
    {
-      list($table, $field, $value) = $relation;
-      $otherModelName = $objModel->tableToModel[$table];
-
-      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2><br/><br/>";
+      list($model, $value) = $relation;
+      $otherModelName = $objModel->tableToModel[$model];
+      $controller = Inflector::pluralize($model);
+      
+      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2>";
       echo "<dl>";
       if( isset($data[$otherModelName]) && is_array($data[$otherModelName]) ) 
       {
@@ -112,7 +115,7 @@
          
       }
       echo "</dl>";
-      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($table)."/edit/{$data[$otherModelName]['id']}")."</li></ul></div>";
+      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/edit/{$data[$otherModelName]['id']}")."</li></ul></div>";
    }
 ?>
 
@@ -136,7 +139,7 @@
       $otherModelName = Inflector::singularize($model);
       $controller = Inflector::pluralize($model);
 
-      echo "<div class='related'><H2>Related ".Inflector::humanize($objModel->tableToModel[$objModel->{$model}->table])."</H2><br/><br/>";
+      echo "<div class='related'><H2>Related ".Inflector::humanize(Inflector::pluralize($objModel->tableToModel[$objModel->{$model}->table]))."</H2>";
       if( isset($data[$objModel->tableToModel[$objModel->{$model}->table]]) && is_array($data[$objModel->tableToModel[$objModel->{$model}->table]]) ) 
       {
 ?>

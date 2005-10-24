@@ -29,11 +29,10 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
+<h1>List <?php echo Inflector::humanize($this->name)?></h1>
 
 <?php
-   $model = Inflector::pluralize($this->name);
-   //$table = Inflector::underscore(get_class($this->models[strtolower(Inflector::singularize(Inflector::underscore($this->name)))]));
-
+   $model = Inflector::singularize($this->name);
    $modelKey = Inflector::underscore(Inflector::singularize($this->name));
    $humanName = Inflector::humanize($this->name);
    $humanSingularName = Inflector::singularize( $humanName );
@@ -65,16 +64,15 @@
                      {
                         
                         //  this is a foreign key, figure out what the display field should be for this model.
-                       $otherModelName = $value['model'];
+                       $otherModelKey = Inflector::underscore($value['model']);
                        $otherControllerName = $value['controller']; 
-                       
-                       $registry =& ClassRegistry::getInstance();
-                       $otherModelObject =& $registry->getObject( $otherModelName );
+                       $registry = ClassRegistry::getInstance();
+                       $otherModelObject = $registry->getObject( $otherModelKey );
                        if( is_object($otherModelObject) ) 
                        {
-                          $displayText = $row[$value['model']][ $otherModelObject->getDisplayField() ];
+                          $displayText = $row[$otherModelKey][ $otherModelObject->getDisplayField() ];
                        } else{
-                          $displayText = $row[$modelKey][$field];
+                          $displayText = $row[$otherModelKey][$field];
                        }  
                           echo $html->linkTo( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
                        
