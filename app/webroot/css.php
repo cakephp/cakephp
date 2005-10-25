@@ -111,7 +111,7 @@ else
 
 header("Date: ".date("D, j M Y G:i:s ", $templateModified).'GMT');
 header("Content-Type: text/css");
-header("Expires: ".date("D, j M Y G:i:s T", time()+DAY));
+header("Expires: ".gmdate("D, j M Y H:i:s", time()+DAY)." GMT");
 header("Cache-Control: cache"); // HTTP/1.1
 header("Pragma: cache"); // HTTP/1.0
 print $output;

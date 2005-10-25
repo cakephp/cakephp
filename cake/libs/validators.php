@@ -44,7 +44,7 @@ define('VALID_NUMBER', '/^[0-9]+$/');
 /**
   * A valid email address.
   */
-define('VALID_EMAIL', '/^([a-z0-9][a-z0-9_\-\.\+]*)@([a-z0-9][a-z0-9\.\-]{0,63}\.[a-z]{2,3})$/i');
+define('VALID_EMAIL', '/^([a-z0-9][a-z0-9_\-\.\+]*)@([a-z0-9][a-z0-9\.\-]{0,63}\.([a-z][a-z]|com|org|net|biz|info|name|net|pro|aero|coop|museum))$/i');
 
 /**
   * A valid year (1000-2999).

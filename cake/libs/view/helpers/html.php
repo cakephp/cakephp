@@ -160,10 +160,12 @@ class HtmlHelper extends Helper
 		}
 		elseif ($url{0} == '/')
 		{
+		    $url = Inflector::underscore($url);
 			$output = $this->base . $url;
 		}
 		else
 		{
+		    $url = Inflector::underscore($url);
 			$output = $this->base.'/'.strtolower($this->params['controller']).'/'.$url;
 		}
 
@@ -1105,7 +1107,7 @@ class HtmlHelper extends Helper
      */
 	function formTag($target=null, $type='post', $htmlAttributes=null)
 	{
-		$htmlAttributes['action'] = $this->UrlFor($target);
+	    $htmlAttributes['action'] = $this->UrlFor($target);
 		$htmlAttributes['method'] = $type=='get'? 'get': 'post';
 		$type == 'file'? $htmlAttributes['enctype'] = 'multipart/form-data': null;
 

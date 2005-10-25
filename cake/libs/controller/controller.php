@@ -618,7 +618,7 @@ class Controller extends Object
 
 	         // Now, set up some other attributes that will be useful for auto generating a form.
 	         //tagName is in the format table/field "post/title"
-	          $fieldNames[ $tabl['name']]['tagName'] = $modelKey.'/'.$tabl['name'];
+	          $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
 
 	         //  Now, find out if this is a required field.
 	         //$validationFields = $classRegistry->getObject($table)->validate;
@@ -651,6 +651,7 @@ class Controller extends Object
 	         {
 	             
 	             case "text":
+	             case "mediumtext":
 	             {
 	                 $fieldNames[ $tabl['name']]['type'] = 'area';
 	                 //$fieldNames[ $tabl['name']]['size'] = $fieldLength;
@@ -666,7 +667,9 @@ class Controller extends Object
 
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject($fieldNames[$tabl['name']]['model']);
+                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['model']));
+
+                         
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -746,7 +749,7 @@ class Controller extends Object
                                      }
                                  }
                              }
-                             $fieldNames[ $tabl['name']]['selected'] = $data[$modelKey][$tabl['name']];
+                             $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
                          }
                      }
                      else
@@ -768,7 +771,7 @@ class Controller extends Object
                          $enum = trim( $enum, "'" );
                          $fieldNames[$tabl['name']]['options'][$enum] = $enum;
                      }
-                     $fieldNames[ $tabl['name']]['selected'] = $data[$table][$tabl['name']];
+                     $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
 
                }
                break;
@@ -807,15 +810,15 @@ class Controller extends Object
                   {
                       foreach( $pass as $key=>$value )
                       {
-                          if( $key == $modelKey && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                          if( $key == $modelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                           {
                               $fieldNames[$modelKey]['options'][$value['id']] = $value[$otherDisplayField];
                           }
                       }
                   }
-                  if( isset( $data[$modelKey] ) )
+                  if( isset( $data[$model] ) )
                   {
-                    foreach( $data[$modelKey] as $row )
+                    foreach( $data[$model] as $row )
                     {
                        $fieldNames[$modelKey]['selected'][$row['id']] = $row['id'];
                     }
@@ -823,6 +826,7 @@ class Controller extends Object
               }
          } // end loop through manytomany relations.
 	    }
+	    
       return $fieldNames;
 	}
 }

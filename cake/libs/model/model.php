@@ -514,7 +514,7 @@ class Model extends Object
                 $this->{$className}->{$this->currentModel.'_insertsql'} = null;
             break;
         }
-        $this->tableToModel[$this->{$className}->table] = strtolower($className);
+        $this->tableToModel[$this->{$className}->table] = $className;
     }
 	   
 /**
@@ -561,7 +561,7 @@ class Model extends Object
         else
         {
             $this->table = $tableName;
-            $this->tableToModel[$this->table] = Inflector::underscore($this->name);
+            $this->tableToModel[$this->table] = $this->name;
             $this->loadInfo();
         }
     }

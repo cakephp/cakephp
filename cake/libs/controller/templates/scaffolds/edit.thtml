@@ -30,12 +30,12 @@
  */
 
     $modelName = Inflector::singularize($this->name);
-    $modelKey = Inflector::underscore($modelName);
+    $modelKey = $modelName;
 ?>
 <h1>Edit <?php echo Inflector::humanize($modelName);?></h1>
 
 <?php
-	echo $html->formTag('/'.Inflector::underscore($this->name).'/update');
+	echo $html->formTag('/'. $this->name .'/update');
 	
 
 	echo $form->generateFields( $fieldNames );

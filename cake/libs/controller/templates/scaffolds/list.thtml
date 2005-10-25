@@ -33,7 +33,7 @@
 
 <?php
    $model = Inflector::singularize($this->name);
-   $modelKey = Inflector::underscore(Inflector::singularize($this->name));
+   $modelKey = $model;
    $humanName = Inflector::humanize($this->name);
    $humanSingularName = Inflector::singularize( $humanName );
 //	var_dump( $data );
@@ -70,9 +70,9 @@
                        $otherModelObject = $registry->getObject( $otherModelKey );
                        if( is_object($otherModelObject) ) 
                        {
-                          $displayText = $row[$otherModelKey][ $otherModelObject->getDisplayField() ];
+                          $displayText = $row[$value['model']][ $otherModelObject->getDisplayField() ];
                        } else{
-                          $displayText = $row[$otherModelKey][$field];
+                          $displayText = $row[$value['model']][$field];
                        }  
                           echo $html->linkTo( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
                        

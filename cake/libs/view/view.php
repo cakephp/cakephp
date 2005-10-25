@@ -271,13 +271,14 @@ class View extends Object
          // check for controller-level view handler
          foreach(array($this->name, 'errors') as $viewDir)
          {
-             if(file_exists(VIEWS.$viewDir.DS.Inflector::underscore($errorAction).'.thtml'))
+             $errorAction =Inflector::underscore($errorAction);
+             if(file_exists(VIEWS.$viewDir.DS.$errorAction.'.thtml'))
              {
-                 $missingViewFileName = VIEWS.$viewDir.DS.Inflector::underscore($errorAction).'.thtml';
+                 $missingViewFileName = VIEWS.$viewDir.DS.$errorAction.'.thtml';
              }
-             elseif(file_exists(LIBS.'view'.DS.'templates'.DS.$viewDir.DS.Inflector::underscore($errorAction).'.thtml'))
+             elseif(file_exists(LIBS.'view'.DS.'templates'.DS.$viewDir.DS.$errorAction.'.thtml'))
              {
-                 $missingViewFileName = LIBS.'view'.DS.'templates'.DS.$viewDir.DS.Inflector::underscore($errorAction).'.thtml';
+                 $missingViewFileName = LIBS.'view'.DS.'templates'.DS.$viewDir.DS.$errorAction.'.thtml';
              }
              else
              {
