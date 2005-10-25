@@ -160,12 +160,10 @@ class HtmlHelper extends Helper
 		}
 		elseif ($url{0} == '/')
 		{
-		    $url = Inflector::underscore($url);
 			$output = $this->base . $url;
 		}
 		else
 		{
-		    $url = Inflector::underscore($url);
 			$output = $this->base.'/'.strtolower($this->params['controller']).'/'.$url;
 		}
 
