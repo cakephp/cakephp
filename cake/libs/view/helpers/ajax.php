@@ -52,7 +52,7 @@ class AjaxHelper extends Helper
      *
      * @var array
      */
-    var $helpers = array('html', 'javascript');
+    var $helpers = array('Html', 'Javascript');
 
     /**
      * Enter description here...
@@ -156,12 +156,12 @@ class AjaxHelper extends Helper
       $href = (!empty($options['fallback'])) ? $options['fallback'] : '#';
       if(isset($html_options['id']))
       {
-        return $this->html->link($title, $href, $html_options) . $this->javascript->event("$('{$html_options['id']}')", "click", "function() {" . $this->remoteFunction($options) . "; return true; }");
+        return $this->Html->link($title, $href, $html_options) . $this->Javascript->event("$('{$html_options['id']}')", "click", "function() {" . $this->remoteFunction($options) . "; return true; }");
       }
       else
       {
         $html_options['onclick'] = $this->remoteFunction($options);
-        return $this->html->link($title, $href, $html_options);
+        return $this->Html->link($title, $href, $html_options);
       }
     }
 
@@ -181,7 +181,7 @@ class AjaxHelper extends Helper
         $javascript_options = $this->_optionsForAjax($options);
         $func = isset($options['update']) ? "new Ajax.Updater('{$options['update']}'," : "new Ajax.Request(";
 
-        $func .= "'" . $this->html->url(isset($options['url']) ? $options['url'] : "") . "'";
+        $func .= "'" . $this->Html->url(isset($options['url']) ? $options['url'] : "") . "'";
         $func .= "$javascript_options)";
 
         if (isset($options['before'])) 
@@ -198,7 +198,7 @@ class AjaxHelper extends Helper
         }
         if (isset($options['confirm'])) 
         {
-            $func = "if (confirm('" . $this->javascript->escapeScript($options['confirm']) . "')) { $func; } else { return false; }";
+            $func = "if (confirm('" . $this->Javascript->escapeScript($options['confirm']) . "')) { $func; } else { return false; }";
         }
         return $func;
     }
@@ -217,7 +217,7 @@ class AjaxHelper extends Helper
     {
         $frequency = (isset($options['frequency']))? $options['frequency'] : 10;
         $code = "new PeriodicalExecuter(function() {" . $this->remote_function($options) . "}, $frequency)";
-        return $this->javascript->codeBlock($code);
+        return $this->Javascript->codeBlock($code);
     }
 
     /**
@@ -236,7 +236,7 @@ class AjaxHelper extends Helper
     {
         $options['id'] = $id;
         //$options['html']['onsubmit'] = $this->remoteFunction($options) . "; return false;";
-        return $this->html->formTag(null, "post", $options) . $this->javascript->event("$('$id')", "submit", "function(){" . $this->remoteFunction($options) . "; return false;}");
+        return $this->Html->formTag(null, "post", $options) . $this->Javascript->event("$('$id')", "submit", "function(){" . $this->remoteFunction($options) . "; return false;}");
     }
 
     /**
@@ -257,7 +257,7 @@ class AjaxHelper extends Helper
         $options['html']['onclick'] = $this->remoteFunction($options) . "; return false;";
         $options['html']['name'] = $name;
         $options['html']['value'] = $value;
-        return $this->html->tag("input", $options['html'], false);
+        return $this->Html->tag("input", $options['html'], false);
     }
 
     /**
@@ -294,7 +294,7 @@ class AjaxHelper extends Helper
         {
             $options['with'] = "Form.Element.serialize('$field_id')";
         }
-        return $this->javascript->codeBlock($this->_buildObserver('Form.Element.Observer', $field_id, $options));
+        return $this->Javascript->codeBlock($this->_buildObserver('Form.Element.Observer', $field_id, $options));
     }
 
     /**
@@ -315,7 +315,7 @@ class AjaxHelper extends Helper
         {
             $options['with'] = 'Form.serialize(this.form)';
         }
-        return $this->javascript->codeBlock($this->_buildObserver('Form.Observer', $field_id, $options));
+        return $this->Javascript->codeBlock($this->_buildObserver('Form.Observer', $field_id, $options));
     }
 
     /**
@@ -356,16 +356,16 @@ class AjaxHelper extends Helper
 
         $divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => "auto_complete");
 
-        return $this->html->input($field, $htmlOptions) .
-          $this->html->tag("div", $divOptions, true) . "</div>" .
-          $this->javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
-          $divOptions['id'] . "', '" . $this->html->url($url) . "', " . $this->_optionsForAjax($ajaxOptions) . ");");
+        return $this->Html->input($field, $htmlOptions) .
+          $this->Html->tag("div", $divOptions, true) . "</div>" .
+          $this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
+          $divOptions['id'] . "', '" . $this->Html->url($url) . "', " . $this->_optionsForAjax($ajaxOptions) . ");");
     }
 
     function drag($id, $options = array())
     {
         $options = $this->_optionsForDraggable($options);
-        return $this->javascript->codeBlock("new Draggable('$id'$options);");
+        return $this->Javascript->codeBlock("new Draggable('$id'$options);");
     }
 
     /**
@@ -389,7 +389,7 @@ class AjaxHelper extends Helper
     function drop($id, $options = array())
     {
         $options = $this->_optionsForDroppable($options);
-        return $this->javascript->codeBlock("Droppables.add('$id'$options);");
+        return $this->Javascript->codeBlock("Droppables.add('$id'$options);");
     }
     
     function _optionsForDroppable ($options)
@@ -421,7 +421,7 @@ class AjaxHelper extends Helper
             $options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options).'}';
         }
         $options = $this->_optionsForSortable($options);
-        return $this->javascript->codeBlock("Sortable.create('$id'$options);");
+        return $this->Javascript->codeBlock("Sortable.create('$id'$options);");
     }
     
     function _optionsForSortable ($options)

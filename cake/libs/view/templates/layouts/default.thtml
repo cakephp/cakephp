@@ -16,36 +16,35 @@
 				<?php echo $html->image('cake.logo.png', array('alt'=>"CakePHP : Rapid Development Framework")); ?>
 			</a>
 		</div>						
-		<span class="headerNav">
+		<div id="headerNav">
 			<?php
-				$css_class = ($title_for_layout == 'Blog') ? 'active' : '';
-				echo $html->link('Blog', 'blog',array('class'=>$css_class));
+				echo $html->link('API', 'http://api.cakephp.org/');
+				
+				echo $html->link('Wiki', 'http://wiki.cakephp.org');
 
-				echo $html->link('Wiki', 'http://wiki.cakephp.org',array('class'=>$css_class));
+				echo $html->link('CakeForge', 'http://cakeforge.org');
 
-				echo $html->link('CakeForge', 'http://cakeforge.org',array('class'=>$css_class));
+				echo $html->link('Trac', 'https://trac.cakephp.org');
 
-				echo $html->link('Trac', 'https://trac.cakephp.org',array('class'=>$css_class));
-
-				$css_class = ($title_for_layout == 'Pastes') ? 'active' : '';
-				echo $html->link('CakeBin', 'http://cakephp.org/pastes/',array('class'=>$css_class));
 			?>
-		</class>
+		</div>
 	</div>
 	<div id="pageNav">
 		<?php
 			$css_class = ($title_for_layout == 'Home') ? 'active' : '';
 			echo $html->link('Home', 'http://cakephp.org/',array('class'=>$css_class));
 			echo '&nbsp;';
-			$css_class = ($title_for_layout == 'Documentation') ? 'active' : '';
-			echo $html->link('Documentation', 'http://cakephp.org/pages/documentation',array('class'=>$css_class));
+			$css_class = ($title_for_layout == 'Blogs') ? 'active' : '';
+			echo $html->link('Blog', 'http://cakephp.org/blogs',array('class'=>$css_class));
 			echo '&nbsp;';
 			$css_class = ($title_for_layout == 'Downloads') ? 'active' : '';
 			echo $html->link('Downloads', 'http://cakephp.org/downloads/',array('class'=>$css_class));
 			echo '&nbsp;';
 			$css_class = ($title_for_layout == 'Support') ? 'active' : '';
 			echo $html->link('Support', 'http://cakephp.org/pages/support/',array('class'=>$css_class));
-	
+			echo '&nbsp;';
+			$css_class = ($title_for_layout == 'Pastes') ? 'active' : '';
+			echo $html->link('CakeBin', 'http://cakephp.org/pastes/',array('class'=>$css_class));
 		?>
 	</div>
 	<div id="content">
@@ -54,7 +53,7 @@
   	<div id="pb-cake">
 	  	&copy; 2005 CakePHP ::
 	  	<a href="https://trac.cakephp.org/wiki/Authors">CakePHP Developers and Authors</a>
-	  	<p>CakePHP version 0.10.0.1076_dev</p>
+	  	<p>CakePHP version 0.10.0.1211_alpha</p>
   		<a href="http://www.cakephp.org/" target="_new" class="simple">
 			<?php echo $html->image('cake.power.png', array('alt'=>"CakePHP : Rapid Development Framework", 'border'=>"0"))?>
 		</a>

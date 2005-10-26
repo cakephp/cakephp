@@ -83,17 +83,18 @@ class Component extends Object
         {
             if(in_array($component, array_keys($loaded)) !== true)
             {
-                $componentFn = COMPONENTS.Inflector::underscore($component).'.php';
-                if(file_exists(COMPONENTS.Inflector::underscore($component).'.php'))
+                $componentFn = Inflector::underscore($component).'.php';
+                
+                if(file_exists(COMPONENTS.$componentFn))
                 {
-                    $componentFn = COMPONENTS.Inflector::underscore($component).'.php';
+                    $componentFn = COMPONENTS.$componentFn;
                 }
-                else if(file_exists(LIBS.'controller'.DS.'components'.DS.Inflector::underscore($component).'.php'))
+                else if(file_exists(LIBS.'controller'.DS.'components'.DS.$componentFn))
                 {
-                    $componentFn = LIBS.'controller'.DS.'components'.DS.Inflector::underscore($component).'.php';
+                    $componentFn = LIBS.'controller'.DS.'components'.DS.$componentFn;
                 }
                 
-                $componentCn = ucfirst($component).'Component';
+                $componentCn = $component.'Component';
                 
                 if (is_file($componentFn))
                 {

@@ -94,7 +94,7 @@ class Controller extends Object
      * @var mixed A single name as a string or a list of names as an array.
      * @access protected
      */
-    var $helpers = array('html');
+    var $helpers = array('Html');
 
     /**
      * Enter description here...
@@ -731,7 +731,7 @@ class Controller extends Object
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
 
-                         $otherModel = $registry->getObject($fieldNames[$tabl['name']]['model']);
+                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['model']));
 
                          if( is_object($otherModel) )
                          {

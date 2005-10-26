@@ -43,11 +43,14 @@ li {
   color: #71300F;
   background-color: #DBA941;
   font-family: Verdana;
+  display: block;
   padding: 1em;
 }
 .tip {
   color: #71300F;
+  font-size: 14px;
   background-color: #DBA941;
+  display: block;
   padding: 1em;
 }
 

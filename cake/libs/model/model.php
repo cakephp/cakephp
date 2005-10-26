@@ -226,7 +226,7 @@ class Model extends Object
             $this->setTablePrefix();
         }
         
-        $this->tablePrefix? $this->useTable($this->tablePrefix.$tableName): $this->useTable ($tableName);
+        $this->tablePrefix? $this->setTable($this->tablePrefix.$tableName): $this->setTable($tableName);
         
         parent::__construct();
         $this->createLinks();
@@ -551,7 +551,7 @@ class Model extends Object
  *
  * @param string $tableName Name of the custom table
  */
-    function useTable ($tableName) 
+    function setTable($tableName) 
     {
         if (!in_array(strtolower($tableName), $this->db->tables())) 
         {
@@ -666,28 +666,26 @@ class Model extends Object
  */
     function field ($name, $conditions=null, $order=null) 
     {
+        if (isset($this->data[$this->name][$name]))
+        {
+            return $this->data[$this->name][$name];
+        }
+        
         if ($conditions) 
         {
             $conditions = $this->parseConditions($conditions);
-            $data = $this->find($conditions, $name, $order);
-            return $data[$name];
         }
-        elseif (isset($this->data[$name]))
+        
+        if ($data = $this->find($conditions, $name, $order)) 
         {
-            return $this->data[$name];
+            return isset($data[$this->name][$name])? $data[$this->name][$name]: false;
         }
         else 
         {
-            if ($this->id && $data = $this->read($name)) 
-            {
-                return isset($data[$name])? $data[$name]: false;
-            }
-            else 
-            {
-                return false;
-            }
+            return false;
         }
     }
+    
 
 /**
  * Saves a single field to the database.

@@ -65,7 +65,7 @@ define('TAG_FIELDSET', '<fieldset><legend>%s</legend>%s</label>');
 class FormHelper extends Helper
 {
 
-	var $helpers = array('html');
+	var $helpers = array('Html');
 	/**
 	 * Constructor which takes an instance of the HtmlHelper class.
 	 *
@@ -85,8 +85,8 @@ class FormHelper extends Helper
 	function isFieldError($field )
 	{
 		$error = 1;
-		$this->html->setFormTag( $field );
-		if( $error == $this->html->tagIsInvalid( $this->html->model, $this->html->field) )
+		$this->Html->setFormTag( $field );
+		if( $error == $this->Html->tagIsInvalid( $this->Html->model, $this->Html->field) )
 		{
 			return true;
 		} else {
@@ -143,7 +143,7 @@ class FormHelper extends Helper
 	 */
 	function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
-		$str = $this->html->inputTag( $tagName, $size, $htmlOptions );
+		$str = $this->Html->inputTag( $tagName, $size, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -180,7 +180,7 @@ class FormHelper extends Helper
 	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null )
 	{
 	   $htmlOptions['class'] = "inputCheckbox";
-		$str = $this->html->checkbox( $tagName, null, $htmlOptions );
+		$str = $this->Html->checkbox( $tagName, null, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -215,7 +215,7 @@ class FormHelper extends Helper
 	 */	
 	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
-		$str = $this->html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE' );
+		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE' );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -251,7 +251,7 @@ class FormHelper extends Helper
 	 */		
 	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
-		$str = $this->html->dateTimeOptionTag( $tagName, 'MDY' , '12' );
+		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , '12' );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -288,7 +288,7 @@ class FormHelper extends Helper
 	 */
 	function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null )
 	{
-		$str = $this->html->areaTag( $tagName, $cols, $rows, $htmlOptions );
+		$str = $this->Html->areaTag( $tagName, $cols, $rows, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -325,7 +325,7 @@ class FormHelper extends Helper
 	 */
 	function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null)
 	{
-		$str = $this->html->selectTag( $tagName, $options, $selected, $selectAttr, $optionAttr );
+		$str = $this->Html->selectTag( $tagName, $options, $selected, $selectAttr, $optionAttr );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -356,7 +356,7 @@ class FormHelper extends Helper
 	 */
 	function generateSubmitDiv($displayText, $htmlOptions = null)
 	{
-		return $this->divTag( 'submit', $this->html->submitTag( $displayText, $htmlOptions) );
+		return $this->divTag( 'submit', $this->Html->submitTag( $displayText, $htmlOptions) );
 
 	}
 
@@ -446,7 +446,7 @@ class FormHelper extends Helper
       				$strFormFields = $strFormFields.$strFieldSet;
    				break;
    				case "hidden";
-   				  $strFormFields = $strFormFields . $this->html->hiddenTag( $field['tagName']);
+   				  $strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
    				  break;
    			   case "date":
    			     $strFormFields = $strFormFields.$this->generateDate( $field['tagName'], $field['prompt'] );

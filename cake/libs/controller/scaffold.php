@@ -288,9 +288,9 @@ class Scaffold extends Object {
  */
     function _scaffoldView ($params)
     {
-        if(!in_array('form', $this->controllerClass->helpers))
+        if(!in_array('Form', $this->controllerClass->helpers))
         {
-            $this->controllerClass->helpers[] = 'form';
+            $this->controllerClass->helpers[] = 'Form';
         }
         
         $isDataBaseSet = DboFactory::getInstance($this->controllerClass->useDbConfig);

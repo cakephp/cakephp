@@ -91,7 +91,7 @@ class View extends Object
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-   var $helpers = array('html');
+   var $helpers = array('Html');
 
 /**
  * Path to View.
@@ -525,12 +525,15 @@ class View extends Object
          
          foreach(array_keys($loadedHelpers) as $helper)
          {
-           ${$helper} =& $loadedHelpers[$helper];
-           if(isset(${$helper}->helpers) && is_array(${$helper}->helpers))
+          $replace = strtolower(substr($helper, 0, 1));
+          $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
+          
+           ${$camelBackedHelper} =& $loadedHelpers[$helper];
+           if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
            {
-             foreach(${$helper}->helpers as $subHelper)
+             foreach(${$camelBackedHelper}->helpers as $subHelper)
              {
-               ${$helper}->{$subHelper} =& $loadedHelpers[$subHelper];
+               ${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
              }
            }
          }
@@ -572,41 +575,44 @@ class View extends Object
      {
         if(in_array($helper, array_keys($loaded)) !== true)
         {
-            $helperFn = HELPERS.Inflector::underscore($helper).'.php';
-            if(file_exists(HELPERS.Inflector::underscore($helper).'.php'))
+            $helperFn = Inflector::underscore($helper).'.php';
+            
+            if(file_exists(HELPERS.$helperFn))
             {
-                 $helperFn = HELPERS.Inflector::underscore($helper).'.php';
+                 $helperFn = HELPERS.$helperFn;
             }
-            else if(file_exists(LIBS.'view'.DS.'helpers'.DS.Inflector::underscore($helper).'.php'))
+            else if(file_exists(LIBS.'view'.DS.'helpers'.DS.$helperFn))
             {
-                $helperFn = LIBS.'view'.DS.'helpers'.DS.Inflector::underscore($helper).'.php';
+                $helperFn = LIBS.'view'.DS.'helpers'.DS.$helperFn;
             }
           
-          $helperCn = ucfirst($helper).'Helper';
-          
+          $helperCn = $helper.'Helper';
+          $replace = strtolower(substr($helper, 0, 1));
+          $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
+
           if (is_file($helperFn))
           {
              require_once $helperFn;
              if(class_exists($helperCn)===true)
              {
-                ${$helper}                       =& new $helperCn;
-                ${$helper}->base                 = $this->base;
-                ${$helper}->webroot              = $this->webroot;
-                ${$helper}->here                 = $this->here;
-                ${$helper}->params               = $this->params;
-                ${$helper}->action               = $this->action;
-                ${$helper}->data                 = $this->data;
+                ${$camelBackedHelper}                       =& new $helperCn;
+                ${$camelBackedHelper}->base                 = $this->base;
+                ${$camelBackedHelper}->webroot              = $this->webroot;
+                ${$camelBackedHelper}->here                 = $this->here;
+                ${$camelBackedHelper}->params               = $this->params;
+                ${$camelBackedHelper}->action               = $this->action;
+                ${$camelBackedHelper}->data                 = $this->data;
                 
                 if(!empty($this->validationErrors))
                 {
-                  ${$helper}->validationErrors = $this->validationErrors;
+                  ${$camelBackedHelper}->validationErrors = $this->validationErrors;
                 }
-                $loaded[$helper] =& ${$helper};
+                $loaded[$helper] =& ${$camelBackedHelper};
 
                 // Find and load helper dependencies
-                if (isset(${$helper}->helpers) && is_array(${$helper}->helpers))
+                if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
                 {
-                  $loaded =& $this->_loadHelpers($loaded, ${$helper}->helpers);
+                  $loaded =& $this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
                 }
              }
              else

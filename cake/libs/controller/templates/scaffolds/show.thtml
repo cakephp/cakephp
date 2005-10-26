@@ -34,7 +34,7 @@
    $modelName = Inflector::singularize($this->name);
    $modelKey = Inflector::underscore($modelName);
    $registry =& ClassRegistry::getInstance();
-   $objModel = $registry->getObject($modelName);
+   $objModel = $registry->getObject($modelKey);
 
 ?>
 <h1>Show <?php echo Inflector::humanize($modelName)?></h1>
@@ -45,7 +45,8 @@
           echo "<dt>".$value['prompt']."</dt>";
           if(isset($value['foreignKey']))
           {
-              $otherModelObject = $registry->getObject($objModel->tableToModel[$value['table']]);
+              
+              $otherModelObject = $registry->getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
               $displayField = $otherModelObject->getDisplayField();
               $displayText = $data[$objModel->tableToModel[$value['table']]][$displayField];
               

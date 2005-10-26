@@ -20,8 +20,20 @@ h1 em {
 	font-weight: normal;
 	font-variant: normal;	
 }
+h2 a {
+	color: #fff;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;	
+}
+h2 a:hover {
+	color: #DBA941;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;	
+}
 
-h2
+h2.cake
 {
 	margin-top: 20px;
 	margin-bottom: 6px;
@@ -80,7 +92,7 @@ p
 	height: 114px;
 	background: #fff url("../img/cake.bg.header.gif") repeat-x;
 	border-bottom: 1px solid #D2D7D8;
-	margin-bottom: 30px;
+	margin-bottom: 16px;
 	text-align: right;
 }
 #header img
@@ -89,24 +101,24 @@ p
 	vertical-align: middle;
 	border: 0;
 }
-.headerNav
+#headerNav
 {
-	float: right;
-	margin-top: 3px;
-	padding-right: 30px;
-	font-size: 13px;
+	float: left;
+	margin-top: 56px;
+	margin-left: 20px;
+	font-size: 15px;
 	font-weight: bold;
 	color: #71300F;
 }
 
-.headerNav a {
+#headerNav a {
 	padding: 4px 10px;
 }
-.headerNav a:hover {
+#headerNav a:hover {
 	padding: 4px 10px;
-	background-color: #fff;	
+	background-color: #D2D7D8;	
 }
-.headerNav .active {
+#headerNav .active {
 	padding: 4px 10px;
 	background-color: #fff;
 }
@@ -151,6 +163,7 @@ p
 	border-left: 1px solid #D2D7D8;
 	border-right: 1px solid #D2D7D8;
 	border-bottom: 1px solid #D2D7D8;
+	text-align: left;
 }
 a
 {

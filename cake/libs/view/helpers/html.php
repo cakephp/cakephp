@@ -47,7 +47,13 @@ class HtmlHelper extends Helper
 	/**#@+
 	* @access public
 	*/
-
+    /**
+     * Included helpers.
+     *
+     * @var array
+     */
+    var $helpers = array('Ajax');
+    
 	/**
      * Base URL
      *
