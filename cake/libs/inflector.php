@@ -63,11 +63,11 @@ class Inflector extends Object
    function pluralize ($word) 
    {
       $plural_rules = array(
+        '/(s)tatus$/' => '\1\2tatuses',
       	'/^(ox)$/'              => '\1\2en',	    # ox
       	'/([m|l])ouse$/'          => '\1ice',	    # mouse, louse
       	'/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
         '/(x|ch|ss|sh)$/'         =>  '\1es',       # search, switch, fix, box, process, address
-        //'/([^aeiouy]|qu)ies$/'    =>  '\1y',
         '/([^aeiouy]|qu)y$/'      =>  '\1ies',      # query, ability, agency
         '/(hive)$/'               =>  '\1s',        # archive, hive
         '/(?:([^f])fe|([lr])f)$/' =>  '\1\2ves',    # half, safe, wife
@@ -105,6 +105,7 @@ class Inflector extends Object
    function singularize ($word)
    {
       $singular_rules = array(
+        '/(s)tatuses$/'           => '\1\2tatus',
         '/(matr)ices$/'         =>'\1ix',
       	'/(vert|ind)ices$/'     => '\1ex',
       	'/^(ox)en/'             => '\1',
@@ -128,7 +129,6 @@ class Inflector extends Object
         '/([ti])a$/'            => '\1um',
         '/(p)eople$/'           => '\1\2erson',
         '/(m)en$/'              => '\1an',
-        '/(s)tatuses$/'           => '\1\2tatus',
         '/(c)hildren$/'         => '\1\2hild',
         '/(n)ews$/'             => '\1\2ews',
         '/s$/'                  => ''

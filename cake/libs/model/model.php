@@ -68,7 +68,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $useTable = false;
+   var $useTable = null;
 
 /**
  * Enter description here...
@@ -218,7 +218,8 @@ class Model extends Object
         {
             $this->id = $id;
         }
-        
+        if($this->useTable !== false)
+        {
         $tableName = $table? $table: ($this->useTable? $this->useTable: Inflector::tableize($this->name));
         
         if (in_array('settableprefix', get_class_methods($this->name)))
@@ -230,6 +231,11 @@ class Model extends Object
         
         parent::__construct();
         $this->createLinks();
+        }
+        else
+        {
+            parent::__construct();
+        }
     }
 
 /**

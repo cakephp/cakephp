@@ -40,7 +40,7 @@ define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(__FILE__).DS);
 
 require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
-require_once ROOT.APP_DIR.DS.'config'.DS.'paths.php';
+require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
 require_once CAKE.'basics.php';
 
 

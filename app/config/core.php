@@ -53,8 +53,35 @@
  *
  * In production, the "flash messages" redirect after a time interval. 
  * With the other debug levels you get to click the "flash message" to continue.
+ *
  */
 define('DEBUG', 1);
+/**
+ * Set the name of session cookie
+ *
+ */
+define('CAKE_SESSION_COOKIE', 'CAKEPHP');
+
+/**
+ * Set level of Cake security.
+ *
+ */
+define('CAKE_SECURITY', 'high');
+
+/**
+ * CakePHP includes 3 types of session saves
+ * database or file. Set this to your preffered method.
+ * If you want to use your own save handeler place it in
+ * app/config/name.php DO NOT USE file or database as the name.
+ * and use just the name portion below.
+ *
+ * Setting this to cake will save files to /cakedistro/tmp directory
+ * Setting it to php will use the php default save path
+ * Setting it to database will use the database
+ * 
+ *
+ */
+define('CAKE_SESSION_SAVE', 'php');
 
 /**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)
