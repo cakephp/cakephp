@@ -367,7 +367,7 @@ class Controller extends Object
             {
                 if(!empty($this->{$model}->validationErrors))
                 {
-                    $view->validationErrors[$this->modelKey] =& $this->{$model}->validationErrors;
+                    $view->validationErrors[$model] =& $this->{$model}->validationErrors;
                 }
             }
         }
