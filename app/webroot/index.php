@@ -128,13 +128,6 @@ uses('folder');
 require_once CAKE.'dispatcher.php';
 require_once LIBS.'model'.DS.'dbo'.DS.'dbo_factory.php';
 
-if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
-{
-  // Starts the session unless AUTO_SESSION is explicitly set to false in config/core
-  //session_start();
-  $session =& CakeSession::getInstance();
-}
-
 config('database');
 
 if (class_exists('DATABASE_CONFIG'))

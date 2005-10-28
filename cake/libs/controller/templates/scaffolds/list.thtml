@@ -93,7 +93,7 @@
     
 </table>
 <ul class="actions">
-    <li><?php echo $html->linkTo('New '.$humanSingularName, '/'.$this->viewPath.'/new'); ?></li>
+    <li><?php echo $html->linkTo('New '.$humanSingularName, '/'.$this->viewPath.'/add'); ?></li>
 </ul>
 
 

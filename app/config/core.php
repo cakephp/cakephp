@@ -84,6 +84,15 @@ define('CAKE_SECURITY', 'high');
 define('CAKE_SESSION_SAVE', 'php');
 
 /**
+ * Uncomment the define below to use cake built in admin routes.
+ * You can set this value to anything you want.
+ * All methods related to the admin route should be prefixed with the
+ * name you set CAKE_ADMIN to.
+ * For example: admin_index, admin_edit
+ */
+//define('CAKE_ADMIN', 'admin');
+
+/**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)
  * This requires a /var/cache directory to be writable by the web server (caching).
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().

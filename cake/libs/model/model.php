@@ -1280,7 +1280,25 @@ class Model extends Object
  */
    function findBySql ($sql) 
    {
-      return $this->db->all($sql);
+       $data = $this->db->all($sql);
+       foreach ($data as $key => $value)
+       {
+           foreach ($this->tableToModel as $key1 => $value1)
+           {
+               if (isset($data[$key][Inflector::singularize($key1)]))
+               {
+                   $newData[$key][$value1] = $data[$key][Inflector::singularize($key1)];
+               }
+           }
+       }
+       if (!empty($newData))
+       {
+           return $newData;
+       }
+       else
+       {
+           return $data;
+       }
    }
 
 /**

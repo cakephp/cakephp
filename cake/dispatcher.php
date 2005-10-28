@@ -53,6 +53,12 @@ class Dispatcher extends Object
  * @var string
  */
    var $base = false;
+   
+/**
+ * Base URL
+ * @var string
+ */
+   var $admin = false;
 
 /**
  * Constructor.
@@ -74,12 +80,30 @@ class Dispatcher extends Object
  */
    function dispatch($url, $additionalParams=array())
    {
-      $this->base = $this->baseUrl();
       $params = array_merge($this->parseParams($url), $additionalParams);
       $missingController = false;
       $missingAction     = false;
       $missingView       = false;
       $privateAction     = false;
+      
+      if(defined('CAKE_ADMIN'))
+      {
+          if(isset($params[CAKE_ADMIN]))
+          {
+              $this->admin = '/'.CAKE_ADMIN ;
+              $url = preg_replace('/'.CAKE_ADMIN.'\//', '', $url);
+              if (empty($params['action']))
+              {
+                  $params['action'] = CAKE_ADMIN.'_'.'index';
+              }
+              else
+              {
+                  $params['action'] = CAKE_ADMIN.'_'.$params['action'];
+              }
+          }
+      }
+      
+      $this->base = $this->baseUrl();
       
       if(!in_array('render', array_keys($params)))
       {
@@ -111,6 +135,7 @@ class Dispatcher extends Object
 
       if ($missingController)
       {
+         require_once(CAKE.'app_controller.php');
          $controller       =& new AppController();
          $params['action'] = 'missingController';
          $params['controller'] = Inflector::camelize($params['controller']."Controller");
@@ -170,7 +195,11 @@ class Dispatcher extends Object
           $controller->privateAction = $params['action'];
           $params['action'] = 'privateAction';
       }
-      
+      if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
+      {
+          session_write_close();
+          $session =& CakeSession::getInstance();
+      }
       return $this->_invoke($controller, $params );
    }
    
@@ -256,11 +285,11 @@ class Dispatcher extends Object
     function baseUrl()
     {
        $htaccess = null;
-       $base = null;
+       $base = $this->admin;
        $this->webroot = '';
        if (defined('BASE_URL'))
        {
-           $base = BASE_URL;
+           $base = BASE_URL.$this->admin;
        }
        
        $docRoot = $_SERVER['DOCUMENT_ROOT'];

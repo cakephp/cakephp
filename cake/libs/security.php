@@ -54,20 +54,20 @@ class Security extends Object
     
     function inactiveMins()
     {
-        //$security = Security::getInstance();
-       switch (CAKE_SECURITY)
-       {
-           case 'high':
-                return;
-           break;
-           case 'medium':
-                return;
-           break;
-           case 'low':
-           default :
-                return;
-           break;
-       }
+        $security =& Security::getInstance();
+        switch (CAKE_SECURITY)
+        {
+            case 'high':
+            return 0;
+            break;
+            case 'medium':
+            return ;
+            break;
+            case 'low':
+            default :
+            return;
+            break;
+        }
     }
 } 
     

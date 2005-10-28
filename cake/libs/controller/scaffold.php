@@ -297,9 +297,14 @@ class Scaffold extends Object {
         if(!empty($isDataBaseSet))
         {
             $this->controllerClass->constructClasses();
+            if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
+            {
+                session_write_close();
+                $session =& CakeSession::getInstance();
+            }
             
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
-               $params['action'] === 'show'   || $params['action'] === 'new' || 
+               $params['action'] === 'show'   || $params['action'] === 'add' || 
                $params['action'] === 'create' || $params['action'] === 'edit' ||  
                $params['action'] === 'update' || $params['action'] === 'destroy')
             {
@@ -317,7 +322,7 @@ class Scaffold extends Object {
                         $this->_scaffoldList($params);
                     break;
        					
-                    case 'new':
+                    case 'add':
                         $this->_scaffoldNew($params);
                     break;
                    

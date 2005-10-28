@@ -54,6 +54,8 @@ class Session extends Object
 /**
  * Enter description here...
  *
+ * Use like this. $this->session->write('Controller.sessKey', 'session value');
+ *
  * @param unknown_type $name
  * @param unknown_type $value
  * @return unknown
@@ -66,6 +68,8 @@ class Session extends Object
 /**
  * Enter description here...
  *
+ * Use like this. $this->session->read('Controller.sessKey');
+ *
  * @param unknown_type $name
  * @return unknown
  */
@@ -77,6 +81,8 @@ class Session extends Object
 /**
  * Enter description here...
  *
+ * Use like this. $this->session->del('Controller.sessKey');
+ *
  * @param unknown_type $name
  * @return unknown
  */
@@ -87,6 +93,8 @@ class Session extends Object
     
 /**
  * Enter description here...
+ *
+ * Use like this. $this->session->check('Controller.sessKey');
  *
  * @param unknown_type $name
  * @return unknown
@@ -112,9 +120,9 @@ class Session extends Object
  * @param unknown_type $name
  * @return unknown
  */
-    function valid($name)
+    function valid()
     {
-        return CakeSession::isValid($name);
+        return CakeSession::isValid();
     }
     
 }

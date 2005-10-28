@@ -130,25 +130,31 @@ class Router extends Object {
          '/:controller/:action/* (default)',
          '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/(.*))?)?))[\\/]*$/',
          array('controller', 'action'),
-         array()
-      );
+         array());
+         
+      if(defined('CAKE_ADMIN'))
+      {
+          $admin = CAKE_ADMIN;
+          if(!empty($admin))
+          {
+              $this->routes[] = array
+              (
+              '/:'.$admin.'/:controller/:action/* (default)',
+              '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\/(.*))?)?)?))[\/]*$/',
+              array($admin, 'controller', 'action'),
+              array());
+              
+          }
+      }
       
-      $admin_route = array
-      (
-         '/:controller/:admin/:action/* (default)',
-         '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/(admin)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\/(.*))?)?)?))[\/]*$/',
-         array('controller', 'admin', 'action'),
-         array()
-      );
-
       $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
       $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));
-      $this->routes[] = $admin_route;
       $this->routes[] = $default_route;
       
       foreach ($this->routes as $route) 
       {
          list($route, $regexp, $names, $defaults) = $route;
+
 
          if (preg_match($regexp, $url, $r)) 
          {

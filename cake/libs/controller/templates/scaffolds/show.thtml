@@ -81,7 +81,7 @@
    echo "<li>".$html->linkTo('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
    echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/destroy/'.$data[$objModel->tableToModel[$objModel->table]]['id'])."</li>";
    echo "<li>".$html->linkTo('List  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/list')."</li>";
-   echo "<li>".$html->linkTo('New  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/new')."</li>";
+   echo "<li>".$html->linkTo('New  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/add')."</li>";
    foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
@@ -181,7 +181,7 @@
 <?php
    //  add a link to create a new relation.
 
-   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/new/")."</li>";
+   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/add/")."</li>";
  //  echo "<li>".$html->linkTo( "View ".Inflector::humanize($table), "/".Inflector::underscore($table)."/list/".$modelName."/".$data[$modelName]['id'])."</li>";
 ?>
 </ul></div>
