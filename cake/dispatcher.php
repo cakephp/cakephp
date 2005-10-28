@@ -138,7 +138,14 @@ class Dispatcher extends Object
          require_once(CAKE.'app_controller.php');
          $controller       =& new AppController();
          $params['action'] = 'missingController';
-         $params['controller'] = Inflector::camelize($params['controller']."Controller");
+         if (empty($params['controller']))
+         {
+             $params['controller'] = "Controller";
+         }
+         else
+         {
+             $params['controller'] = Inflector::camelize($params['controller']."Controller");
+         }
          $controller->missingController = $params['controller'];
          $controller->webroot     = $this->webroot;
          return $this->_invoke($controller, $params );
