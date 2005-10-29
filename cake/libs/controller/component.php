@@ -66,8 +66,22 @@ class Component extends Object
     function Component(&$controller)
     {
         $this->controller =& $controller;
-        $loaded = array();
-        return $this->_loadComponents($loaded,$this->controller->components);
+        if ($this->controller->components !== false)
+        {
+            $loaded =  array();
+            $loaded = $this->_loadComponents($loaded,$this->controller->components);
+            foreach(array_keys($loaded) as $component)
+            {
+                $tempComponent =& $loaded[$component];
+                if(isset($tempComponent->components) && is_array($tempComponent->components))
+                {
+                    foreach($tempComponent->components as $subComponent)
+                    {
+                        $this->controller->{$component}->{$subComponent} =& $loaded[$subComponent];
+                    }
+                }
+            }
+        }
     }
 
 /**
@@ -111,7 +125,7 @@ class Component extends Object
                     }
                     else
                     {
-                        $error =& new AppController();
+                        $error =& new Controller();
                         $error->autoLayout = true;
                         $error->base = $this->controller->base;
                         call_user_func_array(array(&$error, 'missingComponentClass'), $component);
@@ -120,7 +134,7 @@ class Component extends Object
                 }
                 else
                 {
-                    $error =& new AppController();
+                    $error =& new Controller();
                     $error->autoLayout = true;
                     $error->base = $this->controller->base;
                     call_user_func_array(array(&$error, 'missingComponentFile'), Inflector::underscore($component));
