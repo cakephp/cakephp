@@ -39,7 +39,7 @@
  * @since      CakePHP v 0.10.0.1232
  *
  */
-class Session extends Object 
+class SessionComponent extends Object 
 {  
    
 /**
@@ -54,7 +54,7 @@ class Session extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->session->write('Controller.sessKey', 'session value');
+ * Use like this. $this->Session->write('Controller.sessKey', 'session value');
  *
  * @param unknown_type $name
  * @param unknown_type $value
@@ -68,7 +68,7 @@ class Session extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->session->read('Controller.sessKey');
+ * Use like this. $this->Session->read('Controller.sessKey');
  *
  * @param unknown_type $name
  * @return unknown
@@ -81,7 +81,7 @@ class Session extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->session->del('Controller.sessKey');
+ * Use like this. $this->Session->del('Controller.sessKey');
  *
  * @param unknown_type $name
  * @return unknown
@@ -94,7 +94,7 @@ class Session extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->session->check('Controller.sessKey');
+ * Use like this. $this->Session->check('Controller.sessKey');
  *
  * @param unknown_type $name
  * @return unknown
@@ -107,6 +107,8 @@ class Session extends Object
 /**
  * Enter description here...
  *
+ * Use like this. $this->Session->error();
+ *
  * @return unknown
  */
     function error()
@@ -116,6 +118,8 @@ class Session extends Object
     
 /**
  * Enter description here...
+ *
+ * Use like this. $this->Session->valid();
  *
  * @param unknown_type $name
  * @return unknown

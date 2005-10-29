@@ -1111,28 +1111,7 @@ class Model extends Object
                 $data = $newValue;
             }
         }
-        
-
-        foreach ($data as $key => $value)
-        {
-            foreach ($this->tableToModel as $key1 => $value1)
-            {
-                if (isset($data[$key][Inflector::singularize($key1)]))
-                {
-                    $newData[$key][$value1] = $data[$key][Inflector::singularize($key1)];
-                }
-            }
-        }
-        
-        if (!empty($newData))
-        {
-            $merged = array_merge_recursive($data,$newData);
-            return $newData;
-        }
-        else
-        {
-            return $data;
-        }
+         return $data;
     }
    
 /**

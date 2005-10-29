@@ -156,13 +156,14 @@ class CakeSession extends Object
  */
     function getError($errorNumber)
     {
-	    if(!is_array($this->error) || !array_key_exists($errorNumber, $this->error))
+        $cakeSession =& CakeSession::getInstance();
+	    if(!is_array($cakeSession->error) || !array_key_exists($errorNumber, $cakeSession->error))
 	    {
 	        return false;
 	    }
 	    else
 	    {
-		return $this->error[$errorNumber];
+		return $cakeSession->error[$errorNumber];
 	    }
 	}
 	
@@ -173,9 +174,10 @@ class CakeSession extends Object
  */
 	function getLastError()
 	{
-	    if($this->lastError)
+        $cakeSession =& CakeSession::getInstance();
+	    if($cakeSession->lastError)
 	    {
-	        return $this->getError($this->lastError);
+	        return $cakeSession->getError($cakeSession->lastError);
 	    }
 	    else
 	    {
@@ -190,7 +192,8 @@ class CakeSession extends Object
  */
     function isValid()
     {
-        return $this->valid;
+        $cakeSession =& CakeSession::getInstance();
+        return $cakeSession->valid;
     }
     
 /**
@@ -207,7 +210,7 @@ class CakeSession extends Object
             $result = eval("return ".$cakeSession->_sessionVarNames($name).";");
             return $result;
         }
-        $this->_setError(2, "$name doesn't exist");
+        $cakeSession->_setError(2, "$name doesn't exist");
         return false;
     }
     
@@ -474,6 +477,7 @@ class CakeSession extends Object
  */
     function _sessionVarNames($name)
     {
+        $cakeSession =& CakeSession::getInstance();
         if(is_string($name))
         {
             if(strpos($name, "."))
@@ -492,6 +496,7 @@ class CakeSession extends Object
             }
             return $expression;
         }
+        $cakeSession->setError(3, "$name is not a string");
         return false;
     }
     
@@ -504,13 +509,14 @@ class CakeSession extends Object
  */
     function _setError($errorNumber, $errorMessage)
     {
-        if($this->error === false)
+        $cakeSession =& CakeSession::getInstance();
+        if($cakeSession->error === false)
         {
-            $this->error = array();
+            $cakeSession->error = array();
         }
         
-        $this->error[$errorNumber] = $errorMessage;
-        $this->lastError = $errorNumber;
+        $cakeSession->error[$errorNumber] = $errorMessage;
+        $cakeSession->lastError = $errorNumber;
     }
     
 /**
