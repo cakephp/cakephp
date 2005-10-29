@@ -50,6 +50,7 @@
  * - 0: production
  * - 1: development
  * - 2: full debug with sql
+ * - 3: full debug with sql and dump of the current object
  *
  * In production, the "flash messages" redirect after a time interval. 
  * With the other debug levels you get to click the "flash message" to continue.

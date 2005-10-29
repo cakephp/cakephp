@@ -592,6 +592,7 @@ class Controller extends Object
 	    {
 	        foreach ($tables as $tabl)
 	        {
+	            $alias = null;
 	            //  set up the prompt
 	            if( $objRegistryModel->isForeignKey($tabl['name']) )
 	            {
@@ -599,10 +600,16 @@ class Controller extends Object
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
 	                //  this is a foreign key, also set up the other controller
 	                $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
-	                $fieldNames[ $tabl['name'] ]['model'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+	                if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
+	                {
+	                    $alias = 'Child_';
+	                }
+	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
+	                $fieldNames[ $tabl['name'] ]['model'] = $alias.$this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+	                $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
 	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
 	                $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
-	         }
+	            }
 	         else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
 	         {
 	             $fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($tabl['name']);
@@ -658,6 +665,7 @@ class Controller extends Object
                  }
                  break;
                  case "varchar":
+                 case "char":
                  {
                      if( isset( $fieldNames[ $tabl['name']]['foreignKey'] ) )
                      {
@@ -667,8 +675,7 @@ class Controller extends Object
 
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['model']));
-
+                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
                          
                          if( is_object($otherModel) )
                          {
@@ -679,7 +686,7 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
@@ -730,9 +737,8 @@ class Controller extends Object
 
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
-
-                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['model']));
-
+                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+                         
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -742,7 +748,7 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         if( $key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }

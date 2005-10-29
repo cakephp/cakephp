@@ -64,7 +64,7 @@
                      {
                         
                         //  this is a foreign key, figure out what the display field should be for this model.
-                       $otherModelKey = Inflector::underscore($value['model']);
+                       $otherModelKey = Inflector::underscore($value['modelKey']);
                        $otherControllerName = $value['controller']; 
                        $registry = ClassRegistry::getInstance();
                        $otherModelObject = $registry->getObject( $otherModelKey );

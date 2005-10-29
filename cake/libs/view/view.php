@@ -617,7 +617,7 @@ class View extends Object
              }
              else
              {
-                 $error =& new AppController();
+                 $error =& new Controller();
                  $error->autoLayout = true;
                  $error->base = $this->base;
                  call_user_func_array(array(&$error, 'missingHelperClass'), $helper);
@@ -626,7 +626,7 @@ class View extends Object
           }
           else
           {
-            $error =& new AppController();
+            $error =& new Controller();
             $error->autoLayout = true;
             $error->base = $this->base;
             call_user_func_array(array(&$error, 'missingHelperFile'), Inflector::underscore($helper));

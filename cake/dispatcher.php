@@ -135,8 +135,7 @@ class Dispatcher extends Object
 
       if ($missingController)
       {
-         require_once(CAKE.'app_controller.php');
-         $controller       =& new AppController();
+         $controller       =& new Controller();
          $params['action'] = 'missingController';
          if (empty($params['controller']))
          {
@@ -205,7 +204,7 @@ class Dispatcher extends Object
       if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
       {
           session_write_close();
-          $session =& CakeSession::getInstance();
+          $session =& CakeSession::getInstance($this->base);
       }
       return $this->_invoke($controller, $params );
    }
@@ -364,9 +363,10 @@ class Dispatcher extends Object
 	{
         $controller =& new Controller ($this);
         $controller->base = $this->base;
-        $controller->autoLayout = false;
+        $controller->autoLayout = true;
         $controller->set(array('code'=>$code, 'name'=>$name, 'message'=>$message));
-		return $controller->render('layouts/error');
+		$controller->pageTitle = $code.' '. $name;
+        return $controller->render('errors/error404');
 	}
 
 

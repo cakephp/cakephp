@@ -95,6 +95,14 @@ class Model extends Object
    var $table = false;
 
 /**
+ * Table name for this Model.
+ *
+ * @var string
+ * @access public
+ */
+   var $tableId = null;
+   
+/**
  * Table metadata
  *
  * @var array
@@ -193,6 +201,11 @@ class Model extends Object
         if($this->name === null)
         {
             $this->name = get_class($this);
+        }
+        
+        if($this->tableId === null)
+        {
+            $this->tableId = 'id';
         }
         
         $this->currentModel = Inflector::underscore($this->name);     
@@ -655,11 +668,11 @@ class Model extends Object
         $this->validationErrors = null;
         if(is_array($this->id))
         {
-            return $this->id? $this->find("$this->table.id = '{$this->id[0]}'", $fields): false;
+            return $this->id? $this->find("$this->name.$this->tableId = '{$this->id[0]}'", $fields): false;
         }
         else
         {
-            return $this->id? $this->find("$this->table.id = '{$this->id}'", $fields): false;
+            return $this->id? $this->find("$this->name.$this->tableId = '{$this->id}'", $fields): false;
         }
     }
 
@@ -995,7 +1008,7 @@ class Model extends Object
     function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
     {
         $conditions = $this->parseConditions($conditions);
-        
+        $alias = null;
         if (is_array($fields))
         {
             $f = $fields;
@@ -1018,11 +1031,19 @@ class Model extends Object
                 list($model, $value) = $rule;
                 if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
                 {
+                    if($this->name == $this->{$model}->name)
+                    {
+                        $alias = 'Child_'.$this->{$model}->name;
+                    }
+                    else
+                    {
+                        $alias = $this->{$model}->name;
+                    }
                     $oneToOneConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $oneToOneOrder = $this->{$model}->{$this->currentModel.'_order'};
                     
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} ON 
-                                {$this->{$model}->table}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->table}.id"
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS $alias ON 
+                                $alias.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->name}.id"
                                 .($oneToOneConditions? " WHERE {$oneToOneConditions}":null)
                                 .($oneToOneOrder? " ORDER BY {$oneToOneOrder}": null);
                 }
@@ -1033,14 +1054,22 @@ class Model extends Object
         {
             foreach ($this->_belongsToOther as $rule)
             {
-                list($model, $value) = $rule;               
+                list($model, $value) = $rule;   
+                                    
                 if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
                 {
+                    if($this->name == $this->{$model}->name)
+                    {
+                        $alias = 'Child_'.$this->{$model}->name;
+                    }
+                    else
+                    {
+                        $alias = $this->{$model}->name;
+                    }
                     $belongsToOtherConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $belongsToOtherOrder = $this->{$model}->{$this->currentModel.'_order'};
                     
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} ON 
-                                {$this->table}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->{$model}->table}.id"
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS $alias ON {$this->name}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = $alias.id"
                                 .($belongsToOtherConditions? " WHERE {$belongsToOtherConditions}":null)
                                 .($belongsToOtherOrder? " ORDER BY {$belongsToOtherOrder}": null);
                 }
@@ -1058,7 +1087,7 @@ class Model extends Object
             : '';
         
         $sql = "SELECT " .join(', ', $f)
-                ." FROM {$this->table} {$joins}"
+                ." FROM {$this->table} AS {$this->name} {$joins}"
                 .($conditions? " WHERE {$conditions}":null)
                 .($order? " ORDER BY {$order}": null)
                 .$limit_str;
@@ -1083,6 +1112,7 @@ class Model extends Object
             }
         }
         
+
         foreach ($data as $key => $value)
         {
             foreach ($this->tableToModel as $key1 => $value1)
@@ -1093,8 +1123,10 @@ class Model extends Object
                 }
             }
         }
+        
         if (!empty($newData))
         {
+            $merged = array_merge_recursive($data,$newData);
             return $newData;
         }
         else
@@ -1122,7 +1154,7 @@ class Model extends Object
            {
                foreach ($value1 as $key2 => $value2)
                {
-                   if($key2 === Inflector::singularize($this->table))
+                   if($key2 === $this->name)
                    {
                        if($this->{$model}->{$this->currentModel.'_findersql'})
                        {
@@ -1133,24 +1165,24 @@ class Model extends Object
                            $oneToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                            $oneToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                            
-                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} 
+                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS {$this->{$model}->name}
                                       WHERE ({$this->{$model}->{$this->currentModel.'_foreignkey'}})  = '{$value2['id']}'"
                                       .($oneToManyConditions? " WHERE {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
                        }
                        
-                       $oneToManySelect[$this->{$model}->table] = $this->db->all($tmpSQL);
+                       $oneToManySelect[$this->{$model}->name] = $this->db->all($tmpSQL);
                        
-                       if( !empty($oneToManySelect[$this->{$model}->table]) && is_array($oneToManySelect[$this->{$model}->table]))
+                       if( !empty($oneToManySelect[$this->{$model}->name]) && is_array($oneToManySelect[$this->{$model}->name]))
                        {
-                           $newKey = Inflector::singularize($this->{$model}->table);
-                           foreach ($oneToManySelect[$this->{$model}->table] as $key => $value)
+                           $newKey = $this->{$model}->name;
+                           foreach ($oneToManySelect[$this->{$model}->name] as $key => $value)
                            {
                                $oneToManySelect1[$newKey][$key] = $value[$newKey];
                            }
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
-                           unset( $oneToManySelect[$this->{$model}->table], $oneToManySelect1);
+                           unset( $oneToManySelect[$this->{$model}->name], $oneToManySelect1);
                        }
                        if(!empty($newdata[$count]))
                        {
@@ -1506,7 +1538,7 @@ class Model extends Object
  */
 	function _throwMissingTable($tableName)
 	{
-	    $error =& new AppController();
+	    $error =& new Controller();
         $error->missingTable = $this->table;
         call_user_func_array(array(&$error, 'missingTable'), $tableName);
         exit;
@@ -1518,7 +1550,7 @@ class Model extends Object
  */
 	function _throwMissingConnection()
 	{
-	    $error =& new AppController();
+	    $error =& new Controller();
         $error->missingConnection = $this->name;
         call_user_func_array(array(&$error, 'missingConnection'), null);
         exit;

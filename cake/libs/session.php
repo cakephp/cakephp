@@ -88,7 +88,7 @@ class CakeSession extends Object
  *
  * @return unknown
  */
-    function &getInstance()
+    function &getInstance($base = null)
     {
         static $instance = array();
         
@@ -100,11 +100,14 @@ class CakeSession extends Object
             {
                 $instance[0]->host = substr($instance[0]->host,0, strpos($instance[0]->host, ':'));
             }
-            $instance[0]->path = setUri();
+            
+            $instance[0]->path = $base;
+            
             if (empty($instance[0]->path))
             {
                 $instance[0]->path = '/';
             }
+            
             $instance[0]->ip = $_SERVER['REMOTE_ADDR'];
             $instance[0]->userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : "";
             
