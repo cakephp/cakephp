@@ -48,7 +48,7 @@
   	<div id="pb-cake">
 	  	&copy; 2005 CakePHP ::
 	  	<a href="https://trac.cakephp.org/wiki/Authors">CakePHP Developers and Authors</a>
-	  	<p>CakePHP version 0.10.1.1248_alpha</p>
+	  	<p>CakePHP version 0.10.3.1289_alpha</p>
   		<a href="http://www.cakephp.org/" target="_new" class="simple">
 			<?php echo $html->image('cake.power.png', array('alt'=>"CakePHP : Rapid Development Framework", 'border'=>"0"))?>
 		</a>
