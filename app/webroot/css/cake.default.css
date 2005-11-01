@@ -194,3 +194,10 @@ a:hover
 	padding: 0;
 	border: 0;
 }
+
+div.message {
+background-color: #E3FFD1;
+border:1px solid #060;
+padding:1em;
+margin-bottom:1em;
+}

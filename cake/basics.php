@@ -43,6 +43,19 @@ define('MONTH',  30 * DAY);
 define('YEAR',  365 * DAY);
 
 /**
+ * Patch for PHP < 4.3
+ */
+    if (!function_exists("ob_get_clean"))
+    {
+        function ob_get_clean()
+        {
+            $ob_contents = ob_get_contents();
+            ob_end_clean();
+            return $ob_contents;
+        }
+    }
+
+/**
  * Loads all models.
  *
  * @uses listModules()
@@ -98,6 +111,7 @@ function loadControllers ()
   */
 function loadController ($name) 
 {
+    $name = Inflector::underscore($name);
       if(file_exists(CONTROLLERS.$name.'_controller.php'))
       {
           $controller_fn = CONTROLLERS.$name.'_controller.php';

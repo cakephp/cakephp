@@ -182,9 +182,14 @@ class Dispatcher extends Object
       $controller->autoLayout = !$params['bare'];
       $controller->autoRender = !$params['render'];
 
+      if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
+      {
+          array_push($controller->components, 'Session');
+      }
+
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
-          $scaffolding =& new Scaffold($controller, $params);
+          $scaffolding = new Scaffold($controller, $params);
           exit;
       }
 
@@ -203,8 +208,11 @@ class Dispatcher extends Object
       }
       if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
       {
-          session_write_close();
-          $session =& CakeSession::getInstance($this->base);
+          if (function_exists('session_write_close'))
+          {
+              session_write_close();
+          }
+          $session = CakeSession::getInstance($this->base);
       }
       return $this->_invoke($controller, $params );
    }

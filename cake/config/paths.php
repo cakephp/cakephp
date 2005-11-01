@@ -189,7 +189,12 @@ define ('PEAR',            VENDORS.'Pear'.DS);
 /**
  *  Full url prefix
  */
-define('FULL_BASE_URL', 'http://'.$_SERVER['HTTP_HOST']);
+$s = null;
+if ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] =='on' ))
+{ 
+    $s ='s';
+}
+define('FULL_BASE_URL', 'http'.$s.'://'.$_SERVER['HTTP_HOST']);
 
 /**
  * Web path to the public images directory.

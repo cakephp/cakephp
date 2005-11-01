@@ -11,8 +11,7 @@
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2005, CakePHP Authors/Developers
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
  *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
  *
  *  Licensed under The MIT License
@@ -210,11 +209,24 @@ class Scaffold extends Object {
         
         if ($this->controllerClass->{$this->modelKey}->save($this->controllerClass->params['data']))
         {
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.');
+                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                
+            }
+            else
+            {
             return $this->controllerClass->flash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/'.
                                                 Inflector::underscore($this->controllerClass->viewPath) );
+            }
         }
         else
         {
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('Please correct errors below');  
+            }
             $this->controllerClass->set('data', $this->controllerClass->params['data']);
             $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
             return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
@@ -240,13 +252,31 @@ class Scaffold extends Object {
         
         if ( $this->controllerClass->{$this->modelKey}->save())
         {
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/');
+                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                
+            }
+            else
+            {
             return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been updated.','/'.
                                                  Inflector::underscore($this->controllerClass->viewPath));
+            }
         }
         else
 		{
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been updated.','/');
+                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                
+            }
+            else
+            {
 		    return $this->controllerClass->flash('There was an error updating the '.Inflector::humanize($this->modelKey),'/'.
 			                                     Inflector::underscore($this->controllerClass->viewPath));
+            }
 		}
     }
 
@@ -262,13 +292,31 @@ class Scaffold extends Object {
         $id = $params['pass'][0];
         if ($this->controllerClass->{$this->modelKey}->del($id))
         {
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/');
+                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                
+            }
+            else
+            {
             return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' with id: '.
                                                 $id.' has been deleted.', '/'.Inflector::underscore($this->controllerClass->viewPath));
+            }
         }
         else
         {
-            return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
+            if(is_object($this->controllerClass->Session))
+            {
+                $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/');
+                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                
+            }
+            else
+            {
+           return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
                                                 $id, '/'.Inflector::underscore($this->controllerClass->viewPath));
+            }
         }
     }
 	
@@ -299,8 +347,11 @@ class Scaffold extends Object {
             $this->controllerClass->constructClasses();
             if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
             {
-                session_write_close();
-                $session =& CakeSession::getInstance();
+                if (function_exists('session_write_close'))
+                {
+                    session_write_close();
+                }
+                $session = CakeSession::getInstance($this->controllerClass->base);
             }
             
             if($params['action'] === 'index'  || $params['action'] === 'list' ||

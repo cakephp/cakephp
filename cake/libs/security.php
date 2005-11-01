@@ -58,14 +58,14 @@ class Security extends Object
         switch (CAKE_SECURITY)
         {
             case 'high':
-            return 0;
+                return 10;
             break;
             case 'medium':
-            return ;
+                return 20;
             break;
             case 'low':
             default :
-            return;
+                return 30;
             break;
         }
     }

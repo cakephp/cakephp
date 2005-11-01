@@ -264,12 +264,11 @@ class DBO_MySQL extends DBO
       {
          $resultRow = array();
          $i =0;
-         
          foreach ($row as $index => $field)
          {
-            list($table, $column) = $this->map[$index];
-            $resultRow[Inflector::singularize($table)][$column] = $row[$index];
-            $i++;
+             list($table, $column) = $this->map[$index];
+             $resultRow[$table][$column] = $row[$index];
+             $i++;
          }
          return $resultRow;
       }
@@ -278,6 +277,7 @@ class DBO_MySQL extends DBO
          return false;
       }
    }
+   
 }
 
 ?>

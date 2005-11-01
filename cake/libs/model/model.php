@@ -1111,6 +1111,7 @@ class Model extends Object
                 $data = $newValue;
             }
         }
+        
          return $data;
     }
    
@@ -1211,9 +1212,9 @@ class Model extends Object
            {
                foreach ($value1 as $key2 => $value2)
                {
-                   if($key2 === Inflector::singularize($this->table))
+                   if($key2 === $this->name)
                    {
-                       if( 0 == strncmp($key2, $this->{$model}->{$this->currentModel.'_foreignkey'}, strlen($key2)) )
+                       if( 0 == strncmp($key2, $this->{$model}->{$this->currentModel.'_foreignkey'}, $key2) )
                        {
                            if(!empty ($value2['id']))
                            {
@@ -1226,28 +1227,29 @@ class Model extends Object
                                    $manyToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                                    $manyToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                                    
-                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table}
+                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS {$this->{$model}->name}
                                                 JOIN {$this->{$model}->{$this->currentModel.'_jointable'}}
                                                   ON {$this->{$model}->{$this->currentModel.'_jointable'}}.
                                                      {$this->{$model}->{$this->currentModel.'_foreignkey'}} = '$value2[id]' 
                                                  AND {$this->{$model}->{$this->currentModel.'_jointable'}}.
-                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = {$this->{$model}->table} .id"
+                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = {$this->{$model}->name} .id"
                                                     .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
                                                     .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
+                                                    
                                }
                                
-                               $manyToManySelect[$this->{$model}->table] = $this->db->all($tmpSQL);
+                               $manyToManySelect[$this->{$model}->name] = $this->db->all($tmpSQL);
                            }
-                           if( !empty($manyToManySelect[$this->{$model}->table]) && is_array($manyToManySelect[$this->{$model}->table]))
+                           if( !empty($manyToManySelect[$this->{$model}->name]) && is_array($manyToManySelect[$this->{$model}->name]))
                            {
-                               $newKey = Inflector::singularize($this->{$model}->table);
-                               foreach ($manyToManySelect[$this->{$model}->table] as $key => $value)
+                               $newKey = $this->{$model}->name;
+                               foreach ($manyToManySelect[$this->{$model}->name] as $key => $value)
                                {
                                    $manyToManySelect1[$newKey][$key] = $value[$newKey];
                                }
                                $merged = array_merge_recursive($data[$count],$manyToManySelect1);
                                $newdata[$count] = $merged;
-                               unset( $manyToManySelect[$this->{$model}->table], $manyToManySelect1 );
+                               unset( $manyToManySelect[$this->{$model}->name], $manyToManySelect1 );
                            }
                            if(!empty($newdata[$count]))
                            {

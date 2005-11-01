@@ -49,144 +49,136 @@ uses(DS.'controller'.DS.'component',DS.'model'.DS.'model', 'inflector', 'folder'
  */
 class Controller extends Object
 {
-    /**
-     * Name of the controller.
-     *
-     * @var unknown_type
-     * @access public
-     */
+/**
+ * Name of the controller.
+ *
+ * @var unknown_type
+ * @access public
+ */
     var $name = null;
 
-    /**
-     * Stores the current URL (for links etc.)
-     *
-     * @var string Current URL
-     */
+/**
+ * Stores the current URL (for links etc.)
+ *
+ * @var string Current URL
+ */
     var $here = null;
 
-    /**
-     * Enter description here...
-     *
-     * @var unknown_type
-     * @access public
-     */
-    var $parent = null;
-
-    /**
-     * Action to be performed.
-     *
-     * @var string
-     * @access public
-     */
+/**
+ * Action to be performed.
+ *
+ * @var string
+ * @access public
+ */
     var $action = null;
 
-    /**
-     * An array of names of models the particular controller wants to use.
-     *
-     * @var mixed A single name as a string or a list of names as an array.
-     * @access protected
-     */
+/**
+ * An array of names of models the particular controller wants to use.
+ *
+ * @var mixed A single name as a string or a list of names as an array.
+ * @access protected
+ */
     var $uses = false;
 
-    /**
-     * An array of names of built-in helpers to include.
-     *
-     * @var mixed A single name as a string or a list of names as an array.
-     * @access protected
-     */
+/**
+ * An array of names of built-in helpers to include.
+ *
+ * @var mixed A single name as a string or a list of names as an array.
+ * @access protected
+ */
     var $helpers = array('Html');
 
-    /**
-     * Enter description here...
-     *
-     * @var unknown_type
-     */
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
     var $viewPath;
 
-    /**
-     * Variables for the view
-     *
-     * @var array
-     * @access private
-     */
+/**
+ * Variables for the view
+ *
+ * @var array
+ * @access private
+ */
     var $_viewVars = array();
 
-    /**
-     * Web page title
-     *
-     * @var boolean
-     * @access private
-     */
+/**
+ * Web page title
+ *
+ * @var boolean
+ * @access private
+ */
     var $pageTitle = false;
 
-    /**
-     * An array of model objects.
-     *
-     * @var array Array of model objects.
-     * @access public
-     */
+/**
+ * An array of model objects.
+ *
+ * @var array Array of model objects.
+ * @access public
+ */
     var $modelNames = array();
 
 
-    /**
-     * Enter description here...
-     *
-     * @var unknown_type
-     * @access public
-     */
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ * @access public
+ */
     var $base = null;
 
-    /**
-     * Layout file to use (see /app/views/layouts/default.thtml)
-     *
-     * @var string
-     * @access public
-     */
+/**
+ * Layout file to use (see /app/views/layouts/default.thtml)
+ *
+ * @var string
+ * @access public
+ */
     var $layout = 'default';
 
-    /**
-     * Automatically render the view (the dispatcher checks for this variable before running render())
-     *
-     * @var boolean
-     * @access public
-     */
+/**
+ * Automatically render the view (the dispatcher checks for this variable before running render())
+ *
+ * @var boolean
+ * @access public
+ */
     var $autoRender = true;
 
-    /**
-     * Enter description here...
-     *
-     * @var boolean
-     * @access public
-     */
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ * @access public
+ */
     var $autoLayout = true;
 
-    /**
-     * Database configuration to use (see /config/database.php)
-     *
-     * @var string
-     * @access public
-     */
+/**
+ * Database configuration to use (see /config/database.php)
+ *
+ * @var string
+ * @access public
+ */
     var $useDbConfig = 'default';
 
-    /**
-     * Enter description here...
-     *
-     * @var string
-     * @access public
-     */
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
     var $beforeFilter = null;
     
-    /**
-     * Enter description here...
-     *
-     * @var unknown_type
-     */
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
     var $components = array();
 
-    /**
-     * Constructor.
-     *
-     */
+/**
+ * Constructor.
+ *
+ */
     function __construct ()
     {
         if($this->name === null)
@@ -205,11 +197,14 @@ class Controller extends Object
         parent::__construct();
     }
 
-    /**
-     * Enter description here...
-     *
-     */
-    function constructClasses(){
+/**
+ * Enter description here...
+ *
+ */
+    function constructClasses()
+    {
+        $dboFactory = DboFactory::getInstance($this->useDbConfig);
+        $this->db =& $dboFactory;
         
         if (!empty($this->components))
         {
@@ -245,9 +240,6 @@ class Controller extends Object
         {
             $id = $this->params['pass'];
         }
-
-        $dboFactory = DboFactory::getInstance($this->useDbConfig);
-        $this->db =& $dboFactory;
 
         if (class_exists($this->modelClass) && ($this->uses === false))
         {
@@ -474,18 +466,6 @@ class Controller extends Object
         $this->render('../errors/missingDatabase');
         exit();
     }
-    //   /**
-    //    * Displays an error page to the user. Uses layouts/error.html to render the page.
-    //    *
-    //    * @param int $code Error code (for instance: 404)
-    //    * @param string $name Name of the error (for instance: Not Found)
-    //    * @param string $message Error message
-    //    */
-    //      function error ($code, $name, $message)
-    //      {
-    //         header ("HTTP/1.0 {$code} {$name}");
-    //         print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
-    //      }
 
     /**
      * Sets data for this view. Will set title if the key "title" is in given $data array.
@@ -801,16 +781,16 @@ class Controller extends Object
          {
             list($modelName) = $relation;
 
-            $modelKey = Inflector::underscore($modelName);
+            $modelKeyM = Inflector::underscore($modelName);
             $modelObject = new $modelName();
 
             if( $doCreateOptions )
               {
                   $otherDisplayField = $modelObject->getDisplayField();
-                  $fieldNames[$modelKey]['model'] = $modelName;
-                  $fieldNames[$modelKey]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
-                  $fieldNames[$modelKey]['type'] = "selectMultiple";
-                  $fieldNames[$modelKey]['tagName'] = $modelKey.'/'.$modelKey;
+                  $fieldNames[$modelKeyM]['model'] = $modelName;
+                  $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
+                  $fieldNames[$modelKeyM]['type'] = "selectMultiple";
+                  $fieldNames[$modelKeyM]['tagName'] = $modelName.'/'.$modelName;
 
                   foreach( $modelObject->findAll() as $pass )
                   {
@@ -818,15 +798,15 @@ class Controller extends Object
                       {
                           if( $key == $modelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                           {
-                              $fieldNames[$modelKey]['options'][$value['id']] = $value[$otherDisplayField];
+                              $fieldNames[$modelKeyM]['options'][$value['id']] = $value[$otherDisplayField];
                           }
                       }
                   }
-                  if( isset( $data[$model] ) )
+                  if( isset( $data[$modelName] ) )
                   {
-                    foreach( $data[$model] as $row )
+                    foreach( $data[$modelName] as $key => $row )
                     {
-                       $fieldNames[$modelKey]['selected'][$row['id']] = $row['id'];
+                       $fieldNames[$modelKeyM]['selected'][$row['id']] = $row['id'];
                     }
                   }
               }

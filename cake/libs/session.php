@@ -91,10 +91,9 @@ class CakeSession extends Object
     function &getInstance($base = null)
     {
         static $instance = array();
-        
         if (!$instance)
         {
-            $instance[0] =& new CakeSession;
+            $instance[0] = new CakeSession;
             $instance[0]->host = $_SERVER['HTTP_HOST'];
             if (strpos($instance[0]->host, ':') !== false)
             {
@@ -110,8 +109,8 @@ class CakeSession extends Object
             
             $instance[0]->ip = $_SERVER['REMOTE_ADDR'];
             $instance[0]->userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : "";
-            
             $instance[0]->_initSession();
+            $instance[0]->_begin();
         }
         return $instance[0];
     }
@@ -124,7 +123,7 @@ class CakeSession extends Object
  */
     function checkSessionVar($name)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         $expression = "return isset(".$cakeSession->_sessionVarNames($name).");";
         return eval($expression);
     }
@@ -137,14 +136,14 @@ class CakeSession extends Object
  */
     function delSessionVar($name)
     {
-        $cakeSession =& CakeSession::getInstance();
-        if($cakeSession->check($name))
+        $cakeSession = CakeSession::getInstance();
+        if($cakeSession->checkSessionVar($name))
         {
             $var = $cakeSession->_sessionVarNames($name);
             eval("unset($var);");
             return true;
         }
-        $this->_setError(2, "$name doesn't exist");
+        $cakeSession->_setError(2, "$name doesn't exist");
         return false;
     }
     
@@ -156,7 +155,7 @@ class CakeSession extends Object
  */
     function getError($errorNumber)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
 	    if(!is_array($cakeSession->error) || !array_key_exists($errorNumber, $cakeSession->error))
 	    {
 	        return false;
@@ -174,7 +173,7 @@ class CakeSession extends Object
  */
 	function getLastError()
 	{
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
 	    if($cakeSession->lastError)
 	    {
 	        return $cakeSession->getError($cakeSession->lastError);
@@ -192,7 +191,7 @@ class CakeSession extends Object
  */
     function isValid()
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         return $cakeSession->valid;
     }
     
@@ -204,7 +203,7 @@ class CakeSession extends Object
  */
     function readSessionVar($name)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         if($cakeSession->checkSessionVar($name))
         {
             $result = eval("return ".$cakeSession->_sessionVarNames($name).";");
@@ -222,7 +221,7 @@ class CakeSession extends Object
  */
     function writeSessionVar($name, $value)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         $expression = $cakeSession->_sessionVarNames($name);
         $expression .= " = \$value;";
         eval($expression);
@@ -235,20 +234,10 @@ class CakeSession extends Object
  */
     function _begin()
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         session_cache_limiter("must-revalidate");    
         session_start();
-        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-        $cakeSession->sessionId = session_id();
-        
-        if($cakeSession->_isActiveSession() == false)
-        {
-            $cakeSession->_new();
-        }
-        else
-        {
-            $cakeSession->_renew();
-        }
+        $cakeSession->_new();
     }
    
 /**
@@ -297,19 +286,19 @@ class CakeSession extends Object
  */
     function _initSession()
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         switch (CAKE_SECURITY)
         {
             case 'high':
-                $cookieLifeTime = 0;
+                $cakeSession->cookieLifeTime = 0;
                 ini_set('session.referer_check', $cakeSession->host);
             break;
             case 'medium':
-                $cookieLifeTime = 7 * 86400;
+                $cakeSession->cookieLifeTime = 7 * 86400;
             break;
             case 'low':
             default :
-                $cookieLifeTime = 788940000;
+                $cakeSession->cookieLifeTime = 788940000;
             break;
         }
         
@@ -321,7 +310,7 @@ class CakeSession extends Object
                 ini_set('session.serialize_handler', 'php');
                 ini_set('session.use_cookies', 1);
                 ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $cookieLifeTime);
+                ini_set('session.cookie_lifetime', $cakeSession->cookieLifeTime);
                 ini_set('session.cookie_path', $cakeSession->path);
                 ini_set('session.gc_probability', 1);
                 ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
@@ -335,7 +324,7 @@ class CakeSession extends Object
                 ini_set('session.serialize_handler', 'php');
                 ini_set('session.use_cookies', 1);
                 ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $cookieLifeTime);
+                ini_set('session.cookie_lifetime', $cakeSession->cookieLifeTime);
                 ini_set('session.cookie_path', $cakeSession->path);
                 ini_set('session.gc_probability', 1);
                 ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
@@ -349,7 +338,7 @@ class CakeSession extends Object
             break;
             case 'php':
                 ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $cookieLifeTime);
+                ini_set('session.cookie_lifetime', $cakeSession->cookieLifeTime);
                 ini_set('session.cookie_path', $cakeSession->path);
                 ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
             break;
@@ -362,25 +351,13 @@ class CakeSession extends Object
                 else
                 {
                     ini_set('session.name', CAKE_SESSION_COOKIE);
-                    ini_set('session.cookie_lifetime', $cookieLifeTime);
+                    ini_set('session.cookie_lifetime', $cakeSession->cookieLifeTime);
                     ini_set('session.cookie_path', $cakeSession->path);
                     ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60); 
                 }               
             break;
         }
         
-        $cakeSession->_begin();
-    }
-    
-/**
- * Enter description here...
- *
- * @access private
- * @return unknown
- */
-    function _isActiveSession()
-    { 
-        return false; 
     }
     
 /**
@@ -391,8 +368,7 @@ class CakeSession extends Object
  */
     function _new()
     {
-        $cakeSession =& CakeSession::getInstance();
-
+        $cakeSession = CakeSession::getInstance();
         if(!ereg("proxy\.aol\.com$", gethostbyaddr($cakeSession->ip)))
         {
             if($cakeSession->readSessionVar("Config"))
@@ -427,6 +403,12 @@ class CakeSession extends Object
            }
            $cakeSession->valid = true;
        }
+       
+        if(CAKE_SECURITY == 'high')
+        {
+            $cakeSession->_regenerateId();
+        }
+        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
     
 /**
@@ -457,6 +439,38 @@ class CakeSession extends Object
         die();
     }
     
+
+/**
+ * Enter description here...
+ *
+ *
+ * @access private
+ * 
+ */
+    function _regenerateId()
+    {
+        $cakeSession = CakeSession::getInstance();
+        $oldSessionId = session_id();
+        session_regenerate_id();
+        $newSessid = session_id();
+          if (function_exists('session_write_close'))
+          {
+              if(CAKE_SECURITY == 'high')
+              {
+                  if (isset($_COOKIE[session_name()]))
+                  {
+                  setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $cakeSession->path);
+                  }
+                  $file = ini_get('session.save_path')."/sess_$oldSessionId";
+                  @unlink($file);
+              }
+              session_write_close();
+              $cakeSession->_initSession();
+              session_id($newSessid);
+              session_start();
+          }
+    }
+
 /**
  * Enter description here...
  *
@@ -465,7 +479,7 @@ class CakeSession extends Object
  */
     function _renew()
     {
-        return true;
+        $cakeSession->_regenerateId();
     }
     
 /**
@@ -477,7 +491,7 @@ class CakeSession extends Object
  */
     function _sessionVarNames($name)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         if(is_string($name))
         {
             if(strpos($name, "."))
@@ -509,7 +523,7 @@ class CakeSession extends Object
  */
     function _setError($errorNumber, $errorMessage)
     {
-        $cakeSession =& CakeSession::getInstance();
+        $cakeSession = CakeSession::getInstance();
         if($cakeSession->error === false)
         {
             $cakeSession->error = array();

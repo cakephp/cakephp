@@ -109,7 +109,7 @@ class SessionComponent extends Object
  *
  * Use like this. $this->Session->error();
  *
- * @return unknown
+ * @return string Last session error
  */
     function error()
     {
@@ -119,10 +119,44 @@ class SessionComponent extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->Session->valid();
+ * Use like this. $this->Session->setError();
  *
- * @param unknown_type $name
- * @return unknown
+ * @return string Last session error
+ */
+    function setFlash($flashMessage)
+    {
+        $this->write('Message.flash', $flashMessage);
+    }
+
+/**
+ * Enter description here...
+ *
+ * Use like this. $this->Session->setError();
+ *
+ * @return
+ */
+    function flash()
+    {
+        if($this->check('Message.flash'))
+        {
+            echo '<div class="message">'.$this->read('Message.flash').'</div>';
+            $this->del('Message.flash');
+        }
+        else
+        {
+            return false;
+        }
+       
+    }
+    
+/**
+ * Enter description here...
+ *
+ * Use like this. $this->Session->valid();
+ * This will return true if session is valid
+ * false if session is invalid
+ *
+ * @return boolean
  */
     function valid()
     {

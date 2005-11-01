@@ -11,9 +11,7 @@
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2005, CakePHP Authors/Developers
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
  *
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
