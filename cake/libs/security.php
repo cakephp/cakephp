@@ -69,6 +69,17 @@ class Security extends Object
             break;
         }
     }
+    
+    function generateAuthKey()
+    {
+        
+        return $authKey;
+    }
+    
+    function validateAuthKey($authKey)
+    {
+        return true;
+    }
 } 
     
 ?>

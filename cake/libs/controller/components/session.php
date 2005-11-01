@@ -48,6 +48,7 @@ class SessionComponent extends Object
  */
     function __construct () 
     {
+        $this->CakeSession = New CakeSession();
         parent::__construct();
     }
     
@@ -62,7 +63,7 @@ class SessionComponent extends Object
  */
     function write($name, $value)
     {
-        return CakeSession::writeSessionVar($name, $value);
+        return $this->CakeSession->writeSessionVar($name, $value);
     }
     
 /**
@@ -75,7 +76,7 @@ class SessionComponent extends Object
  */
     function read($name)
     {
-        return CakeSession::readSessionVar($name);
+        return $this->CakeSession->readSessionVar($name);
     }
     
 /**
@@ -88,7 +89,7 @@ class SessionComponent extends Object
  */
     function del($name)
     {
-        return CakeSession::delSessionVar($name);
+        return $this->CakeSession->delSessionVar($name);
     }
     
 /**
@@ -101,7 +102,7 @@ class SessionComponent extends Object
  */
     function check($name)
     {
-        return CakeSession::checkSessionVar($name);
+        return $this->CakeSession->checkSessionVar($name);
     }
     
 /**
@@ -113,7 +114,7 @@ class SessionComponent extends Object
  */
     function error()
     {
-        return CakeSession::getLastError();
+        return $this->CakeSession->getLastError();
     }
     
 /**
@@ -160,7 +161,7 @@ class SessionComponent extends Object
  */
     function valid()
     {
-        return CakeSession::isValid();
+        return $this->CakeSession->isValid();
     }
     
 }

@@ -345,14 +345,6 @@ class Scaffold extends Object {
         if(!empty($isDataBaseSet))
         {
             $this->controllerClass->constructClasses();
-            if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
-            {
-                if (function_exists('session_write_close'))
-                {
-                    session_write_close();
-                }
-                $session = CakeSession::getInstance($this->controllerClass->base);
-            }
             
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
                $params['action'] === 'show'   || $params['action'] === 'add' || 

@@ -206,14 +206,7 @@ class Dispatcher extends Object
           $controller->privateAction = $params['action'];
           $params['action'] = 'privateAction';
       }
-      if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
-      {
-          if (function_exists('session_write_close'))
-          {
-              session_write_close();
-          }
-          $session = CakeSession::getInstance($this->base);
-      }
+      
       return $this->_invoke($controller, $params );
    }
    

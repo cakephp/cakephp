@@ -185,7 +185,7 @@ class AjaxHelper extends Helper
 
         if (isset($options['before'])) 
         {
-            $func = "{$options['before']}; $function";
+            $func = "{$options['before']}; $func";
         }
         if (isset($options['after'])) 
         {
@@ -231,11 +231,12 @@ class AjaxHelper extends Helper
       * @param array $options             Callback options
       * @return string                     JavaScript code
       */
-    function form($id, $options = null) 
+    function form($id, $options = null, $html_options = array())
     {
-        $options['id'] = $id;
-        //$options['html']['onsubmit'] = $this->remoteFunction($options) . "; return false;";
-        return $this->Html->formTag(null, "post", $options) . $this->Javascript->event("$('$id')", "submit", "function(){" . $this->remoteFunction($options) . "; return false;}");
+        $html_options['id'] = $id;
+        return $this->html->formTag(null, "post", $html_options) . 
+               $this->Javascript->event("$('$id')", "submit", "function(){" . 
+               $this->remoteFunction($options) . "; return false;}");
     }
 
     /**
