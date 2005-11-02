@@ -658,6 +658,19 @@ class Model extends Object
     }
 
 /**
+ * Initializes the model for writing a new record
+ *
+ * @return boolean True on success
+ */
+    function create () 
+    {
+        $this->id = false;
+        unset($this->data);
+        $this->data = array();
+    }
+
+
+/**
  * Returns a list of fields from the database
  *
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
@@ -1042,8 +1055,8 @@ class Model extends Object
                     $oneToOneConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $oneToOneOrder = $this->{$model}->{$this->currentModel.'_order'};
                     
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS $alias ON 
-                                $alias.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->name}.id"
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON 
+                                `$alias`.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->name}.id"
                                 .($oneToOneConditions? " WHERE {$oneToOneConditions}":null)
                                 .($oneToOneOrder? " ORDER BY {$oneToOneOrder}": null);
                 }
@@ -1069,7 +1082,7 @@ class Model extends Object
                     $belongsToOtherConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $belongsToOtherOrder = $this->{$model}->{$this->currentModel.'_order'};
                     
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS $alias ON {$this->name}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = $alias.id"
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON {$this->name}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = `$alias`.id"
                                 .($belongsToOtherConditions? " WHERE {$belongsToOtherConditions}":null)
                                 .($belongsToOtherOrder? " ORDER BY {$belongsToOtherOrder}": null);
                 }
@@ -1087,7 +1100,7 @@ class Model extends Object
             : '';
         
         $sql = "SELECT " .join(', ', $f)
-                ." FROM {$this->table} AS {$this->name} {$joins}"
+                ." FROM {$this->table} AS `{$this->name}` {$joins}"
                 .($conditions? " WHERE {$conditions}":null)
                 .($order? " ORDER BY {$order}": null)
                 .$limit_str;
@@ -1145,7 +1158,7 @@ class Model extends Object
                            $oneToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                            $oneToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                            
-                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS {$this->{$model}->name}
+                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$this->{$model}->name}`
                                       WHERE ({$this->{$model}->{$this->currentModel.'_foreignkey'}})  = '{$value2['id']}'"
                                       .($oneToManyConditions? " WHERE {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
@@ -1227,12 +1240,12 @@ class Model extends Object
                                    $manyToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                                    $manyToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                                    
-                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS {$this->{$model}->name}
+                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$this->{$model}->name}`
                                                 JOIN {$this->{$model}->{$this->currentModel.'_jointable'}}
                                                   ON {$this->{$model}->{$this->currentModel.'_jointable'}}.
                                                      {$this->{$model}->{$this->currentModel.'_foreignkey'}} = '$value2[id]' 
                                                  AND {$this->{$model}->{$this->currentModel.'_jointable'}}.
-                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = {$this->{$model}->name} .id"
+                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = `{$this->{$model}->name}` .id"
                                                     .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
                                                     .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
                                                     
@@ -1298,9 +1311,9 @@ class Model extends Object
        {
            foreach ($this->tableToModel as $key1 => $value1)
            {
-               if (isset($data[$key][Inflector::singularize($key1)]))
+               if (isset($data[$key][$key1]))
                {
-                   $newData[$key][$value1] = $data[$key][Inflector::singularize($key1)];
+                   $newData[$key][$value1] = $data[$key][$key1];
                }
            }
        }

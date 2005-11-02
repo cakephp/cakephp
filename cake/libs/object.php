@@ -114,7 +114,6 @@ class Object
         {
           $extra['render'] = 1; 
         }
-        //$extra = array_merge($extra, array('bare'=>1));
         $dispatcher =& new Dispatcher();
         return $dispatcher->dispatch($url, $extra);
     }

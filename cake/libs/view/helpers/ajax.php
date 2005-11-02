@@ -159,7 +159,7 @@ class AjaxHelper extends Helper
       }
       else
       {
-        $html_options['onclick'] = $this->remoteFunction($options);
+        $html_options['onclick'] = $this->remoteFunction($options) . " return false;";
         return $this->Html->link($title, $href, $html_options);
       }
     }
