@@ -153,30 +153,30 @@ class JavascriptHelper extends Helper
   * Includes the Prototype Javascript library (and anything else) inside a single script tag.
   * 
   * Note: The recommended approach is to copy the contents of
-  * lib/javascripts/ into your application's
+  * javascripts into your application's
   * public/javascripts/ directory, and use @see javascriptIncludeTag() to
   * create remote script links.
   * @return string script with all javascript in /javascripts folder
   */
 	function includeScript ($script = "")
 	{
-		$dir = $this->webroot . JS_URL;
-		if($script == "") {
-			$files = scandir($dir);
-			$javascript = '';
-			foreach($files as $file)
-			{
-				if (substr($file, -3) == '.js')
-				{
-					$javascript .= file_get_contents("{$dir}{$file}") . "\n\n";
-				}
-			}
-		}
-		else
-		{
-			$javascript = file_get_contents("{$dir}$script.js") . "\n\n";
-		}
-		return $this->codeBlock("\n\n" . $javascript);
+	    if($script == "")
+	    {
+	        $files = scandir(JS);
+	        $javascript = '';
+	        foreach($files as $file)
+	        {
+	            if (substr($file, -3) == '.js')
+	            {
+	                $javascript .= file_get_contents(JS."{$file}") . "\n\n";
+	            }
+	        }
+	    }
+	    else
+	    {
+	        $javascript = file_get_contents(JS."$script.js") . "\n\n";
+	    }
+	    return $this->codeBlock("\n\n" . $javascript);
 	}
 
 }
