@@ -11,7 +11,8 @@
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2005, CakePHP Authors/Developers
  *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
+ * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
+ *            Larry E. Masters aka PhpNut <nut@phpnut.com>
  *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
  *
  *  Licensed under The MIT License
@@ -30,7 +31,7 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-uses(DS.'controller'.DS.'components'.DS.'acl_base');
+uses('controller/components/acl_base');
 
 /**
  * In this file you can extend the AclBase.
@@ -39,7 +40,7 @@ uses(DS.'controller'.DS.'components'.DS.'acl_base');
  * @subpackage cake.cake.app.controllers.componenets
  */
 
-class MyACL extends AclBase 
+class INI_ACL extends AclBase 
 {
    /**
     * The constructor must be overridden, as AclBase is abstract.
@@ -58,7 +59,7 @@ class MyACL extends AclBase
     * @param string $aco
     * @return boolean
     */
-   function check($aro, $aco)
+   function check($aro, $aco, $aco_action = null)
    {
       $aclConfig = $this->readConfigFile(CONFIGS . 'acl.ini.php');
       

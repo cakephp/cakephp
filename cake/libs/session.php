@@ -156,7 +156,6 @@ class CakeSession extends Object
  */
     function getError($errorNumber)
     {
-        
 	    if(!is_array($this->error) || !array_key_exists($errorNumber, $this->error))
 	    {
 	        return false;
@@ -202,8 +201,12 @@ class CakeSession extends Object
  * @param unknown_type $name
  * @return unknown
  */
-    function readSessionVar($name)
+    function readSessionVar($name = null)
     {
+        if(is_null($name))
+        {
+            return $this->returnSessionVars();
+        }
         
         if($this->checkSessionVar($name))
         {
@@ -211,6 +214,24 @@ class CakeSession extends Object
             return $result;
         }
         $this->_setError(2, "$name doesn't exist");
+        return false;
+    }
+    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return unknown
+ */
+    function returnSessionVars()
+    {
+        
+        if(!empty($_SESSION))
+        {
+            $result = eval("return ".$_SESSION.";");
+            return $result;
+        }
+        $this->_setError(2, "No Session vars set");
         return false;
     }
     

@@ -80,6 +80,60 @@ class Security extends Object
     {
         return true;
     }
-} 
     
+    
+    function hash($string, $type='sha1')
+    {
+        $type = strtolower($type);
+        if ($type == 'sha1')
+        {
+            if (function_exists('sha1'))
+            {
+                return sha1($string);
+            }
+            else
+            {
+                $type = 'sha256';
+            }
+        }
+        if ($type == 'sha256')
+        {
+            if (function_exists('mhash'))
+            {
+                return bin2hex(mhash(MHASH_SHA256, $string));
+            }
+            else
+            {
+                 $type = 'md5';
+            }
+        }
+        if ($type == 'md5')
+        {
+            return md5($string);
+        }
+    }
+    
+    function cipher($text, $key)
+    {
+        if (!defined('CIPHER_SEED'))
+        {
+            //This is temporary will change later
+            define('CIPHER_SEED', 'mKEZGy8AB8FErX4t');
+        }
+        srand(CIPHER_SEED);
+        
+        $out = '';
+        for($i = 0; $i < strlen($text); $i++)
+        {
+            for($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++)
+            {
+                $toss = rand(0, 255);
+            }
+            
+            $mask = rand(0, 255);
+            $out .= chr(ord(substr($text, $i, 1)) ^ $mask);
+        }
+        return $out;
+    }
+}
 ?>

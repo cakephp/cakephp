@@ -70,11 +70,12 @@ class SessionComponent extends Object
  * Enter description here...
  *
  * Use like this. $this->Session->read('Controller.sessKey');
+ * Calling the method without a param will return all session vars
  *
  * @param unknown_type $name
  * @return unknown
  */
-    function read($name)
+    function read($name = null)
     {
         return $this->CakeSession->readSessionVar($name);
     }

@@ -43,7 +43,7 @@ uses('error_messages');
  */
 class AclBase
 {
-   
+
    function AclBase()
    {
       //No instantiations or constructor calls (even statically)
@@ -52,10 +52,11 @@ class AclBase
          trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
          return NULL;
       }
-      
+
    }
-   
-   function check($aro, $aco) {}
-   
-}   
+
+   function check($aro, $aco, $action = "*") {}
+
+}
+
 ?>

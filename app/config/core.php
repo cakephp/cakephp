@@ -118,7 +118,7 @@ define('MAX_MD5SIZE', (5*1024)*1024 );
 /**
  * To use Access Control Lists with Cake...
  */
-define('ACL_CLASSNAME',  'MyACL');
-define('ACL_FILENAME',   'my_acl.php');
+define('ACL_CLASSNAME',  'DB_ACL');
+define('ACL_FILENAME',   'dbacl'.DS.'db_acl');
 
 ?>
