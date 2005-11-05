@@ -44,10 +44,10 @@
           echo "<dt>".$value['prompt']."</dt>";
           if(isset($value['foreignKey']))
           {
-              
+              $alias = array_search($value['table'],$objModel->alias);
               $otherModelObject = $registry->getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
               $displayField = $otherModelObject->getDisplayField();
-              $displayText = $data[$objModel->tableToModel[$value['table']]][$displayField];
+              $displayText = $data[$alias][$displayField];
               
               if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]))
               {
@@ -84,7 +84,7 @@
    foreach( $fieldNames as $field => $value ) { 
       if( isset( $value['foreignKey'] ) )
       {
-         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$objModel->tableToModel[$value['table']]]['id'] )."</li>";
+         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$alias]['id'] )."</li>";
       }
   }
 ?>
@@ -94,15 +94,15 @@
 <?php
    foreach ($objModel->_oneToOne as $relation)
    {
-      list($model, $value) = $relation;
+      list($association, $model, $value) = $relation;
       $otherModelName = $objModel->tableToModel[$model];
       $controller = Inflector::pluralize($model);
       
-      echo "<div class='related'><H2>Related ".Inflector::humanize($otherModelName)."</H2>";
+      echo "<div class='related'><H2>Related ".Inflector::humanize($association)."</H2>";
       echo "<dl>";
-      if( isset($data[$otherModelName]) && is_array($data[$otherModelName]) ) 
+      if( isset($data[$association]) && is_array($data[$association]) ) 
       {
-         foreach( $data[$otherModelName] as $field=>$value )
+         foreach( $data[$association] as $field=>$value )
          {
             echo "<dt>".Inflector::humanize($field)."</dt>";
             if( !empty($value) )
@@ -115,7 +115,7 @@
          
       }
       echo "</dl>";
-      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/edit/{$data[$otherModelName]['id']}")."</li></ul></div>";
+      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/edit/{$data[$association]['id']}")."</li></ul></div>";
    }
 ?>
 
@@ -134,13 +134,13 @@
 
    foreach( $relations as $relation )
    {
-      list($model, $value) = $relation;
+      list($association, $model, $value) = $relation;
       $count = 0;
       $otherModelName = Inflector::singularize($model);
       $controller = Inflector::pluralize($model);
 
-      echo "<div class='related'><H2>Related ".Inflector::humanize(Inflector::pluralize($objModel->tableToModel[$objModel->{$model}->table]))."</H2>";
-      if( isset($data[$objModel->tableToModel[$objModel->{$model}->table]]) && is_array($data[$objModel->tableToModel[$objModel->{$model}->table]]) ) 
+      echo "<div class='related'><H2>Related ".Inflector::humanize(Inflector::pluralize($association))."</H2>";
+      if( isset($data[$association]) && is_array($data[$association]) ) 
       {
 ?>
    
@@ -149,7 +149,7 @@
 <?php      //  Loop through and create the header row.
          //  find a row that matches this title.
          $bFound = false;
-         foreach( $data[$objModel->tableToModel[$objModel->{$model}->table]][0] as $column=>$value ) {
+         foreach( $data[$association][0] as $column=>$value ) {
             echo "<th>".Inflector::humanize($column)."</th>";
          }
 ?>
@@ -157,7 +157,7 @@
     </tr>
 <?php
       //  now find all matching rows
-            foreach( $data[$objModel->tableToModel[$objModel->$model->table]] as $row ) 
+            foreach( $data[$association] as $row ) 
             {
                echo "<tr>";
                foreach( $row as $column=>$value ) 
@@ -180,7 +180,7 @@
 <?php
    //  add a link to create a new relation.
 
-   echo "<li>".$html->linkTo('New '.Inflector::humanize($otherModelName),"/".Inflector::underscore($controller)."/add/")."</li>";
+   echo "<li>".$html->linkTo('New '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/add/")."</li>";
  //  echo "<li>".$html->linkTo( "View ".Inflector::humanize($table), "/".Inflector::underscore($table)."/list/".$modelName."/".$data[$modelName]['id'])."</li>";
 ?>
 </ul></div>

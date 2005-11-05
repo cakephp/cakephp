@@ -564,6 +564,7 @@ class Controller extends Object
 	    $model = $this->modelClass;
 	    $modelKey = $this->modelKey;
 	    $table = $this->{$model}->table;
+	    $association = array_search($table,$this->{$model}->alias);
 	    
 	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject($modelKey);
@@ -580,12 +581,13 @@ class Controller extends Object
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
 	                //  this is a foreign key, also set up the other controller
 	                $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
+	                $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
 	                if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
 	                {
 	                    $alias = 'Child_';
 	                }
 	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
-	                $fieldNames[ $tabl['name'] ]['model'] = $alias.$this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+	                $fieldNames[ $tabl['name'] ]['model'] = $alias.$association;
 	                $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
 	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
 	                $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
@@ -666,14 +668,15 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         if( $alias.$key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         
+                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
                                      }
                                  }
                              }
-                             $fieldNames[ $tabl['name']]['selected'] = $data[$table][$tabl['name']];
+                             $fieldNames[ $tabl['name']]['selected'] = $data[$association][$tabl['name']];
                          }
                      }
                      else
@@ -728,7 +731,7 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         if( $alias.$key == $fieldNames[ $tabl['name']]['model'] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
@@ -779,8 +782,8 @@ class Controller extends Object
    	    //  loop through the many to many relations to make a list box.
       	foreach( $objRegistryModel->_manyToMany as $relation )
          {
-            list($modelName) = $relation;
-
+            //list($modelName) = $relation;
+            list($manyAssociation, $modelName, $value) = $relation;  
             $modelKeyM = Inflector::underscore($modelName);
             $modelObject = new $modelName();
 
@@ -790,7 +793,7 @@ class Controller extends Object
                   $fieldNames[$modelKeyM]['model'] = $modelName;
                   $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
                   $fieldNames[$modelKeyM]['type'] = "selectMultiple";
-                  $fieldNames[$modelKeyM]['tagName'] = $modelName.'/'.$modelName;
+                  $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
 
                   foreach( $modelObject->findAll() as $pass )
                   {
@@ -802,9 +805,9 @@ class Controller extends Object
                           }
                       }
                   }
-                  if( isset( $data[$modelName] ) )
+                  if( isset( $data[$manyAssociation] ) )
                   {
-                    foreach( $data[$modelName] as $key => $row )
+                    foreach( $data[$manyAssociation] as $key => $row )
                     {
                        $fieldNames[$modelKeyM]['selected'][$row['id']] = $row['id'];
                     }

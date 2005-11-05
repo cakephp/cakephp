@@ -409,45 +409,45 @@ class Scaffold extends Object {
  */
     function _cleanUpFields()
     {
-        $modelKey = Inflector::underscore($this->modelKey);
+        
         foreach( $this->controllerClass->{$this->modelKey}->_tableInfo as $table )
         {
             foreach ($table as $field)
             {
-                if('date' == $field['type'] && isset($this->controllerClass->params['data'][$modelKey][$field['name'].'_year']))
+                if('date' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']))
                 {
                     $newDate = mktime( 0,0,0,
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_month'],
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_day'],
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_year'] );
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
                     $newDate = date( 'Y-m-d', $newDate );
-                    $this->controllerClass->params['data'][$modelKey][$field['name']] = $newDate;
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
-                else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$modelKey][$field['name'].'_year'] ) )
+                else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
                 {
-                    $hour = $this->controllerClass->params['data'][$modelKey][$field['name'].'_hour'];
-                    if( $hour != 12 && 'pm' == $this->controllerClass->params['data'][$modelKey][$field['name'].'_meridian'] )
+                    $hour = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour'];
+                    if( $hour != 12 && 'pm' == $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian'] )
                     {
                         $hour = $hour + 12;
                     }
                     $newDate = mktime( $hour,
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_min'],0,
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_month'],
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_day'],
-                    $this->controllerClass->params['data'][$modelKey][$field['name'].'_year'] );
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'],0,
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
                     $newDate = date( 'Y-m-d H:i:s', $newDate );
-                    $this->controllerClass->params['data'][$modelKey][$field['name']] = $newDate;
+                    $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
                 else if( 'tinyint(1)' == $field['type'] )
                 {
-                    if( isset( $this->controllerClass->params['data'][$modelKey][$field['name']]) &&
-                                "on" == $this->controllerClass->params['data'][$modelKey][$field['name']] )
+                    if( isset( $this->controllerClass->params['data'][$this->modelKey][$field['name']]) &&
+                                "on" == $this->controllerClass->params['data'][$this->modelKey][$field['name']] )
                     {
-                        $this->controllerClass->params['data'][$modelKey][$field['name']] = true;
+                        $this->controllerClass->params['data'][$this->modelKey][$field['name']] = true;
                     }
                     else
                     {
-                        $this->controllerClass->params['data'][$modelKey][$field['name']] = false;
+                        $this->controllerClass->params['data'][$this->modelKey][$field['name']] = false;
                     }
                 }
             }

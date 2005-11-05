@@ -42,7 +42,7 @@
 	
 	<div id="content">
 
-  	<?php if(is_object($this->controller->Session)){$this->controller->Session->flash();} ?>
+  	<?php $this->controller->Session->flash(); ?>
   	<?php echo $content_for_layout?>
 	</div>
   	<div id="pb-cake">

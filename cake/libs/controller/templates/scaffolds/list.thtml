@@ -61,17 +61,17 @@
                   <?php
                      if( isset($value['foreignKey']) ) 
                      {
-                        
                         //  this is a foreign key, figure out what the display field should be for this model.
                        $otherModelKey = Inflector::underscore($value['modelKey']);
                        $otherControllerName = $value['controller']; 
                        $registry = ClassRegistry::getInstance();
                        $otherModelObject = $registry->getObject( $otherModelKey );
+                       $alias = array_search($value['table'],$this->controller->{$model}->alias);
                        if( is_object($otherModelObject) ) 
                        {
-                          $displayText = $row[$value['model']][ $otherModelObject->getDisplayField() ];
+                          $displayText = $row[$alias][ $otherModelObject->getDisplayField() ];
                        } else{
-                          $displayText = $row[$value['model']][$field];
+                          $displayText = $row[$alias][$field];
                        }  
                           echo $html->linkTo( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
                        

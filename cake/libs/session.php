@@ -367,6 +367,7 @@ class CakeSession extends Object
                 ini_set('session.name', CAKE_SESSION_COOKIE);
                 ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                 ini_set('session.cookie_path', $this->path);
+                ini_set('session.gc_probability', 1);
                 ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
             break;
             default :
@@ -380,6 +381,7 @@ class CakeSession extends Object
                     ini_set('session.name', CAKE_SESSION_COOKIE);
                     ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                     ini_set('session.cookie_path', $this->path);
+                    ini_set('session.gc_probability', 1);
                     ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60); 
                 }               
             break;

@@ -190,6 +190,13 @@ class Model extends Object
    var $tableToModel = array();
    
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $alias = array();
+   
+/**
  * Constructor. Binds the Model's database table to the object.
  *
  * @param unknown_type $id
@@ -287,7 +294,7 @@ class Model extends Object
             foreach ($this->belongsTo as $association => $associationValue)
             {
                 $className = $association;
-                $this->_associationSwitch($className, $associationValue, 'Belongs');
+                $this->_associationSwitch($association, $className, $associationValue, 'Belongs');
             }
         }
         else
@@ -296,7 +303,7 @@ class Model extends Object
             foreach ($association as $className) 
             {
                 $this->_constructAssociatedModels($className , 'Belongs');
-                $this->linkAssociation('Belongs', $className, $this->id);
+                $this->linkAssociation('Belongs', $className, $className, $this->id);
             }
         }
     }
@@ -313,7 +320,7 @@ class Model extends Object
             foreach ($this->hasOne as $association => $associationValue)
             {
                 $className = $association;
-                $this->_associationSwitch($className, $associationValue, 'One');
+                $this->_associationSwitch($className, $className, $associationValue, 'One');
             }
         }
         else
@@ -322,7 +329,7 @@ class Model extends Object
             foreach ($association as $className) 
             {
                 $this->_constructAssociatedModels($className , 'One');
-                $this->linkAssociation('One', $className, $this->id);
+                $this->linkAssociation('One', $className, $className, $this->id);
             }
         }
     }
@@ -339,7 +346,7 @@ class Model extends Object
 	        foreach ($this->hasMany as $association => $associationValue)
 	        {
 	            $className = $association;
-	            $this->_associationSwitch($className, $associationValue, 'Many');
+	            $this->_associationSwitch($association, $className, $associationValue, 'Many');
 	        }
 	    }
 	   else
@@ -348,7 +355,7 @@ class Model extends Object
 	       foreach ($association as $className) 
 	       {
 	           $this->_constructAssociatedModels($className , 'Many');
-	           $this->linkAssociation('Many', $className, $this->id); 
+	           $this->linkAssociation('Many', $className, $className, $this->id);
 	       }
 	   }
 	}
@@ -365,7 +372,7 @@ class Model extends Object
             foreach ($this->hasAndBelongsToMany as $association => $associationValue)
             {
                 $className = $association;
-                $this->_associationSwitch($className, $associationValue, 'ManyTo');
+                $this->_associationSwitch($association, $className, $associationValue, 'ManyTo');
             }
         }
         else
@@ -374,7 +381,7 @@ class Model extends Object
             foreach ($association as $className) 
             {
                 $this->_constructAssociatedModels($className , 'ManyTo');
-                $this->linkAssociation('ManyTo', $className, $this->id);
+                $this->linkAssociation('ManyTo', $className, $className, $this->id);
             }
         }
     }
@@ -387,7 +394,7 @@ class Model extends Object
  * @param unknown_type $type
  * @access private
  */
-    function _associationSwitch($className, $associationValue, $type)
+    function _associationSwitch($association, $className, $associationValue, $type)
     {
         $classCreated = false;
         
@@ -463,7 +470,7 @@ class Model extends Object
 	            break;
                }
         }
-        $this->linkAssociation($type, $className, $this->id);
+        $this->linkAssociation($type, $association, $className, $this->id);
     }
 
 /**
@@ -543,24 +550,28 @@ class Model extends Object
  * @param unknown_type $tableName
  * @param unknown_type $value
  */
-    function linkAssociation ($type, $model, $value=null) 
+    function linkAssociation ($type, $association, $model, $value=null) 
     {
         switch ($type)
         {
             case 'Belongs':
-                $this->_belongsToOther[] = array($model, $value);
+                $this->alias[$association] = $this->{$model}->table;
+                $this->_belongsToOther[] = array($association, $model, $value);
             break;
             
             case 'One':
-                $this->_oneToOne[] = array($model, $value);
+                $this->alias[$association] = $this->{$model}->table;
+                $this->_oneToOne[] = array($association, $model, $value);
             break;
             
             case 'Many':
-                $this->_oneToMany[] = array($model, $value);
+                $this->alias[$association] = $this->{$model}->table;
+                $this->_oneToMany[] = array($association, $model, $value);
             break;
             
             case 'ManyTo':
-                $this->_manyToMany[]  = array($model, $value);
+                $this->alias[$association] = $this->{$model}->table;
+                $this->_manyToMany[]  = array($association, $model, $value);
             break;
         }
     }
@@ -728,7 +739,7 @@ class Model extends Object
  */
     function saveField($name, $value) 
     {
-        return Model::save(array($this->table=>array($name=>$value)), false);
+        return Model::save(array($this->name=>array($name=>$value)), false);
     }
 
 /**
@@ -1041,16 +1052,16 @@ class Model extends Object
         {
             foreach ($this->_oneToOne as $rule)
             {
-                list($model, $value) = $rule;
+                list($association, $model, $value) = $rule;
                 if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
                 {
                     if($this->name == $this->{$model}->name)
                     {
-                        $alias = 'Child_'.$this->{$model}->name;
+                        $alias = 'Child_'.$association;
                     }
                     else
                     {
-                        $alias = $this->{$model}->name;
+                        $alias = $association;
                     }
                     $oneToOneConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $oneToOneOrder = $this->{$model}->{$this->currentModel.'_order'};
@@ -1067,17 +1078,16 @@ class Model extends Object
         {
             foreach ($this->_belongsToOther as $rule)
             {
-                list($model, $value) = $rule;   
-                                    
+                list($association, $model, $value) = $rule;           
                 if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
                 {
                     if($this->name == $this->{$model}->name)
                     {
-                        $alias = 'Child_'.$this->{$model}->name;
+                        $alias = 'Child_'.$association;
                     }
                     else
                     {
-                        $alias = $this->{$model}->name;
+                        $alias = $association;
                     }
                     $belongsToOtherConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                     $belongsToOtherOrder = $this->{$model}->{$this->currentModel.'_order'};
@@ -1141,8 +1151,7 @@ class Model extends Object
        foreach ($this->_oneToMany as $rule)
        {
            $count = 0;
-           list($model, $value) = $rule;
-           
+           list($association, $model, $value) = $rule;  
            foreach ($datacheck as $key => $value1)
            {
                foreach ($value1 as $key2 => $value2)
@@ -1158,24 +1167,24 @@ class Model extends Object
                            $oneToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                            $oneToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                            
-                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$this->{$model}->name}`
+                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
                                       WHERE ({$this->{$model}->{$this->currentModel.'_foreignkey'}})  = '{$value2['id']}'"
                                       .($oneToManyConditions? " WHERE {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
                        }
                        
-                       $oneToManySelect[$this->{$model}->name] = $this->db->all($tmpSQL);
+                       $oneToManySelect[$association] = $this->db->all($tmpSQL);
                        
-                       if( !empty($oneToManySelect[$this->{$model}->name]) && is_array($oneToManySelect[$this->{$model}->name]))
+                       if( !empty($oneToManySelect[$association]) && is_array($oneToManySelect[$association]))
                        {
-                           $newKey = $this->{$model}->name;
-                           foreach ($oneToManySelect[$this->{$model}->name] as $key => $value)
+                           $newKey = $association;
+                           foreach ($oneToManySelect[$association] as $key => $value)
                            {
                                $oneToManySelect1[$newKey][$key] = $value[$newKey];
                            }
                            $merged = array_merge_recursive($data[$count],$oneToManySelect1);
                            $newdata[$count] = $merged;
-                           unset( $oneToManySelect[$this->{$model}->name], $oneToManySelect1);
+                           unset( $oneToManySelect[$association], $oneToManySelect1);
                        }
                        if(!empty($newdata[$count]))
                        {
@@ -1219,8 +1228,7 @@ class Model extends Object
        foreach ($this->_manyToMany as $rule)
        {
            $count = 0;
-           list($model, $value) = $rule;
-           
+           list($association, $model, $value) = $rule;  
            foreach ($datacheck as $key => $value1)
            {
                foreach ($value1 as $key2 => $value2)
@@ -1240,29 +1248,29 @@ class Model extends Object
                                    $manyToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
                                    $manyToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
                                    
-                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$this->{$model}->name}`
+                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
                                                 JOIN {$this->{$model}->{$this->currentModel.'_jointable'}}
                                                   ON {$this->{$model}->{$this->currentModel.'_jointable'}}.
                                                      {$this->{$model}->{$this->currentModel.'_foreignkey'}} = '$value2[id]' 
                                                  AND {$this->{$model}->{$this->currentModel.'_jointable'}}.
-                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = `{$this->{$model}->name}` .id"
+                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = `{$association}` .id"
                                                     .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
                                                     .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
                                                     
                                }
                                
-                               $manyToManySelect[$this->{$model}->name] = $this->db->all($tmpSQL);
+                               $manyToManySelect[$association] = $this->db->all($tmpSQL);
                            }
-                           if( !empty($manyToManySelect[$this->{$model}->name]) && is_array($manyToManySelect[$this->{$model}->name]))
+                           if( !empty($manyToManySelect[$association]) && is_array($manyToManySelect[$association]))
                            {
-                               $newKey = $this->{$model}->name;
-                               foreach ($manyToManySelect[$this->{$model}->name] as $key => $value)
+                               $newKey = $association;
+                               foreach ($manyToManySelect[$association] as $key => $value)
                                {
                                    $manyToManySelect1[$newKey][$key] = $value[$newKey];
                                }
                                $merged = array_merge_recursive($data[$count],$manyToManySelect1);
                                $newdata[$count] = $merged;
-                               unset( $manyToManySelect[$this->{$model}->name], $manyToManySelect1 );
+                               unset( $manyToManySelect[$association], $manyToManySelect1 );
                            }
                            if(!empty($newdata[$count]))
                            {
@@ -1273,22 +1281,20 @@ class Model extends Object
                }
                $count++;
            }
-           if(empty($newValue2) && !empty($original))
+           if(empty($newValue) && !empty($original))
            {
-               for ($i = 0; $i< count($original); $i++) 
+               $originalCount = count($original);
+               for ($i = 0; $i< $originalCount; $i++) 
                {
-                   $newValue2[$i] = $original[$i];
-               }
-               if(count($this->_manyToMany < 2))
-               {
-                   $newValue = $newValue2;
+                   $newValue[$i] = $original[$i];
                }
            }
            elseif(!empty($original))
            {
-               for ($i = 0; $i< count($original); $i++) 
+               $originalCount = count($original);
+               for ($i = 0; $i< $originalCount; $i++) 
                {
-                   $newValue[$i]  = array_merge($newValue2[$i], $original[$i]);
+                   $newValue[$i]  = array_merge($newValue[$i], $original[$i]);
                }
            }
        }
@@ -1481,7 +1487,7 @@ class Model extends Object
       
         foreach ($this->_belongsToOther as $rule)
         {
-            list($model, $value) = $rule;
+            list($association, $model, $value) = $rule;  
             $foreignKeys[$this->{$model}->{$this->currentModel.'_foreignkey'}] = $this->{$model}->{$this->currentModel.'_foreignkey'};
         }
       }	   
