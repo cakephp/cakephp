@@ -94,6 +94,12 @@ define('CAKE_SESSION_SAVE', 'php');
 //define('CAKE_ADMIN', 'admin');
 
 /**
+ *  The define below is used to turn cake built webservices
+ *  on or off. Default setting is off.
+ */
+define('WEBSERVICES', 'on');
+
+/**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)
  * This requires a /var/cache directory to be writable by the web server (caching).
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
