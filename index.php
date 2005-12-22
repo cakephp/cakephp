@@ -39,9 +39,9 @@ define ('APP_DIR', 'app');
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(__FILE__).DS);
 
+require_once ROOT.'cake'.DS.'basics.php';
 require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
 require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
-require_once CAKE.'basics.php';
 
 
 $uri = setUri();
@@ -50,24 +50,26 @@ $uri = setUri();
  * As mod_rewrite (or .htaccess files) is not working, we need to take care
  * of what would normally be rewritten, i.e. the static files in /public
  */
-   if ($uri === '/' || $uri === '/index.php')
-   {
-       $_GET['url'] = '/';
-       include_once (ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php');
-   }
-   else
-   {
-      $elements = explode('/index.php', $uri);
-      if(!empty($elements[1]))
-      {
-          $path = $elements[1];
-      }
-      else
-      {
-          $path = '/';
-      }
-      $_GET['url'] = $path;
+if ($uri === '/' || $uri === '/index.php')
+{
+    $_GET['url'] = '/';
+    require_once ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+}
+else
+{
+    $elements = explode('/index.php', $uri);
 
-          include_once (ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php');
-   }
+    if(!empty($elements[1]))
+    {
+        $path = $elements[1];
+    }
+    else
+    {
+        $path = '/';
+    }
+
+    $_GET['url'] = $path;
+
+    require_once ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+}
 ?>

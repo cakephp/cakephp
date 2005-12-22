@@ -87,6 +87,11 @@ class DB_ACL extends AclBase
          trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_ERROR);
       }
 
+      if($aroPath == false || $aroPath == null || count($aroPath) == 0 || $tmpAcoPath == false || $tmpAcoPath == null || count($tmpAcoPath) == 0)
+      {
+         return null;
+      }
+
       foreach($tmpAcoPath as $a)
       {
          $acoPath[] = $a['Aco']['id'];
@@ -111,10 +116,10 @@ class DB_ACL extends AclBase
                   {
                      if(isset($perm['aros_acos']))
                      {
-						 if($perm['aros_acos'][$key] != 1)
-						 {
-							return false;
-						 }
+                         if($perm['aros_acos'][$key] != 1)
+                         {
+                            return false;
+                         }
                      }
                   }
                   return true;
@@ -151,6 +156,13 @@ class DB_ACL extends AclBase
       $permKeys = $this->_getAcoKeys($Perms->loadInfo());
       $save = array();
 
+
+      if($perms == false)
+      {
+         // One of the nodes does not exist
+         return false;
+      }
+
       if(isset($perms[0]))
       {
          $save = $perms[0]['aros_acos'];
@@ -173,6 +185,7 @@ class DB_ACL extends AclBase
          else
          {
             // Raise an error
+            return false;
          }
       }
 
@@ -301,12 +314,17 @@ class DB_ACL extends AclBase
    
       $qAro = (is_string($aro) ? "alias = '" . addslashes($aro) . "'" : "user_id   = {$aro}");
       $qAco = (is_string($aco) ? "alias = '" . addslashes($aco) . "'" : "object_id = {$aco}");
-      
+
       $obj = array();
       $obj['Aro'] = $Aro->find($qAro);
       $obj['Aco'] = $Aco->find($qAco);
       $obj['Aro'] = $obj['Aro']['Aro'];
       $obj['Aco'] = $obj['Aco']['Aco'];
+
+      if($obj['Aro'] == null || count($obj['Aro']) == 0 || $obj['Aco'] == null || count($obj['Aco']) == 0)
+      {
+         return false;
+      }
 
       return array(
          'aro'  => $obj['Aro']['id'],

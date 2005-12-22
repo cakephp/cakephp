@@ -58,29 +58,36 @@ class AclNode extends AppModel
  * Enter description here...
  *
  */
-   function __construct()
+   function __construct($object = null, $parent = null)
    {
       parent::__construct();
       $this->__setTable();
+      if($object != null)
+      {
+         $this->create($object, $parent);
+      }
+      exit();
    }
 
 /**
  * Enter description here...
  *
- * @param unknown_type $link_id
- * @param unknown_type $parent_id
- * @param unknown_type $alias
+ * @param unknown_type $object A new ACL object.  This can be a string for alias-based ACL, or a Model for object-based ACL
+ * @param unknown_type $parent The parent object
  * @return unknown
  */
-   function create($link_id = 0, $parent_id = null, $alias = '') 
+   function create($object = null, $parent = null) 
    {
-      parent::create();
-
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
          return NULL;
       }
+      parent::create();
+
+      pr($this->__dataVars());
+      exit();
+
       extract($this->__dataVars());
 
       if($parent_id == null || $parent_id === 0)
@@ -208,10 +215,10 @@ class AclNode extends AppModel
    }
 
 /**
- * Enter description here...
+ * The path to a node as an array, where the first element of the array is at the root of the tree, and the last element is the requested node
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return array
  */
    function getPath($id)
    {
@@ -223,14 +230,18 @@ class AclNode extends AppModel
       extract($this->__dataVars());
 
       $item = $this->find($this->_resolveID($id, $secondary_id));
+      if($item == null || count($item) == 0)
+      {
+         return null;
+      }
       return $this->findAll("lft <= {$item[$class]['lft']} and rght >= {$item[$class]['rght']}");
    }
 
 /**
- * Enter description here...
+ * Gets the child nodes of a specified element
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return array
  */
    function getChildren($id)
    {
@@ -246,32 +257,57 @@ class AclNode extends AppModel
    }
 
 /**
- * Enter description here...
+ * Gets a reference to a node object
  *
- * @param unknown_type $id
+ * @param unknown_type $obj
  * @param unknown_type $fKey
  * @return unknown
  */
-   function _resolveID($id, $fKey)
+   function _resolveID($obj, $fKey)
    {
+      extract($this->__dataVars());
+      if(is_object($obj))
+      {
+         if(isset($obj->id) && isset($obj->name))
+         {
+            return "model = '{$obj->name}' and {$secondary_id} = {$obj->id}";
+         }
+         return null;
+      }
+      else if(is_array($obj))
+      {
+         $keys = array_keys($obj);
+         $key1 = $keys[0];
+         if(is_string($key1) && is_array($obj[$key1]) && isset($obj[$key1]['id']))
+         {
+            return "model = '{$key1}' and {$secondary_id} = {$obj[$key1]['id']}";
+         }
+         return null;
+      }
+      else if(is_string($obj))
+      {
+         $path = explode('/', $obj);
+         
+      }
       $key = (is_string($id) ? 'alias' : $fKey);
       $val = (is_string($id) ? '"' . addslashes($id) . '"' : $id);
       return "{$key} = {$val}";
    }
 
 /**
- * Enter description here...
+ * Private method: modifies the left and right values of affected nodes in a tree when a node is added or removed
  *
- * @param unknown_type $table
- * @param unknown_type $dir
- * @param unknown_type $lft
- * @param unknown_type $rght
+ * @param string $table aros or acos, depending on the tree to be modified
+ * @param int $dir The direction in which to shift the nodes
+ * @param int $lft The left position of the node being added or removed
+ * @param int $rght The right position of the node being added or removed
  */
    function _syncTable($table, $dir, $lft, $rght)
    {
       $shift = ($dir == 2 ? 1 : 2);
-      $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
-      $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
+      $table = strtolower($table);
+      $this->db->query("UPDATE {$table} SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
+      $this->db->query("UPDATE {$table} SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
    }
 
 /**

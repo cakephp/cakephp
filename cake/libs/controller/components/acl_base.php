@@ -72,8 +72,10 @@ class AclBase
  * @param unknown_type $aco
  * @param unknown_type $action
  */
-   function check($aro, $aco, $action = "*") {}
+   function check($aro, $aco, $action = "*")
+   {
 
+   }
 }
 
 ?>
