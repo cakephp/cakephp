@@ -4,7 +4,7 @@
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
- * Also includes methods for logging and the special method RequestAction, 
+ * Also includes methods for logging and the special method RequestAction,
  * to call other Controllers' Actions from anywhere.
  *
  * PHP versions 4 and 5
@@ -40,7 +40,7 @@ uses('log');
 /**
  * Object class, allowing __construct and __destruct in PHP4.
  *
- * Also includes methods for logging and the special method RequestAction, 
+ * Also includes methods for logging and the special method RequestAction,
  * to call other Controllers' Actions from anywhere.
  *
  * @package    cake
@@ -98,7 +98,7 @@ class Object
    }
 
 /**
- * Calls a controller's method from any location. 
+ * Calls a controller's method from any location.
  *
  * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
  * @param array $extra If array includes the key "render" it sets the AutoRender to true.
@@ -112,12 +112,12 @@ class Object
         }
         else
         {
-          $extra['render'] = 1; 
+          $extra['render'] = 1;
         }
         $dispatcher =& new Dispatcher();
         return $dispatcher->dispatch($url, $extra);
     }
-    
+
 /**
  * API for logging events.
  *
@@ -139,6 +139,123 @@ class Object
             return $this->_log->write('error', $msg);
       }
    }
+
+/**
+ * Renders the Missing Controller web page.
+ *
+ */
+   function missingController()
+   {
+       $this->autoLayout = true;
+       $this->pageTitle = 'Missing Controller';
+       $this->render('../errors/missingController');
+       exit();
+   }
+
+/**
+ * Renders the Missing Action web page.
+ *
+ */
+   function missingAction()
+   {
+       $this->autoLayout = true;
+       $this->pageTitle = 'Missing Method in Controller';
+       $this->render('../errors/missingAction');
+       exit();
+   }
+
+/**
+ * Renders the Private Action web page.
+ *
+ */
+   function privateAction()
+   {
+       $this->autoLayout = true;
+       $this->pageTitle = 'Trying to access private method in class';
+       $this->render('../errors/privateAction');
+       exit();
+   }
+
+/**
+ * Renders the Missing View web page.
+ *
+ */
+   function missingView()
+   {
+      //We are simulating action call below, this is not a filename!
+      $this->autoLayout = true;
+      $this->missingView = $this->name;
+      $this->pageTitle = 'Missing View';
+      $this->render('../errors/missingView');
+   }
+
+/**
+ * Renders the Missing Database web page.
+ *
+ */
+    function missingDatabase()
+    {
+        $this->autoLayout = true;
+        $this->pageTitle = 'Scaffold Missing Database Connection';
+        $this->render('../errors/missingScaffolddb');
+        exit();
+    }
+
+/**
+ * Renders the Missing Table web page.
+ *
+ */
+    function missingTable($tableName)
+    {
+	    $error =& new Controller();
+	    $error->constructClasses();
+        $error->missingTable = $this->table;
+        $error->missingTableName = $tableName;
+        $error->pageTitle = 'Missing Database Table';
+        $error->render('../errors/missingTable');
+        exit();
+    }
+
+/**
+ * Renders the Missing Table web page.
+ *
+ */
+    function missingConnection()
+    {
+        $error =& new Controller();
+	    $error->constructClasses();
+        $error->missingConnection = $this->name;
+        $error->autoLayout = true;
+        $error->pageTitle = 'Missing Database Connection';
+        $error->render('../errors/missingDatabase');
+        exit();
+    }
+
+/**
+ * Renders the Missing Helper file web page.
+ *
+ */
+    function missingHelperFile($file)
+    {
+        $this->missingHelperFile = $file;
+        $this->missingHelperClass = Inflector::camelize($file) . "Helper";
+        $this->pageTitle = 'Missing Helper File';
+        $this->render('../errors/missingHelperFile');
+        exit();
+    }
+
+/**
+ * Renders the Missing Helper class web page.
+ *
+ */
+    function missingHelperClass($class)
+    {
+        $this->missingHelperClass = Inflector::camelize($class) . "Helper";
+        $this->missingHelperFile = Inflector::underscore($class);
+        $this->pageTitle = 'Missing Helper Class';
+        $this->render('../errors/missingHelperClass');
+        exit();
+    }
 }
 
 ?>

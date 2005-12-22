@@ -35,7 +35,7 @@
 uses('object', DS.'view'.DS.'helper');
 
 /**
- * View, the V in the MVC triad. 
+ * View, the V in the MVC triad.
  *
  * Class holding methods for displaying presentation data.
  *
@@ -167,7 +167,7 @@ class View extends Object
  * @var boolean
  */
    var $hasRendered = null;
-   
+
 /**
  * Enter description here...
  *
@@ -200,6 +200,7 @@ class View extends Object
         $this->params        =& $this->controller->params;
         $this->data          =& $this->controller->data;
         $this->displayFields =& $this->controller->displayFields;
+        $this->webservices   =& $this->controller->webservices;
    }
 
 /**
@@ -219,7 +220,7 @@ class View extends Object
 
 
 /**
- * Renders view for given action and layout. If $file is given, that is used 
+ * Renders view for given action and layout. If $file is given, that is used
  * for a view filename (e.g. customFunkyView.thtml).
  *
  * @param string $action Name of action to render for
@@ -352,7 +353,7 @@ class View extends Object
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
  * This realizes the concept of Elements, (or "partial layouts")
- * and the $params array is used to send data to be used in the 
+ * and the $params array is used to send data to be used in the
  * Element.
  *
  * @param string $name Name of template file in the /app/views/elements/ folder
@@ -429,18 +430,6 @@ class View extends Object
       print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
    }
 
-/**
- * Renders the Missing View web page.
- *
- */
-   function missingView()
-   {
-      //We are simulating action call below, this is not a filename!
-      $this->autoLayout = true;
-      $this->missingView = $this->name;
-      $this->render('../errors/missingView');
-   }
-
 
 /**************************************************************************
    * Private methods.
@@ -457,28 +446,36 @@ class View extends Object
    function _getViewFileName($action)
    {
        $action = Inflector::underscore($action);
-       
-       $viewFileName = VIEWS.$this->viewPath.DS.$action.'.thtml';
-       
-       if(file_exists(VIEWS.$this->viewPath.DS.$action.'.thtml'))
+
+       if(!is_null($this->webservices))
        {
-           $viewFileName = VIEWS.$this->viewPath.DS.$action.'.thtml';
+           $type =   strtolower($this->webservices).DS;
        }
-       elseif(file_exists(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$action.'.thtml'))
+       else
        {
-           $viewFileName = LIBS.'view'.DS.'templates'.DS.'errors'.DS.$action.'.thtml';
+           $type = null;
        }
-       elseif(file_exists(LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$action.'.thtml'))
+       $viewFileName = VIEWS.$this->viewPath.DS.$type.$action.'.thtml';
+
+       if(file_exists(VIEWS.$this->viewPath.DS.$type.$action.'.thtml'))
        {
-           $viewFileName = LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$action.'.thtml';
+           $viewFileName = VIEWS.$this->viewPath.DS.$type.$action.'.thtml';
        }
-       
-       
+       elseif(file_exists(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
+       {
+           $viewFileName = LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml';
+       }
+       elseif(file_exists(LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml'))
+       {
+           $viewFileName = LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml';
+       }
+
+
        $viewPath = explode(DS, $viewFileName);
        $i = array_search('..', $viewPath);
        unset($viewPath[$i-1]);
        unset($viewPath[$i]);
-       
+
        $return = '/'.implode('/', $viewPath);
        return $return;
    }
@@ -489,21 +486,31 @@ class View extends Object
  * @return string Filename for layout file (.thtml).
  * @access private
  */
-   function _getLayoutFileName()
-   {
-		if(file_exists(LAYOUTS."{$this->layout}.thtml"))
+    function _getLayoutFileName()
+    {
+        if(!is_null($this->webservices))
+        {
+            $type =   strtolower($this->webservices).DS;
+        }
+        else
+        {
+            $type = null;
+        }
+        $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
+
+		if(file_exists(LAYOUTS.$type."{$this->layout}.thtml"))
 		{
-		    $layoutFileName = LAYOUTS."{$this->layout}.thtml";
+		    $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
 		}
-		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS."{$this->layout}.thtml"))
+		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
 		{
-		    $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS."{$this->layout}.thtml";
+		    $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml";
 		}
 		return $layoutFileName;
    }
-   
+
 /**
- * Renders and returns output for given view filename with its 
+ * Renders and returns output for given view filename with its
  * array of data.
  *
  * @param string $___viewFn Filename of the view
@@ -521,12 +528,12 @@ class View extends Object
       {
          $loadedHelpers =  array();
          $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
-         
+
          foreach(array_keys($loadedHelpers) as $helper)
          {
           $replace = strtolower(substr($helper, 0, 1));
           $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
-          
+
            ${$camelBackedHelper} =& $loadedHelpers[$helper];
            if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
            {
@@ -560,13 +567,13 @@ class View extends Object
 
       return $out;
    }
-   
+
    /**
     * Loads helpers, with their dependencies.
     *
     * @param array $loaded List of helpers that are already loaded.
     * @param array $helpers List of helpers to load.
-    * @return array 
+    * @return array
  */
    function &_loadHelpers(&$loaded, $helpers) {
 
@@ -575,7 +582,7 @@ class View extends Object
         if(in_array($helper, array_keys($loaded)) !== true)
         {
             $helperFn = Inflector::underscore($helper).'.php';
-            
+
             if(file_exists(HELPERS.$helperFn))
             {
                  $helperFn = HELPERS.$helperFn;
@@ -584,7 +591,7 @@ class View extends Object
             {
                 $helperFn = LIBS.'view'.DS.'helpers'.DS.$helperFn;
             }
-          
+
           $helperCn = $helper.'Helper';
           $replace = strtolower(substr($helper, 0, 1));
           $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
@@ -601,7 +608,7 @@ class View extends Object
                 ${$camelBackedHelper}->params               = $this->params;
                 ${$camelBackedHelper}->action               = $this->action;
                 ${$camelBackedHelper}->data                 = $this->data;
-                
+
                 if(!empty($this->validationErrors))
                 {
                   ${$camelBackedHelper}->validationErrors = $this->validationErrors;
@@ -633,7 +640,7 @@ class View extends Object
           }
        }
      }
-     
+
      return $loaded;
    }
 }

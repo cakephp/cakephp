@@ -31,7 +31,7 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * @package    cake
@@ -82,7 +82,7 @@ class CakeSession extends Object
  * @var unknown_type
  */
 	var $sessionId     = null;
-    
+
 /**
  * Enter description here...
  *
@@ -96,7 +96,7 @@ class CakeSession extends Object
             {
                 $this->host = substr($this->host,0, strpos($this->host, ':'));
             }
-            
+
             if (empty($this->path))
             {
                 $dispatcher =& new Dispatcher();
@@ -110,8 +110,8 @@ class CakeSession extends Object
             {
                 $this->path = '/';
             }
-            
-            $this->ip = $_SERVER['REMOTE_ADDR'];
+
+            $this->ip = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
             $this->userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : "";
             $this->_initSession();
             $this->_begin();
@@ -129,7 +129,7 @@ class CakeSession extends Object
         $expression = "return isset(".$this->_sessionVarNames($name).");";
         return eval($expression);
     }
-    
+
 /**
  * Enter description here...
  *
@@ -147,7 +147,7 @@ class CakeSession extends Object
         $this->_setError(2, "$name doesn't exist");
         return false;
     }
-    
+
 /**
  * Enter description here...
  *
@@ -165,7 +165,7 @@ class CakeSession extends Object
 		return $this->error[$errorNumber];
 	    }
 	}
-	
+
 /**
  * Enter description here...
  *
@@ -173,7 +173,7 @@ class CakeSession extends Object
  */
 	function getLastError()
 	{
-        
+
 	    if($this->lastError)
 	    {
 	        return $this->getError($this->lastError);
@@ -183,7 +183,7 @@ class CakeSession extends Object
 	        return false;
 	    }
 	}
-    
+
 /**
  * Enter description here...
  *
@@ -191,10 +191,10 @@ class CakeSession extends Object
  */
     function isValid()
     {
-        
+
         return $this->valid;
     }
-    
+
 /**
  * Enter description here...
  *
@@ -207,7 +207,7 @@ class CakeSession extends Object
         {
             return $this->returnSessionVars();
         }
-        
+
         if($this->checkSessionVar($name))
         {
             $result = eval("return ".$this->_sessionVarNames($name).";");
@@ -216,7 +216,7 @@ class CakeSession extends Object
         $this->_setError(2, "$name doesn't exist");
         return false;
     }
-    
+
 /**
  * Enter description here...
  *
@@ -225,7 +225,7 @@ class CakeSession extends Object
  */
     function returnSessionVars()
     {
-        
+
         if(!empty($_SESSION))
         {
             $result = eval("return ".$_SESSION.";");
@@ -234,20 +234,20 @@ class CakeSession extends Object
         $this->_setError(2, "No Session vars set");
         return false;
     }
-    
+
 /**
- * Enter description here...  
+ * Enter description here...
  *
  * @param unknown_type $name
  * @param unknown_type $value
  */
     function writeSessionVar($name, $value)
     {
-        
+
         $expression = $this->_sessionVarNames($name);
         $expression .= " = \$value;";
         eval($expression);
-    }  
+    }
 
 /**
  * Enter description here...
@@ -256,17 +256,17 @@ class CakeSession extends Object
  */
     function _begin()
     {
-        
+
         if (function_exists('session_write_close'))
         {
             session_write_close();
         }
-        
-        session_cache_limiter("must-revalidate");    
+
+        session_cache_limiter("must-revalidate");
         session_start();
         $this->_new();
     }
-   
+
 /**
  * Enter description here...
  *
@@ -279,7 +279,7 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-    
+
 /**
  * Enter description here...
  *
@@ -292,7 +292,7 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-    
+
 /**
  * Enter description here...
  *
@@ -305,7 +305,7 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-    
+
 /**
  * Enter description here...
  *
@@ -313,7 +313,7 @@ class CakeSession extends Object
  */
     function _initSession()
     {
-        
+
         switch (CAKE_SECURITY)
         {
             case 'high':
@@ -328,7 +328,7 @@ class CakeSession extends Object
                 $this->cookieLifeTime = 788940000;
             break;
         }
-        
+
         switch (CAKE_SESSION_SAVE)
         {
             case 'cake':
@@ -371,7 +371,7 @@ class CakeSession extends Object
                 ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
             break;
             default :
-                $config = CONFIGS.CAKE_SESSION_SAVE.'.php.';
+                $config = CONFIGS.CAKE_SESSION_SAVE.'.php';
                 if(is_file($config))
                 {
                     require_once($config);
@@ -382,22 +382,22 @@ class CakeSession extends Object
                     ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                     ini_set('session.cookie_path', $this->path);
                     ini_set('session.gc_probability', 1);
-                    ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60); 
-                }               
+                    ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
+                }
             break;
         }
-        
+
     }
-    
+
 /**
  * Enter description here...
  *
  * @access private
- * 
+ *
  */
     function _new()
     {
-        
+
         if(!ereg("proxy\.aol\.com$", gethostbyaddr($this->ip)))
         {
             if($this->readSessionVar("Config"))
@@ -415,7 +415,7 @@ class CakeSession extends Object
            else
            {
                srand((double)microtime() * 1000000);
-               $this->writeSessionVar('Config.rand', rand());				
+               $this->writeSessionVar('Config.rand', rand());
                $this->writeSessionVar("Config.ip", $this->ip);
                $this->writeSessionVar("Config.userAgent", $this->userAgent);
                $this->valid = true;
@@ -426,25 +426,25 @@ class CakeSession extends Object
            if(!$this->readSessionVar("Config"))
            {
                srand((double)microtime() * 1000000);
-               $this->writeSessionVar('Config.rand', rand());				
+               $this->writeSessionVar('Config.rand', rand());
                $this->writeSessionVar("Config.ip", $this->ip);
                $this->writeSessionVar("Config.userAgent", $this->userAgent);
            }
            $this->valid = true;
        }
-       
+
         if(CAKE_SECURITY == 'high')
         {
             $this->_regenerateId();
         }
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
-    
+
 /**
  * Enter description here...
  *
  * @access private
- * 
+ *
  */
     function _open()
     {
@@ -453,12 +453,12 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-    
+
 /**
  * Enter description here...
  *
  * @access private
- * 
+ *
  */
     function _read()
     {
@@ -467,18 +467,18 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-    
+
 
 /**
  * Enter description here...
  *
  *
  * @access private
- * 
+ *
  */
     function _regenerateId()
     {
-        
+
         $oldSessionId = session_id();
         session_regenerate_id();
         $newSessid = session_id();
@@ -504,13 +504,13 @@ class CakeSession extends Object
  * Enter description here...
  *
  * @access private
- * 
+ *
  */
     function _renew()
     {
         $this->_regenerateId();
     }
-    
+
 /**
  * Enter description here...
  *
@@ -520,7 +520,7 @@ class CakeSession extends Object
  */
     function _sessionVarNames($name)
     {
-        
+
         if(is_string($name))
         {
             if(strpos($name, "."))
@@ -532,7 +532,7 @@ class CakeSession extends Object
                 $names = array($name);
             }
             $expression = $expression = "\$_SESSION";
-            
+
             foreach($names as $item)
             {
                 $expression .= is_numeric($item) ? "[$item]" : "['$item']";
@@ -542,7 +542,7 @@ class CakeSession extends Object
         $this->setError(3, "$name is not a string");
         return false;
     }
-    
+
 /**
  * Enter description here...
  *
@@ -552,16 +552,16 @@ class CakeSession extends Object
  */
     function _setError($errorNumber, $errorMessage)
     {
-        
+
         if($this->error === false)
         {
             $this->error = array();
         }
-        
+
         $this->error[$errorNumber] = $errorMessage;
         $this->lastError = $errorNumber;
     }
-    
+
 /**
  * Enter description here...
  *
@@ -574,5 +574,5 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
-} 
+}
 ?>

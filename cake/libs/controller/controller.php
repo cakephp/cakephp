@@ -167,7 +167,7 @@ class Controller extends Object
  * @access public
  */
     var $beforeFilter = null;
-    
+
 /**
  * Enter description here...
  *
@@ -190,10 +190,14 @@ class Controller extends Object
             }
             $this->name = $r[1];
         }
-        
+
         $this->viewPath = Inflector::underscore($this->name);
         $this->modelClass = Inflector::singularize($this->name);
         $this->modelKey  = Inflector::underscore($this->modelClass);
+        if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
+        {
+            array_push($this->components, 'Session');
+        }
         parent::__construct();
     }
 
@@ -205,12 +209,12 @@ class Controller extends Object
     {
         $dboFactory = DboFactory::getInstance($this->useDbConfig);
         $this->db =& $dboFactory;
-        
+
         if (!empty($this->components))
         {
             $component =& new Component($this);
         }
-        
+
         if (!empty($this->beforeFilter))
         {
             if(is_array($this->beforeFilter))
@@ -231,7 +235,7 @@ class Controller extends Object
                 }
             }
         }
-        
+
         if(empty($this->params['pass']))
         {
             $id = false;
@@ -272,34 +276,34 @@ class Controller extends Object
         }
     }
 
-    /**
-     * Redirects to given $url, after turning off $this->autoRender.
-     *
-     * @param unknown_type $url
-     */
+/**
+ * Redirects to given $url, after turning off $this->autoRender.
+ *
+ * @param unknown_type $url
+ */
     function redirect ($url)
     {
         $this->autoRender = false;
         header ('Location: '.$this->base.$url);
     }
 
-    /**
-     * Saves a variable to use inside a template.
-     *
-     * @param mixed $one A string or an array of data.
-     * @param string $two Value in case $one is a string (which then works as the key), otherwise unused.
-     * @return unknown
-     */
+/**
+ * Saves a variable to use inside a template.
+ *
+ * @param mixed $one A string or an array of data.
+ * @param string $two Value in case $one is a string (which then works as the key), otherwise unused.
+ * @return unknown
+ */
     function set($one, $two=null)
     {
         return $this->_setArray(is_array($one)? $one: array($one=>$two));
     }
 
-    /**
-     * Enter description here...
-     *
-     * @param unknown_type $action
-     */
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $action
+ */
     function setAction ($action)
     {
         $this->action = $action;
@@ -308,11 +312,11 @@ class Controller extends Object
         call_user_func_array(array(&$this, $action), $args);
     }
 
-    /**
-     * Returns number of errors in a submitted FORM.
-     *
-     * @return int Number of errors
-     */
+/**
+ * Returns number of errors in a submitted FORM.
+ *
+ * @return int Number of errors
+ */
     function validate ()
     {
         $args = func_get_args();
@@ -321,11 +325,11 @@ class Controller extends Object
         return count($errors);
     }
 
-    /**
-     * Validates a FORM according to the rules set up in the Model.
-     *
-     * @return int Number of errors
-     */
+/**
+ * Validates a FORM according to the rules set up in the Model.
+ *
+ * @return int Number of errors
+ */
     function validateErrors ()
     {
         $objects = func_get_args();
@@ -340,15 +344,15 @@ class Controller extends Object
         return $this->validationErrors = (count($errors)? $errors: false);
     }
 
-    /**
-     * Gets an instance of the view object & prepares it for rendering the output, then
-     * asks the view to actualy do the job.
-     *
-     * @param unknown_type $action
-     * @param unknown_type $layout
-     * @param unknown_type $file
-     * @return unknown
-     */
+/**
+ * Gets an instance of the view object & prepares it for rendering the output, then
+ * asks the view to actualy do the job.
+ *
+ * @param unknown_type $action
+ * @param unknown_type $layout
+ * @param unknown_type $file
+ * @return unknown
+ */
     function render($action=null, $layout=null, $file=null)
     {
         $view =& new View($this);
@@ -368,111 +372,11 @@ class Controller extends Object
     }
 
 /**
- * Renders the Missing Controller web page.
+ * Sets data for this view. Will set title if the key "title" is in given $data array.
  *
+ * @param array $data Array of
+ * @access private
  */
-   function missingController()
-   {
-       $this->autoLayout = true;
-       $this->pageTitle = 'Missing Controller';
-       $this->render('../errors/missingController');
-       exit();
-   }
-
-/**
- * Renders the Missing Action web page.
- *
- */
-   function missingAction()
-   {
-       $this->autoLayout = true;
-       $this->pageTitle = 'Missing Method in Controller';
-       $this->render('../errors/missingAction');
-       exit();
-   }
-   
-/**
- * Renders the Private Action web page.
- *
- */
-   function privateAction()
-   {
-       $this->autoLayout = true;
-       $this->pageTitle = 'Trying to access private method in class';
-       $this->render('../errors/privateAction');
-       exit();
-   }
-   
-/**
- * Renders the Missing Database web page.
- *
- */
-    function missingDatabase()
-    {
-        $this->autoLayout = true;
-        $this->pageTitle = 'Scaffold Missing Database Connection';
-        $this->render('../errors/missingScaffolddb');
-        exit();
-    }
-
-/**
- * Renders the Missing Table web page.
- *
- */
-    function missingTable($tableName)
-    {
-        $this->autoLayout = true;
-        $this->missingTableName = $tableName;
-        $this->pageTitle = 'Missing Database Table';
-        $this->render('../errors/missingTable');
-        exit();
-    }
-    
-/**
- * Renders the Missing Helper file web page.
- *
- */
-    function missingHelperFile($file)
-    {
-        $this->missingHelperFile = $file;
-        $this->missingHelperClass = Inflector::camelize($file) . "Helper";
-        $this->pageTitle = 'Missing Helper File';
-        $this->render('../errors/missingHelperFile');
-        exit();
-    }
-    
-    
-/**
- * Renders the Missing Helper class web page.
- *
- */
-    function missingHelperClass($class)
-    {
-        $this->missingHelperClass = Inflector::camelize($class) . "Helper";
-        $this->missingHelperFile = Inflector::underscore($class);
-        $this->pageTitle = 'Missing Helper Class';
-        $this->render('../errors/missingHelperClass');
-        exit();
-    }
-    
-/**
- * Renders the Missing Table web page.
- *
- */
-    function missingConnection()
-    {
-        $this->autoLayout = true;
-        $this->pageTitle = 'Missing Database Connection';
-        $this->render('../errors/missingDatabase');
-        exit();
-    }
-
-    /**
-     * Sets data for this view. Will set title if the key "title" is in given $data array.
-     *
-     * @param array $data Array of
-     * @access private
-     */
     function _setArray($data)
     {
         foreach ($data as $name => $value)
@@ -484,25 +388,25 @@ class Controller extends Object
         }
     }
 
-    /**
-     * Set the title element of the page.
-     *
-     * @param string $pageTitle Text for the title
-     * @access private
-     */
+/**
+ * Set the title element of the page.
+ *
+ * @param string $pageTitle Text for the title
+ * @access private
+ */
     function _setTitle($pageTitle)
     {
         $this->pageTitle = $pageTitle;
     }
 
-    /**
-     * Shows a message to the user $time seconds, then redirects to $url
-     * Uses flash.thtml as a layout for the messages
-     *
-     * @param string $message Message to display to the user
-     * @param string $url Relative URL to redirect to after the time expires
-     * @param int $time Time to show the message
-     */
+/**
+ * Shows a message to the user $time seconds, then redirects to $url
+ * Uses flash.thtml as a layout for the messages
+ *
+ * @param string $message Message to display to the user
+ * @param string $url Relative URL to redirect to after the time expires
+ * @param int $time Time to show the message
+ */
     function flash($message, $url, $pause=1)
     {
         $this->autoRender = false;
@@ -521,24 +425,24 @@ class Controller extends Object
 		{
 		    $flash = LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml';
 		}
-        
-        
-        
+
+
+
         $this->render(null,false,$flash);
     }
 
-    /**
-     * Shows a message to the user $time seconds, then redirects to $url
-     * Uses flash.thtml as a layout for the messages
-     *
-     * @param string $message Message to display to the user
-     * @param string $url URL to redirect to after the time expires
-     * @param int $time Time to show the message
-     *
-     * @param unknown_type $message
-     * @param unknown_type $url
-     * @param unknown_type $time
-     */
+/**
+ * Shows a message to the user $time seconds, then redirects to $url
+ * Uses flash.thtml as a layout for the messages
+ *
+ * @param string $message Message to display to the user
+ * @param string $url URL to redirect to after the time expires
+ * @param int $time Time to show the message
+ *
+ * @param unknown_type $message
+ * @param unknown_type $url
+ * @param unknown_type $time
+ */
     function flashOut($message, $url, $time=1)
     {
         $this->autoRender = false;
@@ -551,24 +455,24 @@ class Controller extends Object
         $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
     }
 
-    /**
-	 * This function creates a $fieldNames array for the view to use.
-	 * @todo Map more database field types to html form fields.
-	 * @todo View the database field types from all the supported databases.
-	 *
-	 */
+/**
+ * This function creates a $fieldNames array for the view to use.
+ * @todo Map more database field types to html form fields.
+ * @todo View the database field types from all the supported databases.
+ *
+ */
 	function generateFieldNames( $data = null, $doCreateOptions = true  )
 	{
 	    $fieldNames = array();
-	    
+
 	    $model = $this->modelClass;
 	    $modelKey = $this->modelKey;
 	    $table = $this->{$model}->table;
 	    $association = array_search($table,$this->{$model}->alias);
-	    
+
 	    $classRegistry =& ClassRegistry::getInstance();
 	    $objRegistryModel = $classRegistry->getObject($modelKey);
-	    
+
 	    foreach ($objRegistryModel->_tableInfo as $tables)
 	    {
 	        foreach ($tables as $tabl)
@@ -638,7 +542,7 @@ class Controller extends Object
 	         }
 	         switch( $type )
 	         {
-	             
+
 	             case "text":
 	             case "mediumtext":
 	             {
@@ -658,7 +562,7 @@ class Controller extends Object
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
                          $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
-                         
+
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -668,7 +572,7 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         
+
                                          if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
@@ -691,7 +595,7 @@ class Controller extends Object
                     {
                        $fieldNames[ $tabl['name']]['type'] = 'input';
                     }
-                    else 
+                    else
                     {
                        $fieldNames[ $tabl['name']]['type'] = 'checkbox';
                     }
@@ -721,7 +625,7 @@ class Controller extends Object
                          //  get the list of options from the other model.
                          $registry = ClassRegistry::getInstance();
                          $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
-                         
+
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -783,7 +687,7 @@ class Controller extends Object
       	foreach( $objRegistryModel->_manyToMany as $relation )
          {
             //list($modelName) = $relation;
-            list($manyAssociation, $modelName, $value) = $relation;  
+            list($manyAssociation, $modelName, $value) = $relation;
             $modelKeyM = Inflector::underscore($modelName);
             $modelObject = new $modelName();
 
@@ -815,7 +719,7 @@ class Controller extends Object
               }
          } // end loop through manytomany relations.
 	    }
-	    
+
       return $fieldNames;
 	}
 }

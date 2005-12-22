@@ -31,7 +31,7 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * @package    cake
@@ -39,19 +39,19 @@
  * @since      CakePHP v 0.10.0.1232
  *
  */
-class SessionComponent extends Object 
-{  
-   
+class SessionComponent extends Object
+{
+
 /**
  * Enter description here...
  *
  */
-    function __construct () 
+    function __construct ()
     {
         $this->CakeSession = New CakeSession();
         parent::__construct();
     }
-    
+
 /**
  * Enter description here...
  *
@@ -65,7 +65,7 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->writeSessionVar($name, $value);
     }
-    
+
 /**
  * Enter description here...
  *
@@ -79,7 +79,7 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->readSessionVar($name);
     }
-    
+
 /**
  * Enter description here...
  *
@@ -92,7 +92,7 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->delSessionVar($name);
     }
-    
+
 /**
  * Enter description here...
  *
@@ -105,7 +105,7 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->checkSessionVar($name);
     }
-    
+
 /**
  * Enter description here...
  *
@@ -117,11 +117,11 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->getLastError();
     }
-    
+
 /**
  * Enter description here...
  *
- * Use like this. $this->Session->setError();
+ * Use like this. $this->Session->setFlash('This has been saved');
  *
  * @return string Last session error
  */
@@ -133,7 +133,7 @@ class SessionComponent extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->Session->setError();
+ * Use like this. $this->Session->flash();
  *
  * @return
  */
@@ -148,9 +148,9 @@ class SessionComponent extends Object
         {
             return false;
         }
-       
+
     }
-    
+
 /**
  * Enter description here...
  *
@@ -164,6 +164,6 @@ class SessionComponent extends Object
     {
         return $this->CakeSession->isValid();
     }
-    
+
 }
 ?>

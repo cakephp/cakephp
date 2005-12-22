@@ -1,35 +1,40 @@
 <?php
-//////////////////////////////////////////////////////////////////////////
-// + $Id$
-// +------------------------------------------------------------------+ //
-// + Cake PHP : Rapid Development Framework <http://www.cakephp.org/> + //
-// + Copyright: (c) 2005, CakePHP Authors/Developers                  + //
-// + Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com> + //
-// +            Larry E. Masters aka PhpNut <nut@phpnut.com>          + //
-// +            Kamil Dzielinski aka Brego <brego.dk@gmail.com>       + //
-// +------------------------------------------------------------------+ //
-// + Licensed under The MIT License                                   + //
-// + Redistributions of files must retain the above copyright notice. + //
-// + See: http://www.opensource.org/licenses/mit-license.php          + //
-//////////////////////////////////////////////////////////////////////////
+/* SVN FILE: $Id$ */
 
 /**
  * Access Control List abstract class.
  * 
- * @filesource 
- * @author CakePHP Authors/Developers
- * @copyright Copyright (c) 2005, CakePHP Authors/Developers
- * @link https://trac.cakephp.org/wiki/Authors Authors/Developers
- * @package cake
- * @subpackage cake.cake.libs.controller.components
- * @since CakePHP v 0.10.0.1076
- * @version $Revision$
- * @modifiedby $LastChangedBy$
- * @lastmodified $Date$
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * Long description for file
  *
+ * PHP versions 4 and 5
+ *
+ * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c) 2005, CakePHP Authors/Developers
+ *
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
+ *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource 
+ * @author       CakePHP Authors/Developers
+ * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
+ * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package      cake
+ * @subpackage   cake.cake.libs.controller.components
+ * @since        CakePHP v 0.10.0.1232
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
+ * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+/**
+ * Enter description here...
+ *
+ * @return AclBase
+ */
 uses('error_messages');
 
 /**
@@ -44,6 +49,11 @@ uses('error_messages');
 class AclBase
 {
 
+/**
+ * Enter description here...
+ *
+ * @return AclBase
+ */
    function AclBase()
    {
       //No instantiations or constructor calls (even statically)
@@ -55,6 +65,13 @@ class AclBase
 
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $aro
+ * @param unknown_type $aco
+ * @param unknown_type $action
+ */
    function check($aro, $aco, $action = "*") {}
 
 }

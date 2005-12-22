@@ -11,8 +11,7 @@
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2005, CakePHP Authors/Developers
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
  *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
  *
  *  Licensed under The MIT License
@@ -23,7 +22,7 @@
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
- * @subpackage   cake.cake.app.controllers.componenets
+ * @subpackage   cake.cake.app.controllers.componenets.dbacl
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -31,6 +30,7 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+uses('inflector');
 uses('controller'.DS.'components'.DS.'acl_base');
 uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode');
 uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco');
@@ -42,17 +42,29 @@ uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aros_aco');
  * In this file you can extend the AclBase.
  *
  * @package    cake
- * @subpackage cake.cake.app.controllers.components
+ * @subpackage cake.cake.app.controllers.components.dbacl
  */
 
 class DB_ACL extends AclBase 
 {
 
+/**
+ * Enter description here...
+ *
+ */
    function __construct()
    {
       
    }
    
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $aro
+ * @param unknown_type $aco
+ * @param unknown_type $action
+ * @return unknown
+ */
    function check($aro, $aco, $action = "*")
    {
 
@@ -97,9 +109,12 @@ class DB_ACL extends AclBase
                   // ARO must be cleared for ALL ACO actions
                   foreach($permKeys as $key)
                   {
-                     if($perm['aros_acos'][$key] != 1)
+                     if(isset($perm['aros_acos']))
                      {
-                     	return false;
+						 if($perm['aros_acos'][$key] != 1)
+						 {
+							return false;
+						 }
                      }
                   }
                   return true;
@@ -124,11 +139,11 @@ class DB_ACL extends AclBase
       return false;
    }
 
-   /**
-    * Allow
-    *
-    * @return boolean
-    */
+/**
+ * Allow
+ *
+ * @return boolean
+ */
    function allow($aro, $aco, $action = "*", $value = 1)
    {
       $Perms = new ArosAco();
@@ -192,41 +207,41 @@ class DB_ACL extends AclBase
       return true;
    }
 
-   /**
-    * Deny
-    *
-    * @return boolean
-    */
+/**
+ * Deny
+ *
+ * @return boolean
+ */
    function deny($aro, $aco, $action = "*")
    {
       return $this->allow($aro, $aco, $action, -1);
    }
 
-   /**
-    * Inherit
-    *
-    * @return boolean
-    */
+/**
+ * Inherit
+ *
+ * @return boolean
+ */
    function inherit($aro, $aco, $action = "*")
    {
       return $this->allow($aro, $aco, $action, 0);
    }
 
-   /**
-    * Allow alias
-    *
-    * @return boolean
-    */
+/**
+ * Allow alias
+ *
+ * @return boolean
+ */
    function grant($aro, $aco, $action = "*")
    {
       return $this->allow($aro, $aco, $action);
    }
 
-   /**
-    * Deny alias
-    *
-    * @return boolean
-    */
+/**
+ * Deny alias
+ *
+ * @return boolean
+ */
    function revoke($aro, $aco, $action = "*")
    {
       return $this->deny($aro, $aco, $action);
@@ -234,6 +249,12 @@ class DB_ACL extends AclBase
 
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @return unknown
+ */
    function getAro($id = null)
    {
      if($id == null)
@@ -247,6 +268,12 @@ class DB_ACL extends AclBase
    }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @return unknown
+ */
    function getAco($id = null)
    {
      if($id == null)
@@ -260,6 +287,13 @@ class DB_ACL extends AclBase
    }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $aro
+ * @param unknown_type $aco
+ * @return unknown
+ */
    function getAclLink($aro, $aco)
    {
       $Aro = new Aro();
@@ -281,6 +315,12 @@ class DB_ACL extends AclBase
       );
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $keys
+ * @return unknown
+ */
    function _getAcoKeys($keys)
    {
       $newKeys = array();

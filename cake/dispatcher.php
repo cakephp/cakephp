@@ -39,7 +39,7 @@ uses('error_messages', 'object', 'router', DS.'controller'.DS.'controller', DS.'
 
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
- * 
+ *
  * Dispatches the request, creating appropriate models and controllers.
  *
  * @package    cake
@@ -53,12 +53,18 @@ class Dispatcher extends Object
  * @var string
  */
    var $base = false;
-   
+
 /**
  * Base URL
  * @var string
  */
    var $admin = false;
+
+/**
+ * Base URL
+ * @var string
+ */
+   var $webservices = null;
 
 /**
  * Constructor.
@@ -71,8 +77,8 @@ class Dispatcher extends Object
 /**
  * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the results (if autoRender is set).
  *
- * If no controller of given name can be found, invoke() shows error messages in 
- * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called 
+ * If no controller of given name can be found, invoke() shows error messages in
+ * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
  * Actions).
  *
  * @param string $url	URL information to work on.
@@ -85,7 +91,7 @@ class Dispatcher extends Object
       $missingAction     = false;
       $missingView       = false;
       $privateAction     = false;
-      
+
       if(defined('CAKE_ADMIN'))
       {
           if(isset($params[CAKE_ADMIN]))
@@ -102,14 +108,14 @@ class Dispatcher extends Object
               }
           }
       }
-      
+
       $this->base = $this->baseUrl();
-      
+
       if(!in_array('render', array_keys($params)))
       {
           $params['render'] = 0;
       }
-          
+
       if (empty($params['controller']))
       {
          $missingController = true;
@@ -146,32 +152,30 @@ class Dispatcher extends Object
              $params['controller'] = Inflector::camelize($params['controller']."Controller");
          }
          $controller->missingController = $params['controller'];
-         $controller->webroot     = $this->webroot;
-         return $this->_invoke($controller, $params );
       }
       else
       {
          $controller =& new $ctrlClass($this);
       }
-      
+
       $classMethods = get_class_methods($controller);
       $classVars = get_object_vars($controller);
-      
+
       if (empty($params['action']))
       {
           $params['action'] = 'index';
       }
-      
+
       if(in_array($params['action'], $classMethods) && strpos($params['action'], '_', 0) === 0)
       {
           $privateAction = true;
       }
-      
+
       if(!in_array($params['action'], $classMethods))
       {
           $missingAction = true;
       }
-      
+
       $controller->base        = $this->base;
       $controller->here        = $this->base.'/'.$url;
       $controller->webroot     = $this->webroot;
@@ -181,10 +185,12 @@ class Dispatcher extends Object
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
       $controller->autoLayout = !$params['bare'];
       $controller->autoRender = !$params['render'];
+      $controller->webservices = $params['webservices'];
 
-      if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
+      if(!is_null($controller->webservices))
       {
-          array_push($controller->components, 'Session');
+          array_push($controller->components, $controller->webservices);
+          array_push($controller->helpers, $controller->webservices);
       }
 
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
@@ -194,22 +200,22 @@ class Dispatcher extends Object
       }
 
       $controller->constructClasses();
-      
+
       if ($missingAction)
       {
           $controller->missingAction = $params['action'];
           $params['action'] = 'missingAction';
       }
-      
+
       if ($privateAction)
       {
           $controller->privateAction = $params['action'];
           $params['action'] = 'privateAction';
       }
-      
+
       return $this->_invoke($controller, $params );
    }
-   
+
 /**
  * Invokes given controller's render action if autoRender option is set. Otherwise the contents of the operation are returned as a string.
  *
@@ -240,7 +246,7 @@ class Dispatcher extends Object
        $Route = new Router();
        include CONFIGS.'routes.php';
        $params = $Route->parse ($from_url);
-       
+
        // add submitted form data
        $params['form'] = $_POST;
        if (isset($_POST['data']))
@@ -254,13 +260,17 @@ class Dispatcher extends Object
            $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
            $this->stripslashes_deep($params['url']) : $params['url'];
        }
-       
+
        foreach ($_FILES as $name => $data)
        {
            $params['form'][$name] = $data;
        }
        $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
 
+      if(defined('WEBSERVICES'))
+      {
+          $params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];
+      }
        return $params;
    }
 
@@ -270,7 +280,7 @@ class Dispatcher extends Object
  */
    function stripslashes_deep($val)
    {
-      return (is_array($val)) ? 
+      return (is_array($val)) ?
         array_map(array('Dispatcher','stripslashes_deep'), $val) : stripslashes($val);
    }
 
@@ -280,7 +290,7 @@ class Dispatcher extends Object
  */
    function urldecode_deep($val)
    {
-      return (is_array($val)) ? 
+      return (is_array($val)) ?
         array_map(array('Dispatcher','urldecode_deep'), $val) : urldecode($val);
    }
 
@@ -298,10 +308,10 @@ class Dispatcher extends Object
        {
            $base = BASE_URL.$this->admin;
        }
-       
+
        $docRoot = $_SERVER['DOCUMENT_ROOT'];
        $scriptName = $_SERVER['PHP_SELF'];
-      
+
       // If document root ends with 'webroot', it's probably correctly set
       $r = null;
       if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
@@ -351,7 +361,7 @@ class Dispatcher extends Object
       }
       return $base;
    }
-   
+
 /**
  * Displays an error page (e.g. 404 Not found).
  *

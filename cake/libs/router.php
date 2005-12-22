@@ -149,6 +149,16 @@ class Router extends Object {
       
       $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
       $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));
+      
+      if(defined('WEBSERVICES') && WEBSERVICES == 'on' )
+      {
+          $this->connect('/rest/:controller/:action/*', array('webservices'=>'Rest'));
+          $this->connect('/rss/:controller/:action/*', array('webservices'=>'Rss'));
+          $this->connect('/soap/:controller/:action/*', array('webservices'=>'Soap'));
+          $this->connect('/xml/:controller/:action/*', array('webservices'=>'Xml'));
+          $this->connect('/xmlrpc/:controller/:action/*', array('webservices'=>'XmlRpc'));
+      }
+      
       $this->routes[] = $default_route;
       
       foreach ($this->routes as $route) 

@@ -3,7 +3,7 @@
 
 /**
  * Object-relational mapper.
- * 
+ *
  * DBO-backed object data model, for mapping database tables to Cake objects.
  *
  * PHP versions 4 and 5
@@ -11,20 +11,19 @@
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2005, CakePHP Authors/Developers
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
  *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
  *
  *  Licensed under The MIT License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @author       CakePHP Authors/Developers
  * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
  * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
  * @package      cake
  * @subpackage   cake.cake.libs.model
- * @since        CakePHP v 0.2.9
+ * @since        CakePHP v 0.10.0.0
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -43,7 +42,7 @@ uses('object',  'class_registry', 'validators', 'inflector');
  * DBO-backed object data model.
  * Automatically selects a database table name based on a pluralized lowercase object class name
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
- * The table is required to have at least 'id auto_increment', 'created datetime', 
+ * The table is required to have at least 'id auto_increment', 'created datetime',
  * and 'modified datetime' fields.
  *
  * @package    cake
@@ -51,9 +50,9 @@ uses('object',  'class_registry', 'validators', 'inflector');
  * @since      CakePHP v 0.2.9
  *
  */
-class Model extends Object 
+class Model extends Object
 {
-    
+
 /**
  * Enter description here...
  *
@@ -101,7 +100,7 @@ class Model extends Object
  * @access public
  */
    var $tableId = null;
-   
+
 /**
  * Table metadata
  *
@@ -109,9 +108,9 @@ class Model extends Object
  * @access private
  */
    var $_tableInfo = null;
-   
+
 /**
- * Array of other Models this Model references in a belongsTo (one-to-one) relationship. 
+ * Array of other Models this Model references in a belongsTo (one-to-one) relationship.
  *
  * @var array
  * @access private
@@ -120,16 +119,16 @@ class Model extends Object
 
 
 /**
- * Array of other Models this Model references in a hasOne (one-to-one) relationship. 
+ * Array of other Models this Model references in a hasOne (one-to-one) relationship.
  *
  * @var array
  * @access private
  */
    var $_oneToOne = array();
 
-   
+
 /**
- * Array of other Models this Model references in a hasMany (one-to-many) relationship. 
+ * Array of other Models this Model references in a hasMany (one-to-many) relationship.
  *
  * @var array
  * @access private
@@ -138,7 +137,7 @@ class Model extends Object
 
 
 /**
- * Array of other Models this Model references in a hasAndBelongsToMany (many-to-many) relationship. 
+ * Array of other Models this Model references in a hasAndBelongsToMany (many-to-many) relationship.
  *
  * @var array
  * @access private
@@ -160,14 +159,14 @@ class Model extends Object
  * @var array
  */
    var $validationErrors = null;
-   
+
 /**
  * Prefix for tables in model.
  *
  * @var string
  */
    var $tablePrefix = null;
-   
+
 /**
  * Name of the model.
  *
@@ -188,14 +187,14 @@ class Model extends Object
  * @var unknown_type
  */
    var $tableToModel = array();
-   
+
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
    var $alias = array();
-   
+
 /**
  * Constructor. Binds the Model's database table to the object.
  *
@@ -203,37 +202,37 @@ class Model extends Object
  * @param string $table Database table to use.
  * @param unknown_type $db Database connection object.
  */
-    function __construct ($id=false, $table=null, $db=null) 
+    function __construct ($id=false, $table=null, $db=null)
     {
         if($this->name === null)
         {
             $this->name = get_class($this);
         }
-        
+
         if($this->tableId === null)
         {
             $this->tableId = 'id';
         }
-        
-        $this->currentModel = Inflector::underscore($this->name);     
-        
+
+        $this->currentModel = Inflector::underscore($this->name);
+
         if($db != null)
         {
             $this->db =& $db;
         }
         else
         {
-            $dboFactory = DboFactory::getInstance();  
-            $this->db =& $dboFactory ;
+            $dboFactory = DboFactory::getInstance();
+            $this->db =& $dboFactory;
             if(empty($this->db))
             {
-                $this->_throwMissingConnection();
+                $this->missingConnection();
             }
         }
-        
+
         $classRegistry =& ClassRegistry::getInstance();
         $classRegistry->addObject($this->currentModel, $this);
-        
+
         if ($id)
         {
             $this->id = $id;
@@ -241,14 +240,14 @@ class Model extends Object
         if($this->useTable !== false)
         {
         $tableName = $table? $table: ($this->useTable? $this->useTable: Inflector::tableize($this->name));
-        
+
         if (in_array('settableprefix', get_class_methods($this->name)))
         {
             $this->setTablePrefix();
         }
-        
+
         $this->tablePrefix? $this->setTable($this->tablePrefix.$tableName): $this->setTable($tableName);
-        
+
         parent::__construct();
         $this->createLinks();
         }
@@ -300,14 +299,14 @@ class Model extends Object
         else
         {
             $association = explode(',', $this->belongsTo);
-            foreach ($association as $className) 
+            foreach ($association as $className)
             {
-                $this->_constructAssociatedModels($className , 'Belongs');
+                $this->_constructAssociatedModels($className, $className , 'Belongs');
                 $this->linkAssociation('Belongs', $className, $className, $this->id);
             }
         }
     }
-	
+
 /**
  * Enter description here...
  *
@@ -320,15 +319,15 @@ class Model extends Object
             foreach ($this->hasOne as $association => $associationValue)
             {
                 $className = $association;
-                $this->_associationSwitch($className, $className, $associationValue, 'One');
+                $this->_associationSwitch($association, $className, $associationValue, 'One');
             }
         }
         else
         {
             $association = explode(',', $this->hasOne);
-            foreach ($association as $className) 
+            foreach ($association as $className)
             {
-                $this->_constructAssociatedModels($className , 'One');
+                $this->_constructAssociatedModels($className, $className , 'One');
                 $this->linkAssociation('One', $className, $className, $this->id);
             }
         }
@@ -352,9 +351,9 @@ class Model extends Object
 	   else
 	   {
 	       $association = explode(',', $this->hasMany);
-	       foreach ($association as $className) 
+	       foreach ($association as $className)
 	       {
-	           $this->_constructAssociatedModels($className , 'Many');
+	           $this->_constructAssociatedModels($className, $className , 'Many');
 	           $this->linkAssociation('Many', $className, $className, $this->id);
 	       }
 	   }
@@ -378,14 +377,14 @@ class Model extends Object
         else
         {
             $association = explode(',', $this->hasAndBelongsToMany);
-            foreach ($association as $className) 
+            foreach ($association as $className)
             {
-                $this->_constructAssociatedModels($className , 'ManyTo');
+                $this->_constructAssociatedModels($className, $className , 'ManyTo');
                 $this->linkAssociation('ManyTo', $className, $className, $this->id);
             }
         }
     }
-    
+
 /**
  * Enter description here...
  *
@@ -397,76 +396,76 @@ class Model extends Object
     function _associationSwitch($association, $className, $associationValue, $type)
     {
         $classCreated = false;
-        
+
         foreach ($associationValue as $option => $optionValue)
         {
             if (($option === 'className') && ($classCreated === false))
             {
                 $className = $optionValue;
             }
-            
+
             if ($classCreated === false)
             {
-                $this->_constructAssociatedModels($className , $type);
+                $this->_constructAssociatedModels($association, $className , $type);
                 $classCreated = true;
             }
-            
+
             switch($option)
             {
                 case 'associationForeignKey':
-                    $this->{$className}->{$this->currentModel.'_associationforeignkey'} = $optionValue;
+                    $this->{$association.'_associationforeignkey'} = $optionValue;
                 break;
-                
+
                 case 'conditions':
-                    $this->{$className}->{$this->currentModel.'_conditions'} = $optionValue;
+                    $this->{$association.'_conditions'} = $optionValue;
                 break;
-                
+
                 case 'counterCache':
-                    $this->{$className}->{$this->currentModel.'_countercache'} = $optionValue;
+                    $this->{$association.'_countercache'} = $optionValue;
                 break;
 
                 case 'counterSql':
-                    $this->{$className}->{$this->currentModel.'_countersql'} = $optionValue;
+                    $this->{$association.'_countersql'} = $optionValue;
 	            break;
-	               
+
 	            case 'deleteSql':
-                    $this->{$className}->{$this->currentModel.'_deletesql'} = $optionValue;
+                    $this->{$association.'_deletesql'} = $optionValue;
 	            break;
-	               
+
 	            case 'dependent':
-	               $this->{$className}->{$this->currentModel.'_dependent'} = $optionValue;
+	               $this->{$association.'_dependent'} = $optionValue;
 	            break;
 
 	            case 'exclusive':
-                    $this->{$className}->{$this->currentModel.'_exclusive'} = $optionValue;
+                    $this->{$association.'_exclusive'} = $optionValue;
 	            break;
-	               
+
 	            case 'finderSql':
-                    $this->{$className}->{$this->currentModel.'_findersql'} = $optionValue;
+                    $this->{$association.'_findersql'} = $optionValue;
 	            break;
-	               
+
 	            case 'foreignKey':
-                    $this->{$className}->{$this->currentModel.'_foreignkey'} = $optionValue;
+                    $this->{$association.'_foreignkey'} = $optionValue;
 	            break;
-	               
+
 	            case 'insertSql':
-                    $this->{$className}->{$this->currentModel.'_insertsql'} = $optionValue;
+                    $this->{$association.'_insertsql'} = $optionValue;
 	            break;
-	               
+
 	            case 'joinTable':
-                    $this->{$className}->{$this->currentModel.'_jointable'} = $optionValue;
+                    $this->{$association.'_jointable'} = $optionValue;
 	            break;
-	               
+
 	            case 'order':
-                    $this->{$className}->{$this->currentModel.'_order'} = $optionValue;
+                    $this->{$association.'_order'} = $optionValue;
                 break;
-                   
+
                 case 'uniq':
-                    $this->{$className}->{$this->currentModel.'_uniq'} = $optionValue;
+                    $this->{$association.'_uniq'} = $optionValue;
 	            break;
-	            
+
                 case 'fields':
-                    $this->{$className}->{$this->currentModel.'_fields'} = $optionValue;
+                    $this->{$association.'_fields'} = $optionValue;
 	            break;
                }
         }
@@ -480,45 +479,45 @@ class Model extends Object
  * @param unknown_type $type
  * @access private
  */
-    function _constructAssociatedModels($className, $type)
+    function _constructAssociatedModels($association, $className, $type)
     {
         $collectionKey = Inflector::underscore($className);
         $classRegistry =& ClassRegistry::getInstance();
-        
+
         if(!$classRegistry->isKeySet($collectionKey))
         {
             $this->{$className} = new $className();
         }
         else
         {
-            $this->{$className} = $classRegistry->getObject($collectionKey); 
+            $this->{$className} = $classRegistry->getObject($collectionKey);
         }
-        
+
         switch($type)
         {
             case 'Belongs':
-                $this->{$className}->{$this->currentModel.'_conditions'} = null;
-                $this->{$className}->{$this->currentModel.'_order'} = null;
-                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->{$className}->table).'_id';
-                $this->{$className}->{$this->currentModel.'_countercache'} = null;
+                $this->{$association.'_conditions'} = null;
+                $this->{$association.'_order'} = null;
+                $this->{$association.'_foreignkey'} = Inflector::singularize($this->{$className}->table).'_id';
+                $this->{$association.'_countercache'} = null;
             break;
-            
+
             case 'One':
-                $this->{$className}->{$this->currentModel.'_conditions'} = null;
-                $this->{$className}->{$this->currentModel.'_order'} = null;
-                $this->{$className}->{$this->currentModel.'_dependent'} = null;
-                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->table).'_id';
+                $this->{$association.'_conditions'} = null;
+                $this->{$association.'_order'} = null;
+                $this->{$association.'_dependent'} = null;
+                $this->{$association.'_foreignkey'} = Inflector::singularize($this->table).'_id';
             break;
 
             case 'Many':
-                $this->{$className}->{$this->currentModel.'_conditions'} = null;
-                $this->{$className}->{$this->currentModel.'_order'} = null;
-                $this->{$className}->{$this->currentModel.'_foreignkey'} = Inflector::singularize($this->table).'_id';
-                $this->{$className}->{$this->currentModel.'_fields'} = '*';
-                $this->{$className}->{$this->currentModel.'_dependent'} = null;
-                $this->{$className}->{$this->currentModel.'_exclusive'} = null;
-                $this->{$className}->{$this->currentModel.'_findersql'} = null;
-                $this->{$className}->{$this->currentModel.'_countersql'} = null;
+                $this->{$association.'_conditions'} = null;
+                $this->{$association.'_order'} = null;
+                $this->{$association.'_foreignkey'} = Inflector::singularize($this->table).'_id';
+                $this->{$association.'_fields'} = '*';
+                $this->{$association.'_dependent'} = null;
+                $this->{$association.'_exclusive'} = null;
+                $this->{$association.'_findersql'} = null;
+                $this->{$association.'_countersql'} = null;
             break;
 
             case 'ManyTo':
@@ -528,21 +527,21 @@ class Model extends Object
                 $joinTable = $tableSort[0] . '_' . $tableSort[1];
                 $key1 = Inflector::singularize($this->table) . '_id';
                 $key2 = Inflector::singularize($this->{$className}->table) . '_id';
-                $this->{$className}->{$this->currentModel.'_jointable'} = $joinTable;
-                $this->{$className}->{$this->currentModel.'_fields'} = '*';
-                $this->{$className}->{$this->currentModel.'_foreignkey'} = $key1;
-                $this->{$className}->{$this->currentModel.'_associationforeignkey'} = $key2;
-                $this->{$className}->{$this->currentModel.'_conditions'} = null;
-                $this->{$className}->{$this->currentModel.'_order'} = null;
-                $this->{$className}->{$this->currentModel.'_uniq'} = null;
-                $this->{$className}->{$this->currentModel.'_findersql'} = null;
-                $this->{$className}->{$this->currentModel.'_deletesql'} = null;
-                $this->{$className}->{$this->currentModel.'_insertsql'} = null;
+                $this->{$association.'_jointable'} = $joinTable;
+                $this->{$association.'_fields'} = '*';
+                $this->{$association.'_foreignkey'} = $key1;
+                $this->{$association.'_associationforeignkey'} = $key2;
+                $this->{$association.'_conditions'} = null;
+                $this->{$association.'_order'} = null;
+                $this->{$association.'_uniq'} = null;
+                $this->{$association.'_findersql'} = null;
+                $this->{$association.'_deletesql'} = null;
+                $this->{$association.'_insertsql'} = null;
             break;
         }
         $this->tableToModel[$this->{$className}->table] = $className;
     }
-	   
+
 /**
  * Enter description here...
  *
@@ -550,7 +549,7 @@ class Model extends Object
  * @param unknown_type $tableName
  * @param unknown_type $value
  */
-    function linkAssociation ($type, $association, $model, $value=null) 
+    function linkAssociation ($type, $association, $model, $value=null)
     {
         switch ($type)
         {
@@ -558,34 +557,34 @@ class Model extends Object
                 $this->alias[$association] = $this->{$model}->table;
                 $this->_belongsToOther[] = array($association, $model, $value);
             break;
-            
+
             case 'One':
                 $this->alias[$association] = $this->{$model}->table;
                 $this->_oneToOne[] = array($association, $model, $value);
             break;
-            
+
             case 'Many':
                 $this->alias[$association] = $this->{$model}->table;
                 $this->_oneToMany[] = array($association, $model, $value);
             break;
-            
+
             case 'ManyTo':
                 $this->alias[$association] = $this->{$model}->table;
                 $this->_manyToMany[]  = array($association, $model, $value);
             break;
         }
     }
-   
+
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
  */
-    function setTable($tableName) 
+    function setTable($tableName)
     {
-        if (!in_array(strtolower($tableName), $this->db->tables())) 
+        if (!in_array(strtolower($tableName), $this->db->tables()))
         {
-            $this->_throwMissingTable($tableName);
+            $this->missingTable($tableName);
             exit();
         }
         else
@@ -602,27 +601,27 @@ class Model extends Object
  * and if that's found, it sets the current id to the value of $one[id].
  * For all other keys than 'id' the keys and values of $one are copied to the 'data' property of this object.
  * 2) Returns an array with all of $one's keys and values.
- * (Alternative indata: two strings, which are mangled to 
+ * (Alternative indata: two strings, which are mangled to
  * a one-item, two-dimensional array using $one for a key and $two as its value.)
  *
  * @param mixed $one Array or string of data
  * @param string $two Value string for the alternative indata method
  * @return unknown
  */
-    function set ($one, $two=null) 
+    function set ($one, $two=null)
     {
         $this->validationErrors = null;
         $data = is_array($one)? $one : array($one=>$two);
-        
-        foreach ($data as $n => $v) 
+
+        foreach ($data as $n => $v)
         {
             foreach ($v as $x => $y)
             {
-                if($x == 'id')
+                if($x == $this->tableId)
                 {
                     $this->id = $y;
                 }
-                $this->data[$n][$x] = $y;	
+                $this->data[$n][$x] = $y;
             }
         }
         return $data;
@@ -633,7 +632,7 @@ class Model extends Object
  *
  * @param int $id Id
  */
-    function setId ($id) 
+    function setId ($id)
     {
         $this->id = $id;
     }
@@ -643,9 +642,9 @@ class Model extends Object
  *
  * @return array Array of table metadata
  */
-    function loadInfo () 
+    function loadInfo ()
     {
-        if (empty($this->_tableInfo)) 
+        if (empty($this->_tableInfo))
         {
             $this->_tableInfo = new NeatArray($this->db->fields($this->table));
         }
@@ -654,15 +653,15 @@ class Model extends Object
 
 /**
  * Returns true if given field name exists in this Model's database table.
- * Starts by loading the metadata into the private property table_info if that is not already set. 
+ * Starts by loading the metadata into the private property table_info if that is not already set.
  *
  * @param string $name Name of table to look in
  * @return boolean
  */
-    function hasField ($name) 
+    function hasField ($name)
     {
         if (empty($this->_tableInfo))
-        { 
+        {
             $this->loadInfo();
         }
         return $this->_tableInfo->findIn('name', $name);
@@ -673,7 +672,7 @@ class Model extends Object
  *
  * @return boolean True on success
  */
-    function create () 
+    function create ()
     {
         $this->id = false;
         unset($this->data);
@@ -687,7 +686,7 @@ class Model extends Object
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
  * @return array Array of database fields
  */
-    function read ($fields=null) 
+    function read ($fields=null)
     {
         $this->validationErrors = null;
         if(is_array($this->id))
@@ -707,28 +706,28 @@ class Model extends Object
  * @param string $conditions SQL conditions (defaults to NULL)
  * @return field contents
  */
-    function field ($name, $conditions=null, $order=null) 
+    function field ($name, $conditions=null, $order=null)
     {
         if (isset($this->data[$this->name][$name]))
         {
             return $this->data[$this->name][$name];
         }
-        
-        if ($conditions) 
+
+        if ($conditions)
         {
             $conditions = $this->parseConditions($conditions);
         }
-        
-        if ($data = $this->find($conditions, $name, $order)) 
+
+        if ($data = $this->find($conditions, $name, $order))
         {
             return isset($data[$this->name][$name])? $data[$this->name][$name]: false;
         }
-        else 
+        else
         {
             return false;
         }
     }
-    
+
 
 /**
  * Saves a single field to the database.
@@ -737,7 +736,7 @@ class Model extends Object
  * @param mixed $value Value of the field
  * @return boolean True on success save
  */
-    function saveField($name, $value) 
+    function saveField($name, $value)
     {
         return Model::save(array($this->name=>array($name=>$value)), false);
     }
@@ -745,35 +744,35 @@ class Model extends Object
 /**
  * Saves model data to the database.
  *
- * @param array $data Data to save. 
+ * @param array $data Data to save.
  * @param boolean $validate
  * @return boolean success
  */
-    function save ($data=null, $validate=true) 
+    function save ($data=null, $validate=true)
     {
-        if ($data) 
-        { 
+        if ($data)
+        {
             $this->set($data);
         }
-        
+
         if ($validate && !$this->validates())
         {
             return false;
         }
-        
+
         $fields = $values = array();
-        
+
         $count = 0;
         if(count($this->data) > 1)
         {
             $weHaveMulti = true;
             $joined = false;
         }
-        else 
+        else
         {
             $weHaveMulti = false;
         }
-        
+
         foreach ($this->data as $n=>$v)
         {
             if(isset($weHaveMulti) && $count > 0 && !empty($this->_manyToMany))
@@ -784,13 +783,13 @@ class Model extends Object
             {
                 foreach ($v as $x => $y)
                 {
-                    if ($this->hasField($x)) 
+                    if ($this->hasField($x))
                     {
                         $fields[] = $x;
-                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? 
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ?
                                     $this->db->prepare(stripslashes($y)) : $this->db->prepare($y);
-                                    
-                        if($x == 'id' && !is_numeric($y))
+
+                        if($x == $this->tableId && !is_numeric($y))
                         {
                             $newID = $y;
                         }
@@ -799,13 +798,13 @@ class Model extends Object
                 $count++;
             }
         }
-        
-        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields)) 
+
+        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
         {
             $fields[] = 'created';
             $values[] = date("'Y-m-d H:i:s'");
         }
-        if ($this->hasField('modified') && !in_array('modified', $fields)) 
+        if ($this->hasField('modified') && !in_array('modified', $fields))
         {
             $fields[] = 'modified';
             $values[] = 'NOW()';
@@ -819,37 +818,37 @@ class Model extends Object
             if(!empty($this->id))
             {
                 $sql = array();
-                foreach (array_combine($fields, $values) as $field=>$value) 
+                foreach (array_combine($fields, $values) as $field=>$value)
                 {
                     $sql[] = $field.'='.$value;
                 }
-                
+
                 $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
-                
+
                 if ($this->db->query($sql))
                 {
                     if(!empty($joined))
                     {
                         $this->_saveMulti($joined, $this->id);
-                    } 
+                    }
                     $this->data = false;
                     return true;
                 }
-                else 
+                else
                 {
-                    return $this->db->hasAny($this->table, "id = '{$this->id}'");
+                    return $this->db->hasAny($this->table, "$this->tableId = '{$this->id}'");
                 }
             }
-            else 
+            else
             {
                 $fields = join(',', $fields);
                 $values = join(',', $values);
-                
+
                 $sql = "INSERT INTO {$this->table} ({$fields}) VALUES ({$values})";
-                
-                if($this->db->query($sql)) 
+
+                if($this->db->query($sql))
                 {
-                    $this->id = $this->db->lastInsertId($this->table, 'id');
+                    $this->id = $this->db->lastInsertId($this->table, $this->tableId);
                     if(!empty($joined))
                     {
                         if(!$this->id > 0 && isset($newID))
@@ -857,16 +856,16 @@ class Model extends Object
                             $this->id = $newID;
                         }
                         $this->_saveMulti($joined, $this->id);
-                    }   
+                    }
                     return true;
                 }
-                else 
+                else
                 {
                     return false;
                 }
             }
         }
-        else 
+        else
         {
             return false;
         }
@@ -875,31 +874,30 @@ class Model extends Object
 /**
  * Saves model hasAndBelongsToMany data to the database.
  *
- * @param array $joined Data to save. 
- * @param string $id 
+ * @param array $joined Data to save.
+ * @param string $id
  * @return
  * @access private
  */
-    function _saveMulti ($joined, $id) 
+    function _saveMulti ($joined, $id)
     {
         foreach ($joined as $x => $y)
         {
-            foreach ($y as $name => $value)
+            foreach ($y as $association => $value)
             {
-                $name = Inflector::camelize($name);
-                $joinTable[] = $this->{$name}->{$this->currentModel.'_jointable'};
-                $mainKey = $this->{$name}->{$this->currentModel.'_foreignkey'};
+                $joinTable[] = $this->{$association.'_jointable'};
+                $mainKey = $this->{$association.'_foreignkey'};
                 $keys[] = $mainKey;
-                $keys[] = $this->{$name}->{$this->currentModel.'_associationforeignkey'};
+                $keys[] = $this->{$association.'_associationforeignkey'};
                 $fields[] = join(',', $keys);
                 unset($keys);
-                
+
                 foreach ($value as $update)
                 {
                     if(!empty($update))
                     {
-                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id); 
-                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update); 
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($id)) : $this->db->prepare($id);
+                        $values[] = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($update)) : $this->db->prepare($update);
                         $values = join(',', $values);
                         $newValues[] = "({$values})";
                         unset($values);
@@ -912,8 +910,9 @@ class Model extends Object
                 }
             }
         }
-        
-        for ($count = 0; $count < count($joinTable); $count++) 
+
+        $total = count($joinTable);
+        for ($count = 0; $count < $total; $count++)
         {
             $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
             if(!empty($newValue[$count]))
@@ -922,7 +921,7 @@ class Model extends Object
             }
         }
     }
-   
+
 /**
  * Synonym for del().
  *
@@ -930,7 +929,7 @@ class Model extends Object
  * @see function del
  * @return boolean True on success
  */
-    function remove ($id=null) 
+    function remove ($id=null)
     {
         return $this->del($id);
     }
@@ -941,13 +940,13 @@ class Model extends Object
  * @param mixed $id Id of database record to delete
  * @return boolean True on success
  */
-    function del ($id=null) 
+    function del ($id=null)
     {
         if ($id)
-        { 
+        {
             $this->id = $id;
         }
-        if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE id = '{$this->id}'")) 
+        if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE {$this->tableId} = '{$this->id}'"))
         {
             $this->id = false;
             return true;
@@ -963,9 +962,9 @@ class Model extends Object
  *
  * @return boolean True if such a record exists
  */
-    function exists () 
+    function exists ()
     {
-        return $this->id? $this->db->hasAny($this->table, "id = '{$this->id}'"): false;
+        return $this->id? $this->db->hasAny($this->table, "$this->tableId = '{$this->id}'"): false;
     }
 
 /**
@@ -973,7 +972,7 @@ class Model extends Object
  *
  * @return boolean True if such a record exists
  */
-    function hasAny ($conditions = null) 
+    function hasAny ($conditions = null)
     {
         return $this->findCount($conditions);
     }
@@ -986,7 +985,7 @@ class Model extends Object
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @return array Array of records
  */
-    function find ($conditions = null, $fields = null, $order = null) 
+    function find ($conditions = null, $fields = null, $order = null)
     {
         $data = Model::findAll($conditions, $fields, $order, 1);
         return empty($data[0])? false: $data[0];
@@ -996,16 +995,16 @@ class Model extends Object
  * @return string
  *
  */
-    function parseConditions ($conditions) 
+    function parseConditions ($conditions)
     {
-        if (is_string($conditions)) 
+        if (is_string($conditions))
         {
             return $conditions;
         }
-        elseif (is_array($conditions)) 
+        elseif (is_array($conditions))
         {
             $out = array();
-            foreach ($conditions as $key=>$value) 
+            foreach ($conditions as $key=>$value)
             {
                 $slashedValue = (ini_get('magic_quotes_gpc') == 1) ? $this->db->prepare(stripslashes($value)) : $this->db->prepare($value);
                 //Should remove the = below so LIKE and other compares can be used
@@ -1013,7 +1012,7 @@ class Model extends Object
             }
             return join(' and ', $out);
         }
-        else 
+        else
         {
             return null;
         }
@@ -1029,7 +1028,7 @@ class Model extends Object
  * @param int $page Page number
  * @return array Array of records
  */
-    function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1) 
+    function findAll ($conditions = null, $fields = null, $order = null, $limit=50, $page=1)
     {
         $conditions = $this->parseConditions($conditions);
         $alias = null;
@@ -1045,17 +1044,17 @@ class Model extends Object
         {
             $f = array('*');
         }
-        
+
         $joins = $whers = array();
-       
+
         if(!empty($this->_oneToOne))
         {
             foreach ($this->_oneToOne as $rule)
             {
                 list($association, $model, $value) = $rule;
-                if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
+                if(!empty($this->{$association.'_foreignkey'}))
                 {
-                    if($this->name == $this->{$model}->name)
+                    if($this->name == $this->{$model}->name and $this->name == $association)
                     {
                         $alias = 'Child_'.$association;
                     }
@@ -1063,25 +1062,25 @@ class Model extends Object
                     {
                         $alias = $association;
                     }
-                    $oneToOneConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
-                    $oneToOneOrder = $this->{$model}->{$this->currentModel.'_order'};
-                    
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON 
-                                `$alias`.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = {$this->name}.id"
+                    $oneToOneConditions = $this->parseConditions($this->{$association.'_conditions'});
+                    $oneToOneOrder = $this->{$association.'_order'};
+
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON
+                                `$alias`.{$this->{$association.'_foreignkey'}} = {$this->name}.id"
                                 .($oneToOneConditions? " WHERE {$oneToOneConditions}":null)
                                 .($oneToOneOrder? " ORDER BY {$oneToOneOrder}": null);
                 }
             }
         }
-        
+
         if(!empty($this->_belongsToOther))
         {
             foreach ($this->_belongsToOther as $rule)
             {
-                list($association, $model, $value) = $rule;           
-                if(!empty($this->{$model}->{$this->currentModel.'_foreignkey'}))
+                list($association, $model, $value) = $rule;
+                if(!empty($this->{$association.'_foreignkey'}))
                 {
-                    if($this->name == $this->{$model}->name)
+                    if($this->name == $this->{$model}->name and $this->name == $association)
                     {
                         $alias = 'Child_'.$association;
                     }
@@ -1089,43 +1088,43 @@ class Model extends Object
                     {
                         $alias = $association;
                     }
-                    $belongsToOtherConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
-                    $belongsToOtherOrder = $this->{$model}->{$this->currentModel.'_order'};
-                    
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON {$this->name}.{$this->{$model}->{$this->currentModel.'_foreignkey'}} = `$alias`.id"
+                    $belongsToOtherConditions = $this->parseConditions($this->{$association.'_conditions'});
+                    $belongsToOtherOrder = $this->{$association.'_order'};
+
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON {$this->name}.{$this->{$association.'_foreignkey'}} = `$alias`.id"
                                 .($belongsToOtherConditions? " WHERE {$belongsToOtherConditions}":null)
                                 .($belongsToOtherOrder? " ORDER BY {$belongsToOtherOrder}": null);
                 }
             }
         }
-        
+
         $joins = count($joins)? join(' ', $joins): null;
         $whers = count($whers)? '('.join(' AND ', $whers).')': null;
         $conditions .= ($conditions && $whers? ' AND ': null).$whers;
-        
+
         $offset = $page > 1? ($page-1) * $limit: 0;
-        
+
         $limit_str = $limit
             ? $this->db->selectLimit($limit, $offset)
             : '';
-        
+
         $sql = "SELECT " .join(', ', $f)
                 ." FROM {$this->table} AS `{$this->name}` {$joins}"
                 .($conditions? " WHERE {$conditions}":null)
                 .($order? " ORDER BY {$order}": null)
                 .$limit_str;
-                
+
         $data = $this->db->all($sql);
-        
+
         if(!empty($this->_oneToMany))
         {
-            $newValue = $this->_findOneToMany($data);  
+            $newValue = $this->_findOneToMany($data);
             if(!empty($newValue))
             {
                 $data = $newValue;
             }
         }
-        
+
         if(!empty($this->_manyToMany))
         {
             $newValue = $this->_findManyToMany($data);
@@ -1134,10 +1133,10 @@ class Model extends Object
                 $data = $newValue;
             }
         }
-        
+
          return $data;
     }
-   
+
 /**
  * Enter description here...
  *
@@ -1151,30 +1150,30 @@ class Model extends Object
        foreach ($this->_oneToMany as $rule)
        {
            $count = 0;
-           list($association, $model, $value) = $rule;  
+           list($association, $model, $value) = $rule;
            foreach ($datacheck as $key => $value1)
            {
                foreach ($value1 as $key2 => $value2)
                {
                    if($key2 === $this->name)
                    {
-                       if($this->{$model}->{$this->currentModel.'_findersql'})
+                       if($this->{$association.'_findersql'})
                        {
-                           $tmpSQL = $this->{$model}->{$this->currentModel.'_findersql'};
+                           $tmpSQL = $this->{$association.'_findersql'};
                        }
-                       else 
+                       else
                        {
-                           $oneToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
-                           $oneToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
-                           
-                           $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
-                                      WHERE ({$this->{$model}->{$this->currentModel.'_foreignkey'}})  = '{$value2['id']}'"
-                                      .($oneToManyConditions? " WHERE {$oneToManyConditions}":null)
+                           $oneToManyConditions = $this->parseConditions($this->{$association.'_conditions'});
+                           $oneToManyOrder = $this->{$association.'_order'};
+
+                           $tmpSQL = "SELECT {$this->{$association.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
+                                      WHERE ({$this->{$association.'_foreignkey'}})  = '{$value2['id']}'"
+                                      .($oneToManyConditions? " {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
                        }
-                       
+
                        $oneToManySelect[$association] = $this->db->all($tmpSQL);
-                       
+
                        if( !empty($oneToManySelect[$association]) && is_array($oneToManySelect[$association]))
                        {
                            $newKey = $association;
@@ -1196,14 +1195,14 @@ class Model extends Object
            }
            if(empty($newValue) && !empty($original))
            {
-               for ($i = 0; $i< count($original); $i++) 
+               for ($i = 0; $i< count($original); $i++)
                {
                    $newValue[$i] = $original[$i];
                }
            }
            elseif(!empty($original))
            {
-               for ($i = 0; $i< count($original); $i++) 
+               for ($i = 0; $i< count($original); $i++)
                {
                    $newValue[$i]  = array_merge($newValue[$i], $original[$i]);
                }
@@ -1214,7 +1213,7 @@ class Model extends Object
            return $newValue;
        }
    }
-   
+
 /**
  * Enter description here...
  *
@@ -1228,37 +1227,37 @@ class Model extends Object
        foreach ($this->_manyToMany as $rule)
        {
            $count = 0;
-           list($association, $model, $value) = $rule;  
+           list($association, $model, $value) = $rule;
            foreach ($datacheck as $key => $value1)
            {
                foreach ($value1 as $key2 => $value2)
                {
                    if($key2 === $this->name)
                    {
-                       if( 0 == strncmp($key2, $this->{$model}->{$this->currentModel.'_foreignkey'}, $key2) )
+                       if( 0 == strncmp($key2, $this->{$association.'_foreignkey'}, $key2) )
                        {
                            if(!empty ($value2['id']))
                            {
-                               if($this->{$model}->{$this->currentModel.'_findersql'})
+                               if($this->{$association.'_findersql'})
                                {
-                                   $tmpSQL = $this->{$model}->{$this->currentModel.'_findersql'};
+                                   $tmpSQL = $this->{$association.'_findersql'};
                                }
-                               else 
+                               else
                                {
-                                   $manyToManyConditions = $this->parseConditions($this->{$model}->{$this->currentModel.'_conditions'});
-                                   $manyToManyOrder = $this->{$model}->{$this->currentModel.'_order'};
-                                   
-                                   $tmpSQL = "SELECT {$this->{$model}->{$this->currentModel.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
-                                                JOIN {$this->{$model}->{$this->currentModel.'_jointable'}}
-                                                  ON {$this->{$model}->{$this->currentModel.'_jointable'}}.
-                                                     {$this->{$model}->{$this->currentModel.'_foreignkey'}} = '$value2[id]' 
-                                                 AND {$this->{$model}->{$this->currentModel.'_jointable'}}.
-                                                     {$this->{$model}->{$this->currentModel.'_associationforeignkey'}} = `{$association}` .id"
+                                   $manyToManyConditions = $this->parseConditions($this->{$association.'_conditions'});
+                                   $manyToManyOrder = $this->{$association.'_order'};
+
+                                   $tmpSQL = "SELECT {$this->{$association.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
+                                                JOIN {$this->{$association.'_jointable'}}
+                                                  ON {$this->{$association.'_jointable'}}.
+                                                     {$this->{$association.'_foreignkey'}} = '$value2[id]'
+                                                 AND {$this->{$association.'_jointable'}}.
+                                                     {$this->{$association.'_associationforeignkey'}} = `{$association}` .id"
                                                     .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
                                                     .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
-                                                    
+
                                }
-                               
+
                                $manyToManySelect[$association] = $this->db->all($tmpSQL);
                            }
                            if( !empty($manyToManySelect[$association]) && is_array($manyToManySelect[$association]))
@@ -1284,7 +1283,7 @@ class Model extends Object
            if(empty($newValue) && !empty($original))
            {
                $originalCount = count($original);
-               for ($i = 0; $i< $originalCount; $i++) 
+               for ($i = 0; $i< $originalCount; $i++)
                {
                    $newValue[$i] = $original[$i];
                }
@@ -1292,7 +1291,7 @@ class Model extends Object
            elseif(!empty($original))
            {
                $originalCount = count($original);
-               for ($i = 0; $i< $originalCount; $i++) 
+               for ($i = 0; $i< $originalCount; $i++)
                {
                    $newValue[$i]  = array_merge($newValue[$i], $original[$i]);
                }
@@ -1303,14 +1302,14 @@ class Model extends Object
            return $newValue;
        }
    }
-       
+
 /**
  * Returns an array of all rows for given SQL statement.
  *
  * @param string $sql SQL query
  * @return array
  */
-   function findBySql ($sql) 
+   function findBySql ($sql)
    {
        $data = $this->db->all($sql);
        foreach ($data as $key => $value)
@@ -1334,7 +1333,7 @@ class Model extends Object
    }
 
 /**
- * Returns number of rows matching given SQL condition. 
+ * Returns number of rows matching given SQL condition.
  *
  * @param string $conditions SQL conditions (WHERE clause conditions)
  * @return int Number of matching rows
@@ -1352,7 +1351,7 @@ class Model extends Object
  * @param unknown_type $fields
  * @return unknown
  */
-   function findAllThreaded ($conditions=null, $fields=null, $sort=null) 
+   function findAllThreaded ($conditions=null, $fields=null, $sort=null)
    {
       return $this->_doThread(Model::findAll($conditions, $fields, $sort), null);
    }
@@ -1360,25 +1359,25 @@ class Model extends Object
 /**
  * Enter description here...
  *
- * @param unknown_type $data 
+ * @param unknown_type $data
  * @param unknown_type $root NULL or id for root node of operation
  * @return array
  * @access private
  */
-   function _doThread ($data, $root) 
+   function _doThread ($data, $root)
    {
       $out = array();
-      
-      for ($ii=0; $ii<sizeof($data); $ii++) 
+
+      for ($ii=0; $ii<sizeof($data); $ii++)
       {
-         if ($data[$ii]['parent_id'] == $root) 
+         if ($data[$ii]['parent_id'] == $root)
          {
             $tmp = $data[$ii];
             $tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
             $out[] = $tmp;
          }
       }
-      
+
       return $out;
    }
 
@@ -1391,11 +1390,11 @@ class Model extends Object
  * @param unknown_type $value
  * @return array Array with keys "prev" and "next" that holds the id's
  */
-    function findNeighbours ($conditions, $field, $value) 
+    function findNeighbours ($conditions, $field, $value)
     {
         @list($prev) = Model::findAll($conditions." AND {$field} < '{$value}'", $field, "{$field} DESC", 1);
         @list($next) = Model::findAll($conditions." AND {$field} > '{$value}'", $field, "{$field} ASC", 1);
-        
+
         $prev = isset($prev) ? $prev: false;
         $next = isset($next) ? $next: false;
         return array('prev'=>$prev, 'next'=>$next);
@@ -1407,7 +1406,7 @@ class Model extends Object
  * @param string $sql SQL statement
  * @return array Resultset
  */
-   function query ($sql) 
+   function query ($sql)
    {
       return $this->db->query($sql);
    }
@@ -1421,7 +1420,7 @@ class Model extends Object
    function validates ($data=null)
    {
       $errors = count($this->invalidFields($data? $data: $this->data));
-      
+
       return $errors == 0;
    }
 
@@ -1431,7 +1430,7 @@ class Model extends Object
  * @param array $data Posted data
  * @return array Array of invalid fields
  */
-   function invalidFields ($data=null) 
+   function invalidFields ($data=null)
    {
       return $this->_invalidFields($data);
    }
@@ -1439,11 +1438,11 @@ class Model extends Object
 /**
  * Returns an array of invalid fields.
  *
- * @param array $data 
+ * @param array $data
  * @return array Array of invalid fields
  * @access private
  */
-   function _invalidFields ($data=null) 
+   function _invalidFields ($data=null)
    {
       if (!isset($this->validate))
       {
@@ -1454,12 +1453,12 @@ class Model extends Object
       {
          return $this->validationErrors;
       }
-         
+
       $data = ($data? $data: (isset($this->data)? $this->data: array()));
       $errors = array();
       foreach ($data as $table => $field)
       {
-         foreach ($this->validate as $field_name=>$validator) 
+         foreach ($this->validate as $field_name=>$validator)
          {
            if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
             {
@@ -1470,27 +1469,27 @@ class Model extends Object
          return $errors;
       }
    }
-   
-   
+
+
 /**
  * This function determines whether or not a string is a foreign key
  *
  * @param string $field Returns true if the input string ends in "_id"
  * @return True if the field is a foreign key listed in the belongsTo array.
  */
-	function isForeignKey( $field ) 
+	function isForeignKey( $field )
 	{
 	    $foreignKeys = array();
-	   
+
 	   if(!empty($this->_belongsToOther))
       {
-      
+
         foreach ($this->_belongsToOther as $rule)
         {
-            list($association, $model, $value) = $rule;  
-            $foreignKeys[$this->{$model}->{$this->currentModel.'_foreignkey'}] = $this->{$model}->{$this->currentModel.'_foreignkey'};
+            list($association, $model, $value) = $rule;
+            $foreignKeys[$this->{$association.'_foreignkey'}] = $this->{$association.'_foreignkey'};
         }
-      }	   
+      }
 
 	   if( array_key_exists($field, $foreignKeys) )
 	   {
@@ -1498,7 +1497,7 @@ class Model extends Object
 	   }
 	   return false;
 	}
-	
+
 /**
  * Enter description here...
  *
@@ -1516,7 +1515,7 @@ class Model extends Object
 
 	   //  And if the display field does not exist in the table info structure, use the ID field.
 	   if( false == $this->hasField( $dispField ) )
-	     $dispField = 'id';
+	     $dispField = $this->tableId;
 
 	   return $dispField;
 	}
@@ -1528,32 +1527,7 @@ class Model extends Object
  */
 	function getLastInsertID()
 	{
-     return $this->db->lastInsertId($this->table, 'id');
-	}
-	
-/**
- * Enter description here...
- *
- * @param unknown_type $tableName
- */
-	function _throwMissingTable($tableName)
-	{
-	    $error =& new Controller();
-        $error->missingTable = $this->table;
-        call_user_func_array(array(&$error, 'missingTable'), $tableName);
-        exit;
-	}
-	
-/**
- * Enter description here...
- *
- */
-	function _throwMissingConnection()
-	{
-	    $error =& new Controller();
-        $error->missingConnection = $this->name;
-        call_user_func_array(array(&$error, 'missingConnection'), null);
-        exit;
+     return $this->db->lastInsertId($this->table, $this->tableId);
 	}
 }
 

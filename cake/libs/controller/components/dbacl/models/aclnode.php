@@ -1,17 +1,77 @@
 <?php
+/* SVN FILE: $Id$ */
 
+/**
+ * Short description for file.
+ * 
+ * Long description for file
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c) 2005, CakePHP Authors/Developers
+ *
+ * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
+ *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource 
+ * @author       CakePHP Authors/Developers
+ * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
+ * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @package      cake
+ * @subpackage   cake.cake.libs.controller.components.dbacl.models
+ * @since        CakePHP v 0.10.0.1232
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
+ * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+
+/**
+ * Short description.
+ */
 require_once(CAKE . 'app_model.php');
 
+/**
+ * Short description for file.
+ * 
+ * Long description for file
+ *
+ * @package    cake
+ * @subpackage cake.cake.libs.controller.components.dbacl.models
+ * @since      CakePHP v 0.10.0.1232
+ *
+ */
 class AclNode extends AppModel
 {	
 
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
    var $useTable = false;
+/**
+ * Enter description here...
+ *
+ */
    function __construct()
    {
       parent::__construct();
       $this->__setTable();
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $link_id
+ * @param unknown_type $parent_id
+ * @param unknown_type $alias
+ * @return unknown
+ */
    function create($link_id = 0, $parent_id = null, $alias = '') 
    {
       parent::create();
@@ -58,6 +118,13 @@ class AclNode extends AppModel
    }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $parent_id
+ * @param unknown_type $id
+ * @return unknown
+ */
    function setParent($parent_id = null, $id = null)
    {
       if (strtolower(get_class($this)) == "aclnode")
@@ -121,6 +188,12 @@ class AclNode extends AppModel
    }
 
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @return unknown
+ */
    function getParent($id)
    {
       $path = $this->getPath($id);
@@ -134,6 +207,12 @@ class AclNode extends AppModel
       }
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @return unknown
+ */
    function getPath($id)
    {
       if (strtolower(get_class($this)) == "aclnode")
@@ -147,6 +226,12 @@ class AclNode extends AppModel
       return $this->findAll("lft <= {$item[$class]['lft']} and rght >= {$item[$class]['rght']}");
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @return unknown
+ */
    function getChildren($id)
    {
       if (strtolower(get_class($this)) == "aclnode")
@@ -160,6 +245,13 @@ class AclNode extends AppModel
       return $this->findAll("lft > {$item[$class]['lft']} and rght < {$item[$class]['rght']}");
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $id
+ * @param unknown_type $fKey
+ * @return unknown
+ */
    function _resolveID($id, $fKey)
    {
       $key = (is_string($id) ? 'alias' : $fKey);
@@ -167,6 +259,14 @@ class AclNode extends AppModel
       return "{$key} = {$val}";
    }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $table
+ * @param unknown_type $dir
+ * @param unknown_type $lft
+ * @param unknown_type $rght
+ */
    function _syncTable($table, $dir, $lft, $rght)
    {
       $shift = ($dir == 2 ? 1 : 2);
@@ -174,17 +274,26 @@ class AclNode extends AppModel
       $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
    }
 
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
    function __dataVars()
    {
       $vars = array();
-      $class = strtolower(get_class($this));
-      $vars['secondary_id'] = ($class == 'aro' ? 'user_id' : 'object_id');
+      $class = Inflector::camelize(strtolower(get_class($this)));
+      $vars['secondary_id'] = (strtolower($class) == 'aro' ? 'user_id' : 'object_id');
       $vars['data_name']    = $class;
       $vars['table_name']   = $class . 's';
-      $vars['class']        = ucwords($class);
+      $vars['class']        = Inflector::camelize($class);
       return $vars;
    }
 
+/**
+ * Enter description here...
+ *
+ */
    function __setTable()
    {
       $this->table = strtolower(get_class($this)) . "s";
