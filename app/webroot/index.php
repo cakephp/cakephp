@@ -3,25 +3,22 @@
 
 /**
  * The main "loop"
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.app.webroot
  * @since        CakePHP v 0.2.9
@@ -106,7 +103,7 @@ require_once LIBS.'inflector.php';
     else
     {
         $url = empty($_GET['url'])? null: $_GET['url'];
-    }   
+    }
 
 
 if (strpos($url, 'ccss/') === 0)
@@ -114,10 +111,10 @@ if (strpos($url, 'ccss/') === 0)
    include WWW_ROOT.DS.'css.php';
    die();
 }
-   
+
 
 DEBUG? error_reporting(E_ALL): error_reporting(0);
-if (DEBUG) 
+if (DEBUG)
 {
     ini_set('display_errors', 1);
 }

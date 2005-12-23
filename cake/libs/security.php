@@ -9,17 +9,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
- *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs
  * @since        CakePHP v .0.10.0.1233

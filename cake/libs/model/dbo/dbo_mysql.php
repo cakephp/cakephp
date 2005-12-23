@@ -3,25 +3,22 @@
 
 /**
  * MySQL layer for DBO
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model.dbo
  * @since        CakePHP v 0.2.9
@@ -39,7 +36,7 @@ uses('model'.DS.'dbo'.DS.'dbo');
 
 /**
  * Short description for class.
- * 
+ *
  * Long description for class
  *
  * @package    cake
@@ -55,9 +52,9 @@ class DBO_MySQL extends DBO
   * @param array $config Configuration array for connecting
   * @return boolean True if the database could be connected, else false
   */
-   function connect ($config) 
+   function connect ($config)
    {
-      if ($config) 
+      if ($config)
       {
          $this->config = $config;
          $this->_conn = $config['connect']($config['host'],$config['login'],$config['password']);
@@ -76,9 +73,9 @@ class DBO_MySQL extends DBO
   *
   * @return boolean True if the database could be disconnected, else false
   */
-   function disconnect () 
+   function disconnect ()
    {
-      return mysql_close();
+      return mysql_close($this->_conn);
    }
 
 /**
@@ -87,9 +84,9 @@ class DBO_MySQL extends DBO
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-   function execute ($sql) 
+   function execute ($sql)
    {
-      return mysql_query($sql);
+      return mysql_query($sql, $this->_conn);
    }
 
 /**
@@ -98,7 +95,7 @@ class DBO_MySQL extends DBO
   * @param bool $assoc Associative array only, or both?
   * @return array The fetched row as an array
   */
-   function fetchRow ($assoc=false) 
+   function fetchRow ($assoc=false)
    {
       //return mysql_fetch_array($this->_result, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
 		$this->mysqlResultSet($this->_result);
@@ -112,16 +109,16 @@ class DBO_MySQL extends DBO
   *
   * @return array Array of tablenames in the database
   */
-   function tablesList () 
+   function tablesList ()
    {
-      $result = mysql_list_tables($this->config['database']);
+      $result = mysql_list_tables($this->config['database'], $this->_conn);
 
-      if (!$result) 
+      if (!$result)
       {
          trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
          exit;
       }
-      else 
+      else
       {
          $tables = array();
          while ($line = mysql_fetch_array($result))
@@ -168,7 +165,7 @@ class DBO_MySQL extends DBO
   */
    function prepareValue ($data)
    {
-      return "'".mysql_real_escape_string($data)."'";
+      return "'".mysql_real_escape_string($data, $this->_conn)."'";
    }
 
 /**
@@ -176,9 +173,9 @@ class DBO_MySQL extends DBO
   *
   * @return string Error message with error number
   */
-   function lastError () 
+   function lastError ()
    {
-      return mysql_errno()? mysql_errno().': '.mysql_error(): null;
+      return mysql_errno($this->_conn)? mysql_errno($this->_conn).': '.mysql_error($this->_conn): null;
    }
 
 /**
@@ -188,16 +185,16 @@ class DBO_MySQL extends DBO
   */
    function lastAffected ()
    {
-      return $this->_result? mysql_affected_rows(): false;
+      return $this->_result? mysql_affected_rows($this->_conn): false;
    }
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * Returns number of rows in previous resultset. If no previous resultset exists,
   * this returns false.
   *
   * @return int Number of rows in resultset
   */
-   function lastNumRows () 
+   function lastNumRows ()
    {
       return $this->_result? @mysql_num_rows($this->_result): false;
    }
@@ -205,11 +202,11 @@ class DBO_MySQL extends DBO
 /**
   * Returns the ID generated from the previous INSERT operation.
   *
-  * @return int 
+  * @return int
   */
-   function lastInsertId () 
+   function lastInsertId ()
    {
-      return mysql_insert_id();
+      return mysql_insert_id($this->_conn);
    }
 
 /**
@@ -236,11 +233,11 @@ class DBO_MySQL extends DBO
       $index = 0;
       $num_fields = mysql_num_fields($results);
       $j=0;
-      
+
       while ($j < $num_fields)
       {
          $column = mysql_fetch_field($results,$j);
-         
+
          if(!empty($column->table))
          {
             $this->map[$index++] = array($column->table, $column->name);
@@ -252,7 +249,7 @@ class DBO_MySQL extends DBO
          $j++;
       }
    }
-		
+
 /**
  * Enter description here...
  *
@@ -277,7 +274,7 @@ class DBO_MySQL extends DBO
          return false;
       }
    }
-   
+
 }
 
 ?>

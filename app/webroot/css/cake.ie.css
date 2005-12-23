@@ -1,0 +1,9 @@
+form div,
+form div label.labelCheckbox, form div label.labelRadio,
+form div small,
+form div label.labelCheckbox, form div label.labelRadio, label.labelCheckbox, label.labelRadio {
+  height: expression('1%');
+}
+form div fieldset input.inputText, form div fieldset input.inputPassword, form div fieldset input.inputFile, form div fieldset textarea.inputTextarea {
+  margin: expression('0px 0px 0px -124px');
+}

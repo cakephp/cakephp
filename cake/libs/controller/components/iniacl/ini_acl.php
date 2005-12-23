@@ -9,19 +9,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
- *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
- *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
  * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.app.controllers.componenets
  * @since        CakePHP v 0.2.9
@@ -42,23 +39,23 @@ uses('controller/components/acl_base');
 
 class INI_ACL extends AclBase 
 {
-   /**
-    * The constructor must be overridden, as AclBase is abstract.
-    *
-    */
+/**
+ * The constructor must be overridden, as AclBase is abstract.
+ *
+ */
    function __construct()
    {
       
    }
    
-   /**
-    * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
-    * Looks at the acl.ini.php file for permissions (see instructions in /config/acl.ini.php).
-    *
-    * @param string $aro
-    * @param string $aco
-    * @return boolean
-    */
+/**
+ * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
+ * Looks at the acl.ini.php file for permissions (see instructions in /config/acl.ini.php).
+ *
+ * @param string $aro
+ * @param string $aco
+ * @return boolean
+ */
    function check($aro, $aco, $aco_action = null)
    {
       $aclConfig = $this->readConfigFile(CONFIGS . 'acl.ini.php');
@@ -124,12 +121,12 @@ class INI_ACL extends AclBase
       return false;
    }
    
-   /**
-    * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
-    *
-    * @param string $fileName
-    * @return array
-    */
+/**
+ * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
+ *
+ * @param string $fileName
+ * @return array
+ */
    function readConfigFile ($fileName)
    {
    	$fileLineArray = file($fileName);
@@ -174,12 +171,12 @@ class INI_ACL extends AclBase
    	return $iniSetting;
    }
    
-   /**
-    * Removes trailing spaces on all array elements (to prepare for searching)
-    *
-    * @param array $array
-    * @return array
-    */
+/**
+ * Removes trailing spaces on all array elements (to prepare for searching)
+ *
+ * @param array $array
+ * @return array
+ */
    function arrayTrim($array)
    {
       foreach($array as $element) {

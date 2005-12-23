@@ -3,25 +3,22 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model.dbo
  * @since        CakePHP v 0.10.0.1076
@@ -44,7 +41,7 @@ config('database');
 
 /**
  * DbFactory
- * 
+ *
  * Creates DBO-descendant objects from a given db connection configuration
  *
  * @package    cake
@@ -62,55 +59,53 @@ class DboFactory extends Object
  */
    function getInstance($config = null)
    {
-      static $instance = array();
+       $configName = $config;
+       static $instance = array();
+       if ($configName == null && !empty($instance))
+       {
+           return $instance["default"];
+       }
+       else if ($configName == null && empty($instance))
+       {
+           return false;
+       }
 
-      if (!$instance)
-      {
-         if ($config == null)
-         {
-            return false;
-         }
+       if (!key_exists($configName, $instance))
+       {
+           $configs = get_class_vars('DATABASE_CONFIG');
+           $config  = $configs[$configName];
 
-         $configs = get_class_vars('DATABASE_CONFIG');
-         $config  = $configs[$config];
-         
-
-         // special case for AdoDB -- driver name in the form of 'adodb-drivername'
-         if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res))
-         {
-            uses('model'.DS.'dbo'.DS.'dbo_adodb');
-            $config['driver'] = $res[1];
-
-            $instance[0] =& new DBO_AdoDB($config);
-         }
-         // special case for PEAR:DB -- driver name in the form of 'pear-drivername'
-         elseif (preg_match('#^pear[\-_](.*)$#i', $config['driver'], $res))
-         {
-            uses('model'.DS.'dbo'.DS.'dbo_pear');
-            $config['driver'] = $res[1];
-
-            $instance[0] =& new DBO_Pear($config);
-         }
-         // regular, Cake-native db drivers
-         else
-         {
-            $db_driver_class = 'DBO_'.$config['driver'];
-            $db_driver_fn = LIBS.strtolower('model'.DS.'dbo'.DS.$db_driver_class.'.php');
-
-            if (file_exists($db_driver_fn))
-            {
-               uses(strtolower('model'.DS.'dbo'.DS.$db_driver_class));
-               $instance[0] =& new $db_driver_class($config);
-            }
-            else
-            {
-               //trigger_error(ERROR_UNKNOWN_DATABASE_DRIVER, E_USER_ERROR);
-               return false;
-            }
-         }
-      }
-
-      return $instance[0];
+           // special case for AdoDB -- driver name in the form of 'adodb-drivername'
+           if (preg_match('#^adodb[\-_](.*)$#i', $config['driver'], $res))
+           {
+               uses('model'.DS.'dbo'.DS.'dbo_adodb');
+               $config['driver'] = $res[1];
+               $instance[$configName] =& new DBO_AdoDB($config);
+           }
+           // special case for PEAR:DB -- driver name in the form of 'pear-drivername'
+           elseif (preg_match('#^pear[\-_](.*)$#i', $config['driver'], $res))
+           {
+               uses('model'.DS.'dbo'.DS.'dbo_pear');
+               $config['driver'] = $res[1];
+               $instance[$configName] =& new DBO_Pear($config);
+           }
+           // regular, Cake-native db drivers
+           else
+           {
+               $db_driver_class = 'DBO_'.$config['driver'];
+               $db_driver_fn = LIBS.strtolower('model'.DS.'dbo'.DS.$db_driver_class.'.php');
+               if (file_exists($db_driver_fn))
+               {
+                   uses(strtolower('model'.DS.'dbo'.DS.$db_driver_class));
+                   $instance[$configName] =& new $db_driver_class($config);
+               }
+               else
+               {
+                   return false;
+               }
+           }
+       }
+       return $instance[$configName];
    }
 
 /**
@@ -121,13 +116,12 @@ class DboFactory extends Object
  */
    function setConfig($config)
    {
-      $db = DboFactory::getInstance();
-      if ($db->isConnected() === true)
-      {
-         $db->close();
-      }
-
-      return $this->getInstance($config);
+       $db = DboFactory::getInstance();
+       if ($db->isConnected() === true)
+       {
+           $db->close();
+       }
+       return $this->getInstance($config);
    }
 }
 

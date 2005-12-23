@@ -3,25 +3,22 @@
 
 /**
  *
- * 
+ *
  *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.view.templates.pages
  * @since        CakePHP v 0.10.0.1076
@@ -31,41 +28,53 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<br/>
-<h1>Cake <em>Pre Beta</em> mmmmm good</h1>
-<p>
-The Pre Beta release is exciting. We changed quite a few things, but hope you agree with 
-our efforts to make the code easier to read and handle. 
-It all comes back to our desire to make the best RAD framework available. 
-</p>
-<p>See <a href="http://cakephp.org/">CakePHP.org</a> for major changes in this release</p>
-<p>If you plan to upgrade from an older version, you may also want to read the <a href="http://cakephp.org/pages/changelog">changelog</a></p>
-<h3></h3>
-
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ? 'present.'. $filePresent = ' ' : 'not present.';?></p>
+<p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?  'present.' . $filePresent = ' ' : 'not present.';?></p>
 <?php $db = DboFactory::getInstance(); ?>
 <?php if (!empty($filePresent)):?>
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake <?php echo $db->connected ? "is able to" : "is not able to" ?> connect to the database.</p>
+<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $db->connected ? ' is able to' : ' is not able to';  ' connect to the database'; ?>.</p>
+<br />
 <?php endif; ?>
+<h1>Take a bite out of Cake<em>PHP</em> Beta</h1>
+<p>
+More content will be added...
+</p>
+<p>If you plan to upgrade from an older version, you may also want to read the <a href="http://cakephp.org/pages/changelog">changelog</a></p>
+
 <h2>Editing <em>this Page</em></h2>
 <p>
-To change the content of this page, create <code>/app/views/pages/home.thtml</code>. 
-To change it's layout, create <code>/app/views/layouts/default.thtml</code>. 
-<a href="http://wiki.cakephp.org/tutorials:sample_layout">see the wiki for more info</a>
-You can also add some CSS styles for your pages at <code>/webroot/css/</code>.
+To change the content of this page, create: <em>/app/views/pages/home.thtml</em>.<br />
+To change its layout, create: <em>/app/views/layouts/default.thtml</em>.<br />
+<a href="http://wiki.cakephp.org/tutorials:sample_layout">See the wiki for more info</a><br />
+You can also add some CSS styles for your pages at: <em>app/webroot/css/</em>.
 </p>
 <h2>More about <em>Cake</em></h2>
 <p>
-Cake is a rapid development framework for PHP which uses commonly known design patterns like
-ActiveRecord, Association Data Mapping, Front Controller and MVC.
-Our primary goal is to provide a structured framework that enables PHP users at all levels 
+CakePHP is a rapid development framework for PHP which uses commonly known design patterns like
+Active Record, Association Data Mapping, Front Controller and MVC.
+</p>
+<p>
+Our primary goal is to provide a structured framework that enables PHP users at all levels
 to rapidly develop robust web applications, without any loss to flexibility.
 </p>
-
-<p>
-<b>#cakephp at irc.freenode.net</b>
-&middot;
-<a href="http://groups-beta.google.com/group/cake-php">Cake PHP Google Group</a>
-&middot;
-<a href="https://trac.cakephp.org/">Cake TRAC (Wiki, SVN repository, etc.)</a>  
-</p>
+<ul>
+    <li><a href="http://www.cakefoundation.org/">Cake<em>Software</em>Foundation</a>
+    <ul><li>Promoting development related to CakePHP</li></ul></li>
+    <li><a href="http://www.cafepress.com/cakefoundation">Cake<em>Schwag</em></a>
+    <ul><li>Get your own CakePHP gear - Doughnate to Cake</li></ul></li>
+    <li><a href="http://www.cakephp.org">Cake<em>PHP</em></a>
+    <ul><li>The Rapid Development Framework</li></ul></li>
+    <li><a href="http://manual.cakephp.org">Cake<em>PHP</em>Manual</a>
+    <ul><li>Your Rapid Development Cookbook</li></ul></li>
+    <li><a href="http://wiki.cakephp.org">Cake<em>PHP</em>Wiki</a>
+    <ul><li>The Community for CakePHP</li></ul></li>
+    <li><a href="http://api.cakephp.org">Cake<em>PHP</em>API</a>
+    <ul><li>Docblock Your Best Friend</li></ul></li>
+    <li><a href="http://www.cakeforge.org">Cake<em>Forge</em></a>
+    <ul><li>Open Development for CakePHP</li></ul></li>
+    <li><a href="https://trac.cakephp.org/">Cake<em>PHP</em>Trac</a>
+    <ul><li>For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)</li></ul></li>
+    <li><a href="http://groups-beta.google.com/group/cake-php">Cake<em>PHP</em> Google Group</a>
+    <ul><li>Community mailing list</li></ul></li>
+    <li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cake<em>php</em></a>
+    <ul><li>Live chat about CakePHP</li></ul></li>
+</ul>

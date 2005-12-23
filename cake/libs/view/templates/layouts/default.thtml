@@ -1,65 +1,76 @@
+<?php
+/* SVN FILE: $Id$ */
+
+/**
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @package      cake
+ * @subpackage   cake.cake.libs.view.templates.pages
+ * @since        CakePHP v 0.10.0.1076
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
+ * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>CakePHP : A Rapid Development Framework :: <?php echo $title_for_layout?></title>
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<title>'CakePHP : A Rapid Development Framework :: <?php echo $title_for_layout?></title>
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <?php echo $html->charset('UTF-8')?>
 <?php echo $html->css('cake.default')?>
-<?php echo $html->css('cake.scaffold')?>
-<?php echo $html->css('cake.forms')?>
+<!--[if lt IE 7]>
+<?php echo $html->css('cake.ie');?>
+<![endif]-->
 </head>
 <body>
-<div id="container">
-	<div id="header">
-		<div id="headerLogo">
-			<a href="http://cakephp.org">
-				<?php echo $html->image('cake.logo.png', array('alt'=>"CakePHP : Rapid Development Framework")); ?>
-			</a>
-		</div>						
-		<div id="headerNav">
-			<?php
-				echo $html->link('API', 'http://api.cakephp.org/');
-				echo $html->link('Wiki', 'http://wiki.cakephp.org');
-				echo $html->link('CakeForge', 'http://cakeforge.org');
-				echo $html->link('Trac', 'https://trac.cakephp.org');
-
-			?>
-		</div>
-	</div>
-	<div id="pageNav">
-		<?php
-			echo $html->link('Home', 'http://cakephp.org/',array('class'=>'active'));
-			echo '&nbsp;';
-			echo $html->link('Blog', 'http://cakephp.org/blogs',array('class'=>''));
-			echo '&nbsp;';
-			echo $html->link('Downloads', 'http://cakephp.org/downloads/',array('class'=>''));
-			echo '&nbsp;';
-			echo $html->link('Support', 'http://cakephp.org/pages/support/',array('class'=>''));
-			echo '&nbsp;';
-			echo $html->link('CakeBin', 'http://cakephp.org/pastes/',array('class'=>''));
-		?>
-	</div>
-	
-	<div id="content">
-
-  	<?php $this->controller->Session->flash(); ?>
-  	<?php echo $content_for_layout?>
-	</div>
-  	<div id="pb-cake">
-	  	&copy; 2005 CakePHP ::
-	  	<a href="https://trac.cakephp.org/wiki/Authors">CakePHP Developers and Authors</a>
-	  	<p>CakePHP version 0.10.3.1311_pre_beta</p>
-  		<a href="http://www.cakephp.org/" target="_new" class="simple">
-			<?php echo $html->image('cake.power.png', array('alt'=>"CakePHP : Rapid Development Framework", 'border'=>"0"))?>
-		</a>
-		<a href="http://www.cakephp.org/" target="_new" class="simple">
-			<?php echo $html->image('pbcake.gif', array('width'=>"120",'height'=>"28",'alt'=>"CakePHP : Rapid Development Framework", 'border'=>"0"))?>
-		</a>
-	</div>
-	<div id="footer">
-	</div>
+<div id="wrapper">
+<div id="header">
+<?php echo $html->image('cake.logo.png', array('alt'=>'CakePHP : Rapid Development Framework', 'border'=>"0"))?>
 </div>
-<!---PLEASE USE ONE OF THE POWERED BY CAKE LOGOS------->
-
+<div id="content">
+  	<?php if (isset($this->controller->Session)) $this->controller->Session->flash(); ?>
+  	<?php echo $content_for_layout?>
+</div>
+<div id="footer">
+	  	<p>&copy; 2005 CakePHP ::
+	  	<a href="http://www.cakefoundation.org/copyright/cakephp/"><?php echo 'Cake Software Foundation, Inc.'; ?></a>
+	  	</p>
+	  	<br />
+	  	<p>
+<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
+    <a href="http://www.cakephp.org/" target="_new">
+        <?php echo $html->image('cake.power.png', array('alt'=>'CakePHP : Rapid Development Framework',
+                                                        'height' => "15",
+                                                        'width' => "80"))?>
+       </a>
+       </p>
+  <p>
+    <a href="http://validator.w3.org/check?uri=referer">
+        <?php echo $html->image('w3c_xhtml10.png', array('alt' => 'Valid XHTML 1.0 Transitional',
+                                                         'height' => "15",
+                                                         'width' => "80"))?>
+    </a>
+    <a href="http://jigsaw.w3.org/css-validator/check/referer">
+        <?php echo $html->image('w3c_css.png', array('alt' => 'Valid CSS!',
+                                                         'height' => "15",
+                                                         'width' => "80"))?>
+    </a>
+  </p>
+</div>
+</div>
 </body>
 </html>

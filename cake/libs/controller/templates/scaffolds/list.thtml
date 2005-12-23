@@ -7,18 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
- *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
- *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.controller.templates.scaffolds
  * @since        CakePHP v 0.10.0.1076
@@ -80,9 +78,9 @@
                      } ?>
                </td>
             <?php } // end for each $fieldNames as $field=>value ?>
-               <td class="listactions"><?php echo $html->linkTo('View',"/".$this->viewPath."/show/{$row[$modelKey]['id']}/")?>
-                   <?php echo $html->linkTo('Edit',"/".$this->viewPath."/edit/{$row[$modelKey]['id']}/")?>
-                  <?php echo $html->linkTo('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey]['id']}/")?>
+               <td class="listactions"><?php echo $html->linkTo('View',"/".$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                   <?php echo $html->linkTo('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                  <?php echo $html->linkTo('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
                 </td>
    
          </tr>

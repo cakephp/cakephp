@@ -9,18 +9,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
- *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
- *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model
  * @since        CakePHP v 0.10.0.0
@@ -94,12 +92,15 @@ class Model extends Object
    var $table = false;
 
 /**
- * Table name for this Model.
+ * Primary Key.
+ *
+ * If set in the model sub class this will be used.
+ * If not set, 'id' will be expected as the primary key
  *
  * @var string
  * @access public
  */
-   var $tableId = null;
+   var $primaryKey = null;
 
 /**
  * Table metadata
@@ -196,6 +197,15 @@ class Model extends Object
    var $alias = array();
 
 /**
+ * Custom database configuration name to use
+ *
+ * @var string
+ * @access public
+ */
+   var $useDbConfig = 'default';
+
+
+/**
  * Constructor. Binds the Model's database table to the object.
  *
  * @param unknown_type $id
@@ -209,9 +219,9 @@ class Model extends Object
             $this->name = get_class($this);
         }
 
-        if($this->tableId === null)
+        if($this->primaryKey == null)
         {
-            $this->tableId = 'id';
+            $this->primaryKey = 'id';
         }
 
         $this->currentModel = Inflector::underscore($this->name);
@@ -222,7 +232,7 @@ class Model extends Object
         }
         else
         {
-            $dboFactory = DboFactory::getInstance();
+            $dboFactory = DboFactory::getInstance($this->useDbConfig);
             $this->db =& $dboFactory;
             if(empty($this->db))
             {
@@ -617,7 +627,7 @@ class Model extends Object
         {
             foreach ($v as $x => $y)
             {
-                if($x == $this->tableId)
+                if($x == $this->primaryKey)
                 {
                     $this->id = $y;
                 }
@@ -691,11 +701,11 @@ class Model extends Object
         $this->validationErrors = null;
         if(is_array($this->id))
         {
-            return $this->id? $this->find("$this->name.$this->tableId = '{$this->id[0]}'", $fields): false;
+            return $this->id? $this->find("$this->name.$this->primaryKey = '{$this->id[0]}'", $fields): false;
         }
         else
         {
-            return $this->id? $this->find("$this->name.$this->tableId = '{$this->id}'", $fields): false;
+            return $this->id? $this->find("$this->name.$this->primaryKey = '{$this->id}'", $fields): false;
         }
     }
 
@@ -789,7 +799,7 @@ class Model extends Object
                         $values[] = (ini_get('magic_quotes_gpc') == 1) ?
                                     $this->db->prepare(stripslashes($y)) : $this->db->prepare($y);
 
-                        if($x == $this->tableId && !is_numeric($y))
+                        if($x == $this->primaryKey && !is_numeric($y))
                         {
                             $newID = $y;
                         }
@@ -823,7 +833,7 @@ class Model extends Object
                     $sql[] = $field.'='.$value;
                 }
 
-                $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE id = '{$this->id}'";
+                $sql = "UPDATE {$this->table} SET ".join(',', $sql)." WHERE $this->primaryKey = '{$this->id}'";
 
                 if ($this->db->query($sql))
                 {
@@ -836,7 +846,7 @@ class Model extends Object
                 }
                 else
                 {
-                    return $this->db->hasAny($this->table, "$this->tableId = '{$this->id}'");
+                    return $this->db->hasAny($this->table, "$this->primaryKey = '{$this->id}'");
                 }
             }
             else
@@ -848,7 +858,7 @@ class Model extends Object
 
                 if($this->db->query($sql))
                 {
-                    $this->id = $this->db->lastInsertId($this->table, $this->tableId);
+                    $this->id = $this->db->lastInsertId($this->table, $this->primaryKey);
                     if(!empty($joined))
                     {
                         if(!$this->id > 0 && isset($newID))
@@ -946,7 +956,7 @@ class Model extends Object
         {
             $this->id = $id;
         }
-        if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE {$this->tableId} = '{$this->id}'"))
+        if ($this->id && $this->db->query("DELETE FROM {$this->table} WHERE {$this->primaryKey} = '{$this->id}'"))
         {
             $this->id = false;
             return true;
@@ -964,7 +974,7 @@ class Model extends Object
  */
     function exists ()
     {
-        return $this->id? $this->db->hasAny($this->table, "$this->tableId = '{$this->id}'"): false;
+        return $this->id? $this->db->hasAny($this->table, "$this->primaryKey = '{$this->id}'"): false;
     }
 
 /**
@@ -1066,7 +1076,7 @@ class Model extends Object
                     $oneToOneOrder = $this->{$association.'_order'};
 
                     $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON
-                                `$alias`.{$this->{$association.'_foreignkey'}} = {$this->name}.id"
+                                `$alias`.{$this->{$association.'_foreignkey'}} = {$this->name}.$this->primaryKey"
                                 .($oneToOneConditions? " WHERE {$oneToOneConditions}":null)
                                 .($oneToOneOrder? " ORDER BY {$oneToOneOrder}": null);
                 }
@@ -1091,7 +1101,7 @@ class Model extends Object
                     $belongsToOtherConditions = $this->parseConditions($this->{$association.'_conditions'});
                     $belongsToOtherOrder = $this->{$association.'_order'};
 
-                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON {$this->name}.{$this->{$association.'_foreignkey'}} = `$alias`.id"
+                    $joins[] = "LEFT JOIN {$this->{$model}->table} AS `$alias` ON {$this->name}.{$this->{$association.'_foreignkey'}} = `$alias`.{$this->{$model}->primaryKey}"
                                 .($belongsToOtherConditions? " WHERE {$belongsToOtherConditions}":null)
                                 .($belongsToOtherOrder? " ORDER BY {$belongsToOtherOrder}": null);
                 }
@@ -1167,7 +1177,7 @@ class Model extends Object
                            $oneToManyOrder = $this->{$association.'_order'};
 
                            $tmpSQL = "SELECT {$this->{$association.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
-                                      WHERE ({$this->{$association.'_foreignkey'}})  = '{$value2['id']}'"
+                                      WHERE ({$this->{$association.'_foreignkey'}})  = '{$value2[$this->primaryKey]}'"
                                       .($oneToManyConditions? " {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
                        }
@@ -1236,7 +1246,7 @@ class Model extends Object
                    {
                        if( 0 == strncmp($key2, $this->{$association.'_foreignkey'}, $key2) )
                        {
-                           if(!empty ($value2['id']))
+                           if(!empty ($value2[$this->primaryKey]))
                            {
                                if($this->{$association.'_findersql'})
                                {
@@ -1250,9 +1260,9 @@ class Model extends Object
                                    $tmpSQL = "SELECT {$this->{$association.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
                                                 JOIN {$this->{$association.'_jointable'}}
                                                   ON {$this->{$association.'_jointable'}}.
-                                                     {$this->{$association.'_foreignkey'}} = '$value2[id]'
+                                                     {$this->{$association.'_foreignkey'}} = '{$value2[$this->primaryKey]}'
                                                  AND {$this->{$association.'_jointable'}}.
-                                                     {$this->{$association.'_associationforeignkey'}} = `{$association}` .id"
+                                                     {$this->{$association.'_associationforeignkey'}} = `{$association}` .{$this->{$model}->primaryKey}"
                                                     .($manyToManyConditions? " WHERE {$manyToManyConditions}":null)
                                                     .($manyToManyOrder? " ORDER BY {$manyToManyOrder}": null);
 
@@ -1515,7 +1525,7 @@ class Model extends Object
 
 	   //  And if the display field does not exist in the table info structure, use the ID field.
 	   if( false == $this->hasField( $dispField ) )
-	     $dispField = $this->tableId;
+	     $dispField = $this->primaryKey;
 
 	   return $dispField;
 	}
@@ -1527,7 +1537,7 @@ class Model extends Object
  */
 	function getLastInsertID()
 	{
-     return $this->db->lastInsertId($this->table, $this->tableId);
+     return $this->db->lastInsertId($this->table, $this->primaryKey);
 	}
 }
 

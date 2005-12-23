@@ -3,24 +3,22 @@
 
 /**
  * Automatic generation of HTML FORMs from given data.
- * 
+ *
  * Used for scaffolding.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
+ * 
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- * Author(s): Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
- *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.view.helpers
  * @since        CakePHP v 0.10.0.1076
@@ -32,28 +30,28 @@
 
 
 /**
- * Tag template for a div. 
+ * Tag template for a div.
  */
 define('TAG_DIV', '<div class="%s">%s</div>');
 
 /**
- * Tag template for a div. 
+ * Tag template for a div.
  */
 define('TAG_P_CLASS', '<p class="%s">%s</p>');
 
 /**
- * Tag template for a label. 
+ * Tag template for a label.
  */
 define('TAG_LABEL', '<label for="%s">%s</label>');
 
 /**
- * Tag template for a fieldset. 
+ * Tag template for a fieldset.
  */
 define('TAG_FIELDSET', '<fieldset><legend>%s</legend>%s</label>');
 
 /**
  * Form helper library.
- * 
+ *
  * Automatic generation of HTML FORMs from given data.
  *
  * @package    cake
@@ -69,7 +67,7 @@ class FormHelper extends Helper
 	 * Constructor which takes an instance of the HtmlHelper class.
 	 *
 	 * @param object $htmlHelper  the HtmlHelper object to use as our helper.
-	 * @return void 
+	 * @return void
 	 */
 	function FormHelper()
 	{
@@ -79,7 +77,7 @@ class FormHelper extends Helper
 	 * Returns a formatted error message for given FORM field, NULL if no errors.
 	 *
 	 * @param string $field  	If field is to be used for CRUD, this should be modelName/fieldName
-	 * @return bool 			If there are errors this method returns true, else false. 
+	 * @return bool 			If there are errors this method returns true, else false.
 	 */
 	function isFieldError($field )
 	{
@@ -102,7 +100,7 @@ class FormHelper extends Helper
 	 */
 	function labelTag( $tagName, $text )
 	{
-		return sprintf( TAG_LABEL, $tagName, $text );
+		return sprintf( TAG_LABEL, strtolower(str_replace('/', '_',$tagName)), $text );
 	}
 
 	/**
@@ -137,11 +135,12 @@ class FormHelper extends Helper
 	 * @param bool $required 	True if this field is required.
 	 * @param string $errorMsg 	Text that will appear if an error has occurred.
 	 * @param int $size 		Size attribute for INPUT element
-	 * @param array $htmlOptions 
+	 * @param array $htmlOptions
 	 * @return string 			The formatted INPUT element
 	 */
 	function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
+	    $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
 		$str = $this->Html->inputTag( $tagName, $size, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
@@ -173,13 +172,14 @@ class FormHelper extends Helper
 	 * @param bool $required 	True if this field is required.
 	 * @param string $errorMsg 	Text that will appear if an error has occurred.
 	 * @param int $size 		Size attribute for INPUT element
-	 * @param array $htmlOptions 
+	 * @param array $htmlOptions
 	 * @return string 			The formatted INPUT element
 	 */
 	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null )
 	{
-	   $htmlOptions['class'] = "inputCheckbox";
-		$str = $this->Html->checkbox( $tagName, null, $htmlOptions );
+	    $htmlOptions['class'] = "inputCheckbox";
+	    $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
+	    $str = $this->Html->checkbox( $tagName, null, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -209,12 +209,13 @@ class FormHelper extends Helper
 	 * @param bool $required 	True if this field is required.
 	 * @param string $errorMsg 	Text that will appear if an error has occurred.
 	 * @param int $size 		Size attribute for INPUT element
-	 * @param array $htmlOptions 
+	 * @param array $htmlOptions
 	 * @return string 			The formatted INPUT element
-	 */	
+	 */
 	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
-		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE' );
+	    $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
+		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE', '',  $htmlOptions);
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -236,7 +237,7 @@ class FormHelper extends Helper
 
 		return $this->divTag("date", $requiredDiv);
 	}
-	
+
 	/**
 	 * Returns a formatted datetime option element for HTML FORMs.
 	 *
@@ -245,12 +246,13 @@ class FormHelper extends Helper
 	 * @param bool $required 	True if this field is required.
 	 * @param string $errorMsg 	Text that will appear if an error has occurred.
 	 * @param int $size 		Size attribute for INPUT element
-	 * @param array $htmlOptions 
+	 * @param array $htmlOptions
 	 * @return string 			The formatted datetime option element
-	 */		
+	 */
 	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
 	{
-		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , '12' );
+	    $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
+		$str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , '12', '',  $htmlOptions);
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
 		$divClass = "optional";
@@ -272,7 +274,7 @@ class FormHelper extends Helper
 
 		return $this->divTag("date", $requiredDiv);
 	}
-	
+
 	/**
 	 * Returns a formatted TEXTAREA inside a DIV for use with HTML forms.
 	 *
@@ -287,6 +289,7 @@ class FormHelper extends Helper
 	 */
 	function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null )
 	{
+	    $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
 		$str = $this->Html->areaTag( $tagName, $cols, $rows, $htmlOptions );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
@@ -308,7 +311,7 @@ class FormHelper extends Helper
 		return $this->divTag( $divClass, $divTagInside );
 
 	}
-	
+
 	/**
 	 * Returns a formatted SELECT tag for HTML FORMs.
 	 *
@@ -319,11 +322,12 @@ class FormHelper extends Helper
 	 * @param array $selectAttr	Array of HTML attributes for the SELECT element
 	 * @param array $optionAttr Array of HTML attributes for the OPTION elements
 	 * @param bool $required 	True if this field is required
-	 * @param string $errorMsg 	Text that will appear if an error has occurred	 
+	 * @param string $errorMsg 	Text that will appear if an error has occurred
 	 * @return string 			The formatted INPUT element
 	 */
 	function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null)
 	{
+	    $selectAttr['id'] = strtolower(str_replace('/', '_',$tagName));;
 		$str = $this->Html->selectTag( $tagName, $options, $selected, $selectAttr, $optionAttr );
 		$strLabel = $this->labelTag( $tagName, $prompt );
 
@@ -344,8 +348,8 @@ class FormHelper extends Helper
 
 		return $this->divTag( $divClass, $divTagInside );
 
-	}	
-	
+	}
+
 	/**
 	 * Returns a formatted submit widget for HTML FORMs.
 	 *
@@ -414,7 +418,7 @@ class FormHelper extends Helper
    				     $field['selectAttr'] = null;
    				   if( !isset( $field['optionsAttr'] ) )
    				     $field['optionsAttr'] = null;
-   				   
+
    				   if( $readOnly )
    				     $field['selectAttr']['DISABLED'] = true;
 
@@ -432,7 +436,7 @@ class FormHelper extends Helper
    				break;
    				case "fieldset";
    				$strFieldsetFields = $this->generateFields( $field['fields'] );
-   
+
    				$strFieldSet = sprintf( '
    					<fieldset>
    						<legend>%s</legend>

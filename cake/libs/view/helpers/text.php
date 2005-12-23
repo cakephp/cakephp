@@ -3,26 +3,22 @@
 
 /**
  * Text Helper
- * 
+ *
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @author       Christian Gillen aka kodos <christian@crew.lu>
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.view.helpers
  * @since        CakePHP v 0.10.0.1076
@@ -39,7 +35,7 @@ uses('flay', DS.'view'.DS.'helpers'.DS.'html');
 
 /**
  * Text helper library.
- * 
+ *
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @package    cake
@@ -85,7 +81,7 @@ class TextHelper extends Helper
     /**
      * Strips given text of all links (<a href=....)
      *
-     * @param string $text Text 
+     * @param string $text Text
      * @return string The text without links
      */
     function stripLinks($text)
@@ -131,7 +127,7 @@ class TextHelper extends Helper
     /**
      * Adds email links (<a href="mailto:....) to a given text.
      *
-     * @param string $text Text 
+     * @param string $text Text
      * @param array $htmlOptions Array of HTML options.
      * @return string The text with links
      */
@@ -157,7 +153,7 @@ class TextHelper extends Helper
     /**
      * Convert all links and email adresses to HTML links.
      *
-     * @param string $text Text 
+     * @param string $text Text
      * @param array $htmlOptions Array of HTML options.
      * @return string The text with links
      */
@@ -168,7 +164,7 @@ class TextHelper extends Helper
 
     /**
      * Truncates text.
-     * 
+     *
      * Cuts a string to the length of $length and replaces the last characters
      * with the ending if the text is longer than length.
      *
@@ -184,8 +180,8 @@ class TextHelper extends Helper
         else
         return substr($text, 0, $length - strlen($ending)) . $ending;
     }
-    
-    
+
+
     /**
      * Alias for truncate().
      *
@@ -224,7 +220,7 @@ class TextHelper extends Helper
     }
 
     /**
-     * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax. 
+     * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
      *
      * @param string $text String to "flay"
      * @param boolean $allowHtml Set to true if if html is allowed

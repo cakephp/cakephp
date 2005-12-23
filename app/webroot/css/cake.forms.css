@@ -5,7 +5,7 @@ form {
   font-size: 120%;
   border-width: 0px 0px 0px 0px;
   border-style: solid;
-  border-color: #71300F;
+  border-color: #DB8101;
 }
 
 form fieldset {
@@ -45,7 +45,6 @@ textarea {
 form div {
   clear: left;
   display: block;
-  height: expression('1%');
   margin: 5px 0px 0px 0px;
   padding: 1px 3px;
 }
@@ -105,7 +104,7 @@ form div label {
   display: block;
   float: left;
   width: 200px;
-  background-color: #f4f4f4; 
+  background-color: #f4f4f4;
   font-size: 16px;
   padding: 3px 5px;
   margin: 0px 0px 5px 0px;
@@ -123,7 +122,6 @@ form div.required label, label.required {
 form div label.labelCheckbox, form div label.labelRadio {
   float: none;
   display: block;
-  height: expression('1%');
   margin: 0px 0px 5px 142px;
   text-align: left;
 }
@@ -132,14 +130,13 @@ form div fieldset label.labelCheckbox, form div fieldset label.labelRadio {
   margin: 0px 0px 5px 0px;
 }
 p.error {
-  color: #71300F;
+  color: #DB8101;
   background-color: #DBA941;
   font-size: 14px;
   padding: 1em;
 }
 
 form div input, form div select, form div textarea {
-   background-color: #f4f4f4;
   padding: 1px 3px;
   margin: 0px 0px 0px 0px;
 }
@@ -169,7 +166,7 @@ form div.submit {
 
 div.submit input {
   padding: 2px 12px;
-  color: #71300F;
+  color: #DB8101;
   background-color:#ccc;
   text-decoration: none;
   border: 1px solid #666;
@@ -182,7 +179,7 @@ div.submit input {
 div.submit input:hover {
   padding: 2px 12px;
   color: #fff;
-  background-color:#71300F;
+  background-color:#DB8101;
   text-decoration: none;
   border: 1px solid #666;
   font-size: 14px;
@@ -202,7 +199,6 @@ form div small {
   margin: 0px 0px 5px 142px;
   padding: 1px 3px;
   font-size: 88%;
-  height: expression('1%');
 }
 
 /* form.import.css */
@@ -215,12 +211,6 @@ form input, form select, form textarea {
   background-color: #fff;
 }
 
-form textarea.expanding {
-  overflow: auto;
-  overflow-x: auto;
-  overflow-y: visible;
-}
-
 div.optional label:before {
   content: '';
 }
@@ -228,11 +218,10 @@ div.optional label:before {
 div.required label:before {
   content: '';
 }
-  
+
 form div label.labelCheckbox, form div label.labelRadio, label.labelCheckbox, label.labelRadio {
   display: block;
   width: 190px;
-  height: expression('1%');
   padding: 4px 0px 0px 18px;
   text-indent: -18px;
   line-height: 120%;
@@ -245,7 +234,6 @@ form div label.labelCheckbox input.inputCheckbox, form div label.labelRadio inpu
 form div fieldset input.inputText, form div fieldset input.inputPassword, form div fieldset input.inputFile, form div fieldset textarea.inputTextarea {
   width: 160px;
   margin: 0px 0px 0px 18px;
-  margin: expression('0px 0px 0px -124px');
 }
 
 form div label.compact {

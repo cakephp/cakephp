@@ -7,19 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
- *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.controller
  * @since        CakePHP v 0.2.9
@@ -573,9 +570,9 @@ class Controller extends Object
                                      foreach( $pass as $key=>$value )
                                      {
 
-                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value[$otherModel->primaryKey] ) && isset( $value[$otherDisplayField] ) )
                                          {
-                                             $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
+                                             $fieldNames[ $tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
                                          }
                                      }
                                  }
@@ -612,7 +609,9 @@ class Controller extends Object
                      //BUGBUG:  Need a better way to determine if this field is an auto increment foreign key.
                      //  If it is a number, and it is a foreign key, we'll make a HUGE assumption that it is an auto increment field.
                      //  for foreign key autonumber fields, we'll set the type to 'key' so that it does not display in the input form.
-                     if( 0 == strncmp($tabl['name'], 'id', 2) )
+
+                     $charCount = strlen($this->$model->primaryKey);
+                     if( 0 == strncmp($tabl['name'], $this->$model->primaryKey, $charCount) )
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'hidden';
                      }
@@ -635,9 +634,9 @@ class Controller extends Object
                                  {
                                      foreach( $pass as $key=>$value )
                                      {
-                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value[$otherModel->primaryKey] ) && isset( $value[$otherDisplayField] ) )
                                          {
-                                             $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
+                                             $fieldNames[ $tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
                                          }
                                      }
                                  }
@@ -703,9 +702,9 @@ class Controller extends Object
                   {
                       foreach( $pass as $key=>$value )
                       {
-                          if( $key == $modelName && isset( $value['id'] ) && isset( $value[$otherDisplayField] ) )
+                          if( $key == $modelName && isset( $value[$modelObject->primaryKey] ) && isset( $value[$otherDisplayField] ) )
                           {
-                              $fieldNames[$modelKeyM]['options'][$value['id']] = $value[$otherDisplayField];
+                              $fieldNames[$modelKeyM]['options'][$value[$modelObject->primaryKey]] = $value[$otherDisplayField];
                           }
                       }
                   }
@@ -713,7 +712,7 @@ class Controller extends Object
                   {
                     foreach( $data[$manyAssociation] as $key => $row )
                     {
-                       $fieldNames[$modelKeyM]['selected'][$row['id']] = $row['id'];
+                       $fieldNames[$modelKeyM]['selected'][$row[$modelObject->primaryKey]] = $row[$modelObject->primaryKey];
                     }
                   }
               }

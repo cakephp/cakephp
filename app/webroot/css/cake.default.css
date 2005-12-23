@@ -1,203 +1,195 @@
-body 
-{
-	margin: 4px 30px;
-	font: 13px "Trebuchet MS",Verdana,Arial,Sans-serif;
-	background-color: #51230B;
-	line-height: 18px;
+/* CSS Document */
+@import url("cake.forms.css");
+
+* {
+  padding:0;
+  margin:0;
+}
+body {
+  font: 76% Verdana, Arial, Sans-serif;
+  color: #333;
+}
+img {
+  border:0;
+}
+#wrapper {
+ text-align:left;
+}
+#header {
+  height: 101px;
+  background: #0D5087 url(../img/cake.header_bg.png) repeat-x left top;
+  border-bottom: 1px solid #000;
+}
+#content {
+ min-height:400px;
+  background-color: #fff;
+  padding:2em 4em;
+}
+#footer {
+ text-align:center;
+ padding:1em 0;
+ font-size:smaller;
+ border-top:1px solid #333;
+ background-color: #063260;
+ color:#fff;
+ line-height:1.5;
+}
+#footer a {
+ color:#fff;
 }
 
-h1
-{
-	margin: 4px;
-	padding: 0;
-	color: #71300F;
-	font-size: 30px;
+h1, h2, h3, h4 {
+padding-bottom:0.5em;
 }
-
-h1 em {
-	color: #DBA941;
+h1 {
+  font-family:"Trebuchet MS",Verdana,Arial,Sans-serif;
+}
+h1, a  {
+  color:#DB8101;
+}
+h1 em, a em  {
+	color:#008BCC;
 	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;	
 }
-h2 a {
-	color: #fff;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;	
-}
-h2 a:hover {
-	color: #DBA941;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;	
-}
-
-h2.cake
-{
-	margin-top: 20px;
-	margin-bottom: 6px;
-	padding: 0;
-	color: #71300F;
-}
-
-h2 em {
-	color: #DBA941;
-	font-style: normal;
+ul.colored a em
+h2 {
+	font-style: italic;
 	font-weight: bold;
-	font-variant: normal;	
+	color:#666;
 }
-h3
-{
-	margin-top: 20px;
-	margin-bottom: 6px;
-	color: #71300F;
+a:hover, a:hover em {
+color:#A22424;
+text-decoration:none;
 }
-acronym
-{
-	border-bottom: 1px dotted #DBA941;
+#content p, #content ul, #content ol {
+line-height:1.5;
+padding-bottom:1em;
 }
-
-ul
-{
-	font-family: Helvetica;
-	margin-top: 2px;
-	margin-bottom: 6px;
-	padding: 2px 30px;
-}
-ul li
-{
-	list-style-image: url("../img/cake.redbox.gif");
-	margin-bottom: 8px;
-	
-}
-p
-{
-	font-family: Helvetica;
-	margin-top: 2px;
-	margin-left: 4px;
-	margin-bottom: 6px;
+ul, ol {
+margin-left:3em;
 }
 
-#container 
-{
-	margin-bottom: 20px;
-	border: 5px solid #fff;
-	background-color: #EBEDEE;
+/* tables */
+
+table {
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid #333;
+  clear:both;
+  margin: 0 0 2em 0;
+  white-space: normal;
+}
+th {
+  background-color: #ccc;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
+  text-align: center;
+  padding:3px;
+}
+table tr td {
+  border-right: 1px solid #ccc;
+  padding:4px 4px;
+  vertical-align:top;
+  text-align: center;
+}
+table tr.altRow td {
+  background: #f4f4f4;
 }
 
-#header
-{
-	padding: 0px;
-	height: 114px;
-	background: #fff url("../img/cake.bg.header.gif") repeat-x;
-	border-bottom: 1px solid #D2D7D8;
-	margin-bottom: 16px;
-	text-align: right;
+/* scaffold show */
+
+
+div.related {
+  clear:both;
+  display:block;
 }
-#header img
-{
-	float: left;
-	vertical-align: middle;
-	border: 0;
+dl {
+  line-height:2em;
+  margin:1em;
 }
-#headerNav
-{
-	float: left;
-	margin-top: 56px;
-	margin-left: 20px;
-	font-size: 15px;
-	font-weight: bold;
-	color: #71300F;
+dt {
+  font-weight: bold;
+  vertical-align:top;
+}
+dd {
+  margin-left:10em;
+  margin-top:-2em;
+  vertical-align:top;
 }
 
-#headerNav a {
-	padding: 4px 10px;
+/* scaffold buttons */
+
+
+.notice {
+  color: #DB8101;
+  background-color: #ddd;
+  display: block;
+  padding: 1em;
 }
-#headerNav a:hover {
-	padding: 4px 10px;
-	background-color: #D2D7D8;	
-}
-#headerNav .active {
-	padding: 4px 10px;
-	background-color: #fff;
-}
-#pageNav {
-	clear: both;
-	margin-top: 0px;
-	margin-right: 30px;
-	margin-left: 30px;
-	text-align: right;
-	font-size: 15px;
-	font-weight: bold;
-	color: #71300F;
+.tip {
+  color: #DB8101;
+  background-color: #ddd;
+  display: block;
+  padding: 1em;
 }
 
-#pageNav a {
-	padding: 4px 10px;
-	border-top: 1px solid #EBEDEE;
-	border-left: 1px solid #EBEDEE;
-	border-right: 1px solid #EBEDEE;
+ul.actions {
+  list-style: none;
+  text-align:left;
+  margin:2em 0;
+  padding: 0;
 }
-#pageNav a:hover {
-	padding: 4px 10px;
-	background-color: #fff;
-	border-top: 1px solid #D2D7D8;
-	border-left: 1px solid #D2D7D8;
-	border-right: 1px solid #D2D7D8;
+ul.actions li {
+  margin-left:1em;
+  list-style: none;
+  display: inline;
 }
-#pageNav .active {
-	padding: 4px 10px;
-	background-color: #fff;
-	border-top: 1px solid #D2D7D8;
-	border-left: 1px solid #D2D7D8;
-	border-right: 1px solid #D2D7D8;
+ul.actions li a,  ul.actions li input {
+  padding: 2px 12px;
+  color: #DB8101;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  line-height: 24px;
+  font-weight: bold;
+  text-align:center;
+  text-decoration: none;
 }
-#content 
-{
-	clear: both;
-	margin: 2px 20px 20px 20px;
-	padding: 20px 28px 40px 22px;
-	background-color: #fff;
-	border-top: 1px solid #D2D7D8;
-	border-left: 1px solid #D2D7D8;
-	border-right: 1px solid #D2D7D8;
-	border-bottom: 1px solid #D2D7D8;
-	text-align: left;
+ul.actions li a:hover {
+  color: #DB8101;
+  background-color:#fff;
+  text-decoration: none;
 }
-a
-{
-	color: #71300F;
-	text-decoration: none;
-	font-weight: bold;	
+td.listactions {
+  width: 14em;
+  text-align: center;
+  white-space: nowrap;
 }
-
-a:hover
-{
-	color: #71300F;
-	text-decoration: underline;
-	font-weight: bold;
+td.listactions a {
+  padding: 0px 8px;
+  text-align:center;
+  font-weight: bold;
+  color: #DB8101;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  white-space: nowrap;
 }
-
-#footer
-{
-	padding-bottom: 0px;
-	text-align: right;	
-}
-/***Please Leave Powered by Cake****/
-#pb-cake {
-	margin-bottom: 20px;
-	padding-right: 6px;
-	text-align: center;
-}
-#pb-cake a {
-	padding: 0;
-	border: 0;
+td.listactions a:hover {
+  color: #fff;
+  background-color:#DB8101;
 }
 
-div.message {
-background-color: #E3FFD1;
-border:1px solid #060;
-padding:1em;
-margin-bottom:1em;
+/* index links */
+
+ul.colored a {
+
+}
+ul.colored a em {
+
+}
+
+a {
+font-weight: bold;
 }

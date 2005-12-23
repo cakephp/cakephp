@@ -2,26 +2,23 @@
 /* SVN FILE: $Id$ */
 
 /**
- * This is core configuration file. 
- * 
+ * This is core configuration file.
+ *
  * Use it to configure core behaviour ofCake.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, CakePHP Authors/Developers
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ *                     1785 E. Sahara Avenue, Suite 490-204
+ *                     Las Vegas, Nevada 89104
  *
- * Author(s): Michal Tatarynowicz aka Pies <tatarynowicz@gmail.com>
- *            Larry E. Masters aka PhpNut <nut@phpnut.com>
- *            Kamil Dzielinski aka Brego <brego.dk@gmail.com>
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
  *
- *  Licensed under The MIT License
- *  Redistributions of files must retain the above copyright notice.
- *
- * @filesource 
- * @author       CakePHP Authors/Developers
- * @copyright    Copyright (c) 2005, CakePHP Authors/Developers
- * @link         https://trac.cakephp.org/wiki/Authors Authors/Developers
+ * @filesource
+ * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.app.config
  * @since        CakePHP v 0.2.9
@@ -37,10 +34,10 @@
  * uncomment the line below.
  * Note: If you do have mod rewrite but prefer the
  * CakePHP pretty urls, you also have to remove the
- * .htaccess files  
- * release/.htaccess 
- * release/app/.htaccess  
- * release/app/webroot/.htaccess 
+ * .htaccess files
+ * release/.htaccess
+ * release/app/.htaccess
+ * release/app/webroot/.htaccess
  */
 //define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
 
@@ -52,7 +49,7 @@
  * - 2: full debug with sql
  * - 3: full debug with sql and dump of the current object
  *
- * In production, the "flash messages" redirect after a time interval. 
+ * In production, the "flash messages" redirect after a time interval.
  * With the other debug levels you get to click the "flash message" to continue.
  *
  */
@@ -79,7 +76,7 @@ define('CAKE_SECURITY', 'high');
  * Setting this to cake will save files to /cakedistro/tmp directory
  * Setting it to php will use the php default save path
  * Setting it to database will use the database
- * 
+ *
  *
  */
 define('CAKE_SESSION_SAVE', 'php');
@@ -97,7 +94,7 @@ define('CAKE_SESSION_SAVE', 'php');
  *  The define below is used to turn cake built webservices
  *  on or off. Default setting is off.
  */
-define('WEBSERVICES', 'on');
+define('WEBSERVICES', 'off');
 
 /**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)
