@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
- * 
- * Long description for file
+ * Scaffold.
+ *
+ * Automatic forms and actions generation for rapid web application development.
  *
  * PHP versions 4 and 5
  *
@@ -29,7 +29,7 @@
  */
 
 /**
-  * Enter description here...
+  * Included libs.
   */
 uses(DS.'model'.DS.'model', 'inflector', 'object');
 
@@ -48,23 +48,23 @@ uses(DS.'model'.DS.'model', 'inflector', 'object');
 class Scaffold extends Object {
 
 /**
- * Enter description here...
+ *  Name of view to render
  *
  * @var string
  */
     var $actionView = null;
 
 /**
- * Enter description here...
+ * Class name of model
  *
  * @var unknown_type
  */
     var $modelKey = null;
 
 /**
- * Enter description here...
+ * Controller object
  *
- * @var Object
+ * @var Controller
  */
     var $controllerClass = null;
 
@@ -98,18 +98,18 @@ class Scaffold extends Object {
     function __construct(&$controller, $params)
     {
         $this->controllerClass =& $controller;
-		$this->actionView = $controller->action;
-		$this->modelKey = Inflector::singularize($controller->name);
-		$this->scaffoldTitle = Inflector::humanize($this->modelKey);
-		$this->controllerClass->pageTitle = $this->scaffoldTitle;
-		$this->_renderScaffold($params);
-	}
+        $this->actionView = $controller->action;
+        $this->modelKey = Inflector::singularize($controller->name);
+        $this->scaffoldTitle = Inflector::humanize($this->modelKey);
+        $this->controllerClass->pageTitle = $this->scaffoldTitle;
+        $this->_renderScaffold($params);
+    }
 
 
 /**
- * Enter description here...
+ * Private method to render Scaffold.
  *
- * @param unknown_type $params
+ * @param array $params
  * @access private
  */
     function _renderScaffold($params)
@@ -142,7 +142,7 @@ class Scaffold extends Object {
         $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
         $this->controllerClass->set('data', $this->controllerClass->params['data'] );
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames( $this->controllerClass->params['data'], false ) );
-        return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
+        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
     }
 
 /**
@@ -156,7 +156,7 @@ class Scaffold extends Object {
     {
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
         $this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
-        return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
+        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
     }
 
 /**
@@ -169,7 +169,7 @@ class Scaffold extends Object {
     function _scaffoldNew($params)
     {
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-        return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
+        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
     }
 
 /**
@@ -184,7 +184,7 @@ class Scaffold extends Object {
         $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->controllerClass->params['data']) );
         $this->controllerClass->set('data', $this->controllerClass->params['data']);
-        return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
     }
 
 
@@ -227,7 +227,7 @@ class Scaffold extends Object {
             }
             $this->controllerClass->set('data', $this->controllerClass->params['data']);
             $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
-            return $this->controllerClass->render($this->actionView, '', LIBS.'controller'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
+            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
         }
     }
 
@@ -263,7 +263,7 @@ class Scaffold extends Object {
             }
         }
         else
-		{
+        {
             if(is_object($this->controllerClass->Session))
             {
                 $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been updated.','/');
@@ -272,10 +272,10 @@ class Scaffold extends Object {
             }
             else
             {
-		    return $this->controllerClass->flash('There was an error updating the '.Inflector::humanize($this->modelKey),'/'.
-			                                     Inflector::underscore($this->controllerClass->viewPath));
+            return $this->controllerClass->flash('There was an error updating the '.Inflector::humanize($this->modelKey),'/'.
+                                                 Inflector::underscore($this->controllerClass->viewPath));
             }
-		}
+        }
     }
 
 /**
