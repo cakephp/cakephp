@@ -212,7 +212,7 @@ class DBO extends Object
  * Destructor. Closes connection to the database.
  *
  */
-   function __destructor()
+   function __destruct()
    {
       $this->close();
    }

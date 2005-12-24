@@ -31,7 +31,7 @@
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?  'present.' . $filePresent = ' ' : 'not present.';?></p>
 <?php $db = DboFactory::getInstance(); ?>
 <?php if (!empty($filePresent)):?>
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $db->connected ? ' is able to' : ' is not able to';  ' connect to the database'; ?>.</p>
+<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $db->connected ? ' is able to ' : ' is not able to ';?>connect to the database.</p>
 <br />
 <?php endif; ?>
 <h1>Take a bite out of Cake<em>PHP</em> Beta</h1>

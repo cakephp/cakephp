@@ -33,10 +33,11 @@
   * START-UP
   */
 define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(__FILE__)).DS);
+define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
+define ('APP_DIR', 'app');
 
-require (ROOT.'config'.DS.'paths.php');
-require (LIBS.'basics.php');
+require (ROOT.'cake'.DS.'config'.DS.'paths.php');
+require (ROOT.'cake'.DS.'basics.php');
 uses ('bake');
 
 $waste = array_shift($argv);

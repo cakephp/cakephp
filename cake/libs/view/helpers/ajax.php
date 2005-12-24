@@ -232,7 +232,7 @@ class AjaxHelper extends Helper
     function form($id, $options = null, $html_options = array())
     {
         $html_options['id'] = $id;
-        return $this->html->formTag(null, "post", $html_options) . 
+        return $this->Html->formTag(null, "post", $html_options) . 
                $this->Javascript->event("$('$id')", "submit", "function(){" . 
                $this->remoteFunction($options) . "; return false;}");
     }

@@ -64,17 +64,18 @@ class File extends Object
  * @param boolean $create Create file if it does not exist
  * @return File
  */
-   function File ($path , $create = false )
+   function __construct ($path, $create = false)
    {
-      $this->folder = new Folder( dirname( realpath($path) ) , $create );
+      parent::__construct();
 
-      $this->name = basename( realpath($path) );
+      $this->folder = new Folder(dirname($path), $create);
+      $this->name = basename($path);
 
-      if ( !$this->exists() )
+      if (!$this->exists())
       {
-         if ( $create === true )
+         if ($create === true)
          {
-            if ( !$this->create() )
+            if (!$this->create())
             {
                return false;
             }
@@ -93,7 +94,7 @@ class File extends Object
  */
    function read ()
    {
-      return file_get_contents( $this->getFullPath() );
+      return file_get_contents($this->getFullPath());
    }
 
 /**

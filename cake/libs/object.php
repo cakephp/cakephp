@@ -10,7 +10,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -64,22 +64,20 @@ class Object
  */
    function Object()
    {
-      $args = func_get_args();
-      register_shutdown_function(array(&$this, '__destruct'));
-      call_user_func_array(array(&$this, '__construct'), $args);
+       $args = func_get_args();
+
+       if (method_exists($this, '__destruct'))
+       {
+           register_shutdown_function(array(&$this, '__destruct'));
+       }
+
+       call_user_func_array(array(&$this, '__construct'), $args);
    }
 
 /**
  * Class constructor, overridden in descendant classes.
  */
    function __construct()
-   {
-   }
-
-/**
- * Class destructor, overridden in descendant classes.
- */
-   function __destruct()
    {
    }
 

@@ -2,22 +2,22 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Dispatcher takes the URL information, parses it for paramters and 
+ * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.
- * 
- * This is the heart of Cake's operation. 
+ *
+ * This is the heart of Cake's operation.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -163,12 +163,12 @@ class Dispatcher extends Object
           $params['action'] = 'index';
       }
 
-      if(in_array($params['action'], $classMethods) && strpos($params['action'], '_', 0) === 0)
+      if((in_array($params['action'], $classMethods) || in_array(strtolower($params['action']), $classMethods)) && strpos($params['action'], '_', 0) === 0)
       {
           $privateAction = true;
       }
 
-      if(!in_array($params['action'], $classMethods))
+      if(!in_array($params['action'], $classMethods) && !in_array(strtolower($params['action']), $classMethods))
       {
           $missingAction = true;
       }
@@ -384,6 +384,7 @@ class Dispatcher extends Object
  */
    function error404 ($url, $message)
    {
+      header("HTTP/1.0 404 Not Found");
       $this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
    }
 }

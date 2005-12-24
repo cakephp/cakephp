@@ -65,6 +65,11 @@ class DBO_Pear extends DBO
    {
       $this->config = $config;
 
+      if (preg_match('#^pear[-_](.*)$#i', $config['driver'], $res))
+      {
+          $config['driver'] = $res[1];
+      }
+
       $dsn = $config['driver'].'://'.$config['login'].':'.$config['password'].'@'.$config['host'].'/'.$config['database'];
       $options = array(
          'debug'       => DEBUG-1,

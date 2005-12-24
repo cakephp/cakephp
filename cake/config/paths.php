@@ -144,17 +144,17 @@ define ('TESTS',       ROOT.'tests'.DS);
 /**
  * Path to the controller test directory.
  */
-define ('CONTROLLER_TESTS',TESTS.APP_DIR.'controllers'.DS);
+define ('CONTROLLER_TESTS',TESTS.APP_DIR.DS.'controllers'.DS);
 
 /**
  * Path to the helpers test directory.
  */
-define ('HELPER_TESTS',    TESTS.APP_DIR.'helpers'.DS);
+define ('HELPER_TESTS',    TESTS.APP_DIR.DS.'helpers'.DS);
 
 /**
  * Path to the models' test directory.
  */
-define ('MODEL_TESTS',     TESTS.APP_DIR.'models'.DS);
+define ('MODEL_TESTS',     TESTS.APP_DIR.DS.'models'.DS);
 
 /**
  * Path to the lib test directory.
@@ -191,7 +191,10 @@ if ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] =='on' ))
 { 
     $s ='s';
 }
-define('FULL_BASE_URL', 'http'.$s.'://'.$_SERVER['HTTP_HOST']);
+if (isset($_SERVER['HTTP_HOST']))
+{
+    define('FULL_BASE_URL', 'http'.$s.'://'.$_SERVER['HTTP_HOST']);
+}
 
 /**
  * Web path to the public images directory.
