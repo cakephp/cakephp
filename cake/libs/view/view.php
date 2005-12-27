@@ -613,7 +613,7 @@ class View extends Object
                 $replace = strtolower(substr($helper, 0, 1));
                 $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
 
-                if(class_exists($helperCn, FALSE))
+                if(class_exists($helperCn))
                 {
                     ${$camelBackedHelper}                       =& new $helperCn;
                     ${$camelBackedHelper}->base                 = $this->base;

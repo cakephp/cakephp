@@ -32,7 +32,7 @@
   * Included libraries.
   *
   */
-if(!class_exists('Object', FALSE))
+if(!class_exists('Object'))
 {
     uses('object');
 }

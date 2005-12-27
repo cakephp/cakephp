@@ -106,7 +106,7 @@ class Component extends Object
                 {
                     require_once $componentFn;
 
-                    if(class_exists($componentCn, FALSE)===true)
+                    if(class_exists($componentCn)===true)
                     {
                         if($componentCn == 'SessionComponent')
                         {

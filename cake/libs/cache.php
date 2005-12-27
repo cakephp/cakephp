@@ -33,7 +33,7 @@
   * Included libraries.
   *
   */
-if(!class_exists('Model', FALSE))
+if(!class_exists('Model'))
 {
     uses(DS.'model'.DS.'model');
 }

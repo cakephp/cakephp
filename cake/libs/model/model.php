@@ -795,6 +795,10 @@ class Model extends Object
                 {
                     if ($this->hasField($x))
                     {
+                        if($x == $this->primaryKey && $y === '')
+                        {
+                            continue;
+                        }
                         $fields[] = $x;
                         $values[] = (ini_get('magic_quotes_gpc') == 1) ?
                                     $this->db->prepare(stripslashes($y)) : $this->db->prepare($y);

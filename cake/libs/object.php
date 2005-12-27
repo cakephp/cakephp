@@ -116,7 +116,7 @@ class Object
  */
    function log ($msg, $type=LOG_ERROR)
    {
-       if(!class_exists('Log', FALSE))
+       if(!class_exists('Log'))
        {
            uses('log');
        }

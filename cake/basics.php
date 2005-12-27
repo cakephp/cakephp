@@ -61,7 +61,7 @@ if (!function_exists("ob_get_clean"))
  */
 function loadModels ()
 {
-    if(!class_exists('AppModel', FALSE))
+    if(!class_exists('AppModel'))
     {
         if(file_exists(APP.'app_model.php'))
         {
@@ -88,7 +88,7 @@ function loadModels ()
  */
 function loadControllers ()
 {
-    if(!class_exists('AppController', FALSE))
+    if(!class_exists('AppController'))
     {
         if(file_exists(APP.'app_controller.php'))
         {
@@ -101,7 +101,7 @@ function loadControllers ()
     }
     foreach (listClasses(CONTROLLERS) as $controller)
     {
-        if(!class_exists($controller, FALSE))
+        if(!class_exists($controller))
         {
             require_once (CONTROLLERS.$controller.'.php');
         }
@@ -116,7 +116,7 @@ function loadControllers ()
   */
 function loadController ($name)
 {
-    if(!class_exists('AppController', FALSE))
+    if(!class_exists('AppController'))
     {
         if(file_exists(APP.'app_controller.php'))
         {
@@ -127,7 +127,7 @@ function loadController ($name)
             require_once(CAKE.'app_controller.php');
         }
     }
-    if(!class_exists($name, FALSE))
+    if(!class_exists($name.'Controller'))
     {
         $name = Inflector::underscore($name);
         if(file_exists(CONTROLLERS.$name.'_controller.php'))

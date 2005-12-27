@@ -32,7 +32,7 @@
   * Included libraries.
   *
   */
-if(!class_exists('File', FALSE))
+if(!class_exists('File'))
 {
     uses('file');
 }

@@ -122,16 +122,19 @@ class Dispatcher extends Object
          $ctrlName  = Inflector::camelize($params['controller']);
          $ctrlClass = $ctrlName.'Controller';
 
-         if (!loadController($params['controller']) || !class_exists($ctrlClass, FALSE))
+         if(!class_exists($ctrlClass))
          {
-             if(preg_match('/([\\.]+)/',$ctrlName))
+             if (!loadController($ctrlName))
              {
-                 $this->error404(strtolower($ctrlName),'Was not found on this server');
-                 exit();
-             }
-             else
-             {
-                 $missingController = true;
+                 if(preg_match('/([\\.]+)/',$ctrlName))
+                 {
+                     $this->error404(strtolower($ctrlName),'Was not found on this server');
+                     exit();
+                 }
+                 else
+                 {
+                     $missingController = true;
+                 }
              }
          }
       }
