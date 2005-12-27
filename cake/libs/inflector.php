@@ -3,20 +3,20 @@
 
 /**
  * Pluralize and singularize English words.
- * 
+ *
  * Used by Cake's naming conventions throughout the framework.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -29,9 +29,17 @@
  */
 
 /**
+  * Included libraries.
+  *
+  */
+if(!class_exists('Object', FALSE))
+{
+    uses('object');
+}
+/**
  * Pluralize and singularize English words.
  *
- * Inflector pluralizes and singularizes English nouns. 
+ * Inflector pluralizes and singularizes English nouns.
  * Used by Cake's naming conventions throughout the framework.
  * Test with $i = new Inflector(); $i->test();
  *
@@ -39,31 +47,31 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
-class Inflector extends Object 
+class Inflector extends Object
 {
-   
+
 /**
   * Constructor.
   *
   */
-   function __construct () 
+   function __construct ()
    {
       parent::__construct();
    }
-   
+
 /**
   * Return $word in plural form.
   *
   * @param string $word Word in singular
   * @return string Word in plural
   */
-   function pluralize ($word) 
+   function pluralize ($word)
    {
       $plural_rules = array(
         '/(s)tatus$/' => '\1\2tatuses',
-      	'/^(ox)$/'              => '\1\2en',	    # ox
-      	'/([m|l])ouse$/'          => '\1ice',	    # mouse, louse
-      	'/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
+          '/^(ox)$/'              => '\1\2en',        # ox
+          '/([m|l])ouse$/'          => '\1ice',        # mouse, louse
+          '/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
         '/(x|ch|ss|sh)$/'         =>  '\1es',       # search, switch, fix, box, process, address
         '/([^aeiouy]|qu)y$/'      =>  '\1ies',      # query, ability, agency
         '/(hive)$/'               =>  '\1s',        # archive, hive
@@ -73,23 +81,23 @@ class Inflector extends Object
         '/(p)erson$/'             =>  '\1eople',    # person, salesperson
         '/(m)an$/'                =>  '\1en',       # man, woman, spokesman
         '/(c)hild$/'              =>  '\1hildren',  # child
-      	'/(buffal|tomat)o$/'      =>  '\1\2oes',    # buffalo, tomato
-      	'/(bu)s$/'                =>  '\1\2ses',    # bus
+          '/(buffal|tomat)o$/'      =>  '\1\2oes',    # buffalo, tomato
+          '/(bu)s$/'                =>  '\1\2ses',    # bus
         '/(alias)/'               =>  '\1es',       # alias
-      	'/(octop|vir)us$/'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
-      	'/(ax|cri|test)is$/'      =>  '\1es',       # axis, crisis 
+          '/(octop|vir)us$/'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
+          '/(ax|cri|test)is$/'      =>  '\1es',       # axis, crisis
         '/s$/'                    =>  's',          # no change (compatibility)
         '/$/'                     => 's'
       );
-      
-      foreach ($plural_rules as $rule => $replacement) 
+
+      foreach ($plural_rules as $rule => $replacement)
       {
-         if (preg_match($rule, $word)) 
+         if (preg_match($rule, $word))
          {
             return preg_replace($rule, $replacement, $word);
          }
       }
-      
+
       return $word;//false;
    }
 
@@ -104,15 +112,15 @@ class Inflector extends Object
       $singular_rules = array(
         '/(s)tatuses$/'           => '\1\2tatus',
         '/(matr)ices$/'         =>'\1ix',
-      	'/(vert|ind)ices$/'     => '\1ex',
-      	'/^(ox)en/'             => '\1',
-      	'/(alias)es$/'          => '\1',
-      	'/([octop|vir])i$/'     => '\1us',
-      	'/(cris|ax|test)es$/'   => '\1is',
-      	'/(shoe)s$/'            => '\1',
-      	'/(o)es$/'              => '\1',
-      	'/(bus)es$/'            => '\1',
-      	'/([m|l])ice$/'         => '\1ouse',
+          '/(vert|ind)ices$/'     => '\1ex',
+          '/^(ox)en/'             => '\1',
+          '/(alias)es$/'          => '\1',
+          '/([octop|vir])i$/'     => '\1us',
+          '/(cris|ax|test)es$/'   => '\1is',
+          '/(shoe)s$/'            => '\1',
+          '/(o)es$/'              => '\1',
+          '/(bus)es$/'            => '\1',
+          '/([m|l])ice$/'         => '\1ouse',
         '/(x|ch|ss|sh)es$/'     => '\1',
         '/(m)ovies$/'           => '\1\2ovie',
         '/(s)eries$/'           => '\1\2eries',
@@ -131,9 +139,9 @@ class Inflector extends Object
         '/s$/'                  => ''
       );
 
-      foreach ($singular_rules as $rule => $replacement) 
+      foreach ($singular_rules as $rule => $replacement)
       {
-         if (preg_match($rule, $word)) 
+         if (preg_match($rule, $word))
          {
             return preg_replace($rule, $replacement, $word);
          }
@@ -141,17 +149,17 @@ class Inflector extends Object
       // should not return false is not matched
       return $word;//false;
    }
-   
+
 /**
   * Returns given $lower_case_and_underscored_word as a camelCased word.
   *
   * @param string $lower_case_and_underscored_word Word to camelize
   * @return string Camelized word. likeThis.
   */
-   function camelize($lower_case_and_underscored_word) 
+   function camelize($lower_case_and_underscored_word)
    {
       return str_replace(" ","",ucwords(str_replace("_"," ",$lower_case_and_underscored_word)));
-   }    
+   }
 
 /**
   * Returns an underscore-syntaxed ($like_this_dear_reader) version of the $camel_cased_word.
@@ -159,7 +167,7 @@ class Inflector extends Object
   * @param string $camel_cased_word Camel-cased word to be "underscorized"
   * @return string Underscore-syntaxed version of the $camel_cased_word
   */
-   function underscore($camel_cased_word) 
+   function underscore($camel_cased_word)
    {
       $camel_cased_word = preg_replace('/([A-Z]+)([A-Z])/','\1_\2', $camel_cased_word);
       return strtolower(preg_replace('/([a-z])([A-Z])/','\1_\2', $camel_cased_word));
@@ -172,10 +180,10 @@ class Inflector extends Object
   * @param string $lower_case_and_underscored_word String to be made more readable
   * @return string Human-readable string
   */
-   function humanize($lower_case_and_underscored_word) 
+   function humanize($lower_case_and_underscored_word)
    {
       return ucwords(str_replace("_"," ",$lower_case_and_underscored_word));
-   }    
+   }
 
 /**
   * Returns corresponding table name for given $class_name. ("posts" for the model class "Post").
@@ -183,7 +191,7 @@ class Inflector extends Object
   * @param string $class_name Name of class to get database table name for
   * @return string Name of the database table for given class
   */
-   function tableize($class_name) 
+   function tableize($class_name)
    {
       return Inflector::pluralize(Inflector::underscore($class_name));
    }
@@ -200,7 +208,7 @@ class Inflector extends Object
    }
 
 /**
-  * Returns $class_name in underscored form, with "_id" tacked on at the end. 
+  * Returns $class_name in underscored form, with "_id" tacked on at the end.
   * This is for use in dealing with foreign keys in the database.
   *
   * @param string $class_name
@@ -209,8 +217,8 @@ class Inflector extends Object
    function foreignKey($class_name)
    {
       return Inflector::underscore($class_name) . "_id";
-   } 
-   
+   }
+
 /**
  * Returns filename for given Cake controller name.
  *
@@ -221,7 +229,7 @@ class Inflector extends Object
    {
       return CONTROLLERS.Inflector::underscore($name).'.php';
    }
-   
+
 /**
  * Returns filename for given Cake helper name.
  *
@@ -232,12 +240,12 @@ class Inflector extends Object
    {
       return HELPERS.Inflector::underscore($name).'.php';
    }
-   
+
 /**
  * Returns given name as camelized.
  *
  * @param string $name
- * @param string $correct 
+ * @param string $correct
  * @return string
  * @todo Explain this method
  */
@@ -247,24 +255,24 @@ class Inflector extends Object
       {
          return Inflector::camelize($name);
       }
-   
+
       if (preg_match("/^(.*)({$correct})$/i", $name, $reg))
       {
          if ($reg[2] == $correct)
          {
             return $name;
          }
-         else 
+         else
          {
             return ucfirst($reg[1].$correct);
          }
       }
-      else 
+      else
       {
          return ucfirst($name.$correct);
       }
    }
-   
+
 /**
  * Returns filename for given Cake library name.
  *

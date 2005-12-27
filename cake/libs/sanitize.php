@@ -48,10 +48,10 @@ class Sanitize
  * @param string $string
  * @return string
  */
-	function paranoid($string)
-	{
-		return preg_replace( "/[^a-zA-Z0-9]/", "", $string );
-	}
+    function paranoid($string)
+    {
+        return preg_replace( "/[^a-zA-Z0-9]/", "", $string );
+    }
 
 /**
  * Makes a string SQL-safe by adding slashes (if needed).
@@ -68,7 +68,7 @@ class Sanitize
       
       return $string;
    }
-	
+    
 /**
  * Returns given string safe for display as HTML. Renders entities and converts newlines to <br/>.
  *
@@ -85,13 +85,13 @@ class Sanitize
       else
       {
          $patterns   =  array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/", "/\n/");
-			$replacements 	= array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;", "<br/>");
-			$string = preg_replace($patterns, $replacements, $string);
+            $replacements     = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;", "<br/>");
+            $string = preg_replace($patterns, $replacements, $string);
       }
 
       return $string;
    }
-	
+    
 /**
  * Recursively sanitizes given array of data for safe input.
  *
@@ -131,7 +131,7 @@ class Sanitize
          return null;
       }
    }
-	
+    
 /**
  * Do we really need to sanitize array keys? If so, we can use this code...
 
@@ -154,7 +154,7 @@ class Sanitize
       return $key;
    }
  */
-	
+    
 /**
  * Method used by cleanArray() to sanitize array nodes.
  *
@@ -177,10 +177,10 @@ class Sanitize
 
       //Double-check special chars and remove carriage returns
       //For increased SQL security
-      $val = preg_replace( "/\\\$/"	,"$"	,$val);
-      $val = preg_replace( "/\r/"		,""		,$val);
-      $val = str_replace ( "!"		,"!"	,$val);
-      $val = str_replace ( "'"		, "'"	,$val);
+      $val = preg_replace( "/\\\$/"    ,"$"    ,$val);
+      $val = preg_replace( "/\r/"        ,""        ,$val);
+      $val = str_replace ( "!"        ,"!"    ,$val);
+      $val = str_replace ( "'"        , "'"    ,$val);
 
       //Allow unicode (?)
       $val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val );

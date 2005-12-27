@@ -3,20 +3,20 @@
 
 /**
  * Logging.
- * 
+ *
  * Log messages to text files.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -30,9 +30,13 @@
 
 /**
   * Included libraries.
+  *
   */
-uses('file');
-    
+if(!class_exists('File', FALSE))
+{
+    uses('file');
+}
+
 /**
  * Logs messages to text files
  *
@@ -45,7 +49,7 @@ class Log
 /**
  * Writes given message to a log file in the logs directory.
  *
- * @param string $type Type of log, becomes part of the log's filename 
+ * @param string $type Type of log, becomes part of the log's filename
  * @param string $msg  Message to log
  * @return boolean Success
  */

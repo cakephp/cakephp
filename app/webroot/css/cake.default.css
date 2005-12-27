@@ -48,14 +48,14 @@ h1, a  {
   color:#DB8101;
 }
 h1 em, a em  {
-	color:#008BCC;
-	font-style: normal;
+    color:#008BCC;
+    font-style: normal;
 }
 ul.colored a em
 h2 {
-	font-style: italic;
-	font-weight: bold;
-	color:#666;
+    font-style: italic;
+    font-weight: bold;
+    color:#666;
 }
 a:hover, a:hover em {
 color:#A22424;

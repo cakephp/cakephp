@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -66,8 +66,8 @@ if (!defined('WEBROOT_DIR'))
 require_once ROOT.'cake'.DS.'basics.php';
 require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
 require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
-require_once LIBS.'log.php';
 require_once LIBS.'object.php';
+require_once LIBS.'log.php';
 require_once LIBS.'session.php';
 require_once LIBS.'security.php';
 require_once LIBS.'neat_array.php';
@@ -127,12 +127,11 @@ require_once LIBS.'model'.DS.'dbo'.DS.'dbo_factory.php';
 
 config('database');
 
-if (class_exists('DATABASE_CONFIG'))
+if (class_exists('DATABASE_CONFIG') && !class_exists('AppModel'))
 {
-   loadModels();
+    require_once LIBS.'model'.DS.'model.php';
+    loadModels();
 }
-
-
 
 //RUN THE SCRIPT
    if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')

@@ -30,8 +30,13 @@
 
 /**
  * Included libraries.
+ *
  */
-uses('flay', DS.'view'.DS.'helpers'.DS.'html');
+if(!class_exists('Flay') || !class_exists('Html'))
+{
+    uses('flay', DS.'view'.DS.'helpers'.DS.'html');
+}
+
 
 /**
  * Text helper library.
@@ -45,14 +50,14 @@ uses('flay', DS.'view'.DS.'helpers'.DS.'html');
  */
 class TextHelper extends Helper
 {
-    /**
-     * Highlights a given phrase in a text.
-     *
-     * @param string $text Text to search the phrase in
-     * @param string $phrase The phrase that will be searched
-     * @param string $highlighter The piece of html with that the phrase will be highlighted
-     * @return string The highlighted text
-     */
+ /**
+ * Highlights a given phrase in a text.
+ *
+ * @param string $text Text to search the phrase in
+ * @param string $phrase The phrase that will be searched
+ * @param string $highlighter The piece of html with that the phrase will be highlighted
+ * @return string The highlighted text
+ */
     function highlight($text, $phrase, $highlighter = '<span class="highlight">\1</span>')
     {
         if (empty($phrase)) return $text;
@@ -78,25 +83,25 @@ class TextHelper extends Helper
         }
     }
 
-    /**
-     * Strips given text of all links (<a href=....)
-     *
-     * @param string $text Text
-     * @return string The text without links
-     */
+ /**
+ * Strips given text of all links (<a href=....)
+ *
+ * @param string $text Text
+ * @return string The text without links
+ */
     function stripLinks($text)
     {
         return preg_replace('|<a.*>(.*)<\/a>|im', '\1', $text);
     }
 
-    /**
-     * Adds links (<a href=....) to a given text, by finding text that begins with
-     * strings like http:// and ftp://.
-     *
-     * @param string $text Text to add links to
-     * @param array $htmlOptions Array of HTML options.
-     * @return string The text with links
-     */
+ /**
+ * Adds links (<a href=....) to a given text, by finding text that begins with
+ * strings like http:// and ftp://.
+ *
+ * @param string $text Text to add links to
+ * @param array $htmlOptions Array of HTML options.
+ * @return string The text with links
+ */
     function autoLinkUrls($text, $htmlOptions = array())
     {
         $options = 'array(';
@@ -124,13 +129,13 @@ class TextHelper extends Helper
         );
     }
 
-    /**
-     * Adds email links (<a href="mailto:....) to a given text.
-     *
-     * @param string $text Text
-     * @param array $htmlOptions Array of HTML options.
-     * @return string The text with links
-     */
+ /**
+ * Adds email links (<a href="mailto:....) to a given text.
+ *
+ * @param string $text Text
+ * @param array $htmlOptions Array of HTML options.
+ * @return string The text with links
+ */
     function autoLinkEmails($text, $htmlOptions = array())
     {
         $options = 'array(';
@@ -150,29 +155,29 @@ class TextHelper extends Helper
         );
     }
 
-    /**
-     * Convert all links and email adresses to HTML links.
-     *
-     * @param string $text Text
-     * @param array $htmlOptions Array of HTML options.
-     * @return string The text with links
-     */
+ /**
+ * Convert all links and email adresses to HTML links.
+ *
+ * @param string $text Text
+ * @param array $htmlOptions Array of HTML options.
+ * @return string The text with links
+ */
     function autoLink($text, $htmlOptions = array())
     {
         return $this->autoLinkEmails($this->autoLinkUrls($text, $htmlOptions), $htmlOptions);
     }
 
-    /**
-     * Truncates text.
-     *
-     * Cuts a string to the length of $length and replaces the last characters
-     * with the ending if the text is longer than length.
-     *
-     * @param string  $text   String to truncate.
-     * @param integer $length Length of returned string, including ellipsis.
-     * @param string  $ending Ending to be appended to the trimmed string.
-     * @return string Trimmed string.
-     */
+ /**
+ * Truncates text.
+ *
+ * Cuts a string to the length of $length and replaces the last characters
+ * with the ending if the text is longer than length.
+ *
+ * @param string  $text   String to truncate.
+ * @param integer $length Length of returned string, including ellipsis.
+ * @param string  $ending Ending to be appended to the trimmed string.
+ * @return string Trimmed string.
+ */
     function truncate($text, $length, $ending='...')
     {
         if (strlen($text) <= $length)
@@ -182,26 +187,26 @@ class TextHelper extends Helper
     }
 
 
-    /**
-     * Alias for truncate().
-     *
-     * @see TextHelper::truncate()
-     */
+ /**
+ * Alias for truncate().
+ *
+ * @see TextHelper::truncate()
+ */
     function trim()
     {
         $args = func_get_args();
         return call_user_func_array(array(&$this, "truncate"), $args);
     }
 
-    /**
-     * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side determined by radius.
-     *
-     * @param string $text String to search the phrase in
-     * @param string $phrase Phrase that will be searched for
-     * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
-     * @param string $ending Ending that will be appended
-     * @return string Enter description here...
-     */
+ /**
+ * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side determined by radius.
+ *
+ * @param string $text String to search the phrase in
+ * @param string $phrase Phrase that will be searched for
+ * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
+ * @param string $ending Ending that will be appended
+ * @return string Enter description here...
+ */
     function excerpt($text, $phrase, $radius = 100, $ending = "...")
     {
         if (empty($text) or empty($phrase)) return $this->truncate($text, $radius * 2, $ending);
@@ -219,14 +224,14 @@ class TextHelper extends Helper
         return $excerpt;
     }
 
-    /**
-     * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
-     *
-     * @param string $text String to "flay"
-     * @param boolean $allowHtml Set to true if if html is allowed
-     * @return string "Flayed" text
-     * @todo Change this. We need a real Textile parser.
-     */
+ /**
+ * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
+ *
+ * @param string $text String to "flay"
+ * @param boolean $allowHtml Set to true if if html is allowed
+ * @return string "Flayed" text
+ * @todo Change this. We need a real Textile parser.
+ */
     function flay($text, $allowHtml=false)
     {
         return Flay::toHtml($text, false, $allowHtml);

@@ -3,19 +3,19 @@
 
 /**
  * Methods for displaying presentation data
- * 
+ *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -30,16 +30,16 @@
 /**
   * Included libraries.
   */
-uses('object', DS.'view'.DS.'helper');
+uses(DS.'view'.DS.'helper');
 
 /**
  * View, the V in the MVC triad.
  *
  * Class holding methods for displaying presentation data.
  *
- * @package    cake
- * @subpackage cake.cake.libs.view
- * @since      CakePHP v 0.10.0.1076
+ * @package      cake
+ * @subpackage   cake.cake.libs.view
+ * @since        CakePHP v 0.10.0.1076
  */
 class View extends Object
 {
@@ -247,7 +247,11 @@ class View extends Object
          $this->setLayout($layout);
       }
 
-      $viewFileName = $file? $file: $this->_getViewFileName($action);
+      $viewFileName = $this->_getViewFileName($action);
+      if ($file)
+      {
+          $viewFileName = $file;
+      }
 
       if (!is_file($viewFileName))
       {
@@ -366,7 +370,7 @@ class View extends Object
       {
          return "(Error rendering {$name})";
       }
-      return $this->_render($fn, array_merge($this->_viewVars, $params));
+      return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
    }
 
 /**
@@ -385,7 +389,7 @@ class View extends Object
 
       if (is_file($layout_fn))
       {
-         $out = $this->_render($layout_fn, $data_for_layout);
+         $out = $this->_render($layout_fn, $data_for_layout, true, false);
 
          if ($out === false)
          {
@@ -496,15 +500,15 @@ class View extends Object
         }
         $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
 
-		if(file_exists(LAYOUTS.$type."{$this->layout}.thtml"))
-		{
-		    $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
-		}
-		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
-		{
-		    $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml";
-		}
-		return $layoutFileName;
+        if(file_exists(LAYOUTS.$type."{$this->layout}.thtml"))
+        {
+            $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
+        }
+        else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
+        {
+            $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml";
+        }
+        return $layoutFileName;
    }
 
 /**
@@ -517,12 +521,12 @@ class View extends Object
  * @return string Rendered output
  * @access private
  */
-   function _render($___viewFn, $___data_for_view, $___play_safe = true)
+   function _render($___viewFn, $___data_for_view, $___play_safe = true, $loadHelpers = true)
    {
-   /**
+/**
     * Fetching helpers
     */
-      if ($this->helpers !== false)
+      if ($this->helpers != false && $loadHelpers = true)
       {
          $loadedHelpers =  array();
          $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
@@ -544,19 +548,19 @@ class View extends Object
       }
 
       extract($___data_for_view, EXTR_SKIP); # load all view variables
-   /**
+/**
     * Local template variables.
     */
       $BASE       = $this->base;
       $params     = &$this->params;
       $page_title = $this->pageTitle;
 
-   /**
+/**
     * Start caching output (eval outputs directly so we need to cache).
     */
       ob_start();
 
-   /**
+/**
     * Include the template.
     */
       $___play_safe? @include($___viewFn): include($___viewFn);
@@ -566,81 +570,81 @@ class View extends Object
       return $out;
    }
 
-   /**
+/**
     * Loads helpers, with their dependencies.
     *
     * @param array $loaded List of helpers that are already loaded.
     * @param array $helpers List of helpers to load.
     * @return array
  */
-   function &_loadHelpers(&$loaded, $helpers) {
-
-     foreach ($helpers as $helper)
-     {
-        if(in_array($helper, array_keys($loaded)) !== true)
+    function &_loadHelpers(&$loaded, $helpers)
+    {
+        foreach ($helpers as $helper)
         {
-            $helperFn = Inflector::underscore($helper).'.php';
+            $helperCn = $helper.'Helper';
 
-            if(file_exists(HELPERS.$helperFn))
+            if(in_array($helper, array_keys($loaded)) !== true)
             {
-                 $helperFn = HELPERS.$helperFn;
-            }
-            else if(file_exists(LIBS.'view'.DS.'helpers'.DS.$helperFn))
-            {
-                $helperFn = LIBS.'view'.DS.'helpers'.DS.$helperFn;
-            }
-
-          $helperCn = $helper.'Helper';
-          $replace = strtolower(substr($helper, 0, 1));
-          $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
-
-          if (is_file($helperFn))
-          {
-             require_once $helperFn;
-             if(class_exists($helperCn)===true)
-             {
-                ${$camelBackedHelper}                       =& new $helperCn;
-                ${$camelBackedHelper}->base                 = $this->base;
-                ${$camelBackedHelper}->webroot              = $this->webroot;
-                ${$camelBackedHelper}->here                 = $this->here;
-                ${$camelBackedHelper}->params               = $this->params;
-                ${$camelBackedHelper}->action               = $this->action;
-                ${$camelBackedHelper}->data                 = $this->data;
-
-                if(!empty($this->validationErrors))
+                if(!class_exists($helperCn))
                 {
-                  ${$camelBackedHelper}->validationErrors = $this->validationErrors;
+                    $helperFn = Inflector::underscore($helper).'.php';
+                    if(file_exists(HELPERS.$helperFn))
+                    {
+                        $helperFn = HELPERS.$helperFn;
+                    }
+                    else if(file_exists(LIBS.'view'.DS.'helpers'.DS.$helperFn))
+                    {
+                        $helperFn = LIBS.'view'.DS.'helpers'.DS.$helperFn;
+                    }
+                    if (is_file($helperFn))
+                    {
+                        require_once $helperFn;
+                    }
+                    else
+                    {
+                        $error =& new Controller();
+                        $error->autoLayout = true;
+                        $error->base = $this->base;
+                        call_user_func_array(array(&$error, 'missingHelperFile'), Inflector::underscore($helper));
+                        exit();
+                    }
                 }
-                $loaded[$helper] =& ${$camelBackedHelper};
 
-                // Find and load helper dependencies
-                if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
+                $replace = strtolower(substr($helper, 0, 1));
+                $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
+
+                if(class_exists($helperCn, FALSE))
                 {
-                  $loaded =& $this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
-                }
-             }
-             else
-             {
-                 $error =& new Controller();
-                 $error->autoLayout = true;
-                 $error->base = $this->base;
-                 call_user_func_array(array(&$error, 'missingHelperClass'), $helper);
-                 exit();
-             }
-          }
-          else
-          {
-            $error =& new Controller();
-            $error->autoLayout = true;
-            $error->base = $this->base;
-            call_user_func_array(array(&$error, 'missingHelperFile'), Inflector::underscore($helper));
-            exit();
-          }
-       }
-     }
+                    ${$camelBackedHelper}                       =& new $helperCn;
+                    ${$camelBackedHelper}->base                 = $this->base;
+                    ${$camelBackedHelper}->webroot              = $this->webroot;
+                    ${$camelBackedHelper}->here                 = $this->here;
+                    ${$camelBackedHelper}->params               = $this->params;
+                    ${$camelBackedHelper}->action               = $this->action;
+                    ${$camelBackedHelper}->data                 = $this->data;
 
-     return $loaded;
-   }
+                    if(!empty($this->validationErrors))
+                    {
+                        ${$camelBackedHelper}->validationErrors = $this->validationErrors;
+                    }
+                    $loaded[$helper] =& ${$camelBackedHelper};
+                    if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
+                    {
+                        $loaded =& $this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
+                    }
+                }
+                else
+                {
+                    $error =& new Controller();
+                    $error->autoLayout = true;
+                    $error->base = $this->base;
+                    call_user_func_array(array(&$error, 'missingHelperClass'), $helper);
+                    exit();
+                }
+            }
+        }
+        return $loaded;
+    }
 }
 
 ?>

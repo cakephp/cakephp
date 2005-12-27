@@ -43,35 +43,35 @@ class JavascriptHelper extends Helper
   var $_cachedEvents = array();
   var $_cacheEvents = false;
 
-    /**
-     * Returns a JavaScript script tag.
-     *
-     * @param  string $script The JavaScript to be wrapped in SCRIPT tags.
-     * @return string The full SCRIPT element, with the JavaScript inside it.
-     */
+ /**
+ * Returns a JavaScript script tag.
+ *
+ * @param  string $script The JavaScript to be wrapped in SCRIPT tags.
+ * @return string The full SCRIPT element, with the JavaScript inside it.
+ */
     function codeBlock($script)
     {
         return sprintf($this->tags['javascriptblock'], $script);
     }
 
-    /**
-     * Returns a JavaScript include tag (SCRIPT element)
-     *
-     * @param  string $url URL to JavaScript file.
-     * @return string
-     */
+ /**
+ * Returns a JavaScript include tag (SCRIPT element)
+ *
+ * @param  string $url URL to JavaScript file.
+ * @return string
+ */
     function link($url)
     {
       if(strpos($url, ".") === false) $url .= ".js";
       return sprintf($this->tags['javascriptlink'], $this->webroot . JS_URL . $url);
     }
 
-    /**
-     * Returns a JavaScript include tag for an externally-hosted script
-     *
-     * @param  string $url URL to JavaScript file.
-     * @return string
-     */
+ /**
+ * Returns a JavaScript include tag for an externally-hosted script
+ *
+ * @param  string $url URL to JavaScript file.
+ * @return string
+ */
     function linkOut($url)
     {
       if(strpos($url, ".") === false) $url .= ".js";
@@ -84,12 +84,12 @@ class JavascriptHelper extends Helper
   * @param string $script string that might have javascript elements
   * @return string escaped string
   */
-	function escapeScript ($script)
-	{
-		$script = str_replace(array("\r\n","\n","\r"),'\n', $script);
-		$script = str_replace(array('"', "'"), array('\"', "\\'"), $script);
-		return $script;
-	}
+    function escapeScript ($script)
+    {
+        $script = str_replace(array("\r\n","\n","\r"),'\n', $script);
+        $script = str_replace(array('"', "'"), array('\"', "\\'"), $script);
+        return $script;
+    }
 
 /**
   * Attach an event to an element. Used with the Prototype library.
@@ -155,26 +155,26 @@ class JavascriptHelper extends Helper
   * create remote script links.
   * @return string script with all javascript in /javascripts folder
   */
-	function includeScript ($script = "")
-	{
-	    if($script == "")
-	    {
-	        $files = scandir(JS);
-	        $javascript = '';
-	        foreach($files as $file)
-	        {
-	            if (substr($file, -3) == '.js')
-	            {
-	                $javascript .= file_get_contents(JS."{$file}") . "\n\n";
-	            }
-	        }
-	    }
-	    else
-	    {
-	        $javascript = file_get_contents(JS."$script.js") . "\n\n";
-	    }
-	    return $this->codeBlock("\n\n" . $javascript);
-	}
+    function includeScript ($script = "")
+    {
+        if($script == "")
+        {
+            $files = scandir(JS);
+            $javascript = '';
+            foreach($files as $file)
+            {
+                if (substr($file, -3) == '.js')
+                {
+                    $javascript .= file_get_contents(JS."{$file}") . "\n\n";
+                }
+            }
+        }
+        else
+        {
+            $javascript = file_get_contents(JS."$script.js") . "\n\n";
+        }
+        return $this->codeBlock("\n\n" . $javascript);
+    }
 
 }
 

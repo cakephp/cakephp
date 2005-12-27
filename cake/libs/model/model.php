@@ -9,10 +9,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -31,7 +31,7 @@
 /**
  * Enter description here...
  */
-uses('object',  'class_registry', 'validators', 'inflector');
+uses('class_registry', 'validators');
 
 
 /**
@@ -274,22 +274,22 @@ class Model extends Object
     function createLinks()
     {
         if (!empty($this->belongsTo))
-	    {
-	        $this->_belongsToLink();
-	    }
-	    if (!empty($this->hasOne))
-	    {
-	        $this->_hasOneLink();
-	    }
-	    if (!empty($this->hasMany))
-	    {
-	        $this->_hasManyLinks();
-	    }
-	    if (!empty($this->hasAndBelongsToMany))
-	    {
-	        $this->_hasAndBelongsToManyLinks();
-	    }
-	}
+        {
+            $this->_belongsToLink();
+        }
+        if (!empty($this->hasOne))
+        {
+            $this->_hasOneLink();
+        }
+        if (!empty($this->hasMany))
+        {
+            $this->_hasManyLinks();
+        }
+        if (!empty($this->hasAndBelongsToMany))
+        {
+            $this->_hasAndBelongsToManyLinks();
+        }
+    }
 
 /**
  * Enter description here...
@@ -348,26 +348,26 @@ class Model extends Object
  *
  * @access private
  */
-	function _hasManyLinks()
-	{
-	    if(is_array($this->hasMany))
-	    {
-	        foreach ($this->hasMany as $association => $associationValue)
-	        {
-	            $className = $association;
-	            $this->_associationSwitch($association, $className, $associationValue, 'Many');
-	        }
-	    }
-	   else
-	   {
-	       $association = explode(',', $this->hasMany);
-	       foreach ($association as $className)
-	       {
-	           $this->_constructAssociatedModels($className, $className , 'Many');
-	           $this->linkAssociation('Many', $className, $className, $this->id);
-	       }
-	   }
-	}
+    function _hasManyLinks()
+    {
+        if(is_array($this->hasMany))
+        {
+            foreach ($this->hasMany as $association => $associationValue)
+            {
+                $className = $association;
+                $this->_associationSwitch($association, $className, $associationValue, 'Many');
+            }
+        }
+       else
+       {
+           $association = explode(',', $this->hasMany);
+           foreach ($association as $className)
+           {
+               $this->_constructAssociatedModels($className, $className , 'Many');
+               $this->linkAssociation('Many', $className, $className, $this->id);
+           }
+       }
+    }
 
 /**
  * Enter description here...
@@ -436,47 +436,47 @@ class Model extends Object
 
                 case 'counterSql':
                     $this->{$association.'_countersql'} = $optionValue;
-	            break;
+                break;
 
-	            case 'deleteSql':
+                case 'deleteSql':
                     $this->{$association.'_deletesql'} = $optionValue;
-	            break;
+                break;
 
-	            case 'dependent':
-	               $this->{$association.'_dependent'} = $optionValue;
-	            break;
+                case 'dependent':
+                   $this->{$association.'_dependent'} = $optionValue;
+                break;
 
-	            case 'exclusive':
+                case 'exclusive':
                     $this->{$association.'_exclusive'} = $optionValue;
-	            break;
+                break;
 
-	            case 'finderSql':
+                case 'finderSql':
                     $this->{$association.'_findersql'} = $optionValue;
-	            break;
+                break;
 
-	            case 'foreignKey':
+                case 'foreignKey':
                     $this->{$association.'_foreignkey'} = $optionValue;
-	            break;
+                break;
 
-	            case 'insertSql':
+                case 'insertSql':
                     $this->{$association.'_insertsql'} = $optionValue;
-	            break;
+                break;
 
-	            case 'joinTable':
+                case 'joinTable':
                     $this->{$association.'_jointable'} = $optionValue;
-	            break;
+                break;
 
-	            case 'order':
+                case 'order':
                     $this->{$association.'_order'} = $optionValue;
                 break;
 
                 case 'uniq':
                     $this->{$association.'_uniq'} = $optionValue;
-	            break;
+                break;
 
                 case 'fields':
                     $this->{$association.'_fields'} = $optionValue;
-	            break;
+                break;
                }
         }
         $this->linkAssociation($type, $association, $className, $this->id);
@@ -1355,16 +1355,17 @@ class Model extends Object
    }
 
 /**
- * Enter description here...
+ * Finds all children of $parent_id using 'parent_id' field.
  *
+ * @param int $parent_id
  * @param string $conditions SQL conditions (WHERE clause conditions)
  * @param unknown_type $fields
- * @return unknown
+ * @return unknown type
  */
-   function findAllThreaded ($conditions=null, $fields=null, $sort=null)
-   {
-      return $this->_doThread(Model::findAll($conditions, $fields, $sort), null);
-   }
+    function findAllThreaded ($conditions=null, $fields=null, $sort=null, $parent_id='0')
+    {
+        return $this->_doThread(Model::findAll($conditions, $fields, $sort), $parent_id);
+    }
 
 /**
  * Enter description here...
@@ -1374,22 +1375,20 @@ class Model extends Object
  * @return array
  * @access private
  */
-   function _doThread ($data, $root)
-   {
-      $out = array();
-
-      for ($ii=0; $ii<sizeof($data); $ii++)
-      {
-         if ($data[$ii]['parent_id'] == $root)
-         {
-            $tmp = $data[$ii];
-            $tmp['children'] = isset($data[$ii]['id'])? $this->_doThread($data, $data[$ii]['id']): null;
-            $out[] = $tmp;
-         }
-      }
-
-      return $out;
-   }
+    function _doThread ($data, $root)
+    {
+        $out = array();
+        for ($ii=0; $ii<sizeof($data); $ii++)
+        {
+            if ($data[$ii][$this->name]['parent_id'] == $root)
+            {
+                $tmp = $data[$ii];
+                $tmp['children'] = isset($data[$ii][$this->name][$this->primaryKey])? $this->_doThread($data, $data[$ii][$this->name][$this->primaryKey]): null;
+                $out[] = $tmp;
+            }
+        }
+        return $out;
+    }
 
 /**
  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
@@ -1427,22 +1426,14 @@ class Model extends Object
  * @param array $data POST data
  * @return boolean True if there are no errors
  */
-   function validates ($data=null)
+   function validates ($data = null)
    {
-      $errors = count($this->invalidFields($data? $data: $this->data));
-
+      if (!$data)
+      {
+          $data = $this->data;
+      }
+      $errors = count($this->invalidFields($data));
       return $errors == 0;
-   }
-
-/**
- * Returns an array of invalid fields.
- *
- * @param array $data Posted data
- * @return array Array of invalid fields
- */
-   function invalidFields ($data=null)
-   {
-      return $this->_invalidFields($data);
    }
 
 /**
@@ -1450,9 +1441,8 @@ class Model extends Object
  *
  * @param array $data
  * @return array Array of invalid fields
- * @access private
  */
-   function _invalidFields ($data=null)
+   function invalidFields ($data = null)
    {
       if (!isset($this->validate))
       {
@@ -1464,15 +1454,26 @@ class Model extends Object
          return $this->validationErrors;
       }
 
-      $data = ($data? $data: (isset($this->data)? $this->data: array()));
+      if (!$data)
+      {
+          if (isset($this->data))
+          {
+              $data = $this->data;
+          }
+          else
+          {
+              $data = array();
+          }
+      }
       $errors = array();
+
       foreach ($data as $table => $field)
       {
          foreach ($this->validate as $field_name=>$validator)
          {
            if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
             {
-            	$errors[$field_name] = 1;
+                $errors[$field_name] = 1;
             }
          }
          $this->validationErrors = $errors;
@@ -1487,11 +1488,11 @@ class Model extends Object
  * @param string $field Returns true if the input string ends in "_id"
  * @return True if the field is a foreign key listed in the belongsTo array.
  */
-	function isForeignKey( $field )
-	{
-	    $foreignKeys = array();
+    function isForeignKey( $field )
+    {
+        $foreignKeys = array();
 
-	   if(!empty($this->_belongsToOther))
+       if(!empty($this->_belongsToOther))
       {
 
         foreach ($this->_belongsToOther as $rule)
@@ -1501,44 +1502,44 @@ class Model extends Object
         }
       }
 
-	   if( array_key_exists($field, $foreignKeys) )
-	   {
-	     return true;
-	   }
-	   return false;
-	}
+       if( array_key_exists($field, $foreignKeys) )
+       {
+         return true;
+       }
+       return false;
+    }
 
 /**
  * Enter description here...
  *
  * @return unknown
  */
-	function getDisplayField()
-	{
-	   //  $displayField defaults to 'name'
-	   $dispField = 'name';
+    function getDisplayField()
+    {
+       //  $displayField defaults to 'name'
+       $dispField = 'name';
 
-	   //  If the $displayField variable is set in this model, use it.
-	   if( isset( $this->displayField ) ) {
-	      $dispField = $this->displayField;
-	   }
+       //  If the $displayField variable is set in this model, use it.
+       if( isset( $this->displayField ) ) {
+          $dispField = $this->displayField;
+       }
 
-	   //  And if the display field does not exist in the table info structure, use the ID field.
-	   if( false == $this->hasField( $dispField ) )
-	     $dispField = $this->primaryKey;
+       //  And if the display field does not exist in the table info structure, use the ID field.
+       if( false == $this->hasField( $dispField ) )
+         $dispField = $this->primaryKey;
 
-	   return $dispField;
-	}
+       return $dispField;
+    }
 
 /**
  * Enter description here...
  *
  * @return unknown
  */
-	function getLastInsertID()
-	{
+    function getLastInsertID()
+    {
      return $this->db->lastInsertId($this->table, $this->primaryKey);
-	}
+    }
 }
 
 ?>

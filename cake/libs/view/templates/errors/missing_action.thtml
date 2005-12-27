@@ -3,20 +3,20 @@
 
 /**
  *
- * 
+ *
  *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -32,9 +32,9 @@
 
 <h1>Missing Method in <?php echo $controller;?></h1>
 
-<p class="error">You are seeing this error because the action <em><?php echo $this->controller->missingAction;?></em> 
+<p class="error">You are seeing this error because the action <em><?php echo $this->controller->missingAction;?></em>
   is not defined in controller <em><?php echo $controller;?></em>
-</p>  
+</p>
 
 
 <p>
@@ -43,7 +43,7 @@ view file, a user-customizable error page for handling invalid action dispatches
 </p>
 
 <p>
-<strong>Fatal</strong>: Create Method: 
+<strong>Fatal</strong>: Create Method:
 </p>
 <p>
 <?php echo "<pre>&lt;?php\n\nclass " . $controller ." extends AppController {\n
@@ -62,9 +62,9 @@ in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($controller
 <?php if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<?php  
+<?php
 unset($this->db);
-print_r($this); 
+print_r($this);
 ?>
 </pre>
-<?php endif?>
+<?php endif;?>

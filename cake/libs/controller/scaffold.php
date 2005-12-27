@@ -9,14 +9,14 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -27,11 +27,6 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
-  * Included libs.
-  */
-uses(DS.'model'.DS.'model', 'inflector', 'object');
 
 /**
  * Scaffolding is a set of automatic views, forms and controllers for starting web development work faster.
@@ -101,6 +96,7 @@ class Scaffold extends Object {
         $this->actionView = $controller->action;
         $this->modelKey = Inflector::singularize($controller->name);
         $this->scaffoldTitle = Inflector::humanize($this->modelKey);
+        $this->viewPath = Inflector::underscore($controller->name);
         $this->controllerClass->pageTitle = $this->scaffoldTitle;
         $this->_renderScaffold($params);
     }
@@ -142,6 +138,10 @@ class Scaffold extends Object {
         $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
         $this->controllerClass->set('data', $this->controllerClass->params['data'] );
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames( $this->controllerClass->params['data'], false ) );
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml');
+        }
         return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
     }
 
@@ -156,6 +156,10 @@ class Scaffold extends Object {
     {
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
         $this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml');
+        }
         return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
     }
 
@@ -169,7 +173,12 @@ class Scaffold extends Object {
     function _scaffoldNew($params)
     {
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
+        $this->controllerClass->set('type', 'New');
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml');
+        }
+        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
     }
 
 /**
@@ -179,11 +188,16 @@ class Scaffold extends Object {
  * @return A rendered view with a form to edit a record in the Models database table
  * @access private
  */
-    function _scaffoldEdit($params)
+    function _scaffoldEdit($params=array())
     {
         $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
         $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->controllerClass->params['data']) );
+        $this->controllerClass->set('type', 'Edit');
         $this->controllerClass->set('data', $this->controllerClass->params['data']);
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml');
+        }
         return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
     }
 
@@ -227,7 +241,12 @@ class Scaffold extends Object {
             }
             $this->controllerClass->set('data', $this->controllerClass->params['data']);
             $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
-            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'new.thtml');
+            $this->controllerClass->set('type', 'New');
+            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml');
+            }
+            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
         }
     }
 
@@ -244,8 +263,9 @@ class Scaffold extends Object {
         {
             return $this->_scaffoldNew($params);
         }
-
+        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
         $this->_cleanUpFields();
+
         $this->controllerClass->{$this->modelKey}->set($this->controllerClass->params['data']);
 
         if ( $this->controllerClass->{$this->modelKey}->save())
@@ -266,15 +286,12 @@ class Scaffold extends Object {
         {
             if(is_object($this->controllerClass->Session))
             {
-                $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been updated.','/');
-                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
-
+                $this->controllerClass->Session->setFlash('Please correct errors below');
             }
-            else
-            {
-            return $this->controllerClass->flash('There was an error updating the '.Inflector::humanize($this->modelKey),'/'.
-                                                 Inflector::underscore($this->controllerClass->viewPath));
-            }
+            $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
+            $this->controllerClass->set('data', $this->controllerClass->params['data']);
+            $this->controllerClass->set('type', 'Edit');
+            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
         }
     }
 
@@ -415,11 +432,9 @@ class Scaffold extends Object {
             {
                 if('date' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']))
                 {
-                    $newDate = mktime( 0,0,0,
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
-                    $newDate = date( 'Y-m-d', $newDate );
+                    $newDate  = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'].'-';
+                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
+                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
                     $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
                 else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
@@ -429,12 +444,10 @@ class Scaffold extends Object {
                     {
                         $hour = $hour + 12;
                     }
-                    $newDate = mktime( $hour,
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'],0,
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'],
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'],
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] );
-                    $newDate = date( 'Y-m-d H:i:s', $newDate );
+                    $newDate  = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'].'-';
+                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
+                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
+                    $newDate .= $hour.':'.$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'].':00';
                     $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
                 else if( 'tinyint(1)' == $field['type'] )

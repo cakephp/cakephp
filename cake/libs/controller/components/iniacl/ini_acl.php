@@ -129,46 +129,46 @@ class INI_ACL extends AclBase
  */
    function readConfigFile ($fileName)
    {
-   	$fileLineArray = file($fileName);
+       $fileLineArray = file($fileName);
    
-   	foreach ($fileLineArray  as $fileLine)
-   	{
-   		$dataLine = trim($fileLine);
-   		$firstChar = substr($dataLine, 0, 1);
-   		if ($firstChar != ';' && $dataLine != '')
-   		{
-   			if ($firstChar == '[' && substr($dataLine, -1, 1) == ']')
-   			{
-   				$sectionName = preg_replace('/[\[\]]/', '', $dataLine);
-   			}
-   			else
-   			{
-   				$delimiter = strpos($dataLine, '=');
-   				if ($delimiter > 0)
-   				{
-   					$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
-   					$value = trim(substr($dataLine, $delimiter + 1));
-   					if (substr($value, 0, 1) == '"' && substr($value, -1) == '"')
-   					{
-   						$value = substr($value, 1, -1);
-   					}
-   					$iniSetting[$sectionName][$key] = stripcslashes($value);
-   				}
-   				else
-   				{
-   				   if(!isset($sectionName))
-   				   {
-   				      $sectionName = '';
-   				   }
-   					$iniSetting[$sectionName][strtolower(trim($dataLine))]='';
-   				}
-   			}
-   		}
-   		else
-   		{
-   		}
-   	}
-   	return $iniSetting;
+       foreach ($fileLineArray  as $fileLine)
+       {
+           $dataLine = trim($fileLine);
+           $firstChar = substr($dataLine, 0, 1);
+           if ($firstChar != ';' && $dataLine != '')
+           {
+               if ($firstChar == '[' && substr($dataLine, -1, 1) == ']')
+               {
+                   $sectionName = preg_replace('/[\[\]]/', '', $dataLine);
+               }
+               else
+               {
+                   $delimiter = strpos($dataLine, '=');
+                   if ($delimiter > 0)
+                   {
+                       $key = strtolower(trim(substr($dataLine, 0, $delimiter)));
+                       $value = trim(substr($dataLine, $delimiter + 1));
+                       if (substr($value, 0, 1) == '"' && substr($value, -1) == '"')
+                       {
+                           $value = substr($value, 1, -1);
+                       }
+                       $iniSetting[$sectionName][$key] = stripcslashes($value);
+                   }
+                   else
+                   {
+                      if(!isset($sectionName))
+                      {
+                         $sectionName = '';
+                      }
+                       $iniSetting[$sectionName][strtolower(trim($dataLine))]='';
+                   }
+               }
+           }
+           else
+           {
+           }
+       }
+       return $iniSetting;
    }
    
 /**

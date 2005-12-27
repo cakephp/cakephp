@@ -30,11 +30,6 @@
  */
 
 /**
-  * Included libraries.
-  */
-uses('log');
-
-/**
  * Object class, allowing __construct and __destruct in PHP4.
  *
  * Also includes methods for logging and the special method RequestAction,
@@ -121,6 +116,10 @@ class Object
  */
    function log ($msg, $type=LOG_ERROR)
    {
+       if(!class_exists('Log', FALSE))
+       {
+           uses('log');
+       }
       if (is_null($this->_log))
       {
          $this->_log = new Log ();
@@ -182,6 +181,7 @@ class Object
       $this->missingView = $this->name;
       $this->pageTitle = 'Missing View';
       $this->render('../errors/missingView');
+       exit();
    }
 
 /**
@@ -202,8 +202,8 @@ class Object
  */
     function missingTable($tableName)
     {
-	    $error =& new Controller();
-	    $error->constructClasses();
+        $error =& new Controller();
+        $error->constructClasses();
         $error->missingTable = $this->table;
         $error->missingTableName = $tableName;
         $error->pageTitle = 'Missing Database Table';
@@ -218,7 +218,7 @@ class Object
     function missingConnection()
     {
         $error =& new Controller();
-	    $error->constructClasses();
+        $error->constructClasses();
         $error->missingConnection = $this->name;
         $error->autoLayout = true;
         $error->pageTitle = 'Missing Database Connection';

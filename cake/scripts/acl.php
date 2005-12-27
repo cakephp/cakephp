@@ -75,46 +75,46 @@ $aclCLI = new AclCLI ($command, $args);
 
 class AclCLI {
 
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $stdin;
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $stdout;
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $stderr;
 
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $acl;
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $controller;
 
-   /**
+/**
     * Enter description here...
     *
     * @var unknown_type
     */
    var $args;
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $command
@@ -126,7 +126,7 @@ class AclCLI {
       $this->__construct($command, $args);
    }
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $command
@@ -200,7 +200,7 @@ class AclCLI {
 
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -221,7 +221,7 @@ class AclCLI {
       fwrite($this->stdout, "New $class '".$this->args[3]."' created.\n\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -237,7 +237,7 @@ class AclCLI {
       //fwrite($this->stdout, "$class deleted.\n\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -258,7 +258,7 @@ class AclCLI {
       }
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -285,7 +285,7 @@ class AclCLI {
       }
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -299,7 +299,7 @@ class AclCLI {
       fwrite($this->stdout, "Permission granted.\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -312,13 +312,13 @@ class AclCLI {
       fwrite($this->stdout, "Requested permission successfully denied.\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
    function inherit() {}
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -361,7 +361,7 @@ class AclCLI {
       fwrite($this->stdout, "------------------------------------------------\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -406,7 +406,7 @@ class AclCLI {
       fwrite($this->stdout, "\nDone.\n");
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -485,7 +485,7 @@ class AclCLI {
       fwrite($this->stdout, $out);
    }
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $title
@@ -501,7 +501,7 @@ class AclCLI {
       exit();
    }
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $expectedNum
@@ -515,7 +515,7 @@ class AclCLI {
       }
    }
 
-   /**
+/**
     * Enter description here...
     *
     */
@@ -527,7 +527,7 @@ class AclCLI {
       }
    }
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $type
@@ -552,7 +552,7 @@ class AclCLI {
       }
    }
 
-   /**
+/**
     * Enter description here...
     *
     * @param unknown_type $type

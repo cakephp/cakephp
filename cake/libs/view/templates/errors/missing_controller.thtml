@@ -3,20 +3,20 @@
 
 /**
  *
- * 
+ *
  *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -32,7 +32,7 @@
 <?php $missing = $this->controller->missingController; ?>
 <p class="error">You are seeing this error because controller <em><?php echo $missing;?></em>
   could not be found.
-</p> 
+</p>
 
 <p>
 <span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_controller.thtml</code>
@@ -43,7 +43,7 @@ view file, a user-customizable error page for handling invalid controller dispat
 <strong>Fatal</strong>: Unable to load controller <em><?php echo $missing;?></em>
 </p>
 <p>
-<strong>Fatal</strong>: Create Class: 
+<strong>Fatal</strong>: Create Class:
 </p>
 <p>
 <?php echo "<pre>&lt;?php\n\nclass " . $missing ." extends AppController {\n}\n\n?&gt;</pre>"; ?>
@@ -52,9 +52,9 @@ in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($missing)."
 <?php if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<?php  
+<?php
 unset($this->db);
-print_r($this); 
+print_r($this);
 ?>
 </pre>
-<?php endif?>
+<?php endif;?>

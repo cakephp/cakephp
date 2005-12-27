@@ -32,7 +32,7 @@
 /**
  * List of helpers to include
  */
-uses('error_messages', 'object', 'router', DS.'controller'.DS.'controller', DS.'controller'.DS.'scaffold');
+uses('error_messages', 'router', DS.'controller'.DS.'controller');
 
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
@@ -78,8 +78,8 @@ class Dispatcher extends Object
  * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
  * Actions).
  *
- * @param string $url	URL information to work on.
- * @return boolean		Success
+ * @param string $url    URL information to work on.
+ * @return boolean        Success
  */
    function dispatch($url, $additionalParams=array())
    {
@@ -122,7 +122,7 @@ class Dispatcher extends Object
          $ctrlName  = Inflector::camelize($params['controller']);
          $ctrlClass = $ctrlName.'Controller';
 
-         if (!loadController($params['controller']) || !class_exists($ctrlClass))
+         if (!loadController($params['controller']) || !class_exists($ctrlClass, FALSE))
          {
              if(preg_match('/([\\.]+)/',$ctrlName))
              {
@@ -192,6 +192,7 @@ class Dispatcher extends Object
 
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
+          uses(DS.'controller'.DS.'scaffold');
           $scaffolding = new Scaffold($controller, $params);
           exit;
       }
@@ -234,7 +235,7 @@ class Dispatcher extends Object
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
- * @param string $from_url	URL to mine for parameter information.
+ * @param string $from_url    URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
  */
    function parseParams($from_url)
@@ -292,7 +293,7 @@ class Dispatcher extends Object
 /**
  * Returns a base URL.
  *
- * @return string	Base URL
+ * @return string    Base URL
  */
     function baseUrl()
     {
@@ -360,27 +361,27 @@ class Dispatcher extends Object
 /**
  * Displays an error page (e.g. 404 Not found).
  *
- * @param int $code 	Error code (e.g. 404)
- * @param string $name 	Name of the error message (e.g. Not found)
+ * @param int $code     Error code (e.g. 404)
+ * @param string $name     Name of the error message (e.g. Not found)
  * @param string $message
  * @return unknown
  */
    function error ($code, $name, $message)
-	{
+    {
         $controller =& new Controller ($this);
         $controller->base = $this->base;
         $controller->autoLayout = true;
         $controller->set(array('code'=>$code, 'name'=>$name, 'message'=>$message));
-		$controller->pageTitle = $code.' '. $name;
+        $controller->pageTitle = $code.' '. $name;
         return $controller->render('errors/error404');
-	}
+    }
 
 
 /**
  * Convenience method to display a 404 page.
  *
- * @param string $url 		URL that spawned this message, to be included in the output.
- * @param string $message 	Message text for the 404 page.
+ * @param string $url         URL that spawned this message, to be included in the output.
+ * @param string $message     Message text for the 404 page.
  */
    function error404 ($url, $message)
    {

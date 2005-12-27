@@ -40,23 +40,23 @@
  */
 class NeatString
 {
-    /**
-     * Returns an array with each of the non-empty characters in $string as an element.
-     *
-     * @param string $string
-     * @return array
-     */
+ /**
+ * Returns an array with each of the non-empty characters in $string as an element.
+ *
+ * @param string $string
+ * @return array
+ */
     function toArray ($string)
     {
         return preg_split('//', $string, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    /**
-     * Returns string with Cyrillic characters translated to Roman ones.
-     *
-     * @param string $string
-     * @return string
-     */
+ /**
+ * Returns string with Cyrillic characters translated to Roman ones.
+ *
+ * @param string $string
+ * @return string
+ */
     function toRoman ($string)
     {
         $pl = array('ą','ć','ę','ł','ń','ó','ś','ź','ż','Ą','Ć','Ę','�?','Ń','Ó','Ś','Ź','Ż');
@@ -65,25 +65,25 @@ class NeatString
         return str_replace($pl, $ro, $string);
     }
 
-    /**
-     * Returns string as lowercase with whitespace removed.
-     *
-     * @param string $string
-     * @return string
-     */
+ /**
+ * Returns string as lowercase with whitespace removed.
+ *
+ * @param string $string
+ * @return string
+ */
     function toCompressed ($string)
     {
         $whitespace = array("\n", "    ", "\r", "\0", "\x0B", " ");
         return strtolower(str_replace($whitespace, '', $string));
     }
 
-    /**
-     * Returns a random password.
-     *
-     * @param integer $length Length of generated password
-     * @param string $available_chars List of characters to use in password
-     * @return string Generated password
-     */
+ /**
+ * Returns a random password.
+ *
+ * @param integer $length Length of generated password
+ * @param string $available_chars List of characters to use in password
+ * @return string Generated password
+ */
     function randomPassword ($length, $available_chars = 'ABDEFHKMNPRTWXYABDEFHKMNPRTWXY23456789')
     {
         $chars = preg_split('//', $available_chars, -1, PREG_SPLIT_NO_EMPTY);

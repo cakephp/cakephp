@@ -61,11 +61,11 @@ uses('object');
  *
  *  // emulate the usual way of reading query results
  *  if ($db->query("SELECT a,b,c FROM table")) 
- *	{
- *  	while ( $row = $db->farr() ) 
- *	  	{
- *      	print $row['a'].$row['b'].$row['c'];
- *  	}
+ *    {
+ *      while ( $row = $db->farr() ) 
+ *          {
+ *          print $row['a'].$row['b'].$row['c'];
+ *      }
  *  }
  *
  * // show a log of all queries, sorted by execution time

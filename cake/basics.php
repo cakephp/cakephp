@@ -3,20 +3,20 @@
 
 /**
  * Basic Cake functionality.
- * 
+ *
  * Core functions for including other source files, loading models and so forth.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -42,15 +42,15 @@ define('YEAR',  365 * DAY);
 /**
  * Patch for PHP < 4.3
  */
-    if (!function_exists("ob_get_clean"))
+if (!function_exists("ob_get_clean"))
+{
+    function ob_get_clean()
     {
-        function ob_get_clean()
-        {
-            $ob_contents = ob_get_contents();
-            ob_end_clean();
-            return $ob_contents;
-        }
+        $ob_contents = ob_get_contents();
+        ob_end_clean();
+        return $ob_contents;
     }
+}
 
 /**
  * Loads all models.
@@ -59,20 +59,23 @@ define('YEAR',  365 * DAY);
  * @uses APP
  * @uses MODELS
  */
-function loadModels () 
+function loadModels ()
 {
-      if(file_exists(APP.'app_model.php'))
-      {
-          require_once(APP.'app_model.php');
-      }
-      else
-      {
-          require_once(CAKE.'app_model.php');
-      }
-      foreach (listClasses(MODELS) as $model_fn) 
-      {
-          require_once (MODELS.$model_fn);
-      }
+    if(!class_exists('AppModel', FALSE))
+    {
+        if(file_exists(APP.'app_model.php'))
+        {
+            require_once(APP.'app_model.php');
+        }
+        else
+        {
+            require_once(CAKE.'app_model.php');
+        }
+        foreach (listClasses(MODELS) as $model_fn)
+        {
+            require_once (MODELS.$model_fn);
+        }
+    }
 }
 
 /**
@@ -83,21 +86,26 @@ function loadModels ()
  * @uses HELPERS
  * @uses CONTROLLERS
  */
-function loadControllers () 
-{ 
-      if(file_exists(APP.'app_controller.php'))
-      {
-          require_once(APP.'app_controller.php');
-      }
-      else
-      {
-          require_once(CAKE.'app_controller.php');
-      }
-      
-      foreach (listClasses(CONTROLLERS) as $controller) 
-      {
-          require_once (CONTROLLERS.$controller.'.php');
-      }
+function loadControllers ()
+{
+    if(!class_exists('AppController', FALSE))
+    {
+        if(file_exists(APP.'app_controller.php'))
+        {
+            require_once(APP.'app_controller.php');
+        }
+        else
+        {
+            require_once(CAKE.'app_controller.php');
+        }
+    }
+    foreach (listClasses(CONTROLLERS) as $controller)
+    {
+        if(!class_exists($controller, FALSE))
+        {
+            require_once (CONTROLLERS.$controller.'.php');
+        }
+    }
 }
 
 /**
@@ -106,41 +114,45 @@ function loadControllers ()
   * @param string $name Name of controller
   * @return boolean Success
   */
-function loadController ($name) 
+function loadController ($name)
 {
-    $name = Inflector::underscore($name);
-      if(file_exists(CONTROLLERS.$name.'_controller.php'))
-      {
-          $controller_fn = CONTROLLERS.$name.'_controller.php';
-      }
-      elseif(file_exists(LIBS.'controller'.DS.$name.'_controller.php'))
-      {
-          $controller_fn = LIBS.'controller'.DS.$name.'_controller.php';
-      }
-      else
-      {
-          $controller_fn = false;
-      }
-      
-      if(file_exists(APP.'app_controller.php'))
-      {
-          require_once(APP.'app_controller.php');
-      }
-      else
-      {
-          require_once(CAKE.'app_controller.php');
-      }
-      
-      return file_exists($controller_fn)? require_once($controller_fn): false;
+    if(!class_exists('AppController', FALSE))
+    {
+        if(file_exists(APP.'app_controller.php'))
+        {
+            require_once(APP.'app_controller.php');
+        }
+        else
+        {
+            require_once(CAKE.'app_controller.php');
+        }
+    }
+    if(!class_exists($name, FALSE))
+    {
+        $name = Inflector::underscore($name);
+        if(file_exists(CONTROLLERS.$name.'_controller.php'))
+        {
+            $controller_fn = CONTROLLERS.$name.'_controller.php';
+        }
+        elseif(file_exists(LIBS.'controller'.DS.$name.'_controller.php'))
+        {
+            $controller_fn = LIBS.'controller'.DS.$name.'_controller.php';
+        }
+        else
+        {
+            $controller_fn = false;
+        }
+        return file_exists($controller_fn)? require_once($controller_fn): false;
+    }
 }
 
 /**
   * Lists PHP files in given directory.
   *
-  * @param string $path 	Path to scan for files
-  * @return array 			List of files in directory
+  * @param string $path     Path to scan for files
+  * @return array             List of files in directory
   */
-function listClasses($path) 
+function listClasses($path)
 {
    $modules = new Folder($path);
    return $modules->find('(.+)\.php');
@@ -151,26 +163,27 @@ function listClasses($path)
   *
   * @return boolean Success
   */
-function config () 
+function config ()
 {
    $args = func_get_args();
-   foreach ($args as $arg) 
+   $count = count($args);
+   foreach ($args as $arg)
    {
       if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
       {
          include_once(CONFIGS.$arg.'.php');
       }
-      elseif (file_exists(CONFIGS.$arg.'.php')) 
+      elseif (file_exists(CONFIGS.$arg.'.php'))
       {
          include_once (CONFIGS.$arg.'.php');
-         if (count($args) == 1) return true;
+         if ($count == 1) return true;
       }
-      else 
+      else
       {
-         if (count($args) == 1) return false;
+         if ($count == 1) return false;
       }
    }
-   
+
    return true;
 }
 
@@ -187,7 +200,7 @@ function config ()
 function uses ()
 {
    $args = func_get_args();
-   foreach ($args as $arg) 
+   foreach ($args as $arg)
    {
       require_once(LIBS.strtolower($arg).'.php');
    }
@@ -202,7 +215,7 @@ function uses ()
 function vendor($name)
 {
    $args = func_get_args();
-   foreach ($args as $arg) 
+   foreach ($args as $arg)
    {
       require_once(VENDORS.$arg.'.php');
    }
@@ -213,12 +226,12 @@ function vendor($name)
  *
  * Only runs if DEBUG level is non-zero.
  *
- * @param boolean $var		Variable to show debug information for.
- * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
+ * @param boolean $var        Variable to show debug information for.
+ * @param boolean $show_html    If set to true, the method prints the debug data in a screen-friendly way.
  */
-function debug($var = false, $show_html = false) 
+function debug($var = false, $show_html = false)
 {
-   if (DEBUG) 
+   if (DEBUG)
    {
       print "\n<pre>\n";
       if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
@@ -228,21 +241,21 @@ function debug($var = false, $show_html = false)
 }
 
 
-if (!function_exists('getMicrotime')) 
+if (!function_exists('getMicrotime'))
 {
 /**
  * Returns microtime for execution time checking.
  *
  * @return integer
  */
-   function getMicrotime() 
+   function getMicrotime()
    {
       list($usec, $sec) = explode(" ", microtime());
       return ((float)$usec + (float)$sec);
    }
 }
 
-if (!function_exists('sortByKey')) 
+if (!function_exists('sortByKey'))
 {
 /**
  * Sorts given $array by key $sortby.
@@ -253,30 +266,33 @@ if (!function_exists('sortByKey'))
  * @param integer $type
  * @return mixed
  */
-   function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC) 
-   {
-      if (!is_array($array))
-         return null;
-
-      foreach ($array as $key => $val)
-      {
-         $sa[$key] = $val[$sortby];
-      }
-
-      $order == 'asc'
-         ? asort($sa, $type)
-         : arsort($sa, $type);
-
-      foreach ($sa as $key=>$val)
-      {
-         $out[] = $array[$key];
-      }
-
-      return $out;
-   }
+function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC)
+{
+    if (!is_array($array))
+    {
+        return null;
+    }
+    foreach ($array as $key => $val)
+    {
+        $sa[$key] = $val[$sortby];
+    }
+    if($order == 'asc')
+    {
+        asort($sa, $type);
+    }
+    else
+    {
+        arsort($sa, $type);
+    }
+    foreach ($sa as $key=>$val)
+    {
+        $out[] = $array[$key];
+    }
+    return $out;
+}
 }
 
-if (!function_exists('array_combine')) 
+if (!function_exists('array_combine'))
 {
 /**
  * Combines given identical arrays by using the first array's values as keys,
@@ -286,25 +302,29 @@ if (!function_exists('array_combine'))
  * @param array $a2
  * @return mixed Outputs either combined array or false.
  */
-   function array_combine($a1, $a2) 
-   {
-      $a1 = array_values($a1);
-      $a2 = array_values($a2);
-      $c1 = count($a1);
-      $c2 = count($a2);
+function array_combine($a1, $a2)
+{
+    $a1 = array_values($a1);
+    $a2 = array_values($a2);
+    $c1 = count($a1);
+    $c2 = count($a2);
 
-      if ($c1 != $c2) return false; // different lenghts
-      if ($c1 <= 0)   return false; // arrays are the same and both are empty
-      
-      $output = array();
-      
-      for ($i = 0; $i < $c1; $i++) 
-      {
-         $output[$a1[$i]] = $a2[$i];
-      }
-      
-      return $output;
-   }
+    if ($c1 != $c2)
+    {
+        return false; // different lenghts
+    }
+    if ($c1 <= 0)
+    {
+        return false; // arrays are the same and both are empty
+    }
+
+    $output = array();
+    for ($i = 0; $i < $c1; $i++)
+    {
+        $output[$a1[$i]] = $a2[$i];
+    }
+    return $output;
+}
 }
 
 /**
@@ -315,9 +335,8 @@ if (!function_exists('array_combine'))
  */
 function h($text)
 {
-	return htmlspecialchars($text);
+    return htmlspecialchars($text);
 }
-
 
 /**
  * Returns an array of all the given parameters, making parameter lists shorter to write.
@@ -326,29 +345,34 @@ function h($text)
  */
 function a()
 {
-	$args = func_get_args();
-	return $args;
+    $args = func_get_args();
+    return $args;
 }
 
-
 /**
- * Hierarchical arrays. 
+ * Hierarchical arrays.
  *
  * @return array
  * @todo Explain this method better.
  */
 function ha()
 {
-	$args = func_get_args();
+    $args = func_get_args();
+    $count = count($args);
 
-	for($l=0 ; $l<count($args) ; $l++)
-	{
-		$a[$args[$l]] = $l+1<count($args) ? $args[$l+1] : null;
-		$l++;
-	}
-	return $a;
+    for($i=0 ; $i < $count ; $i++)
+    {
+        if($i+1 < $count)
+        {
+           $a[$args[$i]] =  $args[$i+1];
+        }
+        else
+        {
+            $a[$args[$i]] = null;
+        }
+    }
+    return $a;
 }
-
 
 /**
  * Convenience method for echo().
@@ -357,24 +381,24 @@ function ha()
  */
 function e($text)
 {
-	echo $text;
+    echo $text;
 }
 
 /**
- * Print_r convenience function, which prints out <PRE> tags around 
+ * Print_r convenience function, which prints out <PRE> tags around
  * the output of given array. Similar to debug().
- * 
+ *
  * @see debug
  * @param array $var
  */
 function pr($var)
 {
-	if(DEBUG > 0)
-	{
-		echo "<pre>";
-		print_r($var);
-		echo "</pre>";
-	}
+    if(DEBUG > 0)
+    {
+        echo "<pre>";
+        print_r($var);
+        echo "</pre>";
+    }
 }
 
 /**
@@ -386,21 +410,21 @@ function pr($var)
 function params($p)
 {
 
-	if(!is_array($p) || count($p) == 0)
-	{
-		return null;
-	}
-	else
-	{
-		if(is_array($p[0]) && count($p) == 1)
-		{
-			return $p[0];
-		}
-		else
-		{
-			return $p;
-		}
-	}
+    if(!is_array($p) || count($p) == 0)
+    {
+        return null;
+    }
+    else
+    {
+        if(is_array($p[0]) && count($p) == 1)
+        {
+            return $p[0];
+        }
+        else
+        {
+            return $p;
+        }
+    }
 
 }
 
@@ -410,23 +434,23 @@ function params($p)
  *
  * @return string
  */
-    function setUri()
+function setUri()
+{
+    if (isset($_SERVER['REQUEST_URI']))
     {
-        if (isset($_SERVER['REQUEST_URI']))
+        $uri = $_SERVER['REQUEST_URI'];
+    }
+    else
+    {
+        if (isset($_SERVER['argv']))
         {
-            $uri = $_SERVER['REQUEST_URI'];
+            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['argv'][0];
         }
         else
         {
-            if (isset($_SERVER['argv']))
-            {
-                $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['argv'][0];
-            }
-            else
-            {
-                $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['QUERY_STRING'];
-            }
+            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['QUERY_STRING'];
         }
-        return $uri;
-    } 
+    }
+    return $uri;
+}
 ?>

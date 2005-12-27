@@ -3,20 +3,20 @@
 
 /**
  *
- * 
+ *
  *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -30,10 +30,10 @@
 ?>
 <h1>Missing view</h1>
 
-<p class="error">You are seeing this error because the view <em><?php echo $this->missingView;?></em> 
-  for action <em><?php echo $this->params['action'];?></em> 
+<p class="error">You are seeing this error because the view <em><?php echo $this->missingView;?></em>
+  for action <em><?php echo $this->params['action'];?></em>
   in controller <em><?php echo Inflector::camelize($this->name);?></em> could not be found.
-</p> 
+</p>
 
 <p>
 <span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_view.thtml</code>
@@ -48,9 +48,9 @@ action <em><?php echo $this->missingView;?>::<?php echo $this->params['action'];
 <?php if (DEBUG>1):?>
 <h2>Controller dump:</h2>
 <pre>
-<?php 
+<?php
 unset($this->db);
-print_r($this); 
+print_r($this);
 ?>
 </pre>
-<?endif?>
+<?php endif;?>

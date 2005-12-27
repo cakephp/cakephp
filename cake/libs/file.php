@@ -3,19 +3,19 @@
 
 /**
  * Convenience class for reading, writing and appending to files.
- * 
+ *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -31,7 +31,10 @@
  * Included libraries.
  *
  */
-uses('object');
+if(!class_exists('Object', FALSE))
+{
+    uses('object');
+}
 
 /**
  * Convenience class for reading, writing and appending to files.
@@ -109,10 +112,10 @@ class File extends Object
    }
 
 /**
- * Write given data to this File. 
+ * Write given data to this File.
  *
- * @param string $data	Data to write to this File.
- * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
+ * @param string $data    Data to write to this File.
+ * @param string $mode    Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @return boolean Success
  */
    function write ($data, $mode = 'w')
@@ -136,7 +139,7 @@ class File extends Object
 /**
  * Get md5 Checksum of file with previous check of Filesize
  *
- * @param string $force	Data to write to this File.
+ * @param string $force    Data to write to this File.
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
  */
    function getMd5 ($force = false)
@@ -153,7 +156,7 @@ class File extends Object
 /**
  * Returns the Filesize, either in bytes or in human-readable format.
  *
- * @param boolean $humanReadeble	Data to write to this File.
+ * @param boolean $humanReadeble    Data to write to this File.
  * @return string|int filesize as int or as a human-readable string
  */
    function getSize ()

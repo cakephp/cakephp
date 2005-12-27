@@ -7,7 +7,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -29,7 +29,7 @@
 /**
  * Include files
  */
-uses(DS.'controller'.DS.'component',DS.'model'.DS.'model', 'inflector', 'folder', DS.'view'.DS.'view');
+uses(DS.'controller'.DS.'component', DS.'view'.DS.'view');
 
 /**
  * Controller
@@ -414,14 +414,14 @@ class Controller extends Object
         $this->set('pause', $pause);
         $this->set('page_title', $message);
 
-		if(file_exists(VIEWS.'layouts'.DS.'flash.thtml'))
-		{
-		    $flash = VIEWS.'layouts'.DS.'flash.thtml';
-		}
-		else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml'))
-		{
-		    $flash = LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml';
-		}
+        if(file_exists(VIEWS.'layouts'.DS.'flash.thtml'))
+        {
+            $flash = VIEWS.'layouts'.DS.'flash.thtml';
+        }
+        else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml'))
+        {
+            $flash = LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml';
+        }
 
 
 
@@ -458,93 +458,93 @@ class Controller extends Object
  * @todo View the database field types from all the supported databases.
  *
  */
-	function generateFieldNames( $data = null, $doCreateOptions = true  )
-	{
-	    $fieldNames = array();
+    function generateFieldNames( $data = null, $doCreateOptions = true  )
+    {
+        $fieldNames = array();
 
-	    $model = $this->modelClass;
-	    $modelKey = $this->modelKey;
-	    $table = $this->{$model}->table;
-	    $association = array_search($table,$this->{$model}->alias);
+        $model = $this->modelClass;
+        $modelKey = $this->modelKey;
+        $table = $this->{$model}->table;
+        $association = array_search($table,$this->{$model}->alias);
 
-	    $classRegistry =& ClassRegistry::getInstance();
-	    $objRegistryModel = $classRegistry->getObject($modelKey);
+        $classRegistry =& ClassRegistry::getInstance();
+        $objRegistryModel = $classRegistry->getObject($modelKey);
 
-	    foreach ($objRegistryModel->_tableInfo as $tables)
-	    {
-	        foreach ($tables as $tabl)
-	        {
-	            $alias = null;
-	            //  set up the prompt
-	            if( $objRegistryModel->isForeignKey($tabl['name']) )
-	            {
-	                $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
-	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
-	                //  this is a foreign key, also set up the other controller
-	                $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
-	                $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
-	                if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
-	                {
-	                    $alias = 'Child_';
-	                }
-	                $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
-	                $fieldNames[ $tabl['name'] ]['model'] = $alias.$association;
-	                $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
-	                $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
-	                $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
-	            }
-	         else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
-	         {
-	             $fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($tabl['name']);
-	         }
-	         else if( 'created' == $tabl['name'] )
-	         {
-	             $fieldNames[$tabl['name']]['prompt'] = 'Created';
-	         }
-	         else if( 'updated' == $tabl['name'] )
-	         {
-	             $fieldNames[$tabl['name']]['prompt'] = 'Modified';
-	         }
+        foreach ($objRegistryModel->_tableInfo as $tables)
+        {
+            foreach ($tables as $tabl)
+            {
+                $alias = null;
+                //  set up the prompt
+                if( $objRegistryModel->isForeignKey($tabl['name']) )
+                {
+                    $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
+                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
+                    //  this is a foreign key, also set up the other controller
+                    $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
+                    $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
+                    if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
+                    {
+                        $alias = 'Child_';
+                    }
+                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
+                    $fieldNames[ $tabl['name'] ]['model'] = $alias.$association;
+                    $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
+                    $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
+                    $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
+                }
+             else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
+             {
+                 $fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($tabl['name']);
+             }
+             else if( 'created' == $tabl['name'] )
+             {
+                 $fieldNames[$tabl['name']]['prompt'] = 'Created';
+             }
+             else if( 'updated' == $tabl['name'] )
+             {
+                 $fieldNames[$tabl['name']]['prompt'] = 'Modified';
+             }
 
-	         // Now, set up some other attributes that will be useful for auto generating a form.
-	         //tagName is in the format table/field "post/title"
-	          $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
+             // Now, set up some other attributes that will be useful for auto generating a form.
+             //tagName is in the format table/field "post/title"
+              $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
 
-	         //  Now, find out if this is a required field.
-	         //$validationFields = $classRegistry->getObject($table)->validate;
-	         $validationFields = $objRegistryModel->validate;
-	         if( isset( $validationFields[ $tabl['name'] ] ) )
-	         {
-	            //  Now, we know that this field has some validation set.
-	            //  find out if it is a required field.
-	            if( VALID_NOT_EMPTY == $validationFields[ $tabl['name'] ] )
-	            {
-	                //  this is a required field.
-	                $fieldNames[$tabl['name']]['required'] = true;
-	                $fieldNames[$tabl['name']]['errorMsg'] = "Required Field";
-	            }
-	         }
+             //  Now, find out if this is a required field.
+             //$validationFields = $classRegistry->getObject($table)->validate;
+             $validationFields = $objRegistryModel->validate;
+             if( isset( $validationFields[ $tabl['name'] ] ) )
+             {
+                //  Now, we know that this field has some validation set.
+                //  find out if it is a required field.
+                if( VALID_NOT_EMPTY == $validationFields[ $tabl['name'] ] )
+                {
+                    //  this is a required field.
+                    $fieldNames[$tabl['name']]['required'] = true;
+                    $fieldNames[$tabl['name']]['errorMsg'] = "Required Field";
+                }
+             }
 
-	         //  now, determine what the input type should be for this database field.
-	         $lParenPos = strpos( $tabl['type'], '(');
-	         $rParenPos = strpos( $tabl['type'], ')');
-	         if( false != $lParenPos )
-	         {
-	             $type = substr($tabl['type'], 0, $lParenPos );
-	             $fieldLength = substr( $tabl['type'], $lParenPos+1, $rParenPos - $lParenPos -1 );
-	         }
-	         else
-	         {
-	             $type = $tabl['type'];
-	         }
-	         switch( $type )
-	         {
+             //  now, determine what the input type should be for this database field.
+             $lParenPos = strpos( $tabl['type'], '(');
+             $rParenPos = strpos( $tabl['type'], ')');
+             if( false != $lParenPos )
+             {
+                 $type = substr($tabl['type'], 0, $lParenPos );
+                 $fieldLength = substr( $tabl['type'], $lParenPos+1, $rParenPos - $lParenPos -1 );
+             }
+             else
+             {
+                 $type = $tabl['type'];
+             }
+             switch( $type )
+             {
 
-	             case "text":
-	             case "mediumtext":
-	             {
-	                 $fieldNames[ $tabl['name']]['type'] = 'area';
-	                 //$fieldNames[ $tabl['name']]['size'] = $fieldLength;
+                 case "text":
+                 case "mediumtext":
+                 {
+                     $fieldNames[ $tabl['name']]['type'] = 'area';
+                     //$fieldNames[ $tabl['name']]['size'] = $fieldLength;
                  }
                  break;
                  case "varchar":
@@ -672,6 +672,14 @@ class Controller extends Object
                {
                   if( 0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8) )
                   $fieldNames[ $tabl['name']]['type'] = $type;
+                  if(isset($data[$model][$tabl['name']]))
+                  {
+                      $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
+                  }
+                  else
+                  {
+                      $fieldNames[ $tabl['name']]['selected'] = null;
+                  }
                }
                break;
                default:
@@ -679,11 +687,11 @@ class Controller extends Object
                   break;
 
 
-	         } // end switch
+             } // end switch
          }
-   	    // now, add any necessary hasAndBelongsToMany list boxes
-   	    //  loop through the many to many relations to make a list box.
-      	foreach( $objRegistryModel->_manyToMany as $relation )
+           // now, add any necessary hasAndBelongsToMany list boxes
+           //  loop through the many to many relations to make a list box.
+          foreach( $objRegistryModel->_manyToMany as $relation )
          {
             //list($modelName) = $relation;
             list($manyAssociation, $modelName, $value) = $relation;
@@ -717,10 +725,10 @@ class Controller extends Object
                   }
               }
          } // end loop through manytomany relations.
-	    }
+        }
 
       return $fieldNames;
-	}
+    }
 }
 
 ?>

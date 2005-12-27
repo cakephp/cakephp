@@ -3,20 +3,20 @@
 
 /**
  * Parses the request URL into controller, action, and parameters.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -27,12 +27,14 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
   * Included libraries.
+  *
   */
-uses('object', 'neat_array');
-
+if(!class_exists('Object', FALSE))
+{
+    uses('object');
+}
 /**
   * Parses the request URL into controller, action, and parameters.
   *
@@ -49,7 +51,7 @@ class Router extends Object {
   * @var array
   */
    var $routes = array();
-   
+
 /**
   * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
   *
@@ -58,17 +60,17 @@ class Router extends Object {
   * @see routes
   * @return array           Array of routes
   */
-   function connect ($route, $default=null) 
+   function connect ($route, $default=null)
    {
       $parsed = $names = array ();
 
       $r = null;
-      if (($route == '') || ($route == '/')) 
+      if (($route == '') || ($route == '/'))
       {
          $regexp = '/^[\/]*$/';
          $this->routes[] = array($route, $regexp, array(), $default);
       }
-      else 
+      else
       {
          $elements = array();
          foreach (explode('/', $route) as $element)
@@ -81,20 +83,20 @@ class Router extends Object {
             return false;
          }
 
-         foreach ($elements as $element) 
+         foreach ($elements as $element)
          {
-            if (preg_match('/^:(.+)$/', $element, $r)) 
+            if (preg_match('/^:(.+)$/', $element, $r))
             {
-            	$parsed[] = '(?:\/([^\/]+))?';
-            	$names[] = $r[1];
+                $parsed[] = '(?:\/([^\/]+))?';
+                $names[] = $r[1];
             }
-            elseif (preg_match('/^\*$/', $element, $r)) 
+            elseif (preg_match('/^\*$/', $element, $r))
             {
-            	$parsed[] = '(?:\/(.*))?';
+                $parsed[] = '(?:\/(.*))?';
             }
-            else 
+            else
             {
-            	$parsed[] = '/'.$element;
+                $parsed[] = '/'.$element;
             }
          }
          $regexp = '#^'.join('', $parsed).'[\/]*$#';
@@ -105,12 +107,12 @@ class Router extends Object {
 
 /**
   * Parses given URL and returns an array of controllers, action and parameters
-  * taken from that URL. 
+  * taken from that URL.
   *
-  * @param string $url URL to be parsed 
-  * @return array 
+  * @param string $url URL to be parsed
+  * @return array
   */
-   function parse ($url) 
+   function parse ($url)
    {
       // An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
       // Here's the fix.
@@ -118,7 +120,7 @@ class Router extends Object {
       {
          $url = '/'.$url;
       }
-      
+
       $out = array();
       $r = null;
 
@@ -128,7 +130,7 @@ class Router extends Object {
          '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/(.*))?)?))[\\/]*$/',
          array('controller', 'action'),
          array());
-         
+
       if(defined('CAKE_ADMIN'))
       {
           $admin = CAKE_ADMIN;
@@ -140,13 +142,13 @@ class Router extends Object {
               '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\/(.*))?)?)?))[\/]*$/',
               array($admin, 'controller', 'action'),
               array());
-              
+
           }
       }
-      
+
       $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
       $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));
-      
+
       if(defined('WEBSERVICES') && WEBSERVICES == 'on' )
       {
           $this->connect('/rest/:controller/:action/*', array('webservices'=>'Rest'));
@@ -155,15 +157,15 @@ class Router extends Object {
           $this->connect('/xml/:controller/:action/*', array('webservices'=>'Xml'));
           $this->connect('/xmlrpc/:controller/:action/*', array('webservices'=>'XmlRpc'));
       }
-      
+
       $this->routes[] = $default_route;
-      
-      foreach ($this->routes as $route) 
+
+      foreach ($this->routes as $route)
       {
          list($route, $regexp, $names, $defaults) = $route;
 
 
-         if (preg_match($regexp, $url, $r)) 
+         if (preg_match($regexp, $url, $r))
          {
             // $this->log($url.' matched '.$regexp, 'note');
             // remove the first element, which is the url
@@ -175,9 +177,9 @@ class Router extends Object {
 
             $ii = 0;
 
-            if (is_array($defaults)) 
+            if (is_array($defaults))
             {
-               foreach ($defaults as $name=>$value) 
+               foreach ($defaults as $name=>$value)
                {
                   if (preg_match('#[a-zA-Z_\-]#i', $name))
                   {
@@ -190,15 +192,15 @@ class Router extends Object {
                }
             }
 
-            foreach ($r as $found) 
+            foreach ($r as $found)
             {
                // if $found is a named url element (i.e. ':action')
-               if (isset($names[$ii])) 
+               if (isset($names[$ii]))
                {
                   $out[$names[$ii]] = $found;
                }
                // unnamed elements go in as 'pass'
-               else 
+               else
                {
                   $pass = new NeatArray(explode('/', $found));
                   $pass->cleanup();

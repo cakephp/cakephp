@@ -3,20 +3,20 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -44,43 +44,43 @@ class CakeSession extends Object
  *
  * @var unknown_type
  */
- 	var $valid      = false;
+     var $valid      = false;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $error      = false;
+    var $error      = false;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $ip         = false;
+    var $ip         = false;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $userAgent  = false;
+    var $userAgent  = false;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $path       = false;
+    var $path       = false;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $lastError  = null;
+    var $lastError  = null;
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $sessionId     = null;
+    var $sessionId     = null;
 
 /**
  * Enter description here...
@@ -91,23 +91,19 @@ class CakeSession extends Object
     function __construct($base = null)
     {
             $this->host = $_SERVER['HTTP_HOST'];
-            if (strpos($this->host, ':') !== false)
-            {
-                $this->host = substr($this->host,0, strpos($this->host, ':'));
-            }
 
-            if (empty($this->path))
+            if (empty($base))
             {
-                $dispatcher =& new Dispatcher();
-                $this->path = $dispatcher->baseUrl();
+                $this->path = '/';
             }
             else
             {
-            $this->path = $base;
+                $this->path = $base;
             }
-            if (empty($this->path))
+
+            if (strpos($this->host, ':') !== false)
             {
-                $this->path = '/';
+                $this->host = substr($this->host,0, strpos($this->host, ':'));
             }
 
             $this->ip = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
@@ -155,33 +151,33 @@ class CakeSession extends Object
  */
     function getError($errorNumber)
     {
-	    if(!is_array($this->error) || !array_key_exists($errorNumber, $this->error))
-	    {
-	        return false;
-	    }
-	    else
-	    {
-		return $this->error[$errorNumber];
-	    }
-	}
+        if(!is_array($this->error) || !array_key_exists($errorNumber, $this->error))
+        {
+            return false;
+        }
+        else
+        {
+        return $this->error[$errorNumber];
+        }
+    }
 
 /**
  * Enter description here...
  *
  * @return unknown
  */
-	function getLastError()
-	{
+    function getLastError()
+    {
 
-	    if($this->lastError)
-	    {
-	        return $this->getError($this->lastError);
-	    }
-	    else
-	    {
-	        return false;
-	    }
-	}
+        if($this->lastError)
+        {
+            return $this->getError($this->lastError);
+        }
+        else
+        {
+            return false;
+        }
+    }
 
 /**
  * Enter description here...

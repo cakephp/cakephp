@@ -84,8 +84,8 @@
 /**
  * Returns true if given key is present in the ClassRegistry.
  *
- * @param string $key 	Key to look for
- * @return boolean 		Success
+ * @param string $key     Key to look for
+ * @return boolean         Success
  */
    function isKeySet($key)
    {

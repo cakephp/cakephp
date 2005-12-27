@@ -29,11 +29,11 @@
 <h1>New <?php echo Inflector::humanize($this->name)?></h1>
 
 <?php
-	echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
+    echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
 
-	echo $form->generateFields( $fieldNames );
+    echo $form->generateFields( $fieldNames );
 
-	echo $form->generateSubmitDiv( 'Add' )
+    echo $form->generateSubmitDiv( 'Add' )
 ?>
 </form>
 <ul class='actions'>

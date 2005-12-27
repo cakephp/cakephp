@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id:$ */
+/* SVN FILE: $Id$ */
 
 /**
  *
@@ -22,9 +22,9 @@
  * @package      cake
  * @subpackage   cake.cake.libs.view.templates.errors
  * @since        CakePHP v 0.10.0.1076
- * @version      $Revision:$
- * @modifiedby   $LastChangedBy:$
- * @lastmodified $Date:$
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
@@ -72,4 +72,4 @@ unset($this->db);
 print_r($this);
 ?>
 </pre>
-<?php endif?>
+<?php endif;?>

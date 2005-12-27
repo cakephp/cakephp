@@ -98,9 +98,9 @@ class DBO_MySQL extends DBO
    function fetchRow ($assoc=false)
    {
       //return mysql_fetch_array($this->_result, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
-		$this->mysqlResultSet($this->_result);
-		$resultRow = $this->fetchResult();
-		return $resultRow;
+        $this->mysqlResultSet($this->_result);
+        $resultRow = $this->fetchResult();
+        return $resultRow;
 
    }
 
@@ -145,14 +145,14 @@ class DBO_MySQL extends DBO
         // $fields[] = array('name'=>$column['Field'], 'type'=>$column['Type']);
         if(isset($column['COLUMNS']) && !isset($column[0]))
         {
-        	$column[0] = $column['COLUMNS'];
+            $column[0] = $column['COLUMNS'];
         }
 
         if(isset($column[0]))
         {
-					$fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type']);
-				}
-			}
+                    $fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type']);
+                }
+            }
 
       return $fields;
    }

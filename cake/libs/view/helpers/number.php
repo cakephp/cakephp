@@ -41,26 +41,26 @@
  */
 class NumberHelper extends Helper
 {
-    /**
-     * Formats a number with a level of precision.
-     *
-     * @param  float   $number    A floating point number.
-     * @param  integer $precision The precision of the returned number.
-     * @return float Enter description here...
-     * @static 
-     */
+ /**
+ * Formats a number with a level of precision.
+ *
+ * @param  float   $number    A floating point number.
+ * @param  integer $precision The precision of the returned number.
+ * @return float Enter description here...
+ * @static 
+ */
     function precision($number, $precision = 3)
     {
         return sprintf("%01.{$precision}f", $number);
     }
 
-    /**
-     * Returns a formatted-for-humans file size.
-     *
-     * @param integer $length Size in bytes
-     * @return string Human readable size
-     * @static 
-     */
+ /**
+ * Returns a formatted-for-humans file size.
+ *
+ * @param integer $length Size in bytes
+ * @return string Human readable size
+ * @static 
+ */
     function toReadableSize($size)
     {
         switch ($size)
@@ -74,14 +74,14 @@ class NumberHelper extends Helper
         }
     }
 
-    /**
-     * Formats a number into a percentage string.
-     *
-     * @param float $number A floating point number
-     * @param integer $precision The precision of the returned number
-     * @return string Percentage string
-     * @static 
-     */
+ /**
+ * Formats a number into a percentage string.
+ *
+ * @param float $number A floating point number
+ * @param integer $precision The precision of the returned number
+ * @return string Percentage string
+ * @static 
+ */
     function toPercentage($number, $precision =  2)
     {
         return NumberHelper::precision($number, $precision) . '%';

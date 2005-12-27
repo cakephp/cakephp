@@ -126,12 +126,12 @@ class DBO_SQLite extends DBO
       }
    }
    
-	/**
-	 * Returns an array of the fields in given table name.
-	 *
-	 * @param string $tableName 	Name of database table to inspect
-	 * @return array 				Fields in table. Keys are name and type
-	 */
+ /**
+ * Returns an array of the fields in given table name.
+ *
+ * @param string $tableName     Name of database table to inspect
+ * @return array                 Fields in table. Keys are name and type
+ */
    function fields($tableName)
    {
       $fields = false;
@@ -145,65 +145,65 @@ class DBO_SQLite extends DBO
       return $fields;
    }
 
-	/**
-	 * Returns a quoted and escaped string of $data for use in an SQL statement.
-	 *
-	 * @param string $data String to be prepared for use in an SQL statement
-	 * @return string Quoted and escaped
-	 */
+ /**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @return string Quoted and escaped
+ */
    function prepareValue($data)
    {
       return "'" . sqlite_escape_string($data) . "'";
    }
 
-	/**
-	 * Returns a formatted error message from previous database operation.
-	 *
-	 * @return string Error message
-	 */
+ /**
+ * Returns a formatted error message from previous database operation.
+ *
+ * @return string Error message
+ */
    function lastError() 
    {
       return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
    }
 
-	/**
-	 * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
-	 *
-	 * @return int Number of affected rows
-	 */
+ /**
+ * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+ *
+ * @return int Number of affected rows
+ */
    function lastAffected()
    {
       return $this->_result? sqlite_changes($this->_conn): false;
    }
 
-	/**
-	 * Returns number of rows in previous resultset. If no previous resultset exists, 
-	 * this returns false.
-	 *
-	 * @return int Number of rows in resultset
-	 */
+ /**
+ * Returns number of rows in previous resultset. If no previous resultset exists, 
+ * this returns false.
+ *
+ * @return int Number of rows in resultset
+ */
    function lastNumRows() 
    {
       return $this->_result? sqlite_num_rows($this->_result): false;
    }
 
-	/**
-	 * Returns the ID generated from the previous INSERT operation.
-	 *
-	 * @return int 
-	 */
+ /**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @return int 
+ */
    function lastInsertId() 
    {
       return sqlite_last_insert_rowid($this->_conn);
    }
 
-	/**
-	 * Returns a limit statement in the correct format for the particular database.
-	 *
-	 * @param int $limit 		Limit of results returned
-	 * @param int $offset 		Offset from which to start results
-	 * @return string 			SQL limit/offset statement
-	 */
+ /**
+ * Returns a limit statement in the correct format for the particular database.
+ *
+ * @param int $limit         Limit of results returned
+ * @param int $offset         Offset from which to start results
+ * @return string             SQL limit/offset statement
+ */
    function selectLimit($limit, $offset=null)
    {
       return " LIMIT {$limit}".($offset? ", {$offset}": null);

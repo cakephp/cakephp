@@ -7,10 +7,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -30,28 +30,41 @@
     $modelKey = $modelName;
 
 ?>
-<h1>Edit <?php echo Inflector::humanize($modelName);?></h1>
+<h1><?php echo $type.' '.Inflector::humanize($modelName);?></h1>
 
 <?php
-	echo $html->formTag('/'. Inflector::underscore($this->name) .'/update');
+if($type == 'Edit')
+{
+    echo $html->formTag('/'. Inflector::underscore($this->name) .'/update');
+}
+else
+{
+    echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
+}
 
+    echo $form->generateFields( $fieldNames );
 
-	echo $form->generateFields( $fieldNames );
-
-	echo $form->generateSubmitDiv( 'Save' )
+    echo $form->generateSubmitDiv( 'Save' )
 
 ?>
 </form>
 <ul class='actions'>
 <?php
-
+if($type == 'Edit')
+{
    echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
+}
    echo "<li>".$html->linkTo('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/index')."</li>";
-   foreach( $fieldNames as $field => $value ) {
-      if( isset( $value['foreignKey'] ) )
-      {
-         echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
-      }
-  }
+
+   if($type == 'Edit')
+   {
+       foreach( $fieldNames as $field => $value )
+       {
+           if( isset( $value['foreignKey'] ) )
+           {
+               echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
+           }
+       }
+   }
 ?>
 </ul>

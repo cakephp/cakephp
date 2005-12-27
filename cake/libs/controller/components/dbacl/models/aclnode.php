@@ -44,7 +44,7 @@ require_once(CAKE . 'app_model.php');
  *
  */
 class AclNode extends AppModel
-{	
+{    
 
 /**
  * Enter description here...

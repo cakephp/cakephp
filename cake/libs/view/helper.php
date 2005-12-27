@@ -40,57 +40,57 @@
  */
 class Helper extends Object
 {
-    /*************************************************************************
+ /*************************************************************************
     * Public variables
     *************************************************************************/
 
-    /**#@+
+ /**#@+
     * @access public
     */
 
 
-    /**
-     * Holds tag templates.
-     *
-     * @access public
-     * @var array
-     */
+ /**
+ * Holds tag templates.
+ *
+ * @access public
+ * @var array
+ */
     var $tags = array();
 
-    /**#@-*/
+ /**#@-*/
 
-    /*************************************************************************
+ /*************************************************************************
     * Public methods
     *************************************************************************/
 
-    /**#@+
+ /**#@+
     * @access public
     */
 
-    /**
-     * Constructor.
-     *
-     * Parses tag templates into $this->tags.
-     *
-     * @return void
-     */
+ /**
+ * Constructor.
+ *
+ * Parses tag templates into $this->tags.
+ *
+ * @return void
+ */
     function Helper()
     {
         $this->tags = $this->readConfigFile(CAKE.'config'.DS.'tags.ini.php');
     }
 
-    /**
-     * Decides whether to output or return a string.
-     *
-     * Based on AUTO_OUTPUT and $return's value, this method decides whether to
-     * output a string, or return it.
-     *
-     * @param  string  $str    String to be output or returned.
-     * @param  boolean $return Whether this method should return a value or
-     *                         output it. This overrides AUTO_OUTPUT.
-     * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
-     *                 and $return.
-     */
+ /**
+ * Decides whether to output or return a string.
+ *
+ * Based on AUTO_OUTPUT and $return's value, this method decides whether to
+ * output a string, or return it.
+ *
+ * @param  string  $str    String to be output or returned.
+ * @param  boolean $return Whether this method should return a value or
+ *                         output it. This overrides AUTO_OUTPUT.
+ * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
+ *                 and $return.
+ */
     function output($str, $return = false)
     {
         if (AUTO_OUTPUT && $return === false)
@@ -110,16 +110,16 @@ class Helper extends Object
         }
     }
 
-    /**
-     * Assigns values to tag templates.
-     *
-     * Finds a tag template by $keyName, and replaces $values's keys with
-     * $values's keys.
-     *
-     * @param  string $keyName Name of the key in the tag array.
-     * @param  array  $values  Values to be inserted into tag.
-     * @return string Tag with inserted values.
-     */
+ /**
+ * Assigns values to tag templates.
+ *
+ * Finds a tag template by $keyName, and replaces $values's keys with
+ * $values's keys.
+ *
+ * @param  string $keyName Name of the key in the tag array.
+ * @param  array  $values  Values to be inserted into tag.
+ * @return string Tag with inserted values.
+ */
     function assign($keyName, $values)
     {
         return str_replace('%%'.array_keys($values).'%%', array_values($values),
@@ -174,7 +174,7 @@ class Helper extends Object
         return $iniSetting;
     }
 
-    /**#@-*/
+ /**#@-*/
 }
 
 ?>

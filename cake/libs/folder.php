@@ -3,19 +3,19 @@
 
 /**
  * Convenience class for handling directories.
- * 
+ *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -28,11 +28,13 @@
  */
 
 /**
- * Included libraries.
- *
- */
-uses('object');
-
+  * Included libraries.
+  *
+  */
+if(!class_exists('Object', FALSE))
+{
+    uses('object');
+}
 /**
  * Folder structure browser, lists folders and files.
  *
@@ -106,7 +108,7 @@ class Folder extends Object {
 
 
 /**
-  * Returns an array of the contents of the current directory, or false on failure. 
+  * Returns an array of the contents of the current directory, or false on failure.
   * The returned array holds two arrays: one of dirs and one of files.
   *
   * @param boolean $sort
@@ -230,8 +232,8 @@ class Folder extends Object {
   * Returns true if given $path is a Windows path.
   *
   * @param string $path Path to check
-  * @return boolean 
-  * @static 
+  * @return boolean
+  * @static
   */
    function isWindowsPath ($path)
    {
@@ -242,8 +244,8 @@ class Folder extends Object {
   * Returns true if given $path is an absolute path.
   *
   * @param string $path Path to check
-  * @return boolean 
-  * @static 
+  * @return boolean
+  * @static
   */
    function isAbsolute ($path)
    {
@@ -255,7 +257,7 @@ class Folder extends Object {
   *
   * @param string $path Path to check
   * @return boolean
-  * @static 
+  * @static
   */
    function isSlashTerm ($path)
    {
@@ -267,7 +269,7 @@ class Folder extends Object {
   *
   * @param string $path Path to check
   * @return string Set of slashes ("\\" or "/")
-  * @static 
+  * @static
   */
    function correctSlashFor ($path)
    {
@@ -279,7 +281,7 @@ class Folder extends Object {
   *
   * @param string $path Path to check
   * @return string
-  * @static 
+  * @static
   */
    function slashTerm ($path)
    {
@@ -292,7 +294,7 @@ class Folder extends Object {
   * @param string $path
   * @param string $element
   * @return string
-  * @static 
+  * @static
   */
    function addPathElement ($path, $element)
    {

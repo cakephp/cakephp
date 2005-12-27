@@ -38,12 +38,10 @@
 view file, a user-customizable error page for handling errors within CakePHP.</span>
 </p>
 
-<?if (DEBUG>1):?>
+<?php if (DEBUG > 1) { ?>
 <h2>Controller dump:</h2>
-<pre>
-<? 
-unset($this->db);
-print_r($this); 
+<?php
+    unset($this->db);
+    pr($this); 
 ?>
-</pre>
-<?endif?>
+<?php } ?>
