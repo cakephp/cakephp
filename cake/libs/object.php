@@ -98,11 +98,11 @@ class Object
     {
         if(in_array('render', $extra))
         {
-            $extra['render'] = 0;
+            $extra['render'] = 1;
         }
         else
         {
-          $extra['render'] = 1;
+          $extra['render'] = 0;
         }
         $dispatcher =& new Dispatcher();
         return $dispatcher->dispatch($url, $extra);
