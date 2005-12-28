@@ -174,18 +174,11 @@ class View extends Object
    var $controller = null;
 
 /**
- * Enter description here...
- *
- * @var array
- */
-    var $loaded = array();
-
-/**
  * Constructor
  *
  * @return View
  */
-   function __construct (&$controller)
+   function View(&$controller)
    {
         $this->controller    =& $controller;
         $this->_viewVars     =& $this->controller->_viewVars;
@@ -206,8 +199,23 @@ class View extends Object
         $this->data          =& $this->controller->data;
         $this->displayFields =& $this->controller->displayFields;
         $this->webservices   =& $this->controller->webservices;
-        parent::__construct();
    }
+
+/**
+ * Returns a view instance (singleton)
+ *
+ * @return object
+ */
+   function getInstance()
+   {
+      static $instance;
+      if (!isset($instance))
+      {
+         $instance[0] =& new View();
+      }
+      return $instance[0];
+   }
+
 
 /**
  * Renders view for given action and layout. If $file is given, that is used
@@ -239,13 +247,10 @@ class View extends Object
          $this->setLayout($layout);
       }
 
+      $viewFileName = $this->_getViewFileName($action);
       if ($file)
       {
           $viewFileName = $file;
-      }
-      else
-      {
-          $viewFileName = $this->_getViewFileName($action);
       }
 
       if (!is_file($viewFileName))
@@ -384,8 +389,8 @@ class View extends Object
 
       if (is_file($layout_fn))
       {
-         $data_for_layout = array_merge($data_for_layout,$this->loaded); # load all view variables)
          $out = $this->_render($layout_fn, $data_for_layout, true, false);
+
          if ($out === false)
          {
             $out = $this->_render($layout_fn, $data_for_layout, false);
@@ -458,10 +463,6 @@ class View extends Object
        {
            $viewFileName = VIEWS.$this->viewPath.DS.$type.$action.'.thtml';
        }
-       elseif(file_exists(VIEWS.'errors'.DS.$type.$action.'.thtml'))
-       {
-           $viewFileName = VIEWS.'errors'.DS.$type.$action.'.thtml';
-       }
        elseif(file_exists(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
        {
            $viewFileName = LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml';
@@ -520,30 +521,31 @@ class View extends Object
  * @return string Rendered output
  * @access private
  */
-    function _render($___viewFn, $___data_for_view, $___play_safe = true, $loadHelpers = true)
-    {
-        if ($this->helpers != false && $loadHelpers === true)
-        {
-            $loadedHelpers =  array();
-            $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+   function _render($___viewFn, $___data_for_view, $___play_safe = true, $loadHelpers = true)
+   {
+/**
+    * Fetching helpers
+    */
+      if ($this->helpers != false && $loadHelpers = true)
+      {
+         $loadedHelpers =  array();
+         $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 
-            foreach(array_keys($loadedHelpers) as $helper)
-            {
-                $replace = strtolower(substr($helper, 0, 1));
-                $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
+         foreach(array_keys($loadedHelpers) as $helper)
+         {
+          $replace = strtolower(substr($helper, 0, 1));
+          $camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
 
-                ${$camelBackedHelper} =& $loadedHelpers[$helper];
-
-                if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
-                {
-                    foreach(${$camelBackedHelper}->helpers as $subHelper)
-                    {
-                        ${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
-                    }
-                }
-                $this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
-            }
-        }
+           ${$camelBackedHelper} =& $loadedHelpers[$helper];
+           if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
+           {
+             foreach(${$camelBackedHelper}->helpers as $subHelper)
+             {
+               ${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
+             }
+           }
+         }
+      }
 
       extract($___data_for_view, EXTR_SKIP); # load all view variables
 /**
@@ -577,8 +579,6 @@ class View extends Object
  */
     function &_loadHelpers(&$loaded, $helpers)
     {
-        $helperTags = new Helper();
-        $tags = $helperTags->loadConfig();
         foreach ($helpers as $helper)
         {
             $helperCn = $helper.'Helper';
@@ -622,7 +622,6 @@ class View extends Object
                     ${$camelBackedHelper}->params               = $this->params;
                     ${$camelBackedHelper}->action               = $this->action;
                     ${$camelBackedHelper}->data                 = $this->data;
-                    ${$camelBackedHelper}->tags                 = $tags;
 
                     if(!empty($this->validationErrors))
                     {

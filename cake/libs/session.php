@@ -85,12 +85,6 @@ class CakeSession extends Object
 /**
  * Enter description here...
  *
- * @var unknown_type
- */
-    var $security     = null;
-/**
- * Enter description here...
- *
  * @return unknown
  */
 
@@ -112,25 +106,8 @@ class CakeSession extends Object
                 $this->host = substr($this->host,0, strpos($this->host, ':'));
             }
 
-            if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-            {
-                $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
-            else
-            {
-               $this->ip = $_SERVER['REMOTE_ADDR'];
-            }
-
-            if(!empty($_SERVER['HTTP_USER_AGENT']))
-            {
-                $this->userAgent = md5($_SERVER['HTTP_USER_AGENT']);
-            }
-            else
-            {
-               $this->userAgent = "";
-            }
-
-            $this->security = CAKE_SECURITY;
+            $this->ip = !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+            $this->userAgent = !empty($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : "";
             $this->_initSession();
             $this->_begin();
             parent::__construct();
@@ -332,7 +309,7 @@ class CakeSession extends Object
     function _initSession()
     {
 
-        switch ($this->security)
+        switch (CAKE_SECURITY)
         {
             case 'high':
                 $this->cookieLifeTime = 0;
@@ -416,7 +393,7 @@ class CakeSession extends Object
     function _new()
     {
 
-        if(!ereg("proxy\.aol\.com$", @gethostbyaddr($this->ip)))
+        if(!ereg("proxy\.aol\.com$", gethostbyaddr($this->ip)))
         {
             if($this->readSessionVar("Config"))
             {
@@ -451,7 +428,7 @@ class CakeSession extends Object
            $this->valid = true;
        }
 
-        if($this->security == 'high')
+        if(CAKE_SECURITY == 'high')
         {
             $this->_regenerateId();
         }
@@ -502,14 +479,13 @@ class CakeSession extends Object
         $newSessid = session_id();
           if (function_exists('session_write_close'))
           {
-              if($this->security  == 'high')
+              if(CAKE_SECURITY == 'high')
               {
                   if (isset($_COOKIE[session_name()]))
                   {
                   setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
                   }
-                  $sessionpath = session_save_path();
-                  $file = $sessionpath."/sess_$oldSessionId";
+                  $file = ini_get('session.save_path')."/sess_$oldSessionId";
                   @unlink($file);
               }
               session_write_close();

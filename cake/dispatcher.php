@@ -229,12 +229,10 @@ class Dispatcher extends Object
        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
        if ($controller->autoRender)
        {
-           return $controller->render();
+           $controller->render();
+           exit;
        }
-       else
-       {
-           return $output;
-       }
+       return $output;
    }
 
 /**
