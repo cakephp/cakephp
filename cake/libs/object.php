@@ -96,16 +96,24 @@ class Object
  */
     function requestAction ($url, $extra = array())
     {
+        $dispatcher =& new Dispatcher();
+
         if(in_array('render', $extra))
         {
-            $extra['render'] = 0;
+           $extra['render'] = 0;
+           $extra['bare']   = 1;
+            ob_start();
+                $out = $dispatcher->dispatch($url, $extra);
+                $out = ob_get_clean();
+                return $out;
         }
         else
         {
-          $extra['render'] = 1;
+            $extra['render'] = 1;
+            $extra['bare']   = 1;
+                $out = $dispatcher->dispatch($url, $extra);
+                return $out;
         }
-        $dispatcher =& new Dispatcher();
-        return $dispatcher->dispatch($url, $extra);
     }
 
 /**
@@ -140,7 +148,7 @@ class Object
  */
    function missingController()
    {
-       $this->autoLayout = true;
+       //$this->autoLayout = true;
        $this->pageTitle = 'Missing Controller';
        $this->render('../errors/missingController');
        exit();
@@ -152,7 +160,7 @@ class Object
  */
    function missingAction()
    {
-       $this->autoLayout = true;
+       //$this->autoLayout = true;
        $this->pageTitle = 'Missing Method in Controller';
        $this->render('../errors/missingAction');
        exit();
@@ -164,7 +172,7 @@ class Object
  */
    function privateAction()
    {
-       $this->autoLayout = true;
+       //$this->autoLayout = true;
        $this->pageTitle = 'Trying to access private method in class';
        $this->render('../errors/privateAction');
        exit();
@@ -177,7 +185,7 @@ class Object
    function missingView()
    {
       //We are simulating action call below, this is not a filename!
-      $this->autoLayout = true;
+      //$this->autoLayout = true;
       $this->missingView = $this->name;
       $this->pageTitle = 'Missing View';
       $this->render('../errors/missingView');
@@ -190,7 +198,7 @@ class Object
  */
     function missingDatabase()
     {
-        $this->autoLayout = true;
+        //$this->autoLayout = true;
         $this->pageTitle = 'Scaffold Missing Database Connection';
         $this->render('../errors/missingScaffolddb');
         exit();
@@ -220,7 +228,7 @@ class Object
         $error =& new Controller();
         $error->constructClasses();
         $error->missingConnection = $this->name;
-        $error->autoLayout = true;
+        //$error->autoLayout = true;
         $error->pageTitle = 'Missing Database Connection';
         $error->render('../errors/missingDatabase');
         exit();

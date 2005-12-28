@@ -129,7 +129,7 @@ class HtmlHelper extends Helper
  * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
  *                 and $return.
  */
-    function charset($charset, $return)
+    function charset($charset, $return = false)
     {
         return $this->output(sprintf($this->tags['charset'], $charset), $return);
     }
@@ -547,7 +547,7 @@ class HtmlHelper extends Helper
     function tagValue ($fieldName)
     {
         $this->setFormTag($fieldName);
-        return isset($this->params['data'][$this->model][$this->field])? $this->params['data'][$this->model][$this->field]: false;
+        return isset($this->params['data'][$this->model][$this->field])? htmlspecialchars($this->params['data'][$this->model][$this->field]): false;
     }
 
  /**
@@ -934,16 +934,7 @@ class HtmlHelper extends Helper
             {
                 if (!in_array($k, $exclude))
                 {
-                    $pos = strpos($v, '"');
-                    if($pos === false)
-                    {
-                        $out[] = "{$k}=\"{$v}\"";
-                    }
-                    else
-                    {
-                        $out[] = "{$k}='{$v}'";
-                    }
-
+                    $out[] = "{$k}=\"{$v}\"";
                 }
             }
             $out = join(' ', $out);
@@ -1443,57 +1434,61 @@ class HtmlHelper extends Helper
             }
             $meridian = 'am';
             $date = explode('-',$selected);
-            $day  = explode(' ',$date[2]);
-            $time = explode(':',$day[1]);
+            $days  = explode(' ',$date[2]);
 
-            if(($time[0] > 12) && $timeFormat == '12')
-            {
-                $time[0] = $time[0] - 12;
-                $meridian = 'pm';
-            }
-            elseif($time[0] > 12)
-            {
-               $meridian = 'pm';
-            }
-
-            $day   = $day[0];
+            $day   = $days[0];
             $month = $date[1];
             $year  = $date[0];
-            $hour  = $time[0];
-            $min   = $time[1];
+
+            if($timeFormat != 'NONE' && !empty($timeFormat))
+            {
+                $time = explode(':',$days[1]);
+                if(($time[0] > 12) && $timeFormat == '12')
+                {
+                    $time[0] = $time[0] - 12;
+                    $meridian = 'pm';
+                }
+                elseif($time[0] > 12)
+                {
+                    $meridian = 'pm';
+                }
+                $hour  = $time[0];
+                $min   = $time[1];
+            }
+
         }
 
         switch ( $dateFormat )
         {
             case 'DMY' :
-            $opt = $this->dayOptionTag( $tagName ,null ,$day) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->yearOptionTag( $tagName, null, null, null, $year );
+                $opt = $this->dayOptionTag( $tagName ,null ,$day) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->yearOptionTag( $tagName, null, null, null, $year );
             break;
             case 'MDY' :
-            $opt = $this->monthOptionTag($tagName, null, $month) .'-'.$this->dayOptionTag( $tagName, null, $day  ) . '-' . $this->yearOptionTag($tagName, null, null, null, $year);
+                $opt = $this->monthOptionTag($tagName, null, $month) .'-'.$this->dayOptionTag( $tagName, null, $day  ) . '-' . $this->yearOptionTag($tagName, null, null, null, $year);
             break;
             case 'YMD' :
-            $opt = $this->yearOptionTag($tagName, null, null, null, $year) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->dayOptionTag( $tagName, null, $day );
+                $opt = $this->yearOptionTag($tagName, null, null, null, $year) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->dayOptionTag( $tagName, null, $day );
             break;
             case 'NONE':
-            $opt ='';
+                $opt ='';
             break;
             default:
-            $opt = '';
+                $opt = '';
             break;
         }
         switch ($timeFormat)
         {
             case '24':
-            $opt .= $this->hourOptionTag( $tagName, null , true,  $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min );
+                $opt .= $this->hourOptionTag( $tagName, null , true,  $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min );
             break;
             case '12':
-            $opt .= $this->hourOptionTag( $tagName, null, false, $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min) . ' ' . $this->meridianOptionTag($tagName, null, $meridian);
+                $opt .= $this->hourOptionTag( $tagName, null, false, $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min) . ' ' . $this->meridianOptionTag($tagName, null, $meridian);
             break;
             case 'NONE':
-            $opt .='';
+                $opt .='';
             break;
             default :
-
+                $opt .='';
             break;
         }
         return $opt;

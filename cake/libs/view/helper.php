@@ -3,20 +3,20 @@
 
 /**
  * Backend for helpers.
- * 
+ *
  * Internal methods for the Helpers.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -76,7 +76,11 @@ class Helper extends Object
  */
     function Helper()
     {
-        $this->tags = $this->readConfigFile(CAKE.'config'.DS.'tags.ini.php');
+    }
+
+    function loadConfig()
+    {
+       return $this->readConfigFile(CAKE.'config'.DS.'tags.ini.php');
     }
 
  /**
@@ -125,7 +129,7 @@ class Helper extends Object
         return str_replace('%%'.array_keys($values).'%%', array_values($values),
         $this->tags[$keyName]);
     }
-    
+
 /**
  * Returns an array of settings in given INI file.
  *

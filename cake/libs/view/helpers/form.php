@@ -215,7 +215,7 @@ class FormHelper extends Helper
     function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected )
     {
         $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
-        $str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE', '', $selected,  $htmlOptions);
+        $str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE', $selected,  $htmlOptions);
         $strLabel = $this->labelTag( $tagName, $prompt );
 
         $divClass = "optional";
