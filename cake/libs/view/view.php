@@ -228,8 +228,6 @@ class View extends Object
          $this->hasRendered = false;
       }
 
-      $this->autoRender = false;
-
       if (!$action)
       {
          $action = $this->action;

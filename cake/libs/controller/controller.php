@@ -281,7 +281,7 @@ class Controller extends Object
     function redirect ($url)
     {
         $this->autoRender = false;
-        header ('Location: '.$this->base.$url);
+        header ('Location: '.$this->webroot.$url);
     }
 
 /**
@@ -353,7 +353,6 @@ class Controller extends Object
     function render($action=null, $layout=null, $file=null)
     {
         $view =& new View($this);
-
         if(!empty($this->modelNames))
         {
             foreach ($this->modelNames as $model)
@@ -364,7 +363,7 @@ class Controller extends Object
                 }
             }
         }
-
+        $this->autoRender = false;
         return  $view->render($action, $layout, $file);
     }
 

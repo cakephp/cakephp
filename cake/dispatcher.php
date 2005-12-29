@@ -171,17 +171,9 @@ class Dispatcher extends Object
           $missingAction = true;
       }
 
-      if(!in_array('return', array_keys($params)) && $controller->autoRender == true)
+      if(in_array('return', array_keys($params)) && $params['return'] == 1)
       {
-          $params['render'] = 1;
-      }
-      elseif(in_array('return', array_keys($params)) && $params['return'] == 1)
-      {
-          $params['render'] = 1;
-      }
-      else
-      {
-          $params['render'] = 0;
+          $controller->autoRender = false;
       }
 
       $controller->base        = $this->base;
@@ -192,7 +184,6 @@ class Dispatcher extends Object
       $controller->data        = empty($params['data'])? null: $params['data'];
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
       $controller->autoLayout = !$params['bare'];
-      $controller->autoRender = !$params['render'];
       $controller->webservices = $params['webservices'];
 
       if(!is_null($controller->webservices))

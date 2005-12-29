@@ -110,8 +110,7 @@ class Object
         {
             $extra['return'] = 1;
             $extra['bare']   = 1;
-                $out = $dispatcher->dispatch($url, $extra);
-                return $out;
+                return $dispatcher->dispatch($url, $extra);
         }
     }
 
