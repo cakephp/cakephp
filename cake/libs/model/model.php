@@ -1182,7 +1182,7 @@ class Model extends Object
 
                            $tmpSQL = "SELECT {$this->{$association.'_fields'}} FROM {$this->{$model}->table} AS `{$association}`
                                       WHERE ({$this->{$association.'_foreignkey'}})  = '{$value2[$this->primaryKey]}'"
-                                      .($oneToManyConditions? " {$oneToManyConditions}":null)
+                                      .($oneToManyConditions? "AND {$oneToManyConditions}":null)
                                       .($oneToManyOrder? " ORDER BY {$oneToManyOrder}": null);
                        }
 
