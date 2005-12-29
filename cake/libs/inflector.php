@@ -60,95 +60,92 @@ class Inflector extends Object
    }
 
 /**
-  * Return $word in plural form.
-  *
-  * @param string $word Word in singular
-  * @return string Word in plural
-  */
-   function pluralize ($word)
-   {
-      $plural_rules = array(
-        '/(s)tatus$/' => '\1\2tatuses',
-          '/^(ox)$/'              => '\1\2en',        # ox
-          '/([m|l])ouse$/'          => '\1ice',        # mouse, louse
-          '/(matr|vert|ind)ix|ex$/' =>  '\1ices',     # matrix, vertex, index
-        '/(x|ch|ss|sh)$/'         =>  '\1es',       # search, switch, fix, box, process, address
-        '/([^aeiouy]|qu)y$/'      =>  '\1ies',      # query, ability, agency
-        '/(hive)$/'               =>  '\1s',        # archive, hive
-        '/(?:([^f])fe|([lr])f)$/' =>  '\1\2ves',    # half, safe, wife
-        '/sis$/'                  =>  'ses',        # basis, diagnosis
-        '/([ti])um$/'             =>  '\1a',        # datum, medium
-        '/(p)erson$/'             =>  '\1eople',    # person, salesperson
-        '/(m)an$/'                =>  '\1en',       # man, woman, spokesman
-        '/(c)hild$/'              =>  '\1hildren',  # child
-          '/(buffal|tomat)o$/'      =>  '\1\2oes',    # buffalo, tomato
-          '/(bu)s$/'                =>  '\1\2ses',    # bus
-        '/(alias)/'               =>  '\1es',       # alias
-          '/(octop|vir)us$/'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
-          '/(ax|cri|test)is$/'      =>  '\1es',       # axis, crisis
-        '/s$/'                    =>  's',          # no change (compatibility)
-        '/$/'                     => 's'
-      );
+ * Return $word in plural form.
+ *
+ * @param string $word Word in singular
+ * @return string Word in plural
+ */
+    function pluralize ($word)
+    {
+        $plural_rules = array(
+            '/(s)tatus$/i'             => '\1\2tatuses',
+            '/^(ox)$/i'                => '\1\2en',      # ox
+            '/([m|l])ouse$/i'          => '\1ice',       # mouse, louse
+            '/(matr|vert|ind)ix|ex$/i' =>  '\1ices',     # matrix, vertex, index
+            '/(x|ch|ss|sh)$/i'         =>  '\1es',       # search, switch, fix, box, process, address
+            '/([^aeiouy]|qu)y$/i'      =>  '\1ies',      # query, ability, agency
+            '/(hive)$/i'               =>  '\1s',        # archive, hive
+            '/(?:([^f])fe|([lr])f)$/i' =>  '\1\2ves',    # half, safe, wife
+            '/sis$/i'                  =>  'ses',        # basis, diagnosis
+            '/([ti])um$/i'             =>  '\1a',        # datum, medium
+            '/(p)erson$/i'             =>  '\1eople',    # person, salesperson
+            '/(m)an$/i'                =>  '\1en',       # man, woman, spokesman
+            '/(c)hild$/i'              =>  '\1hildren',  # child
+            '/(buffal|tomat)o$/i'      =>  '\1\2oes',    # buffalo, tomato
+            '/(bu)s$/i'                =>  '\1\2ses',    # bus
+            '/(alias)/i'               =>  '\1es',       # alias
+            '/(octop|vir)us$/i'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
+            '/(ax|cri|test)is$/i'      =>  '\1es',       # axis, crisis
+            '/s$/'                     =>  's',          # no change (compatibility)
+            '/$/'                      => 's');
 
-      foreach ($plural_rules as $rule => $replacement)
-      {
-         if (preg_match($rule, $word))
-         {
-            return preg_replace($rule, $replacement, $word);
-         }
-      }
-
-      return $word;//false;
-   }
+            foreach ($plural_rules as $rule => $replacement)
+            {
+                if (preg_match($rule, $word))
+                {
+                    return preg_replace($rule, $replacement, $word);
+                }
+            }
+            return $word;//false;
+    }
 
 /**
-  * Return $word in singular form.
-  *
-  * @param string $word Word in plural
-  * @return string Word in singular
-  */
-   function singularize ($word)
-   {
-      $singular_rules = array(
-        '/(s)tatuses$/'           => '\1\2tatus',
-        '/(matr)ices$/'         =>'\1ix',
-          '/(vert|ind)ices$/'     => '\1ex',
-          '/^(ox)en/'             => '\1',
-          '/(alias)es$/'          => '\1',
-          '/([octop|vir])i$/'     => '\1us',
-          '/(cris|ax|test)es$/'   => '\1is',
-          '/(shoe)s$/'            => '\1',
-          '/(o)es$/'              => '\1',
-          '/(bus)es$/'            => '\1',
-          '/([m|l])ice$/'         => '\1ouse',
-        '/(x|ch|ss|sh)es$/'     => '\1',
-        '/(m)ovies$/'           => '\1\2ovie',
-        '/(s)eries$/'           => '\1\2eries',
-        '/([^aeiouy]|qu)ies$/'  => '\1y',
-        '/([lr])ves$/'          => '\1f',
-        '/(tive)s$/'            => '\1',
-        '/(hive)s$/'            => '\1',
-        '/([^f])ves$/'          => '\1fe',
-        '/(^analy)ses$/'        => '\1sis',
-        '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/' => '\1\2sis',
-        '/([ti])a$/'            => '\1um',
-        '/(p)eople$/'           => '\1\2erson',
-        '/(m)en$/'              => '\1an',
-        '/(c)hildren$/'         => '\1\2hild',
-        '/(n)ews$/'             => '\1\2ews',
-        '/s$/'                  => ''
-      );
+ * Return $word in singular form.
+ *
+ * @param string $word Word in plural
+ * @return string Word in singular
+ */
+    function singularize ($word)
+    {
+        $singular_rules = array(
+            '/(s)tatuses$/i'         => '\1\2tatus',
+            '/(matr)ices$/i'         =>'\1ix',
+            '/(vert|ind)ices$/i'     => '\1ex',
+            '/^(ox)en/i'             => '\1',
+            '/(alias)es$/i'          => '\1',
+            '/([octop|vir])i$/i'     => '\1us',
+            '/(cris|ax|test)es$/i'   => '\1is',
+            '/(shoe)s$/i'            => '\1',
+            '/(o)es$/i'              => '\1',
+            '/(bus)es$/i'            => '\1',
+            '/([m|l])ice$/i'         => '\1ouse',
+            '/(x|ch|ss|sh)es$/i'     => '\1',
+            '/(m)ovies$/i'           => '\1\2ovie',
+            '/(s)eries$/i'           => '\1\2eries',
+            '/([^aeiouy]|qu)ies$/i'  => '\1y',
+            '/([lr])ves$/i'          => '\1f',
+            '/(tive)s$/i'            => '\1',
+            '/(hive)s$/i'            => '\1',
+            '/([^f])ves$/i'          => '\1fe',
+            '/(^analy)ses$/i'        => '\1sis',
+            '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
+            '/([ti])a$/i'            => '\1um',
+            '/(p)eople$/i'           => '\1\2erson',
+            '/(m)en$/i'              => '\1an',
+            '/(c)hildren$/i'         => '\1\2hild',
+            '/(n)ews$/i'             => '\1\2ews',
+            '/s$/i'                  => '');
 
-      foreach ($singular_rules as $rule => $replacement)
-      {
-         if (preg_match($rule, $word))
-         {
-            return preg_replace($rule, $replacement, $word);
-         }
-      }
-      // should not return false is not matched
-      return $word;//false;
-   }
+            foreach ($singular_rules as $rule => $replacement)
+            {
+                if (preg_match($rule, $word))
+                {
+                    return preg_replace($rule, $replacement, $word);
+                }
+            }
+            // should not return false is not matched
+            return $word;//false;
+    }
 
 /**
   * Returns given $lower_case_and_underscored_word as a camelCased word.
