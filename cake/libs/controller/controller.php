@@ -281,6 +281,10 @@ class Controller extends Object
     function redirect ($url)
     {
         $this->autoRender = false;
+        if(strpos($url, '/') == 0)
+        {
+           $url = substr("$url", 1);
+        }
         header ('Location: '.$this->webroot.$url);
     }
 
