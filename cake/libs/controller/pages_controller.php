@@ -71,7 +71,6 @@ class PagesController extends AppController{
        $this->set('subpage', empty($path[1])? null: $path[1]);
        $this->set('title', ucfirst($path[count($path)-1]));
        $this->render(join('/', $path));
-       $this->autoRender = false;
    }
 }
 ?>

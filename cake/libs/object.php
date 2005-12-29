@@ -97,19 +97,18 @@ class Object
     function requestAction ($url, $extra = array())
     {
         $dispatcher =& new Dispatcher();
-
-        if(in_array('render', $extra))
+        if(in_array('return', $extra))
         {
-           $extra['render'] = 0;
-           $extra['bare']   = 1;
-            ob_start();
+            $extra['return'] = 0;
+            $extra['bare']   = 1;
+                ob_start();
                 $out = $dispatcher->dispatch($url, $extra);
                 $out = ob_get_clean();
                 return $out;
         }
         else
         {
-            $extra['render'] = 1;
+            $extra['return'] = 1;
             $extra['bare']   = 1;
                 $out = $dispatcher->dispatch($url, $extra);
                 return $out;

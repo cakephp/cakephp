@@ -108,11 +108,6 @@ class Dispatcher extends Object
 
       $this->base = $this->baseUrl();
 
-      if(!in_array('render', array_keys($params)))
-      {
-          $params['render'] = 0;
-      }
-
       if (empty($params['controller']))
       {
          $missingController = true;
@@ -174,6 +169,19 @@ class Dispatcher extends Object
       if(!in_array($params['action'], $classMethods) && !in_array(strtolower($params['action']), $classMethods))
       {
           $missingAction = true;
+      }
+
+      if(!in_array('return', array_keys($params)) && $controller->autoRender == true)
+      {
+          $params['render'] = 1;
+      }
+      elseif(in_array('return', array_keys($params)) && $params['return'] == 1)
+      {
+          $params['render'] = 1;
+      }
+      else
+      {
+          $params['render'] = 0;
       }
 
       $controller->base        = $this->base;
