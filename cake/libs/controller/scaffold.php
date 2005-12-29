@@ -224,7 +224,7 @@ class Scaffold extends Object {
             if(is_object($this->controllerClass->Session))
             {
                 $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.');
-                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
 
             }
             else
@@ -273,7 +273,7 @@ class Scaffold extends Object {
             if(is_object($this->controllerClass->Session))
             {
                 $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/');
-                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
 
             }
             else
@@ -310,7 +310,7 @@ class Scaffold extends Object {
             if(is_object($this->controllerClass->Session))
             {
                 $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/');
-                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
 
             }
             else
@@ -324,7 +324,7 @@ class Scaffold extends Object {
             if(is_object($this->controllerClass->Session))
             {
                 $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/');
-                $this->controllerClass->redirect('/'.Inflector::underscore($this->controllerClass->viewPath));
+                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
 
             }
             else
