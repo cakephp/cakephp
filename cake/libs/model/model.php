@@ -800,9 +800,15 @@ class Model extends Object
                             continue;
                         }
                         $fields[] = $x;
+                        if($y === NULL)
+                        {
+                            $values[] = 'NULL';
+                        }
+                        else
+                        {
                         $values[] = (ini_get('magic_quotes_gpc') == 1) ?
                                     $this->db->prepare(stripslashes($y)) : $this->db->prepare($y);
-
+                        }
                         if($x == $this->primaryKey && !is_numeric($y))
                         {
                             $newID = $y;
