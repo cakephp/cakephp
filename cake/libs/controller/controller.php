@@ -173,6 +173,20 @@ class Controller extends Object
     var $components = array();
 
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $view = 'View';
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $_viewClass = null;
+
+/**
  * Constructor.
  *
  */
@@ -281,11 +295,11 @@ class Controller extends Object
     function redirect ($url)
     {
         $this->autoRender = false;
-        if(strpos($url, '/') == 0)
+        if(strpos($url, '/') !== 0)
         {
-           $url = substr("$url", 1);
+           $url = '/'.$url;
         }
-        header ('Location: '.$this->webroot.$url);
+        header ('Location: '.$this->base.$url);
     }
 
 /**
@@ -356,7 +370,13 @@ class Controller extends Object
  */
     function render($action=null, $layout=null, $file=null)
     {
-        $view =& new View($this);
+        $viewClass = $this->view;
+        if($this->view != 'View' && !class_exists($viewClass))
+        {
+            $viewClass = $this->view.'View';
+            loadView($this->view);
+        }
+        $this->_viewClass =& new $viewClass($this);
         if(!empty($this->modelNames))
         {
             foreach ($this->modelNames as $model)
@@ -368,7 +388,7 @@ class Controller extends Object
             }
         }
         $this->autoRender = false;
-        return  $view->render($action, $layout, $file);
+        return  $this->_viewClass->render($action, $layout, $file);
     }
 
 /**

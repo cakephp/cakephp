@@ -181,6 +181,20 @@ class View extends Object
     var $loaded = array();
 
 /**
+ * Enter description here...
+ *
+ * @var array
+ */
+    var $ext = '.thtml';
+
+/**
+ * Enter description here...
+ *
+ * @var array
+ */
+    var $subDir = null;
+
+/**
  * Constructor
  *
  * @return View
@@ -267,9 +281,9 @@ class View extends Object
          foreach(array($this->name, 'errors') as $viewDir)
          {
              $errorAction =Inflector::underscore($errorAction);
-             if(file_exists(VIEWS.$viewDir.DS.$errorAction.'.thtml'))
+             if(file_exists(VIEWS.$viewDir.DS.$errorAction.$this->ext))
              {
-                 $missingViewFileName = VIEWS.$viewDir.DS.$errorAction.'.thtml';
+                 $missingViewFileName = VIEWS.$viewDir.DS.$errorAction.$this->ext;
              }
              elseif(file_exists(LIBS.'view'.DS.'templates'.DS.$viewDir.DS.$errorAction.'.thtml'))
              {
@@ -293,7 +307,7 @@ class View extends Object
             $controller = $this;
             $controller->missingView = $viewFileName;
             $controller->action      = $action;
-            call_user_func_array(array(&$controller, 'missingView'), empty($params['pass'])? null: $params['pass']);
+            call_user_func_array(array('View', 'missingView'), empty($params['pass'])? null: $params['pass']);
             $isFatal = isset($this->isFatal) ? $this->isFatal : false;
             if (!$isFatal)
             {
@@ -323,7 +337,14 @@ class View extends Object
 
       if ($viewFileName && !$this->hasRendered)
       {
-         $out = $this->_render($viewFileName, $this->_viewVars, 0);
+          if(substr($viewFileName, -5) === 'thtml')
+          {
+              $out = View::_render($viewFileName, $this->_viewVars, 0);
+          }
+          else
+          {
+              $out = $this->_render($viewFileName, $this->_viewVars, 0);
+          }
          if ($out !== false)
          {
             if ($this->layout && $this->autoLayout)
@@ -357,7 +378,7 @@ class View extends Object
  */
    function renderElement($name, $params=array())
    {
-      $fn = ELEMENTS.$name.'.thtml';
+      $fn = ELEMENTS.$name.$this->ext;
 
       if (!file_exists($fn))
       {
@@ -384,7 +405,16 @@ class View extends Object
       if (is_file($layout_fn))
       {
          $data_for_layout = array_merge($data_for_layout,$this->loaded); # load all view variables)
-         $out = $this->_render($layout_fn, $data_for_layout, true, false);
+
+          if(substr($layout_fn, -5) === 'thtml')
+          {
+              $out = View::_render($layout_fn, $data_for_layout, true, false);
+          }
+          else
+          {
+              $out = $this->_render($layout_fn, $data_for_layout, true, false);
+          }
+
          if ($out === false)
          {
             $out = $this->_render($layout_fn, $data_for_layout, false);
@@ -451,15 +481,15 @@ class View extends Object
        {
            $type = null;
        }
-       $viewFileName = VIEWS.$this->viewPath.DS.$type.$action.'.thtml';
+       $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
 
-       if(file_exists(VIEWS.$this->viewPath.DS.$type.$action.'.thtml'))
+       if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
        {
-           $viewFileName = VIEWS.$this->viewPath.DS.$type.$action.'.thtml';
+           $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
        }
-       elseif(file_exists(VIEWS.'errors'.DS.$type.$action.'.thtml'))
+       elseif(file_exists(VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext))
        {
-           $viewFileName = VIEWS.'errors'.DS.$type.$action.'.thtml';
+           $viewFileName = VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext;
        }
        elseif(file_exists(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
        {
@@ -469,7 +499,6 @@ class View extends Object
        {
            $viewFileName = LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml';
        }
-
 
        $viewPath = explode(DS, $viewFileName);
        $i = array_search('..', $viewPath);
@@ -496,13 +525,13 @@ class View extends Object
         {
             $type = null;
         }
-        $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
+        $layoutFileName = LAYOUTS.$type."{$this->layout}$this->ext";
 
-        if(file_exists(LAYOUTS.$type."{$this->layout}.thtml"))
+        if(file_exists(LAYOUTS.$this->subDir.$type."{$this->layout}$this->ext"))
         {
-            $layoutFileName = LAYOUTS.$type."{$this->layout}.thtml";
+            $layoutFileName = LAYOUTS.$this->subDir.$type."{$this->layout}$this->ext";
         }
-        else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
+        elseif(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
         {
             $layoutFileName = LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml";
         }

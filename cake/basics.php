@@ -79,6 +79,31 @@ function loadModels ()
 }
 
 /**
+ * Loads custom view class.
+ *
+ */
+function loadView ($viewClass)
+{
+    if(!class_exists($viewClass))
+    {
+        $file = Inflector::underscore($viewClass).'.php';
+        if(file_exists(VIEWS.$file))
+        {
+            return require_once(VIEWS.$file);
+        }
+        elseif(file_exists(LIBS.'view'.DS.$file))
+        {
+            return require_once(LIBS.'view'.DS.$file);
+        }
+        else
+        {
+            return false;
+        }
+    }
+}
+
+
+/**
  * Loads all controllers.
  *
  * @uses APP
