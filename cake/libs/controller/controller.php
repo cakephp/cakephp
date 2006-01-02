@@ -348,7 +348,10 @@ class Controller extends Object
     function validateErrors ()
     {
         $objects = func_get_args();
-        if (!count($objects)) return false;
+        if (!count($objects))
+        {
+            return false;
+        }
 
         $errors = array();
         foreach ($objects as $object)
@@ -383,7 +386,7 @@ class Controller extends Object
             {
                 if(!empty($this->{$model}->validationErrors))
                 {
-                    $view->validationErrors[$model] =& $this->{$model}->validationErrors;
+                    $this->_viewClass->validationErrors[$model] =& $this->{$model}->validationErrors;
                 }
             }
         }

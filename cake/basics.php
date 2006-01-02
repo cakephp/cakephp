@@ -169,6 +169,10 @@ function loadController ($name)
         }
         return file_exists($controller_fn)? require_once($controller_fn): false;
     }
+    else
+    {
+        return true;
+    }
 }
 
 /**

@@ -307,7 +307,7 @@ class View extends Object
             $controller = $this;
             $controller->missingView = $viewFileName;
             $controller->action      = $action;
-            call_user_func_array(array('View', 'missingView'), empty($params['pass'])? null: $params['pass']);
+            call_user_func_array(array(&$controller, 'missingView'), empty($params['pass'])? null: $params['pass']);
             $isFatal = isset($this->isFatal) ? $this->isFatal : false;
             if (!$isFatal)
             {
