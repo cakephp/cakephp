@@ -482,4 +482,19 @@ function setUri()
     }
     return $uri;
 }
+
+function gethost ($ip)
+{
+	if (stristr(getenv('OS'), 'windows'))
+	{
+	    $host = split('Name:',`nslookup $ip`);
+	    return ( trim (isset($host[1]) ? str_replace ("\n".'Address:  '.$ip, '', $host[1]) : $ip));
+	}
+	else
+	{
+	    $host = `host $ip`;
+	    return (($host ? end ( explode (' ', $host)) : $ip));
+	}
+}
+
 ?>

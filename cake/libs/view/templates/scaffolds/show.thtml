@@ -7,10 +7,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -93,7 +93,7 @@
    foreach ($objModel->_oneToOne as $relation)
    {
       list($association, $model, $value) = $relation;
-      $otherModelName = $objModel->tableToModel[$model];
+      $otherModelName = $objModel->tableToModel[$objModel->{$model}->table];
       $controller = Inflector::pluralize($model);
 
       echo "<div class='related'><H2>Related ".Inflector::humanize($association)."</H2>";
@@ -113,7 +113,7 @@
 
       }
       echo "</dl>";
-      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/edit/{$data[$association][$otherModelObject->primaryKey]}")."</li></ul></div>";
+      echo "<ul class='actions'><li>".$html->linkTo('Edit '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/edit/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
    }
 ?>
 

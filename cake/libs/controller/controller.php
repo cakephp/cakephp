@@ -299,6 +299,10 @@ class Controller extends Object
         {
            $url = '/'.$url;
         }
+        if (function_exists('session_write_close'))
+        {
+            session_write_close();
+        }
         header ('Location: '.$this->base.$url);
     }
 

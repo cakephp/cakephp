@@ -58,6 +58,10 @@ require_once (CONFIGS.'core.php');
 require_once (CONFIGS.'database.php');
 
 uses ('neat_array');
+uses ('object');
+uses ('session');
+uses ('security');
+uses ('model'.DS.'model');
 uses ('model'.DS.'dbo'.DS.'dbo_factory');
 uses ('controller'.DS.'controller');
 uses ('controller'.DS.'components'.DS.'acl');

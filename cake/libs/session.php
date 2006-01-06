@@ -81,7 +81,6 @@ class CakeSession extends Object
  * @var unknown_type
  */
     var $sessionId     = null;
-
 /**
  * Enter description here...
  *
@@ -93,47 +92,46 @@ class CakeSession extends Object
  *
  * @return unknown
  */
-
     function __construct($base = null)
     {
-            $this->host = $_SERVER['HTTP_HOST'];
+        $this->host = $_SERVER['HTTP_HOST'];
 
-            if (empty($base))
-            {
-                $this->path = '/';
-            }
-            else
-            {
-                $this->path = $base;
-            }
+        if (empty($base))
+        {
+            $this->path = '/';
+        }
+        else
+        {
+            $this->path = $base;
+        }
 
-            if (strpos($this->host, ':') !== false)
-            {
-                $this->host = substr($this->host,0, strpos($this->host, ':'));
-            }
+        if (strpos($this->host, ':') !== false)
+        {
+            $this->host = substr($this->host,0, strpos($this->host, ':'));
+        }
 
-            if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
-            {
-                $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
-            else
-            {
-               $this->ip = $_SERVER['REMOTE_ADDR'];
-            }
+        if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+        {
+            $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        else
+        {
+            $this->ip = $_SERVER['REMOTE_ADDR'];
+        }
 
-            if(!empty($_SERVER['HTTP_USER_AGENT']))
-            {
-                $this->userAgent = md5($_SERVER['HTTP_USER_AGENT']);
-            }
-            else
-            {
-               $this->userAgent = "";
-            }
+        if(!empty($_SERVER['HTTP_USER_AGENT']))
+        {
+            $this->userAgent = md5($_SERVER['HTTP_USER_AGENT']);
+        }
+        else
+        {
+            $this->userAgent = "";
+        }
 
-            $this->security = CAKE_SECURITY;
-            $this->_initSession();
-            $this->_begin();
-            parent::__construct();
+        $this->security = CAKE_SECURITY;
+        $this->_initSession();
+        $this->_begin();
+        parent::__construct();
     }
 
 /**
@@ -191,7 +189,6 @@ class CakeSession extends Object
  */
     function getLastError()
     {
-
         if($this->lastError)
         {
             return $this->getError($this->lastError);
@@ -209,7 +206,6 @@ class CakeSession extends Object
  */
     function isValid()
     {
-
         return $this->valid;
     }
 
@@ -243,7 +239,6 @@ class CakeSession extends Object
  */
     function returnSessionVars()
     {
-
         if(!empty($_SESSION))
         {
             $result = eval("return ".$_SESSION.";");
@@ -261,7 +256,6 @@ class CakeSession extends Object
  */
     function writeSessionVar($name, $value)
     {
-
         $expression = $this->_sessionVarNames($name);
         $expression .= " = \$value;";
         eval($expression);
@@ -274,12 +268,6 @@ class CakeSession extends Object
  */
     function _begin()
     {
-
-        if (function_exists('session_write_close'))
-        {
-            session_write_close();
-        }
-
         session_cache_limiter("must-revalidate");
         session_start();
         $this->_new();
@@ -331,6 +319,10 @@ class CakeSession extends Object
  */
     function _initSession()
     {
+        if (function_exists('session_write_close'))
+        {
+            session_write_close();
+        }
 
         switch ($this->security)
         {
@@ -404,7 +396,6 @@ class CakeSession extends Object
                 }
             break;
         }
-
     }
 
 /**
@@ -415,8 +406,7 @@ class CakeSession extends Object
  */
     function _new()
     {
-
-        if(!ereg("proxy\.aol\.com$", @gethostbyaddr($this->ip)))
+        if(!ereg("\.aol\.com$", gethost($this->ip)))
         {
             if($this->readSessionVar("Config"))
             {
@@ -430,26 +420,26 @@ class CakeSession extends Object
                     $this->_setError(1, "Session Highjacking Attempted !!!");
                 }
             }
-           else
-           {
-               srand((double)microtime() * 1000000);
-               $this->writeSessionVar('Config.rand', rand());
-               $this->writeSessionVar("Config.ip", $this->ip);
-               $this->writeSessionVar("Config.userAgent", $this->userAgent);
-               $this->valid = true;
-           }
-       }
-       else
-       {
-           if(!$this->readSessionVar("Config"))
-           {
-               srand((double)microtime() * 1000000);
-               $this->writeSessionVar('Config.rand', rand());
-               $this->writeSessionVar("Config.ip", $this->ip);
-               $this->writeSessionVar("Config.userAgent", $this->userAgent);
-           }
-           $this->valid = true;
-       }
+            else
+            {
+                srand((double)microtime() * 1000000);
+                $this->writeSessionVar('Config.rand', rand());
+                $this->writeSessionVar("Config.ip", $this->ip);
+                $this->writeSessionVar("Config.userAgent", $this->userAgent);
+                $this->valid = true;
+            }
+        }
+        else
+        {
+            if(!$this->readSessionVar("Config"))
+            {
+                srand((double)microtime() * 1000000);
+                $this->writeSessionVar('Config.rand', rand());
+                $this->writeSessionVar("Config.ip", $this->ip);
+                $this->writeSessionVar("Config.userAgent", $this->userAgent);
+            }
+            $this->valid = true;
+        }
 
         if($this->security == 'high')
         {
@@ -486,7 +476,6 @@ class CakeSession extends Object
         die();
     }
 
-
 /**
  * Enter description here...
  *
@@ -496,27 +485,23 @@ class CakeSession extends Object
  */
     function _regenerateId()
     {
-
         $oldSessionId = session_id();
+        $sessionpath = session_save_path();
+        if (empty($sessionpath))
+        {
+            $sessionpath = "/tmp";
+        }
+        if (isset($_COOKIE[session_name()]))
+        {
+            setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
+        }
         session_regenerate_id();
         $newSessid = session_id();
-          if (function_exists('session_write_close'))
-          {
-              if($this->security  == 'high')
-              {
-                  if (isset($_COOKIE[session_name()]))
-                  {
-                  setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
-                  }
-                  $sessionpath = session_save_path();
-                  $file = $sessionpath."/sess_$oldSessionId";
-                  @unlink($file);
-              }
-              session_write_close();
-              $this->_initSession();
-              session_id($newSessid);
-              session_start();
-          }
+        $file = $sessionpath.DS."sess_$oldSessionId";
+        @unlink($file);
+        $this->_initSession();
+        session_id($newSessid);
+        session_start();
     }
 
 /**
@@ -539,7 +524,6 @@ class CakeSession extends Object
  */
     function _sessionVarNames($name)
     {
-
         if(is_string($name))
         {
             if(strpos($name, "."))
@@ -571,7 +555,6 @@ class CakeSession extends Object
  */
     function _setError($errorNumber, $errorMessage)
     {
-
         if($this->error === false)
         {
             $this->error = array();
