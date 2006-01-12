@@ -248,14 +248,7 @@ class Dispatcher extends Object
        {
            if(!empty($_POST))
            {
-               if(is_array($_POST))
-               {
-                   $params['form'] = array_map('stripslashes', $_POST);
-               }
-               else
-               {
-                   $params['form'] = stripcslashes($_POST);
-               }
+               $params['form'] = stripslashes_deep($_POST);
            }
        }
        else
@@ -272,14 +265,7 @@ class Dispatcher extends Object
        {
            if (ini_get('magic_quotes_gpc') == 1)
            {
-               if(is_array($_GET))
-               {
-                   $params['url'] = array_map('stripslashes', $_GET);
-               }
-               else
-               {
-                   $params['url'] = stripcslashes($_GET);
-               }
+               $params['url'] = stripslashes_deep($_GET);
            }
            else
            {

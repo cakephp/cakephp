@@ -753,6 +753,13 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
     return $data;
 }
 
+function stripslashes_deep($value)
+{
+    $value = is_array($value) ?
+             array_map('stripslashes_deep', $value) :
+             stripslashes($value);
+             return $value;
+}
 /**
  * Returns a translated string if one is found,
  * or the submitted message if not found.

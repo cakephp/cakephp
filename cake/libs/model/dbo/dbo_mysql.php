@@ -148,13 +148,13 @@ class DboMysql extends DboSource
       elseif (count($args) > 1 && strpos($args[0], 'findBy') === 0)
       {
          $field = Inflector::underscore(str_replace('findBy', '', $args[0]));
-         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         $query = '`' . $args[2]->name . '.' . $field . '` = ' . $this->value($args[1][0]);
          return $args[2]->find($query);
       }
       elseif (count($args) > 1 && strpos($args[0], 'findAllBy') === 0)
       {
          $field = Inflector::underscore(str_replace('findAllBy', '', $args[0]));
-         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         $query = '`' . $args[2]->name . '.' . $field . '` = ' . $this->value($args[1][0]);
          return $args[2]->findAll($query);
       }
    }

@@ -180,7 +180,7 @@ class AjaxHelper extends Helper
 
     function linkToRemote ($title, $options = array(), $html_options = array())
     {
-        trigger_error('Deprecated function: use AjaxHelper::link', E_USER_WARNING);
+        //trigger_error('Deprecated function: use AjaxHelper::link', E_USER_WARNING);
         $href = '#';
         if (!empty($options['fallback']) && isset($options['fallback']))
         {

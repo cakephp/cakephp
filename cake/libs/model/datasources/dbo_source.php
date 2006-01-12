@@ -309,7 +309,12 @@ class DboSource extends DataSource
             $values = array_values($model->data);
         }
 
-        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fields).') VALUES ('.join(',', $values).')'))
+        foreach ($values as $value)
+        {
+            $valueInsert[] = $this->value($value);
+        }
+
+        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fields).') VALUES ('.join(',', $valueInsert).')'))
         {
             return true;
         }

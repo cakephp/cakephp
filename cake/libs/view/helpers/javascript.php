@@ -7,14 +7,14 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -79,8 +79,8 @@ class JavascriptHelper extends Helper
     }
 
 /**
-  * Escape carriage returns and single and double quotes for JavaScript segments. 
-  * 
+  * Escape carriage returns and single and double quotes for JavaScript segments.
+  *
   * @param string $script string that might have javascript elements
   * @return string escaped string
   */
@@ -92,8 +92,33 @@ class JavascriptHelper extends Helper
     }
 
 /**
+ * Escape a string to be JavaScript friendly.
+ *
+ * List of escaped ellements:
+ *   + "\r\n" => '\n'
+ *   + "\r"   => '\n'
+ *   + "\n"   => '\n'
+ *   + '"'    => '\"'
+ *   + "'"    => "\\'"
+ *
+ * @param  string $script String that needs to get escaped.
+ * @return string Escaped string.
+ */
+    function escapeString($string)
+    {
+        $escape = array(
+        "\r\n" => '\n',
+        "\r"   => '\n',
+        "\n"   => '\n',
+        '"'    => '\"',
+        "'"    => "\\'"
+        );
+
+        return str_replace(array_keys($escape), array_values($escape), $string);
+    }
+/**
   * Attach an event to an element. Used with the Prototype library.
-  * 
+  *
   * @param string $object Object to be observed
   * @param string $event event to observe
   * @param string $observer function to call
@@ -125,7 +150,7 @@ class JavascriptHelper extends Helper
 
 /**
   * Cache JavaScript events created with event()
-  * 
+  *
   * @return null
   */
   function cacheEvents ()
@@ -136,7 +161,7 @@ class JavascriptHelper extends Helper
 
 /**
   * Write cached JavaScript events
-  * 
+  *
   * @return string A single code block of all cached JavaScript events created with event()
   */
   function writeEvents ()
@@ -148,7 +173,7 @@ class JavascriptHelper extends Helper
 
 /**
   * Includes the Prototype Javascript library (and anything else) inside a single script tag.
-  * 
+  *
   * Note: The recommended approach is to copy the contents of
   * javascripts into your application's
   * public/javascripts/ directory, and use @see javascriptIncludeTag() to

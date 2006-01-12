@@ -699,7 +699,7 @@ class Model extends Object
  * @param boolean $validate
  * @param array $fields
  * @return boolean success
- *@todo Implement $fields param as a whitelist of allowable fields
+ * @todo Implement $fields param as a whitelist of allowable fields
  */
     function save ($data = null, $validate = true, $fields = null)
     {
@@ -845,7 +845,7 @@ class Model extends Object
                         $values[] = $this->db->value($id);
                         $values[] = $this->db->value($update);
                         $values = join(',', $values);
-                        $newValues[] = '('.$values.')';
+                        $newValues[] = "({$values})";
                         unset($values);
                     }
                 }
@@ -860,10 +860,10 @@ class Model extends Object
         $total = count($joinTable);
         for ($count = 0; $count < $total; $count++)
         {
-            $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+            $this->db->execute("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
             if(!empty($newValue[$count]))
             {
-                $this->db->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+                $this->db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
             }
         }
     }
@@ -1132,24 +1132,16 @@ class Model extends Object
  */
     function findNeighbours ($conditions, $field, $value)
     {
-        @list($prev) = Model::findAll($conditions . ' AND ' . $this->db->name($field) . ' < ' . $this->db->value($value), $field, $this->db->name($field) . ' DESC', 1);
-        @list($next) = Model::findAll($conditions . ' AND ' . $this->db->name($field) . ' > ' . $this->db->value($value), $field, $this->db->name($field) . ' ASC', 1);
+        @list($prev) = Model::findAll($conditions . ' AND ' . $field . ' < ' . $this->db->value($value), $field, $field . ' DESC', 1);
+        @list($next) = Model::findAll($conditions . ' AND ' . $field . ' > ' . $this->db->value($value), $field, $field . ' ASC', 1);
 
-        if (isset($prev))
+        if (!isset($prev))
         {
-            $prev = $prev;
+            $prev = null;
         }
-        else
+        if (!isset($next))
         {
-            $prev = false;
-        }
-        if (isset($next))
-        {
-            $next = $next;
-        }
-        else
-        {
-            $next = false;
+            $next = null;
         }
         return array('prev' => $prev, 'next' => $next);
     }
@@ -1297,8 +1289,6 @@ class Model extends Object
     {
         return $this->db->name($this->name).'.'.$this->db->name($field);
     }
-
-
 /**
  * Returns the current record's ID
  *

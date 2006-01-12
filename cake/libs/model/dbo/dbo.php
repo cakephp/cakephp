@@ -256,13 +256,13 @@ class DBO extends Object
          $out = null;
          foreach ($data as $key=>$item)
          {
-            $out[$key] = $this->prepareValue($item);
+            $out[$key] = $this->value($item);
          }
          return $out;
       }
       else
       {
-         return $this->prepareValue($data);
+         return $this->value($data);
       }
    }
 

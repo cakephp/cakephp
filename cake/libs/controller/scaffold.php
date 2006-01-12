@@ -431,6 +431,12 @@ class Scaffold extends Object {
                     $newDate  = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'].'-';
                     $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
                     $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian']);
                     $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
                 else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
@@ -444,6 +450,12 @@ class Scaffold extends Object {
                     $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
                     $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
                     $newDate .= $hour.':'.$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'].':00';
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min']);
+                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian']);
                     $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
                 }
                 else if( 'tinyint(1)' == $field['type'] )

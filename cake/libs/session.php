@@ -240,7 +240,7 @@ class CakeSession extends Object
     {
         if(!empty($_SESSION))
         {
-            $result = eval("return ".$_SESSION.";");
+            $result = eval("return \$_SESSION;");
             return $result;
         }
         $this->_setError(2, "No Session vars set");
