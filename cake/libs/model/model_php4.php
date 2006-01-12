@@ -919,11 +919,11 @@ class Model extends Object
         if ($this->id)
         {
             $id = $this->id;
-            if (is_array($id) && count($id) == 1)
+            if (is_array($id))
             {
                 $id = $id[0];
             }
-            return $this->hasAny($this->escapeField($this->primaryKey).'='.$this->db->value($id));
+            return $this->db->hasAny($this->table,$this->primaryKey.'='.$this->db->value($id));
         }
         return false;
     }

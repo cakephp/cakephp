@@ -161,7 +161,7 @@ class DboSource extends DataSource
  */
    function one ($sql)
    {
-      if ($this->query($sql))
+      if ($this->execute($sql))
       {
           return $this->fetchArray();
       }
@@ -760,6 +760,19 @@ class DboSource extends DataSource
         $this->close();
         parent::__destruct();
     }
+
+/**
+ * Checks if the specified table contains any record matching specified SQL
+ *
+ * @param string $table Name of table to look in
+ * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
+ * @return boolean True if the table has a matching record, else false
+ */
+   function hasAny($table, $sql)
+   {
+      $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
+      return is_array($out)? $out[0]['count']: false;
+   }
 }
 
 
