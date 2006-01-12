@@ -357,7 +357,7 @@ class Scaffold extends Object {
         }
 
         $this->controllerClass->constructClasses();
-        if(isset($this->controllerClass->{$this->modelKey}->ds))
+        if(isset($this->controllerClass->{$this->modelKey}->db))
         {
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
                $params['action'] === 'show'   || $params['action'] === 'add' ||

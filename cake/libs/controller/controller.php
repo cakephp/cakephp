@@ -479,7 +479,7 @@ class Controller extends Object
 
         $model = $this->modelClass;
         $modelKey = $this->modelKey;
-        $table = $this->{$model}->source;
+        $table = $this->{$model}->table;
         $association = array_search($table,$this->{$model}->alias);
 
         $objRegistryModel = ClassRegistry::getObject($modelKey);

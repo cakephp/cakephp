@@ -212,7 +212,7 @@ class DboMysql extends DboSource
       }
 
       $fields = false;
-      $cols = $this->query('DESC ' . $this->name($model->source));
+      $cols = $this->query('DESC ' . $this->name($model->table));
 
       foreach ($cols as $column)
       {
@@ -228,7 +228,7 @@ class DboMysql extends DboSource
         }
       }
 
-      $this->__cacheDescription($model->source, $fields);
+      $this->__cacheDescription($model->table, $fields);
       return $fields;
    }
 

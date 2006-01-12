@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -102,8 +102,8 @@ class DboSource extends DataSource
    }
 
 /**
- * Queries the database with given SQL statement, and obtains some metadata about the result 
- * (rows affected, timing, any errors, number of rows in resultset). The query is also logged. 
+ * Queries the database with given SQL statement, and obtains some metadata about the result
+ * (rows affected, timing, any errors, number of rows in resultset). The query is also logged.
  * If DEBUG is set, the log is shown all the time, else it is only shown on errors.
  *
  * @param string $sql
@@ -169,7 +169,7 @@ class DboSource extends DataSource
    }
 
 /**
- * Returns an array of all result rows for a given SQL query. 
+ * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
@@ -275,7 +275,7 @@ class DboSource extends DataSource
    }
 
 /**
- * Output information about an SQL query. The SQL statement, number of rows in resultset, 
+ * Output information about an SQL query. The SQL statement, number of rows in resultset,
  * and execution time in microseconds. If the query fails, and error is output instead.
  *
  * @param string $sql
@@ -283,12 +283,12 @@ class DboSource extends DataSource
 	function showQuery($sql)
 	{
 	   $error = $this->error;
- 
+
 	   if (strlen($sql)>200 && !$this->fullDebug)
 	   {
 		  $sql = substr($sql, 0, 200) .'[...]';
 	   }
- 
+
 	   if ($this->debug || $error)
 	   {
 		  print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
@@ -309,7 +309,7 @@ class DboSource extends DataSource
             $values = array_values($model->data);
         }
 
-        if($this->execute('INSERT INTO '.$model->source.' ('.join(',', $fields).') VALUES ('.join(',', $values).')'))
+        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fields).') VALUES ('.join(',', $values).')'))
         {
             return true;
         }
@@ -361,7 +361,7 @@ class DboSource extends DataSource
 
     function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive = 1)
     {
-        //$external = (($linkModel->ds === $this) && $resultSet == null);
+        //$external = (($linkModel->db === $this) && $resultSet == null);
 
         $query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
         if ($query)
@@ -400,7 +400,7 @@ class DboSource extends DataSource
         {
             // Generates primary query
             $sql  = 'SELECT ' . join(', ', $this->fields($queryData['fields'])) . ' FROM ';
-            $sql .= $this->name($model->source).' AS ';
+            $sql .= $this->name($model->table).' AS ';
             $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
             $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
             $sql .= ' '.$this->limit($queryData['limit']);
@@ -422,7 +422,7 @@ class DboSource extends DataSource
                     {
                         return $assocData['finderQuery'];
                     }
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->source).' AS '.$alias;
+                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$alias;
                     $conditions = $queryData['conditions'];
                     $condition = $model->escapeField($assocData['foreignKey']);
                     $condition .= '={$__cake_foreignKey__$}';
@@ -443,7 +443,7 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    $sql  = ' LEFT JOIN '.$this->name($linkModel->source);
+                    $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
                     $sql .= $this->conditions($assocData['conditions']);
@@ -461,7 +461,7 @@ class DboSource extends DataSource
                 {
                     pr('external');
                     $conditions = $assocData['conditions'];
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->source).' AS '.$this->name($alias);
+                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
 
                     $condition = $linkModel->escapeField($assocData['foreignKey']);
                     $condition .= '={$__cake_id__$}';
@@ -483,7 +483,7 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    $sql  = ' LEFT JOIN '.$this->name($linkModel->source);
+                    $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS ' . $this->name($alias) . ' ON ';
                     $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
                     $sql .= '='.$linkModel->escapeField($linkModel->primaryKey);
@@ -503,7 +503,7 @@ class DboSource extends DataSource
                 else
                 {
                     $conditions = $assocData['conditions'];
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->source).' AS ';
+                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS ';
                     $sql .= $this->name($alias);
 
                     $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
@@ -537,7 +537,7 @@ class DboSource extends DataSource
                     $alias = $this->name($alias);
 
                     $sql = 'SELECT '.join(', ', $this->fields($assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->source).' AS '.$alias;
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;
                     $sql .= ' JOIN '.$joinTbl.' ON '.$joinTbl;
                     $sql .= '.'.$this->name($assocData['foreignKey']).'={$__cake_id__$}';
                     $sql .= ' AND '.$joinTbl.'.'.$this->name($assocData['associationForeignKey']);
@@ -560,7 +560,7 @@ class DboSource extends DataSource
             $updates[] = $this->name($field).'='.$this->value($value);
         }
 
-        $sql  = 'UPDATE '.$this->name($model->source).' AS '.$this->name($model->name);
+        $sql  = 'UPDATE '.$this->name($model->table).' AS '.$this->name($model->name);
         $sql .= ' SET '.join(',', $updates);
         $sql .= ' WHERE '.$model->escapeField($model->primaryKey).'='.$this->value($model->getID());
 
@@ -580,7 +580,7 @@ class DboSource extends DataSource
         }
         foreach ($model->id as $id)
         {
-            $result = $this->execute('DELETE FROM '.$this->name($model->source).' WHERE '.$this->name($model->primaryKey).'='.$this->value($id));
+            $result = $this->execute('DELETE FROM '.$this->name($model->table).' WHERE '.$this->name($model->primaryKey).'='.$this->value($id));
         }
         if ($result)
         {
@@ -598,7 +598,7 @@ class DboSource extends DataSource
 
         if (!strpos('.', $key))
         {
-            return $this->name($model->source).'.'.$this->name($key);
+            return $this->name($model->table).'.'.$this->name($key);
         }
         return $key;
     }

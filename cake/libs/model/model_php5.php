@@ -57,7 +57,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $dataSource = 'default';
+   var $useDbConfig = 'default';
 
 /**
  * The DataSource connection object that this Model uses
@@ -65,7 +65,7 @@ class Model extends Object
  * @var unknown_type
  * @access public
  */
-   var $ds = null;
+   var $db = null;
 
 /**
  * Enter description here... Still used?
@@ -114,7 +114,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $source = false;
+   var $table = false;
 
 /**
  * The name of the ID field for this Model.
@@ -358,7 +358,7 @@ class Model extends Object
  */
     function __call($method, $params)
     {
-       return $this->ds->query($method, $params, $this);
+       return $this->db->query($method, $params, $this);
     }
 
 /**
@@ -421,9 +421,9 @@ class Model extends Object
             $this->{$className} = new $className();
         }
 
-        $this->alias[$assoc] = $this->{$className}->source;
-        $this->tableToModel[$this->{$className}->source] = $className;
-        $this->modelToTable[$className] = $this->{$className}->source;
+        $this->alias[$assoc] = $this->{$className}->table;
+        $this->tableToModel[$this->{$className}->table] = $className;
+        $this->modelToTable[$className] = $this->{$className}->table;
     }
 
 /**
@@ -453,17 +453,17 @@ class Model extends Object
                             $data = '*';
                         break;
                         case 'foreignKey':
-                            $data = Inflector::singularize($this->source).'_id';
+                            $data = Inflector::singularize($this->table).'_id';
                             if ($type == 'belongsTo')
                             {
-                                $data = Inflector::singularize($this->{$class}->source).'_id';
+                                $data = Inflector::singularize($this->{$class}->table).'_id';
                             }
                         break;
                         case 'associationForeignKey':
-                            $data = Inflector::singularize($this->{$class}->source) . '_id';
+                            $data = Inflector::singularize($this->{$class}->table) . '_id';
                         break;
                         case 'joinTable':
-                            $tables = array($this->source, $this->{$class}->source);
+                            $tables = array($this->table, $this->{$class}->table);
                             sort($tables);
                             $data = $tables[0].'_'.$tables[1];
                         break;
@@ -484,24 +484,24 @@ class Model extends Object
  */
     function setSource($tableName)
     {
-        if($this->ds->isInterfaceSupported('listSources'))
+        if($this->db->isInterfaceSupported('listSources'))
         {
-           if (!in_array(strtolower($tableName), $this->ds->listSources()))
+           if (!in_array(strtolower($tableName), $this->db->listSources()))
            {
-               $this->missingTable($tableName);
-               exit();
+               return $this->cakeError('missingTable',array(array('className' => $this->name,
+                                                                  'table' => $tableName)));
            }
            else
            {
-               $this->source = $tableName;
-               $this->tableToModel[$this->source] = $this->name;
+               $this->table = $tableName;
+               $this->tableToModel[$this->table] = $this->name;
                $this->loadInfo();
            }
         }
         else
         {
-           $this->source = $tableName;
-           $this->tableToModel[$this->source] = $this->name;
+           $this->table = $tableName;
+           $this->tableToModel[$this->table] = $this->name;
            $this->loadInfo();
         }
     }
@@ -552,9 +552,9 @@ class Model extends Object
  */
    function loadInfo ()
    {
-      if (!is_object($this->_tableInfo) && $this->ds->isInterfaceSupported('describe'))
+      if (!is_object($this->_tableInfo) && $this->db->isInterfaceSupported('describe'))
       {
-          $this->_tableInfo = new NeatArray($this->ds->describe($this));
+          $this->_tableInfo = new NeatArray($this->db->describe($this));
       }
       return $this->_tableInfo;
    }
@@ -598,7 +598,6 @@ class Model extends Object
  */
    function setId ($id)
    {
-      trigger_error('Deprecated function: use Model::read()', E_USER_WARNING);
       $this->id = $id;
    }
 
@@ -608,7 +607,6 @@ class Model extends Object
  */
    function findBySql ($sql)
    {
-      trigger_error('Deprecated function: use Model::query()', E_USER_WARNING);
       return $this->query($sql);
    }
 
@@ -636,8 +634,8 @@ class Model extends Object
 
         if ($this->id)
         {
-            $field = $this->ds->name($this->name).'.'.$this->ds->name($this->primaryKey);
-            return $this->find($field . ' = ' . $this->ds->value($id), $fields);
+            $field = $this->db->name($this->name).'.'.$this->db->name($this->primaryKey);
+            return $this->find($field . ' = ' . $this->db->value($id), $fields);
         }
         else
         {
@@ -661,7 +659,7 @@ class Model extends Object
 
         if ($conditions)
         {
-            $conditions = $this->ds->conditions($conditions);
+            $conditions = $this->db->conditions($conditions);
         }
 
         if ($data = $this->find($conditions, $name, $order))
@@ -778,7 +776,7 @@ class Model extends Object
         {
             if(!empty($this->id))
             {
-                if ($this->ds->update($this, $fields, $values))
+                if ($this->db->update($this, $fields, $values))
                 {
                     if(!empty($joined))
                     {
@@ -789,14 +787,14 @@ class Model extends Object
                 }
                 else
                 {
-                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->ds->value($this->id));
+                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
                 }
             }
             else
             {
-                if($this->ds->create($this, $fields, $values))
+                if($this->db->create($this, $fields, $values))
                 {
-                    $this->id = $this->ds->lastInsertId($this->source, $this->primaryKey);
+                    $this->id = $this->db->lastInsertId($this->table, $this->primaryKey);
                     if(!empty($joined))
                     {
                         if(!$this->id > 0 && isset($newID))
@@ -844,8 +842,8 @@ class Model extends Object
                 {
                     if(!empty($update))
                     {
-                        $values[] = $this->ds->value($id);
-                        $values[] = $this->ds->value($update);
+                        $values[] = $this->db->value($id);
+                        $values[] = $this->db->value($update);
                         $values = join(',', $values);
                         $newValues[] = '('.$values.')';
                         unset($values);
@@ -862,10 +860,10 @@ class Model extends Object
         $total = count($joinTable);
         for ($count = 0; $count < $total; $count++)
         {
-            $this->ds->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+            $this->db->query("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
             if(!empty($newValue[$count]))
             {
-                $this->ds->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+                $this->db->query("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
             }
         }
     }
@@ -897,7 +895,7 @@ class Model extends Object
 
         if($this->beforeDelete())
         {
-            if ($this->id && $this->ds->delete($this))
+            if ($this->id && $this->db->delete($this))
             {
                 $this->afterDelete();
                 $this->id = false;
@@ -922,7 +920,7 @@ class Model extends Object
             {
                 $id = $id[0];
             }
-            return $this->hasAny($this->escapeField($this->primaryKey).'='.$this->ds->value($id));
+            return $this->hasAny($this->escapeField($this->primaryKey).'='.$this->db->value($id));
         }
         return false;
     }
@@ -983,7 +981,7 @@ class Model extends Object
         $limit_str = '';
         if ($limit)
         {
-            $limit_str = $this->ds->limit($limit, $offset);
+            $limit_str = $this->db->limit($limit, $offset);
         }
 
         $queryData = array(
@@ -993,7 +991,7 @@ class Model extends Object
             'limit'			=> $limit_str,
             'order'			=> $order
         );
-        return $this->afterFind($this->ds->read($this, $queryData, $recursive));
+        return $this->afterFind($this->db->read($this, $queryData, $recursive));
     }
 
 
@@ -1029,7 +1027,7 @@ class Model extends Object
 
         $sql .= $limit_str;
 
-        $data = $this->ds->fetchAll($sql);
+        $data = $this->db->fetchAll($sql);
 
         return $data;
     }*/
@@ -1042,7 +1040,7 @@ class Model extends Object
  */
    function execute ($data)
    {
-       $data = $this->ds->fetchAll($data);
+       $data = $this->db->fetchAll($data);
        foreach ($data as $key => $value)
        {
            foreach ($this->tableToModel as $key1 => $value1)
@@ -1134,8 +1132,8 @@ class Model extends Object
  */
     function findNeighbours ($conditions, $field, $value)
     {
-        @list($prev) = $this->findAll($conditions . ' AND ' . $this->ds->name($field) . ' < ' . $this->ds->value($value), $field, $this->ds->name($field) . ' DESC', 1);
-        @list($next) = Model::findAll($conditions . ' AND ' . $this->ds->name($field) . ' > ' . $this->ds->value($value), $field, $this->ds->name($field) . ' ASC', 1);
+        @list($prev) = Model::findAll($conditions . ' AND ' . $this->db->name($field) . ' < ' . $this->db->value($value), $field, $this->db->name($field) . ' DESC', 1);
+        @list($next) = Model::findAll($conditions . ' AND ' . $this->db->name($field) . ' > ' . $this->db->value($value), $field, $this->db->name($field) . ' ASC', 1);
 
         if (isset($prev))
         {
@@ -1165,7 +1163,7 @@ class Model extends Object
    function query ()
    {
       $params = func_get_args();
-      return call_user_func_array(array(&$this->ds, 'query'), $params);
+      return call_user_func_array(array(&$this->db, 'query'), $params);
    }
 
 /**
@@ -1285,8 +1283,8 @@ class Model extends Object
         {
             $valuePath = '{n}.'.$this->name.'.'.$this->displayField;
         }
-        $keys = $this->ds->getFieldValue($result, $keyPath);
-        $vals = $this->ds->getFieldValue($result, $valuePath);
+        $keys = $this->db->getFieldValue($result, $keyPath);
+        $vals = $this->db->getFieldValue($result, $valuePath);
         return array_combine($keys, $vals);
     }
 
@@ -1297,7 +1295,7 @@ class Model extends Object
  */
     function escapeField($field)
     {
-        return $this->ds->name($this->name).'.'.$this->ds->name($field);
+        return $this->db->name($this->name).'.'.$this->db->name($field);
     }
 
 
@@ -1377,12 +1375,12 @@ class Model extends Object
     {
         if ($dataSource == null)
         {
-            $dataSource = $this->dataSource;
+            $dataSource = $this->useDbConfig;
         }
-        $this->ds =& ConnectionManager::getDataSource($dataSource);
-        if(empty($this->ds) || $this->ds == null || !is_object($this->ds))
+        $this->db =& ConnectionManager::getDataSource($dataSource);
+        if(empty($this->db) || $this->db == null || !is_object($this->db))
         {
-            $this->missingConnection();
+            return $this->cakeError('missingConnection',array(array('className' => $this->name)));
         }
     }
 

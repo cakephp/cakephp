@@ -197,6 +197,41 @@ class ErrorHandler extends Object
         exit();
     }
 
+
+/**
+ * Renders the Missing Helper file web page.
+ *
+ */
+    function missingHelperFile($params)
+    {
+        extract($params);
+        $this->controller->webroot = $webroot;
+        $this->controller->set(array('helper' => Inflector::camelize($file) . "Helper",
+                                     'file' => $file,
+                                     'title' => 'Missing Helper File'));
+        $this->controller->render('../errors/missingHelperFile');
+        exit();
+    }
+
+/**
+ * Renders the Missing Helper class web page.
+ *
+ */
+    function missingHelperClass($params)
+    {
+        extract($params);
+        $this->controller->webroot = $webroot;
+        $this->controller->set(array('helper' => Inflector::camelize($class) . "Helper",
+                                     'file' => Inflector::underscore($class),
+                                     'title' => 'Missing Helper Class'));
+        $this->controller->render('../errors/missingHelperClass');
+        exit();
+    }
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
     function _webroot()
     {
         $dispatcher =& new Dispatcher();

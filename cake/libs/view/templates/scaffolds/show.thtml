@@ -46,10 +46,10 @@
               $displayField = $otherModelObject->getDisplayField();
               $displayText = $data[$alias][$displayField];
 
-              if(!empty($data[$objModel->tableToModel[$objModel->source]][$field]))
+              if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]))
               {
                   echo "<dd>".$html->link($displayText, '/'.Inflector::underscore($value['controller']).'/show/'
-                             .$data[$objModel->tableToModel[$objModel->source]][$field] )."</dd>";
+                             .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
               }
               else
               {
@@ -59,9 +59,9 @@
           else
           {
               //  this is just a plain old field.
-              if( !empty($data[$objModel->tableToModel[$objModel->source]][$field]))
+              if( !empty($data[$objModel->tableToModel[$objModel->table]][$field]))
               {
-                  echo "<dd>".$data[$objModel->tableToModel[$objModel->source]][$field]."</dd>";
+                  echo "<dd>".$data[$objModel->tableToModel[$objModel->table]][$field]."</dd>";
               }
               else
               {
@@ -74,8 +74,8 @@
 </dl>
 <ul class='actions'>
 <?php
-   echo "<li>".$html->link('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->source]][$this->controller->{$modelName}->primaryKey])."</li>";
-   echo "<li>".$html->link('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/destroy/'.$data[$objModel->tableToModel[$objModel->source]][$this->controller->{$modelName}->primaryKey])."</li>";
+   echo "<li>".$html->link('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
+   echo "<li>".$html->link('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/destroy/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
    echo "<li>".$html->link('List  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/index')."</li>";
    echo "<li>".$html->link('New  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/add')."</li>";
 
@@ -94,7 +94,7 @@
    foreach ($objModel->hasOne as $association => $relation)
    {
       $model = $relation['className'];
-      $otherModelName = $objModel->tableToModel[$objModel->{$model}->source];
+      $otherModelName = $objModel->tableToModel[$objModel->{$model}->table];
       $controller = Inflector::pluralize($model);
 
       echo "<div class='related'><H2>Related ".Inflector::humanize($association)."</H2>";

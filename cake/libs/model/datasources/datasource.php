@@ -282,15 +282,15 @@ class DataSource extends Object
 
     function describe ($model)
     {
-        if (isset($this->__descriptions[$model->source]))
+        if (isset($this->__descriptions[$model->table]))
         {
-            return $this->__descriptions[$model->source];
+            return $this->__descriptions[$model->table];
         }
 
-        $cache = $this->__cacheDescription($model->source);
+        $cache = $this->__cacheDescription($model->table);
         if ($cache !== null)
         {
-            $this->__descriptions[$model->source] = &$cache;
+            $this->__descriptions[$model->table] = &$cache;
             return $cache;
         }
         return null;

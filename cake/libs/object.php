@@ -141,31 +141,12 @@ class Object
    }
 
 /**
- * Renders the Missing Helper file web page.
+ * Enter description here...
  *
+ * @param unknown_type $method
+ * @param unknown_type $messages
+ * @return unknown
  */
-    function missingHelperFile($file)
-    {
-        $this->missingHelperFile = $file;
-        $this->missingHelperClass = Inflector::camelize($file) . "Helper";
-        $this->pageTitle = 'Missing Helper File';
-        $this->render('../errors/missingHelperFile');
-        exit();
-    }
-
-/**
- * Renders the Missing Helper class web page.
- *
- */
-    function missingHelperClass($class)
-    {
-        $this->missingHelperClass = Inflector::camelize($class) . "Helper";
-        $this->missingHelperFile = Inflector::underscore($class);
-        $this->pageTitle = 'Missing Helper Class';
-        $this->render('../errors/missingHelperClass');
-        exit();
-    }
-
    function cakeError($method, $messages)
    {
        if(!class_exists('ErrorHandler'))
