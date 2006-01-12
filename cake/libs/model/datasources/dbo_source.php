@@ -451,10 +451,9 @@ class DboSource extends DataSource
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
-                    $sql .= $this->conditions($assocData['conditions']);
                     $sql .= $this->order($assocData['order']);
 
-                    if (!in_array($queryData['joins'], $sql))
+                    if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
                     }
