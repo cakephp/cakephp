@@ -71,9 +71,10 @@ uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'acoaction');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aro');
 
 //Get and format args: first arg is the name of the script.
-$wasted = array_shift($_SERVER['argv']);
-$command = array_shift($_SERVER['argv']);
-$args = $_SERVER['argv'];
+$serverArgs = env('argv');
+$wasted = array_shift($serverArgs);
+$command = array_shift($serverArgs);
+$args = $serverArgs;
 
 $aclCLI = new AclCLI ($command, $args);
 

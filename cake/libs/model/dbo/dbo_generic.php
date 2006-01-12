@@ -3,7 +3,7 @@
 
 /**
  * Generic layer for DBO.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
@@ -16,11 +16,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -30,60 +30,60 @@
 
 /**
  * Abstract DBO class file.
- * 
+ *
  * All implementations override this class.
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
-class DBO_generic extends DBO 
+class DBO_generic extends DBO
 {
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function connect ($config) 
+   function connect ($config)
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function disconnect () 
+   function disconnect ()
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function execute ($sql) 
+   function execute ($sql)
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
   *
  */
-   function fetchRow () 
+   function fetchRow ()
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  *
  */
-   function tablesList () 
+   function tablesList ()
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
    function fields ($tableName)
@@ -91,7 +91,7 @@ class DBO_generic extends DBO
    }
 
 /**
-* Abstract method defined in subclasses. 
+* Abstract method defined in subclasses.
  *
  */
    function prepareValue ($data)
@@ -99,15 +99,15 @@ class DBO_generic extends DBO
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function lastError () 
+   function lastError ()
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
    function lastAffected ()
@@ -115,23 +115,23 @@ class DBO_generic extends DBO
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function lastNumRows () 
+   function lastNumRows ()
    {
    }
 
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
-   function lastInsertId () 
+   function lastInsertId ()
    {
    }
-   
+
 /**
- * Abstract method defined in subclasses. 
+ * Abstract method defined in subclasses.
  *
  */
    function selectLimit ($limit, $offset=null)

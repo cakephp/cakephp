@@ -3,7 +3,7 @@
 
 /**
  * {@link http://pear.php.net/package/DB PEAR::DB} layer for DBO.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
@@ -16,11 +16,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -37,16 +37,16 @@ vendor('Pear/DB');
 
 /**
  * {@link http://pear.php.net/package/DB PEAR::DB} layer for DBO.
- * 
+ *
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
 class DBO_Pear extends DBO
 {
-   
+
 /**
  * PEAR::DB object with which we connect.
  *
@@ -61,26 +61,21 @@ class DBO_Pear extends DBO
   * @param array $config Configuration array for connecting
   * @return boolean True if the database could be connected, else false
   */
-   function connect ($config) 
+   function connect ($config)
    {
       $this->config = $config;
-
-      if (preg_match('#^pear[-_](.*)$#i', $config['driver'], $res))
-      {
-          $config['driver'] = $res[1];
-      }
 
       $dsn = $config['driver'].'://'.$config['login'].':'.$config['password'].'@'.$config['host'].'/'.$config['database'];
       $options = array(
          'debug'       => DEBUG-1,
          'portability' => DB_PORTABILITY_ALL,
       );
-      
+
       $this->_pear =& DB::connect($dsn, $options);
       $this->connected = $this->_pear? true: false;
 
       return !(PEAR::isError($this->_pear));
-      
+
    }
 
 /**
@@ -88,7 +83,7 @@ class DBO_Pear extends DBO
   *
   * @return boolean True if the database could be disconnected, else false
   */
-   function disconnect () 
+   function disconnect ()
    {
       die('Please implement DBO::disconnect() first.');
    }
@@ -99,7 +94,7 @@ class DBO_Pear extends DBO
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-   function execute ($sql) 
+   function execute ($sql)
    {
       return $this->_pear->query($sql);
    }
@@ -109,7 +104,7 @@ class DBO_Pear extends DBO
   *
   * @return array The fetched row as an array
   */
-   function fetchRow () 
+   function fetchRow ()
    {
       return $this->_result->fetchRow(DB_FETCHMODE_ASSOC);
    }
@@ -120,11 +115,11 @@ class DBO_Pear extends DBO
   *
   * @return array Array of tablenames in the database
   */
-   function tablesList () 
+   function tablesList ()
    {
       $driver = $this->config['driver'];
       $tables = array();
-   
+
       if ('postgres' == $driver)
       {
          $sql = "SELECT a.relname AS name
@@ -134,7 +129,7 @@ class DBO_Pear extends DBO
             AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname));";
 
          $result = $this->all($sql);
-         foreach ($result as $item) 
+         foreach ($result as $item)
          {
             $tables[] = $item['name'];
          }
@@ -155,12 +150,12 @@ class DBO_Pear extends DBO
       }
 
 
-      if (!$result) 
+      if (!$result)
       {
          trigger_error(ERROR_NO_TABLE_LIST, E_USER_ERROR);
          exit;
       }
-      else 
+      else
       {
          return $tables;
       }
@@ -199,7 +194,7 @@ class DBO_Pear extends DBO
   *
   * @return string Error message
   */
-   function lastError () 
+   function lastError ()
    {
       return PEAR::isError($this->_result)? $this->_result->getMessage(): null;
    }
@@ -215,12 +210,12 @@ class DBO_Pear extends DBO
    }
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * Returns number of rows in previous resultset. If no previous resultset exists,
   * this returns false.
   *
   * @return int Number of rows in resultset
   */
-   function lastNumRows () 
+   function lastNumRows ()
    {
       if (method_exists($this->_result, 'numRows'))
       {
@@ -236,9 +231,9 @@ class DBO_Pear extends DBO
   * Returns the ID generated from the previous INSERT operation.
   *
   * @param string $table Name of the database table
-  * @return int 
+  * @return int
   */
-   function lastInsertId ($table) 
+   function lastInsertId ($table)
    {
       return $this->field('id', "SELECT MAX(id) FROM {$table}");
    }
@@ -254,7 +249,7 @@ class DBO_Pear extends DBO
    {
       return ' ' . $this->_pear->modifyLimitQuery('', $offset, $limit);
    }
-   
+
 }
 
 ?>

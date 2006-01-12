@@ -3,7 +3,7 @@
 
 /**
  * AdoDB layer for DBO.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
@@ -16,11 +16,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -35,16 +35,16 @@ require_once(VENDORS.'adodb/adodb.inc.php');
 
 /**
  * AdoDB DBO implementation.
- * 
+ *
  * Database abstraction implementation for the AdoDB library.
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
-class DBO_AdoDB extends DBO 
+class DBO_AdoDB extends DBO
 {
-   
+
 /**
  * ADOConnection object with which we connect.
  *
@@ -58,7 +58,7 @@ class DBO_AdoDB extends DBO
  *
  * @param array $config Configuration array for connecting
  */
-   function connect ($config) 
+   function connect ($config)
    {
       if ($this->config = $config)
       {
@@ -81,7 +81,7 @@ class DBO_AdoDB extends DBO
  *
  * @return boolean True if the database could be disconnected, else false
  */
-   function disconnect () 
+   function disconnect ()
    {
       return $this->_adodb->close();
    }
@@ -92,7 +92,7 @@ class DBO_AdoDB extends DBO
  * @param string $sql SQL statement
  * @return resource Result resource identifier
  */
-   function execute ($sql) 
+   function execute ($sql)
    {
       return $this->_adodb->execute($sql);
    }
@@ -102,7 +102,7 @@ class DBO_AdoDB extends DBO
  *
  * @return array The fetched row as an array
  */
-   function fetchRow () 
+   function fetchRow ()
    {
       return $this->_result->FetchRow();
    }
@@ -112,7 +112,7 @@ class DBO_AdoDB extends DBO
  *
  * @return array Array of tablenames in the database
  */
-   function tablesList () 
+   function tablesList ()
    {
       $tables = $this->_adodb->MetaTables('TABLES');
 
@@ -148,7 +148,7 @@ class DBO_AdoDB extends DBO
  *
  * @todo To be implemented.
  */
-   function prepareValue ($data)      
+   function prepareValue ($data)
    {
       return $this->_adodb->Quote($data);
    }
@@ -158,7 +158,7 @@ class DBO_AdoDB extends DBO
  *
  * @return string Error message
  */
-   function lastError () 
+   function lastError ()
    {
       return $this->_adodb->ErrorMsg();
    }
@@ -170,7 +170,7 @@ class DBO_AdoDB extends DBO
  */
    function lastAffected ()
    {
-      return $this->_adodb->Affected_Rows(); 
+      return $this->_adodb->Affected_Rows();
    }
 
 /**
@@ -178,7 +178,7 @@ class DBO_AdoDB extends DBO
  *
  * @return int Number of rows in resultset
  */
-   function lastNumRows () 
+   function lastNumRows ()
    {
        return $this->_result? $this->_result->RecordCount(): false;
    }
@@ -186,7 +186,7 @@ class DBO_AdoDB extends DBO
 /**
  * To-be-implemented. Returns the ID generated from the previous INSERT operation.
  *
- * @return int 
+ * @return int
  *
  * @todo To be implemented.
  */

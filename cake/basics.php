@@ -59,7 +59,7 @@ if (!function_exists("ob_get_clean"))
  * @uses APP
  * @uses MODELS
  */
-function loadModels ()
+function loadModels()
 {
     if(!class_exists('AppModel'))
     {
@@ -71,9 +71,20 @@ function loadModels ()
         {
             require_once(CAKE.'app_model.php');
         }
-        foreach (listClasses(MODELS) as $model_fn)
+    }
+
+    if (phpversion() < 5 && function_exists("overload"))
+    {
+        overload('AppModel');
+    }
+
+    foreach (listClasses(MODELS) as $model_fn)
+    {
+        require_once (MODELS.$model_fn);
+        if (phpversion() < 5 && function_exists("overload"))
         {
-            require_once (MODELS.$model_fn);
+            list($name) = explode('.', $model_fn);
+            overload(Inflector::camelize($name));
         }
     }
 }
@@ -102,6 +113,38 @@ function loadView ($viewClass)
     }
 }
 
+/**
+ * Loads a model by CamelCase name.
+ *
+ * @uses listModules()
+ * @uses APP
+ * @uses MODELS
+ */
+function loadModel($name)
+{
+    $name = Inflector::underscore($name);
+
+    // Make sure AppModel is loaded
+    if(!class_exists('AppModel'))
+    {
+        if(file_exists(APP.'app_model.php'))
+        {
+            require_once(APP.'app_model.php');
+        }
+        else
+        {
+            require_once(CAKE.'app_model.php');
+        }
+    }
+
+	if(file_exists(MODELS.$name.'.php'))
+	{
+        require_once (MODELS.$name.'.php');
+        return true;
+    }
+
+    return false;
+}
 
 /**
  * Loads all controllers.
@@ -134,11 +177,11 @@ function loadControllers ()
 }
 
 /**
-  * Loads a controller and its helper libraries.
-  *
-  * @param string $name Name of controller
-  * @return boolean Success
-  */
+ * Loads a controller and its helper libraries.
+ *
+ * @param  string  $name Name of controller
+ * @return boolean Success
+ */
 function loadController ($name)
 {
     if(!class_exists('AppController'))
@@ -176,44 +219,58 @@ function loadController ($name)
 }
 
 /**
-  * Lists PHP files in given directory.
-  *
-  * @param string $path     Path to scan for files
-  * @return array             List of files in directory
-  */
+ * Returns an array of filenames of PHP files in given directory.
+ *
+ * @param  string $path Path to scan for files
+ * @return array  List of files in directory
+ */
 function listClasses($path)
 {
-   $modules = new Folder($path);
-   return $modules->find('(.+)\.php');
+    $dir = opendir($path);
+
+    while (false !== ($file = readdir($dir)))
+    {
+        if ((substr($file, -3, 3) == 'php'))
+        {
+            $classes[] = $file;
+        }
+    }
+    closedir($dir);
+	return $classes;
 }
 
 /**
-  * Loads configuration files
-  *
-  * @return boolean Success
-  */
-function config ()
+ * Loads configuration files
+ *
+ * @return boolean Success
+ */
+function config()
 {
-   $args = func_get_args();
-   $count = count($args);
-   foreach ($args as $arg)
-   {
-      if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
-      {
-         include_once(CONFIGS.$arg.'.php');
-      }
-      elseif (file_exists(CONFIGS.$arg.'.php'))
-      {
-         include_once (CONFIGS.$arg.'.php');
-         if ($count == 1) return true;
-      }
-      else
-      {
-         if ($count == 1) return false;
-      }
-   }
+    $args = func_get_args();
+    foreach ($args as $arg)
+    {
+        if (('database' == $arg) && file_exists(CONFIGS.$arg.'.php'))
+        {
+            include_once(CONFIGS.$arg.'.php');
+        }
+        elseif (file_exists(CONFIGS.$arg.'.php'))
+        {
+            include_once (CONFIGS.$arg.'.php');
+            if (count($args) == 1)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (count($args) == 1)
+            {
+                return false;
+            }
+        }
+    }
 
-   return true;
+    return true;
 }
 
 /**
@@ -228,11 +285,11 @@ function config ()
  */
 function uses ()
 {
-   $args = func_get_args();
-   foreach ($args as $arg)
-   {
-      require_once(LIBS.strtolower($arg).'.php');
-   }
+    $args = func_get_args();
+    foreach ($args as $arg)
+    {
+        require_once(LIBS.low($arg).'.php');
+    }
 }
 
 /**
@@ -243,32 +300,38 @@ function uses ()
  */
 function vendor($name)
 {
-   $args = func_get_args();
-   foreach ($args as $arg)
-   {
-      require_once(VENDORS.$arg.'.php');
-   }
+    $args = func_get_args();
+    foreach ($args as $arg)
+    {
+        require_once(VENDORS.$arg.'.php');
+    }
 }
 
 /**
- * Print out debug information about given variable.
+ * Prints out debug information about given variable.
  *
  * Only runs if DEBUG level is non-zero.
  *
  * @param boolean $var        Variable to show debug information for.
  * @param boolean $show_html    If set to true, the method prints the debug data in a screen-friendly way.
  */
-function debug($var = false, $show_html = false)
+function debug($var = false, $showHtml = false)
 {
-   if (DEBUG)
-   {
-      print "\n<pre>\n";
-      if ($show_html) $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
-      print_r($var);
-      print "\n</pre>\n";
+    if (DEBUG)
+    {
+        print "\n<pre>\n";
+        ob_start();
+        print_r($var);
+        $var = ob_get_clean();
+
+        if ($showHtml)
+        {
+            $var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
+        }
+
+        print "{$var}\n</pre>\n";
    }
 }
-
 
 if (!function_exists('getMicrotime'))
 {
@@ -289,71 +352,78 @@ if (!function_exists('sortByKey'))
 /**
  * Sorts given $array by key $sortby.
  *
- * @param array $array
- * @param string $sortby
- * @param string $order Sort order asc/desc (ascending or descending).
- * @param integer $type
+ * @param  array   $array
+ * @param  string  $sortby
+ * @param  string  $order  Sort order asc/desc (ascending or descending).
+ * @param  integer $type
  * @return mixed
  */
-function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC)
-{
-    if (!is_array($array))
+    function sortByKey(&$array, $sortby, $order='asc', $type=SORT_NUMERIC)
     {
-        return null;
+        if (!is_array($array))
+        {
+            return null;
+        }
+
+        foreach ($array as $key => $val)
+        {
+            $sa[$key] = $val[$sortby];
+        }
+
+        if ($order == 'asc')
+        {
+        	asort($sa, $type);
+        }
+        else
+        {
+        	arsort($sa, $type);
+        }
+
+        foreach ($sa as $key=>$val)
+        {
+            $out[] = $array[$key];
+        }
+
+        return $out;
     }
-    foreach ($array as $key => $val)
-    {
-        $sa[$key] = $val[$sortby];
-    }
-    if($order == 'asc')
-    {
-        asort($sa, $type);
-    }
-    else
-    {
-        arsort($sa, $type);
-    }
-    foreach ($sa as $key=>$val)
-    {
-        $out[] = $array[$key];
-    }
-    return $out;
-}
 }
 
 if (!function_exists('array_combine'))
 {
 /**
  * Combines given identical arrays by using the first array's values as keys,
- * and the second one's values as values. (Implemented for back-compatibility with PHP4.)
+ * and the second one's values as values. (Implemented for back-compatibility
+ * with PHP4)
  *
- * @param array $a1
- * @param array $a2
+ * @param  array $a1
+ * @param  array $a2
  * @return mixed Outputs either combined array or false.
  */
-function array_combine($a1, $a2)
-{
-    $a1 = array_values($a1);
-    $a2 = array_values($a2);
-    $c1 = count($a1);
-    $c2 = count($a2);
+    function array_combine($a1, $a2)
+    {
+        $a1 = array_values($a1);
+        $a2 = array_values($a2);
+        $c1 = count($a1);
+        $c2 = count($a2);
 
-    if ($c1 != $c2)
-    {
-        return false; // different lenghts
-    }
-    if ($c1 <= 0)
-    {
-        return false; // arrays are the same and both are empty
-    }
+        if ($c1 != $c2)
+        {
+            return false; // different lenghts
+        }
+        if ($c1 <= 0)
+        {
+            return false; // arrays are the same and both are empty
+        }
 
-    $output = array();
-    for ($i = 0; $i < $c1; $i++)
-    {
-        $output[$a1[$i]] = $a2[$i];
+        $output = array();
+
+        for ($i = 0; $i < $c1; $i++)
+        {
+            $output[$a1[$i]] = $a2[$i];
+        }
+
+        return $output;
     }
-    return $output;
-}
 }
 
 /**
@@ -368,7 +438,17 @@ function h($text)
 }
 
 /**
- * Returns an array of all the given parameters, making parameter lists shorter to write.
+ * Returns an array of all the given parameters.
+ *
+ * Example:
+ * <code>
+ * a('a', 'b')
+ * </code>
+ *
+ * Would return:
+ * <code>
+ * array('a', 'b')
+ * </code>
  *
  * @return array
  */
@@ -379,28 +459,46 @@ function a()
 }
 
 /**
- * Hierarchical arrays.
+ * Constructs associative array from pairs of arguments.
+ *
+ * Example:
+ * <code>
+ * aa('a','b')
+ * </code>
+ *
+ * Would return:
+ * <code>
+ * array('a'=>'b')
+ * </code>
  *
  * @return array
- * @todo Explain this method better.
+ */
+function aa()
+{
+    $args = func_get_args();
+
+    for ($l = 0, $c = count($args); $l < $c; $l++)
+    {
+        if ($l+1 < count($args))
+        {
+        	$a[$args[$l]] = $args[$l+1];
+        }
+        else
+        {
+        	$a[$args[$l]] = null;
+        }
+        $l++;
+    }
+    return $a;
+}
+
+/**
+ * @deprecated Renamed to aa(). Version 0.10.
  */
 function ha()
 {
     $args = func_get_args();
-    $count = count($args);
-
-    for($i=0 ; $i < $count ; $i++)
-    {
-        if($i+1 < $count)
-        {
-           $a[$args[$i]] =  $args[$i+1];
-        }
-        else
-        {
-            $a[$args[$i]] = null;
-        }
-    }
-    return $a;
+    return call_user_func_array('aa', $args);
 }
 
 /**
@@ -414,11 +512,43 @@ function e($text)
 }
 
 /**
+ * Convenience method for strtolower().
+ *
+ * @param string $str String to lowercase
+ */
+function low($str)
+{
+    return strtolower($str);
+}
+
+/**
+ * Convenience method for strtoupper().
+ *
+ * @param string $str String to uppercase
+ */
+function up($str)
+{
+    return strtoupper($str);
+}
+
+/**
+ * Convenience method for str_replace().
+ *
+ * @param string $search String to be replaced
+ * @param string $replace String to insert
+ * @param string $subject String to search
+ */
+function r($search, $replace, $subject)
+{
+    return str_replace($search, $replace, $subject);
+}
+
+/**
  * Print_r convenience function, which prints out <PRE> tags around
  * the output of given array. Similar to debug().
  *
- * @see debug
- * @param array $var
+ * @see   debug()
+ * @param array   $var
  */
 function pr($var)
 {
@@ -433,19 +563,18 @@ function pr($var)
 /**
  * Display parameter
  *
- * @param mixed $p Parameter as string or array
+ * @param  mixed  $p Parameter as string or array
  * @return string
  */
 function params($p)
 {
-
-    if(!is_array($p) || count($p) == 0)
+    if (!is_array($p) || count($p) == 0)
     {
         return null;
     }
     else
     {
-        if(is_array($p[0]) && count($p) == 1)
+        if (is_array($p[0]) && count($p) == 1)
         {
             return $p[0];
         }
@@ -458,43 +587,183 @@ function params($p)
 }
 
 /**
- * Returns the REQUEST_URI from the server environment, or, failing that, constructs
- * a new one, using the PHP_SELF constant and other variables.
+ * Returns the REQUEST_URI from the server environment, or, failing that,
+ * constructs a new one, using the PHP_SELF constant and other variables.
  *
- * @return string
+ * @return string URI
  */
 function setUri()
 {
-    if (isset($_SERVER['REQUEST_URI']))
+    if (env('REQUEST_URI'))
     {
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri = env('REQUEST_URI');
     }
     else
     {
-        if (isset($_SERVER['argv']))
+        if (env('argv'))
         {
-            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['argv'][0];
+            $uri = env('argv');
+            $uri = env('PHP_SELF') .'/'. $uri[0];
         }
         else
         {
-            $uri = $_SERVER['PHP_SELF'] .'/'. $_SERVER['QUERY_STRING'];
+            $uri = env('PHP_SELF') .'/'. env('QUERY_STRING');
         }
     }
     return $uri;
 }
 
-function gethost ($ip)
+/**
+ * Gets an environment variable from available sources.
+ * Used as a backup if $_SERVER/$_ENV are disabled.
+ *
+ * @param  string $key Environment variable name.
+ * @return string Environment variable setting.
+ */
+function env($key)
 {
-	if (stristr(getenv('OS'), 'windows'))
-	{
-	    $host = split('Name:',`nslookup $ip`);
-	    return ( trim (isset($host[1]) ? str_replace ("\n".'Address:  '.$ip, '', $host[1]) : $ip));
-	}
-	else
-	{
-	    $host = `host $ip`;
-	    return (($host ? end ( explode (' ', $host)) : $ip));
-	}
+    if (isset($_SERVER[$key]))
+    {
+        return $_SERVER[$key];
+    }
+    elseif (isset($_ENV[$key]))
+    {
+        return $_ENV[$key];
+    }
+    elseif (getenv($key) !== false)
+    {
+        return getenv($key);
+    }
+    return null;
 }
 
+if (!function_exists('file_get_contents'))
+{
+    /**
+     * Returns contents of a file as a string.
+     *
+     * @param  string  $fileName       Name of the file.
+     * @param  boolean $useIncludePath Wheter the function should use the
+     *                                 include path or not.
+     * @return mixed   Boolean false or contents of required file.
+     */
+    function file_get_contents($fileName, $useIncludePath = false)
+    {
+        $res = fopen($fileName, 'rb', $useIncludePath);
+        if ($res === false)
+        {
+            trigger_error('file_get_contents() failed to open stream: No such file or directory', E_USER_WARNING);
+            return false;
+        }
+
+        clearstatcache();
+
+        if ($fileSize = @filesize($fileName))
+        {
+            $data = fread($res, $fileSize);
+        }
+        else
+        {
+            $data = '';
+            while (!feof($res))
+            {
+                $data .= fread($res, 8192);
+            }
+        }
+
+        return "$data\n";
+    }
+}
+
+if (!function_exists('file_put_contents'))
+{
+    /**
+     * Writes data into file.
+     *
+     * If file exists, it will be overwritten. If data is an array, it will be
+     * join()ed with an empty string.
+     *
+     * @param string $fileName File name.
+     * @param mixed  $data     String or array.
+     */
+    function file_put_contents($fileName, $data)
+    {
+        if (is_array($data))
+        {
+            $data = join('', $data);
+        }
+        $res = @fopen($fileName, 'xb');
+        if ($res)
+        {
+            @fwrite($res, $data);
+        }
+    }
+}
+
+/**
+ * Reads/writes temporary data to cache files or session.
+ *
+ * @param  string $path    File path within /tmp to save the file.
+ * @param  mixed  $data    The data to save to the temporary file.
+ * @param  mixed  $expires A valid strtotime string when the data expires.
+ * @param  string $target  The target of the cached data; either 'cache' or 'public'.
+ * @return mixed  The contents of the temporary file.
+ */
+function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
+{
+    if (is_string($expires))
+    {
+        $expires = strtotime($expires);
+    }
+
+    switch (low($target))
+    {
+        case 'cache':
+            $filename = CACHE . $path;
+        break;
+        case 'public':
+            $filename = WWW_ROOT . $path;
+        break;
+    }
+
+    $now      = time();
+    $timediff = $expires - $now;
+    $filetime = @filemtime($filename);
+
+    if ($data == null)
+    {
+        // Read data from file
+        if (file_exists($filename) && $filetime !== false)
+        {
+            if ($filetime + $timediff < $now)
+            {
+                // File has expired
+                @unlink($filename);
+            }
+            else
+            {
+                $data = file_get_contents($filename);
+            }
+        }
+    }
+    else
+    {
+        file_put_contents($filename, $data);
+    }
+    return $data;
+}
+
+/**
+ * Returns a translated string if one is found,
+ * or the submitted message if not found.
+ *
+ * @param  unknown_type $msg
+ * @param  unknown_type $return
+ * @return unknown
+ * @todo Not implemented in 0.10.x.x
+ */
+function __($msg, $return = null)
+{
+        return $msg;
+}
 ?>

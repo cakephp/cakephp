@@ -3,20 +3,20 @@
 
 /**
  *
- * 
+ *
  *
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -30,8 +30,8 @@
 ?>
 <h1>Requires a Database Connection</h1>
 
-<p class="error">Missing Database Connection: Model <?php echo $this->controller->missingConnection;?> requires a database connection
-</p>  
+<p class="error">Missing Database Connection: Model <?php echo $model;?> requires a database connection
+</p>
 
 <p>
 <span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_database.thtml</code>
@@ -42,6 +42,6 @@ view file, a user-customizable error page for handling errors within CakePHP.</s
 <h2>Controller dump:</h2>
 <?php
     unset($this->db);
-    pr($this); 
+    pr($this);
 ?>
 <?php } ?>

@@ -52,9 +52,9 @@ else
 <?php
 if($type == 'Edit')
 {
-   echo "<li>".$html->linkTo('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
+   echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
 }
-   echo "<li>".$html->linkTo('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/index')."</li>";
+   echo "<li>".$html->link('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/index')."</li>";
 
    if($type == 'Edit')
    {
@@ -62,7 +62,7 @@ if($type == 'Edit')
        {
            if( isset( $value['foreignKey'] ) )
            {
-               echo "<li>".$html->linkTo( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
+               echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
            }
        }
    }

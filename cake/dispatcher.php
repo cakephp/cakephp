@@ -32,7 +32,7 @@
 /**
  * List of helpers to include
  */
-uses('error_messages', 'router', DS.'controller'.DS.'controller');
+uses('router', DS.'controller'.DS.'controller');
 
 /**
  * Dispatcher translates URLs to controller-action-paramter triads.
@@ -123,7 +123,8 @@ class Dispatcher extends Object
              {
                  if(preg_match('/([\\.]+)/',$ctrlName))
                  {
-                     $this->error404(strtolower($ctrlName),'Was not found on this server');
+                     return $this->cakeError('error404',array(array('url' => strtolower($ctrlName),
+                                             'message' => 'Was not found on this server')));
                      exit();
                  }
                  else
@@ -136,17 +137,8 @@ class Dispatcher extends Object
 
       if ($missingController)
       {
-         $controller       =& new Controller();
-         $params['action'] = 'missingController';
-         if (empty($params['controller']))
-         {
-             $params['controller'] = "Controller";
-         }
-         else
-         {
-             $params['controller'] = Inflector::camelize($params['controller']."Controller");
-         }
-         $controller->missingController = $params['controller'];
+          return $this->cakeError('missingController',array(array('className' => Inflector::camelize($params['controller']."Controller"),
+                                   'webroot' => $this->webroot)));
       }
       else
       {
@@ -195,22 +187,25 @@ class Dispatcher extends Object
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
       {
           uses(DS.'controller'.DS.'scaffold');
-          $scaffolding = new Scaffold($controller, $params);
-          exit;
+          return new Scaffold($controller, $params);
       }
 
       $controller->constructClasses();
 
       if ($missingAction)
       {
-          $controller->missingAction = $params['action'];
-          $params['action'] = 'missingAction';
+          return $this->cakeError('missingAction',
+                      array(array('className' => Inflector::camelize($params['controller']."Controller"),
+                                  'action' => $params['action'],
+                                  'webroot' => $this->webroot)));
       }
 
       if ($privateAction)
       {
-          $controller->privateAction = $params['action'];
-          $params['action'] = 'privateAction';
+          return $this->cakeError('privateAction',
+                      array(array('className' => Inflector::camelize($params['controller']."Controller"),
+                                  'action' => $params['action'],
+                                  'webroot' => $this->webroot)));
       }
 
       return $this->_invoke($controller, $params );
@@ -249,18 +244,47 @@ class Dispatcher extends Object
        include CONFIGS.'routes.php';
        $params = $Route->parse ($from_url);
 
-       // add submitted form data
-       $params['form'] = $_POST;
-       if (isset($_POST['data']))
+       if (ini_get('magic_quotes_gpc') == 1)
        {
-           $params['data'] = (ini_get('magic_quotes_gpc') == 1)?
-           $this->stripslashes_deep($_POST['data']) : $_POST['data'];
+           if(!empty($_POST))
+           {
+               if(is_array($_POST))
+               {
+                   $params['form'] = array_map('stripslashes', $_POST);
+               }
+               else
+               {
+                   $params['form'] = stripcslashes($_POST);
+               }
+           }
        }
+       else
+       {
+           $params['form'] = $_POST;
+       }
+
+       if (isset($params['form']['data']))
+       {
+               $params['data'] = $params['form']['data'];
+       }
+
        if (isset($_GET))
        {
-           $params['url'] = $this->urldecode_deep($_GET);
-           $params['url'] = (ini_get('magic_quotes_gpc') == 1)?
-           $this->stripslashes_deep($params['url']) : $params['url'];
+           if (ini_get('magic_quotes_gpc') == 1)
+           {
+               if(is_array($_GET))
+               {
+                   $params['url'] = array_map('stripslashes', $_GET);
+               }
+               else
+               {
+                   $params['url'] = stripcslashes($_GET);
+               }
+           }
+           else
+           {
+               $params['url'] = $_GET;
+           }
        }
 
        foreach ($_FILES as $name => $data)
@@ -272,26 +296,6 @@ class Dispatcher extends Object
        $params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];
 
        return $params;
-   }
-
-/**
- * Recursively strips slashes from given array.
- *
- */
-   function stripslashes_deep($val)
-   {
-      return (is_array($val)) ?
-        array_map(array('Dispatcher','stripslashes_deep'), $val) : stripslashes($val);
-   }
-
-/**
- * Recursively performs urldecode on given array.
- *
- */
-   function urldecode_deep($val)
-   {
-      return (is_array($val)) ?
-        array_map(array('Dispatcher','urldecode_deep'), $val) : urldecode($val);
    }
 
 /**
@@ -309,8 +313,8 @@ class Dispatcher extends Object
            $base = BASE_URL.$this->admin;
        }
 
-       $docRoot = $_SERVER['DOCUMENT_ROOT'];
-       $scriptName = $_SERVER['PHP_SELF'];
+       $docRoot = env('DOCUMENT_ROOT');
+       $scriptName = env('PHP_SELF');
 
       // If document root ends with 'webroot', it's probably correctly set
       $r = null;
@@ -360,37 +364,6 @@ class Dispatcher extends Object
           }
       }
       return $base;
-   }
-
-/**
- * Displays an error page (e.g. 404 Not found).
- *
- * @param int $code     Error code (e.g. 404)
- * @param string $name     Name of the error message (e.g. Not found)
- * @param string $message
- * @return unknown
- */
-   function error ($code, $name, $message)
-    {
-        $controller =& new Controller ($this);
-        $controller->base = $this->base;
-        $controller->autoLayout = true;
-        $controller->set(array('code'=>$code, 'name'=>$name, 'message'=>$message));
-        $controller->pageTitle = $code.' '. $name;
-        return $controller->render('errors/error404');
-    }
-
-
-/**
- * Convenience method to display a 404 page.
- *
- * @param string $url         URL that spawned this message, to be included in the output.
- * @param string $message     Message text for the 404 page.
- */
-   function error404 ($url, $message)
-   {
-      header("HTTP/1.0 404 Not Found");
-      $this->error('404', 'Not found', sprintf(ERROR_404, $url, $message));
    }
 }
 ?>

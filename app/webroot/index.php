@@ -67,7 +67,6 @@ require_once ROOT.'cake'.DS.'basics.php';
 require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
 require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
 require_once LIBS.'object.php';
-require_once LIBS.'log.php';
 require_once LIBS.'session.php';
 require_once LIBS.'security.php';
 require_once LIBS.'neat_array.php';
@@ -121,9 +120,8 @@ if (DEBUG)
 
 $TIME_START = getMicrotime();
 
-uses('folder');
 require_once CAKE.'dispatcher.php';
-require_once LIBS.'model'.DS.'dbo'.DS.'dbo_factory.php';
+require_once LIBS.'model'.DS.'connection_manager.php';
 
 config('database');
 

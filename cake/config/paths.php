@@ -3,20 +3,20 @@
 
 /**
  * Short description for file.
- * 
+ *
  * In this file you set paths to different directories used by Cake.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -187,15 +187,19 @@ define ('PEAR',            VENDORS.'Pear'.DS);
  *  Full url prefix
  */
 $s = null;
-if ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] =='on' ))
-{ 
+$https = env('HTTPS');
+if ( (isset($https) && $https =='on' ))
+{
     $s ='s';
 }
-if (isset($_SERVER['HTTP_HOST']))
-{
-    define('FULL_BASE_URL', 'http'.$s.'://'.$_SERVER['HTTP_HOST']);
-}
+unset($https);
 
+$httpHost = env('HTTP_HOST');
+if (isset($httpHost))
+{
+    define('FULL_BASE_URL', 'http'.$s.'://'.$httpHost);
+}
+unset($httpHost);
 /**
  * Web path to the public images directory.
  */

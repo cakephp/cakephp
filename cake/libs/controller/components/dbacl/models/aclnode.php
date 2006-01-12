@@ -3,20 +3,20 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -35,7 +35,7 @@ require_once(CAKE . 'app_model.php');
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * @package    cake
@@ -44,7 +44,7 @@ require_once(CAKE . 'app_model.php');
  *
  */
 class AclNode extends AppModel
-{    
+{
 
 /**
  * Enter description here...
@@ -56,36 +56,29 @@ class AclNode extends AppModel
  * Enter description here...
  *
  */
-   function __construct($object = null, $parent = null)
+   function __construct()
    {
       parent::__construct();
       $this->__setTable();
-      if($object != null)
-      {
-         $this->create($object, $parent);
-      }
-      exit();
    }
 
 /**
  * Enter description here...
  *
- * @param unknown_type $object A new ACL object.  This can be a string for alias-based ACL, or a Model for object-based ACL
- * @param unknown_type $parent The parent object
+ * @param unknown_type $link_id
+ * @param unknown_type $parent_id
+ * @param unknown_type $alias
  * @return unknown
  */
-   function create($object = null, $parent = null) 
+   function create($link_id = 0, $parent_id = null, $alias = '')
    {
-      if (strtolower(get_class($this)) == "aclnode")
-      {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
-         return NULL;
-      }
       parent::create();
 
-      pr($this->__dataVars());
-      exit();
-
+      if (strtolower(get_class($this)) == "aclnode")
+      {
+         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
+         return NULL;
+      }
       extract($this->__dataVars());
 
       if($parent_id == null || $parent_id === 0)
@@ -134,7 +127,7 @@ class AclNode extends AppModel
    {
       if (strtolower(get_class($this)) == "aclnode")
       {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
+         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
          return null;
       }
       extract($this->__dataVars());
@@ -213,16 +206,16 @@ class AclNode extends AppModel
    }
 
 /**
- * The path to a node as an array, where the first element of the array is at the root of the tree, and the last element is the requested node
+ * Enter description here...
  *
- * @param mixed $id
- * @return array
+ * @param unknown_type $id
+ * @return unknown
  */
    function getPath($id)
    {
       if (strtolower(get_class($this)) == "aclnode")
       {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
+         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
          return NULL;
       }
       extract($this->__dataVars());
@@ -236,16 +229,16 @@ class AclNode extends AppModel
    }
 
 /**
- * Gets the child nodes of a specified element
+ * Enter description here...
  *
- * @param mixed $id
- * @return array
+ * @param unknown_type $id
+ * @return unknown
  */
    function getChildren($id)
    {
       if (strtolower(get_class($this)) == "aclnode")
       {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
+         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
          return NULL;
       }
       extract($this->__dataVars());
@@ -255,57 +248,32 @@ class AclNode extends AppModel
    }
 
 /**
- * Gets a reference to a node object
+ * Enter description here...
  *
- * @param unknown_type $obj
+ * @param unknown_type $id
  * @param unknown_type $fKey
  * @return unknown
  */
-   function _resolveID($obj, $fKey)
+   function _resolveID($id, $fKey)
    {
-      extract($this->__dataVars());
-      if(is_object($obj))
-      {
-         if(isset($obj->id) && isset($obj->name))
-         {
-            return "model = '{$obj->name}' and {$secondary_id} = {$obj->id}";
-         }
-         return null;
-      }
-      else if(is_array($obj))
-      {
-         $keys = array_keys($obj);
-         $key1 = $keys[0];
-         if(is_string($key1) && is_array($obj[$key1]) && isset($obj[$key1]['id']))
-         {
-            return "model = '{$key1}' and {$secondary_id} = {$obj[$key1]['id']}";
-         }
-         return null;
-      }
-      else if(is_string($obj))
-      {
-         $path = explode('/', $obj);
-         
-      }
       $key = (is_string($id) ? 'alias' : $fKey);
       $val = (is_string($id) ? '"' . addslashes($id) . '"' : $id);
       return "{$key} = {$val}";
    }
 
 /**
- * Private method: modifies the left and right values of affected nodes in a tree when a node is added or removed
+ * Enter description here...
  *
- * @param string $table aros or acos, depending on the tree to be modified
- * @param int $dir The direction in which to shift the nodes
- * @param int $lft The left position of the node being added or removed
- * @param int $rght The right position of the node being added or removed
+ * @param unknown_type $table
+ * @param unknown_type $dir
+ * @param unknown_type $lft
+ * @param unknown_type $rght
  */
    function _syncTable($table, $dir, $lft, $rght)
    {
       $shift = ($dir == 2 ? 1 : 2);
-      $table = strtolower($table);
-      $this->db->query("UPDATE {$table} SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
-      $this->db->query("UPDATE {$table} SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
+      $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
+      $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
    }
 
 /**

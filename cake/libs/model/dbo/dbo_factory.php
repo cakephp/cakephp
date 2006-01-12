@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -32,12 +32,18 @@
  * Enter description here...
  *
  */
-uses('object');
+if(!class_exists('Object'))
+{
+    uses('object');
+}
 /**
  * Enter description here...
  *
  */
-config('database');
+if (!class_exists('DATABASE_CONFIG'))
+{
+    config('database');
+}
 
 /**
  * DbFactory

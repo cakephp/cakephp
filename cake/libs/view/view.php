@@ -324,11 +324,11 @@ class View extends Object
             // app/view/errors/missing_view.thtml view is missing!
             if (DEBUG)
             {
-               trigger_error(sprintf(ERROR_NO_VIEW, $action, $viewFileName), E_USER_ERROR);
+               trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
             }
             else
             {
-               $this->error('404', 'Not found', sprintf(ERROR_404, '', "missing view \"{$action}\""));
+               $this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
             }
 
             die();
@@ -358,7 +358,7 @@ class View extends Object
          else
          {
             $out = $this->_render($viewFileName, $this->_viewVars, false);
-            trigger_error(sprintf(ERROR_IN_VIEW, $viewFileName, $out), E_USER_ERROR);
+            trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
          }
 
          return true;
@@ -418,7 +418,7 @@ class View extends Object
          if ($out === false)
          {
             $out = $this->_render($layout_fn, $data_for_layout, false);
-            trigger_error(sprintf(ERROR_IN_LAYOUT, $layout_fn, $out), E_USER_ERROR);
+            trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layout_fn, $out), E_USER_ERROR);
             return false;
          }
          else
@@ -428,7 +428,7 @@ class View extends Object
       }
       else
       {
-         trigger_error(sprintf(ERROR_NO_LAYOUT, $this->layout, $layout_fn), E_USER_ERROR);
+         trigger_error(sprintf(__("Could not find layout %s (expected %s), create it first"), $this->layout, $layout_fn), E_USER_ERROR);
          return false;
       }
    }
@@ -605,8 +605,13 @@ class View extends Object
  */
     function &_loadHelpers(&$loaded, $helpers)
     {
-        $helperTags = new Helper();
-        $tags = $helperTags->loadConfig();
+        static $tags;
+        if(empty($tags))
+        {
+            $helperTags = new Helper();
+            $tags = $helperTags->loadConfig();
+        }
+
         foreach ($helpers as $helper)
         {
             $helperCn = $helper.'Helper';

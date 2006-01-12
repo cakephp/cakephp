@@ -61,9 +61,8 @@
                      {
                         //  this is a foreign key, figure out what the display field should be for this model.
                        $otherModelKey = Inflector::underscore($value['modelKey']);
-                       $otherControllerName = $value['controller']; 
-                       $registry = ClassRegistry::getInstance();
-                       $otherModelObject = $registry->getObject( $otherModelKey );
+                       $otherControllerName = $value['controller'];
+                       $otherModelObject = ClassRegistry::getObject( $otherModelKey );
                        $alias = array_search($value['table'],$this->controller->{$model}->alias);
                        if( is_object($otherModelObject) ) 
                        {
@@ -71,16 +70,16 @@
                        } else{
                           $displayText = $row[$alias][$field];
                        }  
-                          echo $html->linkTo( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
+                          echo $html->link( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
                        
                      } else {
                         echo $row[$modelKey][$field]; 
                      } ?>
                </td>
             <?php } // end for each $fieldNames as $field=>value ?>
-               <td class="listactions"><?php echo $html->linkTo('View',"/".$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-                   <?php echo $html->linkTo('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-                  <?php echo $html->linkTo('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+               <td class="listactions"><?php echo $html->link('View',"/".$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                   <?php echo $html->link('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                  <?php echo $html->link('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
                 </td>
    
          </tr>
@@ -90,7 +89,7 @@
     
 </table>
 <ul class="actions">
-    <li><?php echo $html->linkTo('New '.$humanSingularName, '/'.$this->viewPath.'/add'); ?></li>
+    <li><?php echo $html->link('New '.$humanSingularName, '/'.$this->viewPath.'/add'); ?></li>
 </ul>
 
 

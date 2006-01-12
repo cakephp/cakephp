@@ -356,65 +356,61 @@ class Scaffold extends Object {
             $this->controllerClass->helpers[] = 'Form';
         }
 
-        $isDataBaseSet = DboFactory::getInstance($this->controllerClass->useDbConfig);
-        if(!empty($isDataBaseSet))
+        $this->controllerClass->constructClasses();
+        if(isset($this->controllerClass->{$this->modelKey}->ds))
         {
-            $this->controllerClass->constructClasses();
-
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
                $params['action'] === 'show'   || $params['action'] === 'add' ||
                $params['action'] === 'create' || $params['action'] === 'edit' ||
                $params['action'] === 'update' || $params['action'] === 'destroy')
-            {
-                switch ($params['action'])
-                {
-                    case 'index':
-                        $this->_scaffoldIndex($params);
-                    break;
+               {
+                   switch ($params['action'])
+                   {
+                       case 'index':
+                           $this->_scaffoldIndex($params);
+                       break;
 
-                    case 'show':
-                        $this->_scaffoldShow($params);
-                    break;
+                       case 'show':
+                           $this->_scaffoldShow($params);
+                       break;
 
-                    case 'list':
-                        $this->_scaffoldList($params);
-                    break;
+                       case 'list':
+                           $this->_scaffoldList($params);
+                       break;
 
-                    case 'add':
-                        $this->_scaffoldNew($params);
-                    break;
+                       case 'add':
+                           $this->_scaffoldNew($params);
+                       break;
 
-                    case 'edit':
-                        $this->_scaffoldEdit($params);
-                    break;
+                       case 'edit':
+                           $this->_scaffoldEdit($params);
+                       break;
 
-                    case 'create':
-                        $this->_scaffoldCreate($params);
-                    break;
+                       case 'create':
+                           $this->_scaffoldCreate($params);
+                       break;
 
-                    case 'update':
-                        $this->_scaffoldUpdate($params);
-                    break;
+                       case 'update':
+                           $this->_scaffoldUpdate($params);
+                       break;
 
-                    case 'destroy':
-                        $this->_scaffoldDestroy($params);
-                    break;
-                }
-            }
-            else
-            {
-                $this->controllerClass->layout = 'default';
-                $this->controllerClass->missingAction = $params['action'];
-                call_user_func_array(array($this->controllerClass, 'missingAction'), null);
-                exit;
-            }
+                       case 'destroy':
+                           $this->_scaffoldDestroy($params);
+                       break;
+                   }
+               }
+               else
+               {
+                   return $this->cakeError('missingAction',
+                               array(array('className' => Inflector::camelize($params['controller']."Controller"),
+                                           'action' => $params['action'],
+                                           'webroot' => $this->controllerClass->webroot)));
+               }
         }
         else
         {
-            $this->controllerClass->constructClasses();
-            $this->controllerClass->layout = 'default';
-            call_user_func_array(array($this->controllerClass, 'missingDatabase'), null);
-            exit;
+            return $this->cakeError('missingDatabase',
+                        array(array('webroot' => $this->controllerClass->webroot)));
         }
     }
 

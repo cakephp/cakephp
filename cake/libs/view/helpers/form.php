@@ -360,7 +360,6 @@ class FormHelper extends Helper
     function generateSubmitDiv($displayText, $htmlOptions = null)
     {
         return $this->divTag( 'submit', $this->Html->submitTag( $displayText, $htmlOptions) );
-
     }
 
  /**
@@ -373,98 +372,106 @@ class FormHelper extends Helper
     function generateFields( $fields, $readOnly = false )
     {
         $strFormFields = '';
-
         foreach( $fields as $field )
         {
-         if( isset( $field['type'] ) )
-         {
-            //  initialize some optional parameters to avoid the notices
-            if( !isset($field['required'] ) )
-               $field['required'] = false;
-            if( !isset( $field['errorMsg'] ) )
-               $field['errorMsg'] = null;
-            if( !isset( $field['htmlOptions'] ) )
-               $field['htmlOptions'] = array();
-
-            if( $readOnly )
+            if(isset( $field['type']))
             {
-               $field['htmlOptions']['READONLY'] = "readonly";
+                if(!isset($field['required']))
+                {
+                    $field['required'] = false;
+                }
+                if(!isset( $field['errorMsg']))
+                {
+                    $field['errorMsg'] = null;
+                }
+                if(!isset( $field['htmlOptions']))
+                {
+                    $field['htmlOptions'] = array();
+                }
+                if( $readOnly )
+                {
+                    $field['htmlOptions']['READONLY'] = "readonly";
+                }
+
+                switch( $field['type'] )
+                {
+                    case "input" :
+                        if( !isset( $field['size'] ) )
+                        {
+                            $field['size'] = 40;
+                        }
+                        $strFormFields = $strFormFields.$this->generateInputDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
+                    break;
+                    case "checkbox" :
+                        $strFormFields = $strFormFields.$this->generateCheckboxDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['htmlOptions'] );
+                    break;
+                    case "select";
+                    case "selectMultiple";
+                        if( "selectMultiple" == $field['type'] )
+                        {
+                            $field['selectAttr']['multiple'] = 'multiple';
+                            $field['selectAttr']['class'] = 'selectMultiple';
+                        }
+                        if(!isset( $field['selected']))
+                        {
+                            $field['selected'] = null;
+                        }
+                        if(!isset( $field['selectAttr']))
+                        {
+                            $field['selectAttr'] = null;
+                        }
+                        if(!isset( $field['optionsAttr']))
+                        {
+                            $field['optionsAttr'] = null;
+                        }
+                        if($readOnly)
+                        {
+                            $field['selectAttr']['DISABLED'] = true;
+                        }
+                        $strFormFields = $strFormFields.$this->generateSelectDiv( $field['tagName'], $field['prompt'], $field['options'], $field['selected'], $field['selectAttr'], $field['optionsAttr'], $field['required'], $field['errorMsg'] );
+                    break;
+                    case "area";
+                        if(!isset( $field['rows']))
+                        {
+                            $field['rows'] = 10;
+                        }
+                        if(!isset( $field['cols']))
+                        {
+                            $field['cols'] = 60;
+                        }
+                        $strFormFields = $strFormFields.$this->generateAreaDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['cols'], $field['rows'], $field['htmlOptions'] );
+                    break;
+                    case "fieldset";
+
+                        $strFieldsetFields = $this->generateFields( $field['fields'] );
+                        $strFieldSet = sprintf( '
+                        <fieldset><legend>%s</legend><div class="notes"><h4>%s</h4><p class="last">%s</p></div>%s</fieldset>',
+                        $field['legend'], $field['noteHeading'], $field['note'], $strFieldsetFields );
+                        $strFormFields = $strFormFields.$strFieldSet;
+                    break;
+                    case "hidden";
+                        $strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
+                    break;
+                    case "date":
+                        if( !isset( $field['selected']))
+                        {
+                            $field['selected'] = null;
+                        }
+                        $strFormFields = $strFormFields.$this->generateDate( $field['tagName'], $field['prompt'], null, null, null, null, $field['selected']);
+                    break;
+                    case "datetime":
+                        if( !isset( $field['selected']))
+                        {
+                            $field['selected'] = null;
+                        }
+                        $strFormFields = $strFormFields.$this->generateDateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
+                    break;
+                    default:
+                    break;
+                }
             }
-            switch( $field['type'] )
-               {
-                   case "input" :
-                   //  If the size has not been set, initialize it to 40.
-                   if( !isset( $field['size'] ) )
-                   {
-                     $field['size'] = 40;
-                   }
-                      $strFormFields = $strFormFields.$this->generateInputDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
-                   break;
-                   case "checkbox" :
-                      $strFormFields = $strFormFields.$this->generateCheckboxDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['htmlOptions'] );
-                   break;
-                   case "select";
-                   case "selectMultiple";
-                   {
-                      if( "selectMultiple" == $field['type'] )
-                      {
-                         $field['selectAttr']['multiple'] = 'multiple';
-                         $field['selectAttr']['class'] = 'selectMultiple';
-                      }
-                      //  If the selected attribute has not been set, initialize it to null.
-                      if( !isset( $field['selected'] ) )
-                        $field['selected'] = null;
-                      if( !isset( $field['selectAttr'] ) )
-                        $field['selectAttr'] = null;
-                      if( !isset( $field['optionsAttr'] ) )
-                        $field['optionsAttr'] = null;
-
-                      if( $readOnly )
-                        $field['selectAttr']['DISABLED'] = true;
-
-                      $strFormFields = $strFormFields.$this->generateSelectDiv( $field['tagName'], $field['prompt'], $field['options'], $field['selected'], $field['selectAttr'], $field['optionsAttr'], $field['required'], $field['errorMsg'] );
-                   }
-                   break;
-                   case "area";
-                   {
-                      if( !isset( $field['rows'] ) )
-                        $field['rows'] = 10;
-                      if( !isset( $field['cols'] ) )
-                        $field['cols'] = 60;
-                      $strFormFields = $strFormFields.$this->generateAreaDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['cols'], $field['rows'], $field['htmlOptions'] );
-                   }
-                   break;
-                   case "fieldset";
-                   $strFieldsetFields = $this->generateFields( $field['fields'] );
-
-                   $strFieldSet = sprintf( '
-                       <fieldset>
-                           <legend>%s</legend>
-                           <div class="notes">
-                               <h4>%s</h4>
-                               <p class="last">%s</p>
-                           </div>
-                           %s
-                       </fieldset>', $field['legend'], $field['noteHeading'], $field['note'], $strFieldsetFields );
-                      $strFormFields = $strFormFields.$strFieldSet;
-                   break;
-                   case "hidden";
-                     $strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
-                     break;
-                  case "date":
-                    $strFormFields = $strFormFields.$this->generateDate( $field['tagName'], $field['prompt'], null, null, null, null, $field['selected']);
-                  break;
-                  case "datetime":
-                    $strFormFields = $strFormFields.$this->generateDateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
-                  break;
-                   default:
-                   //bugbug:  i don't know how to put out a notice that an unknown type was entered.
-                   break;
-               } // end switch $field['type']
-         } // end if isset $field['type']
         }
         return $strFormFields;
     }
 }
-
 ?>

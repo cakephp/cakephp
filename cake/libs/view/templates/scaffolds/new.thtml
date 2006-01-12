@@ -38,7 +38,7 @@
 </form>
 <ul class='actions'>
 <?php
-   echo "<li>".$html->linkTo('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/index')."</li>";
+   echo "<li>".$html->link('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/index')."</li>";
 
 ?>
 </ul>

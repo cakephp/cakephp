@@ -3,20 +3,20 @@
 
 /**
  * Access Control List abstract class.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -29,14 +29,7 @@
  */
 
 /**
- * Enter description here...
- *
- * @return AclBase
- */
-uses('error_messages');
-
-/**
- * Access Control List abstract class. Not to be instantiated. 
+ * Access Control List abstract class. Not to be instantiated.
  * Subclasses of this class are used by AclComponent to perform ACL checks in Cake.
  *
  * @package cake
@@ -57,7 +50,7 @@ class AclBase
       //No instantiations or constructor calls (even statically)
       if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase"))
       {
-         trigger_error(ERROR_ABSTRACT_CONSTRUCTION, E_USER_ERROR);
+         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
          return NULL;
       }
 
@@ -70,10 +63,8 @@ class AclBase
  * @param unknown_type $aco
  * @param unknown_type $action
  */
-   function check($aro, $aco, $action = "*")
-   {
+   function check($aro, $aco, $action = "*") {}
 
-   }
 }
 
 ?>

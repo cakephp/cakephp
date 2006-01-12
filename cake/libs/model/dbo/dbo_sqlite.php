@@ -3,7 +3,7 @@
 
 /**
  * SQLite layer for DBO
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
@@ -16,11 +16,11 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.9.0
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -35,14 +35,14 @@ uses('model'.DS.'dbo'.DS.'dbo');
 
 /**
  * DBO implementation for the SQLite DBMS.
- * 
+ *
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.9.0
  */
-class DBO_SQLite extends DBO 
+class DBO_SQLite extends DBO
 {
 
 /**
@@ -51,9 +51,9 @@ class DBO_SQLite extends DBO
  * @param array $config Configuration array for connecting
  * @return mixed
  */
-   function connect($config) 
+   function connect($config)
    {
-      if ($config) 
+      if ($config)
       {
          $this->config = $config;
          $this->_conn = $config['connect']($config['file']);
@@ -75,7 +75,7 @@ class DBO_SQLite extends DBO
  *
  * @return boolean True if the database could be disconnected, else false
  */
-   function disconnect() 
+   function disconnect()
    {
       return sqlite_close($this->_conn);
    }
@@ -86,7 +86,7 @@ class DBO_SQLite extends DBO
  * @param string $sql SQL statement
  * @return resource Result resource identifier
  */
-   function execute($sql) 
+   function execute($sql)
    {
       return sqlite_query($this->_conn, $sql);
    }
@@ -96,7 +96,7 @@ class DBO_SQLite extends DBO
  *
  * @return array The fetched row as an array
  */
-   function fetchRow() 
+   function fetchRow()
    {
       return sqlite_fetch_array($this->_result);
    }
@@ -106,27 +106,27 @@ class DBO_SQLite extends DBO
  *
  * @return array Array of tablenames in the database
  */
-   function tablesList() 
+   function tablesList()
    {
       $result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
 
-      if (!$result) 
+      if (!$result)
       {
          trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
          exit;
       }
-      else 
+      else
       {
          $tables = array();
-         while ($line = sqlite_fetch_array($result)) 
+         while ($line = sqlite_fetch_array($result))
          {
             $tables[] = $line[0];
          }
          return $tables;
       }
    }
-   
- /**
+
+/**
  * Returns an array of the fields in given table name.
  *
  * @param string $tableName     Name of database table to inspect
@@ -145,7 +145,7 @@ class DBO_SQLite extends DBO
       return $fields;
    }
 
- /**
+/**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
  * @param string $data String to be prepared for use in an SQL statement
@@ -156,17 +156,17 @@ class DBO_SQLite extends DBO
       return "'" . sqlite_escape_string($data) . "'";
    }
 
- /**
+/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
  */
-   function lastError() 
+   function lastError()
    {
       return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
    }
 
- /**
+/**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
  * @return int Number of affected rows
@@ -176,28 +176,28 @@ class DBO_SQLite extends DBO
       return $this->_result? sqlite_changes($this->_conn): false;
    }
 
- /**
- * Returns number of rows in previous resultset. If no previous resultset exists, 
+/**
+ * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
  *
  * @return int Number of rows in resultset
  */
-   function lastNumRows() 
+   function lastNumRows()
    {
       return $this->_result? sqlite_num_rows($this->_result): false;
    }
 
- /**
+/**
  * Returns the ID generated from the previous INSERT operation.
  *
- * @return int 
+ * @return int
  */
-   function lastInsertId() 
+   function lastInsertId()
    {
       return sqlite_last_insert_rowid($this->_conn);
    }
 
- /**
+/**
  * Returns a limit statement in the correct format for the particular database.
  *
  * @param int $limit         Limit of results returned

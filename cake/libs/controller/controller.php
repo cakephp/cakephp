@@ -150,14 +150,6 @@ class Controller extends Object
     var $autoLayout = true;
 
 /**
- * Database configuration to use (see /config/database.php)
- *
- * @var string
- * @access public
- */
-    var $useDbConfig = 'default';
-
-/**
  * Enter description here...
  *
  * @var string
@@ -218,9 +210,6 @@ class Controller extends Object
  */
     function constructClasses()
     {
-        $dboFactory = DboFactory::getInstance($this->useDbConfig);
-        $this->db =& $dboFactory;
-
         if (!empty($this->components))
         {
             $component =& new Component($this);
@@ -263,11 +252,6 @@ class Controller extends Object
         }
         elseif ($this->uses)
         {
-            if (!$this->db)
-            {
-                die("Controller::__construct() : ".$this->name." controller needs database access, exiting.");
-            }
-
             $uses = is_array($this->uses)? $this->uses: array($this->uses);
 
             foreach ($uses as $modelClass)
@@ -281,7 +265,8 @@ class Controller extends Object
                 }
                 else
                 {
-                    die("Controller::__construct() : ".ucfirst($this->name)." requires missing model {$modelClass}, exiting.");
+                    return $this->cakeError('missingTable',array(array('className' => $modelClass,
+                                                                       'webroot' => '')));
                 }
             }
         }
@@ -494,11 +479,10 @@ class Controller extends Object
 
         $model = $this->modelClass;
         $modelKey = $this->modelKey;
-        $table = $this->{$model}->table;
+        $table = $this->{$model}->source;
         $association = array_search($table,$this->{$model}->alias);
 
-        $classRegistry =& ClassRegistry::getInstance();
-        $objRegistryModel = $classRegistry->getObject($modelKey);
+        $objRegistryModel = ClassRegistry::getObject($modelKey);
 
         foreach ($objRegistryModel->_tableInfo as $tables)
         {
@@ -506,7 +490,7 @@ class Controller extends Object
             {
                 $alias = null;
                 //  set up the prompt
-                if( $objRegistryModel->isForeignKey($tabl['name']) )
+                if ($objRegistryModel->isForeignKey($tabl['name']))
                 {
                     $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
@@ -541,7 +525,7 @@ class Controller extends Object
               $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
 
              //  Now, find out if this is a required field.
-             //$validationFields = $classRegistry->getObject($table)->validate;
+             //$validationFields = ClassRegistry::getObject($table)->validate;
              $validationFields = $objRegistryModel->validate;
              if( isset( $validationFields[ $tabl['name'] ] ) )
              {
@@ -580,29 +564,28 @@ class Controller extends Object
                  case "varchar":
                  case "char":
                  {
-                     if( isset( $fieldNames[ $tabl['name']]['foreignKey'] ) )
+                     if (isset($fieldNames[ $tabl['name']]['foreignKey']))
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
                          //  This is a foreign key select dropdown box.  now, we have to add the options.
                          $fieldNames[ $tabl['name']]['options'] = array();
 
                          //  get the list of options from the other model.
-                         $registry = ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+                         $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
 
-                         if( is_object($otherModel) )
+                         if (is_object($otherModel))
                          {
-                             if( $doCreateOptions )
+                             if ($doCreateOptions)
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 foreach( $otherModel->findAll() as $pass )
+                                 foreach ($otherModel->findAll() as $pass)
                                  {
-                                     foreach( $pass as $key=>$value )
+                                     foreach ($pass as $key => $value)
                                      {
 
-                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value[$otherModel->primaryKey] ) && isset( $value[$otherDisplayField] ) )
+                                         if($alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField]))
                                          {
-                                             $fieldNames[ $tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
+                                             $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
                                      }
                                  }
@@ -641,7 +624,7 @@ class Controller extends Object
                      //  for foreign key autonumber fields, we'll set the type to 'key' so that it does not display in the input form.
 
                      $charCount = strlen($this->$model->primaryKey);
-                     if( 0 == strncmp($tabl['name'], $this->$model->primaryKey, $charCount) )
+                     if(0 == strncmp($tabl['name'], $this->$model->primaryKey, $charCount))
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'hidden';
                      }
@@ -652,19 +635,18 @@ class Controller extends Object
                          $fieldNames[ $tabl['name']]['options'] = array();
 
                          //  get the list of options from the other model.
-                         $registry = ClassRegistry::getInstance();
-                         $otherModel = $registry->getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+                         $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
 
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 foreach( $otherModel->findAll() as $pass )
+                                 foreach($otherModel->findAll() as $pass)
                                  {
-                                     foreach( $pass as $key=>$value )
+                                     foreach($pass as $key => $value)
                                      {
-                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value[$otherModel->primaryKey] ) && isset( $value[$otherDisplayField] ) )
+                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset($value[$otherModel->primaryKey]) && isset($value[$otherDisplayField]))
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
                                          }
@@ -700,15 +682,17 @@ class Controller extends Object
                case "date":
                case "datetime":
                {
-                  if( 0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8) )
-                  $fieldNames[ $tabl['name']]['type'] = $type;
+                  if(0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8))
+                  {
+                      $fieldNames[ $tabl['name']]['type'] = $type;
+                  }
                   if(isset($data[$model][$tabl['name']]))
                   {
                       $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
                   }
                   else
                   {
-                      $fieldNames[ $tabl['name']]['selected'] = null;
+                      $ieldNames[ $tabl['name']]['selected'] = null;
                   }
                }
                break;
@@ -721,14 +705,14 @@ class Controller extends Object
          }
            // now, add any necessary hasAndBelongsToMany list boxes
            //  loop through the many to many relations to make a list box.
-          foreach( $objRegistryModel->_manyToMany as $relation )
-         {
-            //list($modelName) = $relation;
-            list($manyAssociation, $modelName, $value) = $relation;
+          foreach($objRegistryModel->hasAndBelongsToMany as $relation => $relData)
+          {
+            $modelName = $relData['className'];
+            $manyAssociation = $relation;
             $modelKeyM = Inflector::underscore($modelName);
             $modelObject = new $modelName();
 
-            if( $doCreateOptions )
+            if($doCreateOptions)
               {
                   $otherDisplayField = $modelObject->getDisplayField();
                   $fieldNames[$modelKeyM]['model'] = $modelName;
@@ -736,11 +720,11 @@ class Controller extends Object
                   $fieldNames[$modelKeyM]['type'] = "selectMultiple";
                   $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
 
-                  foreach( $modelObject->findAll() as $pass )
+                  foreach($modelObject->findAll() as $pass)
                   {
-                      foreach( $pass as $key=>$value )
+                      foreach($pass as $key=>$value)
                       {
-                          if( $key == $modelName && isset( $value[$modelObject->primaryKey] ) && isset( $value[$otherDisplayField] ) )
+                          if($key == $modelName && isset($value[$modelObject->primaryKey]) && isset( $value[$otherDisplayField]))
                           {
                               $fieldNames[$modelKeyM]['options'][$value[$modelObject->primaryKey]] = $value[$otherDisplayField];
                           }
@@ -759,6 +743,6 @@ class Controller extends Object
 
       return $fieldNames;
     }
-}
 
+}
 ?>

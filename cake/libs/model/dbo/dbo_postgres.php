@@ -3,24 +3,24 @@
 
 /**
  * PostgreSQL layer for DBO.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.9.1.114
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -31,41 +31,75 @@
 /**
   * Include DBO.
   */
-uses('model'.DS.'dbo'.DS.'dbo');
+uses('model'.DS.'datasources'.DS.'dbo_source');
 
 /**
  * PostgreSQL layer for DBO.
- * 
+ *
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.9.1.114
  */
-class DBO_Postgres extends DBO 
+class  DboPostgres extends DboSource
 {
-   
+
+
+   var $description = "PostgreSQL DBO Driver";
+
+   var $_baseConfig = array('persistent' => true,
+                            'host'       => 'localhost',
+                            'login'      => 'root',
+                            'password'   => '',
+                            'database'   => 'cake',
+                            'port'       => 3306
+                          );
+
+   var $columns = array(
+        'primary_key' => array('name' => 'serial primary key'),
+        'string'      => array('name' => 'varchar', 'limit' => '255'),
+        'text'        => array('name' => 'text'),
+        'integer'     => array('name' => 'integer'),
+        'float'       => array('name' => 'float'),
+        'datetime'    => array('name' => 'timestamp'),
+        'timestamp'   => array('name' => 'timestamp'),
+        'time'        => array('name' => 'time'),
+        'date'        => array('name' => 'date'),
+        'binary'      => array('name' => 'bytea'),
+        'boolean'     => array('name' => 'boolean')
+   );
+
+
+
 /**
   * Connects to the database using options in the given configuration array.
   *
-  * @param array $config Configuration array for connecting
   * @return True if successfully connected.
   */
-   function connect ($config) 
+   function connect ()
    {
-      if ($config) 
+      $config = $this->config;
+      if ($config['persistent'])
       {
-         $this->config = $config;
-         $this->_conn = $config['connect']("host={$config['host']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
+          $connect = 'pg_pconnect';
       }
-      $this->connected = $this->_conn? true: false;
-
-      if($this->connected)
-         return true;
       else
       {
-         //die('Could not connect to DB.');
+          $connect = 'pg_connect';
       }
+
+      $this->connection = $connect("dbname={$config['database']} user={$config['login']} password={$config['password']}");
+      if ($this->connection)
+      {
+          $this->connected = true;
+      }
+      else
+      {
+          $this->connected = false;
+      }
+
+      return $this->connected;
    }
 
 /**
@@ -73,9 +107,9 @@ class DBO_Postgres extends DBO
   *
   * @return boolean True if the database could be disconnected, else false
   */
-   function disconnect () 
+   function disconnect ()
    {
-      return pg_close($this->_conn);
+      return pg_close($this->connection);
    }
 
 /**
@@ -84,9 +118,34 @@ class DBO_Postgres extends DBO
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-   function execute ($sql) 
+   function __execute ($sql)
    {
-      return pg_query($this->_conn, $sql);
+      return pg_query($this->connection, $sql);
+   }
+
+   function query ()
+   {
+      $args = func_get_args();
+      echo "<pre>";
+      print_r($args);
+      echo "</pre>";
+      die();
+      if (count($args) == 1)
+      {
+         return $this->fetchAll($args[0]);
+      }
+      elseif (count($args) > 1 && strpos($args[0], 'findBy') === 0)
+      {
+         $field = Inflector::underscore(str_replace('findBy', '', $args[0]));
+         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         return $args[2]->find($query);
+      }
+      elseif (count($args) > 1 && strpos($args[0], 'findAllBy') === 0)
+      {
+         $field = Inflector::underscore(str_replace('findAllBy', '', $args[0]));
+         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         return $args[2]->findAll($query);
+      }
    }
 
 /**
@@ -94,7 +153,7 @@ class DBO_Postgres extends DBO
   *
   * @return array The fetched row as an array
   */
-   function fetchRow () 
+   function fetchRow ()
    {
        return pg_fetch_array($this->_result);
    }
@@ -104,7 +163,7 @@ class DBO_Postgres extends DBO
   *
   * @return array Array of tablenames in the database
   */
-   function tablesList () 
+   function listSources ()
    {
       $sql = "SELECT a.relname AS name
          FROM pg_class a, pg_user b
@@ -112,17 +171,20 @@ class DBO_Postgres extends DBO
          AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
          AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname));";
 
-      $result = $this->all($sql);
+      $this->execute($sql);
+      $result = $this->fetchRow();
 
-      if (!$result) 
+      if (!$result)
       {
-         trigger_error(ERROR_NO_TABLE_LIST, E_USER_ERROR);
-         exit;
+         return null;
       }
-      else 
+      else
       {
          $tables = array();
-         foreach ($result as $item) $tables[] = $item['name'];
+         foreach ($result as $item)
+         {
+             $tables[] = $item['name'];
+         }
          return $tables;
       }
    }
@@ -136,7 +198,7 @@ class DBO_Postgres extends DBO
    function fields ($tableName)
    {
       $sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$tableName}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
-      
+
       $fields = false;
       foreach ($this->all($sql) as $field) {
          $fields[] = array(
@@ -153,7 +215,18 @@ class DBO_Postgres extends DBO
   * @param string $data String to be prepared for use in an SQL statement
   * @return string Quoted and escaped
   */
-   function prepareValue ($data)
+   function name ($data)
+   {
+      return "'". $data."'";
+   }
+
+/**
+  * Returns a quoted and escaped string of $data for use in an SQL statement.
+  *
+  * @param string $data String to be prepared for use in an SQL statement
+  * @return string Quoted and escaped
+  */
+   function value ($data)
    {
       return "'".pg_escape_string($data)."'";
    }
@@ -163,10 +236,14 @@ class DBO_Postgres extends DBO
   *
   * @return string Error message
   */
-   function lastError () 
+   function lastError ()
    {
-      $last_error = pg_last_error($this->_conn);
-      return $last_error? $last_error: null;
+      $last_error = pg_last_error($this->connection);
+      if ($last_error)
+      {
+          return $last_error;
+      }
+      return null;
    }
 
 /**
@@ -176,30 +253,38 @@ class DBO_Postgres extends DBO
   */
    function lastAffected ()
    {
-      return $this->_result? pg_affected_rows($this->_result): false;
+      if ($this->_result)
+      {
+          return pg_affected_rows($this->_result);
+      }
+      return false;
    }
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists, 
+  * Returns number of rows in previous resultset. If no previous resultset exists,
   * this returns false.
   *
   * @return int Number of rows in resultset
   */
-   function lastNumRows () 
+   function lastNumRows ()
    {
-      return $this->_result? pg_num_rows($this->_result): false;
+      if ($this->_result)
+      {
+          return pg_num_rows($this->_result);
+      }
+      return false;
    }
 
 /**
   * Returns the ID generated from the previous INSERT operation.
   *
-  * @param string $table Name of the database table
+  * @param string $source Name of the database table
   * @param string $field Name of the ID database field. Defaults to "id"
-  * @return int 
+  * @return int
   */
-   function lastInsertId ($table, $field='id') 
+   function lastInsertId ($source, $field='id')
    {
-      $sql = "SELECT CURRVAL('{$table}_{$field}_seq') AS max";
+      $sql = "SELECT CURRVAL('{$source}_{$field}_seq') AS max";
       $res = $this->rawQuery($sql);
       $data = $this->fetchRow($res);
       return $data['max'];
@@ -212,9 +297,14 @@ class DBO_Postgres extends DBO
  * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-   function selectLimit ($limit, $offset=null)
+   function limit ($limit, $offset = null)
    {
-      return " LIMIT {$limit}".($offset? " OFFSET {$offset}": null);
+      $rt = ' LIMIT ' . $limit;
+      if ($offset)
+      {
+          $rt .= ' OFFSET ' . $offset;
+      }
+      return $rt;
    }
 
 }

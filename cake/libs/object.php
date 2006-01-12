@@ -141,98 +141,6 @@ class Object
    }
 
 /**
- * Renders the Missing Controller web page.
- *
- */
-   function missingController()
-   {
-       //$this->autoLayout = true;
-       $this->pageTitle = 'Missing Controller';
-       $this->render('../errors/missingController');
-       exit();
-   }
-
-/**
- * Renders the Missing Action web page.
- *
- */
-   function missingAction()
-   {
-       //$this->autoLayout = true;
-       $this->pageTitle = 'Missing Method in Controller';
-       $this->render('../errors/missingAction');
-       exit();
-   }
-
-/**
- * Renders the Private Action web page.
- *
- */
-   function privateAction()
-   {
-       //$this->autoLayout = true;
-       $this->pageTitle = 'Trying to access private method in class';
-       $this->render('../errors/privateAction');
-       exit();
-   }
-
-/**
- * Renders the Missing View web page.
- *
- */
-   function missingView()
-   {
-      //We are simulating action call below, this is not a filename!
-      //$this->autoLayout = true;
-      $this->missingView = $this->name;
-      $this->pageTitle = 'Missing View';
-      $this->render('../errors/missingView');
-       exit();
-   }
-
-/**
- * Renders the Missing Database web page.
- *
- */
-    function missingDatabase()
-    {
-        //$this->autoLayout = true;
-        $this->pageTitle = 'Scaffold Missing Database Connection';
-        $this->render('../errors/missingScaffolddb');
-        exit();
-    }
-
-/**
- * Renders the Missing Table web page.
- *
- */
-    function missingTable($tableName)
-    {
-        $error =& new Controller();
-        $error->constructClasses();
-        $error->missingTable = $this->table;
-        $error->missingTableName = $tableName;
-        $error->pageTitle = 'Missing Database Table';
-        $error->render('../errors/missingTable');
-        exit();
-    }
-
-/**
- * Renders the Missing Table web page.
- *
- */
-    function missingConnection()
-    {
-        $error =& new Controller();
-        $error->constructClasses();
-        $error->missingConnection = $this->name;
-        //$error->autoLayout = true;
-        $error->pageTitle = 'Missing Database Connection';
-        $error->render('../errors/missingDatabase');
-        exit();
-    }
-
-/**
  * Renders the Missing Helper file web page.
  *
  */
@@ -257,6 +165,15 @@ class Object
         $this->render('../errors/missingHelperClass');
         exit();
     }
+
+   function cakeError($method, $messages)
+   {
+       if(!class_exists('ErrorHandler'))
+       {
+           uses('error');
+       }
+       return new ErrorHandler($method, $messages);
+   }
 }
 
 ?>

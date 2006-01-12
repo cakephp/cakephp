@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -39,8 +39,7 @@
  * release/app/.htaccess
  * release/app/webroot/.htaccess
  */
-//define ('BASE_URL', $_SERVER['SCRIPT_NAME']);
-
+//define ('BASE_URL', env('SCRIPT_NAME');
 
 /**
  * Set debug level here:
@@ -65,6 +64,12 @@ define('CAKE_SESSION_COOKIE', 'CAKEPHP');
  *
  */
 define('CAKE_SECURITY', 'high');
+
+/**
+ * Set a random string of used in session.
+ *
+ */
+define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 
 /**
  * CakePHP includes 3 types of session saves

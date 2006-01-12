@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc.
+ * Copyright (c) 2005, Cake Software Foundation, Inc. 
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
+ * @subpackage   cake.cake.libs.model.datasources.dbo
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -32,10 +32,7 @@
  * Enter description here...
  *
  */
-if(!class_exists('Object'))
-{
-    uses('object');
-}
+uses('object');
 
 /**
  * Purpose: DBO/ADO
@@ -57,7 +54,7 @@ if(!class_exists('Object'))
  *    'database'=>'database'));
  *
  *  // read the whole query result array (of rows)
- * $all_rows = $db->all("SELECT a,b,c FROM table");
+ * $all_rows = $db->fetchAll("SELECT a,b,c FROM table");
  *
  *  // read the first row with debugging on
  *  $first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
@@ -65,7 +62,7 @@ if(!class_exists('Object'))
  *  // emulate the usual way of reading query results
  *  if ($db->query("SELECT a,b,c FROM table"))
  *    {
- *      while ( $row = $db->farr() )
+ *      while ($row = $db->fetchArray())
  *          {
  *          print $row['a'].$row['b'].$row['c'];
  *      }
@@ -76,7 +73,7 @@ if(!class_exists('Object'))
  * </code>
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.dbo
+ * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
 class DBO extends Object
@@ -215,7 +212,7 @@ class DBO extends Object
  * Destructor. Closes connection to the database.
  *
  */
-   function __destruct()
+   function __destructor()
    {
       $this->close();
    }
@@ -266,9 +263,9 @@ class DBO extends Object
       }
    }
 
-   function tables()
+   function sources ()
    {
-      return array_map('strtolower', $this->tablesList());
+      return array_map('strtolower', $this->listSources());
    }
 
 /**
@@ -332,7 +329,7 @@ class DBO extends Object
  */
    function one ($sql)
    {
-      return $this->query($sql)? $this->farr(): false;
+      return $this->query($sql)? $this->fetchArray(): false;
    }
 
 /**
@@ -347,7 +344,7 @@ class DBO extends Object
       if($this->query($sql))
       {
          $out=array();
-         while ($item = $this->farr(null, true))
+         while ($item = $this->fetchArray(null, true))
          {
             $out[] = $item;
          }

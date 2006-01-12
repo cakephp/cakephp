@@ -2,21 +2,21 @@
 /* SVN FILE: $Id$ */
 
 /**
- * This is core configuration file. 
- * 
+ * This is core configuration file.
+ *
  * Use it to configure core behaviour ofCake.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -43,7 +43,7 @@ uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aros_aco');
  * @subpackage cake.cake.app.controllers.components.dbacl
  */
 
-class DB_ACL extends AclBase 
+class DB_ACL extends AclBase
 {
 
 /**
@@ -52,9 +52,9 @@ class DB_ACL extends AclBase
  */
    function __construct()
    {
-      
+
    }
-   
+
 /**
  * Enter description here...
  *
@@ -69,7 +69,7 @@ class DB_ACL extends AclBase
       $Perms = new ArosAco();
       $Aro = new Aro();
       $Aco = new Aco();
-      
+
       if($aro == null || $aco == null)
       {
          return false;
@@ -83,11 +83,6 @@ class DB_ACL extends AclBase
       if($action != '*' && !in_array($permKeys, '_' . $action))
       {
          trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_ERROR);
-      }
-
-      if($aroPath == false || $aroPath == null || count($aroPath) == 0 || $tmpAcoPath == false || $tmpAcoPath == null || count($tmpAcoPath) == 0)
-      {
-         return null;
       }
 
       foreach($tmpAcoPath as $a)
@@ -195,7 +190,7 @@ class DB_ACL extends AclBase
          $save['id'] = $perms['link'][0]['aros_acos']['id'];
       }
       //return $Perms->save(array('ArosAco' => $save));
-      
+
       if(isset($save['id']))
       {
          $q = 'update aros_acos set ';
@@ -213,7 +208,7 @@ class DB_ACL extends AclBase
       {
          $q = 'insert into aros_acos (' . implode(', ', array_keys($save)) . ') values (' . implode(', ', $save) . ')';
       }
-      
+
       $Perms->db->query($q);
       return true;
    }
@@ -309,7 +304,7 @@ class DB_ACL extends AclBase
    {
       $Aro = new Aro();
       $Aco = new Aco();
-   
+
       $qAro = (is_string($aro) ? "alias = '" . addslashes($aro) . "'" : "user_id   = {$aro}");
       $qAco = (is_string($aco) ? "alias = '" . addslashes($aco) . "'" : "object_id = {$aco}");
 

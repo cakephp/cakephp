@@ -608,7 +608,7 @@ class HtmlHelper extends Helper
 
         if ($error == $this->tagIsInvalid($this->model, $this->field))
         {
-            return sprintf(SHORT_ERROR_MESSAGE, is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
+            return sprintf('<div class="error_message">%s</div>', is_array($text)? (empty($text[$error-1])? 'Error in field': $text[$error-1]): $text);
         }
         else
         {

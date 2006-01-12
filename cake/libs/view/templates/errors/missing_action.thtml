@@ -28,34 +28,37 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<?php $controller = Inflector::camelize($this->name)."Controller"; ?>
 
 <h1>Missing Method in <?php echo $controller;?></h1>
 
-<p class="error">You are seeing this error because the action <em><?php echo $this->controller->missingAction;?></em>
+<p class="error">You are seeing this error because the action <em><?php echo $action;?></em>
   is not defined in controller <em><?php echo $controller;?></em>
 </p>
 
 
 <p>
-<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_action.thtml</code>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <strong>app/views/errors/missing_action.thtml</strong>
 view file, a user-customizable error page for handling invalid action dispatches.</span>
 </p>
 
 <p>
 <strong>Fatal</strong>: Create Method:
 </p>
+<p>&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class <?php echo $controller;?> extends AppController<br />
+&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function <?php echo $action;?>()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br /><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+?&gt;<br />
+</p>
 <p>
-<?php echo "<pre>&lt;?php\n\nclass " . $controller ." extends AppController {\n
-    function ".$this->controller->missingAction."()
-    {
-    }
-}\n?&gt;</pre>"; ?>
 in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($controller).".php"; ?>
 </p>
 
 <p>
-<strong>Error</strong>: Unable to execute action <em><?php echo $this->controller->missingAction;?></em> in
+<strong>Error</strong>: Unable to execute action <em><?php echo $action;?></em> in
 <em><?php echo $controller;?></em>
 </p>
 

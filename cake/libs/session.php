@@ -56,12 +56,6 @@ class CakeSession extends Object
  *
  * @var unknown_type
  */
-    var $ip         = false;
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
     var $userAgent  = false;
 /**
  * Enter description here...
@@ -90,11 +84,23 @@ class CakeSession extends Object
 /**
  * Enter description here...
  *
+ * @var unknown_type
+ */
+    var $time       = false;
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $sessionTime = false;
+/**
+ * Enter description here...
+ *
  * @return unknown
  */
     function __construct($base = null)
     {
-        $this->host = $_SERVER['HTTP_HOST'];
+        $this->host = env('HTTP_HOST');
 
         if (empty($base))
         {
@@ -110,24 +116,17 @@ class CakeSession extends Object
             $this->host = substr($this->host,0, strpos($this->host, ':'));
         }
 
-        if(!empty($_SERVER['HTTP_X_FORWARDED_FOR']))
+        if(env('HTTP_USER_AGENT') != null)
         {
-            $this->ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }
-        else
-        {
-            $this->ip = $_SERVER['REMOTE_ADDR'];
-        }
-
-        if(!empty($_SERVER['HTTP_USER_AGENT']))
-        {
-            $this->userAgent = md5($_SERVER['HTTP_USER_AGENT']);
+            $this->userAgent = md5(env('HTTP_USER_AGENT').CAKE_SESSION_STRING);
         }
         else
         {
             $this->userAgent = "";
         }
 
+        $this->time = time();
+        $this->sessionTime = $this->time + (Security::inactiveMins() * 60);
         $this->security = CAKE_SECURITY;
         $this->_initSession();
         $this->_begin();
@@ -298,6 +297,26 @@ class CakeSession extends Object
         echo "</pre>";
         die();
     }
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
+    function _destroyInvalid()
+    {
+        $sessionpath = session_save_path();
+        if (empty($sessionpath))
+        {
+            $sessionpath = "/tmp";
+        }
+        if (isset($_COOKIE[session_name()]))
+        {
+            setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
+        }
+        $file = $sessionpath.DS."sess_".session_id();
+        @unlink($file);
+        $this->__construct($this->path);
+    }
 
 /**
  * Enter description here...
@@ -406,39 +425,29 @@ class CakeSession extends Object
  */
     function _new()
     {
-        if(!ereg("\.aol\.com$", gethost($this->ip)))
+        if($this->readSessionVar("Config"))
         {
-            if($this->readSessionVar("Config"))
+            if($this->userAgent == $this->readSessionVar("Config.userAgent") &&
+            $this->time <= $this->readSessionVar("Config.time"))
             {
-                if($this->ip == $this->readSessionVar("Config.ip") && $this->userAgent == $this->readSessionVar("Config.userAgent"))
-                {
-                    $this->valid = true;
-                }
-                else
-                {
-                    $this->valid = false;
-                    $this->_setError(1, "Session Highjacking Attempted !!!");
-                }
+                $this->writeSessionVar("Config.time", $this->sessionTime);
+                $this->valid = true;
             }
             else
             {
-                srand((double)microtime() * 1000000);
-                $this->writeSessionVar('Config.rand', rand());
-                $this->writeSessionVar("Config.ip", $this->ip);
-                $this->writeSessionVar("Config.userAgent", $this->userAgent);
-                $this->valid = true;
+                $this->valid = false;
+                $this->_setError(1, "Session Highjacking Attempted !!!");
+                $this->_destroyInvalid();
             }
         }
         else
         {
-            if(!$this->readSessionVar("Config"))
-            {
-                srand((double)microtime() * 1000000);
-                $this->writeSessionVar('Config.rand', rand());
-                $this->writeSessionVar("Config.ip", $this->ip);
-                $this->writeSessionVar("Config.userAgent", $this->userAgent);
-            }
+            srand((double)microtime() * 1000000);
+            $this->writeSessionVar('Config.rand', rand());
+            $this->writeSessionVar("Config.time", $this->sessionTime);
+            $this->writeSessionVar("Config.userAgent", $this->userAgent);
             $this->valid = true;
+            $this->_setError(1, "Session is valid");
         }
 
         if($this->security == 'high')

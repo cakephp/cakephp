@@ -1,4 +1,3 @@
-
 CREATE TABLE `acos` (
   `id` int(11) NOT NULL auto_increment,
   `model` varchar(255) NOT NULL default '',

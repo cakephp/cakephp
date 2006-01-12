@@ -3,20 +3,20 @@
 
 /**
  * Class collections.
- * 
+ *
  * A repository for class objects, each registered with a key.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -31,7 +31,7 @@
 /**
  * Class Collections.
  *
- * A repository for class objects, each registered with a key. 
+ * A repository for class objects, each registered with a key.
  * If you try to add an object with the same key twice, nothing will come of it.
  * If you need a second instance of an object, give it another key.
  *
@@ -39,9 +39,9 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v 0.9.2
  */
-   class ClassRegistry
-   {
- 
+class ClassRegistry
+{
+
 /**
  * Names of classes with their objects.
  *
@@ -55,32 +55,33 @@
  *
  * @return ClassRegistry instance
  */
-   function &getInstance() {
-       
+   function &getInstance()
+   {
        static $instance = array();
        if (!$instance)
        {
-           $instance[0] =& new ClassRegistry; 
+           $instance[0] =& new ClassRegistry;
        }
        return $instance[0];
    }
-   
+
 /**
  * Add $object to the registry, associating it with the name $key.
  *
- * @param string $key 
+ * @param string $key
  * @param mixed $object
  */
    function addObject($key, &$object)
    {
+      $_this =& ClassRegistry::getInstance();
       $key = strtolower($key);
-      
-      if (array_key_exists($key, $this->_objects) === false)
+
+      if (array_key_exists($key, $_this->_objects) === false)
       {
-         $this->_objects[$key] =& $object;
+         $_this->_objects[$key] =& $object;
       }
    }
-   
+
 /**
  * Returns true if given key is present in the ClassRegistry.
  *
@@ -89,8 +90,9 @@
  */
    function isKeySet($key)
    {
+      $_this =& ClassRegistry::getInstance();
       $key = strtolower($key);
-      return array_key_exists($key, $this->_objects);
+      return array_key_exists($key, $_this->_objects);
    }
 
 /**
@@ -102,7 +104,8 @@
    function &getObject($key)
    {
       $key = strtolower($key);
-      return $this->_objects[$key];
+      $_this =& ClassRegistry::getInstance();
+      return $_this->_objects[$key];
    }
 }
 ?>
