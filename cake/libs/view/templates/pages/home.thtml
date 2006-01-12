@@ -29,9 +29,9 @@
  */
 ?>
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
+<?php if (!empty($filePresent)):?>
 <?php $db = ConnectionManager::getInstance(); ?>
 <?php $connected = $db->getDataSource('default'); ?>
-<?php if (!empty($filePresent)):?>
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->connected ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
 <?php endif; ?>
