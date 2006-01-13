@@ -227,7 +227,7 @@ function loadController ($name)
 function listClasses($path)
 {
     $dir = opendir($path);
-
+    $classes = array();
     while (false !== ($file = readdir($dir)))
     {
         if ((substr($file, -3, 3) == 'php'))
