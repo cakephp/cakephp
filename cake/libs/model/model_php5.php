@@ -754,17 +754,17 @@ class Model extends Object
         if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
         {
             $fields[] = 'created';
-            $values[] = date("'Y-m-d H:i:s'");
+            $values[] = date('Y-m-d H:i:s');
         }
         if ($this->hasField('modified') && !in_array('modified', $fields))
         {
             $fields[] = 'modified';
-            $values[] = 'NOW()';
+            $values[] = date('Y-m-d H:i:s');
         }
         if ($this->hasField('updated') && !in_array('updated', $fields))
         {
             $fields[] = 'updated';
-            $values[] = 'NOW()';
+            $values[] = date('Y-m-d H:i:s');
         }
 
         if(!$this->exists())
@@ -794,7 +794,8 @@ class Model extends Object
             {
                 if($this->db->create($this, $fields, $values))
                 {
-                    $this->id = $this->db->lastInsertId($this->table, $this->primaryKey);
+                    $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
+                    $this->id = $this->__insertID;
                     if(!empty($joined))
                     {
                         if(!$this->id > 0 && isset($newID))

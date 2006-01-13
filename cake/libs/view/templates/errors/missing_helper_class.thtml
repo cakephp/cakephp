@@ -28,16 +28,10 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<?php
-
-  $missingClass = $this->controller->missingHelperClass;
-  $missingFile  = $this->controller->missingHelperFile;
-
-?>
 <h1>Missing Helper Class</h1>
 
-<p class="error">You are seeing this error because the view helper class <em><?php echo $missingClass;?></em>
-  can't be found or doesn't exist in <em><?php echo $missingFile;?></em>
+<p class="error">You are seeing this error because the view helper class <em><?php echo $helperClass;?></em>
+  can't be found or doesn't exist in <em><?php echo "app".DS."views".DS."helpers".DS.$file; ?></em>
 </p>
 
 
@@ -45,21 +39,19 @@
 <span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_helper_class.thtml</code>
 view file, a user-customizable error page for handling non-existent view helper classes.</span>
 </p>
-
 <p>
 <strong>Fatal</strong>: Create the Class:
 </p>
 <p>
-<?php echo "<pre>&lt;?php\n\nclass " . $missingClass ." extends Helper {\n
-    // Your helper functions here
-    function <em>myHelperFunction</em> ()
-    {
-    }
-}\n?&gt;</pre>"; ?>
-in file : <?php echo "app".DS."views".DS."helpers".DS.$missingFile.".php"; ?>
+<p>&lt;?php<br />
+&nbsp;&nbsp;&nbsp;&nbsp;class <?php echo $helperClass;?> extends Helper<br />
+&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Your helper functions heree<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function <em>myHelperFunction</em> ()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+?&gt;<br />
 </p>
-
-<p>
-<strong>Error</strong>: Unable to load helper class <em><?php echo $missingClass;?></em> in
-<em>View::_loadHelpers</em>
+in file : <?php echo "app".DS."views".DS."helpers".DS.$file; ?>
 </p>

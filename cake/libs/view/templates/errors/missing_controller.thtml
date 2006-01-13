@@ -51,14 +51,6 @@ view file, a user-customizable error page for handling invalid controller dispat
 &nbsp;&nbsp;&nbsp;&nbsp;}<br />
 ?&gt;<br />
 </p>
+<p>
 in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($controller).".php"; ?>
 </p>
-<?php if (DEBUG>1):?>
-<h2>Controller dump:</h2>
-<pre>
-<?php
-unset($this->db);
-print_r($this->controller);
-?>
-</pre>
-<?php endif;?>

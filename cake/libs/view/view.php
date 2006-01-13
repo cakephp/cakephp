@@ -304,10 +304,11 @@ class View extends Object
 
          if (strpos($action, 'missingView') === false)
          {
-            $controller = $this;
-            $controller->missingView = $viewFileName;
-            $controller->action      = $action;
-            call_user_func_array(array(&$controller, 'missingView'), empty($params['pass'])? null: $params['pass']);
+            return $this->cakeError('missingView',
+                        array(array('className' => $this->controller->name,
+                                    'action' => $action,
+                                    'file' => $viewFileName)));
+
             $isFatal = isset($this->isFatal) ? $this->isFatal : false;
             if (!$isFatal)
             {
@@ -437,8 +438,9 @@ class View extends Object
       }
       else
       {
-         trigger_error(sprintf(__("Could not find layout %s (expected %s), create it first"), $this->layout, $layout_fn), E_USER_ERROR);
-         return false;
+         return $this->cakeError('missingLayout',
+                     array(array('layout' => $this->layout,
+                                 'file' => $layout_fn)));
       }
    }
 
@@ -644,11 +646,9 @@ class View extends Object
                     }
                     else
                     {
-                        $error =& new Controller();
-                        $error->autoLayout = true;
-                        $error->base = $this->base;
-                        call_user_func_array(array(&$error, 'missingHelperFile'), Inflector::underscore($helper));
-                        exit();
+                        return $this->cakeError('missingHelperFile',
+                                    array(array('helper' => $helper,
+                                                'file' => Inflector::underscore($helper).'.php')));
                     }
                 }
 
@@ -678,11 +678,9 @@ class View extends Object
                 }
                 else
                 {
-                    $error =& new Controller();
-                    $error->autoLayout = true;
-                    $error->base = $this->base;
-                    call_user_func_array(array(&$error, 'missingHelperClass'), $helper);
-                    exit();
+                    return $this->cakeError('missingHelperClass',
+                                array(array('helper' => $helper,
+                                            'file' => Inflector::underscore($helper).'.php')));
                 }
             }
         }

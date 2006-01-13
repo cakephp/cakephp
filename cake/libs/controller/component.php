@@ -125,20 +125,18 @@ class Component extends Object
                     }
                     else
                     {
-                        $error =& new Controller();
-                        $error->autoLayout = true;
-                        $error->base = $this->controller->base;
-                        call_user_func_array(array(&$error, 'missingComponentClass'), $component);
-                        exit();
+                        return $this->cakeError('missingComponentClass',
+                                    array(array('className' => $this->controller->name,
+                                                'component' => $component,
+                                                'file' => $componentFn)));
                     }
                 }
                 else
                 {
-                    $error =& new Controller();
-                    $error->autoLayout = true;
-                    $error->base = $this->controller->base;
-                    call_user_func_array(array(&$error, 'missingComponentFile'), Inflector::underscore($component));
-                    exit();
+                    return $this->cakeError('missingComponentFile',
+                                array(array('className' => $this->controller->name,
+                                            'component' => $component,
+                                            'file' => $componentFn)));
                 }
             }
         }

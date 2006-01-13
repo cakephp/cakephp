@@ -1,11 +1,10 @@
-#!/usr/local/bin/php
 <?php
 /* SVN FILE: $Id$ */
 
 /**
- * Bake startup script
  *
- * Invokes the Bake class with given parameters.
+ *
+ *
  *
  * PHP versions 4 and 5
  *
@@ -21,28 +20,21 @@
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.scripts
- * @since        CakePHP v 0.2.9
+ * @subpackage   cake.cake.libs.view.templates.errors
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
-  * START-UP
-  */
-define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
-define ('APP_DIR', 'app');
-
-require (ROOT.'cake'.DS.'basics.php');
-require (ROOT.'cake'.DS.'config'.DS.'paths.php');
-uses ('bake');
-
-$waste = array_shift($argv);
-$product = array_shift($argv);
-
-$bake = new Bake ($product, $argv);
-
 ?>
+<h1>Missing Layout</h1>
+
+<p class="error">You are seeing this error because the layout file <em><?php echo $file;?></em>
+  can't be found or doesn't exist.
+</p>
+<p>
+<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_layout.thtml</code>
+view file, a user-customizable error page for handling missing/invalid views during rendering.</span>
+</p>
+

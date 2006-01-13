@@ -98,7 +98,6 @@ class ErrorHandler extends Object
         $this->error(array('code'=>'404',
         'name'=>'Not found',
         'message'=>sprintf(__("The requested address %s was not found on this server."), $url, $message)));
-
     }
 
 /**
@@ -176,11 +175,26 @@ class ErrorHandler extends Object
     function missingView($params)
     {
         extract($params);
-        $this->controller->webroot = $webroot;
+        $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('controller' => $className,
                                      'action' => $action,
+                                     'file' => $file,
                                      'title' => 'Missing View'));
         $this->controller->render('../errors/missingView');
+    }
+
+/**
+ * Renders the Missing Layout web page.
+ *
+ */
+    function missingLayout($params)
+    {
+        extract($params);
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->layout = 'default';
+        $this->controller->set(array('file' => $file,
+                                     'title' => 'Missing Layout'));
+        $this->controller->render('../errors/missingLayout');
     }
 
 /**
@@ -205,8 +219,8 @@ class ErrorHandler extends Object
     function missingHelperFile($params)
     {
         extract($params);
-        $this->controller->webroot = $webroot;
-        $this->controller->set(array('helper' => Inflector::camelize($file) . "Helper",
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
                                      'file' => $file,
                                      'title' => 'Missing Helper File'));
         $this->controller->render('../errors/missingHelperFile');
@@ -220,13 +234,47 @@ class ErrorHandler extends Object
     function missingHelperClass($params)
     {
         extract($params);
-        $this->controller->webroot = $webroot;
-        $this->controller->set(array('helper' => Inflector::camelize($class) . "Helper",
-                                     'file' => Inflector::underscore($class),
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
+                                     'file' => $file,
                                      'title' => 'Missing Helper Class'));
         $this->controller->render('../errors/missingHelperClass');
         exit();
     }
+
+/**
+ * Renders the Missing Component file web page.
+ *
+ */
+    function missingComponentFile($params)
+    {
+        extract($params);
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->set(array('controller' => $className,
+                                     'component' => $component,
+                                     'file' => $file,
+                                     'title' => 'Missing Component File'));
+        $this->controller->render('../errors/missingComponentFile');
+        exit();
+    }
+
+/**
+ * Renders the Missing Component class web page.
+ *
+ */
+    function missingComponentClass($params)
+    {
+        extract($params);
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->set(array('controller' => $className,
+                                     'component' => $component,
+                                     'file' => $file,
+                                     'title' => 'Missing Component Class'));
+        $this->controller->render('../errors/missingComponentClass');
+        exit();
+    }
+
+
 /**
  * Enter description here...
  *

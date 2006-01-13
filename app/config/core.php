@@ -39,7 +39,7 @@
  * release/app/.htaccess
  * release/app/webroot/.htaccess
  */
-//define ('BASE_URL', env('SCRIPT_NAME');
+//define ('BASE_URL', env('SCRIPT_NAME'));
 
 /**
  * Set debug level here:
