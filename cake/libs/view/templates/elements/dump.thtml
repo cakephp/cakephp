@@ -20,20 +20,17 @@
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.view.templates.errors
- * @since        CakePHP v 0.10.0.1076
+ * @subpackage   cake.cake.libs.view.templates.pages
+ * @since        CakePHP v 0.10.5.1782
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Requires a Database Connection</h1>
-
-<p class="error">Missing Database Connection: Model <?php echo $model;?> requires a database connection
-</p>
-
-<p>
-<span class="notice"><strong>Notice:</strong> this error is being rendered by the <code>app/views/errors/missing_database.thtml</code>
-view file, a user-customizable error page for handling errors within CakePHP.</span>
-</p>
+<div>
+    <h2>Controller dump:</h2>
+        <pre>
+            <?php print_r($this->controller); ?>
+        </pre>
+</div>

@@ -63,13 +63,3 @@ in file : <?php echo "app".DS."views".DS."helpers".DS.$missingFile.".php"; ?>
 <strong>Error</strong>: Unable to load helper file <em><?php echo $missingFile.".php";?></em> in
 <em>View::_loadHelpers</em>
 </p>
-
-<?php if (DEBUG>1):?>
-<h2>Controller dump:</h2>
-<pre>
-<?php
-unset($this->db);
-print_r($this);
-?>
-</pre>
-<?php endif;?>

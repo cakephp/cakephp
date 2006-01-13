@@ -398,9 +398,18 @@ class View extends Object
    {
       $layout_fn = $this->_getLayoutFileName();
 
+      if(DEBUG > 2)
+      {
+          $debug = View::_render(LIBS.'view'.DS.'templates'.DS.'elements'.DS.'dump.thtml', array('controller' => $this->controller), true, false);
+      }
+      else
+      {
+          $debug = '';
+      }
       $data_for_layout = array_merge($this->_viewVars, array(
       'title_for_layout'=>$this->pageTitle !== false? $this->pageTitle: Inflector::humanize($this->viewPath),
-      'content_for_layout'=>$content_for_layout));
+      'content_for_layout'=>$content_for_layout,
+      'cakeDebug' => $debug));
 
       if (is_file($layout_fn))
       {

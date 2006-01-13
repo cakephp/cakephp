@@ -44,13 +44,3 @@ view file, a user-customizable error page for handling missing/invalid views dur
 <strong>Fatal</strong>: Unable to load view file <em><?php echo $this->missingView;?></em> for
 action <em><?php echo $this->missingView;?>::<?php echo $action;?></em>
 </p>
-
-<?php if (DEBUG>1):?>
-<h2>Controller dump:</h2>
-<pre>
-<?php
-unset($this->db);
-print_r($this);
-?>
-</pre>
-<?php endif;?>

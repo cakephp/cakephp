@@ -464,6 +464,8 @@ class AjaxHelper extends Helper
     function dropRemote($id, $options = array(), $ajaxOptions = array())
     {
         $options['onDrop'] = "function(element){" . $this->remoteFunction($ajaxOptions) . "}";
+        $options = $this->_optionsForDroppable($options);
+        return $this->Javascript->codeBlock("Droppables.add('$id'$options);");
     }
 
 /**

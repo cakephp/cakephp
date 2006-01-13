@@ -476,12 +476,10 @@ class Controller extends Object
     function generateFieldNames( $data = null, $doCreateOptions = true  )
     {
         $fieldNames = array();
-
         $model = $this->modelClass;
         $modelKey = $this->modelKey;
         $table = $this->{$model}->table;
         $association = array_search($table,$this->{$model}->alias);
-
         $objRegistryModel = ClassRegistry::getObject($modelKey);
 
         foreach ($objRegistryModel->_tableInfo as $tables)
@@ -489,12 +487,10 @@ class Controller extends Object
             foreach ($tables as $tabl)
             {
                 $alias = null;
-                //  set up the prompt
                 if ($objRegistryModel->isForeignKey($tabl['name']))
                 {
                     $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
-                    //  this is a foreign key, also set up the other controller
                     $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
                     $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
                     if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
@@ -519,27 +515,16 @@ class Controller extends Object
              {
                  $fieldNames[$tabl['name']]['prompt'] = 'Modified';
              }
-
-             // Now, set up some other attributes that will be useful for auto generating a form.
-             //tagName is in the format table/field "post/title"
-              $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
-
-             //  Now, find out if this is a required field.
-             //$validationFields = ClassRegistry::getObject($table)->validate;
+             $fieldNames[ $tabl['name']]['tagName'] = $model.'/'.$tabl['name'];
              $validationFields = $objRegistryModel->validate;
              if( isset( $validationFields[ $tabl['name'] ] ) )
              {
-                //  Now, we know that this field has some validation set.
-                //  find out if it is a required field.
                 if( VALID_NOT_EMPTY == $validationFields[ $tabl['name'] ] )
                 {
-                    //  this is a required field.
                     $fieldNames[$tabl['name']]['required'] = true;
                     $fieldNames[$tabl['name']]['errorMsg'] = "Required Field";
                 }
              }
-
-             //  now, determine what the input type should be for this database field.
              $lParenPos = strpos( $tabl['type'], '(');
              $rParenPos = strpos( $tabl['type'], ')');
              if( false != $lParenPos )
@@ -553,26 +538,17 @@ class Controller extends Object
              }
              switch( $type )
              {
-
                  case "text":
                  case "mediumtext":
-                 {
                      $fieldNames[ $tabl['name']]['type'] = 'area';
-                     //$fieldNames[ $tabl['name']]['size'] = $fieldLength;
-                 }
                  break;
                  case "varchar":
                  case "char":
-                 {
                      if (isset($fieldNames[ $tabl['name']]['foreignKey']))
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
-                         //  This is a foreign key select dropdown box.  now, we have to add the options.
                          $fieldNames[ $tabl['name']]['options'] = array();
-
-                         //  get the list of options from the other model.
                          $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
-
                          if (is_object($otherModel))
                          {
                              if ($doCreateOptions)
@@ -582,7 +558,6 @@ class Controller extends Object
                                  {
                                      foreach ($pass as $key => $value)
                                      {
-
                                          if($alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField]))
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
@@ -597,19 +572,17 @@ class Controller extends Object
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'input';
                      }
-                 }
+
                  break;
                  case "tinyint":
-                 {
-                    if( $fieldLength > 1 )
-                    {
-                       $fieldNames[ $tabl['name']]['type'] = 'input';
-                    }
-                    else
-                    {
-                       $fieldNames[ $tabl['name']]['type'] = 'checkbox';
-                    }
-                 }
+                     if( $fieldLength > 1 )
+                     {
+                         $fieldNames[ $tabl['name']]['type'] = 'input';
+                     }
+                     else
+                     {
+                         $fieldNames[ $tabl['name']]['type'] = 'checkbox';
+                     }
                  break;
                  case "int":
                  case "smallint":
@@ -618,11 +591,6 @@ class Controller extends Object
                  case "decimal":
                  case "float":
                  case "double":
-                 {
-                     //BUGBUG:  Need a better way to determine if this field is an auto increment foreign key.
-                     //  If it is a number, and it is a foreign key, we'll make a HUGE assumption that it is an auto increment field.
-                     //  for foreign key autonumber fields, we'll set the type to 'key' so that it does not display in the input form.
-
                      $charCount = strlen($this->$model->primaryKey);
                      if(0 == strncmp($tabl['name'], $this->$model->primaryKey, $charCount))
                      {
@@ -631,12 +599,8 @@ class Controller extends Object
                      else if( isset( $fieldNames[ $tabl['name']]['foreignKey'] ) )
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
-                         //  This is a foreign key select dropdown box.  now, we have to add the options.
                          $fieldNames[ $tabl['name']]['options'] = array();
-
-                         //  get the list of options from the other model.
                          $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
-
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )
@@ -660,15 +624,10 @@ class Controller extends Object
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'input';
                      }
-                 }
                  break;
                  case "enum":
-                 {
-                     //  for enums, the $fieldLength variable is actually the list of enums.
                      $fieldNames[ $tabl['name']]['type'] = 'select';
-                     //  This is a foreign key select dropdown box.  now, we have to add the options.
                      $fieldNames[ $tabl['name']]['options'] = array();
-
                      $enumValues = split(',', $fieldLength );
                      foreach ($enumValues as $enum )
                      {
@@ -676,73 +635,60 @@ class Controller extends Object
                          $fieldNames[$tabl['name']]['options'][$enum] = $enum;
                      }
                      $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
-
-               }
-               break;
-               case "date":
-               case "datetime":
-               {
-                  if(0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8))
-                  {
-                      $fieldNames[ $tabl['name']]['type'] = $type;
-                  }
-                  if(isset($data[$model][$tabl['name']]))
-                  {
-                      $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
-                  }
-                  else
-                  {
-                      $ieldNames[ $tabl['name']]['selected'] = null;
-                  }
-               }
-               break;
-               default:
-               //sorry, this database field type is not yet set up.
-                  break;
-
-
-             } // end switch
-         }
-           // now, add any necessary hasAndBelongsToMany list boxes
-           //  loop through the many to many relations to make a list box.
-          foreach($objRegistryModel->hasAndBelongsToMany as $relation => $relData)
-          {
-            $modelName = $relData['className'];
-            $manyAssociation = $relation;
-            $modelKeyM = Inflector::underscore($modelName);
-            $modelObject = new $modelName();
-
-            if($doCreateOptions)
-              {
-                  $otherDisplayField = $modelObject->getDisplayField();
-                  $fieldNames[$modelKeyM]['model'] = $modelName;
-                  $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
-                  $fieldNames[$modelKeyM]['type'] = "selectMultiple";
-                  $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
-
-                  foreach($modelObject->findAll() as $pass)
-                  {
-                      foreach($pass as $key=>$value)
-                      {
-                          if($key == $modelName && isset($value[$modelObject->primaryKey]) && isset( $value[$otherDisplayField]))
-                          {
-                              $fieldNames[$modelKeyM]['options'][$value[$modelObject->primaryKey]] = $value[$otherDisplayField];
-                          }
-                      }
-                  }
-                  if( isset( $data[$manyAssociation] ) )
-                  {
-                    foreach( $data[$manyAssociation] as $key => $row )
+                 break;
+                 case "date":
+                 case "datetime":
+                     if(0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8))
+                     {
+                         $fieldNames[ $tabl['name']]['type'] = $type;
+                     }
+                     if(isset($data[$model][$tabl['name']]))
+                     {
+                         $fieldNames[ $tabl['name']]['selected'] = $data[$model][$tabl['name']];
+                     }
+                     else
+                     {
+                         $fieldNames[ $tabl['name']]['selected'] = null;
+                     }
+                 break;
+                 default:
+                 break;
+             }
+            }
+            foreach($objRegistryModel->hasAndBelongsToMany as $relation => $relData)
+            {
+                $modelName = $relData['className'];
+                $manyAssociation = $relation;
+                $modelKeyM = Inflector::underscore($modelName);
+                $modelObject = new $modelName();
+                if($doCreateOptions)
+                {
+                    $otherDisplayField = $modelObject->getDisplayField();
+                    $fieldNames[$modelKeyM]['model'] = $modelName;
+                    $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
+                    $fieldNames[$modelKeyM]['type'] = "selectMultiple";
+                    $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
+                    foreach($modelObject->findAll() as $pass)
                     {
-                       $fieldNames[$modelKeyM]['selected'][$row[$modelObject->primaryKey]] = $row[$modelObject->primaryKey];
+                        foreach($pass as $key=>$value)
+                        {
+                            if($key == $modelName && isset($value[$modelObject->primaryKey]) && isset( $value[$otherDisplayField]))
+                            {
+                                $fieldNames[$modelKeyM]['options'][$value[$modelObject->primaryKey]] = $value[$otherDisplayField];
+                            }
+                        }
                     }
-                  }
-              }
-         } // end loop through manytomany relations.
+                    if( isset( $data[$manyAssociation] ) )
+                    {
+                        foreach( $data[$manyAssociation] as $key => $row )
+                        {
+                            $fieldNames[$modelKeyM]['selected'][$row[$modelObject->primaryKey]] = $row[$modelObject->primaryKey];
+                        }
+                    }
+                }
+            }
         }
-
-      return $fieldNames;
+        return $fieldNames;
     }
-
 }
 ?>

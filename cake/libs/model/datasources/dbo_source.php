@@ -120,11 +120,6 @@ class DboSource extends DataSource
       $this->numRows = $this->lastNumRows($this->_result);
       $this->logQuery($sql);
 
-      if (($this->debug && $this->error) || ($this->fullDebug))
-      {
-          $this->showQuery($sql);
-      }
-
       if ($this->error)
       {
           return false;
@@ -233,7 +228,15 @@ class DboSource extends DataSource
       sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
       $this->_queriesLog;
 
-      print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} queries took {$this->_queriesTime} ms</th></tr>\n");
+      if($this->_queriesCnt >1)
+      {
+         $text = 'queries';
+      }
+      else
+      {
+          $text = 'query';
+      }
+      print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</th></tr>\n");
       print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
 
       foreach($log AS $k=>$i)
@@ -680,7 +683,7 @@ class DboSource extends DataSource
     function conditions ($conditions)
     {
         $rt = '';
-        if (!strpos(low($conditions), 'where') || strpos(low($conditions), 'where') === 0)
+        if (!is_array($conditions) && (!strpos(low($conditions), 'where') || strpos(low($conditions), 'where') === 0))
         {
             $rt = ' WHERE ';
         }
@@ -698,17 +701,31 @@ class DboSource extends DataSource
             $out = array();
             foreach ($conditions as $key => $value)
             {
-                $slashedValue = $this->value($value);
-                //TODO: Remove the = below so LIKE and other compares can be used
-                $data = $key . '=';
-                if ($value === null)
-                {
-                    $data .= 'null';
-                }
-                else
-                {
-                    $data = $slashedValue;
-                }
+				// Treat multiple values as an IN condition.
+				if (is_array($value))
+				{
+					$data = $key . ' IN (';
+					foreach ($value as $valElement)
+					{
+						$data .= $this->value($valElement) . ', ';
+					}
+					// Remove trailing ',' and complete clause.
+					$data[strlen($data)-2] = ')';
+				}
+				else
+				{
+                	$slashedValue = $this->value($value);
+                	//TODO: Remove the = below so LIKE and other compares can be used
+                	$data = $key . '=';
+                	if ($value === null)
+                	{
+                	    $data .= 'null';
+                	}
+                	else
+                	{
+                	    $data .= $slashedValue;
+                	}
+				}
                 $out[] = $data;
             }
             return ' WHERE ' . join(' AND ', $out);

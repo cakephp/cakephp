@@ -61,13 +61,3 @@ in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($controller
 <strong>Error</strong>: Unable to execute action <em><?php echo $action;?></em> in
 <em><?php echo $controller;?></em>
 </p>
-
-<?php if (DEBUG>1):?>
-<h2>Controller dump:</h2>
-<pre>
-<?php
-unset($this->db);
-print_r($this);
-?>
-</pre>
-<?php endif;?>
