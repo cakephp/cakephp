@@ -51,19 +51,17 @@ define ('APP_DIR', 'app');
  *
  */
 define ('DEBUG', 1);
-
+require_once (ROOT.'cake'.DS.'basics.php');
 require_once (ROOT.'cake'.DS.'config'.DS.'paths.php');
-require_once (CAKE.'basics.php');
 require_once (CONFIGS.'core.php');
 require_once (CONFIGS.'database.php');
-
 uses ('neat_array');
 uses ('object');
 uses ('session');
 uses ('security');
+uses ('model'.DS.'connection_manager');
+uses ('model'.DS.'datasources'.DS.'dbo_source');
 uses ('model'.DS.'model');
-uses ('model'.DS.'dbo'.DS.'dbo_factory');
-uses ('controller'.DS.'controller');
 uses ('controller'.DS.'components'.DS.'acl');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco');
@@ -105,12 +103,6 @@ class AclCLI {
     * @var unknown_type
     */
    var $acl;
-/**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $controller;
 
 /**
     * Enter description here...
@@ -118,6 +110,13 @@ class AclCLI {
     * @var unknown_type
     */
    var $args;
+
+/**
+    * Enter description here...
+    *
+    * @var unknown_type
+    */
+   var $dataSource = 'default';
 
 /**
     * Enter description here...
@@ -143,9 +142,7 @@ class AclCLI {
       $this->acl = $acl->getACL();
 
       $this->args = $args;
-
-      $this->controller =& new Controller();
-      $this->controller->constructClasses();
+      $this->db =& ConnectionManager::getDataSource($this->dataSource);
 
       $this->stdin = fopen('php://stdin', 'r');
       $this->stdout = fopen('php://stdout', 'w');
@@ -382,7 +379,7 @@ class AclCLI {
                `rght` int(11) default NULL,
                PRIMARY KEY  (`id`)
                );";
-      $this->controller->db->query($sql);
+      $this->db->query($sql);
 
       fwrite($this->stdout, "Creating access request objects table (acos)...\n");
       $sql2 = "CREATE TABLE `aros` (
@@ -393,7 +390,7 @@ class AclCLI {
                `rght` int(11) default NULL,
                PRIMARY KEY  (`id`)
                );";
-      $this->controller->db->query($sql2);
+      $this->db->query($sql2);
 
       fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
       $sql3 = "CREATE TABLE `aros_acos` (
@@ -406,7 +403,7 @@ class AclCLI {
                `_delete` int(11) NOT NULL default '0',
                PRIMARY KEY  (`id`)
                );";
-      $this->controller->db->query($sql3);
+      $this->db->query($sql3);
 
       fwrite($this->stdout, "\nDone.\n");
    }
@@ -574,7 +571,7 @@ class AclCLI {
       $class = ucwords($type);
       $vars['secondary_id'] = ($class == 'aro' ? 'user_id' : 'object_id');
       $vars['data_name']    = $type;
-      $vars['table_name']   = $class . 's';
+      $vars['table_name']   = $type . 's';
       $vars['class']        = $class;
       return $vars;
    }

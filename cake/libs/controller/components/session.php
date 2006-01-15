@@ -159,6 +159,20 @@ class SessionComponent extends Object
  *
  * @return boolean
  */
+    function renew()
+    {
+        $this->CakeSession->renew();
+    }
+
+/**
+ * Enter description here...
+ *
+ * Use like this. $this->Session->valid();
+ * This will return true if session is valid
+ * false if session is invalid
+ *
+ * @return boolean
+ */
     function valid()
     {
         return $this->CakeSession->isValid();

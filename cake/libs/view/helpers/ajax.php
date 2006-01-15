@@ -61,7 +61,7 @@ class AjaxHelper extends Helper
      *
      * @var array
  */
-    var $ajaxOptions = array('method','position','form','parameters','evalScripts', 'asynchronous', 'onComplete', 'onUninitialized', 'onLoading', 'onLoaded', 'onInteractive');
+    var $ajaxOptions = array('type', 'confirm', 'condition', 'before', 'after', 'fallback', 'update', 'loading', 'loaded', 'interactive', 'complete', 'with', 'url', 'method', 'position', 'form', 'parameters', 'evalScripts', 'asynchronous', 'onComplete', 'onUninitialized', 'onLoading', 'onLoaded', 'onInteractive');
 
 /**
      * Options for draggable.
@@ -83,8 +83,6 @@ class AjaxHelper extends Helper
      * @var array
  */
     var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'onUpdate', 'onChange');
-
-    var $__ajaxKeys = array('url', 'with', 'update', 'loading', 'loaded', 'interactive', 'complete', 'type', 'confirm', 'condition', 'before', 'after', 'fallback');
 
 /**
  * Returns link to remote action
@@ -377,22 +375,10 @@ class AjaxHelper extends Helper
             $options['id'] = r("/", "_", $field);
         }
 
-        $htmlOptions = $options;
-        $ajaxOptions = array('with', 'asynchronous', 'synchronous', 'method', 'position', 'form');
+        $htmlOptions = $this->__getHtmlOptions($options);
 
         $htmlOptions['autocomplete'] = "off";
 
-        foreach($ajaxOptions as $key)
-        {
-            if(isset($options[$key]))
-            {
-                $ajaxOptions[$key] = $options[$key];
-            }
-            else
-            {
-                unset($ajaxOptions[$key]);
-            }
-        }
         if(!isset($options['class']))
         {
            $options['class'] = "auto_complete";
@@ -537,9 +523,13 @@ class AjaxHelper extends Helper
     }
 
 
-    function __getHtmlOptions($options)
+    function __getHtmlOptions($options, $extra = array())
     {
-        foreach($this->__ajaxKeys as $key)
+        foreach($this->ajaxOptions as $key)
+        {
+            unset($options[$key]);
+        }
+        foreach($extra as $key)
         {
             unset($options[$key]);
         }

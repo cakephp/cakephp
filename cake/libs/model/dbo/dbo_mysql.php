@@ -125,8 +125,9 @@ class DboMysql extends DboSource
   *
   * @param string $sql SQL statement
   * @return resource Result resource identifier
+  * @access protected
   */
-   function __execute ($sql)
+   function _execute ($sql)
    {
       return mysql_query($sql, $this->connection);
    }
@@ -168,10 +169,16 @@ class DboMysql extends DboSource
   */
    function fetchRow ($assoc = false)
    {
-      //return mysql_fetch_array($this->_result, $assoc? MYSQL_ASSOC: MYSQL_BOTH);
-        $this->resultSet($this->_result);
-        $resultRow = $this->fetchResult();
-        return $resultRow;
+      if(is_resource($this->_result))
+      {
+          $this->resultSet($this->_result);
+          $resultRow = $this->fetchResult();
+          return $resultRow;
+      }
+      else
+      {
+          return null;
+      }
    }
 
 /**
@@ -244,7 +251,7 @@ class DboMysql extends DboSource
       {
           return '*';
       }
-      return '`'.$data.'`';
+      return '`'. ereg_replace('\.', '`.`', $data) .'`';
    }
 
 /**

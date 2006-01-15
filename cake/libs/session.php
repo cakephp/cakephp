@@ -314,6 +314,7 @@ class CakeSession extends Object
             setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
         }
         $file = $sessionpath.DS."sess_".session_id();
+        session_destroy();
         @unlink($file);
         $this->__construct($this->path);
     }
@@ -427,8 +428,8 @@ class CakeSession extends Object
     {
         if($this->readSessionVar("Config"))
         {
-            if($this->userAgent == $this->readSessionVar("Config.userAgent") &&
-            $this->time <= $this->readSessionVar("Config.time"))
+            if($this->userAgent == $this->readSessionVar("Config.userAgent")
+               && $this->time <= $this->readSessionVar("Config.time"))
             {
                 $this->writeSessionVar("Config.time", $this->sessionTime);
                 $this->valid = true;
@@ -448,11 +449,6 @@ class CakeSession extends Object
             $this->writeSessionVar("Config.userAgent", $this->userAgent);
             $this->valid = true;
             $this->_setError(1, "Session is valid");
-        }
-
-        if($this->security == 'high')
-        {
-            $this->_regenerateId();
         }
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
@@ -519,7 +515,7 @@ class CakeSession extends Object
  * @access private
  *
  */
-    function _renew()
+    function renew()
     {
         $this->_regenerateId();
     }

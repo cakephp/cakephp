@@ -112,7 +112,7 @@ class DboSource extends DataSource
    function execute($sql)
    {
       $t = getMicrotime();
-      $this->_result = $this->__execute($sql);
+      $this->_result = $this->_execute($sql);
 
       $this->affected = $this->lastAffected();
       $this->took = round((getMicrotime() - $t) * 1000, 0);
@@ -407,7 +407,7 @@ class DboSource extends DataSource
         if ($linkModel == null)
         {
             // Generates primary query
-            $sql  = 'SELECT ' . join(', ', $this->fields($queryData['fields'])) . ' FROM ';
+            $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) . ' FROM ';
             $sql .= $this->name($model->table).' AS ';
             $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
             $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
@@ -418,7 +418,7 @@ class DboSource extends DataSource
         $alias = $association;
         if($model->name == $linkModel->name)
         {
-            $alias = Inflector::pluralize($association);
+          //  $alias = Inflector::pluralize($association);
         }
 
         switch ($type)
@@ -430,7 +430,8 @@ class DboSource extends DataSource
                     {
                         return $assocData['finderQuery'];
                     }
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$alias;
+                    $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;
                     $conditions = $queryData['conditions'];
                     $condition = $model->escapeField($assocData['foreignKey']);
                     $condition .= '={$__cake_foreignKey__$}';
@@ -510,8 +511,8 @@ class DboSource extends DataSource
                 else
                 {
                     $conditions = $assocData['conditions'];
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS ';
-                    $sql .= $this->name($alias);
+                    $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '. $this->name($alias);
 
                     $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
                     $cond .= '={$__cake_id__$}';
@@ -541,14 +542,13 @@ class DboSource extends DataSource
                 else
                 {
                     $joinTbl = $this->name($assocData['joinTable']);
-                    $alias = $this->name($alias);
 
-                    $sql = 'SELECT '.join(', ', $this->fields($assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;
+                    $sql = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
                     $sql .= ' JOIN '.$joinTbl.' ON '.$joinTbl;
                     $sql .= '.'.$this->name($assocData['foreignKey']).'={$__cake_id__$}';
                     $sql .= ' AND '.$joinTbl.'.'.$this->name($assocData['associationForeignKey']);
-                    $sql .= ' = '.$alias.'.'.$this->name($linkModel->primaryKey);
+                    $sql .= ' = '.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
 
                     $sql .= $this->conditions($assocData['conditions']);
                     $sql .= $this->order($assocData['order']);
@@ -621,10 +621,10 @@ class DboSource extends DataSource
         {
             $data['conditions'] = ' 1 ';
         }
-        if (!isset($data['fields']))
-        {
-            $data['fields'] = '*';
-        }
+       // if (!isset($data['fields']))
+       // {
+       //     $data['fields'] = '*';
+       // }
         if (!isset($data['joins']))
         {
             $data['joins'] = array();
@@ -639,11 +639,11 @@ class DboSource extends DataSource
         }
     }
 
-    function fields ($fields)
+    function fields (&$model, $alias, $fields)
     {
         if (is_array($fields))
         {
-            $f = $fields;
+            $fields = $fields;
         }
         else
         {
@@ -661,7 +661,12 @@ class DboSource extends DataSource
             }
             else
             {
-                $fields = array('*');
+                 //$fields = array('*');
+                 foreach ($model->_tableInfo->value as $field)
+                 {
+                     $fields[]= $field['name'];
+                 }
+
             }
         }
 
@@ -669,7 +674,7 @@ class DboSource extends DataSource
         {
             for ($i = 0; $i < count($fields); $i++)
             {
-                $fields[$i] = $this->name($fields[$i]);
+                $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
             }
         }
         return $fields;

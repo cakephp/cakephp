@@ -1377,7 +1377,7 @@ class HtmlHelper extends Helper
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_min");
         $minValue = empty($selected) ? date('i') : $selected ;
-        for( $minCount=0; $minCount<61; $minCount++)
+        for( $minCount=0; $minCount<60; $minCount++)
         {
             $mins[$minCount] = sprintf('%02d', $minCount);
         }

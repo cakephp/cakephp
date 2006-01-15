@@ -450,7 +450,7 @@ class Model extends Object
                     switch($key)
                     {
                         case 'fields':
-                            $data = '*';
+                            $data = '';
                         break;
                         case 'foreignKey':
                             $data = Inflector::singularize($this->table).'_id';
@@ -1343,7 +1343,8 @@ class Model extends Object
  */
     function getNumRows ()
     {
-      return $this->__numRows;
+      //return $this->__numRows;
+      return $this->db->lastNumRows();
     }
 
 /**
@@ -1353,7 +1354,8 @@ class Model extends Object
  */
     function getAffectedRows ()
     {
-      return $this->__affectedRows;
+      //return $this->__affectedRows;
+      return $this->db->lastAffected();
     }
 
 /**
