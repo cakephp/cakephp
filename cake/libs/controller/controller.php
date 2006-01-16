@@ -493,10 +493,6 @@ class Controller extends Object
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
                     $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
                     $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
-                    if($this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] == $model)
-                    {
-                        $alias = 'Child_';
-                    }
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
                     $fieldNames[ $tabl['name'] ]['model'] = $alias.$association;
                     $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];

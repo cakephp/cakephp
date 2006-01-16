@@ -153,9 +153,8 @@ class SessionComponent extends Object
 /**
  * Enter description here...
  *
- * Use like this. $this->Session->valid();
- * This will return true if session is valid
- * false if session is invalid
+ * Use like this. $this->Session->renew();
+ * This will renew sessions
  *
  * @return boolean
  */

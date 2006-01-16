@@ -338,9 +338,19 @@ class DboSource extends DataSource
                 foreach($model->{$type} as $assoc => $assocData)
                 {
                     $linkModel =& $model->{$assocData['className']};
-                    if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                    if($model->name == $linkModel->name)
                     {
-                        $linkedModels[] = $type.$assoc;
+                        if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                        {
+                            $linkedModels[] = $type.$assoc;
+                        }
+                    }
+                    else
+                    {
+                        if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                        {
+                            $linkedModels[] = $type.$assoc;
+                        }
                     }
                 }
             }
@@ -401,24 +411,84 @@ class DboSource extends DataSource
         }
     }
 
+    function generateSelfAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet)
+    {
+        $alias = $association;
+        if(!isset($queryData['selfJoin']))
+        {
+            $queryData['selfJoin'] = array();
+
+            $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])). ', ';
+            $sql .= join(', ', $this->fields($linkModel, $alias, ''));
+            $sql .=  ' FROM '.$model->table.' AS ' . $model->name;
+            $sql .=  ' LEFT JOIN '.$linkModel->table.' AS ' . $alias;
+            $sql .=  ' ON ';
+            $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
+            $sql .= ' = '.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
+            if (!in_array($sql, $queryData['selfJoin']))
+            {
+                $queryData['selfJoin'][] = $sql;
+                return true;
+            }
+        }
+        else
+        {
+            if(isset($this->joinFieldJoin))
+            {
+                $replace = ', ';
+                $replace .= join(', ', $this->joinFieldJoin['fields']);
+                $replace .= ' FROM';
+            }
+            else
+            {
+                $replace = 'FROM';
+            }
+            $sql  =  $queryData['selfJoin'][0];
+            $sql .= ' ' . join(' ', $queryData['joins']);
+            $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
+            $sql .= ' '.$this->limit($queryData['limit']);
+            $result = preg_replace('/FROM/', $replace, $sql);
+            return $result;
+        }
+    }
     function generateAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet)
     {
         $this->__scrubQueryData($queryData);
         if ($linkModel == null)
         {
+            if(array_key_exists('selfJoin', $queryData))
+            {
+               return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
+            }
+            else
+            {
+                if(isset($this->joinFieldJoin))
+                {
+                    $joinFields = ', ';
+                    $joinFields .= join(', ', $this->joinFieldJoin['fields']);
+                }
+                else
+                {
+                    $joinFields = null;
+                }
             // Generates primary query
-            $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) . ' FROM ';
+            $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) .$joinFields. ' FROM ';
             $sql .= $this->name($model->table).' AS ';
             $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
             $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
             $sql .= ' '.$this->limit($queryData['limit']);
+            }
             return $sql;
         }
 
         $alias = $association;
         if($model->name == $linkModel->name)
         {
-          //  $alias = Inflector::pluralize($association);
+            $joinedOnSelf = true;
+        }
+        else
+        {
+            $joinedOnSelf = false;
         }
 
         switch ($type)
@@ -452,11 +522,23 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
-                    $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
-                    $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
-                    $sql .= $this->order($assocData['order']);
+                    if($joinedOnSelf == true)
+                    {
 
+                    }
+                    else
+                    {
+                        if(!isset($assocData['fields']))
+                        {
+                            $assocData['fields'] = '';
+                        }
+                        $fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                        $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
+                        $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
+                        $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
+                        $sql .= $this->order($assocData['order']);
+                    }
+                    $this->joinFieldJoin['fields'][] = $fields;
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
@@ -491,11 +573,22 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
-                    $sql .= ' AS ' . $this->name($alias) . ' ON ';
-                    $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
-                    $sql .= '='.$linkModel->escapeField($linkModel->primaryKey);
-
+                    if($joinedOnSelf == true)
+                    {
+                    }
+                    else
+                    {
+                        if(!isset($assocData['fields']))
+                        {
+                            $assocData['fields'] = '';
+                        }
+                        $fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                        $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
+                        $sql .= ' AS ' . $this->name($alias) . ' ON ';
+                        $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
+                        $sql .= '='.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
+                    }
+                    $this->joinFieldJoin['fields'][] = $fields;
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;

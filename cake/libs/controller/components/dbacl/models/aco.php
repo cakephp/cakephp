@@ -46,7 +46,7 @@ class Aco extends AclNode
  *
  * @var unknown_type
  */
-   var $hasMany = 'ArosAco,AcoActions';
+   var $hasMany = 'ArosAco,AcoAction';
 
 }
 

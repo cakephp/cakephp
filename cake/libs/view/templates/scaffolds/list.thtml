@@ -7,10 +7,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -37,17 +37,17 @@
 ?>
 <table class="inav" cellspacing="0">
     <tr>
-      <?php foreach ( $fieldNames as $fieldName ) { ?> 
+      <?php foreach ( $fieldNames as $fieldName ) { ?>
         <th><?php echo $fieldName['prompt'];?></th>
       <?php } ?>
          <th>Actions</th>
     </tr>
-    <?php 
+    <?php
       $iRowIndex = 0;
-    
-      if( is_array( $data ) ) 
+
+      if( is_array( $data ) )
       {
-         foreach ( $data as $row ) { 
+         foreach ( $data as $row ) {
             if( $iRowIndex++ % 2 == 0 )
             {
                echo "<tr>";
@@ -57,23 +57,23 @@
             foreach( $fieldNames as $field=>$value ) { ?>
                <td>
                   <?php
-                     if( isset($value['foreignKey']) ) 
+                     if( isset($value['foreignKey']) )
                      {
                         //  this is a foreign key, figure out what the display field should be for this model.
                        $otherModelKey = Inflector::underscore($value['modelKey']);
                        $otherControllerName = $value['controller'];
                        $otherModelObject = ClassRegistry::getObject( $otherModelKey );
                        $alias = array_search($value['table'],$this->controller->{$model}->alias);
-                       if( is_object($otherModelObject) ) 
+                       if( is_object($otherModelObject) )
                        {
                           $displayText = $row[$alias][ $otherModelObject->getDisplayField() ];
                        } else{
                           $displayText = $row[$alias][$field];
-                       }  
+                       }
                           echo $html->link( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
-                       
+
                      } else {
-                        echo $row[$modelKey][$field]; 
+                        echo $row[$modelKey][$field];
                      } ?>
                </td>
             <?php } // end for each $fieldNames as $field=>value ?>
@@ -81,12 +81,12 @@
                    <?php echo $html->link('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
                   <?php echo $html->link('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
                 </td>
-   
+
          </tr>
        <?php } // end for each data as row
       } //  end if( $data )?>
-    
-    
+
+
 </table>
 <ul class="actions">
     <li><?php echo $html->link('New '.$humanSingularName, '/'.$this->viewPath.'/add'); ?></li>
