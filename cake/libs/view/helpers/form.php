@@ -428,6 +428,10 @@ class FormHelper extends Helper
                         {
                             $field['selectAttr']['DISABLED'] = true;
                         }
+                        if(!isset( $field['options']))
+                        {
+                            $field['options'] = null;
+                        }
                         $strFormFields = $strFormFields.$this->generateSelectDiv( $field['tagName'], $field['prompt'], $field['options'], $field['selected'], $field['selectAttr'], $field['optionsAttr'], $field['required'], $field['errorMsg'] );
                     break;
                     case "area";

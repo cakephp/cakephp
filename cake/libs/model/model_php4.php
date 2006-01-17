@@ -350,19 +350,25 @@ class Model extends Object
         }
     }
 
+
+
 /**
+ * PHP4 Only
+ *
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources.
  *
+ * @param unknown_type $method
+ * @param unknown_type $params
+ * @param unknown_type $return
+ * @return unknown
  * @access protected
  */
-// --- PHP4 Only
     function __call($method, $params, &$return)
     {
        $return = $this->db->query($method, $params, $this);
        return true;
     }
-// --- PHP4 Only
 
 /**
  * Private helper method to create a set of associations.
@@ -435,6 +441,7 @@ class Model extends Object
  * @param string $type "Belongs", "One", "Many", "ManyTo"
  * @param string $assoc
  * @param string $model
+ * @access private
  */
     function __generateAssociation ($type, $assoc)
     {
@@ -651,6 +658,7 @@ class Model extends Object
  *
  * @param string $name Name of field to get
  * @param string $conditions SQL conditions (defaults to NULL)
+ * @param string $order (defaults to NULL)
  * @return field contents
  */
     function field ($name, $conditions = null, $order = null)
@@ -929,9 +937,11 @@ class Model extends Object
         return false;
     }
 
+
 /**
  * Returns true if a record that meets given conditions exists
  *
+ * @param unknown_type $conditions
  * @return boolean True if such a record exists
  */
     function hasAny ($conditions = null)
@@ -998,44 +1008,6 @@ class Model extends Object
         return $this->afterFind($this->db->read($this, $queryData, $recursive));
     }
 
-
-//////////////
-
-/*        $joins[] = $join;
-
-        if (count($joins))
-        {
-            $joins = join(' ', $joins);
-        }
-        else
-        {
-            $joins = null;
-        }
-
-        if (count($whers))
-        {
-            $whers = '(' . join(' AND ', $whers) . ')';
-        }
-        else
-        {
-            $whers = null;
-        }
-
-        if ($conditions && $whers)
-        {
-            $conditions .= ' AND ';
-        }
-        $conditions .= $whers;
-
-////////// conditions & order
-
-        $sql .= $limit_str;
-
-        $data = $this->db->fetchAll($sql);
-
-        return $data;
-    }*/
-
 /**
  * Runs a direct query against the bound DataSource, and returns the result
  *
@@ -1066,6 +1038,7 @@ class Model extends Object
  * Returns number of rows matching given SQL condition.
  *
  * @param string $conditions SQL conditions (WHERE clause conditions)
+ * @param int $recursize The number of levels deep to fetch associated records
  * @return int Number of matching rows
  */
    function findCount ($conditions = null, $recursive = 0)
@@ -1082,11 +1055,11 @@ class Model extends Object
  * Special findAll variation for tables joined to themselves.
  * The table needs fields id and parent_id to work.
  *
- * @todo Perhaps create a Component with this logic, according to a thought from Michal, its author. -OJ 22 nov 2005
  * @param array $conditions Conditions for the findAll() call
  * @param array $fields Fields for the findAll() call
  * @param string $sort SQL ORDER BY statement
  * @return unknown
+ * @todo Perhaps create a Component with this logic
  */
    function findAllThreaded ($conditions=null, $fields=null, $sort=null)
    {
@@ -1287,15 +1260,18 @@ class Model extends Object
 /**
  * Escapes the field name and prepends the model name
  *
+ * @param unknown_type $field
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
  */
     function escapeField($field)
     {
         return $this->db->name($this->name).'.'.$this->db->name($field);
     }
+
 /**
  * Returns the current record's ID
  *
+ * @param unknown_type $list
  * @return mixed The ID of the current record
  */
     function getID($list = 0)
@@ -1383,6 +1359,7 @@ class Model extends Object
 /**
  * Before find callback
  *
+ * @param unknown_type $conditions
  * @return boolean True if the operation should continue, false if it should abort
  */
     function beforeFind($conditions)

@@ -21,7 +21,7 @@
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model.datasources
- * @since        CakePHP v 0.10.x.1379
+ * @since        CakePHP v 0.10.5.1790
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
@@ -35,7 +35,7 @@
  *
  * @package    cake
  * @subpackage cake.cake.libs.model.datasources
- * @since      CakePHP v 0.10.x.1379
+ * @since      CakePHP v 0.10.5.1790
  *
  */
 class DataSource extends Object
@@ -188,6 +188,10 @@ class DataSource extends Object
     var $__transactionStarted = false;
 
 
+/**
+ * Enter description here...
+ *
+ */
    function __construct ()
    {
        parent::__construct();
@@ -198,11 +202,11 @@ class DataSource extends Object
    }
 
 /**
-  * Returns true if the DataSource supports the given interface (method)
-  *
-  * @param string $interface The name of the interface (method)
-  * @return boolean True on success
-  */
+ * Returns true if the DataSource supports the given interface (method)
+ *
+ * @param string $interface The name of the interface (method)
+ * @return boolean True on success
+ */
    function isInterfaceSupported ($interface)
    {
       $methods = get_class_methods(get_class($this));
@@ -212,11 +216,11 @@ class DataSource extends Object
    }
 
 /**
-  * Sets the configuration for the DataSource
-  *
-  * @param array $config The configuration array
-  * @return void
-  */
+ * Sets the configuration for the DataSource
+ *
+ * @param array $config The configuration array
+ * @return void
+ */
    function setConfig ($config)
    {
        if(is_array($this->_baseConfig))
@@ -230,12 +234,12 @@ class DataSource extends Object
    }
 
 /**
-  * Cache the DataSource description
-  *
-  * @param string $object The name of the object (model) to cache
-  * @param mixed $data The description of the model, usually a string or array
-  * @return void
-  */
+ * Cache the DataSource description
+ *
+ * @param string $object The name of the object (model) to cache
+ * @param mixed $data The description of the model, usually a string or array
+ * @return void
+ */
     function __cacheDescription ($object, $data = null)
     {
         if (DEBUG > 0)
@@ -270,16 +274,34 @@ class DataSource extends Object
         return $conditions;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $name
+ * @return unknown
+ */
     function name ($name)
     {
         return $name;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $value
+ * @return unknown
+ */
     function value ($value)
     {
         return $value;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @return unknown
+ */
     function describe ($model)
     {
         if (isset($this->__descriptions[$model->table]))
@@ -296,21 +318,50 @@ class DataSource extends Object
         return null;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $fields
+ * @param unknown_type $values
+ * @return unknown
+ */
     function create (&$model, $fields = null, $values = null)
     {
         return false;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $queryData
+ * @return unknown
+ */
     function read (&$model, $queryData = array())
     {
         return false;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $fields
+ * @param unknown_type $values
+ * @return unknown
+ */
     function update (&$model, $fields = null, $values = null)
     {
         return false;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $id
+ */
     function delete (&$model, $id = null)
     {
         if ($id == null)
@@ -319,16 +370,41 @@ class DataSource extends Object
         }
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $fields
+ * @return unknown
+ */
     function fields ($fields)
     {
         return $fields;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $fields
+ * @return unknown
+ */
     function getColumnType (&$model, $fields)
     {
         return false;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $query
+ * @param unknown_type $data
+ * @param unknown_type $association
+ * @param unknown_type $assocData
+ * @param unknown_type $model
+ * @param unknown_type $linkModel
+ * @param unknown_type $index
+ * @return unknown
+ */
     function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $index)
     {
         $keys = array('{$__cake_id__$}', '{$__cake_foreignKey__$}');
@@ -362,11 +438,25 @@ class DataSource extends Object
         return $query;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $model
+ * @param unknown_type $key
+ * @return unknown
+ */
     function resolveKey($model, $key)
     {
         return $key;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ * @param unknown_type $path
+ * @return unknown
+ */
     function getFieldValue ($data, $path)
     {
         if (!is_array($path))
@@ -418,6 +508,10 @@ class DataSource extends Object
         return $data;
     }
 
+/**
+ * Enter description here...
+ *
+ */
     function __destruct ()
     {
         if ($this->connected)

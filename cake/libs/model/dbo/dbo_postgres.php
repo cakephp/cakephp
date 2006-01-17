@@ -80,14 +80,7 @@ class  DboPostgres extends DboSource
    function connect ()
    {
       $config = $this->config;
-      if ($config['persistent'])
-      {
-          $connect = 'pg_pconnect';
-      }
-      else
-      {
-          $connect = 'pg_connect';
-      }
+      $connect = $config['connect'];
 
       $this->connection = $connect("dbname={$config['database']} user={$config['login']} password={$config['password']}");
       if ($this->connection)

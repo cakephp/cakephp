@@ -59,10 +59,10 @@ class ConnectionManager extends Object
  */
   var $_dataSources = array();
 
-  /**
-   * Constructor.
-   *
-   */
+/**
+ * Constructor.
+ *
+ */
   function __construct()
   {
       if(class_exists('DATABASE_CONFIG'))

@@ -28,11 +28,17 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+
+/**
+ * Load the model class based on the version of PHP.
+ *
+ */
 if (phpversion() < 5)
 {
     require_once(LIBS.'model'.DS.'model_php4.php');
-    if (function_exists("overload")) {
-      overload("Model");
+    if (function_exists("overload"))
+    {
+        overload("Model");
     }
 }
 else
