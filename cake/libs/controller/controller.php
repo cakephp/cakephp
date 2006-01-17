@@ -368,6 +368,10 @@ class Controller extends Object
             $viewClass = $this->view.'View';
             loadView($this->view);
         }
+        if($this->view != 'View')
+        {
+            $viewClass = $this->view.'View';
+        }
         $this->_viewClass =& new $viewClass($this);
         if(!empty($this->modelNames))
         {

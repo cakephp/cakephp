@@ -285,7 +285,15 @@ class DboMysql extends DboSource
         {
             $data = mysql_real_escape_string($data, $this->connection);
         }
-        return "'" . $data . "'";
+        if(!empty($data))
+        {
+            $return = "'" . $data . "'";
+        }
+        else
+        {
+            $return = "NULL";
+        }
+        return $return;
    }
 
 /**
