@@ -462,7 +462,7 @@ class DboSource extends DataSource
             }
             else
             {
-                if(isset($this->joinFieldJoin))
+                if(isset($this->joinFieldJoin) && !isset($queryData['fields']))
                 {
                     $joinFields = ', ';
                     $joinFields .= join(', ', $this->joinFieldJoin['fields']);
@@ -714,10 +714,10 @@ class DboSource extends DataSource
         {
             $data['conditions'] = ' 1 ';
         }
-       // if (!isset($data['fields']))
-       // {
-       //     $data['fields'] = '*';
-       // }
+        if (!isset($data['fields']))
+        {
+            $data['fields'] = '';
+        }
         if (!isset($data['joins']))
         {
             $data['joins'] = array();
@@ -754,7 +754,6 @@ class DboSource extends DataSource
             }
             else
             {
-                 //$fields = array('*');
                  foreach ($model->_tableInfo->value as $field)
                  {
                      $fields[]= $field['name'];

@@ -621,7 +621,7 @@ class Model extends Object
  * @param mixed $fields String of single fieldname, or an array of fieldnames.
  * @return array Array of database fields
  */
-    function read ($id = null, $fields = null)
+    function read ($fields = null, $id = null)
     {
         $this->validationErrors = null;
         if ($id != null)
@@ -950,7 +950,7 @@ class Model extends Object
  */
     function find ($conditions = null, $fields = null, $order = null, $recursive = 1)
     {
-        $data = $this->findAll($conditions, $fields, $order, 1, $recursive);
+        $data = $this->findAll($conditions, $fields, $order, 1, null, $recursive);
         if (empty($data[0]))
         {
             return false;
@@ -1068,9 +1068,9 @@ class Model extends Object
  * @param string $conditions SQL conditions (WHERE clause conditions)
  * @return int Number of matching rows
  */
-   function findCount ($conditions = null)
+   function findCount ($conditions = null, $recursive = 0)
    {
-      list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, 0);
+      list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
       if (isset($data[0]['count']))
       {
           return $data[0]['count'];

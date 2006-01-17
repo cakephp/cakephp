@@ -66,6 +66,17 @@ define('CAKE_SESSION_COOKIE', 'CAKEPHP');
 define('CAKE_SECURITY', 'high');
 
 /**
+ * Set Cake Session time out.
+ * If CAKE_SECURITY define is set
+ * high: multiplied by 10
+ * medium: is multiplied by 100
+ * low is: multiplied by 300
+ *
+ *  Number below is seconds.
+ */
+define('CAKE_SESSION_TIMEOUT', '120');
+
+/**
  * Set a random string of used in session.
  *
  */

@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * The main "loop"
+ * Short description for file.
  *
  * Long description for file
  *
@@ -34,18 +34,11 @@
  */
 if (!defined('DS'))
 {
-/**
- * Enter description here...
- */
    define('DS', DIRECTORY_SEPARATOR);
 }
 
 if (!defined('ROOT'))
 {
-/**
- * Enter description here...
- *
- */
     define('ROOT', dirname(dirname(dirname(__FILE__))).DS);
 }
 
@@ -58,88 +51,5 @@ if (!defined('WEBROOT_DIR'))
 {
     define ('WEBROOT_DIR', basename(dirname(__FILE__)));
 }
-
-
-/**
- * Configuration, directory layout and standard libraries
- */
-require_once ROOT.'cake'.DS.'basics.php';
-require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
-require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
-require_once LIBS.'object.php';
-require_once LIBS.'session.php';
-require_once LIBS.'security.php';
-require_once LIBS.'neat_array.php';
-require_once LIBS.'inflector.php';
-
-/**
- * Enter description here...
- */
-
-    if (empty($uri) && defined('BASE_URL'))
-    {
-        $uri = setUri();
-        if ($uri === '/' || $uri === '/index.php' || $uri === '/app/')
-        {
-            $_GET['url'] = '/';
-            $url = '/';
-        }
-        else
-        {
-            $elements = explode('/index.php', $uri);
-            if(!empty($elements[1]))
-            {
-                $_GET['url'] = $elements[1];
-                $url = $elements[1];
-            }
-            else
-            {
-                $_GET['url'] = '/';
-                $url = '/';
-            }
-        }
-    }
-    else
-    {
-        $url = empty($_GET['url'])? null: $_GET['url'];
-    }
-
-
-if (strpos($url, 'ccss/') === 0)
-{
-   include WWW_ROOT.DS.'css.php';
-   die();
-}
-
-
-DEBUG? error_reporting(E_ALL): error_reporting(0);
-if (DEBUG)
-{
-    ini_set('display_errors', 1);
-}
-
-$TIME_START = getMicrotime();
-
-require_once CAKE.'dispatcher.php';
-require_once LIBS.'model'.DS.'connection_manager.php';
-
-config('database');
-
-if (class_exists('DATABASE_CONFIG') && !class_exists('AppModel'))
-{
-    require_once LIBS.'model'.DS.'model.php';
-    loadModels();
-}
-
-//RUN THE SCRIPT
-   if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
-   {
-   }else{
-      $Dispatcher= new Dispatcher ();
-      $Dispatcher->dispatch($url);
-   }
-
-if (DEBUG) {
-    echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
-}
+require_once ROOT.'cake'.DS.'bootstrap.php';
 ?>

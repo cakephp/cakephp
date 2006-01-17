@@ -3,20 +3,20 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2005, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -30,7 +30,7 @@
 
 /**
  * Short description for file.
- * 
+ *
  * Long description for file
  *
  * @package    cake
@@ -39,18 +39,18 @@
  */
 class Security extends Object
 {
-    
+
     function &getInstance()
     {
         static $instance = array();
-        
+
         if (!$instance)
         {
             $instance[0] =& new Security;
         }
         return $instance[0];
     }
-    
+
     function inactiveMins()
     {
         $security =& Security::getInstance();
@@ -60,27 +60,27 @@ class Security extends Object
                 return 10;
             break;
             case 'medium':
-                return 20;
+                return 100;
             break;
             case 'low':
             default :
-                return 30;
+                return 300;
             break;
         }
     }
-    
+
     function generateAuthKey()
     {
-        
+
         return $authKey;
     }
-    
+
     function validateAuthKey($authKey)
     {
         return true;
     }
-    
-    
+
+
     function hash($string, $type='sha1')
     {
         $type = strtolower($type);
@@ -111,7 +111,7 @@ class Security extends Object
             return md5($string);
         }
     }
-    
+
     function cipher($text, $key)
     {
         if (!defined('CIPHER_SEED'))
@@ -120,7 +120,7 @@ class Security extends Object
             define('CIPHER_SEED', 'mKEZGy8AB8FErX4t');
         }
         srand(CIPHER_SEED);
-        
+
         $out = '';
         for($i = 0; $i < strlen($text); $i++)
         {
@@ -128,7 +128,7 @@ class Security extends Object
             {
                 $toss = rand(0, 255);
             }
-            
+
             $mask = rand(0, 255);
             $out .= chr(ord(substr($text, $i, 1)) ^ $mask);
         }

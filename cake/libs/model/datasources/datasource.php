@@ -340,8 +340,16 @@ class DataSource extends Object
                 {
                     case '{$__cake_id__$}':
                         $val = null;
-                        if (isset($data[$index][$model->name])) {
-                            $val = $data[$index][$model->name][$model->primaryKey];
+                        if (isset($data[$index][$model->name]))
+                        {
+                            if(isset($data[$index][$model->name][$model->primaryKey]))
+                            {
+                                $val = $data[$index][$model->name][$model->primaryKey];
+                            }
+                            else
+                            {
+                                $val = '';
+                            }
                         }
                     break;
                     case '{$__cake_foreignKey__$}':

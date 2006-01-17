@@ -126,7 +126,7 @@ class CakeSession extends Object
         }
 
         $this->time = time();
-        $this->sessionTime = $this->time + (Security::inactiveMins() * 60);
+        $this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
         $this->security = CAKE_SECURITY;
         $this->_initSession();
         $this->_begin();
@@ -370,7 +370,6 @@ class CakeSession extends Object
                 ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                 ini_set('session.cookie_path', $this->path);
                 ini_set('session.gc_probability', 1);
-                ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
                 ini_set('session.auto_start', 0);
                 ini_set('session.save_path', TMP.'sessions');
             break;
@@ -384,7 +383,6 @@ class CakeSession extends Object
                 ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                 ini_set('session.cookie_path', $this->path);
                 ini_set('session.gc_probability', 1);
-                ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
                 ini_set('session.auto_start', 0);
                 session_set_save_handler(array('CakeSession', '_open'),
                                          array('CakeSession', '_close'),
@@ -398,7 +396,6 @@ class CakeSession extends Object
                 ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                 ini_set('session.cookie_path', $this->path);
                 ini_set('session.gc_probability', 1);
-                ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
             break;
             default :
                 $config = CONFIGS.CAKE_SESSION_SAVE.'.php';
@@ -412,7 +409,6 @@ class CakeSession extends Object
                     ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                     ini_set('session.cookie_path', $this->path);
                     ini_set('session.gc_probability', 1);
-                    ini_set('session.gc_maxlifetime', Security::inactiveMins() * 60);
                 }
             break;
         }
