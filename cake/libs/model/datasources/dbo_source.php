@@ -462,7 +462,7 @@ class DboSource extends DataSource
             }
             else
             {
-                if(isset($this->joinFieldJoin) && !isset($queryData['fields']))
+                if(isset($this->joinFieldJoin))// && !isset($queryData['fields']))
                 {
                     $joinFields = ', ';
                     $joinFields .= join(', ', $this->joinFieldJoin['fields']);
@@ -660,9 +660,9 @@ class DboSource extends DataSource
             $updates[] = $this->name($field).'='.$this->value($value);
         }
 
-        $sql  = 'UPDATE '.$this->name($model->table).' AS '.$this->name($model->name);
+        $sql  = 'UPDATE '.$this->name($model->table);
         $sql .= ' SET '.join(',', $updates);
-        $sql .= ' WHERE '.$model->escapeField($model->primaryKey).'='.$this->value($model->getID());
+        $sql .= ' WHERE '.$this->name($model->primaryKey).'='.$this->value($model->getID());
 
         return $this->execute($sql);
     }
