@@ -323,7 +323,7 @@ class DboSource extends DataSource
 	   }
 	}
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -352,7 +352,7 @@ class DboSource extends DataSource
         return false;
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -411,6 +411,18 @@ class DboSource extends DataSource
                     {
                         $linkModel =& $model->{$assocData['className']};
                         $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $recursive - 1);
+                        //if ($recursive > 1)
+                        //{
+                        //    $linkModel =& $model->{$assocData['className']};
+                        //    foreach($linkModel->__associations as $type1)
+                        //    {
+                        //       foreach($linkModel->{$type1} as $assoc1 => $assocData1)
+                        //        {
+                        //            $deepModel =& $linkModel->{$assocData1['className']};
+                        //            $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData, $array, true, $resultSet, $recursive - 1);
+                        //       }
+                        //    }
+                        //}
                     }
                 }
             }
@@ -418,7 +430,7 @@ class DboSource extends DataSource
         return $resultSet;
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -465,7 +477,7 @@ class DboSource extends DataSource
         }
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -518,7 +530,7 @@ class DboSource extends DataSource
             return $result;
         }
     }
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -535,7 +547,6 @@ class DboSource extends DataSource
     {
         $this->__scrubQueryData($queryData);
         $joinedOnSelf = false;
-        $fields = null;
         if ($linkModel == null)
         {
             if(array_key_exists('selfJoin', $queryData))
@@ -544,7 +555,7 @@ class DboSource extends DataSource
             }
             else
             {
-                if(isset($this->__assocJoins['fields']))
+                if(isset($this->__assocJoins))
                 {
                     $joinFields = ', ';
                     $joinFields .= join(', ', $this->__assocJoins['fields']);
@@ -605,15 +616,19 @@ class DboSource extends DataSource
                     {
                         $assocData['fields'] = '';
                     }
-                    if($this->__bypass == false)
+                    if($this->__bypass === false)
                     {
                         $fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                        $this->__assocJoins['fields'][] = $fields;
+                    }
+                    else
+                    {
+                        $this->__assocJoins = null;
                     }
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
                     $sql .= $this->order($assocData['order']);
-                    $this->__assocJoins['fields'][] = $fields;
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
@@ -652,15 +667,19 @@ class DboSource extends DataSource
                     {
                         $assocData['fields'] = '';
                     }
-                    if($this->__bypass == false)
+                    if($this->__bypass === false)
                     {
                         $fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                        $this->__assocJoins['fields'][] = $fields;
+                    }
+                    else
+                    {
+                        $this->__assocJoins = null;
                     }
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS ' . $this->name($alias) . ' ON ';
                     $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
                     $sql .= '='.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
-                    $this->__assocJoins['fields'][] = $fields;
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
@@ -724,7 +743,7 @@ class DboSource extends DataSource
         return null;
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -747,7 +766,7 @@ class DboSource extends DataSource
         return $this->execute($sql);
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -776,7 +795,7 @@ class DboSource extends DataSource
         return false;
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -798,7 +817,7 @@ class DboSource extends DataSource
         return $key;
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -809,7 +828,7 @@ class DboSource extends DataSource
         $columns = $model->loadInfo();
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $data
@@ -838,7 +857,7 @@ class DboSource extends DataSource
         }
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $model
@@ -948,7 +967,7 @@ class DboSource extends DataSource
         }
     }
 
- /**
+/**
  * Enter description here...
  *
  */
@@ -956,7 +975,7 @@ class DboSource extends DataSource
     {
     }
 
- /**
+/**
  * Enter description here...
  *
  * @param unknown_type $key
