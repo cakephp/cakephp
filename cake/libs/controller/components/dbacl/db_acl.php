@@ -80,7 +80,7 @@ class DB_ACL extends AclBase
       $tmpAcoPath = $Aco->getPath($aco);
       $acoPath = array();
 
-      if($action != '*' && !in_array($permKeys, '_' . $action))
+      if($action != '*' && !in_array('_' . $action, $permKeys))
       {
          trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_ERROR);
       }

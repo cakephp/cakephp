@@ -28,10 +28,6 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-/**
- * Short description.
- */
-require_once(CAKE . 'app_model.php');
 
 /**
  * Short description for file.
@@ -49,17 +45,11 @@ class AclNode extends AppModel
 /**
  * Enter description here...
  *
- * @var unknown_type
- */
-   var $useTable = false;
-/**
- * Enter description here...
- *
  */
    function __construct()
    {
+      $this->setSource();
       parent::__construct();
-      $this->__setTable();
    }
 
 /**
@@ -225,7 +215,7 @@ class AclNode extends AppModel
       {
          return null;
       }
-      return $this->findAll("lft <= {$item[$class]['lft']} and rght >= {$item[$class]['rght']}");
+      return $this->findAll("{$data_name}.lft <= {$item[$class]['lft']} and {$data_name}.rght >= {$item[$class]['rght']}");
    }
 
 /**
@@ -244,7 +234,7 @@ class AclNode extends AppModel
       extract($this->__dataVars());
 
       $item = $this->find($this->_resolveID($id, $secondary_id));
-      return $this->findAll("lft > {$item[$class]['lft']} and rght < {$item[$class]['rght']}");
+      return $this->findAll("{$data_name}.lft > {$item[$class]['lft']} and {$data_name}.rght < {$item[$class]['rght']}");
    }
 
 /**
@@ -271,9 +261,11 @@ class AclNode extends AppModel
  */
    function _syncTable($table, $dir, $lft, $rght)
    {
+      pr('...Syncing...');
       $shift = ($dir == 2 ? 1 : 2);
       $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
       $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
+      pr('...Done Syncing...');
    }
 
 /**
@@ -296,9 +288,9 @@ class AclNode extends AppModel
  * Enter description here...
  *
  */
-   function __setTable()
+   function setSource()
    {
-      $this->table = strtolower(get_class($this)) . "s";
+      $this->table = low(get_class($this)) . "s";
    }
 }
 

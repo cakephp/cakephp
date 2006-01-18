@@ -640,7 +640,6 @@ class DboSource extends DataSource
             case 'belongsTo':
                 if ($external)
                 {
-                    pr('external');
                     $conditions = $assocData['conditions'];
                     $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
 
