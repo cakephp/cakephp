@@ -96,21 +96,28 @@ class Object
  */
     function requestAction ($url, $extra = array())
     {
-        $dispatcher =& new Dispatcher();
-        if(in_array('return', $extra))
+        if(!empty($url))
         {
-            $extra['return'] = 0;
-            $extra['bare']   = 1;
+            $dispatcher =& new Dispatcher();
+            if(in_array('return', $extra))
+            {
+                $extra['return'] = 0;
+                $extra['bare']   = 1;
                 ob_start();
                 $out = $dispatcher->dispatch($url, $extra);
                 $out = ob_get_clean();
                 return $out;
+            }
+            else
+            {
+                $extra['return'] = 1;
+                $extra['bare']   = 1;
+                return $dispatcher->dispatch($url, $extra);
+            }
         }
         else
         {
-            $extra['return'] = 1;
-            $extra['bare']   = 1;
-                return $dispatcher->dispatch($url, $extra);
+            return false;
         }
     }
 

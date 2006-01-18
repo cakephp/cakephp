@@ -366,6 +366,7 @@ class DboSource extends DataSource
         $null = null;
         $array = array();
         $linkedModels = array();
+        $this->__bypass = false;
 
         if(!empty($queryData['fields']))
         {

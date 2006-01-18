@@ -257,17 +257,50 @@ class AjaxHelper extends Helper
   * will work just like a regular submission as viewed by the receiving side (all elements available in params).
   * The options for specifying the target with :url and defining callbacks is the same as link_to_remote.
   *
-  * @param string $id                 Form id
-  * @param array $html_options        HTML tag options
-  * @param array $options             Callback options
-  * @return string                     JavaScript code
+  * @param array $params              Form id
+  * @param array $type                How form data is posted: 'get' or 'post'
+  * @param array $options             Callback/HTML options
+  * @return string                    JavaScript/HTML code
   */
-    function form($id, $options = array())
+    function form($params = null, $type = 'post', $options = array())
     {
+        if (is_array($params))
+        {
+            extract($params, EXTR_OVERWRITE);
+            if (!isset($action))
+            {
+                $action = null;
+            }
+            if (!isset($type))
+            {
+                $type = 'post';
+            }
+            if (!isset($options))
+            {
+                $options = array();
+            }
+        }
+        else
+        {
+             $action = $params;
+        }
+
         $htmlOptions = $this->__getHtmlOptions($options);
-        $htmlOptions['id'] = $id;
+        $htmlOptions['action'] = $action;
+
+        if(!isset($htmlOptions['id']))
+        {
+            $htmlOptions['id'] = 'form'.intval(rand());
+        }
         $htmlOptions['onsubmit'] = "return false;";
-        return $this->Html->formTag(null, "post", $htmlOptions) . $this->Javascript->event("$('$id')", "submit", "function(){" . $this->remoteFunction($options) . ";}");
+
+        if(!isset($options['with']))
+        {
+            $options['with'] = 'Form.serialize(this)';
+        }
+        $options['url'] = $action;
+        
+        return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("$('".$htmlOptions['id']."')", "submit", "function(){" . $this->remoteFunction($options) . ";}");
     }
 
 /**
