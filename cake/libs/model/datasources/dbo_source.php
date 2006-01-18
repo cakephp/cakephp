@@ -360,20 +360,24 @@ class DboSource extends DataSource
  * @param unknown_type $recursive
  * @return unknown
  */
-    function read (&$model, $queryData = array(), $recursive = 1)
+    function read (&$model, $queryData = array(), $recursive = null)
     {
         $this->__scrubQueryData($queryData);
         $null = null;
         $array = array();
         $linkedModels = array();
         $this->__bypass = false;
+        if(!is_null($recursive))
+        {
+            $model->recursive = $recursive;
+        }
 
         if(!empty($queryData['fields']))
         {
             $this->__bypass = true;
         }
 
-        if ($recursive > 0)
+        if ($model->recursive > 0)
         {
             foreach($model->__associations as $type)
             {
@@ -402,7 +406,7 @@ class DboSource extends DataSource
         $query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
         $resultSet = $this->fetchAll($query);
 
-        if ($recursive > 0)
+        if ($model->recursive > 0)
         {
             foreach($model->__associations as $type)
             {
@@ -411,19 +415,18 @@ class DboSource extends DataSource
                     if (!in_array($type.$assoc, $linkedModels))
                     {
                         $linkModel =& $model->{$assocData['className']};
-                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $recursive - 1);
-                        //if ($recursive > 1)
-                        //{
-                        //    $linkModel =& $model->{$assocData['className']};
-                        //    foreach($linkModel->__associations as $type1)
-                        //    {
-                        //       foreach($linkModel->{$type1} as $assoc1 => $assocData1)
-                        //        {
-                        //            $deepModel =& $linkModel->{$assocData1['className']};
-                        //            $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData, $array, true, $resultSet, $recursive - 1);
-                        //       }
-                        //    }
-                        //}
+                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet);
+                        if ($model->recursive > 1 && $linkModel->recursive  > 0)
+                        {
+                            foreach($linkModel->__associations as $type1)
+                            {
+                               foreach($linkModel->{$type1} as $assoc1 => $assocData1)
+                               {
+                                   $deepModel =& $linkModel->{$assocData1['className']};
+                                   $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData, $array, false, $resultSet);
+                               }
+                            }
+                        }
                     }
                 }
             }
@@ -444,7 +447,7 @@ class DboSource extends DataSource
  * @param unknown_type $resultSet
  * @param unknown_type $recursive
  */
-    function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive = 1)
+    function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet)
     {
         //$external = (($linkModel->db === $this) && $resultSet == null);
 

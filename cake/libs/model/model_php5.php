@@ -230,6 +230,12 @@ class Model extends Object
  */
    var $hasAndBelongsToMany = array();
 
+/**
+ * recursive assoication depth
+ *
+ * @var int
+ */
+   var $recursive = 1;
 
 /**
  * Default association keys
@@ -950,7 +956,7 @@ class Model extends Object
  * @param int $recursize The number of levels deep to fetch associated records
  * @return array Array of records
  */
-    function find ($conditions = null, $fields = null, $order = null, $recursive = 1)
+    function find ($conditions = null, $fields = null, $order = null, $recursive = null)
     {
         $data = $this->findAll($conditions, $fields, $order, 1, null, $recursive);
         if (empty($data[0]))
@@ -971,7 +977,7 @@ class Model extends Object
  * @param int $recursize The number of levels deep to fetch associated records
  * @return array Array of records
  */
-    function findAll ($conditions = null, $fields = null, $order = null, $limit = 50, $page = 1, $recursive = 1)
+    function findAll ($conditions = null, $fields = null, $order = null, $limit = 50, $page = 1, $recursive = null)
     {
         if (!$this->beforeFind($conditions))
         {
