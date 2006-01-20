@@ -323,7 +323,7 @@ class Model extends Object
                }
            }
 
-           if (in_array('settableprefix', get_class_methods($this->name)))
+           if (in_array('settableprefix', get_class_methods($this)))
            {
                $this->setTablePrefix();
            }

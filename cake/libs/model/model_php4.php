@@ -323,7 +323,7 @@ class Model extends Object
                }
            }
 
-           if (in_array('settableprefix', get_class_methods($this->name)))
+           if (in_array('settableprefix', get_class_methods($this)))
            {
                $this->setTablePrefix();
            }
@@ -429,11 +429,11 @@ class Model extends Object
         $colKey = Inflector::underscore($className);
         if(ClassRegistry::isKeySet($colKey))
         {
-            $this->{$className} = ClassRegistry::getObject($colKey);
+            $this->{$className} =& ClassRegistry::getObject($colKey);
         }
         else
         {
-            $this->{$className} = new $className();
+            $this->{$className} =& new $className();
         }
 
         $this->alias[$assoc] = $this->{$className}->table;

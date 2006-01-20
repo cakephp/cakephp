@@ -62,7 +62,7 @@
                         //  this is a foreign key, figure out what the display field should be for this model.
                        $otherModelKey = Inflector::underscore($value['modelKey']);
                        $otherControllerName = $value['controller'];
-                       $otherModelObject = ClassRegistry::getObject( $otherModelKey );
+                       $otherModelObject =& ClassRegistry::getObject( $otherModelKey );
                        $alias = array_search($value['table'],$this->controller->{$model}->alias);
                        if( is_object($otherModelObject) )
                        {

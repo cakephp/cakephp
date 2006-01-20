@@ -484,7 +484,7 @@ class Controller extends Object
         $modelKey = $this->modelKey;
         $table = $this->{$model}->table;
         $association = array_search($table,$this->{$model}->alias);
-        $objRegistryModel = ClassRegistry::getObject($modelKey);
+        $objRegistryModel =& ClassRegistry::getObject($modelKey);
 
         foreach ($objRegistryModel->_tableInfo as $tables)
         {
@@ -548,7 +548,7 @@ class Controller extends Object
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
                          $fieldNames[ $tabl['name']]['options'] = array();
-                         $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+                         $otherModel =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
                          if (is_object($otherModel))
                          {
                              if ($doCreateOptions)
@@ -600,7 +600,7 @@ class Controller extends Object
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
                          $fieldNames[ $tabl['name']]['options'] = array();
-                         $otherModel = ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+                         $otherModel =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
                          if( is_object($otherModel) )
                          {
                              if( $doCreateOptions )

@@ -30,7 +30,7 @@
 <?php
    $modelName = Inflector::singularize($this->name);
    $modelKey = Inflector::underscore($modelName);
-   $objModel = ClassRegistry::getObject($modelKey);
+   $objModel =& ClassRegistry::getObject($modelKey);
 
 ?>
 <h1>Show <?php echo Inflector::humanize($modelName)?></h1>
@@ -42,7 +42,7 @@
           if(isset($value['foreignKey']))
           {
               $alias = array_search($value['table'],$objModel->alias);
-              $otherModelObject = ClassRegistry::getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
+              $otherModelObject =& ClassRegistry::getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
               $displayField = $otherModelObject->getDisplayField();
               $displayText = $data[$alias][$displayField];
 
