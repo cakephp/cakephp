@@ -705,21 +705,21 @@ class DboSource extends DataSource
                     $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
                     $sql .= ' FROM '.$this->name($linkModel->table).' AS '. $this->name($alias);
 
-                    $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
-                    $cond .= '={$__cake_id__$}';
                     if (is_array($conditions))
                     {
-                        $conditions[] = $cond;
+                        $conditions[$alias.'.'.$assocData['foreignKey']] = '{$__cake_id__$}';
                     }
                     else
                     {
+                        $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
+                        $cond .= '={$__cake_id__$}';
+
                         if (trim($conditions) != '')
                         {
                             $conditions .= ' AND ';
                         }
                         $conditions .= $cond;
                     }
-
                     $sql .= $this->conditions($conditions);
                     $sql .= $this->order($assocData['order']);
                 }
@@ -953,7 +953,12 @@ class DboSource extends DataSource
 				}
 				else
 				{
-                	$slashedValue = $this->value($value);
+				    if (($value != '{$__cake_id__$}') && ($value != '{$__cake_foreignKey__$}'))
+				    {
+				        $value = $this->value($value);
+				    }
+
+                	//$slashedValue = $this->value($value);
                 	//TODO: Remove the = below so LIKE and other compares can be used
                 	$data = $key . '=';
                 	if ($value === null)
@@ -962,7 +967,7 @@ class DboSource extends DataSource
                 	}
                 	else
                 	{
-                	    $data .= $slashedValue;
+                	    $data .= $value;
                 	}
 				}
                 $out[] = $data;
