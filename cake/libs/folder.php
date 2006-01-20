@@ -8,7 +8,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc.
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -16,7 +16,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs
@@ -339,8 +339,6 @@ class Folder extends Object {
 /**
  * Create a directory structure recursively.
  *
- * @author      Aidan Lister <aidan@php.net>
- * @version     1.0.0
  * @param       string   $pathname    The directory structure to create
  * @return      bool     Returns TRUE on success, FALSE on failure
  */
@@ -376,8 +374,6 @@ class Folder extends Object {
 /**
  * Returns the size in bytes of this Folder.
  *
- * @author      Aidan Lister <aidan@php.net>
- * @version     1.0.0
  * @param       string   $directory    Path to directory
  */
    function dirsize()

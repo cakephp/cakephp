@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc.
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model
@@ -72,7 +72,7 @@ class Model extends Object
  *
  * @var unknown_type
  * @access public
- * @todo Is this still used? -OJ 22 nov 2005
+ * @todo Is this still used? -OJ 22 nov 2006
  */
    var $parent = false;
 
@@ -724,110 +724,119 @@ class Model extends Object
         {
             $this->set($data);
         }
-
-        if ($validate && !$this->validates())
+        if($this->beforeSave())
         {
-            return false;
-        }
-
-        $fields = $values = array();
-
-        $count = 0;
-        if(count($this->data) > 1)
-        {
-            $weHaveMulti = true;
-            $joined = false;
-        }
-        else
-        {
-            $weHaveMulti = false;
-        }
-
-        foreach ($this->data as $n => $v)
-        {
-            if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
+            if ($validate && !$this->validates())
             {
-                $joined[] = $v;
+                return false;
             }
-            else
-            {
-                foreach ($v as $x => $y)
-                {
-                    if ($this->hasField($x))
-                    {
-                        $fields[] = $x;
-                        $values[] = $y;
+            $fields = $values = array();
+             $count = 0;
 
-                        if($x == $this->primaryKey && !is_numeric($y))
-                        {
-                            $newID = $y;
-                        }
-                    }
-                }
-                $count++;
-            }
-        }
+             if(count($this->data) > 1)
+             {
+                 $weHaveMulti = true;
+                 $joined = false;
+             }
+             else
+             {
+                 $weHaveMulti = false;
+             }
 
-        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
-        {
-            $fields[] = 'created';
-            $values[] = date('Y-m-d H:i:s');
-        }
-        if ($this->hasField('modified') && !in_array('modified', $fields))
-        {
-            $fields[] = 'modified';
-            $values[] = date('Y-m-d H:i:s');
-        }
-        if ($this->hasField('updated') && !in_array('updated', $fields))
-        {
-            $fields[] = 'updated';
-            $values[] = date('Y-m-d H:i:s');
-        }
+             foreach ($this->data as $n => $v)
+             {
+                 if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
+                 {
+                     $joined[] = $v;
+                 }
+                 else
+                 {
+                     foreach ($v as $x => $y)
+                     {
+                         if ($this->hasField($x))
+                         {
+                             $fields[] = $x;
+                             $values[] = $y;
 
-        if(!$this->exists())
-        {
-            $this->id = false;
-        }
+                             if($x == $this->primaryKey && !is_numeric($y))
+                             {
+                                 $newID = $y;
+                             }
+                         }
+                     }
+                     $count++;
+                 }
+             }
 
-        if(count($fields))
-        {
-            if(!empty($this->id))
-            {
-                if ($this->db->update($this, $fields, $values))
-                {
-                    if(!empty($joined))
-                    {
-                        $this->__saveMulti($joined, $this->id);
-                    }
-                    $this->data = false;
-                    return true;
-                }
-                else
-                {
-                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
-                }
-            }
-            else
-            {
-                if($this->db->create($this, $fields, $values))
-                {
-                    $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
-                    $this->id = $this->__insertID;
-                    if(!empty($joined))
-                    {
-                        if(!$this->id > 0 && isset($newID))
-                        {
-                            $this->id = $newID;
-                        }
-                        $this->__saveMulti($joined, $this->id);
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
+             if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
+             {
+                 $fields[] = 'created';
+                 $values[] = date('Y-m-d H:i:s');
+             }
+             if ($this->hasField('modified') && !in_array('modified', $fields))
+             {
+                 $fields[] = 'modified';
+                 $values[] = date('Y-m-d H:i:s');
+             }
+             if ($this->hasField('updated') && !in_array('updated', $fields))
+             {
+                 $fields[] = 'updated';
+                 $values[] = date('Y-m-d H:i:s');
+             }
+
+             if(!$this->exists())
+             {
+                 $this->id = false;
+             }
+
+             if(count($fields))
+             {
+                 if(!empty($this->id))
+                 {
+                     if ($this->db->update($this, $fields, $values))
+                     {
+                         if(!empty($joined))
+                         {
+                             $this->__saveMulti($joined, $this->id);
+                         }
+                         $this->afterSave();
+                         $this->data = false;
+                         return true;
+                     }
+                     else
+                     {
+                         return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
+                     }
+                 }
+                 else
+                 {
+                     if($this->db->create($this, $fields, $values))
+                     {
+                         $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
+                         $this->id = $this->__insertID;
+
+                         if(!empty($joined))
+                         {
+                             if(!$this->id > 0 && isset($newID))
+                             {
+                                 $this->id = $newID;
+                             }
+                             $this->__saveMulti($joined, $this->id);
+                         }
+                         $this->afterSave();
+                         $this->data = false;
+                         return true;
+                     }
+                     else
+                     {
+                         return false;
+                     }
+                 }
+             }
+             else
+             {
+                 return false;
+             }
         }
         else
         {
@@ -943,11 +952,9 @@ class Model extends Object
         return false;
     }
 
-
 /**
  * Returns true if a record that meets given conditions exists
  *
- * @param unknown_type $conditions
  * @return boolean True if such a record exists
  */
     function hasAny ($conditions = null)
@@ -1273,7 +1280,6 @@ class Model extends Object
     {
         return $this->db->name($this->name).'.'.$this->db->name($field);
     }
-
 /**
  * Returns the current record's ID
  *
@@ -1401,6 +1407,7 @@ class Model extends Object
  */
     function afterSave()
     {
+        return true;
     }
 
 /**
@@ -1420,6 +1427,7 @@ class Model extends Object
  */
     function afterDelete()
     {
+        return true;
     }
 }
 

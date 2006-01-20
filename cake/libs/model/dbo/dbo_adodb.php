@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model.datasources.dbo
@@ -31,7 +31,8 @@
 /**
  * Include AdoDB files.
  */
-require_once(VENDORS.'adodb/adodb.inc.php');
+require_once(VENDORS.'adodb'.DS.'adodb.inc.php');
+uses('model'.DS.'datasources'.DS.'dbo_source');
 
 /**
  * AdoDB DBO implementation.
@@ -42,8 +43,15 @@ require_once(VENDORS.'adodb/adodb.inc.php');
  * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
-class DBO_AdoDB extends DBO
+class DboAdodb extends DboSource
 {
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+   var $description = "ADOdb DBO Driver";
+
 
 /**
  * ADOConnection object with which we connect.
@@ -58,21 +66,27 @@ class DBO_AdoDB extends DBO
  *
  * @param array $config Configuration array for connecting
  */
-   function connect ($config)
+   function connect ()
    {
-      if ($this->config = $config)
-      {
-         if (isset($config['driver']))
-         {
-            $this->_adodb = NewADOConnection($config['driver']);
-
-            $adodb =& $this->_adodb;
-            $this->connected = $adodb->Connect($config['host'], $config['login'], $config['password'], $config['database']);
-         }
+      $config = $this->config;
+      $persistent = strrpos($config['connect'], '|p');
+      if($persistent === FALSE){
+         $adodb_driver = $config['connect'];
+         $connect = 'Connect';
+      }
+      else{
+         $adodb_driver = substr($config['connect'], 0, $persistent);
+         $connect = 'PConnect';
       }
 
-      if(!$this->connected){
-        // die('Could not connect to DB.');
+      $this->_adodb = NewADOConnection($adodb_driver);
+      $adodb =& $this->_adodb;
+
+      $this->connected = $adodb->$connect($config['host'], $config['login'], $config['password'], $config['database']);
+
+      if(!$this->connected)
+      {
+          //die('Could not connect to DB.');
       }
    }
 
@@ -83,7 +97,7 @@ class DBO_AdoDB extends DBO
  */
    function disconnect ()
    {
-      return $this->_adodb->close();
+      return $this->_adodb->Close();
    }
 
 /**
@@ -108,6 +122,61 @@ class DBO_AdoDB extends DBO
    }
 
 /**
+ * Begin a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions).
+ */
+    function begin (&$model)
+    {
+        if (parent::begin($model))
+        {
+            if ($this->_adodb->BeginTrans())
+            {
+                $this->__transactionStarted = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+/**
+ * Commit a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+    function commit (&$model)
+    {
+        if (parent::commit($model))
+        {
+            $this->__transactionStarted;
+            return $this->_adodb->CommitTrans();
+        }
+        return false;
+    }
+
+/**
+ * Rollback a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+    function rollback (&$model)
+    {
+        if (parent::rollback($model))
+        {
+            return $this->_adodb->RollbackTrans();
+        }
+        return false;
+    }
+
+/**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @return array Array of tablenames in the database
@@ -116,7 +185,7 @@ class DBO_AdoDB extends DBO
    {
       $tables = $this->_adodb->MetaTables('TABLES');
 
-      if (!sizeof($tables)>0) {
+      if (!sizeof($tables) > 0) {
          trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
          exit;
       }
@@ -184,13 +253,16 @@ class DBO_AdoDB extends DBO
    }
 
 /**
- * To-be-implemented. Returns the ID generated from the previous INSERT operation.
+ * Returns the ID generated from the previous INSERT operation.
  *
  * @return int
  *
- * @todo To be implemented.
+ * @Returns the last autonumbering ID inserted. Returns false if function not supported.
  */
-   function lastInsertId ()      { die('Please implement DBO::lastInsertId() first.'); }
+   function lastInsertId ()
+   {
+       return $this->_adodb->Insert_ID();
+   }
 
 /**
  * Returns a LIMIT statement in the correct format for the particular database.

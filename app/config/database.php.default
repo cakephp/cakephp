@@ -2,22 +2,22 @@
 /* SVN FILE: $Id$ */
 
 /**
- * This is core configuration file. 
- * 
+ * This is core configuration file.
+ *
  * Use it to configure core behaviour ofCake.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @filesource
+ * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.app.config
@@ -30,7 +30,7 @@
 
 /**
  * In this file you set up your database connection details.
- * 
+ *
  * @package cake
  * @subpackage cake.config
  */
@@ -47,6 +47,9 @@
  * MySQL set the connect to either mysql_pconnect of mysql_connect
  * PostgreSQL set the connect to either pg_pconnect of pg_connect
  * SQLite set the connect to sqlite_popen  sqlite_open
+ * ADOdb set the connect to one of these
+ *   (http://phplens.com/adodb/supported.databases.html) and
+ *   append it '|p' for persistent connection. (mssql|p for example, or just mssql for not persistent)
  *
  * host =>
  * the host you connect to the database

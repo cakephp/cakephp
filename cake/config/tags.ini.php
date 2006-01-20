@@ -9,7 +9,7 @@
 ; * PHP versions 4 and 5
 ; *
 ; * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
-; * Copyright (c) 2005, Cake Software Foundation, Inc.
+; * Copyright (c) 2006, Cake Software Foundation, Inc.
 ; *                     1785 E. Sahara Avenue, Suite 490-204
 ; *                     Las Vegas, Nevada 89104
 ; *
@@ -18,7 +18,7 @@
 ; *
 ; * @filesource
 ; *
-; * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+; * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
 ; * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
 ; * @package      cake
 ; * @subpackage   cake.cake.app.config
@@ -82,7 +82,7 @@ file = "<input type="file" name="%s" %s/>"
 submit = "<input type="submit" %s/>"
 
 ; Tag template for an image tag.
-image =" <img src="%s" %s/>"
+image ="<img src="%s" %s/>"
 
 ; Tag template for a table header tag.
 tableheader = "<th%s>%s</th>"

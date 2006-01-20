@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc.
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -17,7 +17,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
+ * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
  * @subpackage   cake.cake.libs.model.datasources
@@ -367,6 +367,7 @@ class DboSource extends DataSource
         $array = array();
         $linkedModels = array();
         $this->__bypass = false;
+        $this->__assocJoins = null;
         if(!is_null($recursive))
         {
             $model->recursive = $recursive;
@@ -384,7 +385,7 @@ class DboSource extends DataSource
                 foreach($model->{$type} as $assoc => $assocData)
                 {
                     $linkModel =& $model->{$assocData['className']};
-                    if($model->name == $linkModel->name)
+                    if($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany')
                     {
                         if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
                         {
@@ -422,8 +423,11 @@ class DboSource extends DataSource
                             {
                                foreach($linkModel->{$type1} as $assoc1 => $assocData1)
                                {
-                                   $deepModel =& $linkModel->{$assocData1['className']};
-                                   $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData, $array, false, $resultSet);
+                                   if ($assoc1 != $model->name)
+                                   {
+                                       $deepModel =& $linkModel->{$assocData1['className']};
+                                       $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $array, false, $resultSet);
+                                   }
                                }
                             }
                         }
@@ -898,7 +902,7 @@ class DboSource extends DataSource
             }
         }
 
-        if (count($fields) > 1 && $fields[0] != '*')
+        if (count($fields) >= 1 && $fields[0] != '*')
         {
             for ($i = 0; $i < count($fields); $i++)
             {
@@ -1005,7 +1009,7 @@ class DboSource extends DataSource
        {
            $this->showLog();
        }
-       $this->disconnect();
+       //$this->disconnect();
        $this->_conn = NULL;
        $this->connected = false;
     }
