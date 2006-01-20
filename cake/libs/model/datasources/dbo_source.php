@@ -902,9 +902,10 @@ class DboSource extends DataSource
             }
         }
 
-        if (count($fields) >= 1 && $fields[0] != '*')
+        $count = count($fields);
+        if ($count > 1 && $fields[0] != '*')
         {
-            for ($i = 0; $i < count($fields); $i++)
+            for ($i = 0; $i < $count; $i++)
             {
                 $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
             }

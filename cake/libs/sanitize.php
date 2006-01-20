@@ -3,20 +3,20 @@
 
 /**
  * Washes strings from unwanted noise.
- * 
+ *
  * Helpful methods to make unsafe strings usable.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
@@ -48,9 +48,30 @@ class Sanitize
  * @param string $string
  * @return string
  */
-    function paranoid($string)
+    function paranoid($string, $allowed = array())
     {
-        return preg_replace( "/[^a-zA-Z0-9]/", "", $string );
+        $allow = null;
+
+        if(!empty($allowed))
+        {
+            foreach ($allowed as $value)
+            {
+                $allow .= "\\$value";
+            }
+        }
+
+        if(is_array($string))
+        {
+           foreach ($string as $key => $clean)
+           {
+              $cleaned[$key] = preg_replace( "/[^{$allow}a-zA-Z0-9]/", "", $clean);
+           }
+        }
+        else
+        {
+            $cleaned = preg_replace( "/[^{$allow}a-zA-Z0-9]/", "", $string );
+        }
+        return $cleaned;
     }
 
 /**
@@ -65,10 +86,10 @@ class Sanitize
       {
          $string = addslashes($string);
       }
-      
+
       return $string;
    }
-    
+
 /**
  * Returns given string safe for display as HTML. Renders entities and converts newlines to <br/>.
  *
@@ -91,14 +112,14 @@ class Sanitize
 
       return $string;
    }
-    
+
 /**
  * Recursively sanitizes given array of data for safe input.
  *
  * @param mixed $toClean
  * @return mixed
  */
-   function cleanArray(&$toClean) 
+   function cleanArray(&$toClean)
    {
       return $this->cleanArrayR($toClean);
    }
@@ -110,38 +131,38 @@ class Sanitize
  * @return array
  * @see cleanArray
  */
-   function cleanArrayR(&$toClean) 
+   function cleanArrayR(&$toClean)
    {
-      if (is_array($toClean)) 
+      if (is_array($toClean))
       {
          while(list($k, $v) = each($toClean))
          {
-            if ( is_array($toClean[$k]) ) 
+            if ( is_array($toClean[$k]) )
             {
                $this->cleanArray($toClean[$k]);
-            } 
-            else 
+            }
+            else
             {
                $toClean[$k] = $this->cleanValue($v);
             }
          }
       }
-      else 
+      else
       {
          return null;
       }
    }
-    
+
 /**
  * Do we really need to sanitize array keys? If so, we can use this code...
 
    function cleanKey($key)
    {
-      if ($key == "") 
+      if ($key == "")
       {
          return "";
       }
-      
+
       //URL decode and convert chars to HTML entities
       $key = htmlspecialchars(urldecode($key));
       //Remove ..
@@ -150,18 +171,18 @@ class Sanitize
       $key = preg_replace( "/\_\_(.+?)\_\_/", "", $key );
       //Trim word chars, '.', '-', '_'
       $key = preg_replace( "/^([\w\.\-\_]+)$/", "$1", $key );
-      
+
       return $key;
    }
  */
-    
+
 /**
  * Method used by cleanArray() to sanitize array nodes.
  *
  * @param string $val
  * @return string
  */
-   function cleanValue($val) 
+   function cleanValue($val)
    {
       if ($val == "")
       {

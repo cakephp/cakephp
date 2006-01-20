@@ -959,7 +959,7 @@ class Model extends Object
  */
     function hasAny ($conditions = null)
     {
-        return ($this->findCount($conditions) !== false);
+        return ($this->findCount($conditions) != false);
     }
 
 /**
@@ -1120,10 +1120,14 @@ class Model extends Object
  * @param unknown_type $value
  * @return array Array with keys "prev" and "next" that holds the id's
  */
-    function findNeighbours ($conditions, $field, $value)
+    function findNeighbours ($conditions = null, $field, $value)
     {
-        @list($prev) = Model::findAll($conditions . ' AND ' . $field . ' < ' . $this->db->value($value), $field, $field . ' DESC', 1);
-        @list($next) = Model::findAll($conditions . ' AND ' . $field . ' > ' . $this->db->value($value), $field, $field . ' ASC', 1);
+        if(!is_null($conditions))
+        {
+            $conditions = $conditions.' AND ';
+        }
+        @list($prev) = Model::findAll($conditions. $field . ' < ' . $this->db->value($value), $field, $field . ' DESC', 1);
+        @list($next) = Model::findAll($conditions. $field . ' > ' . $this->db->value($value), $field, $field . ' ASC', 1);
 
         if (!isset($prev))
         {

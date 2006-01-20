@@ -62,6 +62,7 @@ uses ('security');
 uses ('model'.DS.'connection_manager');
 uses ('model'.DS.'datasources'.DS.'dbo_source');
 uses ('model'.DS.'model');
+require_once(CAKE.'app_model.php');
 uses ('controller'.DS.'components'.DS.'acl');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco');
