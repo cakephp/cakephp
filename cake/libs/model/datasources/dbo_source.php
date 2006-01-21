@@ -907,7 +907,16 @@ class DboSource extends DataSource
         {
             for ($i = 0; $i < $count; $i++)
             {
-                $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
+                $dot = strrpos($fields[$i], '.');
+                if ($dot === false)
+                {
+                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
+                }
+                else
+                {
+                    $build = explode('.',$fields[$i]);
+                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]);
+                }
             }
         }
         return $fields;
