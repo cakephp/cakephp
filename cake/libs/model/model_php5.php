@@ -182,6 +182,13 @@ class Model extends Object
    var $modelToTable = array();
 
 /**
+ * List of Foreign Key names to table used tables. Used for associations.
+ *
+ * @var array
+ */
+   var $keyToTable = array();
+
+/**
  * Alias table names for model, for use in SQL JOIN statements.
  *
  * @var array
@@ -300,28 +307,28 @@ class Model extends Object
         }
 
         $this->currentModel = Inflector::underscore($this->name);
-        $this->setDataSource($ds);
 
         ClassRegistry::addObject($this->currentModel, $this);
         $this->id = $id;
 
         if($this->useTable !== false)
         {
-           if ($table)
-           {
-               $tableName = $table;
-           }
-           else
-           {
-               if ($this->useTable)
-               {
-                   $tableName = $this->useTable;
-               }
-               else
-               {
-                   $tableName = Inflector::tableize($this->name);
-               }
-           }
+            $this->setDataSource($ds);
+            if ($table)
+            {
+                $tableName = $table;
+            }
+            else
+            {
+                if ($this->useTable)
+                {
+                    $tableName = $this->useTable;
+                }
+                else
+                {
+                    $tableName = Inflector::tableize($this->name);
+                }
+            }
 
            if (in_array('settableprefix', get_class_methods($this)))
            {
@@ -336,23 +343,24 @@ class Model extends Object
            {
                $this->setSource($tableName);
            }
-           $this->__createLinks();
-        }
 
-        if ($this->displayField == null)
-        {
-            if ($this->hasField('title'))
-            {
-                $this->displayField = 'title';
-            }
-            if ($this->hasField('name'))
-            {
-                $this->displayField = 'name';
-            }
-            if ($this->displayField == null)
-            {
-                $this->displayField = $this->primaryKey;
-            }
+           $this->__createLinks();
+
+           if ($this->displayField == null)
+           {
+               if ($this->hasField('title'))
+               {
+                   $this->displayField = 'title';
+               }
+               if ($this->hasField('name'))
+               {
+                   $this->displayField = 'name';
+               }
+               if ($this->displayField == null)
+               {
+                   $this->displayField = $this->primaryKey;
+               }
+           }
         }
     }
 
@@ -482,6 +490,11 @@ class Model extends Object
                         break;
                     }
                     $this->{$type}[$assocKey][$key] = $data;
+                }
+                if($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]]))
+                {
+                    $this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
+                    $this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
                 }
             }
         }

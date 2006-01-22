@@ -494,13 +494,14 @@ class Controller extends Object
                 if ($objRegistryModel->isForeignKey($tabl['name']))
                 {
                     $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
-                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
-                    $fieldNames[ $tabl['name'] ]['table'] = Inflector::pluralize($niceName);
+                    $fkNames = $this->{$model}->keyToTable[$tabl['name']];
+                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($fkNames[1]);
+                    $fieldNames[ $tabl['name'] ]['table'] = $fkNames[0];
                     $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
-                    $fieldNames[ $tabl['name'] ]['model'] = $alias.$association;
+                    $fieldNames[ $tabl['name'] ]['model'] = $fkNames[1];
                     $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
-                    $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($niceName)]);
+                    $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($fkNames[0])]);
                     $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
                 }
              else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
@@ -660,7 +661,7 @@ class Controller extends Object
                 $modelName = $relData['className'];
                 $manyAssociation = $relation;
                 $modelKeyM = Inflector::underscore($modelName);
-                $modelObject = new $modelName();
+                $modelObject =& new $modelName();
                 if($doCreateOptions)
                 {
                     $otherDisplayField = $modelObject->getDisplayField();

@@ -593,9 +593,13 @@ class DboSource extends DataSource
             case 'hasOne':
                 if ($external)
                 {
-                    if ($assocData['finderQuery'])
+                    if (isset($assocData['finderQuery']))
                     {
                         return $assocData['finderQuery'];
+                    }
+                    if(!isset($assocData['fields']))
+                    {
+                        $assocData['fields'] = '';
                     }
                     $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
                     $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;

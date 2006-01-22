@@ -692,7 +692,7 @@ if (!function_exists('file_put_contents'))
         {
             $data = join('', $data);
         }
-        $res = @fopen($fileName, 'xb');
+        $res = @fopen($fileName, 'w+b');
         if ($res)
         {
             @fwrite($res, $data);

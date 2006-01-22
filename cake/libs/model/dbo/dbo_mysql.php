@@ -69,7 +69,7 @@ class DboMysql extends DboSource
  *
  * @var unknown_type
  */
-    var $columns = array('primary_key' =>array('name' => 'int(11) DEFAULT NULL auto_increment'),
+    var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
                          'string'      => array('name' => 'varchar', 'limit' => '255'),
                          'text'        => array('name' => 'text'),
                          'integer'     => array('name' => 'int', 'limit' => '11'),
@@ -285,14 +285,7 @@ class DboMysql extends DboSource
         {
             $data = mysql_real_escape_string($data, $this->connection);
         }
-        if($data != '')
-        {
-            $return = "'" . $data . "'";
-        }
-        else
-        {
-            $return = "NULL";
-        }
+        $return = "'" . $data . "'";
         return $return;
    }
 
@@ -536,5 +529,16 @@ class DboMysql extends DboSource
             return false;
         }
     }
+
+    function buildSchemaQuery($schema)
+    {
+        $search  = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
+                         '{FULLTEXT_MYSQL}', '{BOOLEAN}', '{UTF_8}');
+        $replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
+                         'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
+                         '/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
+        $query = trim(str_replace($search, $replace, $schema));
+        return $query;
+     }
 }
 ?>

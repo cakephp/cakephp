@@ -508,6 +508,11 @@ class DataSource extends Object
         return $data;
     }
 
+    function buildSchemaQuery($schema)
+    {
+        die("Implement in DBO");
+    }
+
 /**
  * Enter description here...
  *

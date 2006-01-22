@@ -46,7 +46,7 @@
               $displayField = $otherModelObject->getDisplayField();
               $displayText = $data[$alias][$displayField];
 
-              if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]))
+              if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]) && (isset($displayText)))
               {
                   echo "<dd>".$html->link($displayText, '/'.Inflector::underscore($value['controller']).'/show/'
                              .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";

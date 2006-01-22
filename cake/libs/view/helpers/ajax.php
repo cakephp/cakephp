@@ -215,7 +215,7 @@ class AjaxHelper extends Helper
 
         if (isset($options['before']))
         {
-            $func = "{$options['before']}; $function";
+            $func = "{$options['before']}; $func";
         }
         if (isset($options['after']))
         {
@@ -299,7 +299,7 @@ class AjaxHelper extends Helper
             $options['with'] = 'Form.serialize(this)';
         }
         $options['url'] = $action;
-        
+
         return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("$('".$htmlOptions['id']."')", "submit", "function(){" . $this->remoteFunction($options) . ";}");
     }
 
