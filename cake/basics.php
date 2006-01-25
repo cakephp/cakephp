@@ -634,6 +634,19 @@ function env($key)
     {
         return getenv($key);
     }
+    if ($key == 'DOCUMENT_ROOT')
+    {
+        $offset = 0;
+        if (!strpos(env('SCRIPT_NAME'), '.php'))
+        {
+            $offset = 4;
+        }
+        return substr(env('SCRIPT_FILENAME'), 0, strlen(env('SCRIPT_FILENAME')) - (strlen(env('SCRIPT_NAME')) + $offset));
+    }
+    if ($key == 'PHP_SELF')
+    {
+        return r(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+    }
     return null;
 }
 

@@ -7,10 +7,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -29,16 +29,13 @@
 <h1>New <?php echo Inflector::humanize($this->name)?></h1>
 
 <?php
-    echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
-
-    echo $form->generateFields( $fieldNames );
-
-    echo $form->generateSubmitDiv( 'Add' )
+echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
+echo $form->generateFields( $fieldNames );
+echo $form->generateSubmitDiv( 'Add' )
 ?>
 </form>
 <ul class='actions'>
 <?php
-   echo "<li>".$html->link('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/index')."</li>";
-
+echo "<li>".$html->link('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/index')."</li>";
 ?>
 </ul>

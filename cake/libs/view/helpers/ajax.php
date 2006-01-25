@@ -152,7 +152,11 @@ class AjaxHelper extends Helper
             $href = $title;
         }
 
-        $options['url'] = $href;
+        if (!isset($options['url']))
+        {
+            $options['url'] = $href;
+        }
+
         if (isset($confirm))
         {
             $options['confirm'] = $confirm;
@@ -414,15 +418,15 @@ class AjaxHelper extends Helper
 
         if(!isset($options['class']))
         {
-           $options['class'] = "auto_complete";
+            $options['class'] = "auto_complete";
         }
 
         $divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => $options['class']);
 
         return $this->Html->input($field, $htmlOptions) .
-          $this->Html->tag("div", $divOptions, true) . "</div>" .
-          $this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
-          $divOptions['id'] . "', '" . $this->Html->url($url) . "'" . $this->__optionsForAjax($ajaxOptions) . ");");
+        $this->Html->tag("div", $divOptions, true) . "</div>" .
+        $this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
+        $divOptions['id'] . "', '" . $this->Html->url($url) . "'" . $this->__optionsForAjax($options) . ");");
     }
 
 /**

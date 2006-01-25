@@ -388,6 +388,40 @@ class Controller extends Object
     }
 
 /**
+ * Gets the referring URL of this request
+ *
+ * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
+ * @param boolean $local If true, restrict referring URLs to local server
+ * @access public
+ */
+    function referer($default = null, $local = false)
+    {
+        $ref = env('HTTP_REFERER');
+        $base = FULL_BASE_URL . $this->webroot;
+
+        if ($ref != null && defined(FULL_BASE_URL))
+        {
+            if (strpos(env('HTTP_REFERER'), $base) == 0)
+            {
+                return substr($ref, strlen($base) - 1);
+            }
+            elseif (!$local)
+            {
+                return $ref;
+            }
+        }
+
+        if ($default != null)
+        {
+            return $default;
+        }
+        else
+        {
+            return '/';
+        }
+    }
+
+/**
  * Sets data for this view. Will set title if the key "title" is in given $data array.
  *
  * @param array $data Array of
