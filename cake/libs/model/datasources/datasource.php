@@ -254,9 +254,14 @@ class DataSource extends Object
         if ($data !== null)
         {
             $this->__descriptions[$object] = &$data;
+            $cache = serialize($data);
+        }
+        else
+        {
+            $cache = null;
         }
 
-        $new = cache('models'.DS.low(get_class($this)).'_'.$object, serialize($data), $expires);
+        $new = cache('models'.DS.low(get_class($this)).'_'.$object, $cache, $expires);
         if($new != null)
         {
            $new = unserialize($new);
