@@ -63,7 +63,7 @@ class JavascriptHelper extends Helper
     function link($url)
     {
       if(strpos($url, ".") === false) $url .= ".js";
-      return sprintf($this->tags['javascriptlink'], $this->webroot . JS_URL . $url);
+      return sprintf($this->tags['javascriptlink'], $this->webroot.JS_URL.$this->themeWeb.$url);
     }
 
  /**

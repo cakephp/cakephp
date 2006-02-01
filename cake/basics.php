@@ -195,6 +195,10 @@ function loadController ($name)
             require_once(CAKE.'app_controller.php');
         }
     }
+    if($name === null)
+    {
+        return;
+    }
     if(!class_exists($name.'Controller'))
     {
         $name = Inflector::underscore($name);
@@ -215,6 +219,32 @@ function loadController ($name)
     else
     {
         return true;
+    }
+}
+
+/**
+ * Loads a loadPluginController.
+ *
+ * @param  string  $plugin Name of plugin
+ * @param  string  $controller Name of controller to load
+ * @return boolean Success
+ */
+function loadPluginController ($plugin, $controller)
+{
+
+    if(!class_exists($controller.'Controller'))
+    {
+        $controller = Inflector::underscore($controller);
+        $file = APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$controller.'_controller.php';
+        if(!file_exists($file))
+        {
+            return false;
+        }
+        else
+        {
+            require_once($file);
+            return true;
+        }
     }
 }
 
@@ -303,7 +333,14 @@ function vendor($name)
     $args = func_get_args();
     foreach ($args as $arg)
     {
-        require_once(VENDORS.$arg.'.php');
+        if(file_exists(APP.'vendors'.DS.$arg.'.php'))
+        {
+            require_once(APP.'vendors'.DS.$arg.'.php');
+        }
+        else
+        {
+            require_once(VENDORS.$arg.'.php');
+        }
     }
 }
 

@@ -195,6 +195,20 @@ class View extends Object
     var $subDir = null;
 
 /**
+ * Enter description here...
+ *
+ * @var array
+ */
+    var $themeWeb = null;
+
+/**
+ * Enter description here...
+ *
+ * @var array
+ */
+    var $plugin = null;
+
+/**
  * Constructor
  *
  * @return View
@@ -220,6 +234,7 @@ class View extends Object
         $this->data          =& $this->controller->data;
         $this->displayFields =& $this->controller->displayFields;
         $this->webservices   =& $this->controller->webservices;
+        $this->plugin        =& $this->controller->plugin;
         parent::__construct();
    }
 
@@ -258,6 +273,11 @@ class View extends Object
       else
       {
           $viewFileName = $this->_getViewFileName($action);
+      }
+
+      if(!is_null($this->plugin) && is_null($file))
+      {
+          return $this->pluginView($action, $layout);
       }
 
       if (!is_file($viewFileName))
@@ -632,7 +652,12 @@ class View extends Object
                 if(!class_exists($helperCn))
                 {
                     $helperFn = Inflector::underscore($helper).'.php';
-                    if(file_exists(HELPERS.$helperFn))
+
+                    if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'helpers'.DS.$helperFn))
+                    {
+                        $helperFn = APP.'plugins'.DS.$this->plugin.'views'.DS.'helpers'.DS.$helperFn;
+                    }
+                    else if(file_exists(HELPERS.$helperFn))
                     {
                         $helperFn = HELPERS.$helperFn;
                     }
@@ -664,6 +689,7 @@ class View extends Object
                     ${$camelBackedHelper}->params               = $this->params;
                     ${$camelBackedHelper}->action               = $this->action;
                     ${$camelBackedHelper}->data                 = $this->data;
+                    ${$camelBackedHelper}->themeWeb             = $this->themeWeb;
                     ${$camelBackedHelper}->tags                 = $tags;
 
                     if(!empty($this->validationErrors))
@@ -686,6 +712,21 @@ class View extends Object
         }
         return $loaded;
     }
-}
 
+    function pluginView($action, $layout)
+    {
+        $viewFileName = APP.'plugins'.DS.$this->plugin.'views'.DS.$this->viewPath.DS.$action.$this->ext;
+        if(file_exists($viewFileName))
+        {
+            $this->render($action, $layout, $viewFileName);
+        }
+        else
+        {
+            return $this->cakeError('missingView',
+                        array(array('className' => $this->controller->name,
+                                    'action' => $action,
+                                    'file' => $viewFileName)));
+        }
+    }
+}
 ?>

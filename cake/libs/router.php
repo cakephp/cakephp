@@ -127,7 +127,7 @@ class Router extends Object {
       $default_route = array
       (
          '/:controller/:action/* (default)',
-         '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/(.*))?)?))[\\/]*$/',
+         '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
          array('controller', 'action'),
          array());
 
@@ -139,7 +139,7 @@ class Router extends Object {
               $this->routes[] = array
               (
               '/:'.$admin.'/:controller/:action/* (default)',
-              '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\/(.*))?)?)?))[\/]*$/',
+              '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
               array($admin, 'controller', 'action'),
               array());
 

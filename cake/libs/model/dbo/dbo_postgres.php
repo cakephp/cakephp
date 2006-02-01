@@ -111,7 +111,7 @@ class  DboPostgres extends DboSource
   * @param string $sql SQL statement
   * @return resource Result resource identifier
   */
-   function __execute ($sql)
+   function _execute ($sql)
    {
       return pg_query($this->connection, $sql);
    }
@@ -171,15 +171,16 @@ class  DboPostgres extends DboSource
       {
          return null;
       }
-      else
-      {
-         $tables = array();
-         foreach ($result as $item)
-         {
-             $tables[] = $item['name'];
-         }
-         return $tables;
-      }
+       else
+       {
+          $tables = array();
+          $tables[] = $result['name'];
+          while ($row = $this->fetchRow())
+          {
+              $tables[] = $row['name'];
+          }
+          return $tables;
+       }
    }
 
 /**

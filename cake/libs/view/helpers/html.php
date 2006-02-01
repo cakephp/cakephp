@@ -335,7 +335,7 @@ class HtmlHelper extends Helper
  */
     function css($path, $rel = 'stylesheet', $htmlAttributes = null, $return = false)
     {
-        $url = "{$this->webroot}".(COMPRESS_CSS? 'c': '').CSS_URL.$path.".css";
+        $url = "{$this->webroot}".(COMPRESS_CSS? 'c': '').CSS_URL.$this->themeWeb.$path.".css";
         return $this->output(sprintf($this->tags['css'], $rel, $url,
         $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
     }
@@ -420,7 +420,14 @@ class HtmlHelper extends Helper
 
     function image($path, $htmlAttributes = null, $return = false)
     {
-        $url = $this->webroot.IMAGES_URL.$path;
+        if (strpos($path, '://'))
+        {
+            $url = $path;
+        }
+        else
+        {
+            $url = $this->webroot.IMAGES_URL.$this->themeWeb.$path;
+        }
         return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
     }
 
@@ -1019,7 +1026,7 @@ class HtmlHelper extends Helper
         foreach ($option_elements as $name=>$title)
         {
             $options_here = $optionAttr;
-            if (!empty($selected) && ($selected == $name))
+            if (($selected !== null) && ($selected == $name))
             {
                 $options_here['selected'] = 'selected';
             } else if ( is_array($selected) && array_key_exists($name, $selected) )

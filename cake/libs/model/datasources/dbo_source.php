@@ -47,11 +47,11 @@ uses('model'.DS.'datasources'.DS.'datasource');
 class DboSource extends DataSource
 {
 /**
- * Enter description here...
+ * Description string for this Database Data Source.
  *
  * @var unknown_type
  */
-   var $description = "Database Data Source";
+    var $description = "Database Data Source";
 /**
  * Enter description here...
  *
@@ -61,7 +61,7 @@ class DboSource extends DataSource
 /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var array
  */
    var $__assocJoins = null;
 /**
@@ -100,9 +100,9 @@ class DboSource extends DataSource
    }
 
 /**
- * Enter description here...
+ * Convenience method for DboSource::listSources().
  *
- * @return unknown
+ * @return array
  */
    function sources ()
    {
@@ -238,7 +238,7 @@ class DboSource extends DataSource
    }
 
 /**
- * Outputs the contents of the log.
+ * Outputs the contents of the queries log.
  *
  * @param boolean $sorted
  */
@@ -248,7 +248,7 @@ class DboSource extends DataSource
       sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
       $this->_queriesLog;
 
-      if($this->_queriesCnt >1)
+      if($this->_queriesCnt > 1)
       {
          $text = 'queries';
       }
@@ -259,9 +259,9 @@ class DboSource extends DataSource
       print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</th></tr>\n");
       print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
 
-      foreach($log AS $k=>$i)
+      foreach($log as $k => $i)
       {
-         print("<tr><td>".($k+1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['numRows']}</td><td align='right'>{$i['took']}</td></tr>\n");
+         print("<tr><td>".($k + 1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['numRows']}</td><td align='right'>{$i['took']}</td></tr>\n");
       }
 
       print("</table>\n");
@@ -299,15 +299,15 @@ class DboSource extends DataSource
 
 /**
  * Output information about an SQL query. The SQL statement, number of rows in resultset,
- * and execution time in microseconds. If the query fails, and error is output instead.
+ * and execution time in microseconds. If the query fails, an error is output instead.
  *
- * @param string $sql
+ * @param string $sql Query to show information on.
  */
 	function showQuery($sql)
 	{
 	   $error = $this->error;
 
-	   if (strlen($sql)>200 && !$this->fullDebug)
+	   if (strlen($sql) > 200 && !$this->fullDebug)
 	   {
 		  $sql = substr($sql, 0, 200) .'[...]';
 	   }
@@ -326,10 +326,10 @@ class DboSource extends DataSource
 /**
  * Enter description here...
  *
- * @param unknown_type $model
+ * @param Model $model
  * @param unknown_type $fields
  * @param unknown_type $values
- * @return unknown
+ * @return boolean Success
  */
     function create(&$model, $fields = null, $values = null)
     {
@@ -355,9 +355,9 @@ class DboSource extends DataSource
 /**
  * Enter description here...
  *
- * @param unknown_type $model
- * @param unknown_type $queryData
- * @param unknown_type $recursive
+ * @param Model $model
+ * @param array $queryData
+ * @param integer $recursive Number of levels of association
  * @return unknown
  */
     function read (&$model, $queryData = array(), $recursive = null)
@@ -441,15 +441,15 @@ class DboSource extends DataSource
 /**
  * Enter description here...
  *
- * @param unknown_type $model
+ * @param Model $model
  * @param unknown_type $linkModel
- * @param unknown_type $type
+ * @param string $type Association type
  * @param unknown_type $association
  * @param unknown_type $assocData
  * @param unknown_type $queryData
  * @param unknown_type $external
  * @param unknown_type $resultSet
- * @param unknown_type $recursive
+ * @param integer $recursive Number of levels of association
  */
     function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet)
     {
@@ -541,7 +541,7 @@ class DboSource extends DataSource
 /**
  * Enter description here...
  *
- * @param unknown_type $model
+ * @param Model $model
  * @param unknown_type $linkModel
  * @param unknown_type $type
  * @param unknown_type $association
@@ -755,12 +755,12 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
- * @param unknown_type $model
- * @param unknown_type $fields
- * @param unknown_type $values
- * @return unknown
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @return array
  */
     function update (&$model, $fields = null, $values = null)
     {
@@ -778,11 +778,11 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Generates and executes an SQL DELETE statement for given id on given model.
  *
- * @param unknown_type $model
- * @param unknown_type $id
- * @return unknown
+ * @param Model $model
+ * @param mixed $id Primary key id number to remove.
+ * @return boolean Success
  */
     function delete (&$model, $id = null)
     {
@@ -807,12 +807,12 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)
  *
  * @param unknown_type $model
  * @param unknown_type $key
  * @param unknown_type $assoc
- * @return unknown
+ * @return string
  */
     function resolveKey($model, $key, $assoc = null)
     {
@@ -840,9 +840,9 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Private helper method to remove query metadata in given data array.
  *
- * @param unknown_type $data
+ * @param array $data
  */
     function __scrubQueryData(&$data)
     {
@@ -869,12 +869,12 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Generates the fields list of an SQL query.
  *
- * @param unknown_type $model
- * @param unknown_type $alias
- * @param unknown_type $fields
- * @return unknown
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields
+ * @return array
  */
     function fields (&$model, $alias, $fields)
     {
@@ -927,10 +927,10 @@ class DboSource extends DataSource
     }
 
 /**
- * Parses conditions array (or just passes it if it's a string)
+ * Creates a WHERE clause by parsing given conditions data.
  *
- * @param unknown_type $conditions
- * @return string
+ * @param mixed $conditions Array or string of conditions
+ * @return string SQL fragment
  */
     function conditions ($conditions)
     {
@@ -994,7 +994,7 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * To be overridden in subclasses.
  *
  */
     function limit ()
@@ -1002,11 +1002,11 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Returns an ORDER BY clause as a string.
  *
- * @param unknown_type $key
- * @param unknown_type $dir
- * @return unknown
+ * @param string $key Field reference, as a key (i.e. Post.title)
+ * @param string $dir Direction (ASC or DESC)
+ * @return string ORDER BY clause
  */
     function order ($key, $dir = '')
     {

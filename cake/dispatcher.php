@@ -52,16 +52,19 @@ class Dispatcher extends Object
    var $base = false;
 
 /**
- * Base URL
  * @var string
  */
    var $admin = false;
 
 /**
- * Base URL
  * @var string
  */
    var $webservices = null;
+
+/**
+ * @var string
+ */
+   var $plugin = null;
 
 /**
  * Constructor.
@@ -89,6 +92,47 @@ class Dispatcher extends Object
       $missingView       = false;
       $privateAction     = false;
 
+      if (empty($params['controller']))
+      {
+         $missingController = true;
+      }
+      else
+      {
+         $ctrlName  = Inflector::camelize($params['controller']);
+         $ctrlClass = $ctrlName.'Controller';
+
+         if(!class_exists($ctrlClass))
+         {
+             if (!loadController($ctrlName))
+             {
+                 $plugin = $ctrlName;
+                 $pluginName  = Inflector::camelize($params['action']);
+                 $pluginClass = $pluginName.'Controller';
+
+                 if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName))
+                 {
+                     if(preg_match('/([\\.]+)/', $ctrlName))
+                     {
+                         return $this->cakeError('error404',array(array('url' => strtolower($ctrlName),
+                                                 'message' => 'Was not found on this server')));
+                        exit();
+                     }
+                     else
+                     {
+                         $missingController = true;
+                     }
+                 }
+                 else
+                 {
+                     $ctrlClass = $pluginClass;
+                     $params = $this->_restructureParams($params);
+                     $this->plugin = Inflector::underscore($ctrlName).DS;
+                 }
+
+             }
+         }
+      }
+
       if(defined('CAKE_ADMIN'))
       {
           if(isset($params[CAKE_ADMIN]))
@@ -107,33 +151,6 @@ class Dispatcher extends Object
       }
 
       $this->base = $this->baseUrl();
-
-      if (empty($params['controller']))
-      {
-         $missingController = true;
-      }
-      else
-      {
-         $ctrlName  = Inflector::camelize($params['controller']);
-         $ctrlClass = $ctrlName.'Controller';
-
-         if(!class_exists($ctrlClass))
-         {
-             if (!loadController($ctrlName))
-             {
-                 if(preg_match('/([\\.]+)/',$ctrlName))
-                 {
-                     return $this->cakeError('error404',array(array('url' => strtolower($ctrlName),
-                                             'message' => 'Was not found on this server')));
-                     exit();
-                 }
-                 else
-                 {
-                     $missingController = true;
-                 }
-             }
-         }
-      }
 
       if ($missingController)
       {
@@ -175,8 +192,9 @@ class Dispatcher extends Object
       $controller->action      = $params['action'];
       $controller->data        = empty($params['data'])? null: $params['data'];
       $controller->passed_args = empty($params['pass'])? null: $params['pass'];
-      $controller->autoLayout = !$params['bare'];
+      $controller->autoLayout  = empty($params['bare'])?$controller->autoLayout:!$params['bare'];
       $controller->webservices = $params['webservices'];
+      $controller->plugin      = $this->plugin;
 
       if(!is_null($controller->webservices))
       {
@@ -350,6 +368,20 @@ class Dispatcher extends Object
           }
       }
       return $base;
+   }
+
+   function _restructureParams($params)
+   {
+       $params['controller'] = $params['action'];
+       if(isset($params['pass'][0]))
+       {
+           $params['action'] = $params['pass'][0];
+       }
+       else
+       {
+           $params['action'] = null;
+       }
+       return $params;
    }
 }
 ?>

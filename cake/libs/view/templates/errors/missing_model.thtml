@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
  *
- * Long description for file
+ *
+ *
  *
  * PHP versions 4 and 5
  *
@@ -20,39 +20,18 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.controller.components.dbacl.models
- * @since        CakePHP v 0.10.0.1232
+ * @subpackage   cake.cake.libs.view.templates.errors
+ * @since        CakePHP v 0.10.0.1076
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
- * Short description.
- */
-if(!class_exists(AppModel))
-{
-    require_once(CAKE.'app_model.php');
-}
-/**
- * Short description for file.
- *
- * Long description for file
- *
- * @package    cake
- * @subpackage cake.cake.libs.controller.components.dbacl.models
- * @since      CakePHP v 0.10.0.1232
- *
- */
-class AcoAction extends AppModel
-{
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-   var $belongsTo = 'Aco';
-}
-
 ?>
+<h1>Missing Model</h1>
+
+<p class="error">No class found for the model <?php echo $model;?> </p>
+
+<p> <span class="notice"><strong>Notice:</strong> this error is being rendered by the
+<code>app/views/errors/missing_model.thtml</code> view file, a user-customizable error page.</span>
+</p>

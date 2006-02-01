@@ -273,6 +273,10 @@ class DboMysql extends DboSource
         {
             return $parent;
         }
+        if ($data === null)
+        {
+            return 'NULL';
+        }
         if (ini_get('magic_quotes_gpc') == 1)
         {
             $data = stripslashes($data);

@@ -91,7 +91,11 @@ class Component extends Object
             {
                 $componentFn = Inflector::underscore($component).'.php';
 
-                if(file_exists(COMPONENTS.$componentFn))
+                if(file_exists(APP.'plugins'.DS.$this->controller->plugin.'controllers'.DS.'components'.DS.$componentFn))
+                {
+                    $componentFn = APP.'plugins'.DS.$this->controller->plugin.'controllers'.DS.'components'.DS.$componentFn;
+                }
+                else if(file_exists(COMPONENTS.$componentFn))
                 {
                     $componentFn = COMPONENTS.$componentFn;
                 }

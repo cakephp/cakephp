@@ -287,11 +287,13 @@ class TimeHelper extends Helper
  * like 'Posted ' before the function output.
  *
  * @param string $date_string Datetime string or Unix timestamp
+ * @param string $format Default format if timestamp is used
+ * @param string $backwards False if $date_string is in the past, true if in the future
  * @param  boolean $return Whether this method should return a value
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Relative time string.
  */
-    function timeAgoInWords ($datetime_string, $return = false, $backwards = false)
+    function timeAgoInWords ($datetime_string, $format = 'j/n/y', $backwards = false, $return = false)
     {
         $datetime = $this->fromString($datetime_string);
 
@@ -319,7 +321,7 @@ class TimeHelper extends Helper
         if ($months>0)
         {
             // over a month old, just show date (mm/dd/yyyy format)
-            $relative_date = 'on '.date("j/n/Y", $in_seconds);
+            $relative_date = 'on '.date($format, $in_seconds);
             $old = true;
         }
         else
@@ -373,17 +375,17 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Relative time string.
  */
-    function relativeTime ($datetime_string, $return = false)
+    function relativeTime ($datetime_string, $format = 'j/n/y', $return = false)
     {
         $date = strtotime($datetime_string);
 
         if(strtotime("now") > $date)
         {
-            $ret = $this->timeAgoInWords($datetime_string);
+            $ret = $this->timeAgoInWords($datetime_string, $format, false);
         }
         else
         {
-            $ret = $this->timeAgoInWords($datetime_string, $return, true);
+            $ret = $this->timeAgoInWords($datetime_string, $format, true);
         }
 
         return $this->output($ret, $return);

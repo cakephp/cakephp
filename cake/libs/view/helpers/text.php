@@ -115,7 +115,7 @@ class TextHelper extends Helper
         '#((?:http|https|ftp|nntp)://[^ ]+)#',
         create_function(
         '$matches',
-        '$Html = new HtmlHelper(); return $Html->linkOut($matches[0], $matches[0],' . $options . ');'
+        '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->linkOut($matches[0], $matches[0],' . $options . ');'
         ),
         $text
         );
@@ -123,7 +123,7 @@ class TextHelper extends Helper
         '#(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ ]+[^\n\%\,\.\ ])#',
         create_function(
         '$matches',
-        '$Html = new HtmlHelper(); return $Html->linkOut($matches[0], "http://" . $matches[0],' . $options . ');'
+        '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->linkOut($matches[0], "http://" . $matches[0],' . $options . ');'
         ),
         $text
         );
@@ -149,7 +149,7 @@ class TextHelper extends Helper
         '#([_A-Za-z0-9+-+]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
         create_function(
         '$matches',
-        '$Html = new HtmlHelper(); return $Html->linkEmail($matches[0], $matches[0],' . $options . ');'
+        '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->linkEmail($matches[0], $matches[0],' . $options . ');'
         ),
         $text
         );

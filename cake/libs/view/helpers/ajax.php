@@ -145,7 +145,7 @@ class AjaxHelper extends Helper
  * @param array $options         Options for JavaScript function
  * @return string                 HTML code for link to remote action
  */
-    function link($title, $href = null, $options = array(), $confirm = null)
+    function link($title, $href = null, $options = array(), $confirm = null, $escapeTitle = true)
     {
         if (!isset($href))
         {
@@ -176,7 +176,7 @@ class AjaxHelper extends Helper
         else
         {
             $htmlOptions['onclick'] = $this->remoteFunction($options) . '; return false;';
-            return $this->Html->link($title, $href, $htmlOptions);
+            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
         }
     }
 
@@ -194,7 +194,7 @@ class AjaxHelper extends Helper
         }
         else
         {
-            $html_options['onclick'] = $this->remoteFunction($options);
+            $html_options['onclick'] = $this->remoteFunction($options) . "; return false;";
             return $this->Html->link($title, $href, $html_options);
         }
     }

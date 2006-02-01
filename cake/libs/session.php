@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * Session class for Cake.
  *
- * Long description for file
+ * Cake abstracts the handling of sessions. There are several convenient methods to access session information. This class is the implementation of those methods. They are mostly used by the Session Component.
  *
  * PHP versions 4 and 5
  *
@@ -29,9 +29,9 @@
  */
 
 /**
- * Short description for file.
+ * Session class for Cake.
  *
- * Long description for file
+ * Cake abstracts the handling of sessions. There are several convenient methods to access session information. This class is the implementation of those methods. They are mostly used by the Session Component.
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -40,63 +40,64 @@
 class CakeSession extends Object
 {
 /**
- * Enter description here...
+ * True if the Session is still valid
  *
- * @var unknown_type
+ * @var boolean
  */
      var $valid      = false;
 /**
- * Enter description here...
+ * Error messages for this session
  *
- * @var unknown_type
+ * @var array
  */
     var $error      = false;
 /**
- * Enter description here...
+ * User agent string
  *
- * @var unknown_type
+ * @var string
  */
     var $userAgent  = false;
 /**
- * Enter description here...
+ * Path to where the session is active.
  *
- * @var unknown_type
+ * @var string
  */
     var $path       = false;
 /**
- * Enter description here...
+ * Error number of last occurred error
  *
- * @var unknown_type
+ * @var integer
  */
     var $lastError  = null;
 /**
  * Enter description here...
  *
  * @var unknown_type
+ * @todo Is this still in use? OJ 30 jan 2006
  */
     var $sessionId     = null;
 /**
- * Enter description here...
+ * CAKE_SECURITY setting, "high", "medium", or "low".
  *
- * @var unknown_type
+ * @var string
  */
     var $security     = null;
 /**
- * Enter description here...
+ * Start time for this session.
  *
- * @var unknown_type
+ * @var integer
  */
     var $time       = false;
 /**
- * Enter description here...
+ * Time when this session becomes invalid.
  *
- * @var unknown_type
+ * @var integer
  */
     var $sessionTime = false;
 /**
- * Enter description here...
+ * Constructor.
  *
- * @return unknown
+ * @param string $base The base path for the Session
  */
     function __construct($base = null)
     {
@@ -128,16 +129,21 @@ class CakeSession extends Object
         $this->time = time();
         $this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
         $this->security = CAKE_SECURITY;
-        $this->_initSession();
-        $this->_begin();
+
+        if (!isset($_SESSION))
+        {
+            $this->_initSession();
+            $this->_begin();
+
+        }
         parent::__construct();
     }
 
 /**
- * Enter description here...
+ * Returns true if given variable is set in session.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name Variable name to check for
+ * @return boolean True if variable is there
  */
     function checkSessionVar($name)
     {
@@ -146,10 +152,10 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Removes a variable from session.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name Session variable to remove
+ * @return boolean Success
  */
     function delSessionVar($name)
     {
@@ -164,10 +170,10 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Return error description for given error number.
  *
- * @param unknown_type $errorNumber
- * @return unknown
+ * @param int $errorNumber
+ * @return string Error as string
  */
     function getError($errorNumber)
     {
@@ -182,9 +188,9 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Returns last occurred error as a string, if any.
  *
- * @return unknown
+ * @return mixed Error description as a string, or false.
  */
     function getLastError()
     {
@@ -199,9 +205,9 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Returns true if session is valid.
  *
- * @return unknown
+ * @return boolean
  */
     function isValid()
     {
@@ -209,9 +215,9 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Returns given session variable, or all of them, if no parameters given.
  *
- * @param unknown_type $name
+ * @param mixed $name
  * @return unknown
  */
     function readSessionVar($name = null)
@@ -227,14 +233,14 @@ class CakeSession extends Object
             return $result;
         }
         $this->_setError(2, "$name doesn't exist");
-        return false;
+        $return = null;
+        return $return;
     }
 
 /**
- * Enter description here...
+ * Returns all session variables.
  *
- * @param unknown_type $name
- * @return unknown
+ * @return mixed Full $_SESSION array, or false on error.
  */
     function returnSessionVars()
     {
@@ -248,10 +254,10 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Writes value to given session variable name.
  *
- * @param unknown_type $name
- * @param unknown_type $value
+ * @param mixed $name
+ * @param string $value
  */
     function writeSessionVar($name, $value)
     {
@@ -261,7 +267,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Begins a session.
  *
  * @access private
  */
@@ -273,7 +279,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  */
@@ -286,7 +292,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  */
@@ -298,7 +304,7 @@ class CakeSession extends Object
         die();
     }
 /**
- * Enter description here...
+ * Private helper method to destroy invalid sessions.
  *
  * @access private
  */
@@ -320,7 +326,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  */
@@ -333,7 +339,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Private helper method to initialize a session, based on Cake core settings.
  *
  * @access private
  */
@@ -415,7 +421,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Private helper method to create a new session. P3P headers are also sent.
  *
  * @access private
  *
@@ -450,7 +456,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  *
@@ -464,7 +470,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  *
@@ -478,7 +484,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Private helper method to restart a session.
  *
  *
  * @access private
@@ -506,9 +512,9 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Restarts this session.
  *
- * @access private
+ * @access public
  *
  */
     function renew()
@@ -517,10 +523,10 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Private helper method to extract variable names.
  *
- * @param unknown_type $name
- * @return unknown
+ * @param mixed $name Variable names as array or string.
+ * @return string
  * @access private
  */
     function _sessionVarNames($name)
@@ -548,10 +554,10 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Private helper method to set an internal error message.
  *
- * @param unknown_type $errorNumber
- * @param unknown_type $errorMessage
+ * @param int $errorNumber Number of the error
+ * @param string $errorMessage Description of the error
  * @access private
  */
     function _setError($errorNumber, $errorMessage)
@@ -566,7 +572,7 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... To be implemented.
  *
  * @access private
  */

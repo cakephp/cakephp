@@ -659,7 +659,7 @@ class Model extends Object
             $id = $this->id[0];
         }
 
-        if ($this->id)
+        if ($this->id !== null && $this->id !== false)
         {
             $field = $this->db->name($this->name).'.'.$this->db->name($this->primaryKey);
             return $this->find($field . ' = ' . $this->db->value($id), $fields);
@@ -720,6 +720,19 @@ class Model extends Object
         return $this->save(array($this->name => array($name => $value)), $validate);
     }
 
+    function countdim($array)
+    {
+        if (is_array(reset($array)))
+        {
+            $return = $this->countdim(reset($array)) + 1;
+        }
+        else
+        {
+            $return = 1;
+        }
+        return $return;
+    }
+
 /**
  * Saves model data to the database.
  *
@@ -733,8 +746,16 @@ class Model extends Object
     {
         if ($data)
         {
-            $this->set($data);
+            if ($this->countdim($data) == 1)
+            {
+                $this->set(array($this->name => $data));
+            }
+            else
+            {
+                $this->set($data);
+            }
         }
+
         if($this->beforeSave())
         {
             if ($validate && !$this->validates())
@@ -1100,26 +1121,25 @@ class Model extends Object
  */
    function __doThread ($data, $root)
    {
-      $out = array();
-
-      for ($ii=0; $ii<sizeof($data); $ii++)
-      {
-         if ($data[$ii]['parent_id'] == $root)
-         {
-            $tmp = $data[$ii];
-            if (isset($data[$ii]['id']))
-            {
-                $tmp['children'] = $this->__doThread($data, $data[$ii]['id']);
-            }
-            else
-            {
-                $tmp['children'] = null;
-            }
-            $out[] = $tmp;
-         }
-      }
-
-      return $out;
+       $out = array();
+       $sizeOf = sizeof($data);
+       for ($ii=0; $ii < $sizeOf; $ii++)
+       {
+           if ($data[$ii][$this->name]['parent_id']  == $root)
+           {
+               $tmp = $data[$ii];
+               if (isset($data[$ii][$this->name][$this->primaryKey]))
+               {
+                   $tmp['children'] = $this->__doThread($data, $data[$ii][$this->name][$this->primaryKey]);
+               }
+               else
+               {
+                   $tmp['children'] = null;
+               }
+               $out[] = $tmp;
+           }
+       }
+       return $out;
    }
 
 /**

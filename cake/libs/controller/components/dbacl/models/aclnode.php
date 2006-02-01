@@ -279,7 +279,7 @@ class AclNode extends AppModel
       $class = Inflector::camelize(strtolower(get_class($this)));
       $vars['secondary_id'] = (strtolower($class) == 'aro' ? 'user_id' : 'object_id');
       $vars['data_name']    = $class;
-      $vars['table_name']   = $class . 's';
+      $vars['table_name']   = strtolower($class) . 's';
       $vars['class']        = Inflector::camelize($class);
       return $vars;
    }

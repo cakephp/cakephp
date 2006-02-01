@@ -140,8 +140,10 @@ class FormHelper extends Helper
  */
     function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
     {
-        $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
-        $str = $this->Html->inputTag( $tagName, $size, $htmlOptions );
+        $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
+        $htmlAttributes = $htmlOptions;
+        $htmlAttributes['size'] = $size;
+        $str = $this->Html->input( $tagName, $htmlAttributes);
         $strLabel = $this->labelTag( $tagName, $prompt );
 
         $divClass = "optional";
@@ -289,8 +291,11 @@ class FormHelper extends Helper
  */
     function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null )
     {
-        $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
-        $str = $this->Html->areaTag( $tagName, $cols, $rows, $htmlOptions );
+        $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
+        $htmlAttributes = $htmlOptions;
+        $htmlAttributes['cols'] = $cols;
+        $htmlAttributes['rows'] = $rows;
+        $str = $this->Html->textarea( $tagName, $htmlAttributes);
         $strLabel = $this->labelTag( $tagName, $prompt );
 
         $divClass = "optional";

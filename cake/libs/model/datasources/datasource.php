@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Short description for file.
+ * DataSource base class
  *
  * Long description for file
  *
@@ -29,7 +29,7 @@
  */
 
 /**
- * Short description for file.
+ * DataSource base class
  *
  * Long description for file
  *
@@ -76,7 +76,7 @@ class DataSource extends Object
 /**
  * String to hold how many rows were affected by the last SQL operation.
  *
- * @var unknown_type
+ * @var string
  * @access public
  */
    var $affected = null;
@@ -92,7 +92,7 @@ class DataSource extends Object
 /**
  * Time the last query took
  *
- * @var unknown_type
+ * @var int
  * @access public
  */
    var $took = null;
@@ -100,7 +100,7 @@ class DataSource extends Object
 /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var array
  * @access private
  */
    var $_result = null;
@@ -108,7 +108,7 @@ class DataSource extends Object
 /**
  * Queries count.
  *
- * @var unknown_type
+ * @var int
  * @access private
  */
    var $_queriesCnt = 0;
@@ -189,7 +189,7 @@ class DataSource extends Object
 
 
 /**
- * Enter description here...
+ * Constructor.
  *
  */
    function __construct ()
@@ -270,7 +270,7 @@ class DataSource extends Object
     }
 
 /**
- * Parses conditions array (or just passes it if it's a string)
+ * To-be-overridden in subclasses. 
  * @return string
  *
  */
@@ -280,7 +280,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $name
  * @return unknown
@@ -291,7 +291,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $value
  * @return unknown
@@ -302,10 +302,10 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * Returns a Model description (metadata) or null if none found.
  *
- * @param unknown_type $model
- * @return unknown
+ * @param Model $model
+ * @return mixed
  */
     function describe ($model)
     {
@@ -324,7 +324,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $fields
@@ -337,7 +337,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $queryData
@@ -349,7 +349,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $fields
@@ -362,7 +362,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $id
@@ -376,10 +376,10 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
- * @param unknown_type $fields
- * @return unknown
+ * @param mixed $fields
+ * @return mixed
  */
     function fields ($fields)
     {
@@ -387,7 +387,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $fields
@@ -405,7 +405,7 @@ class DataSource extends Object
  * @param unknown_type $data
  * @param unknown_type $association
  * @param unknown_type $assocData
- * @param unknown_type $model
+ * @param Model $model
  * @param unknown_type $linkModel
  * @param unknown_type $index
  * @return unknown
@@ -444,7 +444,7 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * To-be-overridden in subclasses.
  *
  * @param unknown_type $model
  * @param unknown_type $key
@@ -456,10 +456,10 @@ class DataSource extends Object
     }
 
 /**
- * Enter description here...
+ * Enter description here... The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
- * @param unknown_type $data
- * @param unknown_type $path
+ * @param array $data
+ * @param mixed $path
  * @return unknown
  */
     function getFieldValue ($data, $path)
@@ -512,14 +512,17 @@ class DataSource extends Object
         }
         return $data;
     }
-
+/**
+ * To-be-overridden in subclasses.
+ *
+ */
     function buildSchemaQuery($schema)
     {
         die("Implement in DBO");
     }
 
 /**
- * Enter description here...
+ * Closes the current datasource.
  *
  */
     function __destruct ()

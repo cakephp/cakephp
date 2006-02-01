@@ -47,8 +47,12 @@ class ErrorHandler extends Object
  */
     function __construct($method, $messages)
     {
-        $this->controller =& new Controller();
-        if(DEBUG > 0)
+        if(!class_exists('AppController'))
+        {
+            loadController(null);
+        }
+        $this->controller =& new AppController();
+        if(DEBUG > 0 || $method == 'error')
         {
             call_user_func_array(array(&$this, $method), $messages);
         }
@@ -273,6 +277,21 @@ class ErrorHandler extends Object
         $this->controller->render('../errors/missingComponentClass');
         exit();
     }
+
+/**
+ * Renders the Missing Model class web page.
+ *
+ */
+    function missingModel($params)
+    {
+        extract($params);
+        $this->controller->webroot = $this->_webroot();
+        $this->controller->set(array('model' => $className,
+                                     'title' => 'Missing Model'));
+        $this->controller->render('../errors/missingModel');
+        exit();
+    }
+
 
 
 /**
