@@ -208,7 +208,7 @@ class HtmlHelper extends Helper
             $htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
         }
 
-        if (strpos($url, '://'))
+        if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0)))
         {
             $output = sprintf($this->tags['link'], $url,
             $this->_parseAttributes($htmlAttributes), $title);
@@ -1247,9 +1247,10 @@ class HtmlHelper extends Helper
  * @param string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
+ * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function dayOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
+    function dayOptionTag($tagName, $value=null, $selected=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_day");
         $dayValue = empty($selected) ? date('d') : $selected;
@@ -1262,8 +1263,7 @@ class HtmlHelper extends Helper
         '22'=>'22','23'=>'23','24'=>'24',
         '25'=>'25','26'=>'26','27'=>'27',
         '28'=>'28','29'=>'29','30'=>'30','31'=>'31');
-        $option = $this->selectTag($tagName.'_day', $days, $dayValue,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_day', $days, $dayValue, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1276,9 +1276,10 @@ class HtmlHelper extends Helper
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
+ * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function yearOptionTag( $tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $optionAttr=null)
+    function yearOptionTag($tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_year");
 
@@ -1303,8 +1304,7 @@ class HtmlHelper extends Helper
             $years[$yearCounter] = $yearCounter;
         }
 
-        $option = $this->selectTag($tagName.'_year', $years, $yearValue,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_year', $years, $yearValue, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1315,17 +1315,17 @@ class HtmlHelper extends Helper
  * @param string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
+ * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function monthOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
+    function monthOptionTag($tagName, $value=null, $selected=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_month");
         $monthValue = empty($selected) ? date('m') : $selected ;
         $months=array('01'=>'January','02'=>'February','03'=>'March',
         '04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August',
         '09'=>'September','10'=>'October','11'=>'November','12'=>'December');
-        $option = $this->selectTag($tagName.'_month', $months, $monthValue,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_month', $months, $monthValue, $optionAttr, $showEmpty);
         return $option;
     }
 

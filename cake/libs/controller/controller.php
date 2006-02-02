@@ -178,6 +178,19 @@ class Controller extends Object
  */
     var $_viewClass = null;
 
+/**
+ * The output of the requested action.  Contains either a variable
+ * returned from the action, or the data of the rendered view;
+ *
+ * @var unknown_type
+ */
+    var $output = null;
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
     var $plugin = null;
 
 /**
@@ -214,27 +227,6 @@ class Controller extends Object
         if (!empty($this->components))
         {
             $component =& new Component($this);
-        }
-
-        if (!empty($this->beforeFilter))
-        {
-            if(is_array($this->beforeFilter))
-            {
-                foreach($this->beforeFilter as $filter)
-                {
-                    if(is_callable(array($this,$filter)))
-                    {
-                        $this->$filter();
-                    }
-                }
-            }
-            else
-            {
-                if(is_callable(array($this,$this->beforeFilter)))
-                {
-                    $this->{$this->beforeFilter}();
-                }
-            }
         }
 
         if(empty($this->params['pass']))
@@ -287,9 +279,14 @@ class Controller extends Object
     function redirect ($url, $status = null)
     {
         $this->autoRender = false;
-        if(strpos($url, '/') !== 0)
+        $pos = strpos($url, '://');
+        if ($pos === false)
         {
-           $url = '/'.$url;
+            if(strpos($url, '/') !== 0)
+            {
+                $url = '/'.$url;
+            }
+            $url = $this->base . $url;
         }
         if (function_exists('session_write_close'))
         {
@@ -344,15 +341,7 @@ class Controller extends Object
                 header($codes[$status]);
             }
         }
-
-        if (strpos($url, '://'))
-        {
-            header ('Location: '.$url);
-        }
-        else
-        {
-            header ('Location: '.$this->base.$url);
-        }
+        header ('Location: '.$url);
     }
 
 /**
@@ -792,6 +781,30 @@ class Controller extends Object
             }
         }
         return $fieldNames;
+    }
+
+/**
+ * Called before the controller action.  Overridden in subclasses.
+ *
+ */
+    function beforeFilter ()
+    {
+    }
+
+/**
+ * Called after the controller action is run, but before the view is rendered.  Overridden in subclasses.
+ *
+ */
+    function beforeRender ()
+    {
+    }
+
+/**
+ * Called after the controller action is run and rendered.  Overridden in subclasses.
+ *
+ */
+    function afterFilter ()
+    {
     }
 }
 ?>

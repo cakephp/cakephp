@@ -717,25 +717,6 @@ class Model extends Object
     }
 
 /**
- * Enter description here...
- *
- * @param unknown_type $array
- * @return unknown
- */
-    function countdim($array)
-    {
-        if (is_array(reset($array)))
-        {
-            $return = $this->countdim(reset($array)) + 1;
-        }
-        else
-        {
-            $return = 1;
-        }
-        return $return;
-    }
-
-/**
  * Saves model data to the database.
  * By default, validation occurs before save.
  *

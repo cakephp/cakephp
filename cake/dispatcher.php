@@ -226,7 +226,7 @@ class Dispatcher extends Object
                                   'webroot' => $this->webroot)));
       }
 
-      return $this->_invoke($controller, $params );
+      return $this->_invoke($controller, $params);
    }
 
 /**
@@ -236,17 +236,38 @@ class Dispatcher extends Object
  * @param array $params
  * @return string
  */
-   function _invoke (&$controller, $params )
+   function _invoke (&$controller, $params)
    {
+       if (!empty($controller->beforeFilter))
+       {
+           if(is_array($controller->beforeFilter))
+           {
+               foreach($controller->beforeFilter as $filter)
+               {
+                   if(is_callable(array($controller,$filter)) && $filter != 'beforeFilter')
+                   {
+                       $controller->$filter();
+                   }
+               }
+           }
+           else
+           {
+               if(is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter')
+               {
+                   $controller->{$controller->beforeFilter}();
+               }
+           }
+       }
+       $controller->beforeFilter();
+
        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
        if ($controller->autoRender)
        {
-           return $controller->render();
+           $output = $controller->render();
        }
-       else
-       {
-           return $output;
-       }
+       $controller->output =& $output;
+       $controller->afterFilter();
+       return $controller->output;
    }
 
 /**

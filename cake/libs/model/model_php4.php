@@ -720,19 +720,6 @@ class Model extends Object
         return $this->save(array($this->name => array($name => $value)), $validate);
     }
 
-    function countdim($array)
-    {
-        if (is_array(reset($array)))
-        {
-            $return = $this->countdim(reset($array)) + 1;
-        }
-        else
-        {
-            $return = 1;
-        }
-        return $return;
-    }
-
 /**
  * Saves model data to the database.
  *

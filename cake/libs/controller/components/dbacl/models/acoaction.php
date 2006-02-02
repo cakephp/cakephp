@@ -31,7 +31,7 @@
 /**
  * Short description.
  */
-if(!class_exists(AppModel))
+if(!class_exists('AppModel'))
 {
     require_once(CAKE.'app_model.php');
 }

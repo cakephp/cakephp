@@ -417,16 +417,55 @@ class DboSource extends DataSource
                     {
                         $linkModel =& $model->{$assocData['className']};
                         $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet);
+
                         if ($model->recursive > 1 && $linkModel->recursive  > 0)
                         {
                             foreach($linkModel->__associations as $type1)
                             {
                                foreach($linkModel->{$type1} as $assoc1 => $assocData1)
                                {
+                                   $deepModel =& $linkModel->{$assocData1['className']};
+
                                    if ($assoc1 != $model->name)
                                    {
-                                       $deepModel =& $linkModel->{$assocData1['className']};
-                                       $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $array, false, $resultSet);
+                                       foreach ($resultSet as $i => $data)
+                                       {
+                                           if (isset($data[$linkModel->name]))
+                                           {
+                                               foreach ($resultSet[$i][$linkModel->name] as $value)
+                                               {
+                                                   $datas[][$linkModel->name] = $value[$linkModel->primaryKey];
+                                                   $fetch = $this->queryDeepAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $array, false, $datas);
+                                                   unset($datas);
+
+                                                   if (!empty($fetch[0]))
+                                                   {
+                                                       foreach ($fetch as $j => $row1)
+                                                       {
+                                                           if(!empty($row1))
+                                                           {
+                                                               foreach ($resultSet as $valueResult => $endResult)
+                                                               {
+                                                                   $count = 0;
+                                                                   foreach ($endResult[$linkModel->name] as $keyCheck)
+                                                                   {
+                                                                       foreach ($row1 as $mas)
+                                                                       {
+                                                                           if($keyCheck[$linkModel->primaryKey] == $mas[$deepModel->name][$assocData1['foreignKey']])
+                                                                           {
+                                                                               $resultSet[$i][$linkModel->name][$count][$deepModel->name][] = $mas[$deepModel->name];
+                                                                           }
+                                                                       }
+                                                                       $count++;
+                                                                   }
+                                                               }
+                                                           }
+                                                       }
+                                                   }
+                                                   unset($fetch);
+                                               }
+                                           }
+                                       }
                                    }
                                }
                             }
@@ -436,6 +475,20 @@ class DboSource extends DataSource
             }
         }
         return $resultSet;
+    }
+
+    function queryDeepAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet)
+    {
+        $query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
+        if ($query)
+        {
+            foreach ($resultSet as $i => $row)
+            {
+                $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
+                $fetch[] = $this->fetchAll($q);
+            }
+            return $fetch;
+        }
     }
 
 /**
@@ -461,6 +514,7 @@ class DboSource extends DataSource
             foreach ($resultSet as $i => $row)
             {
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
+                //pr($q);
                 $fetch = $this->fetchAll($q);
 
                 if (!empty($fetch) && is_array($fetch))

@@ -270,7 +270,7 @@ class DataSource extends Object
     }
 
 /**
- * To-be-overridden in subclasses. 
+ * To-be-overridden in subclasses.
  * @return string
  *
  */
@@ -487,14 +487,7 @@ class DataSource extends Object
             {
                 foreach ($data as $j => $val)
                 {
-                    if (is_subclass_of($this, 'DataSource') || is_subclass_of($this, 'datasource'))
-                    {
-                        $tmp[] = $this->getFieldValue($val, array_slice($path, $i + 1));
-                    }
-                    else
-                    {
-                        $tmp[] = DataSource::getFieldValue($val, array_slice($path, $i + 1));
-                    }
+                    $tmp[] = DataSource::getFieldValue($val, array_slice($path, $i + 1));
                 }
                 return $tmp;
             }

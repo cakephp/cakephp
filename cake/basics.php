@@ -823,4 +823,25 @@ function __($msg, $return = null)
 {
         return $msg;
 }
+
+
+/**
+ * Counts the dimensions of an array
+ *
+ * @param array $array
+ * @return int The number of dimensions in $array
+ */
+function countdim($array)
+{
+    if (is_array(reset($array)))
+    {
+        $return = $countdim(reset($array)) + 1;
+    }
+    else
+    {
+        $return = 1;
+    }
+    return $return;
+}
+
 ?>
