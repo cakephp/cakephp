@@ -733,7 +733,7 @@ class Model extends Object
     {
         if ($data)
         {
-            if ($this->countdim($data) == 1)
+            if (countdim($data) == 1)
             {
                 $this->set(array($this->name => $data));
             }

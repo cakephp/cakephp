@@ -835,7 +835,7 @@ function countdim($array)
 {
     if (is_array(reset($array)))
     {
-        $return = $countdim(reset($array)) + 1;
+        $return = countdim(reset($array)) + 1;
     }
     else
     {
