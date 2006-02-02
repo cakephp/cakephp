@@ -115,7 +115,7 @@ class Dispatcher extends Object
                      {
                          return $this->cakeError('error404',array(array('url' => strtolower($ctrlName),
                                                  'message' => 'Was not found on this server')));
-                        exit();
+                         exit();
                      }
                      else
                      {
@@ -127,8 +127,8 @@ class Dispatcher extends Object
                      $ctrlClass = $pluginClass;
                      $params = $this->_restructureParams($params);
                      $this->plugin = Inflector::underscore($ctrlName).DS;
+                     loadPluginModels($this->plugin);
                  }
-
              }
          }
       }
@@ -259,6 +259,14 @@ class Dispatcher extends Object
            }
        }
        $controller->beforeFilter();
+
+       foreach($controller->components as $c)
+       {
+           if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup')))
+           {
+               $controller->{$c}->startup($controller);
+           }
+       }
 
        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
        if ($controller->autoRender)

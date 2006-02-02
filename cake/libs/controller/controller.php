@@ -436,6 +436,8 @@ class Controller extends Object
                 }
             }
         }
+
+        $this->beforeRender();
         $this->autoRender = false;
         return  $this->_viewClass->render($action, $layout, $file);
     }

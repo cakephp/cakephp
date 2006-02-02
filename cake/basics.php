@@ -90,6 +90,27 @@ function loadModels()
 }
 
 /**
+ * Loads a loadPluginController.
+ *
+ * @param  string  $plugin Name of plugin
+ * @return
+ */
+function loadPluginModels ($plugin)
+{
+    $pluginModelDir = APP.'plugins'.DS.$plugin.'models'.DS;
+
+    foreach (listClasses($pluginModelDir) as $modelFileName)
+    {
+        require_once ($pluginModelDir.$modelFileName);
+        if (phpversion() < 5 && function_exists("overload"))
+        {
+            list($name) = explode('.', $modelFileName);
+            overload(Inflector::camelize($name));
+        }
+    }
+}
+
+/**
  * Loads custom view class.
  *
  */
