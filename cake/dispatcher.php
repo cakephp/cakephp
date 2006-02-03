@@ -407,6 +407,7 @@ class Dispatcher extends Object
        if(isset($params['pass'][0]))
        {
            $params['action'] = $params['pass'][0];
+           array_shift($params['pass']);
        }
        else
        {

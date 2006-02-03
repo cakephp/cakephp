@@ -401,10 +401,21 @@ class View extends Object
    {
       $fn = ELEMENTS.$name.$this->ext;
 
+      if(!is_null($this->plugin))
+      {
+          if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'elements'.DS.$name.$this->ext))
+          {
+                $fn =  APP.'plugins'.DS.$this->plugin.'views'.DS.'elements'.DS.$name.$this->ext;
+                $params = array_merge_recursive($params, $this->loaded);
+                return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
+            }
+        }
+
       if (!file_exists($fn))
       {
          return "(Error rendering {$name})";
       }
+
       $params = array_merge_recursive($params, $this->loaded);
       return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
    }
@@ -556,6 +567,16 @@ class View extends Object
         {
             $type = null;
         }
+
+        if(!is_null($this->plugin))
+        {
+            if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'layouts'.DS.$this->layout.$this->ext))
+            {
+                $layoutFileName =  APP.'plugins'.DS.$this->plugin.'views'.DS.'layouts'.DS.$this->layout.$this->ext;
+                return $layoutFileName;
+            }
+        }
+
         $layoutFileName = LAYOUTS.$type."{$this->layout}$this->ext";
 
         if(file_exists(LAYOUTS.$this->subDir.$type."{$this->layout}$this->ext"))
