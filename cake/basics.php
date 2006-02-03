@@ -238,7 +238,7 @@ function loadController ($name)
     }
     if($name === null)
     {
-        return;
+        return true;
     }
     if(!class_exists($name.'Controller'))
     {

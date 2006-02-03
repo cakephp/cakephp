@@ -1387,6 +1387,11 @@ class Model extends Object
             $dataSource = $this->useDbConfig;
         }
         $this->db =& ConnectionManager::getDataSource($dataSource);
+
+        if(!empty($this->db->config['prefix']))
+        {
+            $this->tablePrefix = $this->db->config['prefix'];
+        }
         if(empty($this->db) || $this->db == null || !is_object($this->db))
         {
             return $this->cakeError('missingConnection',array(array('className' => $this->name)));

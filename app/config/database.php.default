@@ -64,14 +64,16 @@ class DATABASE_CONFIG
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',
-                         'database' => 'project_name' );
+                         'database' => 'project_name',
+                         'prefix'   => '');
 
     var $test   =  array('driver'   => 'mysql',
                          'connect'  => 'mysql_pconnect',
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',
-                         'database' => 'project_name-test');
+                         'database' => 'project_name-test',
+                         'prefix'   => '');
 }
 
 ?>
