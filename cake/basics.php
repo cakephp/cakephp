@@ -284,7 +284,7 @@ function loadPluginController ($plugin, $controller)
         }
         else
         {
-            die('Plugins must have a class named '. $pluginAppController);
+            return false;
         }
     }
 
