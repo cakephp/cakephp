@@ -51,6 +51,13 @@ class PagesController extends AppController{
  */
    var $helpers = array('Html');
 
+/**
+ * This controller does not use a model
+ *
+ * @var $uses
+ */
+   var $uses = null;
+
 
 /**
  * Displays a view
