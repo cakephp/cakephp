@@ -126,8 +126,9 @@ class Dispatcher extends Object
                  {
                      $ctrlClass = $pluginClass;
                      $params = $this->_restructureParams($params);
-                     $this->plugin = Inflector::underscore($ctrlName).DS;
-                     loadPluginModels($this->plugin);
+                     $plugin = Inflector::underscore($ctrlName);
+                     $this->plugin = $plugin.DS;
+                     loadPluginModels($plugin);
                      $this->base = $this->base.'/'.Inflector::underscore($ctrlName);
                  }
              }

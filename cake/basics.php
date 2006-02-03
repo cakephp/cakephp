@@ -97,7 +97,27 @@ function loadModels()
  */
 function loadPluginModels ($plugin)
 {
-    $pluginModelDir = APP.'plugins'.DS.$plugin.'models'.DS;
+    $pluginAppModel = Inflector::camelize($plugin.'_app_model');
+    $pluginAppModelFile = APP.'plugins'.DS.$plugin.DS.$plugin.'_app_model.php';
+
+    if(!class_exists($pluginAppModel))
+    {
+        if(file_exists($pluginAppModelFile))
+        {
+            require_once($pluginAppModelFile);
+        }
+        else
+        {
+            die('Plugins must have a class named '. $pluginAppModel);
+        }
+    }
+
+    if (phpversion() < 5 && function_exists("overload"))
+    {
+        overload($pluginAppModel);
+    }
+
+    $pluginModelDir = APP.'plugins'.DS.$plugin.DS.'models'.DS;
 
     foreach (listClasses($pluginModelDir) as $modelFileName)
     {
@@ -252,19 +272,19 @@ function loadController ($name)
  */
 function loadPluginController ($plugin, $controller)
 {
-    if(!class_exists('AppController'))
+
+    $pluginAppController = Inflector::camelize($plugin.'_app_controller');
+    $pluginAppControllerFile = APP.'plugins'.DS.$plugin.DS.$plugin.'_app_controller.php';
+
+    if(!class_exists($pluginAppController))
     {
-        if(file_exists(APP.'plugins'.DS.$plugin.DS.'app_controller.php'))
+        if(file_exists($pluginAppControllerFile))
         {
-            require_once(APP.'plugins'.DS.$plugin.DS.'app_controller.php');
-        }
-        elseif(file_exists(APP.'app_controller.php'))
-        {
-            require_once(APP.'app_controller.php');
+            require_once($pluginAppControllerFile);
         }
         else
         {
-            require_once(CAKE.'app_controller.php');
+            die('Plugins must have a class named '. $pluginAppController);
         }
     }
 
