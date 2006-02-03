@@ -252,6 +252,21 @@ function loadController ($name)
  */
 function loadPluginController ($plugin, $controller)
 {
+    if(!class_exists('AppController'))
+    {
+        if(file_exists(APP.'plugins'.DS.$plugin.DS.'app_controller.php'))
+        {
+            require_once(APP.'plugins'.DS.$plugin.DS.'app_controller.php');
+        }
+        elseif(file_exists(APP.'app_controller.php'))
+        {
+            require_once(APP.'app_controller.php');
+        }
+        else
+        {
+            require_once(CAKE.'app_controller.php');
+        }
+    }
 
     if(!class_exists($controller.'Controller'))
     {

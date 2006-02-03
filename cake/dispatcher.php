@@ -91,7 +91,7 @@ class Dispatcher extends Object
       $missingAction     = false;
       $missingView       = false;
       $privateAction     = false;
-
+      $this->base = $this->baseUrl();
       if (empty($params['controller']))
       {
          $missingController = true;
@@ -128,6 +128,7 @@ class Dispatcher extends Object
                      $params = $this->_restructureParams($params);
                      $this->plugin = Inflector::underscore($ctrlName).DS;
                      loadPluginModels($this->plugin);
+                     $this->base = $this->base.'/'.Inflector::underscore($ctrlName);
                  }
              }
          }
@@ -150,7 +151,7 @@ class Dispatcher extends Object
           }
       }
 
-      $this->base = $this->baseUrl();
+
 
       if ($missingController)
       {
