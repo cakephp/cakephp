@@ -518,7 +518,6 @@ class DboSource extends DataSource
             foreach ($resultSet as $i => $row)
             {
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
-                //pr($q);
                 $fetch = $this->fetchAll($q);
 
                 if (!empty($fetch) && is_array($fetch))

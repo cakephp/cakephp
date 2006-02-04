@@ -149,20 +149,22 @@ class DboMysql extends DboSource
     function query ()
     {
         $args = func_get_args();
+
         if (count($args) == 1)
         {
             return $this->fetchAll($args[0]);
         }
-        elseif (count($args) > 1 && strpos($args[0], 'findBy') === 0)
+        elseif (count($args) > 1 && strpos(low($args[0]), 'findby') === 0)
         {
-            $field = Inflector::underscore(str_replace('findBy', '', $args[0]));
-            $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+            $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+            $query = array($args[2]->name.'.'.$field  => $args[1][0]);
+
             return $args[2]->find($query);
         }
-        elseif (count($args) > 1 && strpos($args[0], 'findAllBy') === 0)
+        elseif (count($args) > 1 && strpos(low($args[0]), 'findallby') === 0)
         {
-            $field = Inflector::underscore(str_replace('findAllBy', '', $args[0]));
-            $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+            $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+            $query = array($args[2]->name.'.'.$field  => $args[1][0]);
             return $args[2]->findAll($query);
         }
     }
