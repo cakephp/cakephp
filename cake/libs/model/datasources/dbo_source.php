@@ -370,6 +370,7 @@ class DboSource extends DataSource
         $this->__assocJoins = null;
         if(!is_null($recursive))
         {
+            $_recursive = $model->recursive;
             $model->recursive = $recursive;
         }
 
@@ -435,7 +436,7 @@ class DboSource extends DataSource
                                                foreach ($resultSet[$i][$linkModel->name] as $value)
                                                {
                                                    $datas[][$linkModel->name] = $value[$linkModel->primaryKey];
-                                                   $fetch = $this->queryDeepAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $array, false, $datas);
+                                                   $fetch = $this->queryDeepAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $array, true, $datas);
                                                    unset($datas);
 
                                                    if (!empty($fetch[0]))
@@ -474,6 +475,11 @@ class DboSource extends DataSource
                 }
             }
         }
+
+        if(!is_null($recursive))
+        {
+            $model->recursive = $_recursive;
+        }
         return $resultSet;
     }
 
@@ -506,8 +512,6 @@ class DboSource extends DataSource
  */
     function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet)
     {
-        //$external = (($linkModel->db === $this) && $resultSet == null);
-
         $query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
         if ($query)
         {
@@ -695,6 +699,19 @@ class DboSource extends DataSource
                     $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
                     $sql .= $this->order($assocData['order']);
+
+                    if (isset($assocData['conditions']))
+                    {
+                        if(is_array($queryData['conditions']))
+                        {
+                            $queryData['conditions']  = array_merge($assocData['conditions'], $queryData['conditions']);
+                        }
+                        else
+                        {
+                            $queryData['conditions'] = $assocData['conditions'];
+                        }
+                    }
+
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
@@ -745,6 +762,19 @@ class DboSource extends DataSource
                     $sql .= ' AS ' . $this->name($alias) . ' ON ';
                     $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
                     $sql .= '='.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
+
+                    if (isset($assocData['conditions']))
+                    {
+                        if(is_array($queryData['conditions']))
+                        {
+                            $queryData['conditions']  = array_merge($assocData['conditions'], $queryData['conditions']);
+                        }
+                        else
+                        {
+                            $queryData['conditions'] = $assocData['conditions'];
+                        }
+                    }
+
                     if (!in_array($sql, $queryData['joins']))
                     {
                         $queryData['joins'][] = $sql;
