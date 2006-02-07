@@ -85,6 +85,13 @@ class AjaxHelper extends Helper
     var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'onUpdate', 'onChange');
 
 /**
+     * Options for slider.
+     *
+     * @var array
+ */
+    var $sliderOptions = array('axis', 'increment', 'maximum', 'minimum', 'alignX', 'alignY', 'sliderValue', 'disabled', 'handleImage', 'handleDisabled', 'values');
+
+/**
  * Returns link to remote action
  *
  * Returns a link to a remote action defined by <i>options[url]</i>
@@ -108,7 +115,7 @@ class AjaxHelper extends Helper
  *
  * Example:
  * <code>
- *   linkToRemote (word,
+ *   link (word,
  *       array("url" => "undo", "n" => word_counter),
  *       array("complete" => "undoRequestCompleted(request)"));
  * </code>
@@ -142,8 +149,12 @@ class AjaxHelper extends Helper
  *                       initiated and before <i>loading</i>.
  *
  * @param string $title         Title of link
- * @param array $options         Options for JavaScript function
- * @return string                 HTML code for link to remote action
+ * @param string $href          Href string "/products/view/12"
+ * @param array $options        Options for JavaScript function
+ * @param string $confirm       Confirmation message. Calls up a JavaScript confirm() message.
+ * @param boolean $escapeTitle  Escaping the title string to HTML entities
+ *
+ * @return string               HTML code for link to remote action
  */
     function link($title, $href = null, $options = array(), $confirm = null, $escapeTitle = true)
     {
@@ -315,7 +326,6 @@ class AjaxHelper extends Helper
   *
   * @param string $name         Input button name
   * @param string $value         Input button value
-  * @param array $html_options    HTML options
   * @param array $options         Callback options
   * @return string                 Ajaxed input button
   */
@@ -402,8 +412,9 @@ class AjaxHelper extends Helper
   * but can be any valid javascript expression defining the
   *
   * @param string $field_id         DOM ID of field to observe
-  * @param array $options             ajax options
-  * @return string                     ajax script
+  * @param string $url              URL for the autocomplete action
+  * @param array $options           Ajax options
+  * @return string                  Ajax script
   */
     function autoComplete ($field, $url = "", $options = array())
     {
@@ -433,7 +444,7 @@ class AjaxHelper extends Helper
  * Enter description here...
  *
  * @param unknown_type $id
- * @param unknown_type $options
+ * @param array $options
  * @return unknown
  */
     function drag($id, $options = array())
@@ -458,6 +469,9 @@ class AjaxHelper extends Helper
   * For a reference on the options for this function, check out
   * http://wiki.script.aculo.us/scriptaculous/show/Droppables.add
   *
+ * @param unknown_type $id
+  * @param array $options
+  * @return array
   */
     function drop($id, $options = array())
     {
@@ -492,14 +506,28 @@ class AjaxHelper extends Helper
     }
 
 /**
-  * Makes a list or group of floated objects sortable.
+  * Makes a slider control.
   *
+  *
+  * @param string $id DOM ID of slider handle
+  * @param string $track_id DOM ID of slider track
+  * @param array $options Array of options to control the slider
+  * @link http://wiki.script.aculo.us/scriptaculous/show/Slider
+  */
+    function slider($id, $track_id, $options = array())
+    {
+        $options = $this->_optionsToString($options, array('axis','handleImage','handleDisabled'));
+        $options = $this->_buildOptions($options, $this->sliderOptions);
+        return $this->Javascript->codeBlock("var $id = new Control.Slider('$id', '$track_id'$options);");
+    }
+
+/**
+  * Makes a list or group of floated objects sortable.
   *
   * @param string $id DOM ID of parent
   * @param array $options Array of options to control sort.http://wiki.script.aculo.us/scriptaculous/show/Sortable.create
   * @link http://wiki.script.aculo.us/scriptaculous/show/Sortable.create
   */
-
     function sortable($id, $options = array())
     {
         if (!empty($options['url']))
@@ -514,7 +542,7 @@ class AjaxHelper extends Helper
 /**
  * Private method; generates sortables code from array options
  *
- * @param unknown_type $options
+ * @param array $options
  * @return unknown
  */
     function __optionsForSortable ($options)
@@ -574,11 +602,11 @@ class AjaxHelper extends Helper
     }
 
 /**
- * Enter description here...
+ * Returns a string of JavaScript with the given option data as a JavaScript options hash.
  *
- * @param unknown_type $options
- * @param unknown_type $acceptable
- * @return unknown
+ * @param array $options	Options in the shape of keys and values
+ * @param array $acceptable	Array of legal keys in this options context
+ * @return string	String of Javascript array definition
  */
     function _buildOptions ($options, $acceptable) {
         if(is_array($options))
@@ -606,7 +634,7 @@ class AjaxHelper extends Helper
      *
      * @param string $klass Name of JavaScript class
      * @param string $name
-     * @param array $options
+     * @param array $options	Ajax options
      * @return string Formatted JavaScript
  */
     function _buildObserver ($klass, $name, $options=null)
@@ -645,11 +673,12 @@ class AjaxHelper extends Helper
     }
 
 /**
- * Enter description here...
+ * Returns a string of JavaScript with a string representation of given options array.
  *
- * @param unknown_type $options
- * @param unknown_type $stringOpts
- * @return unknown
+ * @param array $options	Ajax options array
+ * @param array $stringOpts	Options as strings in an array
+ * @access private
+ * @return array
  */
     function _optionsToString ($options, $stringOpts = array())
     {

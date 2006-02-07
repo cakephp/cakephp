@@ -2,9 +2,11 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Cake RequestHandler Component.
+ * Request object for handling alternative HTTP requests
  *
- * PHP versions 4 and 5
+ * Alternative HTTP requests can come from wireless units like mobile phones, palmtop computers, and the like.
+ * These units have no use for Ajax requests, and this Component can tell how Cake should respond to the different
+ * needs of a handheld computer and a desktop machine.
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2006, Cake Software Foundation, Inc.
@@ -48,23 +50,23 @@ class RequestHandlerComponent extends Object
     var $ajaxLayout = 'ajax';
 
 
-  /**
-   * Startup
-   *
-   * @param object A reference to the controller
-   * @return null
-   */
+/**
+ * Startup
+ *
+ * @param object A reference to the controller
+ * @return null
+ */
     function startup(&$controller)
     {
         $this->setAjax($controller);
     }
 
-  /**
-   * Sets a controller's layout based on whether or not the current call is Ajax
-   *
-   * @param object The controller object
-   * @return null
-   */
+/**
+ * Sets a controller's layout based on whether or not the current call is Ajax
+ *
+ * @param object The controller object
+ * @return null
+ */
     function setAjax(&$controller)
     {
         if ($this->isAjax())
@@ -76,11 +78,11 @@ class RequestHandlerComponent extends Object
         }
     }
 
-  /**
-   * Returns true if the current call is from Ajax, false otherwise
-   *
-   * @return bool True if call is Ajax
-   */
+/**
+ * Returns true if the current call is from Ajax, false otherwise
+ *
+ * @return bool True if call is Ajax
+ */
     function isAjax()
     {
         if(env('HTTP_X_REQUESTED_WITH') != null)
@@ -94,11 +96,12 @@ class RequestHandlerComponent extends Object
     }
 
 
-  /**
-   * Gets Prototype version if call is Ajax, otherwise empty string
-   *
-   * @return string Prototype version of component making Ajax call
-   */
+/**
+ * Gets Prototype version if call is Ajax, otherwise empty string. 
+ * The Prototype library sets a special "Prototype version" HTTP header.
+ *
+ * @return string Prototype version of component making Ajax call
+ */
     function getAjaxVersion() {
         if (env('HTTP_X_PROTOTYPE_VERSION') != null)
         {
@@ -107,11 +110,11 @@ class RequestHandlerComponent extends Object
         return false;
     }
 
-  /**
-   * Gets the server name from which this request was referred
-   *
-   * @return string Server address
-   */
+/**
+ * Gets the server name from which this request was referred
+ *
+ * @return string Server address
+ */
     function getReferrer ()
     {
         if (env('HTTP_HOST') != null) {
@@ -126,11 +129,11 @@ class RequestHandlerComponent extends Object
     }
 
 
-  /**
-   * Gets gets remote client IP
-   *
-   * @return string Client IP address
-   */
+/**
+ * Gets remote client IP
+ *
+ * @return string Client IP address
+ */
     function getClientIP ()
     {
 
@@ -162,11 +165,11 @@ class RequestHandlerComponent extends Object
     }
 
 
-  /**
-   * Returns true if user agent string matches a mobile web browser
-   *
-   * @return bool True if user agent is a mobile web browser
-   */
+/**
+ * Returns true if user agent string matches a mobile web browser
+ *
+ * @return bool True if user agent is a mobile web browser
+ */
     function isMobile()
     {
         return (preg_match(REQUEST_MOBILE_UA, $_SERVER['HTTP_USER_AGENT']) > 0);
@@ -221,7 +224,7 @@ class RequestHandlerComponent extends Object
 /**
  * Strips the specified tags from output
  *
- * @param string $str
+ * @param string $str 
  * @param string $tag
  * @param string $tag
  * @param string ...

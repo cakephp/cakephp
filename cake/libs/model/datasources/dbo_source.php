@@ -699,7 +699,7 @@ class DboSource extends DataSource
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
                     $sql .= $this->order($assocData['order']);
 
-                    if (isset($assocData['conditions']))
+                    if (isset($assocData['conditions']) && !empty($assocData['conditions']))
                     {
                         if(is_array($queryData['conditions']))
                         {
@@ -762,7 +762,7 @@ class DboSource extends DataSource
                     $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
                     $sql .= '='.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
 
-                    if (isset($assocData['conditions']))
+                    if (isset($assocData['conditions']) && !empty($assocData['conditions']))
                     {
                         if(is_array($queryData['conditions']))
                         {

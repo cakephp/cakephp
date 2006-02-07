@@ -45,7 +45,7 @@ class AclComponent extends Object
    var $controller = true;
 
 /**
- * Enter description here...
+ * Constructor. Will return an instance of the correct ACL class.
  *
  */
    function __construct()
@@ -70,7 +70,7 @@ class AclComponent extends Object
    }
 
 /**
- * Enter description here...
+ * Empty class defintion, to be overridden in subclasses.
  *
  */
    function _initACL()

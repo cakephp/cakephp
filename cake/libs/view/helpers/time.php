@@ -103,7 +103,7 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Described, relative date string
  */
-    function niceShort ($date_string=null,$return = false)
+    function niceShort ($date_string=null, $return = false)
     {
         $date = $date_string? $this->fromString($date_string): time();
 
@@ -134,9 +134,9 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string is today
  */
-    function isToday ($date_string)
+    function isToday ($date_string, $return = false)
     {
-        $date = $this->fromString($date_string, $return = false);
+        $date = $this->fromString($date_string);
         $ret = date('Y-m-d', $date) == date('Y-m-d', time());
 
         return $this->output($ret, $return);
@@ -190,7 +190,8 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string is within current year
  */
-    function isThisYear ($date_string, $return = false) {
+    function isThisYear ($date_string, $return = false) 
+	{
         $date = $this->fromString($date_string);
         $ret = date('Y', $date) == date('Y', time());
 
@@ -205,7 +206,8 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string was yesterday
  */
-    function wasYesterday ($date_string, $return = false) {
+    function wasYesterday ($date_string, $return = false) 
+	{
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 
@@ -220,7 +222,8 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string was yesterday
  */
-    function isTomorrow ($date_string, $return = false) {
+    function isTomorrow ($date_string, $return = false) 
+	{
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 
@@ -235,7 +238,8 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return int Unix timestamp
  */
-    function toUnix ($date_string, $return = false) {
+    function toUnix ($date_string, $return = false)
+	{
         $ret = strtotime($date_string);
 
         return $this->output($ret, $return);
@@ -249,7 +253,8 @@ class TimeHelper extends Helper
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Formatted date string
  */
-    function toAtom ($date_string, $return = false) {
+    function toAtom ($date_string, $return = false) 
+	{
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d\TH:i:s\Z', $date);
 
@@ -275,7 +280,7 @@ class TimeHelper extends Helper
 /**
  * Returns either a relative date or a formatted date depending
  * on the difference between the current time and given datetime.
- * $datetime should be in a <i>strtotime</i>-parsable format like MySQL datetime.
+ * $datetime should be in a <i>strtotime</i>-parsable format, like MySQL's datetime datatype.
  *
  *      Relative dates look something like this:
  *          3 weeks, 4 days ago
@@ -287,7 +292,7 @@ class TimeHelper extends Helper
  * like 'Posted ' before the function output.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @param string $format Default format if timestamp is used
+ * @param string $format Default format if timestamp is used in $date_string
  * @param string $backwards False if $date_string is in the past, true if in the future
  * @param  boolean $return Whether this method should return a value
  *                         or output it. This overrides AUTO_OUTPUT.
@@ -300,61 +305,61 @@ class TimeHelper extends Helper
         $in_seconds = $datetime;
         if($backwards)
         {
-          $diff = $in_seconds-time();
+          $diff = $in_seconds - time();
         }
         else
         {
-          $diff = time()-$in_seconds;
+          $diff = time() - $in_seconds;
         }
-        $months = floor($diff/2419200);
-        $diff -= $months*2419200;
-        $weeks = floor($diff/604800);
-        $diff -= $weeks*604800;
-        $days = floor($diff/86400);
-        $diff -= $days*86400;
-        $hours = floor($diff/3600);
-        $diff -= $hours*3600;
-        $minutes = floor($diff/60);
-        $diff -= $minutes*60;
+        $months = floor($diff / 2419200);
+        $diff -= $months * 2419200;
+        $weeks = floor($diff / 604800);
+        $diff -= $weeks * 604800;
+        $days = floor($diff / 86400);
+        $diff -= $days * 86400;
+        $hours = floor($diff / 3600);
+        $diff -= $hours * 3600;
+        $minutes = floor($diff / 60);
+        $diff -= $minutes * 60;
         $seconds = $diff;
 
-        if ($months>0)
+        if ($months > 0)
         {
             // over a month old, just show date (mm/dd/yyyy format)
-            $relative_date = 'on '.date($format, $in_seconds);
+            $relative_date = 'on '. date($format, $in_seconds);
             $old = true;
         }
         else
         {
-            $relative_date='';
+            $relative_date = '';
             $old = false;
-            if ($weeks>0)
+            if ($weeks > 0)
             {
                 // weeks and days
-                $relative_date .= ($relative_date?', ':'').$weeks.' week'.($weeks>1?'s':'');
-                $relative_date .= $days>0?($relative_date?', ':'').$days.' day'.($days>1?'s':''):'';
+                $relative_date .= ( $relative_date ? ', ' : '' ).$weeks.' week'.( $weeks > 1 ?'s' : '' );
+                $relative_date .= $days > 0 ? ($relative_date?', ':'').$days.' day'.( $days > 1 ? 's' : '' ):'';
             }
-            elseif ($days>0)
+            elseif ($days > 0)
             {
                 // days and hours
-                $relative_date .= ($relative_date?', ':'').$days.' day'.($days>1?'s':'');
-                $relative_date .= $hours>0?($relative_date?', ':'').$hours.' hour'.($hours>1?'s':''):'';
+                $relative_date .= ($relative_date ? ', ':'').$days.' day'.($days > 1 ? 's' : '');
+                $relative_date .= $hours > 0 ? ($relative_date ? ', ' : '').$hours.' hour'.($hours > 1 ? 's' : '') : '';
             }
-            elseif ($hours>0)
+            elseif ($hours > 0)
             {
                 // hours and minutes
-                $relative_date .= ($relative_date?', ':'').$hours.' hour'.($hours>1?'s':'');
-                $relative_date .= $minutes>0?($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':''):'';
+                $relative_date .= ($relative_date ? ', ' : '').$hours.' hour'.($hours > 1 ? 's' : '');
+                $relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '').$minutes.' minute'.($minutes > 1 ? 's' : '') : '';
             }
-            elseif ($minutes>0)
+            elseif ($minutes > 0)
             {
                 // minutes only
-                $relative_date .= ($relative_date?', ':'').$minutes.' minute'.($minutes>1?'s':'');
+                $relative_date .= ($relative_date ? ', ' : '').$minutes.' minute'.($minutes > 1 ? 's' : '');
             }
             else
             {
                 // seconds only
-                $relative_date .= ($relative_date?', ':'').$seconds.' second'.($seconds>1?'s':'');
+                $relative_date .= ($relative_date ? ', ' : '').$seconds.' second'.($seconds > 1 ? 's' : '');
             }
         }
 
@@ -371,9 +376,11 @@ class TimeHelper extends Helper
 /**
  * Alias for timeAgoInWords
  * @param string $date_string Datetime string or Unix timestamp
+ * @param string $format Default format if timestamp is used in $date_string
  * @param  boolean $return Whether this method should return a value
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Relative time string.
+ * @see		timeAgoInWords
  */
     function relativeTime ($datetime_string, $format = 'j/n/y', $return = false)
     {
@@ -396,14 +403,14 @@ class TimeHelper extends Helper
  *
  * @param mixed $timeInterval the numeric value with space then time
  *               type. Example of valid types: 6 hours, 2 days, 1 minute.
- * @param mixed $date the datestring or unix timestamp to compare
+ * @param mixed $date_string the datestring or unix timestamp to compare
  * @param  boolean $return Whether this method should return a value
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return boolean
  */
    function wasWithinLast($timeInterval, $date_string, $return = false)
    {
-         $date = $this->fromString($date_string);
+      $date = $this->fromString($date_string);
 
       $result = preg_split('/\\s/', $timeInterval);
 
@@ -475,12 +482,8 @@ class TimeHelper extends Helper
       {
           $ret = false;
       }
-
       return $this->output($ret, $return);
-
    }
-
-
 }
 
 ?>

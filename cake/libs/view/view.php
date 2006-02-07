@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Methods for displaying presentation data
+ * Methods for displaying presentation data in the view.
  *
  *
  * PHP versions 4 and 5
@@ -167,44 +167,45 @@ class View extends Object
    var $hasRendered = null;
 
 /**
- * Enter description here...
+ * Reference to the Controller for this view.
  *
- * @var boolean
+ * @var Controller
  */
    var $controller = null;
 
 /**
- * Enter description here...
+ * Array of loaded view helpers.
  *
  * @var array
  */
     var $loaded = array();
 
 /**
- * Enter description here...
+ * File extension. Defaults to Cake's conventional ".thtml".
  *
  * @var array
  */
     var $ext = '.thtml';
 
 /**
- * Enter description here...
+ * Sub-directory for this view file.
  *
- * @var array
+ * @var string
  */
     var $subDir = null;
 
 /**
- * Enter description here...
+ * Enter description here... Themes. New in Cake RC4.
  *
  * @var array
  */
     var $themeWeb = null;
 
 /**
- * Enter description here...
+ * Plugin name. A Plugin is a sub-application. New in Cake RC4.
  *
- * @var array
+ * @link http://wiki.cakephp.org/docs:plugins
+ * @var string
  */
     var $plugin = null;
 
@@ -242,9 +243,9 @@ class View extends Object
  * Renders view for given action and layout. If $file is given, that is used
  * for a view filename (e.g. customFunkyView.thtml).
  *
- * @param string $action Name of action to render for
- * @param string $layout Layout to use
- * @param string $file Custom filename for view
+ * @param string $action 	Name of action to render for
+ * @param string $layout 	Layout to use
+ * @param string $file 		Custom filename for view
  */
    function render($action=null, $layout=null, $file=null)
    {
@@ -393,9 +394,10 @@ class View extends Object
  * and the $params array is used to send data to be used in the
  * Element.
  *
- * @param string $name Name of template file in the /app/views/elements/ folder
- * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
- * @return string Rendered output
+ * @link http://wiki.cakephp.org/docs:view:renderelement
+ * @param string $name 		Name of template file in the /app/views/elements/ folder
+ * @param array $params 	Array of data to be made available to the for rendered view (i.e. the Element)
+ * @return string 			Rendered output
  */
    function renderElement($name, $params=array())
    {
@@ -478,7 +480,7 @@ class View extends Object
 /**
  * Sets layout to be used when rendering.
  *
- * @param string $layout
+ * @param string $layout		Name of layout.
  */
    function setLayout($layout)
    {
@@ -488,9 +490,9 @@ class View extends Object
 /**
  * Displays an error page to the user. Uses layouts/error.html to render the page.
  *
- * @param int $code Error code (for instance: 404)
- * @param string $name Name of the error (for instance: Not Found)
- * @param string $message Error message as a web page
+ * @param int $code 		HTTP Error code (for instance: 404)
+ * @param string $name 		Name of the error (for instance: Not Found)
+ * @param string $message 	Error message as a web page
  */
    function error ($code, $name, $message)
    {

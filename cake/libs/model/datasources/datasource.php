@@ -389,7 +389,7 @@ class DataSource extends Object
 /**
  * To-be-overridden in subclasses.
  *
- * @param unknown_type $model
+ * @param Model $model
  * @param unknown_type $fields
  * @return unknown
  */
@@ -406,7 +406,7 @@ class DataSource extends Object
  * @param unknown_type $association
  * @param unknown_type $assocData
  * @param Model $model
- * @param unknown_type $linkModel
+ * @param Model $linkModel
  * @param unknown_type $index
  * @return unknown
  */
@@ -459,8 +459,8 @@ class DataSource extends Object
  * Enter description here... The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
  * @param array $data
- * @param mixed $path
- * @return unknown
+ * @param mixed $path	As an array, or as a dot-separated string.
+ * @return array
  */
     function getFieldValue ($data, $path)
     {

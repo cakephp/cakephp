@@ -4,7 +4,7 @@
 /**
  * Html Helper class file.
  *
- * PHP versions 4 and 5
+ * Simplifies the construction of HTML elements.
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2006, Cake Software Foundation, Inc.
@@ -65,7 +65,7 @@ class HtmlHelper extends Helper
  */
     var $params = array();
  /**
- * Enter description here...
+ * Current action.
  *
  * @var string
  */
@@ -73,7 +73,7 @@ class HtmlHelper extends Helper
  /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var array
  */
     var $data   = null;
  /**
@@ -143,7 +143,7 @@ class HtmlHelper extends Helper
  *   + '/' - the method will find base URL of application.
  *   + A combination of controller/action - the method will find url for it.
  *
- * @param  string  $url
+ * @param  string  $url		Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  * @param  boolean $return Wheter this method should return a value or
  *                         output it. This overrides AUTO_OUTPUT.
  * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
@@ -177,7 +177,7 @@ class HtmlHelper extends Helper
  * If the $url is empty, $title is used instead.
  *
  * @param  string  $title          The content of the A tag.
- * @param  string  $url
+ * @param  string  $url				Cake-relative URL, or external URL (starts with http://)
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  string  $confirmMessage Confirmation message.
  * @param  boolean $escapeTitle    Whether or not the text in the $title variable should be HTML escaped.
@@ -244,8 +244,7 @@ class HtmlHelper extends Helper
  /**
  * Creates a password input widget.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -272,8 +271,7 @@ class HtmlHelper extends Helper
  /**
  * Creates a textarea widget.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -302,8 +300,7 @@ class HtmlHelper extends Helper
  /**
  * Creates a checkbox widget.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  string  $title
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
@@ -343,8 +340,7 @@ class HtmlHelper extends Helper
  /**
  * Creates file input widget.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname" or just "thefile"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -386,10 +382,9 @@ class HtmlHelper extends Helper
     }
 
  /**
- * Creates a hidden input tag.
+ * Creates a hidden input field.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -410,7 +405,7 @@ class HtmlHelper extends Helper
  /**
  * Creates a formatted IMG element.
  *
- * @param  string  $path           Path to the image file.
+ * @param  string  $path           Path to the image file, relative to the webroot/img/ directory.
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -434,8 +429,7 @@ class HtmlHelper extends Helper
  /**
  * Creates a text input widget.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -463,10 +457,9 @@ class HtmlHelper extends Helper
  /**
  * Creates a set of radio widgets.
  *
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
- * @param  array   $options
- * @param  array   $inbetween
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
+ * @param  array   $options			Radio button options array
+ * @param  array   $inbetween		String that separates the radio buttons.
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -496,9 +489,9 @@ class HtmlHelper extends Helper
  /**
  * Returns a row of formatted and named TABLE headers.
  *
- * @param array $names
- * @param array $tr_options
- * @param array $th_options
+ * @param array $names		Array of tablenames.
+ * @param array $tr_options	HTML options for TR elements.
+ * @param array $th_options	HTML options for TH elements.
  * @return string
  */
     function tableHeaders($names, $tr_options=null, $th_options=null)
@@ -515,10 +508,10 @@ class HtmlHelper extends Helper
  /**
   * Returns a formatted string of table rows (TR's with TD's in them).
   *
-  * @param array $data Array of table data
-  * @param array $tr_options HTML options for TR elements
-  * @param array $td_options HTML options for TD elements
-  * @return string
+  * @param array $data 			Array of table data
+  * @param array $odd_tr_options 	HTML options for odd TR elements
+  * @param array $even_tr_options 	HTML options for even TR elements
+  * @return string	Formatted HTML
   */
     function tableCells($data, $odd_tr_options=null, $even_tr_options=null)
     {
@@ -546,9 +539,9 @@ class HtmlHelper extends Helper
 
 
  /**
- * Returns value of $fieldName. False is the tag does not exist.
+ * Returns value of $fieldName. False if the tag does not exist.
  *
- * @param string $fieldName
+ * @param string $fieldName		Fieldname as "Modelname/fieldname" string
  * @return unknown Value of the named tag.
  */
     function tagValue ($fieldName)
@@ -560,9 +553,9 @@ class HtmlHelper extends Helper
  /**
  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
  *
- * @param string $model
- * @param string $field
- * @return unknown
+ * @param string $model 	Model name as string
+ * @param string $field		Fieldname as string
+ * @return boolean True on errors.
  */
     function tagIsInvalid ($model, $field)
     {
@@ -604,8 +597,8 @@ class HtmlHelper extends Helper
  /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
- * @param string $field  If field is to be used for CRUD, this should be modelName/fieldName
- * @param string $text
+ * @param string $field  	A field name, like "Modelname/fieldname"
+ * @param string $text		Error message
  * @return string If there are errors this method returns an error message, else NULL.
  */
     function tagErrorMsg ($field, $text)
@@ -626,7 +619,7 @@ class HtmlHelper extends Helper
  /**
  * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
  *
- * @param string $tagValue Slash-separated model/field pair.
+ * @param string $tagValue A field name, like "Modelname/fieldname"
  */
     function setFormTag($tagValue)
     {
@@ -644,7 +637,7 @@ class HtmlHelper extends Helper
     */
 
  /**
- * Returns a space-separated string with items of the $options array. If a
+ * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *   + 'compact'
  *   + 'checked'
@@ -660,13 +653,13 @@ class HtmlHelper extends Helper
  *   + 'multiple'
  *   + 'noresize'
  *
- * And it's value is one of:
+ * And its value is one of:
  *   + 1
  *   + true
  *   + 'true'
  *
  * Then the value will be reset to be identical with key's name.
- * If the value is not one of these 3, the parameeter is not outputed.
+ * If the value is not one of these 3, the parameter is not output.
  *
  * @param  array  $options      Array of options.
  * @param  array  $exclude      Array of options to be excluded.
@@ -802,8 +795,7 @@ class HtmlHelper extends Helper
  /**
  * @deprecated Name changed to 'file'. Version 0.9.2.
  * @see HtmlHelper::file()
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -956,8 +948,7 @@ class HtmlHelper extends Helper
  /**
  * @deprecated Name changed to 'password'. Version 0.9.2.
  * @see HtmlHelper::password()
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -973,8 +964,7 @@ class HtmlHelper extends Helper
  /**
  * @deprecated Name changed to 'radio'. Version 0.9.2.
  * @see HtmlHelper::radio()
- * @param  string  $fieldName      If field is to be used for CRUD, this
- *                                 should be modelName/fieldName.
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array   $options
  * @param  array   $inbetween
  * @param  array   $htmlAttributes Array of HTML attributes.
@@ -1263,7 +1253,7 @@ class HtmlHelper extends Helper
         '22'=>'22','23'=>'23','24'=>'24',
         '25'=>'25','26'=>'26','27'=>'27',
         '28'=>'28','29'=>'29','30'=>'30','31'=>'31');
-        $option = $this->selectTag($tagName.'_day', $days, $dayValue, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_day', $days, $dayValue, null, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1304,7 +1294,7 @@ class HtmlHelper extends Helper
             $years[$yearCounter] = $yearCounter;
         }
 
-        $option = $this->selectTag($tagName.'_year', $years, $yearValue, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_year', $years, $yearValue, null, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1325,7 +1315,7 @@ class HtmlHelper extends Helper
         $months=array('01'=>'January','02'=>'February','03'=>'March',
         '04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August',
         '09'=>'September','10'=>'October','11'=>'November','12'=>'December');
-        $option = $this->selectTag($tagName.'_month', $months, $monthValue, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_month', $months, $monthValue, null, $optionAttr, $showEmpty);
         return $option;
     }
 

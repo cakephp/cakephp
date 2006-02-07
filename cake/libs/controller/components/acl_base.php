@@ -41,7 +41,7 @@ class AclBase
 {
 
 /**
- * Enter description here...
+ * This class should never be instantiated, just subclassed.
  *
  * @return AclBase
  */
@@ -57,11 +57,11 @@ class AclBase
    }
 
 /**
- * Enter description here...
+ * Empty method to be overridden in subclasses
  *
  * @param unknown_type $aro
  * @param unknown_type $aco
- * @param unknown_type $action
+ * @param string $action
  */
    function check($aro, $aco, $action = "*") {}
 
