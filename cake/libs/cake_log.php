@@ -44,7 +44,7 @@ if(!class_exists('File'))
  * @subpackage cake.cake.libs
  * @since      CakePHP v 0.2.9
  */
-class Log
+class CakeLog
 {
 /**
  * Writes given message to a log file in the logs directory.
@@ -61,22 +61,6 @@ class Log
       $log = new File($filename);
       return $log->append($output);
    }
-}
-
-/**
-  * Error constant. Used for differentiating error logging and debugging.
-  * Currently PHP supports LOG_DEBUG
-  */
-define ('LOG_ERROR', 2);
-
-/**
-  * Shortcut to Log::write.
-  */
-function LogError ($message)
-{
-   $bad = array("\n", "\r", "\t");
-   $good = ' ';
-   Log::write('error', str_replace($bad, $good, $message));
 }
 
 ?>

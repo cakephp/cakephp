@@ -136,6 +136,7 @@ class CakeSession extends Object
             $this->_begin();
 
         }
+        $this->_checkValid();
         parent::__construct();
     }
 
@@ -275,7 +276,7 @@ class CakeSession extends Object
     {
         session_cache_limiter("must-revalidate");
         session_start();
-        $this->_new();
+        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
 
 /**
@@ -398,6 +399,7 @@ class CakeSession extends Object
                                          array('CakeSession', '_gc'));
             break;
             case 'php':
+                ini_set('session.use_trans_sid', 0);
                 ini_set('session.name', CAKE_SESSION_COOKIE);
                 ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                 ini_set('session.cookie_path', $this->path);
@@ -411,6 +413,7 @@ class CakeSession extends Object
                 }
                 else
                 {
+                    ini_set('session.use_trans_sid', 0);
                     ini_set('session.name', CAKE_SESSION_COOKIE);
                     ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                     ini_set('session.cookie_path', $this->path);
@@ -426,7 +429,7 @@ class CakeSession extends Object
  * @access private
  *
  */
-    function _new()
+    function _checkValid()
     {
         if($this->readSessionVar("Config"))
         {
@@ -452,7 +455,6 @@ class CakeSession extends Object
             $this->valid = true;
             $this->_setError(1, "Session is valid");
         }
-        header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
 
 /**

@@ -445,6 +445,11 @@ class HtmlHelper extends Helper
             $htmlAttributes['value'] = $this->tagValue($fieldName);
         }
 
+        if (!isset($htmlAttributes['type']))
+        {
+            $htmlAttributes['type'] = 'text';
+        }
+
         if ($this->tagIsInvalid($this->model, $this->field))
         {
             $htmlAttributes['class'] = 'form_error';
@@ -1240,7 +1245,7 @@ class HtmlHelper extends Helper
  * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function dayOptionTag($tagName, $value=null, $selected=null, $optionAttr=null, $showEmpty = true)
+    function dayOptionTag($tagName, $value=null, $selected=null, $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_day");
         $dayValue = empty($selected) ? date('d') : $selected;
@@ -1253,7 +1258,7 @@ class HtmlHelper extends Helper
         '22'=>'22','23'=>'23','24'=>'24',
         '25'=>'25','26'=>'26','27'=>'27',
         '28'=>'28','29'=>'29','30'=>'30','31'=>'31');
-        $option = $this->selectTag($tagName.'_day', $days, $dayValue, null, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_day', $days, $dayValue, $select_attr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1269,7 +1274,7 @@ class HtmlHelper extends Helper
  * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function yearOptionTag($tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $optionAttr=null, $showEmpty = true)
+    function yearOptionTag($tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_year");
 
@@ -1294,7 +1299,7 @@ class HtmlHelper extends Helper
             $years[$yearCounter] = $yearCounter;
         }
 
-        $option = $this->selectTag($tagName.'_year', $years, $yearValue, null, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_year', $years, $yearValue, $select_attr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1308,14 +1313,14 @@ class HtmlHelper extends Helper
  * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-    function monthOptionTag($tagName, $value=null, $selected=null, $optionAttr=null, $showEmpty = true)
+    function monthOptionTag($tagName, $value=null, $selected=null,  $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_month");
         $monthValue = empty($selected) ? date('m') : $selected ;
         $months=array('01'=>'January','02'=>'February','03'=>'March',
         '04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August',
         '09'=>'September','10'=>'October','11'=>'November','12'=>'December');
-        $option = $this->selectTag($tagName.'_month', $months, $monthValue, null, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_month', $months, $monthValue, $select_attr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1329,7 +1334,7 @@ class HtmlHelper extends Helper
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-    function hourOptionTag($tagName, $value=null, $format24Hours = false, $selected=null, $optionAttr=null )
+    function hourOptionTag($tagName, $value=null, $format24Hours = false, $selected=null, $select_attr=null, $optionAttr=null, $showEmpty = true )
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_hour");
         if ( $format24Hours )
@@ -1356,7 +1361,7 @@ class HtmlHelper extends Helper
             '10'=>'10','11'=>'11','12'=>'12');
         }
 
-        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,
+        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $select_attr,
         $optionAttr);
         return $option;
     }
@@ -1370,7 +1375,7 @@ class HtmlHelper extends Helper
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-    function minuteOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
+    function minuteOptionTag( $tagName, $value=null, $selected=null,  $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_min");
         $minValue = empty($selected) ? date('i') : $selected ;
@@ -1379,7 +1384,7 @@ class HtmlHelper extends Helper
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
 
-        $option = $this->selectTag($tagName.'_min', $mins, $minValue,
+        $option = $this->selectTag($tagName.'_min', $mins, $minValue, $select_attr, 
         $optionAttr);
         return $option;
     }
@@ -1393,13 +1398,13 @@ class HtmlHelper extends Helper
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-    function meridianOptionTag( $tagName, $value=null, $selected=null, $optionAttr=null)
+    function meridianOptionTag( $tagName, $value=null, $selected=null,  $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $value = isset($value)? $value : $this->tagValue($tagName."_meridian");
         $merValue = empty($selected) ? date('a') : $selected ;
         $meridians = array('am'=>'am','pm'=>'pm');
 
-        $option = $this->selectTag($tagName.'_meridian', $meridians, $merValue,
+        $option = $this->selectTag($tagName.'_meridian', $meridians, $merValue, $select_attr,
         $optionAttr);
         return $option;
     }
@@ -1414,7 +1419,7 @@ class HtmlHelper extends Helper
  * @param array $optionAttr Attribute array for the option elements.
  * @return string The HTML formatted OPTION element
  */
-    function dateTimeOptionTag( $tagName, $dateFormat = 'DMY', $timeFormat = '12',$selected=null, $optionAttr=null)
+    function dateTimeOptionTag( $tagName, $dateFormat = 'DMY', $timeFormat = '12',$selected=null,  $select_attr=null, $optionAttr=null, $showEmpty = true)
     {
         $day   = null;
         $month = null;
@@ -1458,13 +1463,13 @@ class HtmlHelper extends Helper
         switch ( $dateFormat )
         {
             case 'DMY' :
-                $opt = $this->dayOptionTag( $tagName ,null ,$day) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->yearOptionTag( $tagName, null, null, null, $year );
+                $opt = $this->dayOptionTag( $tagName ,null ,$day, $select_attr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $select_attr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag( $tagName, null, null, null, $year, $select_attr, $optionAttr, $showEmpty);
             break;
             case 'MDY' :
-                $opt = $this->monthOptionTag($tagName, null, $month) .'-'.$this->dayOptionTag( $tagName, null, $day  ) . '-' . $this->yearOptionTag($tagName, null, null, null, $year);
+                $opt = $this->monthOptionTag($tagName, null, $month, $select_attr, $optionAttr, $showEmpty) .'-'.$this->dayOptionTag( $tagName, null, $day, $select_attr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $optionAttr, $select_attr, $showEmpty);
             break;
             case 'YMD' :
-                $opt = $this->yearOptionTag($tagName, null, null, null, $year) . '-' . $this->monthOptionTag( $tagName, null, $month ) . '-' . $this->dayOptionTag( $tagName, null, $day );
+                $opt = $this->yearOptionTag($tagName, null, null, null, $year, $select_attr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $select_attr, $optionAttr, $showEmpty) . '-' . $this->dayOptionTag( $tagName, null, $day, $optionAttr, $select_attr, $showEmpty);
             break;
             case 'NONE':
                 $opt ='';
@@ -1476,10 +1481,10 @@ class HtmlHelper extends Helper
         switch ($timeFormat)
         {
             case '24':
-                $opt .= $this->hourOptionTag( $tagName, null , true,  $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min );
+                $opt .= $this->hourOptionTag( $tagName, null , true,  $hour, $select_attr, $optionAttr, $showEmpty) . ':' . $this->minuteOptionTag( $tagName, null, $min, $select_attr, $optionAttr, $showEmpty);
             break;
             case '12':
-                $opt .= $this->hourOptionTag( $tagName, null, false, $hour) . ':' . $this->minuteOptionTag( $tagName, null, $min) . ' ' . $this->meridianOptionTag($tagName, null, $meridian);
+                $opt .= $this->hourOptionTag( $tagName, null, false, $hour, $select_attr, $optionAttr, $showEmpty) . ':' . $this->minuteOptionTag( $tagName, null, $min, $select_attr, $optionAttr, $showEmpty) . ' ' . $this->meridianOptionTag($tagName, null, $meridian, $select_attr, $optionAttr, $showEmpty);
             break;
             case 'NONE':
                 $opt .='';

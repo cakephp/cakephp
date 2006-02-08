@@ -89,7 +89,14 @@ class AjaxHelper extends Helper
      *
      * @var array
  */
-    var $sliderOptions = array('axis', 'increment', 'maximum', 'minimum', 'alignX', 'alignY', 'sliderValue', 'disabled', 'handleImage', 'handleDisabled', 'values');
+    var $sliderOptions = array('axis', 'increment', 'maximum', 'minimum', 'alignX', 'alignY', 'sliderValue', 'disabled', 'handleImage', 'handleDisabled', 'values', 'onSlide', 'onChange');
+
+/**
+     * Options for in-place editor.
+     *
+     * @var array
+ */
+    var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions');
 
 /**
  * Returns link to remote action
@@ -226,7 +233,7 @@ class AjaxHelper extends Helper
         $func = isset($options['update']) ? "new Ajax.Updater('{$options['update']}'," : "new Ajax.Request(";
 
         $func .= "'" . $this->Html->url(isset($options['url']) ? $options['url'] : "") . "'";
-        $func .= "$javascript_options)";
+        $func .= ", $javascript_options)";
 
         if (isset($options['before']))
         {
@@ -311,7 +318,7 @@ class AjaxHelper extends Helper
 
         if(!isset($options['with']))
         {
-            $options['with'] = 'Form.serialize(this)';
+            $options['with'] = "Form.serialize('{$htmlOptions['id']}')";
         }
         $options['url'] = $action;
 
@@ -435,9 +442,9 @@ class AjaxHelper extends Helper
         $divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => $options['class']);
 
         return $this->Html->input($field, $htmlOptions) .
-        $this->Html->tag("div", $divOptions, true) . "</div>" .
-        $this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
-        $divOptions['id'] . "', '" . $this->Html->url($url) . "'" . $this->__optionsForAjax($options) . ");");
+            $this->Html->tag("div", $divOptions, true) . "</div>" .
+            $this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] . "', '" .
+            $divOptions['id'] . "', '" . $this->Html->url($url) . "', " . $this->__optionsForAjax($options) . ");");
     }
 
 /**
@@ -450,7 +457,7 @@ class AjaxHelper extends Helper
     function drag($id, $options = array())
     {
         $options = $this->_optionsForDraggable($options);
-        return $this->Javascript->codeBlock("new Draggable('$id'$options);");
+        return $this->Javascript->codeBlock("new Draggable('$id', $options);");
     }
 
 /**
@@ -476,7 +483,7 @@ class AjaxHelper extends Helper
     function drop($id, $options = array())
     {
         $options = $this->_optionsForDroppable($options);
-        return $this->Javascript->codeBlock("Droppables.add('$id'$options);");
+        return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
     }
 
 /**
@@ -502,12 +509,11 @@ class AjaxHelper extends Helper
     {
         $options['onDrop'] = "function(element){" . $this->remoteFunction($ajaxOptions) . "}";
         $options = $this->_optionsForDroppable($options);
-        return $this->Javascript->codeBlock("Droppables.add('$id'$options);");
+        return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
     }
 
 /**
   * Makes a slider control.
-  *
   *
   * @param string $id DOM ID of slider handle
   * @param string $track_id DOM ID of slider track
@@ -517,8 +523,47 @@ class AjaxHelper extends Helper
     function slider($id, $track_id, $options = array())
     {
         $options = $this->_optionsToString($options, array('axis','handleImage','handleDisabled'));
+        if (isset($options['change']))
+        {
+            $options['onChange'] = $options['change'];
+            unset($options['change']);
+        }
+        if (isset($options['slide']))
+        {
+            $options['onSlide'] = $options['slide'];
+            unset($options['slide']);
+        }
         $options = $this->_buildOptions($options, $this->sliderOptions);
-        return $this->Javascript->codeBlock("var $id = new Control.Slider('$id', '$track_id'$options);");
+        return $this->Javascript->codeBlock("var $id = new Control.Slider('$id', '$track_id', $options);");
+    }
+
+/**
+  * Makes an Ajax In Place editor control.
+  *
+  * @param string $id DOM ID of input element
+  * @param string $url Postback URL of saved data
+  * @param array $options Array of options to control the editor, including ajaxOptions (see link).
+  * @link http://wiki.script.aculo.us/scriptaculous/show/Ajax.InPlaceEditor
+  */
+    function editor($id, $url, $options = array())
+    {
+        $url = $this->Html->url($url);
+        $options['ajaxOptions'] = $this->__optionsForAjax($options);
+        foreach ($this->ajaxOptions as $opt)
+        {
+            if (isset($options[$opt]))
+            {
+                unset($options[$opt]);
+            }
+        }
+        if (isset($options['callback']))
+        {
+            $options['callback'] = 'function(form) {'.$options['callback'].'}';
+        }
+
+        $options = $this->_optionsToString($options, array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText'));
+        $options = $this->_buildOptions($options, $this->editorOptions);
+        return $this->Javascript->codeBlock("new Ajax.InPlaceEditor('{$id}', '{$url}', {$options});");
     }
 
 /**
@@ -536,7 +581,7 @@ class AjaxHelper extends Helper
             $options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options).'}';
         }
         $options = $this->__optionsForSortable($options);
-        return $this->Javascript->codeBlock("Sortable.create('$id'$options);");
+        return $this->Javascript->codeBlock("Sortable.create('$id', $options);");
     }
 
 /**
@@ -558,8 +603,16 @@ class AjaxHelper extends Helper
     function __optionsForAjax ($options = array())
     {
         $js_options = $this->_buildCallbacks($options);
-        $js_options['asynchronous'] = 'true';
-        $js_options['evalScripts'] = 'true';
+        if (!isset($js_options['asynchronous']))
+        {
+            $js_options['asynchronous'] = 'true';
+        }
+
+        if (!isset($js_options['evalScripts']))
+        {
+            $js_options['evalScripts'] = 'true';
+        }
+
         $options = $this->_optionsToString($options, array('method'));
 
         foreach($options as $key => $value)
@@ -620,7 +673,7 @@ class AjaxHelper extends Helper
                 }
             }
             $out = join(', ', $out);
-            $out = ', {' . $out . '}';
+            $out = '{' . $out . '}';
             return $out;
         }
         else

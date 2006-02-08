@@ -256,12 +256,12 @@ class DboSource extends DataSource
       {
           $text = 'query';
       }
-      print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</th></tr>\n");
+      print("<table border=\"1\">\n<tr><th colspan=\"7\">{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</th></tr>\n");
       print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
 
       foreach($log as $k => $i)
       {
-         print("<tr><td>".($k + 1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['numRows']}</td><td align='right'>{$i['took']}</td></tr>\n");
+         print("<tr><td>".($k + 1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td style=\"text-align: right\">{$i['affected']}</td><td style=\"text-align: right\">{$i['numRows']}</td><td style=\"text-align: right\">{$i['took']}</td></tr>\n");
       }
 
       print("</table>\n");
@@ -340,12 +340,17 @@ class DboSource extends DataSource
             $values = array_values($model->data);
         }
 
+        foreach ($fields as $field)
+        {
+            $fieldInsert[] = $this->name($field);
+        }
+
         foreach ($values as $value)
         {
             $valueInsert[] = $this->value($value);
         }
 
-        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fields).') VALUES ('.join(',', $valueInsert).')'))
+        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
         {
             return true;
         }

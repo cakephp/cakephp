@@ -834,14 +834,16 @@ class Model extends Object
                          $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
                          $this->id = $this->__insertID;
 
+                         if(!$this->id > 0 && isset($newID))
+                         {
+                             $this->id = $newID;
+                         }
+
                          if(!empty($joined))
                          {
-                             if(!$this->id > 0 && isset($newID))
-                             {
-                                 $this->id = $newID;
-                             }
                              $this->__saveMulti($joined, $this->id);
                          }
+
                          $this->afterSave();
                          $this->data = false;
                          return true;

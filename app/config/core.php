@@ -54,6 +54,11 @@
  */
 define('DEBUG', 1);
 /**
+  * Error constant. Used for differentiating error logging and debugging.
+  * Currently PHP supports LOG_DEBUG
+  */
+define ('LOG_ERROR', 2);
+/**
  * Set the name of session cookie
  *
  */

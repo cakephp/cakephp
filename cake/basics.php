@@ -900,4 +900,19 @@ function countdim($array)
     return $return;
 }
 
+/**
+  * Shortcut to Log::write.
+  */
+function LogError ($message)
+{
+    if(!class_exists('CakeLog'))
+    {
+        uses('cake_log');
+    }
+
+    $bad = array("\n", "\r", "\t");
+    $good = ' ';
+    CakeLog::write('error', str_replace($bad, $good, $message));
+}
+
 ?>

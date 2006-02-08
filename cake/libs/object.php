@@ -125,17 +125,17 @@ class Object
  * API for logging events.
  *
  * @param string $msg Log message
- * @param int $type Error type constant. Defined in /libs/log.php.
+ * @param int $type Error type constant. Defined in app/config/core.php.
  */
    function log ($msg, $type=LOG_ERROR)
    {
-       if(!class_exists('Log'))
+       if(!class_exists('CakeLog'))
        {
-           uses('log');
+           uses('cake_log');
        }
       if (is_null($this->_log))
       {
-         $this->_log = new Log ();
+         $this->_log = new CakeLog();
       }
 
       switch ($type)

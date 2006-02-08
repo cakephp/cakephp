@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -403,12 +403,12 @@ class DBO extends Object
       sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
       $this->_queriesLog;
 
-      print("<table border=1>\n<tr><th colspan=7>{$this->_queriesCnt} queries took {$this->_queriesTime} ms</th></tr>\n");
+      print("<table border=\"1\">\n<tr><th colspan=\"7\">{$this->_queriesCnt} queries took {$this->_queriesTime} ms</th></tr>\n");
       print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
 
       foreach($log AS $k=>$i)
       {
-         print("<tr><td>".($k+1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td align='right'>{$i['affected']}</td><td align='right'>{$i['numRows']}</td><td align='right'>{$i['took']}</td></tr>\n");
+         print("<tr><td>".($k+1)."</td><td>{$i['query']}</td><td>{$i['error']}</td><td style=\"text-align: right\">{$i['affected']}</td><td style=\"text-align: right\">{$i['numRows']}</td><td style=\"text-align: right\">{$i['took']}</td></tr>\n");
       }
 
       print("</table>\n");
