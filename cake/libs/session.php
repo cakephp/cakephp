@@ -321,7 +321,7 @@ class CakeSession extends Object
             setcookie(CAKE_SESSION_COOKIE, '', time()-42000, $this->path);
         }
         $file = $sessionpath.DS."sess_".session_id();
-        session_destroy();
+        @session_destroy();
         @unlink($file);
         $this->__construct($this->path);
     }

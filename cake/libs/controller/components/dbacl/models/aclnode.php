@@ -261,11 +261,9 @@ class AclNode extends AppModel
  */
    function _syncTable($table, $dir, $lft, $rght)
    {
-      pr('...Syncing...');
       $shift = ($dir == 2 ? 1 : 2);
       $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
       $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
-      pr('...Done Syncing...');
    }
 
 /**

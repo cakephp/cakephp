@@ -153,11 +153,11 @@ class JavascriptHelper extends Helper
   *
   * @return null
   */
-  function cacheEvents ()
-  {
-    $this->_cacheEvents = true;
-  }
-
+    function cacheEvents ()
+    {
+        $this->_cacheEvents = true;
+    }
+ 
 
 /**
   * Write cached JavaScript events
@@ -169,7 +169,6 @@ class JavascriptHelper extends Helper
     $this->_cacheEvents = false;
     return $this->codeBlock("\n" . implode("\n", $this->_cachedEvents) . "\n");
   }
-
 
 /**
   * Includes the Prototype Javascript library (and anything else) inside a single script tag.
@@ -201,6 +200,49 @@ class JavascriptHelper extends Helper
         return $this->codeBlock("\n\n" . $javascript);
     }
 
+/**
+  * Generates a JavaScript object in JavaScript Object Notation (JSON)
+  * from an array
+  *
+  * @param array $data Data to be converted
+  * @param boolean $block Wraps return value in a <script /> block if true
+  * @param string $prefix Prepends the string to the returned data
+  * @param string $postfix Appends the string to the returned data
+  * @param array $stringKeys A list of array keys to be treated as a string
+  * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
+  * @param string $q The type of quote to use
+  * @return string A JSON code block
+  */
+    function object ($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "'")
+    {
+        $out = array();
+        foreach($data as $key => $val)
+        {
+        	if (is_array($val))
+        	{
+        	    $out[] = $key.':'.$this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
+        	}
+        	else
+        	{
+        	    if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)))
+        	    {
+        	        $val = $q.$val.$q;
+        	    }
+        	    if (trim($val) == '')
+        	    {
+        	        $val = 'null';
+        	    }
+        	    
+        	    $out[] = $key.':'.$val;
+        	}
+        }
+        $rt = $prefix.'{'.join(', ', $out).'}'.$postfix;
+        if ($block)
+        {
+            return $this->codeBlock($rt);
+        }
+        return $rt;
+    }
 }
 
 ?>
