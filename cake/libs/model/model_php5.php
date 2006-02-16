@@ -584,6 +584,23 @@ class Model extends Object
    }
 
 /**
+ * Returns an associative array of field names and column types.
+ *
+ * @return array
+ */
+   function getColumnTypes ()
+   {
+       $columns = $this->loadInfo();
+       $columns = $columns->value;
+
+       $cols = array();
+       foreach($columns as $col) {
+           $cols[$col['name']] = $col['type'];
+       }
+       return $cols;
+   }
+
+/**
  * Returns true if this Model has given field in its database table.
  *
  * @param string $name Name of field to look for
@@ -832,6 +849,7 @@ class Model extends Object
 
                          if(!$this->id > 0 && isset($newID))
                          {
+                             $this->__insertID = $newID;
                              $this->id = $newID;
                          }
 

@@ -80,7 +80,7 @@ class Helper extends Object
 
     function loadConfig()
     {
-       return $this->readConfigFile(CAKE.'config'.DS.'tags.ini.php');
+       return $this->readConfigFile($config = fileExistsInPath(CAKE.'config'.DS.'tags.ini.php'));
     }
 
  /**

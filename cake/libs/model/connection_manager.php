@@ -117,7 +117,7 @@ class ConnectionManager extends Object
         }
 
         $tail = 'dbo'.DS.$filename.'.php';
-        if (file_exists(LIBS.'model'.DS.$tail))
+        if (fileExistsInPath(LIBS.'model'.DS.$tail))
         {
             require_once(LIBS.'model'.DS.$tail);
         }

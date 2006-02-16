@@ -290,7 +290,14 @@ class HtmlHelper extends Helper
 
         if ($this->tagIsInvalid($this->model, $this->field))
         {
-            $htmlAttributes['class'] = 'form_error';
+            if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "")
+            {
+                $htmlAttributes['class'] .= ' form_error';
+            }
+            else
+            {
+                $htmlAttributes['class'] = 'form_error';
+            }
         }
 
         return $this->output(sprintf($this->tags['textarea'], $this->model,$this->field,
@@ -450,9 +457,21 @@ class HtmlHelper extends Helper
             $htmlAttributes['type'] = 'text';
         }
 
+        if (!isset($htmlAttributes['id']))
+        {
+            $htmlAttributes['id'] = $this->model.Inflector::camelize($this->field);
+        }
+
         if ($this->tagIsInvalid($this->model, $this->field))
         {
-            $htmlAttributes['class'] = 'form_error';
+            if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "")
+            {
+                $htmlAttributes['class'] .= ' form_error';
+            }
+            else
+            {
+                $htmlAttributes['class'] = 'form_error';
+            }
         }
 
         return $this->output(sprintf($this->tags['input'], $this->model, $this->field,

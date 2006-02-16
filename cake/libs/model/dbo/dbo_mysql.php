@@ -218,7 +218,7 @@ class DboMysql extends DboSource
  * @param string $tableName Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-    function &describe (&$model)
+    function describe (&$model)
     {
         $cache = parent::describe($model);
         if ($cache != null)
@@ -238,7 +238,7 @@ class DboMysql extends DboSource
             }
             if (isset($column[0]))
             {
-                $fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type']);
+                $fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type'], 'null' => $column[0]['Null']);
             }
         }
         $this->__cacheDescription($model->table, $fields);
@@ -291,7 +291,14 @@ class DboMysql extends DboSource
         {
             $data = mysql_real_escape_string($data, $this->connection);
         }
-        $return = "'" . $data . "'";
+        if(!is_numeric($data))
+        {
+            $return = "'" . $data . "'";
+        }
+        else
+        {
+            $return = $data;
+        }
         return $return;
    }
 

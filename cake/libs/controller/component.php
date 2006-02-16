@@ -99,9 +99,9 @@ class Component extends Object
                 {
                     $componentFn = COMPONENTS.$componentFn;
                 }
-                else if(file_exists(LIBS.'controller'.DS.'components'.DS.$componentFn))
+                else if($componentFn = fileExistsInPath(LIBS.'controller'.DS.'components'.DS.$componentFn))
                 {
-                    $componentFn = LIBS.'controller'.DS.'components'.DS.$componentFn;
+
                 }
 
                 $componentCn = $component.'Component';

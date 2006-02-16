@@ -33,9 +33,9 @@
 /**
  * Configuration, directory layout and standard libraries
  */
-require_once ROOT.'cake'.DS.'basics.php';
-require_once ROOT.APP_DIR.DS.'config'.DS.'core.php';
-require_once ROOT.'cake'.DS.'config'.DS.'paths.php';
+require_once 'cake'.DS.'basics.php';
+require_once ROOT.DS.APP_DIR.DS.'config'.DS.'core.php';
+require_once 'cake'.DS.'config'.DS.'paths.php';
 require_once LIBS.'object.php';
 require_once LIBS.'session.php';
 require_once LIBS.'security.php';

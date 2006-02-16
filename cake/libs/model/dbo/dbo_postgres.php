@@ -45,7 +45,6 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
 class  DboPostgres extends DboSource
 {
 
-
    var $description = "PostgreSQL DBO Driver";
 
    var $_baseConfig = array('persistent' => true,
@@ -53,8 +52,7 @@ class  DboPostgres extends DboSource
                             'login'      => 'root',
                             'password'   => '',
                             'database'   => 'cake',
-                            'port'       => 3306
-                          );
+                            'port'       => 3306);
 
    var $columns = array(
         'primary_key' => array('name' => 'serial primary key'),
@@ -67,10 +65,8 @@ class  DboPostgres extends DboSource
         'time'        => array('name' => 'time'),
         'date'        => array('name' => 'date'),
         'binary'      => array('name' => 'bytea'),
-        'boolean'     => array('name' => 'boolean')
-   );
-
-
+        'boolean'     => array('name' => 'boolean'),
+	    'number'      => array('name' => 'numeric'));
 
 /**
   * Connects to the database using options in the given configuration array.
@@ -119,10 +115,6 @@ class  DboPostgres extends DboSource
    function query ()
    {
       $args = func_get_args();
-      echo "<pre>";
-      print_r($args);
-      echo "</pre>";
-      die();
       if (count($args) == 1)
       {
          return $this->fetchAll($args[0]);
@@ -130,13 +122,13 @@ class  DboPostgres extends DboSource
       elseif (count($args) > 1 && strpos($args[0], 'findBy') === 0)
       {
          $field = Inflector::underscore(str_replace('findBy', '', $args[0]));
-         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
          return $args[2]->find($query);
       }
       elseif (count($args) > 1 && strpos($args[0], 'findAllBy') === 0)
       {
          $field = Inflector::underscore(str_replace('findAllBy', '', $args[0]));
-         $query = '`' . $args[2]->name . '`.`' . $field . '` = ' . $this->value($args[1][0]);
+         $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
          return $args[2]->findAll($query);
       }
    }
@@ -146,9 +138,10 @@ class  DboPostgres extends DboSource
   *
   * @return array The fetched row as an array
   */
-   function fetchRow ()
+   function fetchRow ($assoc = false)
    {
-       return pg_fetch_array($this->_result);
+	   $assoc = ($assoc === false) ? PGSQL_BOTH : PGSQL_ASSOC;
+       return pg_fetch_array($this->_result, null, $assoc);
    }
 
 /**
@@ -158,29 +151,23 @@ class  DboPostgres extends DboSource
   */
    function listSources ()
    {
-      $sql = "SELECT a.relname AS name
-         FROM pg_class a, pg_user b
-         WHERE ( relkind = 'r') and relname !~ '^pg_' AND relname !~ '^sql_'
-         AND relname !~ '^xin[vx][0-9]+' AND b.usesysid = a.relowner
-         AND NOT (EXISTS (SELECT viewname FROM pg_views WHERE viewname=a.relname));";
+	 $sql = "SELECT table_name as name FROM information_schema.tables WHERE table_schema = 'public';";
 
-      $this->execute($sql);
-      $result = $this->fetchRow();
+	$result = $this->query($sql);
 
       if (!$result)
       {
          return null;
       }
-       else
-       {
-          $tables = array();
-          $tables[] = $result['name'];
-          while ($row = $this->fetchRow())
-          {
-              $tables[] = $row['name'];
-          }
-          return $tables;
-       }
+      else
+      {
+         $tables = array();
+         foreach ($result as $item)
+         {
+             $tables[] = $item['name'];
+         }
+         return $tables;
+      }
    }
 
 /**
@@ -202,6 +189,28 @@ class  DboPostgres extends DboSource
 
       return $fields;
    }
+
+   /**
+ * Returns an array of the fields in given table name.
+ *
+ * @param string $tableName Name of database table to inspect
+ * @return array Fields in table. Keys are name and type
+ */
+    function &describe (&$model)
+    {
+        $cache = parent::describe($model);
+        if ($cache != null)
+        {
+            return $cache;
+        }
+
+        $fields = false;
+
+	$fields = $this->query("SELECT column_name as name, data_type as type FROM information_schema.columns WHERE table_name =".$this->name($model->table));
+
+        $this->__cacheDescription($model->table, $fields);
+        return $fields;
+    }
 
 /**
   * Returns a quoted and escaped string of $data for use in an SQL statement.

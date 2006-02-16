@@ -85,8 +85,8 @@ class FormHelper extends Helper
         if( $error == $this->Html->tagIsInvalid( $this->Html->model, $this->Html->field) )
         {
             return true;
-        } 
-		else 
+        }
+		else
 		{
             return false;
         }
@@ -137,7 +137,7 @@ class FormHelper extends Helper
  * @param string $errorMsg   Text that will appear if an error has occurred.
  * @param int $size          Size attribute for INPUT element
  * @param array $htmlOptions	HTML options array.
- * @return string             The formatted INPUT element, with a label and wrapped in a div. 
+ * @return string             The formatted INPUT element, with a label and wrapped in a div.
  */
     function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
     {
@@ -214,7 +214,7 @@ class FormHelper extends Helper
  * @param array $htmlOptions HTML options array
  * @return string            Date option wrapped in a div.
  */
-    function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected )
+    function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected=null )
     {
         $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));;
         $str = $this->Html->dateTimeOptionTag( $tagName, 'MDY' , 'NONE', $selected,  $htmlOptions);

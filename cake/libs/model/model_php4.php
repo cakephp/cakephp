@@ -587,6 +587,23 @@ class Model extends Object
    }
 
 /**
+ * Returns an associative array of field names and column types.
+ *
+ * @return array
+ */
+   function getColumnTypes ()
+   {
+       $columns = $this->loadInfo();
+       $columns = $columns->value;
+
+       $cols = array();
+       foreach($columns as $col) {
+           $cols[$col['name']] = $col['type'];
+       }
+       return $cols;
+   }
+
+/**
  * Returns true if given field name exists in this Model's database table.
  * Starts by loading the metadata into the private property table_info if that is not already set.
  *
@@ -836,6 +853,7 @@ class Model extends Object
 
                          if(!$this->id > 0 && isset($newID))
                          {
+                             $this->__insertID = $newID;
                              $this->id = $newID;
                          }
 

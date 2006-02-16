@@ -247,15 +247,16 @@ function loadController ($name)
         {
             $controller_fn = CONTROLLERS.$name.'_controller.php';
         }
-        elseif(file_exists(LIBS.'controller'.DS.$name.'_controller.php'))
+        elseif($controller_fn = fileExistsInPath(LIBS.'controller'.DS.$name.'_controller.php'))
         {
-            $controller_fn = LIBS.'controller'.DS.$name.'_controller.php';
+
         }
         else
         {
-            $controller_fn = false;
+            return false;
         }
-        return file_exists($controller_fn)? require_once($controller_fn): false;
+        require_once($controller_fn);
+        return true;
     }
     else
     {
@@ -301,6 +302,10 @@ function loadPluginController ($plugin, $controller)
             require_once($file);
             return true;
         }
+    }
+    else
+    {
+        return true;
     }
 }
 
@@ -913,6 +918,20 @@ function LogError ($message)
     $bad = array("\n", "\r", "\t");
     $good = ' ';
     CakeLog::write('error', str_replace($bad, $good, $message));
+}
+
+function fileExistsInPath ($file)
+{
+    $paths = explode(PATH_SEPARATOR, get_include_path());
+    foreach ($paths as $path)
+    {
+        $fullPath = $path . DIRECTORY_SEPARATOR . $file;
+        if (file_exists($fullPath))
+        {
+            return $fullPath;
+        }
+    }
+    return false;
 }
 
 ?>

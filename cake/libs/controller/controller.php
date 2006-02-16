@@ -454,9 +454,9 @@ class Controller extends Object
         $ref = env('HTTP_REFERER');
         $base = FULL_BASE_URL . $this->webroot;
 
-        if ($ref != null && defined(FULL_BASE_URL))
+        if ($ref != null && (defined(FULL_BASE_URL) || FULL_BASE_URL))
         {
-            if (strpos(env('HTTP_REFERER'), $base) == 0)
+            if (strpos($ref, $base) === 0)
             {
                 return substr($ref, strlen($base) - 1);
             }
@@ -594,7 +594,7 @@ class Controller extends Object
                     $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
                     $fieldNames[ $tabl['name'] ]['model'] = $fkNames[1];
                     $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
-                    $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[Inflector::pluralize($fkNames[0])]);
+                    $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[$fkNames[0]]);
                     $fieldNames[ $tabl['name'] ]['foreignKey'] = true;
                 }
              else if( 'created' != $tabl['name'] && 'updated' != $tabl['name'] )
