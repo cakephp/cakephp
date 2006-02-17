@@ -59,6 +59,25 @@ define('DEBUG', 1);
   */
 define ('LOG_ERROR', 2);
 /**
+ * CakePHP includes 3 types of session saves
+ * database or file. Set this to your preffered method.
+ * If you want to use your own save handeler place it in
+ * app/config/name.php DO NOT USE file or database as the name.
+ * and use just the name portion below.
+ *
+ * Setting this to cake will save files to /cakedistro/tmp directory
+ * Setting it to php will use the php default save path
+ * Setting it to database will use the database
+ *
+ *
+ */
+define('CAKE_SESSION_SAVE', 'php');
+/**
+ * Set a random string of used in session.
+ *
+ */
+define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+/**
  * Set the name of session cookie
  *
  */
@@ -80,27 +99,6 @@ define('CAKE_SECURITY', 'high');
  *  Number below is seconds.
  */
 define('CAKE_SESSION_TIMEOUT', '120');
-
-/**
- * Set a random string of used in session.
- *
- */
-define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
-
-/**
- * CakePHP includes 3 types of session saves
- * database or file. Set this to your preffered method.
- * If you want to use your own save handeler place it in
- * app/config/name.php DO NOT USE file or database as the name.
- * and use just the name portion below.
- *
- * Setting this to cake will save files to /cakedistro/tmp directory
- * Setting it to php will use the php default save path
- * Setting it to database will use the database
- *
- *
- */
-define('CAKE_SESSION_SAVE', 'php');
 
 /**
  * Uncomment the define below to use cake built in admin routes.

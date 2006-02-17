@@ -33,7 +33,7 @@
  */
 if(!class_exists('AppModel'))
 {
-    require_once(CAKE.'app_model.php');
+    require(CAKE.'app_model.php');
 }
 /**
  * Short description for file.

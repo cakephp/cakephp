@@ -35,10 +35,8 @@
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->connected ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
 <?php endif; ?>
-<h1>Take a bite out of Cake<em>PHP</em> Beta</h1>
-<p>
-More content will be added...
-</p>
+<h1>Cake<em>PHP</em></h1>
+
 <p>If you plan to upgrade from an older version, you may also want to read the <a href="http://cakephp.org/pages/changelog">changelog</a></p>
 
 <h2>Editing <em>this Page</em></h2>

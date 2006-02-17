@@ -65,11 +65,11 @@ function loadModels()
     {
         if(file_exists(APP.'app_model.php'))
         {
-            require_once(APP.'app_model.php');
+            require(APP.'app_model.php');
         }
         else
         {
-            require_once(CAKE.'app_model.php');
+            require(CAKE.'app_model.php');
         }
     }
 
@@ -80,7 +80,7 @@ function loadModels()
 
     foreach (listClasses(MODELS) as $model_fn)
     {
-        require_once (MODELS.$model_fn);
+        require (MODELS.$model_fn);
         if (phpversion() < 5 && function_exists("overload"))
         {
             list($name) = explode('.', $model_fn);
@@ -104,7 +104,7 @@ function loadPluginModels ($plugin)
     {
         if(file_exists($pluginAppModelFile))
         {
-            require_once($pluginAppModelFile);
+            require($pluginAppModelFile);
         }
         else
         {
@@ -121,7 +121,7 @@ function loadPluginModels ($plugin)
 
     foreach (listClasses($pluginModelDir) as $modelFileName)
     {
-        require_once ($pluginModelDir.$modelFileName);
+        require ($pluginModelDir.$modelFileName);
         if (phpversion() < 5 && function_exists("overload"))
         {
             list($name) = explode('.', $modelFileName);
@@ -141,11 +141,11 @@ function loadView ($viewClass)
         $file = Inflector::underscore($viewClass).'.php';
         if(file_exists(VIEWS.$file))
         {
-            return require_once(VIEWS.$file);
+            return require(VIEWS.$file);
         }
         elseif(file_exists(LIBS.'view'.DS.$file))
         {
-            return require_once(LIBS.'view'.DS.$file);
+            return require(LIBS.'view'.DS.$file);
         }
         else
         {
@@ -170,17 +170,17 @@ function loadModel($name)
     {
         if(file_exists(APP.'app_model.php'))
         {
-            require_once(APP.'app_model.php');
+            require(APP.'app_model.php');
         }
         else
         {
-            require_once(CAKE.'app_model.php');
+            require(CAKE.'app_model.php');
         }
     }
 
 	if(file_exists(MODELS.$name.'.php'))
 	{
-        require_once (MODELS.$name.'.php');
+        require (MODELS.$name.'.php');
         return true;
     }
 
@@ -201,18 +201,18 @@ function loadControllers ()
     {
         if(file_exists(APP.'app_controller.php'))
         {
-            require_once(APP.'app_controller.php');
+            require(APP.'app_controller.php');
         }
         else
         {
-            require_once(CAKE.'app_controller.php');
+            require(CAKE.'app_controller.php');
         }
     }
     foreach (listClasses(CONTROLLERS) as $controller)
     {
         if(!class_exists($controller))
         {
-            require_once (CONTROLLERS.$controller.'.php');
+            require (CONTROLLERS.$controller.'.php');
         }
     }
 }
@@ -229,11 +229,11 @@ function loadController ($name)
     {
         if(file_exists(APP.'app_controller.php'))
         {
-            require_once(APP.'app_controller.php');
+            require(APP.'app_controller.php');
         }
         else
         {
-            require_once(CAKE.'app_controller.php');
+            require(CAKE.'app_controller.php');
         }
     }
     if($name === null)
@@ -255,7 +255,7 @@ function loadController ($name)
         {
             return false;
         }
-        require_once($controller_fn);
+        require($controller_fn);
         return true;
     }
     else
@@ -281,7 +281,7 @@ function loadPluginController ($plugin, $controller)
     {
         if(file_exists($pluginAppControllerFile))
         {
-            require_once($pluginAppControllerFile);
+            require($pluginAppControllerFile);
         }
         else
         {
@@ -299,7 +299,7 @@ function loadPluginController ($plugin, $controller)
         }
         else
         {
-            require_once($file);
+            require($file);
             return true;
         }
     }
@@ -396,11 +396,11 @@ function vendor($name)
     {
         if(file_exists(APP.'vendors'.DS.$arg.'.php'))
         {
-            require_once(APP.'vendors'.DS.$arg.'.php');
+            require(APP.'vendors'.DS.$arg.'.php');
         }
         else
         {
-            require_once(VENDORS.$arg.'.php');
+            require(VENDORS.$arg.'.php');
         }
     }
 }

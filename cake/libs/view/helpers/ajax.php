@@ -189,7 +189,7 @@ class AjaxHelper extends Helper
         if (isset($options['id']))
         {
             $htmlOptions['onclick'] = ' return false;';
-            return $this->Html->link($title, $href, $htmlOptions) . $this->Javascript->event("$('{$options['id']}')", "click", "function() {" . $this->remoteFunction($options) . "; return true; }");
+            return $this->Html->link($title, $href, $htmlOptions) . $this->Javascript->event("$('{$options['id']}')", "click", $this->remoteFunction($options));
         }
         else
         {
@@ -208,7 +208,7 @@ class AjaxHelper extends Helper
         }
         if (isset($html_options['id']))
         {
-            return $this->Html->link($title, $href, $html_options) . $this->Javascript->event("$('{$html_options['id']}')", "click", "function() {" . $this->remoteFunction($options) . "; return true; }");
+            return $this->Html->link($title, $href, $html_options) . $this->Javascript->event("$('{$html_options['id']}')", "click", $this->remoteFunction($options));
         }
         else
         {
@@ -322,7 +322,7 @@ class AjaxHelper extends Helper
         }
         $options['url'] = $action;
 
-        return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("$('".$htmlOptions['id']."')", "submit", "function(){" . $this->remoteFunction($options) . ";}");
+        return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("$('".$htmlOptions['id']."')", "submit", $this->remoteFunction($options));
     }
 
 /**
@@ -331,25 +331,32 @@ class AjaxHelper extends Helper
   * Returns a button input tag that will submit form using XMLHttpRequest in the background instead of regular
   * reloading POST arrangement. <i>options</i> argument is the same as in <i>form_remote_tag</i>
   *
-  * @param string $name         Input button name
-  * @param string $value         Input button value
+  * @param string $title         Input button title
   * @param array $options         Callback options
   * @return string                 Ajaxed input button
   */
-    function submit ($name, $value, $options = array())
+    function submit ($title = 'Submit', $options = array())
     {
         $htmlOptions = $this->__getHtmlOptions($options);
-        $htmlOptions['type'] = 'button';
-        $htmlOptions['name'] = $name;
-        $htmlOptions['value'] = $value;
+        if (!isset($htmlOptions['type']))
+        {
+            $htmlOptions['type'] = 'submit';
+        }
+        $htmlOptions['value'] = $title;
 
         if (!isset($options['with']))
         {
-            $options['with'] = 'Form.serialize(this.form)';
+            $options['with'] = 'Form.serialize(Event.element(event).form)';
         }
 
-        $htmlOptions['onclick'] = $this->remoteFunction($options) . "; return false;";
-        return $this->Html->tag('input', $htmlOptions);
+        if(!isset($htmlOptions['id']))
+        {
+            $htmlOptions['id'] = 'submit'.intval(rand());
+        }
+
+        $htmlOptions['onclick'] = "return false;";
+        return $this->Html->submit($title, $htmlOptions) .
+        	$this->Javascript->event('$("'.$htmlOptions['id'].'")', 'click', $this->remoteFunction($options));
     }
 
 /**
@@ -558,7 +565,7 @@ class AjaxHelper extends Helper
         }
         if (isset($options['callback']))
         {
-            $options['callback'] = 'function(form) {'.$options['callback'].'}';
+            $options['callback'] = 'function(form, value) {'.$options['callback'].'}';
         }
 
         $options = $this->_optionsToString($options, array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText'));
@@ -597,7 +604,7 @@ class AjaxHelper extends Helper
     }
 
 /**
-      * Private helper function for Javascript.
+  * Private helper function for Javascript.
   *
   */
     function __optionsForAjax ($options = array())

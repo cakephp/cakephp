@@ -33,14 +33,17 @@
 /**
  * Configuration, directory layout and standard libraries
  */
-require_once 'cake'.DS.'basics.php';
-require_once ROOT.DS.APP_DIR.DS.'config'.DS.'core.php';
-require_once 'cake'.DS.'config'.DS.'paths.php';
-require_once LIBS.'object.php';
-require_once LIBS.'session.php';
-require_once LIBS.'security.php';
-require_once LIBS.'neat_array.php';
-require_once LIBS.'inflector.php';
+if(!isset($bootstrap))
+{
+    require 'cake'.DS.'basics.php';
+    require 'config'.DS.'core.php';
+    require 'cake'.DS.'config'.DS.'paths.php';
+}
+require LIBS.'object.php';
+require LIBS.'session.php';
+require LIBS.'security.php';
+require LIBS.'neat_array.php';
+require LIBS.'inflector.php';
 
 /**
  * Enter description here...
@@ -101,28 +104,14 @@ else
 
 $TIME_START = getMicrotime();
 
-require_once CAKE.'dispatcher.php';
-require_once LIBS.'model'.DS.'connection_manager.php';
+require CAKE.'dispatcher.php';
+require LIBS.'model'.DS.'connection_manager.php';
 
 config('database');
 
 if (class_exists('DATABASE_CONFIG') && !class_exists('AppModel'))
 {
-    require_once LIBS.'model'.DS.'model.php';
+    require LIBS.'model'.DS.'model.php';
     loadModels();
-}
-
-if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
-{
-}
-else
-{
-    $Dispatcher= new Dispatcher ();
-    $Dispatcher->dispatch($url);
-}
-
-if (DEBUG)
-{
-    echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
 }
 ?>

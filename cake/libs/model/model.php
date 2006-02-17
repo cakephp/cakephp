@@ -35,7 +35,7 @@
  */
 if (phpversion() < 5)
 {
-    require_once(LIBS.'model'.DS.'model_php4.php');
+    require(LIBS.'model'.DS.'model_php4.php');
     if (function_exists("overload"))
     {
         overload("Model");
@@ -43,6 +43,6 @@ if (phpversion() < 5)
 }
 else
 {
-    require_once(LIBS.'model'.DS.'model_php5.php');
+    require(LIBS.'model'.DS.'model_php5.php');
 }
 ?>

@@ -6,7 +6,7 @@
  *
  * DBO-backed object data model, for mapping database tables to Cake objects.
  *
- * PHP versions 4 and 5
+ * PHP versions 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2006, Cake Software Foundation, Inc.
@@ -739,11 +739,10 @@ class Model extends Object
  *
  * @param array $data Data to save.
  * @param boolean $validate If set, validation will be done before the save
- * @param array $fields
+ * @param array $fieldList List of fields to allow to be written
  * @return boolean success
- * @todo Implement $fields param as a whitelist of allowable fields
  */
-    function save ($data = null, $validate = true, $fields = null)
+    function save ($data = null, $validate = true, $fieldList = array())
     {
         if ($data)
         {
@@ -756,122 +755,124 @@ class Model extends Object
                 $this->set($data);
             }
         }
-        if($this->beforeSave())
+
+        $whitelist = !(empty($fieldList) || count($fieldList) == 0);
+
+        if ($validate && !$this->validates())
         {
-            if ($validate && !$this->validates())
+            return false;
+        }
+
+        if(!$this->beforeSave())
+        {
+            return false;
+        }
+
+        $fields = $values = array();
+        $count = 0;
+
+        if(count($this->data) > 1)
+        {
+            $weHaveMulti = true;
+            $joined = false;
+        }
+        else
+        {
+            $weHaveMulti = false;
+        }
+
+        foreach ($this->data as $n => $v)
+        {
+            if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
             {
-                return false;
+                $joined[] = $v;
             }
-            $fields = $values = array();
-             $count = 0;
+            else
+            {
+                foreach ($v as $x => $y)
+                {
+                    if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist))
+                    {
+                        $fields[] = $x;
+                        $values[] = $y;
 
-             if(count($this->data) > 1)
-             {
-                 $weHaveMulti = true;
-                 $joined = false;
-             }
-             else
-             {
-                 $weHaveMulti = false;
-             }
+                        if($x == $this->primaryKey && !is_numeric($y))
+                        {
+                            $newID = $y;
+                        }
+                    }
+                }
+                $count++;
+            }
+        }
 
-             foreach ($this->data as $n => $v)
-             {
-                 if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
-                 {
-                     $joined[] = $v;
-                 }
-                 else
-                 {
-                     foreach ($v as $x => $y)
-                     {
-                         if ($this->hasField($x))
-                         {
-                             $fields[] = $x;
-                             $values[] = $y;
+        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'created';
+            $values[] = date('Y-m-d H:i:s');
+        }
+        if ($this->hasField('modified') && !in_array('modified', $fields) && ($whitelist && in_array('modified', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'modified';
+            $values[] = date('Y-m-d H:i:s');
+        }
+        if ($this->hasField('updated') && !in_array('updated', $fields) && ($whitelist && in_array('updated', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'updated';
+            $values[] = date('Y-m-d H:i:s');
+        }
 
-                             if($x == $this->primaryKey && !is_numeric($y))
-                             {
-                                 $newID = $y;
-                             }
-                         }
-                     }
-                     $count++;
-                 }
-             }
+        if(!$this->exists())
+        {
+            $this->id = false;
+        }
 
-             if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
-             {
-                 $fields[] = 'created';
-                 $values[] = date('Y-m-d H:i:s');
-             }
-             if ($this->hasField('modified') && !in_array('modified', $fields))
-             {
-                 $fields[] = 'modified';
-                 $values[] = date('Y-m-d H:i:s');
-             }
-             if ($this->hasField('updated') && !in_array('updated', $fields))
-             {
-                 $fields[] = 'updated';
-                 $values[] = date('Y-m-d H:i:s');
-             }
+        if(count($fields))
+        {
+            if(!empty($this->id))
+            {
+                if ($this->db->update($this, $fields, $values))
+                {
+                    if(!empty($joined))
+                    {
+                        $this->__saveMulti($joined, $this->id);
+                    }
+                    $this->afterSave();
+                    $this->data = false;
+                    return true;
+                }
+                else
+                {
+                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
+                }
+            }
+            else
+            {
+                if($this->db->create($this, $fields, $values))
+                {
+                    $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
+                    $this->id = $this->__insertID;
 
-             if(!$this->exists())
-             {
-                 $this->id = false;
-             }
+                    if(!$this->id > 0 && isset($newID))
+                    {
+                        $this->__insertID = $newID;
+                        $this->id = $newID;
+                    }
 
-             if(count($fields))
-             {
-                 if(!empty($this->id))
-                 {
-                     if ($this->db->update($this, $fields, $values))
-                     {
-                         if(!empty($joined))
-                         {
-                             $this->__saveMulti($joined, $this->id);
-                         }
-                         $this->afterSave();
-                         $this->data = false;
-                         return true;
-                     }
-                     else
-                     {
-                         return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
-                     }
-                 }
-                 else
-                 {
-                     if($this->db->create($this, $fields, $values))
-                     {
-                         $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
-                         $this->id = $this->__insertID;
+                    if(!empty($joined))
+                    {
+                        $this->__saveMulti($joined, $this->id);
+                    }
 
-                         if(!$this->id > 0 && isset($newID))
-                         {
-                             $this->__insertID = $newID;
-                             $this->id = $newID;
-                         }
-
-                         if(!empty($joined))
-                         {
-                             $this->__saveMulti($joined, $this->id);
-                         }
-
-                         $this->afterSave();
-                         $this->data = false;
-                         return true;
-                     }
-                     else
-                     {
-                         return false;
-                     }
-                 }
-             }
-             else
-             {
-                 return false;
-             }
+                    $this->afterSave();
+                    $this->data = false;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
         else
         {
@@ -948,7 +949,7 @@ class Model extends Object
  * @param mixed $id Id of record to delete
  * @return boolean True on success
  */
-    function del ($id = null)
+    function del ($id = null, $cascade = false)
     {
         if ($id)
         {
@@ -959,6 +960,11 @@ class Model extends Object
         {
             if ($this->id && $this->db->delete($this))
             {
+                //$this->__deleteJoins($id);
+                if ($cascade)
+                {
+                    //$this->__deleteMulti($id);
+                }
                 $this->afterDelete();
                 $this->id = false;
                 return true;
@@ -966,6 +972,42 @@ class Model extends Object
         }
 
         return false;
+    }
+
+/**
+ * Cascades model deletes to hasMany relationships.
+ *
+ * @param string $id
+ * @return null
+ * @access private
+ */
+    function __deleteMulti ($id)
+    {
+        foreach ($this->hasMany as $assoc => $data)
+        {
+            $model =& $this->{$data['className']};
+            $field = $model->escapeField($data['foreignKey']);
+            $records = $model->findAll($field.'='.$id);
+
+            foreach($records as $record)
+            {
+                
+            }
+        }
+    }
+
+/**
+ * Cascades model deletes to HABTM join keys.
+ *
+ * @param string $id
+ * @return null
+ * @access private
+ */
+    function __deleteJoins ($id)
+    {
+        foreach ($this->hasAndBelongsToMany as $assoc => $data)
+        {
+        }
     }
 
 /**

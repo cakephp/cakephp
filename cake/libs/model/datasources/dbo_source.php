@@ -29,12 +29,6 @@
  */
 
 /**
- * Include DataSource base class
- *
- */
-uses('model'.DS.'datasources'.DS.'datasource');
-
-/**
  * DboSource
  *
  * Creates DBO-descendant objects from a given db connection configuration
@@ -513,11 +507,13 @@ class DboSource extends DataSource
             {
                 if (count($row) == 1)
                 {
-                	$data[$association][] = $row[$association];
+                    $data[$association][] = $row[$association];
                 }
                 else
                 {
-                    $data[$association][] = $row;
+                    $tmp = array_merge($row[$association], $row);
+                    unset($tmp[$association]);
+                    $data[$association][] = $tmp;
                 }
             }
         }
@@ -916,7 +912,7 @@ class DboSource extends DataSource
     {
         if (!isset($data['conditions']))
         {
-            $data['conditions'] = ' 1 ';
+            $data['conditions'] = ' 1 = 1 ';
         }
         if (!isset($data['fields']))
         {
@@ -1012,7 +1008,7 @@ class DboSource extends DataSource
         {
             if (trim($conditions) == '')
             {
-                $conditions = ' 1';
+                $conditions = ' 1 = 1';
             }
             return $rt.$conditions;
         }
@@ -1073,10 +1069,10 @@ class DboSource extends DataSource
  * Returns an ORDER BY clause as a string.
  *
  * @param string $key Field reference, as a key (i.e. Post.title)
- * @param string $dir Direction (ASC or DESC)
+ * @param string $direction Direction (ASC or DESC)
  * @return string ORDER BY clause
  */
-    function order ($keys, $dir = '')
+    function order ($keys, $direction = 'ASC')
     {
         if (empty($keys))
         {
@@ -1090,7 +1086,7 @@ class DboSource extends DataSource
                 if(is_numeric($key))
                 {
                     $key = $value;
-                    $value = null;
+                    $value = ' '.$direction;
                 }
                 else
                 {
@@ -1104,10 +1100,14 @@ class DboSource extends DataSource
         {
             if (preg_match('/(?P<direction>\\x20ASC|\\x20DESC)/', $keys, $match))
             {
-                $dir = $match['direction'];
+                $direction = $match['direction'];
                 $keys = preg_replace('/'.$match['direction'].'/', '', $keys);
             }
-            return ' ORDER BY '.$this->name($keys).$dir;
+            else
+            {
+                $direction = ' '.$direction;
+            }
+            return ' ORDER BY '.$this->name($keys).$direction;
         }
     }
 

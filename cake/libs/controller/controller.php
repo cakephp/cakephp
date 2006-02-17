@@ -425,6 +425,9 @@ class Controller extends Object
         {
             $viewClass = $this->view.'View';
         }
+
+        $this->beforeRender();
+
         $this->_viewClass =& new $viewClass($this);
         if(!empty($this->modelNames))
         {
@@ -437,7 +440,6 @@ class Controller extends Object
             }
         }
 
-        $this->beforeRender();
         $this->autoRender = false;
         return  $this->_viewClass->render($action, $layout, $file);
     }

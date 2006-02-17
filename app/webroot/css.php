@@ -31,9 +31,9 @@
 /**
  * Enter description here...
  */
-require_once(CONFIGS.'paths.php');
-require_once(CAKE.'basics.php');
-require_once(LIBS.'folder.php');
+require(CONFIGS.'paths.php');
+require(CAKE.'basics.php');
+require(LIBS.'folder.php');
 require(LIBS.'file.php');
 require(LIBS.'legacy.php');
 
@@ -46,7 +46,7 @@ require(LIBS.'legacy.php');
  */
 function make_clean_css ($path, $name)
 {
-   require_once(VENDORS.'csspp'.DS.'csspp.php');
+   require(VENDORS.'csspp'.DS.'csspp.php');
 
    $data = file_get_contents($path);
    $csspp = new csspp();

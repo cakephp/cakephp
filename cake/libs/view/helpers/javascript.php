@@ -136,7 +136,7 @@ class JavascriptHelper extends Helper
       $useCapture = "false";
     }
 
-    $b = "Event.observe($object, '$event', $observer, $useCapture);";
+    $b = "Event.observe($object, '$event', function(event){ $observer }, $useCapture);";
     if($this->_cacheEvents === true)
     {
       $this->_cachedEvents[] = $b;

@@ -32,11 +32,14 @@
  * Included libraries.
  *
  */
-if(!class_exists('Flay') || !class_exists('Html'))
+if(!class_exists('Flay'))
 {
-    uses('flay', DS.'view'.DS.'helpers'.DS.'html');
+    uses('flay');
 }
-
+if(!class_exists('Html'))
+{
+    uses(DS.'view'.DS.'helpers'.DS.'html');
+}
 
 /**
  * Text helper library.

@@ -6,7 +6,7 @@
  *
  * DBO-backed object data model, for mapping database tables to Cake objects.
  *
- * PHP versions 4 and 5
+ * PHP versions 4
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
  * Copyright (c) 2006, Cake Software Foundation, Inc.
@@ -77,7 +77,7 @@ class Model extends Object
    var $parent = false;
 
 /**
- * Custom database table name
+ * Custom database table name.
  *
  * @var string
  * @access public
@@ -85,7 +85,7 @@ class Model extends Object
    var $useTable = null;
 
 /**
- * Custom display field name
+ * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
  *
  * @var string
  * @access public
@@ -147,7 +147,7 @@ class Model extends Object
    var $validationErrors = null;
 
 /**
- * Prefix for tables in model.
+ * Database table prefix for tables in model.
  *
  * @var string
  */
@@ -161,7 +161,7 @@ class Model extends Object
    var $name = null;
 
 /**
- * Name of the model.
+ * Name of the current model.
  *
  * @var string
  */
@@ -182,7 +182,7 @@ class Model extends Object
    var $modelToTable = array();
 
 /**
- * List of Foreign Key names to table used tables. Used for associations.
+ * List of Foreign Key names to used tables. Used for associations.
  *
  * @var array
  */
@@ -203,7 +203,7 @@ class Model extends Object
    var $logTransactions = false;
 
 /**
- * Whether or not to enable transactions for this model (i.e. begin/commit/rollback)
+ * Whether or not to enable transactions for this model (i.e. BEGIN/COMMIT/ROLLBACK)
  *
  * @var boolean
  */
@@ -238,7 +238,7 @@ class Model extends Object
    var $hasAndBelongsToMany = array();
 
 /**
- * recursive assoication depth
+ * Depth of recursive association
  *
  * @var int
  */
@@ -290,8 +290,8 @@ class Model extends Object
  * Constructor. Binds the Model's database table to the object.
  *
  * @param integer $id
- * @param string $table Database table to use.
- * @param unknown_type $ds DataSource connection object.
+ * @param string $table Name of database table to use.
+ * @param DataSource $ds DataSource connection object.
  */
     function __construct ($id=false, $table=null, $ds=null)
     {
@@ -428,6 +428,7 @@ class Model extends Object
  * @param string $assoc
  * @param string $className Class name
  * @param string $type Type of assocation
+ * @todo Is the third parameter in use at the moment? It is not referred to in the  method OJ, 30. jan 2006
  * @access private
  */
     function __constructLinkedModel($assoc, $className, $type)
@@ -435,7 +436,7 @@ class Model extends Object
         $colKey = Inflector::underscore($className);
         if(ClassRegistry::isKeySet($colKey))
         {
-            $this->{$className} =& ClassRegistry::getObject($colKey);
+            $this->{$className} =& ClassRegistry::getObject($colKey); 
         }
         else
         {
@@ -448,11 +449,11 @@ class Model extends Object
     }
 
 /**
- * Build array-based association from string
+ * Build array-based association from string.
  *
  * @param string $type "Belongs", "One", "Many", "ManyTo"
  * @param string $assoc
- * @param string $model
+ * @todo Is the second parameter in use at the moment? It is not referred to in the  method OJ, 30. jan 2006
  * @access private
  */
     function __generateAssociation ($type, $assoc)
@@ -604,10 +605,9 @@ class Model extends Object
    }
 
 /**
- * Returns true if given field name exists in this Model's database table.
- * Starts by loading the metadata into the private property table_info if that is not already set.
+ * Returns true if this Model has given field in its database table.
  *
- * @param string $name Name of table to look in
+ * @param string $name Name of field to look for
  * @return boolean
  */
     function hasField ($name)
@@ -624,9 +624,9 @@ class Model extends Object
     }
 
 /**
- * Initializes the model for writing a new record
+ * Initializes the model for writing a new record.
  *
- * @return boolean True on success
+ * @return boolean True
  */
    function create ()
    {
@@ -646,7 +646,7 @@ class Model extends Object
    }
 
 /**
- * Deprecated
+ * Deprecated. Use query() instead.
  *
  */
    function findBySql ($sql)
@@ -691,8 +691,8 @@ class Model extends Object
  * Returns contents of a field in a query matching given conditions.
  *
  * @param string $name Name of field to get
- * @param string $conditions SQL conditions (defaults to NULL)
- * @param string $order (defaults to NULL)
+ * @param array $conditions SQL conditions (defaults to NULL)
+ * @param string $order SQL ORDER BY fragment
  * @return field contents
  */
     function field ($name, $conditions = null, $order = null)
@@ -739,14 +739,14 @@ class Model extends Object
 
 /**
  * Saves model data to the database.
+ * By default, validation occurs before save.
  *
  * @param array $data Data to save.
- * @param boolean $validate
- * @param array $fields
+ * @param boolean $validate If set, validation will be done before the save
+ * @param array $fieldList List of fields to allow to be written
  * @return boolean success
- * @todo Implement $fields param as a whitelist of allowable fields
  */
-    function save ($data = null, $validate = true, $fields = null)
+    function save ($data = null, $validate = true, $fieldList = array())
     {
         if ($data)
         {
@@ -760,122 +760,123 @@ class Model extends Object
             }
         }
 
-        if($this->beforeSave())
+        $whitelist = !(empty($fieldList) || count($fieldList) == 0);
+
+        if ($validate && !$this->validates())
         {
-            if ($validate && !$this->validates())
+            return false;
+        }
+
+        if(!$this->beforeSave())
+        {
+            return false;
+        }
+
+        $fields = $values = array();
+        $count = 0;
+
+        if(count($this->data) > 1)
+        {
+            $weHaveMulti = true;
+            $joined = false;
+        }
+        else
+        {
+            $weHaveMulti = false;
+        }
+
+        foreach ($this->data as $n => $v)
+        {
+            if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
             {
-                return false;
+                $joined[] = $v;
             }
-            $fields = $values = array();
-             $count = 0;
+            else
+            {
+                foreach ($v as $x => $y)
+                {
+                    if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist))
+                    {
+                        $fields[] = $x;
+                        $values[] = $y;
 
-             if(count($this->data) > 1)
-             {
-                 $weHaveMulti = true;
-                 $joined = false;
-             }
-             else
-             {
-                 $weHaveMulti = false;
-             }
+                        if($x == $this->primaryKey && !is_numeric($y))
+                        {
+                            $newID = $y;
+                        }
+                    }
+                }
+                $count++;
+            }
+        }
 
-             foreach ($this->data as $n => $v)
-             {
-                 if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
-                 {
-                     $joined[] = $v;
-                 }
-                 else
-                 {
-                     foreach ($v as $x => $y)
-                     {
-                         if ($this->hasField($x))
-                         {
-                             $fields[] = $x;
-                             $values[] = $y;
+        if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'created';
+            $values[] = date('Y-m-d H:i:s');
+        }
+        if ($this->hasField('modified') && !in_array('modified', $fields) && ($whitelist && in_array('modified', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'modified';
+            $values[] = date('Y-m-d H:i:s');
+        }
+        if ($this->hasField('updated') && !in_array('updated', $fields) && ($whitelist && in_array('updated', $fieldList) || !$whitelist))
+        {
+            $fields[] = 'updated';
+            $values[] = date('Y-m-d H:i:s');
+        }
 
-                             if($x == $this->primaryKey && !is_numeric($y))
-                             {
-                                 $newID = $y;
-                             }
-                         }
-                     }
-                     $count++;
-                 }
-             }
+        if(!$this->exists())
+        {
+            $this->id = false;
+        }
 
-             if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields))
-             {
-                 $fields[] = 'created';
-                 $values[] = date('Y-m-d H:i:s');
-             }
-             if ($this->hasField('modified') && !in_array('modified', $fields))
-             {
-                 $fields[] = 'modified';
-                 $values[] = date('Y-m-d H:i:s');
-             }
-             if ($this->hasField('updated') && !in_array('updated', $fields))
-             {
-                 $fields[] = 'updated';
-                 $values[] = date('Y-m-d H:i:s');
-             }
+        if(count($fields))
+        {
+            if(!empty($this->id))
+            {
+                if ($this->db->update($this, $fields, $values))
+                {
+                    if(!empty($joined))
+                    {
+                        $this->__saveMulti($joined, $this->id);
+                    }
+                    $this->afterSave();
+                    $this->data = false;
+                    return true;
+                }
+                else
+                {
+                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
+                }
+            }
+            else
+            {
+                if($this->db->create($this, $fields, $values))
+                {
+                    $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
+                    $this->id = $this->__insertID;
 
-             if(!$this->exists())
-             {
-                 $this->id = false;
-             }
+                    if(!$this->id > 0 && isset($newID))
+                    {
+                        $this->__insertID = $newID;
+                        $this->id = $newID;
+                    }
 
-             if(count($fields))
-             {
-                 if(!empty($this->id))
-                 {
-                     if ($this->db->update($this, $fields, $values))
-                     {
-                         if(!empty($joined))
-                         {
-                             $this->__saveMulti($joined, $this->id);
-                         }
-                         $this->afterSave();
-                         $this->data = false;
-                         return true;
-                     }
-                     else
-                     {
-                         return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
-                     }
-                 }
-                 else
-                 {
-                     if($this->db->create($this, $fields, $values))
-                     {
-                         $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
-                         $this->id = $this->__insertID;
+                    if(!empty($joined))
+                    {
+                        $this->__saveMulti($joined, $this->id);
+                    }
 
-                         if(!$this->id > 0 && isset($newID))
-                         {
-                             $this->__insertID = $newID;
-                             $this->id = $newID;
-                         }
-
-                         if(!empty($joined))
-                         {
-                             $this->__saveMulti($joined, $this->id);
-                         }
-
-                         $this->afterSave();
-                         $this->data = false;
-                         return true;
-                     }
-                     else
-                     {
-                         return false;
-                     }
-                 }
-             }
-             else
-             {
-                 return false;
-             }
+                    $this->afterSave();
+                    $this->data = false;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
         else
         {
@@ -949,10 +950,10 @@ class Model extends Object
 /**
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
  *
- * @param mixed $id Id of database record to delete
+ * @param mixed $id Id of record to delete
  * @return boolean True on success
  */
-    function del ($id = null)
+    function del ($id = null, $cascade = false)
     {
         if ($id)
         {
@@ -963,6 +964,11 @@ class Model extends Object
         {
             if ($this->id && $this->db->delete($this))
             {
+                //$this->__deleteJoins($id);
+                if ($cascade)
+                {
+                    //$this->__deleteMulti($id);
+                }
                 $this->afterDelete();
                 $this->id = false;
                 return true;
@@ -970,6 +976,42 @@ class Model extends Object
         }
 
         return false;
+    }
+
+/**
+ * Cascades model deletes to hasMany relationships.
+ *
+ * @param string $id
+ * @return null
+ * @access private
+ */
+    function __deleteMulti ($id)
+    {
+        foreach ($this->hasMany as $assoc => $data)
+        {
+            $model =& $this->{$data['className']};
+            $field = $model->escapeField($data['foreignKey']);
+            $records = $model->findAll($field.'='.$id);
+
+            foreach($records as $record)
+            {
+                
+            }
+        }
+    }
+
+/**
+ * Cascades model deletes to HABTM join keys.
+ *
+ * @param string $id
+ * @return null
+ * @access private
+ */
+    function __deleteJoins ($id)
+    {
+        foreach ($this->hasAndBelongsToMany as $assoc => $data)
+        {
+        }
     }
 
 /**
@@ -994,6 +1036,7 @@ class Model extends Object
 /**
  * Returns true if a record that meets given conditions exists
  *
+ * @param array $conditions SQL conditions array
  * @return boolean True if such a record exists
  */
     function hasAny ($conditions = null)
@@ -1003,11 +1046,13 @@ class Model extends Object
 
 /**
  * Return a single row as a resultset array.
+  * By using the $recursive parameter, the call can access further "levels of association" than
+ * the ones this model is directly associated to.
  *
- * @param string $conditions SQL conditions
+ * @param array $conditions SQL conditions array
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $recursize The number of levels deep to fetch associated records
+ * @param int $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  */
     function find ($conditions = null, $fields = null, $order = null, $recursive = null)
@@ -1022,13 +1067,15 @@ class Model extends Object
 
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
+ * By using the $recursive parameter, the call can access further "levels of association" than
+ * the ones this model is directly associated to.
  *
  * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $limit SQL LIMIT clause, for calculating items per page
- * @param int $page Page number
- * @param int $recursize The number of levels deep to fetch associated records
+ * @param int $limit SQL LIMIT clause, for calculating items per page.
+ * @param int $page Page number, for accessing paged data
+ * @param int $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  */
     function findAll ($conditions = null, $fields = null, $order = null, $limit = 50, $page = 1, $recursive = null)
@@ -1061,7 +1108,7 @@ class Model extends Object
     }
 
 /**
- * Runs a direct query against the bound DataSource, and returns the result
+ * Runs a direct query against the bound DataSource, and returns the result.
  *
  * @param string $data Query data
  * @return array
@@ -1089,9 +1136,10 @@ class Model extends Object
 /**
  * Returns number of rows matching given SQL condition.
  *
- * @param string $conditions SQL conditions (WHERE clause conditions)
+ * @param array $conditions SQL conditions array for findAll
  * @param int $recursize The number of levels deep to fetch associated records
  * @return int Number of matching rows
+ * @see Model::findAll
  */
    function findCount ($conditions = null, $recursive = 0)
    {
@@ -1105,12 +1153,12 @@ class Model extends Object
 
 /**
  * Special findAll variation for tables joined to themselves.
- * The table needs fields id and parent_id to work.
+ * The table needs the fields id and parent_id to work.
  *
  * @param array $conditions Conditions for the findAll() call
  * @param array $fields Fields for the findAll() call
  * @param string $sort SQL ORDER BY statement
- * @return unknown
+ * @return array
  * @todo Perhaps create a Component with this logic
  */
    function findAllThreaded ($conditions=null, $fields=null, $sort=null)
@@ -1125,6 +1173,7 @@ class Model extends Object
  * @param string $root NULL or id for root node of operation
  * @return array
  * @access private
+ * @see findAllThreaded
  */
    function __doThread ($data, $root)
    {
@@ -1154,7 +1203,7 @@ class Model extends Object
  * which is useful when creating paged lists.
  *
  * @param string $conditions SQL conditions for matching rows
- * @param unknown_type $field
+ * @param string $field Field name (parameter for findAll)
  * @param unknown_type $value
  * @return array Array with keys "prev" and "next" that holds the id's
  */
@@ -1179,7 +1228,7 @@ class Model extends Object
     }
 
 /**
- * Returns a resultset for given SQL statement.
+ * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.
  *
  * @param string $sql SQL statement
  * @return array Resultset
@@ -1191,7 +1240,7 @@ class Model extends Object
    }
 
 /**
- * Returns true if all fields pass validation.
+ * Returns true if all fields pass validation, otherwise false.
  *
  * @param array $data POST data
  * @return boolean True if there are no errors
@@ -1254,7 +1303,7 @@ class Model extends Object
    }
 
 /**
- * This function determines whether or not a string is a foreign key
+ * Returns true if given field name is a foreign key in this Model.
  *
  * @param string $field Returns true if the input string ends in "_id"
  * @return True if the field is a foreign key listed in the belongsTo array.
@@ -1284,7 +1333,7 @@ class Model extends Object
     }
 
 /**
- * Returns a resultset array with specified fields from database matching given conditions.
+ * Returns a resultset array with specified fields from database matching given conditions. Method can be used to generate option lists for SELECT elements.
  *
  * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
  * @param mixed $fields Either a single string of a field name, or an array of field names
@@ -1313,7 +1362,7 @@ class Model extends Object
     }
 
 /**
- * Escapes the field name and prepends the model name
+ * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.
  *
  * @param unknown_type $field
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
@@ -1350,7 +1399,7 @@ class Model extends Object
     }
 
 /**
- * Gets the ID of the last record this Model inserted
+ * Returns the ID of the last record this Model inserted
  *
  * @return mixed
  */
@@ -1360,7 +1409,7 @@ class Model extends Object
     }
 
 /**
- * Gets the ID of the last record this Model inserted
+ * Returns the ID of the last record this Model inserted
  *
  * @return mixed
  */
@@ -1370,7 +1419,7 @@ class Model extends Object
     }
 
 /**
- * Gets the number of rows returned from the last query
+ * Returns the number of rows returned from the last query
  *
  * @return int
  */
@@ -1381,7 +1430,7 @@ class Model extends Object
     }
 
 /**
- * Gets the number of rows affected by the last query
+ * Returns the number of rows affected by the last query
  *
  * @return int
  */
@@ -1409,7 +1458,6 @@ class Model extends Object
         {
             $this->tablePrefix = $this->db->config['prefix'];
         }
-
         if(empty($this->db) || $this->db == null || !is_object($this->db))
         {
             return $this->cakeError('missingConnection',array(array('className' => $this->name)));
@@ -1428,7 +1476,7 @@ class Model extends Object
     }
 
 /**
- * After find callback
+ * After find callback. Can be used to modify any results returned by find and findAll.
  *
  * @param mixed $results The results of the find operation
  * @return mixed Result of the find operation

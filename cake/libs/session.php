@@ -129,13 +129,21 @@ class CakeSession extends Object
         $this->time = time();
         $this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
         $this->security = CAKE_SECURITY;
-
+        session_write_close();
+        
         if (!isset($_SESSION))
         {
             $this->_initSession();
-            $this->_begin();
-
         }
+        
+        session_cache_limiter("must-revalidate");
+        session_start();
+        
+        if (!isset($_SESSION))
+        {
+        	$this->_begin();
+        }
+        
         $this->_checkValid();
         parent::__construct();
     }
@@ -274,8 +282,6 @@ class CakeSession extends Object
  */
     function _begin()
     {
-        session_cache_limiter("must-revalidate");
-        session_start();
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
 
@@ -286,10 +292,7 @@ class CakeSession extends Object
  */
     function _close()
     {
-        echo "<pre>";
-        echo "CakeSession::_close() Not Implemented Yet";
-        echo "</pre>";
-        die();
+        return true;
     }
 
 /**
@@ -297,13 +300,13 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _destroy()
+    function _destroy($key)
     {
-        echo "<pre>";
-        echo "CakeSession::_destroy() Not Implemented Yet";
-        echo "</pre>";
-        die();
+    	$db =& ConnectionManager::getDataSource('default');
+    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." = ".$db->value($key));
+    	return true;
     }
+
 /**
  * Private helper method to destroy invalid sessions.
  *
@@ -331,12 +334,11 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _gc()
+    function _gc($expires)
     {
-        echo "<pre>";
-        echo "CakeSession::_gc() Not Implemented Yet";
-        echo "</pre>";
-        die();
+		$db =& ConnectionManager::getDataSource('default');
+    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('expires')." < " . $db->value(time()));
+    	return true;
     }
 
 /**
@@ -346,11 +348,6 @@ class CakeSession extends Object
  */
     function _initSession()
     {
-        if (function_exists('session_write_close'))
-        {
-            session_write_close();
-        }
-
         switch ($this->security)
         {
             case 'high':
@@ -409,7 +406,7 @@ class CakeSession extends Object
                 $config = CONFIGS.CAKE_SESSION_SAVE.'.php';
                 if(is_file($config))
                 {
-                    require_once($config);
+                    require($config);
                 }
                 else
                 {
@@ -465,10 +462,7 @@ class CakeSession extends Object
  */
     function _open()
     {
-        echo "<pre>";
-        echo "CakeSession::_open() Not Implemented Yet";
-        echo "</pre>";
-        die();
+        return true;
     }
 
 /**
@@ -477,12 +471,20 @@ class CakeSession extends Object
  * @access private
  *
  */
-    function _read()
+    function _read($key)
     {
-        echo "<pre>";
-        echo "CakeSession::_read() Not Implemented Yet";
-        echo "</pre>";
-        die();
+        $db =& ConnectionManager::getDataSource('default');
+
+        $row = $db->query("SELECT ".$db->name('data')." FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." =  ".$db->value($key));
+
+		if ($row && $row[0]['cake_sessions']['data'])
+		{
+			return $row[0]['cake_sessions']['data'];
+		}
+		else
+		{
+			return false;
+		}
     }
 
 /**
@@ -543,7 +545,7 @@ class CakeSession extends Object
             {
                 $names = array($name);
             }
-            $expression = $expression = "\$_SESSION";
+            $expression = "\$_SESSION";
 
             foreach($names as $item)
             {
@@ -578,12 +580,40 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _write()
+    function _write($key, $value)
     {
-        echo "<pre>";
-        echo "CakeSession::_write() Not Implemented Yet";
-        echo "</pre>";
-        die();
+        $db =& ConnectionManager::getDataSource('default');
+
+        switch (CAKE_SECURITY) {
+        	case 'high':
+        		$factor = 10;
+        		break;
+        	case 'medium':
+        		$factor = 100;
+        		break;
+        	case 'low':
+        		$factor = 300;
+        		break;
+
+        	default:
+        		$factor = 10;
+        		break;
+        }
+
+        $expires = time() + CAKE_SESSION_TIMEOUT * $factor;
+
+		$row = $db->query("SELECT COUNT(*) AS count FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." = ".$db->value($key));
+
+		if($row[0][0]['count'] > 0)
+		{
+			$db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('data')." = ".$db->value($value).", ".$db->name('expires')." = ".$db->name($expires)." WHERE ".$db->name('id')." = ".$db->value($key));
+		}
+		else
+		{
+			$db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('data').",".$db->name('expires').",".$db->name('id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
+		}
+
+        return true;
     }
 }
 ?>

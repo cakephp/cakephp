@@ -283,14 +283,8 @@ class DboMysql extends DboSource
         {
             $data = stripslashes($data);
         }
-        if (version_compare(phpversion(),"4.3.0") == "-1")
-        {
-            $data = mysql_escape_string($data, $this->connection);
-        }
-        else
-        {
-            $data = mysql_real_escape_string($data, $this->connection);
-        }
+        $data = mysql_real_escape_string($data, $this->connection);
+
         if(!is_numeric($data))
         {
             $return = "'" . $data . "'";

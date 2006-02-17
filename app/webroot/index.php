@@ -73,5 +73,19 @@ if (!defined('WEBROOT_DIR'))
 ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
 
 
-require_once 'cake'.DS.'bootstrap.php';
+require 'cake'.DS.'bootstrap.php';
+
+if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
+{
+}
+else
+{
+    $Dispatcher= new Dispatcher ();
+    $Dispatcher->dispatch($url);
+}
+
+if (DEBUG)
+{
+    echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
+}
 ?>

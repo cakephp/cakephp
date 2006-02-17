@@ -44,7 +44,7 @@ uses('object');
  * Example usage:
  *
  * <code>
- * require_once('dbo_mysql.php'); // or 'dbo_postgres.php'
+ * require('dbo_mysql.php'); // or 'dbo_postgres.php'
  *
  * // create and connect the object
  * $db = new DBO_MySQL(array( // or 'DBO_Postgres'

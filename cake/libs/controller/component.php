@@ -108,7 +108,10 @@ class Component extends Object
 
                 if (is_file($componentFn))
                 {
-                    require_once $componentFn;
+                    if(!class_exists($componentCn))
+                    {
+                        require_once $componentFn;
+                    }
 
                     if(class_exists($componentCn)===true)
                     {

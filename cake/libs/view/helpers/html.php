@@ -255,7 +255,7 @@ class HtmlHelper extends Helper
     {
         $this->setFormTag($fieldName);
 
-        if (empty($htmlAttributes['value']))
+        if (!isset($htmlAttributes['value']))
         {
             $htmlAttributes['value'] = $this->tagValue($fieldName);
         }
@@ -502,7 +502,7 @@ class HtmlHelper extends Helper
             $opt_value==$value? $options_here['checked'] = 'checked': null;
             $parsed_options = $this->parseHtmlOptions(array_merge($htmlAttributes, $options_here), null, '', ' ');
             $individual_tag_name = "{$this->field}_{$opt_value}";
-            $out[] = sprintf($this->tags['radio'], $individual_tag_name, $this->model, $this->field, $individual_tag_name, $parsed_options, $opt_title);
+            $out[] = sprintf($this->tags['radio'], $this->model, $this->field, $individual_tag_name, $parsed_options, $opt_title);
         }
 
         $out = join($inbetween, $out);
@@ -1403,7 +1403,7 @@ class HtmlHelper extends Helper
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
 
-        $option = $this->selectTag($tagName.'_min', $mins, $minValue, $select_attr, 
+        $option = $this->selectTag($tagName.'_min', $mins, $minValue, $select_attr,
         $optionAttr);
         return $option;
     }

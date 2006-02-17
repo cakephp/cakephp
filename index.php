@@ -48,10 +48,10 @@ if (!defined('CAKE_CORE_INCLUDE_PATH'))
 
 ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
 
-require_once 'cake'.DS.'basics.php';
-require_once 'config'.DS.'core.php';
-require_once 'cake'.DS.'config'.DS.'paths.php';
-
+require 'cake'.DS.'basics.php';
+require 'config'.DS.'core.php';
+require 'cake'.DS.'config'.DS.'paths.php';
+$bootstrap = true;
 
 $uri = setUri();
 
@@ -62,7 +62,7 @@ $uri = setUri();
 if ($uri === '/' || $uri === '/index.php')
 {
     $_GET['url'] = '/';
-    require_once ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+    require ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
 }
 else
 {
@@ -79,6 +79,6 @@ else
 
     $_GET['url'] = $path;
 
-    require_once ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+    require ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
 }
 ?>

@@ -28,7 +28,6 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-uses('inflector');
 uses('controller'.DS.'components'.DS.'acl_base');
 uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode');
 uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco');

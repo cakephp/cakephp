@@ -78,12 +78,12 @@ class ConnectionManager extends Object
  */
   function &getInstance()
   {
-     static $instance = null;
-     if($instance == null)
+     static $instance = array();
+     if(!isset($instance[0]) || !$instance[0])
      {
-        $instance =& new ConnectionManager();
+        $instance[0] =& new ConnectionManager();
      }
-     return $instance;
+     return $instance[0];
   }
 
 /**
@@ -117,18 +117,21 @@ class ConnectionManager extends Object
         }
 
         $tail = 'dbo'.DS.$filename.'.php';
-        if (fileExistsInPath(LIBS.'model'.DS.$tail))
+        if(!class_exists($classname))
         {
-            require_once(LIBS.'model'.DS.$tail);
-        }
-        else if (file_exists(MODELS.$tail))
-        {
-            require_once(MODELS.$tail);
-        }
-        else
-        {
-            trigger_error('Unable to load model file ' . $filename . '.php', E_USER_ERROR);
-            return null;
+            if (fileExistsInPath(LIBS.'model'.DS.$tail))
+            {
+                require(LIBS.'model'.DS.$tail);
+            }
+            else if (file_exists(MODELS.$tail))
+            {
+                require(MODELS.$tail);
+            }
+            else
+            {
+                trigger_error('Unable to load model file ' . $filename . '.php', E_USER_ERROR);
+                return null;
+            }
         }
         $_this->_dataSources[$name] =& new $classname($config);
         $_this->_dataSources[$name]->configKeyName = $name;

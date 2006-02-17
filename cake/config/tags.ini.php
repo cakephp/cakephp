@@ -55,7 +55,7 @@ textarea = "<textarea name="data[%s][%s]" %s>%s</textarea>"
 checkbox = "<input type="checkbox" name="data[%s][%s]" id="tag_%s" %s/>"
 
 ; Tag template for a input type='radio' tag.
-radio = "<input type="radio" name="data[%s][%s]" id="tag_%s" %s/>"
+radio = "<input type="radio" name="data[%s][%s]" id="%s" %s />%s"
 
 ; Tag template for a select opening tag.
 selectstart = "<select name="data[%s][%s]" %s>"

@@ -687,7 +687,7 @@ class View extends Object
                     }
                     if (is_file($helperFn))
                     {
-                        require_once $helperFn;
+                        require $helperFn;
                     }
                     else
                     {

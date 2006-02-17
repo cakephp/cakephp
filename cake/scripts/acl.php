@@ -51,10 +51,10 @@ define ('APP_DIR', 'app');
  *
  */
 define ('DEBUG', 1);
-require_once (ROOT.'cake'.DS.'basics.php');
-require_once (ROOT.'cake'.DS.'config'.DS.'paths.php');
-require_once (CONFIGS.'core.php');
-require_once (CONFIGS.'database.php');
+require (ROOT.'cake'.DS.'basics.php');
+require (ROOT.'cake'.DS.'config'.DS.'paths.php');
+require (CONFIGS.'core.php');
+require (CONFIGS.'database.php');
 uses ('neat_array');
 uses ('object');
 uses ('session');
@@ -62,7 +62,7 @@ uses ('security');
 uses ('model'.DS.'connection_manager');
 uses ('model'.DS.'datasources'.DS.'dbo_source');
 uses ('model'.DS.'model');
-require_once(CAKE.'app_model.php');
+require(CAKE.'app_model.php');
 uses ('controller'.DS.'components'.DS.'acl');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode');
 uses ('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco');
