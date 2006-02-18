@@ -57,7 +57,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $useDbConfig = 'default';
+    var $useDbConfig = 'default';
 
 /**
  * The DataSource connection object that this Model uses
@@ -65,7 +65,7 @@ class Model extends Object
  * @var unknown_type
  * @access public
  */
-   var $db = null;
+    var $db = null;
 
 /**
  * Enter description here... Still used?
@@ -74,7 +74,7 @@ class Model extends Object
  * @access public
  * @todo Is this still used? -OJ 22 nov 2006
  */
-   var $parent = false;
+    var $parent = false;
 
 /**
  * Custom database table name.
@@ -82,7 +82,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $useTable = null;
+    var $useTable = null;
 
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
@@ -90,7 +90,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $displayField = null;
+    var $displayField = null;
 
 /**
  *Value of the primary key ID of the record that this model is currently pointing to
@@ -98,7 +98,7 @@ class Model extends Object
  * @var unknown_type
  * @access public
  */
-   var $id = false;
+    var $id = false;
 
 /**
  * Container for the data that this model gets from persistent storage (the database).
@@ -106,7 +106,7 @@ class Model extends Object
  * @var array
  * @access public
  */
-   var $data = array();
+    var $data = array();
 
 /**
  * Table name for this Model.
@@ -114,7 +114,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $table = false;
+    var $table = false;
 
 /**
  * The name of the ID field for this Model.
@@ -122,7 +122,7 @@ class Model extends Object
  * @var string
  * @access public
  */
-   var $primaryKey = null;
+    var $primaryKey = null;
 
 /**
  * Table metadata
@@ -130,7 +130,7 @@ class Model extends Object
  * @var array
  * @access private
  */
-   var $_tableInfo = null;
+    var $_tableInfo = null;
 
 /**
  * List of validation rules. Append entries for validation as ('field_name' => '/^perl_compat_regexp$/')
@@ -138,118 +138,118 @@ class Model extends Object
  *
  * @var array
  */
-   var $validate = array();
+    var $validate = array();
 
 /**
  * Errors in validation
  * @var array
  */
-   var $validationErrors = null;
+    var $validationErrors = null;
 
 /**
  * Database table prefix for tables in model.
  *
  * @var string
  */
-   var $tablePrefix = null;
+    var $tablePrefix = null;
 
 /**
  * Name of the model.
  *
  * @var string
  */
-   var $name = null;
+    var $name = null;
 
 /**
  * Name of the current model.
  *
  * @var string
  */
-   var $currentModel = null;
+    var $currentModel = null;
 
 /**
  * List of table names included in the Model description. Used for associations.
  *
  * @var array
  */
-   var $tableToModel = array();
+    var $tableToModel = array();
 
 /**
  * List of Model names by used tables. Used for associations.
  *
  * @var array
  */
-   var $modelToTable = array();
+    var $modelToTable = array();
 
 /**
  * List of Foreign Key names to used tables. Used for associations.
  *
  * @var array
  */
-   var $keyToTable = array();
+    var $keyToTable = array();
 
 /**
  * Alias table names for model, for use in SQL JOIN statements.
  *
  * @var array
  */
-   var $alias = array();
+    var $alias = array();
 
 /**
  * Whether or not transactions for this model should be logged
  *
  * @var boolean
  */
-   var $logTransactions = false;
+    var $logTransactions = false;
 
 /**
  * Whether or not to enable transactions for this model (i.e. BEGIN/COMMIT/ROLLBACK)
  *
  * @var boolean
  */
-   var $transactional = false;
+    var $transactional = false;
 
 /**
  * belongsTo association
  *
  * @var array
  */
-   var $belongsTo = array();
+    var $belongsTo = array();
 
 /**
  * hasOne association
  *
  * @var array
  */
-   var $hasOne = array();
+    var $hasOne = array();
 
 /**
  * hasMany association
  *
  * @var array
  */
-   var $hasMany = array();
+    var $hasMany = array();
 
 /**
  * hasAndBelongsToMany association
  *
  * @var array
  */
-   var $hasAndBelongsToMany = array();
+    var $hasAndBelongsToMany = array();
 
 /**
  * Depth of recursive association
  *
  * @var int
  */
-   var $recursive = 1;
+    var $recursive = 1;
 
 /**
  * Default association keys
  *
  * @var array
  */
-   var $__associationKeys = array('belongsTo' 	=> array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
+    var $__associationKeys = array('belongsTo' 	=> array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
                                   'hasOne' 		=> array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
                                   'hasMany' 	=> array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finder_query', 'counter_query'),
                                   'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery')
@@ -260,7 +260,7 @@ class Model extends Object
  *
  * @var array
  */
-   var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+    var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
  * The last inserted ID of the data that this model created
@@ -268,7 +268,7 @@ class Model extends Object
  * @var int
  * @access private
  */
-   var $__insertID = null;
+    var $__insertID = null;
 
 /**
  * The number of records returned by the last query
@@ -276,7 +276,7 @@ class Model extends Object
  * @access private
  * @var int
  */
-   var $__numRows = null;
+    var $__numRows = null;
 
 /**
  * The number of records affected by the last query
@@ -284,7 +284,7 @@ class Model extends Object
  * @access private
  * @var int
  */
-   var $__affectedRows = null;
+    var $__affectedRows = null;
 
 /**
  * Constructor. Binds the Model's database table to the object.
@@ -330,37 +330,37 @@ class Model extends Object
                 }
             }
 
-           if (in_array('settableprefix', get_class_methods($this)))
-           {
-               $this->setTablePrefix();
-           }
+            if (in_array('settableprefix', get_class_methods($this)))
+            {
+                $this->setTablePrefix();
+            }
 
-           if ($this->tablePrefix)
-           {
-               $this->setSource($this->tablePrefix.$tableName);
-           }
-           else
-           {
-               $this->setSource($tableName);
-           }
+            if ($this->tablePrefix)
+            {
+                $this->setSource($this->tablePrefix.$tableName);
+            }
+            else
+            {
+                $this->setSource($tableName);
+            }
 
-           $this->__createLinks();
+            $this->__createLinks();
 
-           if ($this->displayField == null)
-           {
-               if ($this->hasField('title'))
-               {
-                   $this->displayField = 'title';
-               }
-               if ($this->hasField('name'))
-               {
-                   $this->displayField = 'name';
-               }
-               if ($this->displayField == null)
-               {
-                   $this->displayField = $this->primaryKey;
-               }
-           }
+            if ($this->displayField == null)
+            {
+                if ($this->hasField('title'))
+                {
+                    $this->displayField = 'title';
+                }
+                if ($this->hasField('name'))
+                {
+                    $this->displayField = 'name';
+                }
+                if ($this->displayField == null)
+                {
+                    $this->displayField = $this->primaryKey;
+                }
+            }
         }
     }
 
@@ -375,7 +375,7 @@ class Model extends Object
  */
     function __call($method, $params)
     {
-       return $this->db->query($method, $params, $this);
+        return $this->db->query($method, $params, $this);
     }
 
 /**
@@ -385,7 +385,7 @@ class Model extends Object
  */
     function __createLinks()
     {
-        // Convert all string-based associations to array based
+// Convert all string-based associations to array based
         foreach($this->__associations as $type)
         {
             if(!is_array($this->{$type}))
@@ -510,23 +510,23 @@ class Model extends Object
     {
         if($this->db->isInterfaceSupported('listSources'))
         {
-           if (!in_array(strtolower($tableName), $this->db->listSources()))
-           {
-               return $this->cakeError('missingTable',array(array('className' => $this->name,
+            if (!in_array(strtolower($tableName), $this->db->listSources()))
+            {
+                return $this->cakeError('missingTable',array(array('className' => $this->name,
                                                                   'table' => $tableName)));
-           }
-           else
-           {
-               $this->table = $tableName;
-               $this->tableToModel[$this->table] = $this->name;
-               $this->loadInfo();
-           }
+            }
+            else
+            {
+                $this->table = $tableName;
+                $this->tableToModel[$this->table] = $this->name;
+                $this->loadInfo();
+            }
         }
         else
         {
-           $this->table = $tableName;
-           $this->tableToModel[$this->table] = $this->name;
-           $this->loadInfo();
+            $this->table = $tableName;
+            $this->tableToModel[$this->table] = $this->name;
+            $this->loadInfo();
         }
     }
 
@@ -574,31 +574,31 @@ class Model extends Object
  *
  * @return array Array of table metadata
  */
-   function loadInfo ()
-   {
+    function loadInfo ()
+    {
       if (!is_object($this->_tableInfo) && $this->db->isInterfaceSupported('describe'))
       {
           $this->_tableInfo = new NeatArray($this->db->describe($this));
       }
       return $this->_tableInfo;
-   }
+    }
 
 /**
  * Returns an associative array of field names and column types.
  *
  * @return array
  */
-   function getColumnTypes ()
-   {
-       $columns = $this->loadInfo();
-       $columns = $columns->value;
+    function getColumnTypes ()
+    {
+        $columns = $this->loadInfo();
+        $columns = $columns->value;
 
-       $cols = array();
-       foreach($columns as $col) {
-           $cols[$col['name']] = $col['type'];
-       }
-       return $cols;
-   }
+        $cols = array();
+        foreach($columns as $col) {
+            $cols[$col['name']] = $col['type'];
+        }
+        return $cols;
+    }
 
 /**
  * Returns true if this Model has given field in its database table.
@@ -608,15 +608,15 @@ class Model extends Object
  */
     function hasField ($name)
     {
-       if (empty($this->_tableInfo))
-       {
+        if (empty($this->_tableInfo))
+        {
           $this->loadInfo();
-       }
-       if($this->_tableInfo != null)
-       {
+        }
+        if($this->_tableInfo != null)
+        {
           return $this->_tableInfo->findIn('name', $name);
-       }
-       return null;
+        }
+        return null;
     }
 
 /**
@@ -624,31 +624,31 @@ class Model extends Object
  *
  * @return boolean True
  */
-   function create ()
-   {
+    function create ()
+    {
       $this->id = false;
       unset($this->data);
       $this->data = array();
       return true;
-   }
+    }
 
 /**
  * Deprecated
  *
  */
-   function setId ($id)
-   {
+    function setId ($id)
+    {
       $this->id = $id;
-   }
+    }
 
 /**
  * Deprecated. Use query() instead.
  *
  */
-   function findBySql ($sql)
-   {
+    function findBySql ($sql)
+    {
       return $this->query($sql);
-   }
+    }
 
 
 /**
@@ -960,10 +960,10 @@ class Model extends Object
         {
             if ($this->id && $this->db->delete($this))
             {
-                //$this->__deleteJoins($id);
+//$this->__deleteJoins($id);
                 if ($cascade)
                 {
-                    //$this->__deleteMulti($id);
+//$this->__deleteMulti($id);
                 }
                 $this->afterDelete();
                 $this->id = false;
@@ -1042,7 +1042,7 @@ class Model extends Object
 
 /**
  * Return a single row as a resultset array.
-  * By using the $recursive parameter, the call can access further "levels of association" than
+ * By using the $recursive parameter, the call can access further "levels of association" than
  * the ones this model is directly associated to.
  *
  * @param array $conditions SQL conditions array
@@ -1109,25 +1109,25 @@ class Model extends Object
  * @param string $data Query data
  * @return array
  */
-   function execute ($data)
-   {
-       $data = $this->db->fetchAll($data);
-       foreach ($data as $key => $value)
-       {
-           foreach ($this->tableToModel as $key1 => $value1)
-           {
-               if (isset($data[$key][$key1]))
-               {
-                   $newData[$key][$value1] = $data[$key][$key1];
-               }
-           }
-       }
-       if (!empty($newData))
-       {
-           return $newData;
-       }
-       return $data;
-   }
+    function execute ($data)
+    {
+        $data = $this->db->fetchAll($data);
+        foreach ($data as $key => $value)
+        {
+            foreach ($this->tableToModel as $key1 => $value1)
+            {
+                if (isset($data[$key][$key1]))
+                {
+                    $newData[$key][$value1] = $data[$key][$key1];
+                }
+            }
+        }
+        if (!empty($newData))
+        {
+            return $newData;
+        }
+        return $data;
+    }
 
 /**
  * Returns number of rows matching given SQL condition.
@@ -1137,15 +1137,15 @@ class Model extends Object
  * @return int Number of matching rows
  * @see Model::findAll
  */
-   function findCount ($conditions = null, $recursive = 0)
-   {
+    function findCount ($conditions = null, $recursive = 0)
+    {
       list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
       if (isset($data[0]['count']))
       {
           return $data[0]['count'];
       }
       return false;
-   }
+    }
 
 /**
  * Special findAll variation for tables joined to themselves.
@@ -1157,10 +1157,10 @@ class Model extends Object
  * @return array
  * @todo Perhaps create a Component with this logic
  */
-   function findAllThreaded ($conditions=null, $fields=null, $sort=null)
-   {
+    function findAllThreaded ($conditions=null, $fields=null, $sort=null)
+    {
       return $this->__doThread(Model::findAll($conditions, $fields, $sort), null);
-   }
+    }
 
 /**
  * Private, recursive helper method for findAllThreaded.
@@ -1171,28 +1171,28 @@ class Model extends Object
  * @access private
  * @see findAllThreaded
  */
-   function __doThread ($data, $root)
-   {
-       $out = array();
-       $sizeOf = sizeof($data);
-       for ($ii=0; $ii < $sizeOf; $ii++)
-       {
-           if ($data[$ii][$this->name]['parent_id']  == $root)
-           {
-               $tmp = $data[$ii];
-               if (isset($data[$ii][$this->name][$this->primaryKey]))
-               {
-                   $tmp['children'] = $this->__doThread($data, $data[$ii][$this->name][$this->primaryKey]);
-               }
-               else
-               {
-                   $tmp['children'] = null;
-               }
-               $out[] = $tmp;
-           }
-       }
-       return $out;
-   }
+    function __doThread ($data, $root)
+    {
+        $out = array();
+        $sizeOf = sizeof($data);
+        for ($ii=0; $ii < $sizeOf; $ii++)
+        {
+            if ($data[$ii][$this->name]['parent_id']  == $root)
+            {
+                $tmp = $data[$ii];
+                if (isset($data[$ii][$this->name][$this->primaryKey]))
+                {
+                    $tmp['children'] = $this->__doThread($data, $data[$ii][$this->name][$this->primaryKey]);
+                }
+                else
+                {
+                    $tmp['children'] = null;
+                }
+                $out[] = $tmp;
+            }
+        }
+        return $out;
+    }
 
 /**
  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
@@ -1229,11 +1229,11 @@ class Model extends Object
  * @param string $sql SQL statement
  * @return array Resultset
  */
-   function query ()
-   {
+    function query ()
+    {
       $params = func_get_args();
       return call_user_func_array(array(&$this->db, 'query'), $params);
-   }
+    }
 
 /**
  * Returns true if all fields pass validation, otherwise false.
@@ -1241,15 +1241,15 @@ class Model extends Object
  * @param array $data POST data
  * @return boolean True if there are no errors
  */
-   function validates ($data = null)
-   {
+    function validates ($data = null)
+    {
       if ($data == null)
       {
           $data = $this->data;
       }
       $errors = $this->invalidFields($data);
       return count($errors) == 0;
-   }
+    }
 
 /**
  * Returns an array of invalid fields.
@@ -1257,8 +1257,8 @@ class Model extends Object
  * @param array $data
  * @return array Array of invalid fields
  */
-   function invalidFields ($data=null)
-   {
+    function invalidFields ($data=null)
+    {
       if (!isset($this->validate) || is_array($this->validationErrors))
       {
          if (!isset($this->validate))
@@ -1288,7 +1288,7 @@ class Model extends Object
       {
          foreach ($this->validate as $field_name => $validator)
          {
-           if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
+            if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
             {
                 $errors[$field_name] = 1;
             }
@@ -1296,7 +1296,7 @@ class Model extends Object
          $this->validationErrors = $errors;
          return $errors;
       }
-   }
+    }
 
 /**
  * Returns true if given field name is a foreign key in this Model.
@@ -1306,16 +1306,16 @@ class Model extends Object
  */
     function isForeignKey($field)
     {
-       $foreignKeys = array();
-       if(count($this->belongsTo))
-       {
+        $foreignKeys = array();
+        if(count($this->belongsTo))
+        {
          foreach ($this->belongsTo as $assoc => $data)
          {
             $foreignKeys[] = $data['foreignKey'];
          }
-       }
+        }
 
-       return (bool)(in_array($field, $foreignKeys));
+        return (bool)(in_array($field, $foreignKeys));
     }
 
 /**
@@ -1421,7 +1421,7 @@ class Model extends Object
  */
     function getNumRows ()
     {
-      //return $this->__numRows;
+//return $this->__numRows;
       return $this->db->lastNumRows();
     }
 
@@ -1432,7 +1432,7 @@ class Model extends Object
  */
     function getAffectedRows ()
     {
-      //return $this->__affectedRows;
+//return $this->__affectedRows;
       return $this->db->lastAffected();
     }
 

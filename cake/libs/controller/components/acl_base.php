@@ -45,16 +45,16 @@ class AclBase
  *
  * @return AclBase
  */
-   function AclBase()
-   {
-      //No instantiations or constructor calls (even statically)
+    function AclBase()
+    {
+//No instantiations or constructor calls (even statically)
       if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase"))
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
          return NULL;
       }
 
-   }
+    }
 
 /**
  * Empty method to be overridden in subclasses
@@ -63,7 +63,7 @@ class AclBase
  * @param unknown_type $aco
  * @param string $action
  */
-   function check($aro, $aco, $action = "*") {}
+    function check($aro, $aco, $action = "*") {}
 
 }
 

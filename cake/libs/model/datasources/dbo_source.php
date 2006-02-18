@@ -51,24 +51,24 @@ class DboSource extends DataSource
  *
  * @var unknown_type
  */
-   var $__bypass = false;
+    var $__bypass = false;
 /**
  * Enter description here...
  *
  * @var array
  */
-   var $__assocJoins = null;
+    var $__assocJoins = null;
 /**
  * Constructor
  *
  */
-   function __construct($config = null)
-   {
+    function __construct($config = null)
+    {
       $this->debug = DEBUG > 0;
       $this->fullDebug = DEBUG > 1;
       parent::__construct($config);
       return $this->connect();
-   }
+    }
 
 /**
  * Prepares a value, or an array of values for database queries by quoting and escaping them.
@@ -76,8 +76,8 @@ class DboSource extends DataSource
  * @param mixed $data A value or an array of values to prepare.
  * @return mixed Prepared value or array of values.
  */
-   function value ($data, $column = null)
-   {
+    function value ($data, $column = null)
+    {
       if (is_array($data))
       {
 		  $out = array();
@@ -91,17 +91,17 @@ class DboSource extends DataSource
       {
           return null;
       }
-   }
+    }
 
 /**
  * Convenience method for DboSource::listSources().
  *
  * @return array
  */
-   function sources ()
-   {
+    function sources ()
+    {
       return array_map('strtolower', $this->listSources());
-   }
+    }
 
 /**
  * Executes given SQL statement.
@@ -109,11 +109,11 @@ class DboSource extends DataSource
  * @param string $sql SQL statement
  * @return unknown
  */
-   function rawQuery ($sql)
-   {
+    function rawQuery ($sql)
+    {
       $this->took = $this->error = $this->numRows = false;
       return $this->execute($sql);
-   }
+    }
 
 /**
  * Queries the database with given SQL statement, and obtains some metadata about the result
@@ -123,8 +123,8 @@ class DboSource extends DataSource
  * @param string $sql
  * @return unknown
  */
-   function execute($sql)
-   {
+    function execute($sql)
+    {
       $t = getMicrotime();
       $this->_result = $this->_execute($sql);
 
@@ -142,7 +142,7 @@ class DboSource extends DataSource
       {
           return $this->_result;
       }
-   }
+    }
 
 /**
  * Returns a single row of results from the _last_ SQL query.
@@ -150,8 +150,8 @@ class DboSource extends DataSource
  * @param resource $res
  * @return array A single row of results
  */
-   function fetchArray ($assoc=false)
-   {
+    function fetchArray ($assoc=false)
+    {
       if ($assoc === false)
       {
          return $this->fetchRow();
@@ -160,7 +160,7 @@ class DboSource extends DataSource
       {
          return $this->fetchRow($assoc);
       }
-   }
+    }
 
 /**
  * Returns a single row of results for a _given_ SQL query.
@@ -168,14 +168,14 @@ class DboSource extends DataSource
  * @param string $sql SQL statement
  * @return array A single row of results
  */
-   function one ($sql)
-   {
+    function one ($sql)
+    {
       if ($this->execute($sql))
       {
           return $this->fetchArray();
       }
       return false;
-   }
+    }
 
 /**
  * Returns an array of all result rows for a given SQL query.
@@ -184,8 +184,8 @@ class DboSource extends DataSource
  * @param string $sql SQL statement
  * @return array Array of resultset rows, or false if no rows matched
  */
-   function fetchAll ($sql)
-   {
+    function fetchAll ($sql)
+    {
       if($this->execute($sql))
       {
          $out = array();
@@ -199,7 +199,7 @@ class DboSource extends DataSource
       {
          return false;
       }
-   }
+    }
 
 /**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
@@ -226,18 +226,18 @@ class DboSource extends DataSource
  *
  * @return boolean True if the database is connected, else false
  */
-   function isConnected()
-   {
+    function isConnected()
+    {
       return $this->connected;
-   }
+    }
 
 /**
  * Outputs the contents of the queries log.
  *
  * @param boolean $sorted
  */
-   function showLog($sorted=false)
-   {
+    function showLog($sorted=false)
+    {
       $log = $sorted?
       sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
       $this->_queriesLog;
@@ -259,15 +259,15 @@ class DboSource extends DataSource
       }
 
       print("</table>\n");
-   }
+    }
 
 /**
  * Log given SQL query.
  *
  * @param string $sql SQL statement
  */
-   function logQuery($sql)
-   {
+    function logQuery($sql)
+    {
       $this->_queriesCnt++;
       $this->_queriesTime += $this->took;
 
@@ -286,10 +286,10 @@ class DboSource extends DataSource
 
       if ($this->error)
       {
-          return false; // shouldn't we be logging errors somehow?
-          // TODO: Add hook to error log
+          return false;// shouldn't we be logging errors somehow?
+// TODO: Add hook to error log
       }
-   }
+    }
 
 /**
  * Output information about an SQL query. The SQL statement, number of rows in resultset,
@@ -299,22 +299,22 @@ class DboSource extends DataSource
  */
 	function showQuery($sql)
 	{
-	   $error = $this->error;
+	    $error = $this->error;
 
-	   if (strlen($sql) > 200 && !$this->fullDebug)
-	   {
+	    if (strlen($sql) > 200 && !$this->fullDebug)
+	    {
 		  $sql = substr($sql, 0, 200) .'[...]';
-	   }
+	    }
 
-	   if ($this->debug || $error)
-	   {
+	    if ($this->debug || $error)
+	    {
 		  print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 		  if($error)
 		  {
 			 print("<br /><span style=\"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
 		  }
 		  print('</p>');
-	   }
+	    }
 	}
 
 /**
@@ -403,7 +403,7 @@ class DboSource extends DataSource
             }
         }
 
-        // Build final query SQL
+// Build final query SQL
         $query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
         $resultSet = $this->fetchAll($query);
 
@@ -421,7 +421,7 @@ class DboSource extends DataSource
                     	// Fetch recursively on belongsTo and hasOne
                         if ($model->recursive > 1)
                         {
-                            //$this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
+//$this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
                         }
                     }
                 }
@@ -593,7 +593,7 @@ class DboSource extends DataSource
         {
             if(array_key_exists('selfJoin', $queryData))
             {
-               return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
+                return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
             }
             else
             {
@@ -606,7 +606,7 @@ class DboSource extends DataSource
                 {
                     $joinFields = null;
                 }
-            // Generates primary query
+// Generates primary query
             $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) .$joinFields. ' FROM ';
             $sql .= $this->name($model->table).' AS ';
             $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
@@ -639,7 +639,7 @@ class DboSource extends DataSource
                     $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;
                     $conditions = $queryData['conditions'];
                     $condition = $model->escapeField($assocData['foreignKey']);
-                    $condition .= '={$__cake_foreignKey__$}';
+                    $condition .= '={$__cakeForeignKey__$}';
                     if (is_array($conditions))
                     {
                         $conditions[] = $condition;
@@ -702,7 +702,7 @@ class DboSource extends DataSource
                     $conditions = $assocData['conditions'];
 
                     $condition = $linkModel->escapeField($linkModel->primaryKey);
-                    $condition .= '={$__cake_id__$}';
+                    $condition .= '={$__cakeID__$}';
 
                     if (is_array($conditions))
                     {
@@ -775,12 +775,12 @@ class DboSource extends DataSource
 
                     if (is_array($conditions))
                     {
-                        $conditions[$alias.'.'.$assocData['foreignKey']] = '{$__cake_id__$}';
+                        $conditions[$alias.'.'.$assocData['foreignKey']] = '{$__cakeID__$}';
                     }
                     else
                     {
                         $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
-                        $cond .= '={$__cake_id__$}';
+                        $cond .= '={$__cakeID__$}';
 
                         if (trim($conditions) != '')
                         {
@@ -805,7 +805,7 @@ class DboSource extends DataSource
                     $sql = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
                     $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
                     $sql .= ' JOIN '.$joinTbl.' ON '.$joinTbl;
-                    $sql .= '.'.$this->name($assocData['foreignKey']).'={$__cake_id__$}';
+                    $sql .= '.'.$this->name($assocData['foreignKey']).'={$__cakeID__$}';
                     $sql .= ' AND '.$joinTbl.'.'.$this->name($assocData['associationForeignKey']);
                     $sql .= ' = '.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
 
@@ -971,7 +971,13 @@ class DboSource extends DataSource
         }
 
         $count = count($fields);
-        if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false)
+        if ($count >= 1 && $fields[0] != '*'
+                        && strpos($fields[0], 'COUNT(') === false
+                        && strpos($fields[0], 'MAX(') === false
+                        && strpos($fields[0], 'MIN(') === false
+                        && strpos($fields[0], 'DISTINCT') === false
+                        && strpos($fields[0], 'SUM(') === false
+                        && strpos($fields[0], 'CONCAT(') === false)
         {
             for ($i = 0; $i < $count; $i++)
             {
@@ -1010,6 +1016,16 @@ class DboSource extends DataSource
             {
                 $conditions = ' 1 = 1';
             }
+            else
+            {
+                preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $conditions, $result, PREG_PATTERN_ORDER);
+                $pregCount = count($result[0]);
+
+                for ($i = 0; $i < $pregCount; $i++)
+                {
+                    $conditions = preg_replace('/'.$result[0][$i].'/', $this->name($result[0][$i]), $conditions);
+                }
+            }
             return $rt.$conditions;
         }
         elseif (is_array($conditions))
@@ -1032,7 +1048,7 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    if (($value != '{$__cake_id__$}') && ($value != '{$__cake_foreignKey__$}'))
+                    if (($value != '{$__cakeID__$}') && ($value != '{$__cakeForeignKey__$}'))
 				    {
 				        $value = $this->value($value);
 				    }
@@ -1118,12 +1134,12 @@ class DboSource extends DataSource
  */
     function close ()
     {
-       if ($this->fullDebug)
-       {
-           $this->showLog();
-       }
-       $this->_conn = NULL;
-       $this->connected = false;
+        if ($this->fullDebug)
+        {
+            $this->showLog();
+        }
+        $this->_conn = NULL;
+        $this->connected = false;
     }
 
 /**
@@ -1147,10 +1163,10 @@ class DboSource extends DataSource
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-   function hasAny($table, $sql)
-   {
+    function hasAny($table, $sql)
+    {
       $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
       return is_array($out)? $out[0]['count']: false;
-   }
+    }
 }
 ?>

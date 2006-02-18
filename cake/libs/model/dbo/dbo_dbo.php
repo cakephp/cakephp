@@ -44,22 +44,22 @@ uses('object');
  * Example usage:
  *
  * <code>
- * require('dbo_mysql.php'); // or 'dbo_postgres.php'
+ * require('dbo_mysql.php');// or 'dbo_postgres.php'
  *
- * // create and connect the object
- * $db = new DBO_MySQL(array( // or 'DBO_Postgres'
+ *// create and connect the object
+ * $db = new DBO_MySQL(array(// or 'DBO_Postgres'
  *    'host'=>'localhost',
  *    'login'=>'username',
  *    'password'=>'password',
  *    'database'=>'database'));
  *
- *  // read the whole query result array (of rows)
+ *// read the whole query result array (of rows)
  * $all_rows = $db->fetchAll("SELECT a,b,c FROM table");
  *
- *  // read the first row with debugging on
+ *// read the first row with debugging on
  *  $first_row_only = $db->one("SELECT a,b,c FROM table WHERE a=1", TRUE);
  *
- *  // emulate the usual way of reading query results
+ *// emulate the usual way of reading query results
  *  if ($db->query("SELECT a,b,c FROM table"))
  *    {
  *      while ($row = $db->fetchArray())
@@ -68,7 +68,7 @@ uses('object');
  *      }
  *  }
  *
- * // show a log of all queries, sorted by execution time
+ *// show a log of all queries, sorted by execution time
  * $db->showLog(TRUE);
  * </code>
  *
@@ -85,7 +85,7 @@ class DBO extends Object
  * @var boolean
  * @access public
  */
-   var $connected=FALSE;
+    var $connected=FALSE;
 
 /**
  * Connection configuration.
@@ -93,7 +93,7 @@ class DBO extends Object
  * @var array
  * @access public
  */
-   var $config=FALSE;
+    var $config=FALSE;
 
 /**
  * Enter description here...
@@ -101,7 +101,7 @@ class DBO extends Object
  * @var boolean
  * @access public
  */
-   var $debug=FALSE;
+    var $debug=FALSE;
 
 /**
  * Enter description here...
@@ -109,7 +109,7 @@ class DBO extends Object
  * @var boolean
  * @access public
  */
-   var $fullDebug=FALSE;
+    var $fullDebug=FALSE;
 
 /**
  * Enter description here...
@@ -117,7 +117,7 @@ class DBO extends Object
  * @var unknown_type
  * @access public
  */
-   var $error=NULL;
+    var $error=NULL;
 
 /**
  * String to hold how many rows were affected by the last SQL operation.
@@ -125,7 +125,7 @@ class DBO extends Object
  * @var unknown_type
  * @access public
  */
-   var $affected=NULL;
+    var $affected=NULL;
 
 /**
  * Number of rows in current resultset
@@ -133,7 +133,7 @@ class DBO extends Object
  * @var int
  * @access public
  */
-   var $numRows=NULL;
+    var $numRows=NULL;
 
 /**
  * Time the last query took
@@ -141,7 +141,7 @@ class DBO extends Object
  * @var unknown_type
  * @access public
  */
-   var $took=NULL;
+    var $took=NULL;
 
 /**
  * Enter description here...
@@ -149,7 +149,7 @@ class DBO extends Object
  * @var unknown_type
  * @access private
  */
-   var $_conn=NULL;
+    var $_conn=NULL;
 
 /**
  * Enter description here...
@@ -157,7 +157,7 @@ class DBO extends Object
  * @var unknown_type
  * @access private
  */
-   var $_result=NULL;
+    var $_result=NULL;
 
 /**
  * Queries count.
@@ -165,7 +165,7 @@ class DBO extends Object
  * @var unknown_type
  * @access private
  */
-   var $_queriesCnt=0;
+    var $_queriesCnt=0;
 
 /**
  * Total duration of all queries.
@@ -173,7 +173,7 @@ class DBO extends Object
  * @var unknown_type
  * @access private
  */
-   var $_queriesTime=NULL;
+    var $_queriesTime=NULL;
 
 /**
  * Enter description here...
@@ -181,7 +181,7 @@ class DBO extends Object
  * @var unknown_type
  * @access private
  */
-   var $_queriesLog=array();
+    var $_queriesLog=array();
 
 /**
  * Maximum number of items in query log, to prevent query log taking over
@@ -191,7 +191,7 @@ class DBO extends Object
  * @var int Maximum number of queries in the queries log.
  * @access private
  */
-   var $_queriesLogMax=200;
+    var $_queriesLogMax=200;
 
 
 /**
@@ -200,22 +200,22 @@ class DBO extends Object
  * @param array $config
  * @return unknown
  */
-   function __construct($config=NULL)
-   {
+    function __construct($config=NULL)
+    {
       $this->debug = DEBUG > 0;
       $this->fullDebug = DEBUG > 1;
       parent::__construct();
       return $this->connect($config);
-   }
+    }
 
 /**
  * Destructor. Closes connection to the database.
  *
  */
-   function __destructor()
-   {
+    function __destructor()
+    {
       $this->close();
-   }
+    }
 
 /**
  * Returns a string with a USE [databasename] SQL statement.
@@ -223,22 +223,22 @@ class DBO extends Object
  * @param string $db_name Name of database to use
  * @return unknown Result of the query
  */
-   function useDb($db_name)
-   {
+    function useDb($db_name)
+    {
       return $this->query("USE {$db_name}");
-   }
+    }
 
 /**
  * Disconnects database, kills the connection and says the connection is closed, and if DEBUG is turned on, the log for this object is shown.
  *
  */
-   function close ()
-   {
+    function close ()
+    {
       if ($this->fullDebug) $this->showLog();
       $this->disconnect();
       $this->_conn = NULL;
       $this->connected = false;
-   }
+    }
 
 /**
  * Prepares a value, or an array of values for database queries by quoting and escaping them.
@@ -246,8 +246,8 @@ class DBO extends Object
  * @param mixed $data A value or an array of values to prepare.
  * @return mixed Prepared value or array of values.
  */
-   function prepare ($data)
-   {
+    function prepare ($data)
+    {
       if (is_array($data))
       {
          $out = null;
@@ -261,12 +261,12 @@ class DBO extends Object
       {
          return $this->prepareValue($data);
       }
-   }
+    }
 
-   function sources ()
-   {
+    function sources ()
+    {
       return array_map('strtolower', $this->listSources());
-   }
+    }
 
 /**
  * Executes given SQL statement.
@@ -274,11 +274,11 @@ class DBO extends Object
  * @param string $sql SQL statement
  * @return unknown
  */
-   function rawQuery ($sql)
-   {
+    function rawQuery ($sql)
+    {
       $this->took = $this->error = $this->numRows = false;
       return $this->execute($sql);
-   }
+    }
 
 /**
  * Queries the database with given SQL statement, and obtains some metadata about the result
@@ -288,8 +288,8 @@ class DBO extends Object
  * @param string $sql
  * @return unknown
  */
-   function query($sql)
-   {
+    function query($sql)
+    {
       $t = getMicrotime();
       $this->_result = $this->execute($sql);
       $this->affected = $this->lastAffected();
@@ -301,7 +301,7 @@ class DBO extends Object
       $this->showQuery($sql);
 
       return $this->error? false: $this->_result;
-   }
+    }
 
 /**
  * Returns a single row of results from the _last_ SQL query.
@@ -309,8 +309,8 @@ class DBO extends Object
  * @param resource $res
  * @return array A single row of results
  */
-   function farr ($assoc=false)
-   {
+    function farr ($assoc=false)
+    {
       if ($assoc === false)
       {
          return $this->fetchRow();
@@ -319,7 +319,7 @@ class DBO extends Object
       {
          return $this->fetchRow($assoc);
       }
-   }
+    }
 
 /**
  * Returns a single row of results for a _given_ SQL query.
@@ -327,10 +327,10 @@ class DBO extends Object
  * @param string $sql SQL statement
  * @return array A single row of results
  */
-   function one ($sql)
-   {
+    function one ($sql)
+    {
       return $this->query($sql)? $this->fetchArray(): false;
-   }
+    }
 
 /**
  * Returns an array of all result rows for a given SQL query.
@@ -339,8 +339,8 @@ class DBO extends Object
  * @param string $sql SQL statement
  * @return array Array of resultset rows, or false if no rows matched
  */
-   function all ($sql)
-   {
+    function all ($sql)
+    {
       if($this->query($sql))
       {
          $out=array();
@@ -354,7 +354,7 @@ class DBO extends Object
       {
          return false;
       }
-   }
+    }
 
 /**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
@@ -363,11 +363,11 @@ class DBO extends Object
  * @param string $sql SQL query
  * @return unknown
  */
-   function field ($name, $sql)
-   {
+    function field ($name, $sql)
+    {
       $data = $this->one($sql);
       return empty($data[$name])? false: $data[$name];
-   }
+    }
 
 /**
  * Checks if the specified table contains any record matching specified SQL
@@ -376,29 +376,29 @@ class DBO extends Object
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-   function hasAny($table, $sql)
-   {
+    function hasAny($table, $sql)
+    {
       $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
       return is_array($out)? $out[0]['count']: false;
-   }
+    }
 
 /**
  * Checks if it's connected to the database
  *
  * @return boolean True if the database is connected, else false
  */
-   function isConnected()
-   {
+    function isConnected()
+    {
       return $this->connected;
-   }
+    }
 
 /**
  * Outputs the contents of the log.
  *
  * @param boolean $sorted
  */
-   function showLog($sorted=false)
-   {
+    function showLog($sorted=false)
+    {
       $log = $sorted?
       sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC):
       $this->_queriesLog;
@@ -412,15 +412,15 @@ class DBO extends Object
       }
 
       print("</table>\n");
-   }
+    }
 
 /**
  * Log given SQL query.
  *
  * @param string $sql SQL statement
  */
-   function logQuery($sql)
-   {
+    function logQuery($sql)
+    {
       $this->_queriesCnt++;
       $this->_queriesTime += $this->took;
 
@@ -438,8 +438,8 @@ class DBO extends Object
       }
 
       if ($this->error)
-      return false; // shouldn't we be logging errors somehow?
-   }
+      return false;// shouldn't we be logging errors somehow?
+    }
 
 /**
  * Output information about an SQL query. The SQL statement, number of rows in resultset,
@@ -447,8 +447,8 @@ class DBO extends Object
  *
  * @param string $sql
  */
-   function showQuery($sql)
-   {
+    function showQuery($sql)
+    {
       $error = $this->error;
 
       if (strlen($sql)>200 && !$this->fullDebug)
@@ -465,7 +465,7 @@ class DBO extends Object
          }
          print('</p>');
       }
-   }
+    }
 }
 
 ?>

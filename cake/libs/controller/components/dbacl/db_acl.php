@@ -49,10 +49,10 @@ class DB_ACL extends AclBase
  * Enter description here...
  *
  */
-   function __construct()
-   {
+    function __construct()
+    {
 
-   }
+    }
 
 /**
  * Enter description here...
@@ -62,8 +62,8 @@ class DB_ACL extends AclBase
  * @param unknown_type $action
  * @return unknown
  */
-   function check($aro, $aco, $action = "*")
-   {
+    function check($aro, $aco, $action = "*")
+    {
 
       $Perms = new ArosAco();
       $Aro = new Aro();
@@ -101,9 +101,9 @@ class DB_ACL extends AclBase
          {
             foreach($perms as $perm)
             {
-               if($action == '*')
-               {
-                  // ARO must be cleared for ALL ACO actions
+                if($action == '*')
+                {
+// ARO must be cleared for ALL ACO actions
                   foreach($permKeys as $key)
                   {
                      if(isset($perm['aros_acos']))
@@ -115,9 +115,9 @@ class DB_ACL extends AclBase
                      }
                   }
                   return true;
-               }
-               else
-               {
+                }
+                else
+                {
                   switch($perm['aros_acos']['_' . $action])
                   {
                      case -1:
@@ -128,21 +128,21 @@ class DB_ACL extends AclBase
                      case 1:
                         return true;
                   }
-               }
+                }
             }
          }
       }
 
       return false;
-   }
+    }
 
 /**
  * Allow
  *
  * @return boolean
  */
-   function allow($aro, $aco, $action = "*", $value = 1)
-   {
+    function allow($aro, $aco, $action = "*", $value = 1)
+    {
       $Perms = new ArosAco();
       $perms = $this->getAclLink($aro, $aco);
       $permKeys = $this->_getAcoKeys($Perms->loadInfo());
@@ -151,7 +151,7 @@ class DB_ACL extends AclBase
 
       if($perms == false)
       {
-         // One of the nodes does not exist
+// One of the nodes does not exist
          return false;
       }
 
@@ -176,7 +176,7 @@ class DB_ACL extends AclBase
          }
          else
          {
-            // Raise an error
+// Raise an error
             return false;
          }
       }
@@ -188,7 +188,7 @@ class DB_ACL extends AclBase
       {
          $save['id'] = $perms['link'][0]['aros_acos']['id'];
       }
-      //return $Perms->save(array('ArosAco' => $save));
+//return $Perms->save(array('ArosAco' => $save));
 
       if(isset($save['id']))
       {
@@ -198,7 +198,7 @@ class DB_ACL extends AclBase
          {
             if($key != 'id')
             {
-               $saveKeys[] = $key . ' = ' . $val;
+                $saveKeys[] = $key . ' = ' . $val;
             }
          }
          $q .= implode(', ', $saveKeys) . ' where id = ' . $save['id'];
@@ -210,47 +210,47 @@ class DB_ACL extends AclBase
 
       $Perms->db->query($q);
       return true;
-   }
+    }
 
 /**
  * Deny
  *
  * @return boolean
  */
-   function deny($aro, $aco, $action = "*")
-   {
+    function deny($aro, $aco, $action = "*")
+    {
       return $this->allow($aro, $aco, $action, -1);
-   }
+    }
 
 /**
  * Inherit
  *
  * @return boolean
  */
-   function inherit($aro, $aco, $action = "*")
-   {
+    function inherit($aro, $aco, $action = "*")
+    {
       return $this->allow($aro, $aco, $action, 0);
-   }
+    }
 
 /**
  * Allow alias
  *
  * @return boolean
  */
-   function grant($aro, $aco, $action = "*")
-   {
+    function grant($aro, $aco, $action = "*")
+    {
       return $this->allow($aro, $aco, $action);
-   }
+    }
 
 /**
  * Deny alias
  *
  * @return boolean
  */
-   function revoke($aro, $aco, $action = "*")
-   {
+    function revoke($aro, $aco, $action = "*")
+    {
       return $this->deny($aro, $aco, $action);
-   }
+    }
 
 
 
@@ -260,17 +260,17 @@ class DB_ACL extends AclBase
  * @param unknown_type $id
  * @return unknown
  */
-   function getAro($id = null)
-   {
+    function getAro($id = null)
+    {
      if($id == null)
      {
-        // Raise error
+// Raise error
      }
      $aro = new Aro();
-     $tmp = $aro->find(is_string($aro) ? "aros.alias = '" . addslashes($aro) . "'" : "aros.user_id   = {$aro}");
+     $tmp = $aro->find(is_string($aro) ? "aros.alias = '" . addslashes($aro) . "'" : "aros.user_id    = {$aro}");
      $aro->setId($tmp['aro']['id']);
      return $aro;
-   }
+    }
 
 
 /**
@@ -279,17 +279,17 @@ class DB_ACL extends AclBase
  * @param unknown_type $id
  * @return unknown
  */
-   function getAco($id = null)
-   {
+    function getAco($id = null)
+    {
      if($id == null)
      {
-        // Raise error
+// Raise error
      }
      $aco = new Aco();
-     $tmp = $aco->find(is_string($aco) ? "acos.alias = '" . addslashes($aco) . "'" : "acos.user_id   = {$aco}");
+     $tmp = $aco->find(is_string($aco) ? "acos.alias = '" . addslashes($aco) . "'" : "acos.user_id    = {$aco}");
      $aro->setId($tmp['aco']['id']);
      return $aco;
-   }
+    }
 
 
 /**
@@ -299,12 +299,12 @@ class DB_ACL extends AclBase
  * @param unknown_type $aco
  * @return unknown
  */
-   function getAclLink($aro, $aco)
-   {
+    function getAclLink($aro, $aco)
+    {
       $Aro = new Aro();
       $Aco = new Aco();
 
-      $qAro = (is_string($aro) ? "alias = '" . addslashes($aro) . "'" : "user_id   = {$aro}");
+      $qAro = (is_string($aro) ? "alias = '" . addslashes($aro) . "'" : "user_id    = {$aro}");
       $qAco = (is_string($aco) ? "alias = '" . addslashes($aco) . "'" : "object_id = {$aco}");
 
       $obj = array();
@@ -323,7 +323,7 @@ class DB_ACL extends AclBase
          'aco'  => $obj['Aco']['id'],
          'link' => $Aro->findBySql("select * from aros_acos where aro_id = {$obj['Aro']['id']} and aco_id = {$obj['Aco']['id']}")
       );
-   }
+    }
 
 /**
  * Enter description here...
@@ -331,8 +331,8 @@ class DB_ACL extends AclBase
  * @param unknown_type $keys
  * @return unknown
  */
-   function _getAcoKeys($keys)
-   {
+    function _getAcoKeys($keys)
+    {
       $newKeys = array();
       $keys = $keys->value;
       foreach($keys as $key)
@@ -343,7 +343,7 @@ class DB_ACL extends AclBase
          }
       }
       return $newKeys;
-   }
+    }
 
 }
 

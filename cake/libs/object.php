@@ -47,7 +47,7 @@ class Object
  *
  * @var object
  */
-   var $_log = null;
+    var $_log = null;
 
 /**
  * A hack to support __construct() on PHP 4
@@ -57,24 +57,24 @@ class Object
  *
  * @return Object
  */
-   function Object()
-   {
-       $args = func_get_args();
+    function Object()
+    {
+        $args = func_get_args();
 
-       if (method_exists($this, '__destruct'))
-       {
-           register_shutdown_function(array(&$this, '__destruct'));
-       }
+        if (method_exists($this, '__destruct'))
+        {
+            register_shutdown_function(array(&$this, '__destruct'));
+        }
 
-       call_user_func_array(array(&$this, '__construct'), $args);
-   }
+        call_user_func_array(array(&$this, '__construct'), $args);
+    }
 
 /**
  * Class constructor, overridden in descendant classes.
  */
-   function __construct()
-   {
-   }
+    function __construct()
+    {
+    }
 
 /**
  * Object-to-string conversion.
@@ -82,10 +82,10 @@ class Object
  *
  * @return string The name of this class
  */
-   function toString()
-   {
+    function toString()
+    {
       return get_class($this);
-   }
+    }
 
 /**
  * Calls a controller's method from any location.
@@ -102,7 +102,7 @@ class Object
             if(in_array('return', $extra))
             {
                 $extra['return'] = 0;
-                $extra['bare']   = 1;
+                $extra['bare']    = 1;
                 ob_start();
                 $out = $dispatcher->dispatch($url, $extra);
                 $out = ob_get_clean();
@@ -111,7 +111,7 @@ class Object
             else
             {
                 $extra['return'] = 1;
-                $extra['bare']   = 1;
+                $extra['bare']    = 1;
                 return $dispatcher->dispatch($url, $extra);
             }
         }
@@ -127,12 +127,12 @@ class Object
  * @param string $msg Log message
  * @param int $type Error type constant. Defined in app/config/core.php.
  */
-   function log ($msg, $type=LOG_ERROR)
-   {
-       if(!class_exists('CakeLog'))
-       {
-           uses('cake_log');
-       }
+    function log ($msg, $type=LOG_ERROR)
+    {
+        if(!class_exists('CakeLog'))
+        {
+            uses('cake_log');
+        }
       if (is_null($this->_log))
       {
          $this->_log = new CakeLog();
@@ -145,7 +145,7 @@ class Object
          default:
             return $this->_log->write('error', $msg);
       }
-   }
+    }
 
 /**
  * Enter description here...
@@ -154,14 +154,14 @@ class Object
  * @param unknown_type $messages
  * @return unknown
  */
-   function cakeError($method, $messages)
-   {
-       if(!class_exists('ErrorHandler'))
-       {
-           uses('error');
-       }
-       return new ErrorHandler($method, $messages);
-   }
+    function cakeError($method, $messages)
+    {
+        if(!class_exists('ErrorHandler'))
+        {
+            uses('error');
+        }
+        return new ErrorHandler($method, $messages);
+    }
 }
 
 ?>

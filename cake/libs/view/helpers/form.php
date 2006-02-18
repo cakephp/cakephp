@@ -63,7 +63,7 @@ class FormHelper extends Helper
 {
 
     var $helpers = array('Html');
- /**
+/**
  * Constructor which takes an instance of the HtmlHelper class.
  *
  * @return void
@@ -72,7 +72,7 @@ class FormHelper extends Helper
     {
     }
 
- /**
+/**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
  * @param string $field      This should be "Modelname/fieldname"
@@ -92,7 +92,7 @@ class FormHelper extends Helper
         }
     }
 
- /**
+/**
  * Returns a formatted LABEL element for HTML FORMs.
  *
  * @param string $tagName     This should be "Modelname/fieldname"
@@ -104,10 +104,10 @@ class FormHelper extends Helper
         return sprintf( TAG_LABEL, strtolower(str_replace('/', '_',$tagName)), $text );
     }
 
- /**
+/**
  * Returns a formatted DIV tag for HTML FORMs.
  *
- * @param string $class       CSS class name of the div element.
+ * @param string $class        CSS class name of the div element.
  * @param string $text        String content that will appear inside the div element.
  * @return string             The formatted DIV element
  */
@@ -116,7 +116,7 @@ class FormHelper extends Helper
         return sprintf( TAG_DIV, $class, $text );
     }
 
- /**
+/**
  * Returns a formatted P tag with class for HTML FORMs.
  *
  * @param string $class     CSS class name of the p element.
@@ -128,13 +128,13 @@ class FormHelper extends Helper
         return sprintf( TAG_P_CLASS, $class, $text );
     }
 
- /**
+/**
  * Returns a formatted INPUT tag for HTML FORMs.
  *
  * @param string $tagName    This should be "Modelname/fieldname"
  * @param string $prompt     Text that will appear in the label field.
  * @param bool $required     True if this field is a required field.
- * @param string $errorMsg   Text that will appear if an error has occurred.
+ * @param string $errorMsg    Text that will appear if an error has occurred.
  * @param int $size          Size attribute for INPUT element
  * @param array $htmlOptions	HTML options array.
  * @return string             The formatted INPUT element, with a label and wrapped in a div.
@@ -152,11 +152,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -166,7 +166,7 @@ class FormHelper extends Helper
 
     }
 
- /**
+/**
  * Returns a formatted CHECKBOX tag inside a DIV for HTML FORMs.
  *
  * @param string $tagName     This should be "Modelname/fieldname"
@@ -188,11 +188,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -202,13 +202,13 @@ class FormHelper extends Helper
 
     }
 
- /**
+/**
  * Returns a formatted date option element for HTML FORMs.
  *
  * @param string $tagName    This should be "Modelname/fieldname"
  * @param string $prompt     Text that will appear in the label field.
  * @param bool $required     True if this field is a required field.
- * @param string $errorMsg   Text that will appear if an error has occurred.
+ * @param string $errorMsg    Text that will appear if an error has occurred.
  * @param int $size          Not used.
  * @todo  Remove the $size parameter from this method.
  * @param array $htmlOptions HTML options array
@@ -225,11 +225,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -240,7 +240,7 @@ class FormHelper extends Helper
         return $this->divTag("date", $requiredDiv);
     }
 
- /**
+/**
  * Returns a formatted datetime option element for HTML FORMs.
  *
  * @param string $tagName     This should be "Modelname/fieldname"
@@ -264,11 +264,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -279,7 +279,7 @@ class FormHelper extends Helper
         return $this->divTag("date", $requiredDiv);
     }
 
- /**
+/**
  * Returns a formatted TEXTAREA inside a DIV for use with HTML forms.
  *
  * @param string $tagName    This should be "Modelname/fieldname"
@@ -305,11 +305,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -319,7 +319,7 @@ class FormHelper extends Helper
 
     }
 
- /**
+/**
  * Returns a formatted SELECT tag for HTML FORMs.
  *
  * @param string $tagName     	This should be "Modelname/fieldname"
@@ -343,11 +343,11 @@ class FormHelper extends Helper
         if( $required )
         $divClass = "required";
 
-        $strError = ""; // initialize the error to empty.
+        $strError = "";// initialize the error to empty.
 
         if( $this->isFieldError( $tagName ) )
         {
-            // if it was an error that occured, then add the error message, and append " error" to the div tag.
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );
             $divClass = sprintf( "%s error", $divClass );
         }
@@ -357,7 +357,7 @@ class FormHelper extends Helper
 
     }
 
- /**
+/**
  * Returns a formatted submit widget for HTML FORMs.
  *
  * @param string $displayText		Text that will appear on the widget
@@ -369,7 +369,7 @@ class FormHelper extends Helper
         return $this->divTag( 'submit', $this->Html->submitTag( $displayText, $htmlOptions) );
     }
 
- /**
+/**
  * Generates a form to go onto a HtmlHelper object.
  *
  * @param array $fields     An array of form field definitions

@@ -28,8 +28,8 @@
  */
 
 /**
-  * Included libraries.
-  */
+ * Included libraries.
+ */
 uses(DS.'view'.DS.'helper');
 
 /**
@@ -49,14 +49,14 @@ class View extends Object
  * @var string Name of controller
  * @access public
  */
-   var $name = null;
+    var $name = null;
 
 /**
  * Stores the current URL (for links etc.)
  *
  * @var string Current URL
  */
-   var $here = null;
+    var $here = null;
 
 /**
  * Not used. 2006-09
@@ -64,7 +64,7 @@ class View extends Object
  * @var unknown_type
  * @access public
  */
-   var $parent = null;
+    var $parent = null;
 
 /**
  * Action to be performed.
@@ -72,7 +72,7 @@ class View extends Object
  * @var string Name of action
  * @access public
  */
-   var $action = null;
+    var $action = null;
 
 /**
  * An array of names of models the particular controller wants to use.
@@ -80,7 +80,7 @@ class View extends Object
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-   var $uses = false;
+    var $uses = false;
 
 /**
  * An array of names of built-in helpers to include.
@@ -88,14 +88,14 @@ class View extends Object
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-   var $helpers = array('Html');
+    var $helpers = array('Html');
 
 /**
  * Path to View.
  *
  * @var string Path to View
  */
-   var $viewPath;
+    var $viewPath;
 
 /**
  * Variables for the view
@@ -103,7 +103,7 @@ class View extends Object
  * @var array
  * @access private
  */
-   var $_viewVars = array();
+    var $_viewVars = array();
 
 /**
  * Title HTML element of this View.
@@ -111,7 +111,7 @@ class View extends Object
  * @var boolean
  * @access private
  */
-   var $pageTitle = false;
+    var $pageTitle = false;
 
 /**
  * An array of model objects.
@@ -119,7 +119,7 @@ class View extends Object
  * @var array Array of model objects.
  * @access public
  */
-   var $models = array();
+    var $models = array();
 
 /**
  * Path parts for creating links in views.
@@ -127,7 +127,7 @@ class View extends Object
  * @var string Base URL
  * @access public
  */
-   var $base = null;
+    var $base = null;
 
 /**
  * Name of layout to use with this View.
@@ -135,7 +135,7 @@ class View extends Object
  * @var string
  * @access public
  */
-   var $layout = 'default';
+    var $layout = 'default';
 
 /**
  * Turns on or off Cake's conventional mode of rendering views. On by default.
@@ -143,7 +143,7 @@ class View extends Object
  * @var boolean
  * @access public
  */
-   var $autoRender = true;
+    var $autoRender = true;
 
 /**
  * Turns on or off Cake's conventional mode of finding layout files. On by default.
@@ -151,27 +151,27 @@ class View extends Object
  * @var boolean
  * @access public
  */
-   var $autoLayout = true;
+    var $autoLayout = true;
 
 /**
  * Array of parameter data
  *
  * @var array Parameter data
  */
-   var $params;
+    var $params;
 /**
  * True when the view has been rendered.
  *
  * @var boolean
  */
-   var $hasRendered = null;
+    var $hasRendered = null;
 
 /**
  * Reference to the Controller for this view.
  *
  * @var Controller
  */
-   var $controller = null;
+    var $controller = null;
 
 /**
  * Array of loaded view helpers.
@@ -214,8 +214,8 @@ class View extends Object
  *
  * @return View
  */
-   function __construct (&$controller)
-   {
+    function __construct (&$controller)
+    {
         $this->controller    =& $controller;
         $this->_viewVars     =& $this->controller->_viewVars;
         $this->action        =& $this->controller->action;
@@ -237,7 +237,7 @@ class View extends Object
         $this->webservices   =& $this->controller->webservices;
         $this->plugin        =& $this->controller->plugin;
         parent::__construct();
-   }
+    }
 
 /**
  * Renders view for given action and layout. If $file is given, that is used
@@ -247,9 +247,9 @@ class View extends Object
  * @param string $layout 	Layout to use
  * @param string $file 		Custom filename for view
  */
-   function render($action=null, $layout=null, $file=null)
-   {
-       if (isset($this->hasRendered) && $this->hasRendered)
+    function render($action=null, $layout=null, $file=null)
+    {
+        if (isset($this->hasRendered) && $this->hasRendered)
       {
          return true;
       }
@@ -288,7 +288,7 @@ class View extends Object
             return array('action' => $action, 'layout' => $layout, 'viewFn' => $viewFileName);
          }
 
-         // check to see if the missing view is due to a custom missingAction
+// check to see if the missing view is due to a custom missingAction
          if (strpos($action, 'missingAction') !== false)
          {
             $errorAction = 'missingAction';
@@ -298,7 +298,7 @@ class View extends Object
             $errorAction = 'missingView';
          }
 
-         // check for controller-level view handler
+// check for controller-level view handler
          foreach(array($this->name, 'errors') as $viewDir)
          {
              $errorAction =Inflector::underscore($errorAction);
@@ -318,7 +318,7 @@ class View extends Object
             $missingViewExists = is_file($missingViewFileName);
             if ($missingViewExists)
             {
-               break;
+                break;
             }
          }
 
@@ -332,7 +332,7 @@ class View extends Object
             $isFatal = isset($this->isFatal) ? $this->isFatal : false;
             if (!$isFatal)
             {
-               $viewFileName = $missingViewFileName;
+                $viewFileName = $missingViewFileName;
             }
          }
          else
@@ -342,14 +342,14 @@ class View extends Object
 
          if (!$missingViewExists || $isFatal)
          {
-            // app/view/errors/missing_view.thtml view is missing!
+// app/view/errors/missing_view.thtml view is missing!
             if (DEBUG)
             {
-               trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
+                trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
             }
             else
             {
-               $this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
+                $this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
             }
 
             die();
@@ -370,7 +370,7 @@ class View extends Object
          {
             if ($this->layout && $this->autoLayout)
             {
-               $out = $this->renderLayout($out);
+                $out = $this->renderLayout($out);
             }
 
             print $out;
@@ -384,7 +384,7 @@ class View extends Object
 
          return true;
       }
-   }
+    }
 
 /**
  * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
@@ -394,12 +394,12 @@ class View extends Object
  * Element.
  *
  * @link http://wiki.cakephp.org/docs:view:renderelement
- * @param string $name 		Name of template file in the /app/views/elements/ folder
+ * @param string $name 		Name of template file in the/app/views/elements/ folder
  * @param array $params 	Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string 			Rendered output
  */
-   function renderElement($name, $params=array())
-   {
+    function renderElement($name, $params=array())
+    {
       $fn = ELEMENTS.$name.$this->ext;
 
       if(!is_null($this->plugin))
@@ -419,7 +419,7 @@ class View extends Object
 
       $params = array_merge_recursive($params, $this->loaded);
       return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
-   }
+    }
 
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
@@ -427,8 +427,8 @@ class View extends Object
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
  */
-   function renderLayout($content_for_layout)
-   {
+    function renderLayout($content_for_layout)
+    {
       $layout_fn = $this->_getLayoutFileName();
 
       if(DEBUG > 2)
@@ -474,17 +474,17 @@ class View extends Object
                      array(array('layout' => $this->layout,
                                  'file' => $layout_fn)));
       }
-   }
+    }
 
 /**
  * Sets layout to be used when rendering.
  *
  * @param string $layout		Name of layout.
  */
-   function setLayout($layout)
-   {
+    function setLayout($layout)
+    {
       $this->layout = $layout;
-   }
+    }
 
 /**
  * Displays an error page to the user. Uses layouts/error.html to render the page.
@@ -493,16 +493,16 @@ class View extends Object
  * @param string $name 		Name of the error (for instance: Not Found)
  * @param string $message 	Error message as a web page
  */
-   function error ($code, $name, $message)
-   {
+    function error ($code, $name, $message)
+    {
       header ("HTTP/1.0 {$code} {$name}");
       print ($this->_render(VIEWS.'layouts/error.thtml', array('code'=>$code,'name'=>$name,'message'=>$message)));
-   }
+    }
 
 
 /**************************************************************************
-   * Private methods.
-   *************************************************************************/
+ * Private methods.
+ *************************************************************************/
 
 
 /**
@@ -512,44 +512,44 @@ class View extends Object
  * @return string Template filename
  * @access private
  */
-   function _getViewFileName($action)
-   {
-       $action = Inflector::underscore($action);
+    function _getViewFileName($action)
+    {
+        $action = Inflector::underscore($action);
 
-       if(!is_null($this->webservices))
-       {
-           $type =   strtolower($this->webservices).DS;
-       }
-       else
-       {
-           $type = null;
-       }
-       $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
+        if(!is_null($this->webservices))
+        {
+            $type =    strtolower($this->webservices).DS;
+        }
+        else
+        {
+            $type = null;
+        }
+        $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
 
-       if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
-       {
-           $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
-       }
-       elseif(file_exists(VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext))
-       {
-           $viewFileName = VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext;
-       }
-       elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
-       {
+        if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
+        {
+            $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
+        }
+        elseif(file_exists(VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext))
+        {
+            $viewFileName = VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext;
+        }
+        elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
+        {
 
-       }
-       elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml'))
-       {
+        }
+        elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml'))
+        {
 
-       }
+        }
 
-       $viewPath = explode(DS, $viewFileName);
-       $i = array_search('..', $viewPath);
-       unset($viewPath[$i-1]);
-       unset($viewPath[$i]);
-       $return = '/'.implode('/', $viewPath);
-       return $return;
-   }
+        $viewPath = explode(DS, $viewFileName);
+        $i = array_search('..', $viewPath);
+        unset($viewPath[$i-1]);
+        unset($viewPath[$i]);
+        $return = '/'.implode('/', $viewPath);
+        return $return;
+    }
 
 /**
  * Returns layout filename for this template as a string.
@@ -561,7 +561,7 @@ class View extends Object
     {
         if(!is_null($this->webservices))
         {
-            $type =   strtolower($this->webservices).DS;
+            $type =    strtolower($this->webservices).DS;
         }
         else
         {
@@ -587,19 +587,19 @@ class View extends Object
         {
         }
         return $layoutFileName;
-   }
+    }
 
 /**
  * Renders and returns output for given view filename with its
  * array of data.
  *
  * @param string $___viewFn Filename of the view
- * @param array $___data_for_view Data to include in rendered view
- * @param boolean $___play_safe If set to false, the include() of the $__viewFn is done without suppressing output of errors
+ * @param array $___dataForView Data to include in rendered view
+ * @param boolean $___playSafe If set to false, the include() of the $__viewFn is done without suppressing output of errors
  * @return string Rendered output
  * @access private
  */
-    function _render($___viewFn, $___data_for_view, $___play_safe = true, $loadHelpers = true)
+    function _render($___viewFn, $___dataForView, $___playSafe = true, $loadHelpers = true)
     {
         if ($this->helpers != false && $loadHelpers === true)
         {
@@ -624,35 +624,35 @@ class View extends Object
             }
         }
 
-      extract($___data_for_view, EXTR_SKIP); # load all view variables
+      extract($___dataForView, EXTR_SKIP); # load all view variables
 /**
-    * Local template variables.
-    */
-      $BASE       = $this->base;
+ * Local template variables.
+ */
+      $BASE        = $this->base;
       $params     = &$this->params;
       $page_title = $this->pageTitle;
 
 /**
-    * Start caching output (eval outputs directly so we need to cache).
-    */
+ * Start caching output (eval outputs directly so we need to cache).
+ */
       ob_start();
 
 /**
-    * Include the template.
-    */
-      $___play_safe? @include($___viewFn): include($___viewFn);
+ * Include the template.
+ */
+      $___playSafe? @include($___viewFn): include($___viewFn);
 
       $out = ob_get_clean();
 
       return $out;
-   }
+    }
 
 /**
-    * Loads helpers, with their dependencies.
-    *
-    * @param array $loaded List of helpers that are already loaded.
-    * @param array $helpers List of helpers to load.
-    * @return array
+ * Loads helpers, with their dependencies.
+ *
+ * @param array $loaded List of helpers that are already loaded.
+ * @param array $helpers List of helpers to load.
+ * @return array
  */
     function &_loadHelpers(&$loaded, $helpers)
     {
@@ -702,12 +702,12 @@ class View extends Object
 
                 if(class_exists($helperCn))
                 {
-                    ${$camelBackedHelper}                       =& new $helperCn;
+                    ${$camelBackedHelper}                        =& new $helperCn;
                     ${$camelBackedHelper}->base                 = $this->base;
                     ${$camelBackedHelper}->webroot              = $this->webroot;
                     ${$camelBackedHelper}->here                 = $this->here;
-                    ${$camelBackedHelper}->params               = $this->params;
-                    ${$camelBackedHelper}->action               = $this->action;
+                    ${$camelBackedHelper}->params                = $this->params;
+                    ${$camelBackedHelper}->action                = $this->action;
                     ${$camelBackedHelper}->data                 = $this->data;
                     ${$camelBackedHelper}->themeWeb             = $this->themeWeb;
                     ${$camelBackedHelper}->tags                 = $tags;

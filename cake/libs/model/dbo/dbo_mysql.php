@@ -58,11 +58,11 @@ class DboMysql extends DboSource
  * @var unknown_type
  */
     var $_baseConfig = array('persistent' => true,
-                             'host'       => 'localhost',
+                             'host'        => 'localhost',
                              'login'      => 'root',
-                             'password'   => '',
-                             'database'   => 'cake',
-                             'port'       => 3306);
+                             'password'    => '',
+                             'database'    => 'cake',
+                             'port'        => 3306);
 
 /**
  * Enter description here...
@@ -73,9 +73,9 @@ class DboMysql extends DboSource
                          'string'      => array('name' => 'varchar', 'limit' => '255'),
                          'text'        => array('name' => 'text'),
                          'integer'     => array('name' => 'int', 'limit' => '11'),
-                         'float'       => array('name' => 'float'),
+                         'float'        => array('name' => 'float'),
                          'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s'),
-                         'timestamp'   => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s'),
+                         'timestamp'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s'),
                          'time'        => array('name' => 'time', 'format' => 'h:i:s'),
                          'date'        => array('name' => 'date', 'format' => 'Y-m-d'),
                          'binary'      => array('name' => 'blob'),
@@ -115,7 +115,7 @@ class DboMysql extends DboSource
         }
         else
         {
-            //die('Could not connect to DB.');
+//die('Could not connect to DB.');
         }
     }
 
@@ -257,7 +257,12 @@ class DboMysql extends DboSource
         {
             return '*';
         }
-        return '`'. ereg_replace('\.', '`.`', $data) .'`';
+        $pos = strpos($data, '`');
+        if ($pos === false)
+        {
+            $data = '`'. str_replace('.', '`.`', $data) .'`';
+        }
+        return $data;
     }
 
 /**
@@ -294,7 +299,7 @@ class DboMysql extends DboSource
             $return = $data;
         }
         return $return;
-   }
+    }
 
 /**
  * Translates between PHP boolean values and MySQL (faked) boolean values

@@ -50,7 +50,7 @@ class DboAdodb extends DboSource
  *
  * @var unknown_type
  */
-   var $description = "ADOdb DBO Driver";
+    var $description = "ADOdb DBO Driver";
 
 
 /**
@@ -59,15 +59,15 @@ class DboAdodb extends DboSource
  * @var ADOConnection The connection object.
  * @access private
  */
-   var $_adodb = null;
+    var $_adodb = null;
 
 /**
  * Connects to the database using options in the given configuration array.
  *
  * @param array $config Configuration array for connecting
  */
-   function connect ()
-   {
+    function connect ()
+    {
       $config = $this->config;
       $persistent = strrpos($config['connect'], '|p');
       if($persistent === FALSE){
@@ -86,19 +86,19 @@ class DboAdodb extends DboSource
 
       if(!$this->connected)
       {
-          //die('Could not connect to DB.');
+//die('Could not connect to DB.');
       }
-   }
+    }
 
 /**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
  */
-   function disconnect ()
-   {
+    function disconnect ()
+    {
       return $this->_adodb->Close();
-   }
+    }
 
 /**
  * Executes given SQL statement.
@@ -106,20 +106,20 @@ class DboAdodb extends DboSource
  * @param string $sql SQL statement
  * @return resource Result resource identifier
  */
-   function execute ($sql)
-   {
+    function execute ($sql)
+    {
       return $this->_adodb->execute($sql);
-   }
+    }
 
 /**
  * Returns a row from given resultset as an array .
  *
  * @return array The fetched row as an array
  */
-   function fetchRow ()
-   {
+    function fetchRow ()
+    {
       return $this->_result->FetchRow();
-   }
+    }
 
 /**
  * Begin a transaction
@@ -181,8 +181,8 @@ class DboAdodb extends DboSource
  *
  * @return array Array of tablenames in the database
  */
-   function tablesList ()
-   {
+    function tablesList ()
+    {
       $tables = $this->_adodb->MetaTables('TABLES');
 
       if (!sizeof($tables) > 0) {
@@ -190,7 +190,7 @@ class DboAdodb extends DboSource
          exit;
       }
       return $tables;
-   }
+    }
 
 /**
  * Returns an array of the fields in given table name.
@@ -198,8 +198,8 @@ class DboAdodb extends DboSource
  * @param string $tableName Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-   function fields ($tableName)
-   {
+    function fields ($tableName)
+    {
       $data = $this->_adodb->MetaColumns($tableName);
       $fields = false;
 
@@ -207,7 +207,7 @@ class DboAdodb extends DboSource
          $fields[] = array('name'=>$item->name, 'type'=>$item->type);
 
       return $fields;
-   }
+    }
 
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
@@ -217,40 +217,40 @@ class DboAdodb extends DboSource
  *
  * @todo To be implemented.
  */
-   function prepareValue ($data)
-   {
+    function prepareValue ($data)
+    {
       return $this->_adodb->Quote($data);
-   }
+    }
 
 /**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
  */
-   function lastError ()
-   {
+    function lastError ()
+    {
       return $this->_adodb->ErrorMsg();
-   }
+    }
 
 /**
  * Returns number of affected rows in previous database operation, or false if no previous operation exists.
  *
  * @return int Number of affected rows
  */
-   function lastAffected ()
-   {
+    function lastAffected ()
+    {
       return $this->_adodb->Affected_Rows();
-   }
+    }
 
 /**
  * Returns number of rows in previous resultset, or false if no previous resultset exists.
  *
  * @return int Number of rows in resultset
  */
-   function lastNumRows ()
-   {
-       return $this->_result? $this->_result->RecordCount(): false;
-   }
+    function lastNumRows ()
+    {
+        return $this->_result? $this->_result->RecordCount(): false;
+    }
 
 /**
  * Returns the ID generated from the previous INSERT operation.
@@ -259,10 +259,10 @@ class DboAdodb extends DboSource
  *
  * @Returns the last autonumbering ID inserted. Returns false if function not supported.
  */
-   function lastInsertId ()
-   {
-       return $this->_adodb->Insert_ID();
-   }
+    function lastInsertId ()
+    {
+        return $this->_adodb->Insert_ID();
+    }
 
 /**
  * Returns a LIMIT statement in the correct format for the particular database.
@@ -272,12 +272,12 @@ class DboAdodb extends DboSource
  * @return string SQL limit/offset statement
  * @todo Please change output string to whatever select your database accepts. adodb doesn't allow us to get the correct limit string out of it.
  */
-   function selectLimit ($limit, $offset=null)
-   {
+    function selectLimit ($limit, $offset=null)
+    {
       return " LIMIT {$limit}".($offset? "{$offset}": null);
-      // please change to whatever select your database accepts
-      // adodb doesn't allow us to get the correct limit string out of it
-   }
+// please change to whatever select your database accepts
+// adodb doesn't allow us to get the correct limit string out of it
+    }
 
 }
 

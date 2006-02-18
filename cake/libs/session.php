@@ -62,7 +62,7 @@ class CakeSession extends Object
  *
  * @var string
  */
-    var $path       = false;
+    var $path        = false;
 /**
  * Error number of last occurred error
  *
@@ -87,7 +87,7 @@ class CakeSession extends Object
  *
  * @var integer
  */
-    var $time       = false;
+    var $time        = false;
 /**
  * Time when this session becomes invalid.
  *
@@ -431,7 +431,7 @@ class CakeSession extends Object
         if($this->readSessionVar("Config"))
         {
             if($this->userAgent == $this->readSessionVar("Config.userAgent")
-               && $this->time <= $this->readSessionVar("Config.time"))
+                && $this->time <= $this->readSessionVar("Config.time"))
             {
                 $this->writeSessionVar("Config.time", $this->sessionTime);
                 $this->valid = true;

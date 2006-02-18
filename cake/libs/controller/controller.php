@@ -246,7 +246,7 @@ class Controller extends Object
         elseif($this->uses === false)
         {
             return $this->cakeError('missingModel',array(array('className' => $this->modelClass,
-                                                               'webroot' => '')));
+                                                                'webroot' => '')));
         }
         if ($this->uses)
         {
@@ -264,7 +264,7 @@ class Controller extends Object
                 else
                 {
                     return $this->cakeError('missingModel',array(array('className' => $modelClass,
-                                                                       'webroot' => '')));
+                                                                        'webroot' => '')));
                 }
             }
         }
@@ -518,7 +518,7 @@ class Controller extends Object
  * @param string $url Relative URL to redirect to after the time expires
  * @param int $time Time to show the message
  */
-    function flash($message, $url, $pause=1)
+    function flash($message, $url, $pause = 1)
     {
         $this->autoRender = false;
         $this->autoLayout = false;
@@ -532,14 +532,11 @@ class Controller extends Object
         {
             $flash = VIEWS.'layouts'.DS.'flash.thtml';
         }
-        else if(file_exists(LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml'))
+        elseif($flash = fileExistsInPath(LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml'))
         {
-            $flash = LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml';
+
         }
-
-
-
-        $this->render(null,false,$flash);
+        $this->render(null, false, $flash);
     }
 
 /**
@@ -563,7 +560,7 @@ class Controller extends Object
         $this->set('message', $message);
         $this->set('time', $time);
 
-        $this->render(null,false,VIEWS.'layouts'.DS.'flash.thtml');
+        $this->render(null, false, VIEWS.'layouts'.DS.'flash.thtml');
     }
 
 /**

@@ -30,8 +30,8 @@
  */
 
 /**
-  * START-UP
-  */
+ * START-UP
+ */
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
 define ('APP_DIR', 'app');

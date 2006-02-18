@@ -40,13 +40,13 @@
  */
 class Aco extends AclNode
 {
-   var $name = 'Aco';
+    var $name = 'Aco';
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-   var $hasMany = 'ArosAco';
+    var $hasMany = 'ArosAco';
 
 }
 

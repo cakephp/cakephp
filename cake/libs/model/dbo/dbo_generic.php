@@ -44,99 +44,99 @@ class DBO_generic extends DBO
  * Abstract method defined in subclasses.
  *
  */
-   function connect ($config)
-   {
-   }
+    function connect ($config)
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function disconnect ()
-   {
-   }
+    function disconnect ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function execute ($sql)
-   {
-   }
-
-/**
- * Abstract method defined in subclasses.
- *
-  *
- */
-   function fetchRow ()
-   {
-   }
+    function execute ($sql)
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  *
  */
-   function tablesList ()
-   {
-   }
+    function fetchRow ()
+    {
+    }
+
+/**
+ * Abstract method defined in subclasses.
+ *
+ *
+ */
+    function tablesList ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function fields ($tableName)
-   {
-   }
+    function fields ($tableName)
+    {
+    }
 
 /**
 * Abstract method defined in subclasses.
  *
  */
-   function prepareValue ($data)
-   {
-   }
+    function prepareValue ($data)
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function lastError ()
-   {
-   }
+    function lastError ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function lastAffected ()
-   {
-   }
+    function lastAffected ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function lastNumRows ()
-   {
-   }
+    function lastNumRows ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function lastInsertId ()
-   {
-   }
+    function lastInsertId ()
+    {
+    }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-   function selectLimit ($limit, $offset=null)
-   {
-   }
+    function selectLimit ($limit, $offset=null)
+    {
+    }
 
 }
 

@@ -36,12 +36,12 @@
  */
 if(!defined('ROOT'))
 {
-   define ('ROOT', '../');
+    define ('ROOT', '../');
 }
 
 if(!defined('WEBROOT_DIR'))
 {
-   define ('WEBROOT_DIR', 'webroot');
+    define ('WEBROOT_DIR', 'webroot');
 }
 
 /**

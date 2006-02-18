@@ -62,10 +62,10 @@ class Sanitize
 
         if(is_array($string))
         {
-           foreach ($string as $key => $clean)
-           {
+            foreach ($string as $key => $clean)
+            {
               $cleaned[$key] = preg_replace( "/[^{$allow}a-zA-Z0-9]/", "", $clean);
-           }
+            }
         }
         else
         {
@@ -80,38 +80,38 @@ class Sanitize
  * @param string $string
  * @return string
  */
-   function sql($string)
-   {
+    function sql($string)
+    {
       if (!ini_get('magic_quotes_gpc'))
       {
          $string = addslashes($string);
       }
 
       return $string;
-   }
+    }
 
 /**
- * Returns given string safe for display as HTML. Renders entities and converts newlines to <br/>.
+ * Returns given string safe for display as HTML. Renders entities and converts newlines to <br />.
  *
  * @param string $string
  * @param boolean $remove If true, the string is stripped of all HTML tags
  * @return string
  */
-   function html($string, $remove = false)
-   {
+    function html($string, $remove = false)
+    {
       if ($remove)
       {
          $string = strip_tags($string);
       }
       else
       {
-         $patterns   =  array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/", "/\n/");
-            $replacements     = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;", "<br/>");
+         $patterns    =  array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/", "/\n/");
+            $replacements     = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;", "<br />");
             $string = preg_replace($patterns, $replacements, $string);
       }
 
       return $string;
-   }
+    }
 
 /**
  * Recursively sanitizes given array of data for safe input.
@@ -119,10 +119,10 @@ class Sanitize
  * @param mixed $toClean
  * @return mixed
  */
-   function cleanArray(&$toClean)
-   {
+    function cleanArray(&$toClean)
+    {
       return $this->cleanArrayR($toClean);
-   }
+    }
 
 /**
  * Private method used for recursion (see cleanArray()).
@@ -131,19 +131,19 @@ class Sanitize
  * @return array
  * @see cleanArray
  */
-   function cleanArrayR(&$toClean)
-   {
+    function cleanArrayR(&$toClean)
+    {
       if (is_array($toClean))
       {
          while(list($k, $v) = each($toClean))
          {
             if ( is_array($toClean[$k]) )
             {
-               $this->cleanArray($toClean[$k]);
+                $this->cleanArray($toClean[$k]);
             }
             else
             {
-               $toClean[$k] = $this->cleanValue($v);
+                $toClean[$k] = $this->cleanValue($v);
             }
          }
       }
@@ -151,29 +151,29 @@ class Sanitize
       {
          return null;
       }
-   }
+    }
 
 /**
  * Do we really need to sanitize array keys? If so, we can use this code...
 
-   function cleanKey($key)
-   {
+    function cleanKey($key)
+    {
       if ($key == "")
       {
          return "";
       }
 
-      //URL decode and convert chars to HTML entities
+//URL decode and convert chars to HTML entities
       $key = htmlspecialchars(urldecode($key));
-      //Remove ..
+//Remove ..
       $key = preg_replace( "/\.\./", "", $key );
-      //Remove __FILE__, etc.
+//Remove __FILE__, etc.
       $key = preg_replace( "/\_\_(.+?)\_\_/", "", $key );
-      //Trim word chars, '.', '-', '_'
+//Trim word chars, '.', '-', '_'
       $key = preg_replace( "/^([\w\.\-\_]+)$/", "$1", $key );
 
       return $key;
-   }
+    }
  */
 
 /**
@@ -182,37 +182,37 @@ class Sanitize
  * @param string $val
  * @return string
  */
-   function cleanValue($val)
-   {
+    function cleanValue($val)
+    {
       if ($val == "")
       {
          return "";
       }
 
-      //Replace odd spaces with safe ones
+//Replace odd spaces with safe ones
       $val = str_replace(" ", " ", $val);
       $val = str_replace(chr(0xCA), "", $val);
 
-      //Encode any HTML to entities (including \n --> <br/>)
+//Encode any HTML to entities (including \n --> <br />)
       $val = $this->html($val);
 
-      //Double-check special chars and remove carriage returns
-      //For increased SQL security
+//Double-check special chars and remove carriage returns
+//For increased SQL security
       $val = preg_replace( "/\\\$/"    ,"$"    ,$val);
       $val = preg_replace( "/\r/"        ,""        ,$val);
       $val = str_replace ( "!"        ,"!"    ,$val);
       $val = str_replace ( "'"        , "'"    ,$val);
 
-      //Allow unicode (?)
+//Allow unicode (?)
       $val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val );
 
-      //Add slashes for SQL
+//Add slashes for SQL
       $val = $this->sql($val);
 
-      //Swap user-inputted backslashes (?)
+//Swap user-inputted backslashes (?)
       $val = preg_replace( "/\\\(?!&amp;#|\?#)/", "\\", $val );
 
       return $val;
-   }
+    }
 }
 ?>

@@ -28,40 +28,40 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
-  * Included libraries.
-  *
-  */
+ * Included libraries.
+ *
+ */
 if(!class_exists('Object'))
 {
     uses('object');
 }
 /**
-  * Parses the request URL into controller, action, and parameters.
-  *
-  * @package    cake
-  * @subpackage cake.cake.libs
-  * @since      CakePHP v 0.2.9
-  *
-  */
+ * Parses the request URL into controller, action, and parameters.
+ *
+ * @package    cake
+ * @subpackage cake.cake.libs
+ * @since      CakePHP v 0.2.9
+ *
+ */
 class Router extends Object {
 
 /**
-  * Array of routes
-  *
-  * @var array
-  */
-   var $routes = array();
+ * Array of routes
+ *
+ * @var array
+ */
+    var $routes = array();
 
 /**
-  * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
-  *
-  * @param string $route    An empty string, or a route string "/"
-  * @param array $default   NULL or an array describing the default route
-  * @see routes
-  * @return array           Array of routes
-  */
-   function connect ($route, $default=null)
-   {
+ * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
+ *
+ * @param string $route    An empty string, or a route string "/"
+ * @param array $default    NULL or an array describing the default route
+ * @see routes
+ * @return array            Array of routes
+ */
+    function connect ($route, $default=null)
+    {
       $parsed = $names = array ();
 
       $r = null;
@@ -103,19 +103,19 @@ class Router extends Object {
          $this->routes[] = array($route, $regexp, $names, $default);
       }
       return $this->routes;
-   }
+    }
 
 /**
-  * Parses given URL and returns an array of controllers, action and parameters
-  * taken from that URL.
-  *
-  * @param string $url URL to be parsed
-  * @return array
-  */
-   function parse ($url)
-   {
-      // An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
-      // Here's the fix.
+ * Parses given URL and returns an array of controllers, action and parameters
+ * taken from that URL.
+ *
+ * @param string $url URL to be parsed
+ * @return array
+ */
+    function parse ($url)
+    {
+// An URL should start with a '/', mod_rewrite doesn't respect that, but no-mod_rewrite version does.
+// Here's the fix.
       if ($url && ('/' != $url[0]))
       {
          $url = '/'.$url;
@@ -167,20 +167,20 @@ class Router extends Object {
 
          if (preg_match($regexp, $url, $r))
          {
-            // $this->log($url.' matched '.$regexp, 'note');
-            // remove the first element, which is the url
+// $this->log($url.' matched '.$regexp, 'note');
+// remove the first element, which is the url
             array_shift($r);
 
-            // hack, pre-fill the default route names
+// hack, pre-fill the default route names
             foreach ($names as $name)
-               $out[$name] = null;
+                $out[$name] = null;
 
             $ii = 0;
 
             if (is_array($defaults))
             {
-               foreach ($defaults as $name=>$value)
-               {
+                foreach ($defaults as $name=>$value)
+                {
                   if (preg_match('#[a-zA-Z_\-]#i', $name))
                   {
                      $out[$name] = $value;
@@ -189,31 +189,31 @@ class Router extends Object {
                   {
                      $out['pass'][] = $value;
                   }
-               }
+                }
             }
 
             foreach ($r as $found)
             {
-               // if $found is a named url element (i.e. ':action')
-               if (isset($names[$ii]))
-               {
+// if $found is a named url element (i.e. ':action')
+                if (isset($names[$ii]))
+                {
                   $out[$names[$ii]] = $found;
-               }
-               // unnamed elements go in as 'pass'
-               else
-               {
+                }
+// unnamed elements go in as 'pass'
+                else
+                {
                   $pass = new NeatArray(explode('/', $found));
                   $pass->cleanup();
                   $out['pass'] = $pass->value;
-               }
-               $ii++;
+                }
+                $ii++;
             }
             break;
          }
       }
 
       return $out;
-   }
+    }
 }
 
 ?>

@@ -40,7 +40,7 @@
  */
 class NeatString
 {
- /**
+/**
  * Returns an array with each of the non-empty characters in $string as an element.
  *
  * @param string $string
@@ -51,7 +51,7 @@ class NeatString
         return preg_split('//', $string, -1, PREG_SPLIT_NO_EMPTY);
     }
 
- /**
+/**
  * Returns string with Cyrillic characters translated to Roman ones.
  *
  * @param string $string
@@ -65,7 +65,7 @@ class NeatString
         return str_replace($pl, $ro, $string);
     }
 
- /**
+/**
  * Returns string as lowercase with whitespace removed.
  *
  * @param string $string
@@ -77,7 +77,7 @@ class NeatString
         return strtolower(str_replace($whitespace, '', $string));
     }
 
- /**
+/**
  * Returns a random password.
  *
  * @param integer $length Length of generated password

@@ -58,7 +58,7 @@ foreach($fieldNames as $field => $value)
         if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]) && (isset($displayText)))
         {
             echo "<dd>".$html->link($displayText, '/'.Inflector::underscore($value['controller']).'/show/'
-                       .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
+                        .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
         }
         else
         {
@@ -181,7 +181,7 @@ foreach($relations as $association => $relation)
                                                                 "/edit/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
                                         <?php echo $html->link('Delete',"/".Inflector::underscore($controller).
                                                                 "/destroy/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
-               </td>
+                </td>
 <?php
             }
             else

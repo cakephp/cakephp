@@ -116,7 +116,7 @@ class Security extends Object
     {
         if (!defined('CIPHER_SEED'))
         {
-            //This is temporary will change later
+//This is temporary will change later
             define('CIPHER_SEED', 'mKEZGy8AB8FErX4t');
         }
         srand(CIPHER_SEED);

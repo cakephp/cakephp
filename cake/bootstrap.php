@@ -79,7 +79,7 @@ else
     }
     else
     {
-       $url = $_GET['url'];
+        $url = $_GET['url'];
     }
 
 }
@@ -87,8 +87,8 @@ else
 
 if (strpos($url, 'ccss/') === 0)
 {
-   include WWW_ROOT.DS.'css.php';
-   die();
+    include WWW_ROOT.DS.'css.php';
+    die();
 }
 
 

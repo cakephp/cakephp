@@ -54,14 +54,14 @@
  */
 define('DEBUG', 1);
 /**
-  * Error constant. Used for differentiating error logging and debugging.
-  * Currently PHP supports LOG_DEBUG
-  */
+ * Error constant. Used for differentiating error logging and debugging.
+ * Currently PHP supports LOG_DEBUG
+ */
 define ('LOG_ERROR', 2);
 /**
  * CakePHP includes 3 types of session saves
- * database or file. Set this to your preffered method.
- * If you want to use your own save handeler place it in
+ * database or file. Set this to your preferred method.
+ * If you want to use your own save handler place it in
  * app/config/name.php DO NOT USE file or database as the name.
  * and use just the name portion below.
  *
@@ -117,7 +117,7 @@ define('WEBSERVICES', 'off');
 
 /**
  * Compress output CSS (removing comments, whitespace, repeating tags etc.)
- * This requires a /var/cache directory to be writable by the web server (caching).
+ * This requires a/var/cache directory to be writable by the web server (caching).
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
  */
 define('COMPRESS_CSS', false);
@@ -141,6 +141,6 @@ define('MAX_MD5SIZE', (5*1024)*1024 );
  * To use Access Control Lists with Cake...
  */
 define('ACL_CLASSNAME',  'DB_ACL');
-define('ACL_FILENAME',   'dbacl'.DS.'db_acl');
+define('ACL_FILENAME',    'dbacl'.DS.'db_acl');
 
 ?>

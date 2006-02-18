@@ -37,13 +37,13 @@
 
 if (!defined('ROOT'))
 {
-    //define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
+//define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
     define('ROOT', dirname(dirname(dirname(__FILE__))));
 }
 
 if (!defined('APP_DIR'))
 {
-    //define('APP_DIR', 'DIRECTORY NAME OF APPLICATION';
+//define('APP_DIR', 'DIRECTORY NAME OF APPLICATION';
     define ('APP_DIR', basename(dirname(dirname(__FILE__))));
 }
 
@@ -53,7 +53,7 @@ if (!defined('APP_DIR'))
  */
 if (!defined('CAKE_CORE_INCLUDE_PATH'))
 {
-    //define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
+//define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
     define('CAKE_CORE_INCLUDE_PATH', ROOT);
 }
 
@@ -62,7 +62,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH'))
 ///////////////////////////////
 if (!defined('DS'))
 {
-   define('DS', DIRECTORY_SEPARATOR);
+    define('DS', DIRECTORY_SEPARATOR);
 }
 
 if (!defined('WEBROOT_DIR'))

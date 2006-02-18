@@ -47,7 +47,7 @@ class DataSource extends Object
  * @var boolean
  * @access public
  */
-   var $connected = false;
+    var $connected = false;
 
 /**
  * Print debug info?
@@ -55,7 +55,7 @@ class DataSource extends Object
  * @var boolean
  * @access public
  */
-   var $debug = false;
+    var $debug = false;
 
 /**
  * Print full query debug info?
@@ -63,7 +63,7 @@ class DataSource extends Object
  * @var boolean
  * @access public
  */
-   var $fullDebug = false;
+    var $fullDebug = false;
 
 /**
  * Error description of last query
@@ -71,7 +71,7 @@ class DataSource extends Object
  * @var unknown_type
  * @access public
  */
-   var $error = null;
+    var $error = null;
 
 /**
  * String to hold how many rows were affected by the last SQL operation.
@@ -79,7 +79,7 @@ class DataSource extends Object
  * @var string
  * @access public
  */
-   var $affected = null;
+    var $affected = null;
 
 /**
  * Number of rows in current resultset
@@ -87,7 +87,7 @@ class DataSource extends Object
  * @var int
  * @access public
  */
-   var $numRows = null;
+    var $numRows = null;
 
 /**
  * Time the last query took
@@ -95,7 +95,7 @@ class DataSource extends Object
  * @var int
  * @access public
  */
-   var $took = null;
+    var $took = null;
 
 /**
  * Enter description here...
@@ -103,7 +103,7 @@ class DataSource extends Object
  * @var array
  * @access private
  */
-   var $_result = null;
+    var $_result = null;
 
 /**
  * Queries count.
@@ -111,7 +111,7 @@ class DataSource extends Object
  * @var int
  * @access private
  */
-   var $_queriesCnt = 0;
+    var $_queriesCnt = 0;
 
 /**
  * Total duration of all queries.
@@ -119,7 +119,7 @@ class DataSource extends Object
  * @var unknown_type
  * @access private
  */
-   var $_queriesTime = null;
+    var $_queriesTime = null;
 
 /**
  * Log of queries executed by this DataSource
@@ -127,7 +127,7 @@ class DataSource extends Object
  * @var unknown_type
  * @access private
  */
-   var $_queriesLog = array();
+    var $_queriesLog = array();
 
 /**
  * Maximum number of items in query log, to prevent query log taking over
@@ -137,7 +137,7 @@ class DataSource extends Object
  * @var int Maximum number of queries in the queries log.
  * @access private
  */
-   var $_queriesLogMax = 200;
+    var $_queriesLogMax = 200;
 
 /**
  * The default configuration of a specific DataSource
@@ -192,14 +192,14 @@ class DataSource extends Object
  * Constructor.
  *
  */
-   function __construct ()
-   {
-       parent::__construct();
-       if(func_num_args() > 0)
-       {
+    function __construct ()
+    {
+        parent::__construct();
+        if(func_num_args() > 0)
+        {
           $this->setConfig(func_get_arg(0));
-       }
-   }
+        }
+    }
 
 /**
  * Returns true if the DataSource supports the given interface (method)
@@ -207,13 +207,13 @@ class DataSource extends Object
  * @param string $interface The name of the interface (method)
  * @return boolean True on success
  */
-   function isInterfaceSupported ($interface)
-   {
+    function isInterfaceSupported ($interface)
+    {
       $methods = get_class_methods(get_class($this));
       $methods = strtolower(implode('|', $methods));
       $methods = explode('|', $methods);
       return in_array(strtolower($interface), $methods);
-   }
+    }
 
 /**
  * Sets the configuration for the DataSource
@@ -221,17 +221,17 @@ class DataSource extends Object
  * @param array $config The configuration array
  * @return void
  */
-   function setConfig ($config)
-   {
-       if(is_array($this->_baseConfig))
-       {
+    function setConfig ($config)
+    {
+        if(is_array($this->_baseConfig))
+        {
           $this->config = $this->_baseConfig;
           foreach($config as $key => $val)
           {
              $this->config[$key] = $val;
           }
-       }
-   }
+        }
+    }
 
 /**
  * Cache the DataSource description
@@ -264,7 +264,7 @@ class DataSource extends Object
         $new = cache('models'.DS.low(get_class($this)).'_'.$object, $cache, $expires);
         if($new != null)
         {
-           $new = unserialize($new);
+            $new = unserialize($new);
         }
         return $new;
     }
@@ -412,14 +412,14 @@ class DataSource extends Object
  */
     function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $index)
     {
-        $keys = array('{$__cake_id__$}', '{$__cake_foreignKey__$}');
+        $keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
         foreach($keys as $key)
         {
             if (strpos($query, $key) !== false)
             {
                 switch($key)
                 {
-                    case '{$__cake_id__$}':
+                    case '{$__cakeID__$}':
                         $val = null;
                         if (isset($data[$index][$model->name]))
                         {

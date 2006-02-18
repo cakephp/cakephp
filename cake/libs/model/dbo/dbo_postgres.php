@@ -29,8 +29,8 @@
  */
 
 /**
-  * Include DBO.
-  */
+ * Include DBO.
+ */
 uses('model'.DS.'datasources'.DS.'dbo_source');
 
 /**
@@ -45,23 +45,23 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
 class  DboPostgres extends DboSource
 {
 
-   var $description = "PostgreSQL DBO Driver";
+    var $description = "PostgreSQL DBO Driver";
 
-   var $_baseConfig = array('persistent' => true,
-                            'host'       => 'localhost',
+    var $_baseConfig = array('persistent' => true,
+                            'host'        => 'localhost',
                             'login'      => 'root',
-                            'password'   => '',
-                            'database'   => 'cake',
-                            'port'       => 3306);
+                            'password'    => '',
+                            'database'    => 'cake',
+                            'port'        => 3306);
 
-   var $columns = array(
+    var $columns = array(
         'primary_key' => array('name' => 'serial primary key'),
         'string'      => array('name' => 'varchar', 'limit' => '255'),
         'text'        => array('name' => 'text'),
         'integer'     => array('name' => 'integer'),
-        'float'       => array('name' => 'float'),
+        'float'        => array('name' => 'float'),
         'datetime'    => array('name' => 'timestamp'),
-        'timestamp'   => array('name' => 'timestamp'),
+        'timestamp'    => array('name' => 'timestamp'),
         'time'        => array('name' => 'time'),
         'date'        => array('name' => 'date'),
         'binary'      => array('name' => 'bytea'),
@@ -69,12 +69,12 @@ class  DboPostgres extends DboSource
 	    'number'      => array('name' => 'numeric'));
 
 /**
-  * Connects to the database using options in the given configuration array.
-  *
-  * @return True if successfully connected.
-  */
-   function connect ()
-   {
+ * Connects to the database using options in the given configuration array.
+ *
+ * @return True if successfully connected.
+ */
+    function connect ()
+    {
       $config = $this->config;
       $connect = $config['connect'];
 
@@ -89,31 +89,31 @@ class  DboPostgres extends DboSource
       }
 
       return $this->connected;
-   }
+    }
 
 /**
-  * Disconnects from database.
-  *
-  * @return boolean True if the database could be disconnected, else false
-  */
-   function disconnect ()
-   {
+ * Disconnects from database.
+ *
+ * @return boolean True if the database could be disconnected, else false
+ */
+    function disconnect ()
+    {
       return pg_close($this->connection);
-   }
+    }
 
 /**
-  * Executes given SQL statement.
-  *
-  * @param string $sql SQL statement
-  * @return resource Result resource identifier
-  */
-   function _execute ($sql)
-   {
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @return resource Result resource identifier
+ */
+    function _execute ($sql)
+    {
       return pg_query($this->connection, $sql);
-   }
+    }
 
-   function query ()
-   {
+    function query ()
+    {
       $args = func_get_args();
       if (count($args) == 1)
       {
@@ -131,26 +131,34 @@ class  DboPostgres extends DboSource
          $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
          return $args[2]->findAll($query);
       }
-   }
+    }
 
 /**
-  * Returns a row from given resultset as an array .
-  *
-  * @return array The fetched row as an array
-  */
-   function fetchRow ($assoc = false)
-   {
-	   $assoc = ($assoc === false) ? PGSQL_BOTH : PGSQL_ASSOC;
-       return pg_fetch_array($this->_result, null, $assoc);
-   }
+ * Returns a row from given resultset as an array .
+ *
+ * @return array The fetched row as an array
+ */
+    function fetchRow ($assoc = false)
+    {
+	    if(is_resource($this->_result))
+        {
+            $this->resultSet($this->_result);
+            $resultRow = $this->fetchResult();
+            return $resultRow;
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 /**
-  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
-  *
-  * @return array Array of tablenames in the database
-  */
-   function listSources ()
-   {
+ * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
+ *
+ * @return array Array of tablenames in the database
+ */
+    function listSources ()
+    {
 	 $sql = "SELECT table_name as name FROM information_schema.tables WHERE table_schema = 'public';";
 
 	$result = $this->query($sql);
@@ -164,33 +172,72 @@ class  DboPostgres extends DboSource
          $tables = array();
          foreach ($result as $item)
          {
-             $tables[] = $item['name'];
+             $tables[] = $item[0]['name'];
          }
          return $tables;
       }
-   }
+    }
 
 /**
-  * Returns an array of the fields in given table name.
-  *
-  * @param string $tableName Name of database table to inspect
-  * @return array Fields in table. Keys are name and type
-  */
-   function fields ($tableName)
-   {
-      $sql = "SELECT c.relname, a.attname, t.typname FROM pg_class c, pg_attribute a, pg_type t WHERE c.relname = '{$tableName}' AND a.attnum > 0 AND a.attrelid = c.oid AND a.atttypid = t.oid";
+ * Generates the fields list of an SQL query.
+ *
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields
+ * @return array
+ */
+    function fields (&$model, $alias, $fields)
+    {
+      if (is_array($fields))
+        {
+            $fields = $fields;
+        }
+        else
+        {
+            if ($fields != null)
+            {
+                if (strpos($fields, ','))
+                {
+                    $fields = explode(',', $fields);
+                }
+                else
+                {
+                    $fields = array($fields);
+                }
+                $fields = array_map('trim', $fields);
+            }
+            else
+            {
+                 foreach ($model->_tableInfo->value as $field)
+                 {
+                     $fields[]= $field[0]['name'];
+                 }
 
-      $fields = false;
-      foreach ($this->all($sql) as $field) {
-         $fields[] = array(
-            'name' => $field['attname'],
-            'type' => $field['typname']);
-      }
+            }
+        }
 
-      return $fields;
-   }
+        $count = count($fields);
+        if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false)
+        {
+            for ($i = 0; $i < $count; $i++)
+            {
+                $dot = strrpos($fields[$i], '.');
+                if ($dot === false)
+                {
+                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
+                }
+                else
+                {
+                    $build = explode('.',$fields[$i]);
+                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
+                }
+            }
+        }
+        
+        return $fields;
+    }
 
-   /**
+/**
  * Returns an array of the fields in given table name.
  *
  * @param string $tableName Name of database table to inspect
@@ -206,92 +253,115 @@ class  DboPostgres extends DboSource
 
         $fields = false;
 
-	$fields = $this->query("SELECT column_name as name, data_type as type FROM information_schema.columns WHERE table_name =".$this->name($model->table));
+	$fields = $this->query("SELECT column_name as name, data_type as type FROM information_schema.columns WHERE table_name =".$this->value($model->table));
 
         $this->__cacheDescription($model->table, $fields);
         return $fields;
     }
 
 /**
-  * Returns a quoted and escaped string of $data for use in an SQL statement.
-  *
-  * @param string $data String to be prepared for use in an SQL statement
-  * @return string Quoted and escaped
-  */
-   function name ($data)
-   {
-      return "'". $data."'";
-   }
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @return string Quoted and escaped
+ */
+    function name ($data)
+    {
+      if ($data == '*')
+      {
+      		return '*';
+      }
+      return '"'. ereg_replace('\.', '"."', $data) .'"';
+    }
 
 /**
-  * Returns a quoted and escaped string of $data for use in an SQL statement.
-  *
-  * @param string $data String to be prepared for use in an SQL statement
-  * @return string Quoted and escaped
-  */
-   function value ($data)
-   {
-      return "'".pg_escape_string($data)."'";
-   }
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column The column into which this data will be inserted
+ * @return string Quoted and escaped
+ * @todo Add logic that formats/escapes data based on column type
+ */
+    function value ($data, $column = null)
+    {
+      $parent = parent::value($data, $column);
+      if ($parent != null)
+        {
+            return $parent;
+        }
+        if ($data === null)
+        {
+            return 'NULL';
+        }
+        if (ini_get('magic_quotes_gpc') == 1)
+        {
+            $data = stripslashes($data);
+        }
+
+        $data = pg_escape_string($data);
+        
+        $return = "'" . $data . "'";
+        return $return;
+    }
 
 /**
-  * Returns a formatted error message from previous database operation.
-  *
-  * @return string Error message
-  */
-   function lastError ()
-   {
+ * Returns a formatted error message from previous database operation.
+ *
+ * @return string Error message
+ */
+    function lastError ()
+    {
       $last_error = pg_last_error($this->connection);
       if ($last_error)
       {
           return $last_error;
       }
       return null;
-   }
+    }
 
 /**
-  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
-  *
-  * @return int Number of affected rows
-  */
-   function lastAffected ()
-   {
+ * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+ *
+ * @return int Number of affected rows
+ */
+    function lastAffected ()
+    {
       if ($this->_result)
       {
           return pg_affected_rows($this->_result);
       }
       return false;
-   }
+    }
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists,
-  * this returns false.
-  *
-  * @return int Number of rows in resultset
-  */
-   function lastNumRows ()
-   {
+ * Returns number of rows in previous resultset. If no previous resultset exists,
+ * this returns false.
+ *
+ * @return int Number of rows in resultset
+ */
+    function lastNumRows ()
+    {
       if ($this->_result)
       {
           return pg_num_rows($this->_result);
       }
       return false;
-   }
+    }
 
 /**
-  * Returns the ID generated from the previous INSERT operation.
-  *
-  * @param string $source Name of the database table
-  * @param string $field Name of the ID database field. Defaults to "id"
-  * @return int
-  */
-   function lastInsertId ($source, $field='id')
-   {
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param string $source Name of the database table
+ * @param string $field Name of the ID database field. Defaults to "id"
+ * @return int
+ */
+    function lastInsertId ($source, $field='id')
+    {
       $sql = "SELECT CURRVAL('{$source}_{$field}_seq') AS max";
       $res = $this->rawQuery($sql);
       $data = $this->fetchRow($res);
       return $data['max'];
-   }
+    }
 
 /**
  * Returns a limit statement in the correct format for the particular database.
@@ -300,16 +370,74 @@ class  DboPostgres extends DboSource
  * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-   function limit ($limit, $offset = null)
-   {
-      $rt = ' LIMIT ' . $limit;
-      if ($offset)
-      {
-          $rt .= ' OFFSET ' . $offset;
-      }
-      return $rt;
-   }
+    function limit ($limit, $offset = null)
+    {
+      if ($limit)
+        {
+            $rt = '';
+            if (!strpos(low($limit), 'limit') || strpos(low($limit), 'limit') === 0)
+            {
+                $rt = ' LIMIT';
+            }
+            if ($offset)
+            {
+                $rt .= ' ' . $offset. ',';
+            }
+            $rt .= ' ' . $limit;
+            return $rt;
+        }
+        return null;
+    }
+    
+    function resultSet(&$results)
+    {
+        $this->results =& $results;
+        $this->map = array();
+        $num_fields = pg_num_fields($results);
+        $index = 0;
+        $j = 0;
 
+        while ($j < $num_fields)
+        {
+            $columnName = pg_field_name($results, $j);
+            
+            if (strpos($columnName, '__'))
+            {
+                $parts = explode('__', $columnName);
+                $this->map[$index++] = array($parts[0], $parts[1]);
+            }
+            else
+            {
+                $this->map[$index++] = array(0, $columnName);
+            }
+            $j++;
+        }
+    }
+
+/**
+ * Fetches the next row from the current result set
+ *
+ * @return unknown
+ */
+    function fetchResult()
+    {
+        if ($row = pg_fetch_row($this->results))
+        {
+            $resultRow = array();
+            $i =0;
+            foreach ($row as $index => $field)
+            {
+                list($table, $column) = $this->map[$index];
+                $resultRow[$table][$column] = $row[$index];
+                $i++;
+            }
+            return $resultRow;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
 
 ?>

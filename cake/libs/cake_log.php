@@ -29,9 +29,9 @@
  */
 
 /**
-  * Included libraries.
-  *
-  */
+ * Included libraries.
+ *
+ */
 if(!class_exists('File'))
 {
     uses('file');
@@ -53,14 +53,14 @@ class CakeLog
  * @param string $msg  Message to log
  * @return boolean Success
  */
-   function write($type, $msg)
-   {
+    function write($type, $msg)
+    {
       $filename = LOGS.$type.'.log';
       $output = date('y-m-d H:i:s').' '.ucfirst($type).': '.$msg."\n";
 
       $log = new File($filename);
       return $log->append($output);
-   }
+    }
 }
 
 ?>

@@ -53,7 +53,7 @@ if(!class_exists('Html'))
  */
 class TextHelper extends Helper
 {
- /**
+/**
  * Highlights a given phrase in a text.
  *
  * @param string $text Text to search the phrase in
@@ -86,7 +86,7 @@ class TextHelper extends Helper
         }
     }
 
- /**
+/**
  * Strips given text of all links (<a href=....)
  *
  * @param string $text Text
@@ -97,7 +97,7 @@ class TextHelper extends Helper
         return preg_replace('|<a.*>(.*)<\/a>|im', '\1', $text);
     }
 
- /**
+/**
  * Adds links (<a href=....) to a given text, by finding text that begins with
  * strings like http:// and ftp://.
  *
@@ -132,7 +132,7 @@ class TextHelper extends Helper
         );
     }
 
- /**
+/**
  * Adds email links (<a href="mailto:....) to a given text.
  *
  * @param string $text Text
@@ -158,7 +158,7 @@ class TextHelper extends Helper
         );
     }
 
- /**
+/**
  * Convert all links and email adresses to HTML links.
  *
  * @param string $text Text
@@ -170,13 +170,13 @@ class TextHelper extends Helper
         return $this->autoLinkEmails($this->autoLinkUrls($text, $htmlOptions), $htmlOptions);
     }
 
- /**
+/**
  * Truncates text.
  *
  * Cuts a string to the length of $length and replaces the last characters
  * with the ending if the text is longer than length.
  *
- * @param string  $text   String to truncate.
+ * @param string  $text    String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param string  $ending Ending to be appended to the trimmed string.
  * @return string Trimmed string.
@@ -190,7 +190,7 @@ class TextHelper extends Helper
     }
 
 
- /**
+/**
  * Alias for truncate().
  *
  * @see TextHelper::truncate()
@@ -201,7 +201,7 @@ class TextHelper extends Helper
         return call_user_func_array(array(&$this, "truncate"), $args);
     }
 
- /**
+/**
  * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side determined by radius.
  *
  * @param string $text String to search the phrase in
@@ -227,7 +227,7 @@ class TextHelper extends Helper
         return $excerpt;
     }
 
- /**
+/**
  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
  *
  * @param string $text String to "flay"

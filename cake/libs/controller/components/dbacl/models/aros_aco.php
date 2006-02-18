@@ -47,19 +47,19 @@ class ArosAco extends AppModel
  *
  * @var unknown_type
  */
-   var $name = 'ArosAco';
+    var $name = 'ArosAco';
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-   var $useTable = 'aros_acos';
+    var $useTable = 'aros_acos';
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-   var $belongsTo = 'Aro,Aco';
+    var $belongsTo = 'Aro,Aco';
 }
 
 ?>

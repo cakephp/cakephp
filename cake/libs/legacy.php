@@ -48,7 +48,7 @@ if (!function_exists('file_get_contents'))
  * Replace file_get_contents()
  *
  * @internal    resource_context is not supported
- * @since       PHP 5
+ * @since        PHP 5
  * require      PHP 4.0.0 (user_error)
  *
  * @param unknown_type $filename

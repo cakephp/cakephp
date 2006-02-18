@@ -52,7 +52,7 @@ class AcoAction extends AppModel
  *
  * @var unknown_type
  */
-   var $belongsTo = 'Aco';
+    var $belongsTo = 'Aco';
 }
 
 ?>

@@ -55,14 +55,14 @@ class File extends Object
  *
  * @var Folder
  */
-   var $folder = null;
+    var $folder = null;
 
 /**
  * Filename
  *
  * @var string
  */
-   var $name = null;
+    var $name = null;
 
 /**
  * Constructor
@@ -71,8 +71,8 @@ class File extends Object
  * @param boolean $create Create file if it does not exist
  * @return File
  */
-   function __construct ($path, $create = false)
-   {
+    function __construct ($path, $create = false)
+    {
       parent::__construct();
 
       $this->folder = new Folder(dirname($path), $create);
@@ -84,7 +84,7 @@ class File extends Object
          {
             if (!$this->create())
             {
-               return false;
+                return false;
             }
          }
          else
@@ -92,17 +92,17 @@ class File extends Object
             return false;
          }
       }
-   }
+    }
 
 /**
  * Return the contents of this File as a string.
  *
  * @return string Contents
  */
-   function read ()
-   {
+    function read ()
+    {
       return file_get_contents($this->getFullPath());
-   }
+    }
 
 /**
  * Append given data string to this File.
@@ -110,10 +110,10 @@ class File extends Object
  * @param string $data Data to write
  * @return boolean Success
  */
-   function append ($data)
-   {
+    function append ($data)
+    {
       return $this->write($data, 'a');
-   }
+    }
 
 /**
  * Write given data to this File.
@@ -122,8 +122,8 @@ class File extends Object
  * @param string $mode    Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @return boolean Success
  */
-   function write ($data, $mode = 'w')
-   {
+    function write ($data, $mode = 'w')
+    {
       $file = $this->getFullPath();
       if (!($handle = fopen( $file , $mode)))
       {
@@ -138,7 +138,7 @@ class File extends Object
       return false;
 
       return true;
-   }
+    }
 
 /**
  * Get md5 Checksum of file with previous check of Filesize
@@ -146,8 +146,8 @@ class File extends Object
  * @param string $force    Data to write to this File.
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
  */
-   function getMd5 ($force = false)
-   {
+    function getMd5 ($force = false)
+    {
       $md5 = '';
       if ( $force == true || $this->getSize(false) < MAX_MD5SIZE )
       {
@@ -155,7 +155,7 @@ class File extends Object
       }
 
       return $md5;
-   }
+    }
 
 /**
  * Returns the Filesize, either in bytes or in human-readable format.
@@ -163,19 +163,19 @@ class File extends Object
  * @param boolean $humanReadeble    Data to write to this File.
  * @return string|int filesize as int or as a human-readable string
  */
-   function getSize ()
-   {
+    function getSize ()
+    {
       $size = filesize( $this->getFullPath() );
       return $size;
-   }
+    }
 
 /**
  * Returns the File extension.
  *
  * @return string The Fileextension
  */
-   function getExt ()
-   {
+    function getExt ()
+    {
       $ext = '';
 
       $parts = explode('.', $this->getName() );
@@ -190,45 +190,45 @@ class File extends Object
       }
 
       return $ext;
-   }
+    }
 
 /**
  * Returns the filename.
  *
  * @return string The Filename
  */
-   function getName ()
-   {
+    function getName ()
+    {
       return $this->name;
-   }
+    }
 
 /**
  * Returns the File's owner.
  *
  * @return int the Fileowner
  */
-   function getOwner ()
-   {
+    function getOwner ()
+    {
       return fileowner( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns the File group.
  *
  * @return int the Filegroup
  */
-   function getGroup ()
-   {
+    function getGroup ()
+    {
       return filegroup( $this->getFullPath() );
-   }
+    }
 
 /**
  * Creates the File.
  *
  * @return boolean Success
  */
-   function create ()
-   {
+    function create ()
+    {
       $dir = $this->folder->pwd();
       if ( file_exists( $dir ) && is_dir($dir) && is_writable($dir) && !$this->exists() )
       {
@@ -247,107 +247,107 @@ class File extends Object
          print ("[File] Could not create $this->getName()!");
          return false;
       }
-   }
+    }
 
 /**
  * Returns true if the File exists.
  *
  * @return boolean
  */
-   function exists ()
-   {
+    function exists ()
+    {
       return file_exists( $this->getFullPath() );
-   }
+    }
 
 /**
  * Deletes the File.
  *
  * @return boolean
  */
-   function delete ()
-   {
+    function delete ()
+    {
       return unlink( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns true if the File is writable.
  *
  * @return boolean
  */
-   function writable ()
-   {
+    function writable ()
+    {
       return is_writable( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns true if the File is executable.
  *
  * @return boolean
  */
-   function executable ()
-   {
+    function executable ()
+    {
       return is_executable( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns true if the File is readable.
  *
  * @return boolean
  */
-   function readable ()
-   {
+    function readable ()
+    {
       return is_readable( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns last access time.
  *
  * @return int timestamp
  */
-   function lastAccess ()
-   {
+    function lastAccess ()
+    {
       return fileatime( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns last modified time.
  *
  * @return int timestamp
  */
-   function lastChange ()
-   {
+    function lastChange ()
+    {
       return filemtime( $this->getFullPath() );
-   }
+    }
 
 /**
  * Returns the current folder.
  *
  * @return Folder
  */
-   function getFolder ()
-   {
+    function getFolder ()
+    {
       return $this->folder;
-   }
+    }
 
 /**
  * Returns the "chmod" (permissions) of the File.
  *
  * @return string
  */
-   function getChmod (  )
-   {
+    function getChmod (  )
+    {
       return substr(sprintf('%o', fileperms($this->getFullPath())), -4);
-   }
+    }
 
 /**
  * Returns the full path of the File.
  *
  * @return string
  */
-   function getFullPath (  )
-   {
+    function getFullPath (  )
+    {
       return Folder::slashTerm($this->folder->pwd()).$this->getName();
-   }
+    }
 }
 
 ?>

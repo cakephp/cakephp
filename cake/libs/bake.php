@@ -39,11 +39,11 @@ uses('object', 'inflector');
  * @package cake
  * @subpackage cake.libs
  * @since CakePHP v CakePHP v 0.10.3.1612
-  */
+ */
 class Bake extends Object
 {
 
- /**
+/**
  * Standard input stream (php://stdin).
  *
  * @var resource
@@ -51,7 +51,7 @@ class Bake extends Object
  */
     var $stdin = null;
 
- /**
+/**
  * Standard output stream (php://stdout).
  *
  * @var resource
@@ -59,7 +59,7 @@ class Bake extends Object
  */
     var $stdout = null;
 
- /**
+/**
  * Standard error stream (php://stderr).
  *
  * @var resource
@@ -67,7 +67,7 @@ class Bake extends Object
  */
     var $stderr = null;
 
- /**
+/**
  * Counts actions taken.
  *
  * @var integer
@@ -75,7 +75,7 @@ class Bake extends Object
  */
     var $actions = null;
 
- /**
+/**
  * Decides whether to overwrite existing files without asking.
  *
  * @var boolean
@@ -83,7 +83,7 @@ class Bake extends Object
  */
     var $dontAsk = false;
 
- /**
+/**
  * Returns code template for PHP file generator.
  *
  * @param string $type
@@ -94,24 +94,24 @@ class Bake extends Object
     {
         switch ($type)
         {
-            case 'view':   return "%s";
+            case 'view':    return "%s";
             case 'model':  return "<?php\n\nclass %s extends AppModel\n{\n}\n\n?>";
             case 'action': return "\n\tfunction %s () {\n\t\t\n\t}\n";
-            case 'ctrl':   return "<?php\n\nclass %s extends %s\n{\n%s\n}\n\n?>";
+            case 'ctrl':    return "<?php\n\nclass %s extends %s\n{\n%s\n}\n\n?>";
             case 'helper': return "<?php\n\nclass %s extends AppController\n{\n}\n\n?>";
-            case 'test':   return '<?php
+            case 'test':    return '<?php
 
 class %sTest extends TestCase
 {
     var $abc;
 
-    // called before the tests
+// called before the tests
     function setUp()
     {
         $this->abc = new %s ();
     }
 
-    // called after the tests
+// called after the tests
     function tearDown()
     {
         unset($this->abc);
@@ -120,7 +120,7 @@ class %sTest extends TestCase
 /*
     function testFoo ()
     {
-        $result   = $this->abc->Foo();
+        $result    = $this->abc->Foo();
         $expected = \'\';
         $this->assertEquals($result, $expected);
     }
@@ -133,7 +133,7 @@ class %sTest extends TestCase
         }
     }
 
- /**
+/**
  * Baker's constructor method. Initialises bakery, and starts production.
  *
  * @param string $type
@@ -152,7 +152,7 @@ class %sTest extends TestCase
         $this->stdout = fopen('php://stdout', 'w');
         $this->stderr = fopen('php://stderr', 'w');
 
-        // Output directory name
+// Output directory name
         fwrite($this->stderr, "\n".substr(ROOT,0,strlen(ROOT)-1).":\n".str_repeat('-',strlen(ROOT)+1)."\n");
 
         switch ($type)
@@ -172,7 +172,7 @@ class %sTest extends TestCase
             $add_actions = array();
 
             $controllerPlural = Inflector::pluralize($controller);
-            
+
             if ($controllerPlural != $controller)
             {
                 fwrite($this->stdout, "I use pluralized Controller names. You entered '$controller'. I can inflect it to '$controllerPlural'. Should I? If no, I will use '$controller'. [y/n/q] ");
@@ -221,7 +221,7 @@ class %sTest extends TestCase
         }
     }
 
- /**
+/**
  * Creates new view in VIEWS/$controller/ directory.
  *
  * @param string $controller
@@ -245,7 +245,7 @@ class %sTest extends TestCase
         $this->actions++;
     }
 
- /**
+/**
  * Creates new controller with defined actions, controller's test and
  * helper with helper's test.
  *
@@ -263,12 +263,12 @@ class %sTest extends TestCase
     {
         $this->makeController($name, $actions);
         $this->makeControllerTest($name);
-        //$this->makeHelper($name);
-        //$this->makeHelperTest($name);
+//$this->makeHelper($name);
+//$this->makeHelperTest($name);
         $this->actions++;
     }
 
- /**
+/**
  * Creates new controller file with defined actions.
  *
  * @param string $name
@@ -284,14 +284,14 @@ class %sTest extends TestCase
  */
     function makeController ($name, $actions)
     {
-        $ctrl   = $this->makeControllerName($name);
+        $ctrl    = $this->makeControllerName($name);
         $helper = $this->makeHelperName($name);
-        //$body   = sprintf($this->template('ctrl'), $ctrl, $helper, join('', $this->getActions($actions)));
-        $body   = sprintf($this->template('ctrl'), $ctrl, 'AppController', join('', $this->getActions($actions)));
+//$body    = sprintf($this->template('ctrl'), $ctrl, $helper, join('', $this->getActions($actions)));
+        $body    = sprintf($this->template('ctrl'), $ctrl, 'AppController', join('', $this->getActions($actions)));
         return $this->createFile($this->makeControllerFn($name), $body);
     }
 
- /**
+/**
  * Returns controller's name in CamelCase.
  *
  * @param string $name
@@ -304,7 +304,7 @@ class %sTest extends TestCase
         return Inflector::camelize($name).'Controller';
     }
 
- /**
+/**
  * Returns a name for controller's file, underscored.
  *
  * @param string $name
@@ -317,7 +317,7 @@ class %sTest extends TestCase
         return CONTROLLERS.Inflector::underscore($name).'_controller.php';
     }
 
- /**
+/**
  * Creates new test for a controller.
  *
  * @param string $name
@@ -331,13 +331,13 @@ class %sTest extends TestCase
  */
     function makeControllerTest ($name)
     {
-        $fn   = CONTROLLER_TESTS.Inflector::underscore($name).'_controller_test.php';
+        $fn    = CONTROLLER_TESTS.Inflector::underscore($name).'_controller_test.php';
         $body = $this->getTestBody($this->makeControllerName($name));
 
-        return true; //$this->createFile($fn, $body); // Disable creating tests till later
+        return true;//$this->createFile($fn, $body);// Disable creating tests till later
     }
 
- /**
+/**
  * Creates new helper.
  *
  * @param string $name
@@ -355,7 +355,7 @@ class %sTest extends TestCase
         return $this->createFile($this->makeHelperFn($name), $body);
     }
 
- /**
+/**
  * Returns CamelCase name for a helper.
  *
  * @param string $name
@@ -368,7 +368,7 @@ class %sTest extends TestCase
         return Inflector::camelize($name).'Helper';
     }
 
- /**
+/**
  * Underscores file name for a helper.
  *
  * @param string $name
@@ -382,7 +382,7 @@ class %sTest extends TestCase
         return HELPERS.Inflector::underscore($name).'_helper.php';
     }
 
- /**
+/**
  * Creates new test for a helper.
  *
  * @param string $name
@@ -396,13 +396,13 @@ class %sTest extends TestCase
  */
     function makeHelperTest ($name)
     {
-        $fn   = HELPER_TESTS.Inflector::underscore($name).'_helper_test.php';
+        $fn    = HELPER_TESTS.Inflector::underscore($name).'_helper_test.php';
         $body = $this->getTestBody($this->makeHelperName($name));
 
         return $this->createFile($fn, $body);
     }
 
- /**
+/**
  * Returns an array of actions' templates.
  *
  * @param array $as
@@ -420,7 +420,7 @@ class %sTest extends TestCase
         return $out;
     }
 
- /**
+/**
  * Returns a test template for given class.
  *
  * @param string $class
@@ -433,7 +433,7 @@ class %sTest extends TestCase
         return sprintf($this->template('test'), $class, $class);
     }
 
- /**
+/**
  * Creates new model.
  *
  * @param string $name
@@ -470,12 +470,12 @@ class %sTest extends TestCase
         }
 
         $this->createFile($this->getModelFn($name), sprintf($this->template('model'), $this->getModelName($name)));
-        //$this->makeModelTest ($name);
-        // TODO: Add model test back when I'm less lazy
+//$this->makeModelTest ($name);
+// TODO: Add model test back when I'm less lazy
         $this->actions++;
     }
 
- /**
+/**
  * Returns an underscored filename for a model.
  *
  * @param string $name
@@ -489,7 +489,7 @@ class %sTest extends TestCase
         return MODELS.Inflector::underscore($name).'.php';
     }
 
- /**
+/**
  * Creates a test for a given model.
  *
  * @param string $name
@@ -503,13 +503,13 @@ class %sTest extends TestCase
  */
     function makeModelTest ($name)
     {
-        $fn   = MODEL_TESTS.Inflector::underscore($name).'_test.php';
+        $fn    = MODEL_TESTS.Inflector::underscore($name).'_test.php';
         $body = $this->getTestBody($this->getModelName($name));
 
         return $this->createFile($fn, $body);
     }
 
- /**
+/**
  * Returns CamelCased name of a model.
  *
  * @param string $name
@@ -522,7 +522,7 @@ class %sTest extends TestCase
         return Inflector::camelize($name);
     }
 
- /**
+/**
  * Creates a file with given path and contents.
  *
  * @param string $path
@@ -558,7 +558,7 @@ class %sTest extends TestCase
             }
             else
             {
-                fwrite($this->stdout, "Skip   {$shortPath}\n");
+                fwrite($this->stdout, "Skip    {$shortPath}\n");
                 return false;
             }
         }
@@ -567,19 +567,19 @@ class %sTest extends TestCase
         {
             fwrite($f, $contents);
             fclose($f);
-            fwrite($this->stdout, "Wrote   {$shortPath}\n");
-            //            debug ("Wrote {$path}");
+            fwrite($this->stdout, "Wrote    {$shortPath}\n");
+//            debug ("Wrote {$path}");
             return true;
         }
         else
         {
             fwrite($this->stderr, "Error! Couldn't open {$shortPath} for writing.\n");
-            //            debug ("Error! Couldn't open {$path} for writing.");
+//            debug ("Error! Couldn't open {$path} for writing.");
             return false;
         }
     }
 
- /**
+/**
  * Creates a directory with given path.
  *
  * @param string $path
@@ -600,13 +600,13 @@ class %sTest extends TestCase
         if (mkdir($path))
         {
             fwrite($this->stdout, "Created {$shortPath}\n");
-            //            debug ("Created {$path}");
+//            debug ("Created {$path}");
             return true;
         }
         else
         {
             fwrite($this->stderr, "Error! Couldn't create dir {$shortPath}\n");
-            //            debug ("Error! Couldn't create dir {$path}");
+//            debug ("Error! Couldn't create dir {$path}");
             return false;
         }
     }

@@ -80,65 +80,65 @@ $aclCLI = new AclCLI ($command, $args);
 class AclCLI {
 
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $stdin;
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $stdin;
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $stdout;
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $stdout;
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $stderr;
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $stderr;
 
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $acl;
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $acl;
 
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $args;
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $args;
 
 /**
-    * Enter description here...
-    *
-    * @var unknown_type
-    */
-   var $dataSource = 'default';
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $dataSource = 'default';
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $command
-    * @param unknown_type $args
-    * @return AclCLI
-    */
-   function AclCLI($command, $args)
-   {
+ * Enter description here...
+ *
+ * @param unknown_type $command
+ * @param unknown_type $args
+ * @return AclCLI
+ */
+    function AclCLI($command, $args)
+    {
       $this->__construct($command, $args);
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $command
-    * @param unknown_type $args
-    */
-   function __construct ($command, $args)
-   {
+ * Enter description here...
+ *
+ * @param unknown_type $command
+ * @param unknown_type $args
+ */
+    function __construct ($command, $args)
+    {
       $acl = new AclComponent();
       $this->acl = $acl->getACL();
 
@@ -149,7 +149,7 @@ class AclCLI {
       $this->stdout = fopen('php://stdout', 'w');
       $this->stderr = fopen('php://stderr', 'w');
 
-      //Check to see if DB ACL is enabled
+//Check to see if DB ACL is enabled
       if (ACL_CLASSNAME != 'DB_ACL')
       {
          $out = "--------------------------------------------------\n";
@@ -201,14 +201,14 @@ class AclCLI {
             fwrite($this->stderr, "Unknown ACL command '$command'.\nFor usage, try 'php acl.php help'.\n\n");
       }
 
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function create()
-   {
+ * Enter description here...
+ *
+ */
+    function create()
+    {
       $this->checkArgNumber(4, 'create');
       $this->checkNodeType();
       extract($this->__dataVars());
@@ -222,30 +222,30 @@ class AclCLI {
       }
 
       fwrite($this->stdout, "New $class '".$this->args[3]."' created.\n\n");
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function delete()
-   {
+ * Enter description here...
+ *
+ */
+    function delete()
+    {
       $this->checkArgNumber(2, 'delete');
       $this->checkNodeType();
       extract($this->__dataVars());
       $node = &new $class;
 
-      //What about children?
-      //$node->del($this->args[1]);
-      //fwrite($this->stdout, "$class deleted.\n\n");
-   }
+//What about children?
+//$node->del($this->args[1]);
+//fwrite($this->stdout, "$class deleted.\n\n");
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function setParent()
-   {
+ * Enter description here...
+ *
+ */
+    function setParent()
+    {
       $this->checkArgNumber(3, 'setParent');
       $this->checkNodeType();
       extract($this->__dataVars());
@@ -259,14 +259,14 @@ class AclCLI {
       {
          fwrite($this->stdout, "Node parent set to ".$this->args[2]."\n\n");
       }
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function getPath()
-   {
+ * Enter description here...
+ *
+ */
+    function getPath()
+    {
       $this->checkArgNumber(2, 'getPath');
       $this->checkNodeType();
       extract($this->__dataVars());
@@ -286,47 +286,47 @@ class AclCLI {
       {
          fwrite($this->stdout, str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
       }
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function grant()
-   {
+ * Enter description here...
+ *
+ */
+    function grant()
+    {
       $this->checkArgNumber(3, 'grant');
-      //add existence checks for nodes involved
+//add existence checks for nodes involved
 
 
       $this->acl->allow(intval($this->args[0]), intval($this->args[1]), $this->args[2]);
       fwrite($this->stdout, "Permission granted.\n");
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function deny()
-   {
+ * Enter description here...
+ *
+ */
+    function deny()
+    {
       $this->checkArgNumber(3, 'deny');
-      //add existence checks for nodes involved
+//add existence checks for nodes involved
 
       $this->acl->deny(intval($this->args[0]), intval($this->args[1]), $this->args[2]);
       fwrite($this->stdout, "Requested permission successfully denied.\n");
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function inherit() {}
+ * Enter description here...
+ *
+ */
+    function inherit() {}
 
 /**
-    * Enter description here...
-    *
-    */
-   function view()
-   {
+ * Enter description here...
+ *
+ */
+    function view()
+    {
       $this->checkArgNumber(1, 'view');
       $this->checkNodeType();
       extract($this->__dataVars());
@@ -345,14 +345,14 @@ class AclCLI {
          {
             while ($right[count($right)-1] < $nodes[$i][$class]['rght'])
             {
-               if ($right[count($right)-1])
-               {
+                if ($right[count($right)-1])
+                {
                   array_pop($right);
-               }
-               else
-               {
+                }
+                else
+                {
                   break;
-               }
+                }
 
             }
          }
@@ -362,59 +362,59 @@ class AclCLI {
       }
 
       fwrite($this->stdout, "------------------------------------------------\n");
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function initdb()
-   {
+ * Enter description here...
+ *
+ */
+    function initdb()
+    {
       fwrite($this->stdout, "Initializing Database...\n");
       fwrite($this->stdout, "Creating access control objects table (acos)...\n");
       $sql = " CREATE TABLE `acos` (
-               `id` int(11) NOT NULL auto_increment,
-               `object_id` int(11) default NULL,
-               `alias` varchar(255) NOT NULL default '',
-               `lft` int(11) default NULL,
-               `rght` int(11) default NULL,
-               PRIMARY KEY  (`id`)
-               );";
+                `id` int(11) NOT NULL auto_increment,
+                `object_id` int(11) default NULL,
+                `alias` varchar(255) NOT NULL default '',
+                `lft` int(11) default NULL,
+                `rght` int(11) default NULL,
+                PRIMARY KEY  (`id`)
+                );";
       $this->db->query($sql);
 
       fwrite($this->stdout, "Creating access request objects table (acos)...\n");
       $sql2 = "CREATE TABLE `aros` (
-               `id` int(11) NOT NULL auto_increment,
-               `user_id` int(11) default NULL,
-               `alias` varchar(255) NOT NULL default '',
-               `lft` int(11) default NULL,
-               `rght` int(11) default NULL,
-               PRIMARY KEY  (`id`)
-               );";
+                `id` int(11) NOT NULL auto_increment,
+                `user_id` int(11) default NULL,
+                `alias` varchar(255) NOT NULL default '',
+                `lft` int(11) default NULL,
+                `rght` int(11) default NULL,
+                PRIMARY KEY  (`id`)
+                );";
       $this->db->query($sql2);
 
       fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
       $sql3 = "CREATE TABLE `aros_acos` (
-               `id` int(11) NOT NULL auto_increment,
-               `aro_id` int(11) default NULL,
-               `aco_id` int(11) default NULL,
-               `_create` int(1) NOT NULL default '0',
-               `_read` int(1) NOT NULL default '0',
-               `_update` int(1) NOT NULL default '0',
-               `_delete` int(11) NOT NULL default '0',
-               PRIMARY KEY  (`id`)
-               );";
+                `id` int(11) NOT NULL auto_increment,
+                `aro_id` int(11) default NULL,
+                `aco_id` int(11) default NULL,
+                `_create` int(1) NOT NULL default '0',
+                `_read` int(1) NOT NULL default '0',
+                `_update` int(1) NOT NULL default '0',
+                `_delete` int(11) NOT NULL default '0',
+                PRIMARY KEY  (`id`)
+                );";
       $this->db->query($sql3);
 
       fwrite($this->stdout, "\nDone.\n");
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function help()
-   {
+ * Enter description here...
+ *
+ */
+    function help()
+    {
       $out = "Usage: php acl.php <command> <arg1> <arg2>...\n";
       $out .= "-----------------------------------------------\n";
       $out .= "Commands:\n";
@@ -486,60 +486,60 @@ class AclCLI {
       $out .= "\n";
 
       fwrite($this->stdout, $out);
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $title
-    * @param unknown_type $msg
-    */
-   function displayError($title, $msg)
-   {
+ * Enter description here...
+ *
+ * @param unknown_type $title
+ * @param unknown_type $msg
+ */
+    function displayError($title, $msg)
+    {
       $out = "\n";
       $out .= "Error: $title\n";
       $out .= "$msg\n";
       $out .= "\n";
       fwrite($this->stdout, $out);
       exit();
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $expectedNum
-    * @param unknown_type $command
-    */
-   function checkArgNumber($expectedNum, $command)
-   {
+ * Enter description here...
+ *
+ * @param unknown_type $expectedNum
+ * @param unknown_type $command
+ */
+    function checkArgNumber($expectedNum, $command)
+    {
       if (count($this->args) != $expectedNum)
       {
          $this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'php acl.php help\' for help on usage of the '.$command.' command.');
       }
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    */
-   function checkNodeType()
-   {
+ * Enter description here...
+ *
+ */
+    function checkNodeType()
+    {
       if ($this->args[0] != 'aco' && $this->args[0] != 'aro')
       {
          $this->displayError("Missing/Unknown node type: '".$this->args[0]."'", 'Please specify which ACL object type you wish to create.');
       }
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $type
-    * @param unknown_type $id
-    * @return unknown
-    */
-   function nodeExists($type, $id)
-   {
-      //fwrite($this->stdout, "Check to see if $type with ID = $id exists...\n");
+ * Enter description here...
+ *
+ * @param unknown_type $type
+ * @param unknown_type $id
+ * @return unknown
+ */
+    function nodeExists($type, $id)
+    {
+//fwrite($this->stdout, "Check to see if $type with ID = $id exists...\n");
       extract($this->__dataVars($type));
       $node = &new $class;
 
@@ -553,16 +553,16 @@ class AclCLI {
       {
          return $possibility;
       }
-   }
+    }
 
 /**
-    * Enter description here...
-    *
-    * @param unknown_type $type
-    * @return unknown
-    */
-   function __dataVars($type = null)
-   {
+ * Enter description here...
+ *
+ * @param unknown_type $type
+ * @return unknown
+ */
+    function __dataVars($type = null)
+    {
       if ($type == null)
       {
          $type = $this->args[0];
@@ -572,9 +572,9 @@ class AclCLI {
       $class = ucwords($type);
       $vars['secondary_id'] = ($class == 'aro' ? 'user_id' : 'object_id');
       $vars['data_name']    = $type;
-      $vars['table_name']   = $type . 's';
+      $vars['table_name']    = $type . 's';
       $vars['class']        = $class;
       return $vars;
-   }
+    }
 }
 ?>

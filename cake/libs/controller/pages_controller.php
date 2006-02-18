@@ -49,35 +49,35 @@ class PagesController extends AppController{
  *
  * @var unknown_type
  */
-   var $helpers = array('Html');
+    var $helpers = array('Html');
 
 /**
  * This controller does not use a model
  *
  * @var $uses
  */
-   var $uses = null;
+    var $uses = null;
 
 
 /**
  * Displays a view
  *
  */
-   function display()
-   {
-       if (!func_num_args())
-       {
-           $this->redirect('/');
-       }
-       $path = func_get_args();
-       if (!count($path))
-       {
-           $this->redirect('/');
-       }
-       $this->set('page', $path[0]);
-       $this->set('subpage', empty($path[1])? null: $path[1]);
-       $this->set('title', ucfirst($path[count($path)-1]));
-       $this->render(join('/', $path));
-   }
+    function display()
+    {
+        if (!func_num_args())
+        {
+            $this->redirect('/');
+        }
+        $path = func_get_args();
+        if (!count($path))
+        {
+            $this->redirect('/');
+        }
+        $this->set('page', $path[0]);
+        $this->set('subpage', empty($path[1])? null: $path[1]);
+        $this->set('title', ucfirst($path[count($path)-1]));
+        $this->render(join('/', $path));
+    }
 }
 ?>

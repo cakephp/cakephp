@@ -57,8 +57,8 @@
         <?php echo $html->image('cake.power.png', array('alt'=>'CakePHP : Rapid Development Framework',
                                                         'height' => "15",
                                                         'width' => "80"))?>
-       </a>
-       </p>
+        </a>
+        </p>
   <p>
     <a href="http://validator.w3.org/check?uri=referer">
         <?php echo $html->image('w3c_xhtml10.png', array('alt' => 'Valid XHTML 1.0 Transitional',

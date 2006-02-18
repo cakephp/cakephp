@@ -51,8 +51,8 @@ class DBO_SQLite extends DBO
  * @param array $config Configuration array for connecting
  * @return mixed
  */
-   function connect($config)
-   {
+    function connect($config)
+    {
       if ($config)
       {
          $this->config = $config;
@@ -66,19 +66,19 @@ class DBO_SQLite extends DBO
       }
       else
       {
-         //die('Could not connect to DB.');
+//die('Could not connect to DB.');
       }
-   }
+    }
 
 /**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
  */
-   function disconnect()
-   {
+    function disconnect()
+    {
       return sqlite_close($this->_conn);
-   }
+    }
 
 /**
  * Executes given SQL statement.
@@ -86,28 +86,28 @@ class DBO_SQLite extends DBO
  * @param string $sql SQL statement
  * @return resource Result resource identifier
  */
-   function execute($sql)
-   {
+    function execute($sql)
+    {
       return sqlite_query($this->_conn, $sql);
-   }
+    }
 
 /**
  * Returns a row from given resultset as an array.
  *
  * @return array The fetched row as an array
  */
-   function fetchRow()
-   {
+    function fetchRow()
+    {
       return sqlite_fetch_array($this->_result);
-   }
+    }
 
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @return array Array of tablenames in the database
  */
-   function tablesList()
-   {
+    function tablesList()
+    {
       $result = sqlite_query($this->_conn, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;");
 
       if (!$result)
@@ -124,7 +124,7 @@ class DBO_SQLite extends DBO
          }
          return $tables;
       }
-   }
+    }
 
 /**
  * Returns an array of the fields in given table name.
@@ -132,8 +132,8 @@ class DBO_SQLite extends DBO
  * @param string $tableName     Name of database table to inspect
  * @return array                 Fields in table. Keys are name and type
  */
-   function fields($tableName)
-   {
+    function fields($tableName)
+    {
       $fields = false;
       $cols = sqlite_fetch_column_types($tableName, $this->_conn);
 
@@ -143,7 +143,7 @@ class DBO_SQLite extends DBO
       }
 
       return $fields;
-   }
+    }
 
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
@@ -151,30 +151,30 @@ class DBO_SQLite extends DBO
  * @param string $data String to be prepared for use in an SQL statement
  * @return string Quoted and escaped
  */
-   function prepareValue($data)
-   {
+    function prepareValue($data)
+    {
       return "'" . sqlite_escape_string($data) . "'";
-   }
+    }
 
 /**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
  */
-   function lastError()
-   {
+    function lastError()
+    {
       return sqlite_last_error($this->_conn)? sqlite_last_error($this->_conn).': '.sqlite_error_string(sqlite_last_error($this->_conn)): null;
-   }
+    }
 
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
  * @return int Number of affected rows
  */
-   function lastAffected()
-   {
+    function lastAffected()
+    {
       return $this->_result? sqlite_changes($this->_conn): false;
-   }
+    }
 
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
@@ -182,20 +182,20 @@ class DBO_SQLite extends DBO
  *
  * @return int Number of rows in resultset
  */
-   function lastNumRows()
-   {
+    function lastNumRows()
+    {
       return $this->_result? sqlite_num_rows($this->_result): false;
-   }
+    }
 
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
  * @return int
  */
-   function lastInsertId()
-   {
+    function lastInsertId()
+    {
       return sqlite_last_insert_rowid($this->_conn);
-   }
+    }
 
 /**
  * Returns a limit statement in the correct format for the particular database.
@@ -204,9 +204,9 @@ class DBO_SQLite extends DBO
  * @param int $offset         Offset from which to start results
  * @return string             SQL limit/offset statement
  */
-   function selectLimit($limit, $offset=null)
-   {
+    function selectLimit($limit, $offset=null)
+    {
       return " LIMIT {$limit}".($offset? ", {$offset}": null);
-   }
+    }
 }
 ?>

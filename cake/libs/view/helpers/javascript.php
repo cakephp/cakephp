@@ -43,7 +43,7 @@ class JavascriptHelper extends Helper
   var $_cachedEvents = array();
   var $_cacheEvents = false;
 
- /**
+/**
  * Returns a JavaScript script tag.
  *
  * @param  string $script The JavaScript to be wrapped in SCRIPT tags.
@@ -54,7 +54,7 @@ class JavascriptHelper extends Helper
         return sprintf($this->tags['javascriptblock'], $script);
     }
 
- /**
+/**
  * Returns a JavaScript include tag (SCRIPT element)
  *
  * @param  string $url URL to JavaScript file.
@@ -66,7 +66,7 @@ class JavascriptHelper extends Helper
       return sprintf($this->tags['javascriptlink'], $this->webroot.JS_URL.$this->themeWeb.$url);
     }
 
- /**
+/**
  * Returns a JavaScript include tag for an externally-hosted script
  *
  * @param  string $url URL to JavaScript file.
@@ -79,11 +79,11 @@ class JavascriptHelper extends Helper
     }
 
 /**
-  * Escape carriage returns and single and double quotes for JavaScript segments.
-  *
-  * @param string $script string that might have javascript elements
-  * @return string escaped string
-  */
+ * Escape carriage returns and single and double quotes for JavaScript segments.
+ *
+ * @param string $script string that might have javascript elements
+ * @return string escaped string
+ */
     function escapeScript ($script)
     {
         $script = str_replace(array("\r\n","\n","\r"),'\n', $script);
@@ -95,11 +95,11 @@ class JavascriptHelper extends Helper
  * Escape a string to be JavaScript friendly.
  *
  * List of escaped ellements:
- *   + "\r\n" => '\n'
- *   + "\r"   => '\n'
- *   + "\n"   => '\n'
- *   + '"'    => '\"'
- *   + "'"    => "\\'"
+ *    + "\r\n" => '\n'
+ *    + "\r"    => '\n'
+ *    + "\n"    => '\n'
+ *    + '"'    => '\"'
+ *    + "'"    => "\\'"
  *
  * @param  string $script String that needs to get escaped.
  * @return string Escaped string.
@@ -108,8 +108,8 @@ class JavascriptHelper extends Helper
     {
         $escape = array(
         "\r\n" => '\n',
-        "\r"   => '\n',
-        "\n"   => '\n',
+        "\r"    => '\n',
+        "\n"    => '\n',
         '"'    => '\"',
         "'"    => "\\'"
         );
@@ -117,14 +117,14 @@ class JavascriptHelper extends Helper
         return str_replace(array_keys($escape), array_values($escape), $string);
     }
 /**
-  * Attach an event to an element. Used with the Prototype library.
-  *
-  * @param string $object Object to be observed
-  * @param string $event event to observe
-  * @param string $observer function to call
-  * @param boolean $useCapture default true
-  * @return boolean true on success
-  */
+ * Attach an event to an element. Used with the Prototype library.
+ *
+ * @param string $object Object to be observed
+ * @param string $event event to observe
+ * @param string $observer function to call
+ * @param boolean $useCapture default true
+ * @return boolean true on success
+ */
   function event ($object, $event, $observer, $useCapture = true)
   {
     if($useCapture == true)
@@ -149,10 +149,10 @@ class JavascriptHelper extends Helper
 
 
 /**
-  * Cache JavaScript events created with event()
-  *
-  * @return null
-  */
+ * Cache JavaScript events created with event()
+ *
+ * @return null
+ */
     function cacheEvents ()
     {
         $this->_cacheEvents = true;
@@ -160,10 +160,10 @@ class JavascriptHelper extends Helper
  
 
 /**
-  * Write cached JavaScript events
-  *
-  * @return string A single code block of all cached JavaScript events created with event()
-  */
+ * Write cached JavaScript events
+ *
+ * @return string A single code block of all cached JavaScript events created with event()
+ */
   function writeEvents ()
   {
     $this->_cacheEvents = false;
@@ -171,14 +171,14 @@ class JavascriptHelper extends Helper
   }
 
 /**
-  * Includes the Prototype Javascript library (and anything else) inside a single script tag.
-  *
-  * Note: The recommended approach is to copy the contents of
-  * javascripts into your application's
-  * public/javascripts/ directory, and use @see javascriptIncludeTag() to
-  * create remote script links.
-  * @return string script with all javascript in /javascripts folder
-  */
+ * Includes the Prototype Javascript library (and anything else) inside a single script tag.
+ *
+ * Note: The recommended approach is to copy the contents of
+ * javascripts into your application's
+ * public/javascripts/ directory, and use @see javascriptIncludeTag() to
+ * create remote script links.
+ * @return string script with all javascript in/javascripts folder
+ */
     function includeScript ($script = "")
     {
         if($script == "")
@@ -201,18 +201,18 @@ class JavascriptHelper extends Helper
     }
 
 /**
-  * Generates a JavaScript object in JavaScript Object Notation (JSON)
-  * from an array
-  *
-  * @param array $data Data to be converted
-  * @param boolean $block Wraps return value in a <script /> block if true
-  * @param string $prefix Prepends the string to the returned data
-  * @param string $postfix Appends the string to the returned data
-  * @param array $stringKeys A list of array keys to be treated as a string
-  * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
-  * @param string $q The type of quote to use
-  * @return string A JSON code block
-  */
+ * Generates a JavaScript object in JavaScript Object Notation (JSON)
+ * from an array
+ *
+ * @param array $data Data to be converted
+ * @param boolean $block Wraps return value in a <script/> block if true
+ * @param string $prefix Prepends the string to the returned data
+ * @param string $postfix Appends the string to the returned data
+ * @param array $stringKeys A list of array keys to be treated as a string
+ * @param boolean $quoteKeys If false, treats $stringKey as a list of keys *not* to be quoted
+ * @param string $q The type of quote to use
+ * @return string A JSON code block
+ */
     function object ($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "'")
     {
         $out = array();

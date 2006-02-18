@@ -73,7 +73,7 @@ class RequestHandlerComponent extends Object
         {
             $controller->layout = $this->ajaxLayout;
 
-            // Add UTF-8 header for IE6 on XPsp2 bug
+// Add UTF-8 header for IE6 on XPsp2 bug
             header('Content-Type: text/html; charset=UTF-8');
         }
     }

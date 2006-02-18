@@ -33,7 +33,7 @@
  */
 define('SECOND',  1);
 define('MINUTE', 60 * SECOND);
-define('HOUR',   60 * MINUTE);
+define('HOUR',    60 * MINUTE);
 define('DAY',    24 * HOUR);
 define('WEEK',    7 * DAY);
 define('MONTH',  30 * DAY);
@@ -165,7 +165,7 @@ function loadModel($name)
 {
     $name = Inflector::underscore($name);
 
-    // Make sure AppModel is loaded
+// Make sure AppModel is loaded
     if(!class_exists('AppModel'))
     {
         if(file_exists(APP.'app_model.php'))
@@ -289,23 +289,33 @@ function loadPluginController ($plugin, $controller)
         }
     }
 
+    if(empty($controller))
+    {
+        if(file_exists(APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$plugin.'_controller.php'))
+        {
+            require(APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$plugin.'_controller.php');
+            return true;
+        }
+    }
+
     if(!class_exists($controller.'Controller'))
     {
         $controller = Inflector::underscore($controller);
         $file = APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$controller.'_controller.php';
-        if(!file_exists($file))
-        {
-            return false;
-        }
-        else
+        if(file_exists($file))
         {
             require($file);
             return true;
         }
-    }
-    else
-    {
-        return true;
+        elseif(file_exists(APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$plugin.'_controller.php'))
+        {
+            require(APP.'plugins'.DS.$plugin.DS.'controllers'.DS.$plugin.'_controller.php');
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
 
@@ -428,7 +438,7 @@ function debug($var = false, $showHtml = false)
         }
 
         print "{$var}\n</pre>\n";
-   }
+    }
 }
 
 if (!function_exists('getMicrotime'))
@@ -438,11 +448,11 @@ if (!function_exists('getMicrotime'))
  *
  * @return integer
  */
-   function getMicrotime()
-   {
+    function getMicrotime()
+    {
       list($usec, $sec) = explode(" ", microtime());
       return ((float)$usec + (float)$sec);
-   }
+    }
 }
 
 if (!function_exists('sortByKey'))
@@ -450,7 +460,7 @@ if (!function_exists('sortByKey'))
 /**
  * Sorts given $array by key $sortby.
  *
- * @param  array   $array
+ * @param  array    $array
  * @param  string  $sortby
  * @param  string  $order  Sort order asc/desc (ascending or descending).
  * @param  integer $type
@@ -506,11 +516,11 @@ if (!function_exists('array_combine'))
 
         if ($c1 != $c2)
         {
-            return false; // different lenghts
+            return false;// different lenghts
         }
         if ($c1 <= 0)
         {
-            return false; // arrays are the same and both are empty
+            return false;// arrays are the same and both are empty
         }
 
         $output = array();
@@ -645,8 +655,8 @@ function r($search, $replace, $subject)
  * Print_r convenience function, which prints out <PRE> tags around
  * the output of given array. Similar to debug().
  *
- * @see   debug()
- * @param array   $var
+ * @see    debug()
+ * @param array    $var
  */
 function pr($var)
 {
@@ -750,14 +760,14 @@ function env($key)
 
 if (!function_exists('file_get_contents'))
 {
-    /**
-     * Returns contents of a file as a string.
-     *
-     * @param  string  $fileName       Name of the file.
-     * @param  boolean $useIncludePath Wheter the function should use the
-     *                                 include path or not.
-     * @return mixed   Boolean false or contents of required file.
-     */
+/**
+ * Returns contents of a file as a string.
+ *
+ * @param  string  $fileName        Name of the file.
+ * @param  boolean $useIncludePath Wheter the function should use the
+ *                                 include path or not.
+ * @return mixed    Boolean false or contents of required file.
+ */
     function file_get_contents($fileName, $useIncludePath = false)
     {
         $res = fopen($fileName, 'rb', $useIncludePath);
@@ -788,15 +798,15 @@ if (!function_exists('file_get_contents'))
 
 if (!function_exists('file_put_contents'))
 {
-    /**
-     * Writes data into file.
-     *
-     * If file exists, it will be overwritten. If data is an array, it will be
-     * join()ed with an empty string.
-     *
-     * @param string $fileName File name.
-     * @param mixed  $data     String or array.
-     */
+/**
+ * Writes data into file.
+ *
+ * If file exists, it will be overwritten. If data is an array, it will be
+ * join()ed with an empty string.
+ *
+ * @param string $fileName File name.
+ * @param mixed  $data     String or array.
+ */
     function file_put_contents($fileName, $data)
     {
         if (is_array($data))
@@ -843,12 +853,12 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
 
     if ($data == null)
     {
-        // Read data from file
+// Read data from file
         if (file_exists($filename) && $filetime !== false)
         {
             if ($filetime + $timediff < $now)
             {
-                // File has expired
+// File has expired
                 @unlink($filename);
             }
             else
@@ -906,8 +916,8 @@ function countdim($array)
 }
 
 /**
-  * Shortcut to Log::write.
-  */
+ * Shortcut to Log::write.
+ */
 function LogError ($message)
 {
     if(!class_exists('CakeLog'))

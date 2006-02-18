@@ -49,30 +49,30 @@ class Dispatcher extends Object
  * Base URL
  * @var string
  */
-   var $base = false;
+    var $base = false;
 
 /**
  * @var string
  */
-   var $admin = false;
+    var $admin = false;
 
 /**
  * @var string
  */
-   var $webservices = null;
+    var $webservices = null;
 
 /**
  * @var string
  */
-   var $plugin = null;
+    var $plugin = null;
 
 /**
  * Constructor.
  */
-   function __construct()
-   {
+    function __construct()
+    {
       parent::__construct();
-   }
+    }
 
 /**
  * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the results (if autoRender is set).
@@ -84,12 +84,12 @@ class Dispatcher extends Object
  * @param string $url    URL information to work on.
  * @return boolean        Success
  */
-   function dispatch($url, $additionalParams=array())
-   {
+    function dispatch($url, $additionalParams=array())
+    {
       $params = array_merge($this->parseParams($url), $additionalParams);
       $missingController = false;
       $missingAction     = false;
-      $missingView       = false;
+      $missingView        = false;
       $privateAction     = false;
       $this->base = $this->baseUrl();
       if (empty($params['controller']))
@@ -125,11 +125,18 @@ class Dispatcher extends Object
                  else
                  {
                      $ctrlClass = $pluginClass;
+                     $oldAction = $params['action'];
                      $params = $this->_restructureParams($params);
                      $plugin = Inflector::underscore($ctrlName);
                      $this->plugin = $plugin.DS;
                      loadPluginModels($plugin);
                      $this->base = $this->base.'/'.Inflector::underscore($ctrlName);
+                     if(empty($params['controller']) || !class_exists($pluginClass))
+                     {
+                         $params['controller'] = Inflector::underscore($ctrlName);
+                         $ctrlClass = $ctrlName.'Controller';
+                         $params['action'] = $oldAction;
+                     }
                  }
              }
          }
@@ -157,7 +164,7 @@ class Dispatcher extends Object
       if ($missingController)
       {
           return $this->cakeError('missingController',array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                   'webroot' => $this->webroot)));
+                                    'webroot' => $this->webroot)));
       }
       else
       {
@@ -229,7 +236,7 @@ class Dispatcher extends Object
       }
 
       return $this->_invoke($controller, $params);
-   }
+    }
 
 /**
  * Invokes given controller's render action if autoRender option is set. Otherwise the contents of the operation are returned as a string.
@@ -238,47 +245,47 @@ class Dispatcher extends Object
  * @param array $params
  * @return string
  */
-   function _invoke (&$controller, $params)
-   {
-       if (!empty($controller->beforeFilter))
-       {
-           if(is_array($controller->beforeFilter))
-           {
-               foreach($controller->beforeFilter as $filter)
-               {
-                   if(is_callable(array($controller,$filter)) && $filter != 'beforeFilter')
-                   {
-                       $controller->$filter();
-                   }
-               }
-           }
-           else
-           {
-               if(is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter')
-               {
-                   $controller->{$controller->beforeFilter}();
-               }
-           }
-       }
-       $controller->beforeFilter();
+    function _invoke (&$controller, $params)
+    {
+        if (!empty($controller->beforeFilter))
+        {
+            if(is_array($controller->beforeFilter))
+            {
+                foreach($controller->beforeFilter as $filter)
+                {
+                    if(is_callable(array($controller,$filter)) && $filter != 'beforeFilter')
+                    {
+                        $controller->$filter();
+                    }
+                }
+            }
+            else
+            {
+                if(is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter')
+                {
+                    $controller->{$controller->beforeFilter}();
+                }
+            }
+        }
+        $controller->beforeFilter();
 
-       foreach($controller->components as $c)
-       {
-           if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup')))
-           {
-               $controller->{$c}->startup($controller);
-           }
-       }
+        foreach($controller->components as $c)
+        {
+            if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup')))
+            {
+                $controller->{$c}->startup($controller);
+            }
+        }
 
-       $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
-       if ($controller->autoRender)
-       {
-           $output = $controller->render();
-       }
-       $controller->output =& $output;
-       $controller->afterFilter();
-       return $controller->output;
-   }
+        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+        if ($controller->autoRender)
+        {
+            $output = $controller->render();
+        }
+        $controller->output =& $output;
+        $controller->afterFilter();
+        return $controller->output;
+    }
 
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
@@ -286,52 +293,52 @@ class Dispatcher extends Object
  * @param string $from_url    URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
  */
-   function parseParams($from_url)
-   {
-       // load routes config
-       $Route = new Router();
-       include CONFIGS.'routes.php';
-       $params = $Route->parse ($from_url);
+    function parseParams($from_url)
+    {
+// load routes config
+        $Route = new Router();
+        include CONFIGS.'routes.php';
+        $params = $Route->parse ($from_url);
 
-       if (ini_get('magic_quotes_gpc') == 1)
-       {
-           if(!empty($_POST))
-           {
-               $params['form'] = stripslashes_deep($_POST);
-           }
-       }
-       else
-       {
-           $params['form'] = $_POST;
-       }
+        if (ini_get('magic_quotes_gpc') == 1)
+        {
+            if(!empty($_POST))
+            {
+                $params['form'] = stripslashes_deep($_POST);
+            }
+        }
+        else
+        {
+            $params['form'] = $_POST;
+        }
 
-       if (isset($params['form']['data']))
-       {
-               $params['data'] = $params['form']['data'];
-       }
+        if (isset($params['form']['data']))
+        {
+                $params['data'] = $params['form']['data'];
+        }
 
-       if (isset($_GET))
-       {
-           if (ini_get('magic_quotes_gpc') == 1)
-           {
-               $params['url'] = stripslashes_deep($_GET);
-           }
-           else
-           {
-               $params['url'] = $_GET;
-           }
-       }
+        if (isset($_GET))
+        {
+            if (ini_get('magic_quotes_gpc') == 1)
+            {
+                $params['url'] = stripslashes_deep($_GET);
+            }
+            else
+            {
+                $params['url'] = $_GET;
+            }
+        }
 
-       foreach ($_FILES as $name => $data)
-       {
-           $params['form'][$name] = $data;
-       }
-       $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
+        foreach ($_FILES as $name => $data)
+        {
+            $params['form'][$name] = $data;
+        }
+        $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
 
-       $params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];
+        $params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];
 
-       return $params;
-   }
+        return $params;
+    }
 
 /**
  * Returns a base URL.
@@ -340,18 +347,18 @@ class Dispatcher extends Object
  */
     function baseUrl()
     {
-       $htaccess = null;
-       $base = $this->admin;
-       $this->webroot = '';
-       if (defined('BASE_URL'))
-       {
-           $base = BASE_URL.$this->admin;
-       }
+        $htaccess = null;
+        $base = $this->admin;
+        $this->webroot = '';
+        if (defined('BASE_URL'))
+        {
+            $base = BASE_URL.$this->admin;
+        }
 
-       $docRoot = env('DOCUMENT_ROOT');
-       $scriptName = env('PHP_SELF');
+        $docRoot = env('DOCUMENT_ROOT');
+        $scriptName = env('PHP_SELF');
 
-      // If document root ends with 'webroot', it's probably correctly set
+// If document root ends with 'webroot', it's probably correctly set
       $r = null;
       if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
       {
@@ -399,21 +406,21 @@ class Dispatcher extends Object
           }
       }
       return $base;
-   }
+    }
 
-   function _restructureParams($params)
-   {
-       $params['controller'] = $params['action'];
-       if(isset($params['pass'][0]))
-       {
-           $params['action'] = $params['pass'][0];
-           array_shift($params['pass']);
-       }
-       else
-       {
-           $params['action'] = null;
-       }
-       return $params;
-   }
+    function _restructureParams($params)
+    {
+        $params['controller'] = $params['action'];
+        if(isset($params['pass'][0]))
+        {
+            $params['action'] = $params['pass'][0];
+            array_shift($params['pass']);
+        }
+        else
+        {
+            $params['action'] = null;
+        }
+        return $params;
+    }
 }
 ?>

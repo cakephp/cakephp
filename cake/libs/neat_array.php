@@ -45,7 +45,7 @@ class NeatArray
  * @var array
  * @access public
  */
-   var $value;
+    var $value;
 
 /**
  * Constructor. Defaults to an empty array.
@@ -54,10 +54,10 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function NeatArray ($value=array())
-   {
+    function NeatArray ($value=array())
+    {
       $this->value = $value;
-   }
+    }
 
 /**
  * Finds and returns records with $fieldName equal to $value from this NeatArray.
@@ -68,8 +68,8 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function findIn ($fieldName, $value)
-   {
+    function findIn ($fieldName, $value)
+    {
       if (!is_array($this->value))
       {
          return false;
@@ -85,7 +85,7 @@ class NeatArray
       }
 
       return $out;
-   }
+    }
 
 /**
  * Checks if $this->value is an array, and removes all empty elements.
@@ -93,8 +93,8 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function cleanup ()
-   {
+    function cleanup ()
+    {
       $out = is_array($this->value)? array(): null;
       foreach ($this->value as $k=>$v)
       {
@@ -108,7 +108,7 @@ class NeatArray
          }
       }
       $this->value = $out;
-   }
+    }
 
 /**
  * Adds elements from given array to itself.
@@ -118,10 +118,10 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function add ($value)
-   {
+    function add ($value)
+    {
       return ($this->value = $this->plus($value))? true: false;
-   }
+    }
 
 /**
  * Returns itself merged with given array.
@@ -131,10 +131,10 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function plus ($value)
-   {
+    function plus ($value)
+    {
       return array_merge($this->value, (is_array($value)? $value: array($value)));
-   }
+    }
 
 /**
  * Counts repeating strings and returns an array of totals.
@@ -144,8 +144,8 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function totals ($sortedBy=1,$reverse=true)
-   {
+    function totals ($sortedBy=1,$reverse=true)
+    {
       $out = array();
       foreach ($this->value as $val)
       {
@@ -163,7 +163,7 @@ class NeatArray
       }
 
       return $out;
-   }
+    }
 
 /**
  * Performs an array_filter() on the contents of this NeatArray.
@@ -171,10 +171,10 @@ class NeatArray
  * @param string $with Name of callback function to perform on each element of this NeatArray.
  * @return array
  */
-   function filter ($with)
-   {
+    function filter ($with)
+    {
       return $this->value = array_filter($this->value, $with);
-   }
+    }
 
 /**
  * Passes each of its values through a specified function or method.
@@ -185,11 +185,11 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function walk ($with)
-   {
+    function walk ($with)
+    {
       array_walk($this->value, $with);
       return $this->value;
-   }
+    }
 
 /**
  * Apply $template to all elements of this NeatArray, and return the array itself.
@@ -197,15 +197,15 @@ class NeatArray
  * @param string $template {@link http://php.net/sprintf sprintf()}-compatible string to be applied to all values of this NeatArray.
  * @return array
  */
-   function sprintf($template)
-   {
+    function sprintf($template)
+    {
       for ($ii=0; $ii<count($this->value); $ii++)
       {
          $this->value[$ii] = sprintf($template, $this->value[$ii]);
       }
 
       return $this->value;
-   }
+    }
 
 /**
  * Extracts a value from all array items.
@@ -214,8 +214,8 @@ class NeatArray
  * @access public
  * @uses NeatArray::value
  */
-   function extract ($name)
-   {
+    function extract ($name)
+    {
       $out = array();
       foreach ($this->value as $val)
       {
@@ -223,27 +223,27 @@ class NeatArray
          $out[] = $val[$name];
       }
       return $out;
-   }
+    }
 
 /**
  * Returns a list of unique elements.
  *
  * @return array
  */
-   function unique ()
-   {
+    function unique ()
+    {
       return array_unique($this->value);
-   }
+    }
 
 /**
  * Removes duplicate elements from the value and returns it.
  *
  * @return array
  */
-   function makeUnique ()
-   {
+    function makeUnique ()
+    {
       return $this->value = array_unique($this->value);
-   }
+    }
 
 /**
  * Joins an array with myself using a key (like a join between database tables).
@@ -251,7 +251,7 @@ class NeatArray
  * Example:
  *
  *     $alice = array('id'=>'1', 'name'=>'Alice');
- *     $bob   = array('id'=>'2', 'name'=>'Bob');
+ *     $bob    = array('id'=>'2', 'name'=>'Bob');
  *
  *     $users = new NeatArray(array($alice, $bob));
  *
@@ -268,7 +268,7 @@ class NeatArray
  *     $users->value == array
  *         (
  *         array('id'=>'1', 'name'=>'Alice', 'born'=>'1980'),
- *         array('id'=>'2', 'name'=>'Bob',   'born'=>'1976')
+ *         array('id'=>'2', 'name'=>'Bob',    'born'=>'1976')
  *         );
  *
  *
@@ -277,8 +277,8 @@ class NeatArray
  * @param string $onHis Key to use on him.
  * @return array
  */
-   function joinWith ($his, $onMine, $onHis=null)
-   {
+    function joinWith ($his, $onMine, $onHis=null)
+    {
       if (empty($onHis))
       {
          $onHis = $onMine;
@@ -301,7 +301,7 @@ class NeatArray
       }
 
       return $this->value = $out;
-   }
+    }
 
 /**
  * Enter description here...
@@ -313,8 +313,8 @@ class NeatArray
  * @param string $childrenKey
  * @return array
  */
-   function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children')
-   {
+    function threaded ($root=null, $idKey='id', $parentIdKey='parent_id', $childrenKey='children')
+    {
       $out = array();
       $sizeof = sizeof($this->value);
       for ($ii=0; $ii < $sizeof; $ii++)
@@ -330,7 +330,7 @@ class NeatArray
       }
 
       return $out;
-   }
+    }
 
 
 /**
@@ -341,8 +341,8 @@ class NeatArray
  * @return array
  * @link http://php.net/array_search#47116
  */
-   function multi_search($search_value, $the_array=null)
-   {
+    function multi_search($search_value, $the_array=null)
+    {
       if ( $the_array == null )
       {
          $the_array = $this->value;
@@ -355,14 +355,14 @@ class NeatArray
             $result = $this->multi_search($search_value, $value);
             if (is_array($result))
             {
-               $return = $result;
-               array_unshift($return, $key);
-               return $return;
+                $return = $result;
+                array_unshift($return, $key);
+                return $return;
             }
             elseif ($result == true)
             {
-               $return[] = $key;
-               return $return;
+                $return[] = $key;
+                return $return;
             }
          }
          return false;
@@ -375,7 +375,7 @@ class NeatArray
          }
          else return false;
       }
-   }
+    }
 }
 
 

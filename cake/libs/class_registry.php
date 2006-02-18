@@ -48,22 +48,22 @@ class ClassRegistry
  * @var array
  * @access private
  */
-   var $_objects = array();
+    var $_objects = array();
 
 /**
  * Return a singleton instance of the ClassRegistry.
  *
  * @return ClassRegistry instance
  */
-   function &getInstance()
-   {
-       static $instance = array();
-       if (!$instance)
-       {
-           $instance[0] =& new ClassRegistry;
-       }
-       return $instance[0];
-   }
+    function &getInstance()
+    {
+        static $instance = array();
+        if (!$instance)
+        {
+            $instance[0] =& new ClassRegistry;
+        }
+        return $instance[0];
+    }
 
 /**
  * Add $object to the registry, associating it with the name $key.
@@ -71,8 +71,8 @@ class ClassRegistry
  * @param string $key
  * @param mixed $object
  */
-   function addObject($key, &$object)
-   {
+    function addObject($key, &$object)
+    {
       $_this =& ClassRegistry::getInstance();
       $key = strtolower($key);
 
@@ -80,7 +80,7 @@ class ClassRegistry
       {
          $_this->_objects[$key] =& $object;
       }
-   }
+    }
 
 /**
  * Returns true if given key is present in the ClassRegistry.
@@ -88,12 +88,12 @@ class ClassRegistry
  * @param string $key     Key to look for
  * @return boolean         Success
  */
-   function isKeySet($key)
-   {
+    function isKeySet($key)
+    {
       $_this =& ClassRegistry::getInstance();
       $key = strtolower($key);
       return array_key_exists($key, $_this->_objects);
-   }
+    }
 
 /**
  * Return object which corresponds to given key.
@@ -101,11 +101,11 @@ class ClassRegistry
  * @param string $key
  * @return mixed
  */
-   function &getObject($key)
-   {
+    function &getObject($key)
+    {
       $key = strtolower($key);
       $_this =& ClassRegistry::getInstance();
       return $_this->_objects[$key];
-   }
+    }
 }
 ?>

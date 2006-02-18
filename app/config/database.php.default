@@ -48,8 +48,8 @@
  * PostgreSQL set the connect to either pg_pconnect of pg_connect
  * SQLite set the connect to sqlite_popen  sqlite_open
  * ADOdb set the connect to one of these
- *   (http://phplens.com/adodb/supported.databases.html) and
- *   append it '|p' for persistent connection. (mssql|p for example, or just mssql for not persistent)
+ *    (http://phplens.com/adodb/supported.databases.html) and
+ *    append it '|p' for persistent connection. (mssql|p for example, or just mssql for not persistent)
  *
  * host =>
  * the host you connect to the database
@@ -59,21 +59,21 @@
  */
 class DATABASE_CONFIG
 {
-    var $default = array('driver'   => 'mysql',
+    var $default = array('driver'    => 'mysql',
                          'connect'  => 'mysql_pconnect',
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',
                          'database' => 'project_name',
-                         'prefix'   => '');
+                         'prefix'    => '');
 
-    var $test   =  array('driver'   => 'mysql',
+    var $test    =  array('driver'    => 'mysql',
                          'connect'  => 'mysql_pconnect',
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',
                          'database' => 'project_name-test',
-                         'prefix'   => '');
+                         'prefix'    => '');
 }
 
 ?>

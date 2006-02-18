@@ -41,25 +41,25 @@
 class AclComponent extends Object
 {
 
-   var $_instance  = null;
-   var $controller = true;
+    var $_instance  = null;
+    var $controller = true;
 
 /**
  * Constructor. Will return an instance of the correct ACL class.
  *
  */
-   function __construct()
-   {
+    function __construct()
+    {
       $this->getACL();
-   }
+    }
 
 /**
  * Static function used to gain an instance of the correct ACL class.
  *
  * @return MyACL
  */
-   function &getACL()
-   {
+    function &getACL()
+    {
       if($this->_instance == null)
       {
         uses('controller'.DS.'components'.DS.ACL_FILENAME);
@@ -67,26 +67,26 @@ class AclComponent extends Object
         $this->_instance = new $classname;
       }
       return $this->_instance;
-   }
+    }
 
 /**
  * Empty class defintion, to be overridden in subclasses.
  *
  */
-   function _initACL()
-   {
+    function _initACL()
+    {
 
-   }
+    }
 
 /**
  * Pass-thru function for ACL check instance.
  *
  * @return boolean
  */
-   function check($aro, $aco, $action = "*")
-   {
+    function check($aro, $aco, $action = "*")
+    {
       return $this->_instance->check($aro, $aco, $action);
-   }
+    }
 
 
 /**
@@ -94,50 +94,50 @@ class AclComponent extends Object
  *
  * @return boolean
  */
-   function allow($aro, $aco, $action = "*")
-   {
+    function allow($aro, $aco, $action = "*")
+    {
       return $this->_instance->allow($aro, $aco, $action);
-   }
+    }
 
 /**
  * Pass-thru function for ACL deny instance.
  *
  * @return boolean
  */
-   function deny($aro, $aco, $action = "*")
-   {
+    function deny($aro, $aco, $action = "*")
+    {
       return $this->_instance->deny($aro, $aco, $action);
-   }
+    }
 
 /**
  * Pass-thru function for ACL inherit instance.
  *
  * @return boolean
  */
-   function inherit($aro, $aco, $action = "*")
-   {
+    function inherit($aro, $aco, $action = "*")
+    {
       return $this->_instance->inherit($aro, $aco, $action);
-   }
+    }
 
 /**
  * Pass-thru function for ACL grant instance.
  *
  * @return boolean
  */
-   function grant($aro, $aco, $action = "*")
-   {
+    function grant($aro, $aco, $action = "*")
+    {
       return $this->_instance->grant($aro, $aco, $action);
-   }
+    }
 
 /**
  * Pass-thru function for ACL grant instance.
  *
  * @return boolean
  */
-   function revoke($aro, $aco, $action = "*")
-   {
+    function revoke($aro, $aco, $action = "*")
+    {
       return $this->_instance->revoke($aro, $aco, $action);
-   }
+    }
 
 
 /**
@@ -145,10 +145,10 @@ class AclComponent extends Object
  *
  * @return Aro
  */
-   function getAro($id)
-   {
+    function getAro($id)
+    {
       return $this->_instance->getAro($id);
-   }
+    }
 
 
 /**
@@ -156,10 +156,10 @@ class AclComponent extends Object
  *
  * @return Aco
  */
-   function getAco($id)
-   {
+    function getAco($id)
+    {
       return $this->_instance->getAco($id);
-   }
+    }
 
 }
 

@@ -107,13 +107,13 @@ class ConnectionManager extends Object
 
         if(isset($config['driver']) && $config['driver'] != null && $config['driver'] != '')
         {
-           $filename = 'dbo_'.$config['driver'];
-           $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
+            $filename = 'dbo_'.$config['driver'];
+            $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
         }
         else
         {
-           $filename = $config['datasource'].'_source';
-           $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
+            $filename = $config['datasource'].'_source';
+            $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
         }
 
         $tail = 'dbo'.DS.$filename.'.php';

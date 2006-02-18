@@ -46,11 +46,11 @@ class AclNode extends AppModel
  * Enter description here...
  *
  */
-   function __construct()
-   {
+    function __construct()
+    {
       $this->setSource();
       parent::__construct();
-   }
+    }
 
 /**
  * Enter description here...
@@ -60,8 +60,8 @@ class AclNode extends AppModel
  * @param unknown_type $alias
  * @return unknown
  */
-   function create($link_id = 0, $parent_id = null, $alias = '')
-   {
+    function create($link_id = 0, $parent_id = null, $alias = '')
+    {
       parent::create();
 
       if (strtolower(get_class($this)) == "aclnode")
@@ -78,7 +78,7 @@ class AclNode extends AppModel
 
          if($parent[0]['MAX(rght)'] == null)
          {
-            // The tree is empty
+// The tree is empty
             $parent['lft'] = 0;
          }
       }
@@ -96,14 +96,14 @@ class AclNode extends AppModel
 
       $return = $this->save(array($class => array(
         $secondary_id => $link_id,
-        'alias'       => $alias,
+        'alias'        => $alias,
         'lft'         => $parent['lft'] + 1,
         'rght'        => $parent['lft'] + 2
       )));
 
       $this->setId($this->getLastInsertID());
       return $return;
-   }
+    }
 
 
 /**
@@ -113,8 +113,8 @@ class AclNode extends AppModel
  * @param unknown_type $id
  * @return unknown
  */
-   function setParent($parent_id = null, $id = null)
-   {
+    function setParent($parent_id = null, $id = null)
+    {
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
@@ -134,12 +134,12 @@ class AclNode extends AppModel
       $object = $this->find($this->_resolveID($id, $secondary_id));
       if($object == null || count($object) == 0)
       {
-         // Couldn't find object
+// Couldn't find object
          return false;
       }
       $parent = $this->getParent(intval($object[$class][$secondary_id]));
 
-      // Node is already at root, or new parent == old parent
+// Node is already at root, or new parent == old parent
       if(($parent == null && $parent_id == null) || ($parent_id == $parent[$class][$secondary_id]) || ($parent_id == $parent[$class]['alias']))
       {
          return false;
@@ -147,7 +147,7 @@ class AclNode extends AppModel
 
       if($parent_id != null && $parent[$class]['lft'] <= $object[$class]['lft'] && $parent[$class]['rght'] >= $object[$class]['rght'])
       {
-         // Can't move object inside self or own child
+// Can't move object inside self or own child
          return false;
       }
       $this->_syncTable($table_name, 0, $object[$class]['lft'], $object[$class]['lft']);
@@ -173,7 +173,7 @@ class AclNode extends AppModel
          $this->_syncTable($table_name, 2, $parent['lft'], $parent['lft']);
       }
 
-   }
+    }
 
 
 /**
@@ -182,8 +182,8 @@ class AclNode extends AppModel
  * @param unknown_type $id
  * @return unknown
  */
-   function getParent($id)
-   {
+    function getParent($id)
+    {
       $path = $this->getPath($id);
       if($path == null || count($path) < 2)
       {
@@ -193,7 +193,7 @@ class AclNode extends AppModel
       {
          return $path[count($path) - 2];
       }
-   }
+    }
 
 /**
  * Enter description here...
@@ -201,8 +201,8 @@ class AclNode extends AppModel
  * @param unknown_type $id
  * @return unknown
  */
-   function getPath($id)
-   {
+    function getPath($id)
+    {
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
@@ -216,7 +216,7 @@ class AclNode extends AppModel
          return null;
       }
       return $this->findAll("{$data_name}.lft <= {$item[$class]['lft']} and {$data_name}.rght >= {$item[$class]['rght']}");
-   }
+    }
 
 /**
  * Enter description here...
@@ -224,8 +224,8 @@ class AclNode extends AppModel
  * @param unknown_type $id
  * @return unknown
  */
-   function getChildren($id)
-   {
+    function getChildren($id)
+    {
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
@@ -235,7 +235,7 @@ class AclNode extends AppModel
 
       $item = $this->find($this->_resolveID($id, $secondary_id));
       return $this->findAll("{$data_name}.lft > {$item[$class]['lft']} and {$data_name}.rght < {$item[$class]['rght']}");
-   }
+    }
 
 /**
  * Enter description here...
@@ -244,12 +244,12 @@ class AclNode extends AppModel
  * @param unknown_type $fKey
  * @return unknown
  */
-   function _resolveID($id, $fKey)
-   {
+    function _resolveID($id, $fKey)
+    {
       $key = (is_string($id) ? 'alias' : $fKey);
       $val = (is_string($id) ? '"' . addslashes($id) . '"' : $id);
       return "{$key} = {$val}";
-   }
+    }
 
 /**
  * Enter description here...
@@ -259,37 +259,37 @@ class AclNode extends AppModel
  * @param unknown_type $lft
  * @param unknown_type $rght
  */
-   function _syncTable($table, $dir, $lft, $rght)
-   {
+    function _syncTable($table, $dir, $lft, $rght)
+    {
       $shift = ($dir == 2 ? 1 : 2);
       $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
       $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
-   }
+    }
 
 /**
  * Enter description here...
  *
  * @return unknown
  */
-   function __dataVars()
-   {
+    function __dataVars()
+    {
       $vars = array();
       $class = Inflector::camelize(strtolower(get_class($this)));
       $vars['secondary_id'] = (strtolower($class) == 'aro' ? 'user_id' : 'object_id');
       $vars['data_name']    = $class;
-      $vars['table_name']   = strtolower($class) . 's';
+      $vars['table_name']    = strtolower($class) . 's';
       $vars['class']        = Inflector::camelize($class);
       return $vars;
-   }
+    }
 
 /**
  * Enter description here...
  *
  */
-   function setSource()
-   {
+    function setSource()
+    {
       $this->table = low(get_class($this)) . "s";
-   }
+    }
 }
 
 ?>

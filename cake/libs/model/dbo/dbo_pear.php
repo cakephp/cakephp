@@ -29,8 +29,8 @@
  */
 
 /**
-  * Create an include path required PEAR libraries.
-  */
+ * Create an include path required PEAR libraries.
+ */
 uses('model'.DS.'dbo'.DS.'dbo');
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . PEAR);
 vendor('Pear/DB');
@@ -53,21 +53,21 @@ class DBO_Pear extends DBO
  * @var DB The connection object.
  * @access private
  */
-   var $_pear = null;
+    var $_pear = null;
 
 /**
-  * Connects to the database using options in the given configuration array.
-  *
-  * @param array $config Configuration array for connecting
-  * @return boolean True if the database could be connected, else false
-  */
-   function connect ($config)
-   {
+ * Connects to the database using options in the given configuration array.
+ *
+ * @param array $config Configuration array for connecting
+ * @return boolean True if the database could be connected, else false
+ */
+    function connect ($config)
+    {
       $this->config = $config;
 
       $dsn = $config['driver'].'://'.$config['login'].':'.$config['password'].'@'.$config['host'].'/'.$config['database'];
       $options = array(
-         'debug'       => DEBUG-1,
+         'debug'        => DEBUG-1,
          'portability' => DB_PORTABILITY_ALL,
       );
 
@@ -76,47 +76,47 @@ class DBO_Pear extends DBO
 
       return !(PEAR::isError($this->_pear));
 
-   }
+    }
 
 /**
-  * Disconnects from database.
-  *
-  * @return boolean True if the database could be disconnected, else false
-  */
-   function disconnect ()
-   {
+ * Disconnects from database.
+ *
+ * @return boolean True if the database could be disconnected, else false
+ */
+    function disconnect ()
+    {
       die('Please implement DBO::disconnect() first.');
-   }
+    }
 
 /**
-  * Executes given SQL statement.
-  *
-  * @param string $sql SQL statement
-  * @return resource Result resource identifier
-  */
-   function execute ($sql)
-   {
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @return resource Result resource identifier
+ */
+    function execute ($sql)
+    {
       return $this->_pear->query($sql);
-   }
+    }
 
 /**
-  * Returns a row from given resultset as an array .
-  *
-  * @return array The fetched row as an array
-  */
-   function fetchRow ()
-   {
+ * Returns a row from given resultset as an array .
+ *
+ * @return array The fetched row as an array
+ */
+    function fetchRow ()
+    {
       return $this->_result->fetchRow(DB_FETCHMODE_ASSOC);
-   }
+    }
 
 /**
-  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
-  * :WARNING: :TODO: POSTGRESQL & MYSQL ONLY! PEAR::DB doesn't support universal table listing.
-  *
-  * @return array Array of tablenames in the database
-  */
-   function tablesList ()
-   {
+ * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
+ * :WARNING: :TODO: POSTGRESQL & MYSQL ONLY! PEAR::DB doesn't support universal table listing.
+ *
+ * @return array Array of tablenames in the database
+ */
+    function tablesList ()
+    {
       $driver = $this->config['driver'];
       $tables = array();
 
@@ -159,16 +159,16 @@ class DBO_Pear extends DBO
       {
          return $tables;
       }
-   }
+    }
 
 /**
-  * Returns an array of the fields in given table name.
-  *
-  * @param string $tableName Name of database table to inspect
-  * @return array Fields in table. Keys are name and type
-  */
-   function fields ($tableName)
-   {
+ * Returns an array of the fields in given table name.
+ *
+ * @param string $tableName Name of database table to inspect
+ * @return array Fields in table. Keys are name and type
+ */
+    function fields ($tableName)
+    {
       $data = $this->_pear->tableInfo($tableName);
       $fields = false;
 
@@ -176,47 +176,47 @@ class DBO_Pear extends DBO
          $fields[] = array('name'=>$item['name'], 'type'=>$item['type']);
 
       return $fields;
-   }
+    }
 
 /**
-  * Returns a quoted and escaped string of $data for use in an SQL statement.
-  *
-  * @param string $data String to be prepared for use in an SQL statement
-  * @return string Quoted and escaped
-  */
-   function prepareValue ($data)
-   {
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @return string Quoted and escaped
+ */
+    function prepareValue ($data)
+    {
       return $this->_pear->quoteSmart($data);
-   }
+    }
 
 /**
-  * Returns a formatted error message from previous database operation.
-  *
-  * @return string Error message
-  */
-   function lastError ()
-   {
+ * Returns a formatted error message from previous database operation.
+ *
+ * @return string Error message
+ */
+    function lastError ()
+    {
       return PEAR::isError($this->_result)? $this->_result->getMessage(): null;
-   }
+    }
 
 /**
-  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
-  *
-  * @return int Number of affected rows
-  */
-   function lastAffected ()
-   {
+ * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
+ *
+ * @return int Number of affected rows
+ */
+    function lastAffected ()
+    {
       return $this->_pear->affectedRows();
-   }
+    }
 
 /**
-  * Returns number of rows in previous resultset. If no previous resultset exists,
-  * this returns false.
-  *
-  * @return int Number of rows in resultset
-  */
-   function lastNumRows ()
-   {
+ * Returns number of rows in previous resultset. If no previous resultset exists,
+ * this returns false.
+ *
+ * @return int Number of rows in resultset
+ */
+    function lastNumRows ()
+    {
       if (method_exists($this->_result, 'numRows'))
       {
          return $this->_result->numRows();
@@ -225,18 +225,18 @@ class DBO_Pear extends DBO
       {
          return false;
       }
-   }
+    }
 
 /**
-  * Returns the ID generated from the previous INSERT operation.
-  *
-  * @param string $table Name of the database table
-  * @return int
-  */
-   function lastInsertId ($table)
-   {
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param string $table Name of the database table
+ * @return int
+ */
+    function lastInsertId ($table)
+    {
       return $this->field('id', "SELECT MAX(id) FROM {$table}");
-   }
+    }
 
 /**
  * Returns a limit statement in the correct format for the particular database.
@@ -245,10 +245,10 @@ class DBO_Pear extends DBO
  * @param int $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
-   function selectLimit ($limit, $offset='0')
-   {
+    function selectLimit ($limit, $offset='0')
+    {
       return ' ' . $this->_pear->modifyLimitQuery('', $offset, $limit);
-   }
+    }
 
 }
 

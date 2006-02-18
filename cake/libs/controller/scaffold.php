@@ -329,7 +329,7 @@ class Scaffold extends Object {
             }
             else
             {
-           return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
+            return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
                                                 $id, '/'.Inflector::underscore($this->controllerClass->viewPath));
             }
         }
@@ -360,52 +360,52 @@ class Scaffold extends Object {
         if(isset($this->controllerClass->{$this->modelKey}->db))
         {
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
-               $params['action'] === 'show'   || $params['action'] === 'add' ||
-               $params['action'] === 'create' || $params['action'] === 'edit' ||
-               $params['action'] === 'update' || $params['action'] === 'destroy')
-               {
-                   switch ($params['action'])
-                   {
-                       case 'index':
-                           $this->_scaffoldIndex($params);
-                       break;
+                $params['action'] === 'show'    || $params['action'] === 'add' ||
+                $params['action'] === 'create' || $params['action'] === 'edit' ||
+                $params['action'] === 'update' || $params['action'] === 'destroy')
+                {
+                    switch ($params['action'])
+                    {
+                        case 'index':
+                            $this->_scaffoldIndex($params);
+                        break;
 
-                       case 'show':
-                           $this->_scaffoldShow($params);
-                       break;
+                        case 'show':
+                            $this->_scaffoldShow($params);
+                        break;
 
-                       case 'list':
-                           $this->_scaffoldList($params);
-                       break;
+                        case 'list':
+                            $this->_scaffoldList($params);
+                        break;
 
-                       case 'add':
-                           $this->_scaffoldNew($params);
-                       break;
+                        case 'add':
+                            $this->_scaffoldNew($params);
+                        break;
 
-                       case 'edit':
-                           $this->_scaffoldEdit($params);
-                       break;
+                        case 'edit':
+                            $this->_scaffoldEdit($params);
+                        break;
 
-                       case 'create':
-                           $this->_scaffoldCreate($params);
-                       break;
+                        case 'create':
+                            $this->_scaffoldCreate($params);
+                        break;
 
-                       case 'update':
-                           $this->_scaffoldUpdate($params);
-                       break;
+                        case 'update':
+                            $this->_scaffoldUpdate($params);
+                        break;
 
-                       case 'destroy':
-                           $this->_scaffoldDestroy($params);
-                       break;
-                   }
-               }
-               else
-               {
-                   return $this->cakeError('missingAction',
-                               array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                           'action' => $params['action'],
-                                           'webroot' => $this->controllerClass->webroot)));
-               }
+                        case 'destroy':
+                            $this->_scaffoldDestroy($params);
+                        break;
+                    }
+                }
+                else
+                {
+                    return $this->cakeError('missingAction',
+                                array(array('className' => Inflector::camelize($params['controller']."Controller"),
+                                            'action' => $params['action'],
+                                            'webroot' => $this->controllerClass->webroot)));
+                }
         }
         else
         {

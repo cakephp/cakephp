@@ -40,16 +40,16 @@
  */
 class Helper extends Object
 {
- /*************************************************************************
-    * Public variables
-    *************************************************************************/
+/*************************************************************************
+ * Public variables
+ *************************************************************************/
 
- /**#@+
-    * @access public
-    */
+/**#@+
+ * @access public
+ */
 
 
- /**
+/**
  * Holds tag templates.
  *
  * @access public
@@ -57,17 +57,17 @@ class Helper extends Object
  */
     var $tags = array();
 
- /**#@-*/
+/**#@-*/
 
- /*************************************************************************
-    * Public methods
-    *************************************************************************/
+/*************************************************************************
+ * Public methods
+ *************************************************************************/
 
- /**#@+
-    * @access public
-    */
+/**#@+
+ * @access public
+ */
 
- /**
+/**
  * Constructor.
  *
  * Parses tag templates into $this->tags.
@@ -80,10 +80,10 @@ class Helper extends Object
 
     function loadConfig()
     {
-       return $this->readConfigFile($config = fileExistsInPath(CAKE.'config'.DS.'tags.ini.php'));
+        return $this->readConfigFile($config = fileExistsInPath(CAKE.'config'.DS.'tags.ini.php'));
     }
 
- /**
+/**
  * Decides whether to output or return a string.
  *
  * Based on AUTO_OUTPUT and $return's value, this method decides whether to
@@ -92,7 +92,7 @@ class Helper extends Object
  * @param  string  $str    String to be output or returned.
  * @param  boolean $return Whether this method should return a value or
  *                         output it. This overrides AUTO_OUTPUT.
- * @return mixed   Either string or boolean value, depends on AUTO_OUTPUT
+ * @return mixed    Either string or boolean value, depends on AUTO_OUTPUT
  *                 and $return.
  */
     function output($str, $return = false)
@@ -114,7 +114,7 @@ class Helper extends Object
         }
     }
 
- /**
+/**
  * Assigns values to tag templates.
  *
  * Finds a tag template by $keyName, and replaces $values's keys with
@@ -148,9 +148,9 @@ class Helper extends Object
             {
                 if ($firstChar == '[' && substr($dataLine, -1, 1) == ']')
                 {
-                    // [section block] we might use this later do not know for sure
-                    // this could be used to add a key with the section block name
-                    // but it adds another array level
+// [section block] we might use this later do not know for sure
+// this could be used to add a key with the section block name
+// but it adds another array level
                 }
                 else
                 {
@@ -178,7 +178,7 @@ class Helper extends Object
         return $iniSetting;
     }
 
- /**#@-*/
+/**#@-*/
 }
 
 ?>

@@ -6,7 +6,7 @@
  *
  *  This file collects requests if:
  *    - no mod_rewrite is avilable or .htaccess files are not supported
- *    - /public is not set as a web root.
+ *    -/public is not set as a web root.
  *
  * PHP versions 4 and 5
  *
@@ -42,7 +42,7 @@ define ('ROOT', dirname(__FILE__).DS);
  */
 if (!defined('CAKE_CORE_INCLUDE_PATH'))
 {
-    //define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
+//define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
     define('CAKE_CORE_INCLUDE_PATH', ROOT);
 }
 
