@@ -949,22 +949,20 @@ class Model extends Object
  * @param mixed $id Id of record to delete
  * @return boolean True on success
  */
-    function del ($id = null, $cascade = false)
+    function del ($id = null, $cascade = true)
     {
         if ($id)
         {
             $this->id = $id;
         }
-
+        $id = $this->id;
         if($this->beforeDelete())
         {
             if ($this->id && $this->db->delete($this))
             {
-//$this->__deleteJoins($id);
-                if ($cascade)
-                {
-//$this->__deleteMulti($id);
-                }
+                $this->__deleteMulti($id);
+                $this->__deleteHasMany($id, $cascade);
+                $this->__deleteHasOne($id, $cascade);
                 $this->afterDelete();
                 $this->id = false;
                 return true;
@@ -981,17 +979,47 @@ class Model extends Object
  * @return null
  * @access private
  */
-    function __deleteMulti ($id)
+    function __deleteHasMany ($id, $cascade)
     {
         foreach ($this->hasMany as $assoc => $data)
         {
-            $model =& $this->{$data['className']};
-            $field = $model->escapeField($data['foreignKey']);
-            $records = $model->findAll($field.'='.$id);
-
-            foreach($records as $record)
+            if($data['dependent'] === true && $cascade === true)
             {
-                
+                $model =& $this->{$data['className']};
+                $field = $model->escapeField($data['foreignKey']);
+                $model->recursive = 0;
+                $records = $model->findAll($field.'='.$id);
+
+                foreach($records as $record)
+                {
+                    $this->{$data['className']}->del($record[$data['className']][$model->{$data['className']}->primaryKey]);
+                }
+            }
+        }
+    }
+
+/**
+ * Cascades model deletes to hasOne relationships.
+ *
+ * @param string $id
+ * @return null
+ * @access private
+ */
+    function __deleteHasOne ($id, $cascade)
+    {
+        foreach ($this->hasOne as $assoc => $data)
+        {
+            if($data['dependent'] === true && $cascade === true)
+            {
+                $model =& $this->{$data['className']};
+                $field = $model->escapeField($data['foreignKey']);
+                $model->recursive = 0;
+                $records = $model->findAll($field.'='.$id);
+
+                foreach($records as $record)
+                {
+                    $this->{$data['className']}->del($record[$data['className']][$model->primaryKey]);
+                }
             }
         }
     }
@@ -1003,10 +1031,11 @@ class Model extends Object
  * @return null
  * @access private
  */
-    function __deleteJoins ($id)
+    function __deleteMulti ($id)
     {
         foreach ($this->hasAndBelongsToMany as $assoc => $data)
         {
+            $this->db->execute("DELETE FROM {$this->db->name($data['joinTable'])} WHERE {$this->db->name($data['foreignKey'])} = '{$id}'");
         }
     }
 
