@@ -345,7 +345,7 @@ class Dispatcher extends Object
  *
  * @return string    Base URL
  */
-function baseUrl()
+    function baseUrl()
     {
         $htaccess = null;
         $base = $this->admin;
@@ -373,13 +373,21 @@ function baseUrl()
         {
             if (defined('BASE_URL'))
             {
-                $webroot =setUri();
+                $webroot = setUri();
                 $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
             }
             if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
             {
-                !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/'.APP_DIR.'/';
-                return  $base.$regs[1].'/'.APP_DIR;
+                if(APP_DIR === 'app')
+                {
+                    $appDir = null;
+                }
+                else
+                {
+                    $appDir = '/'.APP_DIR;
+                }
+                !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].$appDir.'/';
+                return  $base.$regs[1].$appDir;
             }
             elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
             {
