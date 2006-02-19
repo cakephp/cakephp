@@ -345,7 +345,7 @@ class Dispatcher extends Object
  *
  * @return string    Base URL
  */
-    function baseUrl()
+function baseUrl()
     {
         $htaccess = null;
         $base = $this->admin;
@@ -376,39 +376,22 @@ class Dispatcher extends Object
                 $webroot =setUri();
                 $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
             }
-            if(APP_DIR === 'app')
+            if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
             {
-                if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
-                {
-                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
-                    return  $regs[1];
-                }
-                elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
-                {
-                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
-                    return  $regs[0];
-                }
-                else
-                {
-                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
-                    return $base;
-                }
+                !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/'.APP_DIR.'/';
+                return  $base.$regs[1].'/'.APP_DIR;
+            }
+            elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
+            {
+                !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
+                return  $base.$regs[0];
             }
             else
             {
-                if (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
-                {
-                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
-                    return  $regs[0];
-                }
-                else
-                {
-                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
-                    return $base;
-                }
+                !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
+                return $base;
             }
         }
-        return $base;
     }
 
     function _restructureParams($params)
