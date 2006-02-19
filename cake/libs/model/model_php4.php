@@ -1039,7 +1039,7 @@ class Model extends Object
     {
         foreach ($this->hasAndBelongsToMany as $assoc => $data)
         {
-            $this->db->execute("DELETE FROM {$this->db->name($data['joinTable'])} WHERE {$this->db->name($data['foreignKey'])} = '{$id}'");
+            $this->db->execute("DELETE FROM ".$this->db->name($data['joinTable'])." WHERE ".$this->db->name($data['foreignKey'])." = '{$id}'");
         }
     }
 

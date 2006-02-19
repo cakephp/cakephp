@@ -354,58 +354,61 @@ class Dispatcher extends Object
         {
             $base = BASE_URL.$this->admin;
         }
-
         $docRoot = env('DOCUMENT_ROOT');
         $scriptName = env('PHP_SELF');
+        $r = null;
 
-// If document root ends with 'webroot', it's probably correctly set
-      $r = null;
-      if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
-      {
-          $this->webroot = '/';
-          if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r))
-          {
-              if(!empty($r[1]))
-              {
-                  return  $base.$r[1];
-              }
-          }
-      }
-      else
-      {
-          if (defined('BASE_URL'))
-          {
-              $webroot =setUri();
-              $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
-          }
-          if(APP_DIR === 'app')
-          {
-              if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
-              {
-                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
-                  return  $regs[1];
-              }
-              else
-              {
-                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
-                  return $base;
-              }
-          }
-          else
-          {
-              if (preg_match('/^(.*)\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
-              {
-                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
-                  return  $regs[1];
-              }
-              else
-              {
-                  !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
-                  return $base;
-              }
-          }
-      }
-      return $base;
+        if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
+        {
+            $this->webroot = '/';
+            if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r))
+            {
+                if(!empty($r[1]))
+                {
+                    return  $base.$r[1];
+                }
+            }
+        }
+        else
+        {
+            if (defined('BASE_URL'))
+            {
+                $webroot =setUri();
+                $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
+            }
+            if(APP_DIR === 'app')
+            {
+                if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
+                {
+                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].'/';
+                    return  $regs[1];
+                }
+                elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
+                {
+                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
+                    return  $regs[0];
+                }
+                else
+                {
+                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
+                    return $base;
+                }
+            }
+            else
+            {
+                if (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs))
+                {
+                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
+                    return  $regs[0];
+                }
+                else
+                {
+                    !empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
+                    return $base;
+                }
+            }
+        }
+        return $base;
     }
 
     function _restructureParams($params)
