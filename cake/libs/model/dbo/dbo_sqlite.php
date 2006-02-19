@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -31,7 +31,7 @@
 /**
  * Include DBO.
  */
-uses('model'.DS.'dbo'.DS.'dbo');
+uses('model'.DS.'datasources'.DS.'dbo_source');
 
 /**
  * DBO implementation for the SQLite DBMS.
@@ -42,7 +42,7 @@ uses('model'.DS.'dbo'.DS.'dbo');
  * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.9.0
  */
-class DBO_SQLite extends DBO
+class DBO_SQLite extends DboSource
 {
 
 /**

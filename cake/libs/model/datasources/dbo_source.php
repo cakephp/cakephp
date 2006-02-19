@@ -971,13 +971,23 @@ class DboSource extends DataSource
         }
 
         $count = count($fields);
-        if ($count >= 1 && $fields[0] != '*'
-                        && strpos($fields[0], 'COUNT(') === false
-                        && strpos($fields[0], 'MAX(') === false
-                        && strpos($fields[0], 'MIN(') === false
-                        && strpos($fields[0], 'DISTINCT') === false
-                        && strpos($fields[0], 'SUM(') === false
-                        && strpos($fields[0], 'CONCAT(') === false)
+        $safe = true;
+        $columnFunctions = array('avg(', 'count(', 'count_big(', 'min(', 'max(',
+                                 'distinct', 'sum(', 'concat(', 'rand(', 'stddev_pop',
+                                  'var_pop', 'least(', 'greatest(', 'octet_length(',
+                                  'length(', 'extract(', 'translate(', 'conv(');
+        if ($count >= 1 && $fields[0] != '*')
+        {
+            foreach($columnFunctions as $f)
+            {
+                if (strpos(low($fields[0]), $f) !== false)
+                {
+                    $safe = false;
+                    break;
+                }
+            }
+        }
+        if ($count >= 1 && $fields[0] != '*' && $safe)
         {
             for ($i = 0; $i < $count; $i++)
             {
@@ -1094,7 +1104,6 @@ class DboSource extends DataSource
         {
             return '';
         }
-
         if(is_array($keys))
         {
             foreach($keys as $key => $value)
@@ -1114,7 +1123,26 @@ class DboSource extends DataSource
         }
         else
         {
-            if (preg_match('/(?P<direction>\\x20ASC|\\x20DESC)/', $keys, $match))
+            $keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
+            if (strpos('.', $keys))
+            {
+                preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
+                $pregCount = count($result[0]);
+
+                for ($i = 0; $i < $pregCount; $i++)
+                {
+                    $keys = preg_replace('/'.$result[0][$i].'/', $this->name($result[0][$i]), $keys);
+                }
+                if (preg_match('/\\x20ASC|\\x20DESC/i', $keys))
+                {
+                    return ' ORDER BY '.$keys;
+                }
+                else
+                {
+                    return ' ORDER BY '.$keys.' '.$direction;;
+                }
+            }
+            elseif (preg_match('/(?P<direction>\\x20ASC|\\x20DESC)/i', $keys, $match))
             {
                 $direction = $match['direction'];
                 $keys = preg_replace('/'.$match['direction'].'/', '', $keys);

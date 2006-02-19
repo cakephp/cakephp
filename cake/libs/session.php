@@ -31,7 +31,8 @@
 /**
  * Session class for Cake.
  *
- * Cake abstracts the handling of sessions. There are several convenient methods to access session information. This class is the implementation of those methods. They are mostly used by the Session Component.
+ * Cake abstracts the handling of sessions. There are several convenient methods to access session information.
+ * This class is the implementation of those methods. They are mostly used by the Session Component.
  *
  * @package    cake
  * @subpackage cake.cake.libs
@@ -44,50 +45,43 @@ class CakeSession extends Object
  *
  * @var boolean
  */
-     var $valid      = false;
+     var $valid = false;
 /**
  * Error messages for this session
  *
  * @var array
  */
-    var $error      = false;
+    var $error = false;
 /**
  * User agent string
  *
  * @var string
  */
-    var $userAgent  = false;
+    var $_userAgent = false;
 /**
  * Path to where the session is active.
  *
  * @var string
  */
-    var $path        = false;
+    var $path = false;
 /**
  * Error number of last occurred error
  *
  * @var integer
  */
-    var $lastError  = null;
-/**
- * Enter description here...
- *
- * @var unknown_type
- * @todo Is this still in use? OJ 30 jan 2006
- */
-    var $sessionId     = null;
+    var $lastError = null;
 /**
  * CAKE_SECURITY setting, "high", "medium", or "low".
  *
  * @var string
  */
-    var $security     = null;
+    var $security = null;
 /**
  * Start time for this session.
  *
  * @var integer
  */
-    var $time        = false;
+    var $time = false;
 /**
  * Time when this session becomes invalid.
  *
@@ -119,32 +113,32 @@ class CakeSession extends Object
 
         if(env('HTTP_USER_AGENT') != null)
         {
-            $this->userAgent = md5(env('HTTP_USER_AGENT').CAKE_SESSION_STRING);
+            $this->_userAgent = md5(env('HTTP_USER_AGENT').CAKE_SESSION_STRING);
         }
         else
         {
-            $this->userAgent = "";
+            $this->_userAgent = "";
         }
 
         $this->time = time();
         $this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
         $this->security = CAKE_SECURITY;
         session_write_close();
-        
+
         if (!isset($_SESSION))
         {
-            $this->_initSession();
+            $this->__initSession();
         }
-        
+
         session_cache_limiter("must-revalidate");
         session_start();
-        
+
         if (!isset($_SESSION))
         {
-        	$this->_begin();
+        	$this->__begin();
         }
-        
-        $this->_checkValid();
+
+        $this->__checkValid();
         parent::__construct();
     }
 
@@ -156,7 +150,7 @@ class CakeSession extends Object
  */
     function checkSessionVar($name)
     {
-        $expression = "return isset(".$this->_sessionVarNames($name).");";
+        $expression = "return isset(".$this->__sessionVarNames($name).");";
         return eval($expression);
     }
 
@@ -170,11 +164,11 @@ class CakeSession extends Object
     {
         if($this->checkSessionVar($name))
         {
-            $var = $this->_sessionVarNames($name);
+            $var = $this->__sessionVarNames($name);
             eval("unset($var);");
             return true;
         }
-        $this->_setError(2, "$name doesn't exist");
+        $this->__setError(2, "$name doesn't exist");
         return false;
     }
 
@@ -238,10 +232,10 @@ class CakeSession extends Object
 
         if($this->checkSessionVar($name))
         {
-            $result = eval("return ".$this->_sessionVarNames($name).";");
+            $result = eval("return ".$this->__sessionVarNames($name).";");
             return $result;
         }
-        $this->_setError(2, "$name doesn't exist");
+        $this->__setError(2, "$name doesn't exist");
         $return = null;
         return $return;
     }
@@ -258,7 +252,7 @@ class CakeSession extends Object
             $result = eval("return \$_SESSION;");
             return $result;
         }
-        $this->_setError(2, "No Session vars set");
+        $this->__setError(2, "No Session vars set");
         return false;
     }
 
@@ -270,7 +264,7 @@ class CakeSession extends Object
  */
     function writeSessionVar($name, $value)
     {
-        $expression = $this->_sessionVarNames($name);
+        $expression = $this->__sessionVarNames($name);
         $expression .= " = \$value;";
         eval($expression);
     }
@@ -280,27 +274,29 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _begin()
+    function __begin()
     {
         header('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
     }
 
 /**
- * Enter description here... To be implemented.
+ * Enter description here...
  *
  * @access private
  */
-    function _close()
+    function __close()
     {
         return true;
     }
 
 /**
- * Enter description here... To be implemented.
+ * Enter description here...
  *
+ * @param unknown_type $key
+ * @return unknown
  * @access private
  */
-    function _destroy($key)
+    function __destroy($key)
     {
     	$db =& ConnectionManager::getDataSource('default');
     	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." = ".$db->value($key));
@@ -312,7 +308,7 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _destroyInvalid()
+    function __destroyInvalid()
     {
         $sessionpath = session_save_path();
         if (empty($sessionpath))
@@ -330,11 +326,13 @@ class CakeSession extends Object
     }
 
 /**
- * Enter description here... To be implemented.
+ * Enter description here...
  *
+ * @param unknown_type $expires
+ * @return unknown
  * @access private
  */
-    function _gc($expires)
+    function __gc($expires)
     {
 		$db =& ConnectionManager::getDataSource('default');
     	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('expires')." < " . $db->value(time()));
@@ -346,7 +344,7 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function _initSession()
+    function __initSession()
     {
         switch ($this->security)
         {
@@ -388,12 +386,12 @@ class CakeSession extends Object
                 ini_set('session.cookie_path', $this->path);
                 ini_set('session.gc_probability', 1);
                 ini_set('session.auto_start', 0);
-                session_set_save_handler(array('CakeSession', '_open'),
-                                         array('CakeSession', '_close'),
-                                         array('CakeSession', '_read'),
-                                         array('CakeSession', '_write'),
-                                         array('CakeSession', '_destroy'),
-                                         array('CakeSession', '_gc'));
+                session_set_save_handler(array('CakeSession', '__open'),
+                                         array('CakeSession', '__close'),
+                                         array('CakeSession', '__read'),
+                                         array('CakeSession', '__write'),
+                                         array('CakeSession', '__destroy'),
+                                         array('CakeSession', '__gc'));
             break;
             case 'php':
                 ini_set('session.use_trans_sid', 0);
@@ -421,16 +419,16 @@ class CakeSession extends Object
     }
 
 /**
- * Private helper method to create a new session. P3P headers are also sent.
+ * Private helper method to create a new session.
  *
  * @access private
  *
  */
-    function _checkValid()
+    function __checkValid()
     {
         if($this->readSessionVar("Config"))
         {
-            if($this->userAgent == $this->readSessionVar("Config.userAgent")
+            if($this->_userAgent == $this->readSessionVar("Config.userAgent")
                 && $this->time <= $this->readSessionVar("Config.time"))
             {
                 $this->writeSessionVar("Config.time", $this->sessionTime);
@@ -439,8 +437,8 @@ class CakeSession extends Object
             else
             {
                 $this->valid = false;
-                $this->_setError(1, "Session Highjacking Attempted !!!");
-                $this->_destroyInvalid();
+                $this->__setError(1, "Session Highjacking Attempted !!!");
+                $this->__destroyInvalid();
             }
         }
         else
@@ -448,9 +446,9 @@ class CakeSession extends Object
             srand((double)microtime() * 1000000);
             $this->writeSessionVar('Config.rand', rand());
             $this->writeSessionVar("Config.time", $this->sessionTime);
-            $this->writeSessionVar("Config.userAgent", $this->userAgent);
+            $this->writeSessionVar("Config.userAgent", $this->_userAgent);
             $this->valid = true;
-            $this->_setError(1, "Session is valid");
+            $this->__setError(1, "Session is valid");
         }
     }
 
@@ -460,18 +458,19 @@ class CakeSession extends Object
  * @access private
  *
  */
-    function _open()
+    function __open()
     {
         return true;
     }
 
 /**
- * Enter description here... To be implemented.
+ * Enter description here...
  *
+ * @param unknown_type $key
+ * @return unknown
  * @access private
- *
  */
-    function _read($key)
+    function __read($key)
     {
         $db =& ConnectionManager::getDataSource('default');
 
@@ -494,7 +493,7 @@ class CakeSession extends Object
  * @access private
  *
  */
-    function _regenerateId()
+    function __regenerateId()
     {
         $oldSessionId = session_id();
         $sessionpath = session_save_path();
@@ -523,7 +522,7 @@ class CakeSession extends Object
  */
     function renew()
     {
-        $this->_regenerateId();
+        $this->__regenerateId();
     }
 
 /**
@@ -533,7 +532,7 @@ class CakeSession extends Object
  * @return string
  * @access private
  */
-    function _sessionVarNames($name)
+    function __sessionVarNames($name)
     {
         if(is_string($name))
         {
@@ -564,7 +563,7 @@ class CakeSession extends Object
  * @param string $errorMessage Description of the error
  * @access private
  */
-    function _setError($errorNumber, $errorMessage)
+    function __setError($errorNumber, $errorMessage)
     {
         if($this->error === false)
         {
@@ -575,17 +574,22 @@ class CakeSession extends Object
         $this->lastError = $errorNumber;
     }
 
+
 /**
- * Enter description here... To be implemented.
+ * Enter description here...
  *
+ * @param unknown_type $key
+ * @param unknown_type $value
+ * @return unknown
  * @access private
  */
-    function _write($key, $value)
+    function __write($key, $value)
     {
         $db =& ConnectionManager::getDataSource('default');
 
-        switch (CAKE_SECURITY) {
-        	case 'high':
+        switch (CAKE_SECURITY)
+        {
+            case 'high':
         		$factor = 10;
         		break;
         	case 'medium':
@@ -606,14 +610,13 @@ class CakeSession extends Object
 
 		if($row[0][0]['count'] > 0)
 		{
-			$db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('data')." = ".$db->value($value).", ".$db->name('expires')." = ".$db->name($expires)." WHERE ".$db->name('id')." = ".$db->value($key));
+			$db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('data')." = ".$db->value($value).", ".$db->name('expires')." = ".$db->value($expires)." WHERE ".$db->name('id')." = ".$db->value($key));
 		}
 		else
 		{
 			$db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('data').",".$db->name('expires').",".$db->name('id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
 		}
-
-        return true;
+		return true;
     }
 }
 ?>

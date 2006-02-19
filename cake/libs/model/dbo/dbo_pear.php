@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -31,7 +31,7 @@
 /**
  * Create an include path required PEAR libraries.
  */
-uses('model'.DS.'dbo'.DS.'dbo');
+uses('model'.DS.'datasources'.DS.'dbo_source');
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . PEAR);
 vendor('Pear/DB');
 
@@ -44,7 +44,7 @@ vendor('Pear/DB');
  * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
-class DBO_Pear extends DBO
+class DBO_Pear extends DboSource
 {
 
 /**

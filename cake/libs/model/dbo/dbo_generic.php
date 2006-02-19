@@ -9,7 +9,7 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  *
@@ -27,7 +27,10 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
+/**
+ * Include DBO.
+ */
+uses('model'.DS.'datasources'.DS.'dbo_source');
 /**
  * Abstract DBO class file.
  *
@@ -37,7 +40,7 @@
  * @subpackage cake.cake.libs.model.datasources.dbo
  * @since      CakePHP v 0.2.9
  */
-class DBO_generic extends DBO
+class DBO_generic extends DboSource
 {
 
 /**

@@ -96,7 +96,7 @@ class AjaxHelper extends Helper
  *
  * @var array
  */
-    var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions');
+    var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions', 'clickToEditText');
 
 /**
  * Returns link to remote action
@@ -568,7 +568,7 @@ class AjaxHelper extends Helper
             $options['callback'] = 'function(form, value) {'.$options['callback'].'}';
         }
 
-        $options = $this->_optionsToString($options, array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText'));
+        $options = $this->_optionsToString($options, array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'clickToEditText'));
         $options = $this->_buildOptions($options, $this->editorOptions);
         return $this->Javascript->codeBlock("new Ajax.InPlaceEditor('{$id}', '{$url}', {$options});");
     }
