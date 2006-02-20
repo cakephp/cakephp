@@ -1045,8 +1045,14 @@ class DboSource extends DataSource
         elseif (is_array($conditions))
         {
             $out = array();
+            $count = 0;
+            $operator = null;
             foreach ($conditions as $key => $value)
             {
+                if($count > 0)
+                {
+                    $operator = ' AND ';
+                }
                 if (is_array($value))
                 {
                     $data = $key . ' IN (';
@@ -1060,30 +1066,50 @@ class DboSource extends DataSource
                 {
                     $data = ' '. $value;
                 }
-                elseif (preg_match('/(?P<expression>LIKE\\x20|=\\x20|>\\x20|<\\x20|<=\\x20|>=\\x20|<>\\x20)(?P<value>.*)/i', $value, $match))
+                elseif (preg_match('/^(\\x20(?P<operator>[\\w]+|<=?|>=?|<>|!?=)\\x20)?(?P<value>.*)/i', $value, $match))
                 {
-                    $data = $this->name($key) . ' '.$match['expression'].' '. $this->value($match['value']);
+                    if (preg_match('/(?P<conditional>\\x20[\\w]*\\x20)/', $key, $regs))
+                    {
+                        $operator = $regs['conditional'];
+                        $key = preg_replace('/'.$regs['conditional'].'/', '', $key);
+                    }
+
+                    if (strpos($match['value'], '--return') === 0)
+                    {
+                        $match['value'] = str_replace('--return', '', $match['value']);
+                        $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
+                    }
+                    else
+                    {
+                        $data = $this->name($key) . ' '.$match['operator'].' '. $this->value($match['value']);
+                    }
                 }
                 else
                 {
-                    if (($value != '{$__cakeID__$}') && ($value != '{$__cakeForeignKey__$}'))
-				    {
-				        $value = $this->value($value);
-				    }
-                	$data = $this->name($key) . '=';
+                   if (strpos($value, '--return') === 0)
+                    {
+                        $value = str_replace('--return', '', $value);
+                    }
+                    elseif (($value != '{$__cakeID__$}') && ($value != '{$__cakeForeignKey__$}'))
+                    {
+                        $value = $this->value($value);
+                    }
 
-                	if ($value === null)
-                	{
-                	    $data .= 'null';
-                	}
-                	else
-                	{
-                	    $data .= $value;
-                	}
+                  $data = $this->name($key) . ' = ';
+
+                  if ($value === null)
+                  {
+                      $data .= 'null';
+                  }
+                  else
+                  {
+                      $data .= $value;
+                  }
                 }
-                $out[] = $data;
+                $count++;
+                $out[] = $operator.$data;
             }
-            return ' WHERE ' . join(' AND ', $out);
+            return ' WHERE ' . join('', $out);
         }
         else
         {

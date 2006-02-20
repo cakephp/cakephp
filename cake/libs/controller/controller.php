@@ -379,6 +379,10 @@ class Controller extends Object
         $args = func_get_args();
         $errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
 
+        if ($errors === false)
+        {
+            return 0;
+        }
         return count($errors);
     }
 

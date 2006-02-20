@@ -376,7 +376,7 @@ class AclCLI {
                 );";
       $this->db->query($sql);
 
-      fwrite($this->stdout, "Creating access request objects table (acos)...\n");
+      fwrite($this->stdout, "Creating access request objects table (aros)...\n");
       $sql2 = "CREATE TABLE `aros` (
                 `id` int(11) NOT NULL auto_increment,
                 `user_id` int(11) default NULL,

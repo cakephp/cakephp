@@ -125,10 +125,7 @@ class CakeSession extends Object
         $this->security = CAKE_SECURITY;
         session_write_close();
 
-        if (!isset($_SESSION))
-        {
-            $this->__initSession();
-        }
+        $this->__initSession();
 
         session_cache_limiter("must-revalidate");
         session_start();
@@ -364,28 +361,35 @@ class CakeSession extends Object
         switch (CAKE_SESSION_SAVE)
         {
             case 'cake':
-                ini_set('session.use_trans_sid', 0);
-                ini_set('url_rewriter.tags', '');
-                ini_set('session.serialize_handler', 'php');
-                ini_set('session.use_cookies', 1);
-                ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                ini_set('session.cookie_path', $this->path);
-                ini_set('session.gc_probability', 1);
-                ini_set('session.auto_start', 0);
-                ini_set('session.save_path', TMP.'sessions');
+                if(!isset($_SESSION))
+                {
+                    ini_set('session.use_trans_sid', 0);
+                    ini_set('url_rewriter.tags', '');
+                    ini_set('session.serialize_handler', 'php');
+                    ini_set('session.use_cookies', 1);
+                    ini_set('session.name', CAKE_SESSION_COOKIE);
+                    ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                    ini_set('session.cookie_path', $this->path);
+                    ini_set('session.gc_probability', 1);
+                    ini_set('session.auto_start', 0);
+                    ini_set('session.save_path', TMP.'sessions');
+                }
             break;
             case 'database':
-                ini_set('session.use_trans_sid', 0);
-                ini_set('url_rewriter.tags', '');
-                ini_set('session.save_handler', 'user');
-                ini_set('session.serialize_handler', 'php');
-                ini_set('session.use_cookies', 1);
-                ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                ini_set('session.cookie_path', $this->path);
-                ini_set('session.gc_probability', 1);
-                ini_set('session.auto_start', 0);
+                if(!isset($_SESSION))
+                {
+                    ini_set('session.use_trans_sid', 0);
+                    ini_set('url_rewriter.tags', '');
+                    ini_set('session.save_handler', 'user');
+                    ini_set('session.serialize_handler', 'php');
+                    ini_set('session.use_cookies', 1);
+                    ini_set('session.name', CAKE_SESSION_COOKIE);
+                    ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                    ini_set('session.cookie_path', $this->path);
+                    ini_set('session.gc_probability', 1);
+                    ini_set('session.auto_start', 0);
+                }
+
                 session_set_save_handler(array('CakeSession', '__open'),
                                          array('CakeSession', '__close'),
                                          array('CakeSession', '__read'),
@@ -394,25 +398,34 @@ class CakeSession extends Object
                                          array('CakeSession', '__gc'));
             break;
             case 'php':
-                ini_set('session.use_trans_sid', 0);
-                ini_set('session.name', CAKE_SESSION_COOKIE);
-                ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                ini_set('session.cookie_path', $this->path);
-                ini_set('session.gc_probability', 1);
-            break;
-            default :
-                $config = CONFIGS.CAKE_SESSION_SAVE.'.php';
-                if(is_file($config))
-                {
-                    require($config);
-                }
-                else
+                if(!isset($_SESSION))
                 {
                     ini_set('session.use_trans_sid', 0);
                     ini_set('session.name', CAKE_SESSION_COOKIE);
                     ini_set('session.cookie_lifetime', $this->cookieLifeTime);
                     ini_set('session.cookie_path', $this->path);
                     ini_set('session.gc_probability', 1);
+                }
+            break;
+            default:
+                if(!isset($_SESSION))
+                {
+                    $config = CONFIGS.CAKE_SESSION_SAVE.'.php';
+                    if(is_file($config))
+                    {
+                        require_once($config);
+                    }
+                }
+                else
+                {
+                    if(!isset($_SESSION))
+                    {
+                        ini_set('session.use_trans_sid', 0);
+                        ini_set('session.name', CAKE_SESSION_COOKIE);
+                        ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                        ini_set('session.cookie_path', $this->path);
+                        ini_set('session.gc_probability', 1);
+                    }
                 }
             break;
         }
@@ -509,7 +522,8 @@ class CakeSession extends Object
         $newSessid = session_id();
         $file = $sessionpath.DS."sess_$oldSessionId";
         @unlink($file);
-        $this->_initSession();
+        @session_destroy($oldSessionId);
+        $this->__initSession();
         session_id($newSessid);
         session_start();
     }
