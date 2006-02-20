@@ -368,8 +368,7 @@ class Model extends Object
  * PHP4 Only
  *
  * Handles custom method calls, like findBy<field> for DB models,
- * custom RPC calls for remote data sources and bind to model calls
- * to change associations on the fly.
+ * and custom RPC calls for remote data sources
  *
  * @param unknown_type $method
  * @param unknown_type $params
@@ -379,22 +378,28 @@ class Model extends Object
  */
     function __call($method, $params, &$return)
     {
-        $args = func_get_args();
-        if (count($args) > 1 && strpos(low($args[0]), 'bindto') === 0)
+        $return = $this->db->query($method, $params, $this);
+        return true;
+    }
+
+/**
+ * Bind model associations on the fly.
+ *
+ * @param array $params
+ * @return true
+ */
+    function bindModel($params)
+    {
+        foreach($params as $assoc => $model)
         {
-            $assoc = Inflector::camelize(preg_replace('/bindto/i', '', $args[0]));
-            $this->__constructLinkedModel($assoc, $assoc);
-            $type = array_keys($args[1][0]);
-            $this->__backAssociation[$type[0]] = $this->{$type[0]};
-            $this->{$type[0]}[$assoc] = $args[1][0][$type[0]];
-            $this->__generateAssociation($type[0], $assoc);
-            return true;
+            $modelName = array_keys($model);
+            $this->__constructLinkedModel($modelName[0], $modelName[0]);
+            $type = $assoc;
+            $this->__backAssociation[$type] = $this->{$type};
+            $this->{$type}[$modelName[0]] = $model[$modelName[0]];
+            $this->__generateAssociation($type, $modelName[0]);
         }
-        else
-        {
-            $return = $this->db->query($method, $params, $this);
-            return true;
-        }
+        return true;
     }
 
 /**
