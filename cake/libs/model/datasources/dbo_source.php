@@ -1026,6 +1026,10 @@ class DboSource extends DataSource
             {
                 $conditions = ' 1 = 1';
             }
+            elseif (strpos($conditions, '--return') === 0)
+            {
+                $conditions = str_replace('--return', '', $conditions);
+            }
             else
             {
                 preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $conditions, $result, PREG_PATTERN_ORDER);
@@ -1051,6 +1055,10 @@ class DboSource extends DataSource
                         $data .= $this->value($valElement) . ', ';
                     }
                     $data[strlen($data)-2] = ')';
+                }
+                elseif (is_numeric($key))
+                {
+                    $data = ' '. $value;
                 }
                 elseif (preg_match('/(?P<expression>LIKE\\x20|=\\x20|>\\x20|<\\x20|<=\\x20|>=\\x20|<>\\x20)(?P<value>.*)/i', $value, $match))
                 {

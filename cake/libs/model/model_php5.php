@@ -1152,7 +1152,7 @@ class Model extends Object
 
         if(isset($this->__backAssociation))
         {
-            $this->__resetAssocitions();
+            $this->__resetAssociations();
         }
         return $return;
     }
@@ -1166,7 +1166,7 @@ class Model extends Object
  * @return unknown
  * @access private
  */
-    function __resetAssocitions()
+    function __resetAssociations()
     {
         foreach ($this->__associations as $type)
         {
