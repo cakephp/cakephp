@@ -31,28 +31,22 @@
 ini_set('display_errors', '1');
 ini_set('error_reporting', '7');
 
-/**
- * Enter description here...
- *
- */
 define ('DS', DIRECTORY_SEPARATOR);
+
 /**
- * Enter description here...
+ * Change these setting only if your install
+ * is different from a distribution install.
  *
  */
 define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
-/**
- * Enter description here...
- *
- */
 define ('APP_DIR', 'app');
-/**
- * Enter description here...
- *
- */
+define('CAKE_CORE_INCLUDE_PATH', ROOT);
+
 define ('DEBUG', 1);
-require (ROOT.'cake'.DS.'basics.php');
-require (ROOT.'cake'.DS.'config'.DS.'paths.php');
+ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+
+require ('cake'.DS.'basics.php');
+require ('cake'.DS.'config'.DS.'paths.php');
 require (CONFIGS.'core.php');
 require (CONFIGS.'database.php');
 uses ('neat_array');

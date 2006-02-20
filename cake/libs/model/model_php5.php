@@ -366,7 +366,8 @@ class Model extends Object
 
 /**
  * Handles custom method calls, like findBy<field> for DB models,
- * and custom RPC calls for remote data sources.
+ * custom RPC calls for remote data sources and bind to model calls
+ * to change associations on the fly.
  *
  * @param unknown_type $method
  * @param array $params
@@ -375,7 +376,21 @@ class Model extends Object
  */
     function __call($method, $params)
     {
-        return $this->db->query($method, $params, $this);
+        $args = func_get_args();
+        if (count($args) > 1 && strpos(low($args[0]), 'bindto') === 0)
+        {
+            $assoc = preg_replace('/bindto/i', '', $args[0]);
+            $this->__constructLinkedModel($assoc, $assoc);
+            $type = array_keys($args[1][0]);
+            $this->__backAssociation[$type[0]] = $this->{$type[0]};
+            $this->{$type[0]}[$assoc] = $args[1][0][$type[0]];
+            $this->__generateAssociation($type[0], $assoc);
+            return true;
+        }
+        else
+        {
+            return $this->db->query($method, $params, $this);
+        }
     }
 
 /**
@@ -406,7 +421,7 @@ class Model extends Object
                 {
                     $className = $value['className'];
                 }
-                $this->__constructLinkedModel($assoc, $className, $type);
+                $this->__constructLinkedModel($assoc, $className);
             }
         }
 
@@ -424,10 +439,9 @@ class Model extends Object
  * @param string $assoc
  * @param string $className Class name
  * @param string $type Type of assocation
- * @todo Is the third parameter in use at the moment? It is not referred to in the  method OJ, 30. jan 2006
  * @access private
  */
-    function __constructLinkedModel($assoc, $className, $type)
+    function __constructLinkedModel($assoc, $className)
     {
         $colKey = Inflector::underscore($className);
         if(ClassRegistry::isKeySet($colKey))
@@ -1129,7 +1143,35 @@ class Model extends Object
             'limit'			=> $limit_str,
             'order'			=> $order
         );
-        return $this->afterFind($this->db->read($this, $queryData, $recursive));
+        $return = $this->afterFind($this->db->read($this, $queryData, $recursive));
+
+        if(isset($this->__backAssociation))
+        {
+            $this->__resetAssocitions();
+        }
+        return $return;
+    }
+
+
+/**
+ * Method is called only when bindTo<ModelName>() is used.
+ * This resets the association arrays for the model back
+ * to the original as set in the model.
+ *
+ * @return unknown
+ * @access private
+ */
+    function __resetAssocitions()
+    {
+        foreach ($this->__associations as $type)
+        {
+            if(isset($this->__backAssociation[$type]))
+            {
+                $this->{$type} = $this->__backAssociation[$type];
+            }
+        }
+        unset($this->__backAssociation);
+        return true;
     }
 
 /**
