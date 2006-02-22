@@ -139,7 +139,7 @@ define('SCRIPTS', CAKE.'scripts'.DS);
 /**
  * Path to the tests directory.
  */
-define ('TESTS', ROOT.DS.'tests'.DS);
+define ('TESTS', APP.'tests'.DS);
 
 /**
  * Path to the controller test directory.

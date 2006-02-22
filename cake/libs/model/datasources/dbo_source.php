@@ -1019,7 +1019,7 @@ class DboSource extends DataSource
         {
             if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match))
             {
-                $clause = ' WHERE ';
+                $clause = 'WHERE ';
             }
         }
         if (is_string($conditions))
@@ -1041,7 +1041,7 @@ class DboSource extends DataSource
                 {
                     $end = '\\\\'.$this->endQuote.'\\\\';
                 }
-                preg_match_all('/(\'{1}[-\\w\\s~`!@#$%^&*()_+={[}|:;"<,>.?\/*|\\]\\\]*\'{1})|(?P<field>[a-z0-9_'.$start.$end.']*\\.[a-z0-9_'.$start.$end.']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
+                preg_match_all('/(\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|(?P<field>[a-z0-9_'.$start.$end.']*\\.[a-z0-9_'.$start.$end.']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
 
                 if(isset($match['field'][0]))
                 {
@@ -1059,7 +1059,7 @@ class DboSource extends DataSource
         }
         else
         {
-            $clause = ' WHERE ';
+            $clause = 'WHERE ';
             $out = array();
             $count = 0;
             $operator = null;
@@ -1089,7 +1089,10 @@ class DboSource extends DataSource
                         $operator = $regs['conditional'];
                         $key = preg_replace('/'.$regs['conditional'].'/', '', $key);
                     }
-
+                    if(empty($match['operator']))
+                    {
+                        $match['operator'] = ' = ';
+                    }
                     if (strpos($match['value'], '--return') === 0)
                     {
                         $match['value'] = str_replace('--return', '', $match['value']);
