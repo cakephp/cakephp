@@ -59,6 +59,20 @@ class DboSource extends DataSource
  */
     var $__assocJoins = null;
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $startQuote = null;
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $endQuote = null;
+
+/**
  * Constructor
  *
  */
@@ -966,40 +980,26 @@ class DboSource extends DataSource
                  {
                      $fields[]= $field['name'];
                  }
-
             }
         }
 
         $count = count($fields);
-        $safe = true;
-        $columnFunctions = array('avg(', 'count(', 'count_big(', 'min(', 'max(',
-                                 'distinct', 'sum(', 'concat(', 'rand(', 'stddev_pop',
-                                  'var_pop', 'least(', 'greatest(', 'octet_length(',
-                                  'length(', 'extract(', 'translate(', 'conv(');
         if ($count >= 1 && $fields[0] != '*')
-        {
-            foreach($columnFunctions as $f)
-            {
-                if (strpos(low($fields[0]), $f) !== false)
-                {
-                    $safe = false;
-                    break;
-                }
-            }
-        }
-        if ($count >= 1 && $fields[0] != '*' && $safe)
         {
             for ($i = 0; $i < $count; $i++)
             {
-                $dot = strrpos($fields[$i], '.');
-                if ($dot === false)
+                if(!preg_match('/^avg\\(|^count\\(|^count_big\\(|^min\\(|^max\\(|^distinct|^sum\\(|^concat\\(|^rand\\(|^stddev_pop|^var_pop|^least\\(|^greatest\\(|^octet_length\\(|^length\\(|^extract\\(^translate\\(|^conv\\(/i', $fields[$i]))
                 {
-                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
-                }
-                else
-                {
-                    $build = explode('.',$fields[$i]);
-                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]);
+                    $dot = strrpos($fields[$i], '.');
+                    if ($dot === false)
+                    {
+                        $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
+                    }
+                    else
+                    {
+                        $build = explode('.',$fields[$i]);
+                        $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]);
+                    }
                 }
             }
         }
@@ -1014,36 +1014,52 @@ class DboSource extends DataSource
  */
     function conditions ($conditions)
     {
-        $rt = '';
-        if (!is_array($conditions) && (!strpos(low($conditions), 'where') || strpos(low($conditions), 'where') === 0))
+        $clause = '';
+        if (!is_array($conditions))
         {
-            $rt = ' WHERE ';
+            if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match))
+            {
+                $clause = ' WHERE ';
+            }
         }
-
         if (is_string($conditions))
         {
             if (trim($conditions) == '')
             {
                 $conditions = ' 1 = 1';
             }
-            elseif (strpos($conditions, '--return') === 0)
-            {
-                $conditions = str_replace('--return', '', $conditions);
-            }
             else
             {
-                preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $conditions, $result, PREG_PATTERN_ORDER);
-                $pregCount = count($result[0]);
-
-                for ($i = 0; $i < $pregCount; $i++)
+                $start = null;
+                $end = null;
+                if(!empty($this->startQuote))
                 {
-                    $conditions = preg_replace('/'.$result[0][$i].'/', $this->name($result[0][$i]), $conditions);
+                    $start = '\\\\'.$this->startQuote.'\\\\';
+                }
+                $end = $this->endQuote;
+                if(!empty($this->endQuote))
+                {
+                    $end = '\\\\'.$this->endQuote.'\\\\';
+                }
+                preg_match_all('/(\'{1}[-\\w\\s~`!@#$%^&*()_+={[}|:;"<,>.?\/*|\\]\\\]*\'{1})|(?P<field>[a-z0-9_'.$start.$end.']*\\.[a-z0-9_'.$start.$end.']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
+
+                if(isset($match['field'][0]))
+                {
+                    $pregCount = count($match['field']);
+                    for ($i = 0; $i < $pregCount; $i++)
+                    {
+                        if(!empty($match['field'][$i]))
+                        {
+                            $conditions = preg_replace('/'.$match['field'][$i].'/', $this->name($match['field'][$i]), $conditions);
+                        }
+                    }
                 }
             }
-            return $rt.$conditions;
+            return $clause.$conditions;
         }
-        elseif (is_array($conditions))
+        else
         {
+            $clause = ' WHERE ';
             $out = array();
             $count = 0;
             $operator = null;
@@ -1109,11 +1125,7 @@ class DboSource extends DataSource
                 $count++;
                 $out[] = $operator.$data;
             }
-            return ' WHERE ' . join('', $out);
-        }
-        else
-        {
-            return $rt.' 1 ';
+            return $clause . join('', $out);
         }
     }
 

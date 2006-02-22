@@ -57,6 +57,20 @@ class DboMysql extends DboSource
  *
  * @var unknown_type
  */
+    var $startQuote = "`";
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $endQuote = "`";
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
     var $_baseConfig = array('persistent' => true,
                              'host'        => 'localhost',
                              'login'      => 'root',

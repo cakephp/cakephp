@@ -94,6 +94,16 @@ class SessionComponent extends Object
 
 /**
  * Enter description here...
+ * @param unknown_type $name
+ * @return unknown
+ */
+    function delete($name)
+    {
+        return $this->del($name);
+    }
+
+/**
+ * Enter description here...
  *
  * Use like this. $this->Session->check('Controller.sessKey');
  *

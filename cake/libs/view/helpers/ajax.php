@@ -338,10 +338,6 @@ class AjaxHelper extends Helper
     function submit ($title = 'Submit', $options = array())
     {
         $htmlOptions = $this->__getHtmlOptions($options);
-        if (!isset($htmlOptions['type']))
-        {
-            $htmlOptions['type'] = 'submit';
-        }
         $htmlOptions['value'] = $title;
 
         if (!isset($options['with']))

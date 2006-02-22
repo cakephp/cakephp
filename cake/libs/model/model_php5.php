@@ -388,12 +388,34 @@ class Model extends Object
     {
         foreach($params as $assoc => $model)
         {
-            $modelName = array_keys($model);
-            $this->__constructLinkedModel($modelName[0], $modelName[0]);
-            $type = $assoc;
-            $this->__backAssociation[$type] = $this->{$type};
-            $this->{$type}[$modelName[0]] = $model[$modelName[0]];
-            $this->__generateAssociation($type, $modelName[0]);
+            $this->__backAssociation[$assoc] = $this->{$assoc};
+            foreach($model as $key => $value)
+            {
+                $modelName = $key;
+                $this->__constructLinkedModel($modelName, $modelName);
+                $this->{$assoc}[$modelName] = $model[$modelName];
+                $this->__generateAssociation($assoc, $modelName);
+            }
+        }
+        return true;
+    }
+
+/**
+ * Turn off associations on the fly.
+ *
+ * @param array $params
+ * @return true
+ */
+    function unbindModel($params)
+    {
+        foreach($params as $assoc => $models)
+        {
+            $this->__backAssociation[$assoc] = $this->{$assoc};
+            foreach($models as $model)
+            {
+                $this->__backAssociation = array_merge_recursive($this->__backAssociation, $this->{$assoc});
+                unset($this->{$assoc}[$model]);
+            }
         }
         return true;
     }
@@ -992,6 +1014,17 @@ class Model extends Object
     }
 
 /**
+ * Alias for del()
+ *
+ * @param mixed $id Id of record to delete
+ * @return boolean True on success
+ */
+    function delete ($id = null, $cascade = true)
+    {
+        return $this->del($id, $cascade);
+    }
+
+/**
  * Cascades model deletes to hasMany relationships.
  *
  * @param string $id
@@ -1007,11 +1040,11 @@ class Model extends Object
                 $model =& $this->{$data['className']};
                 $field = $model->escapeField($data['foreignKey']);
                 $model->recursive = 0;
-                $records = $model->findAll($field.'='.$id);
+                $records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
                 foreach($records as $record)
                 {
-                    $this->{$data['className']}->del($record[$data['className']][$model->{$data['className']}->primaryKey]);
+                    $model->del($record[$data['className']][$model->primaryKey]);
                 }
             }
         }
@@ -1033,11 +1066,11 @@ class Model extends Object
                 $model =& $this->{$data['className']};
                 $field = $model->escapeField($data['foreignKey']);
                 $model->recursive = 0;
-                $records = $model->findAll($field.'='.$id);
+                $records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
                 foreach($records as $record)
                 {
-                    $this->{$data['className']}->del($record[$data['className']][$model->primaryKey]);
+                    $model->del($record[$data['className']][$model->primaryKey]);
                 }
             }
         }
