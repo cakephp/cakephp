@@ -101,7 +101,7 @@ if(is_array($data))
 ?>
         <td class="listactions"><?php echo $html->link('View',"/".$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
                                 <?php echo $html->link('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-                                <?php echo $html->link('Delete',"/".$this->viewPath."/destroy/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                                <?php echo $html->link('Delete',"/".$this->viewPath."/delete/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
         </td>
         </tr>
 <?php

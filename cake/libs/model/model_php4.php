@@ -251,7 +251,7 @@ class Model extends Object
  */
     var $__associationKeys = array('belongsTo' 	=> array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
                                   'hasOne' 		=> array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
-                                  'hasMany' 	=> array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finder_query', 'counter_query'),
+                                  'hasMany' 	=> array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
                                   'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery')
                                  );
 

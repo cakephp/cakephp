@@ -98,7 +98,7 @@ class Scaffold extends Object {
         $this->scaffoldTitle = Inflector::humanize($this->modelKey);
         $this->viewPath = Inflector::underscore($controller->name);
         $this->controllerClass->pageTitle = $this->scaffoldTitle;
-        $this->_renderScaffold($params);
+        $this->__renderScaffold($params);
     }
 
 
@@ -108,22 +108,22 @@ class Scaffold extends Object {
  * @param array $params
  * @access private
  */
-    function _renderScaffold($params)
+    function __renderScaffold($params)
     {
-        $this->_scaffoldView($params);
+        $this->__scaffoldView($params);
     }
 
 /**
  * Renders the List view as the default action (index).
  *
  * @param array $params
- * @return Scaffold::_scaffoldList();
+ * @return Scaffold::__scaffoldList();
  * @access private
  */
-    function _scaffoldIndex($params)
+    function __scaffoldIndex($params)
     {
         $this->controllerClass->pageTitle = Inflector::humanize(Inflector::pluralize($this->modelKey));
-        return $this->_scaffoldList($params);
+        return $this->__scaffoldList($params);
     }
 
 /**
@@ -133,16 +133,30 @@ class Scaffold extends Object {
  * @return A rendered view of a row from Models database table
  * @access private
  */
-    function _scaffoldShow($params)
+    function __scaffoldShow($params)
     {
-        $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
-        $this->controllerClass->set('data', $this->controllerClass->params['data'] );
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames( $this->controllerClass->params['data'], false ) );
-        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml'))
+        if($this->controllerClass->_beforeScaffold('show'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml');
+            $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
+            $this->controllerClass->set('data', $this->controllerClass->params['data'] );
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames( $this->controllerClass->params['data'], false ) );
+            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.show.thtml');
+            }
+            elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.show.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.show.thtml');
+            }
+            else
+            {
+                return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
+            }
         }
-        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'show.thtml');
+        else if($this->controllerClass->_scaffoldError('show') === false)
+        {
+            return $this->__scaffoldError();
+        }
     }
 
 /**
@@ -152,15 +166,29 @@ class Scaffold extends Object {
  * @return A rendered view listing rows from Models database table
  * @access private
  */
-    function _scaffoldList($params)
+    function __scaffoldList($params)
     {
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
-        $this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
-        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml'))
+        if($this->controllerClass->_beforeScaffold('index'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml');
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
+            $this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
+            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml');
+            }
+            elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.list.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.list.thtml');
+            }
+            else
+            {
+                return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
+            }
         }
-        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'list.thtml');
+        else if($this->controllerClass->_scaffoldError('index') === false)
+        {
+            return $this->__scaffoldError();
+        }
     }
 
 /**
@@ -170,15 +198,29 @@ class Scaffold extends Object {
  * @return A rendered view with a form to create a new row in the Models database table
  * @access private
  */
-    function _scaffoldNew($params)
+    function __scaffoldNew($params)
     {
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-        $this->controllerClass->set('type', 'New');
-        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml'))
+        if($this->controllerClass->_beforeScaffold('add'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml');
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
+            $this->controllerClass->set('type', 'New');
+            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.new.thtml');
+            }
+            elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml');
+            }
+            else
+            {
+                return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+            }
         }
-        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+        else if($this->controllerClass->_scaffoldError('add') === false)
+        {
+            return $this->__scaffoldError();
+        }
     }
 
 /**
@@ -188,17 +230,31 @@ class Scaffold extends Object {
  * @return A rendered view with a form to edit a record in the Models database table
  * @access private
  */
-    function _scaffoldEdit($params=array())
+    function __scaffoldEdit($params=array())
     {
-        $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->controllerClass->params['data']) );
-        $this->controllerClass->set('type', 'Edit');
-        $this->controllerClass->set('data', $this->controllerClass->params['data']);
-        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml'))
+        if($this->controllerClass->_beforeScaffold('edit'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml');
+            $this->controllerClass->params['data'] = $this->controllerClass->{$this->modelKey}->read();
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->controllerClass->params['data']) );
+            $this->controllerClass->set('type', 'Edit');
+            $this->controllerClass->set('data', $this->controllerClass->params['data']);
+            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffold.edit.thtml');
+            }
+            elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+            {
+                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.edit.thtml');
+            }
+            else
+            {
+                return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+            }
         }
-        return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+        else if($this->controllerClass->_scaffoldError('edit') === false)
+        {
+            return $this->__scaffoldError();
+        }
     }
 
 
@@ -209,44 +265,57 @@ class Scaffold extends Object {
  * @return success on save  new form if data is empty or if data does not validate
  * @access private
  */
-    function _scaffoldCreate($params)
+    function __scaffoldCreate($params)
     {
-        if(empty($this->controllerClass->params['data']))
+        if($this->controllerClass->_beforeScaffold('create'))
         {
-            return $this->_scaffoldNew($params);
-        }
-
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-        $this->_cleanUpFields();
-
-        if ($this->controllerClass->{$this->modelKey}->save($this->controllerClass->params['data']))
-        {
-            if(is_object($this->controllerClass->Session))
+            if(empty($this->controllerClass->params['data']))
             {
-                $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.');
-                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                return $this->__scaffoldNew($params);
+            }
 
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
+            $this->controllerClass->cleanUpFields();
+
+            if ($this->controllerClass->{$this->modelKey}->save($this->controllerClass->params['data']))
+            {
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.');
+                    $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                }
+                else
+                {
+                    return $this->controllerClass->flash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/'.
+                                                                 Inflector::underscore($this->controllerClass->viewPath) );
+                }
             }
             else
             {
-            return $this->controllerClass->flash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/'.
-                                                Inflector::underscore($this->controllerClass->viewPath) );
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('Please correct errors below');
+                }
+                $this->controllerClass->set('data', $this->controllerClass->params['data']);
+                $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
+                $this->controllerClass->set('type', 'New');
+                if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
+                {
+                    return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml');
+                }
+                elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+                {
+                    return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml');
+                }
+                else
+                {
+                    return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+                }
             }
         }
-        else
+        else if($this->controllerClass->_scaffoldError('create') === false)
         {
-            if(is_object($this->controllerClass->Session))
-            {
-                $this->controllerClass->Session->setFlash('Please correct errors below');
-            }
-            $this->controllerClass->set('data', $this->controllerClass->params['data']);
-            $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
-            $this->controllerClass->set('type', 'New');
-            if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
-            {
-                return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml');
-            }
-            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+            return $this->__scaffoldError();
         }
     }
 
@@ -257,41 +326,58 @@ class Scaffold extends Object {
  * @return success on save  new form if data is empty or error if update fails
  * @access private
  */
-    function _scaffoldUpdate($params=array())
+    function __scaffoldUpdate($params=array())
     {
-        if(empty($this->controllerClass->params['data']))
+        if($this->controllerClass->_beforeScaffold('update'))
         {
-            return $this->_scaffoldNew($params);
-        }
-        $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
-        $this->_cleanUpFields();
-
-        $this->controllerClass->{$this->modelKey}->set($this->controllerClass->params['data']);
-
-        if ( $this->controllerClass->{$this->modelKey}->save())
-        {
-            if(is_object($this->controllerClass->Session))
+            if(empty($this->controllerClass->params['data']))
             {
-                $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/');
-                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                return $this->__scaffoldNew($params);
+            }
 
+            $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
+            $this->controllerClass->cleanUpFields();
+            $this->controllerClass->{$this->modelKey}->set($this->controllerClass->params['data']);
+
+            if ( $this->controllerClass->{$this->modelKey}->save())
+            {
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('Your '.Inflector::humanize($this->modelKey).' has been saved.', '/');
+                    $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                }
+                else
+                {
+                    return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been updated.','/'.
+                                                                Inflector::underscore($this->controllerClass->viewPath));
+                }
             }
             else
             {
-            return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been updated.','/'.
-                                                 Inflector::underscore($this->controllerClass->viewPath));
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('Please correct errors below');
+                }
+                $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
+                $this->controllerClass->set('data', $this->controllerClass->params['data']);
+                $this->controllerClass->set('type', 'Edit');
+                if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
+                {
+                    return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'edit.thtml');
+                }
+                elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+                {
+                    return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.edit.thtml');
+                }
+                else
+                {
+                    return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+                }
             }
         }
-        else
+        else if($this->controllerClass->_scaffoldError('index') === false)
         {
-            if(is_object($this->controllerClass->Session))
-            {
-                $this->controllerClass->Session->setFlash('Please correct errors below');
-            }
-            $this->controllerClass->validateErrors($this->controllerClass->{$this->modelKey});
-            $this->controllerClass->set('data', $this->controllerClass->params['data']);
-            $this->controllerClass->set('type', 'Edit');
-            return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'scaffolds'.DS.'edit.thtml');
+            return $this->__scaffoldError();
         }
     }
 
@@ -302,38 +388,65 @@ class Scaffold extends Object {
  * @return success on delete error if delete fails
  * @access private
  */
-    function _scaffoldDestroy($params=array())
+    function __scaffoldDelete($params=array())
     {
-        $id = $params['pass'][0];
-        if ($this->controllerClass->{$this->modelKey}->del($id))
+        if($this->controllerClass->_beforeScaffold('delete'))
         {
-            if(is_object($this->controllerClass->Session))
+            $id = $params['pass'][0];
+            if ($this->controllerClass->{$this->modelKey}->del($id))
             {
-                $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/');
-                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
-
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/');
+                    $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                }
+                else
+                {
+                    return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' with id: '.
+                                                          $id.' has been deleted.', '/'.Inflector::underscore($this->controllerClass->viewPath));
+                }
             }
             else
             {
-            return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' with id: '.
-                                                $id.' has been deleted.', '/'.Inflector::underscore($this->controllerClass->viewPath));
+                if(is_object($this->controllerClass->Session))
+                {
+                    $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/');
+                    $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                }
+                else
+                {
+                    return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
+                                                          $id, '/'.Inflector::underscore($this->controllerClass->viewPath));
+                }
             }
+        }
+        else if($this->controllerClass->_scaffoldError('delete') === false)
+        {
+            return $this->__scaffoldError();
+        }
+    }
+
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
+    function __scaffoldError()
+    {
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'scaffold_error.thtml');
+        }
+        elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+        {
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold_error.thtml');
         }
         else
         {
-            if(is_object($this->controllerClass->Session))
-            {
-                $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/');
-                $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
-
-            }
-            else
-            {
-            return $this->controllerClass->flash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.
-                                                $id, '/'.Inflector::underscore($this->controllerClass->viewPath));
-            }
+             return $this->controllerClass->render($this->actionView, '', LIBS.'view'.DS.'templates'.DS.'errors'.DS.'scaffold_error.thtml');
         }
     }
+
 
 /**
  * When methods are now present in a controller
@@ -349,7 +462,7 @@ class Scaffold extends Object {
  * @since Cake v 0.10.0.172
  * @access private
  */
-    function _scaffoldView ($params)
+    function __scaffoldView ($params)
     {
         if(!in_array('Form', $this->controllerClass->helpers))
         {
@@ -362,40 +475,40 @@ class Scaffold extends Object {
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
                 $params['action'] === 'show'    || $params['action'] === 'add' ||
                 $params['action'] === 'create' || $params['action'] === 'edit' ||
-                $params['action'] === 'update' || $params['action'] === 'destroy')
+                $params['action'] === 'update' || $params['action'] === 'delete')
                 {
                     switch ($params['action'])
                     {
                         case 'index':
-                            $this->_scaffoldIndex($params);
+                            $this->__scaffoldIndex($params);
                         break;
 
                         case 'show':
-                            $this->_scaffoldShow($params);
+                            $this->__scaffoldShow($params);
                         break;
 
                         case 'list':
-                            $this->_scaffoldList($params);
+                            $this->__scaffoldList($params);
                         break;
 
                         case 'add':
-                            $this->_scaffoldNew($params);
+                            $this->__scaffoldNew($params);
                         break;
 
                         case 'edit':
-                            $this->_scaffoldEdit($params);
+                            $this->__scaffoldEdit($params);
                         break;
 
                         case 'create':
-                            $this->_scaffoldCreate($params);
+                            $this->__scaffoldCreate($params);
                         break;
 
                         case 'update':
-                            $this->_scaffoldUpdate($params);
+                            $this->__scaffoldUpdate($params);
                         break;
 
-                        case 'destroy':
-                            $this->_scaffoldDestroy($params);
+                        case 'delete':
+                            $this->__scaffoldDelete($params);
                         break;
                     }
                 }
@@ -411,66 +524,6 @@ class Scaffold extends Object {
         {
             return $this->cakeError('missingDatabase',
                         array(array('webroot' => $this->controllerClass->webroot)));
-        }
-    }
-
-/**
- * Cleans up the date fields of current Model.
- *
- * @access private
- */
-    function _cleanUpFields()
-    {
-
-        foreach( $this->controllerClass->{$this->modelKey}->_tableInfo as $table )
-        {
-            foreach ($table as $field)
-            {
-                if('date' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']))
-                {
-                    $newDate  = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'].'-';
-                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
-                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian']);
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
-                }
-                else if( 'datetime' == $field['type'] && isset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'] ) )
-                {
-                    $hour = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour'];
-                    if( $hour != 12 && 'pm' == $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian'] )
-                    {
-                        $hour = $hour + 12;
-                    }
-                    $newDate  = $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year'].'-';
-                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month'].'-';
-                    $newDate .= $this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day'].' ';
-                    $newDate .= $hour.':'.$this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min'].':00';
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_year']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_month']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_day']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_hour']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_min']);
-                        unset($this->controllerClass->params['data'][$this->modelKey][$field['name'].'_meridian']);
-                    $this->controllerClass->params['data'][$this->modelKey][$field['name']] = $newDate;
-                }
-                else if( 'tinyint(1)' == $field['type'] )
-                {
-                    if( isset( $this->controllerClass->params['data'][$this->modelKey][$field['name']]) &&
-                                "on" == $this->controllerClass->params['data'][$this->modelKey][$field['name']] )
-                    {
-                        $this->controllerClass->params['data'][$this->modelKey][$field['name']] = true;
-                    }
-                    else
-                    {
-                        $this->controllerClass->params['data'][$this->modelKey][$field['name']] = false;
-                    }
-                }
-            }
         }
     }
 }

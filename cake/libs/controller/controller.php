@@ -804,6 +804,65 @@ class Controller extends Object
     }
 
 /**
+ * Cleans up the date fields of current Model.
+ *
+ */
+    function cleanUpFields()
+    {
+
+        foreach( $this->{$this->modelKey}->_tableInfo as $table )
+        {
+            foreach ($table as $field)
+            {
+                if('date' == $field['type'] && isset($this->params['data'][$this->modelKey][$field['name'].'_year']))
+                {
+                    $newDate  = $this->params['data'][$this->modelKey][$field['name'].'_year'].'-';
+                    $newDate .= $this->params['data'][$this->modelKey][$field['name'].'_month'].'-';
+                    $newDate .= $this->params['data'][$this->modelKey][$field['name'].'_day'].' ';
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_year']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_month']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_day']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_hour']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_min']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_meridian']);
+                    $this->params['data'][$this->modelKey][$field['name']] = $newDate;
+                }
+                else if( 'datetime' == $field['type'] && isset($this->params['data'][$this->modelKey][$field['name'].'_year'] ) )
+                {
+                    $hour = $this->params['data'][$this->modelKey][$field['name'].'_hour'];
+                    if( $hour != 12 && 'pm' == $this->params['data'][$this->modelKey][$field['name'].'_meridian'] )
+                    {
+                        $hour = $hour + 12;
+                    }
+                    $newDate  = $this->params['data'][$this->modelKey][$field['name'].'_year'].'-';
+                    $newDate .= $this->params['data'][$this->modelKey][$field['name'].'_month'].'-';
+                    $newDate .= $this->params['data'][$this->modelKey][$field['name'].'_day'].' ';
+                    $newDate .= $hour.':'.$this->params['data'][$this->modelKey][$field['name'].'_min'].':00';
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_year']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_month']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_day']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_hour']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_min']);
+                        unset($this->params['data'][$this->modelKey][$field['name'].'_meridian']);
+                    $this->params['data'][$this->modelKey][$field['name']] = $newDate;
+                }
+                else if( 'tinyint(1)' == $field['type'] )
+                {
+                    if( isset( $this->params['data'][$this->modelKey][$field['name']]) &&
+                                "on" == $this->params['data'][$this->modelKey][$field['name']] )
+                    {
+                        $this->params['data'][$this->modelKey][$field['name']] = true;
+                    }
+                    else
+                    {
+                        $this->params['data'][$this->modelKey][$field['name']] = false;
+                    }
+                }
+            }
+        }
+    }
+
+/**
  * Called before the controller action.  Overridden in subclasses.
  *
  */
@@ -825,6 +884,30 @@ class Controller extends Object
  */
     function afterFilter ()
     {
+    }
+
+/**
+ * This method should be overridden in child classes.
+ *
+ * @param string $method name of method called example index, edit, etc.
+ * @return boolean
+ */
+    function _beforeScaffold($method)
+    {
+        return true;
+    }
+
+/**
+ * This method should be overridden in child classes.
+ * If not it will render a scaffold error.
+ * Method MUST return true in child classes
+ *
+ * @param string $method name of method called example index, edit, etc.
+ * @return boolean
+ */
+    function _scaffoldError($method)
+    {
+        return false;
     }
 }
 ?>

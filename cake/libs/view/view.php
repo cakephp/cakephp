@@ -282,7 +282,7 @@ class View extends Object
             return $this->pluginView($action, $layout);
         }
 
-        if (!is_file($viewFileName) && !$viewFileName = fileExistsInPath($viewFileName) && !$viewFileName === DS)
+        if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === DS)
         {
 
             if (strpos($action, 'missingAction') !== false)

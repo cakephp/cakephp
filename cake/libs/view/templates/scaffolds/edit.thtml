@@ -49,7 +49,7 @@ echo $form->generateSubmitDiv( 'Save' )
 <?php
 if($type == 'Edit')
 {
-    echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/destroy/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
+    echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/delete/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
 }
 echo "<li>".$html->link('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/index')."</li>";
 if($type == 'Edit')
