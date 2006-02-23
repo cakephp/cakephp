@@ -250,140 +250,131 @@ class View extends Object
     function render($action=null, $layout=null, $file=null)
     {
         if (isset($this->hasRendered) && $this->hasRendered)
-      {
-         return true;
-      }
-      else
-      {
-         $this->hasRendered = false;
-      }
+        {
+            return true;
+        }
+        else
+        {
+            $this->hasRendered = false;
+        }
 
-      if (!$action)
-      {
-         $action = $this->action;
-      }
-      if ($layout)
-      {
-         $this->setLayout($layout);
-      }
+        if (!$action)
+        {
+            $action = $this->action;
+        }
 
-      if ($file)
-      {
-          $viewFileName = $file;
-      }
-      else
-      {
-          $viewFileName = $this->_getViewFileName($action);
-      }
+        if ($layout)
+        {
+            $this->setLayout($layout);
+        }
 
-      if(!is_null($this->plugin) && is_null($file))
-      {
-          return $this->pluginView($action, $layout);
-      }
+        if ($file)
+        {
+            $viewFileName = $file;
+        }
+        else
+        {
+            $viewFileName = $this->_getViewFileName($action);
+        }
 
-      if (!is_file($viewFileName) && !$viewFileName = fileExistsInPath($viewFileName))
-      {
-         if (strtolower(get_class($this)) == 'template')
-         {
-            return array('action' => $action, 'layout' => $layout, 'viewFn' => $viewFileName);
-         }
+        if(!is_null($this->plugin) && is_null($file))
+        {
+            return $this->pluginView($action, $layout);
+        }
 
-// check to see if the missing view is due to a custom missingAction
-         if (strpos($action, 'missingAction') !== false)
-         {
-            $errorAction = 'missingAction';
-         }
-         else
-         {
-            $errorAction = 'missingView';
-         }
+        if (!is_file($viewFileName) && !$viewFileName = fileExistsInPath($viewFileName) && !$viewFileName === DS)
+        {
 
-// check for controller-level view handler
-         foreach(array($this->name, 'errors') as $viewDir)
-         {
-             $errorAction =Inflector::underscore($errorAction);
-             if(file_exists(VIEWS.$viewDir.DS.$errorAction.$this->ext))
-             {
-                 $missingViewFileName = VIEWS.$viewDir.DS.$errorAction.$this->ext;
-             }
-             elseif($missingViewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.$viewDir.DS.$errorAction.'.thtml'))
-             {
-             }
-             else
-             {
-                 $missingViewFileName = false;
-             }
-
-
-            $missingViewExists = is_file($missingViewFileName);
-            if ($missingViewExists)
+            if (strpos($action, 'missingAction') !== false)
             {
-                break;
-            }
-         }
-
-         if (strpos($action, 'missingView') === false)
-         {
-            return $this->cakeError('missingView',
-                        array(array('className' => $this->controller->name,
-                                    'action' => $action,
-                                    'file' => $viewFileName)));
-
-            $isFatal = isset($this->isFatal) ? $this->isFatal : false;
-            if (!$isFatal)
-            {
-                $viewFileName = $missingViewFileName;
-            }
-         }
-         else
-         {
-            $missingViewExists = false;
-         }
-
-         if (!$missingViewExists || $isFatal)
-         {
-// app/view/errors/missing_view.thtml view is missing!
-            if (DEBUG)
-            {
-                trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
+                $errorAction = 'missingAction';
             }
             else
             {
-                $this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
+                $errorAction = 'missingView';
             }
 
-            die();
-         }
-      }
-
-      if ($viewFileName && !$this->hasRendered)
-      {
-          if(substr($viewFileName, -5) === 'thtml')
-          {
-              $out = View::_render($viewFileName, $this->_viewVars, 0);
-          }
-          else
-          {
-              $out = $this->_render($viewFileName, $this->_viewVars, 0);
-          }
-         if ($out !== false)
-         {
-            if ($this->layout && $this->autoLayout)
+            foreach(array($this->name, 'errors') as $viewDir)
             {
-                $out = $this->renderLayout($out);
+                $errorAction =Inflector::underscore($errorAction);
+                if(file_exists(VIEWS.$viewDir.DS.$errorAction.$this->ext))
+                {
+                    $missingViewFileName = VIEWS.$viewDir.DS.$errorAction.$this->ext;
+                }
+                elseif($missingViewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.$viewDir.DS.$errorAction.'.thtml'))
+                {
+
+                }
+                else
+                {
+                    $missingViewFileName = false;
+                }
+
+                $missingViewExists = is_file($missingViewFileName);
+                if ($missingViewExists)
+                {
+                    break;
+                }
             }
 
-            print $out;
-            $this->hasRendered = true;
-         }
-         else
-         {
-            $out = $this->_render($viewFileName, $this->_viewVars, false);
-            trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
-         }
+            if (strpos($action, 'missingView') === false)
+            {
+                return $this->cakeError('missingView',
+                            array(array('className' => $this->controller->name,
+                                        'action' => $action,
+                                        'file' => $viewFileName)));
 
-         return true;
-      }
+                $isFatal = isset($this->isFatal) ? $this->isFatal : false;
+                if (!$isFatal)
+                {
+                    $viewFileName = $missingViewFileName;
+                }
+            }
+            else
+            {
+                $missingViewExists = false;
+            }
+
+            if (!$missingViewExists || $isFatal)
+            {
+                if (DEBUG)
+                {
+                    trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
+                }
+                else
+                {
+                    $this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
+                }
+                die();
+            }
+        }
+
+        if ($viewFileName && !$this->hasRendered)
+        {
+            if(substr($viewFileName, -5) === 'thtml')
+            {
+                $out = View::_render($viewFileName, $this->_viewVars, 0);
+            }
+            else
+            {
+                $out = $this->_render($viewFileName, $this->_viewVars, 0);
+            }
+            if ($out !== false)
+            {
+                if ($this->layout && $this->autoLayout)
+                {
+                    $out = $this->renderLayout($out);
+                }
+                print $out;
+                $this->hasRendered = true;
+            }
+            else
+            {
+                $out = $this->_render($viewFileName, $this->_viewVars, false);
+                trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
+            }
+            return true;
+        }
     }
 
 /**

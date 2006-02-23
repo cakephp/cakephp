@@ -49,6 +49,8 @@ class RequestHandlerComponent extends Object
 
     var $ajaxLayout = 'ajax';
 
+    var $disableStartup = false;
+
 
 /**
  * Startup
@@ -59,6 +61,7 @@ class RequestHandlerComponent extends Object
     function startup(&$controller)
     {
         $this->setAjax($controller);
+        
     }
 
 /**
@@ -69,6 +72,11 @@ class RequestHandlerComponent extends Object
  */
     function setAjax(&$controller)
     {
+        if ($this->disableStartup)
+        {
+            return;
+        }
+
         if ($this->isAjax())
         {
             $controller->layout = $this->ajaxLayout;

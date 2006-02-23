@@ -70,8 +70,9 @@ if (!defined('WEBROOT_DIR'))
     define ('WEBROOT_DIR', basename(dirname(__FILE__)));
 }
 
-ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+define('WWW_ROOT', dirname(__FILE__));
 
+ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
 
 require 'cake'.DS.'bootstrap.php';
 

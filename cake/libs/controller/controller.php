@@ -211,15 +211,30 @@ class Controller extends Object
         $this->viewPath = Inflector::underscore($this->name);
         $this->modelClass = Inflector::singularize($this->name);
         $this->modelKey  = Inflector::underscore($this->modelClass);
+
         if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
         {
-            array_push($this->components, 'Session');
+            $this->components[] = 'Session';
+        }
+
+        if (is_subclass_of($this, 'AppController'))
+        {
+            $appVars = get_class_vars('AppController');
+            foreach(array('components', 'helpers', 'uses') as $var)
+            {
+                if (isset($appVars[$var]) && !empty($appVars[$var]))
+                {
+                    $diff = array_diff($appVars[$var], $this->{$var});
+                    $this->{$var} = array_merge($this->{$var}, $diff);
+                }
+            }
         }
         parent::__construct();
     }
 
 /**
- * Enter description here...
+ * Loads and instantiates classes required by this controller,
+ * including components and models
  *
  */
     function constructClasses()

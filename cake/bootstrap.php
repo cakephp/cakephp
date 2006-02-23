@@ -109,7 +109,7 @@ require LIBS.'model'.DS.'connection_manager.php';
 
 config('database');
 
-if (class_exists('DATABASE_CONFIG') && !class_exists('AppModel'))
+if (!class_exists('AppModel'))
 {
     require LIBS.'model'.DS.'model.php';
     loadModels();

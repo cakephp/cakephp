@@ -119,11 +119,6 @@ define ('MODULES', ROOT.DS.'modules'.DS);
 /**
  * Path to the public directory.
  */
-define ('WWW_ROOT', APP.WEBROOT_DIR.DS);
-
-/**
- * Path to the public directory.
- */
 define ('CSS', WWW_ROOT.'css'.DS);
 
 /**
