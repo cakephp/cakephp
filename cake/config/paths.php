@@ -107,11 +107,6 @@ define ('INFLECTIONS', CAKE.'config'.DS.'inflections'.DS);
 define ('LIBS', CAKE.'libs'.DS);
 
 /**
- * Path to the logs directory.
- */
-define ('LOGS', ROOT.DS.'logs'.DS);
-
-/**
  * Path to the modules directory.
  */
 define ('MODULES', ROOT.DS.'modules'.DS);
@@ -160,6 +155,11 @@ define ('LIB_TESTS', TESTS.'libs'.DS);
  * Path to the temporary files directory.
  */
 define ('TMP', APP.'tmp'.DS);
+
+/**
+ * Path to the logs directory.
+ */
+define ('LOGS', TMP.'logs'.DS);
 
 /**
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
