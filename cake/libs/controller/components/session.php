@@ -140,24 +140,33 @@ class SessionComponent extends Object
     }
 
 /**
- * Enter description here...
+ * Used to output or return the value of the Message flash.
  *
- * Use like this. $this->Session->flash();
- *
- * @return
- */
-    function flash()
+ * @param string $css css class used in the div tag
+ * @param boolean $return setting to true return the value of the flash message instead of displaying
+ * @return message output
+ * */
+    function flash($css = 'message', $return = false)
     {
         if($this->check('Message.flash'))
         {
-            echo '<div class="message">'.$this->read('Message.flash').'</div>';
-            $this->del('Message.flash');
+            if($return === false)
+            {
+                echo '<div class="'.$css.'">'.$this->read('Message.flash').'</div>';
+                $this->del('Message.flash');
+                return;
+            }
+            else
+            {
+                $return = $this->read('Message.flash');
+                $this->del('Message.flash');
+                return $return;
+            }
         }
         else
         {
             return false;
         }
-
     }
 
 /**

@@ -375,7 +375,7 @@ class Scaffold extends Object {
                 }
             }
         }
-        else if($this->controllerClass->_scaffoldError('index') === false)
+        else if($this->controllerClass->_scaffoldError('update') === false)
         {
             return $this->__scaffoldError();
         }

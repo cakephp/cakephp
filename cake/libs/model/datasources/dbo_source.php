@@ -988,7 +988,7 @@ class DboSource extends DataSource
         {
             for ($i = 0; $i < $count; $i++)
             {
-                if(!preg_match('/^avg\\(|^count\\(|^count_big\\(|^min\\(|^max\\(|^distinct|^sum\\(|^concat\\(|^rand\\(|^stddev_pop|^var_pop|^least\\(|^greatest\\(|^octet_length\\(|^length\\(|^extract\\(^translate\\(|^conv\\(/i', $fields[$i]))
+                if(!preg_match('/^.+\\(.*\\)/', $fields[$i]))
                 {
                     $dot = strrpos($fields[$i], '.');
                     if ($dot === false)
@@ -1082,48 +1082,31 @@ class DboSource extends DataSource
                 {
                     $data = ' '. $value;
                 }
-                elseif (preg_match('/^(\\x20(?P<operator>[\\w]+|<=?|>=?|<>|!?=)\\x20)?(?P<value>.*)/i', $value, $match))
+                elseif (preg_match('/^(?P<operator>[a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|[<>=!]{1,3}\\x20?)?(?P<value>.*)/i', $value, $match))
                 {
                     if (preg_match('/(?P<conditional>\\x20[\\w]*\\x20)/', $key, $regs))
                     {
-                        $operator = $regs['conditional'];
+                        $clause = $regs['conditional'];
                         $key = preg_replace('/'.$regs['conditional'].'/', '', $key);
                     }
                     if(empty($match['operator']))
                     {
                         $match['operator'] = ' = ';
                     }
-                    if (strpos($match['value'], '--return') === 0)
+
+                    if (strpos($match['value'], '-!') === 0)
                     {
-                        $match['value'] = str_replace('--return', '', $match['value']);
+                        $match['value'] = str_replace('-!', '', $match['value']);
                         $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
                     }
                     else
                     {
-                        $data = $this->name($key) . ' '.$match['operator'].' '. $this->value($match['value']);
+                        if($match['value'] != '' && !is_numeric($match['value']))
+                        {
+                            $match['value'] = $this->value($match['value']);
+                        }
+                        $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
                     }
-                }
-                else
-                {
-                   if (strpos($value, '--return') === 0)
-                    {
-                        $value = str_replace('--return', '', $value);
-                    }
-                    elseif (($value != '{$__cakeID__$}') && ($value != '{$__cakeForeignKey__$}'))
-                    {
-                        $value = $this->value($value);
-                    }
-
-                  $data = $this->name($key) . ' = ';
-
-                  if ($value === null)
-                  {
-                      $data .= 'null';
-                  }
-                  else
-                  {
-                      $data .= $value;
-                  }
                 }
                 $count++;
                 $out[] = $operator.$data;
