@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.app.webroot
+ * @subpackage   cake.app.config
  * @since        CakePHP v 0.10.8.2117
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$

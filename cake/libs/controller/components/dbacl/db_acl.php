@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.app.controllers.componenets.dbacl
+ * @subpackage   cake.cake.libs.controller.componenets.dbacl
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -39,7 +39,7 @@ uses('controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aros_aco');
  * In this file you can extend the AclBase.
  *
  * @package    cake
- * @subpackage cake.cake.app.controllers.components.dbacl
+ * @subpackage cake.cake.libs.controller.components.dbacl
  */
 
 class DB_ACL extends AclBase

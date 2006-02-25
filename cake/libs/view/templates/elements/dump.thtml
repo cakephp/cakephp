@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.view.templates.pages
+ * @subpackage   cake.cake.libs.view.templates.elements
  * @since        CakePHP v 0.10.5.1782
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$

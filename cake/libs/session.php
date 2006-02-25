@@ -347,7 +347,10 @@ class CakeSession extends Object
         {
             case 'high':
                 $this->cookieLifeTime = 0;
-                ini_set('session.referer_check', $this->host);
+                if(function_exists('ini_set'))
+                {
+                    ini_set('session.referer_check', $this->host);
+                }
             break;
             case 'medium':
                 $this->cookieLifeTime = 7 * 86400;
@@ -363,33 +366,38 @@ class CakeSession extends Object
             case 'cake':
                 if(!isset($_SESSION))
                 {
-                    ini_set('session.use_trans_sid', 0);
-                    ini_set('url_rewriter.tags', '');
-                    ini_set('session.serialize_handler', 'php');
-                    ini_set('session.use_cookies', 1);
-                    ini_set('session.name', CAKE_SESSION_COOKIE);
-                    ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                    ini_set('session.cookie_path', $this->path);
-                    ini_set('session.gc_probability', 1);
-                    ini_set('session.auto_start', 0);
-                    ini_set('session.save_path', TMP.'sessions');
+                    if(function_exists('ini_set'))
+                    {
+                        ini_set('session.use_trans_sid', 0);
+                        ini_set('url_rewriter.tags', '');
+                        ini_set('session.serialize_handler', 'php');
+                        ini_set('session.use_cookies', 1);
+                        ini_set('session.name', CAKE_SESSION_COOKIE);
+                        ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                        ini_set('session.cookie_path', $this->path);
+                        ini_set('session.gc_probability', 1);
+                        ini_set('session.auto_start', 0);
+                        ini_set('session.save_path', TMP.'sessions');
+                    }
                 }
             break;
             case 'database':
                 if(!isset($_SESSION))
                 {
-                    ini_set('session.use_trans_sid', 0);
-                    ini_set('url_rewriter.tags', '');
-                    ini_set('session.save_handler', 'user');
-                    ini_set('session.serialize_handler', 'php');
-                    ini_set('session.use_cookies', 1);
-                    ini_set('session.name', CAKE_SESSION_COOKIE);
-                    ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                    ini_set('session.cookie_path', $this->path);
-                    ini_set('session.gc_probability', 1);
-                    ini_set('session.auto_start', 0);
+                    if(function_exists('ini_set'))
+                    {
+                        ini_set('session.use_trans_sid', 0);
+                        ini_set('url_rewriter.tags', '');
+                        ini_set('session.save_handler', 'user');
+                        ini_set('session.serialize_handler', 'php');
+                        ini_set('session.use_cookies', 1);
+                        ini_set('session.name', CAKE_SESSION_COOKIE);
+                        ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                        ini_set('session.cookie_path', $this->path);
+                        ini_set('session.gc_probability', 1);
+                        ini_set('session.auto_start', 0);
+                    }
                 }
-
                 session_set_save_handler(array('CakeSession', '__open'),
                                          array('CakeSession', '__close'),
                                          array('CakeSession', '__read'),
@@ -400,11 +408,14 @@ class CakeSession extends Object
             case 'php':
                 if(!isset($_SESSION))
                 {
-                    ini_set('session.use_trans_sid', 0);
-                    ini_set('session.name', CAKE_SESSION_COOKIE);
-                    ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                    ini_set('session.cookie_path', $this->path);
-                    ini_set('session.gc_probability', 1);
+                    if(function_exists('ini_set'))
+                    {
+                        ini_set('session.use_trans_sid', 0);
+                        ini_set('session.name', CAKE_SESSION_COOKIE);
+                        ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                        ini_set('session.cookie_path', $this->path);
+                        ini_set('session.gc_probability', 1);
+                    }
                 }
             break;
             default:
@@ -420,11 +431,14 @@ class CakeSession extends Object
                 {
                     if(!isset($_SESSION))
                     {
-                        ini_set('session.use_trans_sid', 0);
-                        ini_set('session.name', CAKE_SESSION_COOKIE);
-                        ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                        ini_set('session.cookie_path', $this->path);
-                        ini_set('session.gc_probability', 1);
+                        if(function_exists('ini_set'))
+                        {
+                            ini_set('session.use_trans_sid', 0);
+                            ini_set('session.name', CAKE_SESSION_COOKIE);
+                            ini_set('session.cookie_lifetime', $this->cookieLifeTime);
+                            ini_set('session.cookie_path', $this->path);
+                            ini_set('session.gc_probability', 1);
+                        }
                     }
                 }
             break;

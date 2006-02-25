@@ -21,7 +21,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.controller.components.dbacl.models
+ * @subpackage   cake.cake.scripts
  * @since        CakePHP v 0.10.0.1232
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -71,6 +71,14 @@ $args = $serverArgs;
 
 $aclCLI = new AclCLI ($command, $args);
 
+
+/**
+ * Enter description here...
+ *
+ * @package    cake
+ * @subpackage cake.cake.scripts
+ * @since      CakePHP v 0.10.0.1232
+ */
 class AclCLI {
 
 /**

@@ -940,6 +940,10 @@ function fileExistsInPath ($file)
         {
             return $fullPath;
         }
+        elseif (file_exists($file))
+        {
+            return $file;
+        }
     }
     return false;
 }

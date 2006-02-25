@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.app.webroot
+ * @subpackage   cake.app.webroot
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -66,6 +66,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH'))
     define('CAKE_CORE_INCLUDE_PATH', ROOT);
 }
 
+
 ///////////////////////////////
 //DO NOT EDIT BELOW THIS LINE//
 ///////////////////////////////
@@ -74,13 +75,22 @@ if (!defined('WEBROOT_DIR'))
 {
     define ('WEBROOT_DIR', basename(dirname(__FILE__)));
 }
-
 define('WWW_ROOT', dirname(__FILE__));
 
-ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+if(function_exists('ini_set'))
+{
+    ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+    define('APP_PATH', null);
+    define('CORE_PATH', null);
+}
+else
+{
+    define('APP_PATH', ROOT.DS.APP_DIR.DS);
+    define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
+}
 
-require 'cake'.DS.'bootstrap.php';
-require 'config'.DS.'bootstrap.php';
+require CORE_PATH.'cake'.DS.'bootstrap.php';
+require APP_PATH.'config'.DS.'bootstrap.php';
 
 if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
 {

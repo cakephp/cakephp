@@ -2,25 +2,25 @@
 /* SVN FILE: $Id$ */
 
 /**
- * This is core configuration file. 
- * 
+ * This is core configuration file.
+ *
  * Use it to configure core behaviour ofCake.
  *
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc. 
+ * Copyright (c) 2006, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource 
+ * @filesource
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.app.controllers.componenets
+ * @subpackage   cake.cake.libs.controller.componenets.iniacl
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -34,10 +34,10 @@ uses('controller/components/acl_base');
  * In this file you can extend the AclBase.
  *
  * @package    cake
- * @subpackage cake.cake.app.controllers.componenets
+ * @subpackage cake.cake.libs.controller.componenets.iniacl
  */
 
-class INI_ACL extends AclBase 
+class INI_ACL extends AclBase
 {
 /**
  * The constructor must be overridden, as AclBase is abstract.
@@ -45,9 +45,9 @@ class INI_ACL extends AclBase
  */
     function __construct()
     {
-      
+
     }
-    
+
 /**
  * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
  * Looks at the acl.ini.php file for permissions (see instructions in/config/acl.ini.php).
@@ -59,7 +59,7 @@ class INI_ACL extends AclBase
     function check($aro, $aco, $aco_action = null)
     {
       $aclConfig = $this->readConfigFile(CONFIGS . 'acl.ini.php');
-      
+
 //First, if the user is specifically denied, then DENY
       if(isset($aclConfig[$aro]['deny']))
       {
@@ -70,7 +70,7 @@ class INI_ACL extends AclBase
             return false;
          }
       }
-      
+
 //Second, if the user is specifically allowed, then ALLOW
       if(isset($aclConfig[$aro]['allow']))
       {
@@ -81,7 +81,7 @@ class INI_ACL extends AclBase
             return true;
          }
       }
-      
+
 //Check group permissions
       if (isset($aclConfig[$aro]['groups']))
       {
@@ -101,7 +101,7 @@ class INI_ACL extends AclBase
                      return false;
                   }
                 }
-      
+
 //If the group is specifically allowed, then ALLOW
                 if(isset($aclConfig[$group]['allow']))
                 {
@@ -115,12 +115,12 @@ class INI_ACL extends AclBase
             }
          }
       }
-      
+
 //Default, DENY
 //echo("DEFAULT: DENY.");
       return false;
     }
-    
+
 /**
  * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
  *
@@ -130,7 +130,7 @@ class INI_ACL extends AclBase
     function readConfigFile ($fileName)
     {
         $fileLineArray = file($fileName);
-    
+
         foreach ($fileLineArray  as $fileLine)
         {
             $dataLine = trim($fileLine);
@@ -170,7 +170,7 @@ class INI_ACL extends AclBase
         }
         return $iniSetting;
     }
-    
+
 /**
  * Removes trailing spaces on all array elements (to prepare for searching)
  *
@@ -182,7 +182,7 @@ class INI_ACL extends AclBase
       foreach($array as $element) {
          $element = trim($element);
       }
-      
+
 //Adding this element keeps array_search from returning 0:
 //0 is the first key, which may be correct, but 0 is interpreted as false.
 //Adding this element makes all the keys be positive integers.

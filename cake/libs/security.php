@@ -34,8 +34,8 @@
  * Long description for file
  *
  * @package    cake
- * @subpackage cake.cake.1233
- * @since      CakePHP v .0.10.0.1222
+ * @subpackage cake.cake.libs
+ * @since      CakePHP v .0.10.0.1233
  */
 class Security extends Object
 {

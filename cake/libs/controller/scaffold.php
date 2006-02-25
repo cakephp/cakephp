@@ -356,13 +356,13 @@ class Scaffold extends Object {
  */
     function __scaffoldError()
     {
-        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'new.thtml'))
+        if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'scaffold.error.thtml'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'scaffold_error.thtml');
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.$this->viewPath.DS.'scaffolds'.DS.'scaffold.error.thtml');
         }
-        elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.new.thtml'))
+        elseif(file_exists(APP.'views'.DS.'scaffold'.DS.'scaffold.error.thtml'))
         {
-            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold_error.thtml');
+            return $this->controllerClass->render($this->actionView, '', APP.'views'.DS.'scaffold'.DS.'scaffold.error.thtml');
         }
         else
         {

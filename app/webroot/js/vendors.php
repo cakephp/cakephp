@@ -21,7 +21,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.public.js
+ * @subpackage   cake.app.webroot.js
  * @since        CakePHP v 0.2.9
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$

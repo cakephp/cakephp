@@ -20,7 +20,7 @@
  * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package      cake
- * @subpackage   cake.cake.libs.model.datasources.dbo
+ * @subpackage   cake.cake.libs.model.dbo
  * @since        CakePHP v 0.9.1.114
  * @version      $Revision$
  * @modifiedby   $LastChangedBy$
@@ -39,7 +39,7 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
  * Long description for class
  *
  * @package    cake
- * @subpackage cake.cake.libs.model.datasources.dbo
+ * @subpackage cake.cake.libs.model.dbo
  * @since      CakePHP v 0.9.1.114
  */
 class  DboPostgres extends DboSource
@@ -233,7 +233,7 @@ class  DboPostgres extends DboSource
                 }
             }
         }
-        
+
         return $fields;
     }
 
@@ -299,7 +299,7 @@ class  DboPostgres extends DboSource
         }
 
         $data = pg_escape_string($data);
-        
+
         $return = "'" . $data . "'";
         return $return;
     }
@@ -388,7 +388,7 @@ class  DboPostgres extends DboSource
         }
         return null;
     }
-    
+
     function resultSet(&$results)
     {
         $this->results =& $results;
@@ -400,7 +400,7 @@ class  DboPostgres extends DboSource
         while ($j < $num_fields)
         {
             $columnName = pg_field_name($results, $j);
-            
+
             if (strpos($columnName, '__'))
             {
                 $parts = explode('__', $columnName);

@@ -47,7 +47,7 @@ if(!defined('WEBROOT_DIR'))
 /**
  * Path to the application's directory.
  */
-define ('CAKE', 'cake'.DS);
+define ('CAKE', CORE_PATH.'cake'.DS);
 
 /**
  * Path to the application's directory.

@@ -35,9 +35,9 @@
  */
 if(!isset($bootstrap))
 {
-    require 'cake'.DS.'basics.php';
-    require 'config'.DS.'core.php';
-    require 'cake'.DS.'config'.DS.'paths.php';
+    require CORE_PATH.'cake'.DS.'basics.php';
+    require APP_PATH.'config'.DS.'core.php';
+    require CORE_PATH.'cake'.DS.'config'.DS.'paths.php';
 }
 require LIBS.'object.php';
 require LIBS.'session.php';
@@ -95,7 +95,11 @@ if (strpos($url, 'ccss/') === 0)
 if (DEBUG)
 {
     error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+
+    if(function_exists('ini_set'))
+    {
+        ini_set('display_errors', 1);
+    }
 }
 else
 {
