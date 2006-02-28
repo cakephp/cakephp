@@ -53,7 +53,7 @@
           <br />
           <p>
 <!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
-    <a href="http://www.cakephp.org/" target="_new">
+    <a href="http://www.cakephp.org/" target="_blank">
         <?php echo $html->image('cake.power.png', array('alt'=>'CakePHP : Rapid Development Framework',
                                                         'height' => "15",
                                                         'width' => "80"))?>

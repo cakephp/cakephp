@@ -216,26 +216,29 @@ class View extends Object
  */
     function __construct (&$controller)
     {
-        $this->controller    =& $controller;
-        $this->_viewVars     =& $this->controller->_viewVars;
-        $this->action        =& $this->controller->action;
-        $this->autoLayout    =& $this->controller->autoLayout;
-        $this->autoRender    =& $this->controller->autoRender;
-        $this->base          =& $this->controller->base;
-        $this->webroot       =& $this->controller->webroot;
-        $this->helpers       =& $this->controller->helpers;
-        $this->here          =& $this->controller->here;
-        $this->layout        =& $this->controller->layout;
-        $this->modelNames    =& $this->controller->modelNames;
-        $this->name          =& $this->controller->name;
-        $this->pageTitle     =& $this->controller->pageTitle;
-        $this->parent        =& $this->controller->parent;
-        $this->viewPath      =& $this->controller->viewPath;
-        $this->params        =& $this->controller->params;
-        $this->data          =& $this->controller->data;
-        $this->displayFields =& $this->controller->displayFields;
-        $this->webservices   =& $this->controller->webservices;
-        $this->plugin        =& $this->controller->plugin;
+        if ($controller != null)
+        {
+            $this->controller    =& $controller;
+            $this->_viewVars     =& $this->controller->_viewVars;
+            $this->action        =& $this->controller->action;
+            $this->autoLayout    =& $this->controller->autoLayout;
+            $this->autoRender    =& $this->controller->autoRender;
+            $this->base          =& $this->controller->base;
+            $this->webroot       =& $this->controller->webroot;
+            $this->helpers       =& $this->controller->helpers;
+            $this->here          =& $this->controller->here;
+            $this->layout        =& $this->controller->layout;
+            $this->modelNames    =& $this->controller->modelNames;
+            $this->name          =& $this->controller->name;
+            $this->pageTitle     =& $this->controller->pageTitle;
+            $this->parent        =& $this->controller->parent;
+            $this->viewPath      =& $this->controller->viewPath;
+            $this->params        =& $this->controller->params;
+            $this->data          =& $this->controller->data;
+            $this->displayFields =& $this->controller->displayFields;
+            $this->webservices   =& $this->controller->webservices;
+            $this->plugin        =& $this->controller->plugin;
+        }
         parent::__construct();
     }
 
@@ -353,11 +356,11 @@ class View extends Object
         {
             if(substr($viewFileName, -5) === 'thtml')
             {
-                $out = View::_render($viewFileName, $this->_viewVars, 0);
+                $out = View::_render($viewFileName, $this->_viewVars);
             }
             else
             {
-                $out = $this->_render($viewFileName, $this->_viewVars, 0);
+                $out = $this->_render($viewFileName, $this->_viewVars);
             }
             if ($out !== false)
             {
@@ -370,7 +373,7 @@ class View extends Object
             }
             else
             {
-                $out = $this->_render($viewFileName, $this->_viewVars, false);
+                $out = $this->_render($viewFileName, $this->_viewVars);
                 trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
             }
             return true;
@@ -399,7 +402,7 @@ class View extends Object
           {
                 $fn =  APP.'plugins'.DS.$this->plugin.'views'.DS.'elements'.DS.$name.$this->ext;
                 $params = array_merge_recursive($params, $this->loaded);
-                return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
+                return $this->_render($fn, array_merge($this->_viewVars, $params), false);
             }
         }
 
@@ -409,7 +412,12 @@ class View extends Object
       }
 
       $params = array_merge_recursive($params, $this->loaded);
-      return $this->_render($fn, array_merge($this->_viewVars, $params), true, false);
+      return $this->_render($fn, array_merge($this->_viewVars, $params), false);
+    }
+
+    function element($name)
+    {
+
     }
 
 /**
@@ -422,35 +430,44 @@ class View extends Object
     {
       $layout_fn = $this->_getLayoutFileName();
 
-      if(DEBUG > 2)
+      if(DEBUG > 2 && $this->controller != null)
       {
-          $debug = View::_render(LIBS.'view'.DS.'templates'.DS.'elements'.DS.'dump.thtml', array('controller' => $this->controller), true, false);
+          $debug = View::_render(LIBS.'view'.DS.'templates'.DS.'elements'.DS.'dump.thtml', array('controller' => $this->controller), false);
       }
       else
       {
           $debug = '';
       }
-      $data_for_layout = array_merge($this->_viewVars, array(
-      'title_for_layout'=>$this->pageTitle !== false? $this->pageTitle: Inflector::humanize($this->viewPath),
-      'content_for_layout'=>$content_for_layout,
-      'cakeDebug' => $debug));
+
+      if ($this->pageTitle !== false)
+      {
+          $pageTitle = $this->pageTitle;
+      }
+      else
+      {
+          $pageTitle = Inflector::humanize($this->viewPath);
+      }
+
+      $data_for_layout = array_merge($this->_viewVars, array('title_for_layout' => $pageTitle,
+                                                             'content_for_layout'=> $content_for_layout,
+                                                             'cakeDebug' => $debug));
 
       if (is_file($layout_fn))
       {
-         $data_for_layout = array_merge($data_for_layout,$this->loaded); # load all view variables)
+         $data_for_layout = array_merge($data_for_layout, $this->loaded);
 
           if(substr($layout_fn, -5) === 'thtml')
           {
-              $out = View::_render($layout_fn, $data_for_layout, true, false);
+              $out = View::_render($layout_fn, $data_for_layout, false);
           }
           else
           {
-              $out = $this->_render($layout_fn, $data_for_layout, true, false);
+              $out = $this->_render($layout_fn, $data_for_layout, false);
           }
 
          if ($out === false)
          {
-            $out = $this->_render($layout_fn, $data_for_layout, false);
+            $out = $this->_render($layout_fn, $data_for_layout);
             trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layout_fn, $out), E_USER_ERROR);
             return false;
          }
@@ -550,7 +567,7 @@ class View extends Object
  */
     function _getLayoutFileName()
     {
-        if(!is_null($this->webservices))
+        if(isset($this->webservices) && !is_null($this->webservices))
         {
             $type =    strtolower($this->webservices).DS;
         }
@@ -559,7 +576,7 @@ class View extends Object
             $type = null;
         }
 
-        if(!is_null($this->plugin))
+        if(isset($this->plugin) && !is_null($this->plugin))
         {
             if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'layouts'.DS.$this->layout.$this->ext))
             {
@@ -586,11 +603,10 @@ class View extends Object
  *
  * @param string $___viewFn Filename of the view
  * @param array $___dataForView Data to include in rendered view
- * @param boolean $___playSafe If set to false, the include() of the $__viewFn is done without suppressing output of errors
  * @return string Rendered output
  * @access private
  */
-    function _render($___viewFn, $___dataForView, $___playSafe = true, $loadHelpers = true)
+    function _render($___viewFn, $___dataForView, $loadHelpers = true)
     {
         if ($this->helpers != false && $loadHelpers === true)
         {
@@ -615,27 +631,22 @@ class View extends Object
             }
         }
 
-      extract($___dataForView, EXTR_SKIP); # load all view variables
-/**
- * Local template variables.
- */
-      $BASE        = $this->base;
-      $params     = &$this->params;
-      $page_title = $this->pageTitle;
+        extract($___dataForView, EXTR_SKIP);
+        $BASE        = $this->base;
+        $params     = &$this->params;
+        $page_title = $this->pageTitle;
 
-/**
- * Start caching output (eval outputs directly so we need to cache).
- */
-      ob_start();
-
-/**
- * Include the template.
- */
-      $___playSafe? @include($___viewFn): include($___viewFn);
-
-      $out = ob_get_clean();
-
-      return $out;
+        ob_start();
+        if(DEBUG)
+        {
+            include($___viewFn);
+        }
+        else
+        {
+            @include($___viewFn);
+        }
+        $out = ob_get_clean();
+        return $out;
     }
 
 /**
@@ -693,12 +704,12 @@ class View extends Object
 
                 if(class_exists($helperCn))
                 {
-                    ${$camelBackedHelper}                        =& new $helperCn;
+                    ${$camelBackedHelper}                       =& new $helperCn;
                     ${$camelBackedHelper}->base                 = $this->base;
                     ${$camelBackedHelper}->webroot              = $this->webroot;
                     ${$camelBackedHelper}->here                 = $this->here;
-                    ${$camelBackedHelper}->params                = $this->params;
-                    ${$camelBackedHelper}->action                = $this->action;
+                    ${$camelBackedHelper}->params               = $this->params;
+                    ${$camelBackedHelper}->action               = $this->action;
                     ${$camelBackedHelper}->data                 = $this->data;
                     ${$camelBackedHelper}->themeWeb             = $this->themeWeb;
                     ${$camelBackedHelper}->tags                 = $tags;
@@ -724,6 +735,13 @@ class View extends Object
         return $loaded;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $action
+ * @param unknown_type $layout
+ * @return unknown
+ */
     function pluginView($action, $layout)
     {
         $viewFileName = APP.'plugins'.DS.$this->plugin.'views'.DS.$this->viewPath.DS.$action.$this->ext;

@@ -399,6 +399,25 @@ class DataSource extends Object
     }
 
 /**
+ * Formats column data from definition in DBO's $columns array
+ *
+ * @param string $data
+ * @param unknown_type $fields
+ * @return mixed Data formatted to column specifications
+ * @access protected
+ */
+    function __formatColumnData($data, $format, $formatter)
+    {
+        switch($formatter)
+        {
+            case 'date':
+                return date($format, strtotime($data));
+            case 'sprintf':
+                return sprintf($format, $data);
+        }
+    }
+
+/**
  * Enter description here...
  *
  * @param unknown_type $query

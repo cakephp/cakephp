@@ -132,41 +132,52 @@ class SessionComponent extends Object
  *
  * Use like this. $this->Session->setFlash('This has been saved');
  *
+ * @param string $flashMessage Message to be flashed
+ * @param string $layout Layout to wrap flash message in
+ * @param array $params Parameters to be sent to layout as view variables
+ * @param string $key Message key, default is 'flash'
  * @return string Last session error
  */
-    function setFlash($flashMessage)
+    function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash')
     {
-        $this->write('Message.flash', $flashMessage);
+        if ($layout == 'default' || $layout == null)
+        {
+            $out = '<div class="message">'.$flashMessage.'</div>';
+        }
+        else if($layout == '')
+        {
+            $out = $flashMessage;
+        }
+        else
+        {
+            $ctrl = null;
+            $view = new View($ctrl);
+            $view->layout = $layout;
+            $view->pageTitle = '';
+            $view->_viewVars = $params;
+            $out = $view->renderLayout($flashMessage);
+        }
+        $this->write('Message.'.$key, $out);
     }
 
 /**
- * Used to output or return the value of the Message flash.
+ * Use like this. $this->Session->flash();
  *
- * @param string $css css class used in the div tag
- * @param boolean $return setting to true return the value of the flash message instead of displaying
- * @return message output
- * */
-    function flash($css = 'message', $return = false)
+ * @param string $key Optional message key
+ * @return null
+ */
+    function flash($key = 'flash')
     {
-        if($this->check('Message.flash'))
+        if($this->check('Message.'.$key))
         {
-            if($return === false)
-            {
-                echo '<div class="'.$css.'">'.$this->read('Message.flash').'</div>';
-                $this->del('Message.flash');
-                return;
-            }
-            else
-            {
-                $return = $this->read('Message.flash');
-                $this->del('Message.flash');
-                return $return;
-            }
+            e($this->read('Message.'.$key));
+            $this->del('Message.'.$key);
         }
         else
         {
             return false;
         }
+
     }
 
 /**

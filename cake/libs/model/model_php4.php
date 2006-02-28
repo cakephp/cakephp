@@ -640,7 +640,7 @@ class Model extends Object
 
         $cols = array();
         foreach($columns as $col) {
-            $cols[$col['name']] = $col['type'];
+            $cols[$col['name']] = $this->db->column($col['type']);
         }
         return $cols;
     }
@@ -888,7 +888,7 @@ class Model extends Object
                 }
                 else
                 {
-                    return $this->hasAny($this->escapeField($this->primaryKey).' = '.$this->db->value($this->id));
+                    return false;
                 }
             }
             else
@@ -1094,7 +1094,6 @@ class Model extends Object
             $this->db->execute("DELETE FROM ".$this->db->name($data['joinTable'])." WHERE ".$this->db->name($data['foreignKey'])." = '{$id}'");
         }
     }
-
 
 /**
  * Returns true if a record with set id exists.
@@ -1455,7 +1454,12 @@ class Model extends Object
  */
     function generateList ($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null)
     {
-        $fields = array($this->primaryKey, $this->displayField);
+        if ($keyPath == null && $valuePath == null)
+        {
+            $fields = array($this->primaryKey, $this->displayField);
+        } else {
+            $fields = '*';
+        }
         $result = $this->findAll($conditions, $fields, $order, $limit, 1, 0);
 
         if ($keyPath == null)

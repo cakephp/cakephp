@@ -133,17 +133,26 @@ class Object
         {
             uses('cake_log');
         }
-      if (is_null($this->_log))
-      {
-         $this->_log = new CakeLog();
-      }
+        if (is_null($this->_log))
+        {
+            $this->_log = new CakeLog();
+        }
+        if (!is_string($msg))
+        {
+            ob_start();
+            print_r($msg);
+            $msg = ob_get_contents();
+            ob_end_clean();
+        }
 
-      switch ($type)
-      {
-         case LOG_DEBUG:
-            return $this->_log->write('debug', $msg);
-         default:
-            return $this->_log->write('error', $msg);
+        switch ($type)
+        {
+            case LOG_DEBUG:
+                return $this->_log->write('debug', $msg);
+            break;
+            default:
+                return $this->_log->write('error', $msg);
+            break;
       }
     }
 

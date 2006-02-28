@@ -87,11 +87,11 @@ class DboMysql extends DboSource
                          'string'      => array('name' => 'varchar', 'limit' => '255'),
                          'text'        => array('name' => 'text'),
                          'integer'     => array('name' => 'int', 'limit' => '11'),
-                         'float'        => array('name' => 'float'),
-                         'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s'),
-                         'timestamp'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s'),
-                         'time'        => array('name' => 'time', 'format' => 'h:i:s'),
-                         'date'        => array('name' => 'date', 'format' => 'Y-m-d'),
+                         'float'       => array('name' => 'float'),
+                         'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
+                         'timestamp'   => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
+                         'time'        => array('name' => 'time', 'format' => 'h:i:s', 'formatter' => 'date'),
+                         'date'        => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
                          'binary'      => array('name' => 'blob'),
                          'boolean'     => array('name' => 'tinyint', 'limit' => '1'));
 
@@ -501,6 +501,16 @@ class DboMysql extends DboSource
             return $rt;
         }
         return null;
+    }
+
+/**
+ * Enter description here...
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ */
+    function column($real)
+    {
+        return $real;
     }
 
 /**

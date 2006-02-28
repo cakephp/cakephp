@@ -265,7 +265,7 @@ class Scaffold extends Object {
             {
                 if(is_object($this->controllerClass->Session))
                 {
-                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.', '/');
+                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.');
                     $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
                 }
                 else
@@ -278,7 +278,7 @@ class Scaffold extends Object {
             {
                 if(is_object($this->controllerClass->Session))
                 {
-                    $this->controllerClass->Session->setFlash('Please correct errors below');
+                    $this->controllerClass->Session->setFlash('Please correct errors below.');
                 }
                 $this->controllerClass->set('data', $this->controllerClass->params['data']);
                 $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames($this->__rebuild($this->controllerClass->params['data'])));
@@ -320,7 +320,7 @@ class Scaffold extends Object {
             {
                 if(is_object($this->controllerClass->Session))
                 {
-                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.', '/');
+                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' with id: '.$id.' has been deleted.');
                     $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
                 }
                 else
@@ -333,7 +333,7 @@ class Scaffold extends Object {
             {
                 if(is_object($this->controllerClass->Session))
                 {
-                    $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id, '/');
+                    $this->controllerClass->Session->setFlash('There was an error deleting the '.Inflector::humanize($this->modelKey).' with the id '.$id);
                     $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
                 }
                 else

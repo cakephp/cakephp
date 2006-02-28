@@ -296,7 +296,7 @@ class CakeSession extends Object
     function __destroy($key)
     {
     	$db =& ConnectionManager::getDataSource('default');
-    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." = ".$db->value($key));
+    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
     	return true;
     }
 
@@ -332,7 +332,7 @@ class CakeSession extends Object
     function __gc($expires)
     {
 		$db =& ConnectionManager::getDataSource('default');
-    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('expires')." < " . $db->value(time()));
+    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.expires')." < " . $db->value(time()));
     	return true;
     }
 
@@ -501,7 +501,7 @@ class CakeSession extends Object
     {
         $db =& ConnectionManager::getDataSource('default');
 
-        $row = $db->query("SELECT ".$db->name('data')." FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." =  ".$db->value($key));
+        $row = $db->query("SELECT ".$db->name('cake_sessions.data')." FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." =  ".$db->value($key));
 
 		if ($row && $row[0]['cake_sessions']['data'])
 		{
@@ -634,15 +634,15 @@ class CakeSession extends Object
 
         $expires = time() + CAKE_SESSION_TIMEOUT * $factor;
 
-		$row = $db->query("SELECT COUNT(*) AS count FROM ".$db->name('cake_sessions')." WHERE ".$db->name('id')." = ".$db->value($key));
+		$row = $db->query("SELECT COUNT(id) AS count FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
 
 		if($row[0][0]['count'] > 0)
 		{
-			$db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('data')." = ".$db->value($value).", ".$db->name('expires')." = ".$db->value($expires)." WHERE ".$db->name('id')." = ".$db->value($key));
+			$db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('cake_sessions.data')." = ".$db->value($value).", ".$db->name('cake_sessions.expires')." = ".$db->value($expires)." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
 		}
 		else
 		{
-			$db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('data').",".$db->name('expires').",".$db->name('id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
+			$db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('cake_sessions.data').",".$db->name('cake_sessions.expires').",".$db->name('cake_sessions.id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
 		}
 		return true;
     }

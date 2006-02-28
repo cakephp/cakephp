@@ -566,6 +566,10 @@ class DboSource extends DataSource
                 return true;
             }
         }
+        elseif (isset($linkModel))
+        {
+            return $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
+        }
         else
         {
             if(isset($this->__assocJoins))
@@ -670,7 +674,7 @@ class DboSource extends DataSource
                     $sql .= $this->limit($queryData['limit']);
                     return $sql;
                 }
-                else if($joinedOnSelf != true)
+                else
                 {
                     if(!isset($assocData['fields']))
                     {
@@ -737,7 +741,7 @@ class DboSource extends DataSource
                     }
                     return $sql;
                 }
-                else if($joinedOnSelf != true)
+                else
                 {
                     if(!isset($assocData['fields']))
                     {
@@ -1060,15 +1064,25 @@ class DboSource extends DataSource
         else
         {
             $clause = 'WHERE ';
-            $out = array();
-            $count = 0;
-            $operator = null;
-            foreach ($conditions as $key => $value)
+            $out = $this->conditionKeysToString($conditions);
+            return $clause . ' ('.join(') AND (', $out).')';
+        }
+    }
+
+    function conditionKeysToString($conditions)
+    {
+        $out = array();
+        $operator = null;
+        $bool = array('and', 'or', 'and not', 'or not');
+
+        foreach ($conditions as $key => $value)
+        {
+            if (in_array(low($key), $bool))
             {
-                if($count > 0)
-                {
-                    $operator = ' AND ';
-                }
+                $out[] = '('.join(') '.$key.' (', $this->conditionKeysToString($value)).')';
+            }
+            else
+            {
                 if (is_array($value))
                 {
                     $data = $key . ' IN (';
@@ -1093,7 +1107,6 @@ class DboSource extends DataSource
                     {
                         $match['operator'] = ' = ';
                     }
-
                     if (strpos($match['value'], '-!') === 0)
                     {
                         $match['value'] = str_replace('-!', '', $match['value']);
@@ -1108,12 +1121,12 @@ class DboSource extends DataSource
                         $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
                     }
                 }
-                $count++;
                 $out[] = $operator.$data;
             }
-            return $clause . join('', $out);
         }
+        return $out;
     }
+
 
 /**
  * To be overridden in subclasses.
@@ -1178,12 +1191,13 @@ class DboSource extends DataSource
             {
                 $direction = $match['direction'];
                 $keys = preg_replace('/'.$match['direction'].'/', '', $keys);
+                return ' ORDER BY '.$keys.$direction;
             }
             else
             {
                 $direction = ' '.$direction;
             }
-            return ' ORDER BY '.$this->name($keys).$direction;
+            return ' ORDER BY '.$keys.$direction;
         }
     }
 
