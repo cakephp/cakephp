@@ -75,18 +75,25 @@ if (!defined('WEBROOT_DIR'))
 {
     define ('WEBROOT_DIR', basename(dirname(__FILE__)));
 }
-define('WWW_ROOT', dirname(__FILE__));
 
-if(function_exists('ini_set'))
+if (!defined('WWW_ROOT'))
 {
-    ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
-    define('APP_PATH', null);
-    define('CORE_PATH', null);
+    define('WWW_ROOT', dirname(__FILE__).DS);
 }
-else
+
+if(!defined('CORE_PATH'))
 {
-    define('APP_PATH', ROOT.DS.APP_DIR.DS);
-    define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
+    if(function_exists('ini_set'))
+    {
+        ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+        define('APP_PATH', null);
+        define('CORE_PATH', null);
+    }
+    else
+    {
+        define('APP_PATH', ROOT.DS.APP_DIR.DS);
+        define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
+    }
 }
 
 require CORE_PATH.'cake'.DS.'bootstrap.php';

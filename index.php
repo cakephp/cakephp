@@ -35,7 +35,9 @@
 define ('APP_DIR', 'app');
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(__FILE__).DS);
+define ('WEBROOT_DIR', 'webroot');
 
+define('WWW_ROOT', ROOT.APP_DIR.DS.WEBROOT_DIR.DS);
 /**
  * This only needs to be changed if the cake installed libs are located
  * outside of the distributed directory structure.
@@ -46,11 +48,21 @@ if (!defined('CAKE_CORE_INCLUDE_PATH'))
     define('CAKE_CORE_INCLUDE_PATH', ROOT);
 }
 
-ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+if(function_exists('ini_set'))
+{
+    ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+    define('APP_PATH', null);
+    define('CORE_PATH', null);
+}
+else
+{
+    define('APP_PATH', ROOT.DS.APP_DIR.DS);
+    define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
+}
 
-require 'cake'.DS.'basics.php';
-require 'config'.DS.'core.php';
-require 'cake'.DS.'config'.DS.'paths.php';
+require CORE_PATH.'cake'.DS.'basics.php';
+require APP_PATH.'config'.DS.'core.php';
+require CORE_PATH.'cake'.DS.'config'.DS.'paths.php';
 $bootstrap = true;
 
 $uri = setUri();
@@ -62,7 +74,7 @@ $uri = setUri();
 if ($uri === '/' || $uri === '/index.php')
 {
     $_GET['url'] = '/';
-    require ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+    require APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
 }
 else
 {
@@ -79,6 +91,6 @@ else
 
     $_GET['url'] = $path;
 
-    require ROOT.APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
+    require APP_DIR.DS.WEBROOT_DIR.DS.'index.php';
 }
 ?>

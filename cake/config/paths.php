@@ -134,17 +134,17 @@ define ('TESTS', APP.'tests'.DS);
 /**
  * Path to the controller test directory.
  */
-define ('CONTROLLER_TESTS', TESTS.APP_DIR.DS.'controllers'.DS);
+define ('CONTROLLER_TESTS', TESTS.APP_DIR.DS.'cases'.DS.'controllers'.DS);
 
 /**
  * Path to the helpers test directory.
  */
-define ('HELPER_TESTS', TESTS.APP_DIR.DS.'helpers'.DS);
+define ('HELPER_TESTS', TESTS.APP_DIR.DS.'cases'.DS.'views'.DS.'helpers'.DS);
 
 /**
  * Path to the models' test directory.
  */
-define ('MODEL_TESTS', TESTS.APP_DIR.DS.'models'.DS);
+define ('MODEL_TESTS', TESTS.APP_DIR.DS.'cases'.DS.'models'.DS);
 
 /**
  * Path to the lib test directory.

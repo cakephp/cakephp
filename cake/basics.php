@@ -406,11 +406,11 @@ function vendor($name)
     {
         if(file_exists(APP.'vendors'.DS.$arg.'.php'))
         {
-            require(APP.'vendors'.DS.$arg.'.php');
+            require_once(APP.'vendors'.DS.$arg.'.php');
         }
         else
         {
-            require(VENDORS.$arg.'.php');
+            require_once(VENDORS.$arg.'.php');
         }
     }
 }

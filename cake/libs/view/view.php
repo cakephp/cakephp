@@ -417,7 +417,7 @@ class View extends Object
 
     function element($name)
     {
-
+        return ELEMENTS.$name.$this->ext;
     }
 
 /**
