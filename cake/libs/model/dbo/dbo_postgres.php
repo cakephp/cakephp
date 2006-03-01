@@ -52,7 +52,7 @@ class  DboPostgres extends DboSource
                             'login'      => 'root',
                             'password'    => '',
                             'database'    => 'cake',
-                            'port'        => 3306);
+                            'port'        => 5432);
 
     var $columns = array(
         'primary_key' => array('name' => 'serial primary key'),
@@ -144,7 +144,7 @@ class  DboPostgres extends DboSource
         {
             $this->resultSet($this->_result);
             $resultRow = $this->fetchResult();
-            return $resultRow;
+            return $resultRow[0];
         }
         else
         {
@@ -172,7 +172,7 @@ class  DboPostgres extends DboSource
          $tables = array();
          foreach ($result as $item)
          {
-             $tables[] = $item[0]['name'];
+             $tables[] = $item['name'];
          }
          return $tables;
       }

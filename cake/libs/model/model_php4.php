@@ -646,6 +646,27 @@ class Model extends Object
     }
 
 /**
+ * Returns the column type of a column in the model
+ *
+ * @param string $column The name of the model column
+ * @return string
+ */
+    function getColumnType ($column)
+    {
+        $columns = $this->loadInfo();
+        $columns = $columns->value;
+
+        $cols = array();
+        foreach($columns as $col) {
+            if ($col['name'] == $column)
+            {
+                return $this->db->column($col['type']);
+            }
+        }
+        return null;
+    }
+
+/**
  * Returns true if this Model has given field in its database table.
  *
  * @param string $name Name of field to look for
@@ -720,7 +741,7 @@ class Model extends Object
         if ($this->id !== null && $this->id !== false)
         {
             $field = $this->db->name($this->name).'.'.$this->db->name($this->primaryKey);
-            return $this->find($field . ' = ' . $this->db->value($id), $fields);
+            return $this->find($field . ' = ' . $this->db->value($id, $this->getColumnType($this->primaryKey)), $fields);
         }
         else
         {
@@ -950,7 +971,7 @@ class Model extends Object
                 {
                     if(!empty($update))
                     {
-                        $values[] = $this->db->value($id);
+                        $values[] = $this->db->value($id, $this->getColumnType($this->primaryKey));
                         $values[] = $this->db->value($update);
                         $values = join(',', $values);
                         $newValues[] = "({$values})";
@@ -1109,7 +1130,7 @@ class Model extends Object
             {
                 $id = $id[0];
             }
-            return $this->db->hasAny($this->table,$this->primaryKey.'='.$this->db->value($id));
+            return $this->db->hasAny($this->table,$this->primaryKey.'='.$this->db->value($id, $this->getColumnType($this->primaryKey)));
         }
         return false;
     }

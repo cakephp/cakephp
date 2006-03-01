@@ -363,12 +363,26 @@ class Controller extends Object
  * Saves a variable to use inside a template.
  *
  * @param mixed $one A string or an array of data.
- * @param string $two Value in case $one is a string (which then works as the key), otherwise unused.
+ * @param mixed $two Value in case $one is a string (which then works as the key). Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return unknown
  */
     function set($one, $two=null)
     {
-        return $this->_setArray(is_array($one)? $one: array($one=>$two));
+        if (is_array($one))
+        {
+            if (is_array($two))
+            {
+                return $this->_setArray(array_combine($one, $two));
+            }
+            else
+            {
+                return $this->_setArray($one);
+            }
+        }
+        else
+        {
+            return $this->_setArray(array($one=>$two));
+        }
     }
 
 /**
@@ -703,8 +717,7 @@ class Controller extends Object
                  case "decimal":
                  case "float":
                  case "double":
-                     $charCount = strlen($this->$model->primaryKey);
-                     if(0 == strncmp($tabl['name'], $this->$model->primaryKey, $charCount))
+                     if(strcmp($tabl['name'], $this->$model->primaryKey) == 0)
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'hidden';
                      }
@@ -892,6 +905,28 @@ class Controller extends Object
  * @return boolean
  */
     function _beforeScaffold($method)
+    {
+        return true;
+    }
+
+/**
+ * This method should be overridden in child classes.
+ *
+ * @param string $method name of method called either edit or update.
+ * @return boolean
+ */
+    function _afterScaffoldSave($method)
+    {
+        return true;
+    }
+
+/**
+ * This method should be overridden in child classes.
+ *
+ * @param string $method name of method called either edit or update.
+ * @return boolean
+ */
+    function _afterScaffoldSaveError($method)
     {
         return true;
     }

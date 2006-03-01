@@ -149,7 +149,7 @@ define ('MODEL_TESTS', TESTS.APP_DIR.DS.'cases'.DS.'models'.DS);
 /**
  * Path to the lib test directory.
  */
-define ('LIB_TESTS', TESTS.'libs'.DS);
+define ('LIB_TESTS', TESTS.'lib'.DS);
 
 /**
  * Path to the temporary files directory.

@@ -401,19 +401,30 @@ class DataSource extends Object
 /**
  * Formats column data from definition in DBO's $columns array
  *
- * @param string $data
- * @param unknown_type $fields
+ * @param string $data The data to be formatted
+ * @param array $specs The column definition array
  * @return mixed Data formatted to column specifications
  * @access protected
  */
-    function __formatColumnData($data, $format, $formatter)
+    function __formatColumnData($data, $specs = array())
     {
-        switch($formatter)
+        if (isset($specs['formatter']))
         {
-            case 'date':
-                return date($format, strtotime($data));
-            case 'sprintf':
-                return sprintf($format, $data);
+            switch($specs['formatter'])
+            {
+                case 'date':
+                    return date($specs['format'], strtotime($data));
+                case 'sprintf':
+                    return sprintf($specs['format'], $data);
+                case 'intval':
+                    return intval($data);
+                case 'floatval':
+                    return floatval($data);
+            }
+        }
+        else
+        {
+            return $data;
         }
     }
 
@@ -456,7 +467,7 @@ class DataSource extends Object
 
                     break;
                 }
-                $query = r($key, $this->value($val), $query);
+                $query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
             }
         }
         return $query;
@@ -471,7 +482,7 @@ class DataSource extends Object
  */
     function resolveKey($model, $key)
     {
-        return $key;
+        return $model->name.$key;
     }
 
 /**

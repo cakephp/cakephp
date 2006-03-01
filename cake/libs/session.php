@@ -296,7 +296,7 @@ class CakeSession extends Object
     function __destroy($key)
     {
     	$db =& ConnectionManager::getDataSource('default');
-    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
+    	$db->execute("DELETE FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key, 'integer'));
     	return true;
     }
 

@@ -263,15 +263,22 @@ class Scaffold extends Object {
 
             if ($this->controllerClass->{$this->modelKey}->save($this->controllerClass->params['data']))
             {
-                if(is_object($this->controllerClass->Session))
+                if($this->controllerClass->_afterScaffoldSave($type))
                 {
-                    $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.');
-                    $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                    if(is_object($this->controllerClass->Session))
+                    {
+                        $this->controllerClass->Session->setFlash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.');
+                        $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+                    }
+                    else
+                    {
+                        return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.','/'.
+                                                                Inflector::underscore($this->controllerClass->viewPath));
+                    }
                 }
                 else
                 {
-                    return $this->controllerClass->flash('The '.Inflector::humanize($this->modelKey).' has been '.$success.'.','/'.
-                                                                Inflector::underscore($this->controllerClass->viewPath));
+                    return $this->controllerClass->_afterScaffoldSaveError($type);
                 }
             }
             else

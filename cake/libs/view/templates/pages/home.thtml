@@ -32,7 +32,7 @@
 <?php if (!empty($filePresent)):?>
 <?php $db = ConnectionManager::getInstance(); ?>
 <?php $connected = $db->getDataSource('default'); ?>
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->connected ? ' is able to' : ' is not able to';?> connect to the database.</p>
+<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
 <?php endif; ?>
 <h1>Cake<em>PHP</em></h1>

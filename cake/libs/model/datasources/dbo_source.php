@@ -1096,7 +1096,7 @@ class DboSource extends DataSource
                 {
                     $data = ' '. $value;
                 }
-                elseif (preg_match('/^(?P<operator>[a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|[<>=!]{1,3}\\x20?)?(?P<value>.*)/i', $value, $match))
+                elseif (preg_match('/^(?P<operator>[a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|regexp\\x20?|[<>=!]{1,3}\\x20?)?(?P<value>.*)/i', $value, $match))
                 {
                     if (preg_match('/(?P<conditional>\\x20[\\w]*\\x20)/', $key, $regs))
                     {

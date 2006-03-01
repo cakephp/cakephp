@@ -67,9 +67,9 @@ class DboMysql extends DboSource
     var $endQuote = "`";
 
 /**
- * Enter description here...
+ * Base configuration settings for MySQL driver
  *
- * @var unknown_type
+ * @var array
  */
     var $_baseConfig = array('persistent' => true,
                              'host'        => 'localhost',
@@ -79,17 +79,17 @@ class DboMysql extends DboSource
                              'port'        => 3306);
 
 /**
- * Enter description here...
+ * MySQL column definition
  *
- * @var unknown_type
+ * @var array
  */
     var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
                          'string'      => array('name' => 'varchar', 'limit' => '255'),
                          'text'        => array('name' => 'text'),
-                         'integer'     => array('name' => 'int', 'limit' => '11'),
-                         'float'       => array('name' => 'float'),
+                         'integer'     => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+                         'float'       => array('name' => 'float', 'formatter' => 'floatval'),
                          'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
-                         'timestamp'   => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
+                         'timestamp'   => array('name' => 'timestamp', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
                          'time'        => array('name' => 'time', 'format' => 'h:i:s', 'formatter' => 'date'),
                          'date'        => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
                          'binary'      => array('name' => 'blob'),
@@ -119,17 +119,10 @@ class DboMysql extends DboSource
 
         $this->connected = false;
         $this->connection = $connect($config['host'], $config['login'], $config['password']);
-        if ($this->connection)
+
+        if (mysql_select_db($config['database'], $this->connection))
         {
             $this->connected = true;
-        }
-        if ($this->connected)
-        {
-            return mysql_select_db($config['database'], $this->connection);
-        }
-        else
-        {
-//die('Could not connect to DB.');
         }
     }
 
@@ -284,16 +277,17 @@ class DboMysql extends DboSource
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @return string Quoted and escaped
- * @todo Add logic that formats/escapes data based on column type
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @return string Quoted and escaped data, formatted for column type
  */
-    function value ($data, $column = null)
+    function value ($data, $column = null, $safe = false)
     {
         $parent = parent::value($data, $column);
         if ($parent != null)
         {
             return $parent;
         }
+
         if ($data === null)
         {
             return 'NULL';
@@ -302,17 +296,49 @@ class DboMysql extends DboSource
         {
             $data = stripslashes($data);
         }
-        $data = mysql_real_escape_string($data, $this->connection);
 
-        if(!is_numeric($data))
+        if ($column == null)
         {
-            $return = "'" . $data . "'";
+            $data = mysql_real_escape_string($data, $this->connection);
+
+            if(!is_numeric($data) || $safe == true)
+            {
+                $return = "'" . $data . "'";
+            }
+            else
+            {
+                $return = $data;
+            }
+            return $return;
+
+        } else {
+
+        	$colData = $this->columns[$column];
+            if (isset($colData['limit']) && strlen(strval($data)) > $colData['limit'])
+            {
+                $data = substr(strval($data), 0, $colData['limit']);
+            }
+
+            if (isset($colData['format']) || isset($colData['fomatter']))
+            {
+                $data = $this->__formatColumnData($data, $colData);
+            }
+            
+            switch($column) {
+                case 'string':
+                case 'text':
+                case 'binary':
+                    return "'" . mysql_real_escape_string($data, $this->connection) . "'";
+                case 'date':
+                case 'time':
+                case 'datetime':
+                case 'timestamp':
+                case 'date':
+                    return "'" . $data . "'";
+                break;
+            }
         }
-        else
-        {
-            $return = $data;
-        }
-        return $return;
+        return $data;
     }
 
 /**
@@ -504,13 +530,47 @@ class DboMysql extends DboSource
     }
 
 /**
- * Enter description here...
+ * Converts database-layer column types to basic types
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return string Abstract column type (i.e. "string")
  */
     function column($real)
     {
-        return $real;
+        $col = r(')', '', $real);
+        $limit = null;
+        @list($col, $limit) = explode('(', $col);
+
+        if (in_array($col, array('date', 'time', 'datetime', 'timestamp')))
+        {
+            return $col;
+        }
+        if ($col == 'tinyint' && $limit == '1')
+        {
+            return 'boolean';
+        }
+        if (strpos($col, 'int') !== false)
+        {
+            return 'integer';
+        }
+        if (strpos($col, 'char') !== false)
+        {
+            return 'string';
+        }
+        if (strpos($col, 'text') !== false)
+        {
+            return 'text';
+        }
+        if (strpos($col, 'blob') !== false)
+        {
+            return 'binary';
+        }
+        if (in_array($col, array('float', 'double', 'decimal')))
+        {
+            return 'float';
+        }
+
+        return 'text';
     }
 
 /**
