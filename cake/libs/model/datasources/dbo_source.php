@@ -353,9 +353,11 @@ class DboSource extends DataSource
             $fieldInsert[] = $this->name($field);
         }
 
+        $count = 0;
         foreach ($values as $value)
         {
-            $valueInsert[] = $this->value($value);
+        	$valueInsert[] = $this->value($value, $model->getColumnType($fields[$count]));
+            $count++;
         }
 
         if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
@@ -847,14 +849,15 @@ class DboSource extends DataSource
     function update (&$model, $fields = null, $values = null)
     {
         $updates = array();
-        foreach (array_combine($fields, $values) as $field => $value)
+        $combined = array_combine($fields, $values);
+        foreach ($combined as $field => $value)
         {
-            $updates[] = $this->name($field).'='.$this->value($value);
+        	$updates[] = $this->name($field).'='.$this->value($value, $model->getColumnType($field));
         }
 
         $sql  = 'UPDATE '.$this->name($model->table);
         $sql .= ' SET '.join(',', $updates);
-        $sql .= ' WHERE '.$this->name($model->primaryKey).'='.$this->value($model->getID());
+        $sql .= ' WHERE '.$this->name($model->primaryKey).'='.$this->value($model->getID(), $model->getColumnType($model->primaryKey));
 
         return $this->execute($sql);
     }
