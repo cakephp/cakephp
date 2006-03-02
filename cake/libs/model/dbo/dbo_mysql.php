@@ -283,6 +283,7 @@ class DboMysql extends DboSource
     function value ($data, $column = null, $safe = false)
     {
         $parent = parent::value($data, $column);
+
         if ($parent != null)
         {
             return $parent;
@@ -292,15 +293,21 @@ class DboMysql extends DboSource
         {
             return 'NULL';
         }
+
+        if($data == '')
+        {
+            return  "''";
+        }
+
         if (ini_get('magic_quotes_gpc') == 1)
         {
             $data = stripslashes($data);
         }
 
+        $data = mysql_real_escape_string($data, $this->connection);
+
         if ($column == null)
         {
-            $data = mysql_real_escape_string($data, $this->connection);
-
             if(!is_numeric($data) || $safe == true)
             {
                 $return = "'" . $data . "'";
@@ -311,9 +318,10 @@ class DboMysql extends DboSource
             }
             return $return;
 
-        } else {
-
-        	$colData = $this->columns[$column];
+        }
+        else
+        {
+            $colData = $this->columns[$column];
             if (isset($colData['limit']) && strlen(strval($data)) > $colData['limit'])
             {
                 $data = substr(strval($data), 0, $colData['limit']);
@@ -323,12 +331,16 @@ class DboMysql extends DboSource
             {
                 $data = $this->__formatColumnData($data, $colData);
             }
-            
-            switch($column) {
+
+            switch($column)
+            {
+                case 'integer':
+                case 'int':
+                    return  $data;
+                break;
                 case 'string':
                 case 'text':
                 case 'binary':
-                    return "'" . mysql_real_escape_string($data, $this->connection) . "'";
                 case 'date':
                 case 'time':
                 case 'datetime':

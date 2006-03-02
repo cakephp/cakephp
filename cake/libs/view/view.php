@@ -532,6 +532,20 @@ class View extends Object
         {
             $type = null;
         }
+
+        $position = strpos($action, '..');
+        if ($position === false)
+        {
+        }
+        else
+        {
+            $action = explode('/', $action);
+            $i = array_search('..', $action);
+            unset($action[$i-1]);
+            unset($action[$i]);
+            $action = '..'.DS.implode(DS, $action);
+        }
+
         $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
 
         if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
@@ -550,13 +564,7 @@ class View extends Object
         {
 
         }
-
-        $viewPath = explode(DS, $viewFileName);
-        $i = array_search('..', $viewPath);
-        unset($viewPath[$i-1]);
-        unset($viewPath[$i]);
-        $return = '/'.implode('/', $viewPath);
-        return $return;
+        return $viewFileName;
     }
 
 /**

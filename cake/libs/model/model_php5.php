@@ -765,7 +765,7 @@ class Model extends Object
             $conditions = $this->db->conditions($conditions);
         }
 
-        if ($data = $this->find($conditions, $name, $order))
+        if ($data = $this->find($conditions, $name, $order, 0))
         {
             if (isset($data[$this->name][$name]))
             {

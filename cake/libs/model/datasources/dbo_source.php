@@ -1076,7 +1076,7 @@ class DboSource extends DataSource
     {
         $out = array();
         $operator = null;
-        $bool = array('and', 'or', 'and not', 'or not');
+        $bool = array('and', 'or', 'and not', 'or not', 'xor', '||', '&&');
 
         foreach ($conditions as $key => $value)
         {
