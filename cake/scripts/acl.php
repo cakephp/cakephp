@@ -41,6 +41,7 @@ define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
 define ('APP_DIR', 'app');
 define('CAKE_CORE_INCLUDE_PATH', ROOT);
+define('CORE_PATH', CAKE_CORE_INCLUDE_PATH);
 
 define ('DEBUG', 1);
 ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
@@ -53,6 +54,7 @@ uses ('neat_array');
 uses ('object');
 uses ('session');
 uses ('security');
+uses ('inflector');
 uses ('model'.DS.'connection_manager');
 uses ('model'.DS.'datasources'.DS.'dbo_source');
 uses ('model'.DS.'model');

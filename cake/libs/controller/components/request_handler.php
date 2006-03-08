@@ -102,6 +102,36 @@ class RequestHandlerComponent extends Object
         }
     }
 
+/**
+ * Returns true if the current call a POST request
+ *
+ * @return bool True if call is a POST
+ */
+    function isPost()
+    {
+        return (low(env('REQUEST_METHOD')) == 'post');
+    }
+
+/**
+ * Returns true if the current call a PUT request
+ *
+ * @return bool True if call is a PUT
+ */
+    function isPut()
+    {
+        return (low(env('REQUEST_METHOD')) == 'put');
+    }
+
+/**
+ * Returns true if the current call a GET request
+ *
+ * @return bool True if call is a GET
+ */
+    function isGet()
+    {
+        return (low(env('REQUEST_METHOD')) == 'get');
+    }
+
 
 /**
  * Gets Prototype version if call is Ajax, otherwise empty string. 

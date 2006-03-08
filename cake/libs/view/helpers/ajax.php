@@ -189,7 +189,7 @@ class AjaxHelper extends Helper
         if (isset($options['id']))
         {
             $htmlOptions['onclick'] = ' return false;';
-            return $this->Html->link($title, $href, $htmlOptions) . $this->Javascript->event("$('{$options['id']}')", "click", $this->remoteFunction($options));
+            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle) . $this->Javascript->event("$('{$options['id']}')", "click", $this->remoteFunction($options));
         }
         else
         {
@@ -648,11 +648,17 @@ class AjaxHelper extends Helper
     {
         foreach($this->ajaxOptions as $key)
         {
-            unset($options[$key]);
+            if (isset($options[$key]))
+            {
+                unset($options[$key]);
+            }
         }
         foreach($extra as $key)
         {
-            unset($options[$key]);
+            if (isset($extra[$key]))
+            {
+                unset($options[$key]);
+            }
         }
         return $options;
     }

@@ -53,7 +53,7 @@ class Security extends Object
 
     function inactiveMins()
     {
-        $security =& Security::getInstance();
+        //$security =& Security::getInstance();
         switch (CAKE_SECURITY)
         {
             case 'high':
@@ -71,8 +71,7 @@ class Security extends Object
 
     function generateAuthKey()
     {
-
-        return $authKey;
+        return Security::hash(uniqid(rand(), true));
     }
 
     function validateAuthKey($authKey)

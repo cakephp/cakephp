@@ -110,6 +110,6 @@ else
 
 if (DEBUG)
 {
-    echo "<!-- ". round(getMicrotime() - $TIME_START, 2) ."s -->";
+    echo "<!-- ". round(getMicrotime() - $TIME_START, 4) ."s -->";
 }
 ?>

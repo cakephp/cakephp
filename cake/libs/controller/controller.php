@@ -90,7 +90,7 @@ class Controller extends Object
  *
  * @var unknown_type
  */
-    var $viewPath;
+    var $viewPath = null;
 
 /**
  * Variables for the view
@@ -208,7 +208,12 @@ class Controller extends Object
             }
             $this->name = $r[1];
         }
-        $this->viewPath = Inflector::underscore($this->name);
+
+        if ($this->viewPath == null)
+        {
+            $this->viewPath = Inflector::underscore($this->name);
+        }
+
         $this->modelClass = Inflector::singularize($this->name);
         $this->modelKey  = Inflector::underscore($this->modelClass);
 
@@ -395,6 +400,8 @@ class Controller extends Object
         $this->action = $action;
 
         $args = func_get_args();
+        unset($args[0]);
+
         call_user_func_array(array(&$this, $action), $args);
     }
 
@@ -460,6 +467,18 @@ class Controller extends Object
         }
 
         $this->beforeRender();
+
+        if (!isset($this->_viewVars['data']))
+        {
+            if (isset($this->params['data']))
+            {
+                $this->set('data', $this->params['data']);
+            }
+            else
+            {
+                $this->set('data', array());
+            }
+        }
 
         $this->_viewClass =& new $viewClass($this);
         if(!empty($this->modelNames))

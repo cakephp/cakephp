@@ -208,7 +208,7 @@ class HtmlHelper extends Helper
             $htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
         }
 
-        if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0)))
+        if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)))
         {
             $output = sprintf($this->tags['link'], $url,
             $this->_parseAttributes($htmlAttributes), $title);
@@ -1126,7 +1126,13 @@ class HtmlHelper extends Helper
         $htmlAttributes['method'] = $type=='get'? 'get': 'post';
         $type == 'file'? $htmlAttributes['enctype'] = 'multipart/form-data': null;
 
-        return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, ''));
+        $token = '';
+        if (isset($this->params['_Token']) && !empty($this->params['_Token']))
+        {
+            $token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+        }
+
+        return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $token;
     }
 
 /**

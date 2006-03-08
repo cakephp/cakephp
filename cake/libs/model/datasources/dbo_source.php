@@ -383,6 +383,7 @@ class DboSource extends DataSource
         $linkedModels = array();
         $this->__bypass = false;
         $this->__assocJoins = null;
+
         if(!is_null($recursive))
         {
             $_recursive = $model->recursive;
@@ -429,16 +430,15 @@ class DboSource extends DataSource
             {
                 foreach($model->{$type} as $assoc => $assocData)
                 {
+                    $linkModel =& $model->{$assocData['className']};
                     if (!in_array($type.'/'.$assoc, $linkedModels))
                     {
-                        $linkModel =& $model->{$assocData['className']};
                         $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
-                    } else {
-                    	// Fetch recursively on belongsTo and hasOne
-                        if ($model->recursive > 1)
-                        {
-//$this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
-                        }
+                    }
+                    elseif($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne'))
+                    {
+                        // Do recursive joins on belongsTo and hasOne relationships
+                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
                     }
                 }
             }
@@ -656,10 +656,11 @@ class DboSource extends DataSource
                         $assocData['fields'] = '';
                     }
                     $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias;
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias.' ';
                     $conditions = $queryData['conditions'];
                     $condition = $model->escapeField($assocData['foreignKey']);
                     $condition .= '={$__cakeForeignKey__$}';
+
                     if (is_array($conditions))
                     {
                         $conditions[] = $condition;
@@ -722,7 +723,7 @@ class DboSource extends DataSource
                     $conditions = $assocData['conditions'];
 
                     $condition = $linkModel->escapeField($linkModel->primaryKey);
-                    $condition .= '={$__cakeID__$}';
+                    $condition .= '={$__cakeForeignKey__$}';
 
                     if (is_array($conditions))
                     {
@@ -1026,7 +1027,7 @@ class DboSource extends DataSource
         {
             if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match))
             {
-                $clause = 'WHERE ';
+                $clause = ' WHERE ';
             }
         }
         if (is_string($conditions))
@@ -1066,7 +1067,7 @@ class DboSource extends DataSource
         }
         else
         {
-            $clause = 'WHERE ';
+            $clause = ' WHERE ';
             $out = $this->conditionKeysToString($conditions);
             return $clause . ' ('.join(') AND (', $out).')';
         }

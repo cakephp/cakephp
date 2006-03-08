@@ -88,9 +88,9 @@ class DboMysql extends DboSource
                          'text'        => array('name' => 'text'),
                          'integer'     => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
                          'float'       => array('name' => 'float', 'formatter' => 'floatval'),
-                         'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
-                         'timestamp'   => array('name' => 'timestamp', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
-                         'time'        => array('name' => 'time', 'format' => 'h:i:s', 'formatter' => 'date'),
+                         'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+                         'timestamp'   => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+                         'time'        => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
                          'date'        => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
                          'binary'      => array('name' => 'blob'),
                          'boolean'     => array('name' => 'tinyint', 'limit' => '1'));

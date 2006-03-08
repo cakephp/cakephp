@@ -445,12 +445,12 @@ class DataSource extends Object
         $keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
         foreach($keys as $key)
         {
+            $val = null;
             if (strpos($query, $key) !== false)
             {
                 switch($key)
                 {
                     case '{$__cakeID__$}':
-                        $val = null;
                         if (isset($data[$index][$model->name]))
                         {
                             if(isset($data[$index][$model->name][$model->primaryKey]))
@@ -463,8 +463,9 @@ class DataSource extends Object
                             }
                         }
                     break;
-                    case '{$__cake_foreignKey__$}':
-
+                    case '{$__cakeForeignKey__$}':
+                        $foreignKey = Inflector::underscore($linkModel->name).'_id';
+                        $val = $data[$index][$model->name][$foreignKey];
                     break;
                 }
                 $query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);

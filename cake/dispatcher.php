@@ -135,6 +135,10 @@ class Dispatcher extends Object
                      {
                          $params['controller'] = Inflector::underscore($ctrlName);
                          $ctrlClass = $ctrlName.'Controller';
+                         if (!is_null($params['action']))
+                         {
+                             array_unshift($params['pass'], $params['action']);
+                         }
                          $params['action'] = $oldAction;
                      }
                  }

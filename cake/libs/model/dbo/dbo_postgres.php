@@ -389,6 +389,54 @@ class  DboPostgres extends DboSource
         return null;
     }
 
+/**
+ * Converts database-layer column types to basic types
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return string Abstract column type (i.e. "string")
+ */
+    function column($real)
+    {
+        $col = r(')', '', $real);
+        $limit = null;
+        @list($col, $limit) = explode('(', $col);
+
+        if (in_array($col, array('date', 'time', 'timestamp')))
+        {
+            return $col;
+        }
+        if ($col == 'boolean')
+        {
+            return 'boolean';
+        }
+        if (strpos($col, 'integer') !== false)
+        {
+            return 'integer';
+        }
+        if (strpos($col, 'char') !== false)
+        {
+            return 'string';
+        }
+        if (strpos($col, 'text') !== false)
+        {
+            return 'text';
+        }
+        if (strpos($col, 'bytea') !== false)
+        {
+            return 'binary';
+        }
+        if (in_array($col, array('float', 'double', 'decimal')))
+        {
+            return 'float';
+        }
+        return 'text';
+    }
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $results
+ */
     function resultSet(&$results)
     {
         $this->results =& $results;

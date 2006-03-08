@@ -413,7 +413,7 @@ class Model extends Object
             $this->__backAssociation[$assoc] = $this->{$assoc};
             foreach($models as $model)
             {
-                $this->__backAssociation = array_merge_recursive($this->__backAssociation, $this->{$assoc});
+                $this->__backAssociation = array_merge($this->__backAssociation, $this->{$assoc});
                 unset($this->{$assoc}[$model]);
             }
         }
@@ -551,7 +551,7 @@ class Model extends Object
     {
         if($this->db->isInterfaceSupported('listSources'))
         {
-            if (!in_array(strtolower($tableName), $this->db->listSources()))
+            if (!in_array(low($tableName), $this->db->listSources()) && !in_array($tableName, $this->db->listSources()))
             {
                 return $this->cakeError('missingTable',array(array('className' => $this->name,
                                                                   'table' => $tableName)));
@@ -843,6 +843,7 @@ class Model extends Object
             $weHaveMulti = false;
         }
 
+        $newID = null;
         foreach ($this->data as $n => $v)
         {
             if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
@@ -913,12 +914,15 @@ class Model extends Object
                 if($this->db->create($this, $fields, $values))
                 {
                     $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
-                    $this->id = $this->__insertID;
 
-                    if(!$this->id > 0 && isset($newID))
+                    if (!$this->__insertID && $newID != null)
                     {
                         $this->__insertID = $newID;
                         $this->id = $newID;
+                    }
+                    else
+                    {
+                        $this->id = $this->__insertID;
                     }
 
                     if(!empty($joined))
@@ -1307,7 +1311,7 @@ class Model extends Object
         $sizeOf = sizeof($data);
         for ($ii=0; $ii < $sizeOf; $ii++)
         {
-            if ($data[$ii][$this->name]['parent_id']  == $root)
+            if (($data[$ii][$this->name]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->name]['parent_id'] == '0')))
             {
                 $tmp = $data[$ii];
                 if (isset($data[$ii][$this->name][$this->primaryKey]))
