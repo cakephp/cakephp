@@ -913,6 +913,7 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
 {
     if(is_string($params) || $params === null)
     {
+        $params = preg_replace('/\/\//', '/', $params);
         $cache = CACHE.$type.DS.$params;
         if(is_file($cache.$ext))
         {
@@ -958,6 +959,7 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
     {
         foreach ($params as $key => $file)
         {
+            $file = preg_replace('/\/\//', '/', $file);
             $cache = CACHE.$type.DS.'*'.$file.'*'.$ext;
             $files[] = glob($cache);
         }

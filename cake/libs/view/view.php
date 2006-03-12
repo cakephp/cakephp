@@ -663,9 +663,16 @@ class View extends Object
         {
             if(is_array($this->controller->cacheAction))
             {
-                if(isset($this->controller->cacheAction[$this->action]))
+                $check = str_replace('/', '_', $this->params['url']['url']);
+                $check = str_replace('_'.$this->params['controller'].'_', '', $check);
+                $check = substr_replace($check, '', -1);
+                $keys = str_replace('/', '_', array_keys($this->controller->cacheAction));
+                $key = preg_grep("/^$check/", array_values($keys));
+                $key = str_replace('_', '/', $key['0']);
+
+                if(isset($this->controller->cacheAction[$key]))
                 {
-                    $cacheTime = $this->controller->cacheAction[$this->action];
+                    $cacheTime = $this->controller->cacheAction[$key];
                 }
                 else
                 {
