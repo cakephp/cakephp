@@ -802,16 +802,16 @@ class View extends Object
         $now = time();
         if (is_numeric($timestamp))
         {
-            $timestamp = $now + $timestamp;
+            $cacheTime = $now + $timestamp;
         }
         else
         {
-            $timestamp = $now + strtotime($timestamp);
+            $cacheTime = $now + strtotime($timestamp);
         }
-        $content = '<!--cachetime:' . $timestamp . '-->'.$view;
         $result = preg_replace('/\/\//', '/', $this->here);
-        $cache = str_replace('/', '_', $result.'.php');
-        return cache('views'.DS.$cache, $content, $timestamp);
+        $cache = str_replace('/', '_', $result.$cacheTime.'.php');
+        $cache = str_replace('favicon.ico', '', $cache);
+        return cache('views'.DS.$cache, $view, $timestamp);
     }
 }
 ?>

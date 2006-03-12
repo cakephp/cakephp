@@ -897,6 +897,81 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
     return $data;
 }
 
+/**
+ * Used to delete files in the cache directories, or clear contents of cache directories
+ *
+ * @param mixed $params As String name to be searched for deletion, if name is a directory all files in directory will be deleted.
+ *                      If array, names to be searched for deletion.
+ *                      If clearCache() without params, all files in app/tmp/cache/views will be deleted
+ *
+ * @param string $type Directory in tmp/cache defaults to view directory
+ * @param string $ext The file extension you are deleting
+ * @return true if files found and deleted false otherwise
+ */
+function clearCache($params = null, $type = 'views', $ext = '.php')
+{
+    if(is_string($params) || $params === null)
+    {
+        $cache = CACHE.$type.DS.$params;
+        if(is_file($cache.$ext))
+        {
+            return unlink($cache);
+        }
+        else if(is_dir($cache))
+        {
+            $files = glob("$cache*");
+            if ($files === false)
+            {
+                return false;
+            }
+            array_map('unlink', $files);
+            return true;
+        }
+        else
+        {
+            $cache = CACHE.$type.DS.'*'.$params.'*'.$ext;
+            $files = glob($cache);
+            if ($files === false)
+            {
+                return false;
+            }
+            array_map('unlink', $files);
+            return true;
+        }
+    }
+    else if(is_array($params))
+    {
+        foreach ($params as $key => $file)
+        {
+            $cache = CACHE.$type.DS.'*'.$file.'*'.$ext;
+            $files[] = glob($cache);
+        }
+        if(!empty($files))
+        {
+            foreach ($files as $key => $delete)
+            {
+            	array_map('unlink', $delete);
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $value
+ * @return unknown
+ */
 function stripslashes_deep($value)
 {
     $value = is_array($value) ?
@@ -959,6 +1034,12 @@ function LogError ($message)
     CakeLog::write('error', str_replace($bad, $good, $message));
 }
 
+/**
+ * Searches include path for files
+ *
+ * @param string $file
+ * @return Full path to file if exists, otherwise false
+ */
 function fileExistsInPath ($file)
 {
     $paths = explode(PATH_SEPARATOR, get_include_path());

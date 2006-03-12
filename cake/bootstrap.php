@@ -114,27 +114,31 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
         $uri = setUri();
     }
 
-    $filename = CACHE.'views'.DS.str_replace('/', '_', $uri.'.php');
+    $filename = CACHE.'views'.DS.'*'.str_replace('/', '_', $uri).'*';
+    $files = glob($filename);
 
-    if (file_exists($filename))
+    if(isset($files[0]))
     {
-        ob_start();
-        include($filename);
-        if (DEBUG)
+        if (file_exists($files[0]))
         {
-            echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
-        }
-        $out = ob_get_clean();
-        if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match))
-        {
-            if(time() >= $match['1'])
+            if (preg_match('/(\\d+).php/', $files[0], $match))
             {
-                @unlink($filename);
-                unset($out);
-            }
-            else
-            {
-                die(e($out));
+                if(time() >= $match['1'])
+                {
+                    @unlink($files[0]);
+                    unset($out);
+                }
+                else
+                {
+                    ob_start();
+                    include($files[0]);
+                    if (DEBUG)
+                    {
+                        echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
+                    }
+                    $out = ob_get_clean();
+                    die(e($out));
+                }
             }
         }
     }
