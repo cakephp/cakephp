@@ -902,6 +902,7 @@ class Model extends Object
                     }
                     $this->afterSave();
                     $this->data = false;
+                    $this->_clearCache();
                     return true;
                 }
                 else
@@ -932,6 +933,7 @@ class Model extends Object
 
                     $this->afterSave();
                     $this->data = false;
+                    $this->_clearCache();
                     return true;
                 }
                 else
@@ -1030,6 +1032,7 @@ class Model extends Object
                 $this->__deleteHasMany($id, $cascade);
                 $this->__deleteHasOne($id, $cascade);
                 $this->afterDelete();
+                $this->_clearCache();
                 $this->id = false;
                 return true;
             }
@@ -1670,6 +1673,44 @@ class Model extends Object
     function beforeValidate()
     {
         return true;
+    }
+
+/**
+ * Enter description here...
+ *
+ * @param string $type If null this deletes cached views if CACHE_CHECK is true
+ *                     Will be used to allow deleting query cache also
+ * @return boolean true on delete
+ */
+    function _clearCache($type = null)
+    {
+        if($type === null)
+        {
+            if(defined('CACHE_CHECK') && CACHE_CHECK === true)
+            {
+                $assoc = array();
+                foreach ($this->__associations as $key => $asscociation)
+                {
+                    foreach ($this->$asscociation as $key => $className)
+                    {
+                        $check = low(Inflector::pluralize($className['className']));
+                        if(!in_array($check, $assoc))
+                        {
+                            $assoc[] = low(Inflector::pluralize($className['className']));
+                        }
+                    }
+                }
+                if(!empty($assoc))
+                {
+                    clearCache($assoc);
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            //Will use for query cache deleting
+        }
     }
 }
 

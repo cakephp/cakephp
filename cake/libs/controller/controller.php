@@ -641,15 +641,13 @@ class Controller extends Object
         {
             foreach ($tables as $tabl)
             {
-                $alias = null;
                 if ($objRegistryModel->isForeignKey($tabl['name']))
                 {
                     $niceName = substr( $tabl['name'], 0, strpos( $tabl['name'], "_id" ) );
                     $fkNames = $this->{$model}->keyToTable[$tabl['name']];
-                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($fkNames[1]);
                     $fieldNames[ $tabl['name'] ]['table'] = $fkNames[0];
                     $association = array_search($fieldNames[ $tabl['name'] ]['table'],$this->{$model}->alias);
-                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($alias.$niceName);
+                    $fieldNames[ $tabl['name'] ]['prompt'] = Inflector::humanize($niceName);
                     $fieldNames[ $tabl['name'] ]['model'] = $fkNames[1];
                     $fieldNames[ $tabl['name'] ]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']];
                     $fieldNames[ $tabl['name'] ]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[$fkNames[0]]);
@@ -710,7 +708,7 @@ class Controller extends Object
                                  {
                                      foreach ($pass as $key => $value)
                                      {
-                                         if($alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField]))
+                                         if($key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset( $value['id'] ) && isset( $value[$otherDisplayField]))
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value['id']] = $value[$otherDisplayField];
                                          }
@@ -761,7 +759,7 @@ class Controller extends Object
                                  {
                                      foreach($pass as $key => $value)
                                      {
-                                         if( $alias.$key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset($value[$otherModel->primaryKey]) && isset($value[$otherDisplayField]))
+                                         if( $key == $this->{$model}->tableToModel[$fieldNames[ $tabl['name'] ]['table']] && isset($value[$otherModel->primaryKey]) && isset($value[$otherDisplayField]))
                                          {
                                              $fieldNames[ $tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
                                          }
