@@ -546,8 +546,6 @@ class View extends Object
             $action = '..'.DS.implode(DS, $action);
         }
 
-        $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
-
         if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
         {
             $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
@@ -563,6 +561,10 @@ class View extends Object
         elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.$this->viewPath.DS.$type.$action.'.thtml'))
         {
 
+        }
+        else
+        {
+            $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
         }
         return $viewFileName;
     }
@@ -593,14 +595,16 @@ class View extends Object
             }
         }
 
-        $layoutFileName = LAYOUTS.$type."{$this->layout}$this->ext";
-
         if(file_exists(LAYOUTS.$this->subDir.$type."{$this->layout}$this->ext"))
         {
             $layoutFileName = LAYOUTS.$this->subDir.$type."{$this->layout}$this->ext";
         }
         elseif($layoutFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS."layouts".DS.$type."{$this->layout}.thtml"))
         {
+        }
+        else
+        {
+            $layoutFileName = LAYOUTS.$type."{$this->layout}$this->ext";
         }
         return $layoutFileName;
     }
