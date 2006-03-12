@@ -655,7 +655,7 @@ class View extends Object
         }
         $out = ob_get_clean();
 
-        if($this->controller->cacheAction != false && CACHE_CHECK === true)
+        if($this->controller->cacheAction != false && (defined('CACHE_CHECK') && CACHE_CHECK === true))
         {
             if(is_array($this->controller->cacheAction))
             {

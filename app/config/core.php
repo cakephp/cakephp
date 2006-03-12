@@ -59,7 +59,7 @@ define('DEBUG', 1);
  * You can either set it controller wide, or in each controller method.
  * use var $cacheAction = true; or in the controller method $this->cacheAction = true;
  */
-define ('CACHE_CHECK', true);
+define ('CACHE_CHECK', false);
 /**
  * Error constant. Used for differentiating error logging and debugging.
  * Currently PHP supports LOG_DEBUG

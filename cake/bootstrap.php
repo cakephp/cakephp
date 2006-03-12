@@ -107,7 +107,7 @@ else
 }
 
 $TIME_START = getMicrotime();
-if(defined('CACHE_CHECK'))
+if(defined('CACHE_CHECK') && CACHE_CHECK === true)
 {
     if (empty($uri))
     {
