@@ -107,6 +107,38 @@ else
 }
 
 $TIME_START = getMicrotime();
+if(defined('CACHE_CHECK'))
+{
+    if (empty($uri))
+    {
+        $uri = setUri();
+    }
+
+    $filename = CACHE.'views'.DS.str_replace('/', '_', $uri.'.php');
+
+    if (file_exists($filename))
+    {
+        ob_start();
+        include($filename);
+        if (DEBUG)
+        {
+            echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
+        }
+        $out = ob_get_clean();
+        if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match))
+        {
+            if(time() >= $match['1'])
+            {
+                @unlink($filename);
+                unset($out);
+            }
+            else
+            {
+                die(e($out));
+            }
+        }
+    }
+}
 
 require CAKE.'dispatcher.php';
 require LIBS.'model'.DS.'connection_manager.php';

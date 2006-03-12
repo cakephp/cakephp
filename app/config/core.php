@@ -54,6 +54,13 @@
  */
 define('DEBUG', 1);
 /**
+ * Turn of caching checking wide.
+ * You must still use the controller var cacheAction inside you controller class.
+ * You can either set it controller wide, or in each controller method.
+ * use var $cacheAction = true; or in the controller method $this->cacheAction = true;
+ */
+define ('CACHE_CHECK', true);
+/**
  * Error constant. Used for differentiating error logging and debugging.
  * Currently PHP supports LOG_DEBUG
  */

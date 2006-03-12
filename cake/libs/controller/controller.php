@@ -194,6 +194,13 @@ class Controller extends Object
     var $plugin = null;
 
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $cacheAction = false;
+
+/**
  * Constructor.
  *
  */

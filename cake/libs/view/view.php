@@ -654,7 +654,38 @@ class View extends Object
             @include($___viewFn);
         }
         $out = ob_get_clean();
-        return $out;
+
+        if($this->controller->cacheAction != false && CACHE_CHECK === true)
+        {
+            if(is_array($this->controller->cacheAction))
+            {
+                if(isset($this->controller->cacheAction[$this->action]))
+                {
+                    $cacheTime = $this->controller->cacheAction[$this->action];
+                }
+                else
+                {
+                    $cacheTime = 0;
+                }
+            }
+            else
+            {
+                $cacheTime = $this->controller->cacheAction;
+            }
+
+            if($cacheTime != '' && $cacheTime > 0)
+            {
+                return $this->cacheView($out, $cacheTime);
+            }
+            else
+            {
+                return $out;
+            }
+        }
+        else
+        {
+            return $out;
+        }
     }
 
 /**
@@ -764,6 +795,23 @@ class View extends Object
                                     'action' => $action,
                                     'file' => $viewFileName)));
         }
+    }
+
+    function cacheView($view, $timestamp)
+    {
+        $now = time();
+        if (is_numeric($timestamp))
+        {
+            $timestamp = $now + $timestamp;
+        }
+        else
+        {
+            $timestamp = $now + strtotime($timestamp);
+        }
+        $content = '<!--cachetime:' . $timestamp . '-->'.$view;
+        $result = preg_replace('/\/\//', '/', $this->here);
+        $cache = str_replace('/', '_', $result.'.php');
+        return cache('views'.DS.$cache, $content, $timestamp);
     }
 }
 ?>

@@ -214,5 +214,87 @@ class Sanitize
 
       return $val;
     }
+
+/**
+ * Formats column data from definition in DBO's $columns array
+ *
+ * @param Model $model The model containing the data to be formatted
+ * @return void
+ * @access public
+ */
+    function formatColumns(&$model)
+    {
+        foreach ($model->data as $name => $values)
+        {
+            if ($name == $model->name)
+            {
+                $curModel =& $model;
+            }
+            else if (isset($model->{$name}) && is_object($model->{$name}) && is_subclass_of($model->{$name}, 'Model'))
+            {
+                $curModel =& $model->{$name};
+            }
+            else
+            {
+                $curModel = null;
+            }
+
+            if ($curModel != null)
+            {
+                foreach($values as $column => $data)
+                {
+                    $colType = $curModel->getColumnType($column);
+                    
+                    if ($colType != null)
+                    {
+                        $colData = $curModel->db->columns[$colType];
+                        if (isset($colData['limit']) && strlen(strval($data)) > $colData['limit'])
+                        {
+                            $data = substr(strval($data), 0, $colData['limit']);
+                        }
+
+                        if (isset($colData['formatter']) || isset($colData['format']))
+                        {
+                            switch(low($colData['formatter']))
+                            {
+                                case 'date':
+                                    $data = date($colData['format'], strtotime($data));
+                                break;
+                                case 'sprintf':
+                                    $data = sprintf($colData['format'], $data);
+                                break;
+                                case 'intval':
+                                    $data = intval($data);
+                                break;
+                                case 'floatval':
+                                    $data = floatval($data);
+                                break;
+                            }
+                        }
+
+                        $model->data[$name][$column] = $data;
+
+                        /*switch($colType)
+                        {
+                            case 'integer':
+                            case 'int':
+                                return  $data;
+                            break;
+                            case 'string':
+                            case 'text':
+                            case 'binary':
+                            case 'date':
+                            case 'time':
+                            case 'datetime':
+                            case 'timestamp':
+                            case 'date':
+                                return "'" . $data . "'";
+                            break;
+                        }*/
+                    }
+                }
+            }
+        }
+    }
 }
 ?>

@@ -209,7 +209,7 @@ class RequestHandlerComponent extends Object
  */
     function isMobile()
     {
-        return (preg_match(REQUEST_MOBILE_UA, $_SERVER['HTTP_USER_AGENT']) > 0);
+        return (preg_match('/'.REQUEST_MOBILE_UA.'/i', $_SERVER['HTTP_USER_AGENT']) > 0);
     }
 
 /**

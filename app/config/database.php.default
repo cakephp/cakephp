@@ -60,7 +60,7 @@
 class DATABASE_CONFIG
 {
     var $default = array('driver'    => 'mysql',
-                         'connect'  => 'mysql_pconnect',
+                         'connect'  => 'mysql_connect',
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',
@@ -68,7 +68,7 @@ class DATABASE_CONFIG
                          'prefix'    => '');
 
     var $test    =  array('driver'    => 'mysql',
-                         'connect'  => 'mysql_pconnect',
+                         'connect'  => 'mysql_connect',
                          'host'     => 'localhost',
                          'login'    => 'user',
                          'password' => 'password',

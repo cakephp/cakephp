@@ -278,11 +278,11 @@ class DboMysql extends DboSource
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
  * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
- * @return string Quoted and escaped data, formatted for column type
+ * @return string Quoted and escaped data
  */
     function value ($data, $column = null, $safe = false)
     {
-        $parent = parent::value($data, $column);
+        $parent = parent::value($data, $column, $safe);
 
         if ($parent != null)
         {
@@ -304,53 +304,7 @@ class DboMysql extends DboSource
             $data = stripslashes($data);
         }
 
-        $data = mysql_real_escape_string($data, $this->connection);
-
-        if ($column == null)
-        {
-            if(!is_numeric($data) || $safe == true)
-            {
-                $return = "'" . $data . "'";
-            }
-            else
-            {
-                $return = $data;
-            }
-            return $return;
-
-        }
-        else
-        {
-            $colData = $this->columns[$column];
-            if (isset($colData['limit']) && strlen(strval($data)) > $colData['limit'])
-            {
-                $data = substr(strval($data), 0, $colData['limit']);
-            }
-
-            if (isset($colData['format']) || isset($colData['fomatter']))
-            {
-                $data = $this->__formatColumnData($data, $colData);
-            }
-
-            switch($column)
-            {
-                case 'integer':
-                case 'int':
-                    return  $data;
-                break;
-                case 'string':
-                case 'text':
-                case 'binary':
-                case 'date':
-                case 'time':
-                case 'datetime':
-                case 'timestamp':
-                case 'date':
-                    return "'" . $data . "'";
-                break;
-            }
-        }
-        return $data;
+        return "'" . mysql_real_escape_string($data, $this->connection) . "'";
     }
 
 /**

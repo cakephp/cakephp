@@ -248,7 +248,7 @@ class DataSource extends Object
         }
         else
         {
-            $expires = "+1 day";
+            $expires = "+999 days";
         }
 
         if ($data !== null)
@@ -396,36 +396,6 @@ class DataSource extends Object
     function getColumnType (&$model, $fields)
     {
         return false;
-    }
-
-/**
- * Formats column data from definition in DBO's $columns array
- *
- * @param string $data The data to be formatted
- * @param array $specs The column definition array
- * @return mixed Data formatted to column specifications
- * @access protected
- */
-    function __formatColumnData($data, $specs = array())
-    {
-        if (isset($specs['formatter']))
-        {
-            switch($specs['formatter'])
-            {
-                case 'date':
-                    return date($specs['format'], strtotime($data));
-                case 'sprintf':
-                    return sprintf($specs['format'], $data);
-                case 'intval':
-                    return intval($data);
-                case 'floatval':
-                    return floatval($data);
-            }
-        }
-        else
-        {
-            return $data;
-        }
     }
 
 /**

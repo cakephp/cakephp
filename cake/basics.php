@@ -691,7 +691,30 @@ function params($p)
             return $p;
         }
     }
+}
 
+
+/**
+ * Merge a group of arrays
+ *
+ * @param array First array
+ * @param array Second array
+ * @param array Third array
+ * @param array Etc...
+ * @return array All array parameters merged into one
+ */
+function am ()
+{
+    $r = array();
+    foreach (func_get_args() as $a)
+    {
+        if (!is_array($a))
+        {
+        	$a = array($a);
+        }
+        $r = array_merge($r, $a);
+    }
+    return $r;
 }
 
 /**
@@ -832,7 +855,7 @@ if (!function_exists('file_put_contents'))
  */
 function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
 {
-    if (is_string($expires))
+    if (!is_numeric($expires))
     {
         $expires = strtotime($expires);
     }
@@ -890,11 +913,17 @@ function stripslashes_deep($value)
  * @return unknown
  * @todo Not implemented in 0.10.x.x
  */
-function __($msg, $return = null)
-{
-        return $msg;
-}
-
+    function __($msg, $return = null)
+    {
+        if(is_null($return))
+        {
+            echo ($msg);
+        }
+        else
+        {
+            return $msg;
+        }
+    }
 
 /**
  * Counts the dimensions of an array

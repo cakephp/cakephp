@@ -760,11 +760,6 @@ class Model extends Object
             return $this->data[$this->name][$name];
         }
 
-        if ($conditions)
-        {
-            $conditions = $this->db->conditions($conditions);
-        }
-
         if ($data = $this->find($conditions, $name, $order, 0))
         {
             if (isset($data[$this->name][$name]))
@@ -819,6 +814,11 @@ class Model extends Object
         }
 
         $whitelist = !(empty($fieldList) || count($fieldList) == 0);
+
+        if(!$this->beforeValidate())
+        {
+            return false;
+        }
 
         if ($validate && !$this->validates())
         {
@@ -1182,11 +1182,6 @@ class Model extends Object
  */
     function findAll ($conditions = null, $fields = null, $order = null, $limit = 50, $page = 1, $recursive = null)
     {
-        if (!$this->beforeFind($conditions))
-        {
-            return null;
-        }
-
         $this->id = $this->getID();
         $offset = 0;
         if ($page > 1)
@@ -1206,6 +1201,12 @@ class Model extends Object
             'limit'			=> $limit_str,
             'order'			=> $order
         );
+
+        if (!$this->beforeFind($queryData))
+        {
+            return null;
+        }
+
         $return = $this->afterFind($this->db->read($this, $queryData, $recursive));
 
         if(isset($this->__backAssociation))
@@ -1602,10 +1603,10 @@ class Model extends Object
 /**
  * Before find callback
  *
- * @param unknown_type $conditions
+ * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return boolean True if the operation should continue, false if it should abort
  */
-    function beforeFind($conditions)
+    function beforeFind(&$queryData)
     {
         return true;
     }
@@ -1652,11 +1653,21 @@ class Model extends Object
     }
 
 /**
- * After save callback
+ * After delete callback
  *
  * @return void
  */
     function afterDelete()
+    {
+        return true;
+    }
+
+/**
+ * Before validate callback
+ *
+ * @return void
+ */
+    function beforeValidate()
     {
         return true;
     }

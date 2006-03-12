@@ -368,7 +368,7 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * The "R" in CRUD
  *
  * @param Model $model
  * @param array $queryData
