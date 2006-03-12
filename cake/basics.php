@@ -916,7 +916,8 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
         $cache = CACHE.$type.DS.$params;
         if(is_file($cache.$ext))
         {
-            return unlink($cache);
+            @unlink($cache.$ext);
+            return true;
         }
         else if(is_dir($cache))
         {
@@ -925,7 +926,14 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
             {
                 return false;
             }
-            array_map('unlink', $files);
+
+            foreach($files as $file)
+            {
+                if(is_file($file))
+                {
+                    @unlink($file);
+                }
+            }
             return true;
         }
         else
@@ -936,7 +944,13 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
             {
                 return false;
             }
-            array_map('unlink', $files);
+            foreach($files as $file)
+            {
+                if(is_file($file))
+                {
+                    @unlink($file);
+                }
+            }
             return true;
         }
     }
@@ -953,7 +967,13 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
             {
                 if(is_array($delete))
                 {
-                    array_map('unlink', $delete);
+                    foreach($delete as $file)
+                    {
+                        if(is_file($file))
+                        {
+                            @unlink($file);
+                        }
+                    }
                 }
             }
             return true;

@@ -1700,10 +1700,6 @@ class Model extends Object
                         }
                     }
                 }
-                echo "<pre>";
-                print_r($assoc);
-                echo "</pre>";
-                die();
                 clearCache($assoc);
                 return true;
             }
