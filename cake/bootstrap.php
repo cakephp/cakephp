@@ -114,32 +114,37 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
         $uri = setUri();
     }
 
-    $filename = CACHE.'views'.DS.'*'.str_replace('/', '_', $uri).'*';
+    $pattern = str_replace('/', '_', $uri);
+    $filename = CACHE.'views'.DS.'*'.$pattern .'*';
     $files = glob($filename);
 
-    if(isset($files[0]))
+    foreach ($files as $file)
     {
-        if (file_exists($files[0]))
+        if (preg_match('/('.$pattern.')(_{0,2}\\d+)/', $file))
         {
-            if (preg_match('/(\\d+).php/', $files[0], $match))
+            if (file_exists($file))
             {
-                if(time() >= $match['1'])
+                if (preg_match('/(\\d+).php/', $file, $match))
                 {
-                    @unlink($files[0]);
-                    unset($out);
-                }
-                else
-                {
-                    ob_start();
-                    include($files[0]);
-                    if (DEBUG)
+                    if(time() >= $match['1'])
                     {
-                        echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
+                        @unlink($file);
+                        unset($out);
                     }
-                    $out = ob_get_clean();
-                    die(e($out));
+                    else
+                    {
+                        ob_start();
+                        include($file);
+                        if (DEBUG)
+                        {
+                            echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
+                        }
+                        $out = ob_get_clean();
+                        die(e($out));
+                    }
                 }
             }
+            break;
         }
     }
 }
