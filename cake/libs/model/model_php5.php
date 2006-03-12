@@ -1688,7 +1688,7 @@ class Model extends Object
         {
             if(defined('CACHE_CHECK') && CACHE_CHECK === true)
             {
-                $assoc = array();
+                $assoc[] =  low(Inflector::pluralize($this->name));
                 foreach ($this->__associations as $key => $asscociation)
                 {
                     foreach ($this->$asscociation as $key => $className)
@@ -1700,11 +1700,9 @@ class Model extends Object
                         }
                     }
                 }
-                if(!empty($assoc))
-                {
-                    clearCache($assoc);
-                    return true;
-                }
+
+                clearCache($assoc);
+                return true;
             }
         }
         else
