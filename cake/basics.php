@@ -28,6 +28,7 @@
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+
 /**
  * Basic defines for timing functions.
  */
@@ -950,7 +951,10 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
         {
             foreach ($files as $key => $delete)
             {
-            	array_map('unlink', $delete);
+                if(is_array($delete))
+                {
+                    array_map('unlink', $delete);
+                }
             }
             return true;
         }
@@ -965,7 +969,6 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
     }
 }
 
-
 /**
  * Enter description here...
  *
@@ -979,6 +982,7 @@ function stripslashes_deep($value)
              stripslashes($value);
              return $value;
 }
+
 /**
  * Returns a translated string if one is found,
  * or the submitted message if not found.

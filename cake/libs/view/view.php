@@ -809,7 +809,7 @@ class View extends Object
             $cacheTime = $now + strtotime($timestamp);
         }
         $result = preg_replace('/\/\//', '/', $this->here);
-        $cache = str_replace('/', '_', $result.$cacheTime.'.php');
+        $cache = str_replace('/', '_', $result.'_'.$cacheTime.'.php');
         $cache = str_replace('favicon.ico', '', $cache);
         return cache('views'.DS.$cache, $view, $timestamp);
     }

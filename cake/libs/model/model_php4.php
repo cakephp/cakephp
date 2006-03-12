@@ -1187,7 +1187,7 @@ class Model extends Object
  * @param int $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  */
-    function findAll ($conditions = null, $fields = null, $order = null, $limit = 50, $page = 1, $recursive = null)
+    function findAll ($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null)
     {
         $this->id = $this->getID();
         $offset = 0;
