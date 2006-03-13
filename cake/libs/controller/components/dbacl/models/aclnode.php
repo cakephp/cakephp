@@ -247,7 +247,7 @@ class AclNode extends AppModel
     function _resolveID($id, $fKey)
     {
       $key = (is_string($id) ? 'alias' : $fKey);
-      $val = (is_string($id) ? '"' . addslashes($id) . '"' : $id);
+      $val = (is_string($id) ? '"' . $this->db->value($id) . '"' : $id);
       return "{$key} = {$val}";
     }
 

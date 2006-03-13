@@ -458,7 +458,7 @@ class View extends Object
 
           if(substr($layout_fn, -5) === 'thtml')
           {
-              $out = View::_render($layout_fn, $data_for_layout, false);
+              $out = View::_render($layout_fn, $data_for_layout, false, true);
           }
           else
           {
@@ -618,7 +618,7 @@ class View extends Object
  * @return string Rendered output
  * @access private
  */
-    function _render($___viewFn, $___dataForView, $loadHelpers = true)
+    function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false)
     {
         if ($this->helpers != false && $loadHelpers === true)
         {
@@ -657,47 +657,23 @@ class View extends Object
         {
             @include($___viewFn);
         }
-        $out = ob_get_clean();
 
+        $out = ob_get_clean();
         if($this->controller->cacheAction != false && (defined('CACHE_CHECK') && CACHE_CHECK === true))
         {
-            if(is_array($this->controller->cacheAction))
+            if (is_a($this->loaded['cache'], 'CacheHelper'))
             {
-                $check = str_replace('/', '_', $this->params['url']['url']);
-                $check = str_replace('_'.$this->params['controller'].'_', '', $check);
-                $check = substr_replace($check, '', -1);
-                $keys = str_replace('/', '_', array_keys($this->controller->cacheAction));
-                $key = preg_grep("/^$check/", array_values($keys));
-                $key = str_replace('_', '/', $key['0']);
-
-                if(isset($this->controller->cacheAction[$key]))
-                {
-                    $cacheTime = $this->controller->cacheAction[$key];
-                }
-                else
-                {
-                    $cacheTime = 0;
-                }
-            }
-            else
-            {
-                $cacheTime = $this->controller->cacheAction;
-            }
-
-            if($cacheTime != '' && $cacheTime > 0)
-            {
-                return $this->cacheView($out, $cacheTime);
-            }
-            else
-            {
-                return $out;
+                $cache =& $this->loaded['cache'];
+                $cache->base =  $this->base;
+                $cache->here =  $this->here;
+                $cache->controllerName = $this->params['controller'];
+                $cache->cacheAction = $this->controller->cacheAction;
+                $cache->cache($___viewFn, $out, $cached);
             }
         }
-        else
-        {
-            return $out;
-        }
+        return $out;
     }
+
 
 /**
  * Loads helpers, with their dependencies.
@@ -806,24 +782,6 @@ class View extends Object
                                     'action' => $action,
                                     'file' => $viewFileName)));
         }
-    }
-
-    function cacheView($view, $timestamp)
-    {
-        $now = time();
-        if (is_numeric($timestamp))
-        {
-            $cacheTime = $now + $timestamp;
-        }
-        else
-        {
-            $cacheTime = $now + strtotime($timestamp);
-        }
-        $result = preg_replace('/\/\//', '/', $this->here);
-        $cache = str_replace('/', '_', $result.'.php');
-        $cache = str_replace('favicon.ico', '', $cache);
-        $view = '<!--cachetime:'.$cacheTime.'-->'.$view;
-        return cache('views'.DS.$cache, $view, $timestamp);
     }
 }
 ?>

@@ -992,17 +992,21 @@ function clearCache($params = null, $type = 'views', $ext = '.php')
 }
 
 /**
- * Enter description here...
+ * Recursively strips slashes from all values in an array
  *
  * @param unknown_type $value
  * @return unknown
  */
 function stripslashes_deep($value)
 {
-    $value = is_array($value) ?
-             array_map('stripslashes_deep', $value) :
-             stripslashes($value);
-             return $value;
+    if (is_array($value))
+    {
+        return array_map('stripslashes_deep', $value);
+    }
+    else
+    {
+        return stripslashes($value);
+    }
 }
 
 /**

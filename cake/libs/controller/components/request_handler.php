@@ -51,6 +51,35 @@ class RequestHandlerComponent extends Object
 
     var $disableStartup = false;
 
+    var $__requestContent = array(
+        'js'		=> 'text/javascript',
+        'css'		=> 'text/css',
+        'html'		=> 'text/html',
+        'form'		=> 'application/x-www-form-urlencoded',
+        'file'		=> 'multipart/form-data',
+        'xhtml'		=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+        'xml'		=> array('application/xml', 'text/xml'),
+        'rss'		=> 'application/rss+xml',
+        'atom'		=> 'application/atom+xml'
+    );
+
+    var $__acceptTypes = array();
+
+    function __construct()
+    {
+        $this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
+
+        foreach ($this->__acceptTypes as $i => $type)
+        {
+            if (strpos($type, ';'))
+            {
+                $type = explode(';', $type);
+                $this->__acceptTypes[$i] = $type[0];
+            }
+        }
+
+        parent::__construct();
+    }
 
 /**
  * Startup
@@ -103,6 +132,36 @@ class RequestHandlerComponent extends Object
     }
 
 /**
+ * Returns true if the current call accepts an XML response, false otherwise
+ *
+ * @return bool True if client accepts an XML response
+ */
+    function isXml()
+    {
+        return $this->accepts('xml');
+    }
+
+/**
+ * Returns true if the current call accepts an RSS response, false otherwise
+ *
+ * @return bool True if client accepts an RSS response
+ */
+    function isRss()
+    {
+        return $this->accepts('rss');
+    }
+
+/**
+ * Returns true if the current call accepts an RSS response, false otherwise
+ *
+ * @return bool True if client accepts an RSS response
+ */
+    function isAtom()
+    {
+        return $this->accepts('atom');
+    }
+
+/**
  * Returns true if the current call a POST request
  *
  * @return bool True if call is a POST
@@ -132,6 +191,15 @@ class RequestHandlerComponent extends Object
         return (low(env('REQUEST_METHOD')) == 'get');
     }
 
+/**
+ * Returns true if the current call a DELETE request
+ *
+ * @return bool True if call is a DELETE
+ */
+    function isDelete()
+    {
+        return (low(env('REQUEST_METHOD')) == 'delete');
+    }
 
 /**
  * Gets Prototype version if call is Ajax, otherwise empty string. 
@@ -145,6 +213,18 @@ class RequestHandlerComponent extends Object
             return env('HTTP_X_PROTOTYPE_VERSION');
         }
         return false;
+    }
+
+/**
+ * Adds/sets the Content-type(s) for the given name
+ *
+ * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
+ * @param mixed $type The Content-type or array of Content-types assigned to the name
+ * @return void
+ */
+    function setContent($name, $type)
+    {
+        $this->__requestContent[$name] = $type;
     }
 
 /**
@@ -209,7 +289,7 @@ class RequestHandlerComponent extends Object
  */
     function isMobile()
     {
-        return (preg_match('/'.REQUEST_MOBILE_UA.'/i', $_SERVER['HTTP_USER_AGENT']) > 0);
+        return (preg_match('/'.REQUEST_MOBILE_UA.'/i', env('HTTP_USER_AGENT')) > 0);
     }
 
 /**
@@ -276,6 +356,77 @@ class RequestHandlerComponent extends Object
             $str = preg_replace('/<\/' . $params[$i] . '[^>]*>/i', '', $str);
         }
         return $str;
+    }
+
+/**
+ * Determines which content types the client accepts
+ *
+ * @param mixed $type Can be null (or no parameter), a string type name, or an
+ *                    array of types
+ * @returns mixed If null or no parameter is passed, returns an array of content
+ *                types the client accepts.  If a string is passed, returns true
+ *                if the client accepts it.  If an array is passed, returns true
+ *                if the client accepts one or more elements in the array.
+ * @access public
+ */
+    function accepts($type = null)
+    {
+        if ($type == null)
+        {
+           return $this->__acceptTypes;
+        }
+        else if (is_array($type))
+        {
+            foreach($type as $t)
+            {
+                if ($this->accepts($t) == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (is_string($type))
+        {
+            if (!in_array($type, array_keys($this->__requestContent)))
+            {
+                return false;
+            }
+
+            $content = $this->__requestContent[$type];
+            if (is_array($content))
+            {
+                foreach($content as $c)
+                {
+                    if (in_array($c, $this->__acceptTypes))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                if (in_array($content, $this->__acceptTypes))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+
+/**
+ * Determines which content types the client prefers
+ *
+ * @param mixed $type 
+ * @returns mixed 
+ * @access public
+ */
+    function prefers($type = null)
+    {
+        if ($type == null)
+        {
+            return $this->accepts(null);
+        }
     }
 }
 
