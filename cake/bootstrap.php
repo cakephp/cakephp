@@ -109,6 +109,15 @@ else
 $TIME_START = getMicrotime();
 
 require CAKE.'dispatcher.php';
+require LIBS.'model'.DS.'connection_manager.php';
+
+config('database');
+
+if (!class_exists('AppModel'))
+{
+    require LIBS.'model'.DS.'model.php';
+    loadModels();
+}
 if(defined('CACHE_CHECK') && CACHE_CHECK === true)
 {
     if (empty($uri))
@@ -130,14 +139,5 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
         $view = new View($v);
         $view->renderCache(CACHE.'views'.DS.convertSlash($uri).'_index.php', $TIME_START);
     }
-}
-require LIBS.'model'.DS.'connection_manager.php';
-
-config('database');
-
-if (!class_exists('AppModel'))
-{
-    require LIBS.'model'.DS.'model.php';
-    loadModels();
 }
 ?>
