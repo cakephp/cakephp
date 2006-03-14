@@ -214,7 +214,7 @@ class View extends Object
  *
  * @return View
  */
-    function __construct (&$controller = null)
+    function __construct (&$controller)
     {
         if ($controller != null)
         {

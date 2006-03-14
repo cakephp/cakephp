@@ -121,7 +121,8 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
     if (file_exists($filename))
     {
         uses(DS.'controller'.DS.'component', DS.'view'.DS.'view');
-        $view = new View();
+        $v = null;
+        $view = new View($v);
         $view->renderCache($filename, $TIME_START);
     }
 }
