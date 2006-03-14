@@ -214,7 +214,7 @@ class View extends Object
  *
  * @return View
  */
-    function __construct (&$controller)
+    function __construct (&$controller = null)
     {
         if ($controller != null)
         {
@@ -664,8 +664,13 @@ class View extends Object
             if (is_a($this->loaded['cache'], 'CacheHelper'))
             {
                 $cache =& $this->loaded['cache'];
+                if($cached === true)
+                {
+                    $cache->view =& $this;
+                }
                 $cache->base =  $this->base;
                 $cache->here =  $this->here;
+                $cache->helpers = $this->loaded;
                 $cache->controllerName = $this->params['controller'];
                 $cache->cacheAction = $this->controller->cacheAction;
                 $cache->cache($___viewFn, $out, $cached);
@@ -781,6 +786,31 @@ class View extends Object
                         array(array('className' => $this->controller->name,
                                     'action' => $action,
                                     'file' => $viewFileName)));
+        }
+    }
+
+    function renderCache($filename, $time)
+    {
+        ob_start();
+        include($filename);
+        if (DEBUG)
+        {
+            echo "<!-- Cached Render Time: ". round(getMicrotime() - $time, 4) ."s -->";
+        }
+        $out = ob_get_clean();
+        if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match))
+        {
+            if(time() >= $match['1'])
+            {
+                @unlink($filename);
+                unset($out);
+                return;
+            }
+            else
+            {
+                e($out);
+                die();
+            }
         }
     }
 }

@@ -241,6 +241,10 @@ class Controller extends Object
                 }
             }
         }
+        if (!empty($this->components))
+        {
+            $component =& new Component($this);
+        }
         parent::__construct();
     }
 
@@ -251,11 +255,6 @@ class Controller extends Object
  */
     function constructClasses()
     {
-        if (!empty($this->components))
-        {
-            $component =& new Component($this);
-        }
-
         if(empty($this->params['pass']))
         {
             $id = false;
@@ -838,6 +837,31 @@ class Controller extends Object
             }
         }
         return $fieldNames;
+    }
+
+/**
+ * Converts POST'ed model data to a model conditions array, suitable for a find
+ * or findAll Model query
+ *
+ * @param array $data POST'ed data organized by model and field
+ * @return array An array of model conditions
+ */
+    function postConditions ($data)
+    {
+        if (!is_array($data) || empty($data))
+        {
+            return null;
+        }
+        
+        $conditions = array();
+        foreach ($data as $model => $fields)
+        {
+            foreach ($fields as $field => $value)
+            {
+                $conditions[$model.'.'.$field] = $value;
+            }
+        }
+        return $conditions;
     }
 
 /**

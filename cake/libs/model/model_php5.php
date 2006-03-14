@@ -1395,45 +1395,52 @@ class Model extends Object
  * @param array $data
  * @return array Array of invalid fields
  */
-    function invalidFields ($data=null)
+    function invalidFields ($data = array())
     {
-      if (!isset($this->validate) || is_array($this->validationErrors))
-      {
-         if (!isset($this->validate))
-         {
-             return true;
-         }
-         else
-         {
-             return $this->validationErrors;
-         }
-      }
+        if (!isset($this->validate))
+        {
+            return true;
+        }
 
-      if ($data == null)
-      {
-          if (isset($this->data))
-          {
-              $data = $this->data;
-          }
-          else
-          {
-              $data = array();
-          }
-      }
+        if (is_array($this->validationErrors))
+        {
+            return $this->validationErrors;
+        }
 
-      $errors = array();
-      foreach ($data as $table => $field)
-      {
-         foreach ($this->validate as $field_name => $validator)
-         {
-            if (isset($data[$table][$field_name]) && !preg_match($validator, $data[$table][$field_name]))
+        if (empty($data) && isset($this->data))
+        {
+            $data = $this->data;
+        }
+
+        if (isset($data[$this->name]))
+        {
+            $data = $data[$this->name];
+        }
+
+        $this->validationErrors = array();
+        foreach ($this->validate as $field_name => $validator)
+        {
+            if (isset($data[$field_name]) && !preg_match($validator, $data[$field_name]))
             {
-                $errors[$field_name] = 1;
+                $this->validationErrors[$field_name] = 1;
             }
-         }
-         $this->validationErrors = $errors;
-         return $errors;
-      }
+        }
+        return $this->validationErrors;
+    }
+
+/**
+ * Sets a field as invalid
+ *
+ * @param string $field The name of the field to invalidate
+ * @return void
+ */
+    function invalidate ($field)
+    {
+        if (!is_array($this->validationErrors))
+        {
+            $this->validationErrors = array();
+        }
+        $this->validationErrors[$field] = 1;
     }
 
 /**

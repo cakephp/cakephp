@@ -388,6 +388,12 @@ class RequestHandlerComponent extends Object
         }
         else if (is_string($type))
         {
+            // If client only accepts */*, then assume default HTML browser
+            if ($type == 'html' && $this->__acceptTypes === array('*/*'))
+            {
+                return true;
+            }
+
             if (!in_array($type, array_keys($this->__requestContent)))
             {
                 return false;

@@ -43,6 +43,7 @@ class CacheHelper extends Helper
 {
     var $replace = array();
     var $match = array();
+    var $view;
 
     function cache($file, $out, $cache = false)
     {
@@ -106,7 +107,15 @@ class CacheHelper extends Helper
 
     function __parseFile($file, $cache)
     {
-        $file = file_get_contents($file);
+        if(is_file($file))
+        {
+            $file = file_get_contents($file);
+        }
+        else if($file = fileExistsInPath($file))
+        {
+            $file = file_get_contents($file);
+        }
+
         preg_match_all('/(?P<found><cake:nocache>(?:.*|(?:[\\S\\s]*[^\\S]))<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
         preg_match_all('/<cake:nocache>(?P<replace>(?:.*|(?:[\\S\\s]*[^\\S])))<\/cake:nocache>/i', $file, $result, PREG_PATTERN_ORDER);
 
@@ -151,7 +160,14 @@ class CacheHelper extends Helper
         $result = preg_replace('/\/\//', '/', $this->here);
         $cache = str_replace('/', '_', $result.'.php');
         $cache = str_replace('favicon.ico', '', $cache);
-        $file = '<!--cachetime:'.$cacheTime.'-->'.$file;
+        $file = '<!--cachetime:'.$cacheTime.'-->'.
+                '<?php loadController(\''.$this->view->name.'\'); ?>'.
+                '<?php $this->controller = new '.$this->view->name.'Controller(); ?>'.
+                '<?php $this->helpers = unserialize(\''. serialize($this->view->helpers).'\'); ?>'.
+                '<?php $this->webroot = \''. $this->view->webroot.'\'; ?>'.
+                '<?php $this->data  = unserialize(\''. serialize($this->view->data).'\'); ?>'.
+                '<?php $loaded = array(); ?>'.
+                '<?php $this->_loadHelpers($loaded, $this->helpers); ?>'.$file;
         return cache('views'.DS.$cache, $file, $timestamp);
     }
 }

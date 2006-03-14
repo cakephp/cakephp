@@ -107,6 +107,8 @@ else
 }
 
 $TIME_START = getMicrotime();
+
+require CAKE.'dispatcher.php';
 if(defined('CACHE_CHECK') && CACHE_CHECK === true)
 {
     if (empty($uri))
@@ -118,29 +120,11 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
 
     if (file_exists($filename))
     {
-        ob_start();
-        include($filename);
-        if (DEBUG)
-        {
-            echo "<!-- Cached Render Time: ". round(getMicrotime() - $TIME_START, 4) ."s -->";
-        }
-        $out = ob_get_clean();
-        if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match))
-        {
-            if(time() >= $match['1'])
-            {
-                @unlink($filename);
-                unset($out);
-            }
-            else
-            {
-                die(e($out));
-            }
-        }
+        uses(DS.'controller'.DS.'component', DS.'view'.DS.'view');
+        $view = new View();
+        $view->renderCache($filename, $TIME_START);
     }
 }
-
-require CAKE.'dispatcher.php';
 require LIBS.'model'.DS.'connection_manager.php';
 
 config('database');

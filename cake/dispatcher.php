@@ -213,6 +213,7 @@ class Dispatcher extends Object
       {
           array_push($controller->components, $controller->webservices);
           array_push($controller->helpers, $controller->webservices);
+          $component =& new Component($controller);
       }
 
       if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
