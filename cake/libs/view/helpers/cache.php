@@ -51,32 +51,43 @@ class CacheHelper extends Helper
         {
             $check = str_replace('/', '_', $this->here);
             $replace = str_replace('/', '_', $this->base);
+            $match =  str_replace($this->base, '', $this->here);
+            $match = str_replace('//', '/', $match);
+            $match = str_replace('/'.$this->controllerName.'/', '', $match);
             $check = str_replace($replace, '', $check);
             $check = str_replace('_'.$this->controllerName.'_', '', $check);
-            $pos = strpos($check, '_');
-            $pos1 = strrpos($check, '_');
-            if($pos1 > 0)
-            {
-                $check = substr($check, 0, $pos1);
-            }
-            if ($pos !== false)
-            {
-                $check = substr($check, 1);
-            }
+            $check = convertSlash($check);
             $keys = str_replace('/', '_', array_keys($this->cacheAction));
-            $key = preg_grep("/^$check/", array_values($keys));
-            if(isset($key['0']))
+            $found = array_keys($this->cacheAction);
+            $index = null;
+            $count = 0;
+            foreach ($keys as $key => $value)
             {
-                $key = str_replace('_', '/', $key['0']);
+                if(strpos($check, $value) === 0)
+                {
+                    $index = $found[$count];
+                    break;
+                }
+                $count++;
             }
-            else
+            if(isset($index))
             {
-                $key = 'index';
+                $pos1 = strrpos($match, '/');
+                $char = strlen($match) -1;
+                if($pos1 == $char)
+                {
+                    $match = substr($match, 0, $char);
+                }
+                $key = $match;
+            }
+            elseif ($this->action == 'index')
+            {
+                $index = 'index';
             }
 
-            if(isset($this->cacheAction[$key]))
+            if(isset($this->cacheAction[$index]))
             {
-                $cacheTime = $this->cacheAction[$key];
+                $cacheTime = $this->cacheAction[$index];
             }
             else
             {
@@ -116,16 +127,19 @@ class CacheHelper extends Helper
             $file = file_get_contents($file);
         }
 
-        preg_match_all('/(?P<found><cake:nocache>(?:.*|(?:[\\S\\s]*[^\\S]))<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
-        preg_match_all('/<cake:nocache>(?P<replace>(?:.*|(?:[\\S\\s]*[^\\S])))<\/cake:nocache>/i', $file, $result, PREG_PATTERN_ORDER);
+        preg_match_all('/(?P<found><cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
+        preg_match_all('/(?<=<cake:nocache>)(?P<replace>[\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $result, PREG_PATTERN_ORDER);
 
         if(!empty($result['replace']))
         {
             $count = 0;
             foreach($result['replace'] as $result)
             {
-                $this->replace[] = $result;
-                $this->match[] = $oresult['found'][$count];
+                if(isset($oresult['found'][$count]))
+                {
+                    $this->replace[] = $result;
+                    $this->match[] = $oresult['found'][$count];
+                }
                 $count++;
             }
         }
@@ -157,17 +171,33 @@ class CacheHelper extends Helper
         {
             $cacheTime = $now + strtotime($timestamp);
         }
-        $result = preg_replace('/\/\//', '/', $this->here);
-        $cache = str_replace('/', '_', $result.'.php');
-        $cache = str_replace('favicon.ico', '', $cache);
-        $file = '<!--cachetime:'.$cacheTime.'-->'.
-                '<?php loadController(\''.$this->view->name.'\'); ?>'.
-                '<?php $this->controller = new '.$this->view->name.'Controller(); ?>'.
-                '<?php $this->helpers = unserialize(\''. serialize($this->view->helpers).'\'); ?>'.
-                '<?php $this->webroot = \''. $this->view->webroot.'\'; ?>'.
-                '<?php $this->data  = unserialize(\''. serialize($this->view->data).'\'); ?>'.
-                '<?php $loaded = array(); ?>'.
-                '<?php $this->_loadHelpers($loaded, $this->helpers); ?>'.$file;
+        $cache = convertSlash($this->here).'.php';
+        $file = '<!--cachetime:'.$cacheTime.'-->
+                 <?php
+                    loadController(\''.$this->view->name.'\');
+                    $this->controller = new '.$this->view->name.'Controller();
+                    $this->helpers = unserialize(\''. serialize($this->view->helpers).'\');
+                    $this->webroot = \''. $this->view->webroot.'\';
+                    $this->data  = unserialize(\''. serialize($this->view->data).'\');
+                    $loadedHelpers =  array();
+                    $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
+                    foreach(array_keys($loadedHelpers) as $helper)
+                    {
+                        $replace = strtolower(substr($helper, 0, 1));
+                        $camelBackedHelper = preg_replace(\'/\\w/\', $replace, $helper, 1);
+                        ${$camelBackedHelper} =& $loadedHelpers[$helper];
+
+                        if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
+                        {
+                            foreach(${$camelBackedHelper}->helpers as $subHelper)
+                            {
+                                ${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
+                            }
+                        }
+                        $this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
+                    }
+                    ?>
+                    '.$file;
         return cache('views'.DS.$cache, $file, $timestamp);
     }
 }

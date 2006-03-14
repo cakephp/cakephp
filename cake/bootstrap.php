@@ -115,15 +115,20 @@ if(defined('CACHE_CHECK') && CACHE_CHECK === true)
     {
         $uri = setUri();
     }
-
-    $filename = CACHE.'views'.DS.str_replace('/', '_', $uri.'.php');
-
+    $filename = CACHE.'views'.DS.convertSlash($uri).'.php';
     if (file_exists($filename))
     {
         uses(DS.'controller'.DS.'component', DS.'view'.DS.'view');
         $v = null;
         $view = new View($v);
         $view->renderCache($filename, $TIME_START);
+    }
+    elseif (file_exists(CACHE.'views'.DS.convertSlash($uri).'_index.php'))
+    {
+        uses(DS.'controller'.DS.'component', DS.'view'.DS.'view');
+        $v = null;
+        $view = new View($v);
+        $view->renderCache(CACHE.'views'.DS.convertSlash($uri).'_index.php', $TIME_START);
     }
 }
 require LIBS.'model'.DS.'connection_manager.php';

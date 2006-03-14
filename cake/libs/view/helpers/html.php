@@ -1384,9 +1384,7 @@ class HtmlHelper extends Helper
             '05'=>'5','06'=>'6','07'=>'7','08'=>'8','09'=>'9',
             '10'=>'10','11'=>'11','12'=>'12');
         }
-
-        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1407,9 +1405,7 @@ class HtmlHelper extends Helper
         {
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
-
-        $option = $this->selectTag($tagName.'_min', $mins, $minValue, $selectAttr,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1427,9 +1423,7 @@ class HtmlHelper extends Helper
         $value = isset($value)? $value : $this->tagValue($tagName."_meridian");
         $merValue = empty($selected) ? date('a') : $selected ;
         $meridians = array('am'=>'am','pm'=>'pm');
-
-        $option = $this->selectTag($tagName.'_meridian', $meridians, $merValue, $selectAttr,
-        $optionAttr);
+        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 

@@ -474,18 +474,6 @@ class Controller extends Object
 
         $this->beforeRender();
 
-        if (!isset($this->_viewVars['data']))
-        {
-            if (isset($this->params['data']))
-            {
-                $this->set('data', $this->params['data']);
-            }
-            else
-            {
-                $this->set('data', array());
-            }
-        }
-
         $this->_viewClass =& new $viewClass($this);
         if(!empty($this->modelNames))
         {
@@ -852,7 +840,7 @@ class Controller extends Object
         {
             return null;
         }
-        
+
         $conditions = array();
         foreach ($data as $model => $fields)
         {
