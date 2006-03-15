@@ -247,7 +247,9 @@ class Sanitize
                     
                     if ($colType != null)
                     {
-                        $colData = $curModel->db->columns[$colType];
+                        $db =& ConnectionManager::getDataSource($curModel->useDbConfig);
+                        $colData = $db->columns[$colType];
+
                         if (isset($colData['limit']) && strlen(strval($data)) > $colData['limit'])
                         {
                             $data = substr(strval($data), 0, $colData['limit']);

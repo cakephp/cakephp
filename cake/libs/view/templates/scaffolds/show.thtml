@@ -28,7 +28,7 @@
 ?>
 
 <?php
-$modelName = Inflector::singularize($this->name);
+$modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = Inflector::underscore($modelName);
 $objModel =& ClassRegistry::getObject($modelKey);
 if(!empty($objModel->alias))

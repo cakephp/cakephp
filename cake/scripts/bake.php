@@ -35,7 +35,9 @@
 define ('DS', DIRECTORY_SEPARATOR);
 define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
 define ('APP_DIR', 'app');
-
+define('CAKE_CORE_INCLUDE_PATH', ROOT);
+define('CORE_PATH', CAKE_CORE_INCLUDE_PATH);
+ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
 require (ROOT.'cake'.DS.'basics.php');
 require (ROOT.'cake'.DS.'config'.DS.'paths.php');
 uses ('bake');

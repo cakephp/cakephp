@@ -208,7 +208,8 @@ class DB_ACL extends AclBase
          $q = 'insert into aros_acos (' . implode(', ', array_keys($save)) . ') values (' . implode(', ', $save) . ')';
       }
 
-      $Perms->db->query($q);
+      $db =& ConnectionManager::getDataSource($Perms->useDbConfig);
+      $db->query($q);
       return true;
     }
 

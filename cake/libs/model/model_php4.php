@@ -60,14 +60,6 @@ class Model extends Object
     var $useDbConfig = 'default';
 
 /**
- * The DataSource connection object that this Model uses
- *
- * @var unknown_type
- * @access public
- */
-    var $db = null;
-
-/**
  * Enter description here... Still used?
  *
  * @var unknown_type
@@ -378,7 +370,8 @@ class Model extends Object
  */
     function __call($method, $params, &$return)
     {
-        $return = $this->db->query($method, $params, $this);
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        $return =  $db->query($method, $params, $this);
         return true;
     }
 
@@ -553,9 +546,10 @@ class Model extends Object
  */
     function setSource($tableName)
     {
-        if($this->db->isInterfaceSupported('listSources'))
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        if($db->isInterfaceSupported('listSources'))
         {
-            if (!in_array(low($tableName), $this->db->listSources()) && !in_array($tableName, $this->db->listSources()))
+            if (!in_array(low($tableName), $db->listSources()) && !in_array($tableName, $db->listSources()))
             {
                 return $this->cakeError('missingTable',array(array('className' => $this->name,
                                                                   'table' => $tableName)));
@@ -621,9 +615,10 @@ class Model extends Object
  */
     function loadInfo ()
     {
-      if (!is_object($this->_tableInfo) && $this->db->isInterfaceSupported('describe'))
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe'))
       {
-          $this->_tableInfo = new NeatArray($this->db->describe($this));
+          $this->_tableInfo = new NeatArray($db->describe($this));
       }
       return $this->_tableInfo;
     }
@@ -637,10 +632,11 @@ class Model extends Object
     {
         $columns = $this->loadInfo();
         $columns = $columns->value;
-
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         $cols = array();
-        foreach($columns as $col) {
-            $cols[$col['name']] = $this->db->column($col['type']);
+        foreach($columns as $col)
+        {
+            $cols[$col['name']] = $db->column($col['type']);
         }
         return $cols;
     }
@@ -655,12 +651,13 @@ class Model extends Object
     {
         $columns = $this->loadInfo();
         $columns = $columns->value;
-
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         $cols = array();
-        foreach($columns as $col) {
+        foreach($columns as $col)
+        {
             if ($col['name'] == $column)
             {
-                return $this->db->column($col['type']);
+                return $db->column($col['type']);
             }
         }
         return null;
@@ -740,8 +737,9 @@ class Model extends Object
 
         if ($this->id !== null && $this->id !== false)
         {
-            $field = $this->db->name($this->name).'.'.$this->db->name($this->primaryKey);
-            return $this->find($field . ' = ' . $this->db->value($id, $this->getColumnType($this->primaryKey)), $fields);
+            $db =& ConnectionManager::getDataSource($this->useDbConfig);
+            $field = $db->name($this->name).'.'.$db->name($this->primaryKey);
+            return $this->find($field . ' = ' . $db->value($id, $this->getColumnType($this->primaryKey)), $fields);
         }
         else
         {
@@ -805,6 +803,7 @@ class Model extends Object
  */
     function save ($data = null, $validate = true, $fieldList = array())
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if ($data)
         {
             if (countdim($data) == 1)
@@ -898,7 +897,7 @@ class Model extends Object
         {
             if(!empty($this->id))
             {
-                if ($this->db->update($this, $fields, $values))
+                if ($db->update($this, $fields, $values))
                 {
                     if(!empty($joined))
                     {
@@ -916,9 +915,9 @@ class Model extends Object
             }
             else
             {
-                if($this->db->create($this, $fields, $values))
+                if($db->create($this, $fields, $values))
                 {
-                    $this->__insertID = $this->db->lastInsertId($this->table, $this->primaryKey);
+                    $this->__insertID = $db->lastInsertId($this->table, $this->primaryKey);
 
                     if (!$this->__insertID && $newID != null)
                     {
@@ -962,6 +961,7 @@ class Model extends Object
  */
     function __saveMulti ($joined, $id)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         foreach ($joined as $x => $y)
         {
             foreach ($y as $assoc => $value)
@@ -977,8 +977,8 @@ class Model extends Object
                 {
                     if(!empty($update))
                     {
-                        $values[] = $this->db->value($id, $this->getColumnType($this->primaryKey));
-                        $values[] = $this->db->value($update);
+                        $values[] = $db->value($id, $this->getColumnType($this->primaryKey));
+                        $values[] = $db->value($update);
                         $values = join(',', $values);
                         $newValues[] = "({$values})";
                         unset($values);
@@ -995,10 +995,11 @@ class Model extends Object
         $total = count($joinTable);
         for ($count = 0; $count < $total; $count++)
         {
-            $this->db->execute("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+            $db =& ConnectionManager::getDataSource($this->useDbConfig);
+            $db->execute("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
             if(!empty($newValue[$count]))
             {
-                $this->db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+                $db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
             }
         }
     }
@@ -1030,7 +1031,8 @@ class Model extends Object
         $id = $this->id;
         if($this->beforeDelete())
         {
-            if ($this->id && $this->db->delete($this))
+            $db =& ConnectionManager::getDataSource($this->useDbConfig);
+            if ($this->id && $db->delete($this))
             {
                 $this->__deleteMulti($id);
                 $this->__deleteHasMany($id, $cascade);
@@ -1117,9 +1119,10 @@ class Model extends Object
  */
     function __deleteMulti ($id)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         foreach ($this->hasAndBelongsToMany as $assoc => $data)
         {
-            $this->db->execute("DELETE FROM ".$this->db->name($data['joinTable'])." WHERE ".$this->db->name($data['foreignKey'])." = '{$id}'");
+            $db->execute("DELETE FROM ".$db->name($data['joinTable'])." WHERE ".$db->name($data['foreignKey'])." = '{$id}'");
         }
     }
 
@@ -1137,7 +1140,8 @@ class Model extends Object
             {
                 $id = $id[0];
             }
-            return $this->db->hasAny($this->table,$this->primaryKey.'='.$this->db->value($id, $this->getColumnType($this->primaryKey)));
+            $db =& ConnectionManager::getDataSource($this->useDbConfig);
+            return $db->hasAny($this->table,$this->primaryKey.'='.$db->value($id, $this->getColumnType($this->primaryKey)));
         }
         return false;
     }
@@ -1189,6 +1193,7 @@ class Model extends Object
  */
     function findAll ($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         $this->id = $this->getID();
         $offset = 0;
         if ($page > 1)
@@ -1198,7 +1203,7 @@ class Model extends Object
         $limit_str = '';
         if ($limit)
         {
-            $limit_str = $this->db->limit($limit, $offset);
+            $limit_str = $db->limit($limit, $offset);
         }
 
         $queryData = array(
@@ -1214,7 +1219,7 @@ class Model extends Object
             return null;
         }
 
-        $return = $this->afterFind($this->db->read($this, $queryData, $recursive));
+        $return = $this->afterFind($db->read($this, $queryData, $recursive));
 
         if(isset($this->__backAssociation))
         {
@@ -1253,7 +1258,8 @@ class Model extends Object
  */
     function execute ($data)
     {
-        $data = $this->db->fetchAll($data);
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        $data = $db->fetchAll($data);
         foreach ($data as $key => $value)
         {
             foreach ($this->tableToModel as $key1 => $value1)
@@ -1347,12 +1353,13 @@ class Model extends Object
  */
     function findNeighbours ($conditions = null, $field, $value)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if(!is_null($conditions))
         {
             $conditions = $conditions.' AND ';
         }
-        @list($prev) = Model::findAll($conditions. $field . ' < ' . $this->db->value($value), $field, $field . ' DESC', 1);
-        @list($next) = Model::findAll($conditions. $field . ' > ' . $this->db->value($value), $field, $field . ' ASC', 1);
+        @list($prev) = Model::findAll($conditions. $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1);
+        @list($next) = Model::findAll($conditions. $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1);
 
         if (!isset($prev))
         {
@@ -1374,7 +1381,8 @@ class Model extends Object
     function query ()
     {
       $params = func_get_args();
-      return call_user_func_array(array(&$this->db, 'query'), $params);
+      $db =& ConnectionManager::getDataSource($this->useDbConfig);
+      return call_user_func_array(array(&$db, 'query'), $params);
     }
 
 /**
@@ -1490,6 +1498,7 @@ class Model extends Object
  */
     function generateList ($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if ($keyPath == null && $valuePath == null)
         {
             $fields = array($this->primaryKey, $this->displayField);
@@ -1506,8 +1515,8 @@ class Model extends Object
         {
             $valuePath = '{n}.'.$this->name.'.'.$this->displayField;
         }
-        $keys = $this->db->getFieldValue($result, $keyPath);
-        $vals = $this->db->getFieldValue($result, $valuePath);
+        $keys = $db->getFieldValue($result, $keyPath);
+        $vals = $db->getFieldValue($result, $valuePath);
         return array_combine($keys, $vals);
     }
 
@@ -1519,7 +1528,8 @@ class Model extends Object
  */
     function escapeField($field)
     {
-        return $this->db->name($this->name).'.'.$this->db->name($field);
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        return $db->name($this->name).'.'.$db->name($field);
     }
 /**
  * Returns the current record's ID
@@ -1576,7 +1586,8 @@ class Model extends Object
     function getNumRows ()
     {
 //return $this->__numRows;
-      return $this->db->lastNumRows();
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        return $db->lastNumRows();
     }
 
 /**
@@ -1586,8 +1597,9 @@ class Model extends Object
  */
     function getAffectedRows ()
     {
-//return $this->__affectedRows;
-      return $this->db->lastAffected();
+        //return $this->__affectedRows;
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        return $db->lastAffected();
     }
 
 /**
@@ -1598,17 +1610,18 @@ class Model extends Object
  */
     function setDataSource($dataSource = null)
     {
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if ($dataSource == null)
         {
             $dataSource = $this->useDbConfig;
         }
-        $this->db =& ConnectionManager::getDataSource($dataSource);
+        $db =& ConnectionManager::getDataSource($dataSource);
 
-        if(!empty($this->db->config['prefix']))
+        if(!empty($db->config['prefix']))
         {
-            $this->tablePrefix = $this->db->config['prefix'];
+            $this->tablePrefix = $db->config['prefix'];
         }
-        if(empty($this->db) || $this->db == null || !is_object($this->db))
+        if(empty($db) || $db == null || !is_object($db))
         {
             return $this->cakeError('missingConnection',array(array('className' => $this->name)));
         }

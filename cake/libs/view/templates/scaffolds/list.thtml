@@ -29,7 +29,7 @@
 <h1>List <?php echo Inflector::humanize($this->name)?></h1>
 
 <?php
-$model = Inflector::singularize($this->name);
+$model = ucwords(Inflector::singularize($this->name));
 $modelKey = $model;
 $humanName = Inflector::humanize($this->name);
 $humanSingularName = Inflector::singularize( $humanName );

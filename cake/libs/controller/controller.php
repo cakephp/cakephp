@@ -221,7 +221,7 @@ class Controller extends Object
             $this->viewPath = Inflector::underscore($this->name);
         }
 
-        $this->modelClass = Inflector::singularize($this->name);
+        $this->modelClass = ucwords(Inflector::singularize($this->name));
         $this->modelKey  = Inflector::underscore($this->modelClass);
 
         if(!defined('AUTO_SESSION') || AUTO_SESSION == true)
@@ -234,7 +234,7 @@ class Controller extends Object
             $appVars = get_class_vars('AppController');
             foreach(array('components', 'helpers', 'uses') as $var)
             {
-                if (isset($appVars[$var]) && !empty($appVars[$var]))
+                if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var}))
                 {
                     $diff = array_diff($appVars[$var], $this->{$var});
                     $this->{$var} = array_merge($this->{$var}, $diff);
@@ -444,7 +444,7 @@ class Controller extends Object
         $errors = array();
         foreach ($objects as $object)
         {
-            $errors = array_merge($errors, $object->invalidFields($object->data));
+            $errors = array_merge($errors, $this->{$object->name}->invalidFields($object->data));
         }
 
         return $this->validationErrors = (count($errors)? $errors: false);

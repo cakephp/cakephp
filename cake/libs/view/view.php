@@ -789,13 +789,13 @@ class View extends Object
         }
     }
 
-    function renderCache($filename, $time)
+    function renderCache($filename, $timeStart)
     {
         ob_start();
         include($filename);
         if (DEBUG)
         {
-            echo "<!-- Cached Render Time: ". round(getMicrotime() - $time, 4) ."s -->";
+            echo "<!-- Cached Render Time: ". round(getMicrotime() - $timeStart, 4) ."s -->";
         }
         $out = ob_get_clean();
         if (preg_match('/^<!--cachetime:(\\d+)-->/', $out, $match))

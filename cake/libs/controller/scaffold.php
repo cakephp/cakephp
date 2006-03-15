@@ -94,7 +94,7 @@ class Scaffold extends Object {
     {
         $this->controllerClass =& $controller;
         $this->actionView = $controller->action;
-        $this->modelKey = Inflector::singularize($controller->name);
+        $this->modelKey = ucwords(Inflector::singularize($controller->name));
         $this->scaffoldTitle = Inflector::humanize($this->modelKey);
         $this->viewPath = Inflector::underscore($controller->name);
         $this->controllerClass->pageTitle = $this->scaffoldTitle;
@@ -428,7 +428,8 @@ class Scaffold extends Object {
         }
 
         $this->controllerClass->constructClasses();
-        if(isset($this->controllerClass->{$this->modelKey}->db))
+        $db =& ConnectionManager::getDataSource($this->controllerClass->{$this->modelKey}->useDbConfig);
+        if(isset($db))
         {
             if($params['action'] === 'index'  || $params['action'] === 'list' ||
                 $params['action'] === 'show'    || $params['action'] === 'add' ||

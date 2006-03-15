@@ -147,7 +147,7 @@ class AclCLI {
       $this->acl = $acl->getACL();
 
       $this->args = $args;
-      $this->db =& ConnectionManager::getDataSource($this->dataSource);
+      $this->db =& ConnectionManager::getDataSource($this->useDbConfig);
 
       $this->stdin = fopen('php://stdin', 'r');
       $this->stdout = fopen('php://stdout', 'w');
@@ -374,6 +374,7 @@ class AclCLI {
  */
     function initdb()
     {
+      $db =& ConnectionManager::getDataSource($this->useDbConfig);
       fwrite($this->stdout, "Initializing Database...\n");
       fwrite($this->stdout, "Creating access control objects table (acos)...\n");
       $sql = " CREATE TABLE `acos` (
@@ -384,7 +385,7 @@ class AclCLI {
                 `rght` int(11) default NULL,
                 PRIMARY KEY  (`id`)
                 );";
-      $this->db->query($sql);
+      $db->query($sql);
 
       fwrite($this->stdout, "Creating access request objects table (aros)...\n");
       $sql2 = "CREATE TABLE `aros` (
@@ -395,7 +396,7 @@ class AclCLI {
                 `rght` int(11) default NULL,
                 PRIMARY KEY  (`id`)
                 );";
-      $this->db->query($sql2);
+      $db->query($sql2);
 
       fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
       $sql3 = "CREATE TABLE `aros_acos` (
@@ -408,7 +409,7 @@ class AclCLI {
                 `_delete` int(11) NOT NULL default '0',
                 PRIMARY KEY  (`id`)
                 );";
-      $this->db->query($sql3);
+      $db->query($sql3);
 
       fwrite($this->stdout, "\nDone.\n");
     }

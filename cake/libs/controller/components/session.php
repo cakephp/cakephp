@@ -142,7 +142,7 @@ class SessionComponent extends Object
     {
         if ($layout == 'default' || $layout == null)
         {
-            $out = '<div class="message">'.$flashMessage.'</div>';
+            $out = '<div id="'.$key.'Message" class="message">'.$flashMessage.'</div>';
         }
         else if($layout == '')
         {

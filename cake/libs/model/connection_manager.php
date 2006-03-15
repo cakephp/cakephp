@@ -60,6 +60,14 @@ class ConnectionManager extends Object
   var $_dataSources = array();
 
 /**
+ * Contains a list of all file and class names used in Connection settings
+ *
+ * @var array
+ * @access private
+ */
+  var $_connectionsEnum = array();
+
+/**
  * Constructor.
  *
  */
@@ -101,39 +109,13 @@ class ConnectionManager extends Object
         return $_this->_dataSources[$name];
      }
 
-     if(in_array($name, array_keys(get_object_vars($_this->config))))
+     $connections = $_this->enumConnectionObjects();
+     if(in_array($name, array_keys($connections)))
      {
-        $config = $_this->config->{$name};
-
-        if(isset($config['driver']) && $config['driver'] != null && $config['driver'] != '')
-        {
-            $filename = 'dbo_'.$config['driver'];
-            $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
-        }
-        else
-        {
-            $filename = $config['datasource'].'_source';
-            $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
-        }
-
-        $tail = 'dbo'.DS.$filename.'.php';
-        if(!class_exists($classname))
-        {
-            if (fileExistsInPath(LIBS.'model'.DS.$tail))
-            {
-                require(LIBS.'model'.DS.$tail);
-            }
-            else if (file_exists(MODELS.$tail))
-            {
-                require(MODELS.$tail);
-            }
-            else
-            {
-                trigger_error('Unable to load model file ' . $filename . '.php', E_USER_ERROR);
-                return null;
-            }
-        }
-        $_this->_dataSources[$name] =& new $classname($config);
+        $conn = $connections[$name];
+        $class = $conn['classname'];
+        $_this->loadDataSource($name);
+        $_this->_dataSources[$name] =& new $class($_this->config->{$name});
         $_this->_dataSources[$name]->configKeyName = $name;
      }
      else
@@ -142,6 +124,75 @@ class ConnectionManager extends Object
         return null;
      }
      return $_this->_dataSources[$name];
+  }
+
+
+/**
+ * Loads the DataSource class for the given connection name
+ *
+ * @param string $connName The name of the connection, as defined in Connections config
+ * @return boolean True on success, false on failure or if the class is already loaded
+ */
+  function loadDataSource($connName)
+  {
+      $_this =& ConnectionManager::getInstance();
+
+      $connections = $_this->enumConnectionObjects();
+      $conn = $connections[$connName];
+
+      if(class_exists($conn['classname']))
+      {
+          return false;
+      }
+
+      if (fileExistsInPath(LIBS.'model'.DS.$conn['filename'].'.php'))
+      {
+          require(LIBS.'model'.DS.$conn['filename'].'.php');
+      }
+      else if (file_exists(MODELS.$conn['filename'].'.php'))
+      {
+          require(MODELS.$conn['filename'].'.php');
+      }
+      else
+      {
+          trigger_error('Unable to load DataSource file ' . $filename . '.php', E_USER_ERROR);
+          return null;
+      }
+  }
+
+/**
+ * Gets a list of class and file names associated with the user-defined DataSource connections
+ *
+ * @return array An associative array of elements where the key is the connection name
+ *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
+ */
+  function enumConnectionObjects()
+  {
+      $_this =& ConnectionManager::getInstance();
+      if (!empty($_this->_connectionsEnum))
+      {
+          return $_this->_connectionsEnum;
+      }
+
+      $connections = get_object_vars($_this->config);
+      foreach ($connections as $name => $config)
+      {
+          if(isset($config['driver']) && $config['driver'] != null && $config['driver'] != '')
+          {
+              $filename = 'dbo_'.$config['driver'];
+              $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
+          }
+          else
+          {
+              $filename = $config['datasource'].'_source';
+              $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
+          }
+
+          // TODO 2.0: Change 'dbo' to $config['datasource']
+          $filename = 'dbo'.DS.$filename;
+          $_this->_connectionsEnum[$name] = array('filename' => $filename, 'classname' => $classname);
+      }
+      return $this->_connectionsEnum;
   }
 }
 

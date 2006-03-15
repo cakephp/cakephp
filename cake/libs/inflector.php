@@ -67,67 +67,78 @@ class Inflector extends Object
  */
     function pluralize ($word)
     {
-        $pluralRules = array('/(s)tatus$/i'             => '\1\2tatuses',
-                             '/^(ox)$/i'                => '\1\2en',      # ox
-                             '/([m|l])ouse$/i'          => '\1ice',        # mouse, louse
-                             '/(matr|vert|ind)ix|ex$/i' =>  '\1ices',     # matrix, vertex, index
-                             '/(x|ch|ss|sh)$/i'         =>  '\1es',        # search, switch, fix, box, process, address
-                             '/([^aeiouy]|qu)y$/i'      =>  '\1ies',      # query, ability, agency
-                             '/(hive)$/i'                =>  '\1s',        # archive, hive
-                             '/(?:([^f])fe|([lr])f)$/i' =>  '\1\2ves',    # half, safe, wife
-                             '/sis$/i'                  =>  'ses',        # basis, diagnosis
-                             '/([ti])um$/i'             =>  '\1a',        # datum, medium
-                             '/(p)erson$/i'             =>  '\1eople',    # person, salesperson
-                             '/(m)an$/i'                =>  '\1en',        # man, woman, spokesman
-                             '/(c)hild$/i'              =>  '\1hildren',  # child
-                             '/(buffal|tomat)o$/i'      =>  '\1\2oes',    # buffalo, tomato
-                             '/(bu)s$/i'                =>  '\1\2ses',    # bus
-                             '/(alias)/i'                =>  '\1es',        # alias
-                             '/(octop|vir)us$/i'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
-                             '/(ax|cri|test)is$/i'      =>  '\1es',        # axis, crisis
-                             '/s$/'                     =>  's',          # no change (compatibility)
-                             '/$/'                      => 's');
+        $corePluralRules = array('/(s)tatus$/i'             => '\1\2tatuses',
+                                 '/^(ox)$/i'                => '\1\2en',      # ox
+                                 '/([m|l])ouse$/i'          => '\1ice',       # mouse, louse
+                                 '/(matr|vert|ind)ix|ex$/i' =>  '\1ices',     # matrix, vertex, index
+                                 '/(x|ch|ss|sh)$/i'         =>  '\1es',       # search, switch, fix, box, process, address
+                                 '/([^aeiouy]|qu)y$/i'      =>  '\1ies',      # query, ability, agency
+                                 '/(hive)$/i'               =>  '\1s',        # archive, hive
+                                 '/(?:([^f])fe|([lr])f)$/i' =>  '\1\2ves',    # half, safe, wife
+                                 '/sis$/i'                  =>  'ses',        # basis, diagnosis
+                                 '/([ti])um$/i'             =>  '\1a',        # datum, medium
+                                 '/(p)erson$/i'             =>  '\1eople',    # person, salesperson
+                                 '/(m)an$/i'                =>  '\1en',       # man, woman, spokesman
+                                 '/(c)hild$/i'              =>  '\1hildren',  # child
+                                 '/(buffal|tomat)o$/i'      =>  '\1\2oes',    # buffalo, tomato
+                                 '/(bu)s$/i'                =>  '\1\2ses',    # bus
+                                 '/(alias)/i'               =>  '\1es',       # alias
+                                 '/(octop|vir)us$/i'        =>  '\1i',        # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
+                                 '/(ax|cri|test)is$/i'      =>  '\1es',       # axis, crisis
+                                 '/s$/'                     =>  's',          # no change (compatibility)
+                                 '/$/'                      => 's');
 
-        $uninflected = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', 'Amoyese',
-                             'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-                             'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-                             'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-                             'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-                             'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-                             'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-                             'rabies', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-                             'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-                             'whiting', 'wildebeest', 'Yengeese',);
+        $coreUninflectedPlural = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', 'Amoyese',
+                                       'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
+                                       'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
+                                       'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
+                                       'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
+                                       'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
+                                       'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
+                                       'rabies', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
+                                       'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
+                                       'whiting', 'wildebeest', 'Yengeese',);
 
-        $irregular = array('atlas'     => 'atlases',
-                            'beef'      => 'beefs',
-                            'brother'    => 'brothers',
-                            'child'     => 'children',
-                            'corpus'    => 'corpuses',
-                            'cow'        => 'cows',
-                            'ganglion'  => 'ganglions',
-                            'genie'     => 'genies',
-                            'genus'     => 'genera',
-                            'graffito'  => 'graffiti',
-                            'hoof'      => 'hoofs',
-                            'loaf'      => 'loaves',
-                            'man'        => 'men',
-                            'money'     => 'monies',
-                            'mongoose'  => 'mongooses',
-                            'move'      => 'moves',
-                            'mythos'    => 'mythoi',
-                            'numen'     => 'numina',
-                            'occiput'    => 'occiputs',
-                            'octopus'    => 'octopuses',
-                            'opus'      => 'opuses',
-                            'ox'        => 'oxen',
-                            'penis'     => 'penises',
-                            'person'    => 'people',
-                            'sex'        => 'sexes',
-                            'soliloquy' => 'soliloquies',
-                            'testis'    => 'testes',
-                            'trilby'    => 'trilbys',
-                            'turf'      => 'turfs',);
+        $coreIrregularPlural = array('atlas'     => 'atlases',
+                                     'beef'      => 'beefs',
+                                     'brother'   => 'brothers',
+                                     'child'     => 'children',
+                                     'corpus'    => 'corpuses',
+                                     'cow'       => 'cows',
+                                     'ganglion'  => 'ganglions',
+                                     'genie'     => 'genies',
+                                     'genus'     => 'genera',
+                                     'graffito'  => 'graffiti',
+                                     'hoof'      => 'hoofs',
+                                     'loaf'      => 'loaves',
+                                     'man'       => 'men',
+                                     'money'     => 'monies',
+                                     'mongoose'  => 'mongooses',
+                                     'move'      => 'moves',
+                                     'mythos'    => 'mythoi',
+                                     'numen'     => 'numina',
+                                     'occiput'   => 'occiputs',
+                                     'octopus'   => 'octopuses',
+                                     'opus'      => 'opuses',
+                                     'ox'        => 'oxen',
+                                     'penis'     => 'penises',
+                                     'person'    => 'people',
+                                     'sex'       => 'sexes',
+                                     'soliloquy' => 'soliloquies',
+                                     'testis'    => 'testes',
+                                     'trilby'    => 'trilbys',
+                                     'turf'      => 'turfs',);
+
+        $pluralRules = $corePluralRules;
+        $uninflected = $coreUninflectedPlural;
+        $irregular = $coreIrregularPlural;
+        if(file_exists(CONFIGS.'inflections.php'))
+        {
+            include(CONFIGS.'inflections.php');
+            $pluralRules = array_merge($pluralRules, $corePluralRules);
+            $uninflected = array_merge($uninflectedPlural, $coreUninflectedPlural);
+            $irregular = array_merge($irregularPlural, $coreIrregularPlural);
+        }
 
         $regexUninflected = __enclose(join( '|', $uninflected));
         $regexIrregular = __enclose(join( '|', array_keys($irregular)));
@@ -160,75 +171,86 @@ class Inflector extends Object
  */
     function singularize ($word)
     {
-        $singularRules = array('/(s)tatuses$/i'         => '\1\2tatus',
-                                '/(matr)ices$/i'         =>'\1ix',
-                                '/(vert|ind)ices$/i'     => '\1ex',
-                                '/^(ox)en/i'             => '\1',
-                                '/(alias)es$/i'          => '\1',
-                                '/([octop|vir])i$/i'     => '\1us',
-                                '/(cris|ax|test)es$/i'    => '\1is',
-                                '/(shoe)s$/i'            => '\1',
-                                '/(o)es$/i'              => '\1',
-                                '/(bus)es$/i'            => '\1',
-                                '/([m|l])ice$/i'         => '\1ouse',
-                                '/(x|ch|ss|sh)es$/i'     => '\1',
-                                '/(m)ovies$/i'            => '\1\2ovie',
-                                '/(s)eries$/i'            => '\1\2eries',
-                                '/([^aeiouy]|qu)ies$/i'  => '\1y',
-                                '/([lr])ves$/i'          => '\1f',
-                                '/(tive)s$/i'            => '\1',
-                                '/(hive)s$/i'            => '\1',
-                                '/(drive)s$/i'            => '\1',
-                                '/([^f])ves$/i'          => '\1fe',
-                                '/(^analy)ses$/i'        => '\1sis',
-                                '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
-                                '/([ti])a$/i'            => '\1um',
-                                '/(p)eople$/i'            => '\1\2erson',
-                                '/(m)en$/i'              => '\1an',
-                                '/(c)hildren$/i'         => '\1\2hild',
-                                '/(n)ews$/i'             => '\1\2ews',
-                                '/s$/i'                  => '');
+        $coreSingularRules = array('/(s)tatuses$/i'         => '\1\2tatus',
+                                   '/(matr)ices$/i'         =>'\1ix',
+                                   '/(vert|ind)ices$/i'     => '\1ex',
+                                   '/^(ox)en/i'             => '\1',
+                                   '/(alias)es$/i'          => '\1',
+                                   '/([octop|vir])i$/i'     => '\1us',
+                                   '/(cris|ax|test)es$/i'   => '\1is',
+                                   '/(shoe)s$/i'            => '\1',
+                                   '/(o)es$/i'              => '\1',
+                                   '/(bus)es$/i'            => '\1',
+                                   '/([m|l])ice$/i'         => '\1ouse',
+                                   '/(x|ch|ss|sh)es$/i'     => '\1',
+                                   '/(m)ovies$/i'           => '\1\2ovie',
+                                   '/(s)eries$/i'           => '\1\2eries',
+                                   '/([^aeiouy]|qu)ies$/i'  => '\1y',
+                                   '/([lr])ves$/i'          => '\1f',
+                                   '/(tive)s$/i'            => '\1',
+                                   '/(hive)s$/i'            => '\1',
+                                   '/(drive)s$/i'           => '\1',
+                                   '/([^f])ves$/i'          => '\1fe',
+                                   '/(^analy)ses$/i'        => '\1sis',
+                                   '/((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
+                                   '/([ti])a$/i'            => '\1um',
+                                   '/(p)eople$/i'           => '\1\2erson',
+                                   '/(m)en$/i'              => '\1an',
+                                   '/(c)hildren$/i'         => '\1\2hild',
+                                   '/(n)ews$/i'             => '\1\2ews',
+                                   '/s$/i'                  => '');
 
-        $uninflected = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', 'Amoyese',
-                             'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
-                             'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
-                             'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
-                             'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
-                             'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
-                             'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
-                             'rabies', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
-                             'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-                             'whiting', 'wildebeest', 'Yengeese',);
+        $coreUninflectedSingular = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', 'Amoyese',
+                                         'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
+                                         'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
+                                         'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
+                                         'headquarters', 'herpes', 'hijinks', 'Hottentotese', 'information', 'innings', 'jackanapes', 'Kiplingese',
+                                         'Kongoese', 'Lucchese', 'mackerel', 'Maltese', 'mews', 'moose', 'mumps', 'Nankingese', 'news',
+                                         'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
+                                         'rabies', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
+                                         'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
+                                         'whiting', 'wildebeest', 'Yengeese',);
 
-        $irregular = array('atlas'        => 'atlases',
-                            'beefs'        => 'beef',
-                            'brothers'    => 'brother',
-                            'children'    => 'child',
-                            'corpuses'    => 'corpus',
-                            'cows'        => 'cow',
-                            'ganglions'    => 'ganglion',
-                            'genies'      => 'genie',
-                            'genera'      => 'genus',
-                            'graffiti'    => 'graffito',
-                            'hoofs'        => 'hoof',
-                            'loaves'      => 'loaf',
-                            'men'         => 'man',
-                            'monies'      => 'money',
-                            'mongooses'    => 'mongoose',
-                            'moves'        => 'move',
-                            'mythoi'      => 'mythos',
-                            'numina'      => 'numen',
-                            'occiputs'    => 'occiput',
-                            'octopuses'    => 'octopus',
-                            'opuses'      => 'opus',
-                            'oxen'        => 'ox',
-                            'penises'     => 'penis',
-                            'people'      => 'person',
-                            'sexes'        => 'sex',
-                            'soliloquies' => 'soliloquy',
-                            'testes'      => 'testis',
-                            'trilbys'     => 'trilby',
-                            'turfs'        => 'turf',);
+        $coreIrregularSingular = array('atlases'     => 'atlas',
+                                       'beefs'       => 'beef',
+                                       'brothers'    => 'brother',
+                                       'children'    => 'child',
+                                       'corpuses'    => 'corpus',
+                                       'cows'        => 'cow',
+                                       'ganglions'   => 'ganglion',
+                                       'genies'      => 'genie',
+                                       'genera'      => 'genus',
+                                       'graffiti'    => 'graffito',
+                                       'hoofs'       => 'hoof',
+                                       'loaves'      => 'loaf',
+                                       'men'         => 'man',
+                                       'monies'      => 'money',
+                                       'mongooses'   => 'mongoose',
+                                       'moves'       => 'move',
+                                       'mythoi'      => 'mythos',
+                                       'numina'      => 'numen',
+                                       'occiputs'    => 'occiput',
+                                       'octopuses'   => 'octopus',
+                                       'opuses'      => 'opus',
+                                       'oxen'        => 'ox',
+                                       'penises'     => 'penis',
+                                       'people'      => 'person',
+                                       'sexes'       => 'sex',
+                                       'soliloquies' => 'soliloquy',
+                                       'testes'      => 'testis',
+                                       'trilbys'     => 'trilby',
+                                       'turfs'       => 'turf',);
+
+        $singularRules = $coreSingularRules;
+        $uninflected = $coreUninflectedSingular;
+        $irregular = $coreIrregularSingular;
+        if(file_exists(CONFIGS.'inflections.php'))
+        {
+            include(CONFIGS.'inflections.php');
+            $singularRules = array_merge($singularRules, $coreSingularRules);
+            $uninflected = array_merge($uninflectedSingluar, $coreUninflectedSingular);
+            $irregular = array_merge($irregularSingluar, $coreIrregularSingular);
+        }
 
         $regexUninflected = __enclose(join( '|', $uninflected));
         $regexIrregular = __enclose(join( '|', array_keys($irregular)));

@@ -332,11 +332,11 @@ class DboSource extends DataSource
 	}
 
 /**
- * Enter description here...
+ * The "C" in CRUD
  *
  * @param Model $model
- * @param unknown_type $fields
- * @param unknown_type $values
+ * @param array $fields
+ * @param array $values
  * @return boolean Success
  */
     function create(&$model, $fields = null, $values = null)
@@ -592,6 +592,7 @@ class DboSource extends DataSource
             return $result;
         }
     }
+
 /**
  * Enter description here...
  *
@@ -667,11 +668,14 @@ class DboSource extends DataSource
                     }
                     else
                     {
+                        $cond  = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
+                        $cond .= '={$__cakeID__$}';
+
                         if (trim($conditions) != '')
                         {
                             $conditions .= ' AND ';
+                            $conditions .= $cond;
                         }
-                        $conditions .= $condition;
                     }
                     $sql .= $this->conditions($queryData['conditions']) . $this->order($queryData['order']);
                     $sql .= $this->limit($queryData['limit']);
@@ -915,14 +919,14 @@ class DboSource extends DataSource
     }
 
 /**
- * Enter description here...
+ * Returns the column type of a given
  *
- * @param unknown_type $model
- * @param unknown_type $field
+ * @param Model $model
+ * @param string $field
  */
     function getColumnType (&$model, $field)
     {
-        $columns = $model->loadInfo();
+        return $model->getColumnType($field);
     }
 
 /**
@@ -1081,7 +1085,7 @@ class DboSource extends DataSource
 
         foreach ($conditions as $key => $value)
         {
-            if (in_array(low($key), $bool))
+            if (in_array(low(trim($key)), $bool))
             {
                 $out[] = '('.join(') '.$key.' (', $this->conditionKeysToString($value)).')';
             }
@@ -1099,6 +1103,14 @@ class DboSource extends DataSource
                 elseif (is_numeric($key))
                 {
                     $data = ' '. $value;
+                }
+                elseif ($value === null)
+                {
+                    $data = $this->name($key).' = NULL';
+                }
+                elseif ($value === '')
+                {
+                    $data = $this->name($key)." = ''";
                 }
                 elseif (preg_match('/^(?P<operator>[a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|regexp\\x20?|[<>=!]{1,3}\\x20?)?(?P<value>.*)/i', $value, $match))
                 {
@@ -1122,6 +1134,7 @@ class DboSource extends DataSource
                         {
                             $match['value'] = $this->value($match['value']);
                         }
+
                         $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
                     }
                 }

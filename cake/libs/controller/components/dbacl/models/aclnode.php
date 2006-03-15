@@ -246,9 +246,10 @@ class AclNode extends AppModel
  */
     function _resolveID($id, $fKey)
     {
-      $key = (is_string($id) ? 'alias' : $fKey);
-      $val = (is_string($id) ? '"' . $this->db->value($id) . '"' : $id);
-      return "{$key} = {$val}";
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        $key = (is_string($id) ? 'alias' : $fKey);
+        $val = (is_string($id) ? '"' . $db->value($id) . '"' : $id);
+        return "{$key} = {$val}";
     }
 
 /**
@@ -261,9 +262,10 @@ class AclNode extends AppModel
  */
     function _syncTable($table, $dir, $lft, $rght)
     {
-      $shift = ($dir == 2 ? 1 : 2);
-      $this->db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
-      $this->db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
+        $db =& ConnectionManager::getDataSource($this->useDbConfig);
+        $shift = ($dir == 2 ? 1 : 2);
+        $db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
+        $db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
     }
 
 /**
