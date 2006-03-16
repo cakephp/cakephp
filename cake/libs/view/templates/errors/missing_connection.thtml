@@ -30,7 +30,7 @@
 ?>
 <h1>Requires a Database Connection</h1>
 
-<p class="error">Missing Database Connection: Model <?php echo $model;?> requires a database connection
+<p class="error">Missing Database Connection: <?php echo $model;?> requires a database connection
 </p>
 
 <p>

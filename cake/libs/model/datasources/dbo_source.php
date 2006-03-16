@@ -469,6 +469,18 @@ class DboSource extends DataSource
         $query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
         if ($query)
         {
+            if (!isset($resultSet) || !is_array($resultSet)) {
+            	if (DEBUG)
+            	{
+            	    e('<div style="font: Verdana bold 12px; color: #FF0000">SQL Error in model '.$model->name.': ');
+            	    if (isset($this->error) && $this->error != null)
+            	    {
+            	        e($this->error);
+            	    }
+            	    e('</div>');
+            	}
+            	return null;
+            }
             foreach ($resultSet as $i => $row)
             {
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);

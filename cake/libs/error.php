@@ -79,6 +79,7 @@ class ErrorHandler extends Object
                                      'message'=>$message,
                                      'title' => $code.' '. $name));
         $this->controller->render('../errors/error404');
+        exit();
     }
 
 /**
@@ -102,6 +103,7 @@ class ErrorHandler extends Object
         $this->error(array('code'=>'404',
         'name'=>'Not found',
         'message'=>sprintf(__("The requested address %s was not found on this server."), $url, $message)));
+        exit();
     }
 
 /**
@@ -115,6 +117,7 @@ class ErrorHandler extends Object
         $this->controller->set(array('controller' => $className,
                                      'title' => 'Missing Controller'));
         $this->controller->render('../errors/missingController');
+        exit();
     }
 
 /**
@@ -129,6 +132,7 @@ class ErrorHandler extends Object
                                      'action' => $action,
                                      'title' => 'Missing Method in Controller'));
         $this->controller->render('../errors/missingAction');
+        exit();
     }
 
 /**
@@ -143,6 +147,7 @@ class ErrorHandler extends Object
                                      'action' => $action,
                                      'title' => 'Trying to access private method in class'));
         $this->controller->render('../errors/privateAction');
+        exit();
     }
 
 /**
@@ -164,12 +169,13 @@ class ErrorHandler extends Object
  * Renders the Missing Database web page.
  *
  */
-    function missingDatabase($params)
+    function missingDatabase($params = array())
     {
         extract($params);
-        $this->controller->webroot = $webroot;
+        $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('title' => 'Scaffold Missing Database Connection'));
         $this->controller->render('../errors/missingScaffolddb');
+        exit();
     }
 
 /**
@@ -185,6 +191,7 @@ class ErrorHandler extends Object
                                      'file' => $file,
                                      'title' => 'Missing View'));
         $this->controller->render('../errors/missingView');
+        exit();
     }
 
 /**
@@ -199,6 +206,7 @@ class ErrorHandler extends Object
         $this->controller->set(array('file' => $file,
                                      'title' => 'Missing Layout'));
         $this->controller->render('../errors/missingLayout');
+        exit();
     }
 
 /**

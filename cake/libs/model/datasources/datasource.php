@@ -434,8 +434,25 @@ class DataSource extends Object
                         }
                     break;
                     case '{$__cakeForeignKey__$}':
-                        $foreignKey = Inflector::underscore($linkModel->name).'_id';
-                        $val = $data[$index][$model->name][$foreignKey];
+                        foreach($model->__associations as $id => $name)
+                        {
+                            foreach($model->$name as $assocName => $assoc)
+                            {
+                                if($assocName === $association)
+                                {
+                                    if(isset($assoc['foreignKey']))
+                                    {
+                                        $foreignKey = $assoc['foreignKey'];
+                                        if(isset($data[$index][$model->name][$foreignKey]))
+                                        {
+                                            $val = $data[$index][$model->name][$foreignKey];
+                                        }
+                                    }
+                                    break 3;
+                                }
+
+                            }
+                        }
                     break;
                 }
                 $query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);

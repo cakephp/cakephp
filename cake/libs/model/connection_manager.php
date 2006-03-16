@@ -175,25 +175,30 @@ class ConnectionManager extends Object
       }
 
       $connections = get_object_vars($_this->config);
-      foreach ($connections as $name => $config)
+      if($connections != null)
       {
-          if(isset($config['driver']) && $config['driver'] != null && $config['driver'] != '')
+          foreach ($connections as $name => $config)
           {
-              $filename = 'dbo_'.$config['driver'];
-              $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
+              if(isset($config['driver']) && $config['driver'] != null && $config['driver'] != '')
+              {
+                  $filename = 'dbo_'.$config['driver'];
+                  $classname = Inflector::camelize(strtolower('DBO_'.$config['driver']));
+              }
+              else
+              {
+                  $filename = $config['datasource'].'_source';
+                  $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
+              }
+              // TODO 2.0: Change 'dbo' to $config['datasource']
+              $filename = 'dbo'.DS.$filename;
+              $_this->_connectionsEnum[$name] = array('filename' => $filename, 'classname' => $classname);
           }
-          else
-          {
-              $filename = $config['datasource'].'_source';
-              $classname = Inflector::camelize(strtolower($config['datasource'].'_source'));
-          }
-
-          // TODO 2.0: Change 'dbo' to $config['datasource']
-          $filename = 'dbo'.DS.$filename;
-          $_this->_connectionsEnum[$name] = array('filename' => $filename, 'classname' => $classname);
+          return $this->_connectionsEnum;
       }
-      return $this->_connectionsEnum;
+      else
+      {
+           $this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
+      }
   }
 }
-
 ?>

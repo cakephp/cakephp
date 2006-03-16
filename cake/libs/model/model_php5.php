@@ -580,7 +580,6 @@ class Model extends Object
  */
     function set ($one, $two=null)
     {
-        $this->validationErrors = null;
         if (is_array($one))
         {
             $data = $one;
@@ -1410,11 +1409,6 @@ class Model extends Object
             return true;
         }
 
-        if (is_array($this->validationErrors))
-        {
-            return $this->validationErrors;
-        }
-
         if (empty($data) && isset($this->data))
         {
             $data = $this->data;
@@ -1425,12 +1419,11 @@ class Model extends Object
             $data = $data[$this->name];
         }
 
-        $this->validationErrors = array();
         foreach ($this->validate as $field_name => $validator)
         {
             if (isset($data[$field_name]) && !preg_match($validator, $data[$field_name]))
             {
-                $this->validationErrors[$field_name] = 1;
+                $this->invalidate($field_name);
             }
         }
         return $this->validationErrors;
