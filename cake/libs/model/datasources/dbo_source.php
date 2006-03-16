@@ -196,23 +196,35 @@ class DboSource extends DataSource
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
+ * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
-    function fetchAll ($sql)
+    function fetchAll ($sql, $cache = true)
     {
-      if($this->execute($sql))
-      {
-         $out = array();
-         while ($item = $this->fetchArray(null, true))
-         {
-            $out[] = $item;
-         }
-         return $out;
-      }
-      else
-      {
-         return false;
-      }
+        if ($cache && isset($this->_queryCache[$sql]))
+        {
+            return $this->_queryCache[$sql];
+        }
+
+        if($this->execute($sql))
+        {
+            $out = array();
+            while ($item = $this->fetchArray(null, true))
+            {
+                $out[] = $item;
+            }
+
+            if ($cache)
+            {
+                $this->_queryCache[$sql] = $out;
+            }
+
+            return $out;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 /**
@@ -422,7 +434,7 @@ class DboSource extends DataSource
 
 // Build final query SQL
         $query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
-        $resultSet = $this->fetchAll($query);
+        $resultSet = $this->fetchAll($query, $model->cacheQueries);
 
         if ($model->recursive > 0)
         {
@@ -438,7 +450,7 @@ class DboSource extends DataSource
                     elseif($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne'))
                     {
                         // Do recursive joins on belongsTo and hasOne relationships
-                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
+                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
                     }
                 }
             }
@@ -484,7 +496,7 @@ class DboSource extends DataSource
             foreach ($resultSet as $i => $row)
             {
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
-                $fetch = $this->fetchAll($q);
+                $fetch = $this->fetchAll($q, $model->cacheQueries);
 
                 if (!empty($fetch) && is_array($fetch))
                 {
@@ -492,15 +504,12 @@ class DboSource extends DataSource
                     {
                         foreach($linkModel->__associations as $type1)
                         {
-                            if ($recursive > 1)
+                            foreach($linkModel->{$type1} as $assoc1 => $assocData1)
                             {
-                                foreach($linkModel->{$type1} as $assoc1 => $assocData1)
+                                $deepModel =& $linkModel->{$assocData1['className']};
+                                if ($deepModel->name != $model->name)
                                 {
-                                    $deepModel =& $linkModel->{$assocData1['className']};
-                                    if ($deepModel->name != $model->name)
-                                    {
-                                        $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1);
-                                    }
+                                    $this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1);
                                 }
                             }
                         }
@@ -526,7 +535,17 @@ class DboSource extends DataSource
             }
             else
             {
-                $data[$association] = $merge[0][$association];
+                if (count($merge[0][$association]) > 1)
+                {
+                    foreach ($merge[0] as $assoc => $data2)
+                    {
+                        if ($assoc != $association)
+                        {
+                            $merge[0][$association][$assoc] = $data2;
+                        }
+                    }
+                }
+            	$data[$association] = $merge[0][$association];
             }
         }
         else
@@ -671,7 +690,7 @@ class DboSource extends DataSource
                     $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
                     $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias.' ';
                     $conditions = $queryData['conditions'];
-                    $condition = $model->escapeField($assocData['foreignKey']);
+                    $condition = $model->name($alias).'.'.$model->name($assocData['foreignKey']);
                     $condition .= '={$__cakeForeignKey__$}';
 
                     if (is_array($conditions))
@@ -738,7 +757,7 @@ class DboSource extends DataSource
                     $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
                     $conditions = $assocData['conditions'];
 
-                    $condition = $linkModel->escapeField($linkModel->primaryKey);
+                    $condition = $this->name($alias).'.'.$this->name($linkModel->primaryKey);
                     $condition .= '={$__cakeForeignKey__$}';
 
                     if (is_array($conditions))

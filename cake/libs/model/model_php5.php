@@ -202,6 +202,14 @@ class Model extends Object
     var $transactional = false;
 
 /**
+ * Whether or not to cache queries for this model.  This enables in-memory
+ * caching only, the results are not stored beyond this execution.
+ *
+ * @var boolean
+ */
+    var $cacheQueries = true;
+
+/**
  * belongsTo association
  *
  * @var array
@@ -1254,7 +1262,7 @@ class Model extends Object
     function execute ($data)
     {
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
-        $data = $db->fetchAll($data);
+        $data = $db->fetchAll($data, $this->cacheQueries);
         foreach ($data as $key => $value)
         {
             foreach ($this->tableToModel as $key1 => $value1)
