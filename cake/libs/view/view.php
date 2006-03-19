@@ -523,6 +523,7 @@ class View extends Object
     function _getViewFileName($action)
     {
         $action = Inflector::underscore($action);
+        $paths = Configure::getInstance();
 
         if(!is_null($this->webservices))
         {
@@ -546,15 +547,16 @@ class View extends Object
             $action = '..'.DS.implode(DS, $action);
         }
 
-        if(file_exists(VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
+        foreach ($paths->controllerPaths as $path)
         {
-            $viewFileName = VIEWS.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
+            if(file_exists($path.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
+            {
+                $viewFileName = $path.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext;
+                return $viewFileName;
+            }
         }
-        elseif(file_exists(VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext))
-        {
-            $viewFileName = VIEWS.'errors'.DS.$this->subDir.$type.$action.$this->ext;
-        }
-        elseif($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
+
+        if($viewFileName = fileExistsInPath(LIBS.'view'.DS.'templates'.DS.'errors'.DS.$type.$action.'.thtml'))
         {
 
         }
@@ -659,7 +661,8 @@ class View extends Object
         }
 
         $out = ob_get_clean();
-        if($this->controller->cacheAction != false && (defined('CACHE_CHECK') && CACHE_CHECK === true))
+        if(isset($this->loaded['cache']) && ((isset($this->controller) && $this->controller->cacheAction != false)) &&
+        (defined('CACHE_CHECK') && CACHE_CHECK === true))
         {
             if (is_a($this->loaded['cache'], 'CacheHelper'))
             {
@@ -744,6 +747,7 @@ class View extends Object
                     ${$camelBackedHelper}->data                 = $this->data;
                     ${$camelBackedHelper}->themeWeb             = $this->themeWeb;
                     ${$camelBackedHelper}->tags                 = $tags;
+                    ${$camelBackedHelper}->plugin               = $this->plugin;
 
                     if(!empty($this->validationErrors))
                     {

@@ -269,7 +269,7 @@ class DataSource extends Object
             $cache = null;
         }
 
-        $new = cache('models'.DS.low(get_class($this)).'_'.$object, $cache, $expires);
+        $new = cache('models'.DS.strtolower(get_class($this)).'_'.$object, $cache, $expires);
         if($new != null)
         {
             $new = unserialize($new);

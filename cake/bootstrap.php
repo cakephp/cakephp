@@ -29,7 +29,6 @@
  */
 
 
-
 /**
  * Configuration, directory layout and standard libraries
  */
@@ -39,12 +38,14 @@ if(!isset($bootstrap))
     require APP_PATH.'config'.DS.'core.php';
     require CORE_PATH.'cake'.DS.'config'.DS.'paths.php';
 }
+$TIME_START = getMicrotime();
 require LIBS.'object.php';
 require LIBS.'session.php';
 require LIBS.'security.php';
 require LIBS.'neat_array.php';
 require LIBS.'inflector.php';
-
+require LIBS.'configure.php';
+$paths = Configure::getInstance();
 /**
  * Enter description here...
  */
@@ -105,8 +106,6 @@ else
 {
     error_reporting(0);
 }
-
-$TIME_START = getMicrotime();
 
 require CAKE.'dispatcher.php';
 require LIBS.'model'.DS.'connection_manager.php';

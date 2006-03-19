@@ -203,7 +203,10 @@ class DboSource extends DataSource
     {
         if ($cache && isset($this->_queryCache[$sql]))
         {
-            return $this->_queryCache[$sql];
+            if (strpos(trim(strtolower($sql)), 'select') !== false)
+            {
+                return $this->_queryCache[$sql];
+            }
         }
 
         if($this->execute($sql))
@@ -216,7 +219,10 @@ class DboSource extends DataSource
 
             if ($cache)
             {
-                $this->_queryCache[$sql] = $out;
+                if (strpos(trim(strtolower($sql)), 'select') !== false)
+                {
+                    $this->_queryCache[$sql] = $out;
+                }
             }
 
             return $out;
@@ -1084,16 +1090,16 @@ class DboSource extends DataSource
                 {
                     $end = '\\\\'.$this->endQuote.'\\\\';
                 }
-                preg_match_all('/(\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|(?P<field>[a-z0-9_'.$start.$end.']*\\.[a-z0-9_'.$start.$end.']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
+                preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_'.$start.$end.']*\\.[a-z0-9_'.$start.$end.']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
 
-                if(isset($match['field'][0]))
+                if(isset($match['1']['0']))
                 {
-                    $pregCount = count($match['field']);
+                    $pregCount = count($match['1']);
                     for ($i = 0; $i < $pregCount; $i++)
                     {
-                        if(!empty($match['field'][$i]))
+                        if(!empty($match['1'][$i]))
                         {
-                            $conditions = preg_replace('/'.$match['field'][$i].'/', $this->name($match['field'][$i]), $conditions);
+                            $conditions = preg_replace('/'.$match['0'][$i].'/', $this->name($match['1'][$i]), $conditions);
                         }
                     }
                 }
@@ -1116,7 +1122,7 @@ class DboSource extends DataSource
 
         foreach ($conditions as $key => $value)
         {
-            if (in_array(low(trim($key)), $bool))
+            if (in_array(strtolower(trim($key)), $bool))
             {
                 $out[] = '('.join(') '.$key.' (', $this->conditionKeysToString($value)).')';
             }
@@ -1143,30 +1149,31 @@ class DboSource extends DataSource
                 {
                     $data = $this->name($key)." = ''";
                 }
-                elseif (preg_match('/^(?P<operator>[a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|regexp\\x20?|[<>=!]{1,3}\\x20?)?(?P<value>.*)/i', $value, $match))
+                elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|regexp\\x20?|[<>=!]{1,3}\\x20?)?(.*)/i', $value, $match))
                 {
-                    if (preg_match('/(?P<conditional>\\x20[\\w]*\\x20)/', $key, $regs))
+                    if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs))
                     {
-                        $clause = $regs['conditional'];
-                        $key = preg_replace('/'.$regs['conditional'].'/', '', $key);
+                        $clause = $regs['1'];
+                        $key = preg_replace('/'.$regs['1'].'/', '', $key);
                     }
-                    if(empty($match['operator']))
+                    if(empty($match['1']))
                     {
-                        $match['operator'] = ' = ';
+                        $match['1'] = ' = ';
                     }
-                    if (strpos($match['value'], '-!') === 0)
+                    if (strpos($match['2'], '-!') === 0)
                     {
-                        $match['value'] = str_replace('-!', '', $match['value']);
-                        $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
+                        $match['2'] = str_replace('-!', '', $match['2']);
+                        $data = $this->name($key) . ' '.$match['1'].' '. $match['2'];
                     }
                     else
                     {
-                        if($match['value'] != '' && !is_numeric($match['value']))
+                        if($match['2'] != '' && !is_numeric($match['2']))
                         {
-                            $match['value'] = $this->value($match['value']);
+                            $match['2'] = $this->value($match['value']);
+                            $match['2'] = str_replace(' AND ', "' AND '", $match['2']);
                         }
 
-                        $data = $this->name($key) . ' '.$match['operator'].' '. $match['value'];
+                        $data = $this->name($key) . ' '.$match['1'].' '. $match['2'];
                     }
                 }
                 $out[] = $operator.$data;
@@ -1220,11 +1227,11 @@ class DboSource extends DataSource
             if (strpos('.', $keys))
             {
                 preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
-                $pregCount = count($result[0]);
+                $pregCount = count($result['0']);
 
                 for ($i = 0; $i < $pregCount; $i++)
                 {
-                    $keys = preg_replace('/'.$result[0][$i].'/', $this->name($result[0][$i]), $keys);
+                    $keys = preg_replace('/'.$result['0'][$i].'/', $this->name($result['0'][$i]), $keys);
                 }
                 if (preg_match('/\\x20ASC|\\x20DESC/i', $keys))
                 {
@@ -1235,10 +1242,10 @@ class DboSource extends DataSource
                     return ' ORDER BY '.$keys.' '.$direction;;
                 }
             }
-            elseif (preg_match('/(?P<direction>\\x20ASC|\\x20DESC)/i', $keys, $match))
+            elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match))
             {
-                $direction = $match['direction'];
-                $keys = preg_replace('/'.$match['direction'].'/', '', $keys);
+                $direction = $match['1'];
+                $keys = preg_replace('/'.$match['1'].'/', '', $keys);
                 return ' ORDER BY '.$keys.$direction;
             }
             else

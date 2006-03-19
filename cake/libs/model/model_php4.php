@@ -557,7 +557,7 @@ class Model extends Object
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if($db->isInterfaceSupported('listSources'))
         {
-            if (!in_array(low($tableName), $db->listSources()) && !in_array($tableName, $db->listSources()))
+            if (!in_array(strtolower($tableName), $db->listSources()) && !in_array($tableName, $db->listSources()))
             {
                 return $this->cakeError('missingTable',array(array('className' => $this->name,
                                                                   'table' => $tableName)));
@@ -764,11 +764,10 @@ class Model extends Object
  */
     function field ($name, $conditions = null, $order = null)
     {
-        if (isset($this->data[$this->name][$name]))
+        if($conditions === null)
         {
-            return $this->data[$this->name][$name];
+            $conditions = array($this->name.'.'.$this->primaryKey => $this->id);
         }
-
         if ($data = $this->find($conditions, $name, $order, 0))
         {
             if (isset($data[$this->name][$name]))
@@ -1518,7 +1517,11 @@ class Model extends Object
         }
         $keys = $db->getFieldValue($result, $keyPath);
         $vals = $db->getFieldValue($result, $valuePath);
-        return array_combine($keys, $vals);
+        if(!empty($keys) && !empty($vals))
+        {
+            $return = array_combine($keys, $vals);
+            return $return;
+        }
     }
 
 /**
@@ -1713,15 +1716,15 @@ class Model extends Object
         {
             if(defined('CACHE_CHECK') && CACHE_CHECK === true)
             {
-                $assoc[] =  low(Inflector::pluralize($this->name));
+                $assoc[] =  strtolower(Inflector::pluralize($this->name));
                 foreach ($this->__associations as $key => $asscociation)
                 {
                     foreach ($this->$asscociation as $key => $className)
                     {
-                        $check = low(Inflector::pluralize($className['className']));
+                        $check = strtolower(Inflector::pluralize($className['className']));
                         if(!in_array($check, $assoc))
                         {
-                            $assoc[] = low(Inflector::pluralize($className['className']));
+                            $assoc[] = strtolower(Inflector::pluralize($className['className']));
                         }
                     }
                 }
@@ -1733,6 +1736,17 @@ class Model extends Object
         {
             //Will use for query cache deleting
         }
+    }
+
+/**
+ * Called when serializing a model
+ *
+ * @return array
+ */
+    function __sleep()
+    {
+        $return = array_keys(get_object_vars($this));
+        return $return;
     }
 }
 

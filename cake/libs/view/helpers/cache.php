@@ -41,10 +41,35 @@
  */
 class CacheHelper extends Helper
 {
+/**
+ * Array of strings replaced in cached views.
+ * The strings are found between <cake:nocache><cake:nocache> in views
+ *
+ * @var array
+ */
     var $replace = array();
+/**
+ * Array of string that are replace with there var replace above.
+ * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
+ *
+ * @var array
+ */
     var $match = array();
+/**
+ * holds the View object passed in final call to CacheHelper::cache()
+ *
+ * @var object
+ */
     var $view;
 
+/**
+ * Enter description here...
+ *
+ * @param string $file
+ * @param string $out
+ * @param string $cache
+ * @return view ouput
+ */
     function cache($file, $out, $cache = false)
     {
         if(is_array($this->cacheAction))
@@ -116,6 +141,12 @@ class CacheHelper extends Helper
     }
 
 
+/**
+ * Enter description here...
+ *
+ * @param string $file
+ * @param boolean $cache
+ */
     function __parseFile($file, $cache)
     {
         if(is_file($file))
@@ -127,24 +158,30 @@ class CacheHelper extends Helper
             $file = file_get_contents($file);
         }
 
-        preg_match_all('/(?P<found><cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
-        preg_match_all('/(?<=<cake:nocache>)(?P<replace>[\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $result, PREG_PATTERN_ORDER);
+        preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
+        preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $result, PREG_PATTERN_ORDER);
 
-        if(!empty($result['replace']))
+        if(!empty($result['0']))
         {
             $count = 0;
-            foreach($result['replace'] as $result)
+            foreach($result['0'] as $result)
             {
-                if(isset($oresult['found'][$count]))
+                if(isset($oresult['0'][$count]))
                 {
                     $this->replace[] = $result;
-                    $this->match[] = $oresult['found'][$count];
+                    $this->match[] = $oresult['0'][$count];
                 }
                 $count++;
             }
         }
     }
 
+/**
+ * Enter description here...
+ *
+ * @param sting $cache
+ * @return string with all replacements made to <cake:nocache><cake:nocache>
+ */
     function __parseOutput($cache)
     {
         $count = 0;
@@ -160,6 +197,13 @@ class CacheHelper extends Helper
         return $cache;
     }
 
+/**
+ * Enter description here...
+ *
+ * @param string $file
+ * @param sting $timestamp
+ * @return cached view
+ */
     function __writeFile($file, $timestamp)
     {
         $now = time();

@@ -171,6 +171,79 @@ class Object
         }
         return new ErrorHandler($method, $messages);
     }
+
+/**
+ * Checks for a persistent class file, if found file is opened and true returned
+ * If file is not found a file is created and false returned
+ * If used in other locations of the model you should choose a unique name for the persistent file
+ * There are many uses for this method, see manual for examples
+ *
+ * @param string $name name of the class to persist
+ * @return boolean
+ * @param string $object the object to persist
+ * @access public
+ * @todo add examples to manual
+ */
+    function _persist($name, $return = null, &$object)
+    {
+        $file = CACHE.'persistent'.DS.strtolower($name).'.php';
+
+        if($return === null)
+        {
+            if(!file_exists($file))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        if(!file_exists($file))
+        {
+            $this->_savePersistent($name, &$object);
+            return false;
+        }
+        else
+        {
+            $this->__openPersistent($name);
+            return true;
+        }
+    }
+
+/**
+ * When a Model::persist; is set to true, a file with the model name it auto created.
+ * If used in other locations of the model you should choose a unique name for the persistent file
+ * There are many uses for this method, see manual for examples
+ *
+ * @param string $name name used for object to cach
+ * @param string $object the object to persist
+ * @return true on save, throws error if file can not be created
+ * @access public
+ * @todo add examples to manual
+ */
+    function _savePersistent($name, &$object)
+    {
+        $file = 'persistent'.DS.strtolower($name).'.php';
+        $objectArray = array(&$object);
+        $data = '<?php $'.$name.' =  \''.str_replace('\'', '\\\'', serialize($objectArray)).'\' ?>';
+        cache($file, $data, '+1 day');
+    }
+
+/**
+ * Open the persistent class file for reading
+ *
+ * @param string $name name of the class
+ * @access private
+ */
+    function __openPersistent($name)
+    {
+        $file = CACHE.'persistent'.DS.strtolower($name).'.php';
+        include($file);
+        $vars = unserialize(${$name});
+        $this->{$name} = $vars['0'];
+    }
 }
 
 ?>

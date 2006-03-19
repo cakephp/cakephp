@@ -268,8 +268,8 @@ class DB_ACL extends AclBase
 // Raise error
      }
      $aro = new Aro();
-     $tmp = $aro->find(is_string($aro) ? "aros.alias = '" . addslashes($aro) . "'" : "aros.user_id    = {$aro}");
-     $aro->setId($tmp['aro']['id']);
+     $tmp = $aro->find(is_numeric($id) ? "Aro.user_id = {$id}" : "Aro.alias = '" . addslashes($id) . "'");
+     $aro->setId($tmp['Aro']['id']);
      return $aro;
     }
 
@@ -287,11 +287,10 @@ class DB_ACL extends AclBase
 // Raise error
      }
      $aco = new Aco();
-     $tmp = $aco->find(is_string($aco) ? "acos.alias = '" . addslashes($aco) . "'" : "acos.user_id    = {$aco}");
-     $aro->setId($tmp['aco']['id']);
+     $tmp = $aco->find(is_numeric($id) ? "Aco.user_id    = {$id}" : "Aco.alias = '" . addslashes($id) . "'");
+     $aco->setId($tmp['Aco']['id']);
      return $aco;
     }
-
 
 /**
  * Enter description here...

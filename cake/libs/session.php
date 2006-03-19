@@ -123,7 +123,10 @@ class CakeSession extends Object
         $this->time = time();
         $this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
         $this->security = CAKE_SECURITY;
-        session_write_close();
+        if (function_exists('session_write_close'))
+        {
+            session_write_close();
+        }
 
         $this->__initSession();
 
@@ -537,6 +540,10 @@ class CakeSession extends Object
         $file = $sessionpath.DS."sess_$oldSessionId";
         @unlink($file);
         @session_destroy($oldSessionId);
+        if (function_exists('session_write_close'))
+        {
+            session_write_close();
+        }
         $this->__initSession();
         session_id($newSessid);
         session_start();

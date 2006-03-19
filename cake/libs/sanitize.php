@@ -105,9 +105,9 @@ class Sanitize
       }
       else
       {
-         $patterns    =  array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/", "/\n/");
-            $replacements     = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;", "<br />");
-            $string = preg_replace($patterns, $replacements, $string);
+         $patterns    =  array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
+         $replacements     = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
+         $string = preg_replace($patterns, $replacements, $string);
       }
 
       return $string;
@@ -244,7 +244,7 @@ class Sanitize
                 foreach($values as $column => $data)
                 {
                     $colType = $curModel->getColumnType($column);
-                    
+
                     if ($colType != null)
                     {
                         $db =& ConnectionManager::getDataSource($curModel->useDbConfig);
@@ -257,7 +257,7 @@ class Sanitize
 
                         if (isset($colData['formatter']) || isset($colData['format']))
                         {
-                            switch(low($colData['formatter']))
+                            switch(strtolower($colData['formatter']))
                             {
                                 case 'date':
                                     $data = date($colData['format'], strtotime($data));

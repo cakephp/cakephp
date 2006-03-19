@@ -74,7 +74,7 @@ class ClassRegistry
     function addObject($key, &$object)
     {
       $_this =& ClassRegistry::getInstance();
-      $key = low($key);
+      $key = strtolower($key);
 
       if (array_key_exists($key, $_this->_objects) === false)
       {
@@ -91,7 +91,7 @@ class ClassRegistry
     function removeObject($key)
     {
         $_this =& ClassRegistry::getInstance();
-        $key = low($key);
+        $key = strtolower($key);
 
         if (array_key_exists($key, $_this->_objects) === true)
         {

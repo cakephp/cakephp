@@ -36,7 +36,15 @@
  *
  */
 
-
+/**
+ * The settings below can be used to set additional paths to models, views and controllers.
+ * This is related to Ticket #470 (https://trac.cakephp.org/ticket/470)
+ *
+ * $modelPaths = array('full path to models', 'second full path to models', 'etc...');
+ * $viewPaths  = array('this path to views', 'second full path to views', 'etc...');
+ * $controllerPaths  = array('this path to controllers', 'second full path to controllers', 'etc...');
+ *
+ */
 
 //EOF
 ?>

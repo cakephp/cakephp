@@ -76,11 +76,14 @@ class NeatArray
       }
 
       $out = false;
-      foreach ($this->value as $k=>$v)
+      $keys = array_keys($this->value);
+      $count = sizeof($keys);
+
+      for ($i = 0; $i < $count; $i++)
       {
-         if (isset($v[$fieldName]) && ($v[$fieldName] == $value))
+         if (isset($this->value[$keys[$i]][$fieldName]) && ($this->value[$keys[$i]][$fieldName] == $value))
          {
-            $out[$k] = $v;
+            $out[$keys[$i]] = $this->value[$keys[$i]];
          }
       }
 

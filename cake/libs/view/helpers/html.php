@@ -149,21 +149,33 @@ class HtmlHelper extends Helper
  * @return mixed    Either string or boolean value, depends on AUTO_OUTPUT
  *                 and $return.
  */
-    function url($url = null, $return = false)
+function url($url = null, $return = false)
     {
+        $base = $this->base;
+        if($this->plugin != null)
+        {
+            $match = str_replace('/', '', $this->plugin);
+			$base = preg_replace('/'.$match.'/', '', $this->base);
+			$base = str_replace('//','', $base);
+            $pos1 = strrpos($base, '/');
+            $char = strlen($base) -1;
+            if($pos1 == $char)
+            {
+                $base = substr($base, 0, $char);
+            }
+        }
         if (empty($url))
         {
             return $this->here;
         }
         elseif ($url{0} == '/')
         {
-            $output = $this->base . $url;
+            $output = $base . $url;
         }
         else
         {
-            $output = $this->base.'/'.strtolower($this->params['controller']).'/'.$url;
+            $output = $base.'/'.strtolower($this->params['controller']).'/'.$url;
         }
-
         return $this->output(preg_replace('/&([^a])/', '&amp;\1', $output), $return);
     }
 
@@ -364,20 +376,24 @@ class HtmlHelper extends Helper
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
  * @param  string  $separator Text to separate crumbs.
+ * @param  string  $startText This will be the first crumb, if false it defaults to first crumb in array
  * @param  boolean $return    Wheter this method should return a value
  *                            or output it. This overrides AUTO_OUTPUT.
  * @return mixed    Either string or boolean value, depends on AUTO_OUTPUT
  *                 and $return. If $this->_crumbs is empty, return null.
  */
-    function getCrumbs($separator = '&raquo;', $return = false)
+    function getCrumbs($separator = '&raquo;', $startText = false, $return = false)
     {
         if(count($this->_crumbs))
         {
-
-            $out = array("<a href=\"{$this->base}\">START</a>");
+			$out = array();
+			if($startText)
+			{
+				$out[] = $this->link($startText, '/');
+			}
             foreach ($this->_crumbs as $crumb)
             {
-                $out[] = "<a href=\"{$this->base}{$crumb[1]}\">{$crumb[0]}</a>";
+                $out[] = $this->link($crumb[0], $crumb[1]);
             }
 
             return $this->output(join($separator, $out), $return);
@@ -1015,11 +1031,26 @@ class HtmlHelper extends Helper
     function selectTag($fieldName, $optionElements, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty=true)
     {
         $this->setFormTag($fieldName);
-
-// do not display the select tag if no option elements are avaible
+        if ($this->tagIsInvalid($this->model, $this->field))
+        {
+            if (isset($selectAttr['class']) && trim($selectAttr['class']) != "")
+            {
+                $selectAttr['class'] .= ' form_error';
+            }
+            else
+            {
+                $selectAttr['class'] = 'form_error';
+            }
+        }
+        // do not display the select tag if no option elements are avaible
         if (!is_array($optionElements) || count($optionElements) == 0)
         {
             return null;
+        }
+
+        if(!isset($selected))
+        {
+            $selected = $this->tagValue($fieldName);
         }
 
         if( isset($selectAttr) && array_key_exists( "multiple", $selectAttr) )
@@ -1405,7 +1436,7 @@ class HtmlHelper extends Helper
         {
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
-        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_min', $mins, $minValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1423,7 +1454,7 @@ class HtmlHelper extends Helper
         $value = isset($value)? $value : $this->tagValue($tagName."_meridian");
         $merValue = empty($selected) ? date('a') : $selected ;
         $meridians = array('am'=>'am','pm'=>'pm');
-        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName.'_meridian', $meridians, $merValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 

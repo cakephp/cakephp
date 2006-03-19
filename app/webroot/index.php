@@ -97,7 +97,6 @@ if(!defined('CORE_PATH'))
 }
 
 require CORE_PATH.'cake'.DS.'bootstrap.php';
-require APP_PATH.'config'.DS.'bootstrap.php';
 
 if(isset($_GET['url']) && $_GET['url'] === 'favicon.ico')
 {

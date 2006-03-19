@@ -47,7 +47,7 @@ class SessionComponent extends Object
  */
     function __construct ($base = null)
     {
-        $this->CakeSession = New CakeSession($base);
+        $this->CakeSession = new CakeSession($base);
         parent::__construct();
     }
 

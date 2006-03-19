@@ -55,13 +55,10 @@ if (!function_exists("ob_get_clean"))
 
 /**
  * Loads all models.
- *
- * @uses listModules()
- * @uses APP
- * @uses MODELS
  */
 function loadModels()
 {
+    $path = Configure::getInstance();
     if(!class_exists('AppModel'))
     {
         if(file_exists(APP.'app_model.php'))
@@ -73,19 +70,25 @@ function loadModels()
             require(CAKE.'app_model.php');
         }
     }
-
     if (phpversion() < 5 && function_exists("overload"))
     {
         overload('AppModel');
     }
-
-    foreach (listClasses(MODELS) as $model_fn)
+    $loadedModels = array();
+    foreach ($path->modelPaths as $path)
     {
-        require (MODELS.$model_fn);
-        if (phpversion() < 5 && function_exists("overload"))
+        foreach (listClasses($path) as $model_fn)
         {
-            list($name) = explode('.', $model_fn);
-            overload(Inflector::camelize($name));
+            if (!key_exists($model_fn, $loadedModels))
+            {
+                require ($path.$model_fn);
+                if (phpversion() < 5 && function_exists("overload"))
+                {
+                    list($name) = explode('.', $model_fn);
+                    overload(Inflector::camelize($name));
+                }
+                $loadedModels[$model_fn] = $model_fn;
+            }
         }
     }
 }
@@ -139,12 +142,16 @@ function loadView ($viewClass)
 {
     if(!class_exists($viewClass))
     {
+        $paths = Configure::getInstance();
         $file = Inflector::underscore($viewClass).'.php';
-        if(file_exists(VIEWS.$file))
+        foreach ($paths->viewPaths as $path)
         {
-            return require(VIEWS.$file);
+            if(file_exists($path.$file))
+            {
+                return require($path.$file);
+            }
         }
-        elseif(file_exists(LIBS.'view'.DS.$file))
+        if(file_exists(LIBS.'view'.DS.$file))
         {
             return require(LIBS.'view'.DS.$file);
         }
@@ -157,16 +164,12 @@ function loadView ($viewClass)
 
 /**
  * Loads a model by CamelCase name.
- *
- * @uses listModules()
- * @uses APP
- * @uses MODELS
  */
 function loadModel($name)
 {
     $name = Inflector::underscore($name);
+    $paths = Configure::getInstance();
 
-// Make sure AppModel is loaded
     if(!class_exists('AppModel'))
     {
         if(file_exists(APP.'app_model.php'))
@@ -179,10 +182,13 @@ function loadModel($name)
         }
     }
 
-	if(file_exists(MODELS.$name.'.php'))
-	{
-        require (MODELS.$name.'.php');
-        return true;
+    foreach ($paths->modelPaths as $path)
+    {
+        if(file_exists($path.$name.'.php'))
+        {
+            require ($path.$name.'.php');
+            return true;
+        }
     }
 
     return false;
@@ -190,14 +196,10 @@ function loadModel($name)
 
 /**
  * Loads all controllers.
- *
- * @uses APP
- * @uses listModules()
- * @uses HELPERS
- * @uses CONTROLLERS
  */
 function loadControllers ()
 {
+    $paths = Configure::getInstance();
     if(!class_exists('AppController'))
     {
         if(file_exists(APP.'app_controller.php'))
@@ -209,11 +211,19 @@ function loadControllers ()
             require(CAKE.'app_controller.php');
         }
     }
-    foreach (listClasses(CONTROLLERS) as $controller)
+    $loadedControllers = array();
+    foreach ($paths->controllerPaths as $path)
     {
-        if(!class_exists($controller))
+        foreach (listClasses($path) as $controller)
         {
-            require (CONTROLLERS.$controller.'.php');
+            if(file_exists($path.$controller.'.php'))
+            {
+                if (!key_exists($controller, $loadedControllers))
+                {
+                    require ($path.$controller.'.php');
+                    $loadedControllers[$controller] = $controller;
+                }
+            }
         }
     }
 }
@@ -226,6 +236,7 @@ function loadControllers ()
  */
 function loadController ($name)
 {
+    $paths = Configure::getInstance();
     if(!class_exists('AppController'))
     {
         if(file_exists(APP.'app_controller.php'))
@@ -241,23 +252,30 @@ function loadController ($name)
     {
         return true;
     }
+
     if(!class_exists($name.'Controller'))
     {
         $name = Inflector::underscore($name);
-        if(file_exists(CONTROLLERS.$name.'_controller.php'))
+        foreach ($paths->controllerPaths as $path)
         {
-            $controller_fn = CONTROLLERS.$name.'_controller.php';
+            if(file_exists($path.$name.'_controller.php'))
+            {
+                require($path.$name.'_controller.php');
+                return true;
+            }
         }
-        elseif($controller_fn = fileExistsInPath(LIBS.'controller'.DS.$name.'_controller.php'))
+        if($controller_fn = fileExistsInPath(LIBS.'controller'.DS.$name.'_controller.php'))
         {
-
+            if(file_exists($controller_fn))
+            {
+                require($controller_fn);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-        else
-        {
-            return false;
-        }
-        require($controller_fn);
-        return true;
     }
     else
     {
@@ -390,7 +408,7 @@ function uses ()
     $args = func_get_args();
     foreach ($args as $arg)
     {
-        require_once(LIBS.low($arg).'.php');
+        require_once(LIBS.strtolower($arg).'.php');
     }
 }
 
@@ -861,7 +879,7 @@ function cache($path, $data = null, $expires = '+1 day', $target = 'cache')
         $expires = strtotime($expires);
     }
 
-    switch (low($target))
+    switch (strtolower($target))
     {
         case 'cache':
             $filename = CACHE . $path;

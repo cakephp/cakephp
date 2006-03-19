@@ -375,7 +375,7 @@ class  DboPostgres extends DboSource
       if ($limit)
         {
             $rt = '';
-            if (!strpos(low($limit), 'limit') || strpos(low($limit), 'limit') === 0)
+            if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
             {
                 $rt = ' LIMIT';
             }

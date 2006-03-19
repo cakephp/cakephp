@@ -161,14 +161,14 @@ class DboMysql extends DboSource
         {
             return $this->fetchAll($args[0]);
         }
-        elseif (count($args) > 1 && strpos(low($args[0]), 'findby') === 0)
+        elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findby') === 0)
         {
             $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
             $query = array($args[2]->name.'.'.$field  => $args[1][0]);
 
             return $args[2]->find($query);
         }
-        elseif (count($args) > 1 && strpos(low($args[0]), 'findallby') === 0)
+        elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findallby') === 0)
         {
             $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
             $query = array($args[2]->name.'.'.$field  => $args[1][0]);
@@ -481,7 +481,7 @@ class DboMysql extends DboSource
         if ($limit)
         {
             $rt = '';
-            if (!strpos(low($limit), 'limit') || strpos(low($limit), 'limit') === 0)
+            if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
             {
                 $rt = ' LIMIT';
             }

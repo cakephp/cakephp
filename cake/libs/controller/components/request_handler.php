@@ -168,7 +168,7 @@ class RequestHandlerComponent extends Object
  */
     function isPost()
     {
-        return (low(env('REQUEST_METHOD')) == 'post');
+        return (strtolower(env('REQUEST_METHOD')) == 'post');
     }
 
 /**
@@ -178,7 +178,7 @@ class RequestHandlerComponent extends Object
  */
     function isPut()
     {
-        return (low(env('REQUEST_METHOD')) == 'put');
+        return (strtolower(env('REQUEST_METHOD')) == 'put');
     }
 
 /**
@@ -188,7 +188,7 @@ class RequestHandlerComponent extends Object
  */
     function isGet()
     {
-        return (low(env('REQUEST_METHOD')) == 'get');
+        return (strtolower(env('REQUEST_METHOD')) == 'get');
     }
 
 /**
@@ -198,7 +198,7 @@ class RequestHandlerComponent extends Object
  */
     function isDelete()
     {
-        return (low(env('REQUEST_METHOD')) == 'delete');
+        return (strtolower(env('REQUEST_METHOD')) == 'delete');
     }
 
 /**

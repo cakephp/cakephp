@@ -42,6 +42,8 @@
 class AclNode extends AppModel
 {
 
+    var $cacheQueries = false;
+
 /**
  * Enter description here...
  *
@@ -246,10 +248,8 @@ class AclNode extends AppModel
  */
     function _resolveID($id, $fKey)
     {
-        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         $key = (is_string($id) ? 'alias' : $fKey);
-        $val = (is_string($id) ? '"' . $db->value($id) . '"' : $id);
-        return "{$key} = {$val}";
+        return array($key => $id);
     }
 
 /**
@@ -290,7 +290,7 @@ class AclNode extends AppModel
  */
     function setSource()
     {
-      $this->table = low(get_class($this)) . "s";
+      $this->table = strtolower(get_class($this)) . "s";
     }
 }
 

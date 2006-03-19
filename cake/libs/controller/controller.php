@@ -201,6 +201,12 @@ class Controller extends Object
     var $cacheAction = false;
 
 /**
+ * Enter description here...
+ *
+ * @var boolean
+ */
+    var $persistModel = false;
+/**
  * Constructor.
  *
  */
@@ -264,10 +270,30 @@ class Controller extends Object
             $id = $this->params['pass'];
         }
 
+        $cached = false;
+        $object = null;
         if (class_exists($this->modelClass) && ($this->uses === false))
         {
-            $this->{$this->modelClass} =& new $this->modelClass($id);
-            $this->modelNames[] = $this->modelClass;
+            if($this->persistModel === true)
+            {
+                $cached = $this->_persist($this->modelClass, null, $object);
+            }
+            if(($cached === false))
+            {
+                $model =& new $this->modelClass($id);
+                $this->modelNames[] = $this->modelClass;
+                $this->{$this->modelClass} = $model;
+                if($this->persistModel === true)
+                {
+                    $this->_persist($this->modelClass, true,  $model);
+                }
+            }
+            else
+            {
+                $this->_persist($this->modelClass, true, $object);
+                $this->modelNames[] = $this->modelClass;
+                return true;
+            }
         }
         elseif($this->uses === false)
         {
