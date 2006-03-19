@@ -547,7 +547,7 @@ class View extends Object
             $action = '..'.DS.implode(DS, $action);
         }
 
-        foreach ($paths->controllerPaths as $path)
+        foreach ($paths->viewPaths as $path)
         {
             if(file_exists($path.$this->viewPath.DS.$this->subDir.$type.$action.$this->ext))
             {
