@@ -154,7 +154,7 @@ function url($url = null, $return = false)
         $base = $this->base;
         if($this->plugin != null)
         {
-            $match = str_replace('/', '', $this->plugin);
+            $match = str_replace(DS, '', $this->plugin);
 			$base = preg_replace('/'.$match.'/', '', $this->base);
 			$base = str_replace('//','', $base);
             $pos1 = strrpos($base, '/');

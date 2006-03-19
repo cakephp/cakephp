@@ -1169,7 +1169,7 @@ class DboSource extends DataSource
                     {
                         if($match['2'] != '' && !is_numeric($match['2']))
                         {
-                            $match['2'] = $this->value($match['value']);
+                            $match['2'] = $this->value($match['2']);
                             $match['2'] = str_replace(' AND ', "' AND '", $match['2']);
                         }
 

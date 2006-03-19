@@ -31,7 +31,7 @@
 
 if (!defined('REQUEST_MOBILE_UA'))
 {
-    define('REQUEST_MOBILE_UA', '[AvantGo|BlackBerry|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino]');
+    define('REQUEST_MOBILE_UA', '(AvantGo|BlackBerry|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
 }
 
 /**
@@ -202,7 +202,7 @@ class RequestHandlerComponent extends Object
     }
 
 /**
- * Gets Prototype version if call is Ajax, otherwise empty string. 
+ * Gets Prototype version if call is Ajax, otherwise empty string.
  * The Prototype library sets a special "Prototype version" HTTP header.
  *
  * @return string Prototype version of component making Ajax call
@@ -341,7 +341,7 @@ class RequestHandlerComponent extends Object
 /**
  * Strips the specified tags from output
  *
- * @param string $str 
+ * @param string $str
  * @param string $tag
  * @param string $tag
  * @param string ...
@@ -423,8 +423,8 @@ class RequestHandlerComponent extends Object
 /**
  * Determines which content types the client prefers
  *
- * @param mixed $type 
- * @returns mixed 
+ * @param mixed $type
+ * @returns mixed
  * @access public
  */
     function prefers($type = null)

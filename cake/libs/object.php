@@ -202,7 +202,7 @@ class Object
 
         if(!file_exists($file))
         {
-            $this->_savePersistent($name, &$object);
+            $this->_savePersistent($name, $object);
             return false;
         }
         else
