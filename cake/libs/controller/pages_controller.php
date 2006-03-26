@@ -49,6 +49,13 @@ class PagesController extends AppController{
  *
  * @var unknown_type
  */
+    var $name = 'Pages';
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
     var $helpers = array('Html');
 
 /**

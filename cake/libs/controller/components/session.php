@@ -140,11 +140,11 @@ class SessionComponent extends Object
  */
     function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash')
     {
-        if ($layout == 'default' || $layout == null)
+        if ($layout == 'default')
         {
             $out = '<div id="'.$key.'Message" class="message">'.$flashMessage.'</div>';
         }
-        else if($layout == '')
+        else if($layout == '' || $layout == null)
         {
             $out = $flashMessage;
         }

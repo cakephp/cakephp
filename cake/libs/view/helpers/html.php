@@ -331,7 +331,11 @@ function url($url = null, $return = false)
     $return = false)
     {
         $this->setFormTag($fieldName);
-        $this->tagValue($fieldName)? $htmlAttributes['checked'] = 'checked': null;
+        $value = $this->tagValue($fieldName);
+        $model = new $this->model;
+        $db =& ConnectionManager::getDataSource($model->useDbConfig);
+        $value = $db->boolean($value);
+        $value? $htmlAttributes['checked'] = 'checked': null;
         $title = $title? $title: ucfirst($fieldName);
         return $this->output(sprintf($this->tags['checkbox'], $this->model, $this->field,
         $this->field,
@@ -1518,7 +1522,7 @@ function url($url = null, $return = false)
                 $opt = $this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) .'-'.$this->dayOptionTag( $tagName, null, $day, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $optionAttr, $selectAttr, $showEmpty);
             break;
             case 'YMD' :
-                $opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->dayOptionTag( $tagName, null, $day, $optionAttr, $selectAttr, $showEmpty);
+                $opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->dayOptionTag( $tagName, null, $day, $selectAttr, $optionAttr, $showEmpty);
             break;
             case 'NONE':
                 $opt ='';

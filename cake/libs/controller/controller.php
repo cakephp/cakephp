@@ -306,12 +306,32 @@ class Controller extends Object
 
             foreach ($uses as $modelClass)
             {
+                $cached = false;
+                $object = null;
                 $modelKey  = Inflector::underscore($modelClass);
 
                 if (class_exists($modelClass))
                 {
-                    $this->{$modelClass} =& new $modelClass($id);
-                    $this->modelNames[] = $modelClass;
+                    if($this->persistModel === true)
+                    {
+                        $cached = $this->_persist($modelClass, null, $object);
+                    }
+                    if(($cached === false))
+                    {
+                        $model =& new $$modelClass($id);
+                        $this->modelNames[] = $modelClass;
+                        $this->{$modelClass} = $model;
+                        if($this->persistModel === true)
+                        {
+                            $this->_persist($modelClass, true,  $model);
+                        }
+                    }
+                    else
+                    {
+                        $this->_persist($modelClass, true, $object);
+                        $this->modelNames[] = $modelClass;
+                        return true;
+                    }
                 }
                 else
                 {
@@ -702,11 +722,9 @@ class Controller extends Object
              switch( $type )
              {
                  case "text":
-                 case "mediumtext":
                      $fieldNames[ $tabl['name']]['type'] = 'area';
                  break;
-                 case "varchar":
-                 case "char":
+                 case "string":
                      if (isset($fieldNames[ $tabl['name']]['foreignKey']))
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'select';
@@ -717,7 +735,8 @@ class Controller extends Object
                              if ($doCreateOptions)
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 foreach ($otherModel->findAll() as $pass)
+                                 $rec = $otherModel->findAll(null, null, null, 500);
+                                 foreach ($rec as $pass)
                                  {
                                      foreach ($pass as $key => $value)
                                      {
@@ -737,23 +756,11 @@ class Controller extends Object
                      }
 
                  break;
-                 case "tinyint":
-                     if( $fieldLength > 1 )
-                     {
-                         $fieldNames[ $tabl['name']]['type'] = 'input';
-                     }
-                     else
-                     {
-                         $fieldNames[ $tabl['name']]['type'] = 'checkbox';
-                     }
+                 case "boolean":
+                     $fieldNames[ $tabl['name']]['type'] = 'checkbox';
                  break;
-                 case "int":
-                 case "smallint":
-                 case "mediumint":
-                 case "bigint":
-                 case "decimal":
+                 case "integer":
                  case "float":
-                 case "double":
                      if(strcmp($tabl['name'], $this->$model->primaryKey) == 0)
                      {
                          $fieldNames[ $tabl['name']]['type'] = 'hidden';
@@ -768,7 +775,8 @@ class Controller extends Object
                              if( $doCreateOptions )
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 foreach($otherModel->findAll() as $pass)
+                                 $rec = $otherModel->findAll(null, null, null, 500);
+                                 foreach ($rec as $pass)
                                  {
                                      foreach($pass as $key => $value)
                                      {
@@ -830,7 +838,8 @@ class Controller extends Object
                     $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
                     $fieldNames[$modelKeyM]['type'] = "selectMultiple";
                     $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
-                    foreach($modelObject->findAll() as $pass)
+                    $rec = $modelObject->findAll(null, null, null, 500);
+                    foreach ($rec as $pass)
                     {
                         foreach($pass as $key=>$value)
                         {
@@ -920,7 +929,7 @@ class Controller extends Object
                         unset($this->params['data'][$this->modelClass][$field['name'].'_meridian']);
                     $this->params['data'][$this->modelClass][$field['name']] = $newDate;
                 }
-                else if( 'tinyint(1)' == $field['type'] )
+                else if( 'boolean' == $field['type'] )
                 {
                     if( isset( $this->params['data'][$this->modelClass][$field['name']]) &&
                                 "on" == $this->params['data'][$this->modelClass][$field['name']] )

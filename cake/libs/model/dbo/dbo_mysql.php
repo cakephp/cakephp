@@ -174,6 +174,10 @@ class DboMysql extends DboSource
             $query = array($args[2]->name.'.'.$field  => $args[1][0]);
             return $args[2]->findAll($query);
         }
+        else
+        {
+            return $this->fetchAll($args[0], false);
+        }
     }
 
 /**
@@ -245,7 +249,7 @@ class DboMysql extends DboSource
             }
             if (isset($column[0]))
             {
-                $fields[] = array('name' => $column[0]['Field'], 'type' => $column[0]['Type'], 'null' => $column[0]['Null']);
+                $fields[] = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type']), 'null' => $column[0]['Null']);
             }
         }
         $this->__cacheDescription($model->table, $fields);
@@ -299,38 +303,21 @@ class DboMysql extends DboSource
             return  "''";
         }
 
-        if (ini_get('magic_quotes_gpc') == 1)
+        switch ($column)
         {
-            $data = stripslashes($data);
+            case 'boolean':
+                $data = $this->boolean($data);
+                break;
+            default:
+                if (ini_get('magic_quotes_gpc') == 1)
+                {
+                    $data = stripslashes($data);
+                }
+
+                $data = mysql_real_escape_string($data, $this->connection);
         }
 
-        return "'" . mysql_real_escape_string($data, $this->connection) . "'";
-    }
-
-/**
- * Translates between PHP boolean values and MySQL (faked) boolean values
- *
- * @param mixed $data Value to be translated
- * @return mixed Converted boolean value
- */
-    function boolean ($data)
-    {
-        if ($data === true || $data === false)
-        {
-            if ($data === true)
-            {
-                return 1;
-            }
-            return 0;
-        }
-        else
-        {
-            if (intval($data !== 0))
-            {
-                return true;
-            }
-            return false;
-        }
+        return "'" . $data . "'";
     }
 
 /**

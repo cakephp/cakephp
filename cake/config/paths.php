@@ -169,7 +169,7 @@ define('CACHE', TMP.'cache'.DS);
 /**
  * Path to the vendors directory.
  */
-define ('VENDORS', ROOT.DS.'vendors'.DS);
+define ('VENDORS', CAKE_CORE_INCLUDE_PATH.DS.'vendors'.DS);
 
 /**
  * Path to the Pear directory

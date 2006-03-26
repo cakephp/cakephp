@@ -56,7 +56,7 @@ class  DboPostgres extends DboSource
 
     var $columns = array(
         'primary_key' => array('name' => 'serial primary key'),
-        'string'      => array('name' => 'varchar', 'limit' => '255'),
+        'string'      => array('name' => 'character varying', 'limit' => '255'),
         'text'        => array('name' => 'text'),
         'integer'     => array('name' => 'integer'),
         'float'        => array('name' => 'float'),
@@ -67,6 +67,10 @@ class  DboPostgres extends DboSource
         'binary'      => array('name' => 'bytea'),
         'boolean'     => array('name' => 'boolean'),
 	    'number'      => array('name' => 'numeric'));
+
+    var $startQuote = '"';
+
+    var $endQuote = '"';
 
 /**
  * Connects to the database using options in the given configuration array.
@@ -119,15 +123,15 @@ class  DboPostgres extends DboSource
       {
          return $this->fetchAll($args[0]);
       }
-      elseif (count($args) > 1 && strpos($args[0], 'findBy') === 0)
+      elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findby') === 0)
       {
-         $field = Inflector::underscore(str_replace('findBy', '', $args[0]));
+         $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
          $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
          return $args[2]->find($query);
       }
-      elseif (count($args) > 1 && strpos($args[0], 'findAllBy') === 0)
+      elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findallby') === 0)
       {
-         $field = Inflector::underscore(str_replace('findAllBy', '', $args[0]));
+         $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
          $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
          return $args[2]->findAll($query);
       }
@@ -144,7 +148,7 @@ class  DboPostgres extends DboSource
         {
             $this->resultSet($this->_result);
             $resultRow = $this->fetchResult();
-            return $resultRow[0];
+            return $resultRow;
         }
         else
         {
@@ -172,7 +176,7 @@ class  DboPostgres extends DboSource
          $tables = array();
          foreach ($result as $item)
          {
-             $tables[] = $item['name'];
+             $tables[] = $item[0]['name'];
          }
          return $tables;
       }
@@ -210,7 +214,7 @@ class  DboPostgres extends DboSource
             {
                  foreach ($model->_tableInfo->value as $field)
                  {
-                     $fields[]= $field[0]['name'];
+                     $fields[]= $field['name'];
                  }
 
             }
@@ -253,8 +257,20 @@ class  DboPostgres extends DboSource
 
         $fields = false;
 
-	$fields = $this->query("SELECT column_name as name, data_type as type FROM information_schema.columns WHERE table_name =".$this->value($model->table));
+        $cols = $this->query("SELECT column_name AS name, data_type AS type, is_nullable AS null FROM information_schema.columns WHERE table_name =".$this->value($model->table)." ORDER BY ordinal_position");
 
+        foreach ($cols as $column)
+        {
+            $colKey = array_keys($column);
+            if (isset($column[$colKey[0]]) && !isset($column[0]))
+            {
+                $column[0] = $column[$colKey[0]];
+            }
+            if (isset($column[0]))
+            {
+                $fields[] = array('name' => $column[0]['name'], 'type' => $this->column($column[0]['type']), 'null' => $column[0]['null']);
+            }
+        }
         $this->__cacheDescription($model->table, $fields);
         return $fields;
     }
@@ -267,11 +283,16 @@ class  DboPostgres extends DboSource
  */
     function name ($data)
     {
-      if ($data == '*')
-      {
+        if ($data == '*')
+        {
       		return '*';
-      }
-      return '"'. ereg_replace('\.', '"."', $data) .'"';
+        }
+        $pos = strpos($data, '"');
+        if ($pos === false)
+        {
+            $data = '"'. str_replace('.', '"."', $data) .'"';
+        }
+        return $data;
     }
 
 /**
@@ -293,15 +314,80 @@ class  DboPostgres extends DboSource
         {
             return 'NULL';
         }
-        if (ini_get('magic_quotes_gpc') == 1)
+        switch ($column)
         {
-            $data = stripslashes($data);
+            case 'bytea':
+                $data = pg_escape_bytea($data);
+                break;
+            case 'boolean':
+                $data = $this->boolean($data);
+                break;
+            default:
+                if (ini_get('magic_quotes_gpc') == 1)
+                {
+                    $data = stripslashes($data);
+                }
+    
+                $data = pg_escape_string($data);
         }
-
-        $data = pg_escape_string($data);
 
         $return = "'" . $data . "'";
         return $return;
+    }
+
+/**
+ * Begin a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions).
+ */
+    function begin (&$model)
+    {
+        if (parent::begin($model))
+        {
+            if ($this->execute('BEGIN'))
+            {
+                $this->__transactionStarted = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+/**
+ * Commit a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+    function commit (&$model)
+    {
+        if (parent::commit($model))
+        {
+            $this->__transactionStarted;
+            return $this->execute('COMMIT');
+        }
+        return false;
+    }
+
+/**
+ * Rollback a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+    function rollback (&$model)
+    {
+        if (parent::rollback($model))
+        {
+            return $this->execute('ROLLBACK');
+        }
+        return false;
     }
 
 /**
@@ -372,18 +458,18 @@ class  DboPostgres extends DboSource
  */
     function limit ($limit, $offset = null)
     {
-      if ($limit)
+        if ($limit)
         {
             $rt = '';
             if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
             {
                 $rt = ' LIMIT';
             }
+            $rt .= ' ' . $limit;
             if ($offset)
             {
-                $rt .= ' ' . $offset. ',';
+                $rt .= ' OFFSET ' . $offset;
             }
-            $rt .= ' ' . $limit;
             return $rt;
         }
         return null;
@@ -401,9 +487,13 @@ class  DboPostgres extends DboSource
         $limit = null;
         @list($col, $limit) = explode('(', $col);
 
-        if (in_array($col, array('date', 'time', 'timestamp')))
+        if (in_array($col, array('date', 'time')))
         {
             return $col;
+        }
+        if (strpos($col, 'timestamp') !== false)
+        {
+        	return 'datetime';
         }
         if ($col == 'boolean')
         {
@@ -425,7 +515,7 @@ class  DboPostgres extends DboSource
         {
             return 'binary';
         }
-        if (in_array($col, array('float', 'double', 'decimal')))
+        if (in_array($col, array('float', 'double', 'decimal', 'real')))
         {
             return 'float';
         }
@@ -486,6 +576,33 @@ class  DboPostgres extends DboSource
             return false;
         }
     }
+
+/**
+ * Translates between PHP boolean values and MySQL (faked) boolean values
+ *
+ * @param mixed $data Value to be translated
+ * @return mixed Converted boolean value
+ */
+    function boolean ($data)
+    {
+        if ($data === true || $data === false)
+        {
+            if ($data === true)
+            {
+                return 't';
+            }
+            return 'f';
+        }
+        else
+        {
+            if (strpos($data, 't') !== false)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
 }
 
 ?>

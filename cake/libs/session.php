@@ -504,7 +504,7 @@ class CakeSession extends Object
     {
         $db =& ConnectionManager::getDataSource('default');
 
-        $row = $db->query("SELECT ".$db->name('cake_sessions.data')." FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." =  ".$db->value($key));
+        $row = $db->query("SELECT ".$db->name('cake_sessions.data')." FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." =  ".$db->value($key), false);
 
 		if ($row && $row[0]['cake_sessions']['data'])
 		{
@@ -641,7 +641,7 @@ class CakeSession extends Object
 
         $expires = time() + CAKE_SESSION_TIMEOUT * $factor;
 
-		$row = $db->query("SELECT COUNT(id) AS count FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
+		$row = $db->query("SELECT COUNT(id) AS count FROM ".$db->name('cake_sessions')." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key), false);
 
 		if($row[0][0]['count'] > 0)
 		{

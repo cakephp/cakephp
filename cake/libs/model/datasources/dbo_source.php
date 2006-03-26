@@ -212,7 +212,7 @@ class DboSource extends DataSource
         if($this->execute($sql))
         {
             $out = array();
-            while ($item = $this->fetchArray(null, true))
+            while ($item = $this->fetchArray(true))
             {
                 $out[] = $item;
             }
@@ -1296,6 +1296,32 @@ class DboSource extends DataSource
     {
       $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
       return is_array($out)? $out[0]['count']: false;
+    }
+
+/**
+ * Translates between PHP boolean values and MySQL (faked) boolean values
+ *
+ * @param mixed $data Value to be translated
+ * @return mixed Converted boolean value
+ */
+    function boolean ($data)
+    {
+        if ($data === true || $data === false)
+        {
+            if ($data === true)
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+        {
+            if (!empty($data))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
 ?>

@@ -31,7 +31,7 @@
 /**
  * Include AdoDB files.
  */
-require(VENDORS.'adodb'.DS.'adodb.inc.php');
+vendor('adodb'.DS.'adodb.inc.php');
 uses('model'.DS.'datasources'.DS.'dbo_source');
 
 /**
