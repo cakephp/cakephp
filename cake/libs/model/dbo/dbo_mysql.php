@@ -522,6 +522,10 @@ class DboMysql extends DboSource
         {
             return 'float';
         }
+        if (strpos($col, 'enum') !== false)
+        {
+            return "enum($limit)";
+        }
 
         return 'text';
     }

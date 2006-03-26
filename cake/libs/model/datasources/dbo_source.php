@@ -1299,7 +1299,7 @@ class DboSource extends DataSource
     }
 
 /**
- * Translates between PHP boolean values and MySQL (faked) boolean values
+ * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
  * @return mixed Converted boolean value

@@ -643,16 +643,25 @@ class Controller extends Object
  * @param unknown_type $url
  * @param unknown_type $time
  */
-    function flashOut($message, $url, $time=1)
+    function flashOut($message, $url, $pause=1)
     {
         $this->autoRender = false;
         $this->autoLayout = false;
 
         $this->set('url', $url);
         $this->set('message', $message);
-        $this->set('time', $time);
+        $this->set('pause', $pause);
+        $this->set('page_title', $message);
 
-        $this->render(null, false, VIEWS.'layouts'.DS.'flash.thtml');
+        if(file_exists(VIEWS.'layouts'.DS.'flash.thtml'))
+        {
+            $flash = VIEWS.'layouts'.DS.'flash.thtml';
+        }
+        elseif($flash = fileExistsInPath(LIBS.'view'.DS.'templates'.DS."layouts".DS.'flash.thtml'))
+        {
+
+        }
+        $this->render(null, false, $flash);
     }
 
 /**

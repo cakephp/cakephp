@@ -327,7 +327,7 @@ class  DboPostgres extends DboSource
                 {
                     $data = stripslashes($data);
                 }
-    
+
                 $data = pg_escape_string($data);
         }
 
@@ -443,10 +443,10 @@ class  DboPostgres extends DboSource
  */
     function lastInsertId ($source, $field='id')
     {
-      $sql = "SELECT CURRVAL('{$source}_{$field}_seq') AS max";
+      $sql = "SELECT last_value AS max FROM {$source}_{$field}_seq";
       $res = $this->rawQuery($sql);
       $data = $this->fetchRow($res);
-      return $data['max'];
+      return $data[0]['max'];
     }
 
 /**
@@ -576,33 +576,6 @@ class  DboPostgres extends DboSource
             return false;
         }
     }
-
-/**
- * Translates between PHP boolean values and MySQL (faked) boolean values
- *
- * @param mixed $data Value to be translated
- * @return mixed Converted boolean value
- */
-    function boolean ($data)
-    {
-        if ($data === true || $data === false)
-        {
-            if ($data === true)
-            {
-                return 't';
-            }
-            return 'f';
-        }
-        else
-        {
-            if (strpos($data, 't') !== false)
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-
 }
 
 ?>

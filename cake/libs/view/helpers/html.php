@@ -320,15 +320,14 @@ function url($url = null, $return = false)
  * Creates a checkbox widget.
  *
  * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
- * @param  string  $title
+ * @deprecated  string  $title
  * @param  array    $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
  * @return mixed    Either string or boolean value, depends on AUTO_OUTPUT
  *                 and $return.
  */
-    function checkbox($fieldName, $title = null, $htmlAttributes = null,
-    $return = false)
+    function checkbox($fieldName, $title = null, $htmlAttributes = null, $return = false)
     {
         $this->setFormTag($fieldName);
         $value = $this->tagValue($fieldName);
@@ -336,10 +335,9 @@ function url($url = null, $return = false)
         $db =& ConnectionManager::getDataSource($model->useDbConfig);
         $value = $db->boolean($value);
         $value? $htmlAttributes['checked'] = 'checked': null;
-        $title = $title? $title: ucfirst($fieldName);
         return $this->output(sprintf($this->tags['checkbox'], $this->model, $this->field,
         $this->field,
-        $this->_parseAttributes($htmlAttributes, null, '', ' '), $title), $return);
+        $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
     }
 
 /**

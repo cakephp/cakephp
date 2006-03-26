@@ -855,27 +855,30 @@ class Model extends Object
         $newID = null;
         foreach ($this->data as $n => $v)
         {
-            if(isset($weHaveMulti) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
+            if(isset($weHaveMulti) && isset($v[$n]) && $count > 0 && count($this->hasAndBelongsToMany) > 0)
             {
                 $joined[] = $v;
             }
             else
             {
-                foreach ($v as $x => $y)
+                if ($n === $this->name)
                 {
-                    if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist))
+                    foreach ($v as $x => $y)
                     {
-                        $fields[] = $x;
-                        $values[] = $y;
-
-                        if($x == $this->primaryKey && !is_numeric($y))
+                        if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist))
                         {
-                            $newID = $y;
+                            $fields[] = $x;
+                            $values[] = $y;
+
+                            if($x == $this->primaryKey && !empty($y))
+                            {
+                                $newID = $y;
+                            }
                         }
                     }
                 }
-                $count++;
             }
+            $count++;
         }
 
         if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist))
