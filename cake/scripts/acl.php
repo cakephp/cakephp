@@ -147,7 +147,7 @@ class AclCLI {
       $this->acl = $acl->getACL();
 
       $this->args = $args;
-      $this->db =& ConnectionManager::getDataSource($this->useDbConfig);
+      $this->db =& ConnectionManager::getDataSource($this->dataSource);
 
       $this->stdin = fopen('php://stdin', 'r');
       $this->stdout = fopen('php://stdout', 'w');
@@ -374,7 +374,7 @@ class AclCLI {
  */
     function initdb()
     {
-      $db =& ConnectionManager::getDataSource($this->useDbConfig);
+      $db =& ConnectionManager::getDataSource($this->dataSource);
       fwrite($this->stdout, "Initializing Database...\n");
       fwrite($this->stdout, "Creating access control objects table (acos)...\n");
       $sql = " CREATE TABLE `acos` (

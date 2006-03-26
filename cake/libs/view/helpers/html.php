@@ -1317,7 +1317,7 @@ function url($url = null, $return = false)
         '22'=>'22','23'=>'23','24'=>'24',
         '25'=>'25','26'=>'26','27'=>'27',
         '28'=>'28','29'=>'29','30'=>'30','31'=>'31');
-        $option = $this->selectTag($tagName.'_day', $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1358,7 +1358,7 @@ function url($url = null, $return = false)
             $years[$yearCounter] = $yearCounter;
         }
 
-        $option = $this->selectTag($tagName.'_year', $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1379,7 +1379,7 @@ function url($url = null, $return = false)
         $months=array('01'=>'January','02'=>'February','03'=>'March',
         '04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August',
         '09'=>'September','10'=>'October','11'=>'November','12'=>'December');
-        $option = $this->selectTag($tagName.'_month', $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1419,7 +1419,7 @@ function url($url = null, $return = false)
             '05'=>'5','06'=>'6','07'=>'7','08'=>'8','09'=>'9',
             '10'=>'10','11'=>'11','12'=>'12');
         }
-        $option = $this->selectTag($tagName.'_hour', $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1440,7 +1440,7 @@ function url($url = null, $return = false)
         {
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
-        $option = $this->selectTag($tagName.'_min', $mins, $minValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $mins, $minValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1458,7 +1458,7 @@ function url($url = null, $return = false)
         $value = isset($value)? $value : $this->tagValue($tagName."_meridian");
         $merValue = empty($selected) ? date('a') : $selected ;
         $meridians = array('am'=>'am','pm'=>'pm');
-        $option = $this->selectTag($tagName.'_meridian', $meridians, $merValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($value, $meridians, $merValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 

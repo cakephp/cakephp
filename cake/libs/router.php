@@ -159,7 +159,10 @@ class Router extends Object {
       }
 
       $this->routes[] = $default_route;
-
+      if (strpos($url, '?') !== false)
+      {
+          $url = substr($url, 0, strpos($url, '?'));
+      }
       foreach ($this->routes as $route)
       {
          list($route, $regexp, $names, $defaults) = $route;
@@ -173,7 +176,9 @@ class Router extends Object {
 
 // hack, pre-fill the default route names
             foreach ($names as $name)
+            {
                 $out[$name] = null;
+            }
 
             $ii = 0;
 

@@ -392,10 +392,15 @@ class Model extends Object
             $this->__backAssociation[$assoc] = $this->{$assoc};
             foreach($model as $key => $value)
             {
+                $assocName = $key;
                 $modelName = $key;
-                $this->__constructLinkedModel($modelName, $modelName);
-                $this->{$assoc}[$modelName] = $model[$modelName];
-                $this->__generateAssociation($assoc, $modelName);
+                if(isset($value['className']))
+                {
+                    $modelName = $value['className'];
+                }
+                $this->__constructLinkedModel($assocName, $modelName);
+                $this->{$assoc}[$assocName] = $model[$assocName];
+                $this->__generateAssociation($assoc);
             }
         }
         return true;
@@ -455,10 +460,7 @@ class Model extends Object
 
         foreach($this->__associations as $type)
         {
-            foreach ($this->{$type} as $assoc => $value)
-            {
-                $this->__generateAssociation($type, $assoc);
-            }
+            $this->__generateAssociation($type);
         }
     }
 
@@ -490,11 +492,9 @@ class Model extends Object
  * Build array-based association from string.
  *
  * @param string $type "Belongs", "One", "Many", "ManyTo"
- * @param string $assoc
- * @todo Is the second parameter in use at the moment? It is not referred to in the  method OJ, 30. jan 2006
  * @access private
  */
-    function __generateAssociation ($type, $assoc)
+    function __generateAssociation ($type)
     {
         foreach ($this->{$type} as $assocKey => $assocData)
         {
