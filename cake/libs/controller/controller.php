@@ -318,7 +318,7 @@ class Controller extends Object
                     }
                     if(($cached === false))
                     {
-                        $model =& new $$modelClass($id);
+                        $model =& new $modelClass($id);
                         $this->modelNames[] = $modelClass;
                         $this->{$modelClass} = $model;
                         if($this->persistModel === true)
