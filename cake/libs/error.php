@@ -47,11 +47,23 @@ class ErrorHandler extends Object
  */
     function __construct($method, $messages)
     {
-        if(!class_exists('AppController'))
+        parent::__construct();
+        static $__previousError = null;
+
+        if ($__previousError != array($method, $messages))
         {
-            loadController(null);
+            if(!class_exists('AppController'))
+            {
+                loadController(null);
+            }
+            $this->controller =& new AppController();
         }
-        $this->controller =& new AppController();
+        else
+        {
+            $this->controller =& new Controller();
+        }
+        $__previousError = array($method, $messages);
+
         if(DEBUG > 0 || $method == 'error')
         {
             call_user_func_array(array(&$this, $method), $messages);

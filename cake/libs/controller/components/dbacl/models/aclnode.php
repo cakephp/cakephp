@@ -69,7 +69,7 @@ class AclNode extends AppModel
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
-         return NULL;
+         return null;
       }
       extract($this->__dataVars());
 
@@ -86,7 +86,7 @@ class AclNode extends AppModel
       }
       else
       {
-         $parent = $this->find($this->_resolveID($parent_id, $secondary_id));
+         $parent = $this->find($this->_resolveID($parent_id));
          if($parent == null || count($parent) == 0)
          {
             trigger_error("Null parent in {$class}::create()", E_USER_ERROR);
@@ -133,7 +133,7 @@ class AclNode extends AppModel
          $id = $this->id;
       }
 
-      $object = $this->find($this->_resolveID($id, $secondary_id));
+      $object = $this->find($this->_resolveID($id));
       if($object == null || count($object) == 0)
       {
 // Couldn't find object
@@ -161,7 +161,7 @@ class AclNode extends AppModel
       }
       else
       {
-         $parent = $this->find($this->_resolveID($parent_id, $secondary_id));
+         $parent = $this->find($this->_resolveID($parent_id));
          $parent = $parent[$class];
          $this->_syncTable($table_name, 1, $parent['lft'], $parent['lft']);
       }
@@ -179,10 +179,10 @@ class AclNode extends AppModel
 
 
 /**
- * Enter description here...
+ * Get the parent node of the given Aro or Aco
  *
- * @param unknown_type $id
- * @return unknown
+ * @param moxed $id
+ * @return array
  */
     function getParent($id)
     {
@@ -198,62 +198,63 @@ class AclNode extends AppModel
     }
 
 /**
- * Enter description here...
+ * Gets the path to the given Aro or Aco
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return array
  */
     function getPath($id)
     {
       if (strtolower(get_class($this)) == "aclnode")
       {
          trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
-         return NULL;
+         return null;
       }
       extract($this->__dataVars());
 
-      $item = $this->find($this->_resolveID($id, $secondary_id));
+      $item = $this->find($this->_resolveID($id));
       if($item == null || count($item) == 0)
       {
          return null;
       }
-      return $this->findAll("{$data_name}.lft <= {$item[$class]['lft']} and {$data_name}.rght >= {$item[$class]['rght']}");
+      return $this->findAll(array($class.'.lft' => '<= '.$item[$class]['lft'], $class.'.rght' => '>= '.$item[$class]['rght']));
     }
 
 /**
- * Enter description here...
+ * Get the child nodes of the given Aro or Aco
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return array
  */
     function getChildren($id)
     {
-      if (strtolower(get_class($this)) == "aclnode")
-      {
-         trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
-         return NULL;
-      }
-      extract($this->__dataVars());
+        if (strtolower(get_class($this)) == "aclnode")
+        {
+           trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
+           return null;
+        }
+        extract($this->__dataVars());
 
-      $item = $this->find($this->_resolveID($id, $secondary_id));
-      return $this->findAll("{$data_name}.lft > {$item[$class]['lft']} and {$data_name}.rght < {$item[$class]['rght']}");
+        $item = $this->find($this->_resolveID($id));
+        return $this->findAll(array($class.'.lft' => '> '.$item[$class]['lft'], $class.'.rght' => '< '.$item[$class]['rght']));
     }
 
 /**
- * Enter description here...
+ * Gets a conditions array to find an Aro or Aco, based on the given id or alias
  *
- * @param unknown_type $id
- * @param unknown_type $fKey
- * @return unknown
+ * @param mixed $id
+ * @return array Conditions array for a find/findAll call
  */
-    function _resolveID($id, $fKey)
+    function _resolveID($id)
     {
-        $key = (is_string($id) ? 'alias' : $fKey);
-        return array($key => $id);
+        extract($this->__dataVars());
+        $key = (is_string($id) ? 'alias' : $secondary_id);
+        return array($this->name.'.'.$key => $id);
     }
 
 /**
- * Enter description here...
+ * Shifts the left and right values of the aro/aco tables
+ * when a node is added or removed
  *
  * @param unknown_type $table
  * @param unknown_type $dir
@@ -263,9 +264,27 @@ class AclNode extends AppModel
     function _syncTable($table, $dir, $lft, $rght)
     {
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
-        $shift = ($dir == 2 ? 1 : 2);
-        $db->query("UPDATE $table SET rght = rght " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE rght > " . $rght);
-        $db->query("UPDATE $table SET lft  = lft  " . ($dir > 0 ? "+" : "-") . " {$shift} WHERE lft  > " . $lft);
+
+        if ($dir == 2)
+        {
+            $shift = 1;
+            $dir = '+';
+        }
+        else
+        {
+            $shift = 2;
+            if ($dir > 0)
+            {
+                $dir = '+';
+            }
+            else
+            {
+                $dir = '-';
+            }
+        }
+
+        $db->query('UPDATE '.$table.' SET rght = rght '.$dir.' '.$shift.' WHERE rght > '.$rght);
+        $db->query('UPDATE '.$table.' SET lft  = lft  '.$dir.' '.$shift.' WHERE lft  > '.$lft);
     }
 
 /**
@@ -276,11 +295,17 @@ class AclNode extends AppModel
     function __dataVars()
     {
       $vars = array();
-      $class = Inflector::camelize(strtolower(get_class($this)));
-      $vars['secondary_id'] = (strtolower($class) == 'aro' ? 'user_id' : 'object_id');
-      $vars['data_name']    = $class;
-      $vars['table_name']    = strtolower($class) . 's';
-      $vars['class']        = Inflector::camelize($class);
+      $class = strtolower(get_class($this));
+      if ($class == 'aro')
+      {
+          $vars['secondary_id'] = 'user_id';
+      }
+      else
+      {
+          $vars['secondary_id'] = 'object_id';
+      }
+      $vars['table_name']    = $class . 's';
+      $vars['class']        = ucwords($class);
       return $vars;
     }
 

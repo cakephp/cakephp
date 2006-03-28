@@ -277,9 +277,9 @@ class AjaxHelper extends Helper
  * Returns a form tag that will submit using XMLHttpRequest in the background instead of the regular
  * reloading POST arrangement. Even though it's using Javascript to serialize the form elements, the form submission
  * will work just like a regular submission as viewed by the receiving side (all elements available in params).
- * The options for specifying the target with :url and defining callbacks is the same as link_to_remote.
+ * The options for defining callbacks is the same as link().
  *
- * @param array $params              Form id
+ * @param array $params              Form target
  * @param array $type                How form data is posted: 'get' or 'post'
  * @param array $options             Callback/HTML options
  * @return string                    JavaScript/HTML code

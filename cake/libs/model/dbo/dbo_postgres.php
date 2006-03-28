@@ -257,7 +257,7 @@ class  DboPostgres extends DboSource
 
         $fields = false;
 
-        $cols = $this->query("SELECT column_name AS name, data_type AS type, is_nullable AS null FROM information_schema.columns WHERE table_name =".$this->value($model->table)." ORDER BY ordinal_position");
+        $cols = $this->query("SELECT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default FROM information_schema.columns WHERE table_name =".$this->value($model->table)." ORDER BY ordinal_position");
 
         foreach ($cols as $column)
         {
@@ -268,7 +268,7 @@ class  DboPostgres extends DboSource
             }
             if (isset($column[0]))
             {
-                $fields[] = array('name' => $column[0]['name'], 'type' => $this->column($column[0]['type']), 'null' => $column[0]['null']);
+                $fields[] = array('name' => $column[0]['name'], 'type' => $this->column($column[0]['type']), 'null' => $column[0]['null'], 'default' => $column[0]['default']);
             }
         }
         $this->__cacheDescription($model->table, $fields);
@@ -316,11 +316,11 @@ class  DboPostgres extends DboSource
         }
         switch ($column)
         {
-            case 'bytea':
+            case 'binary':
                 $data = pg_escape_bytea($data);
                 break;
             case 'boolean':
-                $data = $this->boolean($data);
+                $data = $this->boolean((bool)$data);
                 break;
             default:
                 if (ini_get('magic_quotes_gpc') == 1)
@@ -575,6 +575,86 @@ class  DboPostgres extends DboSource
         {
             return false;
         }
+    }
+
+/**
+ * Translates between PHP boolean values and MySQL (faked) boolean values
+ *
+ * @param mixed $data Value to be translated
+ * @return mixed Converted boolean value
+ */
+    function boolean ($data)
+    {
+        if ($data === true || $data === false)
+        {
+            if ($data === true)
+            {
+                return 't';
+            }
+            return 'f';
+        }
+        else
+        {
+            if (strpos($data, 't') !== false)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
+/**
+ * The "C" in CRUD
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @return boolean Success
+ */
+    function create(&$model, $fields = null, $values = null)
+    {
+        if ($fields == null)
+        {
+            unset($fields, $values);
+            $fields = array_keys($model->data);
+            $values = array_values($model->data);
+        }
+
+        foreach ($fields as $field)
+        {
+            $fieldInsert[] = $this->name($field);
+        }
+
+        $count = 0;
+        foreach ($values as $value)
+        {
+            if ($value === '')
+            {
+                $columns = $model->loadInfo();
+                $columns = $columns->value;
+                foreach($columns as $col)
+                {
+                    if ($col['name'] == $fields[$count])
+                    {
+                        $insert = $col['default'];
+                        break;
+                    }
+                }
+            }
+            if (empty($insert))
+            {
+                $insert = $this->value($value, $model->getColumnType($fields[$count]));
+            }
+        	$valueInsert[] = $insert;
+        	unset($insert);
+            $count++;
+        }
+
+        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
+        {
+            return true;
+        }
+        return false;
     }
 }
 

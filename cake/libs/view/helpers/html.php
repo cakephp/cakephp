@@ -335,9 +335,11 @@ function url($url = null, $return = false)
         $db =& ConnectionManager::getDataSource($model->useDbConfig);
         $value = $db->boolean($value);
         $value? $htmlAttributes['checked'] = 'checked': null;
-        return $this->output(sprintf($this->tags['checkbox'], $this->model, $this->field,
-        $this->field,
-        $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+        $htmlAttributes['value'] = 1;
+        $output = $this->hidden($fieldName, array('value' => 0), true);
+        $output .= sprintf($this->tags['checkbox'], $this->model, $this->field,
+                $this->_parseAttributes($htmlAttributes, null, '', ' '));
+        return $output;
     }
 
 /**
@@ -580,7 +582,7 @@ function url($url = null, $return = false)
 
 
 /**
- * Returns value of $fieldName. False if the tag does not exist.
+ * Returns value of $fieldName. Null if the tag does not exist.
  *
  * @param string $fieldName		Fieldname as "Modelname/fieldname" string
  * @return unknown Value of the named tag.
@@ -588,7 +590,7 @@ function url($url = null, $return = false)
     function tagValue ($fieldName)
     {
         $this->setFormTag($fieldName);
-        return isset($this->params['data'][$this->model][$this->field])? htmlspecialchars($this->params['data'][$this->model][$this->field]): false;
+        return isset($this->params['data'][$this->model][$this->field])? htmlspecialchars($this->params['data'][$this->model][$this->field]): null;
     }
 
 /**
@@ -1296,7 +1298,7 @@ function url($url = null, $return = false)
  * Returns a SELECT element for days.
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
  * @param boolean $show_empty Show/hide the empty select option
@@ -1304,18 +1306,16 @@ function url($url = null, $return = false)
  */
     function dayOptionTag($tagName, $value=null, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty = true)
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_day");
         $dayValue = empty($selected) ? date('d') : $selected;
         $days=array('01'=>'1','02'=>'2','03'=>'3','04'=>'4',
-        '05'=>'5','06'=>'6','07'=>'7','08'=>'8','09'=>'9',
-        '10'=>'10','11'=>'11','12'=>'12',
-        '13'=>'13','14'=>'14','15'=>'15',
-        '16'=>'16','17'=>'17','18'=>'18',
-        '19'=>'19','20'=>'20','21'=>'21',
-        '22'=>'22','23'=>'23','24'=>'24',
-        '25'=>'25','26'=>'26','27'=>'27',
-        '28'=>'28','29'=>'29','30'=>'30','31'=>'31');
-        $option = $this->selectTag($value, $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
+                    '05'=>'5','06'=>'6','07'=>'7','08'=>'8',
+                    '09'=>'9','10'=>'10','11'=>'11','12'=>'12',
+                    '13'=>'13','14'=>'14','15'=>'15','16'=>'16',
+                    '17'=>'17','18'=>'18','19'=>'19','20'=>'20',
+                    '21'=>'21','22'=>'22','23'=>'23','24'=>'24',
+                    '25'=>'25','26'=>'26','27'=>'27','28'=>'28',
+                    '29'=>'29','30'=>'30','31'=>'31');
+        $option = $this->selectTag($tagName."_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1323,7 +1323,7 @@ function url($url = null, $return = false)
  * Returns a SELECT element for years
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param integer $minYear First year in sequence
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
@@ -1333,30 +1333,25 @@ function url($url = null, $return = false)
  */
     function yearOptionTag($tagName, $value=null, $minYear=null, $maxYear=null, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty = true)
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_year");
-
         $yearValue = empty($selected) ? date('Y') : $selected;
         $currentYear = date('Y');
-
         $maxYear = is_null($maxYear) ? $currentYear + 11 : $maxYear + 1;
-
         $minYear = is_null($minYear) ? $currentYear - 60 : $minYear;
 
-        if ( $minYear > $maxYear)
+        if ($minYear > $maxYear)
         {
             $tmpYear = $minYear;
             $minYear = $maxYear;
             $maxYear = $tmpYear;
-        };
+        }
         $minYear = $currentYear < $minYear ? $currentYear : $minYear;
         $maxYear = $currentYear > $maxYear ? $currentYear : $maxYear;
 
-        for ( $yearCounter = $minYear; $yearCounter < $maxYear; $yearCounter++)
+        for ($yearCounter = $minYear; $yearCounter < $maxYear; $yearCounter++)
         {
             $years[$yearCounter] = $yearCounter;
         }
-
-        $option = $this->selectTag($value, $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName."_year", $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1364,7 +1359,7 @@ function url($url = null, $return = false)
  * Returns a SELECT element for months.
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
  * @param boolean $show_empty Show/hide the empty select option
@@ -1372,12 +1367,12 @@ function url($url = null, $return = false)
  */
     function monthOptionTag($tagName, $value=null, $selected=null,  $selectAttr=null, $optionAttr=null, $showEmpty = true)
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_month");
         $monthValue = empty($selected) ? date('m') : $selected ;
         $months=array('01'=>'January','02'=>'February','03'=>'March',
-        '04'=>'April','05'=>'May','06'=>'June','07'=>'July','08'=>'August',
-        '09'=>'September','10'=>'October','11'=>'November','12'=>'December');
-        $option = $this->selectTag($value, $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
+                      '04'=>'April','05'=>'May','06'=>'June',
+                      '07'=>'July','08'=>'August','09'=>'September',
+                      '10'=>'October','11'=>'November','12'=>'December');
+        $option = $this->selectTag($tagName."_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1385,7 +1380,7 @@ function url($url = null, $return = false)
  * Returns a SELECT element for hours.
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
@@ -1393,7 +1388,6 @@ function url($url = null, $return = false)
  */
     function hourOptionTag($tagName, $value=null, $format24Hours = false, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty = true )
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_hour");
         if ( $format24Hours )
         {
             $hourValue = empty($selected) ? date('H') : $selected;
@@ -1404,20 +1398,18 @@ function url($url = null, $return = false)
         }
         if ( $format24Hours )
         { $hours = array('00'=>'00','01'=>'01','02'=>'02','03'=>'03','04'=>'04',
-        '05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09',
-        '10'=>'10','11'=>'11','12'=>'12',
-        '13'=>'13','14'=>'14','15'=>'15',
-        '16'=>'16','17'=>'17','18'=>'18',
-        '19'=>'19','20'=>'20','21'=>'21',
-        '22'=>'22','23'=>'23');
+                         '05'=>'05','06'=>'06','07'=>'07','08'=>'08','09'=>'09',
+                         '10'=>'10','11'=>'11','12'=>'12','13'=>'13','14'=>'14',
+                         '15'=>'15','16'=>'16','17'=>'17','18'=>'18','19'=>'19',
+                         '20'=>'20','21'=>'21','22'=>'22','23'=>'23');
         }
         else
         {
             $hours = array('01'=>'1','02'=>'2','03'=>'3','04'=>'4',
-            '05'=>'5','06'=>'6','07'=>'7','08'=>'8','09'=>'9',
-            '10'=>'10','11'=>'11','12'=>'12');
+                           '05'=>'5','06'=>'6','07'=>'7','08'=>'8',
+                           '09'=>'9','10'=>'10','11'=>'11','12'=>'12');
         }
-        $option = $this->selectTag($value, $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName."_hour", $hours, $hourValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1425,20 +1417,19 @@ function url($url = null, $return = false)
  * Returns a SELECT element for minutes.
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
     function minuteOptionTag( $tagName, $value=null, $selected=null,  $selectAttr=null, $optionAttr=null, $showEmpty = true)
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_min");
         $minValue = empty($selected) ? date('i') : $selected ;
         for( $minCount=0; $minCount<60; $minCount++)
         {
             $mins[$minCount] = sprintf('%02d', $minCount);
         }
-        $option = $this->selectTag($value, $mins, $minValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName."_min", $mins, $minValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 
@@ -1446,17 +1437,16 @@ function url($url = null, $return = false)
  * Returns a SELECT element for AM or PM.
  *
  * @param string $tagName Prefix name for the SELECT element
- * @param string $value
+ * @deprecated  string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
     function meridianOptionTag( $tagName, $value=null, $selected=null,  $selectAttr=null, $optionAttr=null, $showEmpty = true)
     {
-        $value = isset($value)? $value : $this->tagValue($tagName."_meridian");
         $merValue = empty($selected) ? date('a') : $selected ;
         $meridians = array('am'=>'am','pm'=>'pm');
-        $option = $this->selectTag($value, $meridians, $merValue,  $selectAttr, $optionAttr, $showEmpty);
+        $option = $this->selectTag($tagName."_meridian", $meridians, $merValue,  $selectAttr, $optionAttr, $showEmpty);
         return $option;
     }
 

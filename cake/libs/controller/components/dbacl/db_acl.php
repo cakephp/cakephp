@@ -64,7 +64,6 @@ class DB_ACL extends AclBase
  */
     function check($aro, $aco, $action = "*")
     {
-
       $Perms = new ArosAco();
       $Aro = new Aro();
       $Aco = new Aco();
@@ -81,18 +80,19 @@ class DB_ACL extends AclBase
 
       if($action != '*' && !in_array('_' . $action, $permKeys))
       {
-         trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_ERROR);
+         trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_NOTICE);
+         return false;
       }
 
       foreach($tmpAcoPath as $a)
       {
          $acoPath[] = $a['Aco']['id'];
       }
-      $acoPath = implode(", ", $acoPath);
 
       for($i = count($aroPath) - 1; $i >= 0; $i--)
       {
-         $perms = $Perms->findBySql("select aros_acos.* from aros_acos left join acos on aros_acos.aco_id = acos.id where aros_acos.aro_id = " . $aroPath[$i]['Aro']['id'] . " and aros_acos.aco_id in ({$acoPath}) order by acos.lft asc");
+         $perms = $Perms->findAll(array('ArosAco.aro_id' => $aroPath[$i]['Aro']['id'], 'ArosAco.aco_id' => $acoPath), null, 'Aco.lft asc');
+
          if($perms == null || count($perms) == 0)
          {
             continue;
@@ -106,9 +106,9 @@ class DB_ACL extends AclBase
 // ARO must be cleared for ALL ACO actions
                   foreach($permKeys as $key)
                   {
-                     if(isset($perm['aros_acos']))
+                     if(isset($perm['ArosAco']))
                      {
-                         if($perm['aros_acos'][$key] != 1)
+                         if($perm['ArosAco'][$key] != 1)
                          {
                             return false;
                          }
@@ -118,7 +118,7 @@ class DB_ACL extends AclBase
                 }
                 else
                 {
-                  switch($perm['aros_acos']['_' . $action])
+                  switch($perm['ArosAco']['_' . $action])
                   {
                      case -1:
                         return false;
@@ -132,7 +132,6 @@ class DB_ACL extends AclBase
             }
          }
       }
-
       return false;
     }
 
@@ -143,74 +142,51 @@ class DB_ACL extends AclBase
  */
     function allow($aro, $aco, $action = "*", $value = 1)
     {
-      $Perms = new ArosAco();
-      $perms = $this->getAclLink($aro, $aco);
-      $permKeys = $this->_getAcoKeys($Perms->loadInfo());
-      $save = array();
+        $Perms = new ArosAco();
+        $perms = $this->getAclLink($aro, $aco);
+        $permKeys = $this->_getAcoKeys($Perms->loadInfo());
+        $save = array();
 
-
-      if($perms == false)
-      {
-// One of the nodes does not exist
-         return false;
-      }
-
-      if(isset($perms[0]))
-      {
-         $save = $perms[0]['aros_acos'];
-      }
-
-      if($action == "*")
-      {
-         $permKeys = $this->_getAcoKeys($Perms->loadInfo());
-         foreach($permKeys as $key)
-         {
-            $save[$key] = $value;
-         }
-      }
-      else
-      {
-         if(in_array('_' . $action, $permKeys))
-         {
-            $save['_' . $action] = $value;
-         }
-         else
-         {
-// Raise an error
+        if($perms == false)
+        {
+            trigger_error('DB_ACL::allow() - Invalid node', E_USER_WARNING);
             return false;
-         }
-      }
+        }
 
-      $save['aro_id'] = $perms['aro'];
-      $save['aco_id'] = $perms['aco'];
+        if(isset($perms[0]))
+        {
+            $save = $perms[0]['ArosAco'];
+        }
 
-      if($perms['link'] != null && count($perms['link']) > 0)
-      {
-         $save['id'] = $perms['link'][0]['aros_acos']['id'];
-      }
-//return $Perms->save(array('ArosAco' => $save));
-
-      if(isset($save['id']))
-      {
-         $q = 'update aros_acos set ';
-         $saveKeys = array();
-         foreach($save as $key => $val)
-         {
-            if($key != 'id')
+        if($action == "*")
+        {
+            $permKeys = $this->_getAcoKeys($Perms->loadInfo());
+            foreach($permKeys as $key)
             {
-                $saveKeys[] = $key . ' = ' . $val;
+                $save[$key] = $value;
             }
-         }
-         $q .= implode(', ', $saveKeys) . ' where id = ' . $save['id'];
-      }
-      else
-      {
-         $q = 'insert into aros_acos (' . implode(', ', array_keys($save)) . ') values (' . implode(', ', $save) . ')';
-      }
+        }
+        else
+        {
+            if(in_array('_' . $action, $permKeys))
+            {
+                $save['_' . $action] = $value;
+            }
+            else
+            {
+                trigger_error('DB_ACL::allow() - Invalid ACO action', E_USER_WARNING);
+                return false;
+            }
+        }
 
-      $db =& ConnectionManager::getDataSource($Perms->useDbConfig);
-      $db->query($q);
-      return true;
+        $save['aro_id'] = $perms['aro'];
+        $save['aco_id'] = $perms['aco'];
+
+        if($perms['link'] != null && count($perms['link']) > 0)
+        {
+            $save['id'] = $perms['link'][0]['ArosAco']['id'];
+        }
+        return $Perms->save(array('ArosAco' => $save));
     }
 
 /**
@@ -256,60 +232,61 @@ class DB_ACL extends AclBase
 
 
 /**
- * Enter description here...
+ * Get an ARO object from the given id or alias
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return Aro
  */
     function getAro($id = null)
     {
-     if($id == null)
-     {
-// Raise error
-     }
-     $aro = new Aro();
-     $tmp = $aro->find(is_numeric($id) ? "Aro.user_id = {$id}" : "Aro.alias = '" . addslashes($id) . "'");
-     $aro->setId($tmp['Aro']['id']);
-     return $aro;
+        return $this->__getObject($id, 'Aro');
     }
 
 
 /**
- * Enter description here...
+ * Get an ACO object from the given id or alias
  *
- * @param unknown_type $id
- * @return unknown
+ * @param mixed $id
+ * @return Aco
  */
     function getAco($id = null)
     {
-     if($id == null)
-     {
-// Raise error
-     }
-     $aco = new Aco();
-     $tmp = $aco->find(is_numeric($id) ? "Aco.user_id    = {$id}" : "Aco.alias = '" . addslashes($id) . "'");
-     $aco->setId($tmp['Aco']['id']);
-     return $aco;
+        return $this->__getObject($id, 'Aco');
     }
 
 /**
- * Enter description here...
+ * Privaate method
  *
- * @param unknown_type $aro
- * @param unknown_type $aco
- * @return unknown
+ */
+    function __getObject($id = null, $object)
+    {
+        if($id == null)
+        {
+            trigger_error('Null id provided in DB_ACL::get'.$object, E_USER_WARNING);
+            return null;
+        }
+        $obj = new $obj;
+        $tmp = $obj->find(is_numeric($id) ? "Aco.user_id    = {$id}" : "Aco.alias = '" . addslashes($id) . "'");
+        $aco->setId($tmp['Aco']['id']);
+        return $aco;
+    }
+
+/**
+ * Get an array of access-control links between the given Aro and Aco
+ *
+ * @param mixed $aro
+ * @param mixed $aco
+ * @return array
  */
     function getAclLink($aro, $aco)
     {
-      $Aro = new Aro();
-      $Aco = new Aco();
-
-      $qAro = (is_string($aro) ? "alias = '" . addslashes($aro) . "'" : "user_id    = {$aro}");
-      $qAco = (is_string($aco) ? "alias = '" . addslashes($aco) . "'" : "object_id = {$aco}");
+      $Aro  = new Aro();
+      $Aco  = new Aco();
+      $Link = new ArosAco();
 
       $obj = array();
-      $obj['Aro'] = $Aro->find($qAro);
-      $obj['Aco'] = $Aco->find($qAco);
+      $obj['Aro'] = $Aro->find($Aro->_resolveID($aro));
+      $obj['Aco'] = $Aco->find($Aco->_resolveID($aco));
       $obj['Aro'] = $obj['Aro']['Aro'];
       $obj['Aco'] = $obj['Aco']['Aco'];
 
@@ -321,7 +298,7 @@ class DB_ACL extends AclBase
       return array(
          'aro'  => $obj['Aro']['id'],
          'aco'  => $obj['Aco']['id'],
-         'link' => $Aro->findBySql("select * from aros_acos where aro_id = {$obj['Aro']['id']} and aco_id = {$obj['Aco']['id']}")
+         'link' => $Link->findAll(array('ArosAco.aro_id' => $obj['Aro']['id'], 'ArosAco.aco_id' => $obj['Aco']['id']))
       );
     }
 

@@ -938,18 +938,6 @@ class Controller extends Object
                         unset($this->params['data'][$this->modelClass][$field['name'].'_meridian']);
                     $this->params['data'][$this->modelClass][$field['name']] = $newDate;
                 }
-                else if( 'boolean' == $field['type'] )
-                {
-                    if( isset( $this->params['data'][$this->modelClass][$field['name']]) &&
-                                "on" == $this->params['data'][$this->modelClass][$field['name']] )
-                    {
-                        $this->params['data'][$this->modelClass][$field['name']] = true;
-                    }
-                    else
-                    {
-                        $this->params['data'][$this->modelClass][$field['name']] = false;
-                    }
-                }
             }
         }
     }

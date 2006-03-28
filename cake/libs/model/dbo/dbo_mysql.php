@@ -306,7 +306,7 @@ class DboMysql extends DboSource
         switch ($column)
         {
             case 'boolean':
-                $data = $this->boolean($data);
+                $data = $this->boolean((bool)$data);
                 break;
             default:
                 if (ini_get('magic_quotes_gpc') == 1)
@@ -318,32 +318,6 @@ class DboMysql extends DboSource
         }
 
         return "'" . $data . "'";
-    }
-
-/**
- * Enter description here...
- *
- * @param unknown_type $model
- * @param unknown_type $fields
- * @param unknown_type $values
- * @return unknown
- */
-    function create(&$model, $fields = null, $values = null)
-    {
-        return parent::create($model, $fields, $values);
-    }
-
-/**
- * Enter description here...
- *
- * @param unknown_type $model
- * @param unknown_type $fields
- * @param unknown_type $values
- * @return unknown
- */
-    function update(&$model, $fields = null, $values = null)
-    {
-        return parent::update($model, $fields, $values);
     }
 
 /**

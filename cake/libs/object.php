@@ -169,7 +169,8 @@ class Object
         {
             uses('error');
         }
-        return new ErrorHandler($method, $messages);
+        $error = new ErrorHandler($method, $messages);
+        return $error;
     }
 
 /**
