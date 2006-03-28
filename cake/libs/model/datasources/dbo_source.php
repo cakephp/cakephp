@@ -359,6 +359,8 @@ class DboSource extends DataSource
  */
     function create(&$model, $fields = null, $values = null)
     {
+        $fieldInsert = array();
+        $valueInsert = array();
         if ($fields == null)
         {
             unset($fields, $values);
@@ -374,7 +376,15 @@ class DboSource extends DataSource
         $count = 0;
         foreach ($values as $value)
         {
-        	$valueInsert[] = $this->value($value, $model->getColumnType($fields[$count]));
+            $set = $this->value($value, $model->getColumnType($fields[$count]));
+            if($set === "''")
+            {
+                unset($fieldInsert[$count]);
+            }
+            else
+            {
+                $valueInsert[] = $set;
+            }
             $count++;
         }
 
@@ -852,6 +862,12 @@ class DboSource extends DataSource
                     }
                     $sql .= $this->conditions($conditions);
                     $sql .= $this->order($assocData['order']);
+
+                    if (isset($assocData['limit']))
+                    {
+                        $sql .= $this->limit($assocData['limit']);
+                    }
+
                 }
                 return $sql;
             break;
@@ -873,6 +889,10 @@ class DboSource extends DataSource
 
                     $sql .= $this->conditions($assocData['conditions']);
                     $sql .= $this->order($assocData['order']);
+                    if (isset($assocData['limit']))
+                    {
+                        $sql .= $this->limit($assocData['limit']);
+                    }
                 }
                 return $sql;
             break;

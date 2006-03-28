@@ -29,13 +29,21 @@
 <h1>New <?php echo Inflector::humanize($this->name)?></h1>
 
 <?php
-echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
+if(is_null($this->plugin))
+{
+    $path = '/';
+}
+else
+{
+    $path =  '/'.$this->plugin.'/';
+}
+echo $html->formTag($path. Inflector::underscore($this->name).'/create');
 echo $form->generateFields( $fieldNames );
 echo $form->generateSubmitDiv( 'Add' )
 ?>
 </form>
 <ul class='actions'>
 <?php
-echo "<li>".$html->link('List  '.Inflector::humanize($this->name), '/'.$this->viewPath.'/index')."</li>";
+echo "<li>".$html->link('List  '.Inflector::humanize($this->name), $path.$this->viewPath.'/index')."</li>";
 ?>
 </ul>

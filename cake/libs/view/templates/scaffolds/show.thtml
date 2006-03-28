@@ -31,6 +31,14 @@
 $modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = Inflector::underscore($modelName);
 $objModel =& ClassRegistry::getObject($modelKey);
+if(is_null($this->plugin))
+{
+    $path = '/';
+}
+else
+{
+    $path =  '/'.$this->plugin.'/';
+}
 if(!empty($objModel->alias))
 {
     foreach ($objModel->alias as $key => $value)
@@ -57,7 +65,7 @@ foreach($fieldNames as $field => $value)
 
         if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]) && (isset($displayText)))
         {
-            echo "<dd>".$html->link($displayText, '/'.Inflector::underscore($value['controller']).'/show/'
+            echo "<dd>".$html->link($displayText, $path.Inflector::underscore($value['controller']).'/show/'
                         .$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
         }
         else
@@ -83,16 +91,16 @@ foreach($fieldNames as $field => $value)
 </dl>
 <ul class='actions'>
 <?php
-echo "<li>".$html->link('Edit '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
-echo "<li>".$html->link('Delete  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/delete/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
-echo "<li>".$html->link('List  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/index')."</li>";
-echo "<li>".$html->link('New  '.Inflector::humanize($objModel->name), '/'.$this->viewPath.'/add')."</li>";
+echo "<li>".$html->link('Edit '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
+echo "<li>".$html->link('Delete  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/delete/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
+echo "<li>".$html->link('List  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/index')."</li>";
+echo "<li>".$html->link('New  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/add')."</li>";
 
 foreach( $fieldNames as $field => $value )
 {
     if( isset( $value['foreignKey'] ) )
     {
-        echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/index/")."</li>";
+        echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/index/")."</li>";
     }
 }
 ?>
@@ -129,11 +137,11 @@ foreach ($objModel->hasOne as $association => $relation)
         echo "</dl>";
         if($new == null)
         {
-            echo "<ul class='actions'><li>".$html->link('Edit '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/edit/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
+            echo "<ul class='actions'><li>".$html->link('Edit '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/edit/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
         }
         else
         {
-            echo "<ul class='actions'><li>".$html->link('New '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/add/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
+            echo "<ul class='actions'><li>".$html->link('New '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/add/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
         }
     }
 }
@@ -175,11 +183,11 @@ foreach($relations as $association => $relation)
             if (isset($this->controller->{$modelName}->{$association}))
             {
 ?>
-                <td class="listactions"><?php echo $html->link('View',"/".Inflector::underscore($controller).
+                <td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
                                                                 "/show/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
-                                        <?php echo $html->link('Edit',"/".Inflector::underscore($controller).
+                                        <?php echo $html->link('Edit',$path.Inflector::underscore($controller).
                                                                 "/edit/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
-                                        <?php echo $html->link('Delete',"/".Inflector::underscore($controller).
+                                        <?php echo $html->link('Delete',$path.Inflector::underscore($controller).
                                                                 "/delete/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
                 </td>
 <?php
@@ -187,11 +195,11 @@ foreach($relations as $association => $relation)
             else
             {
 ?>
-                <td class="listactions"><?php echo $html->link('View',"/".Inflector::underscore($controller).
+                <td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
                                                                 "/show/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
-                                        <?php echo $html->link('Edit',"/".Inflector::underscore($controller).
+                                        <?php echo $html->link('Edit',$path.Inflector::underscore($controller).
                                                                 "/edit/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
-                                        <?php echo $html->link('Delete',"/".Inflector::underscore($controller).
+                                        <?php echo $html->link('Delete',$path.Inflector::underscore($controller).
                                                                 "/delete/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
                 </td>
 <?php
@@ -203,7 +211,7 @@ foreach($relations as $association => $relation)
 </table>
 <ul class="actions">
 <?php
-    echo "<li>".$html->link('New '.Inflector::humanize($association),"/".Inflector::underscore($controller)."/add/")."</li>";
+    echo "<li>".$html->link('New '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/add/")."</li>";
 ?>
 </ul></div>
 <?php

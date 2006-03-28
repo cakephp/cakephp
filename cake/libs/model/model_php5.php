@@ -1363,8 +1363,8 @@ class Model extends Object
         {
             $conditions = $conditions.' AND ';
         }
-        @list($prev) = Model::findAll($conditions. $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1);
-        @list($next) = Model::findAll($conditions. $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1);
+        @list($prev) = Model::findAll($conditions. $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1, null, 0);
+        @list($next) = Model::findAll($conditions. $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1, null, 0);
 
         if (!isset($prev))
         {
@@ -1488,7 +1488,6 @@ class Model extends Object
  * Returns a resultset array with specified fields from database matching given conditions. Method can be used to generate option lists for SELECT elements.
  *
  * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
- * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
  * @param int $limit SQL LIMIT clause, for calculating items per page
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
@@ -1501,7 +1500,9 @@ class Model extends Object
         if ($keyPath == null && $valuePath == null)
         {
             $fields = array($this->primaryKey, $this->displayField);
-        } else {
+        }
+        else
+        {
             $fields = '*';
         }
         $result = $this->findAll($conditions, $fields, $order, $limit, 1, 0);

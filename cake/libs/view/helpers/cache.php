@@ -216,13 +216,20 @@ class CacheHelper extends Helper
             $cacheTime = $now + strtotime($timestamp);
         }
         $cache = convertSlash($this->here).'.php';
+
         $file = '<!--cachetime:'.$cacheTime.'-->
                  <?php
-                    loadController(\''.$this->view->name.'\');
-                    $this->controller = new '.$this->view->name.'Controller();
-                    $this->helpers = unserialize(\''. serialize($this->view->helpers).'\');
+                    loadController(\''. $this->view->name .'\');
+                    $this->controller = new '. $this->view->name .'Controller();
+                    $this->helpers = unserialize(\''. serialize($this->view->helpers) .'\');
+                    $this->base =  \''. $this->view->base .'\';
                     $this->webroot = \''. $this->view->webroot.'\';
-                    $this->data  = unserialize(\''. serialize($this->view->data).'\');
+                    $this->here = \''. $this->view->here .'\';
+                    $this->params = unserialize(\''. serialize($this->view->params) .'\');
+                    $this->action = unserialize(\''. serialize($this->view->action) .'\');
+                    $this->data  = unserialize(\''. serialize($this->view->data) .'\');
+                    $this->themeWeb = \''. $this->view->themeWeb .'\';
+                    $this->plugin = \''. $this->view->plugin .'\';
                     $loadedHelpers =  array();
                     $loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
                     foreach(array_keys($loadedHelpers) as $helper)

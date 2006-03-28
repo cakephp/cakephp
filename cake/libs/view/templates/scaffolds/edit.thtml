@@ -28,6 +28,14 @@
 
 $modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = $modelName;
+if(is_null($this->plugin))
+{
+    $path = '/';
+}
+else
+{
+    $path =  '/'.$this->plugin.'/';
+}
 
 ?>
 <h1><?php echo $type.' '.Inflector::humanize($modelName);?></h1>
@@ -35,11 +43,11 @@ $modelKey = $modelName;
 <?php
 if($type == 'Edit')
 {
-    echo $html->formTag('/'. Inflector::underscore($this->name) .'/update');
+    echo $html->formTag($path . Inflector::underscore($this->name) .'/update');
 }
 else
 {
-    echo $html->formTag('/'. Inflector::underscore($this->name).'/create');
+    echo $html->formTag($path. Inflector::underscore($this->name).'/create');
 }
 echo $form->generateFields( $fieldNames );
 echo $form->generateSubmitDiv( 'Save' )
@@ -49,16 +57,16 @@ echo $form->generateSubmitDiv( 'Save' )
 <?php
 if($type == 'Edit')
 {
-    echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/delete/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
+    echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), $path.$this->viewPath.'/delete/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
 }
-echo "<li>".$html->link('List  '.Inflector::humanize($modelName), '/'.$this->viewPath.'/index')."</li>";
+echo "<li>".$html->link('List  '.Inflector::humanize($modelName), $path.$this->viewPath.'/index')."</li>";
 if($type == 'Edit')
 {
     foreach($fieldNames as $field => $value)
     {
         if(isset($value['foreignKey']))
         {
-            echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), "/".Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
+            echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
         }
     }
 }

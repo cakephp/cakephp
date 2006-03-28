@@ -185,7 +185,7 @@ class Object
  * @access public
  * @todo add examples to manual
  */
-    function _persist($name, $return = null, &$object)
+    function _persist($name, $return = null, &$object, $type = null)
     {
         $file = CACHE.'persistent'.DS.strtolower($name).'.php';
 
@@ -208,7 +208,7 @@ class Object
         }
         else
         {
-            $this->__openPersistent($name);
+            $this->__openPersistent($name, $type);
             return true;
         }
     }
@@ -238,12 +238,26 @@ class Object
  * @param string $name name of the class
  * @access private
  */
-    function __openPersistent($name)
+    function __openPersistent($name, $type = null)
     {
         $file = CACHE.'persistent'.DS.strtolower($name).'.php';
         include($file);
-        $vars = unserialize(${$name});
-        $this->{$name} = $vars['0'];
+        switch ($type)
+        {
+            case 'registry':
+                $vars = unserialize(${$name});
+                foreach ($vars['0'] as $key => $value)
+                {
+                    ClassRegistry::addObject($key, $value);
+                    unset($value);
+                }
+            break;
+            default:
+                $vars = unserialize(${$name});
+                $this->{$name} = $vars['0'];
+            break;
+
+        }
     }
 }
 

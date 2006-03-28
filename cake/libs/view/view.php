@@ -398,9 +398,9 @@ class View extends Object
 
       if(!is_null($this->plugin))
       {
-          if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'elements'.DS.$name.$this->ext))
+          if(file_exists(APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'elements'.DS.$name.$this->ext))
           {
-                $fn =  APP.'plugins'.DS.$this->plugin.'views'.DS.'elements'.DS.$name.$this->ext;
+                $fn =  APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'elements'.DS.$name.$this->ext;
                 $params = array_merge_recursive($params, $this->loaded);
                 return $this->_render($fn, array_merge($this->_viewVars, $params), false);
             }
@@ -590,9 +590,9 @@ class View extends Object
 
         if(isset($this->plugin) && !is_null($this->plugin))
         {
-            if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'layouts'.DS.$this->layout.$this->ext))
+            if(file_exists(APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'layouts'.DS.$this->layout.$this->ext))
             {
-                $layoutFileName =  APP.'plugins'.DS.$this->plugin.'views'.DS.'layouts'.DS.$this->layout.$this->ext;
+                $layoutFileName =  APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'layouts'.DS.$this->layout.$this->ext;
                 return $layoutFileName;
             }
         }
@@ -709,9 +709,9 @@ class View extends Object
                 {
                     $helperFn = Inflector::underscore($helper).'.php';
 
-                    if(file_exists(APP.'plugins'.DS.$this->plugin.'views'.DS.'helpers'.DS.$helperFn))
+                    if(file_exists(APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'helpers'.DS.$helperFn))
                     {
-                        $helperFn = APP.'plugins'.DS.$this->plugin.'views'.DS.'helpers'.DS.$helperFn;
+                        $helperFn = APP.'plugins'.DS.$this->plugin.DS.'views'.DS.'helpers'.DS.$helperFn;
                     }
                     else if(file_exists(HELPERS.$helperFn))
                     {
@@ -779,7 +779,7 @@ class View extends Object
  */
     function pluginView($action, $layout)
     {
-        $viewFileName = APP.'plugins'.DS.$this->plugin.'views'.DS.$this->viewPath.DS.$action.$this->ext;
+        $viewFileName = APP.'plugins'.DS.$this->plugin.DS.'views'.DS.$this->viewPath.DS.$action.$this->ext;
         if(file_exists($viewFileName))
         {
             $this->render($action, $layout, $viewFileName);

@@ -154,8 +154,7 @@ function url($url = null, $return = false)
         $base = $this->base;
         if($this->plugin != null)
         {
-            $match = str_replace(DS, '', $this->plugin);
-			$base = preg_replace('/'.$match.'/', '', $this->base);
+			$base = preg_replace('/'.$this->plugin.'/', '', $this->base);
 			$base = str_replace('//','', $base);
             $pos1 = strrpos($base, '/');
             $char = strlen($base) -1;
@@ -329,13 +328,25 @@ function url($url = null, $return = false)
  */
     function checkbox($fieldName, $title = null, $htmlAttributes = null, $return = false)
     {
-        $this->setFormTag($fieldName);
         $value = $this->tagValue($fieldName);
         $model = new $this->model;
         $db =& ConnectionManager::getDataSource($model->useDbConfig);
         $value = $db->boolean($value);
-        $value? $htmlAttributes['checked'] = 'checked': null;
-        $htmlAttributes['value'] = 1;
+
+        if($value === true || $value === 't')
+        {
+            $htmlAttributes['checked'] = 'checked';
+        }
+        else
+        {
+            $htmlAttributes['checked'] = null;
+        }
+
+        if(!isset($htmlAttributes['value']))
+        {
+            $htmlAttributes['value'] = 1;
+        }
+
         $output = $this->hidden($fieldName, array('value' => 0), true);
         $output .= sprintf($this->tags['checkbox'], $this->model, $this->field,
                 $this->_parseAttributes($htmlAttributes, null, '', ' '));

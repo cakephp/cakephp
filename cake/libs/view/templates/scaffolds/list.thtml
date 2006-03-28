@@ -33,6 +33,14 @@ $model = ucwords(Inflector::singularize($this->name));
 $modelKey = $model;
 $humanName = Inflector::humanize($this->name);
 $humanSingularName = Inflector::singularize( $humanName );
+if(is_null($this->plugin))
+{
+    $path = '/';
+}
+else
+{
+    $path =  '/'.$this->plugin.'/';
+}
 if(!empty($this->controller->{$model}->alias))
 {
     foreach ($this->controller->{$model}->alias as $key => $value)
@@ -87,7 +95,7 @@ if(is_array($data))
                 {
                     $displayText = $row[$alias[$count]][$field];
                 }
-                echo $html->link( $displayText, "/".Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
+                echo $html->link( $displayText, $path.Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
                 $count++;
             }
             else
@@ -99,9 +107,9 @@ if(is_array($data))
 <?php
         }
 ?>
-        <td class="listactions"><?php echo $html->link('View',"/".$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-                                <?php echo $html->link('Edit',"/".$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-                                <?php echo $html->link('Delete',"/".$this->viewPath."/delete/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+        <td class="listactions"><?php echo $html->link('View',$path.$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                                <?php echo $html->link('Edit',$path.$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+                                <?php echo $html->link('Delete',$path.$this->viewPath."/delete/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
         </td>
         </tr>
 <?php
@@ -110,5 +118,5 @@ if(is_array($data))
 ?>
 </table>
 <ul class="actions">
-    <li><?php echo $html->link('New '.$humanSingularName, '/'.$this->viewPath.'/add'); ?></li>
+    <li><?php echo $html->link('New '.$humanSingularName, $path.$this->viewPath.'/add'); ?></li>
 </ul>

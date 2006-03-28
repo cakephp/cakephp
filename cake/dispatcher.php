@@ -128,7 +128,7 @@ class Dispatcher extends Object
                      $oldAction = $params['action'];
                      $params = $this->_restructureParams($params);
                      $plugin = Inflector::underscore($ctrlName);
-                     $this->plugin = $plugin.DS;
+                     $this->plugin = $plugin;
                      loadPluginModels($plugin);
                      $this->base = $this->base.'/'.Inflector::underscore($ctrlName);
                      if(empty($params['controller']) || !class_exists($pluginClass))
