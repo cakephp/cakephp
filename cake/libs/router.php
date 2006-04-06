@@ -118,7 +118,10 @@ class Router extends Object {
 // Here's the fix.
       if ($url && ('/' != $url[0]))
       {
-         $url = '/'.$url;
+         if (!defined('SERVER_IIS'))
+         {
+             $url = '/'.$url;
+         }
       }
 
       $out = array();

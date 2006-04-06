@@ -405,6 +405,7 @@ class Dispatcher extends Object
                 return $base;
             }
         }
+        return $base;
     }
 
     function _restructureParams($params)

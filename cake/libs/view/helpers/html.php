@@ -329,25 +329,25 @@ function url($url = null, $return = false)
     function checkbox($fieldName, $title = null, $htmlAttributes = null, $return = false)
     {
         $value = $this->tagValue($fieldName);
-        $model = new $this->model;
-        $db =& ConnectionManager::getDataSource($model->useDbConfig);
-        $value = $db->boolean($value);
+        $notCheckedValue = 0;
 
-        if($value === true || $value === 't')
+        if (isset($htmlAttributes['value']))
         {
-            $htmlAttributes['checked'] = 'checked';
+        	$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value)? 'checked': null;
+        	if ($htmlAttributes['checked'] == '0') {
+        		$notCheckedValue = -1;
+        	}
         }
         else
         {
-            $htmlAttributes['checked'] = null;
-        }
-
-        if(!isset($htmlAttributes['value']))
-        {
+            $model = new $this->model;
+            $db =& ConnectionManager::getDataSource($model->useDbConfig);
+            $value = $db->boolean($value);
+        	$htmlAttributes['checked'] = $value? 'checked': null;
             $htmlAttributes['value'] = 1;
         }
 
-        $output = $this->hidden($fieldName, array('value' => 0), true);
+        $output = $this->hidden($fieldName, array('value' => $notCheckedValue), true);
         $output .= sprintf($this->tags['checkbox'], $this->model, $this->field,
                 $this->_parseAttributes($htmlAttributes, null, '', ' '));
         return $output;
@@ -601,7 +601,17 @@ function url($url = null, $return = false)
     function tagValue ($fieldName)
     {
         $this->setFormTag($fieldName);
-        return isset($this->params['data'][$this->model][$this->field])? htmlspecialchars($this->params['data'][$this->model][$this->field]): null;
+
+        if(isset($this->params['data'][$this->model][$this->field]))
+        {
+            return h($this->params['data'][$this->model][$this->field]);
+        }
+        elseif(isset($this->data[$this->model][$this->field]))
+        {
+            return h($this->data[$this->model][$this->field]);
+        }
+
+        return false;
     }
 
 /**

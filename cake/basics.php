@@ -350,7 +350,7 @@ function listClasses($path)
     $classes = array();
     while (false !== ($file = readdir($dir)))
     {
-        if ((substr($file, -3, 3) == 'php'))
+        if ((substr($file, -3, 3) == 'php') && substr($file, 0, 1) != '.')
         {
             $classes[] = $file;
         }
@@ -753,7 +753,14 @@ function setUri()
         if (env('argv'))
         {
             $uri = env('argv');
-            $uri = env('PHP_SELF') .'/'. $uri[0];
+            if (defined('SERVER_IIS'))
+            {
+                $uri = BASE_URL.$uri[0];
+            }
+            else
+            {
+                $uri = env('PHP_SELF') .'/'. $uri[0];
+            }
         }
         else
         {

@@ -34,7 +34,7 @@
  */
 define ('APP_DIR', 'app');
 define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(__FILE__).DS);
+define ('ROOT', dirname(__FILE__));
 define ('WEBROOT_DIR', 'webroot');
 
 define('WWW_ROOT', ROOT.APP_DIR.DS.WEBROOT_DIR.DS);

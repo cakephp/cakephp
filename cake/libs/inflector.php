@@ -248,8 +248,8 @@ class Inflector extends Object
         {
             include(CONFIGS.'inflections.php');
             $singularRules = array_merge($singularRules, $coreSingularRules);
-            $uninflected = array_merge($uninflectedSingluar, $coreUninflectedSingular);
-            $irregular = array_merge($irregularSingluar, $coreIrregularSingular);
+            $uninflected = array_merge($uninflectedSingular, $coreUninflectedSingular);
+            $irregular = array_merge($irregularSingular, $coreIrregularSingular);
         }
 
         $regexUninflected = __enclose(join( '|', $uninflected));

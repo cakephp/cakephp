@@ -59,7 +59,15 @@ if (empty($uri) && defined('BASE_URL'))
     }
     else
     {
-        $elements = explode('/index.php', $uri);
+        if (strpos($uri, 'index.php') !== false)
+        {
+            $uri = r ('?', '', $uri);
+        	$elements = explode('/index.php', $uri);
+        }
+        else
+        {
+            $elements = explode('/?', $uri);
+        }
         if(!empty($elements[1]))
         {
             $_GET['url'] = $elements[1];

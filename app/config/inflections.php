@@ -62,13 +62,13 @@ $singularRules = array();
  * You should not have to change this value below if you do change it use same format
  * as the $uninflectedPlural above.
  */
-$uninflectedSingluar = $uninflectedPlural;
+$uninflectedSingular = $uninflectedPlural;
 /**
  * This is a key => value array of singular irregular words.
  * Most of the time this will be a reverse of the above $irregularPlural array
  * You should not have to change this value below if you do change it use same format
  *
- * $irregularSingluar = array('atlases' => 'atlas', 'beefs' => 'beef', 'brothers' => 'brother')
+ * $irregularSingular = array('atlases' => 'atlas', 'beefs' => 'beef', 'brothers' => 'brother')
  */
-$irregularSingluar = array_flip($irregularPlural);
+$irregularSingular = array_flip($irregularPlural);
 ?>

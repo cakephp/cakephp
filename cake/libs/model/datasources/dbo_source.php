@@ -388,7 +388,7 @@ class DboSource extends DataSource
             $count++;
         }
 
-        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
+        if($this->execute('INSERT INTO '.$this->name($model->table).' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
         {
             return true;
         }

@@ -419,7 +419,14 @@ class Controller extends Object
                 header($codes[$status]);
             }
         }
-        header ('Location: '.$url);
+        if (defined('SERVER_IIS'))
+        {
+            header ('Location: '.FULL_BASE_URL . $url);
+        }
+        else
+        {
+            header ('Location: '.$url);
+        }
     }
 
 /**
