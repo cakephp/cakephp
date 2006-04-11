@@ -1494,7 +1494,8 @@ class Model extends Object
     }
 
 /**
- * Returns a resultset array with specified fields from database matching given conditions. Method can be used to generate option lists for SELECT elements.
+ * Returns a resultset array with specified fields from database matching given conditions.
+ * Method can be used to generate option lists for SELECT elements.
  *
  * @param mixed $conditions SQL conditions as a string or as an array('field'=>'value',...)
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")

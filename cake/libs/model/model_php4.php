@@ -1215,6 +1215,15 @@ class Model extends Object
             $limit_str = $db->limit($limit, $offset);
         }
 
+        if ($order == null)
+        {
+            $order = array();
+        }
+        else
+        {
+            $order = array($order);
+        }
+
         $queryData = array(
             'conditions' 	=> $conditions,
             'fields'		=> $fields,
