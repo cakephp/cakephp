@@ -149,38 +149,6 @@ class DboMysql extends DboSource
     }
 
 /**
- * MySQL query abstraction
- *
- * @return resource Result resource identifier
- */
-    function query ()
-    {
-        $args = func_get_args();
-
-        if (count($args) == 1)
-        {
-            return $this->fetchAll($args[0]);
-        }
-        elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findby') === 0)
-        {
-            $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
-            $query = array($args[2]->name.'.'.$field  => $args[1][0]);
-
-            return $args[2]->find($query);
-        }
-        elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findallby') === 0)
-        {
-            $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
-            $query = array($args[2]->name.'.'.$field  => $args[1][0]);
-            return $args[2]->findAll($query);
-        }
-        else
-        {
-            return $this->fetchAll($args[0], false);
-        }
-    }
-
-/**
  * Returns a row from given resultset as an array .
  *
  * @param bool $assoc Associative array only, or both?
@@ -207,6 +175,12 @@ class DboMysql extends DboSource
  */
     function listSources ()
     {
+        $cache = parent::listSources();
+        if ($cache != null)
+        {
+            return $cache;
+        }
+
         $result = mysql_list_tables($this->config['database'], $this->connection);
         if (!$result)
         {
@@ -219,6 +193,7 @@ class DboMysql extends DboSource
             {
                 $tables[] = $line[0];
             }
+            parent::listSources($tables);
             return $tables;
         }
     }

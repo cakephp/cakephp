@@ -189,7 +189,7 @@ class AjaxHelper extends Helper
         if (isset($options['id']))
         {
             $htmlOptions['onclick'] = ' return false;';
-            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle) . $this->Javascript->event("$('{$options['id']}')", "click", $this->remoteFunction($options));
+            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle) . $this->Javascript->event("'{$options['id']}'", "click", $this->remoteFunction($options));
         }
         else
         {
@@ -216,6 +216,7 @@ class AjaxHelper extends Helper
             return $this->Html->link($title, $href, $html_options);
         }
     }
+
 /**
  * Creates JavaScript function for remote AJAX call
  *
@@ -322,7 +323,7 @@ class AjaxHelper extends Helper
         }
         $options['url'] = $action;
 
-        return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("$('".$htmlOptions['id']."')", "submit", $this->remoteFunction($options));
+        return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event("'".$htmlOptions['id']."'", "submit", $this->remoteFunction($options));
     }
 
 /**
@@ -352,7 +353,7 @@ class AjaxHelper extends Helper
 
         $htmlOptions['onclick'] = "return false;";
         return $this->Html->submit($title, $htmlOptions) .
-        	$this->Javascript->event('$("'.$htmlOptions['id'].'")', 'click', $this->remoteFunction($options));
+        	$this->Javascript->event('"'.$htmlOptions['id'].'"', 'click', $this->remoteFunction($options));
     }
 
 /**

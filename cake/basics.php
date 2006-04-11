@@ -744,7 +744,11 @@ function am ()
  */
 function setUri()
 {
-    if (env('REQUEST_URI'))
+    if (env('HTTP_X_REWRITE_URL'))
+    {
+        $uri = env('HTTP_X_REWRITE_URL');
+    }
+    elseif (env('REQUEST_URI'))
     {
         $uri = env('REQUEST_URI');
     }

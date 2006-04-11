@@ -125,7 +125,7 @@ class JavascriptHelper extends Helper
  * @param boolean $useCapture default true
  * @return boolean true on success
  */
-  function event ($object, $event, $observer, $useCapture = true)
+  function event ($object, $event, $observer, $useCapture = false)
   {
     if($useCapture == true)
     {
@@ -140,6 +140,7 @@ class JavascriptHelper extends Helper
     if($this->_cacheEvents === true)
     {
       $this->_cachedEvents[] = $b;
+      return true;
     }
     else
     {

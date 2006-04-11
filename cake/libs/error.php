@@ -86,11 +86,12 @@ class ErrorHandler extends Object
     {
         extract($params);
         $this->controller->webroot = $this->_webroot();
+        $this->controller->viewPath = 'errors';
         $this->controller->set(array('code'=>$code,
                                      'name'=>$name,
                                      'message'=>$message,
                                      'title' => $code.' '. $name));
-        $this->controller->render('../errors/error404');
+        $this->controller->render('error404');
         exit();
     }
 

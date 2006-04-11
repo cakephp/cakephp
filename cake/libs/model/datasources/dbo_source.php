@@ -108,6 +108,42 @@ class DboSource extends DataSource
     }
 
 /**
+ * Caches/returns cached results for child instances
+ *
+ * @return array
+ */
+    function listSources ($data = null)
+    {
+        if ($this->__sources != null)
+        {
+            return $this->__sources;
+        }
+
+        if (DEBUG > 0)
+        {
+            $expires = "+10 seconds";
+        }
+        else
+        {
+            $expires = "+999 days";
+        }
+
+        if ($data != null)
+        {
+            $data = serialize($data);
+        }
+
+        $filename = strtolower(get_class($this)).'_'.$this->config['database'].'_list';
+        $new = cache('models'.DS.$filename, $data, $expires);
+        if($new != null)
+        {
+            $new = unserialize($new);
+            $this->__sources = $new;
+        }
+        return $new;
+    }
+
+/**
  * Convenience method for DboSource::listSources().
  *
  * @return array
@@ -115,6 +151,79 @@ class DboSource extends DataSource
     function sources ()
     {
       return array_map('strtolower', $this->listSources());
+    }
+
+/**
+ * MySQL query abstraction
+ *
+ * @return resource Result resource identifier
+ */
+    function query ()
+    {
+        $args = func_get_args();
+        $fields = null;
+        $order = null;
+        $limit = null;
+        $page = null;
+        $recursive = null;
+
+        if (count($args) == 1)
+        {
+            return $this->fetchAll($args[0]);
+        }
+        elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0))
+        {
+            if (isset($args[1][1]))
+            {
+                $fields = $args[1][1];
+            }
+            if (isset($args[1][2]))
+            {
+                $order = $args[1][2];
+            }
+
+            if (strpos(strtolower($args[0]), 'findby') === 0)
+            {
+                $all = false;
+                $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+                if (isset($args[1][3]))
+                {
+                    $recursive = $args[1][3];
+                }
+            }
+            else
+            {
+                $all = true;
+                $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+                if (isset($args[1][3]))
+                {
+                    $limit = $args[1][3];
+                }
+                if (isset($args[1][4]))
+                {
+                    $page = $args[1][4];
+                }
+                if (isset($args[1][5]))
+                {
+                    $recursive = $args[1][4];
+                }
+            }
+
+            $query = array($args[2]->name.'.'.$field  => $args[1][0]);
+
+            if ($all)
+            {
+                return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
+            }
+            else
+            {
+                return $args[2]->find($query, $fields, $order, $recursive);
+            }
+        }
+        else
+        {
+            return $this->fetchAll($args[0], false);
+        }
     }
 
 /**
@@ -704,9 +813,10 @@ class DboSource extends DataSource
                         $assocData['fields'] = '';
                     }
                     $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$alias.' ';
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias).' ';
+
                     $conditions = $queryData['conditions'];
-                    $condition = $model->name($alias).'.'.$model->name($assocData['foreignKey']);
+                    $condition = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
                     $condition .= '={$__cakeForeignKey__$}';
 
                     if (is_array($conditions))
@@ -721,10 +831,10 @@ class DboSource extends DataSource
                         if (trim($conditions) != '')
                         {
                             $conditions .= ' AND ';
-                            $conditions .= $cond;
                         }
+                        $conditions .= $cond;
                     }
-                    $sql .= $this->conditions($queryData['conditions']) . $this->order($queryData['order']);
+                    $sql .= $this->conditions($conditions) . $this->order($queryData['order']);
                     $sql .= $this->limit($queryData['limit']);
                     return $sql;
                 }
@@ -746,7 +856,11 @@ class DboSource extends DataSource
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
                     $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
-                    $sql .= $this->order($assocData['order']);
+
+                    if ($assocData['order'] != null)
+                    {
+                        $queryData['order'][] = $assocData['order'];
+                    }
 
                     if (isset($assocData['conditions']) && !empty($assocData['conditions']))
                     {
@@ -770,7 +884,13 @@ class DboSource extends DataSource
             case 'belongsTo':
                 if ($external)
                 {
-                    $sql  = 'SELECT * FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
+                    if(!isset($assocData['fields']))
+                    {
+                        $assocData['fields'] = '';
+                    }
+                    $sql = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias).' ';
+
                     $conditions = $assocData['conditions'];
 
                     $condition = $this->name($alias).'.'.$this->name($linkModel->primaryKey);
@@ -867,7 +987,6 @@ class DboSource extends DataSource
                     {
                         $sql .= $this->limit($assocData['limit']);
                     }
-
                 }
                 return $sql;
             break;
@@ -1220,30 +1339,65 @@ class DboSource extends DataSource
  */
     function order ($keys, $direction = 'ASC')
     {
-        if (empty($keys))
+        if (is_array($keys))
+        {
+           foreach ($keys as $key => $val)
+           {
+              if (is_numeric($key) && empty($val))
+              {
+                  unset($keys[$key]);
+              }
+           }
+        }
+
+        if (empty($keys) || (is_array($keys) && count($keys) && isset($keys[0]) && empty($keys[0])))
         {
             return '';
         }
+
         if(is_array($keys))
         {
+            if (countdim($keys) > 1)
+            {
+                $new = array();
+                foreach ($keys as $val)
+                {
+                    $new[] = $this->order($val);
+                }
+                $keys = $new;
+            }
+
             foreach($keys as $key => $value)
             {
                 if(is_numeric($key))
                 {
+                    if (is_array($value))
+                    {
+                        $value = $this->order($value);
+                    }
+
                     $key = $value;
-                    $value = ' '.$direction;
+                    if (!preg_match('/\\x20ASC|\\x20DESC/i', $key))
+                    {
+                        $value = ' '.$direction;
+                    }
+                    else
+                    {
+                        $value = '';
+                    }
                 }
                 else
                 {
                     $value= ' '.$value;
                 }
-                $order[] = $this->name($key).$value;
+                $order[] = $this->order($this->name($key).$value);
             }
-            return ' ORDER BY '.join(',', $order);
+            return ' ORDER BY '. r('ORDER BY', '', join(',', $order));
         }
         else
         {
             $keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
+
             if (strpos('.', $keys))
             {
                 preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
@@ -1259,7 +1413,7 @@ class DboSource extends DataSource
                 }
                 else
                 {
-                    return ' ORDER BY '.$keys.' '.$direction;;
+                    return ' ORDER BY '.$keys.' '.$direction;
                 }
             }
             elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match))
