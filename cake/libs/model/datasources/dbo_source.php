@@ -1390,7 +1390,12 @@ class DboSource extends DataSource
                 {
                     $value= ' '.$value;
                 }
-                $order[] = $this->order($this->name($key).$value);
+
+                if(!preg_match('/^.+\\(.*\\)/', $key))
+                {
+                    $key = $this->name($key);
+                }
+                $order[] = $this->order($key.$value);
             }
             return ' ORDER BY '. r('ORDER BY', '', join(',', $order));
         }
