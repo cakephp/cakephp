@@ -179,14 +179,28 @@ class TextHelper extends Helper
  * @param string  $text    String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param string  $ending Ending to be appended to the trimmed string.
+ * @param boolean $exact If false, $test will not be cut mid-word
  * @return string Trimmed string.
  */
-    function truncate($text, $length, $ending='...')
+    function truncate($text, $length, $ending = '...', $exact = true)
     {
         if (strlen($text) <= $length)
-        return $text;
+        {
+            return $text;
+        }
         else
-        return substr($text, 0, $length - strlen($ending)) . $ending;
+        {
+            $truncate = substr($text, 0, $length - strlen($ending));
+            if (!$exact)
+            {
+                $spacepos = strrpos($truncate, ' ');
+                if (isset($spacepos))
+                {
+                    return substr($truncate, 0, $spacepos).$ending;
+                }
+            }
+            return $truncate.$ending;
+        }
     }
 
 

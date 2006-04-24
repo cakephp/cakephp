@@ -132,18 +132,26 @@ class Component extends Object
                     }
                     else
                     {
-                        return $this->cakeError('missingComponentClass',
-                                    array(array('className' => $this->controller->name,
-                                                'component' => $component,
-                                                'file' => $componentFn)));
+                        return $this->cakeError('missingComponentClass', array(
+                                   array(
+                                        'className' => $this->controller->name,
+                                        'component' => $component,
+                                        'file'      => $componentFn,
+                                        'base'      => $this->controller->base
+                                   )
+                               ));
                     }
                 }
                 else
                 {
-                    return $this->cakeError('missingComponentFile',
-                                array(array('className' => $this->controller->name,
-                                            'component' => $component,
-                                            'file' => $componentFn)));
+                    return $this->cakeError('missingComponentFile', array(
+                               array(
+                                   'className' => $this->controller->name,
+                                   'component' => $component,
+                                   'file'      => $componentFn,
+                                   'base'      => $this->controller->base
+                               )
+                           ));
                 }
             }
         }

@@ -300,8 +300,13 @@ class Controller extends Object
         }
         elseif($this->uses === false)
         {
-            return $this->cakeError('missingModel',array(array('className' => $this->modelClass,
-                                                                'webroot' => '')));
+            return $this->cakeError('missingModel', array(
+                       array(
+                           'className' => $this->modelClass,
+                           'webroot'   => '',
+                           'base'      => $this->base
+                       )
+                   ));
         }
         if ($this->uses)
         {
@@ -341,8 +346,13 @@ class Controller extends Object
                 }
                 else
                 {
-                    return $this->cakeError('missingModel',array(array('className' => $modelClass,
-                                                                        'webroot' => '')));
+                    return $this->cakeError('missingModel', array(
+                               array(
+                                   'className' => $modelClass,
+                                   'webroot'   => '',
+                                   'base'      => $this->base
+                               )
+                           ));
                 }
             }
         }

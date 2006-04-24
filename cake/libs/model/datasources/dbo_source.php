@@ -85,6 +85,22 @@ class DboSource extends DataSource
     }
 
 /**
+ * Reconnects to database server with optional new settings
+ *
+ * @param array $config An array defining the new configuration settings
+ * @return boolean True on success, false on failure
+ */
+    function reconnect ($config = null)
+    {
+        $this->disconnect();
+        if ($config != null)
+        {
+            $this->config = am($this->config, $config);
+        }
+        return $this->connect();
+    }
+
+/**
  * Prepares a value, or an array of values for database queries by quoting and escaping them.
  *
  * @param mixed $data A value or an array of values to prepare.
@@ -95,9 +111,11 @@ class DboSource extends DataSource
       if (is_array($data))
       {
 		  $out = array();
-		  foreach ($data as $key => $item)
+		  $keys = array_keys($data);
+		  $count = count($data);
+		  for ($i = 0; $i < $count; $i++)
 		  {
-			 $out[$key] = $this->value($item);
+              $out[$keys[$i]] = $this->value($data[$keys[$i]]);
 		  }
 		  return $out;
       }
@@ -548,9 +566,12 @@ class DboSource extends DataSource
                     }
                     else
                     {
-                        if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                        if ($model->useDbConfig == $linkModel->useDbConfig)
                         {
-                            $linkedModels[] = $type.'/'.$assoc;
+                            if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                            {
+                                $linkedModels[] = $type.'/'.$assoc;
+                            }
                         }
                     }
                 }
@@ -560,6 +581,7 @@ class DboSource extends DataSource
 // Build final query SQL
         $query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
         $resultSet = $this->fetchAll($query, $model->cacheQueries);
+        $filtered = $this->__filterResults($resultSet, $model);
 
         if ($model->recursive > 0)
         {
@@ -567,18 +589,36 @@ class DboSource extends DataSource
             {
                 foreach($model->{$type} as $assoc => $assocData)
                 {
+                    $db = null;
                     $linkModel =& $model->{$assocData['className']};
                     if (!in_array($type.'/'.$assoc, $linkedModels))
                     {
-                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
+                        if ($model->useDbConfig == $linkModel->useDbConfig)
+                        {
+                            $db =& $this;
+                        }
+                        else
+                        {
+                            $db =& ConnectionManager::getDataSource($linkModel->useDbConfig);
+                        }
                     }
                     elseif($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne'))
                     {
                         // Do recursive joins on belongsTo and hasOne relationships
-                        $this->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
+                        $db =& $this;
+                    }
+                    else
+                    {
+                        unset($db);
+                    }
+                    if (isset($db) && $db != null)
+                    {
+                        $db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
+                        unset($db);
                     }
                 }
             }
+            $this->__filterResults($resultSet, $model, $filtered);
         }
 
         if(!is_null($recursive))
@@ -586,6 +626,48 @@ class DboSource extends DataSource
             $model->recursive = $_recursive;
         }
         return $resultSet;
+    }
+
+/**
+ * Private method
+ *
+ * @param unknown_type $linkModel
+ * @param Model $model
+ * @return array
+ */
+    function __filterResults(&$results, &$model, $filtered = array())
+    {
+        $filtering = array();
+        $associations = am($model->belongsTo, $model->hasOne, $model->hasMany, $model->hasAndBelongsToMany);
+
+        $count = count($results);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $keys = array_keys($results[$i]);
+            $count2 = count($keys);
+
+            for ($j = 0; $j < $count2; $j++)
+            {
+                $key = $keys[$j];
+                if ($model->name != $key && !in_array($key, $filtered))
+                {
+                    if (!in_array($key, $filtering))
+                    {
+                        $filtering[] = $key;
+                    }
+                    if (isset($model->{$key}) && is_object($model->{$key}))
+                    {
+                        $data = $model->{$key}->afterFind(array(array($key => $results[$i][$key])));
+                    }
+                    else
+                    {
+                        $data = $model->{$associations[$key]['className']}->afterFind(array(array($key => $results[$i][$key])));
+                    }
+                    $results[$i][$key] = $data[0][$key];
+                }
+            }
+        }
+        return $filtering;
     }
 
 /**
@@ -618,14 +700,17 @@ class DboSource extends DataSource
             	}
             	return null;
             }
-            foreach ($resultSet as $i => $row)
+
+            $count = count($resultSet);
+            for ($i = 0; $i < $count; $i++)
             {
+                $row =& $resultSet[$i];
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
                 $fetch = $this->fetchAll($q, $model->cacheQueries);
 
                 if (!empty($fetch) && is_array($fetch))
                 {
-                    if ($recursive > 0)
+                    if ($recursive > 1)
                     {
                         foreach($linkModel->__associations as $type1)
                         {
@@ -713,8 +798,8 @@ class DboSource extends DataSource
 
             $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])). ', ';
             $sql .= join(', ', $this->fields($linkModel, $alias, ''));
-            $sql .=  ' FROM '.$model->table.' AS ' . $model->name;
-            $sql .=  ' LEFT JOIN '.$linkModel->table.' AS ' . $alias;
+            $sql .=  ' FROM '.$this->name($model->table).' AS ' . $this->name($model->name);
+            $sql .=  ' LEFT JOIN '.$this->name($linkModel->table).' AS ' . $this->name($alias);
             $sql .=  ' ON ';
             $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
             $sql .= ' = '.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
@@ -1178,15 +1263,22 @@ class DboSource extends DataSource
             {
                 if(!preg_match('/^.+\\(.*\\)/', $fields[$i]))
                 {
+                    $prepend = '';
+                    if (strpos($fields[$i], 'DISTINCT') !== false)
+                    {
+                        $prepend = 'DISTINCT ';
+                        $fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
+                    }
+
                     $dot = strrpos($fields[$i], '.');
                     if ($dot === false)
                     {
-                        $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]);
+                        $fields[$i] = $prepend.$this->name($alias).'.'.$this->name($fields[$i]);
                     }
                     else
                     {
                         $build = explode('.',$fields[$i]);
-                        $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]);
+                        $fields[$i] = $prepend.$this->name($build[0]).'.'.$this->name($build[1]);
                     }
                 }
             }
@@ -1288,7 +1380,7 @@ class DboSource extends DataSource
                 {
                     $data = $this->name($key)." = ''";
                 }
-                elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|like\\x20?|or\\x20?|between\\x20?|regexp\\x20?|[<>=!]{1,3}\\x20?)?(.*)/i', $value, $match))
+                elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<>=!]{1,3}\\x20?)?(.*)/i', $value, $match))
                 {
                     if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs))
                     {

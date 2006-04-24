@@ -359,7 +359,7 @@ class TimeHelper extends Helper
             else
             {
 // seconds only
-                $relative_date .= ($relative_date ? ', ' : '').$seconds.' second'.($seconds > 1 ? 's' : '');
+                $relative_date .= ($relative_date ? ', ' : '').$seconds.' second'.($seconds != 1 ? 's' : '');
             }
         }
 

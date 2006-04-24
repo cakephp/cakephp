@@ -68,16 +68,10 @@ class Helper extends Object
  */
 
 /**
- * Constructor.
- *
  * Parses tag templates into $this->tags.
  *
  * @return void
  */
-    function Helper()
-    {
-    }
-
     function loadConfig()
     {
         $config = fileExistsInPath(CAKE.'config'.DS.'tags.ini.php');
@@ -109,14 +103,8 @@ class Helper extends Object
     {
         if (AUTO_OUTPUT && $return === false)
         {
-            if (print $str)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            echo $str;
+            return true;
         }
         else
         {

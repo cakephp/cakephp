@@ -587,7 +587,7 @@ class CakeSession extends Object
             }
             return $expression;
         }
-        $this->setError(3, "$name is not a string");
+        $this->__setError(3, "$name is not a string");
         return false;
     }
 

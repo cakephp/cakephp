@@ -605,7 +605,7 @@ class Model extends Object
         {
             foreach ($v as $x => $y)
             {
-                if($x == $this->primaryKey)
+                if($x == $this->primaryKey && $n == $this->name)
                 {
                     $this->id = $y;
                 }

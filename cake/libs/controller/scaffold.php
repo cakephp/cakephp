@@ -473,10 +473,14 @@ class Scaffold extends Object {
                 }
                 else
                 {
-                    return $this->cakeError('missingAction',
-                                array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                            'action' => $params['action'],
-                                            'webroot' => $this->controllerClass->webroot)));
+                    return $this->cakeError('missingAction', array(
+                               array(
+                                   'className' => Inflector::camelize($params['controller']."Controller"),
+                                   'base'      => $this->controllerClass->base,
+                                   'action' => $params['action'],
+                                   'webroot' => $this->controllerClass->webroot
+                               )
+                           ));
                 }
         }
         else

@@ -75,7 +75,7 @@ class AclNode extends AppModel
 
       if($parent_id == null || $parent_id === 0)
       {
-         $parent = $this->find(null, "MAX(rght)");
+         $parent = $this->find(null, "MAX(rght)", null, null, 0);
          $parent['lft'] = $parent[0]['MAX(rght)'];
 
          if($parent[0]['MAX(rght)'] == null)
@@ -86,7 +86,7 @@ class AclNode extends AppModel
       }
       else
       {
-         $parent = $this->find($this->_resolveID($parent_id));
+         $parent = $this->find($this->_resolveID($parent_id), null, null, 0);
          if($parent == null || count($parent) == 0)
          {
             trigger_error("Null parent in {$class}::create()", E_USER_WARNING);
@@ -134,48 +134,61 @@ class AclNode extends AppModel
          $id = $this->id;
       }
 
-      $object = $this->find($this->_resolveID($id));
+      $object = $this->find($this->_resolveID($id), null, null, 0);
       if($object == null || count($object) == 0)
       {
-// Couldn't find object
+         // Couldn't find object
          return false;
       }
-      $parent = $this->getParent(intval($object[$class][$secondary_id]));
+      $object = $object[$class];
+      $parent = $this->getParent($id);
 
-// Node is already at root, or new parent == old parent
-      if(($parent == null && $parent_id == null) || ($parent_id == $parent[$class][$secondary_id]) || ($parent_id == $parent[$class]['alias']))
+      // Node is already at root, or new parent == old parent
+      if(($parent == null && $parent_id == null) || ($parent_id == $parent[$class][$secondary_id] && $parent_id != null) || ($parent_id == $parent[$class]['alias'] && $parent_id != null))
       {
          return false;
       }
-
-      if($parent_id != null && $parent[$class]['lft'] <= $object[$class]['lft'] && $parent[$class]['rght'] >= $object[$class]['rght'])
-      {
-// Can't move object inside self or own child
-         return false;
-      }
-      $this->_syncTable($table_name, 0, $object[$class]['lft'], $object[$class]['lft']);
 
       if($parent_id == null)
       {
-         $parent = $this->find(null, "MAX(rght)");
-         $parent['lft'] = $parent[0]['MAX(rght)'];
+         $newParent = $this->find(null, "MAX(rght) as lft", null, 0);
+         $newParent = $newParent[0];
+         $newParent['rght'] = $newParent['lft'];
       }
       else
       {
-         $parent = $this->find($this->_resolveID($parent_id));
-         $parent = $parent[$class];
-         $this->_syncTable($table_name, 1, $parent['lft'], $parent['lft']);
+         $newParent = $this->find($this->_resolveID($parent_id), null, null, 0);
+         $newParent = $newParent[$class];
       }
 
-      $object[$class]['lft']  = $parent['lft'] + 1;
-      $object[$class]['rght'] = $parent['lft'] + 2;
-      $this->save($object);
-
-      if($parent['lft'] == 0)
+      if($parent_id != null && $newParent['lft'] <= $object['lft'] && $newParent['rght'] >= $object['rght'])
       {
-         $this->_syncTable($table_name, 2, $parent['lft'], $parent['lft']);
+         // Can't move object inside self or own child
+         return false;
       }
 
+      $this->_syncTable($table_name, 0, $object['lft'], $object['lft']);
+      
+      if ($object['lft'] < $newParent['lft'])
+      {
+          $newParent['lft']  = $newParent['lft']  - 2;
+          $newParent['rght'] = $newParent['rght'] - 2;
+      }
+
+      if ($parent_id != null)
+      {
+          $this->_syncTable($table_name, 1, $newParent['lft'], $newParent['lft']);
+      }
+
+      $object['lft']  = $newParent['lft'] + 1;
+      $object['rght'] = $newParent['lft'] + 2;
+      $this->save(array($class => $object));
+
+      if($newParent['lft'] == 0)
+      {
+         $this->_syncTable($table_name, 2, $newParent['lft'], $newParent['lft']);
+      }
+      return true;
     }
 
 
@@ -213,12 +226,12 @@ class AclNode extends AppModel
       }
       extract($this->__dataVars());
 
-      $item = $this->find($this->_resolveID($id));
+      $item = $this->find($this->_resolveID($id), null, null, 0);
       if($item == null || count($item) == 0)
       {
          return null;
       }
-      return $this->findAll(array($class.'.lft' => '<= '.$item[$class]['lft'], $class.'.rght' => '>= '.$item[$class]['rght']));
+      return $this->findAll(array($class.'.lft' => '<= '.$item[$class]['lft'], $class.'.rght' => '>= '.$item[$class]['rght']), null, array($class.'.lft' => 'ASC'), null, null, 0);
     }
 
 /**
@@ -236,8 +249,8 @@ class AclNode extends AppModel
         }
         extract($this->__dataVars());
 
-        $item = $this->find($this->_resolveID($id));
-        return $this->findAll(array($class.'.lft' => '> '.$item[$class]['lft'], $class.'.rght' => '< '.$item[$class]['rght']));
+        $item = $this->find($this->_resolveID($id), null, null, 0);
+        return $this->findAll(array($class.'.lft' => '> '.$item[$class]['lft'], $class.'.rght' => '< '.$item[$class]['rght']), null, null, null, null, null, 0);
     }
 
 /**

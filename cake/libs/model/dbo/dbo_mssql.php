@@ -2,7 +2,7 @@
 /* SVN FILE: $Id$ */
 
 /**
- * MySQL layer for DBO
+ * MS SQL layer for DBO
  *
  * Long description for file
  *
@@ -43,44 +43,44 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
  * @subpackage cake.cake.libs.model.dbo
  * @since      CakePHP v 0.10.5.1790
  */
-class DboMysql extends DboSource
+class DboMssql extends DboSource
 {
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-    var $description = "MySQL DBO Driver";
+    var $description = "MS SQL DBO Driver";
 
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-    var $startQuote = "`";
+    var $startQuote = "[";
 
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-    var $endQuote = "`";
+    var $endQuote = "]";
 
 /**
- * Base configuration settings for MySQL driver
+ * Base configuration settings for MS SQL driver
  *
  * @var array
  */
-    var $_baseConfig = array('persistent'  => true,
+    var $_baseConfig = array('persistent' => true,
                              'host'        => 'localhost',
-                             'login'       => 'root',
+                             'login'      => 'root',
                              'password'    => '',
                              'database'    => 'cake',
-                             'port'        => '3306',
-                             'connect'     => 'mysql_pconnect');
+                             'port'        => '1433',
+                             'connect'     => 'mssql_pconnect');
 
 /**
- * MySQL column definition
+ * MS SQL column definition
  *
  * @var array
  */
@@ -91,10 +91,23 @@ class DboMysql extends DboSource
                          'float'       => array('name' => 'float', 'formatter' => 'floatval'),
                          'datetime'    => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
                          'timestamp'   => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-                         'time'        => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
-                         'date'        => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-                         'binary'      => array('name' => 'blob'),
-                         'boolean'     => array('name' => 'tinyint', 'limit' => '1'));
+                         'time'        => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+                         'date'        => array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
+                         'binary'      => array('name' => 'image'),
+                         'boolean'     => array('name' => 'bit'));
+
+/**
+ * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
+ *
+ * @param array $config Configuration data from app/config/databases.php
+ * @return boolean True if connected successfully, false on error
+ */
+    function __construct ($config)
+    {
+        mssql_min_message_severity(15);
+        mssql_min_error_severity(2);
+        return parent::__construct($config);
+    }
 
 /**
  * Connects to the database using options in the given configuration array.
@@ -107,16 +120,19 @@ class DboMysql extends DboSource
         $connect = $config['connect'];
 
         $this->connected = false;
-        if (!$config['persistent'])
+        
+        if (is_numeric($config['port']))
         {
-            $this->connection = mysql_connect($config['host'], $config['login'], $config['password'], true);
+            $port = ':'.$config['port']; // Port number
         }
         else
         {
-            $this->connection = $connect($config['host'], $config['login'], $config['password']);
+            $port = '\\'.$config['port']; // Named pipe
         }
 
-        if (mysql_select_db($config['database'], $this->connection))
+        $this->connection = $connect($config['host'].$port, $config['login'], $config['password']);
+
+        if (mssql_select_db($config['database'], $this->connection))
         {
             $this->connected = true;
         }
@@ -129,8 +145,7 @@ class DboMysql extends DboSource
  */
     function disconnect ()
     {
-        $this->connected = !@mysql_close($this->connection);
-        return !$this->connected;
+        return @mssql_close($this->connection);
     }
 
 /**
@@ -142,7 +157,7 @@ class DboMysql extends DboSource
  */
     function _execute ($sql)
     {
-        return mysql_query($sql, $this->connection);
+        return mssql_query($sql, $this->connection);
     }
 
 /**
@@ -177,18 +192,18 @@ class DboMysql extends DboSource
         {
             return $cache;
         }
+        $result = $this->fetchAll('SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES');
 
-        $result = mysql_list_tables($this->config['database'], $this->connection);
-        if (!$result)
+        if (!$result || empty($result))
         {
             return null;
         }
         else
         {
             $tables = array();
-            while ($line = mysql_fetch_array($result))
+            foreach ($result as $table)
             {
-                $tables[] = $line[0];
+                $tables[] = $table[0]['TABLE_NAME'];
             }
             parent::listSources($tables);
             return $tables;
@@ -210,19 +225,12 @@ class DboMysql extends DboSource
         }
 
         $fields = false;
-        $cols = $this->query('DESC ' . $this->name($model->table));
+        $cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('".$model->table."', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('".$model->table."'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '".$model->table."'", false);
 
         foreach ($cols as $column)
         {
-            $colKey = array_keys($column);
-            if (isset($column[$colKey[0]]) && !isset($column[0]))
-            {
-                $column[0] = $column[$colKey[0]];
-            }
-            if (isset($column[0]))
-            {
-                $fields[] = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type']), 'null' => $column[0]['Null']);
-            }
+            $field = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type'].$column[0]['Length']), 'null' => $column[0]['Null']);
+            $fields[] = $field;
         }
         $this->__cacheDescription($model->table, $fields);
         return $fields;
@@ -232,7 +240,7 @@ class DboMysql extends DboSource
  * Returns a quoted name of $data for use in an SQL statement.
  *
  * @param string $data Name (table.field) to be prepared for use in an SQL statement
- * @return string Quoted for MySQL
+ * @return string Quoted for MS SQL
  */
     function name ($data)
     {
@@ -240,11 +248,12 @@ class DboMysql extends DboSource
         {
             return '*';
         }
-        $pos = strpos($data, '`');
+        $pos = strpos($data, '[');
         if ($pos === false)
         {
-            $data = '`'. str_replace('.', '`.`', $data) .'`';
+            $data = '['. r('.', '].[', $data) .']';
         }
+        $data = r(']]', ']', r('[[', '[', $data));
         return $data;
     }
 
@@ -285,11 +294,69 @@ class DboMysql extends DboSource
                 {
                     $data = stripslashes($data);
                 }
-
-                $data = mysql_real_escape_string($data, $this->connection);
+                $data = addslashes($data);
         }
 
         return "'" . $data . "'";
+    }
+
+/**
+ * Generates the fields list of an SQL query.
+ *
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields
+ * @return array
+ */
+    function fields (&$model, $alias, $fields)
+    {
+      if (is_array($fields))
+        {
+            $fields = $fields;
+        }
+        else
+        {
+            if ($fields != null)
+            {
+                if (strpos($fields, ','))
+                {
+                    $fields = explode(',', $fields);
+                }
+                else
+                {
+                    $fields = array($fields);
+                }
+                $fields = array_map('trim', $fields);
+            }
+            else
+            {
+                 foreach ($model->_tableInfo->value as $field)
+                 {
+                     $fields[]= $field['name'];
+                 }
+
+            }
+        }
+
+        $count = count($fields);
+        if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false)
+        {
+            for ($i = 0; $i < $count; $i++)
+            {
+                $dot = strrpos($fields[$i], '.');
+                if ($dot === false)
+                {
+                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
+                }
+                else
+                {
+                    $build = explode('.',$fields[$i]);
+                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
+                }
+            }
+        }
+
+        return $fields;
     }
 
 /**
@@ -303,7 +370,7 @@ class DboMysql extends DboSource
     {
         if (parent::begin($model))
         {
-            if ($this->execute('START TRANSACTION'))
+            if ($this->execute('BEGIN TRANSACTION'))
             {
                 $this->__transactionStarted = true;
                 return true;
@@ -354,9 +421,13 @@ class DboMysql extends DboSource
  */
     function lastError ()
     {
-        if (mysql_errno($this->connection))
+        $error = mssql_get_last_message($this->connection);
+        if ($error)
         {
-            return mysql_errno($this->connection).': '.mysql_error($this->connection);
+            if (strpos('changed database', low($error)) !== false)
+            {
+                return $error;
+            }
         }
         return null;
     }
@@ -371,7 +442,7 @@ class DboMysql extends DboSource
     {
         if ($this->_result)
         {
-            return mysql_affected_rows($this->connection);
+            return mssql_rows_affected($this->connection);
         }
         return null;
     }
@@ -386,7 +457,7 @@ class DboMysql extends DboSource
     {
         if ($this->_result)
         {
-            return @mysql_num_rows($this->_result);
+            return @mssql_num_rows($this->_result);
         }
         return null;
     }
@@ -399,7 +470,8 @@ class DboMysql extends DboSource
  */
     function lastInsertId ($source = null)
     {
-        return mysql_insert_id($this->connection);
+        $id = $this->fetchAll('SELECT SCOPE_IDENTITY() AS insertID', false);
+        return $id[0]['insertID'];
     }
 
 /**
@@ -444,11 +516,11 @@ class DboMysql extends DboSource
         {
             return $col;
         }
-        if ($col == 'tinyint' && $limit == '1')
+        if ($col == 'bit')
         {
             return 'boolean';
         }
-        if (strpos($col, 'int') !== false)
+        if (strpos($col, 'int') !== false || $col == 'numeric')
         {
             return 'integer';
         }
@@ -460,17 +532,13 @@ class DboMysql extends DboSource
         {
             return 'text';
         }
-        if (strpos($col, 'blob') !== false)
+        if (strpos($col, 'binary') !== false || $col == 'image')
         {
             return 'binary';
         }
-        if (in_array($col, array('float', 'double', 'decimal')))
+        if (in_array($col, array('float', 'real', 'decimal')))
         {
             return 'float';
-        }
-        if (strpos($col, 'enum') !== false)
-        {
-            return "enum($limit)";
         }
 
         return 'text';
@@ -485,16 +553,16 @@ class DboMysql extends DboSource
     {
         $this->results =& $results;
         $this->map = array();
-        $num_fields = mysql_num_fields($results);
+        $num_fields = mssql_num_fields($results);
         $index = 0;
         $j = 0;
 
         while ($j < $num_fields)
         {
-            $column = mysql_fetch_field($results,$j);
-            if (!empty($column->table))
+            $column = mssql_fetch_field($results, $j);
+            if (strpos($column->name, '__'))
             {
-                $this->map[$index++] = array($column->table, $column->name);
+                $this->map[$index++] = explode('__', $column->name);
             }
             else
             {
@@ -511,10 +579,10 @@ class DboMysql extends DboSource
  */
     function fetchResult()
     {
-        if ($row = mysql_fetch_row($this->results))
+        if ($row = mssql_fetch_row($this->results))
         {
             $resultRow = array();
-            $i =0;
+            $i = 0;
             foreach ($row as $index => $field)
             {
                 list($table, $column) = $this->map[$index];
@@ -532,12 +600,13 @@ class DboMysql extends DboSource
     function buildSchemaQuery($schema)
     {
         $search  = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-                         '{FULLTEXT_MYSQL}', '{BOOLEAN}', '{UTF_8}');
+                         '{BOOLEAN}', '{UTF_8}');
         $replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
-                         'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
+                         'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
                          '/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-        $query = trim(str_replace($search, $replace, $schema));
+        $query = trim(r($search, $replace, $schema));
         return $query;
      }
 }
+
 ?>

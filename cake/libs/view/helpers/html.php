@@ -271,6 +271,18 @@ function url($url = null, $return = false)
             $htmlAttributes['value'] = $this->tagValue($fieldName);
         }
 
+        if ($this->tagIsInvalid($this->model, $this->field))
+        {
+            if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "")
+            {
+                $htmlAttributes['class'] .= ' form_error';
+            }
+            else
+            {
+                $htmlAttributes['class'] = 'form_error';
+            }
+        }
+
         return $this->output(sprintf($this->tags['password'], $this->model, $this->field,
         $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
     }
@@ -350,7 +362,7 @@ function url($url = null, $return = false)
         $output = $this->hidden($fieldName, array('value' => $notCheckedValue), true);
         $output .= sprintf($this->tags['checkbox'], $this->model, $this->field,
                 $this->_parseAttributes($htmlAttributes, null, '', ' '));
-        return $output;
+        return $this->output($output, $return);
     }
 
 /**
@@ -546,16 +558,18 @@ function url($url = null, $return = false)
  * @param array $names		Array of tablenames.
  * @param array $trOptions	HTML options for TR elements.
  * @param array $thOptions	HTML options for TH elements.
+ * @param  boolean $return         Wheter this method should return a value
  * @return string
  */
-    function tableHeaders($names, $trOptions=null, $thOptions=null)
+    function tableHeaders($names, $trOptions=null, $thOptions=null, $return=false)
     {
         $out = array();
         foreach ($names as $arg)
         {
             $out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($thOptions), $arg);
         }
-        return sprintf($this->tags['tablerow'], $this->parseHtmlOptions($trOptions), join(' ', $out));
+        $data = sprintf($this->tags['tablerow'], $this->parseHtmlOptions($trOptions), join(' ', $out));
+        return $this->output($data, $return);
     }
 
 
@@ -565,9 +579,10 @@ function url($url = null, $return = false)
  * @param array $data 			Array of table data
  * @param array $oddTrOptions 	HTML options for odd TR elements
  * @param array $evenTrOptions 	HTML options for even TR elements
+ * @param  boolean $return         Wheter this method should return a value
  * @return string	Formatted HTML
  */
-    function tableCells($data, $oddTrOptions=null, $evenTrOptions=null)
+    function tableCells($data, $oddTrOptions=null, $evenTrOptions=null, $return=false)
     {
         if (empty($data[0]) || !is_array($data[0]))
         {
@@ -587,8 +602,7 @@ function url($url = null, $return = false)
             $options = $this->parseHtmlOptions($count%2? $oddTrOptions: $evenTrOptions);
             $out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
         }
-
-        return join("\n", $out);
+        return $this->output(join("\n", $out), $return);
     }
 
 
@@ -1051,9 +1065,10 @@ function url($url = null, $return = false)
  * @param boolean $show_empty Show/hide the empty select option
  * @param array $selectAttr Array of HTML options for the opening SELECT element
  * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
+ * @param  boolean $return         Wheter this method should return a value
  * @return string Formatted SELECT element
  */
-    function selectTag($fieldName, $optionElements, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty=true)
+    function selectTag($fieldName, $optionElements, $selected=null, $selectAttr=null, $optionAttr=null, $showEmpty=true, $return=false)
     {
         $this->setFormTag($fieldName);
         if ($this->tagIsInvalid($this->model, $this->field))
@@ -1107,7 +1122,7 @@ function url($url = null, $return = false)
 
         $select[] = sprintf($this->tags['selectend']);
 
-        return implode("\n", $select);
+        return $this->output(implode("\n", $select), $return);
     }
 
 

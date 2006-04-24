@@ -596,7 +596,7 @@ class AjaxHelper extends Helper
  */
     function __optionsForSortable ($options)
     {
-        $options = $this->_optionsToString($options, array('handle','tag','constraint','ghosting'));
+        $options = $this->_optionsToString($options, array('handle','tag','constraint','ghosting', 'only'));
         return $this->_buildOptions($options, $this->sortOptions);
     }
 

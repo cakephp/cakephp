@@ -85,6 +85,7 @@ class ErrorHandler extends Object
     function error ($params)
     {
         extract($params);
+        $this->controller->base = $base;
         $this->controller->webroot = $this->_webroot();
         $this->controller->viewPath = 'errors';
         $this->controller->set(array('code'=>$code,
@@ -112,12 +113,17 @@ class ErrorHandler extends Object
         {
             $message = '';
         }
+        if(!isset($base))
+        {
+            $base = '';
+        }
 
         header("HTTP/1.0 404 Not Found");
         $this->error(
             array('code'	=> '404',
                   'name'	=> 'Not found',
-                  'message'	=> sprintf(__("The requested address %s was not found on this server.", true), $url, $message)
+                  'message'	=> sprintf(__("The requested address %s was not found on this server.", true), $url, $message),
+                  'base'    => $base
                  )
         );
         exit();
@@ -130,10 +136,12 @@ class ErrorHandler extends Object
     function missingController($params)
     {
         extract($params);
+        $this->controller->base = $base;
         $this->controller->webroot = $webroot;
+        $this->controller->viewPath = 'errors';
         $this->controller->set(array('controller' => $className,
                                      'title' => 'Missing Controller'));
-        $this->controller->render('../errors/missingController');
+        $this->controller->render('missingController');
         exit();
     }
 
@@ -144,11 +152,13 @@ class ErrorHandler extends Object
     function missingAction($params)
     {
         extract($params);
+        $this->controller->base = $base;
         $this->controller->webroot = $webroot;
+        $this->controller->viewPath = 'errors';
         $this->controller->set(array('controller' => $className,
                                      'action' => $action,
                                      'title' => 'Missing Method in Controller'));
-        $this->controller->render('../errors/missingAction');
+        $this->controller->render('missingAction');
         exit();
     }
 
@@ -159,11 +169,13 @@ class ErrorHandler extends Object
     function privateAction($params)
     {
         extract($params);
+        $this->controller->base = $base;
         $this->controller->webroot = $webroot;
+        $this->controller->viewPath = 'errors';
         $this->controller->set(array('controller' => $className,
                                      'action' => $action,
                                      'title' => 'Trying to access private method in class'));
-        $this->controller->render('../errors/privateAction');
+        $this->controller->render('privateAction');
         exit();
     }
 
@@ -174,11 +186,12 @@ class ErrorHandler extends Object
     function missingTable($params)
     {
         extract($params);
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('model' => $className,
                                      'table' => $table,
                                      'title' => 'Missing Database Table'));
-        $this->controller->render('../errors/missingTable');
+        $this->controller->render('missingTable');
         exit();
     }
 
@@ -189,9 +202,10 @@ class ErrorHandler extends Object
     function missingDatabase($params = array())
     {
         extract($params);
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('title' => 'Scaffold Missing Database Connection'));
-        $this->controller->render('../errors/missingScaffolddb');
+        $this->controller->render('missingScaffolddb');
         exit();
     }
 
@@ -202,12 +216,14 @@ class ErrorHandler extends Object
     function missingView($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('controller' => $className,
                                      'action' => $action,
                                      'file' => $file,
                                      'title' => 'Missing View'));
-        $this->controller->render('../errors/missingView');
+        $this->controller->render('missingView');
         exit();
     }
 
@@ -218,11 +234,13 @@ class ErrorHandler extends Object
     function missingLayout($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->layout = 'default';
         $this->controller->set(array('file' => $file,
                                      'title' => 'Missing Layout'));
-        $this->controller->render('../errors/missingLayout');
+        $this->controller->render('missingLayout');
         exit();
     }
 
@@ -233,10 +251,11 @@ class ErrorHandler extends Object
     function missingConnection($params)
     {
         extract($params);
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('model' => $className,
                                      'title' => 'Missing Database Connection'));
-        $this->controller->render('../errors/missingConnection');
+        $this->controller->render('missingConnection');
         exit();
     }
 
@@ -248,11 +267,13 @@ class ErrorHandler extends Object
     function missingHelperFile($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
                                      'file' => $file,
                                      'title' => 'Missing Helper File'));
-        $this->controller->render('../errors/missingHelperFile');
+        $this->controller->render('missingHelperFile');
         exit();
     }
 
@@ -263,11 +284,13 @@ class ErrorHandler extends Object
     function missingHelperClass($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
                                      'file' => $file,
                                      'title' => 'Missing Helper Class'));
-        $this->controller->render('../errors/missingHelperClass');
+        $this->controller->render('missingHelperClass');
         exit();
     }
 
@@ -278,12 +301,14 @@ class ErrorHandler extends Object
     function missingComponentFile($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('controller' => $className,
                                      'component' => $component,
                                      'file' => $file,
                                      'title' => 'Missing Component File'));
-        $this->controller->render('../errors/missingComponentFile');
+        $this->controller->render('missingComponentFile');
         exit();
     }
 
@@ -294,12 +319,14 @@ class ErrorHandler extends Object
     function missingComponentClass($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('controller' => $className,
                                      'component' => $component,
                                      'file' => $file,
                                      'title' => 'Missing Component Class'));
-        $this->controller->render('../errors/missingComponentClass');
+        $this->controller->render('missingComponentClass');
         exit();
     }
 
@@ -310,10 +337,12 @@ class ErrorHandler extends Object
     function missingModel($params)
     {
         extract($params);
+        $this->controller->base = $base;
+        $this->controller->viewPath = 'errors';
         $this->controller->webroot = $this->_webroot();
         $this->controller->set(array('model' => $className,
                                      'title' => 'Missing Model'));
-        $this->controller->render('../errors/missingModel');
+        $this->controller->render('missingModel');
         exit();
     }
 

@@ -601,7 +601,7 @@ class Model extends Object
         {
             foreach ($v as $x => $y)
             {
-                if($x == $this->primaryKey)
+                if($x == $this->primaryKey && $n == $this->name)
                 {
                     $this->id = $y;
                 }
@@ -1624,7 +1624,6 @@ class Model extends Object
  */
     function setDataSource($dataSource = null)
     {
-        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if ($dataSource == null)
         {
             $dataSource = $this->useDbConfig;

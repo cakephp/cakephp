@@ -412,8 +412,8 @@ class FormHelper extends Helper
                     case "checkbox" :
                         $strFormFields = $strFormFields.$this->generateCheckboxDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['htmlOptions'] );
                     break;
-                    case "select";
-                    case "selectMultiple";
+                    case "select":
+                    case "selectMultiple":
                         if( "selectMultiple" == $field['type'] )
                         {
                             $field['selectAttr']['multiple'] = 'multiple';
@@ -441,7 +441,7 @@ class FormHelper extends Helper
                         }
                         $strFormFields = $strFormFields.$this->generateSelectDiv( $field['tagName'], $field['prompt'], $field['options'], $field['selected'], $field['selectAttr'], $field['optionsAttr'], $field['required'], $field['errorMsg'] );
                     break;
-                    case "area";
+                    case "area":
                         if(!isset( $field['rows']))
                         {
                             $field['rows'] = 10;
@@ -452,7 +452,7 @@ class FormHelper extends Helper
                         }
                         $strFormFields = $strFormFields.$this->generateAreaDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['cols'], $field['rows'], $field['htmlOptions'] );
                     break;
-                    case "fieldset";
+                    case "fieldset":
 
                         $strFieldsetFields = $this->generateFields( $field['fields'] );
                         $strFieldSet = sprintf( '
@@ -460,7 +460,7 @@ class FormHelper extends Helper
                         $field['legend'], $field['noteHeading'], $field['note'], $strFieldsetFields );
                         $strFormFields = $strFormFields.$strFieldSet;
                     break;
-                    case "hidden";
+                    case "hidden":
                         $strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
                     break;
                     case "date":

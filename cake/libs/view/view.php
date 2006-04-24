@@ -322,10 +322,14 @@ class View extends Object
 
             if (strpos($action, 'missingView') === false)
             {
-                return $this->cakeError('missingView',
-                            array(array('className' => $this->controller->name,
-                                        'action' => $action,
-                                        'file' => $viewFileName)));
+                return $this->cakeError('missingView', array(
+                           array(
+                               'className' => $this->controller->name,
+                               'action' => $action,
+                               'file' => $viewFileName,
+                               'base' => $this->base
+                           )
+                       ));
 
                 $isFatal = isset($this->isFatal) ? $this->isFatal : false;
                 if (!$isFatal)
@@ -478,9 +482,13 @@ class View extends Object
       }
       else
       {
-         return $this->cakeError('missingLayout',
-                     array(array('layout' => $this->layout,
-                                 'file' => $layout_fn)));
+         return $this->cakeError('missingLayout', array(
+                    array(
+                        'layout' => $this->layout,
+                        'file'   => $layout_fn,
+                        'base'   => $this->base
+                    )
+                ));
       }
     }
 
@@ -727,9 +735,13 @@ class View extends Object
                     }
                     else
                     {
-                        return $this->cakeError('missingHelperFile',
-                                    array(array('helper' => $helper,
-                                                'file' => Inflector::underscore($helper).'.php')));
+                        return $this->cakeError('missingHelperFile', array(
+                                   array(
+                                       'helper' => $helper,
+                                       'file'   => Inflector::underscore($helper).'.php',
+                                       'base'   => $this->base
+                                   )
+                               ));
                     }
                 }
 
@@ -761,9 +773,13 @@ class View extends Object
                 }
                 else
                 {
-                    return $this->cakeError('missingHelperClass',
-                                array(array('helper' => $helper,
-                                            'file' => Inflector::underscore($helper).'.php')));
+                    return $this->cakeError('missingHelperClass', array(
+                               array(
+                                   'helper' => $helper,
+                                   'file'   => Inflector::underscore($helper).'.php',
+                                   'base'   => $this->base
+                               )
+                           ));
                 }
             }
         }
@@ -786,10 +802,14 @@ class View extends Object
         }
         else
         {
-            return $this->cakeError('missingView',
-                        array(array('className' => $this->controller->name,
-                                    'action' => $action,
-                                    'file' => $viewFileName)));
+            return $this->cakeError('missingView', array(
+                       array(
+                           'className' => $this->controller->name,
+                           'action'    => $action,
+                           'file'      => $viewFileName,
+                           'base'      => $this->base
+                       )
+                   ));
         }
     }
 

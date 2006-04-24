@@ -92,6 +92,7 @@ class Dispatcher extends Object
       $missingView        = false;
       $privateAction     = false;
       $this->base = $this->baseUrl();
+
       if (empty($params['controller']))
       {
          $missingController = true;
@@ -113,8 +114,13 @@ class Dispatcher extends Object
                  {
                      if(preg_match('/([\\.]+)/', $ctrlName))
                      {
-                         return $this->cakeError('error404',array(array('url' => strtolower($ctrlName),
-                                                 'message' => 'Was not found on this server')));
+                         return $this->cakeError('error404', array(
+                                    array(
+                                        'url'     => strtolower($ctrlName),
+                                        'message' => 'Was not found on this server',
+                                        'base'    => $this->base
+                                    )
+                                ));
                          exit();
                      }
                      else
@@ -167,8 +173,14 @@ class Dispatcher extends Object
 
       if ($missingController)
       {
-          return $this->cakeError('missingController',array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                    'webroot' => $this->webroot)));
+          return $this->cakeError('missingController', array(
+                     array(
+                         'className' => Inflector::camelize($params['controller']."Controller"),
+                         'webroot'   => $this->webroot,
+                         'url'       => $url,
+                         'base'      => $this->base
+                     )
+                 ));
       }
       else
       {
@@ -216,31 +228,35 @@ class Dispatcher extends Object
           $component =& new Component($controller);
       }
 
-      if((in_array('scaffold', array_keys($classVars))) && ($missingAction === true))
-      {
-          uses(DS.'controller'.DS.'scaffold');
-          return new Scaffold($controller, $params);
-      }
-
       $controller->constructClasses();
 
-      if ($missingAction)
+      if ($missingAction && !in_array('scaffold', array_keys($classVars)))
       {
-          return $this->cakeError('missingAction',
-                      array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                  'action' => $params['action'],
-                                  'webroot' => $this->webroot)));
+          return $this->cakeError('missingAction', array(
+                     array(
+                         'className' => Inflector::camelize($params['controller']."Controller"),
+                         'action'    => $params['action'],
+                         'webroot'   => $this->webroot,
+                         'url'       => $url,
+                         'base'      => $this->base
+                     )
+                ));
       }
 
       if ($privateAction)
       {
-          return $this->cakeError('privateAction',
-                      array(array('className' => Inflector::camelize($params['controller']."Controller"),
-                                  'action' => $params['action'],
-                                  'webroot' => $this->webroot)));
+          return $this->cakeError('privateAction', array(
+                     array(
+                         'className' => Inflector::camelize($params['controller']."Controller"),
+                         'action'    => $params['action'],
+                         'webroot'   => $this->webroot,
+                         'url'       => $url,
+                         'base'      => $this->base
+                     )
+                 ));
       }
 
-      return $this->_invoke($controller, $params);
+      return $this->_invoke($controller, $params, $missingAction);
     }
 
 /**
@@ -248,9 +264,10 @@ class Dispatcher extends Object
  *
  * @param object $controller
  * @param array $params
+ * @param boolean $missingAction
  * @return string
  */
-    function _invoke (&$controller, $params)
+    function _invoke (&$controller, $params, $missingAction = false)
     {
         if (!empty($controller->beforeFilter))
         {
@@ -282,7 +299,16 @@ class Dispatcher extends Object
             }
         }
 
-        $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+        $classVars = get_object_vars($controller);
+        if ($missingAction && in_array('scaffold', array_keys($classVars)))
+        {
+            uses(DS.'controller'.DS.'scaffold');
+            return new Scaffold($controller, $params);
+        }
+        else
+        {
+            $output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+        }
         if ($controller->autoRender)
         {
             $output = $controller->render();
