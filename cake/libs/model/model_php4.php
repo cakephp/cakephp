@@ -1628,7 +1628,6 @@ class Model extends Object
  */
     function setDataSource($dataSource = null)
     {
-        $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if ($dataSource == null)
         {
             $dataSource = $this->useDbConfig;
