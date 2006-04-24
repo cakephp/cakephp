@@ -31,12 +31,34 @@
 ini_set('display_errors', '1');
 ini_set('error_reporting', '7');
 
+$app = 'app';
+$core = null;
+$root = dirname(dirname(dirname(__FILE__)));
+$here = $argv[0];
+
+for ($i = 1; $i < count($argv); $i += 2)
+{
+    // Process command-line modifiers here
+    switch ($argv[$i])
+    {
+        case '-app':
+            $app = $argv[$i + 1];
+        break;
+        case '-core':
+            $core = $argv[$i + 1];
+        break;
+        case '-root':
+            $root = $argv[$i + 1];
+        break;
+    }
+}
+
 define ('DS', DIRECTORY_SEPARATOR);
-define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
-define ('APP_DIR', 'app');
-define ('APP_PATH', 'app'.DS);
+define ('ROOT', $root.DS);
+define ('APP_DIR', $app);
+define ('APP_PATH', $app.DS);
 define ('DEBUG', 1);
-define ('CORE_PATH', null);
+define ('CORE_PATH', $core);
 
 require_once (ROOT.'cake'.DS.'basics.php');
 require_once (ROOT.'cake'.DS.'config'.DS.'paths.php');
@@ -527,6 +549,11 @@ class Bake {
 				$modelTableName = null;
 			}
 			$this->bakeModel($modelClassName, $dbConnection, $modelTableName, $validate, $modelAssociations);
+
+			if ($this->doUnitTest())
+			{
+				$this->bakeUnitTest('model', $modelClassName);
+			}
 		}
 		else
 		{
@@ -612,7 +639,7 @@ class Bake {
 				$indexView .= "\t<th>Actions</th>\n";
 				$indexView .= "</tr>\n";
 				
-				$indexView .= "<?php foreach (\$data as \$row):?>\n";
+				$indexView .= "<?php foreach (\$data as \$row): ?>\n";
 				
 				$indexView .= "<tr>\n";
 				
@@ -726,7 +753,7 @@ class Bake {
 	                $viewView .= "\t\t<dd><?php echo \$value ?></dd>\n";
 		            $viewView .= "\t<?php endforeach; ?>\n";	        
 			        $viewView .= "\t<ul><li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" .$inflect->underscore($controller)."/add/' . \$data['{$association}']['" . $objModel->{$model}->primaryKey . "'])?> </li></ul>\n";
-			        $viewView .= "<?endif?>\n";
+			        $viewView .= "<?php endif ?>\n";
 			        $viewView .= "</dl>\n";
 				    
 				}
@@ -749,7 +776,7 @@ class Bake {
 				
 			        $viewView .= "<?php foreach(\$data['{$association}'][0] as \$column => \$value): ?>\n";
 			        	$viewView .= "<th><?php echo \$column?></th>\n";
-			        $viewView .= "<?endforeach;?>\n";
+			        $viewView .= "<?php endforeach; ?>\n";
 			
 			        $viewView .= "<th>Actions</th>\n";
 			        $viewView .= "</tr>\n";
@@ -760,27 +787,27 @@ class Bake {
 			            
 			            $viewView .= "\t<?php foreach(\$row as \$column => \$value):?>\n";
 			            	$viewView .= "\t\t<td><?php echo \$value?></td>\n";
-			            $viewView .= "\t<?endforeach;?>\n";
+			            $viewView .= "\t<?php endforeach;?>\n";
 			            
-			            $viewView .= "<?if (isset(\$this->controller->{$modelName}->{$association})):?>\n";
+			            $viewView .= "<?php if (isset(\$this->controller->{$modelName}->{$association})):?>\n";
 			                $viewView .= "<td>\n";
 			                	$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
                                 $viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
                                 $viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
 			                $viewView .= "</td>\n";
-			            $viewView .= "<?else:?>\n";
+			            $viewView .= "<?php else: ?>\n";
 			                $viewView .= "<td>\n";
 			                	$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
                                 $viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
                                 $viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
 			                $viewView .= "</td>\n";
-			            $viewView .= "<?endif;?>\n";
+			            $viewView .= "<?php endif ?>\n";
 			            
 			            $viewView .= "</tr>\n";
-			        $viewView .= "<?endforeach;?>\n";
+			        $viewView .= "<?php endforeach; ?>\n";
 				
 				$viewView .= "</table>\n";
-				$viewView .= "<?endif;?>\n\n";
+				$viewView .= "<?php endif ?>\n\n";
 				
 				$viewView .= "<ul>\n";
 				
@@ -1082,12 +1109,32 @@ class Bake {
 		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes')
 		{
 			$this->bakeController($controllerClassName, $uses, $helpers, $components, $actions);
+
+			if ($this->doUnitTest())
+			{
+			    $this->bakeUnitTest('controller', $controllerClassName);
+			}
 		}
 		else
 		{
 			$this->stdout('Bake Aborted.');
 		}	
 	}
+
+    function doUnitTest()
+    {
+        if (is_dir('vendors'.DS.'simpletest') || is_dir(APP_PATH.'vendors'.DS.'simpletest'))
+        {
+            return true;
+        }
+        $unitTest = $this->getInput('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
+        $result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
+        if ($result)
+        {
+        	$this->stdout("\nYou can download the Cake test suite from http://ww.cakephp.org/", true);
+        }
+        return $result;
+    }
 	
 	/*---- ----*/
 	
@@ -1326,7 +1373,80 @@ class Bake {
 		
 		$this->createFile($filename, $out);
 	}
-	
+
+	function bakeUnitTest($type, $className)
+	{
+		$out = '<?php '."\n\n";
+		$error = false;
+		switch ($type)
+		{
+			case 'model':
+				$out .= 'loadModelTest();'."\n\n";
+				$out .= "class {$className}TestCase extends UnitTestCase\n{\n";
+				$out .= "\tvar \$object = null;\n\n";
+				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
+				$out .= "\t}\n\n\tfunction tearDown()\n\t{\n\t\tunset(\$this->object);\n\t}\n";
+				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
+				$out .= "\t\t\$result = \$this->object->doSomething();\n";
+				$out .= "\t\t\$expected = 1;\n";
+				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
+				$path = MODEL_TESTS;
+				$filename = Inflector::underscore($className).'.test.php';
+			break;
+
+			case 'controller':
+				$out .= 'loadControllerTest();'."\n\n";
+				$out .= "class {$className}ControllerTestCase extends UnitTestCase\n{\n";
+				$out .= "\tvar \$object = null;\n\n";
+				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
+				$out .= "\t}\n\n\tfunction tearDown()\n\t{\n\t\tunset(\$this->object);\n\t}\n";
+				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
+				$out .= "\t\t\$result = \$this->object->doSomething();\n";
+				$out .= "\t\t\$expected = 1;\n";
+				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
+				$path = CONTROLLER_TESTS;
+				$filename = Inflector::underscore($className.'Controller').'.test.php';
+			break;
+
+			default:
+				$error = true;
+			break;
+		}
+		$out .= "\n?>";
+		if (!$error)
+		{
+			$this->stdout("Baking unit test for $className...");
+			$path = explode(DS, $path);
+			foreach($path as $i => $val)
+			{
+				if ($val == '')
+				{
+					unset($path[$i]);
+				}
+			}
+			$path = implode(DS, $path);
+
+			if (!is_dir(DS.$path))
+			{
+				$create = $this->getInput("Unit test directory does not exist.  Create it?", array('y','n'), 'y');
+				if (low($create) == 'y' || low($create) == 'yes')
+				{
+					$build = array();
+					foreach(explode(DS, $path) as $i => $dir)
+					{
+						$build[] = $dir;
+						if (!is_dir(DS.implode(DS, $build)))
+						{
+							mkdir(DS.implode(DS, $build));
+						}
+					}
+				}
+			}
+
+			$this->createFile(DS.$path.DS.$filename, $out);
+		}
+	}
+
 	/*----General purpose functions----*/
 	
 	function getInput($prompt, $options = null, $default = null)
