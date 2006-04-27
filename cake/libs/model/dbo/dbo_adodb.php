@@ -62,6 +62,23 @@ class DboAdodb extends DboSource
     var $_adodb = null;
 
 /**
+ * Array translating ADOdb column MetaTypes to cake-supported metatypes
+ *
+ * @var array
+ * @access private
+ */
+    var $_adodb_column_types = array(
+        'C' => 'string',
+        'X' => 'text',
+        'D' => 'date',
+        'T' => 'timestamp',
+        'L' => 'boolean',
+        'N' => 'float',
+        'I' => 'integer',
+        'R' => 'integer', // denotes auto-increment or counter field
+        'B' => 'binary');
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @param array $config Configuration array for connecting
@@ -106,7 +123,7 @@ class DboAdodb extends DboSource
  * @param string $sql SQL statement
  * @return resource Result resource identifier
  */
-    function execute ($sql)
+    function _execute ($sql)
     {
       return $this->_adodb->execute($sql);
     }
@@ -116,10 +133,14 @@ class DboAdodb extends DboSource
  *
  * @return array The fetched row as an array
  */
-    function fetchRow ()
-    {
-      return $this->_result->FetchRow();
-    }
+     function fetchRow ()
+     {
+         if($this->_result->EOF)
+         {
+             return null;
+         }
+         return $this->_result->FetchRow();
+     }
 
 /**
  * Begin a transaction
@@ -193,20 +214,27 @@ class DboAdodb extends DboSource
     }
 
 /**
- * Returns an array of the fields in given table name.
+ * Returns an array of the fields in the table used by the given model.
  *
- * @param string $tableName Name of database table to inspect
+ *
+ * @param AppModel $model Model object
  * @return array Fields in table. Keys are name and type
  */
-    function fields ($tableName)
+    function describe (&$model)
     {
-      $data = $this->_adodb->MetaColumns($tableName);
-      $fields = false;
-
-      foreach ($data as $item)
-         $fields[] = array('name'=>$item->name, 'type'=>$item->type);
-
-      return $fields;
+        $cache = parent::describe($model);
+        if ($cache != null)
+        {
+            return $cache;
+        }
+        $fields = false;
+        $cols = $this->_adodb->MetaColumns($model->table);
+        foreach ($cols as $column)
+        {
+            $fields[] = array('name'=>$column->name, 'type'=>$column->type);
+        }
+        $this->__cacheDescription($model->table, $fields);
+        return $fields;
     }
 
 /**
@@ -279,6 +307,87 @@ class DboAdodb extends DboSource
 // adodb doesn't allow us to get the correct limit string out of it
     }
 
-}
+/**
+ * Converts database-layer column types to basic types
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return string Abstract column type (i.e. "string")
+ */
+    function column($real)
+    {
+        if ( isset( $this->_result ))
+        {
+            $adodb_metatyper = & $this->_result;
+        }
+        else
+        {
+            $adodb_metatyper = & $this->_adodb->execute('Select 1');
+        }
+        $interpreted_type = $adodb_metatyper->MetaType($real);
 
+        if (!isset($this->_adodb_column_types[$interpreted_type]))
+        {
+            return 'text';
+        }
+        return $this->_adodb_column_types[ $interpreted_type ] ;
+    }
+
+/**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column_type The type of the column into which this data will be inserted
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @return string Quoted and escaped data
+ */
+    function value ($data, $column = null, $safe = false)
+    {
+        $parent = parent::value($data, $column, $safe);
+
+        if ($parent != null)
+        {
+            return $parent;
+        }
+
+        if ($data === null)
+        {
+            return 'NULL';
+        }
+
+        if($data == '')
+        {
+            return  "''";
+        }
+
+        if (ini_get('magic_quotes_gpc') == 1)
+        {
+            $data = stripslashes($data);
+        }
+
+        return $this->_adodb->qstr( $data );
+    }
+
+/**
+ * Returns an array of all result rows for a given SQL query.
+ * Returns false if no rows matched.
+ *
+ * @param string $sql SQL statement
+ * @param boolean $cache Enables returning/storing cached query results
+ * @param string $modelName Name of model for first array dimension of results
+ * @return array Array of resultset rows, or false if no rows matched
+ */
+    function fetchAll ($sql, $cache = true, $modelName = null)
+    {
+        $result = parent::fetchAll( $sql, $cache );
+        if (!$result)
+        {
+            return false;
+        }
+        foreach($result as $key => $value)
+        {
+            $return[$key][$modelName] = $value;
+        }
+        return $return;
+    }
+}
 ?>

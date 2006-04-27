@@ -334,18 +334,19 @@ class FormHelper extends Helper
  */
     function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null)
     {
-        $selectAttr['id'] = strtolower(str_replace('/', '_',$tagName));;
+        $selectAttr['id'] = strtolower(str_replace('/', '_',$tagName));
         $str = $this->Html->selectTag( $tagName, $options, $selected, $selectAttr, $optionAttr );
         $strLabel = $this->labelTag( $tagName, $prompt );
 
         $divClass = "optional";
-
-        if( $required )
-        $divClass = "required";
+        if($required)
+        {
+            $divClass = "required";
+        }
 
         $strError = "";// initialize the error to empty.
 
-        if( $this->isFieldError( $tagName ) )
+        if($this->isFieldError($tagName))
         {
 // if it was an error that occured, then add the error message, and append " error" to the div tag.
             $strError = $this->pTag( 'error', $errorMsg );

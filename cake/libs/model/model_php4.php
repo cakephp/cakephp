@@ -453,8 +453,15 @@ class Model extends Object
 
             foreach ($this->{$type} as $assoc => $value)
             {
+                if (is_numeric($assoc))
+                {
+                    unset($this->{$type}[$assoc]);
+                    $assoc = $value;
+                    $value = array();
+                    $this->{$type}[$assoc] = $value;
+                }
                 $className = $assoc;
-                if (isset($value['className']) && $value['className'] !== null)
+                if (isset($value['className']) && !empty($value['className']))
                 {
                     $className = $value['className'];
                 }
@@ -480,11 +487,11 @@ class Model extends Object
         $colKey = Inflector::underscore($className);
         if(ClassRegistry::isKeySet($colKey))
         {
-            $this->{$className} =& ClassRegistry::getObject($colKey);
+            $this->{$className} = ClassRegistry::getObject($colKey);
         }
         else
         {
-            $this->{$className} =& new $className();
+            $this->{$className} = new $className();
         }
 
         $this->alias[$assoc] = $this->{$className}->table;
@@ -590,15 +597,22 @@ class Model extends Object
  * @param string $two Value string for the alternative indata method
  * @return unknown
  */
-    function set ($one, $two=null)
+    function set ($one, $two = null)
     {
         if (is_array($one))
         {
-            $data = $one;
+            if (countdim($one) == 1)
+            {
+                $data = array($this->name => $one);
+            }
+            else
+            {
+                $data = $one;
+            }
         }
         else
         {
-            $data = array($one=>$two);
+            $data = array($this->name => array($one => $two));
         }
 
         foreach ($data as $n => $v)
@@ -823,6 +837,7 @@ class Model extends Object
         }
 
         $whitelist = !(empty($fieldList) || count($fieldList) == 0);
+        $this->validationErrors = array();
 
         if(!$this->beforeValidate())
         {
@@ -976,8 +991,8 @@ class Model extends Object
             foreach ($y as $assoc => $value)
             {
                 $joinTable[] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-                $mainKey = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-                $keys[] = $mainKey;
+                $mainKey[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+                $keys[] =  $this->hasAndBelongsToMany[$assoc]['foreignKey'];
                 $keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
                 $fields[] = join(',', $keys);
                 unset($keys);
@@ -1005,7 +1020,7 @@ class Model extends Object
         for ($count = 0; $count < $total; $count++)
         {
             $db =& ConnectionManager::getDataSource($this->useDbConfig);
-            $db->execute("DELETE FROM {$joinTable[$count]} WHERE $mainKey = '{$id}'");
+            $db->execute("DELETE FROM {$joinTable[$count]} WHERE {$mainKey[$count]} = '{$id}'");
             if(!empty($newValue[$count]))
             {
                 $db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");

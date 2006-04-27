@@ -73,15 +73,29 @@ class DboSource extends DataSource
     var $endQuote = null;
 
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $alias = 'AS ';
+
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $goofyLimit = false;
+
+/**
  * Constructor
  *
  */
     function __construct($config = null)
     {
-      $this->debug = DEBUG > 0;
-      $this->fullDebug = DEBUG > 1;
-      parent::__construct($config);
-      return $this->connect();
+        $this->debug = DEBUG > 0;
+        $this->fullDebug = DEBUG > 1;
+        parent::__construct($config);
+        return $this->connect();
     }
 
 /**
@@ -95,7 +109,7 @@ class DboSource extends DataSource
         $this->disconnect();
         if ($config != null)
         {
-            $this->config = am($this->config, $config);
+            $this->config = am($this->_baseConfig, $config);
         }
         return $this->connect();
     }
@@ -326,7 +340,7 @@ class DboSource extends DataSource
  * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
-    function fetchAll ($sql, $cache = true)
+    function fetchAll ($sql, $cache = true, $modelName = null)
     {
         if ($cache && isset($this->_queryCache[$sql]))
         {
@@ -409,8 +423,8 @@ class DboSource extends DataSource
       {
           $text = 'query';
       }
-      print("<table border=\"1\">\n<tr><th colspan=\"7\">{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</th></tr>\n");
-      print("<tr><td>Nr</td><td>Query</td><td>Error</td><td>Affected</td><td>Num. rows</td><td>Took (ms)</td></tr>\n");
+      print("<table border=\"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
+      print("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
 
       foreach($log as $k => $i)
       {
@@ -580,7 +594,7 @@ class DboSource extends DataSource
 
 // Build final query SQL
         $query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
-        $resultSet = $this->fetchAll($query, $model->cacheQueries);
+        $resultSet = $this->fetchAll($query, $model->cacheQueries, $model->name );
         $filtered = $this->__filterResults($resultSet, $model);
 
         if ($model->recursive > 0)
@@ -613,7 +627,7 @@ class DboSource extends DataSource
                     }
                     if (isset($db) && $db != null)
                     {
-                        $db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive);
+                        $db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1);
                         unset($db);
                     }
                 }
@@ -628,12 +642,14 @@ class DboSource extends DataSource
         return $resultSet;
     }
 
+
 /**
- * Private method
+ * Enter description here...
  *
- * @param unknown_type $linkModel
- * @param Model $model
- * @return array
+ * @param unknown_type $results
+ * @param unknown_type $model
+ * @param unknown_type $filtered
+ * @return unknown
  */
     function __filterResults(&$results, &$model, $filtered = array())
     {
@@ -706,7 +722,7 @@ class DboSource extends DataSource
             {
                 $row =& $resultSet[$i];
                 $q = $this->insertQueryData($query, $resultSet, $association, $assocData, $model, $linkModel, $i);
-                $fetch = $this->fetchAll($q, $model->cacheQueries);
+                $fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 
                 if (!empty($fetch) && is_array($fetch))
                 {
@@ -726,10 +742,23 @@ class DboSource extends DataSource
                     }
                     $this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
                 }
+                else
+                {
+                    $tempArray[0][$association] = false;
+                    $this->__mergeAssociation($resultSet[$i], $tempArray, $association, $type);
+                }
             }
         }
     }
 
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ * @param unknown_type $merge
+ * @param unknown_type $association
+ * @param unknown_type $type
+ */
     function __mergeAssociation(&$data, $merge, $association, $type)
     {
         if (isset($merge[0]) && !isset($merge[0][$association]))
@@ -760,17 +789,24 @@ class DboSource extends DataSource
         }
         else
         {
-        	foreach ($merge as $i => $row)
+            if($merge[0][$association] === false)
             {
-                if (count($row) == 1)
+                $data[$association] = null;
+            }
+            else
+            {
+                foreach ($merge as $i => $row)
                 {
-                    $data[$association][] = $row[$association];
-                }
-                else
-                {
-                    $tmp = array_merge($row[$association], $row);
-                    unset($tmp[$association]);
-                    $data[$association][] = $tmp;
+                    if (count($row) == 1)
+                    {
+                        $data[$association][] = $row[$association];
+                    }
+                    else
+                    {
+                        $tmp = array_merge($row[$association], $row);
+                        unset($tmp[$association]);
+                        $data[$association][] = $tmp;
+                    }
                 }
             }
         }
@@ -798,8 +834,8 @@ class DboSource extends DataSource
 
             $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])). ', ';
             $sql .= join(', ', $this->fields($linkModel, $alias, ''));
-            $sql .=  ' FROM '.$this->name($model->table).' AS ' . $this->name($model->name);
-            $sql .=  ' LEFT JOIN '.$this->name($linkModel->table).' AS ' . $this->name($alias);
+            $sql .=  ' FROM '.$this->name($model->table).' '.$this->alias.$this->name($model->name);
+            $sql .=  ' LEFT JOIN '.$this->name($linkModel->table).' '.$this->alias.$this->name($alias);
             $sql .=  ' ON ';
             $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
             $sql .= ' = '.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
@@ -868,12 +904,21 @@ class DboSource extends DataSource
                 {
                     $joinFields = null;
                 }
+
 // Generates primary query
-            $sql  = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) .$joinFields. ' FROM ';
-            $sql .= $this->name($model->table).' AS ';
-            $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
-            $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
-            $sql .= ' '.$this->limit($queryData['limit']);
+                $sql  = 'SELECT ';
+                if ($this->goofyLimit)
+                {
+                    $sql .= $this->limit($queryData['limit']);
+                }
+                $sql .= ' ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) .$joinFields. ' FROM ';
+                $sql .= $this->name($model->table).' '.$this->alias;
+                $sql .= $this->name($model->name).' ' . join(' ', $queryData['joins']).' ';
+                $sql .= $this->conditions($queryData['conditions']).' '.$this->order($queryData['order']);
+                if (!$this->goofyLimit)
+                {
+                    $sql .= ' '.$this->limit($queryData['limit']);
+                }
             }
             return $sql;
         }
@@ -897,8 +942,18 @@ class DboSource extends DataSource
                     {
                         $assocData['fields'] = '';
                     }
-                    $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias).' ';
+                    $limit = '';
+                    if (isset($queryData['limit']) && !empty($queryData['limit']))
+                    {
+                        $limit = $this->limit($queryData['limit']);
+                    }
+                    $sql  = 'SELECT ';
+                    if ($this->goofyLimit)
+                    {
+                        $sql .= $limit;
+                    }
+                    $sql .= ' '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' '.$this->alias.$this->name($alias).' ';
 
                     $conditions = $queryData['conditions'];
                     $condition = $this->name($alias).'.'.$this->name($assocData['foreignKey']);
@@ -920,7 +975,11 @@ class DboSource extends DataSource
                         $conditions .= $cond;
                     }
                     $sql .= $this->conditions($conditions) . $this->order($queryData['order']);
-                    $sql .= $this->limit($queryData['limit']);
+
+                    if (!$this->goofyLimit)
+                    {
+                        $sql .= $limit;
+                    }
                     return $sql;
                 }
                 else
@@ -939,7 +998,7 @@ class DboSource extends DataSource
                         $this->__assocJoins = null;
                     }
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
-                    $sql .= ' AS '.$this->name($alias).' ON '.$this->name($alias).'.';
+                    $sql .= ' '.$this->alias.$this->name($alias).' ON '.$this->name($alias).'.';
                     $sql .= $this->name($assocData['foreignKey']).'='.$model->escapeField($model->primaryKey);
 
                     if ($assocData['order'] != null)
@@ -969,12 +1028,23 @@ class DboSource extends DataSource
             case 'belongsTo':
                 if ($external)
                 {
+                    $limit = '';
+                    if (isset($assocData['limit']))
+                    {
+                        $limit = $this->limit($assocData['limit']);
+                    }
                     if(!isset($assocData['fields']))
                     {
                         $assocData['fields'] = '';
                     }
-                    $sql = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias).' ';
+
+                    $sql = 'SELECT ';
+                    if ($this->goofyLimit)
+                    {
+                        $sql .= $limit;
+                    }
+                    $sql .= ' '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' '.$this->alias.$this->name($alias).' ';
 
                     $conditions = $assocData['conditions'];
 
@@ -994,9 +1064,9 @@ class DboSource extends DataSource
                         $conditions .= $condition;
                     }
                     $sql .= $this->conditions($conditions) . $this->order($assocData['order']);
-                    if (isset($assocData['limit']))
+                    if (!$this->goofyLimit)
                     {
-                        $sql .= $this->limit($assocData['limit']);
+                        $sql .= $limit;
                     }
                     return $sql;
                 }
@@ -1016,7 +1086,7 @@ class DboSource extends DataSource
                         $this->__assocJoins = null;
                     }
                     $sql  = ' LEFT JOIN '.$this->name($linkModel->table);
-                    $sql .= ' AS ' . $this->name($alias) . ' ON ';
+                    $sql .= ' '.$this->alias . $this->name($alias) . ' ON ';
                     $sql .= $this->name($model->name).'.'.$this->name($assocData['foreignKey']);
                     $sql .= '='.$this->name($alias).'.'.$this->name($linkModel->primaryKey);
 
@@ -1046,9 +1116,20 @@ class DboSource extends DataSource
                 }
                 else
                 {
+                    $limit = '';
+                    if (isset($assocData['limit']))
+                    {
+                        $limit = $this->limit($assocData['limit']);
+                    }
+
                     $conditions = $assocData['conditions'];
-                    $sql  = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '. $this->name($alias);
+                    $sql  = 'SELECT ';
+                    if ($this->goofyLimit)
+                    {
+                        $sql .= $limit;
+                    }
+                    $sql .= ' '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' '.$this->alias. $this->name($alias);
 
                     if (is_array($conditions))
                     {
@@ -1068,9 +1149,9 @@ class DboSource extends DataSource
                     $sql .= $this->conditions($conditions);
                     $sql .= $this->order($assocData['order']);
 
-                    if (isset($assocData['limit']))
+                    if (!$this->goofyLimit)
                     {
-                        $sql .= $this->limit($assocData['limit']);
+                        $sql .= $limit;
                     }
                 }
                 return $sql;
@@ -1084,8 +1165,18 @@ class DboSource extends DataSource
                 {
                     $joinTbl = $this->name($assocData['joinTable']);
 
-                    $sql = 'SELECT '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-                    $sql .= ' FROM '.$this->name($linkModel->table).' AS '.$this->name($alias);
+                    $limit = '';
+                    if (isset($assocData['limit']))
+                    {
+                        $limit = $this->limit($assocData['limit']);
+                    }
+                    $sql = 'SELECT ';
+                    if ($this->goofyLimit)
+                    {
+                        $sql .= $limit;
+                    }
+                    $sql .= ' '.join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+                    $sql .= ' FROM '.$this->name($linkModel->table).' '.$this->alias.$this->name($alias);
                     $sql .= ' JOIN '.$joinTbl.' ON '.$joinTbl;
                     $sql .= '.'.$this->name($assocData['foreignKey']).'={$__cakeID__$}';
                     $sql .= ' AND '.$joinTbl.'.'.$this->name($assocData['associationForeignKey']);
@@ -1093,9 +1184,9 @@ class DboSource extends DataSource
 
                     $sql .= $this->conditions($assocData['conditions']);
                     $sql .= $this->order($assocData['order']);
-                    if (isset($assocData['limit']))
+                    if (!$this->goofyLimit)
                     {
-                        $sql .= $this->limit($assocData['limit']);
+                        $sql .= $limit;
                     }
                 }
                 return $sql;
@@ -1112,7 +1203,7 @@ class DboSource extends DataSource
  * @param array $values
  * @return array
  */
-    function update (&$model, $fields = null, $values = null)
+    function update (&$model, $fields = array(), $values = array())
     {
         $updates = array();
         $combined = array_combine($fields, $values);
@@ -1413,13 +1504,30 @@ class DboSource extends DataSource
         return $out;
     }
 
-
 /**
- * To be overridden in subclasses.
+ * Returns a limit statement in the correct format for the particular database.
  *
+ * @param int $limit Limit of results returned
+ * @param int $offset Offset from which to start results
+ * @return string SQL limit/offset statement
  */
-    function limit ()
+    function limit ($limit, $offset = null)
     {
+        if ($limit)
+        {
+            $rt = '';
+            if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
+            {
+                $rt = ' LIMIT';
+            }
+            if ($offset)
+            {
+                $rt .= ' ' . $offset. ',';
+            }
+            $rt .= ' ' . $limit;
+            return $rt;
+        }
+        return null;
     }
 
 /**
@@ -1565,8 +1673,8 @@ class DboSource extends DataSource
  */
     function hasAny($table, $sql)
     {
-      $out = $this->one("SELECT COUNT(*) AS count FROM {$table}".($sql? " WHERE {$sql}":""));
-      return is_array($out)? $out[0]['count']: false;
+        $out = $this->one("SELECT COUNT(*) ".$this->alias."count FROM {$table}".($sql? " WHERE {$sql}":""));
+        return is_array($out)? $out[0]['count']: false;
     }
 
 /**

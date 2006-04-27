@@ -214,33 +214,72 @@ class JavascriptHelper extends Helper
  * @param string $q The type of quote to use
  * @return string A JSON code block
  */
-    function object ($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "'")
+    function object ($data = array(), $block = false, $prefix = '', $postfix = '', $stringKeys = array(), $quoteKeys = true, $q = "\"")
     {
+        if (is_object($data))
+        {
+            $data = get_object_vars($data);
+        }
+
         $out = array();
+        $key = array();
+        if (is_array($data))
+        {
+            $keys = array_keys($data);
+        }
+        $numeric = true;
+
+        if (!empty($keys))
+        {
+            foreach ($keys as $key)
+            {
+                if (!is_numeric($key))
+                {
+                    $numeric = false;
+                    break;
+                }
+            }
+        }
+
         foreach($data as $key => $val)
         {
-        	if (is_array($val))
-        	{
-        	    $out[] = $key.':'.$this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
-        	}
-        	else
-        	{
-        	    if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)))
-        	    {
-        	        $val = $q.$val.$q;
-        	    }
-        	    if (trim($val) == '')
-        	    {
-        	        $val = 'null';
-        	    }
-        	    
-        	    $out[] = $key.':'.$val;
-        	}
+            if (is_array($val) || is_object($val))
+            {
+                $val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
+                $out[] = $val;
+            }
+            else
+            {
+                if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)))
+                {
+                    $val = $q.$val.$q;
+                }
+                if (trim($val) == '')
+                {
+                    $val = 'null';
+                }
+            }
+
+            if (!$numeric)
+            {
+                $val = $key.':'.$val;
+            }
+            $out[] = $val;
         }
-        $rt = $prefix.'{'.join(', ', $out).'}'.$postfix;
+
+        if (!$numeric)
+        {
+            $rt = '{'.join(', ', $out).'}';
+        }
+        else
+        {
+            $rt = 'new Array('.join(', ', $out).')';
+        }
+        $rt = $prefix.$rt.$postfix;
+
         if ($block)
         {
-            return $this->codeBlock($rt);
+            $rt = $this->codeBlock($rt);
         }
         return $rt;
     }

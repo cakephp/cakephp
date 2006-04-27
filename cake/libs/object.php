@@ -91,7 +91,7 @@ class Object
  * Calls a controller's method from any location.
  *
  * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
- * @param array $extra If array includes the key "render" it sets the AutoRender to true.
+ * @param array $extra If array includes the key "return" it sets the AutoRender to true.
  * @return boolean  Success
  */
     function requestAction ($url, $extra = array())

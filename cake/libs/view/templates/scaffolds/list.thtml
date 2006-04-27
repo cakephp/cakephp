@@ -49,7 +49,8 @@ if(!empty($this->controller->{$model}->alias))
     }
 }
 ?>
-<table class="inav" cellspacing="0">
+<table class="inav" cellpadding="1">
+<thead>
     <tr>
 <?php
 foreach ($fieldNames as $fieldName)
@@ -60,6 +61,8 @@ foreach ($fieldNames as $fieldName)
 }
 ?>
 <th>Actions</th>
+</thead>
+<tbody>
 </tr>
 <?php
 $iRowIndex = 0;
@@ -116,6 +119,7 @@ if(is_array($data))
     }
 }
 ?>
+</tbody>
 </table>
 <ul class="actions">
     <li><?php echo $html->link('New '.$humanSingularName, $path.$this->viewPath.'/add'); ?></li>

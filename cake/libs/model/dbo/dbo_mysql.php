@@ -181,7 +181,7 @@ class DboMysql extends DboSource
         $result = mysql_list_tables($this->config['database'], $this->connection);
         if (!$result)
         {
-            return null;
+            return array();
         }
         else
         {
@@ -403,32 +403,6 @@ class DboMysql extends DboSource
     }
 
 /**
- * Returns a limit statement in the correct format for the particular database.
- *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
- * @return string SQL limit/offset statement
- */
-    function limit ($limit, $offset = null)
-    {
-        if ($limit)
-        {
-            $rt = '';
-            if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
-            {
-                $rt = ' LIMIT';
-            }
-            if ($offset)
-            {
-                $rt .= ' ' . $offset. ',';
-            }
-            $rt .= ' ' . $limit;
-            return $rt;
-        }
-        return null;
-    }
-
-/**
  * Converts database-layer column types to basic types
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
@@ -436,6 +410,16 @@ class DboMysql extends DboSource
  */
     function column($real)
     {
+        if (is_array($real))
+        {
+            $col = $real['name'];
+            if (isset($real['limit']))
+            {
+                $col .= '('.$real['limit'].')';
+            }
+            return $col;
+        }
+
         $col = r(')', '', $real);
         $limit = null;
         @list($col, $limit) = explode('(', $col);

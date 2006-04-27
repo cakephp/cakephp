@@ -76,14 +76,35 @@ class PagesController extends AppController{
         {
             $this->redirect('/');
         }
+
         $path = func_get_args();
+
         if (!count($path))
         {
             $this->redirect('/');
         }
-        $this->set('page', $path[0]);
-        $this->set('subpage', empty($path[1])? null: $path[1]);
-        $this->set('title', ucfirst($path[count($path)-1]));
+
+        $count = count($path);
+        $page = null;
+        $subpage = null;
+        $title = null;
+
+        if(!empty($path[0]))
+        {
+            $page = $path[0];
+        }
+        if(!empty($path[1]))
+        {
+            $subpage = $path[1];
+        }
+        if(!empty($path[$count-1]))
+        {
+            $title = ucfirst($path[$count-1]);
+        }
+
+        $this->set('page', $page);
+        $this->set('subpage', $subpage);
+        $this->set('title', $title);
         $this->render(join('/', $path));
     }
 }

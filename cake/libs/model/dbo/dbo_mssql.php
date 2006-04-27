@@ -67,6 +67,13 @@ class DboMssql extends DboSource
     var $endQuote = "]";
 
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+    var $goofyLimit = true;
+
+/**
  * Base configuration settings for MS SQL driver
  *
  * @var array
@@ -84,7 +91,7 @@ class DboMssql extends DboSource
  *
  * @var array
  */
-    var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+     var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
                          'string'      => array('name' => 'varchar', 'limit' => '255'),
                          'text'        => array('name' => 'text'),
                          'integer'     => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
@@ -196,7 +203,7 @@ class DboMssql extends DboSource
 
         if (!$result || empty($result))
         {
-            return null;
+            return array();
         }
         else
         {
@@ -213,7 +220,7 @@ class DboMssql extends DboSource
 /**
  * Returns an array of the fields in given table name.
  *
- * @param string $tableName Name of database table to inspect
+ * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
  */
     function describe (&$model)
@@ -415,6 +422,28 @@ class DboMssql extends DboSource
     }
 
 /**
+ * Removes Identity (primary key) column from update data before returning to parent
+ *
+ * @param Model $model
+ * @param array $fields
+ * @param array $values
+ * @return array
+ */
+    function update (&$model, $fields = array(), $values = array())
+    {
+        foreach ($fields as $i => $field)
+        {
+            if ($field == $model->primaryKey)
+            {
+                unset($fields[$i]);
+                unset($values[$i]);
+                break;
+            }
+        }
+        return parent::update($model, $fields, $values);
+    }
+
+/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message with error number
@@ -486,13 +515,9 @@ class DboMssql extends DboSource
         if ($limit)
         {
             $rt = '';
-            if (!strpos(strtolower($limit), 'limit') || strpos(strtolower($limit), 'limit') === 0)
+            if (!strpos(strtolower($limit), 'top') || strpos(strtolower($limit), 'top') === 0)
             {
-                $rt = ' LIMIT';
-            }
-            if ($offset)
-            {
-                $rt .= ' ' . $offset. ',';
+                $rt = ' TOP';
             }
             $rt .= ' ' . $limit;
             return $rt;
@@ -508,6 +533,16 @@ class DboMssql extends DboSource
  */
     function column($real)
     {
+        if (is_array($real))
+        {
+            $col = $real['name'];
+            if (isset($real['limit']))
+            {
+                $col .= '('.$real['limit'].')';
+            }
+            return $col;
+        }
+
         $col = r(')', '', $real);
         $limit = null;
         @list($col, $limit) = explode('(', $col);

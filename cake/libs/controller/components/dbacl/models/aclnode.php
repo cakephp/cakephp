@@ -47,16 +47,6 @@ class AclNode extends AppModel
 /**
  * Enter description here...
  *
- */
-    function __construct()
-    {
-      $this->setSource();
-      parent::__construct();
-    }
-
-/**
- * Enter description here...
- *
  * @param unknown_type $link_id
  * @param unknown_type $parent_id
  * @param unknown_type $alias
@@ -262,7 +252,7 @@ class AclNode extends AppModel
     function _resolveID($id)
     {
         extract($this->__dataVars());
-        $key = (is_string($id) ? 'alias' : $secondary_id);
+        $key = (is_numeric($id) ? $secondary_id : 'alias');
         return array($this->name.'.'.$key => $id);
     }
 
@@ -321,15 +311,6 @@ class AclNode extends AppModel
       $vars['table_name']    = $class . 's';
       $vars['class']        = ucwords($class);
       return $vars;
-    }
-
-/**
- * Enter description here...
- *
- */
-    function setSource()
-    {
-      $this->table = strtolower(get_class($this)) . "s";
     }
 }
 

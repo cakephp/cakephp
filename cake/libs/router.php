@@ -52,6 +52,23 @@ class Router extends Object {
  */
     var $routes = array();
 
+    function __construct ()
+    {
+        if(defined('CAKE_ADMIN'))
+        {
+            $admin = CAKE_ADMIN;
+            if(!empty($admin))
+            {
+                $this->routes[] = array (
+                    '/:'.$admin.'/:controller/:action/* (default)',
+                    '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
+                    array($admin, 'controller', 'action'),
+                    array()
+                );
+            }
+        }
+    }
+
 /**
  * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
  *
@@ -133,21 +150,6 @@ class Router extends Object {
          '/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
          array('controller', 'action'),
          array());
-
-      if(defined('CAKE_ADMIN'))
-      {
-          $admin = CAKE_ADMIN;
-          if(!empty($admin))
-          {
-              $this->routes[] = array
-              (
-              '/:'.$admin.'/:controller/:action/* (default)',
-              '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
-              array($admin, 'controller', 'action'),
-              array());
-
-          }
-      }
 
       $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
       $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));

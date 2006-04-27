@@ -1083,7 +1083,7 @@ function url($url = null, $return = false)
             }
         }
         // do not display the select tag if no option elements are avaible
-        if (!is_array($optionElements) || count($optionElements) == 0)
+        if (!is_array($optionElements))
         {
             return null;
         }

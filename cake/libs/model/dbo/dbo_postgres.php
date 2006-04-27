@@ -55,13 +55,13 @@ class  DboPostgres extends DboSource
                             'port'        => 5432);
 
     var $columns = array(
-        'primary_key' => array('name' => 'serial primary key'),
-        'string'      => array('name' => 'character varying', 'limit' => '255'),
+        'primary_key' => array('name' => 'serial NOT NULL'),
+        'string'      => array('name' => 'varchar', 'limit' => '255'),
         'text'        => array('name' => 'text'),
         'integer'     => array('name' => 'integer'),
-        'float'        => array('name' => 'float'),
+        'float'       => array('name' => 'float'),
         'datetime'    => array('name' => 'timestamp'),
-        'timestamp'    => array('name' => 'timestamp'),
+        'timestamp'   => array('name' => 'timestamp'),
         'time'        => array('name' => 'time'),
         'date'        => array('name' => 'date'),
         'binary'      => array('name' => 'bytea'),
@@ -82,7 +82,7 @@ class  DboPostgres extends DboSource
       $config = $this->config;
       $connect = $config['connect'];
 
-      $this->connection = $connect("dbname={$config['database']} user={$config['login']} password={$config['password']}");
+      $this->connection = $connect("host={$config['host']} port={$config['port']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
       if ($this->connection)
       {
           $this->connected = true;
@@ -102,7 +102,7 @@ class  DboPostgres extends DboSource
  */
     function disconnect ()
     {
-      return pg_close($this->connection);
+        return pg_close($this->connection);
     }
 
 /**
@@ -113,28 +113,7 @@ class  DboPostgres extends DboSource
  */
     function _execute ($sql)
     {
-      return pg_query($this->connection, $sql);
-    }
-
-    function query ()
-    {
-      $args = func_get_args();
-      if (count($args) == 1)
-      {
-         return $this->fetchAll($args[0]);
-      }
-      elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findby') === 0)
-      {
-         $field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
-         $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
-         return $args[2]->find($query);
-      }
-      elseif (count($args) > 1 && strpos(strtolower($args[0]), 'findallby') === 0)
-      {
-         $field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
-         $query = '"' . $args[2]->name . '"."' . $field . '" = ' . $this->value($args[1][0]);
-         return $args[2]->findAll($query);
-      }
+        return pg_query($this->connection, $sql);
     }
 
 /**
@@ -163,23 +142,29 @@ class  DboPostgres extends DboSource
  */
     function listSources ()
     {
-	 $sql = "SELECT table_name as name FROM information_schema.tables WHERE table_schema = 'public';";
+        $cache = parent::listSources();
+        if ($cache != null)
+        {
+            return $cache;
+        }
 
-	$result = $this->query($sql);
+        $sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = 'public';";
+        $result = $this->fetchAll($sql);
 
-      if (!$result)
-      {
-         return null;
-      }
-      else
-      {
-         $tables = array();
-         foreach ($result as $item)
-         {
-             $tables[] = $item[0]['name'];
-         }
-         return $tables;
-      }
+        if (!$result)
+        {
+            return array();
+        }
+        else
+        {
+            $tables = array();
+            foreach ($result as $item)
+            {
+                $tables[] = $item[0]['name'];
+            }
+            parent::listSources($tables);
+            return $tables;
+        }
     }
 
 /**
@@ -257,7 +242,7 @@ class  DboPostgres extends DboSource
 
         $fields = false;
 
-        $cols = $this->query("SELECT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default FROM information_schema.columns WHERE table_name =".$this->value($model->table)." ORDER BY ordinal_position");
+        $cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position FROM information_schema.columns WHERE table_name =".$this->value($model->table)." ORDER BY ordinal_position");
 
         foreach ($cols as $column)
         {
@@ -316,19 +301,29 @@ class  DboPostgres extends DboSource
         }
         switch ($column)
         {
+            case 'integer':
+                if ($data == '')
+                {
+                    return 'DEFAULT';
+                }
+                else
+                {
+                    $data = pg_escape_string($data);
+                }
+            break;
             case 'binary':
                 $data = pg_escape_bytea($data);
-                break;
+            break;
             case 'boolean':
                 $data = $this->boolean((bool)$data);
-                break;
+            break;
             default:
                 if (ini_get('magic_quotes_gpc') == 1)
                 {
                     $data = stripslashes($data);
                 }
-
                 $data = pg_escape_string($data);
+            break;
         }
 
         $return = "'" . $data . "'";
@@ -443,10 +438,10 @@ class  DboPostgres extends DboSource
  */
     function lastInsertId ($source, $field='id')
     {
-      $sql = "SELECT last_value AS max FROM {$source}_{$field}_seq";
-      $res = $this->rawQuery($sql);
-      $data = $this->fetchRow($res);
-      return $data[0]['max'];
+        $sql = "SELECT last_value AS max FROM {$source}_{$field}_seq";
+        $res = $this->rawQuery($sql);
+        $data = $this->fetchRow($res);
+        return $data[0]['max'];
     }
 
 /**
@@ -483,6 +478,16 @@ class  DboPostgres extends DboSource
  */
     function column($real)
     {
+        if (is_array($real))
+        {
+            $col = $real['name'];
+            if (isset($real['limit']))
+            {
+                $col .= '('.$real['limit'].')';
+            }
+            return $col;
+        }
+
         $col = r(')', '', $real);
         $limit = null;
         @list($col, $limit) = explode('(', $col);
@@ -499,7 +504,7 @@ class  DboPostgres extends DboSource
         {
             return 'boolean';
         }
-        if (strpos($col, 'integer') !== false)
+        if (strpos($col, 'int') !== false && $col != 'interval')
         {
             return 'integer';
         }
@@ -515,7 +520,7 @@ class  DboPostgres extends DboSource
         {
             return 'binary';
         }
-        if (in_array($col, array('float', 'double', 'decimal', 'real')))
+        if (in_array($col, array('float', 'float4', 'float8', 'double', 'decimal', 'real')))
         {
             return 'float';
         }
@@ -645,7 +650,15 @@ class  DboPostgres extends DboSource
             {
                 $insert = $this->value($value, $model->getColumnType($fields[$count]));
             }
-        	$valueInsert[] = $insert;
+            
+            if ($insert === '\'\'')
+            {
+                unset($fieldInsert[$count]);
+            }
+            else
+            {
+                $valueInsert[] = $insert;
+            }
         	unset($insert);
             $count++;
         }

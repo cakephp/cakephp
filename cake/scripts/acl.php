@@ -33,15 +33,39 @@ ini_set('error_reporting', '7');
 
 define ('DS', DIRECTORY_SEPARATOR);
 
-/**
- * Change these setting only if your install
- * is different from a distribution install.
- *
- */
-define ('ROOT', dirname(dirname(dirname(__FILE__))).DS);
-define ('APP_DIR', 'app');
-define('CAKE_CORE_INCLUDE_PATH', ROOT);
-define('CORE_PATH', CAKE_CORE_INCLUDE_PATH);
+$app = 'app';
+$core = null;
+$root = dirname(dirname(dirname(__FILE__)));
+$here = $argv[0];
+$dataSource = 'default';
+
+for ($i = 1; $i < count($argv); $i += 2)
+{
+    // Process command-line modifiers here
+    switch (strtolower($argv[$i]))
+    {
+        case '-app':
+            $app = $argv[$i + 1];
+        break;
+        case '-core':
+            $core = $argv[$i + 1];
+        break;
+        case '-root':
+            $root = $argv[$i + 1];
+        break;
+        case '-datasource':
+            $dataSource = $argv[$i + 1];
+        break;
+    }
+}
+
+define ('ROOT', $root.DS);
+define ('APP_DIR', $app);
+define ('APP_PATH', $app.DS);
+define ('DEBUG', 1);
+define ('CORE_PATH', $core);
+define ('CAKE_CORE_INCLUDE_PATH', ROOT);
+define('DATASOURCE', $dataSource);
 
 define ('DEBUG', 1);
 ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
@@ -49,7 +73,14 @@ ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_
 require ('cake'.DS.'basics.php');
 require ('cake'.DS.'config'.DS.'paths.php');
 require (CONFIGS.'core.php');
-require (CONFIGS.'database.php');
+if (file_exists( CONFIGS.'database.php' ))
+{
+    require_once (CONFIGS.'database.php');
+}
+else
+{
+    die("Unable to find /app/config/database.php.  Please create it before continuing.\n\n");
+}
 uses ('neat_array');
 uses ('object');
 uses ('session');
@@ -143,6 +174,7 @@ class AclCLI {
  */
     function __construct ($command, $args)
     {
+      $this->dataSource = DATASOURCE;
       $acl = new AclComponent();
       $this->acl = $acl->getACL();
 
@@ -255,7 +287,7 @@ class AclCLI {
       extract($this->__dataVars());
       $node = &new $class;
 
-      if (!$node->setParent(intval($this->args[2]), intval($this->args[1])))
+      if (!$node->setParent($this->args[2], $this->args[1]))
       {
          fwrite($this->stdout, "Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.\n");
       }
@@ -377,37 +409,38 @@ class AclCLI {
       $db =& ConnectionManager::getDataSource($this->dataSource);
       fwrite($this->stdout, "Initializing Database...\n");
       fwrite($this->stdout, "Creating access control objects table (acos)...\n");
-      $sql = " CREATE TABLE `acos` (
-                `id` int(11) NOT NULL auto_increment,
-                `object_id` int(11) default NULL,
-                `alias` varchar(255) NOT NULL default '',
-                `lft` int(11) default NULL,
-                `rght` int(11) default NULL,
-                PRIMARY KEY  (`id`)
+
+      $sql = " CREATE TABLE ".$db->name('acos')." (
+                ".$db->name('id')." ".$db->column($db->columns['primary_key']).",
+                ".$db->name('object_id')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
+                ".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
+                PRIMARY KEY  (".$db->name('id').")
                 );";
       $db->query($sql);
 
       fwrite($this->stdout, "Creating access request objects table (aros)...\n");
-      $sql2 = "CREATE TABLE `aros` (
-                `id` int(11) NOT NULL auto_increment,
-                `user_id` int(11) default NULL,
-                `alias` varchar(255) NOT NULL default '',
-                `lft` int(11) default NULL,
-                `rght` int(11) default NULL,
-                PRIMARY KEY  (`id`)
+      $sql2 = "CREATE TABLE ".$db->name('aros')." (
+                ".$db->name('id')." ".$db->column($db->columns['primary_key']).",
+                ".$db->name('user_id')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
+                ".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
+                PRIMARY KEY  (".$db->name('id').")
                 );";
       $db->query($sql2);
 
       fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
-      $sql3 = "CREATE TABLE `aros_acos` (
-                `id` int(11) NOT NULL auto_increment,
-                `aro_id` int(11) default NULL,
-                `aco_id` int(11) default NULL,
-                `_create` int(1) NOT NULL default '0',
-                `_read` int(1) NOT NULL default '0',
-                `_update` int(1) NOT NULL default '0',
-                `_delete` int(11) NOT NULL default '0',
-                PRIMARY KEY  (`id`)
+      $sql3 = "CREATE TABLE ".$db->name('aros_acos')." (
+                ".$db->name('id')." ".$db->column($db->columns['primary_key']).",
+                ".$db->name('aro_id')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('aco_id')." ".$db->column($db->columns['integer'])." default NULL,
+                ".$db->name('_create')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
+                ".$db->name('_read')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
+                ".$db->name('_update')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
+                ".$db->name('_delete')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
+                PRIMARY KEY  (".$db->name('id').")
                 );";
       $db->query($sql3);
 
