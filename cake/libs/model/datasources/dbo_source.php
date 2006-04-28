@@ -564,28 +564,25 @@ class DboSource extends DataSource
             $this->__bypass = true;
         }
 
-        if ($model->recursive > 0)
+        foreach($model->__associations as $type)
         {
-            foreach($model->__associations as $type)
+            foreach($model->{$type} as $assoc => $assocData)
             {
-                foreach($model->{$type} as $assoc => $assocData)
+                $linkModel =& $model->{$assocData['className']};
+                if($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany')
                 {
-                    $linkModel =& $model->{$assocData['className']};
-                    if($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany')
+                    if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
                     {
-                        if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                        $linkedModels[] = $type.'/'.$assoc;
+                    }
+                }
+                else
+                {
+                    if ($model->useDbConfig == $linkModel->useDbConfig)
+                    {
+                        if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
                         {
                             $linkedModels[] = $type.'/'.$assoc;
-                        }
-                    }
-                    else
-                    {
-                        if ($model->useDbConfig == $linkModel->useDbConfig)
-                        {
-                            if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
-                            {
-                                $linkedModels[] = $type.'/'.$assoc;
-                            }
                         }
                     }
                 }
@@ -791,7 +788,7 @@ class DboSource extends DataSource
         {
             if($merge[0][$association] === false)
             {
-                $data[$association] = null;
+                $data[$association] = array();
             }
             else
             {

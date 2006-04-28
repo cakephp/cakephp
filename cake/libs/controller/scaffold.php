@@ -148,6 +148,7 @@ class Scaffold extends Object {
         if($this->controllerClass->_beforeScaffold('index'))
         {
             $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames(null,false) );
+            $this->controllerClass->{$this->modelKey}->recursive = 0;
             $this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
             if(file_exists(APP.'views'.DS.$this->viewPath.DS.'scaffold.list.thtml'))
             {
@@ -251,7 +252,6 @@ class Scaffold extends Object {
 
             $this->controllerClass->set('fieldNames', $this->controllerClass->generateFieldNames() );
             $this->controllerClass->cleanUpFields();
-
 
             if($type == 'create')
             {

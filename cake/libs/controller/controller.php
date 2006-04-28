@@ -767,7 +767,8 @@ class Controller extends Object
                              if ($doCreateOptions)
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 $rec = $otherModel->findAll(null, null, null, 500);
+                                 $otherModel->recursive = 0;
+                                 $rec = $otherModel->findAll();
                                  foreach ($rec as $pass)
                                  {
                                      foreach ($pass as $key => $value)
@@ -807,7 +808,8 @@ class Controller extends Object
                              if( $doCreateOptions )
                              {
                                  $otherDisplayField = $otherModel->getDisplayField();
-                                 $rec = $otherModel->findAll(null, null, null, 500);
+                                 $otherModel->recursive = 0;
+                                 $rec = $otherModel->findAll();
                                  foreach ($rec as $pass)
                                  {
                                      foreach($pass as $key => $value)
@@ -870,7 +872,8 @@ class Controller extends Object
                     $fieldNames[$modelKeyM]['prompt'] = "Related ".Inflector::humanize(Inflector::pluralize($modelName));
                     $fieldNames[$modelKeyM]['type'] = "selectMultiple";
                     $fieldNames[$modelKeyM]['tagName'] = $manyAssociation.'/'.$manyAssociation;
-                    $rec = $modelObject->findAll(null, null, null, 500);
+                    $modelObject->recursive = 0;
+                    $rec = $modelObject->findAll();
                     foreach ($rec as $pass)
                     {
                         foreach($pass as $key=>$value)

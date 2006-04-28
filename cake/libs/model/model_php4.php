@@ -638,10 +638,10 @@ class Model extends Object
     {
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
         if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe'))
-      {
-          $this->_tableInfo = new NeatArray($db->describe($this));
-      }
-      return $this->_tableInfo;
+        {
+            $this->_tableInfo = new NeatArray($db->describe($this));
+        }
+        return $this->_tableInfo;
     }
 
 /**

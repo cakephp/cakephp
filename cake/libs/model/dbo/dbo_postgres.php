@@ -102,7 +102,8 @@ class  DboPostgres extends DboSource
  */
     function disconnect ()
     {
-        return pg_close($this->connection);
+        $this->connected = !@pg_close($this->connection);
+        return !$this->connected;
     }
 
 /**
@@ -165,65 +166,6 @@ class  DboPostgres extends DboSource
             parent::listSources($tables);
             return $tables;
         }
-    }
-
-/**
- * Generates the fields list of an SQL query.
- *
- * @param Model $model
- * @param string $alias Alias tablename
- * @param mixed $fields
- * @return array
- */
-    function fields (&$model, $alias, $fields)
-    {
-      if (is_array($fields))
-        {
-            $fields = $fields;
-        }
-        else
-        {
-            if ($fields != null)
-            {
-                if (strpos($fields, ','))
-                {
-                    $fields = explode(',', $fields);
-                }
-                else
-                {
-                    $fields = array($fields);
-                }
-                $fields = array_map('trim', $fields);
-            }
-            else
-            {
-                 foreach ($model->_tableInfo->value as $field)
-                 {
-                     $fields[]= $field['name'];
-                 }
-
-            }
-        }
-
-        $count = count($fields);
-        if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false)
-        {
-            for ($i = 0; $i < $count; $i++)
-            {
-                $dot = strrpos($fields[$i], '.');
-                if ($dot === false)
-                {
-                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
-                }
-                else
-                {
-                    $build = explode('.',$fields[$i]);
-                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
-                }
-            }
-        }
-
-        return $fields;
     }
 
 /**
@@ -445,6 +387,65 @@ class  DboPostgres extends DboSource
     }
 
 /**
+ * Generates the fields list of an SQL query.
+ *
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields
+ * @return array
+ */
+    function fields (&$model, $alias, $fields)
+    {
+      if (is_array($fields))
+        {
+            $fields = $fields;
+        }
+        else
+        {
+            if ($fields != null)
+            {
+                if (strpos($fields, ','))
+                {
+                    $fields = explode(',', $fields);
+                }
+                else
+                {
+                    $fields = array($fields);
+                }
+                $fields = array_map('trim', $fields);
+            }
+            else
+            {
+                 foreach ($model->_tableInfo->value as $field)
+                 {
+                     $fields[]= $field['name'];
+                 }
+
+            }
+        }
+
+        $count = count($fields);
+        if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false)
+        {
+            for ($i = 0; $i < $count; $i++)
+            {
+                $dot = strrpos($fields[$i], '.');
+                if ($dot === false)
+                {
+                    $fields[$i] = $this->name($alias).'.'.$this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
+                }
+                else
+                {
+                    $build = explode('.',$fields[$i]);
+                    $fields[$i] = $this->name($build[0]).'.'.$this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
+                }
+            }
+        }
+
+        return $fields;
+    }
+
+/**
  * Returns a limit statement in the correct format for the particular database.
  *
  * @param int $limit Limit of results returned
@@ -520,7 +521,7 @@ class  DboPostgres extends DboSource
         {
             return 'binary';
         }
-        if (in_array($col, array('float', 'float4', 'float8', 'double', 'decimal', 'real')))
+        if (in_array($col, array('float', 'float4', 'float8', 'double', 'decimal', 'real', 'numeric')))
         {
             return 'float';
         }

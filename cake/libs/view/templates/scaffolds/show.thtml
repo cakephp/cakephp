@@ -158,7 +158,7 @@ foreach($relations as $association => $relation)
     $controller = Inflector::pluralize($model);
 
     echo "<div class='related'><H2>Related ".Inflector::humanize(Inflector::pluralize($association))."</H2>";
-    if(isset($data[$association]) && is_array($data[$association]))
+    if(isset($data[$association][0]) && is_array($data[$association]))
     {
 ?>
         <table class="inav" cellspacing="0">

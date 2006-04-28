@@ -120,6 +120,7 @@ class DboMysql extends DboSource
         {
             $this->connected = true;
         }
+        return $this->connected;
     }
 
 /**
@@ -279,14 +280,14 @@ class DboMysql extends DboSource
         {
             case 'boolean':
                 $data = $this->boolean((bool)$data);
-                break;
+            break;
             default:
                 if (ini_get('magic_quotes_gpc') == 1)
                 {
                     $data = stripslashes($data);
                 }
-
                 $data = mysql_real_escape_string($data, $this->connection);
+            break;
         }
 
         return "'" . $data . "'";
