@@ -205,6 +205,11 @@ class Dispatcher extends Object
           $missingAction = true;
       }
 
+      if (in_array(strtolower($params['action']), array('beforefilter', 'beforerender', 'afterfilter')))
+      {
+          $missingAction = true;
+      }
+
       if(in_array('return', array_keys($params)) && $params['return'] == 1)
       {
           $controller->autoRender = false;
@@ -362,8 +367,25 @@ class Dispatcher extends Object
 
         foreach ($_FILES as $name => $data)
         {
-            $params['form'][$name] = $data;
+            if ($name != 'data')
+            {
+                $params['form'][$name] = $data;
+            }
         }
+        if (isset($_FILES['data']))
+        {
+            foreach ($_FILES['data'] as $key => $data)
+            {
+                foreach ($data as $model => $fields)
+                {
+                    foreach ($fields as $field => $value)
+                    {
+                        $params['data'][$model][$field][$key] = $value;
+                    }
+                }
+            }
+        }
+
         $params['bare'] = empty($params['ajax'])? (empty($params['bare'])? 0: 1): 1;
 
         $params['webservices'] = empty($params['webservices']) ? null : $params['webservices'];

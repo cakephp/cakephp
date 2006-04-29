@@ -52,6 +52,13 @@ class Router extends Object {
  */
     var $routes = array();
 
+/**
+ * CAKE_ADMIN route
+ *
+ * @var array
+ */
+    var $__admin = null;
+
     function __construct ()
     {
         if(defined('CAKE_ADMIN'))
@@ -59,7 +66,7 @@ class Router extends Object {
             $admin = CAKE_ADMIN;
             if(!empty($admin))
             {
-                $this->routes[] = array (
+                $this->__admin = array (
                     '/:'.$admin.'/:controller/:action/* (default)',
                     '/^(?:\/(?:('.$admin.')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
                     array($admin, 'controller', 'action'),
@@ -80,6 +87,15 @@ class Router extends Object {
     function connect ($route, $default=null)
     {
       $parsed = $names = array ();
+
+      if (defined('CAKE_ADMIN') && $default == null)
+      {
+          if ($route == CAKE_ADMIN)
+          {
+              $this->routes[] = $this->__admin;
+              $this->__admin = null;
+          }
+      }
 
       $r = null;
       if (($route == '') || ($route == '/'))
@@ -151,16 +167,22 @@ class Router extends Object {
          array('controller', 'action'),
          array());
 
+      if (defined('CAKE_ADMIN') && $this->__admin != null)
+      {
+          $this->routes[] = $this->__admin;
+          $this->__admin = null;
+      }
+
       $this->connect('/bare/:controller/:action/*', array('bare'=>'1'));
       $this->connect('/ajax/:controller/:action/*', array('bare'=>'1'));
 
       if(defined('WEBSERVICES') && WEBSERVICES == 'on' )
       {
-          $this->connect('/rest/:controller/:action/*', array('webservices'=>'Rest'));
-          $this->connect('/rss/:controller/:action/*', array('webservices'=>'Rss'));
-          $this->connect('/soap/:controller/:action/*', array('webservices'=>'Soap'));
-          $this->connect('/xml/:controller/:action/*', array('webservices'=>'Xml'));
-          $this->connect('/xmlrpc/:controller/:action/*', array('webservices'=>'XmlRpc'));
+          $this->connect('/rest/:controller/:action/*',   array('webservices' => 'Rest'));
+          $this->connect('/rss/:controller/:action/*',    array('webservices' => 'Rss'));
+          $this->connect('/soap/:controller/:action/*',   array('webservices' => 'Soap'));
+          $this->connect('/xml/:controller/:action/*',    array('webservices' => 'Xml'));
+          $this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
       }
 
       $this->routes[] = $default_route;

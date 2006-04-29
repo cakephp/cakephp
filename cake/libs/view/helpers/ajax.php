@@ -189,13 +189,19 @@ class AjaxHelper extends Helper
         if (isset($options['id']))
         {
             $htmlOptions['onclick'] = ' return false;';
-            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle) . $this->Javascript->event("'{$options['id']}'", "click", $this->remoteFunction($options));
+            $return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
+            $script = $this->Javascript->event("'{$options['id']}'", "click", $this->remoteFunction($options));
+            if (is_string($script))
+            {
+                $return .= $script;
+            }
         }
         else
         {
             $htmlOptions['onclick'] = $this->remoteFunction($options) . '; return false;';
-            return $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
+            $return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
         }
+        return $return;
     }
 
     function linkToRemote ($title, $options = array(), $html_options = array())

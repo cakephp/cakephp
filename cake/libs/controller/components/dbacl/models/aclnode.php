@@ -84,7 +84,7 @@ class AclNode extends AppModel
          }
 
          $parent = $parent[$class];
-         $this->_syncTable($table_name, 1, $parent['lft'], $parent['lft']);
+         $this->_syncTable(1, $parent['lft'], $parent['lft']);
       }
 
       $return = $this->save(array($class => array(
@@ -157,7 +157,7 @@ class AclNode extends AppModel
          return false;
       }
 
-      $this->_syncTable($table_name, 0, $object['lft'], $object['lft']);
+      $this->_syncTable(0, $object['lft'], $object['lft']);
       
       if ($object['lft'] < $newParent['lft'])
       {
@@ -167,7 +167,7 @@ class AclNode extends AppModel
 
       if ($parent_id != null)
       {
-          $this->_syncTable($table_name, 1, $newParent['lft'], $newParent['lft']);
+          $this->_syncTable(1, $newParent['lft'], $newParent['lft']);
       }
 
       $object['lft']  = $newParent['lft'] + 1;
@@ -176,7 +176,7 @@ class AclNode extends AppModel
 
       if($newParent['lft'] == 0)
       {
-         $this->_syncTable($table_name, 2, $newParent['lft'], $newParent['lft']);
+         $this->_syncTable(2, $newParent['lft'], $newParent['lft']);
       }
       return true;
     }
@@ -260,12 +260,11 @@ class AclNode extends AppModel
  * Shifts the left and right values of the aro/aco tables
  * when a node is added or removed
  *
- * @param unknown_type $table
  * @param unknown_type $dir
  * @param unknown_type $lft
  * @param unknown_type $rght
  */
-    function _syncTable($table, $dir, $lft, $rght)
+    function _syncTable($dir, $lft, $rght)
     {
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
 
@@ -287,8 +286,8 @@ class AclNode extends AppModel
             }
         }
 
-        $db->query('UPDATE '.$table.' SET rght = rght '.$dir.' '.$shift.' WHERE rght > '.$rght);
-        $db->query('UPDATE '.$table.' SET lft  = lft  '.$dir.' '.$shift.' WHERE lft  > '.$lft);
+        $db->query('UPDATE '.$this->table.' SET '.$db->name('rght').' = '.$db->name('rght').' '.$dir.' '.$shift.' WHERE '.$db->name('rght').' > '.$rght);
+        $db->query('UPDATE '.$this->table.' SET '.$db->name('lft').'  = '.$db->name('lft').'  '.$dir.' '.$shift.' WHERE '.$db->name('lft').'  > '.$lft);
     }
 
 /**
@@ -308,7 +307,6 @@ class AclNode extends AppModel
       {
           $vars['secondary_id'] = 'object_id';
       }
-      $vars['table_name']    = $class . 's';
       $vars['class']        = ucwords($class);
       return $vars;
     }

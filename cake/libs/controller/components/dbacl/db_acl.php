@@ -266,7 +266,17 @@ class DB_ACL extends AclBase
             return null;
         }
         $obj = new $obj;
-        $tmp = $obj->find(is_numeric($id) ? "Aco.user_id    = {$id}" : "Aco.alias = '" . addslashes($id) . "'");
+        
+        if (is_numeric($id))
+        {
+            $conditions = array('Aco.user_id' => $id);
+        }
+        else
+        {
+            $conditions = array('Aco.alias' => $id);
+        }
+
+        $tmp = $obj->find($conditions);
         $aco->setId($tmp['Aco']['id']);
         return $aco;
     }

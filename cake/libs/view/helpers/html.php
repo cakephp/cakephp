@@ -395,7 +395,9 @@ function url($url = null, $return = false)
  */
     function file($fieldName, $htmlAttributes = null, $return = false)
     {
-        return $this->output(sprintf($this->tags['file'], $fieldName,
+        $this->setFormTag($fieldName);
+
+        return $this->output(sprintf($this->tags['file'], $this->model, $this->field,
         $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
     }
 
