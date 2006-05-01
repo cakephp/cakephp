@@ -400,7 +400,13 @@ class DboMysql extends DboSource
  */
     function lastInsertId ($source = null)
     {
-        return mysql_insert_id($this->connection);
+        $id = mysql_insert_id($this->connection);
+        if ($id)
+        {
+            return $id;
+        }
+        $data = $this->fetchAll('SELECT LAST_INSERT_ID() as id From '.$source);
+        return $data[0]['id'];
     }
 
 /**

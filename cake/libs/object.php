@@ -157,19 +157,32 @@ class Object
     }
 
 /**
- * Enter description here...
+ * Used to report user friendly errors.
+ * If there is a file app/error.php this file will be loaded
+ * error.php is the AppError class it should extend ErrorHandler class.
  *
- * @param unknown_type $method
- * @param unknown_type $messages
- * @return unknown
+ * @param string $method Method to be called in the error class (AppError or ErrorHandler classes)
+ * @param array $messages Message that is to be displayed by the error class
+ * @return error message
  */
     function cakeError($method, $messages)
     {
         if(!class_exists('ErrorHandler'))
         {
             uses('error');
+            if(file_exists(APP.'error.php'))
+            {
+                include_once(APP.'error.php');
+            }
         }
-        $error = new ErrorHandler($method, $messages);
+        if(class_exists('AppError'))
+        {
+            $error = new AppError($method, $messages);
+        }
+        else
+        {
+            $error = new ErrorHandler($method, $messages);
+        }
         return $error;
     }
 

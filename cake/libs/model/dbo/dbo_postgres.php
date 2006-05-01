@@ -608,68 +608,6 @@ class  DboPostgres extends DboSource
             return false;
         }
     }
-
-/**
- * The "C" in CRUD
- *
- * @param Model $model
- * @param array $fields
- * @param array $values
- * @return boolean Success
- */
-    function create(&$model, $fields = null, $values = null)
-    {
-        if ($fields == null)
-        {
-            unset($fields, $values);
-            $fields = array_keys($model->data);
-            $values = array_values($model->data);
-        }
-
-        foreach ($fields as $field)
-        {
-            $fieldInsert[] = $this->name($field);
-        }
-
-        $count = 0;
-        foreach ($values as $value)
-        {
-            if ($value === '')
-            {
-                $columns = $model->loadInfo();
-                $columns = $columns->value;
-                foreach($columns as $col)
-                {
-                    if ($col['name'] == $fields[$count])
-                    {
-                        $insert = $col['default'];
-                        break;
-                    }
-                }
-            }
-            if (empty($insert))
-            {
-                $insert = $this->value($value, $model->getColumnType($fields[$count]));
-            }
-            
-            if ($insert === '\'\'')
-            {
-                unset($fieldInsert[$count]);
-            }
-            else
-            {
-                $valueInsert[] = $insert;
-            }
-        	unset($insert);
-            $count++;
-        }
-
-        if($this->execute('INSERT INTO '.$model->table.' ('.join(',', $fieldInsert).') VALUES ('.join(',', $valueInsert).')'))
-        {
-            return true;
-        }
-        return false;
-    }
 }
 
 ?>

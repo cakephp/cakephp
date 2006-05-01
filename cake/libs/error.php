@@ -52,17 +52,23 @@ class ErrorHandler extends Object
 
         if ($__previousError != array($method, $messages))
         {
+            $__previousError = array($method, $messages);
+
             if(!class_exists('AppController'))
             {
                 loadController(null);
             }
             $this->controller =& new AppController();
+
+            if(method_exists($this->controller, 'apperror'))
+            {
+                return $this->controller->appError($method, $messages);
+            }
         }
         else
         {
             $this->controller =& new Controller();
         }
-        $__previousError = array($method, $messages);
 
         if(DEBUG > 0 || $method == 'error')
         {

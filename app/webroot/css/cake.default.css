@@ -75,26 +75,23 @@ table {
   width: 100%;
   background-color: #fff;
   border: 1px solid #333;
-  border-collapse: collapse;
   clear:both;
   margin: 0 0 2em 0;
   white-space: normal;
 }
-tbody {
-    height: 400px;
-    overflow: auto;
-}
 th {
-  border: 1px solid #666;
+  background-color: #ccc;
+  border-top: 1px solid #fff;
+  border-right: 1px solid #666;
+  border-bottom: 1px solid #666;
   text-align: center;
   padding:3px;
-  border-bottom: 1px solid #666;
 }
 table tr td {
+  border-right: 1px solid #ccc;
   padding:4px 4px;
   vertical-align:top;
   text-align: center;
-  border-bottom: 1px solid #666;
 }
 table tr.altRow td {
   background: #f4f4f4;
