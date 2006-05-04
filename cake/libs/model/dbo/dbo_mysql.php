@@ -406,7 +406,10 @@ class DboMysql extends DboSource
             return $id;
         }
         $data = $this->fetchAll('SELECT LAST_INSERT_ID() as id From '.$source);
-        return $data[0]['id'];
+        if ($data && isset($data[0]['id']))
+        {
+            return $data[0]['id'];
+        }
     }
 
 /**

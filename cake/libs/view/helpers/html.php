@@ -386,7 +386,7 @@ function url($url = null, $return = false)
 /**
  * Creates file input widget.
  *
- * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname" or just "thefile"
+ * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
  * @param  array    $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -395,10 +395,14 @@ function url($url = null, $return = false)
  */
     function file($fieldName, $htmlAttributes = null, $return = false)
     {
-        $this->setFormTag($fieldName);
-
-        return $this->output(sprintf($this->tags['file'], $this->model, $this->field,
-        $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+        if (strpos($fieldName, '/'))
+        {
+            $this->setFormTag($fieldName);
+            return $this->output(sprintf($this->tags['file'], $this->model, $this->field,
+                $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+        }
+        return $this->output(sprintf($this->tags['file_no_model'], $fieldName,
+            $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
     }
 
 /**

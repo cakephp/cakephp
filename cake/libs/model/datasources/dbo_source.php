@@ -656,27 +656,30 @@ class DboSource extends DataSource
         $count = count($results);
         for ($i = 0; $i < $count; $i++)
         {
-            $keys = array_keys($results[$i]);
-            $count2 = count($keys);
-
-            for ($j = 0; $j < $count2; $j++)
+            if (is_array($results[$i]))
             {
-                $key = $keys[$j];
-                if ($model->name != $key && !in_array($key, $filtered))
+                $keys = array_keys($results[$i]);
+                $count2 = count($keys);
+
+                for ($j = 0; $j < $count2; $j++)
                 {
-                    if (!in_array($key, $filtering))
+                    $key = $keys[$j];
+                    if ($model->name != $key && !in_array($key, $filtered))
                     {
-                        $filtering[] = $key;
+                        if (!in_array($key, $filtering))
+                        {
+                            $filtering[] = $key;
+                        }
+                        if (isset($model->{$key}) && is_object($model->{$key}))
+                        {
+                            $data = $model->{$key}->afterFind(array(array($key => $results[$i][$key])));
+                        }
+                        else
+                        {
+                            $data = $model->{$associations[$key]['className']}->afterFind(array(array($key => $results[$i][$key])));
+                        }
+                        $results[$i][$key] = $data[0][$key];
                     }
-                    if (isset($model->{$key}) && is_object($model->{$key}))
-                    {
-                        $data = $model->{$key}->afterFind(array(array($key => $results[$i][$key])));
-                    }
-                    else
-                    {
-                        $data = $model->{$associations[$key]['className']}->afterFind(array(array($key => $results[$i][$key])));
-                    }
-                    $results[$i][$key] = $data[0][$key];
                 }
             }
         }
@@ -723,7 +726,7 @@ class DboSource extends DataSource
 
                 if (!empty($fetch) && is_array($fetch))
                 {
-                    if ($recursive > 1)
+                    if ($recursive > 0)
                     {
                         foreach($linkModel->__associations as $type1)
                         {
@@ -1536,6 +1539,12 @@ class DboSource extends DataSource
  */
     function order ($keys, $direction = 'ASC')
     {
+        if (is_string($keys) && strpos($keys, ','))
+        {
+            $keys = explode(',', $keys);
+            array_map('trim', $keys);
+        }
+
         if (is_array($keys))
         {
            foreach ($keys as $key => $val)
@@ -1559,7 +1568,8 @@ class DboSource extends DataSource
                 $new = array();
                 foreach ($keys as $val)
                 {
-                    $new[] = $this->order($val);
+                    $val = $this->order($val);
+                    $new[] = $val;
                 }
                 $keys = $new;
             }
@@ -1568,12 +1578,9 @@ class DboSource extends DataSource
             {
                 if(is_numeric($key))
                 {
-                    if (is_array($value))
-                    {
-                        $value = $this->order($value);
-                    }
-
+                    $value = r('ORDER BY ', '', $this->order($value));
                     $key = $value;
+
                     if (!preg_match('/\\x20ASC|\\x20DESC/i', $key))
                     {
                         $value = ' '.$direction;
@@ -1588,19 +1595,31 @@ class DboSource extends DataSource
                     $value= ' '.$value;
                 }
 
-                if(!preg_match('/^.+\\(.*\\)/', $key))
+                if(!preg_match('/^.+\\(.*\\)/', $key) && !strpos($key, ','))
                 {
-                    $key = $this->name($key);
+                    $dir = '';
+                    $hasDir = preg_match('/\\x20ASC|\\x20DESC/i', $key, $dir);
+
+                    if ($hasDir)
+                    {
+                        $dir = $dir[0];
+                        $key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
+                    }
+                    else
+                    {
+                        $dir = '';
+                    }
+                    $key = trim($this->name($key).' '.$dir);
                 }
                 $order[] = $this->order($key.$value);
             }
-            return ' ORDER BY '. r('ORDER BY', '', join(',', $order));
+            return ' ORDER BY '. trim(r('ORDER BY', '', join(',', $order)));
         }
         else
         {
             $keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
 
-            if (strpos('.', $keys))
+            if (strpos($keys, '.'))
             {
                 preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
                 $pregCount = count($result['0']);

@@ -78,6 +78,9 @@ password = "<input type="password" name="data[%s][%s]" %s/>"
 ; Tag template for a file input tag.
 file = "<input type="file" name="data[%s][%s]" %s/>"
 
+; Tag template for a file input tag with no associated model.
+file_no_model = "<input type="file" name="%s" %s/>"
+
 ; Tag template for a submit button tag.
 submit = "<input type="submit" %s/>"
 

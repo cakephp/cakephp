@@ -487,11 +487,11 @@ class Model extends Object
         $colKey = Inflector::underscore($className);
         if(ClassRegistry::isKeySet($colKey))
         {
-            $this->{$className} = ClassRegistry::getObject($colKey);
+            $this->{$className} =& ClassRegistry::getObject($colKey);
         }
         else
         {
-            $this->{$className} = new $className();
+            $this->{$className} =& new $className();
         }
 
         $this->alias[$assoc] = $this->{$className}->table;

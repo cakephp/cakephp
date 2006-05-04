@@ -1707,7 +1707,7 @@ class Bake {
         $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
 
         $tagNameArray = explode('/', $tagName);
-        $htmlAttributes['checked'] = "<?php \$data['{$tagNameArray[0]}']['{$tagNameArray[1]}'] ? 'checked' : '' ?>";
+        $htmlAttributes['checked'] = "\$data['{$tagNameArray[0]}']['{$tagNameArray[1]}'] ? 'checked' : ''";
 
 
         $str = "\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->attributesToArray($htmlAttributes) . ")?>\n";
@@ -1760,6 +1760,34 @@ class Bake {
 
         return $this->divTag("date", $requiredDiv);
     }
+
+function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null )
+    {
+        $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
+        $tagNameArray = explode('/', $tagName);
+        $str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \$data['{$tagNameArray[0]}']['{$tagNameArray[1]}'], " . $this->attributesToArray($htmlOptions) . ")?>\n";
+        $str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
+        $strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
+        $divClass = "optional";
+
+        if( $required )
+        $divClass = "required";
+
+        $strError = "";// initialize the error to empty.
+
+        if( $this->isFieldError( $tagName ) )
+        {
+// if it was an error that occured, then add the error message, and append " error" to the div tag.
+            $strError = $this->pTag( 'error', $errorMsg );
+            $divClass = sprintf( "%s error", $divClass );
+        }
+        $divTagInside = sprintf( "%s %s %s", $strError, $strLabel, $str );
+
+        $requiredDiv = $this->divTag( $divClass, $divTagInside );
+
+        return $this->divTag("date", $requiredDiv);
+    }
+
 
     function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
     {
