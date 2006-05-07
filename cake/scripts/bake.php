@@ -588,6 +588,8 @@ class Bake {
 			}
 		}
 
+		$controllerName =  $inflect->underscore($controllerName);
+
 		$wannaDoScaffold = $this->getInput("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
 		$uses = array();
 
@@ -983,23 +985,26 @@ class Bake {
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes')
 		{
 			$controllerModel = $inflect->singularize($controllerClassName);
+			loadModels();
+			$tempModel = new $controllerModel();
 
 			$actions .= "\n";
 			$actions .= "\tfunction index()\n";
 			$actions .= "\t{\n";
+			$actions .= "\t\t\$this->{$controllerModel}->recursive = 0;\n";
 			$actions .= "\t\t\$this->set('data', \$this->{$controllerModel}->findAll());\n";
 			$actions .= "\t}\n";
 
 			$actions .= "\n";
 			$actions .= "\tfunction add()\n";
 			$actions .= "\t{\n";
-			$actions .= "\t\tif(empty(\$this->params['data']))\n";
+			$actions .= "\t\tif(empty(\$this->data))\n";
 			$actions .= "\t\t{\n";
 			$actions .= "\t\t\t\$this->render();\n";
 			$actions .= "\t\t}\n";
 			$actions .= "\t\telse\n";
 			$actions .= "\t\t{\n";
-			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->params['data']))\n";
+			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data))\n";
 			$actions .= "\t\t\t{\n";
 			$actions .= "\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$controllerName}/index');\n";
 			$actions .= "\t\t\t}\n";
@@ -1013,19 +1018,19 @@ class Bake {
 			$actions .= "\n";
 			$actions .= "\tfunction edit(\$id)\n";
 			$actions .= "\t{\n";
-			$actions .= "\t\tif(empty(\$this->params['data']))\n";
+			$actions .= "\t\tif(empty(\$this->data))\n";
 			$actions .= "\t\t{\n";
-			$actions .= "\t\t\t\$this->set('data', \$this->{$controllerModel}->find('{$controllerModel}.id = ' . \$id));\n";
+			$actions .= "\t\t\t\$this->set('data', \$this->{$controllerModel}->find('{$controllerModel}.{$tempModel->primaryKey} = ' . \$id));\n";
 			$actions .= "\t\t}\n";
 			$actions .= "\t\telse\n";
 			$actions .= "\t\t{\n";
-			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->params['data']))\n";
+			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data))\n";
 			$actions .= "\t\t\t{\n";
 			$actions .= "\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$controllerName}/index');\n";
 			$actions .= "\t\t\t}\n";
 			$actions .= "\t\t\telse\n";
 			$actions .= "\t\t\t{\n";
-			$actions .= "\t\t\t\t\$this->set('data', \$this->params['data']);\n";
+			$actions .= "\t\t\t\t\$this->set('data', \$this->data);\n";
 			$actions .= "\t\t\t\t\$this->validateErrors(\$this->{$controllerModel});\n";
 			$actions .= "\t\t\t\t\$this->render();\n";
 			$actions .= "\t\t\t}\n";
@@ -1035,7 +1040,7 @@ class Bake {
 			$actions .= "\n";
 			$actions .= "\tfunction view(\$id)\n";
 			$actions .= "\t{\n";
-			$actions .= "\t\t\$this->set('data', \$this->{$controllerModel}->find('{$controllerModel}.id = ' . \$id));\n";
+			$actions .= "\t\t\$this->set('data', \$this->{$controllerModel}->find('{$controllerModel}.{$tempModel->primaryKey} = ' . \$id));\n";
 			$actions .= "\t}\n";
 
 			$actions .= "\n";
@@ -1047,13 +1052,19 @@ class Bake {
 			$actions .= "\n";
 
 			$lowerCaseModel = strtolower(substr($controllerModel, 0, 1)) . substr($controllerModel, 1);
+			if($tempModel->displayField === null)
+			{
+			    $tempModel->displayField = 'name';
+			}
+
 
 			$actions .= "\tfunction {$lowerCaseModel}List()\n";
 			$actions .= "\t{\n";
-			$actions .= "\t\t\$vars = \$this->{$controllerModel}->findAll();\n";
+			$actions .= "\t\t\$this->{$controllerModel}->recursive = 0;\n";
+			$actions .= "\t\t\$vars = \$this->{$controllerModel}->findAll(null,'{$tempModel->name}.{$tempModel->primaryKey}, {$tempModel->name}.{$tempModel->displayField}');\n";
 			$actions .= "\t\tforeach(\$vars as \$var)\n";
 			$actions .= "\t\t{\n";
-			$actions .= "\t\t\t\$list[\$var['{$controllerModel}']['id']] = \$var['{$controllerModel}']['name'];\n";
+			$actions .= "\t\t\t\$list[\$var['{$controllerModel}']['{$tempModel->primaryKey}']] = \$var['{$controllerModel}']['{$tempModel->displayField}'];\n";
 			$actions .= "\t\t}\n";
 			$actions .= "\n";
 			$actions .= "\t\treturn \$list;\n";
@@ -1761,7 +1772,7 @@ class Bake {
         return $this->divTag("date", $requiredDiv);
     }
 
-function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null )
+    function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null )
     {
         $htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
         $tagNameArray = explode('/', $tagName);
@@ -1842,7 +1853,11 @@ function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $s
         else
         {
         	$lowerName = strtolower($tagNameArray[0]);
-        	$str = "\t<?php foreach (\$data['{$tagNameArray[0]}'] as \$var): \${$lowerName}Options[\$var['id']] = \$var['id']; endforeach; ?>\n";
+        	$str = "\t<?php if(isset(\$data['{$tagNameArray[0]}'])): ?>\n";
+        	$str .= "\t<?php foreach (\$data['{$tagNameArray[0]}'] as \$var): \${$lowerName}Options[\$var['id']] = \$var['id']; endforeach; ?>\n";
+        	$str .= "\t<?php else: ?>\n";
+        	$str .= "\t<?php \${$lowerName}Options = null;?>\n";
+        	$str .= "\t<?php endif ?>\n";
         	$str .= "\t<?php echo \$html->selectTag('{$tagName}', " . "\$this->requestAction('{$path}'), \${$lowerName}Options, " . $this->attributesToArray($selectAttr) . ") ?>\n";
         	$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
         }

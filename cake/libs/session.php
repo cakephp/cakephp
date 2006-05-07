@@ -308,7 +308,7 @@ class CakeSession extends Object
  *
  * @access private
  */
-    function __destroyInvalid()
+    function destroyInvalid()
     {
         $sessionpath = session_save_path();
         if (empty($sessionpath))
@@ -468,7 +468,7 @@ class CakeSession extends Object
             {
                 $this->valid = false;
                 $this->__setError(1, "Session Highjacking Attempted !!!");
-                $this->__destroyInvalid();
+                $this->destroyInvalid();
             }
         }
         else

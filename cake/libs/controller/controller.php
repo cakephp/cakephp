@@ -842,7 +842,7 @@ class Controller extends Object
                  break;
                  case "date":
                  case "datetime":
-                     if(0 != strncmp( "created", $tabl['name'], 6 ) && 0 != strncmp("modified",$tabl['name'], 8))
+                     if(0 != strncmp( "created", $tabl['name'], 7 ) && 0 != strncmp("modified",$tabl['name'], 8))
                      {
                          $fieldNames[ $tabl['name']]['type'] = $type;
                      }

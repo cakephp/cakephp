@@ -784,13 +784,28 @@ class Model extends Object
         }
         if ($data = $this->find($conditions, $name, $order, 0))
         {
-            if (isset($data[$this->name][$name]))
+            if (strpos($name, '.') === false)
             {
-                return $data[$this->name][$name];
+                if (isset($data[$this->name][$name]))
+                {
+                    return $data[$this->name][$name];
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
-                return false;
+                $name = explode('.', $name);
+                if (isset($data[$name[0]][$name[1]]))
+                {
+                    return $data[$name[0]][$name[1]];
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
         else
@@ -838,11 +853,6 @@ class Model extends Object
 
         $whitelist = !(empty($fieldList) || count($fieldList) == 0);
         $this->validationErrors = array();
-
-        if(!$this->beforeValidate())
-        {
-            return false;
-        }
 
         if ($validate && !$this->validates())
         {
@@ -1058,9 +1068,9 @@ class Model extends Object
             $db =& ConnectionManager::getDataSource($this->useDbConfig);
             if ($this->id && $db->delete($this))
             {
-                $this->__deleteMulti($id);
-                $this->__deleteHasMany($id, $cascade);
-                $this->__deleteHasOne($id, $cascade);
+                $this->_deleteMulti($id);
+                $this->_deleteHasMany($id, $cascade);
+                $this->_deleteHasOne($id, $cascade);
                 $this->afterDelete();
                 $this->_clearCache();
                 $this->id = false;
@@ -1087,9 +1097,9 @@ class Model extends Object
  *
  * @param string $id
  * @return null
- * @access private
+ * @access protected
  */
-    function __deleteHasMany ($id, $cascade)
+    function _deleteHasMany ($id, $cascade)
     {
         foreach ($this->hasMany as $assoc => $data)
         {
@@ -1113,9 +1123,9 @@ class Model extends Object
  *
  * @param string $id
  * @return null
- * @access private
+ * @access protected
  */
-    function __deleteHasOne ($id, $cascade)
+    function _deleteHasOne ($id, $cascade)
     {
         foreach ($this->hasOne as $assoc => $data)
         {
@@ -1139,9 +1149,9 @@ class Model extends Object
  *
  * @param string $id
  * @return null
- * @access private
+ * @access protected
  */
-    function __deleteMulti ($id)
+    function _deleteMulti ($id)
     {
         $db =& ConnectionManager::getDataSource($this->useDbConfig);
         foreach ($this->hasAndBelongsToMany as $assoc => $data)
@@ -1442,6 +1452,11 @@ class Model extends Object
  */
     function invalidFields ($data = array())
     {
+        if(!$this->beforeValidate())
+        {
+            return false;
+        }
+
         if (!isset($this->validate))
         {
             return true;

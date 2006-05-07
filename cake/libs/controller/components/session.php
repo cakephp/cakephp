@@ -207,5 +207,16 @@ class SessionComponent extends Object
         return $this->CakeSession->isValid();
     }
 
+/**
+ * Enter description here...
+ *
+ * Use like this. $this->Session->destroy();
+ * Used to destroy Sessions
+ *
+ */
+    function destroy()
+    {
+      $this->CakeSession->destroyInvalid();
+    }
 }
 ?>

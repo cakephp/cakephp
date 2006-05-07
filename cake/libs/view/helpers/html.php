@@ -309,6 +309,7 @@ function url($url = null, $return = false)
         if(!empty($htmlAttributes['value']) && !$value)
         {
             $value = $htmlAttributes['value'];
+            unset($htmlAttributes['value']);
         }
 
         if ($this->tagIsInvalid($this->model, $this->field))

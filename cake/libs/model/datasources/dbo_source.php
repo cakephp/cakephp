@@ -568,21 +568,24 @@ class DboSource extends DataSource
         {
             foreach($model->{$type} as $assoc => $assocData)
             {
-                $linkModel =& $model->{$assocData['className']};
-                if($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany')
+                if ($model->recursive > -1)
                 {
-                    if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                    $linkModel =& $model->{$assocData['className']};
+                    if($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany')
                     {
-                        $linkedModels[] = $type.'/'.$assoc;
-                    }
-                }
-                else
-                {
-                    if ($model->useDbConfig == $linkModel->useDbConfig)
-                    {
-                        if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                        if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
                         {
                             $linkedModels[] = $type.'/'.$assoc;
+                        }
+                    }
+                    else
+                    {
+                        if ($model->useDbConfig == $linkModel->useDbConfig)
+                        {
+                            if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null))
+                            {
+                                $linkedModels[] = $type.'/'.$assoc;
+                            }
                         }
                     }
                 }
@@ -1578,7 +1581,7 @@ class DboSource extends DataSource
             {
                 if(is_numeric($key))
                 {
-                    $value = r('ORDER BY ', '', $this->order($value));
+                    $value = ltrim(r('ORDER BY ', '', $this->order($value)));
                     $key = $value;
 
                     if (!preg_match('/\\x20ASC|\\x20DESC/i', $key))

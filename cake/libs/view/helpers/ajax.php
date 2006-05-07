@@ -415,7 +415,7 @@ class AjaxHelper extends Helper
     {
         if (!isset($options['with']))
         {
-            $options['with'] = 'Form.serialize(this.form)';
+            $options['with'] = 'Form.serialize("'.$field_id.'")';
         }
         return $this->Javascript->codeBlock($this->_buildObserver('Form.Observer', $field_id, $options));
     }
