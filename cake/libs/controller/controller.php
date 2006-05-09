@@ -944,6 +944,7 @@ class Controller extends Object
                         unset($this->params['data'][$this->modelClass][$field['name'].'_min']);
                         unset($this->params['data'][$this->modelClass][$field['name'].'_meridian']);
                     $this->params['data'][$this->modelClass][$field['name']] = $newDate;
+                    $this->data[$this->modelClass][$field['name']] = $newDate;
                 }
                 else if( 'datetime' == $field['type'] && isset($this->params['data'][$this->modelClass][$field['name'].'_year'] ) )
                 {
@@ -963,6 +964,7 @@ class Controller extends Object
                         unset($this->params['data'][$this->modelClass][$field['name'].'_min']);
                         unset($this->params['data'][$this->modelClass][$field['name'].'_meridian']);
                     $this->params['data'][$this->modelClass][$field['name']] = $newDate;
+                    $this->data[$this->modelClass][$field['name']] = $newDate;
                 }
             }
         }

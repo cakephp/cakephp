@@ -191,7 +191,7 @@ class TimeHelper extends Helper
  * @return boolean True if datetime string is within current year
  */
     function isThisYear ($date_string, $return = false)
-	{
+    {
         $date = $this->fromString($date_string);
         $ret = date('Y', $date) == date('Y', time());
 
@@ -207,7 +207,7 @@ class TimeHelper extends Helper
  * @return boolean True if datetime string was yesterday
  */
     function wasYesterday ($date_string, $return = false)
-	{
+    {
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 
@@ -223,7 +223,7 @@ class TimeHelper extends Helper
  * @return boolean True if datetime string was yesterday
  */
     function isTomorrow ($date_string, $return = false)
-	{
+    {
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 
@@ -239,7 +239,7 @@ class TimeHelper extends Helper
  * @return int Unix timestamp
  */
     function toUnix ($date_string, $return = false)
-	{
+    {
         $ret = strtotime($date_string);
 
         return $this->output($ret, $return);
@@ -254,7 +254,7 @@ class TimeHelper extends Helper
  * @return string Formatted date string
  */
     function toAtom ($date_string, $return = false)
-	{
+    {
         $date = $this->fromString($date_string);
         $ret = date('Y-m-d\TH:i:s\Z', $date);
 
@@ -380,7 +380,7 @@ class TimeHelper extends Helper
  * @param  boolean $return Whether this method should return a value
  *                         or output it. This overrides AUTO_OUTPUT.
  * @return string Relative time string.
- * @see		timeAgoInWords
+ * @see        timeAgoInWords
  */
     function relativeTime ($datetime_string, $format = 'j/n/y', $return = false)
     {

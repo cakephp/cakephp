@@ -28,50 +28,51 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>CakePHP : A Rapid Development Framework :: <?php echo $title_for_layout?></title>
+<title>CakePHP : The PHP Rapid Development Framework :: <?php echo $title_for_layout?></title>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <?php echo $html->charset('UTF-8')?>
-<?php echo $html->css('cake.default')?>
-<!--[if lt IE 7]>
-<?php echo $html->css('cake.ie');?>
-<![endif]-->
+<?php echo $html->css('cake.basic', 'stylesheet', array("media"=>"all" ));?>   
+<?php echo $html->css('cake.forms', 'stylesheet', array("media"=>"all" ));?>  
 </head>
-<body>
-<div id="wrapper">
-<div id="header">
-<?php echo $html->image('cake.logo.png', array('alt'=>'CakePHP : Rapid Development Framework', 'border'=>"0"))?>
-</div>
-<div id="content">
-      <?php if (isset($this->controller->Session)) $this->controller->Session->flash(); ?>
-      <?php echo $content_for_layout?>
-</div>
-<?php echo $cakeDebug;?>
-<div id="footer">
-          <p>CakePHP ::
-          <a href="http://www.cakefoundation.org/pages/copyright/">&copy; 2006 Cake Software Foundation, Inc.</a>
-          </p>
-          <br />
-          <p>
-<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
-    <a href="http://www.cakephp.org/" target="_blank">
-        <?php echo $html->image('cake.power.png', array('alt'=>'CakePHP : Rapid Development Framework',
-                                                        'height' => "15",
-                                                        'width' => "80"))?>
-        </a>
-        </p>
-  <p>
-    <a href="http://validator.w3.org/check?uri=referer">
-        <?php echo $html->image('w3c_xhtml10.png', array('alt' => 'Valid XHTML 1.0 Transitional',
-                                                         'height' => "15",
-                                                         'width' => "80"))?>
-    </a>
-    <a href="http://jigsaw.w3.org/css-validator/check/referer">
-        <?php echo $html->image('w3c_css.png', array('alt' => 'Valid CSS!',
-                                                         'height' => "15",
-                                                         'width' => "80"))?>
-    </a>
-  </p>
-</div>
-</div>
+<body class="main">
+  <div id="container">
+        <div id="header">
+          <h1 class="logo">
+            <a href="http://cakephp.org"></a>
+          </h1>
+            <div id="navigation">
+              <ul>
+                  <li class="active"><a href="http://cakephp.org"><span>Home</span></a></li>
+                  <li><a href="http://cakephp.org/downloads/"><span>Downloads</span></a></li>
+                  <!--<li><a href="#"><span>Screencasts coming soon!</span></a></li>-->
+                  <li><a href="http://manual.cakephp.org"><span>Manual</span></a></li>
+                  <li><a href="http://api.cakephp.org/"><span>API</span></a></li>
+                  <li><a href="http://bakery.cakephp.org"><span>Bakery</span></a></li>
+                  <li><a href="https://trac.cakephp.org"><span>Trac</span></a></li>
+                  <li><a href="http://cakeforge.org"><span>CakeForge</span></a></li>                                                                                  
+                </ul>  
+            </div> <!-- #navigation -->  
+        </div> <!-- #header -->    
+        <div id="content">   
+                <?php if ($this->controller->Session->check('Message.flash')) $this->controller->Session->flash(); ?>
+                <?php echo $content_for_layout?>  
+                <div class="clear"></div>
+        </div> <!-- #content --> 
+        <div id="footer">
+               <p>      
+            CakePHP : <a href="http://www.cakefoundation.org/pages/copyright/">&copy; 2006 Cake Software Foundation, Inc.</a>
+               </p> 
+                <a href="http://www.w3c.org/" target="_new">
+                     <?php echo $html->image('w3c_css.png', array('alt'=>"valid css", 'border'=>"0"))?>
+                  </a>
+                  <a href="http://www.w3c.org/" target="_new">
+                      <?php echo $html->image('w3c_xhtml10.png', array('alt'=>"valid xhtml", 'border'=>"0"))?>
+                   </a>
+               <a href="http://www.cakephp.org/" target="_new">
+                     <?php echo $html->image('cake.power.png', array('alt'=>"CakePHP : Rapid Development Framework", 'border'=>"0"))?>
+                 </a> 
+           </div> 
+           <?php echo $cakeDebug;?>
+    </div> <!-- #container -->
 </body>
 </html>

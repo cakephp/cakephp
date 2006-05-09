@@ -1,0 +1,279 @@
+/* form.css */
+
+form {
+  margin: 0 4px;
+  font-size: 120%;
+  border-width: 0px 0px 0px 0px;
+  border-style: solid;
+  border-color: #DB8101;
+}
+
+form fieldset {
+  font-size: 100%;
+  border-color: #000000;
+  border-width: 1px 0px 0px 0px;
+  border-style: solid none none none;
+  padding: 10px;
+}
+
+form fieldset legend {
+  font-size: 150%;
+  font-weight: normal;
+  color: #000;
+  padding: 0px 5px;
+}
+
+label {
+  font-size: 150%;
+}
+
+label u {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+input, select, textarea {
+  font-family: Tahoma, Arial, sans-serif;
+  font-size: 100%;
+  color: #000;
+}
+
+textarea {
+  overflow: auto;
+}
+
+form div {
+  clear: left;
+  display: block;
+  margin: 5px 0px 0px 0px;
+  padding: 1px 3px;
+}
+
+form fieldset div.notes {
+  float: right;
+  width: 158px;
+  height: auto;
+  margin: 0px 0px 10px 10px;
+  padding: 5px;
+  border: 1px solid #666;
+  background-color: #ffffe1;
+  color: #666;
+  font-size: 88%;
+}
+
+form fieldset div.notes h4 {
+  background-image: url(/images/icon_info.gif);
+  background-repeat: no-repeat;
+  background-position: top left;
+  padding: 3px 0px 3px 27px;
+  border-width: 0px 0px 1px 0px;
+  border-style: solid;
+  border-color: #666;
+  color: #666;
+  font-size: 110%;
+}
+
+form fieldset div.notes p {
+  margin: 0em 0em 1.2em 0em;
+  color: #666;
+}
+
+form fieldset div.notes p.last {
+  margin: 0em;
+}
+
+form div fieldset {
+  clear: none;
+  border-width: 0px 1px 0px 1px;
+  border-style: solid;
+  border-color: #666;
+  margin: 0px 0px 0px 142px;
+  padding: 0px 5px 5px 5px;
+}
+
+form div fieldset legend {
+  font-size: 100%;
+  padding: 0px 3px 0px 9px;
+}
+
+form div.required fieldset legend {
+  font-weight: bold;
+}
+
+form div label {
+  display: block;
+  float: left;
+  width: 200px;
+  background-color: #f4f4f4;
+  font-size: 16px;
+  padding: 3px 5px;
+  margin: 0px 0px 5px 0px;
+  text-align: right;
+}
+
+form div.optional label, label.optional {
+  font-weight: normal;
+}
+
+form div.required label, label.required {
+  font-weight: bold;
+}
+
+form div label.labelCheckbox, form div label.labelRadio {
+  float: none;
+  display: block;
+  margin: 0px 0px 5px 142px;
+  text-align: left;
+}
+
+form div fieldset label.labelCheckbox, form div fieldset label.labelRadio {
+  margin: 0px 0px 5px 0px;
+}
+p.error {
+  color: #DB8101;
+  background-color: #DBA941;
+  font-size: 14px;
+  padding: 1em;
+}
+
+form div input, form div select, form div textarea {
+  padding: 1px 3px;
+  margin: 0px 0px 0px 0px;
+}
+
+form div input.inputFile {
+  width: 211px;
+}
+
+form div select.selectOne, form div select.selectMultiple {
+  width: 211px;
+  padding: 1px 3px;
+}
+
+form div input.inputCheckbox, form div input.inputRadio, input.inputCheckbox, input.inputRadio {
+  display: inline;
+  height: 14px;
+  width: 14px;
+  background-color: transparent;
+  border-width: 0px;
+}
+
+form div.submit {
+  padding: 0px 0px 0px 140px;
+  clear:both;
+  display:block;
+}
+
+div.submit input {
+  padding: 2px 12px;
+  color: #DB8101;
+  background-color:#ccc;
+  text-decoration: none;
+  border: 1px solid #666;
+  font-size: 14px;
+  font-weight: bold;
+  text-align:center;
+  text-decoration: none;
+  width: auto;
+}
+div.submit input:hover {
+  padding: 2px 12px;
+  color: #fff;
+  background-color:#DB8101;
+  text-decoration: none;
+  border: 1px solid #666;
+  font-size: 14px;
+  font-weight: bold;
+  text-align:center;
+  text-decoration: none;
+  width: auto;
+}
+
+form div.submit div input.inputSubmit, form div.submit div input.inputButton {
+  float: right;
+  margin: 0px 0px 0px 5px;
+}
+
+form div small {
+  display: block;
+  margin: 0px 0px 5px 142px;
+  padding: 1px 3px;
+  font-size: 88%;
+}
+
+/* form.import.css */
+
+form fieldset legend {
+  line-height: 150%;
+}
+
+form input, form select, form textarea {
+  background-color: #fff;
+}
+
+div.optional label:before {
+  content: '';
+}
+
+div.required label:before {
+  content: '';
+}
+
+form div label.labelCheckbox, form div label.labelRadio, label.labelCheckbox, label.labelRadio {
+  display: block;
+  width: 190px;
+  padding: 4px 0px 0px 18px;
+  text-indent: -18px;
+  line-height: 120%;
+}
+
+form div label.labelCheckbox input.inputCheckbox, form div label.labelRadio input.inputRadio, label.labelCheckbox input.inputCheckbox, label.labelRadio input.inputRadio {
+  margin: 0;
+}
+
+form div fieldset input.inputText, form div fieldset input.inputPassword, form div fieldset input.inputFile, form div fieldset textarea.inputTextarea {
+  width: 160px;
+  margin: 0px 0px 0px 18px;
+}
+
+form div label.compact {
+  display: inline;
+  width: auto;
+  padding: 4px 10px 0px 0px;
+  text-indent: 0px;
+  margin: 0;
+}
+
+form div.wide label {
+  float: none;
+  display: block;
+}
+
+form div label.wide {
+  width: 348px;
+}
+
+form div.wide input.inputText, form div.wide input.inputPassword, form div.wide input.inputFile, form div.wide select, form div.wide textarea {
+  width: 344px;
+  margin: 0;
+}
+
+form div.notes p, form div small {
+  line-height: 125%;
+}
+
+form div.wide small {
+  margin: 0px 0px 5px 0px;
+}
+
+div.date select {
+  width:auto;
+}
+
+select.autoWidth {
+  width:auto;
+}
+
+option {
+    padding-left:1em;
+}

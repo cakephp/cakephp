@@ -66,7 +66,7 @@ class  DboPostgres extends DboSource
         'date'        => array('name' => 'date'),
         'binary'      => array('name' => 'bytea'),
         'boolean'     => array('name' => 'boolean'),
-	    'number'      => array('name' => 'numeric'));
+        'number'      => array('name' => 'numeric'));
 
     var $startQuote = '"';
 
@@ -124,7 +124,7 @@ class  DboPostgres extends DboSource
  */
     function fetchRow ($assoc = false)
     {
-	    if(is_resource($this->_result))
+        if(is_resource($this->_result))
         {
             $this->resultSet($this->_result);
             $resultRow = $this->fetchResult();
@@ -212,7 +212,7 @@ class  DboPostgres extends DboSource
     {
         if ($data == '*')
         {
-      		return '*';
+              return '*';
         }
         $pos = strpos($data, '"');
         if ($pos === false)
@@ -499,7 +499,7 @@ class  DboPostgres extends DboSource
         }
         if (strpos($col, 'timestamp') !== false)
         {
-        	return 'datetime';
+            return 'datetime';
         }
         if ($col == 'boolean')
         {

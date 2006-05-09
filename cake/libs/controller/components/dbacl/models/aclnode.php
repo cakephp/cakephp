@@ -65,10 +65,10 @@ class AclNode extends AppModel
 
       if($parent_id == null || $parent_id === 0)
       {
-         $parent = $this->find(null, "MAX(rght)", null, null, 0);
-         $parent['lft'] = $parent[0]['MAX(rght)'];
+         $parent = $this->find(null, 'MAX(rght) as rght', null, -1);
+         $parent['lft'] = $parent[0]['rght'];
 
-         if($parent[0]['MAX(rght)'] == null)
+         if($parent[0]['rght'] == null || !$parent[0]['rght'])
          {
 // The tree is empty
             $parent['lft'] = 0;
@@ -141,7 +141,7 @@ class AclNode extends AppModel
 
       if($parent_id == null)
       {
-         $newParent = $this->find(null, "MAX(rght) as lft", null, 0);
+         $newParent = $this->find(null, 'MAX(rght) as lft', null, -1);
          $newParent = $newParent[0];
          $newParent['rght'] = $newParent['lft'];
       }

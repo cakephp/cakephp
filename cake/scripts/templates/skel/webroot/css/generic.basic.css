@@ -1,0 +1,176 @@
+*{
+margin:0;
+padding:0;
+}
+
+body{
+font-family:verdana,helvetica,arial,sans-serif;
+font-size:12px;
+text-align:center;
+color:#333;  
+background:#fff;
+line-height: 18px;
+}
+
+/*
+*  General Style Info
+*/
+
+a{  
+color:#003d4c;
+text-decoration:none;
+}
+a:hover{  
+color:#003d4c;
+text-decoration:underline;
+}
+
+a img{ 
+border:none;
+}
+
+h1, h2, h3, h4{
+font-family:'Gill Sans';
+font-weight:normal;
+} 
+
+h1{  
+font-size:28px;
+padding:0.5em 0; 
+color:#003d4c;
+} 
+
+em {
+ font-size: 12px;
+} 
+
+h2{ 
+font-size:24px;      
+padding-top:0.15em;  
+margin:0.3em 0;
+color:#e32000;
+}
+
+h3{ 
+font-size:18px;  
+padding-top:0.5em; 
+color:#003d4c;
+}
+
+h4{
+color:#ff9966;
+font-size:16px; 
+padding-top:0.5em;
+font-weight:normal;
+}
+ul, li {
+margin: 0 12px;
+}
+
+/*
+*  Layout
+*/ 
+
+#container{ 
+text-align:left; 
+}
+
+#header{
+background:#003d4c;  
+padding: 4px 20px;
+}
+
+#header h1{
+color:#fff;
+font-family: 'Gill Sans';
+font-size: 45px;
+font-weight:normal;
+}
+
+
+#content{   
+padding: 10px 40px;
+}  
+#footer{ 
+padding: 6px 10px;   
+background:#003d4c;
+text-align: right;
+}
+                              
+/* tables */
+
+table {  
+  width: 100%;   
+  border: 1px solid #003d4c; 
+  color:#333; 
+  background-color: #fff;
+  clear:both;    
+  padding: 0;
+  margin: 0 0 2em 0;
+  white-space: normal;
+}
+th {
+  background-color: #ccc;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #003d4c;
+  border-bottom: 1px solid #003d4c;
+  text-align: center;
+  padding:1px;
+}
+table tr td {
+  border-right: 1px solid #ccc;
+  padding:4px 4px;
+  vertical-align:top;
+  text-align: center;
+}
+table tr.altRow td {
+  background: #f4f4f4;
+}
+
+/* scaffold show */
+
+
+div.related {
+  clear:both;
+  display:block;
+}
+dl {
+  line-height:2em;
+  margin:1em; 
+  float:left;
+  width: 400px;
+}
+dt {
+  font-weight: bold;
+  vertical-align:top;
+}
+dd {
+  margin-left:10em;
+  margin-top:-2em;
+  vertical-align:top;
+}
+
+/* scaffold buttons */
+
+
+.notice {
+  color: #DB8101;
+  background-color: #ddd;
+  display: block;
+  padding: 1em;
+}
+.tip {
+  color: #DB8101;
+  background-color: #ddd;
+  display: block;
+  padding: 1em;
+}
+
+
+/* action links */   
+ul.actions {
+      float:left;
+      margin-left: 10px;
+      width: 200px;
+}

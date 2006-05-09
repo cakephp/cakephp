@@ -68,7 +68,7 @@ class AjaxHelper extends Helper
  *
  * @var array
  */
-    var $dragOptions = array('handle', 'revert', 'constraint', 'change');
+    var $dragOptions = array('handle', 'revert', 'constraint', 'change', 'ghosting');
 
 /**
  * Options for droppable.
@@ -359,7 +359,7 @@ class AjaxHelper extends Helper
 
         $htmlOptions['onclick'] = "return false;";
         return $this->Html->submit($title, $htmlOptions) .
-        	$this->Javascript->event('"'.$htmlOptions['id'].'"', 'click', $this->remoteFunction($options));
+            $this->Javascript->event('"'.$htmlOptions['id'].'"', 'click', $this->remoteFunction($options));
     }
 
 /**
@@ -673,9 +673,9 @@ class AjaxHelper extends Helper
 /**
  * Returns a string of JavaScript with the given option data as a JavaScript options hash.
  *
- * @param array $options	Options in the shape of keys and values
- * @param array $acceptable	Array of legal keys in this options context
- * @return string	String of Javascript array definition
+ * @param array $options    Options in the shape of keys and values
+ * @param array $acceptable    Array of legal keys in this options context
+ * @return string    String of Javascript array definition
  */
     function _buildOptions ($options, $acceptable) {
         if(is_array($options))
@@ -703,7 +703,7 @@ class AjaxHelper extends Helper
  *
  * @param string $klass Name of JavaScript class
  * @param string $name
- * @param array $options	Ajax options
+ * @param array $options    Ajax options
  * @return string Formatted JavaScript
  */
     function _buildObserver ($klass, $name, $options=null)
@@ -744,8 +744,8 @@ class AjaxHelper extends Helper
 /**
  * Returns a string of JavaScript with a string representation of given options array.
  *
- * @param array $options	Ajax options array
- * @param array $stringOpts	Options as strings in an array
+ * @param array $options    Ajax options array
+ * @param array $stringOpts    Options as strings in an array
  * @access private
  * @return array
  */

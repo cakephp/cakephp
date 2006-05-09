@@ -410,8 +410,9 @@ class Dispatcher extends Object
         $docRoot = env('DOCUMENT_ROOT');
         $scriptName = env('PHP_SELF');
         $r = null;
+        $appDirName = str_replace('/','\/',preg_quote(APP_DIR));
 
-        if (preg_match('/'.APP_DIR.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
+        if (preg_match('/'.$appDirName.'\\'.DS.WEBROOT_DIR.'/', $docRoot))
         {
             $this->webroot = '/';
             if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r))
@@ -429,7 +430,7 @@ class Dispatcher extends Object
                 $webroot = setUri();
                 $htaccess =  preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
             }
-            if (preg_match('/^(.*)\\/'.APP_DIR.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
+            if (preg_match('/^(.*)\\/'.$appDirName.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs))
             {
                 if(APP_DIR === 'app')
                 {

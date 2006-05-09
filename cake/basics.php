@@ -356,7 +356,7 @@ function listClasses($path)
         }
     }
     closedir($dir);
-	return $classes;
+    return $classes;
 }
 
 /**
@@ -499,11 +499,11 @@ if (!function_exists('sortByKey'))
 
         if ($order == 'asc')
         {
-        	asort($sa, $type);
+            asort($sa, $type);
         }
         else
         {
-        	arsort($sa, $type);
+            arsort($sa, $type);
         }
 
         foreach ($sa as $key=>$val)
@@ -608,11 +608,11 @@ function aa()
     {
         if ($l+1 < count($args))
         {
-        	$a[$args[$l]] = $args[$l+1];
+            $a[$args[$l]] = $args[$l+1];
         }
         else
         {
-        	$a[$args[$l]] = null;
+            $a[$args[$l]] = null;
         }
         $l++;
     }
@@ -729,7 +729,7 @@ function am ()
     {
         if (!is_array($a))
         {
-        	$a = array($a);
+            $a = array($a);
         }
         $r = array_merge($r, $a);
     }
@@ -1139,6 +1139,53 @@ function convertSlash($string)
         $string = substr($string, 1);
     }
     return $string;
+}
+
+/**
+ * chmod recursively on a directory
+ *
+ * @param string $path
+ * @param int $mode
+ * @return boolean
+ */
+function chmodr($path, $mode = 0755)
+{
+    if (!is_dir($path))
+    {
+        return chmod($path, $mode);
+    }
+    $dir = opendir($path);
+    while ($file = readdir($dir))
+    {
+        if($file != '.' && $file != '..')
+        {
+            $fullpath = $path.'/'.$file;
+            if(!is_dir($fullpath))
+            {
+                if (!chmod($fullpath, $mode))
+                {
+                    return false;
+                }
+           }
+           else
+           {
+               if (!chmodr($fullpath, $mode))
+               {
+                   return false;
+               }
+           }
+       }
+   }
+
+   closedir($dir);
+   if(chmod($path, $mode))
+   {
+       return true;
+   }
+   else
+   {
+       return false;
+   }
 }
 
 ?>

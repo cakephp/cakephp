@@ -62,7 +62,7 @@ if (empty($uri) && defined('BASE_URL'))
         if (strpos($uri, 'index.php') !== false)
         {
             $uri = r ('?', '', $uri);
-        	$elements = explode('/index.php', $uri);
+            $elements = explode('/index.php', $uri);
         }
         else
         {

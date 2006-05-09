@@ -135,7 +135,7 @@ class DboSqlite extends DboSource
  */
     function fetchRow ($assoc = false)
     {
-	    if(is_resource($this->_result))
+        if(is_resource($this->_result))
         {
             $this->resultSet($this->_result);
             $resultRow = $this->fetchResult();

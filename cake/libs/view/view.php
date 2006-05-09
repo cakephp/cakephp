@@ -246,9 +246,9 @@ class View extends Object
  * Renders view for given action and layout. If $file is given, that is used
  * for a view filename (e.g. customFunkyView.thtml).
  *
- * @param string $action 	Name of action to render for
- * @param string $layout 	Layout to use
- * @param string $file 		Custom filename for view
+ * @param string $action     Name of action to render for
+ * @param string $layout     Layout to use
+ * @param string $file         Custom filename for view
  */
     function render($action=null, $layout=null, $file=null)
     {
@@ -392,9 +392,9 @@ class View extends Object
  * Element.
  *
  * @link http://wiki.cakephp.org/docs:view:renderelement
- * @param string $name 		Name of template file in the/app/views/elements/ folder
- * @param array $params 	Array of data to be made available to the for rendered view (i.e. the Element)
- * @return string 			Rendered output
+ * @param string $name         Name of template file in the/app/views/elements/ folder
+ * @param array $params     Array of data to be made available to the for rendered view (i.e. the Element)
+ * @return string             Rendered output
  */
     function renderElement($name, $params=array())
     {
@@ -495,7 +495,7 @@ class View extends Object
 /**
  * Sets layout to be used when rendering.
  *
- * @param string $layout		Name of layout.
+ * @param string $layout        Name of layout.
  */
     function setLayout($layout)
     {
@@ -505,9 +505,9 @@ class View extends Object
 /**
  * Displays an error page to the user. Uses layouts/error.html to render the page.
  *
- * @param int $code 		HTTP Error code (for instance: 404)
- * @param string $name 		Name of the error (for instance: Not Found)
- * @param string $message 	Error message as a web page
+ * @param int $code         HTTP Error code (for instance: 404)
+ * @param string $name         Name of the error (for instance: Not Found)
+ * @param string $message     Error message as a web page
  */
     function error ($code, $name, $message)
     {

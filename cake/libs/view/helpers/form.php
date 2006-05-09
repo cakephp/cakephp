@@ -86,8 +86,8 @@ class FormHelper extends Helper
         {
             return true;
         }
-		else
-		{
+        else
+        {
             return false;
         }
     }
@@ -136,7 +136,7 @@ class FormHelper extends Helper
  * @param bool $required     True if this field is a required field.
  * @param string $errorMsg    Text that will appear if an error has occurred.
  * @param int $size          Size attribute for INPUT element
- * @param array $htmlOptions	HTML options array.
+ * @param array $htmlOptions    HTML options array.
  * @return string             The formatted INPUT element, with a label and wrapped in a div.
  */
     function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null )
@@ -173,7 +173,7 @@ class FormHelper extends Helper
  * @param string $prompt      Text that will appear in the label field.
  * @param bool $required      True if this field is a required field.
  * @param string $errorMsg     Text that will appear if an error has occurred.
- * @param array $htmlOptions	HTML options array.
+ * @param array $htmlOptions    HTML options array.
  * @return string             The formatted checkbox div
  */
     function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null )
@@ -288,7 +288,7 @@ class FormHelper extends Helper
  * @param string $errorMsg    ext that will appear if an error has occurred.
  * @param integer $cols        Number of columns.
  * @param integer $rows        Number of rows.
- * @param array $htmlOptions	HTML options array.
+ * @param array $htmlOptions    HTML options array.
  * @return string             The formatted TEXTAREA element, wrapped in a div.
  */
     function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null )
@@ -322,15 +322,15 @@ class FormHelper extends Helper
 /**
  * Returns a formatted SELECT tag for HTML FORMs.
  *
- * @param string $tagName     	This should be "Modelname/fieldname"
- * @param string $prompt     	Text that will appear in the label field
- * @param array $options     	Options to be contained in SELECT element
- * @param string $selected     	Currently selected item
- * @param array $selectAttr    	Array of HTML attributes for the SELECT element
- * @param array $optionAttr 	Array of HTML attributes for the OPTION elements
- * @param bool $required     	True if this field is required
- * @param string $errorMsg     	Text that will appear if an error has occurred
- * @return string             	The formatted INPUT element, wrapped in a div
+ * @param string $tagName         This should be "Modelname/fieldname"
+ * @param string $prompt         Text that will appear in the label field
+ * @param array $options         Options to be contained in SELECT element
+ * @param string $selected         Currently selected item
+ * @param array $selectAttr        Array of HTML attributes for the SELECT element
+ * @param array $optionAttr     Array of HTML attributes for the OPTION elements
+ * @param bool $required         True if this field is required
+ * @param string $errorMsg         Text that will appear if an error has occurred
+ * @return string                 The formatted INPUT element, wrapped in a div
  */
     function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null)
     {
@@ -361,9 +361,9 @@ class FormHelper extends Helper
 /**
  * Returns a formatted submit widget for HTML FORMs.
  *
- * @param string $displayText		Text that will appear on the widget
- * @param array $htmlOptions		HTML options array
- * @return string             		The formatted submit widget
+ * @param string $displayText        Text that will appear on the widget
+ * @param array $htmlOptions        HTML options array
+ * @return string                     The formatted submit widget
  */
     function generateSubmitDiv($displayText, $htmlOptions = null)
     {

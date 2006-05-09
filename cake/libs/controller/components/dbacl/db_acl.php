@@ -265,20 +265,25 @@ class DB_ACL extends AclBase
             trigger_error('Null id provided in DB_ACL::get'.$object, E_USER_WARNING);
             return null;
         }
-        $obj = new $obj;
-        
+        $obj = new $object;
+
         if (is_numeric($id))
         {
-            $conditions = array('Aco.user_id' => $id);
+            $key = 'user_id';
+            if ($object == 'Aco')
+            {
+                $key = 'object_id';
+            }
+            $conditions = array($object.'.'.$key => $id);
         }
         else
         {
-            $conditions = array('Aco.alias' => $id);
+            $conditions = array($object.'.alias' => $id);
         }
 
         $tmp = $obj->find($conditions);
-        $aco->setId($tmp['Aco']['id']);
-        return $aco;
+        $obj->id = $tmp[$object]['id'];
+        return $obj;
     }
 
 /**

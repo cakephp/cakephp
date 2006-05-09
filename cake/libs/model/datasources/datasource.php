@@ -493,7 +493,7 @@ class DataSource extends Object
  * Enter description here... The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
  * @param array $data
- * @param mixed $path	As an array, or as a dot-separated string.
+ * @param mixed $path    As an array, or as a dot-separated string.
  * @return array
  */
     function getFieldValue ($data, $path)

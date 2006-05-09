@@ -52,15 +52,15 @@ class RequestHandlerComponent extends Object
     var $disableStartup = false;
 
     var $__requestContent = array(
-        'js'		=> 'text/javascript',
-        'css'		=> 'text/css',
-        'html'		=> 'text/html',
-        'form'		=> 'application/x-www-form-urlencoded',
-        'file'		=> 'multipart/form-data',
-        'xhtml'		=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-        'xml'		=> array('application/xml', 'text/xml'),
-        'rss'		=> 'application/rss+xml',
-        'atom'		=> 'application/atom+xml'
+        'js'        => 'text/javascript',
+        'css'        => 'text/css',
+        'html'        => 'text/html',
+        'form'        => 'application/x-www-form-urlencoded',
+        'file'        => 'multipart/form-data',
+        'xhtml'        => array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+        'xml'        => array('application/xml', 'text/xml'),
+        'rss'        => 'application/rss+xml',
+        'atom'        => 'application/atom+xml'
     );
 
     var $__acceptTypes = array();
@@ -336,7 +336,7 @@ class RequestHandlerComponent extends Object
         $str = $this->stripImages($str);
         $str = $this->stripScripts($str);
         return $str;
-	}
+    }
 
 /**
  * Strips the specified tags from output

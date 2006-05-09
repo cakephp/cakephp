@@ -249,9 +249,9 @@ class Model extends Object
  *
  * @var array
  */
-    var $__associationKeys = array('belongsTo' 	=> array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
-                                  'hasOne' 		=> array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
-                                  'hasMany' 	=> array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
+    var $__associationKeys = array('belongsTo'     => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
+                                  'hasOne'         => array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
+                                  'hasMany'     => array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
                                   'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery')
                                  );
 
@@ -1246,11 +1246,11 @@ class Model extends Object
         }
 
         $queryData = array(
-            'conditions' 	=> $conditions,
-            'fields'		=> $fields,
-            'joins'			=> array(),
-            'limit'			=> $limit_str,
-            'order'			=> $order
+            'conditions'     => $conditions,
+            'fields'        => $fields,
+            'joins'            => array(),
+            'limit'            => $limit_str,
+            'order'            => $order
         );
 
         if (!$this->beforeFind($queryData))

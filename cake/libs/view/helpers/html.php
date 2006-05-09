@@ -143,7 +143,7 @@ class HtmlHelper extends Helper
  *    + '/' - the method will find base URL of application.
  *    + A combination of controller/action - the method will find url for it.
  *
- * @param  string  $url		Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
+ * @param  string  $url        Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  * @param  boolean $return Wheter this method should return a value or
  *                         output it. This overrides AUTO_OUTPUT.
  * @return mixed    Either string or boolean value, depends on AUTO_OUTPUT
@@ -154,8 +154,8 @@ function url($url = null, $return = false)
         $base = $this->base;
         if($this->plugin != null)
         {
-			$base = preg_replace('/'.$this->plugin.'/', '', $this->base);
-			$base = str_replace('//','', $base);
+            $base = preg_replace('/'.$this->plugin.'/', '', $this->base);
+            $base = str_replace('//','', $base);
             $pos1 = strrpos($base, '/');
             $char = strlen($base) -1;
             if($pos1 == $char)
@@ -188,7 +188,7 @@ function url($url = null, $return = false)
  * If the $url is empty, $title is used instead.
  *
  * @param  string  $title          The content of the A tag.
- * @param  string  $url				Cake-relative URL, or external URL (starts with http://)
+ * @param  string  $url                Cake-relative URL, or external URL (starts with http://)
  * @param  array    $htmlAttributes Array of HTML attributes.
  * @param  string  $confirmMessage Confirmation message.
  * @param  boolean $escapeTitle    Whether or not the text in the $title variable should be HTML escaped.
@@ -346,17 +346,17 @@ function url($url = null, $return = false)
 
         if (isset($htmlAttributes['value']))
         {
-        	$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value)? 'checked': null;
-        	if ($htmlAttributes['checked'] == '0') {
-        		$notCheckedValue = -1;
-        	}
+            $htmlAttributes['checked'] = ($htmlAttributes['value'] == $value)? 'checked': null;
+            if ($htmlAttributes['checked'] == '0') {
+                $notCheckedValue = -1;
+            }
         }
         else
         {
             $model = new $this->model;
             $db =& ConnectionManager::getDataSource($model->useDbConfig);
             $value = $db->boolean($value);
-        	$htmlAttributes['checked'] = $value? 'checked': null;
+            $htmlAttributes['checked'] = $value? 'checked': null;
             $htmlAttributes['value'] = 1;
         }
 
@@ -420,11 +420,11 @@ function url($url = null, $return = false)
     {
         if(count($this->_crumbs))
         {
-			$out = array();
-			if($startText)
-			{
-				$out[] = $this->link($startText, '/');
-			}
+            $out = array();
+            if($startText)
+            {
+                $out[] = $this->link($startText, '/');
+            }
             foreach ($this->_crumbs as $crumb)
             {
                 $out[] = $this->link($crumb[0], $crumb[1]);
@@ -532,8 +532,8 @@ function url($url = null, $return = false)
  * Creates a set of radio widgets.
  *
  * @param  string  $fieldName      Name of a field, like this "Modelname/fieldname"
- * @param  array    $options			Radio button options array
- * @param  array    $inbetween		String that separates the radio buttons.
+ * @param  array    $options            Radio button options array
+ * @param  array    $inbetween        String that separates the radio buttons.
  * @param  array    $htmlAttributes Array of HTML attributes.
  * @param  boolean $return         Wheter this method should return a value
  *                                 or output it. This overrides AUTO_OUTPUT.
@@ -562,9 +562,9 @@ function url($url = null, $return = false)
 /**
  * Returns a row of formatted and named TABLE headers.
  *
- * @param array $names		Array of tablenames.
- * @param array $trOptions	HTML options for TR elements.
- * @param array $thOptions	HTML options for TH elements.
+ * @param array $names        Array of tablenames.
+ * @param array $trOptions    HTML options for TR elements.
+ * @param array $thOptions    HTML options for TH elements.
  * @param  boolean $return         Wheter this method should return a value
  * @return string
  */
@@ -583,11 +583,11 @@ function url($url = null, $return = false)
 /**
  * Returns a formatted string of table rows (TR's with TD's in them).
  *
- * @param array $data 			Array of table data
- * @param array $oddTrOptions 	HTML options for odd TR elements
- * @param array $evenTrOptions 	HTML options for even TR elements
+ * @param array $data             Array of table data
+ * @param array $oddTrOptions     HTML options for odd TR elements
+ * @param array $evenTrOptions     HTML options for even TR elements
  * @param  boolean $return         Wheter this method should return a value
- * @return string	Formatted HTML
+ * @return string    Formatted HTML
  */
     function tableCells($data, $oddTrOptions=null, $evenTrOptions=null, $return=false)
     {
@@ -616,7 +616,7 @@ function url($url = null, $return = false)
 /**
  * Returns value of $fieldName. Null if the tag does not exist.
  *
- * @param string $fieldName		Fieldname as "Modelname/fieldname" string
+ * @param string $fieldName        Fieldname as "Modelname/fieldname" string
  * @return unknown Value of the named tag.
  */
     function tagValue ($fieldName)
@@ -638,8 +638,8 @@ function url($url = null, $return = false)
 /**
  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
  *
- * @param string $model 	Model name as string
- * @param string $field		Fieldname as string
+ * @param string $model     Model name as string
+ * @param string $field        Fieldname as string
  * @return boolean True on errors.
  */
     function tagIsInvalid ($model, $field)
@@ -682,8 +682,8 @@ function url($url = null, $return = false)
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
- * @param string $field  	A field name, like "Modelname/fieldname"
- * @param string $text		Error message
+ * @param string $field      A field name, like "Modelname/fieldname"
+ * @param string $text        Error message
  * @return string If there are errors this method returns an error message, else NULL.
  */
     function tagErrorMsg ($field, $text)

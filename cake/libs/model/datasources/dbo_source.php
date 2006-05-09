@@ -124,14 +124,14 @@ class DboSource extends DataSource
     {
       if (is_array($data))
       {
-		  $out = array();
-		  $keys = array_keys($data);
-		  $count = count($data);
-		  for ($i = 0; $i < $count; $i++)
-		  {
+          $out = array();
+          $keys = array_keys($data);
+          $count = count($data);
+          for ($i = 0; $i < $count; $i++)
+          {
               $out[$keys[$i]] = $this->value($data[$keys[$i]]);
-		  }
-		  return $out;
+          }
+          return $out;
       }
       else
       {
@@ -445,11 +445,11 @@ class DboSource extends DataSource
       $this->_queriesTime += $this->took;
 
       $this->_queriesLog[] = array(
-          'query'		=> $sql,
-          'error'		=> $this->error,
-          'affected'	=> $this->affected,
-          'numRows'		=> $this->numRows,
-          'took'		=> $this->took
+          'query'        => $sql,
+          'error'        => $this->error,
+          'affected'    => $this->affected,
+          'numRows'        => $this->numRows,
+          'took'        => $this->took
       );
 
       if (count($this->_queriesLog) > $this->_queriesLogMax)
@@ -470,25 +470,25 @@ class DboSource extends DataSource
  *
  * @param string $sql Query to show information on.
  */
-	function showQuery($sql)
-	{
-	    $error = $this->error;
+    function showQuery($sql)
+    {
+        $error = $this->error;
 
-	    if (strlen($sql) > 200 && !$this->fullDebug)
-	    {
-		  $sql = substr($sql, 0, 200) .'[...]';
-	    }
+        if (strlen($sql) > 200 && !$this->fullDebug)
+        {
+          $sql = substr($sql, 0, 200) .'[...]';
+        }
 
-	    if ($this->debug || $error)
-	    {
-		  print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
-		  if($error)
-		  {
-			 print("<br /><span style=\"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
-		  }
-		  print('</p>');
-	    }
-	}
+        if ($this->debug || $error)
+        {
+          print("<p style=\"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
+          if($error)
+          {
+             print("<br /><span style=\"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
+          }
+          print('</p>');
+        }
+    }
 
 /**
  * The "C" in CRUD
@@ -708,16 +708,16 @@ class DboSource extends DataSource
         if ($query)
         {
             if (!isset($resultSet) || !is_array($resultSet)) {
-            	if (DEBUG)
-            	{
-            	    e('<div style="font: Verdana bold 12px; color: #FF0000">SQL Error in model '.$model->name.': ');
-            	    if (isset($this->error) && $this->error != null)
-            	    {
-            	        e($this->error);
-            	    }
-            	    e('</div>');
-            	}
-            	return null;
+                if (DEBUG)
+                {
+                    e('<div style="font: Verdana bold 12px; color: #FF0000">SQL Error in model '.$model->name.': ');
+                    if (isset($this->error) && $this->error != null)
+                    {
+                        e($this->error);
+                    }
+                    e('</div>');
+                }
+                return null;
             }
 
             $count = count($resultSet);
@@ -787,7 +787,7 @@ class DboSource extends DataSource
                         }
                     }
                 }
-            	$data[$association] = $merge[0][$association];
+                $data[$association] = $merge[0][$association];
             }
         }
         else
@@ -1212,7 +1212,7 @@ class DboSource extends DataSource
         $combined = array_combine($fields, $values);
         foreach ($combined as $field => $value)
         {
-        	$updates[] = $this->name($field).'='.$this->value($value, $model->getColumnType($field));
+            $updates[] = $this->name($field).'='.$this->value($value, $model->getColumnType($field));
         }
 
         $sql  = 'UPDATE '.$this->name($model->table);
