@@ -1016,7 +1016,7 @@ class Model extends Object
                 }
                 if(!empty($newValues))
                 {
-                    $newValue[] = join(',', $newValues);
+                    $newValue[] = $newValues;
                     unset($newValues);
                 }
             }
@@ -1029,7 +1029,11 @@ class Model extends Object
             $db->execute("DELETE FROM {$joinTable[$count]} WHERE {$mainKey[$count]} = '{$id}'");
             if(!empty($newValue[$count]))
             {
-                $db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count]}");
+                $secondCount = count($newValue[$count]);
+                for ($x = 0; $x < $secondCount; $x++)
+                {
+                    $db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count][$x]}");
+                }
             }
         }
     }
@@ -1458,7 +1462,7 @@ class Model extends Object
             return true;
         }
 
-        if (empty($data) && isset($this->data))
+        if (isset($this->data))
         {
             $data = $this->data;
         }

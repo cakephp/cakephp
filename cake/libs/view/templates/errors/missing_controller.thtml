@@ -44,11 +44,12 @@ view file, a user-customizable error page for handling invalid controller dispat
 <p>
 <strong>Fatal</strong>: Create Class:
 </p>
-<p>
+<br />
 <p>&lt;?php<br />
-&nbsp;&nbsp;&nbsp;&nbsp;class <?php echo $controller;?> extends AppController<br />
-&nbsp;&nbsp;&nbsp;&nbsp;{<br />
-&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+class <?php echo $controller;?> extends AppController<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;var $name = '<?php echo $controllerName;?>';<br />
+}<br />
 ?&gt;<br />
 </p>
 <p>

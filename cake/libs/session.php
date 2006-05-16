@@ -430,20 +430,6 @@ class CakeSession extends Object
                         require_once($config);
                     }
                 }
-                else
-                {
-                    if(!isset($_SESSION))
-                    {
-                        if(function_exists('ini_set'))
-                        {
-                            ini_set('session.use_trans_sid', 0);
-                            ini_set('session.name', CAKE_SESSION_COOKIE);
-                            ini_set('session.cookie_lifetime', $this->cookieLifeTime);
-                            ini_set('session.cookie_path', $this->path);
-                            ini_set('session.gc_probability', 1);
-                        }
-                    }
-                }
             break;
         }
     }
@@ -645,11 +631,11 @@ class CakeSession extends Object
 
         if($row[0][0]['count'] > 0)
         {
-            $db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('cake_sessions.data')." = ".$db->value($value).", ".$db->name('cake_sessions.expires')." = ".$db->value($expires)." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
+            $db->execute("UPDATE ".$db->name('cake_sessions')." SET ".$db->name('data')." = ".$db->value($value).", ".$db->name('cake_sessions.expires')." = ".$db->value($expires)." WHERE ".$db->name('cake_sessions.id')." = ".$db->value($key));
         }
         else
         {
-            $db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('cake_sessions.data').",".$db->name('cake_sessions.expires').",".$db->name('cake_sessions.id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
+            $db->execute("INSERT INTO ".$db->name('cake_sessions')." (".$db->name('data').",".$db->name('cake_sessions.expires').",".$db->name('cake_sessions.id').") VALUES (".$db->value($value).", ".$db->value($expires).", ".$db->value($key).")");
         }
         return true;
     }

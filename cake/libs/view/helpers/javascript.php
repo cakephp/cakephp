@@ -273,7 +273,7 @@ class JavascriptHelper extends Helper
         }
         else
         {
-            $rt = 'new Array('.join(', ', $out).')';
+            $rt = '['.join(', ', $out).']';
         }
         $rt = $prefix.$rt.$postfix;
 

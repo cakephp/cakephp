@@ -155,7 +155,7 @@ class ConnectionManager extends Object
       }
       else
       {
-          trigger_error('Unable to load DataSource file ' . $filename . '.php', E_USER_ERROR);
+          trigger_error('Unable to load DataSource file ' . $conn['filename'] . '.php', E_USER_ERROR);
           return null;
       }
   }

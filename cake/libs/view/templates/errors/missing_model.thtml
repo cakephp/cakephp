@@ -35,3 +35,22 @@
 <p> <span class="notice"><strong>Notice:</strong> this error is being rendered by the
 <code>app/views/errors/missing_model.thtml</code> view file, a user-customizable error page.</span>
 </p>
+
+<p>
+<strong>Fatal</strong>: Unable to load model <em><?php echo $model;?></em>
+</p>
+
+<p>
+<strong>Fatal</strong>: Create Class:
+</p>
+<br />
+<p>&lt;?php<br />
+class <?php echo $model;?> extends AppModel<br />
+{<br />
+&nbsp;&nbsp;&nbsp;&nbsp;var $name = '<?php echo $model;?>';<br />
+}<br />
+?&gt;<br />
+</p>
+<p>
+in file : <?php echo "app".DS."models".DS.Inflector::underscore($model).".php"; ?>
+</p>

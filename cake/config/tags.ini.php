@@ -64,7 +64,7 @@ selectstart = "<select name="data[%s][%s]" %s>"
 selectmultiplestart = "<select name="data[%s][%s][]" %s>"
 
 ; Tag template for an empty select option tag.
-selectempty = "<option value="" %s></option>"
+selectempty = "<option value="" %s>&nbsp;</option>"
 
 ; Tag template for a select option tag.
 selectoption = "<option value="%s" %s>%s</option>"

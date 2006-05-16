@@ -220,9 +220,32 @@ class Dispatcher extends Object
       $controller->webroot     = $this->webroot;
       $controller->params      = $params;
       $controller->action      = $params['action'];
-      $controller->data        = empty($params['data'])? null: $params['data'];
-      $controller->passed_args = empty($params['pass'])? null: $params['pass'];
-      $controller->autoLayout  = empty($params['bare'])?$controller->autoLayout:!$params['bare'];
+      if (!empty($controller->params['data']))
+      {
+          $controller->data =& $controller->params['data'];
+      }
+      else
+      {
+          $controller->data = null;
+      }
+      if (!empty($controller->params['pass']))
+      {
+          $controller->passed_args =& $controller->params['pass'];
+          $controller->passedArgs =&  $controller->params['pass'];
+      }
+      else
+      {
+          $controller->passed_args = null;
+          $controller->passedArgs = null;
+      }
+      if (!empty($params['bare']))
+      {
+          $controller->autoLayout = !$params['bare'];
+      }
+      else
+      {
+           $controller->autoLayout = $controller->autoLayout;
+      }
       $controller->webservices = $params['webservices'];
       $controller->plugin      = $this->plugin;
 

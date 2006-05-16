@@ -1550,7 +1550,7 @@ function url($url = null, $return = false)
                 $opt = $this->dayOptionTag( $tagName ,null ,$day, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag( $tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty);
             break;
             case 'MDY' :
-                $opt = $this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) .'-'.$this->dayOptionTag( $tagName, null, $day, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $optionAttr, $selectAttr, $showEmpty);
+                $opt = $this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) .'-'.$this->dayOptionTag( $tagName, null, $day, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty);
             break;
             case 'YMD' :
                 $opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->monthOptionTag( $tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->dayOptionTag( $tagName, null, $day, $selectAttr, $optionAttr, $showEmpty);

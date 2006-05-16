@@ -145,7 +145,9 @@ class ErrorHandler extends Object
         $this->controller->base = $base;
         $this->controller->webroot = $webroot;
         $this->controller->viewPath = 'errors';
+        $controllerName = str_replace('Controller', '', $className);
         $this->controller->set(array('controller' => $className,
+                                     'controllerName' => $controllerName,
                                      'title' => 'Missing Controller'));
         $this->controller->render('missingController');
         exit();
