@@ -9,23 +9,23 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc.
- *                     1785 E. Sahara Avenue, Suite 490-204
- *                     Las Vegas, Nevada 89104
+ * Copyright (c)	2006, Cake Software Foundation, Inc.
+ *								1785 E. Sahara Avenue, Suite 490-204
+ *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package      cake
- * @subpackage   cake.cake.libs.view.templates.pages
- * @since        CakePHP v 0.10.0.1076
- * @version      $Revision$
- * @modifiedby   $LastChangedBy$
- * @lastmodified $Date$
- * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @package			cake
+ * @subpackage		cake.cake.libs.view.templates.pages
+ * @since			CakePHP v 0.10.0.1076
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
@@ -56,24 +56,24 @@ Our primary goal is to provide a structured framework that enables PHP users at 
 to rapidly develop robust web applications, without any loss to flexibility.
 </p>
 <ul>
-    <li><a href="http://www.cakefoundation.org/">Cake Software Foundation</a>
-    <ul><li>Promoting development related to CakePHP</li></ul></li>
-    <li><a href="http://www.cafepress.com/cakefoundation">CakeSchwag</a>
-    <ul><li>Get your own CakePHP gear - Doughnate to Cake</li></ul></li>
-    <li><a href="http://www.cakephp.org">CakePHP</a>
-    <ul><li>The Rapid Development Framework</li></ul></li>
-    <li><a href="http://manual.cakephp.org">CakePHPManual</a>
-    <ul><li>Your Rapid Development Cookbook</li></ul></li>
-    <li><a href="http://wiki.cakephp.org">CakePHPWiki</a>
-    <ul><li>The Community for CakePHP</li></ul></li>
-    <li><a href="http://api.cakephp.org">CakePHPAPI</a>
-    <ul><li>Docblock Your Best Friend</li></ul></li>
-    <li><a href="http://www.cakeforge.org">CakeForge</a>
-    <ul><li>Open Development for CakePHP</li></ul></li>
-    <li><a href="https://trac.cakephp.org/">CakePHPTrac</a>
-    <ul><li>For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)</li></ul></li>
-    <li><a href="http://groups-beta.google.com/group/cake-php">CakePHP Google Group</a>
-    <ul><li>Community mailing list</li></ul></li>
-    <li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-    <ul><li>Live chat about CakePHP</li></ul></li>
+	<li><a href="http://www.cakefoundation.org/">Cake Software Foundation</a>
+	<ul><li>Promoting development related to CakePHP</li></ul></li>
+	<li><a href="http://www.cafepress.com/cakefoundation">CakeSchwag</a>
+	<ul><li>Get your own CakePHP gear - Doughnate to Cake</li></ul></li>
+	<li><a href="http://www.cakephp.org">CakePHP</a>
+	<ul><li>The Rapid Development Framework</li></ul></li>
+	<li><a href="http://manual.cakephp.org">CakePHPManual</a>
+	<ul><li>Your Rapid Development Cookbook</li></ul></li>
+	<li><a href="http://wiki.cakephp.org">CakePHPWiki</a>
+	<ul><li>The Community for CakePHP</li></ul></li>
+	<li><a href="http://api.cakephp.org">CakePHPAPI</a>
+	<ul><li>Docblock Your Best Friend</li></ul></li>
+	<li><a href="http://www.cakeforge.org">CakeForge</a>
+	<ul><li>Open Development for CakePHP</li></ul></li>
+	<li><a href="https://trac.cakephp.org/">CakePHPTrac</a>
+	<ul><li>For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)</li></ul></li>
+	<li><a href="http://groups-beta.google.com/group/cake-php">CakePHP Google Group</a>
+	<ul><li>Community mailing list</li></ul></li>
+	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
+	<ul><li>Live chat about CakePHP</li></ul></li>
 </ul>

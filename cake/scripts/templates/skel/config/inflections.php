@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Custom Inflected Words.
  *
@@ -10,30 +9,29 @@
  * PHP versions 4 and %
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc.
- *                     1785 E. Sahara Avenue, Suite 490-204
- *                     Las Vegas, Nevada 89104
+ * Copyright (c)	2006, Cake Software Foundation, Inc.
+ *								1785 E. Sahara Avenue, Suite 490-204
+ *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package      cake
- * @subpackage   cake.app.config
- * @since        CakePHP v 1.0.0.2312
- * @version      $Revision$
- * @modifiedby   $LastChangedBy$
- * @lastmodified $Date$
- * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @package			cake
+ * @subpackage		cake.app.config
+ * @since			CakePHP v 1.0.0.2312
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * This is a key => value array of regex used to match words.
  * If key matches then the value is returned.
  *
- *  $pluralRules  = array('/(s)tatus$/i' => '\1\2tatuses', '/^(ox)$/i' => '\1\2en', '/([m|l])ouse$/i' => '\1ice');
+ *  $pluralRules = array('/(s)tatus$/i' => '\1\2tatuses', '/^(ox)$/i' => '\1\2en', '/([m|l])ouse$/i' => '\1ice');
  */
 $pluralRules = array();
 /**

@@ -9,138 +9,129 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc.
- *                     1785 E. Sahara Avenue, Suite 490-204
- *                     Las Vegas, Nevada 89104
+ * Copyright (c)	2006, Cake Software Foundation, Inc.
+ *								1785 E. Sahara Avenue, Suite 490-204
+ *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package      cake
- * @subpackage   cake.cake.libs.model.dbo
- * @since        CakePHP v 0.2.9
- * @version      $Revision$
- * @modifiedby   $LastChangedBy$
- * @lastmodified $Date$
- * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @package			cake
+ * @subpackage		cake.cake.libs.model.dbo
+ * @since			CakePHP v 0.2.9
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
  * Include DBO.
  */
-uses('model'.DS.'datasources'.DS.'dbo_source');
+uses('model' . DS . 'datasources' . DS . 'dbo_source');
 /**
  * Abstract DBO class file.
  *
  * All implementations override this class.
  *
- * @package    cake
- * @subpackage cake.cake.libs.model.dbo
- * @since      CakePHP v 0.2.9
+ * @package		cake
+ * @subpackage	cake.cake.libs.model.dbo
  */
-class DBO_generic extends DboSource
-{
+class DBO_generic extends DboSource{
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function connect ($config)
-    {
-    }
+	 function connect($config) {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function disconnect ()
-    {
-    }
+	 function disconnect() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function execute ($sql)
-    {
-    }
+	 function execute($sql) {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  *
  */
-    function fetchRow ()
-    {
-    }
+	 function fetchRow() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  *
  */
-    function tablesList ()
-    {
-    }
+	 function tablesList() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function fields ($tableName)
-    {
-    }
+	 function fields($tableName) {
+	 }
 
 /**
-* Abstract method defined in subclasses.
+	 * Abstract method defined in subclasses.
  *
  */
-    function prepareValue ($data)
-    {
-    }
+	 function name($name) {
+	 }
 
 /**
- * Abstract method defined in subclasses.
+	 * Abstract method defined in subclasses.
  *
  */
-    function lastError ()
-    {
-    }
+	 function value($data) {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function lastAffected ()
-    {
-    }
+	 function lastError() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function lastNumRows ()
-    {
-    }
+	 function lastAffected() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function lastInsertId ()
-    {
-    }
+	 function lastNumRows() {
+	 }
 
 /**
  * Abstract method defined in subclasses.
  *
  */
-    function selectLimit ($limit, $offset=null)
-    {
-    }
+	 function lastInsertId() {
+	 }
 
+/**
+ * Abstract method defined in subclasses.
+ *
+ */
+	 function selectLimit($limit, $offset = null) {
+	 }
 }
-
 ?>

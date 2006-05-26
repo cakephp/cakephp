@@ -9,23 +9,23 @@
  * PHP versions 4 and 5
  *
  * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2006, Cake Software Foundation, Inc.
- *                     1785 E. Sahara Avenue, Suite 490-204
- *                     Las Vegas, Nevada 89104
+ * Copyright (c)	2006, Cake Software Foundation, Inc.
+ *								1785 E. Sahara Avenue, Suite 490-204
+ *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package      cake
- * @subpackage   cake.cake.libs.controller.components
- * @since        CakePHP v 0.10.0.1232
- * @version      $Revision$
- * @modifiedby   $LastChangedBy$
- * @lastmodified $Date$
- * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @package			cake
+ * @subpackage		cake.cake.libs.controller.components
+ * @since			CakePHP v 0.10.0.1232
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
 /**
@@ -33,23 +33,20 @@
  *
  * Long description for file
  *
- * @package    cake
- * @subpackage cake.cake.libs.controller.components
- * @since      CakePHP v 0.10.0.1232
+ * @package		cake
+ * @subpackage	cake.cake.libs.controller.components
  *
  */
-class SessionComponent extends Object
-{
+class SessionComponent extends Object{
 
 /**
  * Enter description here...
  *
  */
-    function __construct ($base = null)
-    {
-        $this->CakeSession = new CakeSession($base);
-        parent::__construct();
-    }
+	 function __construct($base = null) {
+		  $this->CakeSession=new CakeSession($base);
+		  parent::__construct();
+	 }
 
 /**
  * Enter description here...
@@ -60,10 +57,9 @@ class SessionComponent extends Object
  * @param unknown_type $value
  * @return unknown
  */
-    function write($name, $value)
-    {
-        return $this->CakeSession->writeSessionVar($name, $value);
-    }
+	 function write($name, $value) {
+		  return $this->CakeSession->writeSessionVar($name, $value);
+	 }
 
 /**
  * Enter description here...
@@ -74,10 +70,9 @@ class SessionComponent extends Object
  * @param unknown_type $name
  * @return unknown
  */
-    function read($name = null)
-    {
-        return $this->CakeSession->readSessionVar($name);
-    }
+	 function read($name = null) {
+		  return $this->CakeSession->readSessionVar($name);
+	 }
 
 /**
  * Enter description here...
@@ -87,20 +82,18 @@ class SessionComponent extends Object
  * @param unknown_type $name
  * @return unknown
  */
-    function del($name)
-    {
-        return $this->CakeSession->delSessionVar($name);
-    }
+	 function del($name) {
+		  return $this->CakeSession->delSessionVar($name);
+	 }
 
 /**
  * Enter description here...
  * @param unknown_type $name
  * @return unknown
  */
-    function delete($name)
-    {
-        return $this->del($name);
-    }
+	 function delete($name) {
+		  return $this->del($name);
+	 }
 
 /**
  * Enter description here...
@@ -110,10 +103,9 @@ class SessionComponent extends Object
  * @param unknown_type $name
  * @return unknown
  */
-    function check($name)
-    {
-        return $this->CakeSession->checkSessionVar($name);
-    }
+	 function check($name) {
+		  return $this->CakeSession->checkSessionVar($name);
+	 }
 
 /**
  * Enter description here...
@@ -122,10 +114,9 @@ class SessionComponent extends Object
  *
  * @return string Last session error
  */
-    function error()
-    {
-        return $this->CakeSession->getLastError();
-    }
+	 function error() {
+		  return $this->CakeSession->getLastError();
+	 }
 
 /**
  * Enter description here...
@@ -138,27 +129,22 @@ class SessionComponent extends Object
  * @param string $key Message key, default is 'flash'
  * @return string Last session error
  */
-    function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash')
-    {
-        if ($layout == 'default')
-        {
-            $out = '<div id="'.$key.'Message" class="message">'.$flashMessage.'</div>';
-        }
-        else if($layout == '' || $layout == null)
-        {
-            $out = $flashMessage;
-        }
-        else
-        {
-            $ctrl = null;
-            $view = new View($ctrl);
-            $view->layout = $layout;
-            $view->pageTitle = '';
-            $view->_viewVars = $params;
-            $out = $view->renderLayout($flashMessage);
-        }
-        $this->write('Message.'.$key, $out);
-    }
+	 function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
+		  if ($layout == 'default') {
+				$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
+		  } else if($layout == '' || $layout == null) {
+				$out = $flashMessage;
+		  } else {
+				$ctrl           =null;
+				$view           =new View($ctrl);
+				$view->layout   =$layout;
+				$view->pageTitle='';
+				$view->_viewVars=$params;
+				$out            =$view->renderLayout($flashMessage);
+		  }
+
+		  $this->write('Message.' . $key, $out);
+	 }
 
 /**
  * Use like this. $this->Session->flash();
@@ -166,19 +152,14 @@ class SessionComponent extends Object
  * @param string $key Optional message key
  * @return null
  */
-    function flash($key = 'flash')
-    {
-        if($this->check('Message.'.$key))
-        {
-            e($this->read('Message.'.$key));
-            $this->del('Message.'.$key);
-        }
-        else
-        {
-            return false;
-        }
-
-    }
+	 function flash($key = 'flash') {
+		  if ($this->check('Message.' . $key)) {
+				e($this->read('Message.' . $key));
+				$this->del('Message.' . $key);
+		  } else {
+				return false;
+		  }
+	 }
 
 /**
  * Enter description here...
@@ -188,10 +169,9 @@ class SessionComponent extends Object
  *
  * @return boolean
  */
-    function renew()
-    {
-        $this->CakeSession->renew();
-    }
+	 function renew() {
+		  $this->CakeSession->renew();
+	 }
 
 /**
  * Enter description here...
@@ -202,10 +182,9 @@ class SessionComponent extends Object
  *
  * @return boolean
  */
-    function valid()
-    {
-        return $this->CakeSession->isValid();
-    }
+	 function valid() {
+		  return $this->CakeSession->isValid();
+	 }
 
 /**
  * Enter description here...
@@ -214,9 +193,8 @@ class SessionComponent extends Object
  * Used to destroy Sessions
  *
  */
-    function destroy()
-    {
-      $this->CakeSession->destroyInvalid();
-    }
+	 function destroy() {
+		  $this->CakeSession->destroyInvalid();
+	 }
 }
 ?>
