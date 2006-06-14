@@ -49,13 +49,13 @@ class AjaxHelper extends Helper {
  *
  * @var array
  */
-	var $callbacks = array('uninitialized', 'loading', 'loaded', 'interactive', 'complete');
+	var $callbacks = array('uninitialized', 'loading', 'loaded', 'interactive', 'complete', 'success', 'failure');
 /**
  * Names of AJAX options.
  *
  * @var array
  */
-	var $ajaxOptions = array('type', 'confirm', 'condition', 'before', 'after', 'fallback', 'update', 'loading', 'loaded', 'interactive', 'complete', 'with', 'url', 'method', 'position', 'form', 'parameters', 'evalScripts', 'asynchronous', 'onComplete', 'onUninitialized', 'onLoading', 'onLoaded', 'onInteractive', 'insertion', 'requestHeaders');
+	var $ajaxOptions = array('type', 'confirm', 'condition', 'before', 'after', 'fallback', 'update', 'loading', 'loaded', 'interactive', 'complete', 'with', 'url', 'method', 'position', 'form', 'parameters', 'evalScripts', 'asynchronous', 'onComplete', 'onUninitialized', 'onLoading', 'onLoaded', 'onInteractive', 'success', 'failure', 'onSuccess', 'onFailure', 'insertion', 'requestHeaders');
 /**
  * Options for draggable.
  *
@@ -276,8 +276,8 @@ class AjaxHelper extends Helper {
  * @return string Javascript code
  */
 	function remoteTimer($options = null) {
-		$frequency=(isset($options['frequency'])) ? $options['frequency'] : 10;
-		$code="new PeriodicalExecuter(function() {" . $this->remoteFunction($options) . "}, $frequency)";
+		$frequency = (isset($options['frequency'])) ? $options['frequency'] : 10;
+		$code = "new PeriodicalExecuter(function() {" . $this->remoteFunction($options) . "}, $frequency)";
 		return $this->Javascript->codeBlock($code);
 	}
 
@@ -326,14 +326,10 @@ class AjaxHelper extends Helper {
 				$options['with'] = "Form.serialize('{$htmlOptions['id']}')";
 		}
 
-		$options['url']=$action;
+		$options['url'] = $action;
 
-		return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions) . $this->Javascript->event(
-																													"'" . $htmlOptions['id']
-																														. "'",
-																														"submit",
-																														$this->remoteFunction(
-																															$options));
+		return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions)
+			. $this->Javascript->event("'" . $htmlOptions['id']. "'", "submit", $this->remoteFunction($options));
 	}
 
 /**
@@ -624,6 +620,7 @@ class AjaxHelper extends Helper {
  *
  */
 	function __optionsForAjax($options = array()) {
+
 		$js_options = $this->_buildCallbacks($options);
 
 		if (!isset($js_options['asynchronous'])) {
@@ -634,7 +631,7 @@ class AjaxHelper extends Helper {
 			$js_options['evalScripts'] = 'true';
 		}
 
-		$options=$this->_optionsToString($options, array('method'));
+		$options = $this->_optionsToString($options, array('method'));
 
 		foreach($options as $key => $value) {
 			switch($key) {
@@ -738,6 +735,11 @@ class AjaxHelper extends Helper {
 				$name = 'on' . ucfirst($callback);
 				$code = $options[$callback];
 				$callbacks[$name] = "function(request){" . $code . "}";
+				if (isset($options['bind'])) {
+					if ((is_array($options['bind']) && in_array($callback, $options['bind'])) || (is_string($options['bind']) && strpos($options['bind'], $callback) !== false)) {
+						$callbacks[$name] .= ".bind(this)";
+					}
+				}
 			}
 		}
 		return $callbacks;
