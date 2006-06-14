@@ -628,7 +628,12 @@ class DboSource extends DataSource {
 								if ($deepModel->name != $model->name) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
-									$this->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
+										$db =& $this;
+									} else {
+										$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+									}
+									$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 								}
 							}
 						}
