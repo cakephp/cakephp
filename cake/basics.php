@@ -910,21 +910,169 @@
 		}
 	}
 /**
+ *
  * Returns a translated string if one is found,
  * or the submitted message if not found.
  *
- * @param  unknown_type $msg
- * @param  unknown_type $return
+ * @param unknown_type $msg
+ * @param unknown_type $return
  * @return unknown
- * @todo Not implemented fully till 2.0
  */
 	function __($msg, $return = null) {
-		if (is_null($return)) {
-			echo($msg);
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg, $msg2=NULL, $domain=NULL, $category=NULL, $count=NULL, $dir);
 		} else {
-			return $msg;
+			return I18n::translate($msg, $msg2=NULL, $domain=NULL, $category=NULL, $count=NULL, $dir);
 		}
 	}
+/**
+ *
+ * Returns correct plural form of message identified by $msg1 and $msg2 for count $count.
+ * Some languages have more than one form for plural messages dependent on the count.
+ *
+ * @param unknown_type $msg1
+ * @param unknown_type $msg2
+ * @param unknown_type $count
+ * @param unknown_type $return
+ * @return unknown
+ */
+	function __n($msg1, $msg2, $count, $return = null) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg1, $msg2, NULL, NULL, $count, $dir);
+		} else {
+			return I18n::translate($msg1, $msg2, NULL, NULL, $count, $dir);
+		}
+	}
+/**
+ *
+ * Allows you to override the current domain for a single plural message lookup
+ * Returns correct plural form of message identified by $msg1 and $msg2 for count $count
+ * from domain $domain
+ *
+ * @param unknown_type $domain
+ * @param unknown_type $msg1
+ * @param unknown_type $msg2
+ * @param unknown_type $count
+ * @param unknown_type $return
+ * @return unknown
+ */
+	function __dn($domain, $msg1, $msg2, $count, $return = null) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg1, $msg2, $domain, NULL, $count, $dir);;
+		} else {
+			return I18n::translate($msg1, $msg2, $domain, NULL, $count, $dir);
+		}
+	}
+/**
+ *
+ * Allows you to override the current domain for a single plural message lookup.
+ * It also allows you to specify a category.
+ * Returns correct plural form of message identified by $msg1 and $msg2 for count $count
+ * from domain $domain
+ *
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * LC_CTYPE     0
+ * LC_NUMERIC   1
+ * LC_TIME      2
+ * LC_COLLATE   3
+ * LC_MONETARY  4
+ * LC_MESSAGES  5
+ * LC_ALL       6
+ *
+ * @param unknown_type $domain
+ * @param unknown_type $msg1
+ * @param unknown_type $msg2
+ * @param unknown_type $count
+ * @param unknown_type $category
+ * @param unknown_type $return
+ * @return unknown
+ */
+	function __dcn($domain, $msg1, $msg2, $count, $category, $return = null) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg1, $msg2, $domain, $category, $count, $dir);
+		} else {
+			return I18n::translate($msg1, $msg2, $domain, $category, $count, $dir);
+		}
+	}
+/**
+ *
+ * Allows you to override the current domain for a single message lookup.
+ * It also allows you to specify a category.
+ *
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * LC_CTYPE     0
+ * LC_NUMERIC   1
+ * LC_TIME      2
+ * LC_COLLATE   3
+ * LC_MONETARY  4
+ * LC_MESSAGES  5
+ * LC_ALL       6
+ *
+ * @param unknown_type $domain
+ * @param unknown_type $msg
+ * @param unknown_type $category
+ * @param unknown_type $return
+ * @return unknown
+ */
+	function __dc($domain, $msg, $category, $return = null) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg, NULL, $domain, $category, NULL, $dir);
+		} else {
+			return I18n::translate($msg, NULL, $domain, $category, NULL, $dir);
+		}
+	}
+/**
+ *
+ * Allows you to override the current domain for a single message lookup.
+ *
+ * @param unknown_type $domain
+ * @param unknown_type $msg
+ * @param unknown_type $return
+ * @return unknown
+ */
+    function __d($domain, $msg, $return = null) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+		$calledFrom = debug_backtrace();
+		$dir = dirname($calledFrom[0]['file']);
+		if(is_null($return)) {
+			echo I18n::translate($msg, NULL, $domain, NULL, NULL, $dir);
+		} else {
+			return I18n::translate($msg, NULL, $domain, NULL, NULL, $dir);
+		}
+    }
 /**
  * Counts the dimensions of an array
  *
