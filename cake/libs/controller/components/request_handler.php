@@ -29,8 +29,7 @@
  */
 
 if (!defined('REQUEST_MOBILE_UA')) {
-	define('REQUEST_MOBILE_UA',
-			'(AvantGo|BlackBerry|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
+	define('REQUEST_MOBILE_UA', '(MIDP|AvantGo|BlackBerry|J2ME|Opera Mini|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
 }
 
 /**
@@ -41,22 +40,24 @@ if (!defined('REQUEST_MOBILE_UA')) {
  *
  */
 class RequestHandlerComponent extends Object{
-	var $controller = true;
 
 	var $ajaxLayout = 'ajax';
 
 	var $disableStartup = false;
 
+	var $enabled = true;
+
 	var $__requestContent = array(
-		'js' => 'text/javascript',
-		'css'	=> 'text/css',
-		'html'	=> 'text/html',
-		'form'	=> 'application/x-www-form-urlencoded',
-		'file'	=> 'multipart/form-data',
-		'xhtml'	=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-		'xml' => array('application/xml', 'text/xml'),
-		'rss' => 'application/rss+xml',
-		'atom' => 'application/atom+xml'
+		'javascript'	=> 'text/javascript',
+		'css'			=> 'text/css',
+		'html'			=> array('text/html', '*/*'),
+		'text'			=> 'text/plain',
+		'form'			=> 'application/x-www-form-urlencoded',
+		'file'			=> 'multipart/form-data',
+		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+		'xml'			=> array('application/xml', 'text/xml'),
+		'rss'			=> 'application/rss+xml',
+		'atom'			=> 'application/atom+xml'
 	);
 
 	var $__acceptTypes = array();
@@ -70,6 +71,11 @@ class RequestHandlerComponent extends Object{
 				$this->__acceptTypes[$i] = $type[0];
 			}
 		}
+
+		foreach ($this->__requestContent as $type => $data) {
+			$this->setContent($type, $data);
+		}
+
 		parent::__construct();
 	}
 /**
@@ -79,16 +85,27 @@ class RequestHandlerComponent extends Object{
  * @return null
  */
 	function startup(&$controller) {
-		if ($this->disableStartup) {
+		if ($this->disableStartup || !$this->enabled) {
 			return;
 		}
-		$this->setAjax($controller);
+		$this->setView($controller);
+	}
+/**
+ * Sets a controller's layout/View class based on request headers
+ *
+ * @param object The controller object
+ * @return null
+ */
+	function setView(&$controller) {
+		if ($this->setAjax($controller)) {
+			return;
+		}
 	}
 /**
  * Sets a controller's layout based on whether or not the current call is Ajax
  *
  * @param object The controller object
- * @return null
+ * @return boolean True if call is Ajax, otherwise false
  */
 	function setAjax(&$controller) {
 		if ($this->isAjax()) {
@@ -96,7 +113,9 @@ class RequestHandlerComponent extends Object{
 
 			// Add UTF-8 header for IE6 on XPsp2 bug
 			header ('Content-Type: text/html; charset=UTF-8');
+			return true;
 		}
+		return false;
 	}
 /**
  * Returns true if the current call is from Ajax, false otherwise
@@ -104,11 +123,7 @@ class RequestHandlerComponent extends Object{
  * @return bool True if call is Ajax
  */
 	function isAjax() {
-		if (env('HTTP_X_REQUESTED_WITH') != null) {
-			return env('HTTP_X_REQUESTED_WITH') == "XMLHttpRequest";
-		} else {
-			return false;
-		}
+		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
 	}
 /**
  * Returns true if the current call accepts an XML response, false otherwise
@@ -186,6 +201,13 @@ class RequestHandlerComponent extends Object{
  * @return void
  */
 	function setContent($name, $type) {
+		if (!is_array($type) || isset($type[0])) {
+			$type = array(
+				'layout'	=> Inflector::underscore($name),
+				'view'		=> Inflector::camelize($name),
+				'content'	=> $type
+			);
+		}
 		$this->__requestContent[$name] = $type;
 	}
 /**
@@ -307,7 +329,7 @@ class RequestHandlerComponent extends Object{
  */
 	function accepts($type = null) {
 		if ($type == null) {
-			return $this->__acceptTypes;
+			return $this->mapType($this->__acceptTypes);
 		} else if(is_array($type)) {
 			foreach($type as $t) {
 				if ($this->accepts($t) == true) {
@@ -316,16 +338,12 @@ class RequestHandlerComponent extends Object{
 			}
 			return false;
 		} else if(is_string($type)) {
-			// If client only accepts */*, then assume default HTML browser
-			if ($type == 'html' && $this->__acceptTypes === array('*/*')) {
-				return true;
-			}
 
 			if (!in_array($type, array_keys($this->__requestContent))) {
 				return false;
 			}
 
-			$content = $this->__requestContent[$type];
+			$content = $this->__requestContent[$type]['content'];
 
 			if (is_array($content)) {
 				foreach($content as $c) {
@@ -350,6 +368,40 @@ class RequestHandlerComponent extends Object{
 	function prefers($type = null) {
 		if ($type == null) {
 			return $this->accepts(null);
+		}
+
+		
+	}
+/**
+ * Maps a content-type back to an alias
+ *
+ * @param mixed $type
+ * @returns mixed
+ * @access public
+ */
+	function mapType($ctype) {
+
+		if (is_array($ctype)) {
+			$out = array();
+			foreach ($ctype as $t) {
+				$out[] = $this->mapType($t);
+			}
+			return $out;
+		} else {
+			$keys = array_keys($this->__requestContent);
+			$count = count($keys);
+
+			for ($i = 0; $i < $count; $i++) {
+				$name = $keys[$i];
+				$type = $this->__requestContent[$name];
+
+				if (is_array($type['content']) && in_array($ctype, $type['content'])) {
+					return $name;
+				} elseif (!is_array($type['content']) && $type['content'] == $ctype) {
+					return $name;
+				}
+			}
+			return $ctype;
 		}
 	}
 }
