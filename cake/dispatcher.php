@@ -89,10 +89,7 @@ class Dispatcher extends Object {
 
 			if(!class_exists($ctrlClass)) {
 				if (!loadController($ctrlName)) {
-					$plugin = $ctrlName;
 					$pluginName = Inflector::camelize($params['action']);
-					$pluginClass = $pluginName.'Controller';
-
 					if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
 						if(preg_match('/([\\.]+)/', $ctrlName)) {
 							return $this->cakeError('error404', array(
@@ -104,25 +101,30 @@ class Dispatcher extends Object {
 							$missingController = true;
 						}
 					} else {
-						$ctrlClass = $pluginClass;
-						$oldAction = $params['action'];
-						$params = $this->_restructureParams($params);
-						$plugin = Inflector::underscore($ctrlName);
-						$this->plugin = $plugin;
-						loadPluginModels($plugin);
-						$this->base = $this->base.'/'.Inflector::underscore($ctrlName);
-
-						if(empty($params['controller']) || !class_exists($pluginClass)) {
-							$params['controller'] = Inflector::underscore($ctrlName);
-							$ctrlClass = $ctrlName.'Controller';
-
-							if (!is_null($params['action'])) {
-								array_unshift($params['pass'], $params['action']);
-							}
-							$params['action'] = $oldAction;
-						}
+						$params['plugin'] = Inflector::underscore($ctrlName);
 					}
 				}
+			}
+		}
+
+		if(isset($params['plugin'])){
+			$plugin = $params['plugin'];
+			$pluginName = Inflector::camelize($params['action']);
+			$pluginClass = $pluginName.'Controller';
+			$ctrlClass = $pluginClass;
+			$oldAction = $params['action'];
+			$params = $this->_restructureParams($params);
+			$this->plugin = $plugin;
+			loadPluginModels($plugin);
+			$this->base = $this->base.'/'.Inflector::underscore($ctrlName);
+
+			if(empty($params['controller']) || !class_exists($pluginClass)) {
+				$params['controller'] = Inflector::underscore($ctrlName);
+				$ctrlClass = $ctrlName.'Controller';
+				if (!is_null($params['action'])) {
+					array_unshift($params['pass'], $params['action']);
+				}
+				$params['action'] = $oldAction;
 			}
 		}
 

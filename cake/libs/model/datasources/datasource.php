@@ -222,18 +222,18 @@ class DataSource extends Object{
  */
 	function __cacheDescription($object, $data = null) {
 		if (DEBUG > 0) {
-			$expires = "+10 seconds";
+			$expires = "+15 seconds";
 		} else {
 			$expires = "+999 days";
 		}
 
 		if ($data !== null) {
-			$this->__descriptions[$object]=&$data;
+			$this->__descriptions[$object] =& $data;
 			$cache = serialize($data);
 		} else {
 			$cache = null;
 		}
-		$new = cache('models' . DS . strtolower(get_class($this)) . '_' . $object, $cache, $expires);
+		$new = cache('models' . DS . ConnectionManager::getSourceName($this) . '_' . $object, $cache, $expires);
 
 		if ($new != null) {
 			$new = unserialize($new);
@@ -276,10 +276,10 @@ class DataSource extends Object{
 		if (isset($this->__descriptions[$model->table])) {
 			return $this->__descriptions[$model->table];
 		}
-		$cache=$this->__cacheDescription($model->table);
+		$cache = $this->__cacheDescription($model->tablePrefix.$model->table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$model->table]=&$cache;
+			$this->__descriptions[$model->table] =& $cache;
 			return $cache;
 		}
 		return null;
@@ -355,11 +355,11 @@ class DataSource extends Object{
  * @param unknown_type $assocData
  * @param Model $model
  * @param Model $linkModel
- * @param unknown_type $index
+ * @param array $stack
  * @return unknown
  */
-	function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $index) {
-		$keys=array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
+	function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $stack) {
+		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
 
 		foreach($keys as $key) {
 			$val = null;
@@ -367,10 +367,22 @@ class DataSource extends Object{
 			if (strpos($query, $key) !== false) {
 				switch($key) {
 					case '{$__cakeID__$}':
-						if (isset($data[$index][$model->name])) {
-							if (isset($data[$index][$model->name][$model->primaryKey])) {
-								$val = $data[$index][$model->name][$model->primaryKey];
-							} else {
+						if (isset($data[$model->name]) || isset($data[$association])) {
+							if (isset($data[$model->name][$model->primaryKey])) {
+								$val = $data[$model->name][$model->primaryKey];
+							} elseif (isset($data[$association][$model->primaryKey])) {
+								$val = $data[$association][$model->primaryKey];
+							}
+						} else {
+							$found = false;
+							foreach (array_reverse($stack) as $assoc) {
+								if (isset($data[$assoc]) && isset($data[$assoc][$model->primaryKey])) {
+									$val = $data[$assoc][$model->primaryKey];
+									$found = true;
+									break;
+								}
+							}
+							if (!$found) {
 								$val = '';
 							}
 						}
@@ -380,10 +392,24 @@ class DataSource extends Object{
 							foreach($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {
-										$foreignKey=$assoc['foreignKey'];
+										$foreignKey = $assoc['foreignKey'];
 
-										if (isset($data[$index][$model->name][$foreignKey])) {
-											$val = $data[$index][$model->name][$foreignKey];
+										if (isset($data[$model->name][$foreignKey])) {
+											$val = $data[$model->name][$foreignKey];
+										} elseif (isset($data[$association][$foreignKey])) {
+											$val = $data[$association][$foreignKey];
+										} else {
+											$found = false;
+											foreach (array_reverse($stack) as $assoc) {
+												if (isset($data[$assoc]) && isset($data[$assoc][$model->primaryKey])) {
+													$val = $data[$assoc][$model->primaryKey];
+													$found = true;
+													break;
+												}
+											}
+											if (!$found) {
+												$val = '';
+											}
 										}
 									}
 									break 3;
@@ -441,13 +467,6 @@ class DataSource extends Object{
 			}
 		}
 		return $data;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- */
-	function buildSchemaQuery($schema) {
-		die ("Implement in DBO");
 	}
 /**
  * Closes the current datasource.

@@ -55,6 +55,12 @@ class Controller extends Object{
  */
 	var $here = null;
 /**
+ * The webroot of the application
+ *
+ * @var string
+ */
+	var $webroot = null;
+/**
  * Action to be performed.
  *
  * @var string
@@ -75,6 +81,20 @@ class Controller extends Object{
  * @access protected
  */
 	var $helpers = array('Html');
+/**
+ * Parameters received in the current request, i.e. GET and POST data
+ *
+ * @var array
+ * @access public
+ */
+	var $params = array();
+/**
+ * POST'ed model data
+ *
+ * @var array
+ * @access public
+ */
+	var $data = array();
 /**
  * Enter description here...
  *
@@ -186,40 +206,38 @@ class Controller extends Object{
  */
 	function __construct() {
 		if ($this->name === null) {
-				$r=null;
+			$r = null;
 
-				if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
-					die ("Controller::__construct() : Can't get or parse my own class name, exiting.");
-				}
-				$this->name=$r[1];
+			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
+				die ("Controller::__construct() : Can't get or parse my own class name, exiting.");
+			}
+			$this->name = $r[1];
 		}
 
 		if ($this->viewPath == null) {
-				$this->viewPath = Inflector::underscore($this->name);
+			$this->viewPath = Inflector::underscore($this->name);
 		}
 
-		$this->modelClass=ucwords(Inflector::singularize($this->name));
-		$this->modelKey  =Inflector::underscore($this->modelClass);
+		$this->modelClass = ucwords(Inflector::singularize($this->name));
+		$this->modelKey = Inflector::underscore($this->modelClass);
 
 		if (!defined('AUTO_SESSION') || AUTO_SESSION == true) {
-				$this->components[] = 'Session';
+			$this->components[] = 'Session';
 		}
 
 		if (is_subclass_of($this, 'AppController')) {
-				$appVars=get_class_vars('AppController');
+			$appVars = get_class_vars('AppController');
 
-				foreach(array('components',
-							'helpers',
-							'uses')as $var) {
-					if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-						$diff        =array_diff($appVars[$var], $this->{$var});
-						$this->{$var}=array_merge($this->{$var}, $diff);
-					}
+			foreach(array('components', 'helpers', 'uses') as $var) {
+				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+					$diff = array_diff($appVars[$var], $this->{$var});
+					$this->{$var} = array_merge($this->{$var}, $diff);
 				}
+			}
 		}
 
 		if (!empty($this->components)) {
-				$component = &new Component($this);
+			$component = &new Component($this);
 		}
 		parent::__construct();
 	}
@@ -255,7 +273,7 @@ class Controller extends Object{
 			} else {
 				$this->_persist($this->modelClass . 'registry', true, $object, 'registry');
 				$this->_persist($this->modelClass, true, $object);
-				$this->modelNames[]=$this->modelClass;
+				$this->modelNames[] = $this->modelClass;
 				return true;
 			}
 		} elseif ($this->uses === false) {
@@ -306,11 +324,12 @@ class Controller extends Object{
 	function redirect($url, $status = null) {
 		$this->autoRender = false;
 		$pos = strpos($url, '://');
+		$base = strip_plugin($this->base, $this->plugin);
 		if ($pos === false) {
 			if (strpos($url, '/') !== 0) {
 				$url = '/' . $url;
 			}
-			$url = $this->base . $url;
+			$url = $base . $url;
 		}
 
 		if (function_exists('session_write_close')) {
@@ -318,45 +337,47 @@ class Controller extends Object{
 		}
 
 		if ($status != null) {
-			$codes = array(100 => "HTTP/1.1 100 Continue",
-						101 => "HTTP/1.1 101 Switching Protocols",
-						200 => "HTTP/1.1 200 OK",
-						201 => "HTTP/1.1 201 Created",
-						202 => "HTTP/1.1 202 Accepted",
-						203 => "HTTP/1.1 203 Non-Authoritative Information",
-						204 => "HTTP/1.1 204 No Content",
-						205 => "HTTP/1.1 205 Reset Content",
-						206 => "HTTP/1.1 206 Partial Content",
-						300 => "HTTP/1.1 300 Multiple Choices",
-						301 => "HTTP/1.1 301 Moved Permanently",
-						302 => "HTTP/1.1 302 Found",
-						303 => "HTTP/1.1 303 See Other",
-						304 => "HTTP/1.1 304 Not Modified",
-						305 => "HTTP/1.1 305 Use Proxy",
-						307 => "HTTP/1.1 307 Temporary Redirect",
-						400 => "HTTP/1.1 400 Bad Request",
-						401 => "HTTP/1.1 401 Unauthorized",
-						402 => "HTTP/1.1 402 Payment Required",
-						403 => "HTTP/1.1 403 Forbidden",
-						404 => "HTTP/1.1 404 Not Found",
-						405 => "HTTP/1.1 405 Method Not Allowed",
-						406 => "HTTP/1.1 406 Not Acceptable",
-						407 => "HTTP/1.1 407 Proxy Authentication Required",
-						408 => "HTTP/1.1 408 Request Time-out",
-						409 => "HTTP/1.1 409 Conflict",
-						410 => "HTTP/1.1 410 Gone",
-						411 => "HTTP/1.1 411 Length Required",
-						412 => "HTTP/1.1 412 Precondition Failed",
-						413 => "HTTP/1.1 413 Request Entity Too Large",
-						414 => "HTTP/1.1 414 Request-URI Too Large",
-						415 => "HTTP/1.1 415 Unsupported Media Type",
-						416 => "HTTP/1.1 416 Requested range not satisfiable",
-						417 => "HTTP/1.1 417 Expectation Failed",
-						500 => "HTTP/1.1 500 Internal Server Error",
-						501 => "HTTP/1.1 501 Not Implemented",
-						502 => "HTTP/1.1 502 Bad Gateway",
-						503 => "HTTP/1.1 503 Service Unavailable",
-						504 => "HTTP/1.1 504 Gateway Time-out");
+			$codes = array(
+				100 => "HTTP/1.1 100 Continue",
+				101 => "HTTP/1.1 101 Switching Protocols",
+				200 => "HTTP/1.1 200 OK",
+				201 => "HTTP/1.1 201 Created",
+				202 => "HTTP/1.1 202 Accepted",
+				203 => "HTTP/1.1 203 Non-Authoritative Information",
+				204 => "HTTP/1.1 204 No Content",
+				205 => "HTTP/1.1 205 Reset Content",
+				206 => "HTTP/1.1 206 Partial Content",
+				300 => "HTTP/1.1 300 Multiple Choices",
+				301 => "HTTP/1.1 301 Moved Permanently",
+				302 => "HTTP/1.1 302 Found",
+				303 => "HTTP/1.1 303 See Other",
+				304 => "HTTP/1.1 304 Not Modified",
+				305 => "HTTP/1.1 305 Use Proxy",
+				307 => "HTTP/1.1 307 Temporary Redirect",
+				400 => "HTTP/1.1 400 Bad Request",
+				401 => "HTTP/1.1 401 Unauthorized",
+				402 => "HTTP/1.1 402 Payment Required",
+				403 => "HTTP/1.1 403 Forbidden",
+				404 => "HTTP/1.1 404 Not Found",
+				405 => "HTTP/1.1 405 Method Not Allowed",
+				406 => "HTTP/1.1 406 Not Acceptable",
+				407 => "HTTP/1.1 407 Proxy Authentication Required",
+				408 => "HTTP/1.1 408 Request Time-out",
+				409 => "HTTP/1.1 409 Conflict",
+				410 => "HTTP/1.1 410 Gone",
+				411 => "HTTP/1.1 411 Length Required",
+				412 => "HTTP/1.1 412 Precondition Failed",
+				413 => "HTTP/1.1 413 Request Entity Too Large",
+				414 => "HTTP/1.1 414 Request-URI Too Large",
+				415 => "HTTP/1.1 415 Unsupported Media Type",
+				416 => "HTTP/1.1 416 Requested range not satisfiable",
+				417 => "HTTP/1.1 417 Expectation Failed",
+				500 => "HTTP/1.1 500 Internal Server Error",
+				501 => "HTTP/1.1 501 Not Implemented",
+				502 => "HTTP/1.1 502 Bad Gateway",
+				503 => "HTTP/1.1 503 Service Unavailable",
+				504 => "HTTP/1.1 504 Gateway Time-out"
+			);
 
 			if (isset($codes[$status])) {
 				header($codes[$status]);
@@ -439,16 +460,11 @@ class Controller extends Object{
  * @return unknown
  */
 	function render($action = null, $layout = null, $file = null) {
-		$viewClass=$this->view;
-		if ($this->view != 'View' && !class_exists($viewClass)) {
+		$viewClass = $this->view;
+		if ($this->view != 'View') {
 			$viewClass = $this->view . 'View';
 			loadView($this->view);
 		}
-
-		if ($this->view != 'View') {
-			$viewClass = $this->view . 'View';
-		}
-
 		$this->beforeRender();
 		$this->_viewClass =& new $viewClass($this);
 
@@ -459,7 +475,7 @@ class Controller extends Object{
 				}
 			}
 		}
-		$this->autoRender=false;
+		$this->autoRender = false;
 		return $this->_viewClass->render($action, $layout, $file);
 	}
 /**
@@ -472,6 +488,7 @@ class Controller extends Object{
 	function referer($default = null, $local = false) {
 		$ref = env('HTTP_REFERER');
 		$base = FULL_BASE_URL . $this->webroot;
+
 		if ($ref != null && (defined(FULL_BASE_URL) || FULL_BASE_URL)) {
 			if (strpos($ref, $base) === 0) {
 				return substr($ref, strlen($base) - 1);
@@ -545,15 +562,15 @@ class Controller extends Object{
  * @param unknown_type $time
  */
 	function flashOut($message, $url, $pause = 1) {
-		$this->autoRender=false;
-		$this->autoLayout=false;
+		$this->autoRender = false;
+		$this->autoLayout = false;
 		$this->set('url', $url);
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
 
 		if (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
-				$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
+			$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
 		} elseif($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.thtml')) {
 		}
 		$this->render(null, false, $flash);
@@ -587,7 +604,7 @@ class Controller extends Object{
 					$fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($niceName);
 					$fieldNames[$tabl['name']]['model'] = $fkNames[1];
 					$fieldNames[$tabl['name']]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']];
-					$fieldNames[$tabl['name']]['controller']=Inflector::pluralize($this->{$model}->tableToModel[$fkNames[0]]);
+					$fieldNames[$tabl['name']]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[$fkNames[0]]);
 					$fieldNames[$tabl['name']]['foreignKey'] = true;
 
 				} else if('created' != $tabl['name'] && 'updated' != $tabl['name']) {
@@ -597,8 +614,8 @@ class Controller extends Object{
 				} else if('updated' == $tabl['name']) {
 					$fieldNames[$tabl['name']]['prompt'] = 'Modified';
 				}
-				$fieldNames[$tabl['name']]['tagName']=$model . '/' . $tabl['name'];
-				$validationFields=$objRegistryModel->validate;
+				$fieldNames[$tabl['name']]['tagName'] = $model . '/' . $tabl['name'];
+				$validationFields = $objRegistryModel->validate;
 
 				if (isset($validationFields[$tabl['name']])) {
 					if (VALID_NOT_EMPTY == $validationFields[$tabl['name']]) {
@@ -618,7 +635,7 @@ class Controller extends Object{
 
 				switch($type) {
 					case "text":
-						$fieldNames[$tabl['name']]['type']='area';
+						$fieldNames[$tabl['name']]['type'] = 'area';
 					break;
 					case "string":
 						if (isset($fieldNames[$tabl['name']]['foreignKey'])) {
@@ -673,7 +690,7 @@ class Controller extends Object{
 										}
 									}
 								}
-								$fieldNames[$tabl['name']]['selected']=$data[$model][$tabl['name']];
+								$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
 							}
 						} else {
 							$fieldNames[$tabl['name']]['type'] = 'input';
@@ -681,7 +698,7 @@ class Controller extends Object{
 
 					break;
 					case "enum":
-						$fieldNames[$tabl['name']]['type']='select';
+						$fieldNames[$tabl['name']]['type'] = 'select';
 						$fieldNames[$tabl['name']]['options'] = array();
 						$enumValues = split(',', $fieldLength);
 
@@ -864,4 +881,5 @@ class Controller extends Object{
 		return false;
 	}
 }
+
 ?>

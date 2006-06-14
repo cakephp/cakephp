@@ -129,6 +129,8 @@
 			} else {
 				return false;
 			}
+		} else {
+			return true;
 		}
 	}
 /**
@@ -165,14 +167,14 @@
 				require(CAKE . 'app_controller.php');
 			}
 		}
-		$loadedControllers=array();
+		$loadedControllers = array();
 
 		foreach($paths->controllerPaths as $path) {
-			foreach(listClasses($path)as $controller) {
+			foreach(listClasses($path) as $controller) {
 				if (file_exists($path . $controller . '.php')) {
 					if (!key_exists($controller, $loadedControllers)) {
 						require($path . $controller . '.php');
-						$loadedControllers[$controller]=$controller;
+						$loadedControllers[$controller] = $controller;
 					}
 				}
 			}
@@ -252,13 +254,126 @@
 			if (file_exists($file)) {
 				require($file);
 				return true;
-			} elseif (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php'))
-			{
+			} elseif (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 				require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 				return true;
 			} else {
 				return false;
 			}
+		} else {
+			return true;
+		}
+	}
+/**
+ * Loads a helper
+ *
+ * @param  string  $name Name of helper
+ * @return boolean Success
+ */
+	function loadHelper($name) {
+		$paths = Configure::getInstance();
+
+		if ($name === null) {
+			return true;
+		}
+
+		if (!class_exists($name . 'Helper')) {
+			$name=Inflector::underscore($name);
+
+			foreach($paths->helperPaths as $path) {
+				if (file_exists($path . $name . '.php')) {
+					require($path . $name . '.php');
+					return true;
+				}
+			}
+
+			if ($helper_fn = fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $name . '.php')) {
+				if (file_exists($helper_fn)) {
+					require($helper_fn);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+/**
+ * Loads a plugin's helper
+ *
+ * @param  string  $plugin Name of plugin
+ * @param  string  $helper Name of helper to load
+ * @return boolean Success
+ */
+	function loadPluginHelper($plugin, $helper) {
+		if (!class_exists($helper . 'Helper')) {
+			$helper = Inflector::underscore($helper);
+			$file = APP . 'plugins' . DS . $plugin . DS . 'views' . DS . 'helpers' . DS . $helper . '.php';
+			if (file_exists($file)) {
+				require($file);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+	}
+/**
+ * Loads a component
+ *
+ * @param  string  $name Name of component
+ * @return boolean Success
+ */
+	function loadComponent($name) {
+		$paths = Configure::getInstance();
+
+		if ($name === null) {
+			return true;
+		}
+
+		if (!class_exists($name . 'Component')) {
+			$name=Inflector::underscore($name);
+
+			foreach($paths->componentPaths as $path) {
+				if (file_exists($path . $name . '.php')) {
+					require($path . $name . '.php');
+					return true;
+				}
+			}
+
+			if ($component_fn = fileExistsInPath(LIBS . 'controller' . DS . 'components' . DS . $name . '.php')) {
+				if (file_exists($component_fn)) {
+					require($component_fn);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+/**
+ * Loads a plugin's component
+ *
+ * @param  string  $plugin Name of plugin
+ * @param  string  $helper Name of component to load
+ * @return boolean Success
+ */
+	function loadPluginComponent($plugin, $component) {
+		if (!class_exists($component . 'Component')) {
+			$component = Inflector::underscore($component);
+			$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . 'components' . DS . $component . '.php';
+			if (file_exists($file)) {
+				require($file);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return true;
 		}
 	}
 /**
@@ -344,7 +459,7 @@
  */
 	function debug($var = false, $showHtml = false) {
 		if (DEBUG) {
-			print "\n<pre>\n";
+			print "\n<pre class=\"cake_debug\">\n";
 			ob_start();
 			print_r($var);
 			$var = ob_get_clean();
@@ -362,7 +477,7 @@
  */
 	if (!function_exists('getMicrotime')) {
 		function getMicrotime() {
-			list($usec, $sec)=explode(" ", microtime());
+			list($usec, $sec) = explode(" ", microtime());
 			return ((float)$usec + (float)$sec);
 		}
 	}
@@ -886,7 +1001,7 @@
 		if (!is_dir($path)) {
 			return chmod($path, $mode);
 		}
-		$di = opendir($path);
+		$dir = opendir($path);
 
 		while($file = readdir($dir)) {
 			if ($file != '.' && $file != '..') {
@@ -910,5 +1025,25 @@
 		} else {
 			return false;
 		}
+	}
+/**
+ * removed the plugin name from the base url
+ *
+ * @param string $base
+ * @param string $plugin
+ * @return base url with plugin name removed if present
+ */
+	function strip_plugin($base, $plugin){
+		if ($plugin != null) {
+			$base = preg_replace('/' . $plugin . '/', '', $base);
+			$base = str_replace('//', '', $base);
+			$pos1 = strrpos($base, '/');
+			$char = strlen($base) - 1;
+
+			if ($pos1 == $char) {
+				$base = substr($base, 0, $char);
+			}
+		}
+		return $base;
 	}
 ?>

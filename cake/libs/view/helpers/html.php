@@ -129,18 +129,7 @@ class HtmlHelper extends Helper {
  * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
  */
 	function url($url = null, $return = false) {
-		$base = $this->base;
-		if ($this->plugin != null) {
-			$base = preg_replace('/' . $this->plugin . '/', '', $this->base);
-			$base = str_replace('//', '', $base);
-			$pos1 = strrpos($base, '/');
-			$char = strlen($base) - 1;
-
-			if ($pos1 == $char) {
-				$base = substr($base, 0, $char);
-			}
-		}
-
+		$base = strip_plugin($this->base, $this->plugin);
 		if (empty($url)) {
 			return $this->here;
 		} elseif($url{0} == '/') {
@@ -148,7 +137,8 @@ class HtmlHelper extends Helper {
 		} else {
 			$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
 		}
-		return $this->output(preg_replace('/&([^a])/', '&amp;\1', $output), $return);
+
+		return $this->output($output, $return);
 	}
 /**
  * Creates an HTML link.
@@ -210,7 +200,10 @@ class HtmlHelper extends Helper {
 	function password($fieldName, $htmlAttributes = null, $return = false) {
 		$this->setFormTag($fieldName);
 		if (!isset($htmlAttributes['value'])) {
-				$htmlAttributes['value'] = $this->tagValue($fieldName);
+			$htmlAttributes['value'] = $this->tagValue($fieldName);
+		}
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 		}
 
 		if ($this->tagIsInvalid($this->model, $this->field)) {
@@ -236,6 +229,9 @@ class HtmlHelper extends Helper {
 		if (!empty($htmlAttributes['value']) && !$value) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
+		}
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 		}
 
 		if ($this->tagIsInvalid($this->model, $this->field)) {
@@ -272,6 +268,9 @@ class HtmlHelper extends Helper {
 			$htmlAttributes['checked'] = $value ? 'checked' : null;
 			$htmlAttributes['value'] = 1;
 		}
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
+		}
 		$output = $this->hidden($fieldName, array('value' => $notCheckedValue), true);
 		$output .= sprintf($this->tags['checkbox'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		return $this->output($output, $return);
@@ -287,7 +286,11 @@ class HtmlHelper extends Helper {
  */
 	function css($path, $rel = 'stylesheet', $htmlAttributes = null, $return = false) {
 		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . CSS_URL . $this->themeWeb . $path . ".css";
-		return $this->output(sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+		if ($rel == 'import') {
+			return $this->output(sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');'), $return);
+		} else {
+			return $this->output(sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+		}
 	}
 /**
  * Creates file input widget.
@@ -300,6 +303,9 @@ class HtmlHelper extends Helper {
 	function file($fieldName, $htmlAttributes = null, $return = false) {
 		if (strpos($fieldName, '/')) {
 			$this->setFormTag($fieldName);
+			if (!isset($htmlAttributes['id'])) {
+				$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
+			}
 			return $this->output(sprintf($this->tags['file'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
 		}
 		return $this->output(sprintf($this->tags['file_no_model'], $fieldName, $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
@@ -339,6 +345,9 @@ class HtmlHelper extends Helper {
 		$this->setFormTag($fieldName);
 		if (!isset($htmlAttributes['value'])) {
 			$htmlAttributes['value'] = $this->tagValue($fieldName);
+		}
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 		}
 		return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
 	}
@@ -400,9 +409,11 @@ class HtmlHelper extends Helper {
  * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
  */
 	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array(), $return = false) {
+
 		$this->setFormTag($fieldName);
 		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->tagValue($fieldName);
 		$out = array();
+
 		foreach($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 			$optValue == $value ? $optionsHere['checked'] = 'checked' : null;
@@ -799,48 +810,47 @@ class HtmlHelper extends Helper {
 	function selectTag($fieldName, $optionElements, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true, $return = false) {
 		$this->setFormTag($fieldName);
 		if ($this->tagIsInvalid($this->model, $this->field)) {
-				if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
-					$selectAttr['class'] .= ' form_error';
-				} else {
-					$selectAttr['class'] = 'form_error';
-				}
+			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
+				$selectAttr['class'] .= ' form_error';
+			} else {
+				$selectAttr['class'] = 'form_error';
+			}
+		}
+		if (!isset($selectAttr['id'])) {
+			$selectAttr['id'] = $this->model . Inflector::camelize($this->field);
 		}
 
 		if (!is_array($optionElements)) {
-				return null;
+			return null;
 		}
 
 		if (!isset($selected)) {
-				$selected = $this->tagValue($fieldName);
+			$selected = $this->tagValue($fieldName);
 		}
 
 		if (isset($selectAttr) && array_key_exists("multiple", $selectAttr)) {
-				$select[] = sprintf($this->tags['selectmultiplestart'], $this->model, $this->field,
-											$this->parseHtmlOptions($selectAttr));
+			$select[] = sprintf($this->tags['selectmultiplestart'], $this->model, $this->field, $this->parseHtmlOptions($selectAttr));
 		} else {
-				$select[] = sprintf($this->tags['selectstart'], $this->model, $this->field,
-											$this->parseHtmlOptions($selectAttr));
+			$select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($selectAttr));
 		}
 
 		if ($showEmpty == true) {
-				$select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
+			$select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
 		}
 
 		foreach($optionElements as $name => $title) {
-				$optionsHere = $optionAttr;
+			$optionsHere = $optionAttr;
 
-				if (($selected !== null) && ($selected == $name)) {
-					$optionsHere['selected'] = 'selected';
-				} else if(is_array($selected) && array_key_exists($name, $selected)) {
-					$optionsHere['selected'] = 'selected';
-				}
+			if (($selected !== null) && ($selected == $name)) {
+				$optionsHere['selected'] = 'selected';
+			} else if(is_array($selected) && array_key_exists($name, $selected)) {
+				$optionsHere['selected'] = 'selected';
+			}
 
-				$select[]
-				=sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($optionsHere), $title);
+			$select[] = sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($optionsHere), $title);
 		}
 
-		$select[]=sprintf($this->tags['selectend']);
-
+		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select), $return);
 	}
 /**
@@ -855,9 +865,8 @@ class HtmlHelper extends Helper {
  * @see HtmlHelper::submit()
  */
 	function submitTag() {
-		$args=func_get_args();
-		return call_user_func_array(array(&$this,
-					"submit"),         $args);
+		$args = func_get_args();
+		return call_user_func_array(array(&$this, "submit"), $args);
 	}
 /*************************************************************************
  * Moved methods
@@ -1101,6 +1110,9 @@ class HtmlHelper extends Helper {
 			$hourValue = !isset($selected) ? date('H') : $selected;
 		} else {
 			$hourValue = !isset($selected) ? date('g') : $selected;
+			if (intval($hourValue) == 0) {
+				$hourValue = 12;
+			}
 		}
 
 		if ($format24Hours) {
@@ -1179,6 +1191,10 @@ class HtmlHelper extends Helper {
 			}
 
 			$meridian = 'am';
+			$selected = trim($selected);
+			if (strpos($selected, ' ') === false) {
+				$selected = '0000-00-00 ' . $selected;
+			}
 			$date = explode('-', $selected);
 			$days = explode(' ', $date[2]);
 

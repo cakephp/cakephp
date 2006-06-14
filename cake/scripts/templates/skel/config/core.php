@@ -37,7 +37,7 @@
  * release/app/.htaccess
  * release/app/webroot/.htaccess
  */
-//define ('BASE_URL', env('SCRIPT_NAME'));
+//	define ('BASE_URL', env('SCRIPT_NAME'));
 /**
  * Set debug level here:
  * - 0: production
@@ -77,6 +77,13 @@
  */
 	define('CAKE_SESSION_SAVE', 'php');
 /**
+ * If using you own table name for storing sessions
+ * set the table name here.
+ * DO NOT INCLUDE PREFIX IF YOU HAVE SET ONE IN database.php
+ *
+ */
+	define('CAKE_SESSION_TABLE', 'cake_sessions');
+/**
  * Set a random string of used in session.
  *
  */
@@ -108,7 +115,7 @@
  * name you set CAKE_ADMIN to.
  * For example: admin_index, admin_edit
  */
-//define('CAKE_ADMIN', 'admin');
+//	define('CAKE_ADMIN', 'admin');
 /**
  *  The define below is used to turn cake built webservices
  *  on or off. Default setting is off.

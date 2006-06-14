@@ -48,31 +48,33 @@ class DboOdbc extends DboSource{
  *
  * @var string
  */
-	 var $description = "ODBC DBO Driver";
+	var $description = "ODBC DBO Driver";
 
 /**
  * Table/column starting quote
  *
  * @var string
  */
-	 var $startQuote = "`";
+	var $startQuote = "`";
 
 /**
  * Table/column end quote
  *
  * @var string
  */
-	 var $endQuote = "`";
+	var $endQuote = "`";
 
 /**
  * Driver base configuration
  *
  * @var array
  */
-	 var $_baseConfig = array('persistent' => true,
-				 'login' => 'root',
-				 'password' => '',
-				 'database' => 'cake');
+	var $_baseConfig = array('persistent' => true,
+				'login' => 'root',
+				'password' => '',
+				'database' => 'cake',
+				'connect'  => 'odbc_pconnect'
+	);
 
 /**
  * Enter description here...
@@ -80,47 +82,47 @@ class DboOdbc extends DboSource{
  * @var unknown_type
  */
 
-	 var $columns = array();
+	var $columns = array();
 
-	 //	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
-	 //						'string' => array('name' => 'varchar', 'limit' => '255'),
-	 //						'text' => array('name' => 'text'),
-	 //						'integer' => array('name' => 'int', 'limit' => '11'),
-	 //						'float' => array('name' => 'float'),
-	 //						'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
-	 //						'timestamp' => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
-	 //						'time' => array('name' => 'time', 'format' => 'h:i:s', 'formatter' => 'date'),
-	 //						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-	 //						'binary' => array('name' => 'blob'),
-	 //						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
+	//	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+	//						'string' => array('name' => 'varchar', 'limit' => '255'),
+	//						'text' => array('name' => 'text'),
+	//						'integer' => array('name' => 'int', 'limit' => '11'),
+	//						'float' => array('name' => 'float'),
+	//						'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
+	//						'timestamp' => array('name' => 'datetime', 'format' => 'Y-m-d h:i:s', 'formatter' => 'date'),
+	//						'time' => array('name' => 'time', 'format' => 'h:i:s', 'formatter' => 'date'),
+	//						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
+	//						'binary' => array('name' => 'blob'),
+	//						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
 
 /**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
  */
-	 function connect() {
-		  $config          =$this->config;
-		  $connect         =$config['connect'];
+	function connect() {
+		$config = $this->config;
+		$connect = $config['connect'];
 
-		  $this->connected =false;
-		  $this->connection=$connect($config['database'], $config['login'], $config['password']);
+		$this->connected = false;
+		$this->connection = $connect($config['database'], $config['login'], $config['password']);
 
-		  if ($this->connection) {
+		if ($this->connection) {
 				$this->connected = true;
-		  }
+		}
 
-		  return $this->connected;
-	 }
+		return $this->connected;
+	}
 
 /**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
  */
-	 function disconnect() {
-		  return@odbc_close($this->connection);
-	 }
+	function disconnect() {
+		return@odbc_close($this->connection);
+	}
 
 /**
  * Executes given SQL statement.
@@ -129,9 +131,9 @@ class DboOdbc extends DboSource{
  * @return resource Result resource identifier
  * @access protected
  */
-	 function _execute($sql) {
-		  return odbc_exec($this->connection, $sql);
-	 }
+	function _execute($sql) {
+		return odbc_exec($this->connection, $sql);
+	}
 
 /**
  * Returns a row from given resultset as an array .
@@ -139,87 +141,98 @@ class DboOdbc extends DboSource{
  * @param bool $assoc Associative array only, or both?
  * @return array The fetched row as an array
  */
-	 function fetchRow($assoc = false) {
-		  if (is_resource($this->_result)) {
-				$this->resultSet($this->_result);
-				$resultRow=$this->fetchResult();
-				return $resultRow;
-		  } else {
-				return null;
-		  }
-	 }
-
+	function fetchRow($assoc = false) {
+		if (is_resource($this->_result)) {
+			$this->resultSet($this->_result);
+			$resultRow = $this->fetchResult();
+			return $resultRow;
+		} else {
+			return null;
+		}
+	}
 /**
  * Returns an array of sources (tables) in the database.
  *
  * @return array Array of tablenames in the database
  */
-	 function listSources() {
-		  $result=odbc_tables($this->connection);
+	function listSources() {
 
-		  if (!$result) {
-				return array();
-		  } else {
-				$tables=array();
+		$cache = parent::listSources();
+		if ($cache != null) {
+			return $cache;
+		}
 
-				while($line = odbc_fetch_array($result)) {
-					 $tables[] = strtolower($line['TABLE_NAME']);
-				}
+		/*$result = odbc_tables($this->connection);
+		if (function_exists('odbc_fetch_row')) {
+			echo 'GOOD';
+		} else {
+			echo 'BAD';
+		}*/
 
-				return $tables;
-		  }
-	 }
+		$result = odbc_tables($this->connection);
 
+		$tables = array();
+		while (odbc_fetch_row($result)) {
+			array_push($tables, odbc_result($result, "TABLE_NAME"));
+		}
+
+		foreach( $tables as $t ) {
+			echo "$t\n";
+		}
+
+		parent::listSources($tables);
+		return $tables;
+	}
 /**
  * Returns an array of the fields in given table name.
  *
  * @param Model $model Model object to describe
  * @return array Fields in table. Keys are name and type
  */
-	 function &describe(&$model) {
-		  $cache=parent::describe($model);
+	function &describe(&$model) {
+		$cache=parent::describe($model);
 
-		  if ($cache != null) {
+		if ($cache != null) {
 				return $cache;
-		  }
+		}
 
-		  $fields=array();
-		  $sql='SELECT * FROM ' . $this->fullTableName($model) . ' LIMIT 1';
-		  $result=odbc_exec($this->connection, $sql);
+		$fields=array();
+		$sql='SELECT * FROM ' . $this->fullTableName($model) . ' LIMIT 1';
+		$result=odbc_exec($this->connection, $sql);
 
-		  $count=odbc_num_fields($result);
+		$count=odbc_num_fields($result);
 
-		  for($i = 1; $i <= $count; $i++) {
+		for($i = 1; $i <= $count; $i++) {
 				$cols[$i - 1] = odbc_field_name($result, $i);
-		  }
+		}
 
-		  foreach($cols as $column) {
+		foreach($cols as $column) {
 				$type
 				= odbc_field_type(
-					  odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)),
-					  1);
+					odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)),
+					1);
 				array_push($fields, array('name' => $column,
-												  'type' => $type));
-		  }
+												'type' => $type));
+		}
 
-		  $this->__cacheDescription($model->tablePrefix . $model->table, $fields);
-		  return $fields;
-	 }
+		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
+		return $fields;
+	}
 
-	 function name($data) {
-		  if ($data == '*') {
+	function name($data) {
+		if ($data == '*') {
 				return '*';
-		  }
+		}
 
-		  $pos=strpos($data, '`');
+		$pos=strpos($data, '`');
 
-		  if ($pos === false) {
+		if ($pos === false) {
 				$data = '' . str_replace('.', '.', $data) . '';
-		  //$data = '`'. str_replace('.', '`.`', $data) .'`';
-		  }
+		//$data = '`'. str_replace('.', '`.`', $data) .'`';
+		}
 
-		  return $data;
-	 }
+		return $data;
+	}
 
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
@@ -229,30 +242,30 @@ class DboOdbc extends DboSource{
  * @return string Quoted and escaped
  * @todo Add logic that formats/escapes data based on column type
  */
-	 function value($data, $column = null) {
-		  $parent=parent::value($data, $column);
+	function value($data, $column = null) {
+		$parent=parent::value($data, $column);
 
-		  if ($parent != null) {
+		if ($parent != null) {
 				return $parent;
-		  }
+		}
 
-		  if ($data === null) {
+		if ($data === null) {
 				return 'NULL';
-		  }
+		}
 
-		  if (ini_get('magic_quotes_gpc') == 1) {
+		if (ini_get('magic_quotes_gpc') == 1) {
 				$data = stripslashes($data);
-		  }
-		  // $data = mysql_real_escape_string($data, $this->connection);
+		}
+		// $data = mysql_real_escape_string($data, $this->connection);
 
-		  if (!is_numeric($data)) {
+		if (!is_numeric($data)) {
 				$return = "'" . $data . "'";
-		  } else {
+		} else {
 				$return = $data;
-		  }
+		}
 
-		  return $return;
-	 }
+		return $return;
+	}
 
 /**
  * Not sure about this one, MySQL needs it but does ODBC?  Safer just to leave it
@@ -261,21 +274,21 @@ class DboOdbc extends DboSource{
  * @param mixed $data Value to be translated
  * @return mixed Converted boolean value
  */
-	 function boolean($data) {
-		  if ($data === true || $data === false) {
+	function boolean($data) {
+		if ($data === true || $data === false) {
 				if ($data === true) {
-					 return 1;
+					return 1;
 				}
 
 				return 0;
-		  } else {
+		} else {
 				if (intval($data !== 0)) {
-					 return true;
+					return true;
 				}
 
 				return false;
-		  }
-	 }
+		}
+	}
 
 /**
  * Begin a transaction
@@ -284,16 +297,16 @@ class DboOdbc extends DboSource{
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
-	 function begin(&$model) {
-		  if (parent::begin($model)) {
+	function begin(&$model) {
+		if (parent::begin($model)) {
 				if (odbc_autocommit($this->connection, false)) {
-					 $this->__transactionStarted=true;
-					 return true;
+					$this->__transactionStarted=true;
+					return true;
 				}
-		  }
+		}
 
-		  return false;
-	 }
+		return false;
+	}
 
 /**
  * Commit a transaction
@@ -303,16 +316,16 @@ class DboOdbc extends DboSource{
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	 function commit(&$model) {
-		  if (parent::commit($model)) {
+	function commit(&$model) {
+		if (parent::commit($model)) {
 				if (odbc_commit($this->connection)) {
-					 $this->__transactionStarted=false;
-					 return true;
+					$this->__transactionStarted=false;
+					return true;
 				}
-		  }
+		}
 
-		  return false;
-	 }
+		return false;
+	}
 
 /**
  * Rollback a transaction
@@ -322,27 +335,27 @@ class DboOdbc extends DboSource{
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	 function rollback(&$model) {
-		  if (parent::rollback($model)) {
+	function rollback(&$model) {
+		if (parent::rollback($model)) {
 				$this->__transactionStarted=false;
 				return odbc_rollback($this->connection);
-		  }
+		}
 
-		  return false;
-	 }
+		return false;
+	}
 
 /**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message with error number
  */
-	 function lastError() {
-		  if (odbc_error($this->connection)) {
+	function lastError() {
+		if (odbc_error($this->connection)) {
 				return odbc_error($this->connection) . ': ' . odbc_errormsg($this->connection);
-		  }
+		}
 
-		  return null;
-	 }
+		return null;
+	}
 
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
@@ -350,13 +363,13 @@ class DboOdbc extends DboSource{
  *
  * @return int Number of affected rows
  */
-	 function lastAffected() {
-		  if ($this->_result) {
+	function lastAffected() {
+		if ($this->_result) {
 				return null;
-		  }
+		}
 
-		  return null;
-	 }
+		return null;
+	}
 
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
@@ -364,13 +377,13 @@ class DboOdbc extends DboSource{
  *
  * @return int Number of rows in resultset
  */
-	 function lastNumRows() {
-		  if ($this->_result) {
+	function lastNumRows() {
+		if ($this->_result) {
 				return@odbc_num_rows($this->_result);
-		  }
+		}
 
-		  return null;
-	 }
+		return null;
+	}
 
 /**
  * Returns the ID generated from the previous INSERT operation.
@@ -378,101 +391,101 @@ class DboOdbc extends DboSource{
  * @param unknown_type $source
  * @return int
  */
-	 function lastInsertId($source = null) {
-		  $result=$this->fetchAll('SELECT @@IDENTITY');
-		  return $result[0];
-	 }
+	function lastInsertId($source = null) {
+		$result=$this->fetchAll('SELECT @@IDENTITY');
+		return $result[0];
+	}
 
 /**
  * Enter description here...
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  */
-	 function column($real) {
-		  if (is_array($real)) {
+	function column($real) {
+		if (is_array($real)) {
 				$col=$real['name'];
 
 				if (isset($real['limit'])) {
-					 $col .= '(' . $real['limit'] . ')';
+					$col .= '(' . $real['limit'] . ')';
 				}
 
 				return $col;
-		  }
+		}
 
-		  return $real;
-	 }
+		return $real;
+	}
 
 /**
  * Enter description here...
  *
  * @param unknown_type $results
  */
-	 function resultSet(&$results) {
-		  $this->results=&$results;
-		  $this->map=array();
-		  $num_fields   =odbc_num_fields($results);
-		  $index        =0;
-		  $j            =0;
+	function resultSet(&$results) {
+		$this->results=&$results;
+		$this->map=array();
+		$num_fields   =odbc_num_fields($results);
+		$index        =0;
+		$j            =0;
 
-		  while($j < $num_fields) {
+		while($j < $num_fields) {
 				$column = odbc_fetch_array($results, $j);
 
 				if (!empty($column->table)) {
-					 $this->map[$index++] = array($column->table,
-								 $column->name);
+					$this->map[$index++] = array($column->table,
+								$column->name);
 				} else {
-					 echo array(0,
-								 $column->name);
+					echo array(0,
+								$column->name);
 
-					 $this->map[$index++]=array(0,
-								 $column->name);
+					$this->map[$index++]=array(0,
+								$column->name);
 				}
 
 				$j++;
-		  }
-	 }
+		}
+	}
 
 /**
  * Fetches the next row from the current result set
  *
  * @return unknown
  */
-	 function fetchResult() {
-		  if ($row = odbc_fetch_row($this->results)) {
+	function fetchResult() {
+		if ($row = odbc_fetch_row($this->results)) {
 				$resultRow=array();
 				$i=0;
 
 				foreach($row as $index => $field) {
-					 list($table, $column)      = $this->map[$index];
-					 $resultRow[$table][$column]=$row[$index];
-					 $i++;
+					list($table, $column)      = $this->map[$index];
+					$resultRow[$table][$column]=$row[$index];
+					$i++;
 				}
 
 				return $resultRow;
-		  } else {
+		} else {
 				return false;
-		  }
-	 }
+		}
+	}
 
-	 function buildSchemaQuery($schema) {
-		  $search=array('{AUTOINCREMENT}',
-					  '{PRIMARY}',
-					  '{UNSIGNED}',
-					  '{FULLTEXT}',
-					  '{FULLTEXT_MYSQL}',
-					  '{BOOLEAN}',
-					  '{UTF_8}');
+	function buildSchemaQuery($schema) {
+		$search=array('{AUTOINCREMENT}',
+					'{PRIMARY}',
+					'{UNSIGNED}',
+					'{FULLTEXT}',
+					'{FULLTEXT_MYSQL}',
+					'{BOOLEAN}',
+					'{UTF_8}');
 
-		  $replace=array('int(11) not null auto_increment',
-					  'primary key',
-					  'unsigned',
-					  'FULLTEXT',
-					  'FULLTEXT',
-					  'enum (\'true\', \'false\') NOT NULL default \'true\'',
-					  '/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
+		$replace=array('int(11) not null auto_increment',
+					'primary key',
+					'unsigned',
+					'FULLTEXT',
+					'FULLTEXT',
+					'enum (\'true\', \'false\') NOT NULL default \'true\'',
+					'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
 
-		  $query=trim(str_replace($search, $replace, $schema));
-		  return $query;
-	 }
+		$query=trim(str_replace($search, $replace, $schema));
+		return $query;
+	}
 }
 ?>

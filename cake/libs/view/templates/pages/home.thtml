@@ -34,10 +34,9 @@
 <?php $connected = $db->getDataSource('default'); ?>
 <p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
-<?php endif; ?>
-<h1>CakePHP</h1>
-
-<p>If you plan to upgrade from an older version, you may also want to read the <a href="http://cakephp.org/pages/changelog">changelog</a></p>
+<?php endif; ?>     
+<h2>CakePHP release information is on CakeForge</h2>
+<a href="http://cakeforge.org/projects/cakephp">Read the release notes and get the latest version</a>
 
 <h2>Editing this Page</h2>
 <p>
@@ -62,15 +61,15 @@ to rapidly develop robust web applications, without any loss to flexibility.
 	<ul><li>Get your own CakePHP gear - Doughnate to Cake</li></ul></li>
 	<li><a href="http://www.cakephp.org">CakePHP</a>
 	<ul><li>The Rapid Development Framework</li></ul></li>
-	<li><a href="http://manual.cakephp.org">CakePHPManual</a>
+	<li><a href="http://manual.cakephp.org">CakePHP Manual</a>
 	<ul><li>Your Rapid Development Cookbook</li></ul></li>
-	<li><a href="http://wiki.cakephp.org">CakePHPWiki</a>
+	<li><a href="http://wiki.cakephp.org">CakePHP Wiki</a>
 	<ul><li>The Community for CakePHP</li></ul></li>
-	<li><a href="http://api.cakephp.org">CakePHPAPI</a>
+	<li><a href="http://api.cakephp.org">CakePHP API</a>
 	<ul><li>Docblock Your Best Friend</li></ul></li>
 	<li><a href="http://www.cakeforge.org">CakeForge</a>
 	<ul><li>Open Development for CakePHP</li></ul></li>
-	<li><a href="https://trac.cakephp.org/">CakePHPTrac</a>
+	<li><a href="https://trac.cakephp.org/">CakePHP Trac</a>
 	<ul><li>For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)</li></ul></li>
 	<li><a href="http://groups-beta.google.com/group/cake-php">CakePHP Google Group</a>
 	<ul><li>Community mailing list</li></ul></li>

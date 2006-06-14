@@ -43,11 +43,23 @@ class SessionComponent extends Object{
  * Enter description here...
  *
  */
-	 function __construct($base = null) {
-		  $this->CakeSession=new CakeSession($base);
-		  parent::__construct();
-	 }
-
+	function __construct($base = null) {
+		$this->CakeSession = new CakeSession($base);
+		parent::__construct();
+	}
+/**
+ * Startup method.  Copies controller data locally for rendering flash messages.
+ *
+ */
+	function startup(&$controller) {
+		$this->base = $controller->base;
+		$this->webroot = $controller->webroot;
+		$this->here = $controller->here;
+		$this->params = $controller->params;
+		$this->action = $controller->action;
+		$this->data = $controller->data;
+		$this->plugin = $controller->plugin;
+	}
 /**
  * Enter description here...
  *
@@ -57,10 +69,9 @@ class SessionComponent extends Object{
  * @param unknown_type $value
  * @return unknown
  */
-	 function write($name, $value) {
-		  return $this->CakeSession->writeSessionVar($name, $value);
-	 }
-
+	function write($name, $value) {
+		return $this->CakeSession->writeSessionVar($name, $value);
+	}
 /**
  * Enter description here...
  *
@@ -70,10 +81,9 @@ class SessionComponent extends Object{
  * @param unknown_type $name
  * @return unknown
  */
-	 function read($name = null) {
-		  return $this->CakeSession->readSessionVar($name);
-	 }
-
+	function read($name = null) {
+		return $this->CakeSession->readSessionVar($name);
+	}
 /**
  * Enter description here...
  *
@@ -82,19 +92,17 @@ class SessionComponent extends Object{
  * @param unknown_type $name
  * @return unknown
  */
-	 function del($name) {
-		  return $this->CakeSession->delSessionVar($name);
-	 }
-
+	function del($name) {
+		return $this->CakeSession->delSessionVar($name);
+	}
 /**
  * Enter description here...
  * @param unknown_type $name
  * @return unknown
  */
-	 function delete($name) {
-		  return $this->del($name);
-	 }
-
+	function delete($name) {
+		return $this->del($name);
+	}
 /**
  * Enter description here...
  *
@@ -103,10 +111,9 @@ class SessionComponent extends Object{
  * @param unknown_type $name
  * @return unknown
  */
-	 function check($name) {
-		  return $this->CakeSession->checkSessionVar($name);
-	 }
-
+	function check($name) {
+		return $this->CakeSession->checkSessionVar($name);
+	}
 /**
  * Enter description here...
  *
@@ -114,10 +121,9 @@ class SessionComponent extends Object{
  *
  * @return string Last session error
  */
-	 function error() {
-		  return $this->CakeSession->getLastError();
-	 }
-
+	function error() {
+		return $this->CakeSession->getLastError();
+	}
 /**
  * Enter description here...
  *
@@ -129,38 +135,43 @@ class SessionComponent extends Object{
  * @param string $key Message key, default is 'flash'
  * @return string Last session error
  */
-	 function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
-		  if ($layout == 'default') {
-				$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
-		  } else if($layout == '' || $layout == null) {
-				$out = $flashMessage;
-		  } else {
-				$ctrl           =null;
-				$view           =new View($ctrl);
-				$view->layout   =$layout;
-				$view->pageTitle='';
-				$view->_viewVars=$params;
-				$out            =$view->renderLayout($flashMessage);
-		  }
-
-		  $this->write('Message.' . $key, $out);
-	 }
-
+	function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
+		if ($layout == 'default') {
+			$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
+		} else if($layout == '' || $layout == null) {
+			$out = $flashMessage;
+		} else {
+			$ctrl = null;
+			$view = new View($ctrl);
+			$view->base			= $this->base;
+			$view->webroot		= $this->webroot;
+			$view->here			= $this->here;
+			$view->params		= $this->params;
+			$view->action		= $this->action;
+			$view->data			= $this->data;
+			$view->plugin		= $this->plugin;
+			$view->helpers		= array('Html');
+			$view->layout		= $layout;
+			$view->pageTitle	= '';
+			$view->_viewVars	= $params;
+			$out = $view->renderLayout($flashMessage);
+		}
+		$this->write('Message.' . $key, $out);
+	}
 /**
  * Use like this. $this->Session->flash();
  *
  * @param string $key Optional message key
  * @return null
  */
-	 function flash($key = 'flash') {
-		  if ($this->check('Message.' . $key)) {
-				e($this->read('Message.' . $key));
-				$this->del('Message.' . $key);
-		  } else {
-				return false;
-		  }
-	 }
-
+	function flash($key = 'flash') {
+		if ($this->check('Message.' . $key)) {
+			e($this->read('Message.' . $key));
+			$this->del('Message.' . $key);
+		} else {
+			return false;
+		}
+	}
 /**
  * Enter description here...
  *
@@ -169,10 +180,9 @@ class SessionComponent extends Object{
  *
  * @return boolean
  */
-	 function renew() {
-		  $this->CakeSession->renew();
-	 }
-
+	function renew() {
+		$this->CakeSession->renew();
+	}
 /**
  * Enter description here...
  *
@@ -182,10 +192,9 @@ class SessionComponent extends Object{
  *
  * @return boolean
  */
-	 function valid() {
-		  return $this->CakeSession->isValid();
-	 }
-
+	function valid() {
+		return $this->CakeSession->isValid();
+	}
 /**
  * Enter description here...
  *
@@ -193,8 +202,9 @@ class SessionComponent extends Object{
  * Used to destroy Sessions
  *
  */
-	 function destroy() {
-		  $this->CakeSession->destroyInvalid();
-	 }
+	function destroy() {
+		$this->CakeSession->destroyInvalid();
+	}
 }
+
 ?>

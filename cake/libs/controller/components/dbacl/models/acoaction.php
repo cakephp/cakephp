@@ -43,7 +43,7 @@ if (!class_exists('AppModel')) {
  * @subpackage	cake.cake.libs.controller.components.dbacl.models
  *
  */
-class AcoAction extends AppModel{
+class AcoAction extends AppModel {
 /**
  * Enter description here...
  *

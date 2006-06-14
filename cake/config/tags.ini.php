@@ -105,6 +105,9 @@ blockend = "</div>"
 ; Tag template for a CSS link tag.
 css = "<link rel="%s" type="text/css" href="%s" %s/>"
 
+; Tag template for a CSS tag block.
+style = "<style type="text/css"%s>%s</style>"
+
 ; Tag template for a charset meta-tag.
 charset = "<meta http-equiv="Content-Type" content="text/html; charset=%s" />"
 

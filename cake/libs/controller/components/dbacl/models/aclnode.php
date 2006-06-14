@@ -69,10 +69,12 @@ class AclNode extends AppModel {
 			$parent = $parent[$class];
 			$this->_syncTable(1, $parent['lft'], $parent['lft']);
 		}
-		$return = $this->save(array($class => array($secondary_id => $link_id,
-										'alias' => $alias,
-										'lft' => $parent['lft'] + 1,
-										'rght' => $parent['lft'] + 2)));
+		$return = $this->save(array($class => array(
+			$secondary_id => $link_id,
+			'alias' => $alias,
+			'lft' => $parent['lft'] + 1,
+			'rght' => $parent['lft'] + 2
+		)));
 		$this->id  = $this->getLastInsertID();
 		return $return;
 	}
@@ -103,10 +105,8 @@ class AclNode extends AppModel {
 		$object = $object[$class];
 		$parent = $this->getParent($id);
 
-		if (($parent == null && $parent_id == null)
-			 || ($parent_id == $parent[$class][$secondary_id] && $parent_id != null)
-			 || ($parent_id == $parent[$class]['alias'] && $parent_id != null)) {
-				return false;
+		if (($parent == null && $parent_id == null) || ($parent_id == $parent[$class][$secondary_id] && $parent_id != null) || ($parent_id == $parent[$class]['alias'] && $parent_id != null)) {
+			return false;
 		}
 
 		if ($parent_id == null) {
@@ -245,4 +245,5 @@ class AclNode extends AppModel {
 		return $vars;
 	}
 }
+
 ?>

@@ -8,7 +8,7 @@ font-family:verdana,helvetica,arial,sans-serif;
 font-size:12px;
 text-align:center;
 color:#333;
-background:#fff;
+background:#003d4c;
 line-height: 18px;
 }
 
@@ -18,11 +18,11 @@ line-height: 18px;
 
 a{
 color:#003d4c;
-text-decoration:none;
+text-decoration:underline;
 }
 a:hover{
 color:#003d4c;
-text-decoration:underline;
+text-decoration:none;
 }
 
 a img{
@@ -89,7 +89,9 @@ font-weight:normal;
 
 
 #content{
-padding: 10px 40px;
+padding: 10px 40px;  
+background-color: #fff;
+color: #333;
 }
 #footer{
 padding: 6px 10px;
@@ -151,20 +153,29 @@ dd {
   vertical-align:top;
 }
 
-/* scaffold buttons */
-
-
-.notice {
-  color: #DB8101;
-  background-color: #ddd;
-  display: block;
-  padding: 1em;
+/* notices and errors */
+p.error, error_message {
+  color: #e32000;
+  font-size: 18px;
+  background-color: #fff;
+  margin: 8px 4px;
 }
+p.error em {
+  font-size: 18px;
+  color: #003d4c;
+}   
+
+.notice { 
+  color: #656565;
+  font-size: 14px;
+  background-color: #f4f4f4;  
+  padding: 4px;
+  display:block;
+}
+
 .tip {
-  color: #DB8101;
+  color: #e32000;
   background-color: #ddd;
-  display: block;
-  padding: 1em;
 }
 
 

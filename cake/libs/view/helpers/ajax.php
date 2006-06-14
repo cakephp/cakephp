@@ -654,8 +654,8 @@ class AjaxHelper extends Helper {
 				case 'requestHeaders':
 					$keys = array();
 					foreach ($value as $key => $val) {
-						$keys[] = '"' . $key . '"';
-						$keys[] = '"' . $val . '"';
+						$keys[] = "'" . $key . "'";
+						$keys[] = "'" . $val . "'";
 					}
 					$js_options['requestHeaders'] = '[' . join(', ', $keys) . ']';
 				break;
@@ -762,13 +762,18 @@ class AjaxHelper extends Helper {
 	function afterRender() {
 		if (env('HTTP_X_UPDATE') != null && count($this->__ajaxBuffer) > 0) {
 			$data = array();
+			$divs = explode(' ', env('HTTP_X_UPDATE'));
+
 			foreach ($this->__ajaxBuffer as $key => $val) {
-				$data[] = $key . ':"' . rawurlencode($val) . '"';
+				if (in_array($key, $divs)) {
+					$data[] = $key . ':"' . rawurlencode($val) . '"';
+				}
 			}
 
 			$out  = 'var __ajaxUpdater__ = {' . join(', ', $data) . '};' . "\n";
 			$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(__ajaxUpdater__[n])); }';
 
+			@ob_end_clean();
 			e($this->Javascript->codeBlock($out));
 			exit();
 		}

@@ -27,8 +27,12 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-	ini_set('display_errors', '1');
-	ini_set('error_reporting', '7');
+	define ('DS', DIRECTORY_SEPARATOR);
+	if (function_exists('ini_set')) {
+		ini_set('display_errors', '1');
+		ini_set('error_reporting', '7');
+	}
+
 	$app = 'app';
 	$root = dirname(dirname(dirname(__FILE__)));
 	$core = null;
@@ -61,7 +65,12 @@
 			break;
 		}
 	}
-	define ('DS', DIRECTORY_SEPARATOR);
+
+	if (strlen($app) && $app[0] == DS) {
+		$cnt = substr_count($root, DS);
+		$app = str_repeat('..' . DS, $cnt) . $app;
+	}
+
 	define ('ROOT', $root.DS);
 	define ('APP_DIR', $app);
 	define ('APP_PATH', $app.DS);
@@ -71,6 +80,9 @@
 
 	if(function_exists('ini_set')) {
 		ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+	} else {
+		define('APP_PATH', ROOT . DS . APP_DIR . DS);
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 	}
 
 	require_once (ROOT.'cake'.DS.'basics.php');
@@ -219,12 +231,16 @@ class Bake {
 			}
 		}
 		$password = '';
+		$blankPassword = false;
 
-		while ($password == '') {
+		while ($password == '' && $blankPassword == false) {
 			$password = $this->getInput('What is the database password?');
-
 			if ($password == '') {
-				$this->stdout('The password you supplied was empty. Please try again.');
+				$blank = $this->getInput('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
+				if($blank == 'y')
+				{
+					$blankPassword = true;
+				}
 			}
 		}
 		$database = '';
@@ -272,7 +288,18 @@ class Bake {
 		}*/
 		$modelName = '';
 		$db =& ConnectionManager::getDataSource($dbConnection);
-		$tables = $db->listSources();
+		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
+		if ($usePrefix) {
+			$tables = array();
+			foreach ($db->listSources() as $table) {
+				if (! strncmp($table, $usePrefix, strlen($usePrefix))) {
+					$tables[] = substr($table, strlen($usePrefix));
+				}
+			}
+		} else {
+			$tables = $db->listSources();
+		}
+
 		$inflect = new Inflector();
 		$this->stdout('Possible models based on your current database:');
 
@@ -391,7 +418,7 @@ class Bake {
 			$this->stdout('Done.');
 			$this->hr();
 			//if none found...
-			if(count($hasOneClasses) < 1 && count($hasManyClasses) < 1 && count($hasAndBelongsToManyClasses) < 1 && count($belongsToClasses)) {
+			if(count($hasOneClasses) < 1 && count($hasManyClasses) < 1 && count($hasAndBelongsToManyClasses) < 1 && count($belongsToClasses) < 1) {
 				$this->stdout('None found.');
 			} else {
 				$this->stdout('Please confirm the following associations:');
@@ -502,7 +529,7 @@ class Bake {
 		$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
 
 		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
-			if ($inflect->camelize($inflect->singularize($modelTableName)) == $modelClassName) {
+			if ($modelTableName == $inflect->underscore($inflect->pluralize($modelClassName))) {
 				// set it to null...
 				// putting $useTable in the model
 				// is unnecessary.
@@ -842,16 +869,13 @@ class Bake {
 			}
 			$tempModel = new $controllerModel();
 			$actions .= "\n";
-			$actions .= "\tfunction index()\n";
-			$actions .= "\t{\n";
+			$actions .= "\tfunction index() {\n";
 			$actions .= "\t\t\$this->{$controllerModel}->recursive = 0;\n";
 			$actions .= "\t\t\$this->set('{$this->lowCtrl}', \$this->{$controllerModel}->findAll());\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction add()\n";
-			$actions .= "\t{\n";
-			$actions .= "\t\tif(empty(\$this->data))\n";
-			$actions .= "\t\t{\n";
+			$actions .= "\tfunction add() {\n";
+			$actions .= "\t\tif(empty(\$this->data)) {\n";
 
 			foreach($tempModel->hasAndBelongsToMany as $association => $relation) {
 				if(!empty($relation['className'])) {
@@ -869,26 +893,17 @@ class Bake {
 				}
 			}
 			$actions .= "\t\t\t\$this->set('{$this->lowCtrl}', null);\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t\telse\n";
-			$actions .= "\t\t{\n";
+			$actions .= "\t\t} else {\n";
 			$actions .= "\t\t\t\$this->cleanUpFields();\n";
-			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data))\n";
-			$actions .= "\t\t\t{\n";
-			$actions .= "\t\t\t\tif(is_object(\$this->Session))\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
+			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
 			$actions .= "\t\t\t\t\t\$this->redirect(\$this->viewPath.'/index');\n";
-			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t\telse\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\t\t} else {\n";
 			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', \$this->viewPath.'/index');\n";
 			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t}\n";
-			$actions .= "\t\t\telse\n";
-			$actions .= "\t\t\t{\n";
-			$actions .= "\t\t\t\tif(is_object(\$this->Session))\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\t} else {\n";
+			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
 			$actions .= "\t\t\t\t}\n";
 			$actions .= "\t\t\t\t\$data = \$this->data;\n";
@@ -901,10 +916,8 @@ class Bake {
 					$lowerName = strtolower($association);
 					$actions .= "\t\t\t\t\${$lowerName} = null;\n";
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}']))\n";
-					$actions .= "\t\t\t\t{\n";
-					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var)\n";
-					$actions .= "\t\t\t\t\t{\n";
+					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}'])) {\n";
+					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var) {\n";
 					$actions .= "\t\t\t\t\t\t\${$lowerName}[\$var] = \$var;\n";
 					$actions .= "\t\t\t\t\t}\n";
 					$actions .= "\t\t\t\t}\n";
@@ -922,10 +935,8 @@ class Bake {
 			$actions .= "\t\t}\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction edit(\$id)\n";
-			$actions .= "\t{\n";
-			$actions .= "\t\tif(empty(\$this->data))\n";
-			$actions .= "\t\t{\n";
+			$actions .= "\tfunction edit(\$id) {\n";
+			$actions .= "\t\tif(empty(\$this->data)) {\n";
 			$actions .= "\t\t\t\$data = \$this->{$controllerModel}->read(null, \$id);\n";
 			$actions .= "\t\t\t\$this->set('{$this->lowCtrl}', \$data );\n";
 
@@ -936,8 +947,7 @@ class Bake {
 					$lowerName = strtolower($association);
 					$actions .= "\t\t\t\${$lowerName} = null;\n";
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\tforeach(\$data['{$model}'] as \$var)\n";
-					$actions .= "\t\t\t{\n";
+					$actions .= "\t\t\tforeach(\$data['{$model}'] as \$var) {\n";
 					$actions .= "\t\t\t\t\${$lowerName}[\$var['{$associationModel->primaryKey}']] = \$var['{$associationModel->primaryKey}'];\n";
 					$actions .= "\t\t\t}\n";
 					$actions .= "\t\t\t\$this->set('selected{$model}', \${$lowerName});\n";
@@ -950,26 +960,17 @@ class Bake {
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
-			$actions .= "\t\t}\n";
-			$actions .= "\t\telse\n";
-			$actions .= "\t\t{\n";
+			$actions .= "\t\t} else {\n";
 			$actions .= "\t\t\t\$this->cleanUpFields();\n";
-			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data))\n";
-			$actions .= "\t\t\t{\n";
-			$actions .= "\t\t\t\tif(is_object(\$this->Session))\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
+			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
 			$actions .= "\t\t\t\t\t\$this->redirect(\$this->viewPath.'/index');\n";
-			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t\telse\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\t\t} else {\n";
 			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', \$this->viewPath.'/index');\n";
 			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t}\n";
-			$actions .= "\t\t\telse\n";
-			$actions .= "\t\t\t{\n";
-			$actions .= "\t\t\t\tif(is_object(\$this->Session))\n";
-			$actions .= "\t\t\t\t{\n";
+			$actions .= "\t\t\t} else {\n";
+			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
 			$actions .= "\t\t\t\t}\n";
 			$actions .= "\t\t\t\t\$data = \$this->data;\n";
@@ -982,10 +983,8 @@ class Bake {
 					$lowerName = strtolower($association);
 					$actions .= "\t\t\t\t\${$lowerName} = null;\n";
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}']))\n";
-					$actions .= "\t\t\t\t{\n";
-					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var)\n";
-					$actions .= "\t\t\t\t\t{\n";
+					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}'])) {\n";
+					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var) {\n";
 					$actions .= "\t\t\t\t\t\t\${$lowerName}[\$var] = \$var;\n";
 					$actions .= "\t\t\t\t\t}\n";
 					$actions .= "\t\t\t\t}\n";
@@ -1003,13 +1002,11 @@ class Bake {
 			$actions .= "\t\t}\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction view(\$id)\n";
-			$actions .= "\t{\n";
+			$actions .= "\tfunction view(\$id) {\n";
 			$actions .= "\t\t\$this->set('{$this->lowCtrl}', \$this->{$controllerModel}->read(null, \$id));\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction delete(\$id)\n";
-			$actions .= "\t{\n";
+			$actions .= "\tfunction delete(\$id) {\n";
 			$actions .= "\t\t\$this->{$controllerModel}->del(\$id);\n";
 			$actions .= "\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
 			$actions .= "\t}\n";
@@ -1890,7 +1887,6 @@ class Bake {
 		$this->stdout('   -core [path...] Absolute path to Cake\'s cake Folder.');
 		$this->stdout('   -help Shows this help message.');
 		$this->stdout('   -project [path...]  Generates a new app folder in the path supplied.');
-		$this->stdout('                       Must be used with the -app command.');
 		$this->stdout('   -root [path...] Absolute path to Cake\'s \app\webroot Folder.');
 		$this->stdout('');
 	}
@@ -1924,13 +1920,6 @@ class Bake {
 		$parentPath = explode(DS, $projectPath);
 		$count = count($parentPath);
 		$appName = $parentPath[$count - 1];
-		unset($parentPath[$count - 1]);
-		$parentPath = implode(DS, $parentPath);
-
-		if(!is_writable($parentPath)) {
-			$projectPath = $this->getInput('The directory path is not writable. Please try again');
-			$this->project($projectPath);
-		}
 		$this->__buildDirLayout($projectPath, $appName);
 		exit();
 	}
@@ -2019,7 +2008,9 @@ class Bake {
 		$messages=array();
 
 		if (!is_dir($toDir)) {
-			mkdir($toDir, 0755);
+			uses('folder');
+			$folder = new Folder();
+			$folder->mkdirr($toDir, 0755);
 		}
 
 		if (!is_writable($toDir)) {
@@ -2082,11 +2073,12 @@ class Bake {
  * Enter description here...
  *
  */
-	function welcome() {
+	function welcome()
+	{
 		$this->stdout('');
-		$this->stdout(' ___  __  _  _  ___  __  _  _  __     __   __  _  _  ___ ');
-		$this->stdout('|	|__| |_/  |__  |__] |__| |__]	|__] |__| |_/  |__ ');
-		$this->stdout('|___ |  | | \_ |___ |	|  | |   |__] |  | | \_ |___ ');
+		$this->stdout(' ___  __  _  _  ___  __  _  _  __      __   __  _  _  ___ ');
+		$this->stdout('|    |__| |_/  |__  |__] |__| |__]    |__] |__| |_/  |__ ');
+		$this->stdout('|___ |  | | \_ |___ |    |  | |       |__] |  | | \_ |___ ');
 		$this->hr();
 		$this->stdout('');
 	}

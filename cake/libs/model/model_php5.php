@@ -341,7 +341,6 @@ class Model extends Object{
 			}
 		}
 	}
-
 /**
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources
@@ -355,7 +354,6 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->query($method, $params, $this);
 	}
-
 /**
  * Bind model associations on the fly.
  *
@@ -382,7 +380,6 @@ class Model extends Object{
 		}
 		return true;
 	}
-
 /**
  * Turn off associations on the fly.
  *
@@ -400,7 +397,6 @@ class Model extends Object{
 		}
 		return true;
 	}
-
 /**
  * Private helper method to create a set of associations.
  *
@@ -414,14 +410,14 @@ class Model extends Object{
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
 
-				foreach($this->{$type}as $i => $className) {
+				foreach($this->{$type} as $i => $className) {
 					$className = trim($className);
 					unset ($this->{$type}[$i]);
 					$this->{$type}[$className] = array();
 				}
 			}
 
-			foreach($this->{$type}as $assoc => $value) {
+			foreach($this->{$type} as $assoc => $value) {
 				if (is_numeric($assoc)) {
 					unset ($this->{$type}[$assoc]);
 					$assoc = $value;
@@ -442,7 +438,6 @@ class Model extends Object{
 			$this->__generateAssociation($type);
 		}
 	}
-
 /**
  * Private helper method to create associated models of given class.
  * @param string $assoc
@@ -463,7 +458,6 @@ class Model extends Object{
 		$this->tableToModel[$this->{$className}->table] = $className;
 		$this->modelToTable[$className] = $this->{$className}->table;
 	}
-
 /**
  * Build array-based association from string.
  *
@@ -520,7 +514,6 @@ class Model extends Object{
 			}
 		}
 	}
-
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
@@ -554,7 +547,6 @@ class Model extends Object{
 			$this->loadInfo();
 		}
 	}
-
 /**
  * This function does two things: 1) it scans the array $one for the primary key,
  * and if that's found, it sets the current id to the value of $one[id].
@@ -598,7 +590,6 @@ class Model extends Object{
 		}
 		return $data;
 	}
-
 /**
  * Returns an array of table metadata (column names and types) from the database.
  *
@@ -612,7 +603,6 @@ class Model extends Object{
 		}
 		return $this->_tableInfo;
 	}
-
 /**
  * Returns an associative array of field names and column types.
  *
@@ -629,7 +619,6 @@ class Model extends Object{
 		}
 		return $cols;
 	}
-
 /**
  * Returns the column type of a column in the model
  *
@@ -649,7 +638,6 @@ class Model extends Object{
 		}
 		return null;
 	}
-
 /**
  * Returns true if this Model has given field in its database table.
  *
@@ -666,7 +654,6 @@ class Model extends Object{
 		}
 		return null;
 	}
-
 /**
  * Initializes the model for writing a new record.
  *
@@ -678,7 +665,6 @@ class Model extends Object{
 		$this->data = array();
 		return true;
 	}
-
 /**
  * Deprecated
  *
@@ -686,7 +672,6 @@ class Model extends Object{
 	function setId($id) {
 		$this->id = $id;
 	}
-
 /**
  * Deprecated. Use query() instead.
  *
@@ -694,7 +679,6 @@ class Model extends Object{
 	function findBySql($sql) {
 		return $this->query($sql);
 	}
-
 /**
  * Returns a list of fields from the database
  *
@@ -706,13 +690,13 @@ class Model extends Object{
 		$this->validationErrors = array();
 
 		if ($id != null) {
-				$this->id = $id;
+			$this->id = $id;
 		}
 
 		$id = $this->id;
 
 		if (is_array($this->id)) {
-				$id = $this->id[0];
+			$id = $this->id[0];
 		}
 
 		if ($this->id !== null && $this->id !== false) {
@@ -834,69 +818,66 @@ class Model extends Object{
 		}
 
 		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
-				$fields[] = 'created';
-				$values[] = date('Y-m-d H:i:s');
+			$fields[] = 'created';
+			$values[] = date('Y-m-d H:i:s');
 		}
 
-		if ($this->hasField('modified')
-			&& !in_array('modified', $fields) && ($whitelist && in_array('modified', $fieldList) || !$whitelist)) {
-				$fields[] = 'modified';
-				$values[] = date('Y-m-d H:i:s');
+		if ($this->hasField('modified') && !in_array('modified', $fields) && ($whitelist && in_array('modified', $fieldList) || !$whitelist)) {
+			$fields[] = 'modified';
+			$values[] = date('Y-m-d H:i:s');
 		}
 
-		if ($this->hasField('updated')
-			&& !in_array('updated', $fields) && ($whitelist && in_array('updated', $fieldList) || !$whitelist)) {
-				$fields[] = 'updated';
-				$values[] = date('Y-m-d H:i:s');
+		if ($this->hasField('updated') && !in_array('updated', $fields) && ($whitelist && in_array('updated', $fieldList) || !$whitelist)) {
+			$fields[] = 'updated';
+			$values[] = date('Y-m-d H:i:s');
 		}
 
 		if (!$this->exists()) {
-				$this->id = false;
+			$this->id = false;
 		}
 
 		if (count($fields)) {
-				if (!empty($this->id)) {
-					if ($db->update($this, $fields, $values)) {
-						if (!empty($joined)) {
-								$this->__saveMulti($joined, $this->id);
-						}
-
-						$this->afterSave();
-						$this->data = false;
-						$this->_clearCache();
-						return true;
-					} else {
-						return false;
+			if (!empty($this->id)) {
+				if ($db->update($this, $fields, $values)) {
+					if (!empty($joined)) {
+						$this->__saveMulti($joined, $this->id);
 					}
+
+					$this->afterSave();
+					$this->data = false;
+					$this->_clearCache();
+					return true;
 				} else {
-					if ($db->create($this, $fields, $values)) {
-						$this->__insertID = $db->lastInsertId($this->table, $this->primaryKey);
-
-						if (!$this->__insertID && $newID != null) {
-								$this->__insertID = $newID;
-								$this->id       = $newID;
-						} else {
-								$this->id = $this->__insertID;
-						}
-
-						if (!empty($joined)) {
-								$this->__saveMulti($joined, $this->id);
-						}
-
-						$this->afterSave();
-						$this->data = false;
-						$this->_clearCache();
-						$this->validationErrors = array();
-						return true;
-					} else {
-						return false;
-					}
+					return false;
 				}
+			} else {
+				if ($db->create($this, $fields, $values)) {
+					$this->__insertID = $db->lastInsertId($this->table, $this->primaryKey);
+
+					if (!$this->__insertID && $newID != null) {
+						$this->__insertID = $newID;
+						$this->id = $newID;
+					} else {
+						$this->id = $this->__insertID;
+					}
+
+					if (!empty($joined)) {
+						$this->__saveMulti($joined, $this->id);
+					}
+
+					$this->afterSave();
+					$this->data = false;
+					$this->_clearCache();
+					$this->validationErrors = array();
+					return true;
+				} else {
+					return false;
+				}
+			}
 		} else {
-				return false;
+			return false;
 		}
 	}
-
 /**
  * Saves model hasAndBelongsToMany data to the database.
  *
@@ -909,48 +890,48 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		foreach($joined as $x => $y) {
-				foreach($y as $assoc => $value) {
+			foreach($y as $assoc => $value) {
 
-					$joinTable[] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-					$mainKey[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-					$keys[]    = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-					$keys[]    = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
-					$fields[]  = join(',', $keys);
-					unset($keys);
+				$joinTable[] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
+				$mainKey[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+				$keys[]    = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+				$keys[]    = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+				$fields[]  = join(',', $keys);
+				unset($keys);
 
-					foreach($value as $update) {
-						if (!empty($update)) {
-								$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
-								$values[]  = $db->value($update);
-								$values    = join(',', $values);
-								$newValues[] = "({$values})";
-								unset ($values);
-						}
-					}
-
-					if (!empty($newValues)) {
-						$newValue[] = $newValues;
-						unset($newValues);
+				foreach($value as $update) {
+					if (!empty($update)) {
+						$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
+						$values[]  = $db->value($update);
+						$values    = join(',', $values);
+						$newValues[] = "({$values})";
+						unset ($values);
 					}
 				}
+
+				if (!empty($newValues)) {
+					$newValue[] = $newValues;
+					unset($newValues);
+				}
+			}
 		}
 
 		$total = count($joinTable);
 
 		for($count = 0; $count < $total; $count++) {
-				$db =& ConnectionManager::getDataSource($this->useDbConfig);
-				$db->execute("DELETE FROM {$joinTable[$count]} WHERE {$mainKey[$count]} = '{$id}'");
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$table = $db->name($db->fullTableName($joinTable[$count]));
+			$db->execute("DELETE FROM {$table} WHERE {$mainKey[$count]} = '{$id}'");
 
-				if (!empty($newValue[$count])) {
-					$secondCount = count($newValue[$count]);
+			if (!empty($newValue[$count])) {
+				$secondCount = count($newValue[$count]);
 
-					for($x = 0; $x < $secondCount; $x++) {
-						$db->execute("INSERT INTO {$joinTable[$count]} ({$fields[$count]}) VALUES {$newValue[$count][$x]}");
-					}
+				for($x = 0; $x < $secondCount; $x++) {
+					$db->execute("INSERT INTO {$table} ({$fields[$count]}) VALUES {$newValue[$count][$x]}");
 				}
+			}
 		}
 	}
-
 /**
  * Synonym for del().
  *
@@ -958,10 +939,9 @@ class Model extends Object{
  * @see function del
  * @return boolean True on success
  */
-	function remove($id = null) {
-		return $this->del($id);
+	function remove($id = null, $cascade = true) {
+		return $this->del($id, $cascade);
 	}
-
 /**
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
  *
@@ -970,28 +950,27 @@ class Model extends Object{
  */
 	function del($id = null, $cascade = true) {
 		if ($id) {
-				$this->id = $id;
+			$this->id = $id;
 		}
 
 		$id = $this->id;
 
 		if ($this->beforeDelete()) {
-				$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-				if ($this->id && $db->delete($this)) {
-					$this->_deleteMulti($id);
-					$this->_deleteHasMany($id, $cascade);
-					$this->_deleteHasOne($id, $cascade);
-					$this->afterDelete();
-					$this->_clearCache();
-					$this->id = false;
-					return true;
-				}
+			if ($this->id && $db->delete($this)) {
+				$this->_deleteMulti($id);
+				$this->_deleteHasMany($id, $cascade);
+				$this->_deleteHasOne($id, $cascade);
+				$this->afterDelete();
+				$this->_clearCache();
+				$this->id = false;
+				return true;
+			}
 		}
 
 		return false;
 	}
-
 /**
  * Alias for del()
  *
@@ -1001,7 +980,6 @@ class Model extends Object{
 	function delete($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
 	}
-
 /**
  * Cascades model deletes to hasMany relationships.
  *
@@ -1011,19 +989,18 @@ class Model extends Object{
  */
 	function _deleteHasMany($id, $cascade) {
 		foreach($this->hasMany as $assoc => $data) {
-				if ($data['dependent'] === true && $cascade === true) {
-					$model          =& $this->{$data['className']};
-					$field          = $model->escapeField($data['foreignKey']);
-					$model->recursive = 0;
-					$records        = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
+			if ($data['dependent'] === true && $cascade === true) {
+				$model =& $this->{$data['className']};
+				$field = $model->escapeField($data['foreignKey']);
+				$model->recursive = 0;
+				$records        = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
-					foreach($records as $record) {
-						$model->del($record[$data['className']][$model->primaryKey]);
-					}
+				foreach($records as $record) {
+					$model->del($record[$data['className']][$model->primaryKey]);
 				}
+			}
 		}
 	}
-
 /**
  * Cascades model deletes to hasOne relationships.
  *
@@ -1033,19 +1010,18 @@ class Model extends Object{
  */
 	function _deleteHasOne($id, $cascade) {
 		foreach($this->hasOne as $assoc => $data) {
-				if ($data['dependent'] === true && $cascade === true) {
-					$model          =& $this->{$data['className']};
-					$field          = $model->escapeField($data['foreignKey']);
-					$model->recursive = 0;
-					$records        = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
+			if ($data['dependent'] === true && $cascade === true) {
+				$model =& $this->{$data['className']};
+				$field = $model->escapeField($data['foreignKey']);
+				$model->recursive = 0;
+				$records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
-					foreach($records as $record) {
-						$model->del($record[$data['className']][$model->primaryKey]);
-					}
+				foreach($records as $record) {
+					$model->del($record[$data['className']][$model->primaryKey]);
 				}
+			}
 		}
 	}
-
 /**
  * Cascades model deletes to HABTM join keys.
  *
@@ -1055,13 +1031,10 @@ class Model extends Object{
  */
 	function _deleteMulti($id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		foreach($this->hasAndBelongsToMany as $assoc => $data) {
-				$db->execute("DELETE FROM " . $db->name($data['joinTable']) . " WHERE "
-									. $db->name($data['foreignKey']) . " = '{$id}'");
+			$db->execute("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
 		}
 	}
-
 /**
  * Returns true if a record with set id exists.
  *
@@ -1069,19 +1042,17 @@ class Model extends Object{
  */
 	function exists() {
 		if ($this->id) {
-				$id = $this->id;
+			$id = $this->id;
 
-				if (is_array($id)) {
-					$id = $id[0];
-				}
+			if (is_array($id)) {
+				$id = $id[0];
+			}
 
-				$db =& ConnectionManager::getDataSource($this->useDbConfig);
-				return $db->hasAny($this, $db->conditions(array($this->primaryKey => $id)));
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			return $db->hasAny($this, array($this->primaryKey => $id));
 		}
-
 		return false;
 	}
-
 /**
  * Returns true if a record that meets given conditions exists
  *
@@ -1091,7 +1062,6 @@ class Model extends Object{
 	function hasAny($conditions = null) {
 		return ($this->findCount($conditions) != false);
 	}
-
 /**
  * Return a single row as a resultset array.
  * By using the $recursive parameter, the call can access further "levels of association" than
@@ -1107,12 +1077,11 @@ class Model extends Object{
 		$data = $this->findAll($conditions, $fields, $order, 1, null, $recursive);
 
 		if (empty($data[0])) {
-				return false;
+			return false;
 		}
 
 		return $data[0];
 	}
-
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
  * By using the $recursive parameter, the call can access further "levels of association" than
@@ -1127,45 +1096,41 @@ class Model extends Object{
  * @return array Array of records
  */
 	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
+
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->id = $this->getID();
-		$offset = 0;
+		$offset = null;
 
-		if ($page > 1) {
+		if ($page > 1 && $limit != null) {
 			$offset = ($page - 1) * $limit;
 		}
 
-		$limit_str = '';
-
-		if ($limit) {
-			$limit_str = $db->limit($limit, $offset);
-		}
-
 		if ($order == null) {
-				$order = array();
+			$order = array();
 		} else {
-				$order = array($order);
+			$order = array($order);
 		}
 
 		$queryData = array('conditions' => $conditions,
-								 'fields'    => $fields,
-								 'joins'     => array(),
-								 'limit'     => $limit_str,
-								 'order'     => $order);
+							'fields'    => $fields,
+							'joins'     => array(),
+							'limit'     => $limit,
+							'offset'	=> $offset,
+							'order'     => $order
+		);
 
 		if (!$this->beforeFind($queryData)) {
-				return null;
+			return null;
 		}
 
 		$return = $this->afterFind($db->read($this, $queryData, $recursive));
 
 		if (isset($this->__backAssociation)) {
-				$this->__resetAssociations();
+			$this->__resetAssociations();
 		}
 
 		return $return;
 	}
-
 /**
  * Method is called only when bindTo<ModelName>() is used.
  * This resets the association arrays for the model back
@@ -1176,15 +1141,14 @@ class Model extends Object{
  */
 	function __resetAssociations() {
 		foreach($this->__associations as $type) {
-				if (isset($this->__backAssociation[$type])) {
-					$this->{$type} = $this->__backAssociation[$type];
-				}
+			if (isset($this->__backAssociation[$type])) {
+				$this->{$type} = $this->__backAssociation[$type];
+			}
 		}
 
 		unset ($this->__backAssociation);
 		return true;
 	}
-
 /**
  * Runs a direct query against the bound DataSource, and returns the result.
  *
@@ -1196,20 +1160,19 @@ class Model extends Object{
 		$data = $db->fetchAll($data, $this->cacheQueries);
 
 		foreach($data as $key => $value) {
-				foreach($this->tableToModel as $key1 => $value1) {
-					if (isset($data[$key][$key1])) {
-						$newData[$key][$value1] = $data[$key][$key1];
-					}
+			foreach($this->tableToModel as $key1 => $value1) {
+				if (isset($data[$key][$key1])) {
+					$newData[$key][$value1] = $data[$key][$key1];
 				}
+			}
 		}
 
 		if (!empty($newData)) {
-				return $newData;
+			return $newData;
 		}
 
 		return $data;
 	}
-
 /**
  * Returns number of rows matching given SQL condition.
  *
@@ -1222,12 +1185,11 @@ class Model extends Object{
 		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
-				return $data[0]['count'];
+			return $data[0]['count'];
 		}
 
 		return false;
 	}
-
 /**
  * Special findAll variation for tables joined to themselves.
  * The table needs the fields id and parent_id to work.
@@ -1241,7 +1203,6 @@ class Model extends Object{
 	function findAllThreaded($conditions = null, $fields = null, $sort = null) {
 		return $this->__doThread(Model::findAll($conditions, $fields, $sort), null);
 	}
-
 /**
  * Private, recursive helper method for findAllThreaded.
  *
@@ -1256,23 +1217,21 @@ class Model extends Object{
 		$sizeOf = sizeof($data);
 
 		for($ii = 0; $ii < $sizeOf; $ii++) {
-				if (($data[$ii][$this->name]['parent_id'] == $root)
-					|| (($root === null) && ($data[$ii][$this->name]['parent_id'] == '0'))) {
-					$tmp = $data[$ii];
+			if (($data[$ii][$this->name]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->name]['parent_id'] == '0'))) {
+				$tmp = $data[$ii];
 
-					if (isset($data[$ii][$this->name][$this->primaryKey])) {
-						$tmp['children'] = $this->__doThread($data, $data[$ii][$this->name][$this->primaryKey]);
-					} else {
-						$tmp['children'] = null;
-					}
-
-					$out[] = $tmp;
+				if (isset($data[$ii][$this->name][$this->primaryKey])) {
+					$tmp['children'] = $this->__doThread($data, $data[$ii][$this->name][$this->primaryKey]);
+				} else {
+					$tmp['children'] = null;
 				}
+
+				$out[] = $tmp;
+			}
 		}
 
 		return $out;
 	}
-
 /**
  * Returns an array with keys "prev" and "next" that holds the id's of neighbouring data,
  * which is useful when creating paged lists.
@@ -1293,16 +1252,15 @@ class Model extends Object{
 		@list($next) = Model::findAll($conditions . $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1, null, 0);
 
 		if (!isset($prev)) {
-				$prev = null;
+			$prev = null;
 		}
 
 		if (!isset($next)) {
-				$next = null;
+			$next = null;
 		}
 
 		return array('prev' => $prev, 'next' => $next);
 	}
-
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.
  *
@@ -1314,22 +1272,16 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
-
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
  * @param array $data POST data
  * @return boolean True if there are no errors
  */
-	function validates($data = null) {
-		if ($data == null) {
-				$data = $this->data;
-		}
-
+	function validates($data = array()) {
 		$errors = $this->invalidFields($data);
 		return count($errors) == 0;
 	}
-
 /**
  * Returns an array of invalid fields.
  *
@@ -1337,6 +1289,10 @@ class Model extends Object{
  * @return array Array of invalid fields
  */
 	function invalidFields($data = array()) {
+		if (empty($data)) {
+			$data = $this->data;
+		}
+
 		if (!$this->beforeValidate()) {
 			return false;
 		}
@@ -1345,10 +1301,9 @@ class Model extends Object{
 			return true;
 		}
 
-		if (!empty($data)){
+		if (!empty($data)) {
 			$data = $data;
-		}
-		elseif (isset($this->data)){
+		} elseif (isset($this->data)) {
 			$data = $this->data;
 		}
 
@@ -1363,7 +1318,6 @@ class Model extends Object{
 		}
 		return $this->validationErrors;
 	}
-
 /**
  * Sets a field as invalid
  *
@@ -1374,10 +1328,8 @@ class Model extends Object{
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
 		}
-
 		$this->validationErrors[$field] = 1;
 	}
-
 /**
  * Returns true if given field name is a foreign key in this Model.
  *
@@ -1392,10 +1344,8 @@ class Model extends Object{
 				$foreignKeys[] = $data['foreignKey'];
 			}
 		}
-
 		return (bool)(in_array($field, $foreignKeys));
 	}
-
 /**
  * Gets the display field for this model
  *
@@ -1404,7 +1354,6 @@ class Model extends Object{
 	function getDisplayField() {
 		return $this->displayField;
 	}
-
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
  * Method can be used to generate option lists for SELECT elements.
@@ -1419,10 +1368,10 @@ class Model extends Object{
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if ($keyPath == null && $valuePath == null) {
+		if ($keyPath == null && $valuePath == null && $this->hasField($this->displayField)) {
 			$fields = array($this->primaryKey, $this->displayField);
 		} else {
-			$fields = '*';
+			$fields = null;
 		}
 
 		$result = $this->findAll($conditions, $fields, $order, $limit, 1, 0);
@@ -1443,7 +1392,6 @@ class Model extends Object{
 			return $return;
 		}
 	}
-
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.
  *
@@ -1454,7 +1402,6 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->name($this->name) . '.' . $db->name($field);
 	}
-
 /**
  * Returns the current record's ID
  *
@@ -1480,7 +1427,6 @@ class Model extends Object{
 
 		return false;
 	}
-
 /**
  * Returns the ID of the last record this Model inserted
  *
@@ -1489,7 +1435,6 @@ class Model extends Object{
 	function getLastInsertID() {
 		return $this->getInsertID();
 	}
-
 /**
  * Returns the ID of the last record this Model inserted
  *
@@ -1498,7 +1443,6 @@ class Model extends Object{
 	function getInsertID() {
 		return $this->__insertID;
 	}
-
 /**
  * Returns the number of rows returned from the last query
  *
@@ -1509,7 +1453,6 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastNumRows();
 	}
-
 /**
  * Returns the number of rows affected by the last query
  *
@@ -1520,7 +1463,6 @@ class Model extends Object{
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastAffected();
 	}
-
 /**
  * Sets the DataSource to which this model is bound
  *
@@ -1542,7 +1484,6 @@ class Model extends Object{
 			return $this->cakeError('missingConnection', array(array('className' => $this->name)));
 		}
 	}
-
 /**
  * Before find callback
  *
@@ -1552,7 +1493,6 @@ class Model extends Object{
 	function beforeFind(&$queryData) {
 		return true;
 	}
-
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
@@ -1562,7 +1502,6 @@ class Model extends Object{
 	function afterFind($results) {
 		return $results;
 	}
-
 /**
  * Before save callback
  *
@@ -1571,7 +1510,6 @@ class Model extends Object{
 	function beforeSave() {
 		return true;
 	}
-
 /**
  * After save callback
  *
@@ -1580,7 +1518,6 @@ class Model extends Object{
 	function afterSave() {
 		return true;
 	}
-
 /**
  * Before delete callback
  *
@@ -1589,7 +1526,6 @@ class Model extends Object{
 	function beforeDelete() {
 		return true;
 	}
-
 /**
  * After delete callback
  *
@@ -1598,7 +1534,6 @@ class Model extends Object{
 	function afterDelete() {
 		return true;
 	}
-
 /**
  * Before validate callback
  *
@@ -1607,7 +1542,6 @@ class Model extends Object{
 	function beforeValidate() {
 		return true;
 	}
-
 /**
  * Private method.  Clears cache for this model
  *
@@ -1636,7 +1570,6 @@ class Model extends Object{
 			//Will use for query cache deleting
 		}
 	}
-
 /**
  * Called when serializing a model
  *

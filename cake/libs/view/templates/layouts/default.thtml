@@ -29,7 +29,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>CakePHP : The PHP Rapid Development Framework :: <?php echo $title_for_layout?></title>
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="<?php echo $html->url('/favicon.ico');?>" type="image/x-icon" />
 <?php echo $html->charset('UTF-8')?>
 <?php echo $html->css('cake.basic', 'stylesheet', array("media"=>"all" ));?>
 <?php echo $html->css('cake.forms', 'stylesheet', array("media"=>"all" ));?>

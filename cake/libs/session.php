@@ -426,8 +426,8 @@ class CakeSession extends Object{
 		$table = $db->fullTableName(CAKE_SESSION_TABLE);
 		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
 
-		if ($row && $row[0][$table]['data']) {
-			return $row[0][$table]['data'];
+		if ($row && $row[0][CAKE_SESSION_TABLE]['data']) {
+			return $row[0][CAKE_SESSION_TABLE]['data'];
 		} else {
 			return false;
 		}
@@ -527,7 +527,7 @@ class CakeSession extends Object{
 				$factor = 10;
 			break;
 			case 'medium':
-				$facto = 100;
+				$factor = 100;
 			break;
 			case 'low':
 				$factor = 300;
@@ -538,17 +538,17 @@ class CakeSession extends Object{
 		}
 		$expires = time() + CAKE_SESSION_TIMEOUT * $factor;
 		$row = $db->query("SELECT COUNT(id) AS count FROM " . $db->name($table) . " WHERE "
-								 . $db->name($table.'.id') . " = "
+								 . $db->name('id') . " = "
 								 . $db->value($key), false);
 
 		if ($row[0][0]['count'] > 0) {
 			$db->execute("UPDATE " . $db->name($table) . " SET " . $db->name('data') . " = "
-								. $db->value($value) . ", " . $db->name($table.'.expires') . " = "
-								. $db->value($expires) . " WHERE " . $db->name($table.'.id') . " = "
+								. $db->value($value) . ", " . $db->name('expires') . " = "
+								. $db->value($expires) . " WHERE " . $db->name('id') . " = "
 								. $db->value($key));
 		} else {
 			$db->execute("INSERT INTO " . $db->name($table) . " (" . $db->name('data') . ","
-							  	. $db->name($table.'.expires') . "," . $db->name($table.'.id')
+							  	. $db->name('expires') . "," . $db->name('id')
 							  	. ") VALUES (" . $db->value($value) . ", " . $db->value($expires) . ", "
 							  	. $db->value($key) . ")");
 		}

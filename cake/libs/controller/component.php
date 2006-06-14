@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  *
  *
@@ -25,53 +24,47 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  *
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller
  */
-class Component extends Object{
-
+class Component extends Object {
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	 var $components = array();
-
+	var $components = array();
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	 var $controller = null;
+	var $controller = null;
 
 /**
  * Constructor
  *
  * @return Component
  */
-	 function Component(&$controller) {
-		  $this->controller=&$controller;
+	function __construct(&$controller) {
+		$this->controller =& $controller;
+		if ($this->controller->components !== false) {
+			$loaded = array();
+			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
-		  if ($this->controller->components !== false) {
-				$loaded=array();
-				$loaded=$this->_loadComponents($loaded, $this->controller->components);
-
-				foreach(array_keys($loaded)as $component) {
-					 $tempComponent = &$loaded[$component];
-
-					 if (isset($tempComponent->components) && is_array($tempComponent->components)) {
-						  foreach($tempComponent->components as $subComponent) {
-								$this->controller->{$component}->{$subComponent}= &$loaded[$subComponent];
-						  }
-					 }
+			foreach(array_keys($loaded)as $component) {
+				$tempComponent =& $loaded[$component];
+				if (isset($tempComponent->components) && is_array($tempComponent->components)) {
+					foreach($tempComponent->components as $subComponent) {
+						$this->controller->{$component}->{$subComponent} =& $loaded[$subComponent];
+					}
 				}
-		  }
-	 }
-
+			}
+		}
+	}
 /**
  * Enter description here...
  *
@@ -79,61 +72,48 @@ class Component extends Object{
  * @param unknown_type $components
  * @return unknown
  */
-	 function &_loadComponents(&$loaded, $components) {
-		  foreach($components as $component) {
-				if (in_array($component, array_keys($loaded)) !== true) {
-					 $componentFn=Inflector::underscore($component) . '.php';
+	function &_loadComponents(&$loaded, $components) {
+		foreach($components as $component) {
+			$componentCn = $component . 'Component';
 
-					 if (file_exists(
-							  APP . 'plugins' . DS . $this->controller->plugin . DS . 'controllers' . DS . 'components' . DS . $componentFn)) {
-						  $componentFn = APP . 'plugins' . DS . $this->controller->plugin . DS . 'controllers' . DS
-							  . 'components' . DS . $componentFn;
-					 } else if(file_exists(COMPONENTS . $componentFn)) {
-						  $componentFn = COMPONENTS . $componentFn;
-					 } else if($componentFn
-						 = fileExistsInPath(LIBS . 'controller' . DS . 'components' . DS . $componentFn)) {
-					 }
+			if (in_array($component, array_keys($loaded)) !== true) {
+				if (!class_exists($componentCn)) {
+					if (is_null($this->controller->plugin) || !loadPluginComponent($this->controller->plugin, $component)) {
+						if (!loadComponent($component)) {
+							return $this->cakeError('missingComponentFile', array(array(
+								'className' => $this->controller->name,
+								'component' => $component,
+								'file' => Inflector::underscore($componentCn) . '.php',
+								'base' => $this->controller->base
+							)));
+						}
+					}
 
-					 $componentCn=$component . 'Component';
-
-					 if (is_file($componentFn)) {
-						  if (!class_exists($componentCn)) {
-								require_once $componentFn;
-						  }
-
-						  if (class_exists($componentCn) === true) {
-								if ($componentCn == 'SessionComponent') {
-									 $param = $this->controller->base . '/';
-								} else {
-									 $param = null;
-								}
-
-								$this->controller->{$component}=&new $componentCn($param);
-								$loaded[$component]            =&$this->controller->{$component};
-
-								if (isset($this->controller->{$component}->components)
-									&& is_array($this->controller->{$component}->components)) {
-									 $loaded = &$this->_loadComponents($loaded,
-																					  $this->controller->{$component}->components);
-								}
-						  } else {
-								return $this->cakeError('missingComponentClass',
-																	array(array('className' => $this->controller->name,
-											'component' => $component,
-											'file' => $componentFn,
-											'base' => $this->controller->base)));
-						  }
-					 } else {
-						  return $this->cakeError('missingComponentFile',
-															  array(array('className' => $this->controller->name,
-									  'component' => $component,
-									  'file' => $componentFn,
-									  'base' => $this->controller->base)));
-					 }
+					if (!class_exists($componentCn)) {
+						$componentFn = Inflector::underscore($component) . '.php';
+						return $this->cakeError('missingComponentClass', array(array(
+							'className' => $this->controller->name,
+							'component' => $component,
+							'file' => $componentFn,
+							'base' => $this->controller->base
+						)));
+					}
 				}
-		  }
 
-		  return $loaded;
-	 }
+				if ($componentCn == 'SessionComponent') {
+					$param = $this->controller->base . '/';
+				} else {
+					$param = null;
+				}
+				$this->controller->{$component} =& new $componentCn($param);
+				$loaded[$component] =& $this->controller->{$component};
+				if (isset($this->controller->{$component}->components) && is_array($this->controller->{$component}->components)) {
+					$loaded =& $this->_loadComponents($loaded, $this->controller->{$component}->components);
+				}
+			}
+		}
+		return $loaded;
+	}
 }
+
 ?>

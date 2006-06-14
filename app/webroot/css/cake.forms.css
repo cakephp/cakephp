@@ -129,12 +129,6 @@ form div label.labelCheckbox, form div label.labelRadio {
 form div fieldset label.labelCheckbox, form div fieldset label.labelRadio {
   margin: 0px 0px 5px 0px;
 }
-p.error {
-  color: #DB8101;
-  background-color: #DBA941;
-  font-size: 14px;
-  padding: 1em;
-}
 
 form div input, form div select, form div textarea {
   padding: 1px 3px;
@@ -276,4 +270,4 @@ select.autoWidth {
 
 option {
 	padding-left:1em;
-}
+}   

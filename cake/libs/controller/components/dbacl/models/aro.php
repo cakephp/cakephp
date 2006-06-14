@@ -37,7 +37,7 @@
  * @subpackage	cake.cake.libs.controller.components.dbacl.models
  *
  */
-class Aro extends AclNode{
+class Aro extends AclNode {
 
 /**
  * Enter description here...

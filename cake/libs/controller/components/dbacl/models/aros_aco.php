@@ -37,8 +37,13 @@
  * @subpackage	cake.cake.libs.controller.components.dbacl.models
  */
 
-class ArosAco extends AppModel{
-
+class ArosAco extends AppModel {
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+	var $cacheQueries = false;
 /**
  * Enter description here...
  *

@@ -386,47 +386,58 @@ class View extends Object{
  * @return mixed Rendered output, or false on error
  */
 	function renderLayout($content_for_layout) {
-		$layout_fn=$this->_getLayoutFileName();
+		$layout_fn = $this->_getLayoutFileName();
 
 		if (DEBUG > 2 && $this->controller != null) {
-				$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS
-												. 'dump.thtml', array('controller' => $this->controller), false);
+			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.thtml', array('controller' => $this->controller), false);
 		} else {
-				$debug = '';
+			$debug = '';
 		}
 
 		if ($this->pageTitle !== false) {
-				$pageTitle = $this->pageTitle;
+			$pageTitle = $this->pageTitle;
 		} else {
-				$pageTitle = Inflector::humanize($this->viewPath);
+			$pageTitle = Inflector::humanize($this->viewPath);
 		}
 
-		$data_for_layout=array_merge($this->_viewVars, array('title_for_layout'   => $pageTitle,
-																				'content_for_layout' => $content_for_layout,
-																				'cakeDebug'          => $debug));
+		$data_for_layout = array_merge(
+								$this->_viewVars,
+								array(
+									'title_for_layout'   => $pageTitle,
+									'content_for_layout' => $content_for_layout,
+									'cakeDebug'          => $debug
+								)
+		);
 
 		if (is_file($layout_fn)) {
-				$data_for_layout=array_merge($data_for_layout, $this->loaded);
+			if (empty($this->loaded) && !empty($this->helpers)) {
+				$loadHelpers = true;
+			} else {
+				$loadHelpers = false;
+				$data_for_layout = array_merge($data_for_layout, $this->loaded);
+			}
 
-				if (substr($layout_fn, -5) === 'thtml') {
-					$out = View::_render($layout_fn, $data_for_layout, false, true);
-				} else {
-					$out = $this->_render($layout_fn, $data_for_layout, false);
-				}
+			if (substr($layout_fn, -5) === 'thtml') {
+				$out = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
+			} else {
+				$out = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
+			}
 
-				if ($out === false) {
-					$out=$this->_render($layout_fn, $data_for_layout);
-					trigger_error(
-						sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layout_fn, $out),
-						E_USER_ERROR);
-					return false;
-				} else {
-					return $out;
-				}
+			if ($out === false) {
+				$out = $this->_render($layout_fn, $data_for_layout);
+				trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layout_fn, $out), E_USER_ERROR);
+				return false;
+			} else {
+				return $out;
+			}
 		} else {
-				return $this->cakeError('missingLayout', array(array('layout' => $this->layout,
-							'file' => $layout_fn,
-							'base' => $this->base)));
+			return $this->cakeError('missingLayout', array(
+					array(
+						'layout' => $this->layout,
+						'file' => $layout_fn,
+						'base' => $this->base
+					)
+			));
 		}
 	}
 
@@ -436,7 +447,7 @@ class View extends Object{
  * @param string $layout		Name of layout.
  */
 	function setLayout($layout) {
-		$this->layout=$layout;
+		$this->layout = $layout;
 	}
 
 /**
@@ -465,39 +476,37 @@ class View extends Object{
  * @access private
  */
 	function _getViewFileName($action) {
-		$action=Inflector::underscore($action);
-		$paths =Configure::getInstance();
+		$action = Inflector::underscore($action);
+		$paths = Configure::getInstance();
 
 		if (!is_null($this->webservices)) {
-				$type = strtolower($this->webservices) . DS;
+			$type = strtolower($this->webservices) . DS;
 		} else {
-				$type = null;
+			$type = null;
 		}
 
-		$position=strpos($action, '..');
+		$position = strpos($action, '..');
 
 		if ($position === false) {
 		} else {
-				$action=explode('/', $action);
-				$i     =array_search('..', $action);
-				unset ($action[$i - 1]);
-				unset ($action[$i]);
-				$action='..' . DS . implode(DS, $action);
+			$action = explode('/', $action);
+			$i = array_search('..', $action);
+			unset($action[$i - 1]);
+			unset($action[$i]);
+			$action='..' . DS . implode(DS, $action);
 		}
 
 		foreach($paths->viewPaths as $path) {
-				if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
-					$viewFileName=$path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
-					return $viewFileName;
-				}
+			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
+				$viewFileName = $path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
+				return $viewFileName;
+			}
 		}
 
-		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type
-																. $action . '.thtml')) {
-		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS
-																	. $type . $action . '.thtml')) {
+		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.thtml')) {
+		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.thtml')) {
 		} else {
-				$viewFileName = VIEWS . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
+			$viewFileName = VIEWS . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
 		}
 
 		return $viewFileName;
@@ -511,27 +520,23 @@ class View extends Object{
  */
 	function _getLayoutFileName() {
 		if (isset($this->webservices) && !is_null($this->webservices)) {
-				$type = strtolower($this->webservices) . DS;
+			$type = strtolower($this->webservices) . DS;
 		} else {
-				$type = null;
+			$type = null;
 		}
 
 		if (isset($this->plugin) && !is_null($this->plugin)) {
-				if (file_exists(
-						APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
-					$layoutFileName=
-						APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
-					return $layoutFileName;
-				}
+			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
+				$layoutFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
+				return $layoutFileName;
+			}
 		}
 
 		if (file_exists(LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext")) {
-				$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
-		} elseif($layoutFileName
-			= fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . $type . "{$this->layout}.thtml"))
-			{
+			$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
+		} elseif($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . $type . "{$this->layout}.thtml")) {
 		} else {
-				$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
+			$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
 		}
 
 		return $layoutFileName;
@@ -548,14 +553,12 @@ class View extends Object{
  */
 	function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
 		if ($this->helpers != false && $loadHelpers === true) {
-			$helperVars = array();
 			$loadedHelpers = array();
 			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 
 			foreach(array_keys($loadedHelpers) as $helper) {
 				$replace = strtolower(substr($helper, 0, 1));
 				$camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
-				$helperVars[] = $camelBackedHelper;
 
 				${$camelBackedHelper} =& $loadedHelpers[$helper];
 
@@ -564,7 +567,7 @@ class View extends Object{
 						${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
 					}
 				}
-				$this->loaded[$camelBackedHelper]=(${$camelBackedHelper});
+				$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
 			}
 		}
 
@@ -582,8 +585,12 @@ class View extends Object{
 		}
 
 		if ($this->helpers != false && $loadHelpers === true) {
-			foreach ($helperVars as $helper) {
-				${$helper}->afterRender();
+			foreach ($loadedHelpers as $helper) {
+				if (is_object($helper)) {
+					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+						$helper->afterRender();
+					}
+				}
 			}
 		}
 
@@ -597,11 +604,11 @@ class View extends Object{
 					$cache->view = &$this;
 				}
 
-				$cache->base          =$this->base;
-				$cache->here          =$this->here;
-				$cache->action        =$this->action;
-				$cache->controllerName=$this->params['controller'];
-				$cache->cacheAction   =$this->controller->cacheAction;
+				$cache->base			= $this->base;
+				$cache->here			= $this->here;
+				$cache->action			= $this->action;
+				$cache->controllerName	= $this->params['controller'];
+				$cache->cacheAction		= $this->controller->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}
 		}
@@ -628,19 +635,17 @@ class View extends Object{
 
 			if (in_array($helper, array_keys($loaded)) !== true) {
 				if (!class_exists($helperCn)) {
-					$helperFn = Inflector::underscore($helper) . '.php';
-
-					if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'helpers' . DS . $helperFn)) {
-						$helperFn = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'helpers' . DS . $helperFn;
-					} else if(file_exists(HELPERS . $helperFn)) {
-						$helperFn = HELPERS . $helperFn;
-					} else if($helperFn = fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $helperFn)) {
-					}
-
-					if (is_file($helperFn)) {
-						require $helperFn;
-					} else {
-						return $this->cakeError('missingHelperFile', array(array(
+				    if (is_null($this->plugin) || !loadPluginHelper($this->plugin, $helper)) {
+					    if (!loadHelper($helper)) {
+							return $this->cakeError('missingHelperFile', array(array(
+										'helper' => $helper,
+										'file' => Inflector::underscore($helper) . '.php',
+										'base' => $this->base
+							)));
+					    }
+				    }
+					if (!class_exists($helperCn)) {
+						return $this->cakeError('missingHelperClass', array(array(
 									'helper' => $helper,
 									'file' => Inflector::underscore($helper) . '.php',
 									'base' => $this->base
@@ -651,34 +656,26 @@ class View extends Object{
 				$replace = strtolower(substr($helper, 0, 1));
 				$camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
 
-				if (class_exists($helperCn)) {
-					${$camelBackedHelper}			=& new $helperCn;
-					${$camelBackedHelper}->view		=& $this;
-					${$camelBackedHelper}->base		= $this->base;
-					${$camelBackedHelper}->webroot	= $this->webroot;
-					${$camelBackedHelper}->here		= $this->here;
-					${$camelBackedHelper}->params	= $this->params;
-					${$camelBackedHelper}->action	= $this->action;
-					${$camelBackedHelper}->data		= $this->data;
-					${$camelBackedHelper}->themeWeb	= $this->themeWeb;
-					${$camelBackedHelper}->tags		= $tags;
-					${$camelBackedHelper}->plugin	= $this->plugin;
+				${$camelBackedHelper}			=& new $helperCn;
+				${$camelBackedHelper}->view		=& $this;
+				${$camelBackedHelper}->base		= $this->base;
+				${$camelBackedHelper}->webroot	= $this->webroot;
+				${$camelBackedHelper}->here		= $this->here;
+				${$camelBackedHelper}->params	= $this->params;
+				${$camelBackedHelper}->action	= $this->action;
+				${$camelBackedHelper}->data		= $this->data;
+				${$camelBackedHelper}->themeWeb	= $this->themeWeb;
+				${$camelBackedHelper}->tags		= $tags;
+				${$camelBackedHelper}->plugin	= $this->plugin;
 
-					if (!empty($this->validationErrors)) {
-						${$camelBackedHelper}->validationErrors = $this->validationErrors;
-					}
+				if (!empty($this->validationErrors)) {
+					${$camelBackedHelper}->validationErrors = $this->validationErrors;
+				}
 
-					$loaded[$helper] =& ${$camelBackedHelper};
+				$loaded[$helper] =& ${$camelBackedHelper};
 
-					if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers)) {
-						$loaded = &$this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
-					}
-				} else {
-					return $this->cakeError('missingHelperClass', array(array(
-								'helper' => $helper,
-								'file' => Inflector::underscore($helper) . '.php',
-								'base' => $this->base
-					)));
+				if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers)) {
+					$loaded = &$this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
 				}
 			}
 		}

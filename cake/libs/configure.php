@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Configure extends Object{
+class Configure extends Object {
 /**
  * Hold array with paths to view files
  *
@@ -56,6 +56,20 @@ class Configure extends Object{
  * @access public
  */
 	var $modelPaths = array();
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
+	var $helperPaths = array();
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
+	var $componentPaths = array();
 /**
  * Return a singleton instance of Configure.
  *
@@ -81,7 +95,7 @@ class Configure extends Object{
 		$_this->modelPaths[] = MODELS;
 		if (isset($modelPaths)) {
 			foreach($modelPaths as $value) {
-				$this->modelPaths[] = $value;
+				$_this->modelPaths[] = $value;
 			}
 		}
 	}
@@ -97,7 +111,7 @@ class Configure extends Object{
 		$_this->viewPaths[] = VIEWS . 'errors' . DS;
 		if (isset($viewPaths)) {
 			foreach($viewPaths as $value) {
-				$this->viewPaths[] = $value;
+				$_this->viewPaths[] = $value;
 			}
 		}
 	}
@@ -112,7 +126,37 @@ class Configure extends Object{
 		$_this->controllerPaths[] = CONTROLLERS;
 		if (isset($controllerPaths)) {
 			foreach($controllerPaths as $value) {
-				$this->controllerPaths[] = $value;
+				$_this->controllerPaths[] = $value;
+			}
+		}
+	}
+/**
+ * Sets the var helperPaths
+ *
+ * @param array $helperPaths
+ * @access private
+ */
+	function __buildHelperPaths($helperPaths) {
+		$_this =& Configure::getInstance();
+		$_this->helperPaths[] = HELPERS;
+		if (isset($helperPaths)) {
+			foreach($helperPaths as $value) {
+				$_this->helperPaths[] = $value;
+			}
+		}
+	}
+/**
+ * Sets the var componentPaths
+ *
+ * @param array $componentPaths
+ * @access private
+ */
+	function __buildComponentPaths($componentPaths) {
+		$_this =& Configure::getInstance();
+		$_this->componentPaths[] = COMPONENTS;
+		if (isset($componentPaths)) {
+			foreach($componentPaths as $value) {
+				$_this->componentPaths[] = $value;
 			}
 		}
 	}
@@ -124,14 +168,19 @@ class Configure extends Object{
  * @access private
  */
 	function __loadBootstrap() {
-		$_this          =&Configure::getInstance();
-		$modelPaths     =null;
-		$viewPaths      =null;
-		$controllerPaths=null;
+		$_this =& Configure::getInstance();
+		$modelPaths = null;
+		$viewPaths = null;
+		$controllerPaths = null;
+		$helperPaths = null;
+		$componentPaths = null;
 		require APP_PATH . 'config' . DS . 'bootstrap.php';
 		$_this->__buildModelPaths($modelPaths);
 		$_this->__buildViewPaths($viewPaths);
 		$_this->__buildControllerPaths($controllerPaths);
+		$_this->__buildHelperPaths($helperPaths);
+		$_this->__buildComponentPaths($componentPaths);
 	}
 }
+
 ?>

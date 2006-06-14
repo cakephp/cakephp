@@ -36,14 +36,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view
  */
-class Helper extends Object{
-/*************************************************************************
- * Public variables
- *************************************************************************/
-
-/**#@+
- * @access public
- */
+class Helper extends Object {
 
 /**
  * Holds tag templates.
@@ -51,35 +44,22 @@ class Helper extends Object{
  * @access public
  * @var array
  */
-	 var $tags = array();
-
-/**#@-*/
-
-/*************************************************************************
- * Public methods
- *************************************************************************/
-
-/**#@+
- * @access public
- */
-
+	var $tags = array();
 /**
  * Parses tag templates into $this->tags.
  *
  * @return void
  */
-	 function loadConfig() {
-		  $config=fileExistsInPath(CAKE . 'config' . DS . 'tags.ini.php');
-		  $cakeConfig=$this->readConfigFile($config);
+	function loadConfig() {
+		$config = fileExistsInPath(CAKE . 'config' . DS . 'tags.ini.php');
+		$cakeConfig = $this->readConfigFile($config);
 
-		  if (file_exists(APP . 'config' . DS . 'tags.ini.php')) {
-				$appConfig=$this->readConfigFile(APP . 'config' . DS . 'tags.ini.php');
-				$cakeConfig=array_merge($cakeConfig, $appConfig);
-		  }
-
-		  return $cakeConfig;
-	 }
-
+		if (file_exists(APP . 'config' . DS . 'tags.ini.php')) {
+			$appConfig = $this->readConfigFile(APP . 'config' . DS . 'tags.ini.php');
+			$cakeConfig = am($cakeConfig, $appConfig);
+		}
+		return $cakeConfig;
+	}
 /**
  * Decides whether to output or return a string.
  *
@@ -92,15 +72,14 @@ class Helper extends Object{
  * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT
  *                and $return.
  */
-	 function output($str, $return = false) {
-		  if (AUTO_OUTPUT && $return === false) {
-				echo $str;
-				return true;
-		  } else {
-				return $str;
-		  }
-	 }
-
+	function output($str, $return = false) {
+		if (AUTO_OUTPUT && $return === false) {
+			echo $str;
+			return true;
+		} else {
+			return $str;
+		}
+	}
 /**
  * Assigns values to tag templates.
  *
@@ -111,49 +90,49 @@ class Helper extends Object{
  * @param  array  $values  Values to be inserted into tag.
  * @return string Tag with inserted values.
  */
-	 function assign($keyName, $values) {
-		  return str_replace('%%' . array_keys($values) . '%%', array_values($values), $this->tags[$keyName]);
-	 }
+	function assign($keyName, $values) {
+		return str_replace('%%' . array_keys($values) . '%%', array_values($values), $this->tags[$keyName]);
+	}
 /**
  * Returns an array of settings in given INI file.
  *
  * @param string $fileName
  * @return array
  */
-	 function readConfigFile($fileName) {
-		  $fileLineArray=file($fileName);
+	function readConfigFile($fileName) {
+		$fileLineArray = file($fileName);
 
-		  foreach($fileLineArray as $fileLine) {
-				$dataLine = trim($fileLine);
-				$firstChar=substr($dataLine, 0, 1);
+		foreach($fileLineArray as $fileLine) {
+			$dataLine = trim($fileLine);
+			$firstChar = substr($dataLine, 0, 1);
 
-				if ($firstChar != ';' && $dataLine != '') {
-					 if ($firstChar == '[' && substr($dataLine, -1, 1) == ']') {
-					 // [section block] we might use this later do not know for sure
-					 // this could be used to add a key with the section block name
-					 // but it adds another array level
-					 } else {
-						  $delimiter=strpos($dataLine, '=');
-
-						  if ($delimiter > 0) {
-								$key  =strtolower(trim(substr($dataLine, 0, $delimiter)));
-								$value=trim(substr($dataLine, $delimiter + 1));
-
-								if (substr($value, 0, 1) == '"' && substr($value, -1) == '"') {
-									 $value = substr($value, 1, -1);
-								}
-
-								$iniSetting[$key]=stripcslashes($value);
-						  } else {
-								$iniSetting[strtolower(trim($dataLine))] = '';
-						  }
-					 }
+			if ($firstChar != ';' && $dataLine != '') {
+				if ($firstChar == '[' && substr($dataLine, -1, 1) == ']') {
+					// [section block] we might use this later do not know for sure
+					// this could be used to add a key with the section block name
+					// but it adds another array level
 				} else {
-				}
-		  }
+					$delimiter = strpos($dataLine, '=');
 
-		  return $iniSetting;
-	 }
+					if ($delimiter > 0) {
+						$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
+						$value = trim(substr($dataLine, $delimiter + 1));
+
+						if (substr($value, 0, 1) == '"' && substr($value, -1) == '"') {
+							$value = substr($value, 1, -1);
+						}
+
+						$iniSetting[$key] = stripcslashes($value);
+					} else {
+						$iniSetting[strtolower(trim($dataLine))] = '';
+					}
+				}
+			} else {
+			}
+		}
+
+		return $iniSetting;
+	}
 /**
  * After render callback.  Overridden in subclasses.
  *
@@ -161,7 +140,6 @@ class Helper extends Object{
  */
 	function afterRender() {
 	}
-
-/**#@-*/
 }
+
 ?>
