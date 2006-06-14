@@ -39,7 +39,7 @@
 
 uses ('model' . DS . 'datasources' . DS . 'datasource');
 
-class ConnectionManager extends Object{
+class ConnectionManager extends Object {
 
 /**
  * Holds a loaded instance of the Connections object
@@ -145,10 +145,10 @@ class ConnectionManager extends Object{
 			return false;
 		}
 
-		if (fileExistsInPath(LIBS . 'model' . DS . $conn['filename'] . '.php')) {
-			require (LIBS . 'model' . DS . $conn['filename'] . '.php');
-		} else if(file_exists(MODELS . $conn['filename'] . '.php')) {
-			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
+		if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
+			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
+		} else if(file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
+			require (MODELS . 'datasources' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
 			trigger_error('Unable to load DataSource file ' . $conn['filename'] . '.php', E_USER_ERROR);
 			return null;
@@ -191,4 +191,5 @@ class ConnectionManager extends Object{
 		}
 	}
 }
+
 ?>
