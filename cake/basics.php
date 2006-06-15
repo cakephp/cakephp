@@ -548,6 +548,12 @@
  * @return string
  */
 	function h($text) {
+		if (is_array($text)) {
+			foreach ($text as $key => $val) {
+				$text[$key] = h($val);
+			}
+			return $text;
+		}
 		return htmlspecialchars($text);
 	}
 /**
