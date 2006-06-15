@@ -49,7 +49,15 @@ class Component extends Object {
  *
  * @return Component
  */
-	function __construct(&$controller) {
+	function __construct() {
+		//parent::__construct();
+	}
+/**
+ * Used to initialize the components for current controller
+ *
+ * @param object $controller
+ */
+	function init(&$controller) {
 		$this->controller =& $controller;
 		if ($this->controller->components !== false) {
 			$loaded = array();
@@ -64,7 +72,9 @@ class Component extends Object {
 				}
 			}
 		}
+
 	}
+
 /**
  * Enter description here...
  *

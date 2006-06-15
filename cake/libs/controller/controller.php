@@ -237,7 +237,8 @@ class Controller extends Object{
 		}
 
 		if (!empty($this->components)) {
-			$component = &new Component($this);
+			$component = new Component();
+			$component->init($this);
 		}
 		parent::__construct();
 	}
