@@ -41,28 +41,33 @@ uses ('model' . DS . 'datasources' . DS . 'dbo_source');
  * @package		cake
  * @subpackage	cake.cake.libs.model.dbo
  */
-class DboPostgres extends DboSource{
+class DboPostgres extends DboSource {
+
 	var $description = "PostgreSQL DBO Driver";
 
-	var $_baseConfig = array('persistent' => true,
-				'host' => 'localhost',
-				'login' => 'root',
-				'password' => '',
-				'database' => 'cake',
-				'port' => 5432);
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => 5432,
+		'connect' => 'pg_pconnect'
+	);
 
-	var $columns = array('primary_key' => array('name' => 'serial NOT NULL'),
-				'string' => array('name'  => 'varchar', 'limit' => '255'),
-				'text' => array('name' => 'text'),
-				'integer' => array('name' => 'integer'),
-				'float' => array('name' => 'float'),
-				'datetime' => array('name' => 'timestamp'),
-				'timestamp' => array('name' => 'timestamp'),
-				'time' => array('name' => 'time'),
-				'date' => array('name' => 'date'),
-				'binary' => array('name' => 'bytea'),
-				'boolean' => array('name' => 'boolean'),
-				'number' => array('name' => 'numeric')
+	var $columns = array(
+		'primary_key' => array('name' => 'serial NOT NULL'),
+		'string' => array('name'  => 'varchar', 'limit' => '255'),
+		'text' => array('name' => 'text'),
+		'integer' => array('name' => 'integer'),
+		'float' => array('name' => 'float'),
+		'datetime' => array('name' => 'timestamp'),
+		'timestamp' => array('name' => 'timestamp'),
+		'time' => array('name' => 'time'),
+		'date' => array('name' => 'date'),
+		'binary' => array('name' => 'bytea'),
+		'boolean' => array('name' => 'boolean'),
+		'number' => array('name' => 'numeric')
 	);
 
 	var $startQuote = '"';
