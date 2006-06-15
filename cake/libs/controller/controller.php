@@ -201,6 +201,12 @@ class Controller extends Object{
  */
 	var $persistModel = false;
 /**
+ * Enter description here...
+ *
+ * @var mixed
+ */
+	var $namedArgs = false;
+/**
  * Constructor.
  *
  */

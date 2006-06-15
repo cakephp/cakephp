@@ -192,8 +192,17 @@ class Dispatcher extends Object {
 		}
 
 		if (!empty($controller->params['pass'])) {
+			if ($controller->namedArgs !== false) {
+				if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
+					$this->_getNamedArgs($controller->params['pass'], $controller->namedArgs[$params['action']]);
+				} elseif (is_int($controller->namedArgs) && $controller->namedArgs > 0) {
+					$this->_getNamedArgs($controller->params['pass'], $controller->namedArgs);
+				} elseif ($controller->namedArgs === true) {
+					$this->_getNamedArgs($controller->params['pass']);
+				}
+			}
 			$controller->passed_args =& $controller->params['pass'];
-			$controller->passedArgs =&  $controller->params['pass'];
+			$controller->passedArgs =& $controller->params['pass'];
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
@@ -414,5 +423,31 @@ class Dispatcher extends Object {
 		}
 		return $params;
 	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $params
+ * @return unknown
+ */
+	function _getNamedArgs(&$params, $start = 0) {
+		if(is_array($params)) {
+			$a = array();
+			$args = $params;
+			$c = count($args);
+
+			for ($l = $start; $l < $c; $l++) {
+				if(isset($args[$l])) {
+					if ($l+1 < count($args)) {
+						$a[$args[$l]] = $args[$l+1];
+					} else {
+						$a[$args[$l]] = null;
+					}
+				}
+				$l++;
+			}
+			$params = $a;
+		}
+	}
 }
+
 ?>
