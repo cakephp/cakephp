@@ -255,23 +255,33 @@ class HtmlHelper extends Helper {
 	function checkbox($fieldName, $title = null, $htmlAttributes = null, $return = false) {
 		$value = $this->tagValue($fieldName);
 		$notCheckedValue = 0;
-		if (isset($htmlAttributes['value'])) {
-			$htmlAttributes['checked']=($htmlAttributes['value'] == $value) ? 'checked' : null;
 
-			if ($htmlAttributes['checked'] == '0') {
+		if (isset($htmlAttributes['checked'])) {
+			if ($htmlAttributes['checked'] == 'checked' || intval($htmlAttributes['checked']) === 1 || $htmlAttributes['checked'] === true) {
+				$htmlAttributes['checked'] = 'checked';
+			} else {
+				$htmlAttributes['checked'] = null;
 				$notCheckedValue = -1;
 			}
 		} else {
-			$model = new $this->model;
-			$db =& ConnectionManager::getDataSource($model->useDbConfig);
-			$value = $db->boolean($value);
-			$htmlAttributes['checked'] = $value ? 'checked' : null;
-			$htmlAttributes['value'] = 1;
+			if (isset($htmlAttributes['value'])) {
+				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
+	
+				if ($htmlAttributes['checked'] == '0') {
+					$notCheckedValue = -1;
+				}
+			} else {
+				$model = new $this->model;
+				$db =& ConnectionManager::getDataSource($model->useDbConfig);
+				$value = $db->boolean($value);
+				$htmlAttributes['checked'] = $value ? 'checked' : null;
+				$htmlAttributes['value'] = 1;
+			}
 		}
 		if (!isset($htmlAttributes['id'])) {
 			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 		}
-		$output = $this->hidden($fieldName, array('value' => $notCheckedValue), true);
+		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
 		$output .= sprintf($this->tags['checkbox'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		return $this->output($output, $return);
 	}
