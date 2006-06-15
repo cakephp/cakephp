@@ -35,6 +35,7 @@
  * @subpackage	cake.cake.libs.view.helpers
  */
 class TimeHelper extends Helper {
+
 /**
  * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
  *
@@ -46,7 +47,6 @@ class TimeHelper extends Helper {
 	function trim($string, $length, $ending = '..') {
 		return substr($string, 0, $length) . (strlen($string) > $length ? $ending : null);
 	}
-
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
@@ -60,7 +60,6 @@ class TimeHelper extends Helper {
 			return strtotime($date_string);
 		}
 	}
-
 /**
  * Returns a nicely formatted date string for given Datetime string.
  *
@@ -78,7 +77,6 @@ class TimeHelper extends Helper {
 		$ret = date("D, M jS Y, H:i", $date);
 		return $this->output($ret, $return);
 	}
-
 /**
  * Returns a formatted descriptive date string for given datetime string.
  *
@@ -106,20 +104,6 @@ class TimeHelper extends Helper {
 
 		return $this->output($ret, $return);
 	}
-
-/**
- * Returns true if given datetime string is today.
- *
- * @param string $date_string Datetime string or Unix timestamp
- * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return boolean True if datetime string is today
- */
-	function isToday($date_string, $return = false) {
-		$date = $this->fromString($date_string);
-		$ret = date('Y-m-d', $date) == date('Y-m-d', time());
-		return $this->output($ret, $return);
-	}
-
 /**
  * Returns a partial SQL string to search for all records between two dates.
  *
@@ -138,7 +122,6 @@ class TimeHelper extends Helper {
 		$ret  ="($field_name >= '$begin') AND ($field_name <= '$end')";
 		return $this->output($ret, $return);
 	}
-
 /**
  * Returns a partial SQL string to search for all records between two times
  * occurring on the same day.
@@ -153,7 +136,36 @@ class TimeHelper extends Helper {
 		$ret = $this->daysAsSql($date_string, $date_string, $field_name);
 		return $this->output($ret, $return);
 	}
-
+/**
+ * Returns true if given datetime string is today.
+ *
+ * @param string $date_string Datetime string or Unix timestamp
+ * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
+ * @return boolean True if datetime string is today
+ */
+	function isToday($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d', $date) == date('Y-m-d', time());
+		return $this->output($ret, $return);
+	}
+/**
+ * Returns true if given datetime string is within this week
+ * @param string $date_string
+ * @return boolean True if datetime string is within current week
+ */
+	function isThisWeek($date_string) {
+		$date = $this->fromString($date_string) + 86400;
+		return date('W Y', $date) == date('W Y', time());
+	}
+/**
+ * Returns true if given datetime string is within this month
+ * @param string $date_string
+ * @return boolean True if datetime string is within current month
+ */
+	function isThisMonth($date_string) {
+		$date = $this->fromString($date_string);
+		return date('m Y',$date) == date('m Y', time());
+	}
 /**
  * Returns true if given datetime string is within current year.
  *
@@ -164,10 +176,8 @@ class TimeHelper extends Helper {
 	function isThisYear($date_string, $return = false) {
 		$date = $this->fromString($date_string);
 		$ret = date('Y', $date) == date('Y', time());
-
 		return $this->output($ret, $return);
 	}
-
 /**
  * Returns true if given datetime string was yesterday.
  *
@@ -180,7 +190,6 @@ class TimeHelper extends Helper {
 		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 		return $this->output($ret, $return);
 	}
-
 /**
  * Returns true if given datetime string is tomorrow.
  *
@@ -249,9 +258,9 @@ class TimeHelper extends Helper {
  * @return string Relative time string.
  */
 	function timeAgoInWords($datetime_string, $format = 'j/n/y', $backwards = false, $return = false) {
-		$datetime  =$this->fromString($datetime_string);
+		$datetime = $this->fromString($datetime_string);
 
-		$in_seconds=$datetime;
+		$in_seconds = $datetime;
 
 		if ($backwards) {
 			$diff = $in_seconds - time();
