@@ -241,6 +241,13 @@ class Model extends Object{
 	var $recursive = 1;
 
 /**
+ * Default ordering of model records
+ *
+ * @var mixed
+ */
+	var $order = null;
+
+/**
  * Default association keys
  *
  * @var array
@@ -1109,17 +1116,22 @@ class Model extends Object{
 		}
 
 		if ($order == null) {
-			$order = array();
+			if ($this->order == null) {
+				$order = array();
+			} else {
+				$order = array($this->order);
+			}
 		} else {
 			$order = array($order);
 		}
 
-		$queryData = array('conditions' => $conditions,
-							'fields'    => $fields,
-							'joins'     => array(),
-							'limit'     => $limit,
-							'offset'	=> $offset,
-							'order'     => $order
+		$queryData = array(
+			'conditions' => $conditions,
+			'fields'    => $fields,
+			'joins'     => array(),
+			'limit'     => $limit,
+			'offset'	=> $offset,
+			'order'     => $order
 		);
 
 		if (!$this->beforeFind($queryData)) {
