@@ -790,7 +790,7 @@ class DboSource extends DataSource {
 
 		switch($type) {
 			case 'hasOne':
-				if ($external) {
+				if ($external || isset($assocData['external'])) {
 					if (isset($assocData['finderQuery'])) {
 						return $assocData['finderQuery'];
 					}
@@ -871,7 +871,7 @@ class DboSource extends DataSource {
 				}
 			break;
 			case 'belongsTo':
-				if ($external) {
+				if ($external || isset($assocData['external'])) {
 					$limit = '';
 					if (isset($assocData['limit'])) {
 						$limit = $this->limit($assocData['limit'], $queryData['offset']);
