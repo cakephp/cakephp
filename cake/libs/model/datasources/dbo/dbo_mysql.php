@@ -74,17 +74,19 @@ class DboMysql extends DboSource {
  *
  * @var array
  */
-	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
-						'string' => array('name' => 'varchar', 'limit' => '255'),
-						'text' => array('name' => 'text'),
-						'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
-						'float' => array('name' => 'float', 'formatter' => 'floatval'),
-						'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
-						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-						'binary' => array('name' => 'blob'),
-						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
+	var $columns = array(
+		'primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+		'string' => array('name' => 'varchar', 'limit' => '255'),
+		'text' => array('name' => 'text'),
+		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'blob'),
+		'boolean' => array('name' => 'tinyint', 'limit' => '1')
+	);
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -104,6 +106,11 @@ class DboMysql extends DboSource {
 		if (mysql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
 		}
+
+		if (isset($config['encoding']) && !empty($config['encoding'])) {
+			$this->setEncoding($config['encoding']);
+		}
+
 		return $this->connected;
 	}
 /**
@@ -434,10 +441,27 @@ class DboMysql extends DboSource {
 		}
 	}
 /**
+ * Sets the database encoding
+ *
+ * @param string $enc Database encoding
+ * @return void
+ */
+	function setEncoding($enc) {
+		return $this->_execute('SET NAMES ' . $enc) != false;
+	}
+/**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	function getEncoding() {
+		return mysql_client_encoding($this->connection);
+	}
+/**
  * Enter description here...
  *
  * @param unknown_type $schema
- *  @return unknown
+ * @return unknown
  */
 	function buildSchemaQuery($schema) {
 		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',

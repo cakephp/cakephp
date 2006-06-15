@@ -85,6 +85,11 @@ class DboPostgres extends DboSource{
 		} else {
 			$this->connected = false;
 		}
+
+		if (isset($config['encoding']) && !empty($config['encoding'])) {
+			$this->setEncoding($config['encoding']);
+		}
+
 		return $this->connected;
 	}
 
@@ -533,5 +538,22 @@ class DboPostgres extends DboSource{
 		}
 	}
 }
+/**
+ * Sets the database encoding
+ *
+ * @param mixed $enc Database encoding
+ * @return boolean True on success, false on failure
+ */
+	function setEncoding($enc) {
+		return pg_set_client_encoding($this->connection, $enc) == 0;
+	}
+/**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	function getEncoding() {
+		return pg_client_encoding($this->connection);
+	}
 
 ?>
