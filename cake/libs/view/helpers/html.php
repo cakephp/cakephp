@@ -375,6 +375,10 @@ class HtmlHelper extends Helper {
 		} else {
 			$url = $this->webroot . IMAGES_URL . $this->themeWeb . $path;
 		}
+		
+		if (!isset($htmlAttributes['alt'])) {
+			$htmlAttributes['alt'] = '';
+		}
 		return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
 	}
 /**
