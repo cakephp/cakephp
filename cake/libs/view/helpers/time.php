@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class TimeHelper extends Helper{
+class TimeHelper extends Helper {
 /**
  * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
  *
@@ -43,9 +43,9 @@ class TimeHelper extends Helper{
  * @param string $ending Ending to be appended after trimmed string
  * @return string Trimmed string
  */
-	 function trim($string, $length, $ending = '..') {
-		  return substr($string, 0, $length) . (strlen($string) > $length ? $ending : null);
-	 }
+	function trim($string, $length, $ending = '..') {
+		return substr($string, 0, $length) . (strlen($string) > $length ? $ending : null);
+	}
 
 /**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
@@ -53,13 +53,13 @@ class TimeHelper extends Helper{
  * @param string $date_string Datetime string
  * @return string Formatted date string
  */
-	 function fromString($date_string) {
-		  if (is_integer($date_string)) {
-				return $date_string;
-		  } else {
-				return strtotime($date_string);
-		  }
-	 }
+	function fromString($date_string) {
+		if (is_integer($date_string)) {
+			return $date_string;
+		} else {
+			return strtotime($date_string);
+		}
+	}
 
 /**
  * Returns a nicely formatted date string for given Datetime string.
@@ -68,16 +68,16 @@ class TimeHelper extends Helper{
  * @param  boolean $return	Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Formatted date string
  */
-	 function nice($date_string = null, $return = false) {
-		  if ($date_string != null) {
-				$date = $this->fromString($date_string);
-		  } else {
-				$date = time();
-		  }
+	function nice($date_string = null, $return = false) {
+		if ($date_string != null) {
+			$date = $this->fromString($date_string);
+		} else {
+			$date = time();
+		}
 
-		  $ret=date("D, M jS Y, H:i", $date);
-		  return $this->output($ret, $return);
-	 }
+		$ret = date("D, M jS Y, H:i", $date);
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns a formatted descriptive date string for given datetime string.
@@ -91,21 +91,21 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Described, relative date string
  */
-	 function niceShort($date_string = null, $return = false) {
-		  $date=$date_string ? $this->fromString($date_string) : time();
+	function niceShort($date_string = null, $return = false) {
+		$date = $date_string ? $this->fromString($date_string) : time();
 
-		  $y=$this->isThisYear($date) ? '' : ' Y';
+		$y = $this->isThisYear($date) ? '' : ' Y';
 
-		  if ($this->isToday($date)) {
-				$ret = "Today, " . date("H:i", $date);
-		  } elseif($this->wasYesterday($date)) {
-				$ret = "Yesterday, " . date("H:i", $date);
-		  } else {
-				$ret = date("M jS{$y}, H:i", $date);
-		  }
+		if ($this->isToday($date)) {
+			$ret = "Today, " . date("H:i", $date);
+		} elseif($this->wasYesterday($date)) {
+			$ret = "Yesterday, " . date("H:i", $date);
+		} else {
+			$ret = date("M jS{$y}, H:i", $date);
+		}
 
-		  return $this->output($ret, $return);
-	 }
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns true if given datetime string is today.
@@ -114,12 +114,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string is today
  */
-	 function isToday($date_string, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =date('Y-m-d', $date) == date('Y-m-d', time());
-
-		  return $this->output($ret, $return);
-	 }
+	function isToday($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d', $date) == date('Y-m-d', time());
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns a partial SQL string to search for all records between two dates.
@@ -130,16 +129,15 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value  or output it. This overrides AUTO_OUTPUT.
  * @return string Partial SQL string.
  */
-	 function daysAsSql($begin, $end, $field_name, $return = false) {
-		  $begin=$this->fromString($begin);
-		  $end  =$this->fromString($end);
-		  $begin=date('Y-m-d', $begin) . ' 00:00:00';
-		  $end  =date('Y-m-d', $end) . ' 23:59:59';
+	function daysAsSql($begin, $end, $field_name, $return = false) {
+		$begin = $this->fromString($begin);
+		$end = $this->fromString($end);
+		$begin = date('Y-m-d', $begin) . ' 00:00:00';
+		$end = date('Y-m-d', $end) . ' 23:59:59';
 
-		  $ret  ="($field_name >= '$begin') AND ($field_name <= '$end')";
-
-		  return $this->output($ret, $return);
-	 }
+		$ret  ="($field_name >= '$begin') AND ($field_name <= '$end')";
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns a partial SQL string to search for all records between two times
@@ -150,12 +148,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Partial SQL string.
  */
-	 function dayAsSql($date_string, $field_name, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =$this->daysAsSql($date_string, $date_string, $field_name);
-
-		  return $this->output($ret, $return);
-	 }
+	function dayAsSql($date_string, $field_name, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = $this->daysAsSql($date_string, $date_string, $field_name);
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns true if given datetime string is within current year.
@@ -164,12 +161,12 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string is within current year
  */
-	 function isThisYear($date_string, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =date('Y', $date) == date('Y', time());
+	function isThisYear($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y', $date) == date('Y', time());
 
-		  return $this->output($ret, $return);
-	 }
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns true if given datetime string was yesterday.
@@ -178,12 +175,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string was yesterday
  */
-	 function wasYesterday($date_string, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-
-		  return $this->output($ret, $return);
-	 }
+	function wasYesterday($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
+		return $this->output($ret, $return);
+	}
 
 /**
  * Returns true if given datetime string is tomorrow.
@@ -192,13 +188,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return boolean True if datetime string was yesterday
  */
-	 function isTomorrow($date_string, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
-
-		  return $this->output($ret, $return);
-	 }
-
+	function isTomorrow($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
+		return $this->output($ret, $return);
+	}
 /**
  * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
  *
@@ -206,12 +200,10 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return int Unix timestamp
  */
-	 function toUnix($date_string, $return = false) {
-		  $ret=strtotime($date_string);
-
-		  return $this->output($ret, $return);
-	 }
-
+	function toUnix($date_string, $return = false) {
+		$ret = strtotime($date_string);
+		return $this->output($ret, $return);
+	}
 /**
  * Returns a date formatted for Atom RSS feeds.
  *
@@ -219,13 +211,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Formatted date string
  */
-	 function toAtom($date_string, $return = false) {
-		  $date=$this->fromString($date_string);
-		  $ret =date('Y-m-d\TH:i:s\Z', $date);
-
-		  return $this->output($ret, $return);
-	 }
-
+	function toAtom($date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$ret = date('Y-m-d\TH:i:s\Z', $date);
+		return $this->output($ret, $return);
+	}
 /**
  * Formats date for RSS feeds
  *
@@ -233,13 +223,11 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Formatted date string
  */
-	 function toRSS($date_string, $return = false) {
-		  $date=TimeHelper::fromString($date_string);
-		  $ret =date("r", $date);
-
-		  return $this->output($ret, $return);
-	 }
-
+	function toRSS($date_string, $return = false) {
+		$date = TimeHelper::fromString($date_string);
+		$ret = date("r", $date);
+		return $this->output($ret, $return);
+	}
 /**
  * Returns either a relative date or a formatted date depending
  * on the difference between the current time and given datetime.
@@ -260,73 +248,65 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Relative time string.
  */
-	 function timeAgoInWords($datetime_string, $format = 'j/n/y', $backwards = false, $return = false) {
-		  $datetime  =$this->fromString($datetime_string);
+	function timeAgoInWords($datetime_string, $format = 'j/n/y', $backwards = false, $return = false) {
+		$datetime  =$this->fromString($datetime_string);
 
-		  $in_seconds=$datetime;
+		$in_seconds=$datetime;
 
-		  if ($backwards) {
-				$diff = $in_seconds - time();
-		  } else {
-				$diff = time() - $in_seconds;
-		  }
+		if ($backwards) {
+			$diff = $in_seconds - time();
+		} else {
+			$diff = time() - $in_seconds;
+		}
 
-		  $months=floor($diff / 2419200);
-		  $diff -= $months * 2419200;
-		  $weeks=floor($diff / 604800);
-		  $diff -= $weeks * 604800;
-		  $days=floor($diff / 86400);
-		  $diff -= $days * 86400;
-		  $hours=floor($diff / 3600);
-		  $diff -= $hours * 3600;
-		  $minutes=floor($diff / 60);
-		  $diff -= $minutes * 60;
-		  $seconds=$diff;
+		$months = floor($diff / 2419200);
+		$diff -= $months * 2419200;
+		$weeks = floor($diff / 604800);
+		$diff -= $weeks * 604800;
+		$days = floor($diff / 86400);
+		$diff -= $days * 86400;
+		$hours = floor($diff / 3600);
+		$diff -= $hours * 3600;
+		$minutes = floor($diff / 60);
+		$diff -= $minutes * 60;
+		$seconds = $diff;
 
-		  if ($months > 0) {
-				// over a month old, just show date (mm/dd/yyyy format)
-				$relative_date='on ' . date($format, $in_seconds);
-				$old=true;
-		  } else {
-				$relative_date='';
-				$old          =false;
+		if ($months > 0) {
+			// over a month old, just show date (mm/dd/yyyy format)
+			$relative_date = 'on ' . date($format, $in_seconds);
+			$old = true;
+		} else {
+			$relative_date = '';
+			$old = false;
 
-				if ($weeks > 0) {
-					 // weeks and days
-					 $relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
-					 $relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '')
-						 : '';
-				} elseif($days > 0) {
-					 // days and hours
-					 $relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
-					 $relative_date .= $hours > 0
-						 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-				} elseif($hours > 0) {
-					 // hours and minutes
-					 $relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
-					 $relative_date .= $minutes > 0
-						 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-				} elseif($minutes > 0) {
-					 // minutes only
-					 $relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute'
-						 . ($minutes > 1 ? 's' : '');
-				} else {
-					 // seconds only
-					 $relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second'
-						 . ($seconds != 1 ? 's' : '');
-				}
-		  }
+			if ($weeks > 0) {
+				// weeks and days
+				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
+				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
+			} elseif($days > 0) {
+				// days and hours
+				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
+				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
+			} elseif($hours > 0) {
+				// hours and minutes
+				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
+				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
+			} elseif($minutes > 0) {
+				// minutes only
+				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+			} else {
+				// seconds only
+				$relative_date .= ($relative_date ? ', ' : '') . $seconds . ' second' . ($seconds != 1 ? 's' : '');
+			}
+		}
 
-		  $ret=$relative_date;
-
-		  // show relative date and add proper verbiage
-		  if (!$backwards && !$old) {
-				$ret .= ' ago';
-		  }
-
-		  return $this->output($ret, $return);
-	 }
-
+		$ret = $relative_date;
+		// show relative date and add proper verbiage
+		if (!$backwards && !$old) {
+			$ret .= ' ago';
+		}
+		return $this->output($ret, $return);
+	}
 /**
  * Alias for timeAgoInWords
  * @param string $date_string Datetime string or Unix timestamp
@@ -335,18 +315,17 @@ class TimeHelper extends Helper{
  * @return string Relative time string.
  * @see		timeAgoInWords
  */
-	 function relativeTime($datetime_string, $format = 'j/n/y', $return = false) {
-		  $date=strtotime($datetime_string);
+	function relativeTime($datetime_string, $format = 'j/n/y', $return = false) {
+		$date = strtotime($datetime_string);
 
-		  if (strtotime("now") > $date) {
-				$ret = $this->timeAgoInWords($datetime_string, $format, false);
-		  } else {
-				$ret = $this->timeAgoInWords($datetime_string, $format, true);
-		  }
+		if (strtotime("now") > $date) {
+			$ret = $this->timeAgoInWords($datetime_string, $format, false);
+		} else {
+			$ret = $this->timeAgoInWords($datetime_string, $format, true);
+		}
 
-		  return $this->output($ret, $return);
-	 }
-
+		return $this->output($ret, $return);
+	}
 /**
  * Returns true if specified datetime was within the interval specified, else false.
  *
@@ -355,79 +334,72 @@ class TimeHelper extends Helper{
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return boolean
  */
-	 function wasWithinLast($timeInterval, $date_string, $return = false) {
-		  $date        =$this->fromString($date_string);
-		  $result      =preg_split('/\\s/', $timeInterval);
-		  $numInterval =$result[0];
-		  $textInterval=$result[1];
-		  $currentTime =floor(time());
-		  $seconds     =($currentTime - floor($date));
+	function wasWithinLast($timeInterval, $date_string, $return = false) {
+		$date = $this->fromString($date_string);
+		$result = preg_split('/\\s/', $timeInterval);
+		$numInterval = $result[0];
+		$textInterval = $result[1];
+		$currentTime = floor(time());
+		$seconds = ($currentTime - floor($date));
 
-		  switch($textInterval)
-				{
-				case "seconds":
-				case "second":
-					 $timePeriod=$seconds;
+		switch($textInterval) {
+			case "seconds":
+			case "second":
+				$timePeriod = $seconds;
+				$ret = $return;
+			break;
 
-					 $ret       =$return;
-					 break;
+			case "minutes":
+			case "minute":
+				$minutes = floor($seconds / 60);
+				$timePeriod = $minutes;
+			break;
 
-				case "minutes":
-				case "minute":
-					 $minutes=floor($seconds / 60);
+			case "hours":
+			case "hour":
+				$hours = floor($seconds / 3600);
+				$timePeriod = $hours;
+			break;
 
-					 $timePeriod=$minutes;
-					 break;
+			case "days":
+			case "day":
+				$days = floor($seconds / 86400);
+				$timePeriod = $days;
+			break;
 
-				case "hours":
-				case "hour":
-					 $hours=floor($seconds / 3600);
+			case "weeks":
+			case "week":
+				$weeks = floor($seconds / 604800);
 
-					 $timePeriod=$hours;
-					 break;
+				$timePeriod = $weeks;
+			break;
 
-				case "days":
-				case "day":
-					 $days=floor($seconds / 86400);
+			case "months":
+			case "month":
+				$months = floor($seconds / 2629743.83);
+				$timePeriod = $months;
+			break;
 
-					 $timePeriod=$days;
-					 break;
+			case "years":
+			case "year":
+				$years = floor($seconds / 31556926);
+				$timePeriod = $years;
+			break;
 
-				case "weeks":
-				case "week":
-					 $weeks=floor($seconds / 604800);
+			default:
+				$days = floor($seconds / 86400);
+				$timePeriod = $days;
+			break;
+		}
 
-					 $timePeriod=$weeks;
-					 break;
+		if ($timePeriod <= $numInterval) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
 
-				case "months":
-				case "month":
-					 $months=floor($seconds / 2629743.83);
-
-					 $timePeriod=$months;
-					 break;
-
-				case "years":
-				case "year":
-					 $years=floor($seconds / 31556926);
-
-					 $timePeriod=$years;
-					 break;
-
-				default:
-					 $days=floor($seconds / 86400);
-
-					 $timePeriod=$days;
-					 break;
-				}
-
-		  if ($timePeriod <= $numInterval) {
-				$ret = true;
-		  } else {
-				$ret = false;
-		  }
-
-		  return $this->output($ret, $return);
-	 }
+		return $this->output($ret, $return);
+	}
 }
+
 ?>
