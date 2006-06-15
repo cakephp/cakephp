@@ -50,7 +50,6 @@ class Component extends Object {
  * @return Component
  */
 	function __construct() {
-		//parent::__construct();
 	}
 /**
  * Used to initialize the components for current controller
