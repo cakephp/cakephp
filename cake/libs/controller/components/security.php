@@ -135,7 +135,7 @@ class SecurityComponent extends Object {
 						if (low($this->loginOptions['type']) == 'digest') {
 							// Do digest authentication
 						} else {
-							if (!(in_array($login[0], array_keys($this->loginUsers)) && $this->loginUsers[$login[0]] == $login[1])) {
+							if (!(in_array($login['username'], array_keys($this->loginUsers)) && $this->loginUsers[$login['username']] == $login['password'])) {
 								$this->blackHole($controller, 'login');
 							}
 						}
@@ -172,8 +172,8 @@ class SecurityComponent extends Object {
 				header('HTTP/1.0 404 Not Found');
 			}
 			exit();
-		} elseif (method_exists($controller, $this->blackHoleCallback)) {
-			return $controller->{$this->blackHoleCallback}($error);
+		} else {
+			return $this->__callback($controller, $this->blackHoleCallback, array($error));
 		}
 	}
 /**
@@ -225,8 +225,8 @@ class SecurityComponent extends Object {
 	function loginCredentials($type = '') {
 
 		if ($type == '' || low($type) == 'basic') {
-			$login = array(env('PHP_AUTH_USER'), env('PHP_AUTH_PW'));
-			if ($login[0] != null) {
+			$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
+			if ($login['username'] != null) {
 				return $login;
 			}
 		}
@@ -314,6 +314,18 @@ class SecurityComponent extends Object {
 		if (empty($req)) {
 			return $keys;
 		} else {
+			return null;
+		}
+	}
+/**
+ * Private method
+ *
+ */
+	function __callback(&$controller, $method, $params = array()) {
+		if (is_callable(array($controller, $method))) {
+			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
+		} else {
+			// Debug::warning('Callback method ' . $method . ' in controller ' . get_class($controller)
 			return null;
 		}
 	}
