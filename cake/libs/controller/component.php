@@ -62,18 +62,19 @@ class Component extends Object {
 			$loaded = array();
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
-			foreach(array_keys($loaded)as $component) {
+			foreach(array_keys($loaded) as $component) {
 				$tempComponent =& $loaded[$component];
 				if (isset($tempComponent->components) && is_array($tempComponent->components)) {
 					foreach($tempComponent->components as $subComponent) {
 						$this->controller->{$component}->{$subComponent} =& $loaded[$subComponent];
 					}
 				}
+				if (is_callable(array($tempComponent, 'initialize'))) {
+					$tempComponent->initialize($controller);
+				}
 			}
 		}
-
 	}
-
 /**
  * Enter description here...
  *
