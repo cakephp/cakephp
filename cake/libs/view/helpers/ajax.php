@@ -493,6 +493,14 @@ class AjaxHelper extends Helper {
 		return $this->output($this->tags['blockend']);
 	}
 /**
+ * Detects Ajax requests
+ *
+ * @return boolean True if the current request is a Prototype Ajax update call
+ */
+	function isAjax() {
+		return (isset($this->params['isAjax']) && $this->params['isAjax'] === true);
+	}
+/**
  * Private helper method to return an array of options for draggable.
  *
  * @param array $options

@@ -89,6 +89,9 @@ class RequestHandlerComponent extends Object{
 			return;
 		}
 		$this->setView($controller);
+		if (in_array('Ajax', $controller->helpers)) {
+			$controller->params['isAjax'] = $this->isAjax();
+		}
 	}
 /**
  * Sets a controller's layout/View class based on request headers
