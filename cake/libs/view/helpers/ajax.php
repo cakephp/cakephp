@@ -61,7 +61,7 @@ class AjaxHelper extends Helper {
  *
  * @var array
  */
-	var $dragOptions = array('handle', 'revert', 'constraint', 'change', 'ghosting');
+	var $dragOptions = array('handle', 'revert', 'snap', 'zindex', 'constraint', 'change', 'ghosting', 'starteffect', 'reverteffect', 'endeffect');
 /**
  * Options for droppable.
  *
@@ -73,19 +73,19 @@ class AjaxHelper extends Helper {
  *
  * @var array
  */
-	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'onUpdate', 'onChange');
+	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tree', 'treeTag', 'onUpdate', 'onChange');
 /**
  * Options for slider.
  *
  * @var array
  */
-	var $sliderOptions = array('axis', 'increment', 'maximum', 'minimum', 'alignX', 'alignY', 'sliderValue', 'disabled', 'handleImage', 'handleDisabled', 'values', 'onSlide', 'onChange');
+	var $sliderOptions = array('axis', 'increment', 'maximum', 'minimum', 'range', 'alignX', 'alignY', 'sliderValue', 'disabled', 'handleImage', 'handleDisabled', 'values', 'onSlide', 'onChange');
 /**
  * Options for in-place editor.
  *
  * @var array
  */
-	var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions', 'clickToEditText');
+	var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions', 'clickToEditText', 'collection');
 /**
  * Output buffer for Ajax update content
  *
@@ -320,10 +320,10 @@ class AjaxHelper extends Helper {
 			$htmlOptions['id'] = 'form' . intval(rand());
 		}
 
-		$htmlOptions['onsubmit']="return false;";
+		$htmlOptions['onsubmit'] = "return false;";
 
 		if (!isset($options['with'])) {
-				$options['with'] = "Form.serialize('{$htmlOptions['id']}')";
+			$options['with'] = "Form.serialize('{$htmlOptions['id']}')";
 		}
 
 		$options['url'] = $action;
@@ -354,7 +354,7 @@ class AjaxHelper extends Helper {
 				$htmlOptions['id'] = 'submit' . intval(rand());
 		}
 
-		$htmlOptions['onclick']="return false;";
+		$htmlOptions['onclick'] = "return false;";
 		return $this->Html->submit($title, $htmlOptions)
 			. $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $this->remoteFunction(
 																											$options));
@@ -409,7 +409,7 @@ class AjaxHelper extends Helper {
  */
 	function observeForm($field_id, $options = array()) {
 		if (!isset($options['with'])) {
-				$options['with'] = 'Form.serialize("' . $field_id . '")';
+			$options['with'] = 'Form.serialize("' . $field_id . '")';
 		}
 		return $this->Javascript->codeBlock($this->_buildObserver('Form.Observer', $field_id, $options));
 	}
@@ -446,16 +446,6 @@ class AjaxHelper extends Helper {
 				$this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] .
 						"', '" . $divOptions['id'] . "', '" . $this->Html->url($url) . "', " .
 						$this->__optionsForAjax($options) . ");");
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $id
- * @param array $options
- * @return unknown
- */
-	function drag($id, $options = array()) {
-		return $this->Javascript->codeBlock("new Draggable('$id', " . $this->_optionsForDraggable($options) . ");");
 	}
 /**
  * Creates an Ajax-updateable DIV element
@@ -501,14 +491,22 @@ class AjaxHelper extends Helper {
 		return (isset($this->params['isAjax']) && $this->params['isAjax'] === true);
 	}
 /**
- * Private helper method to return an array of options for draggable.
+ * Creates a draggable element.  For a reference on the options for this function,
+ * check out http://wiki.script.aculo.us/scriptaculous/show/Draggable
  *
+ * @param unknown_type $id
  * @param array $options
- * @return array
+ * @return unknown
  */
-	function _optionsForDraggable($options) {
+	function drag($id, $options = array()) {
+		$var = '';
+		if (isset($options['var'])) {
+			$var = 'var ' . $options['var'] . ' = ';
+			unset($options['var']);
+		}
 		$options = $this->_optionsToString($options, array('handle', 'constraint'));
-		return $this->_buildOptions($options, $this->dragOptions);
+		$options = $this->_buildOptions($options, $this->dragOptions);
+		return $this->Javascript->codeBlock("{$var}new Draggable('$id', " . $this->_optionsForDraggable($options) . ");");
 	}
 /**
  * For a reference on the options for this function, check out
@@ -519,18 +517,9 @@ class AjaxHelper extends Helper {
  * @return array
  */
 	function drop($id, $options = array()) {
-		$options = $this->_optionsForDroppable($options);
-		return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $options
- * @return unknown
- */
-	function _optionsForDroppable($options) {
 		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
 		return $this->_buildOptions($options, $this->dropOptions);
+		return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
 	}
 /**
  * Enter description here...
@@ -540,7 +529,7 @@ class AjaxHelper extends Helper {
  * @param unknown_type $ajaxOptions
  */
 	function dropRemote($id, $options = array(), $ajaxOptions = array()) {
-		$options['onDrop'] = "function(element){" . $this->remoteFunction($ajaxOptions) . "}";
+		$options['onDrop'] = "function(element, droppable){" . $this->remoteFunction($ajaxOptions) . "}";
 		$options = $this->_optionsForDroppable($options);
 		return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
 	}
@@ -554,6 +543,13 @@ class AjaxHelper extends Helper {
  * @link http://wiki.script.aculo.us/scriptaculous/show/Slider
  */
 	function slider($id, $track_id, $options = array()) {
+		if (isset($options['var'])) {
+			$var = 'var ' . $options['var'] . ' = ';
+			unset($options['var']);
+		} else {
+			$var = 'var ' . $id . ' = ';
+		}
+
 		$options = $this->_optionsToString($options, array('axis', 'handleImage', 'handleDisabled'));
 
 		if (isset($options['change'])) {
@@ -566,8 +562,12 @@ class AjaxHelper extends Helper {
 			unset($options['slide']);
 		}
 
+		if (isset($options['values']) && is_array($options['values'])) {
+			$options['values'] = $this->Javascript->object($options['values']);
+		}
+
 		$options = $this->_buildOptions($options, $this->sliderOptions);
-		return $this->Javascript->codeBlock("var $id = new Control.Slider('$id', '$track_id', $options);");
+		return $this->Javascript->codeBlock("{$var}new Control.Slider('$id', '$track_id', $options);");
 	}
 /**
  * Makes an Ajax In Place editor control.
@@ -591,11 +591,22 @@ class AjaxHelper extends Helper {
 			$options['callback'] = 'function(form, value) {' . $options['callback'] . '}';
 		}
 
+		$type = 'InPlaceEditor';
+		if (isset($options['collection']) && is_array($options['collection'])) {
+			$options['collection'] = $this->Javascript->object($options['collection']);
+			$type = 'InPlaceCollectionEditor';
+		}
+
+		$var = '';
+		if (isset($options['var'])) {
+			$var = 'var ' . $options['var'] . ' = ';
+			unset($options['var']);
+		}
+
 		$options = $this->_optionsToString($options, array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'clickToEditText'));
 		$options = $this->_buildOptions($options, $this->editorOptions);
-		return $this->Javascript->codeBlock("new Ajax.InPlaceEditor('{$id}', '{$url}', {$options});");
+		return $this->Javascript->codeBlock("{$var}new Ajax.{$type}('{$id}', '{$url}', {$options});");
 	}
-
 /**
  * Makes a list or group of floated objects sortable.
  *
@@ -605,23 +616,13 @@ class AjaxHelper extends Helper {
  */
 	function sortable($id, $options = array()) {
 		if (!empty($options['url'])) {
-			$options['with']    ="Sortable.serialize('$id')";
-			$options['onUpdate']='function(sortable){' . $this->remoteFunction($options) . '}';
+			$options['with'] = "Sortable.serialize('$id')";
+			$options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options) . '}';
 		}
 
-		$options=$this->__optionsForSortable($options);
+		$options = $this->_optionsToString($options, array('handle', 'tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag'));
+		$options = $this->_buildOptions($options, $this->sortOptions);
 		return $this->Javascript->codeBlock("Sortable.create('$id', $options);");
-	}
-
-/**
- * Private method; generates sortables code from array options
- *
- * @param array $options
- * @return unknown
- */
-	function __optionsForSortable($options) {
-		$options = $this->_optionsToString($options, array('handle', 'tag', 'constraint', 'ghosting', 'only'));
-		return $this->_buildOptions($options, $this->sortOptions);
 	}
 /**
  * Private helper function for Javascript.
