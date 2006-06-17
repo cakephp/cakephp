@@ -96,7 +96,7 @@ class AjaxHelper extends Helper {
  * Returns link to remote action
  *
  * Returns a link to a remote action defined by <i>options[url]</i>
- * (using the urlFor format) that's called in the background using
+ * (using the url() format) that's called in the background using
  * XMLHttpRequest. The result of that request can then be inserted into a
  * DOM object whose id can be specified with <i>options[update]</i>.
  * Usually, the result would be a partial prepared by the controller with
@@ -369,7 +369,7 @@ class AjaxHelper extends Helper {
  * Required +options+ are:
  * - <i>frequency</i>:: The frequency (in seconds) at which changes to
  *						this field will be detected.
- * - <i>url</i>::		@see urlFor() -style options for the action to call
+ * - <i>url</i>::		@see url() -style options for the action to call
  *						when the field has changed.
  *
  * Additional options are:

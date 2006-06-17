@@ -749,13 +749,6 @@ class HtmlHelper extends Helper {
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select), $return);
 	}
-/**
- * @deprecated Name changed to 'url'. Version 0.9.2.
- * @see HtmlHelper::url()
- */
-	function urlFor($url) {
-		return $this->url($url);
-	}
 /*************************************************************************
  * Deprecated methods
  *************************************************************************/
@@ -769,13 +762,13 @@ class HtmlHelper extends Helper {
  * @deprecated This is very WYSIWYG unfriendly, use HtmlHelper::url() to get contents of "action" attribute. Version 0.9.2.
  */
 	function formTag($target = null, $type = 'post', $htmlAttributes = null) {
-		$htmlAttributes['action']=$this->UrlFor($target);
-		$htmlAttributes['method']=$type == 'get' ? 'get' : 'post';
+		$htmlAttributes['action'] = $this->url($target);
+		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
-		$token='';
+		$token = '';
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-				$token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+			$token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
 		}
 
 		return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $token;
@@ -795,16 +788,15 @@ class HtmlHelper extends Helper {
 	function guiListTree($data, $htmlAttributes = null, $bodyKey = 'body', $childrenKey = 'children', $return = false) {
 		$out="<ul" . $this->_parseAttributes($htmlAttributes) . ">\n";
 		foreach($data as $item) {
-				$out .= "<li>{$item[$bodyKey]}\n";
-				if (isset($item[$childrenKey]) && is_array($item[$childrenKey]) && count($item[$childrenKey])) {
-					$out .= $this->guiListTree($item[$childrenKey], $htmlAttributes, $bodyKey, $childrenKey);
-				}
-				$out .= "</li>\n";
+			$out .= "<li>{$item[$bodyKey]}\n";
+			if (isset($item[$childrenKey]) && is_array($item[$childrenKey]) && count($item[$childrenKey])) {
+				$out .= $this->guiListTree($item[$childrenKey], $htmlAttributes, $bodyKey, $childrenKey);
+			}
+			$out .= "</li>\n";
 		}
 		$out .= "</ul>\n";
 		return $this->output($out, $return);
 	}
-
 /**
  * Returns a mailto: link.
  *
