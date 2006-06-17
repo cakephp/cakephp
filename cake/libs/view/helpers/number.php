@@ -36,7 +36,7 @@
  * @package 	cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class NumberHelper extends Helper{
+class NumberHelper extends Helper {
 /**
  * Formats a number with a level of precision.
  *
@@ -45,9 +45,9 @@ class NumberHelper extends Helper{
  * @return float Enter description here...
  * @static
  */
-	 function precision($number, $precision = 3) {
-		  return sprintf("%01.{$precision}f", $number);
-	 }
+	function precision($number, $precision = 3) {
+		return sprintf("%01.{$precision}f", $number);
+	}
 
 /**
  * Returns a formatted-for-humans file size.
@@ -56,25 +56,22 @@ class NumberHelper extends Helper{
  * @return string Human readable size
  * @static
  */
-	 function toReadableSize($size) {
-		  switch($size)
-				{
-				case 1: return '1 Byte';
-
-				case $size < 1024: return $size . ' Bytes';
-
-				case $size < 1024 * 1024: return NumberHelper::precision($size / 1024, 0) . ' KB';
-
-				case $size < 1024 * 1024 * 1024: return NumberHelper::precision($size / 1024 / 1024, 2) . ' MB';
-
-				case $size < 1024 * 1024 * 1024 * 1024:
-					return NumberHelper::precision($size / 1024 / 1024 / 1024, 2) . ' GB';
-
-				case $size < 1024 * 1024 * 1024 * 1024 * 1024:
-					return NumberHelper::precision($size / 1024 / 1024 / 1024 / 1024, 2) . ' TB';
-				}
-	 }
-
+	function toReadableSize($size) {
+		switch($size) {
+			case 1:
+				return '1 Byte';
+			case $size < 1024:
+				return $size . ' Bytes';
+			case $size < 1024 * 1024:
+				return NumberHelper::precision($size / 1024, 0) . ' KB';
+			case $size < 1024 * 1024 * 1024:
+				return NumberHelper::precision($size / 1024 / 1024, 2) . ' MB';
+			case $size < 1024 * 1024 * 1024 * 1024:
+				return NumberHelper::precision($size / 1024 / 1024 / 1024, 2) . ' GB';
+			case $size < 1024 * 1024 * 1024 * 1024 * 1024:
+				return NumberHelper::precision($size / 1024 / 1024 / 1024 / 1024, 2) . ' TB';
+		}
+	}
 /**
  * Formats a number into a percentage string.
  *
@@ -83,8 +80,32 @@ class NumberHelper extends Helper{
  * @return string Percentage string
  * @static
  */
-	 function toPercentage($number, $precision = 2) {
-		  return NumberHelper::precision($number, $precision) . '%';
-	 }
+	function toPercentage($number, $precision = 2) {
+		return NumberHelper::precision($number, $precision) . '%';
+	}
+/**
+ * Formats a number into a percentage string.
+ *
+ * @param float $number A floating point number
+ * @param integer $precision The precision of the returned number
+ * @return string Percentage string
+ * @static
+ */
+	function currency ($number, $currency = 'USD') {
+		switch ($currency) {
+			case "EUR":
+				$return = "&#128; " . number_format ($number, 2, ",", ".");
+			break;
+			case "GBP":
+				$return = "&#163;" . number_format ($number, 2, ".", ",");
+			break;
+			case 'USD':
+			default:
+				$return = "$" . number_format ($number, 2, ".", ",");
+			break;
+		}
+		return $return;
+	}
 }
+
 ?>
