@@ -97,6 +97,21 @@ class HtmlHelper extends Helper {
  */
 	var $_crumbs = array();
 /**
+ * Document type definitions
+ *
+ * @var	array
+ * @access private
+ */
+	var $__docTypes = array(
+		'html4-strict'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
+		'html4-trans'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
+		'html4-frame'  => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
+		'xhtml-strict' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+		'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+		'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
+		'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">'
+	);
+/**
  * Adds a link to the breadcrumbs array.
  *
  * @param string $name Text for link
@@ -104,6 +119,27 @@ class HtmlHelper extends Helper {
  */
 	function addCrumb($name, $link) {
 		$this->_crumbs[] = array($name, $link);
+	}
+/**
+ * Returns a doctype string.
+ *
+ * Possible doctypes:
+ *   + html4-strict:  HTML4 Strict.
+ *   + html4-trans:  HTML4 Transitional.
+ *   + html4-frame:  HTML4 Frameset.
+ *   + xhtml-strict: XHTML1 Strict.
+ *   + xhtml-trans: XHTML1 Transitional.
+ *   + xhtml-frame: XHTML1 Frameset.
+ *   + xhtml11: XHTML1.1.
+ *
+ * @param  string $type Doctype to use.
+ * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
+ * @return string Doctype.
+ */
+	function docType($type = 'xhtml-strict', $return = false) {
+		if (isset($this->__docTypes[$type])) {
+			return $this->output($this->__docTypes[$type], $return);
+		}
 	}
 /**
  * Returns a charset META-tag.
@@ -628,135 +664,6 @@ class HtmlHelper extends Helper {
  * Renamed methods
  *************************************************************************/
 /**
- * @deprecated Name changed to 'textarea'. Version 0.9.2.
- * @see		HtmlHelper::textarea()
- * @param string  $tagName
- * @param integer $cols
- * @param integer $rows
- * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function areaTag($tagName, $cols = 60, $rows = 10, $htmlAttributes = null, $return = false) {
-		$htmlAttributes['cols']=$cols;
-		$htmlAttributes['rows']=$rows;
-		return $this->textarea($tagName, $htmlAttributes, $return);
-	}
-/**
- * @deprecated Name changed to 'charset'. Version 0.9.2.
- * @see		HtmlHelper::charset()
- * @param string  $charset
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function charsetTag($charset, $return = false) {
-		return $this->charset($charset, $return);
-	}
-/**
- * @deprecated Name changed to 'checkbox'. Version 0.9.2.
- * @see		HtmlHelper::checkbox()
- * @param string  $fieldName If field is to be used for CRUD, this should be modelName/fieldName.
- * @param string  $title
- * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function checkboxTag($fieldName, $title = null, $htmlAttributes = null, $return = false) {
-		return $this->checkbox($fieldName, $title, $htmlAttributes, $return);
-	}
-/**
- * @deprecated Name changed to 'css'. Version 0.9.2.
- * @see HtmlHelper::css()
- * @param string $path			Path to CSS file
- * @param string $rel			Rel attribute. Defaults to "stylesheet".
- * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function cssTag($path, $rel = 'stylesheet', $htmlAttributes = null, $return = false) {
-		return $this->css($path, $rel, $htmlAttributes, $return);
-	}
-/**
- * @deprecated Name changed to 'file'. Version 0.9.2.
- * @see HtmlHelper::file()
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function fileTag($fieldName, $htmlAttributes = null, $return = false) {
-		return $this->file($fieldName, $htmlAttributes, $return);
-	}
-/**
- * @deprecated Name changed to 'hidden'. Version 0.9.2.
- * @see		HtmlHelper::hidden()
- * @param string  $fieldName If field is to be used for CRUD, this should be modelName/fieldName.
- * @param string  $value
- * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function hiddenTag($tagName, $value = null, $htmlOptions = null) {
-		$this->setFormTag($tagName);
-		$htmlOptions['value'] = $value ? $value : $this->tagValue($tagName);
-		return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->parseHtmlOptions($htmlOptions, null, '', ' ')));
-	}
-/**
- * @deprecated Name changed to 'image'. Version 0.9.2.
- * @see		HtmlHelper::image()
- * @param string  $path			Path to the image file.
- * @param string  $alt
- * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT  and $return.
- */
-	function imageTag($path, $alt = null, $htmlAttributes = null, $return = false) {
-		$htmlAttributes['alt'] = $alt;
-		return $this->image($path, $htmlAttributes, $return);
-	}
-/**
- * @deprecated Name changed to 'input'. Version 0.9.2.
- * @see HtmlHelper::input()
- * @param string $fieldName If field is to be used for CRUD, this  should be modelName/fieldName.
- * @param string $value
- * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT  and $return.
- */
-	function inputTag($tagName, $size = 20, $htmlOptions = null) {
-		$this->setFormTag($tagName);
-		$htmlOptions['value'] = isset($htmlOptions['value']) ? $htmlOptions['value'] : $this->tagValue($tagName);
-		$this->tagIsInvalid($this->model, $this->field) ? $htmlOptions['class'] = 'form_error' : null;
-		return $this->output(sprintf($this->tags['input'], $this->model, $this->field, $this->parseHtmlOptions($htmlOptions, null, '', ' ')));
-	}
-/**
- * @deprecated Unified with 'link'. Version 0.9.2.
- * @see HtmlHelper::link()
- * @param  string  $title The content of the "a" tag.
- * @param  string  $url
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function linkOut($title, $url = null, $htmlAttributes = null, $escapeTitle = true, $return = false) {
-		return $this->link($title, $url, $htmlAttributes, false, $escapeTitle, $return);
-	}
-/**
- * @deprecated Unified with 'link'. Version 0.9.2.
- * @see HtmlHelper::link()
- * @param  string  $title The content of the "a" tag.
- * @param  string  $url
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  string  $confirmMessage Confirmation message.
- * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function linkTo($title, $url, $htmlAttributes = null, $confirmMessage = false, $escapeTitle = true, $return = false) {
-		return $this->link($title, $url, $htmlAttributes, $confirmMessage, $escapeTitle, $return);
-	}
-/**
  * @deprecated Name changed to '_parseAttributes'. Version 0.9.2.
  * @see HtmlHelper::_parseAttributes()
  * @param  array  $options Array of options.
@@ -766,48 +673,23 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function parseHtmlOptions($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (!is_array($exclude))
-				$exclude=array();
+		if (!is_array($exclude)) {
+			$exclude = array();
+		}
 
 		if (is_array($options)) {
-				$out=array();
+			$out = array();
 
-				foreach($options as $k => $v) {
-					if (!in_array($k, $exclude)) {
-						$out[] = "{$k}=\"{$v}\"";
-					}
+			foreach($options as $k => $v) {
+				if (!in_array($k, $exclude)) {
+					$out[] = "{$k}=\"{$v}\"";
 				}
-				$out = join(' ', $out);
-				return $out ? $insertBefore . $out . $insertAfter : null;
+			}
+			$out = join(' ', $out);
+			return $out ? $insertBefore . $out . $insertAfter : null;
 		} else {
-				return $options ? $insertBefore . $options . $insertAfter : null;
+			return $options ? $insertBefore . $options . $insertAfter : null;
 		}
-	}
-/**
- * @deprecated Name changed to 'password'. Version 0.9.2.
- * @see HtmlHelper::password()
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function passwordTag($fieldName, $size = 20, $htmlAttributes = null, $return = false) {
-		$args = func_get_args();
-		return call_user_func_array(array(&$this,
-					"password"),       $args);
-	}
-/**
- * @deprecated Name changed to 'radio'. Version 0.9.2.
- * @see HtmlHelper::radio()
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$options
- * @param  array	$inbetween
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function radioTags($fieldName, $options, $inbetween = null, $htmlAttributes = null, $return = false) {
-		return $this->radio($fieldName, $options, $inbetween, $htmlAttributes, $return);
 	}
  /**
  * Returns a formatted SELECT element.
@@ -874,35 +756,6 @@ class HtmlHelper extends Helper {
 	function urlFor($url) {
 		return $this->url($url);
 	}
-/**
- * @deprecated Name changed to 'submit'. Version 0.9.2.
- * @see HtmlHelper::submit()
- */
-	function submitTag() {
-		$args = func_get_args();
-		return call_user_func_array(array(&$this, "submit"), $args);
-	}
-/*************************************************************************
- * Moved methods
- *************************************************************************/
-/**
- * @deprecated Moved to TextHelper. Version 0.9.2.
- */
-	function trim() {
-		die("Method HtmlHelper::trim() was moved to TextHelper::trim().");
-	}
-/**
- * @deprecated Moved to JavascriptHelper. Version 0.9.2.
- */
-	function javascriptIncludeTag($url) {
-		die("Method HtmlHelper::javascriptIncludeTag() was moved to JavascriptHelper::link().");
-	}
-/**
- * @deprecated Moved to JavascriptHelper. Version 0.9.2.
- */
-	function javascriptTag($script) {
-		die("Method HtmlHelper::javascriptTag() was moved to JavascriptHelper::codeBlock().");
-	}
 /*************************************************************************
  * Deprecated methods
  *************************************************************************/
@@ -963,42 +816,44 @@ class HtmlHelper extends Helper {
  */
 	function linkEmail($title, $email = null, $options = null) {
 		// if no $email, then title contains the email.
-		if (empty($email))
-				$email=$title;
-
-		$match=array();
+		if (empty($email)) {
+			$email = $title;
+		}
 
 		// does the address contain extra attributes?
+		$match = array();
 		preg_match('!^(.*)(\?.*)$!', $email, $match);
 
 		// plaintext
 		if (empty($options['encode']) || !empty($match[2])) {
-				return sprintf($this->tags['mailto'], $email, $this->parseHtmlOptions($options), $title);
-		}
-		// encoded to avoid spiders
-		else {
-				$email_encoded=null;
+			return sprintf($this->tags['mailto'], $email, $this->parseHtmlOptions($options), $title);
+		} else {
+			// encoded to avoid spiders
+			$email_encoded = null;
 
-				for($ii = 0; $ii < strlen($email); $ii++) {
-					if (preg_match('!\w!', $email[$ii])) {
-						$email_encoded .= '%' . bin2hex($email[$ii]);
-					} else {
-						$email_encoded .= $email[$ii];
-					}
+			for($ii = 0; $ii < strlen($email); $ii++) {
+				if (preg_match('!\w!', $email[$ii])) {
+					$email_encoded .= '%' . bin2hex($email[$ii]);
+				} else {
+					$email_encoded .= $email[$ii];
 				}
+			}
 
-				$title_encoded=null;
+			$title_encoded = null;
 
-				for($ii = 0; $ii < strlen($title); $ii++) {
-					$title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii])
-						? '&#x' . bin2hex($title[$ii]) . ';' : $title[$ii];
-				}
-
-				return sprintf($this->tags['mailto'],                              $email_encoded,
-									$this->parseHtmlOptions($options, array('encode')), $title_encoded);
+			for($ii = 0; $ii < strlen($title); $ii++) {
+				$title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii]) ? '&#x' . bin2hex($title[$ii]) . ';' : $title[$ii];
+			}
+			return sprintf($this->tags['mailto'], $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
 		}
 	}
-
+/**
+ * @deprecated
+ */
+	function charsetTag($charset, $return = false) {
+		trigger_error('HtmlHelper::charsetTag has been deprecated, use HtmlHelper::charset', E_USER_WARNING);
+		return $this->charset($charset, $return);
+	}
 /**
  * Returns a generic HTML tag (no content).
  *
@@ -1017,27 +872,6 @@ class HtmlHelper extends Helper {
 		$tag .= $open ? ">" : " />";
 		return $tag;
 	}
-
-/**
- * Returns a generic HTML tag with content.
- *
- * Examples:
- * <code>
- * content_tag("p", "Hello world!") => <p>Hello world!</p>
- * content_tag("div", content_tag("p", "Hello world!"),
- * array("class" => "strong")) => <div class="strong"><p>Hello world!</p></div>
- * </code>
- *
- * @param  string $name	Name of HTML element
- * @param  array  $options HTML options
- * @param  bool	$open	Is the tag open or closed? (defaults to closed "/>")
- * @return string The formatted HTML tag
- * @deprecated This seems useless. Version 0.9.2.
- */
-	function contentTag($name, $content, $options = null) {
-		return "<$name " . $this->parseHtmlOptions($options) . ">$content</$name>";
-	}
-
 /**
  * Returns a SELECT element for days.
  *
@@ -1054,7 +888,6 @@ class HtmlHelper extends Helper {
 		$option = $this->selectTag($tagName . "_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
 	}
-
 /**
  * Returns a SELECT element for years
  *
@@ -1064,7 +897,7 @@ class HtmlHelper extends Helper {
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $show_empty Show/hide the empty select option
+ * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
 	function yearOptionTag($tagName, $value = null, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
@@ -1090,7 +923,6 @@ class HtmlHelper extends Helper {
 		$option = $this->selectTag($tagName . "_year", $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
 	}
-
 /**
  * Returns a SELECT element for months.
  *
@@ -1098,7 +930,7 @@ class HtmlHelper extends Helper {
  * @deprecated  string $value
  * @param string $selected Option which is selected.
  * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $show_empty Show/hide the empty select option
+ * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
 	function monthOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
@@ -1108,7 +940,6 @@ class HtmlHelper extends Helper {
 		$option = $this->selectTag($tagName . "_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
 	}
-
 /**
  * Returns a SELECT element for hours.
  *
@@ -1138,7 +969,6 @@ class HtmlHelper extends Helper {
 		$option = $this->selectTag($tagName . "_hour", $hours, $hourValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
 	}
-
 /**
  * Returns a SELECT element for minutes.
  *
@@ -1174,7 +1004,6 @@ class HtmlHelper extends Helper {
 		$option = $this->selectTag($tagName . "_meridian", $meridians, $merValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
 	}
-
 /**
  * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
  *
