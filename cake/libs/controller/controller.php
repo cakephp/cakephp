@@ -772,20 +772,64 @@ class Controller extends Object{
  * or findAll Model query
  *
  * @param array $data POST'ed data organized by model and field
+ * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
+ * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
+ * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
  */
-	function postConditions($data) {
+	function postConditions($data, $op = '', $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
 			return null;
 		}
-		$conditions = array();
+		$cond = array();
 
 		foreach($data as $model => $fields) {
 			foreach($fields as $field => $value) {
-				$conditions[$model . '.' . $field] = $value;
+				$key = $model . '.' . $field;
+				if (is_string($op)) {
+					$cond[$key] = $this->__postConditionMatch($op, $value);
+				} elseif (is_array($op)) {
+					$opFields = array_keys($op);
+					if (in_array($key, $opFields) || in_array($field, $opFields)) {
+						if (in_array($key, $opFields)) {
+							$cond[$key] = $this->__postConditionMatch($op[$key], $value);
+						} else {
+							$cond[$key] = $this->__postConditionMatch($op[$field], $value);
+						}
+					} elseif (!$exclusive) {
+						$cond[$key] = $this->__postConditionMatch(null, $value);
+					}
+				}
 			}
 		}
-		return $conditions;
+		if ($bool != null && up($bool) != 'AND') {
+			$cond = array($bool => $cond);
+		}
+		return $cond;
+	}
+/**
+ * Private method used by postConditions
+ *
+ */
+	function __postConditionMatch($op, $value) {
+
+		if (is_string($op)) {
+			$op = up(trim($op));
+		}
+
+		switch($op) {
+			case '':
+			case '=':
+			case null:
+				return $value;
+			break;
+			case 'LIKE':
+				return 'LIKE %' . $value . '%';
+			break;
+			default:
+				return $op . ' ' . $value;
+			break;
+		}
 	}
 /**
  * Cleans up the date fields of current Model.
