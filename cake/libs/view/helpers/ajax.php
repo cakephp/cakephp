@@ -87,6 +87,12 @@ class AjaxHelper extends Helper {
  */
 	var $editorOptions = array('okText', 'cancelText', 'savingText', 'formId', 'externalControl', 'rows', 'cols', 'size', 'highlightcolor', 'highlightendcolor', 'savingClassName', 'formClassName', 'loadTextURL', 'loadingText', 'callback', 'ajaxOptions', 'clickToEditText', 'collection');
 /**
+ * Options for auto-complete editor.
+ *
+ * @var array
+ */
+	var $autoCompleteOptions = array('paramName', 'tokens', 'frequency', 'minChars', 'indicator', 'updateElement', 'afterUpdateElement', 'onShow', 'onHide');
+/**
  * Output buffer for Ajax update content
  *
  * @var array
@@ -428,24 +434,46 @@ class AjaxHelper extends Helper {
  * @return string Ajax script
  */
 	function autoComplete($field, $url = "", $options = array()) {
+
+		$var = '';
+		if (isset($options['var'])) {
+			$var = 'var ' . $options['var'] . ' = ';
+			unset($options['var']);
+		}
+
 		if (!isset($options['id'])) {
 			$options['id'] = r("/", "_", $field);
+		}
+
+		$divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => isset($options['class']) ? $options['class'] : 'auto_complete');
+		if (isset($options['div_id'])) {
+			$divOptions['id'] = $options['div_id'];
+			unset($options['div_id']);
 		}
 
 		$htmlOptions = $this->__getHtmlOptions($options);
 		$htmlOptions['autocomplete'] = "off";
 
-		if (!isset($options['class'])) {
-			$options['class'] = "auto_complete";
+		foreach ($this->autoCompleteOptions as $opt) {
+			unset($htmlOptions[$opt]);
 		}
 
-		$divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => $options['class']);
+		if (isset($options['tokens'])) {
+			if (is_array($options['tokens'])) {
+				$options['tokens'] = $this->Javascript->object($options['tokens']);
+			} else {
+				$options['tokens'] = '"' . $options['tokens'] . '"';
+			}
+		}
 
-		return $this->Html->input($field, $htmlOptions) .
-				$this->Html->tag("div", $divOptions, true) . "</div>" .
-				$this->Javascript->codeBlock("new Ajax.Autocompleter('" . $options['id'] .
-						"', '" . $divOptions['id'] . "', '" . $this->Html->url($url) . "', " .
-						$this->__optionsForAjax($options) . ");");
+		$options = $this->_optionsToString($options, array('paramName', 'indicator'));
+		$options = $this->_buildOptions($options, $this->autoCompleteOptions);
+
+		return $this->Html->input($field, $htmlOptions) . "\n" .
+				$this->Html->tag("div", $divOptions, true) . "</div>\n" .
+				$this->Javascript->codeBlock("{$var}new Ajax.Autocompleter('" . $htmlOptions['id']
+					. "', '" . $divOptions['id'] . "', '" . $this->Html->url($url) . "', " .
+						$options . ");");
 	}
 /**
  * Creates an Ajax-updateable DIV element
