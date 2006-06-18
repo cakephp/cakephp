@@ -34,7 +34,7 @@
 		require APP_PATH . 'config' . DS . 'core.php';
 		require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 	}
-	$TIME_START=getMicrotime();
+	$TIME_START = getMicrotime();
 	require LIBS . 'object.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
@@ -54,7 +54,7 @@
 		} else {
 			if (strpos($uri, 'index.php') !== false) {
 				$uri = r('?', '', $uri);
-				$elements=explode('/index.php', $uri);
+				$elements = explode('/index.php', $uri);
 			} else {
 				$elements = explode('/?', $uri);
 			}
@@ -77,7 +77,18 @@
 
 	if (strpos($url, 'ccss/') === 0) {
 		include WWW_ROOT . DS . 'css.php';
-		die();
+		exit();
+	}
+
+	$folders = array('js' => 'text/javascript', 'css' => 'text/css');
+	$requestPath = explode('/', $url);
+
+	if (in_array($requestPath[0], array_keys($folders))) {
+		if (file_exists(VENDORS . join(DS, $requestPath))) {
+			header('Content-type: ' . $folders[$requestPath[0]]);
+			e(file_get_contents(VENDORS . join(DS, $requestPath)));
+			exit();
+		}
 	}
 
 	if (DEBUG) {
@@ -89,6 +100,7 @@
 	} else {
 		error_reporting(0);
 	}
+
 	require CAKE . 'dispatcher.php';
 	require LIBS . 'model' . DS . 'connection_manager.php';
 	config('database');
@@ -101,7 +113,7 @@
 		if (empty($uri)) {
 			$uri = setUri();
 		}
-		$filename=CACHE . 'views' . DS . convertSlash($uri) . '.php';
+		$filename = CACHE . 'views' . DS . convertSlash($uri) . '.php';
 
 		if (file_exists($filename)) {
 			uses(DS . 'controller' . DS . 'component', DS . 'view' . DS . 'view');
