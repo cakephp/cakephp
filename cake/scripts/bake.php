@@ -1351,7 +1351,7 @@ class Bake {
 			}
 			$path = implode(DS, $path);
 			$unixPath = DS;
-			if (strpos( PHP_OS, ÔWINÕ ) === 0){
+			if (strpos(PHP_OS, 'WIN') === 0){
 				$unixPath = null;
 			}
 
