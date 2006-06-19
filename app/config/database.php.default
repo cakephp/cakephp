@@ -42,15 +42,15 @@
  * connect =>
  * MySQL set the connect to either mysql_pconnect of mysql_connect
  * PostgreSQL set the connect to either pg_pconnect of pg_connect
- * SQLite set the connect to sqlite_popen  sqlite_open
+ * SQLite set the connect to sqlite_popen or sqlite_open
+ * MSSQL set the connect to mssql_connect or mssql_pconnect
  * ADOdb set the connect to one of these
  *	(http://phplens.com/adodb/supported.databases.html) and
  *	append it '|p' for persistent connection. (mssql|p for example, or just mssql for not persistent)
  *
  * host =>
  * the host you connect to the database
- * MySQL 'localhost' to add a port number use 'localhost:port#'
- * PostgreSQL 'localhost' to add a port number use 'localhost port=5432'
+ * To add a port number use 'port' => #
  *
  */
 class DATABASE_CONFIG
