@@ -1350,20 +1350,25 @@ class Bake {
 				}
 			}
 			$path = implode(DS, $path);
+			$unixPath = DS;
+			if (strpos( PHP_OS, ÔWINÕ ) === 0){
+				$unixPath = null;
+			}
 
-			if (!is_dir(DS.$path)) {
+			if (!is_dir($unixPath.$path)) {
 				$create = $this->getInput("Unit test directory does not exist.  Create it?", array('y','n'), 'y');
 				if (low($create) == 'y' || low($create) == 'yes') {
 					$build = array();
+
 					foreach(explode(DS, $path) as $i => $dir) {
 						$build[] = $dir;
-						if (!is_dir(DS.implode(DS, $build))) {
-							mkdir(DS.implode(DS, $build));
+						if (!is_dir($unixPath.implode(DS, $build))) {
+							mkdir($unixPath.implode(DS, $build));
 						}
 					}
 				}
 			}
-			$this->createFile(DS.$path.DS.$filename, $out);
+			$this->createFile($unixPath.$path.DS.$filename, $out);
 		}
 	}
 /**
