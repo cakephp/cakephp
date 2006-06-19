@@ -859,7 +859,7 @@ class Model extends Object{
 				}
 			} else {
 				if ($db->create($this, $fields, $values)) {
-					$this->__insertID = $db->lastInsertId($this->table, $this->primaryKey);
+					$this->__insertID = $db->lastInsertId($this->tablePrefix . $this->table, $this->primaryKey);
 
 					if (!$this->__insertID && $newID != null) {
 						$this->__insertID = $newID;
