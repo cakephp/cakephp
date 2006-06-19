@@ -855,7 +855,7 @@ class Bake {
 				$componentsListTrimmed = str_replace(' ', '', $componentsList);
 				$components = explode(',', $componentsListTrimmed);
 			}
-			$wannaDoScaffolding = $this->getInput("Would to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
+			$wannaDoScaffolding = $this->getInput("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
 		}
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
@@ -2034,7 +2034,7 @@ class Bake {
 			}
 			return false;
 		}
-		$exceptions=array('.','..');
+		$exceptions=array('.','..','.svn');
 		$handle = opendir($fromDir);
 
 		while (false!==($item = readdir($handle))) {
