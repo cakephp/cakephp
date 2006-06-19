@@ -1881,7 +1881,7 @@ class Bake {
 		$this->hr();
 		$this->stdout('The Bake script generates controllers, views and models for your application.');
 		$this->stdout('If run with no command line arguments, Bake guides the user through the class');
-		$this->stdout('creation process. You can customize the generation process by telling bake');
+		$this->stdout('creation process. You can customize the generation process by telling Bake');
 		$this->stdout('where different parts of your application are using command line arguments.');
 		$this->stdout('');
 		$this->hr('');
