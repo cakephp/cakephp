@@ -296,7 +296,7 @@ class FormHelper extends Helper{
  * @return string The formatted submit widget
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		return $this->divTag('submit', $this->Html->submitTag($displayText, $htmlOptions));
+		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
 	}
 /**
  * Generates a form to go onto a HtmlHelper object.
@@ -389,7 +389,7 @@ class FormHelper extends Helper{
 						if(!isset($field['value'])){
 							$field['value'] = null;
 						}
-						$strFormFields = $strFormFields . $this->Html->hiddenTag($field['tagName'], $field['value']);
+						$strFormFields = $strFormFields . $this->Html->hidden($field['tagName'], $field['value']);
 					break;
 					case "date":
 						if (!isset($field['selected'])) {
