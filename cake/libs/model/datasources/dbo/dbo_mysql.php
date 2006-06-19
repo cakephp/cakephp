@@ -395,7 +395,9 @@ class DboMysql extends DboSource {
 		if (strpos($col, 'enum') !== false) {
 			return "enum($limit)";
 		}
-
+		if ($col == 'boolean') {
+			return $col;
+		}
 		return 'text';
 	}
 /**
