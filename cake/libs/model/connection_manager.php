@@ -190,6 +190,15 @@ class ConnectionManager extends Object {
 			$this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
 		}
 	}
+/**
+ * Destructor.
+ *
+ */
+	function __destruct() {
+		if (CAKE_SESSION_SAVE == 'database' && function_exists('session_write_close')) {
+			session_write_close();
+		}
+	}
 }
 
 ?>

@@ -399,9 +399,10 @@ class DboSource extends DataSource {
  * Gets full table name including prefix
  *
  * @param mixed $model
+ * @param boolean $quote
  * @return string Full quoted table name
  */
-	function fullTableName($model) {
+	function fullTableName($model, $quote = true) {
 		if (is_object($model)) {
 			$table = $model->table;
 			if ($model->tablePrefix != null && !empty($model->tablePrefix)) {
@@ -412,7 +413,10 @@ class DboSource extends DataSource {
 		} else {
 			$table = strval($model);
 		}
-		return $this->name($table);
+		if ($quote) {
+			return $this->name($table);
+		}
+		return $table;
 	}
 /**
  * The "C" in CRUD

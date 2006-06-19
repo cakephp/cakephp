@@ -423,11 +423,11 @@ class CakeSession extends Object{
  */
 	function __read($key) {
 		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE);
+		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
 		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
 
-		if ($row && $row[0][CAKE_SESSION_TABLE]['data']) {
-			return $row[0][CAKE_SESSION_TABLE]['data'];
+		if ($row && $row[0][$table]['data']) {
+			return $row[0][$table]['data'];
 		} else {
 			return false;
 		}
@@ -520,7 +520,7 @@ class CakeSession extends Object{
  */
 	function __write($key, $value) {
 		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE);
+		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
 
 		switch(CAKE_SECURITY) {
 			case 'high':
@@ -555,4 +555,5 @@ class CakeSession extends Object{
 		return true;
 	}
 }
+
 ?>
