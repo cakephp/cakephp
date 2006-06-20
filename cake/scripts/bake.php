@@ -383,7 +383,7 @@ class Bake {
 		}
 
 		$modelTableName == null ? $modelTableName = $inflect->pluralize($modelName) : $modelTableName = $modelTableName;
-		$wannaDoAssoc = $this->getInput('Would you like define model associations (hasMany, hasOne, belongsTo, etc.)?', array('y','n'), 'y');
+		$wannaDoAssoc = $this->getInput('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', array('y','n'), 'y');
 
 		if((strtolower($wannaDoAssoc) == 'y' || strtolower($wannaDoAssoc) == 'yes')) {
 			$this->stdout('One moment while I try to detect any associations...');
