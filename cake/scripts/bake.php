@@ -641,7 +641,7 @@ class Bake {
 				$indexView .= "\t\t<?php echo \$html->link('Delete','/$temp->viewPath/delete/' . \$row['{$temp->modelClass}']['$id'])?>\n";
 				$indexView .= "\t</td>\n";
 				$indexView .= "</tr>\n";
-				$indexView .= "<?php endforeach?>\n";
+				$indexView .= "<?php endforeach; ?>\n";
 				$indexView .= "</table>\n\n";
 				$indexView .= "<ul>\n";
 				$indexView .= "\t<li><?php echo \$html->link('New $temp->modelClass', '/$temp->viewPath/add'); ?></li>\n";
