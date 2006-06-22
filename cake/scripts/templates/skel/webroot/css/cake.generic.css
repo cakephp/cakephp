@@ -73,13 +73,15 @@ text-align:left;
 padding: 4px 20px;
 }
 
-#content{
+#content{ 
+clear:both;
 padding: 10px 40px;  
 background-color: #fff;
 color: #333; 
 line-height: 18px;
 }
-#footer{
+#footer{   
+clear:both;
 padding: 6px 10px;
 text-align: right;
 }
