@@ -28,11 +28,11 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
+<p class="notice">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
 <?php if (!empty($filePresent)):?>
 <?php $db = ConnectionManager::getInstance(); ?>
 <?php $connected = $db->getDataSource('default'); ?>
-<p style="background:#DBA941;padding:4px;font-size: 16px;">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
+<p class="notice">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
 <?php endif; ?>     
 <h2>CakePHP release information is on CakeForge</h2>
@@ -42,7 +42,7 @@
 <p>
 To change the content of this page, create: /app/views/pages/home.thtml.<br />
 To change its layout, create: /app/views/layouts/default.thtml.<br />
-<a href="http://wiki.cakephp.org/tutorials:sample_layout">See the wiki for more info</a><br />
+<a href="http://manual.cakephp.org/">See the views section of the manual for more info</a><br />
 You can also add some CSS styles for your pages at: app/webroot/css/.
 </p>
 <h2>More about Cake</h2>

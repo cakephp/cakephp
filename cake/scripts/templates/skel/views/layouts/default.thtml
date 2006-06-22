@@ -3,8 +3,7 @@
 <head>
 <title>CakePHP : <?php echo $title_for_layout;?></title>
 <link rel="shortcut icon" href="<?php echo $html->url('/favicon.ico')?>" type="image/x-icon" />
-<?php echo $html->css('generic.basic');?>
-<?php echo $html->css('generic.forms');?>
+<?php echo $html->css('cake.generic');?>
 </head>
 <body>
 	<div id="container">
