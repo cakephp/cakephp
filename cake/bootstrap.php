@@ -86,7 +86,7 @@
 	if (in_array($requestPath[0], array_keys($folders))) {
 		if (file_exists(VENDORS . join(DS, $requestPath))) {
 			header('Content-type: ' . $folders[$requestPath[0]]);
-			e(file_get_contents(VENDORS . join(DS, $requestPath)));
+			include (VENDORS . join(DS, $requestPath));
 			exit();
 		}
 	}
