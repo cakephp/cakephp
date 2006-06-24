@@ -624,12 +624,13 @@ class DboSource extends DataSource {
 				$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 
 				if (!empty($fetch) && is_array($fetch)) {
-					if ($recursive > 0) {
+					if ($recursive > 0) {  
+						
 						foreach($linkModel->__associations as $type1) {
 							foreach($linkModel->{$type1} as $assoc1 => $assocData1) {
-
+                                 
 								$deepModel =& $linkModel->{$assocData1['className']};
-								if ($deepModel->name != $model->name) {
+								if ($deepModel->alias != $model->name) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
