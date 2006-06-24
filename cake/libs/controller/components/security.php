@@ -114,7 +114,7 @@ class SecurityComponent extends Object {
 
 		// Check requireLogin
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-			if (in_array($controller->action, $this->requireLogin) || $this->requireLogin = array('*')) {
+			if (in_array($controller->action, $this->requireLogin) || $this->requireLogin == array('*')) {
 
 				if (!isset($this->loginOptions['type'])) {
 					$this->loginOptions['type'] = '';
