@@ -57,7 +57,11 @@ class RequestHandlerComponent extends Object{
 		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
 		'xml'			=> array('application/xml', 'text/xml'),
 		'rss'			=> 'application/rss+xml',
-		'atom'			=> 'application/atom+xml'
+		'atom'			=> 'application/atom+xml',
+		'wap'			=> array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
+		'wml'			=> 'text/vnd.wap.wml',
+		'wmlscript'		=> 'text/vnd.wap.wmlscript',
+		'wbmp'			=> 'image/vnd.wap.wbmp'
 	);
 
 	var $__acceptTypes = array();
@@ -151,6 +155,22 @@ class RequestHandlerComponent extends Object{
  */
 	function isAtom() {
 		return $this->accepts('atom');
+	}
+/**
+ * Returns true if user agent string matches a mobile web browser, or if the client accepts WAP content
+ *
+ * @return bool True if user agent is a mobile web browser
+ */
+	function isMobile() {
+		return (preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT')) > 0 || $this->accepts('wap'));
+	}
+/**
+ * Returns true if the client accepts WAP content
+ *
+ * @return bool
+ */
+	function isWap() {
+		return $this->accepts('wap');
 	}
 /**
  * Returns true if the current call a POST request
@@ -252,14 +272,6 @@ class RequestHandlerComponent extends Object{
 			}
 		}
 		return trim($ipaddr);
-	}
-/**
- * Returns true if user agent string matches a mobile web browser
- *
- * @return bool True if user agent is a mobile web browser
- */
-	function isMobile() {
-		return (preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT')) > 0);
 	}
 /**
  * Strips extra whitespace from output
