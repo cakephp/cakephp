@@ -31,7 +31,7 @@
 /**
  * Include AdoDB files.
  */
-vendor ('adodb' . DS . 'adodb.inc.php');
+vendor ('adodb' . DS . 'adodb.inc');
 
 uses ('model' . DS . 'datasources' . DS . 'dbo_source');
 
