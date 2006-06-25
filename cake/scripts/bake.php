@@ -656,7 +656,7 @@ class Bake {
 
 				foreach($fieldNames as $field => $value) {
 					$viewView .= "<tr>\n";
-					$viewView .= "\t<td><?php echo '{$value['prompt']}' ?></td>\n";
+					$viewView .= "\t<td>" . $value['prompt'] . "</td>\n";
 
 					if(isset($value['foreignKey'])) {
 						$otherModelObject =& ClassRegistry::getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
