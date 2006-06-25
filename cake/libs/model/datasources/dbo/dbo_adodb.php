@@ -225,18 +225,6 @@ class DboAdodb extends DboSource{
 	 }
 
 /**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @return string Quoted and escaped
- *
- * @todo To be implemented.
- */
-	 function value($data) {
-		  return $this->_adodb->Quote($data);
-	 }
-
-/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message
