@@ -64,16 +64,20 @@ class JavascriptHelper extends Helper{
  * @return string
  */
 	function link($url) {
-		if (strpos($url, ".") === false) {
-			$url .= ".js";
+		if (strpos($url, '.') === false && strpos($url, '?') === false) {
+			$url .= '.js';
 		}
-		return sprintf($this->tags['javascriptlink'], $this->webroot . JS_URL . $this->themeWeb . $url);
+		if (strpos($url, '://') === false) {
+			$url = $this->webroot . JS_URL . $this->themeWeb . $url;
+		}
+		return sprintf($this->tags['javascriptlink'], $url);
 	}
 /**
  * Returns a JavaScript include tag for an externally-hosted script
  *
  * @param  string $url URL to JavaScript file.
  * @return string
+ * @deprecated As of 1.2, use JavascriptHelper::link()
  */
 	function linkOut($url) {
 		if (strpos($url, ".") === false) {
@@ -121,13 +125,15 @@ class JavascriptHelper extends Helper{
 	function event($object, $event, $observer = null, $useCapture = false) {
 
 		if ($useCapture == true) {
-			$useCapture = "true";
+			$useCapture = 'true';
 		} else {
-			$useCapture = "false";
+			$useCapture = 'false';
 		}
 
-		if ($object == 'window' || strpos($object, '$(') !== false || strpos($object, '"') !== false || strpos($object, '\'') !== false) {
-			$b = "Event.observe($object, '$event', function(event){ $observer }, $useCapture);";
+		if (strpos($object, 'window') !== false || strpos($object, 'document') !== false || strpos($object, '$(') !== false || strpos($object, '"') !== false || strpos($object, '\'') !== false) {
+			$b = "Event.observe({$object}, '{$event}', function(event){ {$observer} }, {$useCapture});";
+		} elseif (strpos($object, '\'') === 0) {
+			$b = "Event.observe(" . substr($object, 1) . ", '{$event}', function(event){ {$observer} }, {$useCapture});";
 		} else {
 			$chars = array('#', ' ', ', ', '.', ':');
 			$found = false;
@@ -140,7 +146,7 @@ class JavascriptHelper extends Helper{
 			if ($found) {
 				$this->_rules[$object] = $event;
 			} else {
-				$b = "Event.observe(\$('$object'), '$event', function(event){ $observer }, $useCapture);";
+				$b = "Event.observe(\$('{$object}'), '{$event}', function(event){ {$observer} }, {$useCapture});";
 			}
 		}
 
@@ -188,8 +194,7 @@ class JavascriptHelper extends Helper{
 			$this->_cachedEvents = array();
 
 			if (!empty($rules)) {
-				$data .= "\n\nvar SelectorRules = {\n" . implode(",\n\n", $rules) . "\n}\n";
-				$data .= "\nEventSelectors.start(SelectorRules);\n";
+				$data .= "\nEventSelectors.start({\n" . implode(",\n\n", $rules) . "\n});\n";
 			}
 
 			if (!empty($events) || !empty($rules)) {
@@ -270,7 +275,7 @@ class JavascriptHelper extends Helper{
 				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
 			} else {
 				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys))) {
-					$val = $q . $val . $q;
+					$val = $q . $this->escapeString($val) . $q;
 				}
 				if (trim($val) == '') {
 					$val = 'null';
