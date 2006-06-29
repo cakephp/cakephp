@@ -42,19 +42,33 @@ class JavascriptHelper extends Helper{
 	var $_cacheToFile = false;
 	var $_cacheAll = false;
 	var $_rules = array();
+	var $safe = false;
 
 /**
  * Returns a JavaScript script tag.
  *
  * @param  string $script The JavaScript to be wrapped in SCRIPT tags.
  * @param  boolean $allowCache Allows the script to be cached if non-event caching is active
+ * @param  boolean $safe Wraps the script in an HTML comment and a CDATA block
  * @return string The full SCRIPT element, with the JavaScript inside it.
  */
-	function codeBlock($script, $allowCache = true) {
-		if ($this->_cacheEvents && $this->_cacheAll && $allowCache) {
+	function codeBlock($script = null, $allowCache = true, $safe = false) {
+		if ($this->_cacheEvents && $this->_cacheAll && $allowCache && $script !== null) {
 			$this->_cachedEvents[] = $script;
 		} else {
-			return sprintf($this->tags['javascriptblock'], $script);
+			$block = ($script !== null);
+			if ($safe || $this->safe) {
+				$script  = "\n" . '<!--//--><![CDATA[//><!--' . "\n" . $script;
+				if ($block) {
+					$script .= "\n" . '//--><!]]>' . "\n";
+				}
+			}
+			
+			if ($block) {
+				return sprintf($this->tags['javascriptblock'], $script);
+			} else {
+				return sprintf($this->tags['javascriptstart'], $script);
+			}
 		}
 	}
 /**
