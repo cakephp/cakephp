@@ -30,7 +30,7 @@
 ?>
 <h1>Missing Component File</h1>
 
-<p class="error">You are seeing this error because the component file <em><?php echo "app".DS."controllers".DS."components".DS.$file; ?></em>
+<p class="error">You are seeing this error because the component file <em><?php echo "app".DS."controllers".DS."components".DS.r('_component', '', $file); ?></em>
   can't be found or doesn't exist.
 </p>
 
