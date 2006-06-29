@@ -28,7 +28,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div>
+<div id="cakeControllerDump">
 	<h2>Controller dump:</h2>
 		<pre>
 			<?php print_r($this->controller); ?>
