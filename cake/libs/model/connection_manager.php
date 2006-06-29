@@ -169,26 +169,50 @@ class ConnectionManager extends Object {
 		$connections = get_object_vars($_this->config);
 
 		if ($connections != null) {
-
 			foreach($connections as $name => $config) {
-
-				if (!isset($config['datasource'])) {
-					$config['datasource'] = 'dbo';
-				}
-
-				if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
-					$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
-					$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
-				} else {
-					$filename = $config['datasource'] . '_source';
-					$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
-				}
-				$_this->_connectionsEnum[$name] = array('filename'  => $filename, 'classname' => $classname);
+				$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
 			}
 			return $this->_connectionsEnum;
 		} else {
 			$this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
 		}
+	}
+/**
+ * Dynamically creates a DataSource object at runtime, with the given name and settings
+ *
+ * @param string $name The DataSource name
+ * @param array $config The DataSource configuration settings
+ * @return object A reference to the DataSource object, or null if creation failed
+ */
+	function &create($name = '', $config = array()) {
+		$_this =& ConnectionManager::getInstance();
+
+		if (empty($name) || empty($config) || array_key_exists($name, $_this->_connectionsEnum)) {
+			return null;
+		}
+
+		$_this->config->{$name} = $config;
+		$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
+		return $_this->getDataSource($name);
+	}
+/**
+ * Private method
+ *
+ * Returns the file and class name for the given driver
+ */
+	function __getDriver($config) {
+		if (!isset($config['datasource'])) {
+			$config['datasource'] = 'dbo';
+		}
+
+		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
+			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
+			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
+		} else {
+			$filename = $config['datasource'] . '_source';
+			$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
+		}
+		return array('filename'  => $filename, 'classname' => $classname);
 	}
 /**
  * Destructor.
