@@ -676,6 +676,16 @@ class Model extends Object{
 		$this->id = false;
 		unset ($this->data);
 		$this->data = array();
+		
+		$cols = $this->loadInfo();
+		if (array_key_exists('default', $cols->value[0])) {
+			$count = count($cols->value);
+			for ($i = 0; $i < $count; $i++) {
+				if ($cols->value[$i]['name'] != $this->primaryKey) {
+					$this->data[$this->name][$cols->value[$i]['name']] = $cols->value[$i]['default'];
+				}
+			}
+		}
 		return true;
 	}
 /**

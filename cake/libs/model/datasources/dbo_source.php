@@ -1266,7 +1266,7 @@ class DboSource extends DataSource {
 					$data = $this->name($key) . ' = NULL';
 				} elseif($value === '') {
 					$data = $this->name($key) . " = ''";
-				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
+				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:not\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
 					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
 						$clause = $regs['1'];
 						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
