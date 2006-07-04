@@ -195,17 +195,17 @@ class Dispatcher extends Object {
 		}
 
 		if (!empty($controller->params['pass'])) {
-			if ($controller->namedArgs !== false) {
-				if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
-					$this->_getNamedArgs($controller->params['pass'], $controller->namedArgs[$params['action']]);
-				} elseif (is_int($controller->namedArgs) && $controller->namedArgs > 0) {
-					$this->_getNamedArgs($controller->params['pass'], $controller->namedArgs);
-				} elseif ($controller->namedArgs === true) {
-					$this->_getNamedArgs($controller->params['pass']);
-				}
-			}
 			$controller->passed_args =& $controller->params['pass'];
-			$controller->passedArgs =& $controller->params['pass'];
+			$controller->passedArgs =& $controller->params['pass'];	  
+			if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
+				
+				$this->passedArgs =& $controller->params['pass']; 
+				$this->_getNamedArgs($controller->namedArgs[$params['action']]);
+				
+				$controller->passedArgs =& $this->passedArgs;
+				$controller->namedArgs =& $this->namedArgs;		
+			}
+			
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
@@ -378,7 +378,7 @@ class Dispatcher extends Object {
 			if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r)) {
 
 				if(!empty($r[1])) {
-					return  $base.$r[1];
+					return	$base.$r[1];
 				}
 			}
 		} else {
@@ -395,11 +395,11 @@ class Dispatcher extends Object {
 					$appDir = '/'.APP_DIR;
 				}
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].$appDir.'/';
-				return  $base.$regs[1].$appDir;
+				return	$base.$regs[1].$appDir;
 
 			} elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs)) {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
-				return  $base.$regs[0];
+				return	$base.$regs[0];
 
 			} else {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';
@@ -431,23 +431,33 @@ class Dispatcher extends Object {
  * @param unknown_type $params
  * @return unknown
  */
-	function _getNamedArgs(&$params, $start = 0) {
-		if(is_array($params)) {
-			$a = array();
-			$args = $params;
-			$c = count($args);
+	function _getNamedArgs($args)
+	{	
+		if(!is_array($args)) {
+			$args = func_get_args(); 
+		}
+		if(!is_array($args)) {
+			$args = explode(',',$controller->namedArgs[$params['action']]); 
+		}							
+		
+		$this->namedArgs = array();
+		
+		if(is_array($this->passedArgs) && is_array($args))
+		{	 
+			foreach ($args as $arg)
+			{  
+				if(in_array($arg, $this->passedArgs))
+				{	   
+					$key = array_search($arg,$this->passedArgs);
+					$value = $key + 1;		  
+					$this->namedArgs[$arg] = $this->passedArgs[$value]; 
 
-			for ($l = $start; $l < $c; $l++) {
-				if(isset($args[$l])) {
-					if ($l+1 < count($args)) {
-						$a[$args[$l]] = $args[$l+1];
-					} else {
-						$a[$args[$l]] = null;
-					}
-				}
-				$l++;
-			}
-			$params = $a;
+					unset($this->passedArgs[$key]);
+					unset($this->passedArgs[$value]);
+				}			
+			}  
+			$this->passedArgs = array_values($this->passedArgs);
+			return $this->namedArgs;
 		}
 	}
 }
