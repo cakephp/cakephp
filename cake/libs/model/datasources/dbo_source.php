@@ -167,46 +167,66 @@ class DboSource extends DataSource {
 		$limit    = null;
 		$page     = null;
 		$recursive = null;
+
 		if (count($args) == 1) {
 			return $this->fetchAll($args[0]);
 
 		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
 
-			if (isset($args[1][1])) {
-				$fields = $args[1][1];
-			}
-
-			if (isset($args[1][2])) {
-				$order = $args[1][2];
-			}
+			$params = $args[1];
 
 			if (strpos(strtolower($args[0]), 'findby') === 0) {
 				$all  = false;
 				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
-
-				if (isset($args[1][3])) {
-					$recursive = $args[1][3];
-				}
 			} else {
 				$all  = true;
 				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
-				if (isset($args[1][3])) {
-					$limit = $args[1][3];
-				}
-
-				if (isset($args[1][4])) {
-					$page = $args[1][4];
-				}
-
-				if (isset($args[1][5])) {
-					$recursive = $args[1][5];
-				}
 			}
-			$query = array($args[2]->name . '.' . $field => $args[1][0]);
+			
+			$or = (strpos($field, '_or_') !== false);
+			if ($or) {
+				$field = explode('_or_', $field);
+			} else {
+				$field = explode('_and_', $field);
+			}
+			$off = count($field) - 1;
+
+			if (isset($params[1 + $off])) {
+				$fields = $params[1 + $off];
+			}
+
+			if (isset($params[2 + $off])) {
+				$order = $params[2 + $off];
+			}
+
+			$c = 0;
+			$query = array();
+			foreach ($field as $f) {
+				$query[$args[2]->name . '.' . $f] = $params[$c++];
+			}
+
+			if ($or) {
+				$query = array('OR' => $query);
+			}
 
 			if ($all) {
+				
+				if (isset($params[3 + $off])) {
+					$limit = $params[3 + $off];
+				}
+
+				if (isset($params[4 + $off])) {
+					$page = $params[4 + $off];
+				}
+
+				if (isset($params[5 + $off])) {
+					$recursive = $params[5 + $off];
+				}
 				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
 			} else {
+				if (isset($params[3 + $off])) {
+					$recursive = $params[3 + $off];
+				}
 				return $args[2]->find($query, $fields, $order, $recursive);
 			}
 		} else {
@@ -1012,11 +1032,31 @@ class DboSource extends DataSource {
 						$sql .= $limit;
 					}
 
-					$sql .= ' ' . join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+					$joinFields = array();
+					if (isset($assocData['with'])) {
+						$joinName = array_keys($assocData['with']);
+						$joinFields = $assocData['with'][$joinName[0]];
+
+						if (is_array($joinFields) && !empty($joinFields)) {
+							$joinFields = $this->fields($linkModel, $joinName[0], $joinFields);
+						} else {
+							$joinFields = array($this->name($joinName[0]) . '.*');
+						}
+					}
+
+					$sql .= ' ' . join(', ', am($this->fields($linkModel, $alias, $assocData['fields']), $joinFields));
 					$sql .= ' FROM ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
-					$sql .= ' JOIN ' . $joinTbl . ' ON ' . $joinTbl;
+					$sql .= ' JOIN ' . $joinTbl;
+
+					$joinAssoc = $joinTbl;
+					if (isset($assocData['with'])) {
+						$joinAssoc = $joinName[0];
+						$sql .= $this->alias . $this->name($joinAssoc);
+					}
+
+					$sql .= ' ON ' . $this->name($joinAssoc);
 					$sql .= '.' . $this->name($assocData['foreignKey']) . ' = {$__cakeID__$}';
-					$sql .= ' AND ' . $joinTbl . '.' . $this->name($assocData['associationForeignKey']);
+					$sql .= ' AND ' . $this->name($joinAssoc) . '.' . $this->name($assocData['associationForeignKey']);
 					$sql .= ' = ' . $this->name($alias) . '.' . $this->name($linkModel->primaryKey);
 
 					$sql .= $this->conditions($assocData['conditions']);

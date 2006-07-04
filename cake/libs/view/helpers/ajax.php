@@ -813,7 +813,7 @@ class AjaxHelper extends Helper {
 						$data[] = $key . ':"' . rawurlencode($val) . '"';
 					}
 				}
-				$out  = 'var __ajaxUpdater__ = {' . join(', ', $data) . '};' . "\n";
+				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(__ajaxUpdater__[n])); }';
 
 				@ob_end_clean();

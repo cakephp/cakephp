@@ -458,13 +458,13 @@ class Model extends Object{
  * @param string $type Type of assocation
  * @access private
  */
-	function __constructLinkedModel($assoc, $className) {
+	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
 
 		if (ClassRegistry::isKeySet($colKey)) {
 			$this->{$className} =& ClassRegistry::getObject($colKey);
 		} else {
-			$this->{$className} =& new $className();
+			$this->{$className} =& new $className($id, $table, $ds);
 		}
 
 		$this->alias[$assoc] = $this->{$className}->table;
@@ -478,7 +478,7 @@ class Model extends Object{
  * @access private
  */
 	function __generateAssociation($type) {
-		foreach($this->{$type}as $assocKey => $assocData) {
+		foreach($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
 
 			if (isset($this->{$type}[$assocKey]['className']) && $this->{$type}[$assocKey]['className'] !== null) {
@@ -515,6 +515,8 @@ class Model extends Object{
 						case 'className':
 							$data = $class;
 						break;
+					} elseif ($key == 'with') {
+						$this->{$type}[$assocKey][$key] = normalizeList($this->{$type}[$assocKey][$key]);
 					}
 
 					$this->{$type}[$assocKey][$key] = $data;

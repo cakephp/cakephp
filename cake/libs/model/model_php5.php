@@ -45,7 +45,7 @@ uses('class_registry', 'validators');
  * @package		cake
  * @subpackage	cake.cake.libs.model
  */
-class Model extends Object{
+class Model extends Object {
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -253,11 +253,11 @@ class Model extends Object{
  * @var array
  */
 	var $__associationKeys = array(
-			'belongsTo' => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
-			'hasOne' => array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
-			'hasMany' => array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-			'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery')
-		);
+		'belongsTo' => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
+		'hasOne' => array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
+		'hasMany' => array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
+		'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery', 'with')
+	);
 
 /**
  * Holds provided/generated association key names and other data for all associations
@@ -301,11 +301,11 @@ class Model extends Object{
 		parent::__construct();
 
 		if ($this->name === null) {
-				$this->name = get_class($this);
+			$this->name = get_class($this);
 		}
 
 		if ($this->primaryKey === null) {
-				$this->primaryKey = 'id';
+			$this->primaryKey = 'id';
 		}
 
 		$this->currentModel = Inflector::underscore($this->name);
@@ -450,15 +450,18 @@ class Model extends Object{
  * @param string $assoc
  * @param string $className Class name
  * @param string $type Type of assocation
+ * @param mixed $id Primary key ID of linked model
+ * @param string $table Database table associated with linked model
+ * @param string $ds Name of DataSource the model should be bound to
  * @access private
  */
-	function __constructLinkedModel($assoc, $className) {
+	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
 
 		if (ClassRegistry::isKeySet($colKey)) {
 			$this->{$className} = ClassRegistry::getObject($colKey);
 		} else {
-			$this->{$className} = new $className();
+			$this->{$className} = new $className($id, $table, $ds);
 		}
 
 		$this->alias[$assoc] = $this->{$className}->table;
@@ -472,7 +475,7 @@ class Model extends Object{
  * @access private
  */
 	function __generateAssociation($type) {
-		foreach($this->{$type}as $assocKey => $assocData) {
+		foreach($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
 
 			if (isset($this->{$type}[$assocKey]['className']) && $this->{$type}[$assocKey]['className'] !== null) {
@@ -512,6 +515,8 @@ class Model extends Object{
 					}
 
 					$this->{$type}[$assocKey][$key] = $data;
+				} elseif ($key == 'with') {
+					$this->{$type}[$assocKey][$key] = normalizeList($this->{$type}[$assocKey][$key]);
 				}
 
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {

@@ -450,6 +450,48 @@
 		}
 	}
 /**
+ * Normalizes a string or array list
+ *
+ * @param mixed $list
+ * @param boolean $assoc If true, $list will be converted to an associative array
+ * @param string $sep If $list is a string, it will be split into an array with $sep
+ * @param boolean $trim If true, separated strings will be trimmed
+ * @return array
+ */
+	function normalizeList($list, $assoc = true, $sep = ',', $trim = true) {
+		if (is_string($list)) {
+			$list = explode($sep, $list);
+			if ($trim) {
+				$list = array_map('trim', $list);
+			}
+			return normalizeList($list);
+		} elseif (is_array($list)) {
+			$keys = array_keys($list);
+			$count = count($keys);
+			$numeric = true;
+
+			if (!$assoc) {
+				for ($i = 0; $i < $count; $i++) {
+					if (!is_int($keys[$i])) {
+						$numeric = false;
+						break;
+					}
+				}
+			}
+			if (!$numeric || $assoc) {
+				for ($i = 0; $i < $count; $i++) {
+					if (is_int($keys[$i])) {
+						$newList[$list[$keys[$i]]] = null;
+					} else {
+						$newList[$keys[$i]] = $list[$keys[$i]];
+					}
+				}
+				$list = $newList;
+			}
+		}
+		return $list;
+	}
+/**
  * Prints out debug information about given variable.
  *
  * Only runs if DEBUG level is non-zero.
@@ -798,6 +840,11 @@
  * @return mixed  The contents of the temporary file.
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
+
+		if (defined('DISABLE_CACHE')) {
+			return null;
+		}
+
 		if (!is_numeric($expires)) {
 			$expires = strtotime($expires);
 		}
