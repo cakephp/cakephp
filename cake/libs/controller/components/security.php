@@ -63,7 +63,7 @@ class SecurityComponent extends Object {
  *
  */
 	function __construct () {
-		$this->Security = Security::getInstance();
+		$this->Security =& Security::getInstance();
 	}
 
 	function startup(&$controller) {
