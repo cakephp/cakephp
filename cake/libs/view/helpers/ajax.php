@@ -546,8 +546,8 @@ class AjaxHelper extends Helper {
  */
 	function drop($id, $options = array()) {
 		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
-		return $this->_buildOptions($options, $this->dropOptions);
-		return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
+		$options = $this->_buildOptions($options, $this->dropOptions);
+		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
 /**
  * Enter description here...
@@ -559,7 +559,7 @@ class AjaxHelper extends Helper {
 	function dropRemote($id, $options = array(), $ajaxOptions = array()) {
 		$options['onDrop'] = "function(element, droppable){" . $this->remoteFunction($ajaxOptions) . "}";
 		$options = $this->_optionsForDroppable($options);
-		return $this->Javascript->codeBlock("Droppables.add('$id', $options);");
+		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
 
 /**
