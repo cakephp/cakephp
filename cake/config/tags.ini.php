@@ -82,6 +82,9 @@ file_no_model = "<input type="file" name="%s" %s/>"
 ; Tag template for a submit button tag.
 submit = "<input type="submit" %s/>"
 
+; Tag template for a image input tag.
+submitimage = "<input type="image" src="%s" %s/>"
+
 ; Tag template for an image tag.
 image ="<img src="%s" %s/>"
 
@@ -102,6 +105,18 @@ block = "<div%s>%s</div>"
 blockstart = "<div%s>"
 blockend = "</div>"
 
+; Tag templates for a paragraph element.
+para = "<p%s>%s</p>"
+
+; Tag templates for a label element.
+label = "<label for="%s"%s>%s</label>"
+
+; Tag templates for fieldset and legend element.
+fieldset = "<fieldset><legend>%s</legend>%s</fieldset>"
+fieldsetstart = "<fieldset><legend>%s</legend>"
+fieldsetend = "</fieldset>"
+legend = "<legend>%s</legend>"
+
 ; Tag template for a CSS link tag.
 css = "<link rel="%s" type="text/css" href="%s" %s/>"
 
@@ -113,6 +128,7 @@ charset = "<meta http-equiv="Content-Type" content="text/html; charset=%s" />"
 
 ; Tag template for inline JavaScript.
 javascriptblock = "<script type="text/javascript">%s</script>"
+javascriptstart = "<script type="text/javascript">"
 
 ; Tag template for included JavaScript.
 javascriptlink = "<script type="text/javascript" src="%s"></script>"
