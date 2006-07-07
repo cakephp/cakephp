@@ -1033,7 +1033,7 @@ class DboSource extends DataSource {
 					}
 
 					$joinFields = array();
-					if (isset($assocData['with'])) {
+					if (isset($assocData['with']) && !empty($assocData['with'])) {
 						$joinName = array_keys($assocData['with']);
 						$joinFields = $assocData['with'][$joinName[0]];
 
@@ -1049,7 +1049,7 @@ class DboSource extends DataSource {
 					$sql .= ' JOIN ' . $joinTbl;
 
 					$joinAssoc = $joinTbl;
-					if (isset($assocData['with'])) {
+					if (isset($assocData['with']) && !empty($assocData['with'])) {
 						$joinAssoc = $joinName[0];
 						$sql .= $this->alias . $this->name($joinAssoc);
 					}
