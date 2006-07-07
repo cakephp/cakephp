@@ -203,6 +203,12 @@ class Controller extends Object{
 /**
  * Enter description here...
  *
+ * @var unknown_type
+ */
+	var $webservices = null;
+/**
+ * Enter description here...
+ *
  * @var mixed
  */
 	var $namedArgs = false;
