@@ -1798,7 +1798,7 @@ class Bake {
  * @return unknown
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		return $this->divTag( 'submit', $this->Html->submitTag( $displayText, $htmlOptions) );
+		return $this->divTag( 'submit', $this->Html->submit( $displayText, $htmlOptions) );
 	}
 /**
  * Enter description here...
