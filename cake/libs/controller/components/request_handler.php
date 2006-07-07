@@ -47,8 +47,11 @@ class RequestHandlerComponent extends Object{
 
 	var $enabled = true;
 
+	var $__responseTypeSet = false;
+
 	var $__requestContent = array(
 		'javascript'	=> 'text/javascript',
+		'js'			=> 'text/javascript',
 		'css'			=> 'text/css',
 		'html'			=> array('text/html', '*/*'),
 		'text'			=> 'text/plain',
@@ -61,7 +64,10 @@ class RequestHandlerComponent extends Object{
 		'wap'			=> array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
 		'wml'			=> 'text/vnd.wap.wml',
 		'wmlscript'		=> 'text/vnd.wap.wmlscript',
-		'wbmp'			=> 'image/vnd.wap.wbmp'
+		'wbmp'			=> 'image/vnd.wap.wbmp',
+		'pdf'			=> 'application/pdf',
+		'zip'			=> 'application/x-zip',
+		'tar'			=> 'application/x-tar'
 	);
 
 	var $__acceptTypes = array();
@@ -385,7 +391,66 @@ class RequestHandlerComponent extends Object{
 			return $this->accepts(null);
 		}
 
-		
+		$types = normalizeList($type, false);
+		$accepts = array();
+		foreach ($types as $type) {
+			if ($this->accepts($type)) {
+				$accepts[] = $type;
+			}
+		}
+
+		if (count($accepts) == 0) {
+			return false;
+		} elseif (count($accepts) == 1) {
+			return $accepts[0];
+		} else {
+			$accepts = array_intersect($this->__acceptTypes, $accepts);
+			return $accepts[0];
+		}
+	}
+/**
+ * Sets the response header based on type map index name
+ *
+ * @param mixed $type
+ * @param mixed $index
+ * @return boolean
+ * @access public
+ */
+	function respondAs($type, $index = 0) {
+		if ($this->__responseTypeSet) {
+			return false;
+		}
+		if (!array_key_exists($type, $this->__requestContent)) {
+			return false;
+		}
+
+		$cType = null;
+		if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$index]['content'])) {
+			$cType = $this->__requestContent[$type][$index];
+		} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0]['content'])) {
+			pr($this->__requestContent[$type]);
+			$cType = $this->__requestContent[$type][0];
+		} elseif (isset($this->__requestContent[$type]['content'])) {
+			$cType = $this->__requestContent[$type]['content'];
+		} else {
+			return false;
+		}
+
+		if (is_array($cType)) {
+			if ($this->prefers($cType)) {
+				$cType = $this->prefers($cType);
+			} else {
+				$cType = $cType[0];
+			}
+		}
+
+		if ($cType != null) {
+			header('Content-type: ' . $cType);
+			$this->__responseTypeSet = true;
+			return true;
+		} else {
+			return false;
+		}
 	}
 /**
  * Maps a content-type back to an alias
