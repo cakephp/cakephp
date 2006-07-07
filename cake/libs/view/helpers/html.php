@@ -302,7 +302,7 @@ class HtmlHelper extends Helper {
 		} else {
 			if (isset($htmlAttributes['value'])) {
 				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
-	
+
 				if ($htmlAttributes['checked'] == '0') {
 					$notCheckedValue = -1;
 				}
@@ -411,7 +411,7 @@ class HtmlHelper extends Helper {
 		} else {
 			$url = $this->webroot . IMAGES_URL . $this->themeWeb . $path;
 		}
-		
+
 		if (!isset($htmlAttributes['alt'])) {
 			$htmlAttributes['alt'] = '';
 		}
@@ -739,7 +739,7 @@ class HtmlHelper extends Helper {
 
 			if (($selected !== null) && ($selected == $name)) {
 				$optionsHere['selected'] = 'selected';
-			} else if(is_array($selected) && array_key_exists($name, $selected)) {
+			} else if(is_array($selected) && in_array($name, $selected)) {
 				$optionsHere['selected'] = 'selected';
 			}
 
