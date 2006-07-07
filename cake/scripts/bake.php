@@ -863,7 +863,7 @@ class Bake {
 		}
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
-			$controllerModel = $inflect->singularize($controllerClassName);
+			$controllerModel = $inflect->camelize($inflect->singularize($controllerClassName));
 			$this->lowCtrl = Inflector::underscore($controllerName);
 			loadModels();
 
@@ -902,9 +902,9 @@ class Bake {
 			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
-			$actions .= "\t\t\t\t\t\$this->redirect(\$this->viewPath.'/index');\n";
+			$actions .= "\t\t\t\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t} else {\n";
-			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', \$this->viewPath.'/index');\n";
+			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t}\n";
 			$actions .= "\t\t\t} else {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
@@ -969,9 +969,9 @@ class Bake {
 			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
-			$actions .= "\t\t\t\t\t\$this->redirect(\$this->viewPath.'/index');\n";
+			$actions .= "\t\t\t\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t} else {\n";
-			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', \$this->viewPath.'/index');\n";
+			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t}\n";
 			$actions .= "\t\t\t} else {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
