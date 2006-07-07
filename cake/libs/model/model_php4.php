@@ -515,11 +515,11 @@ class Model extends Object{
 						case 'className':
 							$data = $class;
 						break;
-					} elseif ($key == 'with') {
-						$this->{$type}[$assocKey][$key] = normalizeList($this->{$type}[$assocKey][$key]);
 					}
-
+					
 					$this->{$type}[$assocKey][$key] = $data;
+				} elseif ($key == 'with') {
+					$this->{$type}[$assocKey][$key] = normalizeList($this->{$type}[$assocKey][$key]);
 				}
 
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
