@@ -186,10 +186,14 @@ class DboPostgres extends DboSource {
 			}
 
 			if (isset($column[0])) {
-				$fields[] = array('name' => $column[0]['name'],
-							'type' => $this->column($column[0]['type']),
-							'null' => $column[0]['null'],
-							'default' => $column[0]['default']
+				if (strpos($column[0]['default'], 'nextval(') === 0) {
+					$column[0]['default'] = null;
+				}
+				$fields[] = array(
+					'name' => $column[0]['name'],
+					'type' => $this->column($column[0]['type']),
+					'null' => $column[0]['null'],
+					'default' => $column[0]['default']
 				);
 			}
 		}
@@ -542,7 +546,6 @@ class DboPostgres extends DboSource {
 			return false;
 		}
 	}
-}
 /**
  * Sets the database encoding
  *
@@ -560,5 +563,6 @@ class DboPostgres extends DboSource {
 	function getEncoding() {
 		return pg_client_encoding($this->connection);
 	}
+}
 
 ?>

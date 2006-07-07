@@ -219,8 +219,12 @@ class DboMssql extends DboSource {
 		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $model->tablePrefix . $model->table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $model->table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $model->table . "'", false);
 
 		foreach($cols as $column) {
-			$field = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type'] . $column[0]['Length']), 'null' => $column[0]['Null']);
-			$fields[] = $field;
+			$fields[] = array(
+				'name' => $column[0]['Field'],
+				'type' => $this->column($column[0]['Type'] . $column[0]['Length']),
+				'null' => up($column[0]['Null']),
+				'default' => $column[0]['Default']
+			);
 		}
 
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
@@ -243,8 +247,7 @@ class DboMssql extends DboSource {
 			$data = '[' . r('.', '].[', $data) . ']';
 		}
 
-		$data=r(']]', ']', r('[[', '[', $data));
-		return $data;
+		return r(']]', ']', r('[[', '[', $data));
 	}
 
 /**
