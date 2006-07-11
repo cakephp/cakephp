@@ -840,29 +840,51 @@ class HtmlHelper extends Helper {
 		}
 	}
 /**
- * @deprecated
+ * Returns a formatted DIV tag for HTML FORMs.
+ *
+ * @param string $class CSS class name of the div element.
+ * @param string $text String content that will appear inside the div element.
+ *			If null, only a start tag will be printed
+ * @param array $attributes Additional HTML attributes of the DIV tag
+ * @param boolean $escape If true, $text will be HTML-escaped
+ * @return string The formatted DIV element
  */
-	function charsetTag($charset, $return = false) {
-		trigger_error('HtmlHelper::charsetTag has been deprecated, use HtmlHelper::charset', E_USER_WARNING);
-		return $this->charset($charset, $return);
+	function div($class = null, $text = null, $attributes = array(), $escape = false) {
+		if ($escape) {
+			$text = h($text);
+		}
+		if ($class != null && !empty($class)) {
+			$attributes['class'] = $class;
+		}
+		if ($text === null) {
+			$tag = 'blockstart';
+		} else {
+			$tag = 'block';
+		}
+		return $this->output(sprintf($this->tags[$tag], $this->parseHtmlOptions($attributes, null, ' ', ''), $text));
 	}
 /**
- * Returns a generic HTML tag (no content).
+ * Returns a formatted P tag.
  *
- * Examples:
- *	+ <code>tag("br") => <br /></code>
- *	+ <code>tag("input", array("type" => "text")) => <input type="text"/></code>
- *
- * @param string $name Name of HTML element
- * @param array  $options HTML options
- * @param bool	$open Is the tag open or closed? (defaults to closed "/>")
- * @returnstring The formatted HTML tag
- * @deprecated This seems useless. Version 0.9.2.
+ * @param string $class CSS class name of the p element.
+ * @param string $text String content that will appear inside the p element.
+ * @param array $attributes Additional HTML attributes of the P tag
+ * @param boolean $escape If true, $text will be HTML-escaped
+ * @return string The formatted P element
  */
-	function tag($name, $options = null, $open = false) {
-		$tag = "<$name " . $this->parseHtmlOptions($options);
-		$tag .= $open ? ">" : " />";
-		return $tag;
+	function para($class, $text, $attributes = array(), $escape = false) {
+		if ($escape) {
+			$text = h($text);
+		}
+		if ($class != null && !empty($class)) {
+			$attributes['class'] = $class;
+		}
+		if ($text === null) {
+			$tag = 'parastart';
+		} else {
+			$tag = 'para';
+		}
+		return $this->output(sprintf($this->tags[$tag], $this->parseHtmlOptions($attributes, null, ' ', ''), $text));
 	}
 /**
  * Returns a SELECT element for days.

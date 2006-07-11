@@ -107,6 +107,7 @@ blockend = "</div>"
 
 ; Tag templates for a paragraph element.
 para = "<p%s>%s</p>"
+parastart = "<p%s>"
 
 ; Tag templates for a label element.
 label = "<label for="%s"%s>%s</label>"

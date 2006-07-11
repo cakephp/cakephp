@@ -527,23 +527,22 @@ class DboPostgres extends DboSource {
 		}
 	}
 /**
- * Translates between PHP boolean values and MySQL (faked) boolean values
+ * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
  * @return mixed Converted boolean value
  */
 	function boolean($data) {
 		if ($data === true || $data === false) {
-			if ($data === true) {
-				return 't';
-			}
-			return 'f';
-		} else {
+			return $data;
+		} elseif (is_string($data)) {
 			if (strpos($data, 't') !== false) {
 				return true;
 			}
 
 			return false;
+		} else {
+			return (bool)$data;
 		}
 	}
 /**

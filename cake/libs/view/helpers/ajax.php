@@ -442,7 +442,7 @@ class AjaxHelper extends Helper {
 		}
 
 		if (!isset($options['id'])) {
-			$options['id'] = r("/", "_", $field);
+			$options['id'] = Inflector::camelize(r("/", "_", $field));
 		}
 
 		$divOptions = array('id' => $options['id'] . "_autoComplete", 'class' => isset($options['class']) ? $options['class'] : 'auto_complete');
@@ -470,7 +470,7 @@ class AjaxHelper extends Helper {
 		$options = $this->_buildOptions($options, $this->autoCompleteOptions);
 
 		return $this->Html->input($field, $htmlOptions) . "\n" .
-				$this->Html->tag("div", $divOptions, true) . "</div>\n" .
+				$this->Html->div(null, '', $divOptions) . "\n" .
 				$this->Javascript->codeBlock("{$var}new Ajax.Autocompleter('" . $htmlOptions['id']
 					. "', '" . $divOptions['id'] . "', '" . $this->Html->url($url) . "', " .
 						$options . ");");
@@ -706,7 +706,7 @@ class AjaxHelper extends Helper {
 		}
 
 		foreach($extra as $key) {
-			if (isset($extra[$key])) {
+			if (isset($options[$key])) {
 				unset($options[$key]);
 			}
 		}
