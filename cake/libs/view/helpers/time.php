@@ -54,8 +54,8 @@ class TimeHelper extends Helper {
  * @return string Formatted date string
  */
 	function fromString($date_string) {
-		if (is_integer($date_string)) {
-			return $date_string;
+		if (is_integer($date_string) || is_numeric($date_string)) {
+			return intval($date_string);
 		} else {
 			return strtotime($date_string);
 		}
