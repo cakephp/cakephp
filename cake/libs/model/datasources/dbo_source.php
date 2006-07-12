@@ -267,6 +267,21 @@ class DboSource extends DataSource {
 		}
 	}
 /**
+ * Returns a row from given resultset as an array .
+ *
+ * @param bool $assoc Associative array only, or both?
+ * @return array The fetched row as an array
+ */
+	function fetchRow($assoc = false) {
+		if (is_resource($this->_result)) {
+			$this->resultSet($this->_result);
+			$resultRow = $this->fetchResult();
+			return $resultRow;
+		} else {
+			return null;
+		}
+	}
+/**
  * Returns a single row of results from the _last_ SQL query.
  *
  * @param resource $res
