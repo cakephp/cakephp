@@ -126,12 +126,14 @@ class DboMssql extends DboSource {
 		$this->connected = false;
 
 		if (is_numeric($config['port'])) {
-			$port = ':' . $config['port'];  // Port number
+			$port = ':' . $config['port'];	// Port number
+		} elseif ($config['port'] === null) {
+			$port = '';						// No port - SQL Server 2005
 		} else {
-			$port = '\\' . $config['port']; // Named pipe
+			$port = '\\' . $config['port'];	// Named pipe
 		}
 
-		$this->connection=$connect($config['host'] . $port, $config['login'], $config['password']);
+		$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
 
 		if (mssql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
@@ -146,7 +148,6 @@ class DboMssql extends DboSource {
 	function disconnect() {
 		return @mssql_close($this->connection);
 	}
-
 /**
  * Executes given SQL statement.
  *
@@ -157,23 +158,6 @@ class DboMssql extends DboSource {
 	function _execute($sql) {
 		return mssql_query($sql, $this->connection);
 	}
-
-/**
- * Returns a row from given resultset as an array .
- *
- * @param bool $assoc Associative array only, or both?
- * @return array The fetched row as an array
- */
-	function fetchRow($assoc = false) {
-		if (is_resource($this->_result)) {
-			$this->resultSet($this->_result);
-			$resultRow = $this->fetchResult();
-			return $resultRow;
-		} else {
-			return null;
-		}
-	}
-
 /**
  * Returns an array of sources (tables) in the database.
  *
@@ -267,7 +251,7 @@ class DboMssql extends DboSource {
 		if ($data === null) {
 			return 'NULL';
 		}
-		if ($data == '') {
+		if ($data === '') {
 			return "''";
 		}
 

@@ -83,7 +83,7 @@ class DboPostgres extends DboSource {
 
 		$config = $this->config;
 		$connect = $config['connect'];
-		$this->connection = $connect("host={$config['host']} port={$config['port']} dbname={$config['database']} user={$config['login']} password={$config['password']}");
+		$this->connection = $connect("host='{$config['host']}' port='{$config['port']}' dbname='{$config['database']}' user='{$config['login']}' password='{$config['password']}'");
 
 		if ($this->connection) {
 			$this->connected = true;
@@ -104,7 +104,7 @@ class DboPostgres extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		$this->connected=!@pg_close($this->connection);
+		$this->connected = !@pg_close($this->connection);
 		return !$this->connected;
 	}
 
@@ -117,29 +117,13 @@ class DboPostgres extends DboSource {
 	function _execute($sql) {
 		return pg_query($this->connection, $sql);
 	}
-
-/**
- * Returns a row from given resultset as an array .
- *
- * @return array The fetched row as an array
- */
-	function fetchRow($assoc = false) {
-		if (is_resource($this->_result)) {
-			$this->resultSet($this->_result);
-			$resultRow=$this->fetchResult();
-			return $resultRow;
-		} else {
-			return null;
-		}
-	}
-
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$cache=parent::listSources();
+		$cache = parent::listSources();
 
 		if ($cache != null) {
 			return $cache;
@@ -241,7 +225,7 @@ class DboPostgres extends DboSource {
 
 		switch($column) {
 			case 'integer':
-				if ($data == '') {
+				if ($data === '') {
 					return 'DEFAULT';
 				} else {
 					$data = pg_escape_string($data);
@@ -252,7 +236,7 @@ class DboPostgres extends DboSource {
 
 			break;
 			case 'boolean':
-				$data=$this->boolean((bool)$data);
+				$data = $this->boolean((bool)$data);
 
 			break;
 			default:

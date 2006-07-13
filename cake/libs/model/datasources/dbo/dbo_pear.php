@@ -96,9 +96,9 @@ class DBO_Pear extends DboSource{
  *
  * @return array The fetched row as an array
  */
-	 function fetchRow() {
-		  return $this->_result->fetchRow(DB_FETCHMODE_ASSOC);
-	 }
+	function fetchRow() {
+		return $this->_result->fetchRow(DB_FETCHMODE_ASSOC);
+	}
 
 /**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.

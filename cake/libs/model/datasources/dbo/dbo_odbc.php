@@ -121,9 +121,8 @@ class DboOdbc extends DboSource{
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		return@odbc_close($this->connection);
+		return @odbc_close($this->connection);
 	}
-
 /**
  * Executes given SQL statement.
  *
@@ -133,22 +132,6 @@ class DboOdbc extends DboSource{
  */
 	function _execute($sql) {
 		return odbc_exec($this->connection, $sql);
-	}
-
-/**
- * Returns a row from given resultset as an array .
- *
- * @param bool $assoc Associative array only, or both?
- * @return array The fetched row as an array
- */
-	function fetchRow($assoc = false) {
-		if (is_resource($this->_result)) {
-			$this->resultSet($this->_result);
-			$resultRow = $this->fetchResult();
-			return $resultRow;
-		} else {
-			return null;
-		}
 	}
 /**
  * Returns an array of sources (tables) in the database.

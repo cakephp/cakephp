@@ -117,19 +117,17 @@ class DboAdodb extends DboSource{
 	 function _execute($sql) {
 		  return $this->_adodb->execute($sql);
 	 }
-
 /**
  * Returns a row from given resultset as an array .
  *
  * @return array The fetched row as an array
  */
-	 function fetchRow() {
-		  if ($this->_result->EOF) {
-				return null;
-		  }
-
-		  return $this->_result->FetchRow();
-	 }
+	function fetchRow() {
+		if ($this->_result->EOF) {
+			return null;
+		}
+		return $this->_result->FetchRow();
+	}
 
 /**
  * Begin a transaction
@@ -317,7 +315,7 @@ class DboAdodb extends DboSource{
 				return 'NULL';
 		  }
 
-		  if ($data == '') {
+		  if ($data === '') {
 				return "''";
 		  }
 

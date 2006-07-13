@@ -120,20 +120,6 @@ class DboSqlite extends DboSource {
 		return sqlite_query($this->connection, $sql);
 	}
 /**
- * Returns a row from given resultset as an array .
- *
- * @return array The fetched row as an array
- */
-	function fetchRow ($assoc = false) {
-		if(is_resource($this->_result)) {
-			$this->resultSet($this->_result);
-			$resultRow = $this->fetchResult();
-			return $resultRow;
-		} else {
-			return null;
-		}
-	}
-/**
  * Returns an array of tables in the database. If there are no tables, an error is raised and the application exits.
  *
  * @return array Array of tablenames in the database
@@ -224,7 +210,7 @@ class DboSqlite extends DboSource {
 			return 'NULL';
 		}
 
-		if($data == '') {
+		if($data === '') {
 			return  "''";
 		}
 
