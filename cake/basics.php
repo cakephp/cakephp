@@ -99,13 +99,16 @@
 			overload($pluginAppModel);
 		}
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
-
+		$loadedPluginModels = array();
 		foreach(listClasses($pluginModelDir)as $modelFileName) {
-			require($pluginModelDir . $modelFileName);
+			if (!key_exists($modelFileName, $loadedPluginModels)) {
+				require($pluginModelDir . $modelFileName);
 
-			if (phpversion() < 5 && function_exists("overload")) {
-				list($name) = explode('.', $modelFileName);
-				overload(Inflector::camelize($name));
+				if (phpversion() < 5 && function_exists("overload")) {
+					list($name) = explode('.', $modelFileName);
+					overload(Inflector::camelize($name));
+				}
+				$loadedPluginModels[$modelFileName] = $modelFileName;
 			}
 		}
 	}

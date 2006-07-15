@@ -98,7 +98,7 @@ if(is_array($data))
 				{
 					$displayText = $row[$alias[$count]][$field];
 				}
-				echo $html->link( $displayText, $path.Inflector::underscore($otherControllerName)."/show/".$row[$modelKey][$field] );
+				echo $html->link( $displayText, $path.Inflector::underscore($otherControllerName)."/view/".$row[$modelKey][$field] );
 				$count++;
 			}
 			else
@@ -110,7 +110,7 @@ if(is_array($data))
 <?php
 		}
 ?>
-		<td class="listactions"><?php echo $html->link('View',$path.$this->viewPath."/show/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
+		<td class="listactions"><?php echo $html->link('View',$path.$this->viewPath."/view/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
 								<?php echo $html->link('Edit',$path.$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
 								<?php echo $html->link('Delete',$path.$this->viewPath."/delete/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
 		</td>

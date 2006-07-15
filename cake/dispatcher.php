@@ -73,7 +73,7 @@ class Dispatcher extends Object {
  * @param string $url	URL information to work on.
  * @return boolean		Success
  */
-	function dispatch($url, $additionalParams = array()) {
+	function dispatch($url, $additionalParams=array()) {
 		$params = array_merge($this->parseParams($url), $additionalParams);
 		$missingController = false;
 		$missingAction = false;
@@ -92,23 +92,25 @@ class Dispatcher extends Object {
 					$pluginName = Inflector::camelize($params['action']);
 					if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
 						if(preg_match('/([\\.]+)/', $ctrlName)) {
-							return $this->cakeError('error404', array(array(
-								'url' => strtolower($ctrlName),
-								'message' => 'Was not found on this server',
-								'base' => $this->base
-							)));
-							exit();
+							return $this->cakeError('error404', array(
+															array('url' => strtolower($ctrlName),
+																	'message' => 'Was not found on this server',
+																	'base' => $this->base)));
+																	exit();
 						} else {
 							$missingController = true;
 						}
 					} else {
 						$params['plugin'] = Inflector::underscore($ctrlName);
 					}
+				} else {
+					$params['plugin'] = null;
+					$this->plugin = null;
 				}
 			}
 		}
 
-		if(isset($params['plugin'])) {
+		if(isset($params['plugin'])){
 			$plugin = $params['plugin'];
 			$pluginName = Inflector::camelize($params['action']);
 			$pluginClass = $pluginName.'Controller';
@@ -122,7 +124,6 @@ class Dispatcher extends Object {
 			if(empty($params['controller']) || !class_exists($pluginClass)) {
 				$params['controller'] = Inflector::underscore($ctrlName);
 				$ctrlClass = $ctrlName.'Controller';
-
 				if (!is_null($params['action'])) {
 					array_unshift($params['pass'], $params['action']);
 				}
@@ -149,12 +150,11 @@ class Dispatcher extends Object {
 		}
 
 		if ($missingController) {
-			return $this->cakeError('missingController', array(array(
-				'className' => Inflector::camelize($params['controller']."Controller"),
-				'webroot' => $this->webroot,
-				'url' => $url,
-				'base' => $this->base
-			)));
+			return $this->cakeError('missingController', array(
+											array('className' => Inflector::camelize($params['controller']."Controller"),
+													'webroot' => $this->webroot,
+													'url' => $url,
+													'base' => $this->base)));
 		} else {
 			$controller =& new $ctrlClass($this);
 		}
@@ -183,7 +183,12 @@ class Dispatcher extends Object {
 		}
 
 		$controller->base = $this->base;
-		$controller->here = $this->base.'/'.$url;
+		$base = strip_plugin($this->base, $this->plugin);
+		if(defined("BASE_URL")){
+			$controller->here = $base . $this->admin . $url;
+		} else {
+			$controller->here = $base . $this->admin . '/' . $url;
+		}
 		$controller->webroot = $this->webroot;
 		$controller->params = $params;
 		$controller->action = $params['action'];
@@ -228,24 +233,22 @@ class Dispatcher extends Object {
 
 		$controller->constructClasses();
 
-		if ($missingAction && !in_array('scaffold', array_keys($classVars))) {
-			return $this->cakeError('missingAction', array(array(
-				'className' => Inflector::camelize($params['controller']."Controller"),
-				'action' => $params['action'],
-				'webroot' => $this->webroot,
-				'url' => $url,
-				'base' => $this->base
-			)));
+		if ($missingAction && !in_array('scaffold', array_keys($classVars))){
+			return $this->cakeError('missingAction', array(
+											array('className' => Inflector::camelize($params['controller']."Controller"),
+													'action' => $params['action'],
+													'webroot' => $this->webroot,
+													'url' => $url,
+													'base' => $this->base)));
 		}
 
 		if ($privateAction){
-			return $this->cakeError('privateAction', array(array(
-				'className' => Inflector::camelize($params['controller']."Controller"),
-				'action' => $params['action'],
-				'webroot' => $this->webroot,
-				'url' => $url,
-				'base' => $this->base
-			)));
+			return $this->cakeError('privateAction', array(
+											array('className' => Inflector::camelize($params['controller']."Controller"),
+													'action' => $params['action'],
+													'webroot' => $this->webroot,
+													'url' => $url,
+													'base' => $this->base)));
 		}
 		return $this->_invoke($controller, $params, $missingAction);
 	}
@@ -279,8 +282,8 @@ class Dispatcher extends Object {
  *
  * @param object $controller
  */
-	function start(&$controller) {
-
+	function start(&$controller)
+	{
 		if (!empty($controller->beforeFilter)) {
 			if(is_array($controller->beforeFilter)) {
 
@@ -303,6 +306,7 @@ class Dispatcher extends Object {
 			}
 		}
 	}
+
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
@@ -342,7 +346,9 @@ class Dispatcher extends Object {
 
 		if (isset($_FILES['data'])) {
 			foreach ($_FILES['data'] as $key => $data) {
+
 				foreach ($data as $model => $fields) {
+
 					foreach ($fields as $field => $value) {
 						$params['data'][$model][$field][$key] = $value;
 					}
@@ -378,7 +384,7 @@ class Dispatcher extends Object {
 			if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r)) {
 
 				if(!empty($r[1])) {
-					return	$base.$r[1];
+					return  $base.$r[1];
 				}
 			}
 		} else {
@@ -395,11 +401,11 @@ class Dispatcher extends Object {
 					$appDir = '/'.APP_DIR;
 				}
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].$appDir.'/';
-				return	$base.$regs[1].$appDir;
+				return  $base.$regs[1].$appDir;
 
 			} elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs)) {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
-				return	$base.$regs[0];
+				return  $base.$regs[0];
 
 			} else {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = '/';

@@ -1562,6 +1562,12 @@ class Bake {
 						}
 						$strFormFields = $strFormFields.$this->generateDateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
 					break;
+					case "time":
+						if( !isset( $field['selected'])) {
+							$field['selected'] = null;
+						}
+						$strFormFields = $strFormFields.$this->generateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
+					break;
 					default:
 					break;
 				}
@@ -1621,7 +1627,7 @@ class Bake {
 		$htmlOptions['class'] = "inputCheckbox";
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
 		$tagNameArray = explode('/', $tagName);
-		$htmlAttributes['checked'] = "\${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'] ? 'checked' : ''";
+		$htmlAttributes['checked'] = "\${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'] ? 'checked' : null";
 		$str = "\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->attributesToArray($htmlAttributes) . ")?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
@@ -1673,6 +1679,36 @@ class Bake {
 		$divTagInside = sprintf( "%s %s %s", $strError, $strLabel, $str );
 		$requiredDiv = $this->divTag( $divClass, $divTagInside );
 		return $this->divTag("date", $requiredDiv);
+	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $tagName
+ * @param unknown_type $prompt
+ * @param unknown_type $required
+ * @param unknown_type $errorMsg
+ * @param unknown_type $size
+ * @param unknown_type $htmlOptions
+ * @param unknown_type $selected
+ * @return unknown
+ */
+	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
+		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
+		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
+		$strLabel = $this->labelTag($tagName, $prompt);
+		$divClass = "optional";
+		if ($required) {
+			$divClass = "required";
+		}
+		$strError = "";
+
+		if ($this->isFieldError($tagName)) {
+			$strError = $this->pTag('error', $errorMsg);
+			$divClass = sprintf("%s error", $divClass);
+		}
+		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
+		$requiredDiv = $this->divTag($divClass, $divTagInside);
+		return $this->divTag("time", $requiredDiv);
 	}
 /**
  * Enter description here...

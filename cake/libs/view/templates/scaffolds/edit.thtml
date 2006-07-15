@@ -66,7 +66,7 @@ if($type == 'Edit')
 	{
 		if(isset($value['foreignKey']))
 		{
-			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/show/".$data[$modelKey][$field] )."</li>";
+			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/view/".$data[$modelKey][$field] )."</li>";
 		}
 	}
 }

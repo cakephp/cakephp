@@ -426,6 +426,10 @@ class CakeSession extends Object{
 		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
 		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
 
+		if ($row && !isset($row[0][$table]) && isset($row[0][0])) {
+			$table = 0;
+		}
+
 		if ($row && $row[0][$table]['data']) {
 			return $row[0][$table]['data'];
 		} else {

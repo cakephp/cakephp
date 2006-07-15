@@ -100,35 +100,35 @@ class Scaffold extends Object{
 			  'Scaffold :: ' . Inflector::humanize($controller->action) . ' :: ' . Inflector::humanize(
 																											  Inflector::pluralize(
 																												  $this->modelKey));
-		  $this->__scaffoldView($params);
+		  $this->__scaffold($params);
 	 }
 
 /**
- * Renders a Show view of scaffolded Model.
+ * Renders a view view of scaffolded Model.
  *
  * @param array $params
  * @return A rendered view of a row from Models database table
  * @access private
  */
-	 function __scaffoldShow($params) {
-		  if ($this->controllerClass->_beforeScaffold('show')) {
+	 function __scaffoldView($params) {
+		  if ($this->controllerClass->_beforeScaffold('view')) {
 				$this->controllerClass->params['data']=$this->controllerClass->{$this->modelKey}->read();
 				$this->controllerClass->set('data', $this->controllerClass->params['data']);
 				$this->controllerClass->set('fieldNames',
 													 $this->controllerClass->generateFieldNames(
 														 $this->controllerClass->params['data'], false));
 
-				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffold.show.thtml')) {
+				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffold.view.thtml')) {
 					 return $this->controllerClass->render($this->actionView, '',
-																			APP . 'views' . DS . $this->viewPath . DS . 'scaffold.show.thtml');
-				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.show.thtml')) {
+																			APP . 'views' . DS . $this->viewPath . DS . 'scaffold.view.thtml');
+				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.view.thtml')) {
 					 return $this->controllerClass->render($this->actionView, '',
-																			APP . 'views' . DS . 'scaffold' . DS . 'scaffold.show.thtml');
+																			APP . 'views' . DS . 'scaffold' . DS . 'scaffold.view.thtml');
 				} else {
 					 return $this->controllerClass->render($this->actionView, '', LIBS . 'view' . DS . 'templates'
-																			. DS . 'scaffolds' . DS . 'show.thtml');
+																			. DS . 'scaffolds' . DS . 'view.thtml');
 				}
-		  } else if($this->controllerClass->_scaffoldError('show') === false) {
+		  } else if($this->controllerClass->_scaffoldError('view') === false) {
 				return $this->__scaffoldError();
 		  }
 	 }
@@ -147,15 +147,15 @@ class Scaffold extends Object{
 				$this->controllerClass->{$this->modelKey}->recursive=0;
 				$this->controllerClass->set('data', $this->controllerClass->{$this->modelKey}->findAll());
 
-				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffold.list.thtml')) {
+				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffold.index.thtml')) {
 					 return $this->controllerClass->render($this->actionView, '',
-																			APP . 'views' . DS . $this->viewPath . DS . 'scaffold.list.thtml');
-				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.list.thtml')) {
+																			APP . 'views' . DS . $this->viewPath . DS . 'scaffold.index.thtml');
+				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.index.thtml')) {
 					 return $this->controllerClass->render($this->actionView, '',
-																			APP . 'views' . DS . 'scaffold' . DS . 'scaffold.list.thtml');
+																			APP . 'views' . DS . 'scaffold' . DS . 'scaffold.index.thtml');
 				} else {
 					 return $this->controllerClass->render($this->actionView, '', LIBS . 'view' . DS . 'templates'
-																			. DS . 'scaffolds' . DS . 'list.thtml');
+																			. DS . 'scaffolds' . DS . 'index.thtml');
 				}
 		  } else if($this->controllerClass->_scaffoldError('index') === false) {
 				return $this->__scaffoldError();
@@ -166,7 +166,7 @@ class Scaffold extends Object{
  * Renders an Add or Edit view for scaffolded Model.
  *
  * @param array $params
- * @param string $params add or new
+ * @param string $params add or edit
  * @return A rendered view with a form to edit or add a record in the Models database table
  * @access private
  */
@@ -175,8 +175,8 @@ class Scaffold extends Object{
 		  $form ='Edit';
 
 		  if ($type === 'add') {
-				$thtml='new';
-				$form ='New';
+				$thtml='add';
+				$form ='Add';
 		  }
 
 		  if ($this->controllerClass->_beforeScaffold($type)) {
@@ -213,7 +213,7 @@ class Scaffold extends Object{
  *
  * @param array $params
  * @param string $type create or update
- * @return success on save/update, new/edit form if data is empty or error if save or update fails
+ * @return success on save/update, add/edit form if data is empty or error if save or update fails
  * @access private
  */
 	 function __scaffoldSave($params = array(), $type) {
@@ -236,8 +236,8 @@ class Scaffold extends Object{
 
 				if ($type == 'create') {
 					 $this->controllerClass->{$this->modelKey}->create();
-					 $thtml  ='new';
-					 $form   ='New';
+					 $thtml  ='add';
+					 $form   ='Add';
 					 $success='saved';
 				}
 
@@ -390,7 +390,7 @@ class Scaffold extends Object{
  * @since Cake v 0.10.0.172
  * @access private
  */
-	 function __scaffoldView($params) {
+	 function __scaffold($params) {
 		  if (!in_array('Form', $this->controllerClass->helpers)) {
 				$this->controllerClass->helpers[] = 'Form';
 		  }
@@ -399,7 +399,7 @@ class Scaffold extends Object{
 		  $db=&ConnectionManager::getDataSource($this->controllerClass->{$this->modelKey}->useDbConfig);
 
 		  if (isset($db)) {
-				if ($params['action'] === 'index' || $params['action'] === 'list' || $params['action'] === 'show'
+				if ($params['action'] === 'index' || $params['action'] === 'list' || $params['action'] === 'view'
 					|| $params['action'] === 'add' || $params['action'] === 'create'
 					|| $params['action'] === 'edit' || $params['action'] === 'update'
 					|| $params['action'] === 'delete') {
@@ -410,8 +410,8 @@ class Scaffold extends Object{
 
 								break;
 
-						  case 'show':
-								$this->__scaffoldShow($params);
+						  case 'view':
+								$this->__scaffoldView($params);
 
 								break;
 

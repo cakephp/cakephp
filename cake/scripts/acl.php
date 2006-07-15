@@ -38,7 +38,7 @@
 	$root = dirname(dirname(dirname(__FILE__)));
 	$here = $argv[0];
 	$dataSource = 'default';
-	for ($i = 1; $i < count($argv); $i += 2)
+	for ($i = 1; $i < count($argv); $i++)
 	{
 		// Process command-line modifiers here
 		switch (strtolower($argv[$i]))
@@ -57,15 +57,30 @@
 			break;
 		}
 	}
+
+	if (strlen($app) && $app[0] == DS) {
+		$cnt = substr_count($root, DS);
+		$app = str_repeat('..' . DS, $cnt) . $app;
+	}
 	define ('ROOT', $root.DS);
 	define ('APP_DIR', $app);
-	define ('APP_PATH', $app.DS);
-	define ('DEBUG', 1);
-	define ('CORE_PATH', $core);
-	define ('CAKE_CORE_INCLUDE_PATH', ROOT);
+	define ('DEBUG', 1);;
+	define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	define('DATASOURCE', $dataSource);
-	define ('DEBUG', 1);
-	ini_set('include_path',ini_get('include_path').PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
+
+	if(function_exists('ini_set')) {
+		ini_set('include_path',ini_get('include_path').
+													PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.DS.
+													PATH_SEPARATOR.CORE_PATH.DS.
+													PATH_SEPARATOR.ROOT.DS.APP_DIR.DS.
+													PATH_SEPARATOR.APP_DIR.DS.
+													PATH_SEPARATOR.APP_PATH);
+		define('APP_PATH', null);
+		define('CORE_PATH', null);
+	} else {
+		define('APP_PATH', ROOT . DS . APP_DIR . DS);
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+	}
 
 	require ('cake'.DS.'basics.php');
 	require ('cake'.DS.'config'.DS.'paths.php');

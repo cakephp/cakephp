@@ -48,7 +48,7 @@ if(!empty($objModel->alias))
 	$count = 0;
 }
 ?>
-<h1>Show
+<h1>View
 <?php echo Inflector::humanize($modelName)?>
 </h1>
 
@@ -65,7 +65,7 @@ foreach($fieldNames as $field => $value)
 
 		if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]) && (isset($displayText)))
 		{
-			echo "<dd>".$html->link($displayText, $path.Inflector::underscore($value['controller']).'/show/'
+			echo "<dd>".$html->link($displayText, $path.Inflector::underscore($value['controller']).'/view/'
 						.$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
 		}
 		else
@@ -184,7 +184,7 @@ foreach($relations as $association => $relation)
 			{
 ?>
 				<td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
-																"/show/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
+																"/view/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
 										<?php echo $html->link('Edit',$path.Inflector::underscore($controller).
 																"/edit/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
 										<?php echo $html->link('Delete',$path.Inflector::underscore($controller).
@@ -196,7 +196,7 @@ foreach($relations as $association => $relation)
 			{
 ?>
 				<td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
-																"/show/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
+																"/view/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
 										<?php echo $html->link('Edit',$path.Inflector::underscore($controller).
 																"/edit/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
 										<?php echo $html->link('Delete',$path.Inflector::underscore($controller).
