@@ -2,9 +2,11 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
- *
- * Long description for file
+ * Command-line code generation utility to automate programmer chores.
+ * 
+ * Bake is CakePHP's code generation script, which can help you kickstart
+ * application development by writing fully functional skeleton controllers,
+ * models, and views. Going further, Bake can also write Unit Tests for you.
  *
  * PHP versions 4 and 5
  *
@@ -112,7 +114,7 @@
 	}
 	$pattyCake->main();
 /**
- * Short description for class.
+ * Bake is a command-line code generation utility for automating programmer chores.
  *
  * @package		cake
  * @subpackage	cake.cake.scripts
@@ -120,38 +122,38 @@
 class Bake {
 
 /**
- * Enter description here...
+ * Standard input stream.
  *
- * @var unknown_type
+ * @var filehandle
  */
 	var $stdin;
 /**
- * Enter description here...
+ * Standard output stream.
  *
- * @var unknown_type
+ * @var filehandle
  */
 	var $stdout;
 /**
- * Enter description here...
+ * Standard error stream.
  *
- * @var unknown_type
+ * @var filehandle
  */
 	var $stderr;
 /**
- * Enter description here...
+ * Associated controller name.
  *
- * @var unknown_type
+ * @var string
  */
 	var $lowCtrl = null;
 /**
- * Enter description here...
+ * If true, Bake will ask for permission to perform actions.
  *
- * @var unknown_type
+ * @var boolean
  */
 	var $interactive = false;
 /**
- * Enter description here...
- *
+ * Private helper function for constructor
+ * @access private
  */
 	function __construct() {
 		$this->stdin = fopen('php://stdin', 'r');
@@ -160,7 +162,7 @@ class Bake {
 		$this->welcome();
 	}
 /**
- * Enter description here...
+ * Constructor.
  *
  * @return Bake
  */
@@ -168,7 +170,7 @@ class Bake {
 		return $this->__construct();
 	}
 /**
- * Enter description here...
+ * Main-loop method.
  *
  */
 	function main() {
@@ -208,7 +210,7 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Database configuration setup.
  *
  */
 	function doDbConfig() {
@@ -275,7 +277,7 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Action to create a Model.
  *
  */
 	function doModel()
@@ -549,7 +551,7 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Action to create a View.
  *
  */
 	function doView() {
@@ -812,7 +814,7 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Action to create a Controller.
  *
  */
 	function doController() {
@@ -1077,9 +1079,9 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Action to create a Unit Test.
  *
- * @return unknown
+ * @return Success
  */
 	function doUnitTest() {
 		if (is_dir('vendors'.DS.'simpletest') || is_dir(APP_PATH.'vendors'.DS.'simpletest')) {
@@ -1094,12 +1096,12 @@ class Bake {
 		return $result;
 	}
 /**
- * Enter description here...
+ * Creates a database configuration file for Bake.
  *
- * @param unknown_type $host
- * @param unknown_type $login
- * @param unknown_type $password
- * @param unknown_type $database
+ * @param string $host
+ * @param string $login
+ * @param string $password
+ * @param string $database
  */
 	function bakeDbConfig($host, $login, $password, $database) {
 		$out = "<?php\n";
@@ -1119,13 +1121,13 @@ class Bake {
 		$this->createFile($filename, $out);
 	}
 /**
- * Enter description here...
+ * Assembles and writes a Model file.
  *
- * @param unknown_type $modelClassName
- * @param unknown_type $dbConnection
- * @param unknown_type $modelTableName
- * @param unknown_type $validate
- * @param unknown_type $modelAssociations
+ * @param string $modelClassName
+ * @param object $dbConnection
+ * @param string $modelTableName
+ * @param array $validate
+ * @param array $modelAssociations
  */
 	function bakeModel($modelClassName, $dbConnection, $modelTableName, $validate, $modelAssociations) {
 		$out = "<?php\n";
@@ -1224,11 +1226,11 @@ class Bake {
 		$this->createFile($filename, $out);
 	}
 /**
- * Enter description here...
+ * Assembles and writes a View file.
  *
- * @param unknown_type $controllerName
- * @param unknown_type $actionName
- * @param unknown_type $content
+ * @param string $controllerName
+ * @param string $actionName
+ * @param string $content
  */
 	function bakeView($controllerName, $actionName, $content = '') {
 		$out = "<h1>$actionName</h1>\n";
@@ -1242,13 +1244,13 @@ class Bake {
 		$this->createFile($filename, $out);
 	}
 /**
- * Enter description here...
+ * Assembles and writes a Controller file.
  *
- * @param unknown_type $controllerName
- * @param unknown_type $uses
- * @param unknown_type $helpers
- * @param unknown_type $components
- * @param unknown_type $actions
+ * @param string $controllerName
+ * @param array $uses
+ * @param array $helpers
+ * @param array $components
+ * @param string $actions
  */
 	function bakeController($controllerName, $uses, $helpers, $components, $actions = '') {
 		$inflect = new Inflector();
@@ -1304,10 +1306,10 @@ class Bake {
 		$this->createFile($filename, $out);
 	}
 /**
- * Enter description here...
+ * Assembles and writes a unit test file.
  *
- * @param unknown_type $type
- * @param unknown_type $className
+ * @param string $type One of "model", and "controller".
+ * @param string $className
  */
 	function bakeUnitTest($type, $className) {
 		$out = '<?php '."\n\n";
@@ -1376,12 +1378,12 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Prompts the user for input, and returns it.
  *
- * @param unknown_type $prompt
- * @param unknown_type $options
- * @param unknown_type $default
- * @return unknown
+ * @param string $prompt Prompt text.
+ * @param mixed $options Array or string of options.
+ * @param string $default Default input value.
+ * @return Either the default value, or the user-provided input.
  */
 	function getInput($prompt, $options = null, $default = null) {
 		if (!is_array($options)) {
@@ -1406,10 +1408,10 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Outputs to the stdout filehandle.
  *
- * @param unknown_type $string
- * @param unknown_type $newline
+ * @param string $string String to output.
+ * @param boolean $newline If true, the outputs gets an added newline.
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
@@ -1419,26 +1421,26 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Outputs to the stderr filehandle.
  *
- * @param unknown_type $string
+ * @param string $string Error text to output.
  */
 	function stderr($string) {
 		fwrite($this->stderr, $string);
 	}
 /**
- * Enter description here...
+ * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
  */
 	function hr() {
 		$this->stdout('---------------------------------------------------------------');
 	}
 /**
- * Enter description here...
+ * Creates a file at given path.
  *
- * @param unknown_type $path
- * @param unknown_type $contents
- * @return unknown
+ * @param string $path		Where to put the file.
+ * @param string $contents Content to put in the file.
+ * @return Success
  */
 	function createFile ($path, $contents) {
 		echo "\nCreating file $path\n";
@@ -1472,11 +1474,12 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Takes an array of database fields, and generates an HTML form for a View.
+ * This is an extraction from the Scaffold functionality. 
  *
- * @param unknown_type $fields
- * @param unknown_type $readOnly
- * @return unknown
+ * @param array $fields
+ * @param boolean $readOnly
+ * @return Generated HTML and PHP.
  */
 	function generateFields( $fields, $readOnly = false ) {
 		$strFormFields = '';
@@ -1576,16 +1579,16 @@ class Bake {
 		return $strFormFields;
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a textarea.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $cols
- * @param unknown_type $rows
- * @param unknown_type $htmlOptions
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param integer $cols
+ * @param integer $rows
+ * @param array $htmlOptions
+ * @return Generated HTML and PHP.
  */
 	function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
@@ -1614,14 +1617,14 @@ class Bake {
 		return $this->divTag( $divClass, $divTagInside );
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a checkbox, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $htmlOptions
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param array $htmlOptions
+ * @return Generated HTML and PHP.
  */
 	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null ) {
 		$htmlOptions['class'] = "inputCheckbox";
@@ -1647,16 +1650,16 @@ class Bake {
 		return $this->divTag( $divClass, $divTagInside );
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a date-picker, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $size
- * @param unknown_type $htmlOptions
- * @param unknown_type $selected
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param integer $size
+ * @param array $htmlOptions
+ * @param string $selected
+ * @return Generated HTML and PHP.
  */
 	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected=null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
@@ -1681,16 +1684,16 @@ class Bake {
 		return $this->divTag("date", $requiredDiv);
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a time-picker, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $size
- * @param unknown_type $htmlOptions
- * @param unknown_type $selected
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param integer $size
+ * @param array $htmlOptions
+ * @param string $selected
+ * @return Generated HTML and PHP.
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
@@ -1711,16 +1714,16 @@ class Bake {
 		return $this->divTag("time", $requiredDiv);
 	}
 /**
- * Enter description here...
+ * EGenerates PHP code for a View file that makes a datetime-picker, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $size
- * @param unknown_type $htmlOptions
- * @param unknown_type $selected
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param integer $size
+ * @param array $htmlOptions
+ * @param string $selected
+ * @return Generated HTML and PHP.
  */
 	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
@@ -1745,15 +1748,15 @@ class Bake {
 		return $this->divTag("date", $requiredDiv);
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes an INPUT field, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @param unknown_type $size
- * @param unknown_type $htmlOptions
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param boolean $required
+ * @param string $errorMsg
+ * @param integer $size
+ * @param array $htmlOptions
+ * @return Generated HTML and PHP.
  */
 	function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
@@ -1780,17 +1783,17 @@ class Bake {
 		return $this->divTag( $divClass, $divTagInside );
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a SELECT box, wrapped in a DIV.
  *
- * @param unknown_type $tagName
- * @param unknown_type $prompt
- * @param unknown_type $options
- * @param unknown_type $selected
- * @param unknown_type $selectAttr
- * @param unknown_type $optionAttr
- * @param unknown_type $required
- * @param unknown_type $errorMsg
- * @return unknown
+ * @param string $tagName
+ * @param string $prompt
+ * @param array $options
+ * @param string $selected
+ * @param array $selectAttr
+ * @param array $optionAttr
+ * @param boolean $required
+ * @param string $errorMsg
+ * @return Generated HTML and PHP.
  */
 	function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null) {
 		$selectAttr['id'] = strtolower(str_replace('/', '_',$tagName));
@@ -1827,31 +1830,31 @@ class Bake {
 		return $this->divTag( $divClass, $divTagInside );
 	}
 /**
- * Enter description here...
+ * Generates PHP code for a View file that makes a submit button, wrapped in a DIV.
  *
- * @param unknown_type $displayText
- * @param unknown_type $htmlOptions
- * @return unknown
+ * @param string $displayText
+ * @param array $htmlOptions
+ * @return Generated HTML.
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
 		return $this->divTag( 'submit', $this->Html->submit( $displayText, $htmlOptions) );
 	}
 /**
- * Enter description here...
+ * Returns HTML for a LABEL form element.
  *
- * @param unknown_type $tagName
- * @param unknown_type $text
- * @return unknown
+ * @param string $tagName
+ * @param string $text
+ * @return Generated HTML.
  */
 	function labelTag( $tagName, $text ) {
 		return sprintf( TAG_LABEL, strtolower(str_replace('/', '_',$tagName)), $text ) . "\n";
 	}
 
 /**
- * Enter description here...
+ * Tests given field for validity, and returns true if there are errors.
  *
- * @param unknown_type $field
- * @return unknown
+ * @param string $field
+ * @return Success.
  */
 	function isFieldError($field ) {
 		$error = 1;
@@ -1863,30 +1866,31 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Returns the text wrapped in an HTML P tag, followed by a newline.
  *
- * @param unknown_type $class
- * @param unknown_type $text
- * @return unknown
+ * @param string $class
+ * @param string $text
+ * @return Generated HTML.
  */
 	function pTag($class, $text) {
 		return sprintf( TAG_P_CLASS, $class, $text ) . "\n";
 	}
 /**
- * Enter description here...
+ * Returns the text wrapped in an HTML DIV, followed by a newline.
  *
- * @param unknown_type $class
- * @param unknown_type $text
- * @return unknown
+ * @param string $class
+ * @param string $text
+ * @return Generated HTML.
  */
 	function divTag($class, $text) {
 		return sprintf( TAG_DIV, $class, $text ) . "\n";
 	}
 /**
- * Enter description here...
+ * Parses the HTML attributes array, which is a common data structure in View files.
+ * Returns PHP code for initializing this array in a View file.
  *
- * @param unknown_type $htmlAttributes
- * @return unknown
+ * @param array $htmlAttributes
+ * @return Generated PHP code.
  */
 	function attributesToArray($htmlAttributes) {
 		if (is_array($htmlAttributes)) {
@@ -1913,7 +1917,7 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Outputs usage text on the standard output.
  *
  */
 	function help() {
@@ -1936,9 +1940,10 @@ class Bake {
 		$this->stdout('');
 	}
 /**
- * Enter description here...
+ * Checks that given project path does not already exist, and 
+ * finds the app directory in it. Then it calls __buildDirLayout() with that information.
  *
- * @param unknown_type $projectPath
+ * @param string $projectPath
  */
 	function project($projectPath) {
 		if($projectPath != '') {
@@ -1969,10 +1974,10 @@ class Bake {
 		exit();
 	}
 /**
- * Enter description here...
+ * Returns true if given path is a directory.
  *
- * @param unknown_type $projectPath
- * @return unknown
+ * @param string $projectPath
+ * @return True if given path is a directory.
  */
 	function __checkPath($projectPath) {
 		if(is_dir($projectPath)) {
@@ -1982,10 +1987,13 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Looks for a skeleton template of a Cake application,
+ * and if not found asks the user for a path. When there is a path
+ * this method will make a deep copy of the skeleton to the project directory.
+ * A default home page will be added, and the tmp file storage will be chmod'ed to 0777.
  *
- * @param unknown_type $projectPath
- * @param unknown_type $appName
+ * @param string $projectPath
+ * @param string $appName
  */
 	function __buildDirLayout($projectPath, $appName) {
 		$skel = '';
@@ -2040,13 +2048,13 @@ class Bake {
 		}
 	}
 /**
- * Enter description here...
+ * Recursive directory copy.
  *
- * @param unknown_type $fromDir
- * @param unknown_type $toDir
- * @param unknown_type $chmod
- * @param unknown_type $verbose
- * @return unknown
+ * @param string $fromDir
+ * @param string $toDir
+ * @param octal $chmod
+ * @param boolean	 $verbose
+ * @return Success.
  */
 	function copydirr($fromDir, $toDir, $chmod = 0755, $verbose = false) {
 		$errors=array();
@@ -2115,7 +2123,7 @@ class Bake {
 		return true;
 	}
 /**
- * Enter description here...
+ * Outputs an ASCII art banner to standard output.
  *
  */
 	function welcome()
@@ -2128,10 +2136,10 @@ class Bake {
 		$this->stdout('');
 	}
 /**
- * Enter description here...
+ * Writes a file with a default home page to the project.
  *
- * @param unknown_type $dir
- * @param unknown_type $app
+ * @param string $dir
+ * @param string $app
  */
 	function __defaultHome($dir, $app) {
 		$path = $dir.DS.'views'.DS.'pages'.DS;
