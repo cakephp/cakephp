@@ -83,7 +83,7 @@ class Model extends Object{
 /**
  * Value of the primary key ID of the record that this model is currently pointing to
  *
- * @var unknown_type
+ * @var integer
  * @access public
  */
 	var $id = false;
@@ -125,12 +125,14 @@ class Model extends Object{
  * that have to match with preg_match(). Use these rules with Model::validate()
  *
  * @var array
+ * @access public
  */
 	var $validate = array();
 
 /**
  * Errors in validation
  * @var array
+ * @access public
  */
 	var $validationErrors = array();
 
@@ -138,6 +140,7 @@ class Model extends Object{
  * Database table prefix for tables in model.
  *
  * @var string
+ * @access public
  */
 	var $tablePrefix = null;
 
@@ -159,6 +162,7 @@ class Model extends Object{
  * List of table names included in the Model description. Used for associations.
  *
  * @var array
+ * @access public
  */
 	var $tableToModel = array();
 
@@ -166,6 +170,7 @@ class Model extends Object{
  * List of Model names by used tables. Used for associations.
  *
  * @var array
+ * @access public
  */
 	var $modelToTable = array();
 
@@ -173,6 +178,7 @@ class Model extends Object{
  * List of Foreign Key names to used tables. Used for associations.
  *
  * @var array
+ * @access public
  */
 	var $keyToTable = array();
 
@@ -180,6 +186,7 @@ class Model extends Object{
  * Alias table names for model, for use in SQL JOIN statements.
  *
  * @var array
+ * @access public
  */
 	var $alias = array();
 
@@ -187,6 +194,7 @@ class Model extends Object{
  * Whether or not transactions for this model should be logged
  *
  * @var boolean
+ * @access public
  */
 	var $logTransactions = false;
 
@@ -194,6 +202,7 @@ class Model extends Object{
  * Whether or not to enable transactions for this model (i.e. BEGIN/COMMIT/ROLLBACK)
  *
  * @var boolean
+ * @access public
  */
 	var $transactional = false;
 
@@ -202,6 +211,7 @@ class Model extends Object{
  * caching only, the results are not stored beyond this execution.
  *
  * @var boolean
+ * @access public
  */
 	var $cacheQueries = true;
 
@@ -209,6 +219,7 @@ class Model extends Object{
  * belongsTo association
  *
  * @var array
+ * @access public
  */
 	var $belongsTo = array();
 
@@ -216,6 +227,7 @@ class Model extends Object{
  * hasOne association
  *
  * @var array
+ * @access public
  */
 	var $hasOne = array();
 
@@ -223,6 +235,7 @@ class Model extends Object{
  * hasMany association
  *
  * @var array
+ * @access public
  */
 	var $hasMany = array();
 
@@ -230,13 +243,15 @@ class Model extends Object{
  * hasAndBelongsToMany association
  *
  * @var array
+ * @access public
  */
 	var $hasAndBelongsToMany = array();
 
 /**
  * Depth of recursive association
  *
- * @var int
+ * @var integer
+ * @access public
  */
 	var $recursive = 1;
 
@@ -251,6 +266,7 @@ class Model extends Object{
  * Default association keys
  *
  * @var array
+ * @access protected
  */
 	var $__associationKeys = array(
 			'belongsTo' => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
@@ -263,30 +279,31 @@ class Model extends Object{
  * Holds provided/generated association key names and other data for all associations
  *
  * @var array
+ * @access protected
  */
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
  * The last inserted ID of the data that this model created
  *
- * @var int
- * @access private
+ * @var integer
+ * @access protected
  */
 	var $__insertID = null;
 
 /**
  * The number of records returned by the last query
  *
- * @access private
- * @var int
+ * @var integer
+ * @access protected
  */
 	var $__numRows = null;
 
 /**
  * The number of records affected by the last query
  *
- * @access private
- * @var int
+ * @var integer
+ * @access protected
  */
 	var $__affectedRows = null;
 
@@ -353,12 +370,12 @@ class Model extends Object{
  * PHP4 Only
  *
  * Handles custom method calls, like findBy<field> for DB models,
- * and custom RPC calls for remote data sources
+ * and custom RPC calls for remote data sources.
  *
- * @param unknown_type $method
- * @param unknown_type $params
- * @param unknown_type $return
- * @return unknown
+ * @param string $method    Name of method to call. 
+ * @param array $params     Parameters for the method. 
+ * @param array  $return    The database query results, "returned" by reference.
+ * @return boolean Always true 
  * @access protected
  */
 	function __call($method, $params, &$return) {
@@ -368,9 +385,10 @@ class Model extends Object{
 	}
 /**
  * Bind model associations on the fly.
+ * @link http://cakebaker.wordpress.com/2006/02/22/new-feature-bindmodelunbindmodel/
  *
  * @param array $params
- * @return true
+ * @return boolean Always true 
  */
 	function bindModel($params) {
 
@@ -395,8 +413,15 @@ class Model extends Object{
 /**
  * Turn off associations on the fly.
  *
+ * Example: Turn off the associated Model Supportrequest,  
+ * to temporarily lighten the User model: 
+ * <code> 
+ * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) ); 
+ * </code> 
+ * 
+ * @link http://cakebaker.wordpress.com/2006/02/22/new-feature-bindmodelunbindmodel/
  * @param array $params
- * @return true
+ * @return boolean Always true
  */
 	function unbindModel($params) {
 		foreach($params as $assoc => $models) {
@@ -455,7 +480,6 @@ class Model extends Object{
  * Private helper method to create associated models of given class.
  * @param string $assoc
  * @param string $className Class name
- * @param string $type Type of assocation
  * @access private
  */
 	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
@@ -638,7 +662,7 @@ class Model extends Object{
  * Returns the column type of a column in the model
  *
  * @param string $column The name of the model column
- * @return string
+ * @return string Column type
  */
 	function getColumnType($column) {
 		$columns = $this->loadInfo();
