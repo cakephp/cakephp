@@ -71,6 +71,8 @@ class Dispatcher extends Object {
  * Actions).
  *
  * @param string $url	URL information to work on.
+ * @param array $additionalParams	Settings array ("bare", "return"), 
+ * which is melded with the GET and POST params.
  * @return boolean		Success
  */
 	function dispatch($url, $additionalParams=array()) {
