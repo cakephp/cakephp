@@ -697,7 +697,7 @@ class Bake {
 					$viewView .= "\t\t<dd><?php echo \$value ?></dd>\n";
 					$viewView .= "\t<?php endforeach; ?>\n";
 					$viewView .= "\t<ul><li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" .$inflect->underscore($controller)."/add/' . \${$this->lowCtrl}['{$association}']['" . $objModel->{$model}->primaryKey . "'])?> </li></ul>\n";
-					$viewView .= "<?php endif ?>\n";
+					$viewView .= "<?php endif; ?>\n";
 					$viewView .= "</dl>\n";
 
 				}
@@ -734,11 +734,11 @@ class Bake {
 					$viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
 					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
 					$viewView .= "</td>\n";
-					$viewView .= "<?php endif ?>\n";
+					$viewView .= "<?php endif; ?>\n";
 					$viewView .= "</tr>\n";
 					$viewView .= "<?php endforeach; ?>\n";
 					$viewView .= "</table>\n";
-					$viewView .= "<?php endif ?>\n\n";
+					$viewView .= "<?php endif; ?>\n\n";
 					$viewView .= "<ul>\n";
 					$viewView .= "<li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" . $inflect->underscore($controller) . "/add/')?></li>\n";
 					$viewView .= "</ul>\n";
