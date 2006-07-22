@@ -490,8 +490,10 @@ class DboSource extends DataSource {
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
 			return true;
+		} else {
+			$model->onError();
+			return false;
 		}
-		return false;
 	}
 /**
  * The "R" in CRUD
@@ -541,6 +543,12 @@ class DboSource extends DataSource {
 		// Build final query SQL
 		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
 		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->name);
+		
+		if ($resultSet === false) {
+			$model->onError();
+			return false;
+		}
+		
 		$filtered = $this->__filterResults($resultSet, $model);
 
 		if ($model->recursive > 0) {
@@ -1108,7 +1116,11 @@ class DboSource extends DataSource {
 		$sql = 'UPDATE ' . $this->fullTableName($model);
 		$sql .= ' SET ' . join(',', $updates);
 		$sql .= ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($model->getID(), $model->getColumnType($model->primaryKey));
-		return $this->execute($sql);
+		if (!$this->execute($sql)) {
+			$model->onError();
+			return false;
+		}
+		return true;
 	}
 /**
  * Generates and executes an SQL DELETE statement for given id on given model.
@@ -1129,12 +1141,11 @@ class DboSource extends DataSource {
 
 		foreach($model->id as $id) {
 			$result = $this->execute('DELETE FROM ' . $this->fullTableName($model) . ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($id));
+			if ($result === false) {
+				$model->onError();
+			}
 		}
-
-		if ($result) {
-			return true;
-		}
-		return false;
+		return ($result !== false);
 	}
 /**
  * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)

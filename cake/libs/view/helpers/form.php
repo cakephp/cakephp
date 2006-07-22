@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
+/*	Deprecated	*/
+
 /**
  * Tag template for a div with a class attribute.
  */
@@ -50,15 +53,9 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class FormHelper extends Helper{
+class FormHelper extends Helper {
+
 	var $helpers = array('Html');
-/**
- * Constructor which takes an instance of the HtmlHelper class.
- *
- * @return void
- */
-	function FormHelper() {
-	}
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
@@ -66,7 +63,7 @@ class FormHelper extends Helper{
  * @return bool If there are errors this method returns true, else false.
  */
 	function isFieldError($field) {
-		$error=1;
+		$error = 1;
 		$this->Html->setFormTag($field);
 
 		if ($error == $this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
@@ -76,21 +73,23 @@ class FormHelper extends Helper{
 		}
 	}
 /**
+ * @deprecated
+ */
+	function labelTag($tagName, $text) {
+		return sprintf($this->tags['label'], Inflector::camelize(str_replace('/', '_', $tagName)), $text);
+	}
+/**
  * Returns a formatted LABEL element for HTML FORMs.
  *
  * @param string $tagName This should be "Modelname/fieldname"
  * @param string $text Text that will appear in the label field.
  * @return string The formatted LABEL element
  */
-	function labelTag($tagName, $text) {
-		return sprintf(TAG_LABEL, strtolower(str_replace('/', '_', $tagName)), $text);
+	function label($tagName, $text) {
+		return $this->output(sprintf($this->tags['label'], Inflector::camelize(str_replace('/', '_', $tagName)), $text));
 	}
 /**
- * Returns a formatted DIV tag for HTML FORMs.
- *
- * @param string $class CSS class name of the div element.
- * @param string $text String content that will appear inside the div element.
- * @return string The formatted DIV element
+ * @deprecated
  */
 	function divTag($class, $text) {
 		return sprintf(TAG_DIV, $class, $text);
@@ -104,6 +103,83 @@ class FormHelper extends Helper{
  */
 	function pTag($class, $text) {
 		return sprintf(TAG_P_CLASS, $class, $text);
+	}
+/**
+ * Creates a text input widget.
+ *
+ * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
+ * @param array $htmlAttributes Array of HTML attributes.
+ * @return string An HTML text input element
+ */
+	function text($fieldName, $htmlAttributes = null) {
+		$this->Html->setFormTag($fieldName);
+
+		if (!isset($htmlAttributes['value'])) {
+			$htmlAttributes['value'] = $this->tagValue($fieldName);
+		}
+
+		if (!isset($htmlAttributes['type'])) {
+			$htmlAttributes['type'] = 'text';
+		}
+
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
+		}
+
+		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
+			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
+				$htmlAttributes['class'] .= ' form_error';
+			} else {
+				$htmlAttributes['class'] = 'form_error';
+			}
+		}
+
+		return sprintf($this->tags['input'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' ', ' '));
+	}
+/**
+ * Creates a button tag.
+ *
+ * @param  mixed  $params  Array of params [content, type, options] or the
+ *                         content of the button.
+ * @param  string $type    Type of the button (button, submit or reset).
+ * @param  array  $options Array of options.
+ * @return string A HTML button tag.
+ */
+	function button($params, $type = 'button', $options = array()) {
+
+		trigger_error('Don\'t use me yet', E_USER_ERROR);
+		if (isset($options['name'])) {
+			if (strpos($options['name'], "/") !== false) {
+				if ($this->fieldValue($options['name'])) {
+					$options['checked'] = 'checked';
+				}
+				$this->setFieldName($options['name']);
+				$options['name'] = 'data['.$this->_model.']['.$this->_field.']';
+			}
+		}
+
+		$options['type'] = $type;
+
+		$values = array(
+			'options'  => $this->_parseOptions($options),
+			'tagValue' => $content
+		);
+		return $this->_assign('button', $values);
+	}
+/**
+ * Creates an image input widget.
+ *
+ * @param  string  $path           Path to the image file, relative to the webroot/img/ directory.
+ * @param  array   $htmlAttributes Array of HTML attributes.
+ * @return string  HTML submit image element
+ */
+	function submitImage($path, $htmlAttributes = null) {
+		if (strpos($path, '://')) {
+			$url = $path;
+		} else {
+			$url = $this->webroot . IMAGES_URL . $this->themeWeb . $path;
+		}
+		return sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 	}
 /**
  * Returns a formatted INPUT tag for HTML FORMs.

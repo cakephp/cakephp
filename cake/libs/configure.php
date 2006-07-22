@@ -71,6 +71,13 @@ class Configure extends Object {
  */
 	var $componentPaths = array();
 /**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
+	var $behaviorPaths = array();
+/**
  * Return a singleton instance of Configure.
  *
  * @return Configure instance
@@ -161,6 +168,21 @@ class Configure extends Object {
 		}
 	}
 /**
+ * Sets the var behaviorPaths
+ *
+ * @param array $behaviorPaths
+ * @access private
+ */
+	function __buildBehaviorPaths($behaviorPaths) {
+		$_this =& Configure::getInstance();
+		$_this->behaviorPaths[] = BEHAVIORS;
+		if (isset($behaviorPaths)) {
+			foreach($behaviorPaths as $value) {
+				$_this->behaviorPaths[] = $value;
+			}
+		}
+	}
+/**
  * Loads the app/config/bootstrap.php
  * If the alternative paths are set in this file
  * they will be added to the paths vars
@@ -174,12 +196,14 @@ class Configure extends Object {
 		$controllerPaths = null;
 		$helperPaths = null;
 		$componentPaths = null;
+		$behaviorPaths = null;
 		require APP_PATH . 'config' . DS . 'bootstrap.php';
 		$_this->__buildModelPaths($modelPaths);
 		$_this->__buildViewPaths($viewPaths);
 		$_this->__buildControllerPaths($controllerPaths);
 		$_this->__buildHelperPaths($helperPaths);
 		$_this->__buildComponentPaths($componentPaths);
+		$_this->__buildBehaviorPaths($behaviorPaths);
 	}
 }
 

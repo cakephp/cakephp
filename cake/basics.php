@@ -380,6 +380,41 @@
 		}
 	}
 /**
+ * Loads a behavior
+ *
+ * @param  string  $name Name of component
+ * @return boolean Success
+ */
+	function loadBehavior($name) {
+		$paths = Configure::getInstance();
+
+		if ($name === null) {
+			return true;
+		}
+
+		if (!class_exists($name . 'Behavior')) {
+			$name = Inflector::underscore($name);
+
+			foreach($paths->behaviorPaths as $path) {
+				if (file_exists($path . $name . '.php')) {
+					require($path . $name . '.php');
+					return true;
+				}
+			}
+
+			if ($behavior_fn = fileExistsInPath(LIBS . 'model' . DS . 'behaviors' . DS . $name . '.php')) {
+				if (file_exists($behavior_fn)) {
+					require($behavior_fn);
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return true;
+		}
+	}
+/**
  * Returns an array of filenames of PHP files in given directory.
  *
  * @param  string $path Path to scan for files
@@ -482,6 +517,7 @@
 				}
 			}
 			if (!$numeric || $assoc) {
+				$newList = array();
 				for ($i = 0; $i < $count; $i++) {
 					if (is_int($keys[$i])) {
 						$newList[$list[$keys[$i]]] = null;

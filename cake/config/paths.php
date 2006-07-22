@@ -51,6 +51,10 @@
  */
 	define ('MODELS', APP.'models'.DS);
 /**
+ * Path to model behaviors directory.
+ */
+	define ('BEHAVIORS', MODELS.'behaviors'.DS);
+/**
  * Path to the application's controllers directory.
  */
 	define ('CONTROLLERS', APP.'controllers'.DS);

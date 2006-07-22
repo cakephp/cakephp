@@ -248,6 +248,28 @@ class Model extends Object{
 	var $hasAndBelongsToMany = array();
 
 /**
+ * List of behaviors to use
+ *
+ * @var array
+ */
+	var $actsAs = null;
+
+/**
+ * Behavior objects
+ *
+ * @var array
+ */
+	var $behaviors = array();
+
+/**
+ * Mapped behavior methods
+ *
+ * @var array
+ * @access private
+ */
+	var $__behaviorMethods = array();
+
+/**
  * Depth of recursive association
  *
  * @var integer
@@ -380,6 +402,23 @@ class Model extends Object{
  */
 	function __call($method, $params, &$return) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
+		$methods = array_keys($this->__behaviorMethods);
+		$call = array_values($this->__behaviorMethods);
+		$count = count($call);
+ 
+		for($i = 0; $i < $count; $i++) {
+			if (strpos($methods[$i], '/') === 0) {
+				if (preg_match($methods[$i], $method)) {
+					$return = $this->behaviors[$call[$i][1]]->{strtolower($call[$i][0])}($this, $params, $method);
+					return true;
+				}
+			} elseif (strtolower($methods[$i]) == strtolower($method)) {
+				$return = $this->behaviors[$call[$i][1]]->{strtolower($call[$i][0])}($this, $params);
+				return true;
+			}
+		}
+
 		$return = $db->query($method, $params, $this);
 		return true;
 	}
@@ -552,6 +591,39 @@ class Model extends Object{
 				}
 			}
 		}
+
+		if ($this->actsAs !== null && empty($this->behaviors)) {
+			$callbacks = array('setup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
+			$this->actsAs = normalizeList($this->actsAs);
+
+			foreach ($this->actsAs as $behavior => $config) {
+				if (!loadBehavior($behavior)) {
+					// Raise an error
+				} else {
+					$className = $behavior . 'Behavior';
+					$this->behaviors[$behavior] =& new $className;
+					$this->behaviors[$behavior]->setup($this, $config);
+
+					$methods = $this->behaviors[$behavior]->mapMethods;
+					foreach ($methods as $method => $alias) {
+						if (!array_key_exists($method, $this->__behaviorMethods)) {
+							$this->__behaviorMethods[$method] = array($alias, $behavior);
+						}
+					}
+
+					$methods = get_class_methods($this->behaviors[$behavior]);
+					$parentMethods = get_class_methods('ModelBehavior');
+
+					foreach ($methods as $m) {
+						if (!in_array($m, $parentMethods)) {
+							if (strpos($m, '_') !== 0 && !array_key_exists($m, $this->__behaviorMethods) && !in_array($m, $callbacks)) {
+								$this->__behaviorMethods[$m] = array($m, $behavior);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 /**
  * Sets a custom table for your controller class. Used by your controller to select a database table.
@@ -713,20 +785,6 @@ class Model extends Object{
 			}
 		}
 		return true;
-	}
-/**
- * Deprecated
- *
- */
-	function setId($id) {
-		$this->id = $id;
-	}
-/**
- * Deprecated. Use query() instead.
- *
- */
-	function findBySql($sql) {
-		return $this->query($sql);
 	}
 /**
  * Returns a list of fields from the database
@@ -1170,11 +1228,29 @@ class Model extends Object{
 			'order'     => $order
 		);
 
+		if (!empty($this->behaviors)) {
+			$b = array_keys($this->behaviors);
+			$c = count($b);
+			for ($i = 0; $i < $c; $i++) {
+				$this->behaviors[$b[$i]]->beforeFind($this, $queryData);
+			}
+		}
+
 		if (!$this->beforeFind($queryData)) {
 			return null;
 		}
 
-		$return = $this->afterFind($db->read($this, $queryData, $recursive));
+		$results = $db->read($this, $queryData, $recursive);
+
+		if (!empty($this->behaviors)) {
+			$b = array_keys($this->behaviors);
+			$c = count($b);
+			for ($i = 0; $i < $c; $i++) {
+				$this->behaviors[$b[$i]]->afterFind($this, $results);
+			}
+		}
+		
+		$return = $this->afterFind($results);
 
 		if (isset($this->__backAssociation)) {
 			$this->__resetAssociations();
@@ -1449,9 +1525,12 @@ class Model extends Object{
  * @param unknown_type $field
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
  */
-	function escapeField($field) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->name($this->name) . '.' . $db->name($field);
+	function escapeField($field, $alias = null) {
+		if ($alias == null) {
+			$alias = $this->name;
+		}
+		$db =& $this->getDataSource();
+		return $db->name($alias) . '.' . $db->name($field);
 	}
 /**
  * Returns the current record's ID
@@ -1536,6 +1615,44 @@ class Model extends Object{
 		}
 	}
 /**
+ * Gets the DataSource to which this model is bound
+ *
+ * @return DataSource A DataSource object
+ */
+	function &getDataSource() {
+		return ConnectionManager::getDataSource($this->useDbConfig);
+	}
+/**
+ * Gets all the models with which this model is associated
+ *
+ * @return array
+ */
+	function getAssociated($type = null) {
+		if ($type == null) {
+			$associated = array();
+			foreach ($this->__associations as $assoc) {
+				if (!empty($this->{$assoc})) {
+					$models = array_keys($this->{$assoc});
+					foreach ($models as $m) {
+						$associated[$m] = $assoc;
+					}
+				}
+			}
+			return $associated;
+		} elseif (in_array($type, $this->__associations)) {
+			if (empty($this->{$type})) {
+				return array();
+			}
+			return array_keys($this->{$type});
+		} else {
+			$assoc = am($this->hasOne, $this->hasMany, $this->belongsTo, $this->hasAndBelongsToMany);
+			if (array_key_exists($type, $assoc)) {
+				return $assoc[$type];
+			}
+			return null;
+		}
+	}
+/**
  * Before find callback
  *
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
@@ -1588,10 +1705,17 @@ class Model extends Object{
 /**
  * Before validate callback
  *
- * @return void
+ * @return True if validate operation should continue, false to abort
  */
 	function beforeValidate() {
 		return true;
+	}
+/**
+ * DataSource error callback
+ *
+ * @return void
+ */
+	function onError() {
 	}
 /**
  * Private method.  Clears cache for this model

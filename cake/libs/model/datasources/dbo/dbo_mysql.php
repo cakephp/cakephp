@@ -340,6 +340,7 @@ class DboMysql extends DboSource {
 		if ($data && isset($data[0]['id'])) {
 			return $data[0]['id'];
 		}
+		return null;
 	}
 /**
  * Converts database-layer column types to basic types

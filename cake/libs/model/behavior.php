@@ -2,9 +2,9 @@
 /* SVN FILE: $Id$ */
 
 /**
- * Object-relational mapper.
+ * Model behaviors base class.
  *
- * DBO-backed object data model, for mapping database tables to Cake objects.
+ * Adds methods and automagic functionality to Cake Models.
  *
  * PHP versions 4 and 5
  *
@@ -21,29 +21,27 @@
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
  * @subpackage		cake.cake.libs.model
- * @since			CakePHP v 0.10.0.0
+ * @since			CakePHP v 1.2.0.0
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+class ModelBehavior extends Object {
 
-/**
- * Include files
- */
-	uses('model' . DS . 'behavior');
+	var $mapMethods = array();
+	
+	function setup(&$model, $config = array()) { }
 
-/**
- * Load the model class based on the version of PHP.
- *
- */
-if (phpversion() < 5) {
-	require(LIBS . 'model' . DS . 'model_php4.php');
+	function beforeFind(&$model, &$query) { }
 
-	if (function_exists('overload')) {
-		overload('Model');
-	}
-} else {
-	require(LIBS . 'model' . DS . 'model_php5.php');
+	function afterFind(&$model, &$results) { }
+
+	function beforeDelete(&$model) { }
+
+	function afterDelete(&$model) { }
+
+	function onError(&$model, &$error) { }
 }
+
 ?>
