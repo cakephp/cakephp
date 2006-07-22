@@ -288,27 +288,20 @@ class Model extends Object {
  * Default association keys
  *
  * @var array
- * @access protected
+ * @access protected 
  */
 	var $__associationKeys = array(
 		'belongsTo' => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
 		'hasOne' => array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
-		'hasMany' => array('className', 'conditions', 'order','limit','offset', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-		'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order','limit','offset', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery', 'with')
+		'hasMany' => array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
+		'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery', 'with')
 	);
-/**
- * Access to the association property keys
- *
- * @var array
- * @access public
- */
-	var $assoc = array('conditions', 'fields', 'order', 'limit','offset');
 
 /**
  * Holds provided/generated association key names and other data for all associations
  *
  * @var array
- * @access protected
+ * @access protected 
  */
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
@@ -316,7 +309,7 @@ class Model extends Object {
  * The last inserted ID of the data that this model created
  *
  * @var integer
- * @access protected
+ * @access protected 
  */
 	var $__insertID = null;
 
@@ -324,7 +317,7 @@ class Model extends Object {
  * The number of records returned by the last query
  *
  * @var integer
- * @access protected
+ * @access protected 
  */
 	var $__numRows = null;
 
@@ -332,7 +325,7 @@ class Model extends Object {
  * The number of records affected by the last query
  *
  * @var integer
- * @access protected
+ * @access protected 
  */
 	var $__affectedRows = null;
 
@@ -431,14 +424,14 @@ class Model extends Object {
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources.
  *
- * @param string $method    Name of method to call.
+ * @param string $method    Name of method to call. 
  * @param array $params     Parameters for the method.
  * @return unknown
  * @access protected
  */
 	function __call($method, $params) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
+		
 		$methods = array_keys($this->__behaviorMethods);
 		$call = array_values($this->__behaviorMethods);
 		$count = count($call);
@@ -485,12 +478,12 @@ class Model extends Object {
 /**
  * Turn off associations on the fly.
  *
- * Example: Turn off the associated Model Supportrequest,
- * to temporarily lighten the User model:
- * <code>
- * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) );
- * </code>
- *
+ * Example: Turn off the associated Model Supportrequest,  
+ * to temporarily lighten the User model: 
+ * <code> 
+ * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) ); 
+ * </code> 
+ * 
  * @link http://cakebaker.wordpress.com/2006/02/22/new-feature-bindmodelunbindmodel/
  * @param array $params
  * @return boolean Always true
@@ -775,7 +768,7 @@ class Model extends Object {
 		$this->id = false;
 		unset ($this->data);
 		$this->data = array();
-
+		
 		$cols = $this->loadInfo();
 		if (array_key_exists('default', $cols->value[0])) {
 			$count = count($cols->value);
@@ -1253,7 +1246,7 @@ class Model extends Object {
 				$this->behaviors[$b[$i]]->afterFind($this, $results);
 			}
 		}
-
+		
 		$return = $this->afterFind($results);
 
 		if (isset($this->__backAssociation)) {
