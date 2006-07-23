@@ -213,6 +213,12 @@ class Controller extends Object{
  */
 	var $namedArgs = false;
 /**
+ * Enter description here...
+ *
+ * @var string
+ */
+	var $argSeparator = ':';
+/**
  * Constructor.
  *
  */

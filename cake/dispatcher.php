@@ -186,7 +186,7 @@ class Dispatcher extends Object {
 
 		$controller->base = $this->base;
 		$base = strip_plugin($this->base, $this->plugin);
-		if(defined("BASE_URL")){
+		if(defined("BASE_URL")) {
 			$controller->here = $base . $this->admin . $url;
 		} else {
 			$controller->here = $base . $this->admin . '/' . $url;
@@ -203,16 +203,25 @@ class Dispatcher extends Object {
 
 		if (!empty($controller->params['pass'])) {
 			$controller->passed_args =& $controller->params['pass'];
-			$controller->passedArgs =& $controller->params['pass'];	  
+			$controller->passedArgs =& $controller->params['pass'];
 			if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
 				
-				$this->passedArgs =& $controller->params['pass']; 
+				$this->passedArgs =& $controller->params['pass'];
 				$this->_getNamedArgs($controller->namedArgs[$params['action']]);
 				
 				$controller->passedArgs =& $this->passedArgs;
 				$controller->namedArgs =& $this->namedArgs;		
+			} elseif ($controller->namedArgs === true) {
+				$c = count($controller->passedArgs);
+				for ($i = $c - 1; $i > -1; $i--) {
+					if (strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
+						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
+						$controller->passedArgs[$argKey] = $argVal;
+						unset($controller->passedArgs[$i]);
+						unset($params['pass'][$i]);
+					}
+				}
 			}
-			
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
@@ -244,7 +253,7 @@ class Dispatcher extends Object {
 													'base' => $this->base)));
 		}
 
-		if ($privateAction){
+		if ($privateAction) {
 			return $this->cakeError('privateAction', array(
 											array('className' => Inflector::camelize($params['controller']."Controller"),
 													'action' => $params['action'],
@@ -284,8 +293,7 @@ class Dispatcher extends Object {
  *
  * @param object $controller
  */
-	function start(&$controller)
-	{
+	function start(&$controller) {
 		if (!empty($controller->beforeFilter)) {
 			if(is_array($controller->beforeFilter)) {
 
@@ -439,23 +447,19 @@ class Dispatcher extends Object {
  * @param unknown_type $params
  * @return unknown
  */
-	function _getNamedArgs($args)
-	{	
+	function _getNamedArgs($args) {	
 		if(!is_array($args)) {
 			$args = func_get_args(); 
 		}
 		if(!is_array($args)) {
 			$args = explode(',',$controller->namedArgs[$params['action']]); 
 		}							
-		
+
 		$this->namedArgs = array();
-		
-		if(is_array($this->passedArgs) && is_array($args))
-		{	 
-			foreach ($args as $arg)
-			{  
-				if(in_array($arg, $this->passedArgs))
-				{	   
+
+		if(is_array($this->passedArgs) && is_array($args)) {	 
+			foreach ($args as $arg) {  
+				if(in_array($arg, $this->passedArgs)) {
 					$key = array_search($arg,$this->passedArgs);
 					$value = $key + 1;		  
 					$this->namedArgs[$arg] = $this->passedArgs[$value]; 

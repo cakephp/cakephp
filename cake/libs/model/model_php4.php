@@ -1149,7 +1149,12 @@ class Model extends Object{
 			$id = $this->id;
 
 			if (is_array($id)) {
-				$id = $id[0];
+				if (isset($id[0])) {
+					$id = $id[0];
+				} else {
+					$vals = array_values($id);
+					$id = $vals[0];
+				}
 			}
 
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
