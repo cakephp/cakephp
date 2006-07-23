@@ -3,7 +3,7 @@
 /* SVN FILE: $Id$ */
 /**
  * Command-line code generation utility to automate programmer chores.
- * 
+ *
  * Bake is CakePHP's code generation script, which can help you kickstart
  * application development by writing fully functional skeleton controllers,
  * models, and views. Going further, Bake can also write Unit Tests for you.
@@ -602,13 +602,14 @@ class Bake {
 				$this->Html = new HtmlHelper();
 				$this->Html->tags = $this->Html->loadConfig();
 
+				//-------------------------[INDEX]-------------------------//
 				if(!empty($temp->{$temp->modelClass}->alias)) {
 					foreach ($temp->{$temp->modelClass}->alias as $key => $value) {
 						$alias[] = $key;
 					}
 				}
-				$indexView .= "<h1>List " . $inflect->pluralize($temp->modelKey) . "</h1>\n\n";
-				$indexView .= "<table>\n";
+				$indexView .= "<h1>List " . ucwords($inflect->humanize($inflect->pluralize($temp->modelKey))) . "</h1>\n\n";
+				$indexView .= "<table cellpadding=\"0\">\n";
 				$indexView .= "<tr>\n";
 
 				foreach ($fieldNames as $fieldName) {
@@ -622,12 +623,12 @@ class Bake {
 
 				foreach($fieldNames as $field => $value) {
 					if(isset($value['foreignKey'])) {
-						$otherModelKey = Inflector::underscore($value['modelKey']);
+						$otherModelKey = $inflect->underscore($value['modelKey']);
 						$otherControllerName = $value['controller'];
 						$otherModelObject =& ClassRegistry::getObject($otherModelKey);
 
 						if(is_object($otherModelObject)) {
-							$indexView .= "\t<td><?php echo \$row['" . $alias[$count] ."']['" . $otherModelObject->getDisplayField() ."'] ?></td>\n";
+							$indexView .= "\t<td><?php echo \$html->link(\$row['" . $alias[$count] ."']['" . $otherModelObject->getDisplayField() ."'], '/" . $inflect->pluralize($inflect->underscore(strtolower($alias[$count]))) ."/view/' .\$row['{$alias[$count]}']['{$otherModelObject->primaryKey}']);?></td>\n";
 						} else {
 							$indexView .= "\t<td><?php echo \$row['" . $alias[$count] ."']['" . $field ."'] ?></td>\n";
 						}
@@ -640,41 +641,39 @@ class Bake {
 				$indexView .= "\t<td>\n";
 				$indexView .= "\t\t<?php echo \$html->link('View','/$temp->viewPath/view/' . \$row['{$temp->modelClass}']['$id'])?>\n";
 				$indexView .= "\t\t<?php echo \$html->link('Edit','/$temp->viewPath/edit/' . \$row['{$temp->modelClass}']['$id'])?>\n";
-				$indexView .= "\t\t<?php echo \$html->link('Delete','/$temp->viewPath/delete/' . \$row['{$temp->modelClass}']['$id'])?>\n";
+				$indexView .= "\t\t<?php echo \$html->link('Delete','/$temp->viewPath/delete/' . \$row['{$temp->modelClass}']['$id'], null, 'Are you sure you want to delete: id ' . \$row['{$temp->modelClass}']['$id'])?>\n";
 				$indexView .= "\t</td>\n";
 				$indexView .= "</tr>\n";
 				$indexView .= "<?php endforeach; ?>\n";
 				$indexView .= "</table>\n\n";
-				$indexView .= "<ul>\n";
+				$indexView .= "<ul class=\"actions\">\n";
 				$indexView .= "\t<li><?php echo \$html->link('New $temp->modelClass', '/$temp->viewPath/add'); ?></li>\n";
 				$indexView .= "</ul>\n";
+
 				//-------------------------[VIEW]-------------------------//
 				$modelName = $temp->modelClass;
-				$modelKey = Inflector::underscore($modelName);
+				$modelKey = $inflect->underscore($modelName);
 				$objModel =& ClassRegistry::getObject($modelKey);
-				$viewView .= "<h1>View " . $inflect->pluralize($temp->modelKey) . "</h1>\n\n";
-				$viewView .= "<table>\n";
+				$viewView .= "<h1>View " . ucwords($inflect->humanize($inflect->pluralize($temp->modelKey))) . "</h1>\n\n";
 				$count = 0;
-
+				$viewView .= "<dl>\n";
 				foreach($fieldNames as $field => $value) {
-					$viewView .= "<tr>\n";
-					$viewView .= "\t<td>" . $value['prompt'] . "</td>\n";
+					$viewView .= "\t<dt>" . $value['prompt'] . "</dt>\n";
 
 					if(isset($value['foreignKey'])) {
-						$otherModelObject =& ClassRegistry::getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
+						$otherModelObject =& ClassRegistry::getObject($inflect->underscore($objModel->tableToModel[$value['table']]));
 						$displayField = $otherModelObject->getDisplayField();
-						$viewView .= "\t<td><?php echo \$html->link(\${$this->lowCtrl}['{$alias[$count]}']['{$displayField}'], '/" . $inflect->underscore($value['controller']) . "/view/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['{$field}'])?></td>\n";
+						$viewView .= "\t<dd><?php echo \$html->link(\${$this->lowCtrl}['{$alias[$count]}']['{$displayField}'], '/" . $inflect->underscore($value['controller']) . "/view/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['{$field}'])?></dd>\n";
 						$count++;
 					} else {
-						$viewView .= "\t<td><?php echo \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['{$field}']?></td>\n";
+						$viewView .= "\t<dd><?php echo \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['{$field}']?></dd>\n";
 					}
-					$viewView .= "</tr>\n";
 				}
-				$viewView .= "</table>\n";
-				$viewView .= "<ul>\n";
+				$viewView .= "</dl>\n";
+				$viewView .= "<ul class=\"actions\">\n";
 				$viewView .= "\t<li><?php echo \$html->link('Edit " . $inflect->humanize($objModel->name) . "',   '/{$temp->viewPath}/edit/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id']) ?> </li>\n";
-				$viewView .= "\t<li><?php echo \$html->link('Delete " . $inflect->humanize($objModel->name) . "', '/{$temp->viewPath}/delete/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id']) ?> </li>\n";
-				$viewView .= "\t<li><?php echo \$html->link('List " . $inflect->humanize($objModel->name) ."',   '/{$temp->viewPath}/index') ?> </li>\n";
+				$viewView .= "\t<li><?php echo \$html->link('Delete " . $inflect->humanize($objModel->name) . "', '/{$temp->viewPath}/delete/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id'], null, 'Are you sure you want to delete: id ' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id'] . '?') ?> </li>\n";
+				$viewView .= "\t<li><?php echo \$html->link('List " . $inflect->humanize($inflect->pluralize($objModel->name)) ."',   '/{$temp->viewPath}/index') ?> </li>\n";
 				$viewView .= "\t<li><?php echo \$html->link('New " . $inflect->humanize($objModel->name) . "',	'/{$temp->viewPath}/add') ?> </li>\n";
 
 				foreach( $fieldNames as $field => $value ) {
@@ -689,17 +688,18 @@ class Bake {
 					$otherModelName = $objModel->tableToModel[$objModel->{$model}->table];
 					$controller = $inflect->pluralize($model);
 					$new = true;
-					$viewView .= "<h2>Related " . $inflect->humanize($association) . "</h2>\n";
+					$viewView .= "<div class='related'><h2>Related " . $inflect->humanize($association) . "</h2>\n";
+					$viewView .= "<?php if(!empty(\${$this->lowCtrl}['{$association}'])): ?>\n";
 					$viewView .= "<dl>\n";
-					$viewView .= "<?php if(isset(\${$this->lowCtrl}['{$association}']) && is_array(\${$this->lowCtrl}['{$association}'])): ?>\n";
 					$viewView .= "\t<?php foreach(\${$this->lowCtrl}['{$association}'] as \$field => \$value): ?>\n";
 					$viewView .= "\t\t<dt><?php echo \$field ?></dt>\n";
 					$viewView .= "\t\t<dd><?php echo \$value ?></dd>\n";
 					$viewView .= "\t<?php endforeach; ?>\n";
-					$viewView .= "\t<ul><li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" .$inflect->underscore($controller)."/add/' . \${$this->lowCtrl}['{$association}']['" . $objModel->{$model}->primaryKey . "'])?> </li></ul>\n";
-					$viewView .= "<?php endif; ?>\n";
 					$viewView .= "</dl>\n";
-
+					$viewView .= "<?php endif; ?>\n";
+					$viewView .= "<ul class=\"actions\">\n";
+					$viewView .= "\t<li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" .$inflect->underscore($controller)."/add/' . \${$this->lowCtrl}['{$association}']['" . $objModel->{$model}->primaryKey . "'])?> </li>\n";
+					$viewView .= "</ul>\n</div>\n";
 				}
 				$relations = array_merge($objModel->hasMany, $objModel->hasAndBelongsToMany);
 
@@ -708,9 +708,9 @@ class Bake {
 					$count = 0;
 					$otherModelName = $inflect->singularize($model);
 					$controller = $inflect->pluralize($model);
-					$viewView .= "\n<h2>Related " . $inflect->humanize($inflect->pluralize($association)) . "</h2>\n";
-					$viewView .= "<?php if(isset(\${$this->lowCtrl}['{$association}']['0']) && is_array(\${$this->lowCtrl}['{$association}'])):?>\n";
-					$viewView .= "<table>\n";
+					$viewView .= "\n<div class='related'>\n<h2>Related " . $inflect->humanize($inflect->pluralize($association)) . "</h2>\n";
+					$viewView .= "<?php if(!empty(\${$this->lowCtrl}['{$association}']['0'])):?>\n";
+					$viewView .= "<table cellpadding=\"0\">\n";
 					$viewView .= "<tr>\n";
 					$viewView .= "<?php foreach(\${$this->lowCtrl}['{$association}']['0'] as \$column => \$value): ?>\n";
 					$viewView .= "<th><?php echo \$column?></th>\n";
@@ -726,43 +726,43 @@ class Bake {
 					$viewView .= "<td>\n";
 					$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
 					$viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
+					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey], null, 'Are you sure you want to delete: id ' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey] . '?')?>\n";
 					$viewView .= "</td>\n";
 					$viewView .= "<?php else: ?>\n";
 					$viewView .= "<td>\n";
 					$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
 					$viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
+					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->primaryKey], null, 'Are you sure you want to delete: id ' . \$row[\$this->controller->{$modelName}->primaryKey] . '?')?>\n";
 					$viewView .= "</td>\n";
 					$viewView .= "<?php endif; ?>\n";
 					$viewView .= "</tr>\n";
 					$viewView .= "<?php endforeach; ?>\n";
 					$viewView .= "</table>\n";
 					$viewView .= "<?php endif; ?>\n\n";
-					$viewView .= "<ul>\n";
+					$viewView .= "<ul class=\"actions\">\n";
 					$viewView .= "<li><?php echo \$html->link('New " . $inflect->humanize($association) . "', '/" . $inflect->underscore($controller) . "/add/')?></li>\n";
-					$viewView .= "</ul>\n";
+					$viewView .= "</ul>\n</div>\n";
 				}
 				//-------------------------[ADD]-------------------------//
-				$addView .= "<h1>New " . $temp->modelKey . "</h1>\n";
+				$addView .= "<h1>New " . $inflect->humanize($inflect->pluralize($temp->modelKey)) . "</h1>\n";
 				$fields .= "<form action=\"<?php echo \$html->url('/{$temp->viewPath}/add'); ?>\" method=\"post\">\n";
 				$fields .= $this->generateFields($temp->generateFieldNames(null, true));
 				$fields .= $this->generateSubmitDiv('Add');
 				$addView .= $fields;
 				$addView .= "</form>\n";
-				$addView .= "<ul>\n";
+				$addView .= "<ul class=\"actions\">\n";
 				$addView .= "<li><?php echo \$html->link('List " . $temp->viewPath . "', '/{$temp->viewPath}/index')?></li>\n";
 				$addView .= "</ul>\n";
 
 				//-------------------------[EDIT]-------------------------//
-				$editView .= "<h1>Edit " . $temp->modelKey . "</h1>\n";
-				$editView .= "<form action=\"<?php echo \$html->url('/{$temp->viewPath}/edit/'.\${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id'].''); ?>\" method=\"post\">\n";
+				$editView .= "<h1>Edit " . $inflect->humanize($inflect->pluralize($temp->modelKey)) . "</h1>\n";
+				$editView .= "<form action=\"<?php echo \$html->url('/{$temp->viewPath}/edit/'.\$html->tagValue('{$objModel->name}/{$id}')); ?>\" method=\"post\">\n";
 				$fields = $this->generateFields($temp->generateFieldNames(null, true));
-				$fields .= "<?php echo \$html->hidden('{$objModel->name}/{$id}', array('value' => \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['$id']))?>";
+				$fields .= "<?php echo \$html->hidden('{$objModel->name}/{$id}')?>\n";
 				$fields .= $this->generateSubmitDiv('Save');
 				$editView .= $fields;
 				$editView .= "</form>\n";
-				$editView .= "<ul>\n";
+				$editView .= "<ul class=\"actions\">\n";
 				$editView .= "\t<li><?php echo \$html->link('List " . $temp->viewPath . "', '/{$temp->viewPath}/index')?></li>\n";
 				$editView .= "</ul>\n";
 				//------------------------------------------------------------------------------------//
@@ -778,10 +778,6 @@ class Bake {
 				$this->createFile($filename, $addView);
 				$filename = VIEWS . strtolower($controllerName) . DS . 'edit.thtml';
 				$this->createFile($filename, $editView);
-				$this->hr();
-				$this->stdout('');
-				$this->stdout('Note:'."\n");
-				$this->stdout("\t- If you're using a non-domain install, change URL paths \n\t  from /controller/action to /cake_install/controller/action\n");
 				$this->hr();
 				$this->stdout('');
 				$this->stdout('View Scaffolding Complete.'."\n");
@@ -866,7 +862,7 @@ class Bake {
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 			$controllerModel = $inflect->camelize($inflect->singularize($controllerClassName));
-			$this->lowCtrl = Inflector::underscore($controllerName);
+			$this->lowCtrl = $inflect->underscore($controllerName);
 			loadModels();
 
 			if(!class_exists($controllerModel)) {
@@ -898,12 +894,12 @@ class Bake {
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
-			$actions .= "\t\t\t\$this->set('{$this->lowCtrl}', null);\n";
+			$actions .= "\t\t\t\$this->render();\n";
 			$actions .= "\t\t} else {\n";
 			$actions .= "\t\t\t\$this->cleanUpFields();\n";
 			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
-			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
+			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".$inflect->humanize($controllerModel)." has been saved');\n";
 			$actions .= "\t\t\t\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t} else {\n";
 			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$this->lowCtrl}/index');\n";
@@ -912,17 +908,15 @@ class Bake {
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
 			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t\t\$data = \$this->data;\n";
-			$actions .= "\t\t\t\t\$this->set('{$this->lowCtrl}', \$data);\n";
 
 			foreach($tempModel->hasAndBelongsToMany as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
 					$associationModel = new $model();
 					$lowerName = strtolower($association);
-					$actions .= "\t\t\t\t\${$lowerName} = null;\n";
+					$actions .= "\t\t\t\t\${$lowerName} = array();\n";
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}'])) {\n";
+					$actions .= "\t\t\t\tif(!empty(\$data['{$model}']['{$model}'])) {\n";
 					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var) {\n";
 					$actions .= "\t\t\t\t\t\t\${$lowerName}[\$var] = \$var;\n";
 					$actions .= "\t\t\t\t\t}\n";
@@ -943,18 +937,19 @@ class Bake {
 			$actions .= "\n";
 			$actions .= "\tfunction edit(\$id) {\n";
 			$actions .= "\t\tif(empty(\$this->data)) {\n";
-			$actions .= "\t\t\t\$data = \$this->{$controllerModel}->read(null, \$id);\n";
-			$actions .= "\t\t\t\$this->set('{$this->lowCtrl}', \$data );\n";
+			$actions .= "\t\t\t\$this->data = \$this->{$controllerModel}->read(null, \$id);\n";
 
 			foreach($tempModel->hasAndBelongsToMany as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
 					$associationModel = new $model();
 					$lowerName = strtolower($association);
-					$actions .= "\t\t\t\${$lowerName} = null;\n";
+					$actions .= "\t\t\t\${$lowerName} = array();\n";
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\tforeach(\$data['{$model}'] as \$var) {\n";
-					$actions .= "\t\t\t\t\${$lowerName}[\$var['{$associationModel->primaryKey}']] = \$var['{$associationModel->primaryKey}'];\n";
+					$actions .= "\t\t\tif(!empty(\$this->data['{$model}'])) {\n";
+					$actions .= "\t\t\t\tforeach(\$this->data['{$model}'] as \$var) {\n";
+					$actions .= "\t\t\t\t\t\${$lowerName}[\$var['{$associationModel->primaryKey}']] = \$var['{$associationModel->primaryKey}'];\n";
+					$actions .= "\t\t\t\t}\n";
 					$actions .= "\t\t\t}\n";
 					$actions .= "\t\t\t\$this->set('selected{$model}', \${$lowerName});\n";
 				}
@@ -970,7 +965,7 @@ class Bake {
 			$actions .= "\t\t\t\$this->cleanUpFields();\n";
 			$actions .= "\t\t\tif(\$this->{$controllerModel}->save(\$this->data)) {\n";
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
-			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($controllerModel)." has been saved');\n";
+			$actions .= "\t\t\t\t\t\$this->Session->setFlash('The ".$inflect->humanize($controllerModel)." has been saved');\n";
 			$actions .= "\t\t\t\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
 			$actions .= "\t\t\t\t} else {\n";
 			$actions .= "\t\t\t\t\t\$this->flash('{$controllerModel} saved.', '/{$this->lowCtrl}/index');\n";
@@ -979,8 +974,6 @@ class Bake {
 			$actions .= "\t\t\t\tif(is_object(\$this->Session)) {\n";
 			$actions .= "\t\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
 			$actions .= "\t\t\t\t}\n";
-			$actions .= "\t\t\t\t\$data = \$this->data;\n";
-			$actions .= "\t\t\t\t\$this->set('{$this->lowCtrl}', \$data);\n";
 
 			foreach($tempModel->hasAndBelongsToMany as $association => $relation) {
 				if(!empty($relation['className'])) {
@@ -989,7 +982,7 @@ class Bake {
 					$lowerName = strtolower($association);
 					$actions .= "\t\t\t\t\${$lowerName} = null;\n";
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(isset(\$data['{$model}']['{$model}'])) {\n";
+					$actions .= "\t\t\t\tif(!empty(\$data['{$model}']['{$model}'])) {\n";
 					$actions .= "\t\t\t\t\tforeach(\$data['{$model}']['{$model}'] as \$var) {\n";
 					$actions .= "\t\t\t\t\t\t\${$lowerName}[\$var] = \$var;\n";
 					$actions .= "\t\t\t\t\t}\n";
@@ -1013,8 +1006,14 @@ class Bake {
 			$actions .= "\t}\n";
 			$actions .= "\n";
 			$actions .= "\tfunction delete(\$id) {\n";
-			$actions .= "\t\t\$this->{$controllerModel}->del(\$id);\n";
-			$actions .= "\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
+			$actions .= "\t\tif(\$this->{$controllerModel}->del(\$id)) {\n";
+			$actions .= "\t\t\tif(is_object(\$this->Session)) {\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$inflect->humanize($controllerModel).": '.\$id.' has been deleted');\n";
+			$actions .= "\t\t\t\t\$this->redirect('/{$this->lowCtrl}/index');\n";
+			$actions .= "\t\t\t} else {\n";
+			$actions .= "\t\t\t\t\$this->flash('{$controllerModel} '.\$id.' has been deleted', '/{$this->lowCtrl}/index');\n";
+			$actions .= "\t\t\t}\n";
+			$actions .= "\t\t}\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
 		}
@@ -1190,8 +1189,10 @@ class Bake {
 					$out .= "\t\t\t'{$modelAssociations['hasMany'][$i]}' =>\n";
 					$out .= "\t\t\t array('className' => '{$modelAssociations['hasMany'][$i]}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
+					$out .= "\t\t\t\t\t'limit' => '',\n";
+					$out .= "\t\t\t\t\t'offset' => '',\n";
 					$out .= "\t\t\t\t\t'dependent' => '',\n";
 					$out .= "\t\t\t\t\t'exclusive' => '',\n";
 					$out .= "\t\t\t\t\t'finderSql' => '',\n";
@@ -1206,11 +1207,14 @@ class Bake {
 				for($i = 0; $i < count($modelAssociations['hasAndBelongsToMany']); $i++) {
 					$out .= "\t\t\t'{$modelAssociations['hasAndBelongsToMany'][$i]}' =>\n";
 					$out .= "\t\t\t array('className' => '{$modelAssociations['hasAndBelongsToMany'][$i]}',\n";
-					$out .= "\t\t\t\t\t'conditions' => '',\n";
-					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
 					$out .= "\t\t\t\t\t'joinTable' => '',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
 					$out .= "\t\t\t\t\t'associationForeignKey' => '',\n";
+					$out .= "\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t'fields' => '',\n";
+					$out .= "\t\t\t\t\t'order' => '',\n";
+					$out .= "\t\t\t\t\t'limit' => '',\n";
+					$out .= "\t\t\t\t\t'offset' => '',\n";
 					$out .= "\t\t\t\t\t'uniq' => '',\n";
 					$out .= "\t\t\t\t\t'finderQuery' => '',\n";
 					$out .= "\t\t\t\t\t'deleteQuery' => '',\n";
@@ -1326,7 +1330,7 @@ class Bake {
 				$out .= "\t\t\$expected = 1;\n";
 				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
 				$path = MODEL_TESTS;
-				$filename = Inflector::underscore($className).'.test.php';
+				$filename = $inflect->underscore($className).'.test.php';
 			break;
 			case 'controller':
 				$out .= 'loadControllerTest();'."\n\n";
@@ -1339,7 +1343,7 @@ class Bake {
 				$out .= "\t\t\$expected = 1;\n";
 				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
 				$path = CONTROLLER_TESTS;
-				$filename = Inflector::underscore($className.'Controller').'.test.php';
+				$filename = $inflect->underscore($className.'Controller').'.test.php';
 			break;
 			default:
 				$error = true;
@@ -1443,10 +1447,12 @@ class Bake {
  * @return Success
  */
 	function createFile ($path, $contents) {
-		echo "\nCreating file $path\n";
 		$shortPath = str_replace(ROOT, null, $path);
-		$path = str_replace('//', '/', $path);
+		$shortPath = str_replace('../', '', $shortPath);
+		$shortPath = str_replace('//', '/', $shortPath);
 
+		echo "\nCreating file $shortPath\n";
+		$path = str_replace('//', '/', $path);
 		if (is_file($path) && $this->interactive === true) {
 			fwrite($this->stdout, "File {$shortPath} exists, overwrite? (y/n/q):");
 			$key = trim(fgets($this->stdin));
@@ -1475,7 +1481,7 @@ class Bake {
 	}
 /**
  * Takes an array of database fields, and generates an HTML form for a View.
- * This is an extraction from the Scaffold functionality. 
+ * This is an extraction from the Scaffold functionality.
  *
  * @param array $fields
  * @param boolean $readOnly
@@ -1503,8 +1509,8 @@ class Bake {
 
 				switch( $field['type'] ) {
 					case "input" :
-						if( !isset( $field['size'] ) ) {
-							$field['size'] = 40;
+						if(!isset( $field['size'])) {
+							$field['size'] = 60;
 						}
 						$strFormFields = $strFormFields.$this->generateInputDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions'] );
 					break;
@@ -1596,7 +1602,6 @@ class Bake {
 		$htmlAttributes['cols'] = $cols;
 		$htmlAttributes['rows'] = $rows;
 		$tagNameArray = explode('/', $tagName);
-		$htmlAttributes['value'] = "\${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}']";
 		$str = "\t<?php echo \$html->textarea('{$tagName}', " . $this->attributesToArray($htmlAttributes) . ") ?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
@@ -1630,7 +1635,6 @@ class Bake {
 		$htmlOptions['class'] = "inputCheckbox";
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
 		$tagNameArray = explode('/', $tagName);
-		$htmlAttributes['checked'] = "\${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'] ? 'checked' : null";
 		$str = "\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->attributesToArray($htmlAttributes) . ")?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
@@ -1664,7 +1668,7 @@ class Bake {
 	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected=null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
 		$tagNameArray = explode('/', $tagName);
-		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , 'NONE', \${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'], " . $this->attributesToArray($htmlOptions) . ")?>\n";
+		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , 'NONE', \$html->tagValue('{$tagName}'), " . $this->attributesToArray($htmlOptions) . ")?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
 		$divClass = "optional";
@@ -1728,7 +1732,7 @@ class Bake {
 	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null ) {
 		$htmlOptions['id'] = strtolower(str_replace('/', '_',$tagName));
 		$tagNameArray = explode('/', $tagName);
-		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'], " . $this->attributesToArray($htmlOptions) . ")?>\n";
+		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \$html->tagValue('{$tagName}'), " . $this->attributesToArray($htmlOptions) . ")?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
 		$divClass = "optional";
@@ -1763,7 +1767,6 @@ class Bake {
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['size'] = $size;
 		$tagNameArray = explode('/', $tagName);
-		$htmlAttributes['value'] = "\${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}']";
 		$str = "\t<?php echo \$html->input('{$tagName}', " . $this->attributesToArray($htmlAttributes) . ") ?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		$strLabel = "\n\t" . $this->labelTag( $tagName, $prompt );
@@ -1807,7 +1810,7 @@ class Bake {
 		$lowerName = strtolower($tagNameArray[0]);
 
 		if($selectAttr['multiple'] != 'multiple') {
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$model}Array, \${$this->lowCtrl}['{$tagNameArray[0]}']['{$tagNameArray[1]}'], " . $this->attributesToArray($selectAttr) . ") ?>\n";
+			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$model}Array, \$html->tagValue('{$tagName}'), " . $this->attributesToArray($selectAttr) . ") ?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Error message for {$tagNameArray[1]} goes here.') ?>\n";
 		} else {
 			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$lowerName}Array, \$selected{$tagNameArray[0]}, array('multiple' => 'multiple', 'class' => 'selectMultiple', 'id' => '{$lowerName}_{$lowerName}', )) ?>\n";
@@ -1940,7 +1943,7 @@ class Bake {
 		$this->stdout('');
 	}
 /**
- * Checks that given project path does not already exist, and 
+ * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls __buildDirLayout() with that information.
  *
  * @param string $projectPath
