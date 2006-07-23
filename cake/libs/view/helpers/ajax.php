@@ -398,7 +398,12 @@ class AjaxHelper extends Helper {
 		if (!isset($options['with'])) {
 			$options['with'] = "Form.Element.serialize('$field_id')";
 		}
-		return $this->Javascript->codeBlock($this->_buildObserver('Form.Element.Observer', $field_id, $options));
+		if (!isset($options['frequency']) || intval($options['frequency']) == 0) {
+			$observer = 'Event';
+		} else {
+			$observer = '';
+		}
+		return $this->Javascript->codeBlock($this->_buildObserver('Form.Element.' . $observer . 'Observer', $field_id, $options));
 	}
 
 /**
@@ -754,7 +759,7 @@ class AjaxHelper extends Helper {
 
 		$callback = $this->remoteFunction($options);
 		$javascript  = "new $klass('$name', ";
-		$javascript .= (isset($options['frequency']) ? $options['frequency'] : 2) . ", function(element, value) {";
+		$javascript .= (isset($options['frequency']) ? $options['frequency'] . ', ' : '') . "function(element, value) {";
 		$javascript .= "$callback})";
 		return $javascript;
 	}
