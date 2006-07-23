@@ -704,7 +704,8 @@ class Bake {
 				$relations = array_merge($objModel->hasMany, $objModel->hasAndBelongsToMany);
 
 				foreach($relations as $association => $relation) {
-					$model = $relation['className'];
+					$model = $relation['className'];  
+					$associationModel = new $model();
 					$count = 0;
 					$otherModelName = $inflect->singularize($model);
 					$controller = $inflect->pluralize($model);
@@ -722,19 +723,11 @@ class Bake {
 					$viewView .= "\t<?php foreach(\$row as \$column => \$value):?>\n";
 					$viewView .= "\t\t<td><?php echo \$value?></td>\n";
 					$viewView .= "\t<?php endforeach;?>\n";
-					$viewView .= "<?php if (isset(\$this->controller->{$modelName}->{$association})):?>\n";
-					$viewView .= "<td>\n";
-					$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey], null, 'Are you sure you want to delete: id ' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey] . '?')?>\n";
-					$viewView .= "</td>\n";
-					$viewView .= "<?php else: ?>\n";
-					$viewView .= "<td>\n";
-					$viewView .= "\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row[\$this->controller->{$modelName}->primaryKey])?>\n";
-					$viewView .= "\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row[\$this->controller->{$modelName}->primaryKey], null, 'Are you sure you want to delete: id ' . \$row[\$this->controller->{$modelName}->primaryKey] . '?')?>\n";
-					$viewView .= "</td>\n";
-					$viewView .= "<?php endif; ?>\n";
+					$viewView .= "\t<td>\n";
+					$viewView .= "\t\t<?php echo \$html->link('View', '/" . $inflect->underscore($controller) . "/view/' . \$row['{$associationModel->primaryKey}'])?>\n";
+					$viewView .= "\t\t<?php echo \$html->link('Edit', '/" . $inflect->underscore($controller) . "/edit/' . \$row['{$associationModel->primaryKey}'])?>\n";
+					$viewView .= "\t\t<?php echo \$html->link('Delete', '/" . $inflect->underscore($controller) . "/delete/' . \$row['{$associationModel->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$row[\$this->controller->{$modelName}->{$association}->primaryKey] . '?')?>\n";
+					$viewView .= "\t</td>\n";
 					$viewView .= "</tr>\n";
 					$viewView .= "<?php endforeach; ?>\n";
 					$viewView .= "</table>\n";
@@ -1001,7 +994,7 @@ class Bake {
 			$actions .= "\t\t}\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction view(\$id) {\n";
+			$actions .= "\tfunction view(\$id) {\n";  
 			$actions .= "\t\t\$this->set('{$this->lowCtrl}', \$this->{$controllerModel}->read(null, \$id));\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
@@ -1508,7 +1501,7 @@ class Bake {
 				}
 
 				switch( $field['type'] ) {
-					case "input" :
+					case "input" : 
 						if(!isset( $field['size'])) {
 							$field['size'] = 60;
 						}
