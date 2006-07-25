@@ -76,7 +76,7 @@ class FormHelper extends Helper {
  * @deprecated
  */
 	function labelTag($tagName, $text) {
-		return sprintf($this->tags['label'], Inflector::camelize(str_replace('/', '_', $tagName)), $text);
+		return sprintf($this->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
  * Returns a formatted LABEL element for HTML FORMs.
@@ -85,8 +85,11 @@ class FormHelper extends Helper {
  * @param string $text Text that will appear in the label field.
  * @return string The formatted LABEL element
  */
-	function label($tagName, $text) {
-		return $this->output(sprintf($this->tags['label'], Inflector::camelize(str_replace('/', '_', $tagName)), $text));
+	function label($tagName, $text, $attributes = array()) {
+		if (strpos($tagName, '/') !== false) {
+			$tagName = Inflector::camelize(r('/', '_', $tagName));
+		}
+		return $this->output(sprintf($this->tags['label'], $tagName, $this->Html->_parseAttributes($attributes), $text));
 	}
 /**
  * @deprecated
