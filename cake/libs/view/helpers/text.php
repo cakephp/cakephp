@@ -189,7 +189,7 @@ class TextHelper extends Helper {
 			return $this->truncate($text, $radius * 2, $ending);
 		}
 
-		if ($radius < strlen($phrase))
+		if ($radius < strlen($phrase)) {
 			$radius = strlen($phrase);
 		}
 
@@ -207,6 +207,25 @@ class TextHelper extends Helper {
 		}
 
 		return $excerpt;
+	}
+/**
+ * Creates a comma separated list where the last two items are joined with 'and', forming natural English
+ *
+ * @param array $list The list to be joined
+ * @return string
+ */
+	function toList($list) {
+		$r = '';
+		$c = count($list) - 1;
+
+		foreach ($list as $i => $item) {
+			$r .= $item;
+			if ($c > 0 && $i < $c)
+			{
+				$r .= ($i < $c - 1 ? ', ' : ' and ');
+			}
+		}
+		return $r;
 	}
 /**
  * Text-to-html parser, similar to Textile or RedCloth, only with a little different syntax.
