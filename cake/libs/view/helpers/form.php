@@ -200,7 +200,7 @@ class FormHelper extends Helper {
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['size'] = $size;
 		$str = $this->Html->input($tagName, $htmlAttributes);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
 			$divClass = "required";
@@ -228,7 +228,7 @@ class FormHelper extends Helper {
 		$htmlOptions['class'] = "inputCheckbox";
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->checkbox($tagName, null, $htmlOptions);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
 			$divClass = "required";
@@ -257,7 +257,7 @@ class FormHelper extends Helper {
 	function generateDate($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
 			$divClass = "required";
@@ -288,7 +288,7 @@ class FormHelper extends Helper {
 	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
 			$divClass = "required";
@@ -321,7 +321,7 @@ class FormHelper extends Helper {
 		$htmlAttributes['cols'] = $cols;
 		$htmlAttributes['rows'] = $rows;
 		$str = $this->Html->textarea($tagName, $htmlAttributes);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 
 		if ($required) {
@@ -352,7 +352,7 @@ class FormHelper extends Helper {
 	function generateSelectDiv($tagName, $prompt, $options, $selected = null, $selectAttr = null, $optionAttr = null, $required = false, $errorMsg = null) {
 		$selectAttr['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->selectTag($tagName, $options, $selected, $selectAttr, $optionAttr);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 
 		if ($required) {

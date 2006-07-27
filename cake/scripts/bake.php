@@ -704,7 +704,7 @@ class Bake {
 				$relations = array_merge($objModel->hasMany, $objModel->hasAndBelongsToMany);
 
 				foreach($relations as $association => $relation) {
-					$model = $relation['className'];  
+					$model = $relation['className'];
 					$associationModel = new $model();
 					$count = 0;
 					$otherModelName = $inflect->singularize($model);
@@ -994,7 +994,7 @@ class Bake {
 			$actions .= "\t\t}\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
-			$actions .= "\tfunction view(\$id) {\n";  
+			$actions .= "\tfunction view(\$id) {\n";
 			$actions .= "\t\t\$this->set('{$this->lowCtrl}', \$this->{$controllerModel}->read(null, \$id));\n";
 			$actions .= "\t}\n";
 			$actions .= "\n";
@@ -1501,7 +1501,7 @@ class Bake {
 				}
 
 				switch( $field['type'] ) {
-					case "input" : 
+					case "input" :
 						if(!isset( $field['size'])) {
 							$field['size'] = 60;
 						}
