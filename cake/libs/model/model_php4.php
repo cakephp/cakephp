@@ -770,7 +770,7 @@ class Model extends Object{
  *
  * @return boolean True
  */
-	function create() {
+	function create($data = null) {
 		$this->id = false;
 		unset ($this->data);
 		$this->data = array();
@@ -784,6 +784,11 @@ class Model extends Object{
 				}
 			}
 		}
+
+		if (!empty($data) && $data !== null) {
+			$this->set($data);
+		}
+
 		return true;
 	}
 /**

@@ -762,9 +762,10 @@ class Model extends Object {
 /**
  * Initializes the model for writing a new record.
  *
+ * @param array $data Optional data to assign to the model after it is created
  * @return boolean True
  */
-	function create() {
+	function create($data = null) {
 		$this->id = false;
 		unset ($this->data);
 		$this->data = array();
@@ -778,6 +779,11 @@ class Model extends Object {
 				}
 			}
 		}
+		
+		if (!empty($data) && $data !== null) {
+			$this->set($data);
+		}
+
 		return true;
 	}
 /**
