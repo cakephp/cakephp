@@ -272,7 +272,7 @@ class Controller extends Object{
 		if (empty($this->params['pass'])) {
 			$id = false;
 		} else {
-			$id = $this->params['pass'];
+			$id = $this->params['pass']['0'];
 		}
 		$cached = false;
 		$object = null;
@@ -306,6 +306,7 @@ class Controller extends Object{
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
 			foreach($uses as $modelClass) {
+				$id = false;
 				$cached = false;
 				$object = null;
 				$modelKey = Inflector::underscore($modelClass);
