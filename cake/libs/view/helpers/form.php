@@ -273,6 +273,40 @@ class FormHelper extends Helper {
 		return $this->divTag("date", $requiredDiv);
 	}
 /**
+ * Returns a formatted date option element for HTML FORMs.
+ *
+ * @param string $tagName	This should be "Modelname/fieldname"
+ * @param string $prompt Text that will appear in the label field.
+ * @param bool $required True if this field is a required field.
+ * @param string $errorMsg	Text that will appear if an error has occurred.
+ * @param int $size Not used.
+ * @todo  Remove the $size parameter from this method.
+ * @param array $htmlOptions HTML options array
+ * @return string Date option wrapped in a div.
+ */
+	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
+		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
+		$strLabel = $this->labelTag($tagName, $prompt);
+		$divClass = "optional";
+		if ($required) {
+			$divClass = "required";
+		}
+		$strError = "";
+
+		if ($this->isFieldError($tagName)) {
+			$strError = $this->pTag('error', $errorMsg);
+			$divClass = sprintf("%s error", $divClass);
+		}
+		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
+		$requiredDiv = $this->divTag($divClass, $divTagInside);
+		return $this->divTag("time", $requiredDiv);
+	}
+
+
+
+
+
+/**
  * Returns a formatted datetime option element for HTML FORMs.
  *
  * @param string $tagName This should be "Modelname/fieldname"
