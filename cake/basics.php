@@ -127,13 +127,14 @@
 				}
 			}
 
-			if (file_exists(LIBS . 'view' . DS . $file)) {
-				return require(LIBS . 'view' . DS . $file);
-			} else {
-				return false;
+			if ($viewFile = fileExistsInPath(LIBS . 'view' . DS . $file)) {
+				if (file_exists($viewFile)) {
+					require($viewFile);
+					return true;
+				} else {
+					return false;
+				}
 			}
-		} else {
-			return true;
 		}
 	}
 /**
