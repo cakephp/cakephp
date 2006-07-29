@@ -71,7 +71,7 @@ class Dispatcher extends Object {
  * Actions).
  *
  * @param string $url	URL information to work on.
- * @param array $additionalParams	Settings array ("bare", "return"), 
+ * @param array $additionalParams	Settings array ("bare", "return"),
  * which is melded with the GET and POST params.
  * @return boolean		Success
  */
@@ -158,7 +158,7 @@ class Dispatcher extends Object {
 													'url' => $url,
 													'base' => $this->base)));
 		} else {
-			$controller =& new $ctrlClass($this);
+			$controller =& new $ctrlClass();
 		}
 
 		$classMethods = get_class_methods($controller);
@@ -205,12 +205,12 @@ class Dispatcher extends Object {
 			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
 			if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
-				
+
 				$this->passedArgs =& $controller->params['pass'];
 				$this->_getNamedArgs($controller->namedArgs[$params['action']]);
-				
+
 				$controller->passedArgs =& $this->passedArgs;
-				$controller->namedArgs =& $this->namedArgs;		
+				$controller->namedArgs =& $this->namedArgs;
 			} elseif ($controller->namedArgs === true) {
 				$c = count($controller->passedArgs);
 				for ($i = $c - 1; $i > -1; $i--) {
@@ -447,27 +447,27 @@ class Dispatcher extends Object {
  * @param unknown_type $params
  * @return unknown
  */
-	function _getNamedArgs($args) {	
+	function _getNamedArgs($args) {
 		if(!is_array($args)) {
-			$args = func_get_args(); 
+			$args = func_get_args();
 		}
 		if(!is_array($args)) {
-			$args = explode(',',$controller->namedArgs[$params['action']]); 
-		}							
+			$args = explode(',',$controller->namedArgs[$params['action']]);
+		}
 
 		$this->namedArgs = array();
 
-		if(is_array($this->passedArgs) && is_array($args)) {	 
-			foreach ($args as $arg) {  
+		if(is_array($this->passedArgs) && is_array($args)) {
+			foreach ($args as $arg) {
 				if(in_array($arg, $this->passedArgs)) {
 					$key = array_search($arg,$this->passedArgs);
-					$value = $key + 1;		  
-					$this->namedArgs[$arg] = $this->passedArgs[$value]; 
+					$value = $key + 1;
+					$this->namedArgs[$arg] = $this->passedArgs[$value];
 
 					unset($this->passedArgs[$key]);
 					unset($this->passedArgs[$value]);
-				}			
-			}  
+				}
+			}
 			$this->passedArgs = array_values($this->passedArgs);
 			return $this->namedArgs;
 		}
