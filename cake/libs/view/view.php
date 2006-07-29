@@ -628,11 +628,19 @@ class View extends Object{
 		}
 
 		foreach($helpers as $helper) {
+			$pos = strpos($helper, '/');
+			if ($pos === false) {
+				$plugin = $this->plugin;
+			} else {
+				$parts = explode('/', $helper);
+				$plugin = Inflector::underscore($parts['0']);
+				$helper = $parts['1'];
+			}
 			$helperCn = $helper . 'Helper';
 
 			if (in_array($helper, array_keys($loaded)) !== true) {
 				if (!class_exists($helperCn)) {
-				    if (is_null($this->plugin) || !loadPluginHelper($this->plugin, $helper)) {
+				    if (is_null($plugin) || !loadPluginHelper($plugin, $helper)) {
 					    if (!loadHelper($helper)) {
 							return $this->cakeError('missingHelperFile', array(array(
 										'helper' => $helper,

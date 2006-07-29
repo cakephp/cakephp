@@ -84,11 +84,20 @@ class Component extends Object {
  */
 	function &_loadComponents(&$loaded, $components) {
 		foreach($components as $component) {
+			$pos = strpos($component, '/');
+			if ($pos === false) {
+				$plugin = $this->controller->plugin;
+			} else {
+				$parts = explode('/', $component);
+				$plugin = Inflector::underscore($parts['0']);
+				$component = $parts['1'];
+			}
+
 			$componentCn = $component . 'Component';
 
 			if (in_array($component, array_keys($loaded)) !== true) {
 				if (!class_exists($componentCn)) {
-					if (is_null($this->controller->plugin) || !loadPluginComponent($this->controller->plugin, $component)) {
+					if (is_null($plugin) || !loadPluginComponent($plugin, $component)) {
 						if (!loadComponent($component)) {
 							return $this->cakeError('missingComponentFile', array(array(
 								'className' => $this->controller->name,

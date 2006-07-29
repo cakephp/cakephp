@@ -57,6 +57,7 @@ class ErrorHandler extends Object{
 			}
 
 			$this->controller =& new AppController();
+			$this->controller->_initComponents();
 			$this->__dispatch->start($this->controller);
 
 			if (method_exists($this->controller, 'apperror')) {

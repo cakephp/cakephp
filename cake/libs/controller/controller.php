@@ -253,13 +253,16 @@ class Controller extends Object{
 				}
 			}
 		}
+		parent::__construct();
+	}
 
+	function _initComponents(){
 		if (!empty($this->components)) {
 			$component = new Component();
 			$component->init($this);
 		}
-		parent::__construct();
 	}
+
 /**
  * Loads and instantiates classes required by this controller,
  * including components and models
