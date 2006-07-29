@@ -286,7 +286,7 @@ class FormHelper extends Helper {
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
-		$strLabel = $this->labelTag($tagName, $prompt);
+		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
 			$divClass = "required";

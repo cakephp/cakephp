@@ -1029,7 +1029,6 @@ class HtmlHelper extends Helper {
  * @return string The HTML formatted OPTION element
  */
 	function dateTimeOptionTag($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-
 		$day      = null;
 		$month    = null;
 		$year     = null;
@@ -1045,19 +1044,20 @@ class HtmlHelper extends Helper {
 
 			if (is_int($selected)) {
 				$selected = strftime('%G-%m-%d  %T', $selected);
+				$selected = strftime('%G-%m-%d  %H:%M:%S', $selected);
 			}
 
 			$meridian = 'am';
-			$selected = trim($selected);
-			if (strpos($selected, ' ') === false) {
-				$selected = '0000-00-00 ' . $selected;
+			$pos = strpos($selected, '-');
+			if($pos !== false){
+				$date = explode('-', $selected);
+				$days = explode(' ', $date[2]);
+				$day = $days[0];
+				$month = $date[1];
+				$year = $date[0];
+			} else {
+				$days[1] = $selected;
 			}
-			$date = explode('-', $selected);
-			$days = explode(' ', $date[2]);
-
-			$day = $days[0];
-			$month = $date[1];
-			$year = $date[0];
 
 			if ($timeFormat != 'NONE' && !empty($timeFormat)) {
 				$time = explode(':', $days[1]);
@@ -1074,19 +1074,44 @@ class HtmlHelper extends Helper {
 			}
 		}
 
+		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
+		if (isset($selectAttr['id'])) {
+			if (is_string($selectAttr['id'])) {
+				// build out an array version
+				foreach ($elements as $element) {
+					$selectAttrName = 'select' . $element . 'Attr';
+					${$selectAttrName} = $selectAttr;
+					${$selectAttrName}['id'] = $selectAttr['id'] . $element;
+				}
+			} elseif (is_array($selectAttr['id'])) {
+				// check for missing ones and build selectAttr for each element
+				foreach ($elements as $element) {
+					$selectAttrName = 'select' . $element . 'Attr';
+					${$selectAttrName} = $selectAttr;
+					${$selectAttrName}['id'] = $selectAttr['id'][strtolower($element)];
+				}
+			}
+		} else {
+			// build the selectAttrName with empty id's to pass
+			foreach ($elements as $element) {
+				$selectAttrName = 'select' . $element . 'Attr';
+				${$selectAttrName} = $selectAttr;
+			}
+		}
+
 		switch($dateFormat) {
-			case 'DMY':
-				$opt = $this->dayOptionTag($tagName, null, $day, $selectAttr, $optionAttr, $showEmpty) . '-' .
-						$this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty);
+			case 'DMY': // so uses the new selex
+				$opt = $this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' .
+				$this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'MDY':
-				$opt = $this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' .
-						$this->dayOptionTag($tagName, null, $day, $selectAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty);
+				$opt = $this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
+				$this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'YMD':
-				$opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectAttr, $optionAttr, $showEmpty) . '-' .
-						$this->monthOptionTag($tagName, null, $month, $selectAttr, $optionAttr, $showEmpty) . '-' .
-						$this->dayOptionTag($tagName, null, $day, $selectAttr, $optionAttr, $showEmpty);
+				$opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
+				$this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
+				$this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
@@ -1096,13 +1121,13 @@ class HtmlHelper extends Helper {
 
 		switch($timeFormat) {
 			case '24':
-				$opt .= $this->hourOptionTag($tagName, null, true, $hour, $selectAttr, $optionAttr, $showEmpty) . ':' .
-						$this->minuteOptionTag($tagName, null, $min, $selectAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hourOptionTag($tagName, null, true, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
+				$this->minuteOptionTag($tagName, null, $min, $selectMinuteAttr, $optionAttr, $showEmpty);
 			break;
 			case '12':
-				$opt .= $this->hourOptionTag($tagName, null, false, $hour, $selectAttr, $optionAttr, $showEmpty) . ':' .
-						$this->minuteOptionTag($tagName, null, $min, $selectAttr, $optionAttr, $showEmpty) . ' ' .
-						$this->meridianOptionTag($tagName, null, $meridian, $selectAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hourOptionTag($tagName, null, false, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
+				$this->minuteOptionTag($tagName, null, $min, $selectMinuteAttr, $optionAttr, $showEmpty) . ' ' .
+				$this->meridianOptionTag($tagName, null, $meridian, $selectMeridianAttr, $optionAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
