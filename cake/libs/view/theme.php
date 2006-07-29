@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id:$ */
+/* SVN FILE: $Id$ */
 /**
  * A custom view class that is used for themeing
  *
@@ -60,10 +60,10 @@ class ThemeView extends View {
 	function __construct (&$controller) {
 		parent::__construct($controller);
     	$this->theme =& $controller->theme;
-    	$this->themeWeb = $this->theme.'/';
-    	$this->themeElement = VIEWS.$this->theme.DS.'elements'.DS;
-    	$this->themeLayout =  VIEWS.$this->theme.DS.'layouts'.DS;
-    	$this->themePath = VIEWS.$this->theme.DS;
+    	$this->themeWeb = 'themed/'.$this->theme.'/';
+    	$this->themeElement = VIEWS.'themed'.DS.$this->theme.DS.'elements'.DS;
+    	$this->themeLayout =  VIEWS.'themed'.DS.$this->theme.DS.'layouts'.DS;
+    	$this->themePath = VIEWS.'themed'.DS.$this->theme.DS;
 	}
 
 /**

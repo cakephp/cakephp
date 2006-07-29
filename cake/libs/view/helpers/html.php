@@ -331,7 +331,7 @@ class HtmlHelper extends Helper {
  * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
  */
 	function css($path, $rel = 'stylesheet', $htmlAttributes = null, $return = false) {
-		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . CSS_URL . $this->themeWeb . $path . ".css";
+		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
 		if ($rel == 'import') {
 			return $this->output(sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');'), $return);
 		} else {
@@ -409,7 +409,7 @@ class HtmlHelper extends Helper {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
-			$url = $this->webroot . IMAGES_URL . $this->themeWeb . $path;
+			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
 		}
 
 		if (!isset($htmlAttributes['alt'])) {

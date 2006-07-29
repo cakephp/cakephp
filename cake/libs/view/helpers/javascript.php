@@ -63,7 +63,7 @@ class JavascriptHelper extends Helper{
 					$script .= "\n" . '//--><!]]>' . "\n";
 				}
 			}
-			
+
 			if ($block) {
 				return sprintf($this->tags['javascriptblock'], $script);
 			} else {
@@ -82,7 +82,7 @@ class JavascriptHelper extends Helper{
 			$url .= '.js';
 		}
 		if (strpos($url, '://') === false) {
-			$url = $this->webroot . JS_URL . $this->themeWeb . $url;
+			$url = $this->webroot . $this->themeWeb . JS_URL . $url;
 		}
 		return sprintf($this->tags['javascriptlink'], $url);
 	}

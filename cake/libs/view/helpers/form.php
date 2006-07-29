@@ -180,7 +180,7 @@ class FormHelper extends Helper {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
-			$url = $this->webroot . IMAGES_URL . $this->themeWeb . $path;
+			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
 		}
 		return sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 	}
