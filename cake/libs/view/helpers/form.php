@@ -483,6 +483,12 @@ class FormHelper extends Helper {
 						}
 						$strFormFields = $strFormFields . $this->generateDateTime($field['tagName'], $field['prompt'], '', '', '', '', $field['selected']);
 					break;
+					case "time":
+						if (!isset($field['selected'])) {
+							$field['selected'] = null;
+						}
+						$strFormFields = $strFormFields . $this->generateTime($field['tagName'], $field['prompt'], '', '', '', '', $field['selected']);
+					break;
 					default:
 					break;
 				}
