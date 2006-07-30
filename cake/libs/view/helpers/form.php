@@ -184,6 +184,83 @@ class FormHelper extends Helper {
 		}
 		return sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 	}
+ /**
+ * Returns a formatted SELECT element.
+ *
+ * @param string $fieldName Name attribute of the SELECT
+ * @param array $optionElements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
+ * @param mixed $selected Selected option
+ * @param array $selectAttr Array of HTML options for the opening SELECT element
+ * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
+ * @param boolean $show_empty If true, the empty select option is shown
+ * @param  boolean $return         Whether this method should return a value
+ * @return string Formatted SELECT element
+ */
+	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+		$this->Html->setFormTag($fieldName);
+
+		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
+			if (isset($attributes['class']) && trim($attributes['class']) != '') {
+				$attributes['class'] .= ' form_error';
+			} else {
+				$attributes['class'] = 'form_error';
+			}
+		}
+
+		if (!isset($attributes['id'])) {
+			$attributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
+		}
+
+		if (!isset($selected)) {
+			$selected = $this->Html->tagValue($fieldName);
+		}
+
+		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
+			$select[] = sprintf($this->tags['selectmultiplestart'], $this->Html->model, $this->Html->field, $this->Html->parseHtmlOptions($attributes));
+		} else {
+			$select[] = sprintf($this->tags['selectstart'], $this->Html->model, $this->Html->field, $this->Html->parseHtmlOptions($attributes));
+		}
+
+		if ($showEmpty !== null && $showEmpty !== false) {
+			array_unshift($options, array('name' => $showEmpty, 'value' => ''));
+		}
+
+		$select = am($select, $this->selectOptions($options, $selected));
+
+		$select[] = sprintf($this->tags['selectend']);
+		return $this->output(implode("\n", $select));
+	}
+/**
+ * Returns an array of formatted OPTION/OPTGROUP elements
+ * 
+ * @return array
+ */
+	function selectOptions($elements = array(), $selected = null) {
+		$select = array();
+
+		foreach($elements as $name => $title) {
+			$htmlOptions = array();
+			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
+				$name = null;
+			} elseif (is_array($title)) {
+				$select = am($select, $this->selectOptions());
+				$htmlOptions = $title;
+				$name = $title['value'];
+				$title = $title['name'];
+				unset($htmlOptions['name'], $htmlOptions['value']);
+			}
+			
+			if ($name !== null) {
+				if (($selected !== null) && ($selected == $name)) {
+					$htmlOptions['selected'] = 'selected';
+				} else if(is_array($selected) && in_array($name, $selected)) {
+					$htmlOptions['selected'] = 'selected';
+				}
+				$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), $title);
+			}
+		}
+		return $select;
+	}
 /**
  * Returns a formatted INPUT tag for HTML FORMs.
  *

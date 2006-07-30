@@ -839,6 +839,9 @@ class HtmlHelper extends Helper {
 			return sprintf($this->tags['mailto'], $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
 		}
 	}
+
+/* NEW METHODS */
+
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
