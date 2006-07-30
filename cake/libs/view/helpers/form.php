@@ -240,16 +240,19 @@ class FormHelper extends Helper {
 
 		foreach($elements as $name => $title) {
 			$htmlOptions = array();
+
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
+				$select[] = sprintf($this->tags['optiongroup'], $name, '');
+				$select = am($select, $this->selectOptions($title, $selected));
+				$select[] = $this->tags['optiongroupend'];
 				$name = null;
 			} elseif (is_array($title)) {
-				$select = am($select, $this->selectOptions());
 				$htmlOptions = $title;
 				$name = $title['value'];
 				$title = $title['name'];
 				unset($htmlOptions['name'], $htmlOptions['value']);
 			}
-			
+
 			if ($name !== null) {
 				if (($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';

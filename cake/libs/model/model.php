@@ -1506,12 +1506,13 @@ class Model extends Overloadable {
  * @param int $limit SQL LIMIT clause, for calculating items per page
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
+ * @param string $groupPath A string path to a value to group the elements by, i.e. "{n}.Post.category_id"
  * @return array An associative array of records, where the id is the key, and the display field is the value
  */
-	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null) {
+	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if ($keyPath == null && $valuePath == null && $this->hasField($this->displayField)) {
+		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
 			$fields = array($this->primaryKey, $this->displayField);
 		} else {
 			$fields = null;
@@ -1531,9 +1532,26 @@ class Model extends Overloadable {
 		$vals = $db->getFieldValue($result, $valuePath);
 
 		if (!empty($keys) && !empty($vals)) {
+			$out = array();
+
+			if ($groupPath != null) {
+				$group = $db->getFieldValue($result, $groupPath);
+				if (!empty($group)) {
+					$c = count($keys);
+					for ($i = 0; $i < $c; $i++) {
+						if (!isset($out[$group[$i]])) {
+							$out[$group[$i]] = array();
+						}
+						$out[$group[$i]][$keys[$i]] = $vals[$i];
+					}
+					return $out;
+				}
+			}
+
 			$return = array_combine($keys, $vals);
 			return $return;
 		}
+		return null;
 	}
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.

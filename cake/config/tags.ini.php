@@ -70,6 +70,10 @@ selectoption = "<option value="%s" %s>%s</option>"
 ; Tag template for a closing select tag.
 selectend = "</select>"
 
+; Tag template for a option group tag.
+optiongroup = "<optgroup label="%s"%s>"
+optiongroupend = "</optgroup>"
+
 ; Tag template for a password tag.
 password = "<input type="password" name="data[%s][%s]" %s/>"
 
