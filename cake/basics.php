@@ -59,20 +59,14 @@
 			}
 		}
 
-		if (phpversion() < 5 && function_exists("overload")) {
-			overload('AppModel');
-		}
+		Overloadable::overload('AppModel');
 		$loadedModels = array();
 
 		foreach($path->modelPaths as $path) {
 			foreach(listClasses($path)as $model_fn) {
 				if (!key_exists($model_fn, $loadedModels)) {
 					require($path . $model_fn);
-
-					if (phpversion() < 5 && function_exists("overload")) {
-						list($name) = explode('.', $model_fn);
-						overload(Inflector::camelize($name));
-					}
+					list($name) = explode('.', $model_fn);
 					$loadedModels[$model_fn] = $model_fn;
 				}
 			}
@@ -95,19 +89,13 @@
 			}
 		}
 
-		if (phpversion() < 5 && function_exists("overload")) {
-			overload($pluginAppModel);
-		}
+		Overloadable::overload($pluginAppModel);
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
 		$loadedPluginModels = array();
+
 		foreach(listClasses($pluginModelDir)as $modelFileName) {
 			if (!key_exists($modelFileName, $loadedPluginModels)) {
 				require($pluginModelDir . $modelFileName);
-
-				if (phpversion() < 5 && function_exists("overload")) {
-					list($name) = explode('.', $modelFileName);
-					overload(Inflector::camelize($name));
-				}
 				$loadedPluginModels[$modelFileName] = $modelFileName;
 			}
 		}
