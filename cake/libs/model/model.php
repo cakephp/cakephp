@@ -431,7 +431,7 @@ class Model extends Overloadable {
  */
 	function __call__($method, $params) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		
+
 		$methods = array_keys($this->__behaviorMethods);
 		$call = array_values($this->__behaviorMethods);
 		$count = count($call);
@@ -553,9 +553,17 @@ class Model extends Overloadable {
 		$colKey = Inflector::underscore($className);
 
 		if (ClassRegistry::isKeySet($colKey)) {
-			$this->{$className} = ClassRegistry::getObject($colKey);
+			if (phpversion() < 5) {
+				$this->{$className} =& ClassRegistry::getObject($colKey);
+			} else {
+				$this->{$className} = ClassRegistry::getObject($colKey);
+			}
 		} else {
-			$this->{$className} = new $className($id, $table, $ds);
+			if (phpversion() < 5) {
+				$this->{$className} =& new $className($id, $table, $ds);
+			} else {
+				$this->{$className} = new $className($id, $table, $ds);
+			}
 		}
 
 		$this->alias[$assoc] = $this->{$className}->table;
