@@ -207,31 +207,21 @@ class View extends Object{
  */
 	var $plugin = null;
 
+	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator');
 /**
  * Constructor
  *
  * @return View
  */
 	function __construct(&$controller) {
-		if(is_object($controller)){
+		if(is_object($controller)) {
 			$this->controller   =& $controller;
-			$this->_viewVars    = $this->controller->_viewVars;
-			$this->action       = $this->controller->action;
-			$this->autoLayout   = $this->controller->autoLayout;
-			$this->autoRender   = $this->controller->autoRender;
-			$this->base         = $this->controller->base;
-			$this->webroot      = $this->controller->webroot;
-			$this->helpers      = $this->controller->helpers;
-			$this->here         = $this->controller->here;
-			$this->layout       = $this->controller->layout;
-			$this->modelNames   = $this->controller->modelNames;
-			$this->name         = $this->controller->name;
-			$this->pageTitle    = $this->controller->pageTitle;
-			$this->viewPath     = $this->controller->viewPath;
-			$this->params       = $this->controller->params;
-			$this->data         = $this->controller->data;
-			$this->webservices  = $this->controller->webservices;
-			$this->plugin       = $this->controller->plugin;
+
+			$c = count($this->__passedVars);
+			for ($j = 0; $j < $c; $j++) {
+				$var = $this->__passedVars[$j];
+				$this->{$var} = $controller->{$var};
+			}
 		}
 		parent::__construct();
 	}
@@ -663,15 +653,13 @@ class View extends Object{
 
 				${$camelBackedHelper}			=& new $helperCn;
 				${$camelBackedHelper}->view		=& $this;
-				${$camelBackedHelper}->base		= $this->base;
-				${$camelBackedHelper}->webroot	= $this->webroot;
-				${$camelBackedHelper}->here		= $this->here;
-				${$camelBackedHelper}->params	= $this->params;
-				${$camelBackedHelper}->action	= $this->action;
-				${$camelBackedHelper}->data		= $this->data;
-				${$camelBackedHelper}->themeWeb	= $this->themeWeb;
 				${$camelBackedHelper}->tags		= $tags;
-				${$camelBackedHelper}->plugin	= $this->plugin;
+
+				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin', 'namedArgs', 'argSeparator');
+				$c = count($vars);
+				for ($j = 0; $j < $c; $j++) {
+					${$camelBackedHelper}->{$vars[$j]} = $this->{$vars[$j]};
+				}
 
 				if (!empty($this->validationErrors)) {
 					${$camelBackedHelper}->validationErrors = $this->validationErrors;

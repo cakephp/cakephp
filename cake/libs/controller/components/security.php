@@ -48,7 +48,7 @@ class SecurityComponent extends Object {
 
 	var $requireLogin = array();
 
-	var $loginOptions = array();
+	var $loginOptions = array('type' => '');
 
 	var $loginUsers = array();
 
@@ -116,9 +116,6 @@ class SecurityComponent extends Object {
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
 			if (in_array($controller->action, $this->requireLogin) || $this->requireLogin == array('*')) {
 
-				if (!isset($this->loginOptions['type'])) {
-					$this->loginOptions['type'] = '';
-				}
 				$login = $this->loginCredentials($this->loginOptions['type']);
 				if ($login == null) {
 					// User hasn't been authenticated yet
