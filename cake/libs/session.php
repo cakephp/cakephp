@@ -283,6 +283,7 @@ class CakeSession extends Object{
 		@session_destroy();
 		@unlink ($file);
 		$this->__construct($this->path);
+		$this->renew();
 	}
 /**
  * Enter description here...
