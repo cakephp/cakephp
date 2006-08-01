@@ -161,20 +161,28 @@ class HtmlHelper extends Helper {
  *	+ A combination of controller/action - the method will find url for it.
  *
  * @param  string  $url		Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string  Full translated URL with base path.
  */
-	function url($url = null, $return = false) {
+	function url($url = null) {
 		$base = strip_plugin($this->base, $this->plugin);
-		if (empty($url)) {
-			return $this->here;
-		} elseif($url{0} == '/') {
-			$output = $base . $url;
-		} else {
-			$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
-		}
 
-		return $this->output($output, $return);
+		if (is_array($url) && !empty($url)) {
+			if (!isset($url['controller'])) {
+				$url['controller'] = $this->params['controller'];
+			}
+			if (!isset($url['plugin'])) {
+				$url['plugin'] = $this->plugin;
+			}
+		} else {
+			if (empty($url)) {
+				return $this->here;
+			} elseif($url{0} == '/') {
+				$output = $base . $url;
+			} else {
+				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
+			}
+		}
+		return $this->output($output);
 	}
 /**
  * Creates an HTML link.
@@ -190,8 +198,8 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @param  string  $confirmMessage Confirmation message.
  * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
+ * @return string	An <a /> element.
  */
 	function link($title, $url = null, $htmlAttributes = null, $confirmMessage = false, $escapeTitle = true, $return = false) {
 		if ($escapeTitle) {
@@ -203,7 +211,7 @@ class HtmlHelper extends Helper {
 			$confirmMessage = htmlspecialchars($confirmMessage, ENT_NOQUOTES);
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '&quot;', $confirmMessage);
-			$htmlAttributes['onclick']="return confirm('{$confirmMessage}');";
+			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
 		}
 
 		if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0))) {
@@ -212,6 +220,23 @@ class HtmlHelper extends Helper {
 			$output = sprintf($this->tags['link'], $this->url($url, true), $this->_parseAttributes($htmlAttributes), $title);
 		}
 		return $this->output($output, $return);
+	}
+/**
+ * Creates a link element for CSS stylesheets.
+ *
+ * @param string $path Path to CSS file
+ * @param string $rel Rel attribute. Defaults to "stylesheet".
+ * @param array $htmlAttributes Array of HTML attributes.
+ * @return string CSS <link /> or <style /> tag, depending on the type of link.
+ */
+	function css($path, $rel = 'stylesheet', $htmlAttributes = array()) {
+		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
+		if ($rel == 'import') {
+			$out = sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
+		} else {
+			$out = sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' '));
+		}
+		return $this->output($out);
 	}
 /**
  * Creates a submit widget.
@@ -320,23 +345,6 @@ class HtmlHelper extends Helper {
 		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
 		$output .= sprintf($this->tags['checkbox'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		return $this->output($output, $return);
-	}
-/**
- * Creates a link element for CSS stylesheets.
- *
- * @param string $path Path to CSS file
- * @param string $rel Rel attribute. Defaults to "stylesheet".
- * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
- */
-	function css($path, $rel = 'stylesheet', $htmlAttributes = null, $return = false) {
-		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
-		if ($rel == 'import') {
-			return $this->output(sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');'), $return);
-		} else {
-			return $this->output(sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
-		}
 	}
 /**
  * Creates file input widget.
@@ -900,6 +908,10 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function dayOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			$selected = date('d', strtotime($this->tagValue($tagName)));
+		}
+
 		$dayValue = empty($selected) ? date('d') : $selected;
 		$days = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30', '31' => '31');
 		$option = $this->selectTag($tagName . "_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
@@ -918,6 +930,9 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function yearOptionTag($tagName, $value = null, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			$selected = date('Y', strtotime($this->tagValue($tagName)));
+		}
 
 		$yearValue = empty($selected) ? date('Y') : $selected;
 		$currentYear = date('Y');
@@ -951,8 +966,11 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function monthOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			$selected = date('m', strtotime($this->tagValue($tagName)));
+		}
 		$monthValue = empty($selected) ? date('m') : $selected;
-		$months=array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
+		$months = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
 
 		$option = $this->selectTag($tagName . "_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
@@ -968,6 +986,14 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function hourOptionTag($tagName, $value = null, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			if ($format24Hours) {
+				$selected = date('H', strtotime($this->tagValue($tagName)));
+			} else {
+				$selected = date('g', strtotime($this->tagValue($tagName)));
+			}
+		}
+
 		if ($format24Hours) {
 			$hourValue = !isset($selected) ? date('H') : $selected;
 		} else {
@@ -996,6 +1022,9 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function minuteOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			$selected = date('i', strtotime($this->tagValue($tagName)));
+		}
 		$minValue = !isset($selected) ? date('i') : $selected;
 
 		for($minCount = 0; $minCount < 60; $minCount++) {
@@ -1015,6 +1044,9 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function meridianOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+		if (empty($selected) && ($this->tagValue($tagName))) {
+			$selected = date('a', strtotime($this->tagValue($tagName)));
+		}
 		$merValue = empty($selected) ? date('a') : $selected;
 		$meridians = array('am' => 'am', 'pm' => 'pm');
 
