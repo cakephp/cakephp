@@ -287,7 +287,7 @@ class HtmlHelper extends Helper {
 	function textarea($fieldName, $htmlAttributes = null, $return = false) {
 		$this->setFormTag($fieldName);
 		$value = $this->tagValue($fieldName);
-		if (!empty($htmlAttributes['value']) && !$value) {
+		if (!empty($htmlAttributes['value'])) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
 		}
