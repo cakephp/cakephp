@@ -38,11 +38,10 @@
 	$root = dirname(dirname(dirname(__FILE__)));
 	$here = $argv[0];
 	$dataSource = 'default';
-	for ($i = 1; $i < count($argv); $i++)
-	{
+
+	for ($i = 1; $i < count($argv); $i++) {
 		// Process command-line modifiers here
-		switch (strtolower($argv[$i]))
-		{
+		switch (strtolower($argv[$i])) {
 			case '-app':
 				$app = $argv[$i + 1];
 			break;
@@ -70,11 +69,11 @@
 
 	if(function_exists('ini_set')) {
 		ini_set('include_path',ini_get('include_path').
-													PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.DS.
-													PATH_SEPARATOR.CORE_PATH.DS.
-													PATH_SEPARATOR.ROOT.DS.APP_DIR.DS.
-													PATH_SEPARATOR.APP_DIR.DS.
-													PATH_SEPARATOR.APP_PATH);
+			PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.DS.
+			PATH_SEPARATOR.CORE_PATH.DS.
+			PATH_SEPARATOR.ROOT.DS.APP_DIR.DS.
+			PATH_SEPARATOR.APP_DIR.DS.
+			PATH_SEPARATOR.APP_PATH);
 		define('APP_PATH', null);
 		define('CORE_PATH', null);
 	} else {
@@ -85,12 +84,10 @@
 	require ('cake'.DS.'basics.php');
 	require ('cake'.DS.'config'.DS.'paths.php');
 	require (CONFIGS.'core.php');
-	if (file_exists( CONFIGS.'database.php' ))
-	{
+
+	if (file_exists( CONFIGS.'database.php' )) {
 		require_once (CONFIGS.'database.php');
-	}
-	else
-	{
+	} else {
 		die("Unable to find /app/config/database.php.  Please create it before continuing.\n\n");
 	}
 	uses ('object', 'neat_array', 'session', 'security', 'inflector', 'model'.DS.'connection_manager',
@@ -185,7 +182,7 @@ class AclCLI {
 			exit();
 		}
 
-		switch ($command){
+		switch ($command) {
 			case 'create':
 				$this->create();
 			break;
@@ -329,13 +326,13 @@ class AclCLI {
 
 		for($i = 0; $i < count($nodes); $i++){
 			if (count($right) > 0){
-			while ($right[count($right)-1] < $nodes[$i][$class]['rght']){
-				if ($right[count($right)-1]){
-					array_pop($right);
-				} else {
-					break;
+				while ($right[count($right)-1] < $nodes[$i][$class]['rght']){
+					if ($right[count($right)-1]){
+						array_pop($right);
+					} else {
+						break;
+					}
 				}
-			}
 			}
 			fwrite($this->stdout, str_repeat('  ',count($right)) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
 			$right[] = $nodes[$i][$class]['rght'];
@@ -350,7 +347,7 @@ class AclCLI {
 		$db =& ConnectionManager::getDataSource($this->dataSource);
 		fwrite($this->stdout, "Initializing Database...\n");
 		fwrite($this->stdout, "Creating access control objects table (acos)...\n");
-		$sql = " CREATE TABLE ".$db->name('acos')." (
+		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('object_id')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
@@ -361,7 +358,7 @@ class AclCLI {
 		$db->query($sql);
 
 		fwrite($this->stdout, "Creating access request objects table (aros)...\n");
-		$sql2 = "CREATE TABLE ".$db->name('aros')." (
+		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('user_id')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
@@ -372,7 +369,7 @@ class AclCLI {
 		$db->query($sql2);
 
 		fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
-		$sql3 = "CREATE TABLE ".$db->name('aros_acos')." (
+		$sql3 = "CREATE TABLE ".$db->fullTableName('aros_acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('aro_id')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('aco_id')." ".$db->column($db->columns['integer'])." default NULL,
