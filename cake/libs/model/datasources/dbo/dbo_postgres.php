@@ -460,7 +460,7 @@ class DboPostgres extends DboSource {
 		if (strpos($col, 'bytea') !== false) {
 				return 'binary';
 		}
-		if (in_array($col, array('float', 'float4', 'float8', 'double', 'decimal', 'real', 'numeric'))) {
+		if (in_array($col, array('float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'))) {
 			return 'float';
 		}
 		return 'text';
