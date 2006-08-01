@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!defined(CAKE_CORE_INCLUDE_PATH)) {
+	die('You can not access this file directly');
+}
 /**
  * Enter description here...
  */
