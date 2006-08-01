@@ -355,7 +355,9 @@ class AclCLI {
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
 				);";
-		$db->query($sql);
+		if ($db->query($sql) === false) {
+			die("Error: " . $db->lastError() . "\n\n");
+		}
 
 		fwrite($this->stdout, "Creating access request objects table (aros)...\n");
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
@@ -366,7 +368,9 @@ class AclCLI {
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
 				);";
-		$db->query($sql2);
+		if ($db->query($sql) === false) {
+			die("Error: " . $db->lastError() . "\n\n");
+		}
 
 		fwrite($this->stdout, "Creating relationships table (aros_acos)...\n");
 		$sql3 = "CREATE TABLE ".$db->fullTableName('aros_acos')." (
@@ -379,7 +383,9 @@ class AclCLI {
 				".$db->name('_delete')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
 				PRIMARY KEY  (".$db->name('id').")
 				);";
-		$db->query($sql3);
+		if ($db->query($sql3) === false) {
+			die("Error: " . $db->lastError() . "\n\n");
+		}
 
 		fwrite($this->stdout, "\nDone.\n");
 	}
