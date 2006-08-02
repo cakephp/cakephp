@@ -387,8 +387,9 @@ class Dispatcher extends Object {
 		$scriptName = env('PHP_SELF');
 		$r = null;
 		$appDirName = str_replace('/','\/',preg_quote(APP_DIR));
+		$webrootDirName = str_replace('/', '\/', preg_quote(WEBROOT_DIR));
 
-		if (preg_match('/'.$appDirName.'\\'.DS.WEBROOT_DIR.'/', $docRoot)) {
+		if (preg_match('/'.$appDirName.'\\'.DS.$webrootDirName.'/', $docRoot)) {
 			$this->webroot = '/';
 
 			if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r)) {
@@ -400,10 +401,10 @@ class Dispatcher extends Object {
 		} else {
 			if (defined('BASE_URL')) {
 				$webroot = setUri();
-				$htaccess = preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.WEBROOT_DIR.'/';
+				$htaccess = preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.$webrootDirName.'/';
 			}
 
-			if (preg_match('/^(.*)\\/'.$appDirName.'\\/'.WEBROOT_DIR.'\\/index\\.php$/', $scriptName, $regs)) {
+			if (preg_match('/^(.*)\\/'.$appDirName.'\\/'.$webrootDirName.'\\/index\\.php$/', $scriptName, $regs)) {
 
 				if(APP_DIR === 'app') {
 					$appDir = null;
@@ -413,7 +414,7 @@ class Dispatcher extends Object {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[1].$appDir.'/';
 				return  $base.$regs[1].$appDir;
 
-			} elseif (preg_match('/^(.*)\\/'.WEBROOT_DIR.'([^\/i]*)|index\\\.php$/', $scriptName, $regs)) {
+			} elseif (preg_match('/^(.*)\\/'.$webrootDirName.'([^\/i]*)|index\\\.php$/', $scriptName, $regs)) {
 				!empty($htaccess)? $this->webroot = $htaccess : $this->webroot = $regs[0].'/';
 				return  $base.$regs[0];
 
