@@ -409,6 +409,24 @@ class TimeHelper extends Helper {
 
 		return $this->output($ret, $return);
 	}
+
+	function gmt($string = null){
+		if ($string != null) {
+			$string = $this->fromString($string);
+		} else {
+			$string = time();
+		}
+		$string = $this->fromString($string);
+		$hour = intval(date("G", $string));
+		$minute = intval(date("i", $string));
+		$second = intval(date("s", $string));
+		$month = intval(date("n", $string));
+		$day = intval(date("j", $string));
+		$year = intval(date("Y", $string));
+
+		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
+		return $return;
+	}
 }
 
 ?>
