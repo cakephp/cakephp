@@ -43,7 +43,7 @@ class Security extends Object{
 	function &getInstance() {
 		static $instance = array();
 	 	if (!$instance) {
-	 		$instance[0] = &new Security;
+	 		$instance[0] =& new Security;
 	 	}
 	 	return $instance[0];
 	}
@@ -53,6 +53,7 @@ class Security extends Object{
   * @return unknown
   */
 	function inactiveMins() {
+		$_this =& Security::getInstance();
 		switch(CAKE_SECURITY) {
 			case 'high':
 				return 10;
@@ -81,9 +82,10 @@ class Security extends Object{
  * @param unknown_type $authKey
  * @return unknown
  */
-	 function validateAuthKey($authKey) {
-		  return true;
-	 }
+	function validateAuthKey($authKey) {
+		$_this =& Security::getInstance();
+		return true;
+	}
 /**
  * Enter description here...
  *
@@ -91,31 +93,32 @@ class Security extends Object{
  * @param unknown_type $type
  * @return unknown
  */
-	 function hash($string, $type = 'sha1') {
-	 	$type = strtolower($type);
-	 	if ($type == 'sha1') {
-	 		if (function_exists('sha1')) {
-	 			$return = sha1($string);
-	 			return $return;
-	 		} else {
-	 			$type = 'sha256';
-	 		}
-	 	}
+	function hash($string, $type = 'sha1') {
+		$_this =& Security::getInstance();
+		$type = strtolower($type);
+		if ($type == 'sha1') {
+			if (function_exists('sha1')) {
+				$return = sha1($string);
+				return $return;
+			} else {
+				$type = 'sha256';
+			}
+		}
 
-	 	if ($type == 'sha256') {
-	 		if (function_exists('mhash')) {
-	 			$return = bin2hex(mhash(MHASH_SHA256, $string));
-	 			return $return;
-	 		} else {
-	 			$type = 'md5';
+		if ($type == 'sha256') {
+			if (function_exists('mhash')) {
+				$return = bin2hex(mhash(MHASH_SHA256, $string));
+				return $return;
+			} else {
+				$type = 'md5';
 	 		}
-	 	}
+		}
 
-	 	if ($type == 'md5') {
-	 		$return = md5($string);
-	 		return $return;
-	 	}
-	 }
+		if ($type == 'md5') {
+			$return = md5($string);
+			return $return;
+		}
+	}
 /**
  * Enter description here...
  *
@@ -123,22 +126,23 @@ class Security extends Object{
  * @param unknown_type $key
  * @return unknown
  */
-	 function cipher($text, $key) {
-	 	if (!defined('CIPHER_SEED')) {
-	 		//This is temporary will change later
-	 		define('CIPHER_SEED', '76859309657453542496749683645');
-	 	}
-	 	srand (CIPHER_SEED);
-	 	$out = '';
+	function cipher($text, $key) {
+		$_this =& Security::getInstance();
+		if (!defined('CIPHER_SEED')) {
+			//This is temporary will change later
+			define('CIPHER_SEED', '76859309657453542496749683645');
+		}
+		srand (CIPHER_SEED);
+		$out = '';
 
-	 	for($i = 0; $i < strlen($text); $i++) {
-	 		for($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
-	 			$toss = rand(0, 255);
-	 		}
-	 		$mask = rand(0, 255);
-	 		$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
-	 	}
-	 	return $out;
-	 }
+		for($i = 0; $i < strlen($text); $i++) {
+			for($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
+				$toss = rand(0, 255);
+			}
+			$mask = rand(0, 255);
+			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
+		}
+		return $out;
+	}
 }
 ?>
