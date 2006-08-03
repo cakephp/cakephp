@@ -202,21 +202,18 @@ class CacheHelper extends Helper{
 		  $file='<!--cachetime:' . $cacheTime . '-->
 					<?php
 					loadController(\'' . $this->view->name . '\');
-					$this->controller = new ' . $this->view->name
-			  . 'Controller();
+					$this->controller = new ' . $this->view->name . 'Controller();
 					$this->helpers = unserialize(\'' . serialize($this->view->helpers) . '\');
 					$this->base = \'' . $this->view->base . '\';
-					$this->webroot = \''
-			  . $this->view->webroot . '\';
+					$this->layout = \'' . $this->view->layout. '\';
+					$this->webroot = \'' . $this->view->webroot . '\';
 					$this->here = \'' . $this->view->here . '\';
 					$this->namedArgs  = \'' . $this->view->namedArgs . '\';
 					$this->argSeparator = \'' . $this->view->argSeparator . '\';
-					$this->params = unserialize(\'' . serialize($this->view->params)
-			  . '\');
+					$this->params = unserialize(\'' . serialize($this->view->params) . '\');
 					$this->action = unserialize(\'' . serialize($this->view->action) . '\');
 					$this->data = unserialize(\'' . serialize($this->view->data) . '\');
-					$this->themeWeb = \''
-			  . $this->view->themeWeb . '\';
+					$this->themeWeb = \'' . $this->view->themeWeb . '\';
 					$this->plugin = \'' . $this->view->plugin . '\';
 					$loadedHelpers = array();
 					$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);

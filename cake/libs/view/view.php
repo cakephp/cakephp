@@ -701,7 +701,7 @@ class View extends Object{
 		ob_start();
 		include ($filename);
 
-		if (DEBUG) {
+		if (DEBUG && $this->layout != 'xml') {
 			echo "<!-- Cached Render Time: " . round(getMicrotime() - $timeStart, 4) . "s -->";
 		}
 
@@ -713,6 +713,10 @@ class View extends Object{
 				unset ($out);
 				return;
 			} else {
+				if($this->layout === 'xml'){
+					header('Content-type: text/xml');
+					$out = preg_replace('/^<!--cachetime:(\\d+)-->/', '', $out);
+				}
 				e($out);
 				die();
 			}
