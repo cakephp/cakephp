@@ -209,6 +209,8 @@ class CacheHelper extends Helper{
 					$this->webroot = \''
 			  . $this->view->webroot . '\';
 					$this->here = \'' . $this->view->here . '\';
+					$this->namedArgs  = \'' . $this->view->namedArgs . '\';
+					$this->argSeparator = \'' . $this->view->argSeparator . '\';
 					$this->params = unserialize(\'' . serialize($this->view->params)
 			  . '\');
 					$this->action = unserialize(\'' . serialize($this->view->action) . '\');
