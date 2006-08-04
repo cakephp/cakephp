@@ -143,7 +143,7 @@ class SecurityComponent extends Object {
 
 		// Add auth key for new form posts
 		$authKey = Security::generateAuthKey();
-		$expires = strtotime('+'.Security::inactiveMins().' seconds');
+		$expires = strtotime('+'.Security::inactiveMins().' minutes');
 		$token = array(
 			'key' => $authKey,
 			'expires' => $expires,

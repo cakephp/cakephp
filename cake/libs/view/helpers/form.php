@@ -64,7 +64,6 @@ class FormHelper extends Helper {
  * @param string $type		FORM type (POST/GET).
  * @param array  $htmlAttributes
  * @return string An formatted opening FORM tag.
- * @deprecated This is very WYSIWYG unfriendly, use HtmlHelper::url() to get contents of "action" attribute. Version 0.9.2.
  */
 	function create($target = null, $type = 'post', $htmlAttributes = null) {
 		$htmlAttributes['action'] = $this->Html->url($target);
