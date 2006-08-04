@@ -56,6 +56,28 @@
 class FormHelper extends Helper {
 
 	var $helpers = array('Html');
+
+/**
+ * Returns an HTML FORM element.
+ *
+ * @param string $target URL for the FORM's ACTION attribute.
+ * @param string $type		FORM type (POST/GET).
+ * @param array  $htmlAttributes
+ * @return string An formatted opening FORM tag.
+ * @deprecated This is very WYSIWYG unfriendly, use HtmlHelper::url() to get contents of "action" attribute. Version 0.9.2.
+ */
+	function create($target = null, $type = 'post', $htmlAttributes = null) {
+		$htmlAttributes['action'] = $this->Html->url($target);
+		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
+		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
+		$token = '';
+
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$token = $this->Html->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+		}
+
+		return sprintf($this->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, '')) . $token;
+	}
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
@@ -232,7 +254,7 @@ class FormHelper extends Helper {
 	}
 /**
  * Returns an array of formatted OPTION/OPTGROUP elements
- * 
+ *
  * @return array
  */
 	function selectOptions($elements = array(), $selected = null) {

@@ -93,8 +93,8 @@ class SecurityComponent extends Object {
 				$token = $controller->params['data']['_Token']['key'];
 
 				if ($this->Session->check('_Token')) {
-					$tData = $this->Session->read('_Token');
-					if (!(intval($tData['expires']) > strtotime('now')) || $tData['key'] !== $token) {
+					$tData = unserialize($this->Session->read('_Token'));
+					if ($tData['expires'] < time() || $tData['key'] !== $token) {
 						if (!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
@@ -143,7 +143,7 @@ class SecurityComponent extends Object {
 
 		// Add auth key for new form posts
 		$authKey = Security::generateAuthKey();
-		$expires = strtotime('+'.Security::inactiveMins().' minutes');
+		$expires = strtotime('+'.Security::inactiveMins().' seconds');
 		$token = array(
 			'key' => $authKey,
 			'expires' => $expires,
@@ -155,7 +155,7 @@ class SecurityComponent extends Object {
 			$controller->params['data'] = array();
 		}
 		$controller->params['_Token'] = $token;
-		$this->Session->write('_Token', $token);
+		$this->Session->write('_Token', serialize($token));
 	}
 /**
  * Black-hole an invalid request with a 404 error or custom callback
@@ -286,7 +286,7 @@ class SecurityComponent extends Object {
 		$this->__setLoginDefaults($options);
 		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']);
 		$data .= ' realm="' . $options['realm'] . '"';
-		
+
 		return $data;
 	}
 /**
