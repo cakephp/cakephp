@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('sanitize');
 /**
  * Short description for file.
  *
@@ -47,6 +48,8 @@ class ErrorHandler extends Object{
 	function __construct($method, $messages) {
 		parent::__construct();
 		static $__previousError = null;
+		$clean = new Sanitize();
+		$messages = $clean->paranoid($messages, array('.'));
 		$this->__dispatch =& new Dispatcher();
 
 		if ($__previousError != array($method, $messages)) {
