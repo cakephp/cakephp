@@ -33,7 +33,7 @@
  *
  */
 
-if (!class_exists('Html')) {
+if (!class_exists('HtmlHelper')) {
 	uses(DS . 'view' . DS . 'helpers' . DS . 'html');
 }
 
