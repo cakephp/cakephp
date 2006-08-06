@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!defined('PHP5')) {
+	define ('PHP5', (bool)phpversion() > 5);
+}
 /**
  * Configuration, directory layout and standard libraries
  */
