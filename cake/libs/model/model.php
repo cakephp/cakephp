@@ -553,13 +553,13 @@ class Model extends Overloadable {
 		$colKey = Inflector::underscore($className);
 
 		if (ClassRegistry::isKeySet($colKey)) {
-			if (phpversion() < 5) {
+			if (!PHP5) {
 				$this->{$className} =& ClassRegistry::getObject($colKey);
 			} else {
 				$this->{$className} = ClassRegistry::getObject($colKey);
 			}
 		} else {
-			if (phpversion() < 5) {
+			if (!PHP5) {
 				$this->{$className} =& new $className($id, $table, $ds);
 			} else {
 				$this->{$className} = new $className($id, $table, $ds);
