@@ -123,10 +123,17 @@ class DboMssql extends DboSource {
 		$config = $this->config;
 		$connect = $config['connect'];
 
+		$os = env('OS');
+		if (!empty($os) && strpos($os, 'Windows') !== false) {
+			$sep = ',';
+		} else {
+			$sep = ':';
+		}
+
 		$this->connected = false;
 
 		if (is_numeric($config['port'])) {
-			$port = ':' . $config['port'];	// Port number
+			$port = $sep . $config['port'];	// Port number
 		} elseif ($config['port'] === null) {
 			$port = '';						// No port - SQL Server 2005
 		} else {
