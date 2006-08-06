@@ -43,7 +43,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Inflector extends Object{
+class Inflector extends Object {
 /**
  * Constructor.
  *
@@ -52,12 +52,27 @@ class Inflector extends Object{
 		parent::__construct();
 	}
 /**
- * Return $word in plural form.
+ * Gets a reference to the Inflector object instance
  *
- * @param string $word Word in singular
- * @return string Word in plural
+ * @return object
  */
-	function pluralize($word) {
+	function &getInstance() {
+		static $instance = array();
+
+		if (!isset($instance[0]) || !$instance[0]) {
+			$instance[0] = &new Inflector();
+		}
+
+		return $instance[0];
+	}
+/**
+ * Initializes plural inflection rules
+ *
+ * @access protected
+ * @return void
+ */
+	function __initPluralRules() {
+		$_this =& Inflector::getInstance();
 		$corePluralRules = array('/(s)tatus$/i' => '\1\2tatuses',
 									'/^(ox)$/i' => '\1\2en', # ox
 									'/([m|l])ouse$/i' => '\1ice', # mouse, louse
@@ -130,32 +145,62 @@ class Inflector extends Object{
 			$uninflected = array_merge($uninflectedPlural, $coreUninflectedPlural);
 			$irregular = array_merge($irregularPlural, $coreIrregularPlural);
 		}
-		$regexUninflected = __enclose(join( '|', $uninflected));
-		$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
+		$_this->pluralized = array();
+	}
+/**
+ * Return $word in plural form.
+ *
+ * @param string $word Word in singular
+ * @return string Word in plural
+ */
+	function pluralize($word) {
+
+		$_this =& Inflector::getInstance();
+		if (!isset($_this->pluralRules) || empty($_this->pluralRules)) {
+			$_this->__initPluralRules();
+		}
+
+		if (isset($_this->pluralized[$word])) {
+			return $_this->pluralized[$word];
+		}
+
+		extract($_this->pluralRules);
+		if (!isset($regexUninflected) || !isset($regexIrregular)) {
+			$regexUninflected = __enclose(join( '|', $uninflected));
+			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+			$_this->pluralRules['regexUninflected'] = $regexUninflected;
+			$_this->pluralRules['regexIrregular'] = $regexIrregular;
+		}
 
 		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
+			$_this->pluralized[$word] = $word;
 			return $word;
 		}
 
 		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			return $regs[1] . $irregular[strtolower($regs[2])];
+			$_this->pluralized[$word] = $regs[1] . $irregular[strtolower($regs[2])];
+			return $_this->pluralized[$word];
 		}
 
 		foreach($pluralRules as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
-				$replace = preg_replace($rule, $replacement, $word);
-				return $replace;
+				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
+				return $_this->pluralized[$word];
 			}
 		}
+		$_this->pluralized[$word] = $word;
 		return $word;
 	}
 /**
- * Return $word in singular form.
+ * Initializes singular inflection rules
  *
- * @param string $word Word in plural
- * @return string Word in singular
+ * @access protected
+ * @return void
  */
-	function singularize($word) {
+	function __initSingularRules() {
+
+		$_this =& Inflector::getInstance();
 		$coreSingularRules = array('/(s)tatuses$/i' => '\1\2tatus',
 									'/(matr)ices$/i' => '\1ix',
 									'/(vert|ind)ices$/i' => '\1ex',
@@ -236,23 +281,51 @@ class Inflector extends Object{
 			$uninflected = array_merge($uninflectedSingular, $coreUninflectedSingular);
 			$irregular = array_merge($irregularSingular, $coreIrregularSingular);
 		}
-		$regexUninflected = __enclose(join( '|', $uninflected));
-		$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
+		$_this->singularized = array();
+	}
+/**
+ * Return $word in singular form.
+ *
+ * @param string $word Word in plural
+ * @return string Word in singular
+ */
+	function singularize($word) {
+
+		$_this =& Inflector::getInstance();
+		if (!isset($_this->singularRules) || empty($_this->singularRules)) {
+			$_this->__initSingularRules();
+		}
+		
+		if (isset($_this->singularized[$word])) {
+			return $_this->singularized[$word];
+		}
+
+		extract($_this->singularRules);
+		if (!isset($regexUninflected) || !isset($regexIrregular)) {
+			$regexUninflected = __enclose(join( '|', $uninflected));
+			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+			$_this->singularRules['regexUninflected'] = $regexUninflected;
+			$_this->singularRules['regexIrregular'] = $regexIrregular;
+		}
 
 		if (preg_match('/^(' . $regexUninflected . ')$/i', $word, $regs)) {
+			$_this->singularized[$word] = $word;
 			return $word;
 		}
 
 		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			return $regs[1] . $irregular[strtolower($regs[2])];
+			$_this->singularized[$word] = $regs[1] . $irregular[strtolower($regs[2])];
+			return $_this->singularized[$word];
 		}
 
 		foreach($singularRules as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
-				$replace = preg_replace($rule, $replacement, $word);
-				return $replace;
+				$_this->singularized[$word] = preg_replace($rule, $replacement, $word);
+				return $_this->singularized[$word];
 			}
 		}
+		$_this->singularized[$word] = $word;
 		return $word;
 	}
 /**
