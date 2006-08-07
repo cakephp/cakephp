@@ -145,7 +145,7 @@ class Dispatcher extends Object {
 				}
 			} else {
 				$__access = strpos($params['action'], CAKE_ADMIN);
-				if ($__access !== false) {
+				if ($__access === 0) {
 					$privateAction = true;
 				}
 			}
