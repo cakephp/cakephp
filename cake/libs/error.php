@@ -49,7 +49,7 @@ class ErrorHandler extends Object{
 		parent::__construct();
 		static $__previousError = null;
 		$clean = new Sanitize();
-		$messages = $clean->paranoid($messages, array('.'));
+		$messages = $clean->paranoid($messages, array('.', '/', '_'));
 		$this->__dispatch =& new Dispatcher();
 
 		if ($__previousError != array($method, $messages)) {
