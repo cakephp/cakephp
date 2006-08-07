@@ -280,64 +280,6 @@ class RequestHandlerComponent extends Object{
 		return trim($ipaddr);
 	}
 /**
- * Strips extra whitespace from output
- *
- * @param string $str
- */
-	function stripWhitespace($str) {
-		$r = preg_replace('/[\n\r\t]+/', '', $str);
-		return preg_replace('/\s{2,}/', ' ', $r);
-	}
-/**
- * Strips image tags from output
- *
- * @param string $str
- */
-	function stripImages($str) {
-		$str = preg_replace('/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i', '$1$3$5<br />', $str);
-		$str = preg_replace('/(<img[^>]+alt=")([^"]*)("[^>]*>)/i', '$2<br />', $str);
-		$str = preg_replace('/<img[^>]*>/i', '', $str);
-		return $str;
-	}
-/**
- * Strips scripts and stylesheets from output
- *
- * @param string $str
- */
-	function stripScripts($str) {
-		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/i', '', $str);
-	}
-/**
- * Strips extra whitespace, images, scripts and stylesheets from output
- *
- * @param string $str
- */
-	function stripAll($str) {
-		$str = $this->stripWhitespace($str);
-		$str = $this->stripImages($str);
-		$str = $this->stripScripts($str);
-		return $str;
-	}
-/**
- * Strips the specified tags from output
- *
- * @param string $str
- * @param string $tag
- * @param string $tag
- * @param string ...
- */
-	function stripTags() {
-		$params = params(func_get_args());
-		$str = $params[0];
-
-		for($i = 1; $i < count($params); $i++) {
-			$str = preg_replace('/<' . $params[$i] . '[^>]*>/i', '', $str);
-			$str = preg_replace('/<\/' . $params[$i] . '[^>]*>/i', '', $str);
-		}
-		return $str;
-	}
-
-/**
  * Determines which content types the client accepts
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an
