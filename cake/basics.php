@@ -456,9 +456,10 @@
  */
 	function uses() {
 		$args = array_reverse(func_get_args());
-		$i = func_num_args() - 1;
-		while ($i >= 0) {
-			require_once(LIBS . strtolower($args[$i--]) . '.php');
+		$c = func_num_args();
+
+		for ($i = 0; $i < $c; $i++) {
+			require_once(LIBS . strtolower($args[$i]) . '.php');
 		}
 	}
 /**
@@ -469,9 +470,10 @@
  */
 	function vendor($name) {
 		$args = array_reverse(func_get_args());
-		$i = func_num_args() - 1;
-		while ($i >= 0) {
-			$arg = $args[--$i];
+		$c = func_num_args();
+
+		for ($i = 0; $i < $c; $i++) {
+			$arg = $args[$i];
 			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
 				require_once(APP . 'vendors' . DS . $arg . '.php');
 			} else {
