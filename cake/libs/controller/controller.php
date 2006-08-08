@@ -907,6 +907,105 @@ class Controller extends Object{
 		}
 	}
 /**
+ * Handles automatic pagination of model records
+ *
+ * @param mixed $object
+ * @param array $options
+ * @param array $whitelist
+ * @return array Model query results
+ */
+	function paginate($object, $options = array(), $whitelist = array()) {
+		if (is_array($object) || is_numeric($object)) {
+			$whitelist = $options;
+			$options = $object;
+			$object = null;
+		}
+
+		if (is_numeric($options)) {
+			$options = array('page' => $options);
+		}
+
+		if (is_string($object)) {
+			if ($object == $this->modelClass && empty($this->uses)) {
+				$object = $this->{$object};
+			} elseif (!empty($this->uses) && in_array($object, $this->uses)) {
+				$object = $this->{$object};
+			} elseif (isset($this->{$this->modelClass}->{$object})) {
+				$object = $this->{$this->modelClass}->{$object};
+			} elseif (!empty($this->uses)) {
+				for ($i = 0; $i < count($this->uses); $i++) {
+					$model = $this->uses[$i];
+					if (isset($this->{$model}->{$object}) && is_object($this->{$model}->{$object})) {
+						$object = $this->{$model}->{$object};
+						break;
+					}
+				}
+				if (!is_object($object)) {
+					// Error: Can't find model
+					return array();
+				}
+			} else {
+				// Error: Can't find model
+				return array();
+			}
+		} elseif (empty($object) || $object == null) {
+			if (!empty($this->uses)) {
+				$object = $this->{$this->uses[0]};
+			} else {
+				$object = $this->{$this->modelClass};
+			}
+		}
+
+		if (isset($this->paginate[$object->name])) {
+			$defaults = $this->paginate[$object->name];
+		} else {
+			$defaults = $this->paginate;
+		}
+
+		if (empty($options)) {
+			$options = $this->passedArgs;
+		}
+
+		if (isset($options['show'])) {
+			$options['limit'] = $options['show'];
+		}
+		if (isset($options['sort']) && isset($options['dir'])) {
+			$options['order'] = array($options['sort'] => $options['dir']);
+		} elseif (isset($options['sort'])) {
+			$options['order'] = $options['sort'];
+		}
+
+		$vars = array('conditions', 'fields', 'order', 'limit', 'page', 'recursive');
+		$keys = array_keys($options);
+		$count = count($keys);
+		for($i = 0; $i < $count; $i++) {
+			if (!in_array($keys[$i], $vars)) {
+				unset($options[$keys[$i]]);
+			}
+		}
+
+		if (empty($whitelist)) {
+			unset($options['conditions'], $options['fields'], $options['recursive']);
+		} else {
+			$keys = array_keys($options);
+			$count = count($keys);
+			for ($i = 0; $i < $count; $i++) {
+				if (!in_array($keys[$i], $whitelist)) {
+					unset($options[$keys[$i]]);
+				}
+			}
+		}
+
+		$conditions = $fields = $order = $limit = $page = $recursive = null;
+		$options = am($defaults, $options);
+		extract($options);
+		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
+		$this->params['paging'][$object->name] = $options;
+		$this->params['paging'][$object->name]['count'] = $object->findCount($conditions);
+
+		return $results;
+	}
+/**
  * Called before the controller action.  Overridden in subclasses.
  *
  */
