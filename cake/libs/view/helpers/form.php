@@ -243,11 +243,14 @@ class FormHelper extends Helper {
 		}
 
 		if ($showEmpty !== null && $showEmpty !== false) {
-			array_unshift($options, array('name' => $showEmpty, 'value' => ''));
+			$keys = array_keys($options);
+			$vals = array_values($options);
+			array_unshift($keys, '');
+			array_unshift($vals, $showEmpty);
+			$options = array_combine($keys, $vals);
 		}
 
 		$select = am($select, $this->selectOptions($options, $selected));
-
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
@@ -279,6 +282,7 @@ class FormHelper extends Helper {
 			}
 
 			if ($name !== null) {
+				pr($name);
 				if (($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';
 				} else if(is_array($selected) && in_array($name, $selected)) {
