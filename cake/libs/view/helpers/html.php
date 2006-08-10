@@ -167,13 +167,51 @@ class HtmlHelper extends Helper {
 		$base = strip_plugin($this->base, $this->plugin);
 
 		if (is_array($url) && !empty($url)) {
+			if (!isset($url['action'])) {
+				$url['action'] = $this->params['action'];
+			}
 			if (!isset($url['controller'])) {
 				$url['controller'] = $this->params['controller'];
 			}
 			if (!isset($url['plugin'])) {
 				$url['plugin'] = $this->plugin;
 			}
+
+			$named = $args = array();
+			$keys = array_keys($url);
+			$count = count($keys);
+			for ($i = 0; $i < $count; $i++) {
+				if (is_numeric($keys[$i])) {
+					$args[] = $url[$keys[$i]];
+				} else {
+					if (!in_array($keys[$i], array('action', 'controller', 'plugin'))) {
+						$named[] = array($keys[$i], $url[$keys[$i]]);
+					}
+				}
+			}
+
+			$combined = '';
+			if ($this->namedArgs) {
+				if ($this->namedArgs === true) {
+					$sep = $this->argSeparator;
+				} elseif (is_array($this->namedArgs)) {
+					$sep = '/';
+				}
+
+				$count = count($named);
+				for ($i = 0; $i < $count; $i++) {
+					$named[$i] = join($this->argSeparator, $named[$i]);
+				}
+				$combined = join('/', $named);
+			}
+
+			$url = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+			$output = $base . '/' . join('/', $url);
 		} else {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0))) {
+				return $this->output($url);
+			}
+
 			if (empty($url)) {
 				return $this->here;
 			} elseif($url{0} == '/') {
@@ -214,11 +252,7 @@ class HtmlHelper extends Helper {
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
 		}
 
-		if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0))) {
-			$output = sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title);
-		} else {
-			$output = sprintf($this->tags['link'], $this->url($url, true), $this->_parseAttributes($htmlAttributes), $title);
-		}
+		$output = sprintf($this->tags['link'], $this->url($url), $this->_parseAttributes($htmlAttributes), $title);
 		return $this->output($output, $return);
 	}
 /**
