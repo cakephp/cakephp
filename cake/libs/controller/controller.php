@@ -969,8 +969,8 @@ class Controller extends Object{
 		if (isset($options['show'])) {
 			$options['limit'] = $options['show'];
 		}
-		if (isset($options['sort']) && isset($options['dir'])) {
-			$options['order'] = array($options['sort'] => $options['dir']);
+		if (isset($options['sort']) && isset($options['direction'])) {
+			$options['order'] = array($options['sort'] => $options['direction']);
 		} elseif (isset($options['sort'])) {
 			$options['order'] = $options['sort'];
 		}
@@ -999,6 +999,10 @@ class Controller extends Object{
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 		$options = am($defaults, $options);
 		extract($options);
+		if (empty($conditions)) {
+			$conditions = null;
+		}
+
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
 		$this->params['paging'][$object->name] = $options;
 		$this->params['paging'][$object->name]['count'] = $object->findCount($conditions);
