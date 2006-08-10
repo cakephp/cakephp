@@ -160,7 +160,10 @@ class HtmlHelper extends Helper {
  *	+ '/' - the method will find base URL of application.
  *	+ A combination of controller/action - the method will find url for it.
  *
- * @param  string  $url		Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
+ * @param  mixed  $url    Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
+ *                        or an array specifying any of the following: 'controller', 'action',
+ *                        and/or 'plugin', in addition to named arguments (keyed array elements),
+ *                        and standard URL arguments (indexed array elements)
  * @return string  Full translated URL with base path.
  */
 	function url($url = null) {
@@ -232,8 +235,8 @@ class HtmlHelper extends Helper {
  * If the $url is empty, $title is used instead.
  *
  * @param  string  $title The content of the A tag.
- * @param  string  $url Cake-relative URL, or external URL (starts with http://)
- * @param  array	$htmlAttributes Array of HTML attributes.
+ * @param  mixed   $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  string  $confirmMessage Confirmation message.
  * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
  * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
