@@ -282,7 +282,6 @@ class FormHelper extends Helper {
 			}
 
 			if ($name !== null) {
-				pr($name);
 				if (($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';
 				} else if(is_array($selected) && in_array($name, $selected)) {
