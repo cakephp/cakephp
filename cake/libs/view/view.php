@@ -438,6 +438,41 @@ class View extends Object{
 	}
 
 /**
+ * Allows a template or element to set a variable that will be available in
+ * a layout or other element.  Analagous to Controller::set.
+ *
+ * @param mixed $one A string or an array of data.
+ * @param mixed $two Value in case $one is a string (which then works as the key).
+ * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ * @return unknown
+ */
+	function set($one, $two = null) {
+
+		$data = null;
+		if (is_array($one)) {
+			if (is_array($two)) {
+				$data = array_combine($one, $two);
+			} else {
+				$data = $one;
+			}
+		} else {
+			$data = array($one => $two);
+		}
+
+		if ($data == null) {
+			return false;
+		}
+
+		foreach($data as $name => $value) {
+			if ($name == 'title') {
+				$this->pageTitle = $value;
+			} else {
+				$this->_viewVars[$name] = $value;
+			}
+		}
+	}
+
+/**
  * Displays an error page to the user. Uses layouts/error.html to render the page.
  *
  * @param int $code HTTP Error code (for instance: 404)
