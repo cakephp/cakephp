@@ -417,7 +417,8 @@ class Controller extends Object{
  * Saves a variable to use inside a template.
  *
  * @param mixed $one A string or an array of data.
- * @param mixed $two Value in case $one is a string (which then works as the key). Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ * @param mixed $two Value in case $one is a string (which then works as the key).
+ * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return unknown
  */
 	function set($one, $two = null) {
@@ -1005,6 +1006,7 @@ class Controller extends Object{
 
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
 		$this->params['paging'][$object->name] = $options;
+		$this->params['paging'][$object->name]['current'] = count($results);
 		$this->params['paging'][$object->name]['count'] = $object->findCount($conditions);
 
 		return $results;
