@@ -339,9 +339,14 @@ class Dispatcher extends Object {
 
 		if (isset($_GET)) {
 			if (ini_get('magic_quotes_gpc') == 1) {
-				$params['url'] = stripslashes_deep($_GET);
+				$url = stripslashes_deep($_GET);
 			} else {
-				$params['url'] = $_GET;
+				$url = $_GET;
+			}
+			if (isset($params['url'])) {
+				$params['url'] = am($params['url'], $url);
+			} else {
+				$params['url'] = $url;
 			}
 		}
 
