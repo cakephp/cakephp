@@ -53,6 +53,12 @@ class Router extends Object {
  */
 	 var $__admin = null;
 /**
+ * Directive for Router to parse out file extensions for mapping to Content-types.
+ *
+ * @var boolean
+ */
+	 var $__parseExtensions = false;
+/**
  * Enter description here...
  *
  */
@@ -90,7 +96,7 @@ class Router extends Object {
  */
 	function connect($route, $default = null) {
 
-		$_this = Router::getInstance();
+		$_this =& Router::getInstance();
 		$parsed = $names = array();
 
 		if (defined('CAKE_ADMIN') && $default == null) {
@@ -142,7 +148,7 @@ class Router extends Object {
  * @return array
  */
 	function parse($url) {
-		$_this = Router::getInstance();
+		$_this =& Router::getInstance();
 
 		if ($url && ('/' != $url[0])) {
 			if (!defined('SERVER_IIS')) {
@@ -170,9 +176,14 @@ class Router extends Object {
 			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
 		$_this->routes[] = $default_route;
+		$ext = array();
 
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
+		}
+		if ($_this->__parseExtensions && preg_match('/\.[0-9a-zA-Z]*$/', $url, $ext) == 1) {
+			$ext = substr($ext[0], 1);
+			$url = substr($url, 0, strpos($url, '.' . $ext));
 		}
 
 		foreach($_this->routes as $route) {
@@ -212,7 +223,19 @@ class Router extends Object {
 				break;
 			}
 		}
+		if (!empty($ext)) {
+			$out['extension'] = $ext;
+		}
 		return $out;
+	}
+/**
+ * Instructs the router to parse out file extensions from the URL
+ *
+ * @return void
+ */
+	function parseExtensions() {
+		$_this =& Router::getInstance();
+		$_this->__parseExtensions = true;
 	}
 }
 
