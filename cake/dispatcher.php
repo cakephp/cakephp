@@ -321,7 +321,7 @@ class Dispatcher extends Object {
  * @return array Parameters found in POST and GET.
  */
 	function parseParams($from_url) {
-		$Route = new Router();
+		$Route = Router::getInstance();
 		include CONFIGS.'routes.php';
 		$params = $Route->parse ($from_url);
 

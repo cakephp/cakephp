@@ -39,7 +39,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Router extends Object{
+class Router extends Object {
 /**
  * Array of routes
  *
@@ -67,6 +67,20 @@ class Router extends Object{
 		}
 	}
 /**
+ * Gets a reference to the Router object instance
+ *
+ * @return object
+ */
+	function &getInstance() {
+		static $instance = array();
+
+		if (!isset($instance[0]) || !$instance[0]) {
+			$instance[0] =& new Router();
+		}
+
+		return $instance[0];
+	}
+/**
  * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
  *
  * @param string $route	An empty string, or a route string "/"
@@ -75,24 +89,28 @@ class Router extends Object{
  * @return array			Array of routes
  */
 	function connect($route, $default = null) {
+
+		$_this = Router::getInstance();
 		$parsed = $names = array();
 
 		if (defined('CAKE_ADMIN') && $default == null) {
 			if ($route == CAKE_ADMIN) {
-				$this->routes[] = $this->__admin;
-				$this->__admin = null;
+				$_this->routes[] = $_this->__admin;
+				$_this->__admin = null;
 			}
 		}
+
 		$r = null;
 		if (($route == '') || ($route == '/')) {
-			$regexp='/^[\/]*$/';
-			$this->routes[] = array($route, $regexp, array(), $default);
+			$regexp = '/^[\/]*$/';
+			$_this->routes[] = array($route, $regexp, array(), $default);
 		} else {
 			$elements = array();
 
-			foreach(explode('/', $route)as $element) {
-				if (trim($element))
-				$elements[] = $element;
+			foreach(explode('/', $route) as $element) {
+				if (trim($element)) {
+					$elements[] = $element;
+				}
 			}
 
 			if (!count($elements)) {
@@ -102,8 +120,8 @@ class Router extends Object{
 			foreach($elements as $element) {
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
-					$parsed[]='(?:\/([^\/]+))?';
-					$names[] =$r[1];
+					$parsed[] = '(?:\/([^\/]+))?';
+					$names[] = $r[1];
 				} elseif(preg_match('/^\*$/', $element, $r)) {
 					$parsed[] = '(?:\/(.*))?';
 				} else {
@@ -111,10 +129,10 @@ class Router extends Object{
 				}
 			}
 
-			$regexp='#^' . join('', $parsed) . '[\/]*$#';
-			$this->routes[] = array($route, $regexp, $names, $default);
+			$regexp = '#^' . join('', $parsed) . '[\/]*$#';
+			$_this->routes[] = array($route, $regexp, $names, $default);
 		}
-		return $this->routes;
+		return $_this->routes;
 	}
 /**
  * Parses given URL and returns an array of controllers, action and parameters
@@ -124,6 +142,8 @@ class Router extends Object{
  * @return array
  */
 	function parse($url) {
+		$_this = Router::getInstance();
+
 		if ($url && ('/' != $url[0])) {
 			if (!defined('SERVER_IIS')) {
 				$url = '/' . $url;
@@ -135,27 +155,27 @@ class Router extends Object{
 								'/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
 								array('controller', 'action'), array());
 
-		if (defined('CAKE_ADMIN') && $this->__admin != null) {
-			$this->routes[]=$this->__admin;
-			$this->__admin =null;
+		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
+			$_this->routes[] = $_this->__admin;
+			$_this->__admin = null;
 		}
-		$this->connect('/bare/:controller/:action/*', array('bare' => '1'));
-		$this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
+		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
+		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
 
 		if (defined('WEBSERVICES') && WEBSERVICES == 'on') {
-			$this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
-			$this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
-			$this->connect('/soap/:controller/:action/*', array('webservices' => 'Soap'));
-			$this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
-			$this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
+			$_this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
+			$_this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
+			$_this->connect('/soap/:controller/:action/*', array('webservices' => 'Soap'));
+			$_this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
+			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
-		$this->routes[] = $default_route;
+		$_this->routes[] = $default_route;
 
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-		foreach($this->routes as $route) {
+		foreach($_this->routes as $route) {
 			list($route, $regexp, $names, $defaults) = $route;
 
 			if (preg_match($regexp, $url, $r)) {
@@ -165,7 +185,7 @@ class Router extends Object{
 				foreach($names as $name) {
 					$out[$name] = null;
 				}
-				$ii=0;
+				$ii = 0;
 
 				if (is_array($defaults)) {
 					foreach($defaults as $name => $value) {
@@ -195,4 +215,5 @@ class Router extends Object{
 		return $out;
 	}
 }
+
 ?>
