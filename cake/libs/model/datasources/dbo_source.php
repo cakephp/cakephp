@@ -1306,13 +1306,21 @@ class DboSource extends DataSource {
 
 	function conditionKeysToString($conditions) {
 
+		$c = 0;
 		$data = null;
 		$out = array();
 		$bool = array('and', 'or', 'and not', 'or not', 'xor', '||', '&&');
+		$join = ' AND ';
 
 		foreach($conditions as $key => $value) {
 			if (in_array(strtolower(trim($key)), $bool)) {
-				$out[] = '(' . join(') ' . $key . ' (', $this->conditionKeysToString($value)) . ')';
+				$join = ' ' . strtoupper($key) . ' ';
+				$value = $this->conditionKeysToString($value);
+				if (strpos($join, 'NOT')) {
+					$out[] = 'NOT (' . join(') ' . strtoupper($key) . ' (', $value) . ')';
+				} else {
+					$out[] = '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
+				}
 			} else {
 				if (is_array($value) && !empty($value)) {
 
@@ -1324,12 +1332,12 @@ class DboSource extends DataSource {
 						}
 						$data[strlen($data) - 2] = ')';
 					} else {
-						$out[] = '(' . join(') AND (', $this->conditionKeysToString($value)) . ')';
+						$out[] = '(' . join(')' . $join . '(', $this->conditionKeysToString($value)) . ')';
 					}
 				} elseif(is_numeric($key)) {
 					$data = ' ' . $value;
 				} elseif($value === null) {
-					$data = $this->name($key) . ' = NULL';
+					$data = $this->name($key) . ' IS NULL';
 				} elseif($value === '') {
 					$data = $this->name($key) . " = ''";
 				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:not\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
@@ -1358,6 +1366,7 @@ class DboSource extends DataSource {
 					$out[] = $data;
 				}
 			}
+			$c++;
 		}
 		return $out;
 	}
