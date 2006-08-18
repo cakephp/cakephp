@@ -40,7 +40,7 @@
  * @subpackage	cake.cake.libs.controller
  *
  */
-class Controller extends Object{
+class Controller extends Object {
 /**
  * Name of the controller.
  *
@@ -96,11 +96,17 @@ class Controller extends Object{
  */
 	var $data = array();
 /**
- * Enter description here...
+ * Sub-path for view files
  *
- * @var unknown_type
+ * @var string
  */
 	var $viewPath = null;
+/**
+ * Sub-path for layout files
+ *
+ * @var string
+ */
+	var $layoutPath = '';
 /**
  * Variables for the view
  *
@@ -169,6 +175,12 @@ class Controller extends Object{
  * @var unknown_type
  */
 	var $view = 'View';
+/**
+ * File extension for view templates. Defaults to Cake's conventional ".thtml".
+ *
+ * @var array
+ */
+	var $ext = '.thtml';
 /**
  * Enter description here...
  *
@@ -795,10 +807,13 @@ class Controller extends Object{
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
  */
-	function postConditions($data, $op = '', $bool = 'AND', $exclusive = false) {
-		if (!is_array($data) || empty($data)) {
+	function postConditions($data = array(), $op = '', $bool = 'AND', $exclusive = false) {
+		if ((!is_array($data) || empty($data)) && empty($this->data)) {
 			return null;
+		} elseif ((!is_array($data) || empty($data)) && !empty($this->data)) {
+			$data = $this->data;
 		}
+
 		$cond = array();
 
 		foreach($data as $model => $fields) {
