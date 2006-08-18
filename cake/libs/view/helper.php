@@ -134,11 +134,32 @@ class Helper extends Object {
 		return $iniSetting;
 	}
 /**
+ * Before render callback.  Overridden in subclasses.
+ *
+ * @return void
+ */
+	function beforeRender() {
+	}
+/**
  * After render callback.  Overridden in subclasses.
  *
  * @return void
  */
 	function afterRender() {
+	}
+/**
+ * Before layout callback.  Overridden in subclasses.
+ *
+ * @return void
+ */
+	function beforeLayout() {
+	}
+/**
+ * After layout callback.  Overridden in subclasses.
+ *
+ * @return void
+ */
+	function afterLayout() {
 	}
 }
 
