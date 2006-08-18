@@ -431,23 +431,35 @@ class Controller extends Object {
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
  * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return unknown
+ * @return void
  */
 	function set($one, $two = null) {
+		$data = array();
+
 		if (is_array($one)) {
 			if (is_array($two)) {
-				return $this->_setArray(array_combine($one, $two));
+				$data = array_combine($one, $two);
 			} else {
-				return $this->_setArray($one);
+				$data = $one;
 			}
 		} else {
-			return $this->_setArray(array($one => $two));
+			$data = array($one => $two);
+		}
+
+		foreach($data as $name => $value) {
+			if ($name == 'title') {
+				$this->pageTitle = $value;
+			} else {
+				$this->_viewVars[$name] = $value;
+			}
 		}
 	}
 /**
- * Enter description here...
+ * Internally redirects one action to another
  *
- * @param unknown_type $action
+ * @param string $action The new action to be redirected to
+ * @param mixed  Any other parameters passed to this method will be passed as
+ *               parameters to the new action.
  */
 	function setAction($action) {
 		$this->action = $action;
@@ -540,25 +552,7 @@ class Controller extends Object {
 		}
 	}
 /**
- * Sets data for this view. Will set title if the key "title" is in given $data array.
- *
- * @param array $data Array of
- * @access private
- */
-	function _setArray($data) {
-		foreach($data as $name => $value) {
-			if ($name == 'title') {
-				$this->_setTitle($value);
-			} else {
-				$this->_viewVars[$name] = $value;
-			}
-		}
-	}
-/**
- * Set the title element of the page.
- *
- * @param string $pageTitle Text for the title
- * @access private
+ * @deprecated
  */
 	function _setTitle($pageTitle) {
 		$this->pageTitle = $pageTitle;
