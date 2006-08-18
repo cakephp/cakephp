@@ -58,16 +58,19 @@
 
 		define('ROOT', $root);
 		define('APP_DIR', $appdir);
+		define('APP_PATH', ROOT.DS.APP_DIR.DS);
 	}
 	
 	function defineAppConstantsWithDefaultValues() {
 		define('ROOT', CORE_PATH);
 		define('APP_DIR', 'app');
+		define('APP_PATH', ROOT.DS.APP_DIR.DS);
 	}
 	
 	function defineConstants() {
 		define('DS', DIRECTORY_SEPARATOR);
-		define('CORE_PATH', dirname(dirname(dirname(__FILE__))));
+		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
+		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
 	}
 	
 	function executeTask($taskName, $params) {
