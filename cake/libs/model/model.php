@@ -1260,11 +1260,11 @@ class Model extends Overloadable {
 			$b = array_keys($this->behaviors);
 			$c = count($b);
 			for ($i = 0; $i < $c; $i++) {
-				$this->behaviors[$b[$i]]->afterFind($this, $results);
+				$this->behaviors[$b[$i]]->afterFind($this, $results, true);
 			}
 		}
 
-		$return = $this->afterFind($results);
+		$return = $this->afterFind($results, true);
 
 		if (isset($this->__backAssociation)) {
 			$this->__resetAssociations();
@@ -1420,7 +1420,7 @@ class Model extends Overloadable {
  */
 	function validates($data = array()) {
 		$errors = $this->invalidFields($data);
-		return count($errors) == 0;
+		return ($errors === false || count($errors) === 0);
 	}
 /**
  * Returns an array of invalid fields.
@@ -1696,9 +1696,10 @@ class Model extends Overloadable {
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
  * @param mixed $results The results of the find operation
+ * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		return $results;
 	}
 /**

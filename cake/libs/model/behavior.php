@@ -35,7 +35,7 @@ class ModelBehavior extends Object {
 
 	function beforeFind(&$model, &$query) { }
 
-	function afterFind(&$model, &$results) { }
+	function afterFind(&$model, &$results, $primary) { }
 
 	function beforeDelete(&$model) { }
 
