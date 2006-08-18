@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -49,6 +48,8 @@ class RequestHandlerComponent extends Object{
 
 	var $__responseTypeSet = false;
 
+	var $params = array();
+
 	var $__requestContent = array(
 		'javascript'	=> 'text/javascript',
 		'js'			=> 'text/javascript',
@@ -89,18 +90,50 @@ class RequestHandlerComponent extends Object{
 		parent::__construct();
 	}
 /**
+ * Initialize
+ *
+ * @param object A reference to the controller
+ * @return void
+ */
+	function initialize(&$controller) {
+		$this->params =& $controller->params;
+		if (isset($this->params['url']['extension'])) {
+			$ext = $this->params['url']['extension'];
+			if (isset($this->__requestContent[$ext])) {
+				$content = $this->__requestContent[$ext]['content'];
+				if (is_array($content)) {
+					$content = $content[0];
+				}
+				array_unshift($this->__acceptTypes, $content);
+			}
+		}
+	}
+
+/**
  * Startup
  *
  * @param object A reference to the controller
- * @return null
+ * @return void
  */
 	function startup(&$controller) {
 		if ($this->disableStartup || !$this->enabled) {
 			return;
 		}
 		$this->setView($controller);
-		if (in_array('Ajax', $controller->helpers)) {
-			$controller->params['isAjax'] = $this->isAjax();
+		$controller->params['isAjax'] = $this->isAjax();
+
+		if (isset($this->params['url']['extension'])) {
+			$ext = $this->params['url']['extension'];
+			if (in_array($ext, array_keys($this->__requestContent))) {
+				if ($ext != 'html' && $ext != 'htm' && !empty($ext)) {
+					$controller->ext = '.ctp';
+				}
+				$controller->viewPath .= '/' . $ext;
+				$controller->layoutPath = $ext;
+				if (in_array($ext, array_keys($this->__requestContent))) {
+					$this->respondAs($ext);
+				}
+			}
 		}
 	}
 /**

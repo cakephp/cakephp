@@ -96,6 +96,13 @@ class View extends Object{
 	var $viewPath;
 
 /**
+ * Path to Layout.
+ *
+ * @var string Path to Layout
+ */
+	var $layoutPath = '';
+
+/**
  * Variables for the view
  *
  * @var array
@@ -207,7 +214,27 @@ class View extends Object{
  */
 	var $plugin = null;
 
-	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator');
+/**
+ * Controller URL-generation data
+ *
+ * @var mixed
+ */
+	var $namedArgs = null;
+
+/**
+ * Controller URL-generation data
+ *
+ * @var string
+ */
+	var $argSeparator = null;
+
+/**
+ * List of variables to collect from the associated controller
+ *
+ * @var array
+ * @access protected
+ */
+	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator');
 /**
  * Constructor
  *
@@ -247,7 +274,7 @@ class View extends Object{
 		}
 
 		if ($layout) {
-			$this->setLayout($layout);
+			$this->layout = $layout;
 		}
 
 		if ($file) {
@@ -387,13 +414,12 @@ class View extends Object{
 			$pageTitle = Inflector::humanize($this->viewPath);
 		}
 
-		$data_for_layout = array_merge(
-								$this->_viewVars,
-								array(
-									'title_for_layout'   => $pageTitle,
-									'content_for_layout' => $content_for_layout,
-									'cakeDebug'          => $debug
-								)
+		$data_for_layout = array_merge($this->_viewVars,
+			array(
+				'title_for_layout'   => $pageTitle,
+				'content_for_layout' => $content_for_layout,
+				'cakeDebug'          => $debug
+			)
 		);
 
 		if (is_file($layout_fn)) {
@@ -429,9 +455,7 @@ class View extends Object{
 	}
 
 /**
- * Sets layout to be used when rendering.
- *
- * @param string $layout		Name of layout.
+ * @deprecated
  */
 	function setLayout($layout) {
 		$this->layout = $layout;
@@ -554,11 +578,23 @@ class View extends Object{
 			}
 		}
 
-		if (file_exists(LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext")) {
-			$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
-		} elseif($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . $type . "{$this->layout}.thtml")) {
+		if (!empty($this->layoutPath)) {
+			$path = $this->layoutPath . DS;
+			if (file_exists(LAYOUTS . $this->subDir . $this->layoutPath . $type . "{$this->layout}{$this->ext}")) {
+				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "{$this->layout}{$this->ext}";
+			} elseif (file_exists(LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}")) {
+				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}";
+			} elseif ($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $path . "default{$this->ext}")) {
+			} else {
+				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}";
+			}
 		} else {
-			$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
+			if (file_exists(LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext")) {
+				$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
+			} elseif($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . "{$this->layout}.thtml")) {
+			} else {
+				$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
+			}
 		}
 
 		return $layoutFileName;
