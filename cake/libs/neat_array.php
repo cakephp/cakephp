@@ -33,8 +33,9 @@
  *
  * @package		cake
  * @subpackage	cake.cake.libs
+ * @deprecated
  */
-class NeatArray{
+class NeatArray {
 /**
  * Value of NeatArray.
  *
