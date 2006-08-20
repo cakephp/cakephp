@@ -75,8 +75,14 @@
 	
 	function executeTask($taskName, $params) {
 		$scriptDir = dirname(__FILE__);
+		$taskPath = 'tasks'.DS.$taskName.'_task.php';
 		require($scriptDir.DS.'tasks'.DS.'task.php');
-		require($scriptDir.DS.'tasks'.DS.$taskName.'_task.php');
+		
+		if (file_exists(VENDORS.$taskPath)) {
+			require(VENDORS.$taskPath);
+		} else {
+			require($scriptDir.DS.$taskPath);	
+		}
 		
 		$className = $taskName.'Task';
 		$class = new $className;
