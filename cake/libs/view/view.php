@@ -702,13 +702,13 @@ class View extends Object{
 			if (in_array($helper, array_keys($loaded)) !== true) {
 				if (!class_exists($helperCn)) {
 				    if (is_null($plugin) || !loadPluginHelper($plugin, $helper)) {
-					    if (!loadHelper($helper)) {
+						if (!loadHelper($helper)) {
 							return $this->cakeError('missingHelperFile', array(array(
 										'helper' => $helper,
 										'file' => Inflector::underscore($helper) . '.php',
 										'base' => $this->base
 							)));
-					    }
+						}
 				    }
 					if (!class_exists($helperCn)) {
 						return $this->cakeError('missingHelperClass', array(array(
