@@ -128,10 +128,6 @@
  */
 	define('COMPRESS_CSS', false);
 /**
- * If set to true, helpers would output data instead of returning it.
- */
-	define('AUTO_OUTPUT', false);
-/**
  * If set to false, session would not automatically be started.
  */
 	define('AUTO_SESSION', true);

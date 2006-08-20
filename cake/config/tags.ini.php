@@ -28,6 +28,9 @@
 ; * @license		http://www.opensource.org/licenses/mit-license.php The MIT License
 ; */
 
+; Tag template for a link tag.
+metalink = "<link href="%s" title="%s"%s />"
+
 ; Tag template for a link.
 link = "<a href="%s" %s>%s</a>"
 

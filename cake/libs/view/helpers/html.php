@@ -133,23 +133,51 @@ class HtmlHelper extends Helper {
  *   + xhtml11: XHTML1.1.
  *
  * @param  string $type Doctype to use.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string Doctype.
  */
-	function docType($type = 'xhtml-strict', $return = false) {
+	function docType($type = 'xhtml-strict') {
 		if (isset($this->__docTypes[$type])) {
-			return $this->output($this->__docTypes[$type], $return);
+			return $this->output($this->__docTypes[$type]);
 		}
+	}
+/**
+ * Creates a link to an external resource
+ *
+ * @param  string  $title The title of the external resource
+ * @param  mixed   $url   The address of the external resource
+ * @param  array   $attributes
+ * @return string
+ */
+	function meta($title = null, $url = null, $attributes = array()) {
+		$types = array('html' => 'text/html', 'rss' => 'application/rss+xml', 'atom' => 'application/atom+xml');
+
+		if (!isset($attributes['type']) && is_array($url) && isset($url['ext'])) {
+			if (in_array($url['ext'], array_keys($types))) {
+				$attributes['type'] = $url['ext'];
+			} else {
+				$attributes['type'] = 'rss';
+			}
+		} else {
+			$attributes['type'] = 'rss';
+		}
+
+		if (isset($attributes['type']) && in_array($attributes['type'], array_keys($types))) {
+			$attributes['type'] = $types[$attributes['type']];
+		}
+
+		if (!isset($attributes['rel'])) {
+			$attributes['rel'] = 'alternate';
+		}
+		return $this->output(sprintf($this->tags['metalink'], $this->url($url), $title, $this->_parseAttributes($attributes)));
 	}
 /**
  * Returns a charset META-tag.
  *
  * @param  string  $charset
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function charset($charset, $return = false) {
-		return $this->output(sprintf($this->tags['charset'], $charset), $return);
+	function charset($charset = 'UTF-8') {
+		return $this->output(sprintf($this->tags['charset'], $charset));
 	}
 /**
  * Finds URL for specified action.
@@ -164,10 +192,12 @@ class HtmlHelper extends Helper {
  *                        or an array specifying any of the following: 'controller', 'action',
  *                        and/or 'plugin', in addition to named arguments (keyed array elements),
  *                        and standard URL arguments (indexed array elements)
+ * @param boolean $full   If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  */
-	function url($url = null) {
+	function url($url = null, $full = false) {
 		$base = strip_plugin($this->base, $this->plugin);
+		$extension = null;
 
 		if (is_array($url) && !empty($url)) {
 			if (!isset($url['action'])) {
@@ -179,6 +209,9 @@ class HtmlHelper extends Helper {
 			if (!isset($url['plugin'])) {
 				$url['plugin'] = $this->plugin;
 			}
+			if (isset($url['ext'])) {
+				$extension = '.' . $url['ext'];
+			}
 
 			$named = $args = array();
 			$keys = array_keys($url);
@@ -187,7 +220,7 @@ class HtmlHelper extends Helper {
 				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
 				} else {
-					if (!in_array($keys[$i], array('action', 'controller', 'plugin'))) {
+					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext'))) {
 						$named[] = array($keys[$i], $url[$keys[$i]]);
 					}
 				}
@@ -223,7 +256,10 @@ class HtmlHelper extends Helper {
 				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
 			}
 		}
-		return $this->output($output);
+		if ($full) {
+			$output = FULL_BASE_URL . $output;
+		}
+		return $this->output($output . $extension);
 	}
 /**
  * Creates an HTML link.
@@ -239,10 +275,9 @@ class HtmlHelper extends Helper {
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @param  string  $confirmMessage Confirmation message.
  * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
- * @param  boolean $return Whether this method should return a value or output it. This overrides AUTO_OUTPUT.
  * @return string	An <a /> element.
  */
-	function link($title, $url = null, $htmlAttributes = null, $confirmMessage = false, $escapeTitle = true, $return = false) {
+	function link($title, $url = null, $htmlAttributes = null, $confirmMessage = false, $escapeTitle = true) {
 		if ($escapeTitle) {
 			$title = htmlspecialchars($title, ENT_QUOTES);
 		}
@@ -256,7 +291,7 @@ class HtmlHelper extends Helper {
 		}
 
 		$output = sprintf($this->tags['link'], $this->url($url), $this->_parseAttributes($htmlAttributes), $title);
-		return $this->output($output, $return);
+		return $this->output($output);
 	}
 /**
  * Creates a link element for CSS stylesheets.
@@ -280,22 +315,20 @@ class HtmlHelper extends Helper {
  *
  * @param  string  $caption		Text on submit button
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function submit($caption = 'Submit', $htmlAttributes = null, $return = false) {
+	function submit($caption = 'Submit', $htmlAttributes = null) {
 		$htmlAttributes['value'] = $caption;
-		return $this->output(sprintf($this->tags['submit'], $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+		return $this->output(sprintf($this->tags['submit'], $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Creates a password input widget.
  *
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function password($fieldName, $htmlAttributes = null, $return = false) {
+	function password($fieldName, $htmlAttributes = null) {
 		$this->setFormTag($fieldName);
 		if (!isset($htmlAttributes['value'])) {
 			$htmlAttributes['value'] = $this->tagValue($fieldName);
@@ -311,17 +344,16 @@ class HtmlHelper extends Helper {
 				$htmlAttributes['class'] = 'form_error';
 			}
 		}
-		return $this->output(sprintf($this->tags['password'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
+		return $this->output(sprintf($this->tags['password'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a textarea widget.
  *
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function textarea($fieldName, $htmlAttributes = null, $return = false) {
+	function textarea($fieldName, $htmlAttributes = null) {
 		$this->setFormTag($fieldName);
 		$value = $this->tagValue($fieldName);
 		if (!empty($htmlAttributes['value'])) {
@@ -339,7 +371,7 @@ class HtmlHelper extends Helper {
 				$htmlAttributes['class'] = 'form_error';
 			}
 		}
-		return $this->output(sprintf($this->tags['textarea'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' '), $value), $return);
+		return $this->output(sprintf($this->tags['textarea'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a checkbox widget.
@@ -347,10 +379,9 @@ class HtmlHelper extends Helper {
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
  * @deprecated  string  $title
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function checkbox($fieldName, $title = null, $htmlAttributes = null, $return = false) {
+	function checkbox($fieldName, $title = null, $htmlAttributes = null) {
 		$value = $this->tagValue($fieldName);
 		$notCheckedValue = 0;
 
@@ -381,35 +412,33 @@ class HtmlHelper extends Helper {
 		}
 		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
 		$output .= sprintf($this->tags['checkbox'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' '));
-		return $this->output($output, $return);
+		return $this->output($output);
 	}
 /**
  * Creates file input widget.
  *
  * @param string $fieldName Name of a field, like this "Modelname/fieldname"
  * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a valueor output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function file($fieldName, $htmlAttributes = null, $return = false) {
+	function file($fieldName, $htmlAttributes = null) {
 		if (strpos($fieldName, '/')) {
 			$this->setFormTag($fieldName);
 			if (!isset($htmlAttributes['id'])) {
 				$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 			}
-			return $this->output(sprintf($this->tags['file'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+			return $this->output(sprintf($this->tags['file'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 		}
-		return $this->output(sprintf($this->tags['file_no_model'], $fieldName, $this->_parseAttributes($htmlAttributes, null, '', ' ')), $return);
+		return $this->output(sprintf($this->tags['file_no_model'], $fieldName, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
  * @param  string  $separator Text to separate crumbs.
  * @param  string  $startText This will be the first crumb, if false it defaults to first crumb in array
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return. If $this->_crumbs is empty, return null.
+ * @return string
  */
-	function getCrumbs($separator = '&raquo;', $startText = false, $return = false) {
+	function getCrumbs($separator = '&raquo;', $startText = false) {
 		if (count($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
@@ -419,7 +448,7 @@ class HtmlHelper extends Helper {
 			foreach($this->_crumbs as $crumb) {
 				$out[] = $this->link($crumb[0], $crumb[1]);
 			}
-			return $this->output(join($separator, $out), $return);
+			return $this->output(join($separator, $out));
 		} else {
 			return null;
 		}
@@ -429,10 +458,9 @@ class HtmlHelper extends Helper {
  *
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT  and $return.
+ * @return string
  */
-	function hidden($fieldName, $htmlAttributes = null, $return = false) {
+	function hidden($fieldName, $htmlAttributes = null) {
 		$this->setFormTag($fieldName);
 		if (!isset($htmlAttributes['value'])) {
 			$htmlAttributes['value'] = $this->tagValue($fieldName);
@@ -440,17 +468,16 @@ class HtmlHelper extends Helper {
 		if (!isset($htmlAttributes['id'])) {
 			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
 		}
-		return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
+		return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a formatted IMG element.
  *
  * @param string $path Path to the image file, relative to the webroot/img/ directory.
  * @param array	$htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function image($path, $htmlAttributes = null, $return = false) {
+	function image($path, $htmlAttributes = null) {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
@@ -460,17 +487,16 @@ class HtmlHelper extends Helper {
 		if (!isset($htmlAttributes['alt'])) {
 			$htmlAttributes['alt'] = '';
 		}
-		return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')), $return);
+		return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Creates a text input widget.
  *
  * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
  * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function input($fieldName, $htmlAttributes = null, $return = false) {
+	function input($fieldName, $htmlAttributes = null) {
 		$this->setFormTag($fieldName);
 		if (!isset($htmlAttributes['value'])) {
 			$htmlAttributes['value'] = $this->tagValue($fieldName);
@@ -491,7 +517,7 @@ class HtmlHelper extends Helper {
 				$htmlAttributes['class'] = 'form_error';
 			}
 		}
-		return $this->output(sprintf($this->tags['input'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')), $return);
+		return $this->output(sprintf($this->tags['input'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a set of radio widgets.
@@ -500,10 +526,9 @@ class HtmlHelper extends Helper {
  * @param  array	$options			Radio button options array
  * @param  array	$inbetween		String that separates the radio buttons.
  * @param  array	$htmlAttributes Array of HTML attributes.
- * @param  boolean $return	Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return.
+ * @return string
  */
-	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array(), $return = false) {
+	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
 
 		$this->setFormTag($fieldName);
 		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->tagValue($fieldName);
@@ -518,7 +543,7 @@ class HtmlHelper extends Helper {
 		}
 
 		$out = join($inbetween, $out);
-		return $this->output($out ? $out : null, $return);
+		return $this->output($out ? $out : null);
 	}
 /**
  * Returns a row of formatted and named TABLE headers.
@@ -526,17 +551,16 @@ class HtmlHelper extends Helper {
  * @param array $names		Array of tablenames.
  * @param array $trOptions	HTML options for TR elements.
  * @param array $thOptions	HTML options for TH elements.
- * @param  boolean $return	Wheter this method should return a value
  * @return string
  */
-	function tableHeaders($names, $trOptions = null, $thOptions = null, $return = false) {
+	function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($thOptions), $arg);
 		}
 
 		$data = sprintf($this->tags['tablerow'], $this->parseHtmlOptions($trOptions), join(' ', $out));
-		return $this->output($data, $return);
+		return $this->output($data);
 	}
 /**
  * Returns a formatted string of table rows (TR's with TD's in them).
@@ -544,10 +568,9 @@ class HtmlHelper extends Helper {
  * @param array $data		Array of table data
  * @param array $oddTrOptionsHTML options for odd TR elements
  * @param array $evenTrOptionsHTML options for even TR elements
- * @param  boolean $return	Wheter this method should return a value
  * @return string	Formatted HTML
  */
-	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $return = false) {
+	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null) {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
@@ -563,7 +586,7 @@ class HtmlHelper extends Helper {
 			$options = $this->parseHtmlOptions($count % 2 ? $oddTrOptions : $evenTrOptions);
 			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
 		}
-		return $this->output(join("\n", $out), $return);
+		return $this->output(join("\n", $out));
 	}
 /**
  * Returns value of $fieldName. Null if the tag does not exist.
@@ -745,10 +768,9 @@ class HtmlHelper extends Helper {
  * @param array $selectAttr Array of HTML options for the opening SELECT element
  * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
  * @param boolean $show_empty If true, the empty select option is shown
- * @param  boolean $return         Whether this method should return a value
  * @return string Formatted SELECT element
  */
-	function selectTag($fieldName, $optionElements, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true, $return = false) {
+	function selectTag($fieldName, $optionElements, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		$this->setFormTag($fieldName);
 		if ($this->tagIsInvalid($this->model, $this->field)) {
 			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
@@ -792,7 +814,7 @@ class HtmlHelper extends Helper {
 		}
 
 		$select[] = sprintf($this->tags['selectend']);
-		return $this->output(implode("\n", $select), $return);
+		return $this->output(implode("\n", $select));
 	}
 /*************************************************************************
  * Deprecated methods
@@ -826,11 +848,10 @@ class HtmlHelper extends Helper {
  * @param array	$htmlAttributes
  * @param string  $bodyKey
  * @param string  $childrenKey
- * @param boolean $return Wheter this method should return a value or output it. This overrides AUTO_OUTPUT.
- * @return mixed	Either string or boolean value, depends on AUTO_OUTPUT and $return. If $this->_crumbs is empty, return null.
+ * @return string
  * @deprecated This seems useless. Version 0.9.2.
  */
-	function guiListTree($data, $htmlAttributes = null, $bodyKey = 'body', $childrenKey = 'children', $return = false) {
+	function guiListTree($data, $htmlAttributes = null, $bodyKey = 'body', $childrenKey = 'children') {
 		$out="<ul" . $this->_parseAttributes($htmlAttributes) . ">\n";
 		foreach($data as $item) {
 			$out .= "<li>{$item[$bodyKey]}\n";
@@ -840,7 +861,7 @@ class HtmlHelper extends Helper {
 			$out .= "</li>\n";
 		}
 		$out .= "</ul>\n";
-		return $this->output($out, $return);
+		return $this->output($out);
 	}
 /**
  * Returns a mailto: link.
