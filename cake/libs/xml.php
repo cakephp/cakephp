@@ -37,50 +37,47 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v .0.10.3.1400
  */
-class XML extends XMLNode
-{
+class XML extends XMLNode {
 
 /**
  * Resource handle to XML parser.
  *
  * @var resource
  */
-    var $__parser;
-
+	var $__parser;
 /**
  * File handle to XML indata file.
  *
  * @var resource
  */
-    var $__file;
-
+	var $__file;
 /**
  * Raw XML string data (for loading purposes)
  *
  * @var string
  */
-    var $__rawData = null;
+	var $__rawData = null;
 
 /**
  * XML document header
  *
  * @var string
  */
-    var $__header = null;
+	var $__header = null;
 
 /**
  * XML document version
  *
  * @var string
  */
-    var $version = '1.0';
+	var $version = '1.0';
 
 /**
  * XML document encoding
  *
  * @var string
  */
-    var $encoding = 'UTF-8';
+	var $encoding = 'UTF-8';
 
 /**
  * Constructor.  Sets up the XML parser with options, gives it this object as
@@ -88,35 +85,31 @@ class XML extends XMLNode
  *
  * @param string $input
  */
-    function __construct($input = null, $options = array())
-    {
-        parent::__construct('root');
-        $this->__parser = xml_parser_create_ns();
+	function __construct($input = null, $options = array()) {
+		parent::__construct('root');
+		$this->__parser = xml_parser_create_ns();
 
-        xml_set_object($this->__parser, $this);
-        xml_parser_set_option($this->__parser, XML_OPTION_CASE_FOLDING, 0);
-        xml_parser_set_option($this->__parser, XML_OPTION_SKIP_WHITE, 1);
+		xml_set_object($this->__parser, $this);
+		xml_parser_set_option($this->__parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($this->__parser, XML_OPTION_SKIP_WHITE, 1);
 
-        $this->childNodes = array();
+		$this->childNodes = array();
 
-        if($input != null)
-        {
-            $this->load($input);
-        }
+		if($input != null) {
+			$this->load($input);
+		}
 
-        foreach ($options as $key => $val)
-        {
-            switch ($key)
-            {
-                case 'version':
-                    $this->version = $val;
-                break;
-                case 'encoding':
-                    $this->encoding = $val;
-                break;
-            }
-        }
-    }
+		foreach ($options as $key => $val) {
+			switch ($key) {
+				case 'version':
+					$this->version = $val;
+				break;
+				case 'encoding':
+					$this->encoding = $val;
+				break;
+			}
+		}
+	}
 
 /**
  * Initialize XML object from a given XML string. Returns false on error.
@@ -124,135 +117,111 @@ class XML extends XMLNode
  * @param string $in
  * @return boolean Success
  */
-    function load($in)
-    {
-        $this->__rawData = null;
-        $this->header = null;
+	function load($in) {
+		$this->__rawData = null;
+		$this->header = null;
 
-        if(strstr($in, "<"))
-        {
-            // Input is raw xml data
-            $this->__rawData = $in;
-        }
-        else
-        {
-            // Input is an xml file
-            if(strpos($in, '://') || file_exists($in))
-            {
-                $this->__rawData = @file_get_contents($in);
-                if ($this->__rawData == null)
-                {
-                    $this->error("XML file $in is empty or could not be read (possible permissions error).");
-                    return false;
-                }
-            }
-            else
-            {
-                $this->error("XML file $in does not exist");
-                return false;
-            }
-        }
-        return $this->parse();
-    }
-
+		if(strstr($in, "<")) {
+			// Input is raw xml data
+			$this->__rawData = $in;
+		} else {
+			// Input is an xml file
+			if(strpos($in, '://') || file_exists($in)) {
+				$this->__rawData = @file_get_contents($in);
+				if ($this->__rawData == null) {
+					$this->error("XML file $in is empty or could not be read (possible permissions error).");
+					return false;
+				}
+			} else {
+				$this->error("XML file $in does not exist");
+				return false;
+			}
+		}
+		return $this->parse();
+	}
 /**
  * Parses and creates XML nodes from the __rawData property.
  *
  * @see load()
  *
  */
-    function parse()
-    {
-        $this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
+	function parse() {
+		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
 
-        xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
-        $xml = new XMLNode();
+		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
+		$xml = new XMLNode();
 
-        $count = count($vals);
-        for ($i = 0; $i < $count; $i++)
-        {
-            $data = $vals[$i];
-            switch($data['type'])
-            {
-                case "open" :
-                    $tmpXML = new XMLNode();
-                    $tmpXML->name = $data['tag'];
-                    if(isset($data['value']))
-                    {
-                        $tmpXML->value = $data['value'];
-                    }
-                    if(isset($data['attributes']))
-                    {
-                        $tmpXML->attributes = $data['attributes'];
-                    }
+		$count = count($vals);
+		for ($i = 0; $i < $count; $i++) {
+			$data = $vals[$i];
+			switch($data['type']) {
+				case "open" :
+					$tmpXML = new XMLNode();
+					$tmpXML->name = $data['tag'];
 
-                    $tmpXML->__parentNode =& $xml;
-                    $ct = count($xml->childNodes);
-                    $xml->childNodes[$ct] = $tmpXML;
-                    $xml =& $xml->childNodes[$ct];
-                break;
+					if(isset($data['value'])) {
+						$tmpXML->value = $data['value'];
+					}
+					if(isset($data['attributes'])) {
+						$tmpXML->attributes = $data['attributes'];
+					}
 
-                case "close" :
-                    $xml =& $xml->parentNode();
-                break;
+					$tmpXML->setParent($xml);
+					$ct = count($xml->childNodes);
+					$xml->childNodes[$ct] = $tmpXML;
+					$xml =& $xml->childNodes[$ct];
+				break;
 
-                case "complete" :
-                    $tmpXML = new XMLNode();
-                    $tmpXML->name = $data['tag'];
-                    if(isset($data['value']))
-                    {
-                        $tmpXML->value = $data['value'];
-                    }
-                    if(isset($data['attributes']))
-                    {
-                        $tmpXML->attributes = $data['attributes'];
-                    }
+				case "close" :
+					$xml =& $xml->parentNode();
+				break;
 
-                    $tmpXML->__parentNode =& $xml;
-                    $xml->childNodes[] = $tmpXML;
-                break;
-                case 'cdata':
-                    if (is_string($xml->value))
-                	{
-                	    $xml->value = a($xml->value, $data['value']);
-                	}
-                	else
-                	{
-                	    $xml->value[] = $data['value'];
-                	}
-                break;
-            }
-        }
-        $this->childNodes =& $xml->childNodes;
-        return true;
-    }
+				case "complete" :
+					$tmpXML = new XMLNode();
+					$tmpXML->name = $data['tag'];
 
+					if(isset($data['value'])) {
+						$tmpXML->value = $data['value'];
+					}
+					if(isset($data['attributes'])) {
+						$tmpXML->attributes = $data['attributes'];
+					}
+
+					$tmpXML->__parentNode =& $xml;
+					$xml->childNodes[] = $tmpXML;
+				break;
+				case 'cdata':
+					if (is_string($xml->value)) {
+						$xml->value = a($xml->value, $data['value']);
+					} else {
+						$xml->value[] = $data['value'];
+					}
+				break;
+			}
+		}
+		$this->childNodes =& $xml->childNodes;
+		return true;
+	}
 /**
  * Returns a string representation of the XML object
  *
- * @param boolean $header Whether to include the XML header with the document (defaults to true)
+ * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
  * @return string XML data
  */
-    function compose($header = true)
-    {
-        $header =  '<'.'?'.$this->header.' ?'.'>'."\n";
-        if (!$this->hasChildNodes() && !$header)
-        {
-            return null;
-        }
-        elseif (!$this->hasChildNodes())
-        {
-            return $header;
-        }
+	function compose($useHeader = true) {
+		$header =  '<'.'?'.$this->header.' ?'.'>'."\n";
+		if (!$this->hasChildNodes() && !$useHeader) {
+			return null;
+		} elseif (!$this->hasChildNodes()) {
+			return $header;
+		}
 
-        $data = $this->childNodes[0]->__toString();
-        if ($header)
-        {
-            return $header.$data;
-        }
-        return $data;
-    }
-
+		$data = $this->childNodes[0]->__toString();
+		if ($useHeader) {
+			return $header.$data;
+		}
+		return $data;
+	}
 /**
  * If DEBUG is on, this method echoes an error message.
  *
@@ -260,25 +229,21 @@ class XML extends XMLNode
  * @param integer $code Error code
  * @param integer $line Line in file
  */
-    function error($msg, $code = 0, $line = 0)
-    {
-        if(DEBUG)
-        {
-            echo $msg . " " . $code . " " . $line;
-        }
-    }
-
+	function error($msg, $code = 0, $line = 0) {
+		if(DEBUG) {
+			echo $msg . " " . $code . " " . $line;
+		}
+	}
 /**
  * Returns a string with a textual description of the error code, or FALSE if no description was found. 
  *
  * @param integer $code
  * @return string Error message
  */
-    function getError($code)
-    {
-        $r = @xml_error_string($code);
-        return $r;
-    }
+	function getError($code) {
+		$r = @xml_error_string($code);
+		return $r;
+	}
 
 // Overridden functions from superclass
 
@@ -287,38 +252,35 @@ class XML extends XMLNode
  *
  * @return unknown
  */
-    function &nextSibling()
-    {
-        return null;
-    }
-
+	function &nextSibling() {
+		return null;
+	}
 /**
  * Enter description here...
  *
  * @return null
  */
-    function &previousSibling()
-    {
-        return null;
-    }
-
+	function &previousSibling() {
+		return null;
+	}
 /**
  * Enter description here...
  *
  * @return null
  */
-    function &parentNode()
-    {
-        return null;
-    }
+	function &parentNode() {
+		return null;
+	}
 
-    function __destruct()
-    {
-        if (is_resource($this->__parser))
-        {
-            xml_parser_free($this->__parser);
-        }
-    }
+	function toString() {
+		return $this->compose();
+	}
+
+	function __destruct() {
+		if (is_resource($this->__parser)) {
+			xml_parser_free($this->__parser);
+		}
+	}
 }
 
 /**
@@ -330,121 +292,126 @@ class XML extends XMLNode
  * @subpackage cake.cake.libs
  * @since      CakePHP v .0.10.3.1400
  */
-class XMLNode extends Object
-{
+class XMLNode extends Object {
 /**
  * Name of node
  *
  * @var string
  */
-    var $name = null;
-
+	var $name = null;
 /**
  * Value of node
  *
  * @var string
  */
-    var $value;
-
+	var $value;
 /**
  * Attributes on this node
  *
  * @var array
  */
-    var $attributes = array();
-
+	var $attributes = array();
 /**
  * This node's children
  *
  * @var array
  */
-    var $childNodes = array();
-
+	var $childNodes = array();
 /**
  * Reference to parent node.
  *
  * @var XMLNode
  */
-    var $__parentNode = null;
-
+	var $__parentNode = null;
 /**
  * Constructor.
  *
  * @param string $name Node name
+ * @param array  $attributes Node attributes
+ * @param mixed  $value Node contents (text)
  */
-    function __construct($name = null)
-    {
-        $this->name = $name;
-    }
+	function __construct($name = null, $attributes = array(), $value = null, $children = array()) {
+		$this->name = $name;
+		$this->attributes = $attributes;
+		$this->value = $value;
 
+		$c = count($children);
+		for ($i = 0; $i < $c; $i++) {
+			if (is_a($children[$i], 'XMLNode') || is_a($children[$i], 'xmlnode')) {
+				$this->appendChild($children[$i]);
+			} elseif (is_array($children[$i])) {
+				$cName = '';
+				$cAttr = $cChildren = array();
+				list($cName, $cAttr, $cChildren) = $children[$i];
+				$node = new XMLNode($name, $cAttr, $cChildren);
+				$this->appendChild($node);
+				unset($node);
+			} else {
+				$child = $children[$i];
+				$this->appendChild($child);
+				unset($child);
+			}
+		}
+	}
+/**
+ * Sets the parent node of this XMLNode
+ *
+ * @return XMLNode
+ */
+	function setParent(&$parent) {
+		$this->__parentNode =& $parent;
+	}
 /**
  * Returns a copy of self.
  *
  * @return XMLNode
  */
-    function cloneNode()
-    {
-        return $this;
-    }
-
+	function cloneNode() {
+		return $this;
+	}
 /**
  * Append given node as a child.
  *
  * @param XMLNode $child
  */
-    function &appendChild(&$child)
-    {
-        if (is_object($child))
-        {
-            $this->childNodes[] =& $child;
-        }
-        elseif (is_string($child))
-        {
-            $attr = array();
-            if (func_num_args() >= 2 && is_array(func_get_arg(1)))
-            {
-                $attr = func_get_arg(1);
-            }
-            $tmp = new XMLNode();
-            $tmp->name = $child;
-            $tmp->attributes = $attr;
-        }
-    }
-
+	function &appendChild(&$child) {
+		if (is_object($child)) {
+			$this->childNodes[] =& $child;
+		} elseif (is_string($child)) {
+			$attr = array();
+			if (func_num_args() >= 2 && is_array(func_get_arg(1))) {
+				$attr = func_get_arg(1);
+			}
+			$tmp = new XMLNode();
+			$tmp->name = $child;
+			$tmp->attributes = $attr;
+		}
+		return $tmp;
+	}
 /**
  * Returns first child node, or null if empty.
  *
  * @return XMLNode
  */
-    function &firstChild()
-    {
-        if(isset($this->childNodes[0]))
-        {
-            return $this->childNodes[0];
-        }
-        else
-        {
-            return null;
-        }
-    }
-
+	function &firstChild() {
+		if(isset($this->childNodes[0])) {
+			return $this->childNodes[0];
+		} else {
+			return null;
+		}
+	}
 /**
  * Returns last child node, or null if empty.
  *
  * @return XMLNode
  */
-    function &lastChild()
-    {
-        if(count($this->childNodes) > 0)
-        {
-            return $this->childNodes[count($this->childNodes) - 1];
-        }
-        else
-        {
-            return null;
-        }
-    }
-
+	function &lastChild() {
+		if(count($this->childNodes) > 0) {
+			return $this->childNodes[count($this->childNodes) - 1];
+		} else {
+			return null;
+		}
+	}
 /**
  * Returns child node with given ID.
  *
@@ -452,232 +419,174 @@ class XMLNode extends Object
  * @return XMLNode
  *
  */
-    function &getChild($id)
-    {
-        if(is_int($id))
-        {
-            if(isset($this->childNodes[$id]))
-            {
-                return $this->childNodes[$id];
-            }
-            else
-            {
-                return null;
-            }
-        }
-        elseif(is_string($id))
-        {
-            for($i = 0; $i < count($this->childNodes); $i++)
-            {
-                if($this->childNodes[$i]->name == $id)
-                {
-                    return $this->childNodes[$i];
-                }
-            }
-            return null;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
+	function &getChild($id) {
+		if(is_int($id)) {
+			if(isset($this->childNodes[$id])) {
+				return $this->childNodes[$id];
+			} else {
+				return null;
+			}
+		} elseif(is_string($id)) {
+			for($i = 0; $i < count($this->childNodes); $i++) {
+				if($this->childNodes[$i]->name == $id) {
+					return $this->childNodes[$i];
+				}
+			}
+			return null;
+		} else {
+			return null;
+		}
+	}
 /**
  * Gets a list of childnodes with the given tag name.
  *
  * @param string $name Tag name of child nodes
  * @return array An array of XMLNodes with the given tag name
  */
-    function getChildren($name)
-    {
-        $nodes = array();
-        $count = count($this->childNodes);
-        for($i = 0; $i < $count; $i++)
-        {
-            if($this->childNodes[$i]->name == $name)
-            {
-                $nodes[] =& $this->childNodes[$i];
-            }
-        }
-        return $nodes;
-    }
-
+	function getChildren($name) {
+		$nodes = array();
+		$count = count($this->childNodes);
+		for($i = 0; $i < $count; $i++) {
+			if($this->childNodes[$i]->name == $name) {
+				$nodes[] =& $this->childNodes[$i];
+			}
+		}
+		return $nodes;
+	}
 /**
  * Gets a reference to the next child node in the list of this node's parent
  *
  * @return XMLNode A reference to the XMLNode object
  */
-    function &nextSibling()
-    {
-        $count = count($this->__parentNode->childNodes);
-        for ($i = 0; $i < $count; $i++)
-        {
-            if ($this->__parentNode->childNodes === $this)
-            {
-                if ($i >= $count - 1 || !isset($this->__parentNode->childNodes[$i + 1]))
-                {
-                    return null;
-                }
-                return $this->__parentNode->childNodes[$i + 1];
-            }
-        }
-    }
-
+	function &nextSibling() {
+		$count = count($this->__parentNode->childNodes);
+		for ($i = 0; $i < $count; $i++) {
+			if ($this->__parentNode->childNodes === $this) {
+				if ($i >= $count - 1 || !isset($this->__parentNode->childNodes[$i + 1])) {
+					return null;
+				}
+				return $this->__parentNode->childNodes[$i + 1];
+			}
+		}
+	}
 /**
  * Gets a reference to the previous child node in the list of this node's parent
  *
  * @return XMLNode A reference to the XMLNode object
  */
-    function &previousSibling()
-    {
-        $count = count($this->__parentNode->childNodes);
-        for ($i = 0; $i < $count; $i++)
-        {
-            if ($this->__parentNode->childNodes === $this)
-            {
-                if ($i == 0 || !isset($this->__parentNode->childNodes[$i - 1]))
-                {
-                    return null;
-                }
-                return $this->__parentNode->childNodes[$i - 1];
-            }
-        }
-    }
-
+	function &previousSibling() {
+		$count = count($this->__parentNode->childNodes);
+		for ($i = 0; $i < $count; $i++) {
+			if ($this->__parentNode->childNodes === $this) {
+				if ($i == 0 || !isset($this->__parentNode->childNodes[$i - 1])) {
+					return null;
+				}
+				return $this->__parentNode->childNodes[$i - 1];
+			}
+		}
+	}
 /**
  * Returns parent node.
  *
  * @return XMLNode
  */
-    function &parentNode()
-    {
-        return $this->__parentNode;
-    }
-
+	function &parentNode() {
+		return $this->__parentNode;
+	}
 /**
  * Returns true if this structure has child nodes.
  *
  * @return boolean
  */
-    function hasChildNodes()
-    {
-        if(is_array($this->childNodes) && count($this->childNodes) > 0)
-        {
-            return true;
-        }
-        return false;
-    }
-
+	function hasChildNodes() {
+		if(is_array($this->childNodes) && count($this->childNodes) > 0) {
+			return true;
+		}
+		return false;
+	}
 /**
  * Returns this XML structure as a string.
  *
  * @return string String representation of the XML structure.
  */
-    function toString()
-    {
-        $d = '';
-        if($this->name != '')
-        {
-            $d .= '<' . $this->name;
-            if(is_array($this->attributes) && count($this->attributes) > 0)
-            {
-                foreach($this->attributes as $key => $val)
-                {
-                    $d .= " $key=\"$val\"";
-                }
-            }
-        }
+	function toString() {
+		$d = '';
+		if($this->name != '') {
+			$d .= '<' . $this->name;
+			if(is_array($this->attributes) && count($this->attributes) > 0) {
+				foreach($this->attributes as $key => $val) {
+					$d .= " $key=\"$val\"";
+				}
+			}
+		}
 
-        if(!$this->hasChildNodes() && empty($this->value))
-        {
-            if($this->name != '')
-            {
-                $d .= " />\n";
-            }
-        }
-        else
-        {
-            if($this->name != '')
-            {
-                $d .= ">";
-            }
-            if($this->hasChildNodes())
-            {
-                if (is_string($this->value) || empty($this->value))
-                {
-                    if (!empty($this->value))
-                    {
-                        $d .= $this->value;
-                    }
-                    $count = count($this->childNodes);
+		if(!$this->hasChildNodes() && empty($this->value)) {
+			if($this->name != '') {
+				$d .= " />\n";
+			}
+		} else {
+			if($this->name != '') {
+				$d .= ">";
+			}
+			if($this->hasChildNodes()) {
+				if (is_string($this->value) || empty($this->value)) {
+					if (!empty($this->value)) {
+						$d .= $this->value;
+					}
+					$count = count($this->childNodes);
 
-                    for($i = 0; $i < $count; $i++)
-                    {
-                        $d .= $this->childNodes[$i]->toString();
-                    }
-                }
-                elseif (is_array($this->value))
-                {
-                    $count = count($this->value);
-                    for($i = 0; $i < $count; $i++)
-                    {
-                        $d .= $this->value[$i];
-                        if (isset($this->childNodes[$i]))
-                        {
-                            $d .= $this->childNodes[$i]->toString();
-                        }
-                    }
-                    $count = count($this->childNodes);
-                    if ($i < $count)
-                    {
-                        for ($i = $i; $i < $count; $i++)
-                        {
-                            $d .= $this->childNodes[$i]->toString();
-                        }
-                    }
-                }
-            }
+					for($i = 0; $i < $count; $i++) {
+						$d .= $this->childNodes[$i]->toString();
+					}
+				} elseif (is_array($this->value)) {
+					$count = count($this->value);
+					for($i = 0; $i < $count; $i++) {
+						$d .= $this->value[$i];
+						if (isset($this->childNodes[$i])) {
+							$d .= $this->childNodes[$i]->toString();
+						}
+					}
+					$count = count($this->childNodes);
+					if ($i < $count) {
+						for ($i = $i; $i < $count; $i++) {
+							$d .= $this->childNodes[$i]->toString();
+						}
+					}
+				}
+			}
 
-            if (is_string($this->value))
-            {
-                $d .= $this->value;
-            }
+			if (is_string($this->value)) {
+				$d .= $this->value;
+			}
 
-            if($this->name != '')
-            {
-                $d .= "</" . $this->name . ">\n";
-            }
-        }
-        return $d;
-    }
-
+			if($this->name != '' && ($this->hasChildNodes() || !empty($this->value))) {
+				$d .= "</" . $this->name . ">\n";
+			}
+		}
+		return $d;
+	}
 /**
  * Returns data from toString when this object is converted to a string.
  *
  * @return string String representation of this structure.
  */
-    function __toString()
-    {
-        return $this->toString();
-    }
-
+	function __toString() {
+		return $this->toString();
+	}
 /**
- * Magic method. Deletes the parentNode. Also deletes this node's children,
+ * Debug method. Deletes the parentNode. Also deletes this node's children,
  * if given the $recursive parameter.
  *
  * @param boolean $recursive
  */
-    function __killParent($recursive = true)
-    {
-        unset($this->__parentNode);
-        if($recursive && $this->hasChildNodes())
-        {
-            for($i = 0; $i < count($this->childNodes); $i++)
-            {
-                $this->childNodes[$i]->__killParent(true);
-            }
-        }
-    }
+	function __killParent($recursive = true) {
+		unset($this->__parentNode);
+		if($recursive && $this->hasChildNodes()) {
+			for($i = 0; $i < count($this->childNodes); $i++) {
+				$this->childNodes[$i]->__killParent(true);
+			}
+		}
+	}
 }
 
 ?>
