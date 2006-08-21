@@ -76,7 +76,7 @@
 	function executeTask($taskName, $params) {
 		$scriptDir = dirname(__FILE__);
 		$taskPath = 'tasks'.DS.$taskName.'_task.php';
-		require($scriptDir.DS.'tasks'.DS.'task.php');
+		require($scriptDir.DS.'tasks'.DS.'bake_task.php');
 		
 		if (file_exists(VENDORS.$taskPath)) {
 			require(VENDORS.$taskPath);
