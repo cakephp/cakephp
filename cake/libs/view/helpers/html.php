@@ -168,7 +168,7 @@ class HtmlHelper extends Helper {
 		if (!isset($attributes['rel'])) {
 			$attributes['rel'] = 'alternate';
 		}
-		return $this->output(sprintf($this->tags['metalink'], $this->url($url), $title, $this->_parseAttributes($attributes)));
+		return $this->output(sprintf($this->tags['metalink'], $this->url($url, true), $title, $this->_parseAttributes($attributes)));
 	}
 /**
  * Returns a charset META-tag.

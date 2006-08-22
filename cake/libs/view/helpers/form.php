@@ -139,7 +139,7 @@ class FormHelper extends Helper {
 		$this->Html->setFormTag($fieldName);
 
 		if (!isset($htmlAttributes['value'])) {
-			$htmlAttributes['value'] = $this->tagValue($fieldName);
+			$htmlAttributes['value'] = $this->Html->tagValue($fieldName);
 		}
 
 		if (!isset($htmlAttributes['type'])) {
@@ -159,6 +159,32 @@ class FormHelper extends Helper {
 		}
 
 		return sprintf($this->tags['input'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' ', ' '));
+	}
+/**
+ * Creates a textarea widget.
+ *
+ * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
+ * @param array $htmlAttributes Array of HTML attributes.
+ * @return string An HTML text input element
+ */
+	function textarea($fieldName, $htmlAttributes = null) {
+		$value = $this->Html->tagValue($fieldName);
+		if (!empty($htmlAttributes['value'])) {
+			$value = $htmlAttributes['value'];
+			unset($htmlAttributes['value']);
+		}
+		if (!isset($htmlAttributes['id'])) {
+			$htmlAttributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
+		}
+
+		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
+			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
+				$htmlAttributes['class'] .= ' form_error';
+			} else {
+				$htmlAttributes['class'] = 'form_error';
+			}
+		}
+		return $this->output(sprintf($this->tags['textarea'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a button tag.
