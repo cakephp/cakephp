@@ -105,13 +105,17 @@ class Set extends Object {
 	}
 
 	function __map($value, $class) {
-		if (Set::numeric(array_keys($value))) {
+		if (!empty($value) && Set::numeric(array_keys($value))) {
 			$ret = array();
 			foreach ($value as $key => $val) {
 				$ret[$key] = Set::__map($val, $class);
 			}
 		} else {
 			$ret = new $class;
+		}
+
+		if (empty($value)) {
+			return $ret;
 		}
 
 		$keys = array_keys($value);
