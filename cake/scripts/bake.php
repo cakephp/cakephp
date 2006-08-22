@@ -2012,7 +2012,7 @@ class Bake {
 		$this->hr();
 		$this->stdout("Skel Directory: $skel");
 		$this->stdout("Will be copied to:");
-		$this->stdout("New App Direcotry: $projectPath");
+		$this->stdout("New App Directory: $projectPath");
 		$this->hr();
 		$looksGood = $this->getInput('Look okay?', array('y', 'n', 'q'), 'y');
 
