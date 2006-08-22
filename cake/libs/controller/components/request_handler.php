@@ -98,8 +98,8 @@ class RequestHandlerComponent extends Object{
  */
 	function initialize(&$controller) {
 		$this->params =& $controller->params;
-		if (isset($this->params['url']['extension'])) {
-			$ext = $this->params['url']['extension'];
+		if (isset($this->params['url']['ext'])) {
+			$ext = $this->params['url']['ext'];
 			if (isset($this->__requestContent[$ext])) {
 				$content = $this->__requestContent[$ext]['content'];
 				if (is_array($content)) {
@@ -123,8 +123,8 @@ class RequestHandlerComponent extends Object{
 		$this->setView($controller);
 		$controller->params['isAjax'] = $this->isAjax();
 
-		if (isset($this->params['url']['extension'])) {
-			$ext = $this->params['url']['extension'];
+		if (isset($this->params['url']['ext'])) {
+			$ext = $this->params['url']['ext'];
 			if (in_array($ext, array_keys($this->__requestContent))) {
 				if ($ext != 'html' && $ext != 'htm' && !empty($ext)) {
 					$controller->ext = '.ctp';

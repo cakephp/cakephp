@@ -224,7 +224,7 @@ class Router extends Object {
 			}
 		}
 		if (!empty($ext)) {
-			$out['url']['extension'] = $ext;
+			$out['url']['ext'] = $ext;
 		}
 		return $out;
 	}
