@@ -453,14 +453,34 @@ class View extends Object{
 			));
 		}
 	}
-
+/**
+ * Returns a list of variables available in the current View context
+ *
+ * @return array
+ * @access public
+ */
+	function getVars() {
+		return array_keys($this->_viewVars);
+	}
+/**
+ * Returns the contents of the given View variable(s)
+ *
+ * @return array
+ * @access public
+ */
+	function getVar($var) {
+		if (!isset($this->_viewVars[$var])) {
+			return null;
+		} else {
+			return $this->_viewVars[$var];
+		}
+	}
 /**
  * @deprecated
  */
 	function setLayout($layout) {
 		$this->layout = $layout;
 	}
-
 /**
  * Allows a template or element to set a variable that will be available in
  * a layout or other element.  Analagous to Controller::set.
