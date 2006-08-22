@@ -1,2 +1,2 @@
-<?php e('<' . '?xml version="1.0" encoding="UTF-8" ?' . '>' . "\n"); ?>
+<?php e($xml->header()); ?>
 <?php echo $content_for_layout; ?>
