@@ -46,7 +46,7 @@ class RequestHandlerComponent extends Object{
 
 	var $enabled = true;
 
-	var $__responseTypeSet = false;
+	var $__responseTypeSet = null;
 
 	var $params = array();
 
@@ -56,6 +56,7 @@ class RequestHandlerComponent extends Object{
 		'css'			=> 'text/css',
 		'html'			=> array('text/html', '*/*'),
 		'text'			=> 'text/plain',
+		'txt'			=> 'text/plain',
 		'form'			=> 'application/x-www-form-urlencoded',
 		'file'			=> 'multipart/form-data',
 		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
@@ -133,6 +134,12 @@ class RequestHandlerComponent extends Object{
 				if (in_array($ext, array_keys($this->__requestContent))) {
 					$this->respondAs($ext);
 				}
+
+				if (!in_array(ucfirst($ext), $controller->helpers)) {
+					if (file_exists(HELPERS . $ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $ext . '.php')) {
+						$controller->helpers[] = ucfirst($ext);
+					}
+				}
 			}
 		}
 	}
@@ -155,7 +162,7 @@ class RequestHandlerComponent extends Object{
  */
 	function setAjax(&$controller) {
 		if ($this->isAjax()) {
-			$controller->layout=$this->ajaxLayout;
+			$controller->layout = $this->ajaxLayout;
 
 			// Add UTF-8 header for IE6 on XPsp2 bug
 			header ('Content-Type: text/html; charset=UTF-8');
@@ -177,7 +184,7 @@ class RequestHandlerComponent extends Object{
  * @return bool True if client accepts an XML response
  */
 	function isXml() {
-		return $this->accepts('xml');
+		return $this->prefers('xml');
 	}
 /**
  * Returns true if the current call accepts an RSS response, false otherwise
@@ -185,7 +192,7 @@ class RequestHandlerComponent extends Object{
  * @return bool True if client accepts an RSS response
  */
 	function isRss() {
-		return $this->accepts('rss');
+		return $this->prefers('rss');
 	}
 /**
  * Returns true if the current call accepts an RSS response, false otherwise
@@ -193,7 +200,7 @@ class RequestHandlerComponent extends Object{
  * @return bool True if client accepts an RSS response
  */
 	function isAtom() {
-		return $this->accepts('atom');
+		return $this->prefers('atom');
 	}
 /**
  * Returns true if user agent string matches a mobile web browser, or if the client accepts WAP content
@@ -209,7 +216,7 @@ class RequestHandlerComponent extends Object{
  * @return bool
  */
 	function isWap() {
-		return $this->accepts('wap');
+		return $this->prefers('wap');
 	}
 /**
  * Returns true if the current call a POST request
@@ -392,7 +399,7 @@ class RequestHandlerComponent extends Object{
  * @access public
  */
 	function respondAs($type, $index = 0) {
-		if ($this->__responseTypeSet) {
+		if ($this->__responseTypeSet != null) {
 			return false;
 		}
 		if (!array_key_exists($type, $this->__requestContent)) {
@@ -421,17 +428,30 @@ class RequestHandlerComponent extends Object{
 
 		if ($cType != null) {
 			header('Content-type: ' . $cType);
-			$this->__responseTypeSet = true;
+			$this->__responseTypeSet = $cType;
 			return true;
 		} else {
 			return false;
 		}
 	}
 /**
+ * Returns the current response type (Content-type header), or null if none has been set
+ *
+ * @return mixed A string content type alias, or raw content type if no alias map exists,
+ *               otherwise null
+ * @access public
+ */
+	function responseType() {
+		if ($this->__responseTypeSet == null) {
+			return null;
+		}
+		return $this->mapType($this->__responseTypeSet);
+	}
+/**
  * Maps a content-type back to an alias
  *
  * @param mixed $type
- * @returns mixed
+ * @return mixed
  * @access public
  */
 	function mapType($ctype) {
