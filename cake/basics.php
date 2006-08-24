@@ -496,7 +496,9 @@
 			if ($trim) {
 				$list = array_map('trim', $list);
 			}
-			return normalizeList($list);
+			if ($assoc) {
+				return normalizeList($list);
+			}
 		} elseif (is_array($list)) {
 			$keys = array_keys($list);
 			$count = count($keys);
