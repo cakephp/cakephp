@@ -85,6 +85,7 @@ class Sanitize{
 			$patterns = array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
 			$replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
 			$string = preg_replace($patterns, $replacements, $string);
+			$string = nl2br($string);
 		}
 		return $string;
 	}
