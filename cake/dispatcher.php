@@ -112,7 +112,7 @@ class Dispatcher extends Object {
 			}
 		}
 
-		if(isset($params['plugin'])){
+		if(isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 			$pluginName = Inflector::camelize($params['action']);
 			$pluginClass = $pluginName.'Controller';
@@ -232,6 +232,22 @@ class Dispatcher extends Object {
 
 		$controller->webservices = $params['webservices'];
 		$controller->plugin = $this->plugin;
+		if (isset($params['viewPath'])) {
+			$controller->viewPath = $params['viewPath'];
+		}
+		if (isset($params['layout'])) {
+			if ($params['layout'] === '') {
+				$controller->autoLayout = false;
+			} else {
+				$controller->layout = $params['layout'];
+			}
+		}
+		foreach(array('components', 'helpers') as $var) {
+			if (isset($params[$var]) && !empty($params[$var]) && is_array($controller->{$var})) {
+				$diff = array_diff($params[$var], $controller->{$var});
+				$controller->{$var} = array_merge($controller->{$var}, $diff);
+			}
+		}
 
 		if(!is_null($controller->webservices)) {
 			array_push($controller->components, $controller->webservices);
