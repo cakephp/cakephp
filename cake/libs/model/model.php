@@ -430,7 +430,7 @@ class Model extends Overloadable {
  * @access protected
  */
 	function __call__($method, $params) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		$methods = array_keys($this->__behaviorMethods);
 		$call = array_values($this->__behaviorMethods);
@@ -633,7 +633,7 @@ class Model extends Overloadable {
  * @param string $tableName Name of the custom table
  */
 	function setSource($tableName) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if ($db->isInterfaceSupported('listSources')) {
 			$prefix = '';
@@ -709,7 +709,7 @@ class Model extends Overloadable {
  * @return array Array of table metadata
  */
 	function loadInfo() {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe')) {
 			$this->_tableInfo = new NeatArray($db->describe($this));
@@ -724,7 +724,7 @@ class Model extends Overloadable {
 	function getColumnTypes() {
 		$columns = $this->loadInfo();
 		$columns = $columns->value;
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$cols = array();
 
 		foreach($columns as $col) {
@@ -741,7 +741,7 @@ class Model extends Overloadable {
 	function getColumnType($column) {
 		$columns = $this->loadInfo();
 		$columns = $columns->value;
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$cols = array();
 
 		foreach($columns as $col) {
@@ -815,7 +815,6 @@ class Model extends Overloadable {
 		}
 
 		if ($this->id !== null && $this->id !== false) {
-			$db =& $this->getDataSource();
 			return $this->find(array($this->name . '.' . $this->primaryKey => $id), $fields);
 		} else {
 			return false;
@@ -879,7 +878,7 @@ class Model extends Overloadable {
  * @return boolean success
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if ($data) {
 			if (countdim($data) == 1) {
@@ -1001,7 +1000,7 @@ class Model extends Overloadable {
  * @access private
  */
 	function __saveMulti($joined, $id) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		foreach($joined as $x => $y) {
 			foreach($y as $assoc => $value) {
@@ -1033,7 +1032,7 @@ class Model extends Overloadable {
 		$total = count($joinTable);
 
 		for($count = 0; $count < $total; $count++) {
-			$db =& $this->getDataSource();
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$table = $db->name($db->fullTableName($joinTable[$count]));
 			$db->execute("DELETE FROM {$table} WHERE {$mainKey[$count]} = '{$id}'");
 
@@ -1070,7 +1069,7 @@ class Model extends Overloadable {
 		$id = $this->id;
 
 		if ($this->beforeDelete()) {
-			$db =& $this->getDataSource();
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 			if ($this->id && $db->delete($this)) {
 				$this->_deleteMulti($id);
@@ -1144,7 +1143,7 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteMulti($id) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		foreach($this->hasAndBelongsToMany as $assoc => $data) {
 			$db->execute("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
 		}
@@ -1167,7 +1166,7 @@ class Model extends Overloadable {
 				}
 			}
 
-			$db =& $this->getDataSource();
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			return $db->hasAny($this, array($this->primaryKey => $id));
 		}
 		return false;
@@ -1215,7 +1214,7 @@ class Model extends Overloadable {
  */
 	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->id = $this->getID();
 		$offset = null;
 
@@ -1297,7 +1296,7 @@ class Model extends Overloadable {
  * @return array
  */
 	function execute($data) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$data = $db->fetchAll($data, $this->cacheQueries);
 
 		foreach($data as $key => $value) {
@@ -1382,7 +1381,7 @@ class Model extends Overloadable {
  * @return array Array with keys "prev" and "next" that holds the id's
  */
 	function findNeighbours($conditions = null, $field, $value) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if (!is_null($conditions)) {
 				$conditions = $conditions . ' AND ';
@@ -1409,7 +1408,7 @@ class Model extends Overloadable {
  */
 	function query() {
 		$params = func_get_args();
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
 /**
@@ -1507,7 +1506,7 @@ class Model extends Overloadable {
  * @return array An associative array of records, where the id is the key, and the display field is the value
  */
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
 			$fields = array($this->primaryKey, $this->displayField);
@@ -1560,7 +1559,7 @@ class Model extends Overloadable {
 		if ($alias == null) {
 			$alias = $this->name;
 		}
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->name($alias) . '.' . $db->name($field);
 	}
 /**
@@ -1611,7 +1610,7 @@ class Model extends Overloadable {
  */
 	function getNumRows() {
 		//return $this->__numRows;
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastNumRows();
 	}
 /**
@@ -1621,7 +1620,7 @@ class Model extends Overloadable {
  */
 	function getAffectedRows() {
 		//return $this->__affectedRows;
-		$db =& $this->getDataSource();
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastAffected();
 	}
 /**
@@ -1646,12 +1645,14 @@ class Model extends Overloadable {
 		}
 	}
 /**
- * Gets the DataSource to which this model is bound
+ * Gets the DataSource to which this model is bound.
+ * Not safe for use with some versions of PHP4, because this class is overloaded.
  *
  * @return DataSource A DataSource object
  */
 	function &getDataSource() {
-		return ConnectionManager::getDataSource($this->useDbConfig);
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		return $db;
 	}
 /**
  * Gets all the models with which this model is associated
