@@ -212,6 +212,9 @@ class HtmlHelper extends Helper {
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
 			}
+			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($this->params['admin'])) {
+				$url[CAKE_ADMIN] = $this->params['admin'];
+			}
 
 			$named = $args = array();
 			$keys = array_keys($url);
@@ -238,11 +241,17 @@ class HtmlHelper extends Helper {
 				for ($i = 0; $i < $count; $i++) {
 					$named[$i] = join($this->argSeparator, $named[$i]);
 				}
+				if (defined('CAKE_ADMIN') && isset($named[CAKE_ADMIN])) {
+					unset($named[CAKE_ADMIN]);
+				}
 				$combined = join('/', $named);
 			}
 
-			$url = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
-			$output = $base . '/' . join('/', $url);
+			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+			if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
+				array_unshift($urlOut, CAKE_ADMIN);
+			}
+			$output = $base . '/' . join('/', $urlOut);
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || $url == '#') {
 				return $this->output($url);
