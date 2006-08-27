@@ -1005,7 +1005,12 @@ class DboSource extends DataSource {
 
 					$limit = '';
 					if (isset($assocData['limit'])) {
-						$limit = $this->limit($assocData['limit'], $queryData['offset']);
+						if (!isset($assocData['offset']) && isset($assocData['page'])) {
+							$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
+						} elseif (!isset($assocData['offset'])) {
+							$assocData['offset'] = null;
+						}
+						$limit = $this->limit($assocData['limit'], $assocData['offset']);
 					}
 
 					$conditions = $assocData['conditions'];
@@ -1046,7 +1051,12 @@ class DboSource extends DataSource {
 
 					$limit  = '';
 					if (isset($assocData['limit'])) {
-						$limit = $this->limit($assocData['limit'], $queryData['offset']);
+						if (!isset($assocData['offset']) && isset($assocData['page'])) {
+							$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
+						} elseif (!isset($assocData['offset'])) {
+							$assocData['offset'] = null;
+						}
+						$limit = $this->limit($assocData['limit'], $assocData['offset']);
 					}
 
 					$sql = 'SELECT ';
