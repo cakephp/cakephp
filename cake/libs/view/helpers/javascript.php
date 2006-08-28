@@ -74,17 +74,25 @@ class JavascriptHelper extends Helper{
 /**
  * Returns a JavaScript include tag (SCRIPT element)
  *
- * @param  string $url URL to JavaScript file.
+ * @param  string  $url URL to JavaScript file.
+ * @param  boolean $inline If true, the <script /> tag will be printed inline,
+ *                         otherwise it will be printed in the <head />
  * @return string
  */
-	function link($url) {
+	function link($url, $inline = true) {
 		if (strpos($url, '.') === false && strpos($url, '?') === false) {
 			$url .= '.js';
 		}
 		if (strpos($url, '://') === false) {
 			$url = $this->webroot . $this->themeWeb . JS_URL . $url;
 		}
-		return sprintf($this->tags['javascriptlink'], $url);
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+
+		if ($inline) {
+			return $out;
+		} else {
+			$this->view->addScript($out);
+		}
 	}
 /**
  * Returns a JavaScript include tag for an externally-hosted script
@@ -288,16 +296,16 @@ class JavascriptHelper extends Helper{
 			if (is_array($val) || is_object($val)) {
 				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
 			} else {
-				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys))) {
+				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)) && $val !== null) {
 					$val = $q . $this->escapeString($val) . $q;
 				}
-				if (trim($val) == '') {
+				if ($val == null) {
 					$val = 'null';
 				}
 			}
 
 			if (!$numeric) {
-				$val = $key . ':' . $val;
+				$val = $q . $key . $q . ':' . $val;
 			}
 
 			$out[] = $val;
