@@ -148,7 +148,7 @@ class HtmlHelper extends Helper {
  * @param  array   $attributes
  * @return string
  */
-	function meta($title = null, $url = null, $attributes = array()) {
+	function meta($title = null, $url = null, $attributes = array(), $inline = true) {
 		$types = array('html' => 'text/html', 'rss' => 'application/rss+xml', 'atom' => 'application/atom+xml');
 
 		if (!isset($attributes['type']) && is_array($url) && isset($url['ext'])) {
@@ -168,7 +168,13 @@ class HtmlHelper extends Helper {
 		if (!isset($attributes['rel'])) {
 			$attributes['rel'] = 'alternate';
 		}
-		return $this->output(sprintf($this->tags['metalink'], $this->url($url, true), $title, $this->_parseAttributes($attributes)));
+		$out = $this->output(sprintf($this->tags['metalink'], $this->url($url, true), $title, $this->_parseAttributes($attributes)));
+
+		if ($inline) {
+			return $out;
+		} else {
+			$this->view->addScript($out);
+		}
 	}
 /**
  * Returns a charset META-tag.
@@ -308,16 +314,23 @@ class HtmlHelper extends Helper {
  * @param string $path Path to CSS file
  * @param string $rel Rel attribute. Defaults to "stylesheet".
  * @param array $htmlAttributes Array of HTML attributes.
+ * @param boolean $inline
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  */
-	function css($path, $rel = 'stylesheet', $htmlAttributes = array()) {
+	function css($path, $rel = 'stylesheet', $htmlAttributes = array(), $inline = true) {
 		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
 			$out = sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' '));
 		}
-		return $this->output($out);
+		$out = $this->output($out);
+
+		if ($inline) {
+			return $out;
+		} else {
+			$this->view->addScript($out);
+		}
 	}
 /**
  * Creates a submit widget.

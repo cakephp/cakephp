@@ -111,6 +111,14 @@ class View extends Object{
 	var $_viewVars = array();
 
 /**
+ * Scripts (and/or other <head /> tags) for the layout
+ *
+ * @var array
+ * @access private
+ */
+	var $__scripts = array();
+
+/**
  * Title HTML element of this View.
  *
  * @var boolean
@@ -418,6 +426,7 @@ class View extends Object{
 			array(
 				'title_for_layout'   => $pageTitle,
 				'content_for_layout' => $content_for_layout,
+				'scripts_for_layout' => join("\n\t", $this->__scripts),
 				'cakeDebug'          => $debug
 			)
 		);
@@ -473,6 +482,24 @@ class View extends Object{
 			return null;
 		} else {
 			return $this->_viewVars[$var];
+		}
+	}
+/**
+ * Adds a script block or other element to be inserted in $scripts_for_layout in
+ * the <head /> of a document layout
+ *
+ * @param string $name
+ * @param string $content
+ * @return void
+ * @access public
+ */
+	function addScript($name, $content = null) {
+		if ($content == null) {
+			if (!in_array($content, array_values($this->__scripts))) {
+				$this->__scripts[] = $name;
+			}
+		} else {
+			$this->__scripts[$name] = $content;
 		}
 	}
 /**
