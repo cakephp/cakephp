@@ -72,7 +72,7 @@ class Sanitize{
 		return $string;
 	}
 /**
- * Returns given string safe for display as HTML. Renders entities and converts newlines to <br />.
+ * Returns given string safe for display as HTML. Renders entities.
  *
  * @param string $string
  * @param boolean $remove If true, the string is stripped of all HTML tags
@@ -85,7 +85,6 @@ class Sanitize{
 			$patterns = array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
 			$replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
 			$string = preg_replace($patterns, $replacements, $string);
-			$string = nl2br($string);
 		}
 		return $string;
 	}
