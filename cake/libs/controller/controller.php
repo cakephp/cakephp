@@ -553,6 +553,19 @@ class Controller extends Object {
 		}
 	}
 /**
+ * Tells the browser not to cache the results of the current request
+ *
+ * @return void
+ * @access public
+ */
+	function disableCache() {
+		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+		header("Cache-Control: no-store, no-cache, must-revalidate");
+		header("Cache-Control: post-check=0, pre-check=0", false);
+		header("Pragma: no-cache");
+	}
+/**
  * @deprecated
  */
 	function _setTitle($pageTitle) {
