@@ -351,7 +351,8 @@ class Controller extends Object {
 		}
 	}
 /**
- * Redirects to given $url, after turning off $this->autoRender.
+ * Redirects to given $url, after turning off $this->autoRender. Please notice that the script execution is not stopped 
+ * after the redirect.
  *
  * @param string $url
  * @param integer $status
