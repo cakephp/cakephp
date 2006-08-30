@@ -71,7 +71,18 @@ class View extends Object{
  * @access public
  */
 	var $action = null;
-
+/**
+ * Name of current model this view context is attached to
+ *
+ * @var string
+ */
+	var $model = null;
+/**
+ * Name of current model field this view context is attached to
+ *
+ * @var string
+ */
+	var $field = null;
 /**
  * An array of names of models the particular controller wants to use.
  *

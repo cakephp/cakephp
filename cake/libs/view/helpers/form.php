@@ -66,7 +66,7 @@ class FormHelper extends Helper {
  * @return string An formatted opening FORM tag.
  */
 	function create($target = null, $type = 'post', $htmlAttributes = null) {
-		$htmlAttributes['action'] = $this->Html->url($target);
+		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
 		$token = '';
@@ -85,9 +85,9 @@ class FormHelper extends Helper {
  */
 	function isFieldError($field) {
 		$error = 1;
-		$this->Html->setFormTag($field);
+		$this->setFormTag($field);
 
-		if ($error == $this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
+		if ($error == $this->Html->tagIsInvalid()) {
 			return true;
 		} else {
 			return false;
@@ -106,11 +106,85 @@ class FormHelper extends Helper {
  * @param string $text Text that will appear in the label field.
  * @return string The formatted LABEL element
  */
-	function label($tagName, $text, $attributes = array()) {
+	function label($tagName, $text = null, $attributes = array()) {
+		if ($text == null) {
+			if (strpos($tagName, '/') !== false) {
+				list( , $text) = explode('/', $tagName);
+			} else {
+				$text = $tagName;
+			}
+			$text = Inflector::humanize($text);
+		}
 		if (strpos($tagName, '/') !== false) {
 			$tagName = Inflector::camelize(r('/', '_', $tagName));
 		}
-		return $this->output(sprintf($this->tags['label'], $tagName, $this->Html->_parseAttributes($attributes), $text));
+		return $this->output(sprintf($this->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
+	}
+/**
+ * Generates a form input element complete with label and wrapper div
+ *
+ * @param string $tagName This should be "Modelname/fieldname"
+ * @param array $options
+ * @return string
+ */
+	function input($tagName, $options = array()) {
+		if (!isset($options['type'])) {
+			if (isset($options['options'])) {
+				$options['type'] = 'select';
+			} else {
+				$options['type'] = 'text';
+			}
+		}
+
+		$wrap = true;
+		if (isset($options['wrap'])) {
+			$wrap = $options['wrap'];
+			unset($options['wrap']);
+		}
+
+		$divOptions = array();
+		if (!isset($options['class']) || empty($options['class'])) {
+			$divOptions['class'] = 'input';
+		} else {
+			$divOptions['class'] = $options['class'];
+		}
+
+		$label = null;
+		if (isset($options['label'])) {
+			$label = $options['label'];
+			unset($options['label']);
+		}
+		$out = $this->label($tagName, $label);
+
+		$error = null;
+		if (isset($options['error'])) {
+			$error = $options['error'];
+			unset($options['error']);
+		}
+
+		switch ($options['type']) {
+			case 'text':
+				$out .= $this->text($tagName);
+			break;
+			case 'file':
+				$out .= $this->Html->file($tagName);
+			break;
+			case 'select':
+				$list = $options['options'];
+				$empty = (isset($options['empty']) ? $options['empty'] : '');
+				unset($options['options'], $options['empty']);
+				$out .= $this->select($tagName, $list, null, $options, $empty);
+			break;
+		}
+
+		if ($error != null) {
+			$out .= $this->Html->tagErrorMsg($tagName, $error);
+		}
+
+		if ($wrap) {
+			$out = $this->Html->div($divOptions['class'], $out);
+		}
+		return $this->output($out);
 	}
 /**
  * @deprecated
@@ -119,11 +193,7 @@ class FormHelper extends Helper {
 		return sprintf(TAG_DIV, $class, $text);
 	}
 /**
- * Returns a formatted P tag with class for HTML FORMs.
- *
- * @param string $class CSS class name of the p element.
- * @param string $text Text that will appear inside the p element.
- * @return string The formatted P element
+ * @deprecated
  */
 	function pTag($class, $text) {
 		return sprintf(TAG_P_CLASS, $class, $text);
@@ -136,29 +206,17 @@ class FormHelper extends Helper {
  * @return string An HTML text input element
  */
 	function text($fieldName, $htmlAttributes = null) {
-		$this->Html->setFormTag($fieldName);
-
-		if (!isset($htmlAttributes['value'])) {
-			$htmlAttributes['value'] = $this->Html->tagValue($fieldName);
-		}
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
 
 		if (!isset($htmlAttributes['type'])) {
 			$htmlAttributes['type'] = 'text';
 		}
 
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
-
-		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
-			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
-				$htmlAttributes['class'] .= ' form_error';
-			} else {
-				$htmlAttributes['class'] = 'form_error';
-			}
-		}
-
-		return sprintf($this->tags['input'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' ', ' '));
+		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a textarea widget.
@@ -173,16 +231,10 @@ class FormHelper extends Helper {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
 		}
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
-		}
+		$htmlAttributes = $this->domId($htmlAttributes);
 
-		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
-			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
-				$htmlAttributes['class'] .= ' form_error';
-			} else {
-				$htmlAttributes['class'] = 'form_error';
-			}
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
 		return $this->output(sprintf($this->tags['textarea'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
@@ -229,7 +281,7 @@ class FormHelper extends Helper {
 		} else {
 			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
 		}
-		return sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
+		return $this->output(sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
  /**
  * Returns a formatted SELECT element.
@@ -244,29 +296,23 @@ class FormHelper extends Helper {
  * @return string Formatted SELECT element
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
-		$this->Html->setFormTag($fieldName);
+		$this->setFormTag($fieldName);
+		$attributes = $this->domId($attributes);
 
-		if ($this->Html->tagIsInvalid($this->Html->model, $this->Html->field)) {
-			if (isset($attributes['class']) && trim($attributes['class']) != '') {
-				$attributes['class'] .= ' form_error';
-			} else {
-				$attributes['class'] = 'form_error';
-			}
-		}
-
-		if (!isset($attributes['id'])) {
-			$attributes['id'] = $this->Html->model . Inflector::camelize($this->Html->field);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
 
 		if (!isset($selected)) {
-			$selected = $this->Html->tagValue($fieldName);
+			$selected = $this->__value($fieldName);
 		}
 
 		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
-			$select[] = sprintf($this->tags['selectmultiplestart'], $this->Html->model, $this->Html->field, $this->Html->parseHtmlOptions($attributes));
+			$tag = $this->tags['selectmultiplestart'];
 		} else {
-			$select[] = sprintf($this->tags['selectstart'], $this->Html->model, $this->Html->field, $this->Html->parseHtmlOptions($attributes));
+			$tag = $this->tags['selectstart'];
 		}
+		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->parseHtmlOptions($attributes));
 
 		if ($showEmpty !== null && $showEmpty !== false) {
 			$keys = array_keys($options);
@@ -342,7 +388,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -370,7 +416,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -399,7 +445,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -428,7 +474,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -464,7 +510,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -498,7 +544,7 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError = $this->pTag('error', $errorMsg);
+			$strError = $this->Html->para('error', $errorMsg);
 			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
@@ -529,8 +575,8 @@ class FormHelper extends Helper {
 		$strError = "";
 
 		if ($this->isFieldError($tagName)) {
-			$strError=$this->pTag('error', $errorMsg);
-			$divClass=sprintf("%s error", $divClass);
+			$strError = $this->Html->para('error', $errorMsg);
+			$divClass = sprintf("%s error", $divClass);
 		}
 		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
 		return $this->divTag($divClass, $divTagInside);

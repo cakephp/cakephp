@@ -70,18 +70,6 @@ class HtmlHelper extends Helper {
  * @var array
  */
 	var $data = null;
-/**
- * Name of model this helper is attached to.
- *
- * @var string
- */
-	var $model = null;
-/**
- * Enter description here...
- *
- * @var string
- */
-	var $field = null;
 /**#@-*/
 /*************************************************************************
  * Private variables
@@ -186,97 +174,6 @@ class HtmlHelper extends Helper {
 		return $this->output(sprintf($this->tags['charset'], $charset));
 	}
 /**
- * Finds URL for specified action.
- *
- * Returns an URL pointing to a combination of controller and action. Param
- * $url can be:
- *	+ Empty - the method will find adress to actuall controller/action.
- *	+ '/' - the method will find base URL of application.
- *	+ A combination of controller/action - the method will find url for it.
- *
- * @param  mixed  $url    Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *                        or an array specifying any of the following: 'controller', 'action',
- *                        and/or 'plugin', in addition to named arguments (keyed array elements),
- *                        and standard URL arguments (indexed array elements)
- * @param boolean $full   If true, the full base URL will be prepended to the result
- * @return string  Full translated URL with base path.
- */
-	function url($url = null, $full = false) {
-		$base = strip_plugin($this->base, $this->plugin);
-		$extension = null;
-
-		if (is_array($url) && !empty($url)) {
-			if (!isset($url['action'])) {
-				$url['action'] = $this->params['action'];
-			}
-			if (!isset($url['controller'])) {
-				$url['controller'] = $this->params['controller'];
-			}
-			if (!isset($url['plugin'])) {
-				$url['plugin'] = $this->plugin;
-			}
-			if (isset($url['ext'])) {
-				$extension = '.' . $url['ext'];
-			}
-			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($this->params['admin'])) {
-				$url[CAKE_ADMIN] = $this->params['admin'];
-			}
-
-			$named = $args = array();
-			$keys = array_keys($url);
-			$count = count($keys);
-			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
-					$args[] = $url[$keys[$i]];
-				} else {
-					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext'))) {
-						$named[] = array($keys[$i], $url[$keys[$i]]);
-					}
-				}
-			}
-
-			$combined = '';
-			if ($this->namedArgs) {
-				if ($this->namedArgs === true) {
-					$sep = $this->argSeparator;
-				} elseif (is_array($this->namedArgs)) {
-					$sep = '/';
-				}
-
-				$count = count($named);
-				for ($i = 0; $i < $count; $i++) {
-					$named[$i] = join($this->argSeparator, $named[$i]);
-				}
-				if (defined('CAKE_ADMIN') && isset($named[CAKE_ADMIN])) {
-					unset($named[CAKE_ADMIN]);
-				}
-				$combined = join('/', $named);
-			}
-
-			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
-			if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
-				array_unshift($urlOut, CAKE_ADMIN);
-			}
-			$output = $base . '/' . join('/', $urlOut);
-		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || $url == '#') {
-				return $this->output($url);
-			}
-
-			if (empty($url)) {
-				return $this->here;
-			} elseif($url{0} == '/') {
-				$output = $base . $url;
-			} else {
-				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
-			}
-		}
-		if ($full) {
-			$output = FULL_BASE_URL . $output;
-		}
-		return $this->output($output . $extension);
-	}
-/**
  * Creates an HTML link.
  *
  * If $url starts with "http://" this is treated as an external link. Else,
@@ -351,22 +248,12 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function password($fieldName, $htmlAttributes = null) {
-		$this->setFormTag($fieldName);
-		if (!isset($htmlAttributes['value'])) {
-			$htmlAttributes['value'] = $this->tagValue($fieldName);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
-		}
-
-		if ($this->tagIsInvalid($this->model, $this->field)) {
-			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
-				$htmlAttributes['class'] .= ' form_error';
-			} else {
-				$htmlAttributes['class'] = 'form_error';
-			}
-		}
-		return $this->output(sprintf($this->tags['password'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a textarea widget.
@@ -375,25 +262,20 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function textarea($fieldName, $htmlAttributes = null) {
-		$this->setFormTag($fieldName);
-		$value = $this->tagValue($fieldName);
-		if (!empty($htmlAttributes['value'])) {
+	function textarea($fieldName, $htmlAttributes = array()) {
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+
+		$value = null;
+		if (isset($htmlAttributes['value']) && !empty($htmlAttributes['value'])) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
 		}
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
-		}
+		$htmlAttributes = $this->domId($htmlAttributes);
 
-		if ($this->tagIsInvalid($this->model, $this->field)) {
-			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
-				$htmlAttributes['class'] .= ' form_error';
-			} else {
-				$htmlAttributes['class'] = 'form_error';
-			}
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
-		return $this->output(sprintf($this->tags['textarea'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' '), $value));
+		return $this->output(sprintf($this->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a checkbox widget.
@@ -422,18 +304,17 @@ class HtmlHelper extends Helper {
 					$notCheckedValue = -1;
 				}
 			} else {
-				$model = new $this->model;
+				$model = $this->model();
+				$model = new $model;
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$value = $db->boolean($value);
 				$htmlAttributes['checked'] = $value ? 'checked' : null;
 				$htmlAttributes['value'] = 1;
 			}
 		}
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
-		}
+		$htmlAttributes = $this->domId($htmlAttributes);
 		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
-		$output .= sprintf($this->tags['checkbox'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' '));
+		$output .= sprintf($this->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		return $this->output($output);
 	}
 /**
@@ -446,10 +327,8 @@ class HtmlHelper extends Helper {
 	function file($fieldName, $htmlAttributes = null) {
 		if (strpos($fieldName, '/')) {
 			$this->setFormTag($fieldName);
-			if (!isset($htmlAttributes['id'])) {
-				$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
-			}
-			return $this->output(sprintf($this->tags['file'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
+			$htmlAttributes = $this->domId($htmlAttributes);
+			return $this->output(sprintf($this->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 		}
 		return $this->output(sprintf($this->tags['file_no_model'], $fieldName, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
@@ -482,15 +361,10 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function hidden($fieldName, $htmlAttributes = null) {
-		$this->setFormTag($fieldName);
-		if (!isset($htmlAttributes['value'])) {
-			$htmlAttributes['value'] = $this->tagValue($fieldName);
-		}
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
-		}
-		return $this->output(sprintf($this->tags['hidden'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	function hidden($fieldName, $htmlAttributes = array()) {
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		return $this->output(sprintf($this->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a formatted IMG element.
@@ -519,27 +393,17 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function input($fieldName, $htmlAttributes = null) {
-		$this->setFormTag($fieldName);
-		if (!isset($htmlAttributes['value'])) {
-			$htmlAttributes['value'] = $this->tagValue($fieldName);
-		}
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
 
 		if (!isset($htmlAttributes['type'])) {
 			$htmlAttributes['type'] = 'text';
 		}
 
-		if (!isset($htmlAttributes['id'])) {
-			$htmlAttributes['id'] = $this->model . Inflector::camelize($this->field);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
-
-		if ($this->tagIsInvalid($this->model, $this->field)) {
-			if (isset($htmlAttributes['class']) && trim($htmlAttributes['class']) != "") {
-				$htmlAttributes['class'] .= ' form_error';
-			} else {
-				$htmlAttributes['class'] = 'form_error';
-			}
-		}
-		return $this->output(sprintf($this->tags['input'], $this->model, $this->field, $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a set of radio widgets.
@@ -561,7 +425,7 @@ class HtmlHelper extends Helper {
 			$optValue == $value ? $optionsHere['checked'] = 'checked' : null;
 			$parsedOptions = $this->parseHtmlOptions(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
 			$individualTagName = "{$this->field}_{$optValue}";
-			$out[] = sprintf($this->tags['radio'], $this->model, $this->field, $individualTagName, $parsedOptions, $optTitle);
+			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
 		}
 
 		$out = join($inbetween, $out);
@@ -580,7 +444,6 @@ class HtmlHelper extends Helper {
 		foreach($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($thOptions), $arg);
 		}
-
 		$data = sprintf($this->tags['tablerow'], $this->parseHtmlOptions($trOptions), join(' ', $out));
 		return $this->output($data);
 	}
@@ -618,22 +481,12 @@ class HtmlHelper extends Helper {
  */
 	function tagValue($fieldName) {
 		$this->setFormTag($fieldName);
-		if (isset($this->params['data'][$this->model][$this->field])) {
-			return h($this->params['data'][$this->model][$this->field]);
-		} elseif(isset($this->data[$this->model][$this->field])) {
-			return h($this->data[$this->model][$this->field]);
+		if (isset($this->params['data'][$this->model()][$this->field()])) {
+			return h($this->params['data'][$this->model()][$this->field()]);
+		} elseif(isset($this->data[$this->model()][$this->field()])) {
+			return h($this->data[$this->model()][$this->field()]);
 		}
 		return false;
-	}
-/**
- * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
- *
- * @param string $model Model name as string
- * @param string $field		Fieldname as string
- * @return boolean True on errors.
- */
-	function tagIsInvalid($model, $field) {
-		return empty($this->validationErrors[$model][$field]) ? 0 : $this->validationErrors[$model][$field];
 	}
 /**
  * Returns number of errors in a submitted FORM.
@@ -672,115 +525,16 @@ class HtmlHelper extends Helper {
 	function tagErrorMsg($field, $text) {
 		$error = 1;
 		$this->setFormTag($field);
-		if ($error == $this->tagIsInvalid($this->model, $this->field)) {
+		if ($error == $this->tagIsInvalid()) {
 			return sprintf('<div class="error_message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
 		} else {
 			return null;
-		}
-	}
-/**
- * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
- *
- * @param string $tagValue A field name, like "Modelname/fieldname"
- */
-	function setFormTag($tagValue) {
-		return list($this->model, $this->field) = explode("/", $tagValue);
-	}
-/**#@-*/
-/*************************************************************************
- * Private methods
- *************************************************************************/
-/**#@+
- * @access private
- */
-/**
- * Returns a space-delimited string with items of the $options array. If a
- * key of $options array happens to be one of:
- *	+ 'compact'
- *	+ 'checked'
- *	+ 'declare'
- *	+ 'readonly'
- *	+ 'disabled'
- *	+ 'selected'
- *	+ 'defer'
- *	+ 'ismap'
- *	+ 'nohref'
- *	+ 'noshade'
- *	+ 'nowrap'
- *	+ 'multiple'
- *	+ 'noresize'
- *
- * And its value is one of:
- *	+ 1
- *	+ true
- *	+ 'true'
- *
- * Then the value will be reset to be identical with key's name.
- * If the value is not one of these 3, the parameter is not output.
- *
- * @param  array  $options Array of options.
- * @param  array  $exclude Array of options to be excluded.
- * @param  string $insertBefore String to be inserted before options.
- * @param  string $insertAfter  String to be inserted ater options.
- * @return string
- */
-	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
-		if (!is_array($exclude)) {
-			$exclude = array();
-		}
-
-		if (is_array($options)) {
-			$out = array();
-
-			foreach($options as $key => $value) {
-				if (!in_array($key, $exclude)) {
-					if (in_array($key, $minimizedAttributes) && ($value === 1 || $value === true || $value === 'true' || in_array($value, $minimizedAttributes))) {
-						$value = $key;
-					} elseif(in_array($key, $minimizedAttributes)) {
-						continue;
-					}
-					$out[] = "{$key}=\"{$value}\"";
-				}
-			}
-			$out = join(' ', $out);
-			return $out ? $insertBefore . $out . $insertAfter : null;
-		} else {
-			return $options ? $insertBefore . $options . $insertAfter : null;
 		}
 	}
 /**#@-*/
 /*************************************************************************
  * Renamed methods
  *************************************************************************/
-/**
- * @deprecated Name changed to '_parseAttributes'. Version 0.9.2.
- * @see HtmlHelper::_parseAttributes()
- * @param  array  $options Array of options.
- * @param  array  $exclude Array of options to be excluded.
- * @param  string $insertBefore String to be inserted before options.
- * @param  string $insertAfter  String to be inserted ater options.
- * @return string
- */
-	function parseHtmlOptions($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (!is_array($exclude)) {
-			$exclude = array();
-		}
-
-		if (is_array($options)) {
-			$out = array();
-
-			foreach($options as $k => $v) {
-				if (!in_array($k, $exclude)) {
-					$out[] = "{$k}=\"{$v}\"";
-				}
-			}
-			$out = join(' ', $out);
-			return $out ? $insertBefore . $out . $insertAfter : null;
-		} else {
-			return $options ? $insertBefore . $options . $insertAfter : null;
-		}
-	}
  /**
  * Returns a formatted SELECT element.
  *
@@ -794,16 +548,14 @@ class HtmlHelper extends Helper {
  */
 	function selectTag($fieldName, $optionElements, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		$this->setFormTag($fieldName);
-		if ($this->tagIsInvalid($this->model, $this->field)) {
+		if ($this->tagIsInvalid()) {
 			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
 				$selectAttr['class'] .= ' form_error';
 			} else {
 				$selectAttr['class'] = 'form_error';
 			}
 		}
-		if (!isset($selectAttr['id'])) {
-			$selectAttr['id'] = $this->model . Inflector::camelize($this->field);
-		}
+		$selectAttr = $this->domId($selectAttr);
 
 		if (!is_array($optionElements)) {
 			return null;
@@ -814,9 +566,9 @@ class HtmlHelper extends Helper {
 		}
 
 		if (isset($selectAttr) && array_key_exists("multiple", $selectAttr)) {
-			$select[] = sprintf($this->tags['selectmultiplestart'], $this->model, $this->field, $this->parseHtmlOptions($selectAttr));
+			$select[] = sprintf($this->tags['selectmultiplestart'], $this->model(), $this->field(), $this->parseHtmlOptions($selectAttr));
 		} else {
-			$select[] = sprintf($this->tags['selectstart'], $this->model, $this->field, $this->parseHtmlOptions($selectAttr));
+			$select[] = sprintf($this->tags['selectstart'], $this->model(), $this->field(), $this->parseHtmlOptions($selectAttr));
 		}
 
 		if ($showEmpty == true) {

@@ -249,7 +249,7 @@ class AjaxHelper extends Helper {
 			$func = "new Ajax.Request(";
 		}
 
-		$func .= "'" . $this->Html->url(isset($options['url']) ? $options['url'] : "") . "'";
+		$func .= "'" . $this->url(isset($options['url']) ? $options['url'] : "") . "'";
 		$func .= ", " . $this->__optionsForAjax($options) . ")";
 
 		if (isset($options['before'])) {
@@ -495,7 +495,7 @@ class AjaxHelper extends Helper {
 				return '';
 			}
 		}
-		$attr = $this->Html->_parseAttributes(am($options, array('id' => $id)));
+		$attr = $this->_parseAttributes(am($options, array('id' => $id)));
 		return $this->output(sprintf($this->tags['blockstart'], $attr));
 	}
 /**
@@ -611,7 +611,7 @@ class AjaxHelper extends Helper {
  * @link http://wiki.script.aculo.us/scriptaculous/show/Ajax.InPlaceEditor
  */
 	function editor($id, $url, $options = array()) {
-		$url = $this->Html->url($url);
+		$url = $this->url($url);
 		$options['ajaxOptions'] = $this->__optionsForAjax($options);
 
 		foreach($this->ajaxOptions as $opt) {
