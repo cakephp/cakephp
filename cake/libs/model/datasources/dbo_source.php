@@ -1310,6 +1310,9 @@ class DboSource extends DataSource {
 		} else {
 			$clause = ' WHERE ';
 			$out   = $this->conditionKeysToString($conditions);
+			if (empty($out)) {
+				return $clause . ' (1 = 1)';
+			}
 			return $clause . ' (' . join(') AND (', $out) . ')';
 		}
 	}
