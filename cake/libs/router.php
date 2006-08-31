@@ -106,6 +106,11 @@ class Router extends Object {
 			}
 		}
 
+		if (!empty($default) && !isset($default['action']))
+		{
+			$default['action'] = 'index';
+		}
+
 		$r = null;
 		if (($route == '') || ($route == '/')) {
 			$regexp = '/^[\/]*$/';
