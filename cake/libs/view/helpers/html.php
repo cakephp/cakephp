@@ -424,7 +424,7 @@ class HtmlHelper extends Helper {
 			$optionsHere = array('value' => $optValue);
 			$optValue == $value ? $optionsHere['checked'] = 'checked' : null;
 			$parsedOptions = $this->parseHtmlOptions(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
-			$individualTagName = "{$this->field}_{$optValue}";
+			$individualTagName = $this->field() . "_{$optValue}";
 			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
 		}
 
