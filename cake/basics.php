@@ -455,7 +455,7 @@
  * @uses LIBS
  */
 	function uses() {
-		$args = array_reverse(func_get_args());
+		$args = func_get_args();
 		$c = func_num_args();
 
 		for ($i = 0; $i < $c; $i++) {
@@ -469,7 +469,7 @@
  *
  */
 	function vendor($name) {
-		$args = array_reverse(func_get_args());
+		$args = func_get_args();
 		$c = func_num_args();
 
 		for ($i = 0; $i < $c; $i++) {
