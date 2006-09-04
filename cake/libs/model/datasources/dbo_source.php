@@ -1359,8 +1359,12 @@ class DboSource extends DataSource {
 						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
 					}
 
+					$mValue = trim($match['1']);
 					if (empty($match['1'])) {
 						$match['1'] = ' = ';
+					} elseif (empty($mValue)) {
+						$match['1'] = ' = ';
+						$match['2'] = $match['0'];
 					}
 
 					if (strpos($match['2'], '-!') === 0) {
