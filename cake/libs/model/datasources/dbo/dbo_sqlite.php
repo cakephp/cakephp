@@ -162,15 +162,14 @@ class DboSqlite extends DboSource {
 			return $cache;
 		}
 		$fields = array();
-		$cols = sqlite_fetch_column_types($model->tablePrefix . $model->table, $this->connection);
+		$result = $this->fetchAll('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
 
-		pr($cols);
-		die();
-		foreach ($cols as $column => $type) {
+		foreach ($result as $column) {
 			$fields[] = array(
-				'name' => $column,
-				'type' => $this->column($type),
-				'null' => true
+				'name' => $column[0]['name'],
+				'type' => $this->column($column[0]['type']),
+				'null' => ! $column[0]['notnull'],
+				'default' => $column[0]['dflt_value']
 			);
 		}
 
@@ -335,7 +334,7 @@ class DboSqlite extends DboSource {
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
-		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp'))) {
+		if (in_array($col, array('text', 'integer', 'float', 'boolean', 'timestamp', 'datetime'))) {
 			return $col;
 		}
 		if (strpos($col, 'varchar') !== false) {
