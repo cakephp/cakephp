@@ -790,30 +790,56 @@
 		return $uri;
 	}
 /**
- * Gets an environment variable from available sources.
- * Used as a backup if $_SERVER/$_ENV are disabled.
+ * Gets an environment variable from available sources, and provides emulation
+ * for unsupported or inconsisten environment variables (i.e. DOCUMENT_ROOT on
+ * IIS, or SCRIPT_NAME in CGI mode).  Also exposes some additional custom
+ * environment information.
  *
  * @param  string $key Environment variable name.
  * @return string Environment variable setting.
  */
 	function env($key) {
-		if (isset($_SERVER[$key])) {
-			return $_SERVER[$key];
-		} elseif (isset($_ENV[$key])) {
-			return $_ENV[$key];
-		} elseif (getenv($key) !== false) {
-			return getenv($key);
+
+		if ($key == 'SCRIPT_NAME') {
+			if (env('CGI_MODE')) {
+				$key = 'SCRIPT_URL';
+			}
 		}
 
-		if ($key == 'DOCUMENT_ROOT') {
-			$offset=0;
-			if (!strpos(env('SCRIPT_NAME'), '.php')) {
-				$offset = 4;
-			}
-			return substr(env('SCRIPT_FILENAME'), 0, strlen(env('SCRIPT_FILENAME')) - (strlen(env('SCRIPT_NAME')) + $offset));
+		$val = null;
+		if (isset($_SERVER[$key])) {
+			$val = $_SERVER[$key];
+		} elseif (isset($_ENV[$key])) {
+			$val = $_ENV[$key];
+		} elseif (getenv($key) !== false) {
+			$val = getenv($key);
 		}
-		if ($key == 'PHP_SELF') {
-			return r(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+
+		if ($key == 'REMOTE_ADDR' && $val == env('SERVER_ADDR')) {
+			$addr = env('HTTP_PC_REMOTE_ADDR');
+			if ($addr != null) {
+				$val = $addr;
+			}
+		}
+
+		if ($val !== null) {
+			return $val;
+		}
+
+		switch ($key) {
+			case 'DOCUMENT_ROOT':
+				$offset = 0;
+				if (!strpos(env('SCRIPT_NAME'), '.php')) {
+					$offset = 4;
+				}
+				return substr(env('SCRIPT_FILENAME'), 0, strlen(env('SCRIPT_FILENAME')) - (strlen(env('SCRIPT_NAME')) + $offset));
+			break;
+			case 'PHP_SELF':
+				return r(env('DOCUMENT_ROOT'), '', env('SCRIPT_FILENAME'));
+			break;
+			case 'CGI_MODE':
+				return (substr(php_sapi_name(), 0, 3) == 'cgi');
+			break;
 		}
 		return null;
 	}
