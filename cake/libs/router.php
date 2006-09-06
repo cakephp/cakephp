@@ -153,7 +153,7 @@ class Router extends Overloadable {
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
 					if (isset($requirements[$r[1]])) {
-						$parsed[] = '(?:\/(' . $requirements[$r[1]] . '))?';
+						$parsed[] = '(?:\/(' . $requirements[$r[1]] . '))';
 					} else {
 						$parsed[] = '(?:\/([^\/]+))?';
 					}
