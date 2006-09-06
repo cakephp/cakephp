@@ -338,6 +338,7 @@ class Dispatcher extends Object {
  */
 	function parseParams($from_url) {
 		$Route = Router::getInstance();
+		extract(Router::getMap());
 		include CONFIGS.'routes.php';
 		$params = $Route->parse ($from_url);
 

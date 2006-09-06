@@ -39,29 +39,41 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Router extends Object {
+uses('overloadable');
+ 
+class Router extends Overloadable {
 /**
  * Array of routes
  *
  * @var array
  */
-	 var $routes = array();
+	var $routes = array();
 /**
  * CAKE_ADMIN route
  *
  * @var array
  */
-	 var $__admin = null;
+	var $__admin = null;
 /**
  * Directive for Router to parse out file extensions for mapping to Content-types.
  *
  * @var boolean
  */
-	 var $__parseExtensions = false;
+	var $__parseExtensions = false;
 /**
- * Enter description here...
+ * 'Constant' regular expression definitions for named route elements
  *
+ * @var array
  */
+	var $__named = array(
+		'Action' => 'index|show|list|add|create|edit|update|remove|del|delete|new|view|item',
+		'Year' => '[12][0-9]{3}',
+		'ID' => '[0-9]+'
+	);
+ /**
+  * Initialize the Router object
+  *
+  */
 	function __construct() {
 		if (defined('CAKE_ADMIN')) {
 			$admin = CAKE_ADMIN;
@@ -87,14 +99,24 @@ class Router extends Object {
 		return $instance[0];
 	}
 /**
+ * Gets the named route elements for use in app/config/routes.php
+ *
+ * @return array
+ */
+	function getMap() {
+		$_this =& Router::getInstance();
+		return $_this->__named;
+	}
+/**
  * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
  *
- * @param string $route	An empty string, or a route string "/"
- * @param array $default	NULL or an array describing the default route
+ * @param string $route			An empty string, or a route string "/"
+ * @param array $default		NULL or an array describing the default route
+ * @param array $requirements	An array matching the named elements in the route to regular expressions which that element should match.
  * @see routes
  * @return array			Array of routes
  */
-	function connect($route, $default = null) {
+	function connect($route, $default = null, $requirements = array()) {
 
 		$_this =& Router::getInstance();
 		$parsed = $names = array();
@@ -106,8 +128,7 @@ class Router extends Object {
 			}
 		}
 
-		if (!empty($default) && !isset($default['action']))
-		{
+		if (!empty($default) && !isset($default['action'])) {
 			$default['action'] = 'index';
 		}
 
@@ -131,7 +152,11 @@ class Router extends Object {
 			foreach($elements as $element) {
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
-					$parsed[] = '(?:\/([^\/]+))?';
+					if (isset($requirements[$r[1]])) {
+						$parsed[] = '(?:\/(' . $requirements[$r[1]] . '))?';
+					} else {
+						$parsed[] = '(?:\/([^\/]+))?';
+					}
 					$names[] = $r[1];
 				} elseif(preg_match('/^\*$/', $element, $r)) {
 					$parsed[] = '(?:\/(.*))?';
