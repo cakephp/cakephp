@@ -310,7 +310,7 @@ class Bake {
 		$this->stdout('Possible models based on your current database:');
 
 		for ($i = 0; $i < count($tables); $i++) {
-			$this->stdout($i + 1 . ". " . $inflect->camelize($inflect->singularize($tables[$i])));
+			$this->stdout($i + 1 . ". " . $inflect->classify($tables[$i]));
 		}
 
 		while ($modelName == '') {
@@ -324,7 +324,7 @@ class Bake {
 		}
 
 		if (intval($modelName) > 0 && intval($modelName) <= $i ) {
-			$modelClassName = $inflect->camelize($inflect->singularize($tables[$modelName - 1]));
+			$modelClassName = $inflect->classify($tables[$modelName - 1]);
 			$modelTableName = $tables[intval($modelName) - 1];
 		} else {
 			$modelClassName = $inflect->camelize($modelName);
@@ -404,20 +404,20 @@ class Bake {
 
 				foreach($modelFieldsTemp as $field) {
 					if($field['name'] == $inflect->singularize($modelTableName).'_id') {
-						$hasOneClasses[] = $inflect->camelize($inflect->singularize($table));
-						$hasManyClasses[] = $inflect->camelize($inflect->singularize($table));
+						$hasOneClasses[] = $inflect->classify($table);
+						$hasManyClasses[] = $inflect->classify($table);
 					}
 				}
 				$offset = strpos($table, $modelTableName . '_');
 
 				if($offset !== false) {
 					$offset = strlen($modelTableName . '_');
-					$hasAndBelongsToManyClasses[] = $inflect->camelize($inflect->singularize(substr($table, $offset)));
+					$hasAndBelongsToManyClasses[] = $inflect->classify(substr($table, $offset));
 				}
 				$offset = strpos($table, '_' . $modelTableName);
 
 				if ($offset !== false) {
-					$hasAndBelongsToManyClasses[] = $inflect->camelize($inflect->singularize(substr($table, 0, $offset)));
+					$hasAndBelongsToManyClasses[] = $inflect->classify(substr($table, 0, $offset));
 				}
 			}
 
@@ -535,7 +535,7 @@ class Bake {
 		$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
 
 		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
-			if ($modelTableName == $inflect->underscore($inflect->pluralize($modelClassName))) {
+			if ($modelTableName == $inflect->tableize($modelClassName)) {
 				// set it to null...
 				// putting $useTable in the model
 				// is unnecessary.
@@ -667,7 +667,7 @@ class Bake {
 					if(isset($value['foreignKey'])) {
 						$otherModelObject =& ClassRegistry::getObject($inflect->underscore($objModel->tableToModel[$value['table']]));
 						$displayField = $otherModelObject->getDisplayField();
-						$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$inflect->singularize($this->lowCtrl)."['{$alias[$count]}']['{$displayField}'], '/" . $inflect->underscore($value['controller']) . "/view/' . \${$this->lowCtrl}['{$objModel->tableToModel[$objModel->table]}']['{$field}'])?></dd>\n";
+						$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$inflect->singularize($this->lowCtrl)."['{$alias[$count]}']['{$displayField}'], '/" . $inflect->underscore($value['controller']) . "/view/' .\$".$inflect->singularize($this->lowCtrl)."['{$objModel->tableToModel[$objModel->table]}']['{$field}'])?></dd>\n";
 						$count++;
 					} else {
 						$viewView .= "\t<dd>&nbsp;<?php echo \$".$inflect->singularize($this->lowCtrl)."['{$objModel->tableToModel[$objModel->table]}']['{$field}']?></dd>\n";
@@ -692,7 +692,7 @@ class Bake {
 					$otherModelName = $objModel->tableToModel[$objModel->{$model}->table];
 					$controller = $inflect->pluralize($model);
 					$new = true;
-					$viewView .= "<div class='related'><h2>Related " . $inflect->humanize($association) . "</h2>\n";
+					$viewView .= "<div class='related'>\n<h3>Related " . $inflect->humanize($association) . "</h3>\n";
 					$viewView .= "<?php if(!empty(\$".$inflect->singularize($this->lowCtrl)."['{$association}'])): ?>\n";
 					$viewView .= "<dl>\n";
 					$viewView .= "\t<?php foreach(\$".$inflect->singularize($this->lowCtrl)."['{$association}'] as \$field => \$value): ?>\n";
@@ -715,7 +715,7 @@ class Bake {
 					$count = 0;
 					$otherModelName = $inflect->singularize($model);
 					$controller = $inflect->pluralize($model);
-					$viewView .= "\n<div class='related'>\n<h2>Related " . $inflect->humanize($inflect->pluralize($association)) . "</h2>\n";
+					$viewView .= "\n<div class='related'>\n<h3>Related " . $inflect->humanize($inflect->pluralize($association)) . "</h3>\n";
 					$viewView .= "<?php if(!empty(\$".$inflect->singularize($this->lowCtrl)."['{$association}'])):?>\n";
 					$viewView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
 					$viewView .= "<tr>\n";
@@ -887,15 +887,17 @@ class Bake {
 			foreach($tempModel->hasAndBelongsToMany as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
-					$lowerName = strtolower($association);
+					$lowerFirst = strtolower(substr($association, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $association, 1);
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\$this->set('selected{$model}', null);\n";
+					$actions .= "\t\t\t\$this->set('selected{$association}', null);\n";
 				}
 			}
 			foreach($tempModel->belongsTo as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
-					$lowerName = strtolower(substr( $relation['foreignKey'], 0, strpos( $relation['foreignKey'], "_id" ) ));
+					$lowerFirst = strtolower(substr($model, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $model, 1);
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
@@ -918,16 +920,18 @@ class Bake {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
 					$associationModel = new $model();
-					$lowerName = strtolower($association);
+					$lowerFirst = strtolower(substr($association, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $association, 1);
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(empty(\$this->data['{$model}']['{$model}'])) { \$this->data['{$model}']['{$model}'] = null; }\n";
-					$actions .= "\t\t\t\t\$this->set('selected{$model}', \$this->data['{$model}']['{$model}']);\n";
+					$actions .= "\t\t\t\tif(empty(\$this->data['{$association}']['{$association}'])) { \$this->data['{$association}']['{$association}'] = null; }\n";
+					$actions .= "\t\t\t\t\$this->set('selected{$association}', \$this->data['{$association}']['{$association}']);\n";
 				}
 			}
 			foreach($tempModel->belongsTo as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
-					$lowerName = strtolower(substr( $relation['foreignKey'], 0, strpos( $relation['foreignKey'], "_id" ) ));
+					$lowerFirst = strtolower(substr($model, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $model, 1);
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
@@ -943,15 +947,17 @@ class Bake {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
 					$associationModel = new $model();
-					$lowerName = strtolower($association);
+					$lowerFirst = strtolower(substr($association, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $association, 1);
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\$this->set('selected{$model}', \$this->_selectedArray(\$this->data['{$model}'], '{$associationModel->primaryKey}'));\n";
+					$actions .= "\t\t\t\$this->set('selected{$association}', \$this->_selectedArray(\$this->data['{$association}'], '{$associationModel->primaryKey}'));\n";
 				}
 			}
 			foreach($tempModel->belongsTo as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
-					$lowerName = strtolower(substr( $relation['foreignKey'], 0, strpos( $relation['foreignKey'], "_id" ) ));
+					$lowerFirst = strtolower(substr($model, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $model, 1);
 					$actions .= "\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
@@ -973,16 +979,18 @@ class Bake {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
 					$associationModel = new $model();
-					$lowerName = strtolower($association);
+					$lowerFirst = strtolower(substr($association, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $association, 1);
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
-					$actions .= "\t\t\t\tif(empty(\$this->data['{$model}']['{$model}'])) { \$this->data['{$model}']['{$model}'] = null; }\n";
-					$actions .= "\t\t\t\t\$this->set('selected{$model}', \$this->data['{$model}']['{$model}']);\n";
+					$actions .= "\t\t\t\tif(empty(\$this->data['{$association}']['{$association}'])) { \$this->data['{$association}']['{$association}'] = null; }\n";
+					$actions .= "\t\t\t\t\$this->set('selected{$association}', \$this->data['{$association}']['{$association}']);\n";
 				}
 			}
 			foreach($tempModel->belongsTo as $association => $relation) {
 				if(!empty($relation['className'])) {
 					$model = $relation['className'];
-					$lowerName = strtolower(substr( $relation['foreignKey'], 0, strpos( $relation['foreignKey'], "_id" ) ));
+					$lowerFirst = strtolower(substr($model, 0, 1));
+					$lowerName = preg_replace('/\\w/', $lowerFirst, $model, 1);
 					$actions .= "\t\t\t\t\$this->set('{$lowerName}Array', \$this->{$controllerModel}->{$model}->generateList());\n";
 				}
 			}
@@ -1602,7 +1610,7 @@ class Bake {
 		$htmlAttributes['rows'] = $rows;
 		$tagNameArray = explode('/', $tagName);
 		$str = "\t<?php echo \$html->textarea('{$tagName}', " . $this->attributesToArray($htmlAttributes) . ");?>\n";
-		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label( '{$tagName}', '{$prompt}' );?>\n";
 		$divClass = "optional";
 
@@ -1634,7 +1642,7 @@ class Bake {
 		$htmlOptions['class'] = "inputCheckbox";
 		$tagNameArray = explode('/', $tagName);
 		$str = "\n\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->attributesToArray($htmlAttributes) . ");?>\n";
-		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please check the {$prompt}.');?>\n";
 		$strLabel = "\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 
@@ -1666,7 +1674,7 @@ class Bake {
 	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected=null ) {
 		$tagNameArray = explode('/', $tagName);
 		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , 'NONE', \$html->tagValue('{$tagName}'), " . $this->attributesToArray($htmlOptions) . ");?>\n";
-		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 
@@ -1726,7 +1734,7 @@ class Bake {
 	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null ) {
 		$tagNameArray = explode('/', $tagName);
 		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \$html->tagValue('{$tagName}'), " . $this->attributesToArray($htmlOptions) . ");?>\n";
-		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 
@@ -1759,7 +1767,7 @@ class Bake {
 		$htmlAttributes['size'] = $size;
 		$tagNameArray = explode('/', $tagName);
 		$str = "\t<?php echo \$html->input('{$tagName}', " . $this->attributesToArray($htmlAttributes) . ");?>\n";
-		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$prompt}.');?>\n";
 		 $strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 
@@ -1797,14 +1805,15 @@ class Bake {
 		$controllerPath = strtolower(substr($inflect->pluralize($properModel), 0, 1)) . substr($inflect->pluralize($properModel), 1);
 		$actionPath = strtolower(substr($properModel, 0, 1)) . substr($properModel, 1) . 'List';
 		$path = "/$controllerPath/$actionPath";
-		$lowerName = strtolower($tagNameArray[0]);
+		$lowerFirst = strtolower(substr($tagNameArray[0], 0, 1));
+		$lowerName = preg_replace('/\\w/', $lowerFirst, $tagNameArray[0], 1);
 
 		if($selectAttr['multiple'] != 'multiple') {
 			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$model}Array, \$html->tagValue('{$tagName}'), " . $this->attributesToArray($selectAttr) . ");?>\n";
-			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.') ?>\n";
+			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.') ?>\n";
 		} else {
 			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$lowerName}Array, \$selected{$tagNameArray[0]}, array('multiple' => 'multiple', 'class' => 'selectMultiple'));?>\n";
-			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$tagNameArray[1]}.');?>\n";
+			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		}
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
@@ -2012,7 +2021,7 @@ class Bake {
 		$this->hr();
 		$this->stdout("Skel Directory: $skel");
 		$this->stdout("Will be copied to:");
-		$this->stdout("New App Directory: $projectPath");
+		$this->stdout("New App Direcotry: $projectPath");
 		$this->hr();
 		$looksGood = $this->getInput('Look okay?', array('y', 'n', 'q'), 'y');
 
