@@ -66,9 +66,11 @@ class Router extends Overloadable {
  * @var array
  */
 	var $__named = array(
-		'Action' => 'index|show|list|add|create|edit|update|remove|del|delete|new|view|item',
-		'Year' => '[12][0-9]{3}',
-		'ID' => '[0-9]+'
+		'Action'	=> 'index|show|list|add|create|edit|update|remove|del|delete|new|view|item',
+		'Year'		=> '[12][0-9]{3}',
+		'Month'		=> '(0[1-9]|1[012])',
+		'Day'		=> '(0[1-9]|[12][0-9]|3[01])',
+		'ID'		=> '[0-9]+'
 	);
  /**
   * Initialize the Router object
@@ -103,7 +105,7 @@ class Router extends Overloadable {
  *
  * @return array
  */
-	function getMap() {
+	function getNamedExpressions() {
 		$_this =& Router::getInstance();
 		return $_this->__named;
 	}
@@ -112,11 +114,12 @@ class Router extends Overloadable {
  *
  * @param string $route			An empty string, or a route string "/"
  * @param array $default		NULL or an array describing the default route
- * @param array $requirements	An array matching the named elements in the route to regular expressions which that element should match.
+ * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @param array $required		A list of named elements (from $params) which are required to appear in the URL
  * @see routes
  * @return array			Array of routes
  */
-	function connect($route, $default = null, $requirements = array()) {
+	function connect($route, $default = null, $params = array(), $required = array()) {
 
 		$_this =& Router::getInstance();
 		$parsed = $names = array();
@@ -150,10 +153,14 @@ class Router extends Overloadable {
 			}
 
 			foreach($elements as $element) {
+				$q = '?';
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
-					if (isset($requirements[$r[1]])) {
-						$parsed[] = '(?:\/(' . $requirements[$r[1]] . '))';
+					if (isset($params[$r[1]])) {
+						if ((!empty($required) && in_array($r[1], $required)) || empty($required)) {
+							$q = null;
+						}
+						$parsed[] = '(?:\/(' . $params[$r[1]] . '))' . $q;
 					} else {
 						$parsed[] = '(?:\/([^\/]+))?';
 					}
