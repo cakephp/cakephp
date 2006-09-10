@@ -29,26 +29,39 @@
  */
 	defineConstants();
 	$cakeDir = CORE_PATH.DS.'cake'.DS;
+	$argCount = count($argv);
 	
-	if (count($argv) >= 2) {
-		$appPath = getAppPath($cakeDir, $argv[1]);
-		$taskName = '';
-		$params = array();
+	if ($argCount == 1 || $argv[1] == 'help') {
+		showHelp();
+	} else {
+		$taskName = $argv[1];
+		$appPath = false;
+		$params = null;
+		$showHelp = false;
+		
+		if ($argCount > 2) {
+			if ($argv[2] == 'help') {
+				$showHelp = true;
+			} else {
+				$appPath = getAppPath($argv[2]);
+			}
+		}
 		
 		if ($appPath != false) {
 			defineAppConstants($appPath);
-			$taskName = $argv[2];
 			$params = prepareParams($argv, 3);
 		} else {
 			defineAppConstantsWithDefaultValues();
-			$taskName = $argv[1];
 			$params = prepareParams($argv, 2);
 		}
 		
 		includeCoreFiles($cakeDir);
-		executeTask($taskName, $params);
-	} else {
-		showHelp();
+		
+		if ($showHelp) {
+			showHelpForTask($taskName);
+		} else {
+			executeTask($taskName, $params);
+		}
 	}
 		
 	function defineAppConstants($appPath) {
@@ -74,6 +87,25 @@
 	}
 	
 	function executeTask($taskName, $params) {
+		$class = getTaskClass($taskName);
+		$class->execute($params);
+	}
+	
+	function getAppPath($appPathShortcut) {
+		$iniFile = CORE_PATH.DS.'apps.ini';
+		
+		if (file_exists($iniFile)) {
+			$appArray = readConfigFile($iniFile);
+		
+			if (array_key_exists($appPathShortcut, $appArray)) {
+				return $appArray[$appPathShortcut];
+			}
+		}
+		
+		return false;
+	}
+
+	function getTaskClass($taskName) {
 		$scriptDir = dirname(__FILE__);
 		$taskPath = 'tasks'.DS.$taskName.'_task.php';
 		require($scriptDir.DS.'tasks'.DS.'bake_task.php');
@@ -85,22 +117,7 @@
 		}
 		
 		$className = $taskName.'Task';
-		$class = new $className;
-		$class->execute($params);
-	}
-	
-	function getAppPath($cakeDir, $appPathShortcut) {
-		$iniFile = $cakeDir.'config'.DS.'apps.ini';
-		
-		if (file_exists($iniFile)) {
-			$appArray = readConfigFile($iniFile);
-		
-			if (array_key_exists($appPathShortcut, $appArray)) {
-				return $appArray[$appPathShortcut];
-			}
-		}
-		
-		return false;
+		return new $className;
 	}
 	
 	function includeCoreFiles($cakePath) {
@@ -138,5 +155,10 @@
 	
 	function showHelp() {
 		echo "Usage: php bake2.php task [param1, ...]\n";
+	}
+	
+	function showHelpForTask($taskName) {
+		$class = getTaskClass($taskName);
+		$class->help();
 	}
 ?>

@@ -26,6 +26,13 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
- 	class BakeTask {
- 		
- 	}
+ class BakeTask {
+ 	
+ 	/**
+	 * Override this function in subclasses to provide a help message for your task.
+	 */
+	function help()
+	{
+		echo "There is no help available for the specified task.\n";
+	}
+ }
