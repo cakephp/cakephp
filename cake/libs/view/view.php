@@ -740,7 +740,7 @@ class View extends Object{
  */
 	function &_loadHelpers(&$loaded, $helpers) {
 		static $tags;
-
+		$helpers[] = 'Session';
 		if (empty($tags)) {
 			$helperTags = new Helper();
 			$tags = $helperTags->loadConfig();
