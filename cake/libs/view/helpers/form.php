@@ -236,7 +236,7 @@ class FormHelper extends Helper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
-		return $this->output(sprintf($this->tags['textarea'], $this->Html->model, $this->Html->field, $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
+		return $this->output(sprintf($this->tags['textarea'], $this->model(), $this->field(), $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a button tag.

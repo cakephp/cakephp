@@ -214,11 +214,15 @@ class HtmlHelper extends Helper {
  * @param boolean $inline
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  */
-	function css($path, $rel = 'stylesheet', $htmlAttributes = array(), $inline = true) {
+	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
 		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
+
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
+			if ($rel == null) {
+				$rel = 'stylesheet';
+			}
 			$out = sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' '));
 		}
 		$out = $this->output($out);
