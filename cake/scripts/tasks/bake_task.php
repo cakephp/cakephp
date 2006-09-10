@@ -26,13 +26,20 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
- class BakeTask {
- 	
- 	/**
+class BakeTask {
+
+	/**
+	 * Override this function in subclasses to implement the task logic.
+	 * @param array $params The command line params (without script and task name).
+	 */
+	function execute($params) {
+		// empty
+	}
+
+	/**
 	 * Override this function in subclasses to provide a help message for your task.
 	 */
-	function help()
-	{
+	function help() {
 		echo "There is no help available for the specified task.\n";
 	}
- }
+}
