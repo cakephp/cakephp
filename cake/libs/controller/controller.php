@@ -815,7 +815,7 @@ class Controller extends Object {
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
  */
-	function postConditions($data = array(), $op = '', $bool = 'AND', $exclusive = false) {
+	function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if ((!is_array($data) || empty($data)) && empty($this->data)) {
 			return null;
 		} elseif ((!is_array($data) || empty($data)) && !empty($this->data)) {
@@ -823,6 +823,9 @@ class Controller extends Object {
 		}
 
 		$cond = array();
+		if ($op === null) {
+			$op = '';
+		}
 
 		foreach($data as $model => $fields) {
 			foreach($fields as $field => $value) {
