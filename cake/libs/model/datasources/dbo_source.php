@@ -114,6 +114,8 @@ class DboSource extends DataSource {
 				$out[$keys[$i]] = $this->value($data[$keys[$i]]);
 			}
 			return $out;
+		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'))) {
+			return $data;
 		} else {
 			return null;
 		}
