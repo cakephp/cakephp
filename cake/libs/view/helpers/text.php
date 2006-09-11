@@ -150,7 +150,7 @@ class TextHelper extends Helper {
  * @param boolean $exact If false, $test will not be cut mid-word
  * @return string Trimmed string.
  */
-	function truncate($text, $length, $ending = '...', $exact = true) {
+	function truncate($text, $length = 100, $ending = '...', $exact = true) {
 		if (strlen($text) <= $length) {
 			return $text;
 		} else {
