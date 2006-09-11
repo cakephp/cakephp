@@ -915,6 +915,12 @@ class Model extends Overloadable {
 				$joined[] = $v;
 			} else {
 				if ($n === $this->name) {
+					foreach (array('created', 'updated', 'modified') as $field) {
+						if (array_key_exists($field, $v) && (empty($v[$field]) || $v[$field] === null)) {
+							unset($v[$field]);
+						}
+					}
+				
 					foreach($v as $x => $y) {
 						if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist)) {
 							$fields[] = $x;
@@ -965,6 +971,16 @@ class Model extends Overloadable {
 				}
 			} else {
 				if ($db->create($this, $fields, $values)) {
+					
+					if (!empty($this->belongsTo)) {
+						foreach ($this->belongsTo as $parent => $assoc) {
+							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
+								$parentObj =& $this->{$assoc['className']};
+								
+							}
+						}
+					}
+					
 					$this->__insertID = $db->lastInsertId($this->tablePrefix . $this->table, $this->primaryKey);
 
 					if (!$this->__insertID && $newID != null) {
