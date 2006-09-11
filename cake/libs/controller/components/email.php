@@ -38,6 +38,20 @@
  *
  */
 class EmailComponent extends Object {
+	var $to = null;
+	var $from = null;
+	var $cc = null;
+	var $bcc = null;
+	var $subject = null;
+	var $template = 'default';
+	var $sendAs = 'text';
+	var $delivery = 'mail';
+	var $charset = 'ISO-8859-1';
+
+	var $_debug = false;
+	var $_error = false;
+	var $_newLine = '\n';
+	var $_lineLength = 75;
 
 }
 ?>
