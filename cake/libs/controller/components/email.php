@@ -60,13 +60,21 @@ class EmailComponent extends Object{
 
 	var $__header = null;
 	var $__boundary = null;
+	var $__message = null;
 
 
-	function send($content = array()){
+	function send($content){
 		if($this->template === null) {
-			$message = $content;
+			if(is_array($content)){
+				$message = null;
+				foreach ($content as $key => $value){
+					$message .= $value . $this->_newLine;
+				}
+			} else {
+				$message = $content;
+			}
 		} else {
-			$message = $this->__renderTemplate();
+			$message = $this->__renderTemplate($content);
 		}
 
 		$this->__createBoundary();
@@ -122,20 +130,21 @@ class EmailComponent extends Object{
 	}
 
 	function __formatMessage($message){
-		$this->message = '--' . $this->__boundary . $this->_newLine;
-		$this->message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-		$this->message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-		$this->message .=  strip_tags($message) . $this->_newLine;
+		$message = $this->__wrap($message);
+		$this->__message = '--' . $this->__boundary . $this->_newLine;
+		$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+		$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+		$this->__message .=  strip_tags($message) . $this->_newLine;
 
 		if($this->sendAs === 'html'){
-			$this->message .=  strip_tags($message) . $this->_newLine;
-			$this->message = '--' .  $this->__boundary . $this->_newLine;
-			$this->message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$this->message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$this->message .= $message . $this->_newLine;
-			$this->message .=  $this->_newLine . $this->_newLine;
+			$this->__message .=  strip_tags($message) . $this->_newLine;
+			$this->__message = '--' .  $this->__boundary . $this->_newLine;
+			$this->__message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$this->__message .= $message . $this->_newLine;
+			$this->__message .=  $this->_newLine . $this->_newLine;
 		} else {
-			$this->message .= $message . $this->_newLine;
+			$this->__message .= $message . $this->_newLine;
 		}
 	}
 
@@ -150,11 +159,11 @@ class EmailComponent extends Object{
 			$data = chunk_split(base64_encode($data)) ;
 			$filetype = mime_content_type($file);
 
-			$this->message .= '--' . $this->__boundary . $this->_newLine;
-			$this->message .= 'Content-Type: ' . $filetype . '; name="' . $file . '"' . $this->_newLine;
-			$this->message .= 'Content-Transfer-Encoding: base64' . $this->_newLine;
-			$this->message .= 'Content-Disposition: attachment; filename="' .$file. '"' . $this->_newLine . $this->_newLine;
-			$this->message .= $data . $this->_newLine . $this->_newLine;
+			$this->__message .= '--' . $this->__boundary . $this->_newLine;
+			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . $file . '"' . $this->_newLine;
+			$this->__message .= 'Content-Transfer-Encoding: base64' . $this->_newLine;
+			$this->__message .= 'Content-Disposition: attachment; filename="' .$file. '"' . $this->_newLine . $this->_newLine;
+			$this->__message .= $data . $this->_newLine . $this->_newLine;
 		}
 	}
 
@@ -167,8 +176,21 @@ class EmailComponent extends Object{
 		}
 	}
 
+	function __wrap($message) {
+		$message = str_replace("\r\n", "\n ", $message);
+		$words = explode(" ", $message);
+		foreach ($words as $word) {
+			$formated .= chunk_split($word, $this->_lineLength, " ") . " ";
+		}
+		return $formated;
+	}
+
 	function __mail(){
-		return @mail($this->to, $this->subject, $this->message, $this->__header);
+		return @mail($this->to, $this->subject, $this->__message, $this->__header);
+	}
+
+	function __smtp(){
+
 	}
 }
 ?>
