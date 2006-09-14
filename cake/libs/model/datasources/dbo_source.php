@@ -184,7 +184,7 @@ class DboSource extends DataSource {
 				$all  = true;
 				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
 			}
-			
+
 			$or = (strpos($field, '_or_') !== false);
 			if ($or) {
 				$field = explode('_or_', $field);
@@ -212,7 +212,7 @@ class DboSource extends DataSource {
 			}
 
 			if ($all) {
-				
+
 				if (isset($params[3 + $off])) {
 					$limit = $params[3 + $off];
 				}
@@ -545,12 +545,12 @@ class DboSource extends DataSource {
 		// Build final query SQL
 		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
 		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->name);
-		
+
 		if ($resultSet === false) {
 			$model->onError();
 			return false;
 		}
-		
+
 		$filtered = $this->__filterResults($resultSet, $model);
 
 		if ($model->recursive > 0) {
@@ -666,14 +666,18 @@ class DboSource extends DataSource {
 
 				$row =& $resultSet[$i];
 				$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
-				$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
+				if($q != false){
+					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
+				} else {
+					$fetch = null;
+				}
 
 				if (!empty($fetch) && is_array($fetch)) {
-					if ($recursive > 0) {  
-						
+					if ($recursive > 0) {
+
 						foreach($linkModel->__associations as $type1) {
 							foreach($linkModel->{$type1} as $assoc1 => $assocData1) {
-                                 
+
 								$deepModel =& $linkModel->{$assocData1['className']};
 								if ($deepModel->alias != $model->name) {
 									$tmpStack = $stack;
