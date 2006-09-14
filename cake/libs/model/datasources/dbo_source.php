@@ -526,7 +526,7 @@ class DboSource extends DataSource {
 		foreach($model->__associations as $type) {
 			foreach($model->{$type} as $assoc => $assocData) {
 				if ($model->recursive > -1) {
-					$linkModel =& $model->{$assocData['className']};
+					$linkModel =& $model->{$assoc};
 
 					if ($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
 						if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null)) {
@@ -557,7 +557,7 @@ class DboSource extends DataSource {
 			foreach($model->__associations as $type) {
 				foreach($model->{$type} as $assoc => $assocData) {
 					$db = null;
-					$linkModel =& $model->{$assocData['className']};
+					$linkModel =& $model->{$assoc};
 
 					if (!in_array($type . '/' . $assoc, $linkedModels)) {
 						if ($model->useDbConfig == $linkModel->useDbConfig) {

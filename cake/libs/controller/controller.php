@@ -351,7 +351,7 @@ class Controller extends Object {
 		}
 	}
 /**
- * Redirects to given $url, after turning off $this->autoRender. Please notice that the script execution is not stopped 
+ * Redirects to given $url, after turning off $this->autoRender. Please notice that the script execution is not stopped
  * after the redirect.
  *
  * @param string $url
@@ -630,7 +630,7 @@ class Controller extends Object {
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;
 		$table = $this->{$model}->table;
-		$association = array_search($table, $this->{$model}->alias);
+		//$association = array_search($table, $this->{$model}->alias);
 		$objRegistryModel =& ClassRegistry::getObject($modelKey);
 
 		foreach($objRegistryModel->_tableInfo as $tables) {
@@ -644,7 +644,7 @@ class Controller extends Object {
 					}
 					$fkNames = $this->{$model}->keyToTable[$tabl['name']];
 					$fieldNames[$tabl['name']]['table'] = $fkNames[0];
-					$association = array_search($fieldNames[$tabl['name']]['table'], $this->{$model}->alias);
+					//$association = array_search($fieldNames[$tabl['name']]['table'], $this->{$model}->alias);
 					$fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($niceName);
 					$fieldNames[$tabl['name']]['model'] = $fkNames[1];
 					$fieldNames[$tabl['name']]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']];
@@ -702,7 +702,7 @@ class Controller extends Object {
 										}
 									}
 								}
-								$fieldNames[$tabl['name']]['selected'] = $data[$association][$tabl['name']];
+								$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
 							}
 						} else {
 							$fieldNames[$tabl['name']]['type'] = 'input';

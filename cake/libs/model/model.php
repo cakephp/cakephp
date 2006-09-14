@@ -554,21 +554,25 @@ class Model extends Overloadable {
 
 		if (ClassRegistry::isKeySet($colKey)) {
 			if (!PHP5) {
-				$this->{$className} =& ClassRegistry::getObject($colKey);
+				$this->{$assoc} =& ClassRegistry::getObject($colKey);
+				$this->{$className} =& $this->{$assoc};
 			} else {
-				$this->{$className} = ClassRegistry::getObject($colKey);
+				$this->{$assoc} = ClassRegistry::getObject($colKey);
+				$this->{$className} = $this->{$assoc};
 			}
 		} else {
 			if (!PHP5) {
-				$this->{$className} =& new $className($id, $table, $ds);
+				$this->{$assoc} =& new $className($id, $table, $ds);
+				$this->{$className} =& $this->{$assoc};
 			} else {
-				$this->{$className} = new $className($id, $table, $ds);
+				$this->{$assoc} = new $className($id, $table, $ds);
+				$this->{$className} = $this->{$assoc};
 			}
 		}
 
-		$this->alias[$assoc] = $this->{$className}->table;
-		$this->tableToModel[$this->{$className}->table] = $className;
-		$this->modelToTable[$className] = $this->{$className}->table;
+		$this->alias[$assoc] = $this->{$assoc}->table;
+		$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		$this->modelToTable[$assoc] = $this->{$assoc}->table;
 	}
 /**
  * Build array-based association from string.
@@ -580,9 +584,9 @@ class Model extends Overloadable {
 		foreach($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
 
-			if (isset($this->{$type}[$assocKey]['className']) && $this->{$type}[$assocKey]['className'] !== null) {
-				$class = $this->{$type}[$assocKey]['className'];
-			}
+			//if (isset($this->{$type}[$assocKey]['className']) && $this->{$type}[$assocKey]['className'] !== null) {
+			//	$class = $this->{$type}[$assocKey]['className'];
+			//}
 
 			foreach($this->__associationKeys[$type] as $key) {
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] == null) {
