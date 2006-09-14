@@ -1039,24 +1039,27 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$newValue[] = $newValues;
+					$newValue[$assoc] = $newValues;
 					unset($newValues);
+				} else {
+					$newValue[$assoc] = array();
 				}
 			}
 		}
 
 		$total = count($joinTable);
 
-		for($count = 0; $count < $total; $count++) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
-			$table = $db->name($db->fullTableName($joinTable[$count]));
-			$db->execute("DELETE FROM {$table} WHERE {$mainKey[$count]} = '{$id}'");
+		if(is_array($newValue)){
+			foreach ($newValue as $loopAssoc=>$val) {
+				$db =& ConnectionManager::getDataSource($this->useDbConfig);
+				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
+				$db->execute("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
 
-			if (!empty($newValue[$count])) {
-				$secondCount = count($newValue[$count]);
-
-				for($x = 0; $x < $secondCount; $x++) {
-					$db->execute("INSERT INTO {$table} ({$fields[$count]}) VALUES {$newValue[$count][$x]}");
+				if (!empty($newValue[$loopAssoc])) {
+					$secondCount = count($newValue[$loopAssoc]);
+					for($x = 0; $x < $secondCount; $x++) {
+						$db->execute("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
+					}
 				}
 			}
 		}

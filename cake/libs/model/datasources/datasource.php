@@ -437,7 +437,8 @@ class DataSource extends Object{
 		return $model->name . $key;
 	}
 /**
- * Enter description here... The special {n}, as seen in the Model::generateList method, is taken care of here.
+ * Gets a value from an array or object.
+ * The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
  * @param array $data
  * @param mixed $path	As an array, or as a dot-separated string.
