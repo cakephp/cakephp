@@ -401,8 +401,8 @@ class DataSource extends Object{
 										} else {
 											$found = false;
 											foreach (array_reverse($stack) as $assoc) {
-												if (isset($data[$assoc]) && isset($data[$assoc][$model->primaryKey])) {
-													$val = $data[$assoc][$model->primaryKey];
+												if (isset($data[$assoc]) && isset($data[$assoc][$foreignKey])) {
+													$val = $data[$assoc][$foreignKey];
 													$found = true;
 													break;
 												}
