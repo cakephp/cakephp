@@ -1017,15 +1017,13 @@ class Model extends Overloadable {
  */
 	function __saveMulti($joined, $id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		foreach($joined as $x => $y) {
 			foreach($y as $assoc => $value) {
-
-				$joinTable[] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-				$mainKey[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-				$keys[]    = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-				$keys[]    = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
-				$fields[]  = join(',', $keys);
+				$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
+				$mainKey[$assoc] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+				$keys[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+				$keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+				$fields[$assoc]  = join(',', $keys);
 				unset($keys);
 
 				foreach($value as $update) {
