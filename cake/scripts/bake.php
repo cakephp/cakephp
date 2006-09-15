@@ -306,7 +306,7 @@ class Bake {
 			$tables = $db->listSources();
 		}
 
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 		$this->stdout('Possible models based on your current database:');
 
 		for ($i = 0; $i < count($tables); $i++) {
@@ -562,7 +562,7 @@ class Bake {
 		$wannaUseSession = 'y';
 		$wannaDoScaffold = 'y';
 		$controllerName = '';
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 
 		while ($controllerName == '') {
 			$controllerName = $this->getInput('Controller Name? (plural)');
@@ -697,7 +697,7 @@ class Bake {
 					$viewView .= "<dl>\n";
 					$viewView .= "\t<?php foreach(\$".$inflect->singularize($this->lowCtrl)."['{$association}'] as \$field => \$value): ?>\n";
 					$viewView .= "\t\t<dt><?php echo \$field ?></dt>\n";
-					$viewView .= "\t\t<dd>&nbsp<?php echo \$value ?></dd>\n";
+					$viewView .= "\t\t<dd>&nbsp;<?php echo \$value ?></dd>\n";
 					$viewView .= "\t<?php endforeach; ?>\n";
 					$viewView .= "</dl>\n";
 					$viewView .= "<?php endif; ?>\n";
@@ -831,7 +831,7 @@ class Bake {
 			}
 		}
 
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 		$controllerClassName = $inflect->camelize($controllerName);
 		$doItInteractive = $this->getInput("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
 
@@ -1234,7 +1234,7 @@ class Bake {
 		}
 		$out .= "}\n";
 		$out .= "?>";
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 		$filename = MODELS.$inflect->underscore($modelClassName) . '.php';
 		$this->createFile($filename, $out);
 	}
@@ -1266,7 +1266,7 @@ class Bake {
  * @param string $actions
  */
 	function bakeController($controllerName, $uses, $helpers, $components, $actions = '') {
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 		$out = "<?php\n";
 		$out .= "class $controllerName" . "Controller extends AppController\n";
 		$out .= "{\n";
@@ -1324,6 +1324,7 @@ class Bake {
  * @param string $className
  */
 	function bakeUnitTest($type, $className) {
+		$inflect = & new Inflector();
 		$out = '<?php '."\n\n";
 		$error = false;
 		switch ($type) {
@@ -1568,22 +1569,22 @@ class Bake {
 						//$strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
 					break;
 					case "date":
-						if( !isset( $field['selected'])) {
+						if (!isset($field['selected'])) {
 							$field['selected'] = null;
 						}
-						$strFormFields = $strFormFields.$this->generateDate( $field['tagName'], $field['prompt'], null, null, null, null, $field['selected']);
+						$strFormFields = $strFormFields . $this->generateDate($field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], null, $field['htmlOptions'], $field['selected']);
 					break;
 					case "datetime":
-						if( !isset( $field['selected'])) {
+						if (!isset($field['selected'])) {
 							$field['selected'] = null;
 						}
-						$strFormFields = $strFormFields.$this->generateDateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
+						$strFormFields = $strFormFields . $this->generateDateTime($field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], null, $field['htmlOptions'], $field['selected']);
 					break;
 					case "time":
-						if( !isset( $field['selected'])) {
+						if (!isset($field['selected'])) {
 							$field['selected'] = null;
 						}
-						$strFormFields = $strFormFields.$this->generateTime( $field['tagName'], $field['prompt'], '','','', '', $field['selected']);
+						$strFormFields = $strFormFields . $this->generateTime($field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], null, $field['htmlOptions'], $field['selected']);
 					break;
 					default:
 					break;
@@ -1704,7 +1705,7 @@ class Bake {
  * @return Generated HTML and PHP.
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		$str = "\n\t\<?php echo \$html->dateTimeOptionTag(\$tagName, 'NONE', '24', \$selected, \$htmlOptions);?>\n";
+		$str = "\n\t\<?php echo \$html->dateTimeOptionTag('{$tagName}', 'NONE', '24', \$html->tagValue('{$tagName}'), " . $this->attributesToArray($htmlOptions) . ");?>\n";
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 		if ($required) {
@@ -1799,7 +1800,7 @@ class Bake {
  */
 	function generateSelectDiv($tagName, $prompt, $options, $selected=null, $selectAttr=null, $optionAttr=null, $required=false,  $errorMsg=null) {
 		$tagNameArray = explode('/', $tagName);
-		$inflect = new Inflector();
+		$inflect = & new Inflector();
 		$model = str_replace('_id', '', $tagNameArray[1]);
 		$properModel = $inflect->camelize($model);
 		$controllerPath = strtolower(substr($inflect->pluralize($properModel), 0, 1)) . substr($inflect->pluralize($properModel), 1);
@@ -2021,7 +2022,7 @@ class Bake {
 		$this->hr();
 		$this->stdout("Skel Directory: $skel");
 		$this->stdout("Will be copied to:");
-		$this->stdout("New App Direcotry: $projectPath");
+		$this->stdout("New App Directory: $projectPath");
 		$this->hr();
 		$looksGood = $this->getInput('Look okay?', array('y', 'n', 'q'), 'y');
 
