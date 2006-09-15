@@ -203,7 +203,8 @@ class Object{
 	function _savePersistent($name, &$object) {
 		$file = 'persistent' . DS . strtolower($name) . '.php';
 		$objectArray = array(&$object);
-		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', serialize($objectArray)) . '\' ?>';
+		$data = str_replace('\\', '\\\\', serialize($objectArray));
+		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
 		cache($file, $data, '+1 day');
 	}
 /**
