@@ -846,6 +846,7 @@ class View extends Object{
 					header('Content-type: text/xml');
 					$out = preg_replace('/^<!--cachetime:(\\d+)-->/', '', $out);
 				}
+				$out = str_replace('<!--cachetime:'.$match['1'].'-->','',$out);
 				e($out);
 				die();
 			}
