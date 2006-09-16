@@ -40,7 +40,7 @@
  * @subpackage	cake.cake.libs
  */
 uses('overloadable');
- 
+
 class Router extends Overloadable {
 /**
  * Array of routes
@@ -81,7 +81,7 @@ class Router extends Overloadable {
 			$admin = CAKE_ADMIN;
 			if (!empty($admin)) {
 				$this->__admin = array('/:' . $admin . '/:controller/:action/* (default)',
-										'/^(?:\/(?:(' . $admin . ')(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
+										'/^(?:\/(?:(' . $admin . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
 										array($admin, 'controller', 'action'), array());
 			}
 		}
