@@ -223,12 +223,7 @@ class DboSybase extends DboSource {
 				$data = $this->boolean((bool)$data);
 			break;
 			default:
-				if (get_magic_quotes_gpc() && trim(ini_get("magic_quotes_sybase")) == "") {
-					$data = stripslashes($data);
-					$data = str_replace("'", "''", $data); 
-				} elseif (!get_magic_quotes_gpc()) { 
-					$data = str_replace("'", "''", $data); 
-				} 
+				$data = str_replace("'", "''", $data);
 			break;
 		}
 

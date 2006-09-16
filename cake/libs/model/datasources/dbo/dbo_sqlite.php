@@ -218,10 +218,6 @@ class DboSqlite extends DboSource {
 				$data = $this->boolean((bool)$data);
 			break;
 			default:
-				if (ini_get('magic_quotes_gpc') == 1)
-				{
-					$data = stripslashes($data);
-				}
 				$data = sqlite_escape_string($data);
 			break;
 		}

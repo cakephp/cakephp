@@ -103,8 +103,8 @@ class DboMysqli extends DboSource {
 
 		if (mysqli_select_db($this->connection, $config['database'])) {
 			$this->connected = true;
-		}  
-		
+		}
+
 		return $this->connected;
 	}
 /**
@@ -123,19 +123,19 @@ class DboMysqli extends DboSource {
  * @return resource Result resource identifier
  * @access protected
  */
-	function _execute($sql) {      
-		return mysqli_query($this->connection, $sql);  
+	function _execute($sql) {
+		return mysqli_query($this->connection, $sql);
 	}
 /**
  * Returns an array of sources (tables) in the database.
  *
  * @return array Array of tablenames in the database
  */
-	function listSources() {    
+	function listSources() {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
-		}         
+		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database'] . ';');
 		if (!$result) {
 			return array();
@@ -145,7 +145,7 @@ class DboMysqli extends DboSource {
 			while ($line = mysqli_fetch_array($result)) {
 				$tables[] = $line[0];
 			}
-             
+
 			parent::listSources($tables);
 			return $tables;
 		}
@@ -156,16 +156,16 @@ class DboMysqli extends DboSource {
  * @param string $tableName Name of database table to inspect
  * @return array Fields in table. Keys are name and type
  */
-	function describe(&$model) {      
-	
+	function describe(&$model) {
+
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
 
 		$fields = false;
-		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));  
-		
+		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
+
 		foreach ($cols as $column) {
 			$colKey = array_keys($column);
 			if (isset($column[$colKey[0]]) && !isset($column[0])) {
@@ -179,8 +179,8 @@ class DboMysqli extends DboSource {
 					'default' => $column[0]['Default']
 				);
 			}
-		}                     
-		
+		}
+
 		$this->__cacheDescription($model->tablePrefix.$model->table, $fields);
 		return $fields;
 	}
@@ -228,9 +228,6 @@ class DboMysqli extends DboSource {
 				$data = $this->boolean((bool)$data);
 			break;
 			default:
-				if (ini_get('magic_quotes_gpc') == 1) {
-					$data = stripslashes($data);
-				}
 				$data = mysqli_real_escape_string($this->connection, $data);
 			break;
 		}
@@ -388,36 +385,36 @@ class DboMysqli extends DboSource {
  *
  * @param unknown_type $results
  */
-	function resultSet(&$results) {   
+	function resultSet(&$results) {
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = mysqli_num_fields($results);  
+		$num_fields = mysqli_num_fields($results);
 		$index = 0;
 		$j = 0;
 		while ($j < $num_fields) {
-			$column = mysqli_fetch_field_direct($results, $j); 
+			$column = mysqli_fetch_field_direct($results, $j);
 			if (!empty($column->table)) {
 				$this->map[$index++] = array($column->table, $column->name);
-			} else {             
+			} else {
 				$this->map[$index++] = array(0, $column->name);
 			}
 			$j++;
-		}            
+		}
 	}
 /**
  * Fetches the next row from the current result set
  *
  * @return unknown
  */
-	function fetchResult() {                           
-		if ($row = mysqli_fetch_row($this->results)) {  
+	function fetchResult() {
+		if ($row = mysqli_fetch_row($this->results)) {
 			$resultRow = array();
-			$i = 0;                  
-			foreach ($row as $index => $field) {  
-				@list($table, $column) = $this->map[$index]; 
-				$resultRow[$table][$column] = $row[$index]; 
-				$i++;                                  
-			}         
+			$i = 0;
+			foreach ($row as $index => $field) {
+				@list($table, $column) = $this->map[$index];
+				$resultRow[$table][$column] = $row[$index];
+				$i++;
+			}
 			return $resultRow;
 		} else {
 			return false;
@@ -428,8 +425,8 @@ class DboMysqli extends DboSource {
  *
  * @param bool $assoc Associative array only, or both?
  * @return array The fetched row as an array
-*/  
-	function fetchRow($assoc = false) {       
+*/
+	function fetchRow($assoc = false) {
 		if (is_object($this->_result)) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();

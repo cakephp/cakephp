@@ -236,9 +236,6 @@ class DboOdbc extends DboSource{
 				return 'NULL';
 		}
 
-		if (ini_get('magic_quotes_gpc') == 1) {
-				$data = stripslashes($data);
-		}
 		// $data = mysql_real_escape_string($data, $this->connection);
 
 		if (!is_numeric($data)) {
