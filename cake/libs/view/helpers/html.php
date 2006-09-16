@@ -914,8 +914,7 @@ class HtmlHelper extends Helper {
 		if (!empty($selected)) {
 
 			if (is_int($selected)) {
-				$selected = strftime('%G-%m-%d  %T', $selected);
-				$selected = strftime('%G-%m-%d  %H:%M:%S', $selected);
+				$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
 			}
 
 			$meridian = 'am';
