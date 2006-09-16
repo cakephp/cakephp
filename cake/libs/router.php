@@ -195,7 +195,7 @@ class Router extends Overloadable {
 		$out = array();
 		$r = null;
 		$default_route = array('/:controller/:action/* (default)',
-								'/^(?:\/(?:([a-zA-Z0-9_\\-\\.]+)(?:\\/([a-zA-Z0-9_\\-\\.]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
+								'/^(?:\/(?:([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
 								array('controller', 'action'), array());
 
 		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
