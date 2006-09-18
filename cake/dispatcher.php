@@ -98,7 +98,7 @@ class Dispatcher extends Object {
 																'message' => 'Was not found on this server',
 																'base' => $this->base)));
 																exit();
-					} else {
+					} elseif(!class_exists($ctrlClass)) {
 						$missingController = true;
 					}
 				} else {
