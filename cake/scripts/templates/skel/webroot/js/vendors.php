@@ -30,7 +30,14 @@
 /**
  * Enter description here...
  */
-	if (is_file('../../vendors/javascript/' . $_GET['file']) && (preg_match('/(.+)\\.js/', $_GET['file']))) {
-		 readfile('../../vendors/javascript/' . $_GET['file']);
+$file = $_GET['file'];
+$pos = strpos($file, '..');
+if ($pos === false) {
+	if(is_file('../../vendors/javascript/'.$file) && (preg_match('/(\/.+)\\.js/', $file)))
+	{
+		readfile('../../vendors/javascript/'.$file);
 	}
+} else {
+	header('HTTP/1.1 404 Not Found');
+}
 ?>
