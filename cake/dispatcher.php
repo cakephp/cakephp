@@ -256,6 +256,7 @@ class Dispatcher extends Object {
 		$controller->constructClasses();
 
 		if ($missingAction && !in_array('scaffold', array_keys($classVars))){
+			$this->start($controller);
 			return $this->cakeError('missingAction', array(
 											array('className' => Inflector::camelize($params['controller']."Controller"),
 													'action' => $params['action'],
@@ -265,6 +266,7 @@ class Dispatcher extends Object {
 		}
 
 		if ($privateAction) {
+			$this->start($controller);
 			return $this->cakeError('privateAction', array(
 											array('className' => Inflector::camelize($params['controller']."Controller"),
 													'action' => $params['action'],
