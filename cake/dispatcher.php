@@ -89,26 +89,24 @@ class Dispatcher extends Object {
 			$ctrlName = Inflector::camelize($params['controller']);
 			$ctrlClass = $ctrlName.'Controller';
 
-			if(!class_exists($ctrlClass)) {
-				if (!loadController($ctrlName)) {
-					$pluginName = Inflector::camelize($params['action']);
-					if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
-						if(preg_match('/([\\.]+)/', $ctrlName)) {
-							return $this->cakeError('error404', array(
-															array('url' => strtolower($ctrlName),
-																	'message' => 'Was not found on this server',
-																	'base' => $this->base)));
-																	exit();
-						} else {
-							$missingController = true;
-						}
+			if (!loadController($ctrlName)) {
+				$pluginName = Inflector::camelize($params['action']);
+				if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
+					if(preg_match('/([\\.]+)/', $ctrlName)) {
+						return $this->cakeError('error404', array(
+														array('url' => strtolower($ctrlName),
+																'message' => 'Was not found on this server',
+																'base' => $this->base)));
+																exit();
 					} else {
-						$params['plugin'] = Inflector::underscore($ctrlName);
+						$missingController = true;
 					}
 				} else {
-					$params['plugin'] = null;
-					$this->plugin = null;
+					$params['plugin'] = Inflector::underscore($ctrlName);
 				}
+			} else {
+				$params['plugin'] = null;
+				$this->plugin = null;
 			}
 		}
 
