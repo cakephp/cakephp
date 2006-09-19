@@ -75,6 +75,7 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
+		$tmpAcoPath = array_reverse($tmpAcoPath);
 		$acoPath = array();
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
@@ -90,7 +91,7 @@ class DB_ACL extends AclBase {
 			$perms = $Perms->findAll(array(
 				'ArosAco.aro_id' => $aroPath[$i]['Aro']['id'],
 				'ArosAco.aco_id' => $acoPath), null,
-				'Aco.lft asc'
+				'Aco.lft desc'
 			);
 
 			if ($perms == null || count($perms) == 0) {
