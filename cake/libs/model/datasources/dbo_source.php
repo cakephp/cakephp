@@ -78,12 +78,6 @@ class DboSource extends DataSource {
  */
 	var $goofyLimit = false;
 /**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $__asCount = false;
-/**
  * Constructor
  */
 	function __construct($config = null) {
@@ -769,12 +763,8 @@ class DboSource extends DataSource {
 		$alias = $association;
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
-			$sql = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields']));
-			if($this->__asCount === false){
-				$sql .= ', ';
-				$sql .= join(', ', $this->fields($linkModel, $alias, ''));
-			}
-			$this->__asCount = false;
+			$sql = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) . ', ';
+			$sql .= join(', ', $this->fields($linkModel, $alias, ''));
 			$sql .= ' FROM ' . $this->fullTableName($model) . ' ' . $this->alias . $this->name($model->name);
 			$sql .= ' LEFT JOIN ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
 			$sql .= ' ON ' . $this->name($model->name) . '.' . $this->name($assocData['foreignKey']);
@@ -820,7 +810,6 @@ class DboSource extends DataSource {
 		$this->__scrubQueryData($queryData);
 		$this->__scrubQueryData($assocData);
 		$joinedOnSelf = false;
-		$this->__asCount = false;
 
 		if ($linkModel == null) {
 			if (array_key_exists('selfJoin', $queryData)) {
@@ -1260,9 +1249,7 @@ class DboSource extends DataSource {
 			}
 		}
 		$count = count($fields);
-		if (strpos($fields['0'], 'COUNT(*) AS count') !== false) {
-			$this->__asCount = true;
-		}
+
 		if ($count >= 1 && $fields[0] != '*') {
 			for($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
