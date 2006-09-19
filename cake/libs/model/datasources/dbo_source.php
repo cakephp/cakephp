@@ -730,7 +730,9 @@ class DboSource extends DataSource {
 			}
 		} else {
 			if ($merge[0][$association] === false) {
-				$data[$association] = array();
+				if(!isset($data[$association])){
+					$data[$association] = array();
+				}
 			} else {
 				foreach($merge as $i => $row) {
 					if (count($row) == 1) {
