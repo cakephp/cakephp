@@ -797,7 +797,13 @@ class AjaxHelper extends Helper {
 	function _optionsToString($options, $stringOpts = array()) {
 		foreach($stringOpts as $option) {
 			if (isset($options[$option]) && !$options[$option][0] != "'") {
-				$options[$option] = "'{$options[$option]}'";
+				if ($options[$option] === true || $options[$option] === 'true') {
+					$options[$option] = 'true';
+				} elseif ($options[$option] === false || $options[$option] === 'false') {
+					$options[$option] = 'false';
+				} else {
+					$options[$option] = "'{$options[$option]}'";
+				}
 			}
 		}
 		return $options;
