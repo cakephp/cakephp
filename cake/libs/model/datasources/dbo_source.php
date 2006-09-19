@@ -763,8 +763,11 @@ class DboSource extends DataSource {
 		$alias = $association;
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
-			$sql = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields'])) . ', ';
-			$sql .= join(', ', $this->fields($linkModel, $alias, ''));
+			$sql = 'SELECT ' . join(', ', $this->fields($model, $model->name, $queryData['fields']));
+			if($this->__bypass === false){
+				$sql .= ', ';
+				$sql .= join(', ', $this->fields($linkModel, $alias, ''));
+			}
 			$sql .= ' FROM ' . $this->fullTableName($model) . ' ' . $this->alias . $this->name($model->name);
 			$sql .= ' LEFT JOIN ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
 			$sql .= ' ON ' . $this->name($model->name) . '.' . $this->name($assocData['foreignKey']);
