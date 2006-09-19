@@ -732,7 +732,7 @@ class Model extends Overloadable {
 		$cols = array();
 
 		foreach($columns as $col) {
-			$cols[$col['name']] = $db->column($col['type']);
+			$cols[$col['name']] = $col['type'];
 		}
 		return $cols;
 	}
@@ -750,7 +750,7 @@ class Model extends Overloadable {
 
 		foreach($columns as $col) {
 			if ($col['name'] == $column) {
-				return $db->column($col['type']);
+				return $col['type'];
 			}
 		}
 		return null;
