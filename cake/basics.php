@@ -800,6 +800,14 @@
  */
 	function env($key) {
 
+		if ($key == 'HTTPS') {
+			if (isset($_SERVER) && !empty($_SERVER)) {
+				return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
+			} else {
+				return (strpos(env('SCRIPT_URI'), 'https://') === 0);
+			}
+		}
+
 		if ($key == 'SCRIPT_NAME') {
 			if (env('CGI_MODE')) {
 				$key = 'SCRIPT_URL';

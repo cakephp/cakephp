@@ -154,17 +154,16 @@
  *  Full url prefix
  */
 	$s = null;
-	$https = env('HTTPS');
-	if ( (isset($https) && $https =='on' )) {
+	if (env('HTTPS')) {
 		$s ='s';
 	}
-	unset($https);
+
 	$httpHost = env('HTTP_HOST');
 
 	if (isset($httpHost)) {
 		define('FULL_BASE_URL', 'http'.$s.'://'.$httpHost);
 	}
-	unset($httpHost);
+	unset($httpHost, $s);
 /**
  * Web path to the public images directory.
  */
