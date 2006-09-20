@@ -879,56 +879,60 @@ class Controller extends Object {
  * Cleans up the date fields of current Model.
  *
  */
-	function cleanUpFields() {
-		foreach($this->{$this->modelClass}->_tableInfo as $table) {
+	function cleanUpFields($modelClass = null) {
+		if ($modelClass == null) {
+			$modelClass = $this->modelClass;
+		}
+
+		foreach($this->{$modelClass}->_tableInfo as $table) {
 			foreach($table as $field) {
 
-				if ('date' == $field['type'] && isset($this->params['data'][$this->modelClass][$field['name'] . '_year'])) {
-					$newDate = $this->params['data'][$this->modelClass][$field['name'] . '_year'] . '-';
-					$newDate .= $this->params['data'][$this->modelClass][$field['name'] . '_month'] . '-';
-					$newDate .= $this->params['data'][$this->modelClass][$field['name'] . '_day'];
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_year']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_month']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_day']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_hour']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_min']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_meridian']);
-					$this->params['data'][$this->modelClass][$field['name']] = $newDate;
-					$this->data[$this->modelClass][$field['name']] = $newDate;
+				if ('date' == $field['type'] && isset($this->params['data'][$modelClass][$field['name'] . '_year'])) {
+					$newDate = $this->params['data'][$modelClass][$field['name'] . '_year'] . '-';
+					$newDate .= $this->params['data'][$modelClass][$field['name'] . '_month'] . '-';
+					$newDate .= $this->params['data'][$modelClass][$field['name'] . '_day'];
+					unset($this->params['data'][$modelClass][$field['name'] . '_year']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_month']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_day']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_hour']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_min']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_meridian']);
+					$this->params['data'][$modelClass][$field['name']] = $newDate;
+					$this->data[$modelClass][$field['name']] = $newDate;
 
-				} elseif('datetime' == $field['type'] && isset($this->params['data'][$this->modelClass][$field['name'] . '_year'])) {
-					$hour = $this->params['data'][$this->modelClass][$field['name'] . '_hour'];
+				} elseif('datetime' == $field['type'] && isset($this->params['data'][$modelClass][$field['name'] . '_year'])) {
+					$hour = $this->params['data'][$modelClass][$field['name'] . '_hour'];
 
-					if ($hour != 12 && (isset($this->params['data'][$this->modelClass][$field['name'] . '_meridian']) && 'pm' == $this->params['data'][$this->modelClass][$field['name'] . '_meridian'])) {
+					if ($hour != 12 && (isset($this->params['data'][$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->params['data'][$modelClass][$field['name'] . '_meridian'])) {
 						$hour = $hour + 12;
 					}
 
-					$newDate  = $this->params['data'][$this->modelClass][$field['name'] . '_year'] . '-';
-					$newDate .= $this->params['data'][$this->modelClass][$field['name'] . '_month'] . '-';
-					$newDate .= $this->params['data'][$this->modelClass][$field['name'] . '_day'] . ' ';
-					$newDate .= $hour . ':' . $this->params['data'][$this->modelClass][$field['name'] . '_min'] . ':00';
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_year']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_month']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_day']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_hour']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_min']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_meridian']);
-					$this->params['data'][$this->modelClass][$field['name']] = $newDate;
-					$this->data[$this->modelClass][$field['name']] = $newDate;
+					$newDate  = $this->params['data'][$modelClass][$field['name'] . '_year'] . '-';
+					$newDate .= $this->params['data'][$modelClass][$field['name'] . '_month'] . '-';
+					$newDate .= $this->params['data'][$modelClass][$field['name'] . '_day'] . ' ';
+					$newDate .= $hour . ':' . $this->params['data'][$modelClass][$field['name'] . '_min'] . ':00';
+					unset($this->params['data'][$modelClass][$field['name'] . '_year']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_month']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_day']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_hour']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_min']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_meridian']);
+					$this->params['data'][$modelClass][$field['name']] = $newDate;
+					$this->data[$modelClass][$field['name']] = $newDate;
 
-				} elseif('time' == $field['type'] && isset($this->params['data'][$this->modelClass][$field['name'] . '_hour'])) {
-					$hour = $this->params['data'][$this->modelClass][$field['name'] . '_hour'];
+				} elseif('time' == $field['type'] && isset($this->params['data'][$modelClass][$field['name'] . '_hour'])) {
+					$hour = $this->params['data'][$modelClass][$field['name'] . '_hour'];
 
-					if ($hour != 12 && (isset($this->params['data'][$this->modelClass][$field['name'] . '_meridian']) && 'pm' == $this->params['data'][$this->modelClass][$field['name'] . '_meridian'])) {
+					if ($hour != 12 && (isset($this->params['data'][$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->params['data'][$modelClass][$field['name'] . '_meridian'])) {
 						$hour = $hour + 12;
 					}
 
-					$newDate = $hour . ':' . $this->params['data'][$this->modelClass][$field['name'] . '_min'] . ':00';
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_hour']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_min']);
-					unset($this->params['data'][$this->modelClass][$field['name'] . '_meridian']);
-					$this->params['data'][$this->modelClass][$field['name']] = $newDate;
-					$this->data[$this->modelClass][$field['name']] = $newDate;
+					$newDate = $hour . ':' . $this->params['data'][$modelClass][$field['name'] . '_min'] . ':00';
+					unset($this->params['data'][$modelClass][$field['name'] . '_hour']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_min']);
+					unset($this->params['data'][$modelClass][$field['name'] . '_meridian']);
+					$this->params['data'][$modelClass][$field['name']] = $newDate;
+					$this->data[$modelClass][$field['name']] = $newDate;
 				}
 			}
 		}
