@@ -237,12 +237,16 @@ class DboPostgres extends DboSource{
 				}
 			break;
 			case 'binary':
-				$data=pg_escape_bytea($data);
+				$data = pg_escape_bytea($data);
 
 			break;
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
-
+				if ($data === true) {
+					$data = '1';
+				} elseif ($data === false) {
+					$data = '0';
+				}
 			break;
 			default:
 				$data = pg_escape_string($data);
