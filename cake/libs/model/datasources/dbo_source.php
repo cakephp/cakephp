@@ -726,7 +726,13 @@ class DboSource extends DataSource {
 						}
 					}
 				}
-				$data[$association] = $merge[0][$association];
+				if(!isset($data[$association])) {
+					$data[$association] = $merge[0][$association];
+				} else {
+					if(is_array($merge[0][$association])){
+						$data[$association] = array_merge($merge[0][$association], $data[$association]);
+					}
+				}
 			}
 		} else {
 			if ($merge[0][$association] === false) {
