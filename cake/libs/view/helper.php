@@ -386,13 +386,14 @@ class Helper extends Object {
 
 					if ($delimiter > 0) {
 						$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
-						$value = trim(substr($dataLine, $delimiter + 1));
+						$value = trim(stripcslashes(substr($dataLine, $delimiter + 1)));
 
 						if (substr($value, 0, 1) == '"' && substr($value, -1) == '"') {
 							$value = substr($value, 1, -1);
 						}
 
-						$iniSetting[$key] = stripcslashes($value);
+						$iniSetting[$key] = $value;
+
 					} else {
 						$iniSetting[strtolower(trim($dataLine))] = '';
 					}
