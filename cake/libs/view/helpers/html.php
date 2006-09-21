@@ -304,7 +304,7 @@ class HtmlHelper extends Helper {
 			if (isset($htmlAttributes['value'])) {
 				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
 
-				if ($htmlAttributes['checked'] == '0') {
+				if ($htmlAttributes['value'] == '0') {
 					$notCheckedValue = -1;
 				}
 			} else {
@@ -582,7 +582,7 @@ class HtmlHelper extends Helper {
 		foreach($optionElements as $name => $title) {
 			$optionsHere = $optionAttr;
 
-			if (($selected !== null) && ($selected == $name)) {
+			if (($selected != null) && ($selected == $name)) {
 				$optionsHere['selected'] = 'selected';
 			} else if(is_array($selected) && in_array($name, $selected)) {
 				$optionsHere['selected'] = 'selected';
@@ -744,11 +744,10 @@ class HtmlHelper extends Helper {
  * @return string
  */
 	function dayOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
+		if (empty($selected) && $this->tagValue($tagName)) {
 			$selected = date('d', strtotime($this->tagValue($tagName)));
 		}
-
-		$dayValue = empty($selected) ? date('d') : $selected;
+		$dayValue = empty($selected) ? ($showEmpty == true ? NULL : date('d')) : $selected;
 		$days = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30', '31' => '31');
 		$option = $this->selectTag($tagName . "_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
 		return $option;
@@ -770,7 +769,7 @@ class HtmlHelper extends Helper {
 			$selected = date('Y', strtotime($this->tagValue($tagName)));
 		}
 
-		$yearValue = empty($selected) ? date('Y') : $selected;
+		$yearValue = empty($selected) ? ($showEmpty ? NULL : date('Y')) : $selected;
 		$currentYear = date('Y');
 		$maxYear = is_null($maxYear) ? $currentYear + 11 : $maxYear + 1;
 		$minYear = is_null($minYear) ? $currentYear - 60 : $minYear;
@@ -805,7 +804,7 @@ class HtmlHelper extends Helper {
 		if (empty($selected) && ($this->tagValue($tagName))) {
 			$selected = date('m', strtotime($this->tagValue($tagName)));
 		}
-		$monthValue = empty($selected) ? date('m') : $selected;
+		$monthValue = empty($selected) ? ($showEmpty ? NULL : date('m')) : $selected;
 		$months = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
 
 		$option = $this->selectTag($tagName . "_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
@@ -829,16 +828,15 @@ class HtmlHelper extends Helper {
 				$selected = date('g', strtotime($this->tagValue($tagName)));
 			}
 		}
-
 		if ($format24Hours) {
-			$hourValue = !isset($selected) ? date('H') : $selected;
+			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('H')) : $selected;
 		} else {
-			$hourValue = !isset($selected) ? date('g') : $selected;
-			if (intval($hourValue) == 0) {
+			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('g')) : $selected;
+			if (intval($hourValue) == 0 && !$showEmpty) {
 				$hourValue = 12;
 			}
 		}
-
+		
 		if ($format24Hours) {
 			$hours = array('00' => '00', '01' => '01', '02' => '02', '03' => '03', '04' => '04', '05' => '05', '06' => '06', '07' => '07', '08' => '08', '09' => '09', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23');
 		} else {
@@ -861,7 +859,7 @@ class HtmlHelper extends Helper {
 		if (empty($selected) && ($this->tagValue($tagName))) {
 			$selected = date('i', strtotime($this->tagValue($tagName)));
 		}
-		$minValue = !isset($selected) ? date('i') : $selected;
+		$minValue = empty($selected) ? ($showEmpty ? NULL : date('i')) : $selected;
 
 		for($minCount = 0; $minCount < 60; $minCount++) {
 			$mins[$minCount] = sprintf('%02d', $minCount);
@@ -883,7 +881,7 @@ class HtmlHelper extends Helper {
 		if (empty($selected) && ($this->tagValue($tagName))) {
 			$selected = date('a', strtotime($this->tagValue($tagName)));
 		}
-		$merValue = empty($selected) ? date('a') : $selected;
+		$merValue = empty($selected) ? ($showEmpty ? NULL : date('a')) : $selected;
 		$meridians = array('am' => 'am', 'pm' => 'pm');
 
 		$option = $this->selectTag($tagName . "_meridian", $meridians, $merValue, $selectAttr, $optionAttr, $showEmpty);
@@ -910,7 +908,7 @@ class HtmlHelper extends Helper {
 		if (empty($selected)) {
 			$selected = $this->tagValue($tagName);
 		}
-
+		
 		if (!empty($selected)) {
 
 			if (is_int($selected)) {
@@ -982,6 +980,9 @@ class HtmlHelper extends Helper {
 				$opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
 				$this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
 				$this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty);
+			break;
+			case 'Y':
+				$opt = $this->yearOptionTag($tagName, null, null, null, $selected, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
