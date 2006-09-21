@@ -100,7 +100,6 @@ class EmailComponent extends Object{
 
 		$addresses = null;
 		if(!empty($this->cc)) {
-			die(debug($this->cc));
 			foreach ($this->cc as $cc) {
 				$addresses .= $cc . ', ';
 			}
@@ -108,7 +107,6 @@ class EmailComponent extends Object{
 			$this->to .= ', ' . $addresses;
 		}
 		if(!empty($this->bcc)) {
-			die(debug($this->bcc));
 			foreach ($this->bcc as $bcc) {
 				$addresses .= $bcc . ', ';
 			}
@@ -180,11 +178,12 @@ class EmailComponent extends Object{
 	}
 
 	function __wrap($message) {
-		$message = str_replace(array('\r','\n'), '\n ', $message);
-		$words = explode(" ", $message);
+		$message = str_replace(array('\r','\n'), '\n', $message);
+		$words = explode('\n', $message);
 		$formated = null;
 		foreach ($words as $word) {
-			$formated .= chunk_split($word, $this->_lineLength, ' ') . ' ' ;
+			$formated .= wordwrap($word, $this->_lineLength, ' ', 1);
+			$formated .= "\n";
 		}
 		return $formated;
 	}
