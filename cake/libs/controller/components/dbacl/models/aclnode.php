@@ -79,6 +79,37 @@ class AclNode extends AppModel {
 		return $return;
 	}
 /**
+ * Deletes the ARO/ACO node with the given ID
+ *
+ * @param mixed $id	The id or alias of an ARO/ACO node
+ * @return boolean True on success, false on fail
+ */
+	function delete($id) {
+		extract ($this->__dataVars());
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
+		$result = $this->find($this->_resolveID($id));
+		$object = $result[$class];
+		if ($object == null || count($object) == 0) {
+			return false;
+		}
+
+		$children = $this->findAll(array("{$class}.rght" => "< {$result[$class]['rght']}", "{$class}.lft" => "> {$result[$class]['lft']}"), 'id', null, null, null, -1);
+		$idList = DataSource::getFieldValue($children, '{n}.' . $class . '.id');
+		$idList[] = $result[$class]['id'];
+
+		// Delete associated permissions.
+		$this->ArosAco->query('DELETE FROM ' . $db->fullTableName($this->ArosAco) . " WHERE {$class}_id in (" . implode(', ', $idList) . ')');
+
+		$table = $db->fullTableName($this);
+		$this->query("DELETE FROM {$table} WHERE {$table}.lft >= {$result[$class]['lft']} AND {$table}.rght <= {$result[$class]['rght']}");
+
+		$shift = 1 + $result[$class]['rght'] - $result[$class]['lft'];
+		$this->query('UPDATE ' . $table . ' SET `rght` = `rght` - ' . $shift . ' WHERE `rght` > ' . $result[$class]['rght']);
+		$this->query('UPDATE ' . $table . ' SET `lft` = `lft` - ' . $shift . ' WHERE `lft` > ' . $result[$class]['lft']);
+		return true;
+	}
+/**
  * Sets the parent of the given node
  *
  * @param mixed $parent_id
