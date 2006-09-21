@@ -55,7 +55,7 @@ class EmailComponent extends Object{
 
 	var $_debug = false;
 	var $_error = false;
-	var $_newLine = '\n';
+	var $_newLine = "\r\n";
 	var $_lineLength = 75;
 
 	var $__header = null;
@@ -81,7 +81,7 @@ class EmailComponent extends Object{
 		$this->__createHeader();
 		$this->__formatMessage($message);
 
-		if(!empty($this->$attachments)) {
+		if(!empty($this->attachments)) {
 			$this->__attachFiles();
 		}
 		$__method = '__'.$this->delivery;
@@ -94,13 +94,13 @@ class EmailComponent extends Object{
 
 
 	function __createHeader(){
-		$this->__header .= 'To: ' . $this->to . $this->_newLine;
 		$this->__header .= 'From: ' . $this->from . $this->_newLine;
 		$this->__header .= 'Reply-To: ' . $this->replyTo . $this->_newLine;
 		$this->__header .= 'Return-Path: ' . $this->return . $this->_newLine;
 
 		$addresses = null;
 		if(!empty($this->cc)) {
+			die(debug($this->cc));
 			foreach ($this->cc as $cc) {
 				$addresses .= $cc . ', ';
 			}
@@ -108,6 +108,7 @@ class EmailComponent extends Object{
 			$this->to .= ', ' . $addresses;
 		}
 		if(!empty($this->bcc)) {
+			die(debug($this->bcc));
 			foreach ($this->bcc as $bcc) {
 				$addresses .= $bcc . ', ';
 			}
@@ -117,10 +118,10 @@ class EmailComponent extends Object{
 
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
-		if(!empty($this->$attachments) && $this->sendAs === 'text') {
+		if(!empty($this->attachments) && $this->sendAs === 'text') {
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/mixed; boundary=' . $this->__boundary . $this->_newLine;
-		} elseif(!empty($this->$attachments) && $this->sendAs === 'html') {
+		} elseif(!empty($this->attachments) && $this->sendAs === 'html') {
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/related; boundary=' . $this->__boundary . $this->_newLine;
 		} elseif($this->sendAs === 'html') {
@@ -131,13 +132,15 @@ class EmailComponent extends Object{
 
 	function __formatMessage($message){
 		$message = $this->__wrap($message);
-		$this->__message = '--' . $this->__boundary . $this->_newLine;
-		$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-		$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-		$this->__message .=  strip_tags($message) . $this->_newLine;
 
 		if($this->sendAs === 'html'){
+			$this->__message = '--' . $this->__boundary . $this->_newLine;
+			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$this->__message .= 'If you are seeing this is because you may need to change your'.$this->_newLine;
+			$this->__message .= 'preferred message format from HTML to plain text.'.$this->_newLine.$this->_newLine;
 			$this->__message .=  strip_tags($message) . $this->_newLine;
+
 			$this->__message = '--' .  $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
@@ -177,10 +180,11 @@ class EmailComponent extends Object{
 	}
 
 	function __wrap($message) {
-		$message = str_replace("\r\n", "\n ", $message);
+		$message = str_replace(array('\r','\n'), '\n ', $message);
 		$words = explode(" ", $message);
+		$formated = null;
 		foreach ($words as $word) {
-			$formated .= chunk_split($word, $this->_lineLength, " ") . " ";
+			$formated .= chunk_split($word, $this->_lineLength, ' ') . ' ' ;
 		}
 		return $formated;
 	}
