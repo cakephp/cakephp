@@ -1240,44 +1240,70 @@ class DboSource extends DataSource {
  * @return array
  */
 	function fields(&$model, $alias, $fields) {
+		$resultMatch = null;
+		$build = true;
 		if (is_array($fields)) {
 			$fields = $fields;
 		} else {
 			if ($fields != null) {
-				if (strpos($fields, ',')) {
-					$fields = explode(',', $fields);
-				} else {
-					$fields = array($fields);
-				}
+				preg_match_all('/(\\w*\\([\\s\\S]*?\\)[\.,\\s\\w]*?\\))([\\s\\S]*)/', $fields, $result, PREG_PATTERN_ORDER);
 
-				$fields = array_map('trim', $fields);
+				if(isset($result[1][0])){
+					$resultMatch = $result[1][0];
+
+					if(isset($result[2][0])){
+						$fields = $result[2][0];
+
+						if (preg_match('/AS/i', $fields)) {
+							$build = false;
+						}
+					}
+				}
+				if($build === true){
+					if (strpos($fields, ',')) {
+						$fields = explode(',', $fields);
+					} else {
+						$fields = array($fields);
+					}
+					$fields = array_map('trim', $fields);
+				}
 			} else {
 				foreach($model->_tableInfo->value as $field) {
 					$fields[] = $field['name'];
 				}
 			}
 		}
-		$count = count($fields);
+		if($build === true){
+			$count = count($fields);
 
-		if ($count >= 1 && $fields[0] != '*') {
-			for($i = 0; $i < $count; $i++) {
-				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
-					$prepend = '';
+			if ($count >= 1 && $fields[0] != '*') {
+				for($i = 0; $i < $count; $i++) {
+					if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
+						$prepend = '';
 
-					if (strpos($fields[$i], 'DISTINCT') !== false) {
-						$prepend   = 'DISTINCT ';
-						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
-					}
+						if (strpos($fields[$i], 'DISTINCT') !== false) {
+							$prepend   = 'DISTINCT ';
+							$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
+						}
 
-					$dot = strrpos($fields[$i], '.');
+						$dot = strrpos($fields[$i], '.');
 
-					if ($dot === false) {
-						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
-					} else {
-						$build = explode('.', $fields[$i]);
-						$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
+						if ($dot === false) {
+							$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
+						} else {
+							$build = explode('.', $fields[$i]);
+							$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
+						}
 					}
 				}
+			}
+		}
+
+		if($resultMatch != null){
+			if(is_string($fields)) {
+				$fields = array($resultMatch . $fields);
+			} else {
+				$fields = array_merge(array($resultMatch), $fields);
 			}
 		}
 		return $fields;
