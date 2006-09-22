@@ -126,7 +126,7 @@ class RssHelper extends XmlHelper {
 		if (!isset($elements['link'])) {
 			$elements['link'] = '/';
 		} 
-		$elements['link'] = $this->Html->url($elements['link'], true);
+		$elements['link'] = $this->url($elements['link'], true);
 
 		$elems = '';
 		foreach ($elements as $elem => $data) {
