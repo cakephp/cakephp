@@ -75,7 +75,7 @@ class Dispatcher extends Object {
  * which is melded with the GET and POST params.
  * @return boolean		Success
  */
-	function dispatch($url, $additionalParams=array()) {
+	function dispatch($url, $additionalParams = array()) {
 		$params = array_merge($this->parseParams($url), $additionalParams);
 		$missingController = false;
 		$missingAction = false;
@@ -274,6 +274,8 @@ class Dispatcher extends Object {
 													'url' => $url,
 													'base' => $this->base)));
 		}
+
+		Router::setParams(array($params, array('base' => $controller->base, 'here' => $controller->here, 'webroot' => $controller->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		return $this->_invoke($controller, $params, $missingAction);
 	}
 /**

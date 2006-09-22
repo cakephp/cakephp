@@ -72,6 +72,12 @@ class Router extends Overloadable {
 		'Day'		=> '(0[1-9]|[12][0-9]|3[01])',
 		'ID'		=> '[0-9]+'
 	);
+/**
+ * The route matching the URL of the current request
+ *
+ * @var array
+ */
+	var $__currentRoute = array();
  /**
   * Initialize the Router object
   *
@@ -115,11 +121,10 @@ class Router extends Overloadable {
  * @param string $route			An empty string, or a route string "/"
  * @param array $default		NULL or an array describing the default route
  * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
- * @param array $required		A list of named elements (from $params) which are required to appear in the URL
  * @see routes
  * @return array			Array of routes
  */
-	function connect($route, $default = null, $params = array(), $required = array()) {
+	function connect($route, $default = array(), $params = array()) {
 
 		$_this =& Router::getInstance();
 		$parsed = $names = array();
@@ -153,12 +158,12 @@ class Router extends Overloadable {
 			}
 
 			foreach($elements as $element) {
-				$q = '?';
+				$q = null;
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
 					if (isset($params[$r[1]])) {
-						if ((!empty($required) && in_array($r[1], $required)) || empty($required)) {
-							$q = null;
+						if (array_key_exists($r[1], $default) && $default[$r[1]] == null) {
+							$q = '?';
 						}
 						$parsed[] = '(?:\/(' . $params[$r[1]] . '))' . $q;
 					} else {
@@ -227,6 +232,8 @@ class Router extends Overloadable {
 			list($route, $regexp, $names, $defaults) = $route;
 
 			if (preg_match($regexp, $url, $r)) {
+				$_this->__currentRoute[] = $route;
+
 				// remove the first element, which is the url
 				array_shift ($r);
 				// hack, pre-fill the default route names
@@ -264,6 +271,144 @@ class Router extends Overloadable {
 			$out['url']['ext'] = $ext;
 		}
 		return $out;
+	}
+/**
+ * Takes parameter and path information back from the Dispatcher
+ *
+ * @param array
+ * @return void
+ */
+	function setParams($params) {
+		$_this =& Router::getInstance();
+		list($_this->__params[], $_this->__paths[]) = $params;
+	}
+/**
+ * Finds URL for specified action.
+ *
+ * Returns an URL pointing to a combination of controller and action. Param
+ * $url can be:
+ *	+ Empty - the method will find adress to actuall controller/action.
+ *	+ '/' - the method will find base URL of application.
+ *	+ A combination of controller/action - the method will find url for it.
+ *
+ * @param  mixed  $url    Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
+ *                        or an array specifying any of the following: 'controller', 'action',
+ *                        and/or 'plugin', in addition to named arguments (keyed array elements),
+ *                        and standard URL arguments (indexed array elements)
+ * @param boolean $full      If true, the full base URL will be prepended to the result
+ * @return string  Full translated URL with base path.
+ */
+	function url($url = null, $full = false) {
+		$_this =& Router::getInstance();
+
+		$base = strip_plugin($this->base, $this->plugin);
+		$extension = null;
+		$params = $_this->__params[0];
+		$path = $_this->__paths[0];
+
+		if (is_array($url) && !empty($url)) {
+			if (isset($url['?']) && !empty($url['?'])) {
+				$url['?'] = '?' . $url['?'];
+			} else {
+				$url['?'] = null;
+			}
+
+			if (!isset($url['action'])) {
+				if (!isset($url['controller']) || $params['controller'] == $url['controller']) {
+					$url['action'] = $params['action'];
+				} else {
+					$url['action'] = 'index';
+				}
+			}
+			if (!isset($url['controller'])) {
+				$url['controller'] = $params['controller'];
+			}
+			if (!isset($url['plugin'])) {
+				$url['plugin'] = $params['plugin'];
+			}
+			if (isset($url['ext'])) {
+				$extension = '.' . $url['ext'];
+			}
+			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($this->params['admin'])) {
+				$url[CAKE_ADMIN] = $this->params['admin'];
+			}
+
+			$named = $args = array();
+			$keys = array_keys($url);
+			$count = count($keys);
+
+			for ($i = 0; $i < $count; $i++) {
+				if (is_numeric($keys[$i])) {
+					$args[] = $url[$keys[$i]];
+				} else {
+					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext', '?'))) { // CAKE_ADMIN
+						$named[] = array($keys[$i], $url[$keys[$i]]);
+					}
+				}
+			}
+
+			$combined = '';
+			if (isset($path['namedArgs']) && $path['namedArgs']) {
+				if ($path['namedArgs'] === true) {
+					$sep = $path['argSeparator'];
+				} elseif (is_array($path['namedArgs'])) {
+					$sep = '/';
+				}
+
+				$count = count($named);
+				for ($i = 0; $i < $count; $i++) {
+					$named[$i] = join($path['argSeparator'], $named[$i]);
+				}
+				if (defined('CAKE_ADMIN') && isset($named[CAKE_ADMIN])) {
+					unset($named[CAKE_ADMIN]);
+				}
+				$combined = join('/', $named);
+			}
+
+			if (empty($named) && empty($args) && $url['action'] == 'index') {
+				$url['action'] = null;
+			}
+
+			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+			if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
+				array_unshift($urlOut, CAKE_ADMIN);
+			}
+			$output = $base . '/' . join('/', $urlOut);
+		} else {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || $url == '#') {
+				return $url;
+			}
+
+			if (empty($url)) {
+				return $context->here;
+			} elseif($url{0} == '/') {
+				$output = $base . $url;
+			} else {
+				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
+			}
+		}
+		if ($full) {
+			$output = FULL_BASE_URL . $output;
+		}
+		return $output . $extension;
+	}
+/**
+ * Returns the route matching the current request URL
+ *
+ * @return array
+ */
+	function requestRoute() {
+		$_this =& Router::getInstance();
+		return $_this->__currentRoute[0];
+	}
+/**
+ * Returns the route matching the current request (useful for requestAction traces)
+ *
+ * @return array
+ */
+	function currentRoute() {
+		$_this =& Router::getInstance();
+		return $_this->__currentRoute[count($_this->__currentRoute) - 1];
 	}
 /**
  * Instructs the router to parse out file extensions from the URL
