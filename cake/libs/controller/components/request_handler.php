@@ -427,7 +427,9 @@ class RequestHandlerComponent extends Object{
 		}
 
 		if ($cType != null) {
-			header('Content-type: ' . $cType);
+			if (DEBUG < 2) {
+				header('Content-type: ' . $cType);
+			}
 			$this->__responseTypeSet = $cType;
 			return true;
 		} else {
