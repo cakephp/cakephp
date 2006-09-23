@@ -50,7 +50,7 @@ class EmailComponent extends Object{
 	var $delivery = 'mail';
 	var $charset = 'ISO-8859-15';
 	var $attachments = array();
-	var $xMailer = 'CakePHP EmailComponent $Revision$';
+	var $xMailer = 'CakePHP EmailComponent';
 	var $filePaths = array();
 
 	var $_debug = false;
@@ -86,6 +86,19 @@ class EmailComponent extends Object{
 		}
 		$__method = '__'.$this->delivery;
 		$this->$__method();
+	}
+
+	function reset() {
+		$this->to = null;
+		$this->from = null;
+		$this->replyTo = null;
+		$this->return = null;
+		$this->cc = array();
+		$this->bcc = array();
+		$this->subject = null;
+		$this->__header = null;
+		$this->__boundary = null;
+		$this->__message = null;
 	}
 
 	function __createBoundary(){
