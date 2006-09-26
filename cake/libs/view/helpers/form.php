@@ -295,7 +295,7 @@ class FormHelper extends Helper {
  * @param  boolean $return         Whether this method should return a value
  * @return string Formatted SELECT element
  */
-	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '', $showParents = null) {
 		$this->setFormTag($fieldName);
 		$attributes = $this->domId($attributes);
 
@@ -315,14 +315,21 @@ class FormHelper extends Helper {
 		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->parseHtmlOptions($attributes));
 
 		if ($showEmpty !== null && $showEmpty !== false) {
+			if($showEmpty === true) {
+				$showEmpty = '';
+			}
+			$options = array_reverse($options);
+			$options[] = $showEmpty;
+			$options = array_reverse($options);
+			/*nate's old code
 			$keys = array_keys($options);
 			$vals = array_values($options);
 			array_unshift($keys, '');
 			array_unshift($vals, $showEmpty);
-			$options = array_combine($keys, $vals);
+			$options = array_combine($keys, $vals);*/
 		}
-
-		$select = am($select, $this->selectOptions($options, $selected));
+		
+		$select = am($select, $this->__selectOptions(array_reverse($options), $selected, array(), $showParents));
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
@@ -331,19 +338,19 @@ class FormHelper extends Helper {
  *
  * @return array
  */
-	function selectOptions($elements = array(), $selected = null) {
+	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null) {
 		$select = array();
-
+		
 		foreach($elements as $name => $title) {
 			$htmlOptions = array();
-
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
 				if (!empty($name)) {
-					$select[] = sprintf($this->tags['optiongroup'], $name, '');
-				}
-				$select = am($select, $this->selectOptions($title, $selected));
-				if (!empty($name)) {
 					$select[] = $this->tags['optiongroupend'];
+					$parents[] = $name;
+				}
+				$select = am($select, $this->__selectOptions($title, $selected, $parents, $showParents));
+				if (!empty($name)) {
+					$select[] = sprintf($this->tags['optiongroup'], $name, '');
 				}
 				$name = null;
 			} elseif (is_array($title)) {
@@ -352,17 +359,20 @@ class FormHelper extends Helper {
 				$title = $title['name'];
 				unset($htmlOptions['name'], $htmlOptions['value']);
 			}
-
 			if ($name !== null) {
 				if (($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';
 				} else if(is_array($selected) && in_array($name, $selected)) {
 					$htmlOptions['selected'] = 'selected';
 				}
-				$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), $title);
+				
+				if($showParents || (!in_array($title, $parents))) {
+					$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), $title);
+				}
 			}
 		}
-		return $select;
+		
+		return array_reverse($select);
 	}
 /**
  * Returns a formatted INPUT tag for HTML FORMs.
