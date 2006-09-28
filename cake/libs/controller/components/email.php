@@ -37,7 +37,7 @@
  * @subpackage	cake.cake.libs.controller.components
  *
  */
-class EmailComponent extends Object{
+class EmailComponent extends Object {
 	var $to = null;
 	var $from = null;
 	var $replyTo = null;

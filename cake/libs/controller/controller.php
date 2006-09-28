@@ -359,14 +359,6 @@ class Controller extends Object {
  */
 	function redirect($url, $status = null) {
 		$this->autoRender = false;
-		$pos = strpos($url, '://');
-		$base = strip_plugin($this->base, $this->plugin);
-		if ($pos === false) {
-			if (strpos($url, '/') !== 0) {
-				$url = '/' . $url;
-			}
-			$url = $base . $url;
-		}
 
 		if (function_exists('session_write_close')) {
 			session_write_close();
@@ -419,12 +411,7 @@ class Controller extends Object {
 				header($codes[$status]);
 			}
 		}
-
-		if (defined('SERVER_IIS')) {
-			header('Location: ' . FULL_BASE_URL . $url);
-		} else {
-			header('Location: ' . $url);
-		}
+		header('Location: ' . Router::url($url, defined('SERVER_IIS')));
 	}
 /**
  * Saves a variable to use inside a template.
@@ -942,102 +929,109 @@ class Controller extends Object {
  *
  * @param mixed $object
  * @param array $options
+ * @param mixed $scope
  * @param array $whitelist
  * @return array Model query results
  */
-	function paginate($object, $options = array(), $whitelist = array()) {
-		if (is_array($object) || is_numeric($object)) {
-			$whitelist = $options;
-			$options = $object;
+	function paginate($object = null, $scope = array(), $whitelist = array()) {
+
+		if (is_array($object)) {
+			$whitelist = $scope;
+			$scope = $object;
 			$object = null;
 		}
 
-		if (is_numeric($options)) {
-			$options = array('page' => $options);
-		}
-
 		if (is_string($object)) {
-			if ($object == $this->modelClass && empty($this->uses)) {
+			if (isset($this->{$object})) {
 				$object = $this->{$object};
-			} elseif (!empty($this->uses) && in_array($object, $this->uses)) {
-				$object = $this->{$object};
-			} elseif (isset($this->{$this->modelClass}->{$object})) {
+			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
 				$object = $this->{$this->modelClass}->{$object};
 			} elseif (!empty($this->uses)) {
 				for ($i = 0; $i < count($this->uses); $i++) {
 					$model = $this->uses[$i];
-					if (isset($this->{$model}->{$object}) && is_object($this->{$model}->{$object})) {
+					if (isset($this->{$model}->{$object})) {
 						$object = $this->{$model}->{$object};
 						break;
 					}
 				}
-				if (!is_object($object)) {
-					// Error: Can't find model
-					return array();
-				}
-			} else {
-				// Error: Can't find model
-				return array();
 			}
 		} elseif (empty($object) || $object == null) {
-			if (!empty($this->uses)) {
-				$object = $this->{$this->uses[0]};
-			} else {
+			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
+			} else {
+				$object = $this->{$this->uses[0]};
 			}
 		}
 
-		if (isset($this->paginate[$object->name])) {
+		if (!is_object($object)) {
+			// Error: can't find object
+			return array();
+		}
+
+		$options = am($this->params, $this->passedArgs);
+		if (isset($this->pagination[$object->name])) {
 			$defaults = $this->paginate[$object->name];
 		} else {
 			$defaults = $this->paginate;
 		}
 
-		if (empty($options)) {
-			$options = $this->passedArgs;
-		}
-
 		if (isset($options['show'])) {
 			$options['limit'] = $options['show'];
 		}
+
 		if (isset($options['sort']) && isset($options['direction'])) {
 			$options['order'] = array($options['sort'] => $options['direction']);
 		} elseif (isset($options['sort'])) {
 			$options['order'] = $options['sort'];
 		}
 
-		$vars = array('conditions', 'fields', 'order', 'limit', 'page', 'recursive');
+		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
 		$keys = array_keys($options);
 		$count = count($keys);
+
 		for($i = 0; $i < $count; $i++) {
 			if (!in_array($keys[$i], $vars)) {
 				unset($options[$keys[$i]]);
 			}
-		}
-
-		if (empty($whitelist)) {
-			unset($options['conditions'], $options['fields'], $options['recursive']);
-		} else {
-			$keys = array_keys($options);
-			$count = count($keys);
-			for ($i = 0; $i < $count; $i++) {
-				if (!in_array($keys[$i], $whitelist)) {
-					unset($options[$keys[$i]]);
-				}
+			if (empty($whitelist) && ($keys[$i] == 'fields' || $keys[$i] == 'recursive')) {
+				unset($options[$keys[$i]]);
+			} elseif (!empty($whitelist) && !in_array($keys[$i], $whitelist)) {
+				unset($options[$keys[$i]]);
 			}
 		}
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 		$options = am($defaults, $options);
-		extract($options);
-		if (empty($conditions)) {
-			$conditions = null;
+		if (isset($this->paginate[$object->name])) {
+			$defaults = $this->paginate[$object->name];
+		} else {
+			$defaults = $this->paginate;
+		}
+		if (!isset($defaults['conditions'])) {
+			$defaults['conditions'] = array();
 		}
 
+		extract(am($defaults, $options));
+		if ((is_array($scope) || is_string($scope)) && !empty($scope)) {
+			$conditions = array($conditions, $scope);
+		}
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
-		$this->params['paging'][$object->name] = $options;
-		$this->params['paging'][$object->name]['current'] = count($results);
-		$this->params['paging'][$object->name]['count'] = $object->findCount($conditions);
+
+		$count = $object->findCount($conditions);
+		$paging = array(
+			'current'	=> count($results),
+			'count'		=> $count,
+			'prevPage'	=> ($page > 1),
+			'nextPage'	=> ($count > ($page * $limit)),
+			'pageCount'	=> ceil($count / $limit),
+			'defaults'	=> $defaults,
+			'options'	=> $options
+		);
+		$this->params['paging'][$object->name] = $paging;
+
+		if (!in_array('Paginator', $this->helpers)) {
+			$this->helpers[] = 'Paginator';
+		}
 
 		return $results;
 	}
