@@ -97,14 +97,14 @@ class Set extends Object {
 		} elseif (is_a($this, 'set') || is_a($this, 'Set')) {
 			$val = $this->get();
 		}
-		
+
 		if (empty($val) || $val == null) {
 			return null;
 		}
 		return Set::__map($val, $class);
 	}
 
-	function __map($value, $class) {
+	function __map($value, $class, $identity = null) {
 		if (!empty($value) && Set::numeric(array_keys($value))) {
 			$ret = array();
 			foreach ($value as $key => $val) {
@@ -112,6 +112,9 @@ class Set extends Object {
 			}
 		} else {
 			$ret = new $class;
+			if ($identity != null) {
+				$ret->__identity__ = $identity;
+			}
 		}
 
 		if (empty($value)) {
@@ -123,9 +126,9 @@ class Set extends Object {
 			if (!is_numeric($key) && strlen($key) > 1) {
 				if ($key{0} == strtoupper($key{0}) && $key{1} == strtolower($key{1})) {
 					if ($key == $keys[0]) {
-						$ret = Set::__map($val, $class);
+						$ret = Set::__map($val, $class, $key);
 					} else {
-						$ret->{$key} = Set::__map($val, $class);
+						$ret->{$key} = Set::__map($val, $class, $key);
 					}
 				} else {
 					$ret->{$key} = $val;
