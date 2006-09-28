@@ -188,7 +188,7 @@ class DboMysql extends DboSource {
 			}
 		}
 
-		$this->__cacheDescription($model->tablePrefix.$model->table, $fields);
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 /**
