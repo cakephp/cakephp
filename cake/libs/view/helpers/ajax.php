@@ -510,6 +510,7 @@ class AjaxHelper extends Helper {
 			if (in_array($id, $divs)) {
 				$this->__ajaxBuffer[$id] = ob_get_contents();
 				ob_end_clean();
+				ob_start();
 				return '';
 			}
 		}
@@ -811,12 +812,13 @@ class AjaxHelper extends Helper {
 
 	function afterRender() {
 		if (env('HTTP_X_UPDATE') != null && count($this->__ajaxBuffer) > 0) {
+			@ob_end_clean();
+
 			$data = array();
 			$divs = explode(' ', env('HTTP_X_UPDATE'));
 			$keys = array_keys($this->__ajaxBuffer);
 
 			if (count($divs) == 1 && in_array($divs[0], $keys)) {
-				@ob_end_clean();
 				e($this->__ajaxBuffer[$divs[0]]);
 			} else {
 				foreach ($this->__ajaxBuffer as $key => $val) {
@@ -827,7 +829,6 @@ class AjaxHelper extends Helper {
 				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(__ajaxUpdater__[n])); }';
 
-				@ob_end_clean();
 				e($this->Javascript->codeBlock($out));
 			}
 			exit();
