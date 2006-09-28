@@ -207,7 +207,7 @@ class DboMssql extends DboSource {
 		}
 
 		$fields = false;
-		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $model->tablePrefix . $model->table . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $model->table . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $model->table . "'", false);
+		$cols = $this->fetchAll("SELECT COLUMN_NAME as Field, DATA_TYPE as Type, COL_LENGTH('" . $this->fullTableName($model, false) . "', COLUMN_NAME) as Length, IS_NULLABLE As [Null], COLUMN_DEFAULT as [Default], COLUMNPROPERTY(OBJECT_ID('" . $this->fullTableName($model, false) . "'), COLUMN_NAME, 'IsIdentity') as [Key], NUMERIC_SCALE as Size FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $this->fullTableName($model, false) . "'", false);
 
 		foreach($cols as $column) {
 			$fields[] = array(
@@ -218,7 +218,7 @@ class DboMssql extends DboSource {
 			);
 		}
 
-		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 
@@ -267,7 +267,7 @@ class DboMssql extends DboSource {
 				$data = $this->boolean((bool)$data);
 			break;
 			default:
-				$data = addslashes($data);
+				$data = stripslashes(r("'", "''", $data));
 			break;
 		}
 		return "'" . $data . "'";
