@@ -199,8 +199,7 @@ class CacheHelper extends Helper{
 		}
 
 		$cache = convertSlash($this->here) . '.php';
-		$file = '<!--cachetime:' . $cacheTime . '-->
-					<?php
+		$file = '<!--cachetime:' . $cacheTime . '--><?php
 					loadController(\'' . $this->view->name . '\');
 					$this->controller = new ' . $this->view->name . 'Controller();
 					$this->helpers = unserialize(\'' . serialize($this->view->helpers) . '\');
@@ -232,8 +231,7 @@ class CacheHelper extends Helper{
 						}
 						$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
 					}
-					?>
-					' . $file;
+					?>' . $file;
 		  return cache('views' . DS . $cache, $file, $timestamp);
 	 }
 }
