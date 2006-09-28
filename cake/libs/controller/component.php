@@ -102,7 +102,7 @@ class Component extends Object {
 							return $this->cakeError('missingComponentFile', array(array(
 								'className' => $this->controller->name,
 								'component' => $component,
-								'file' => Inflector::underscore($componentCn) . '.php',
+								'file' => Inflector::underscore($component) . '.php',
 								'base' => $this->controller->base
 							)));
 						}

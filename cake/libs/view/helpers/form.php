@@ -318,17 +318,12 @@ class FormHelper extends Helper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			$options = array_reverse($options);
-			$options[] = $showEmpty;
-			$options = array_reverse($options);
-			/*nate's old code
 			$keys = array_keys($options);
 			$vals = array_values($options);
 			array_unshift($keys, '');
 			array_unshift($vals, $showEmpty);
-			$options = array_combine($keys, $vals);*/
+			$options = array_combine($keys, $vals);
 		}
-		
 		$select = am($select, $this->__selectOptions(array_reverse($options), $selected, array(), $showParents));
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select));
