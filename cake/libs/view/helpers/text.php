@@ -108,7 +108,7 @@ class TextHelper extends Helper {
 			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->linkOut($matches[0], $matches[0],' . $options . ');'), $text);
 
 		return preg_replace_callback('#(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])#',
-			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->linkOut($matches[0], "http://" . $matches[0],' . $options . ');'), $text);
+			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . $matches[0],' . $options . ');'), $text);
 	}
 /**
  * Adds email links (<a href="mailto:....) to a given text.
