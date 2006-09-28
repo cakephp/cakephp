@@ -1170,6 +1170,7 @@ class Bake {
 					$out .= "\t\t\t'{$modelAssociations['belongsTo'][$i]}' =>\n";
 					$out .= "\t\t\t array('className' => '{$modelAssociations['belongsTo'][$i]}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
 					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
 					$out .= "\t\t\t\t\t'counterCache' => ''),\n\n";
@@ -1183,9 +1184,10 @@ class Bake {
 				for($i = 0; $i < count($modelAssociations['hasOne']); $i++) {
 					$out .= "\t\t\t'{$modelAssociations['hasOne'][$i]}' =>\n";
 					$out .= "\t\t\t array('className' => '{$modelAssociations['hasOne'][$i]}',\n";
-					$out .= "\t\t\t\t\t'conditions' => '',\n";
-					$out .= "\t\t\t\t\t'order' => '',\n";
 					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
+					$out .= "\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t'fields' => '',\n";
+					$out .= "\t\t\t\t\t'order' => '',\n";
 					$out .= "\t\t\t\t\t'dependent' => ''),\n\n";
 				}
 				$out .= "\t);\n\n";
@@ -1197,6 +1199,7 @@ class Bake {
 				for($i = 0; $i < count($modelAssociations['hasMany']); $i++) {
 					$out .= "\t\t\t'{$modelAssociations['hasMany'][$i]}' =>\n";
 					$out .= "\t\t\t array('className' => '{$modelAssociations['hasMany'][$i]}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
@@ -1329,7 +1332,6 @@ class Bake {
 		$error = false;
 		switch ($type) {
 			case 'model':
-				$out .= 'loadModelTest();'."\n\n";
 				$out .= "class {$className}TestCase extends UnitTestCase\n{\n";
 				$out .= "\tvar \$object = null;\n\n";
 				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
@@ -1342,7 +1344,6 @@ class Bake {
 				$filename = $inflect->underscore($className).'.test.php';
 			break;
 			case 'controller':
-				$out .= 'loadControllerTest();'."\n\n";
 				$out .= "class {$className}ControllerTestCase extends UnitTestCase\n{\n";
 				$out .= "\tvar \$object = null;\n\n";
 				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";

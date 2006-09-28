@@ -291,10 +291,10 @@ class Model extends Overloadable {
  * @access protected
  */
 	var $__associationKeys = array(
-		'belongsTo' => array('className', 'conditions', 'order', 'foreignKey', 'counterCache'),
-		'hasOne' => array('className', 'conditions', 'order', 'foreignKey', 'dependent'),
-		'hasMany' => array('className', 'conditions', 'order', 'foreignKey', 'fields', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-		'hasAndBelongsToMany' => array('className', 'joinTable', 'fields', 'foreignKey', 'associationForeignKey', 'conditions', 'order', 'uniq', 'finderQuery', 'deleteQuery', 'insertQuery', 'with')
+		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
+		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
+		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
+		'hasAndBelongsToMany' => array('className', 'joinTable', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
 	);
 
 /**
