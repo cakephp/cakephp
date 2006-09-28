@@ -134,7 +134,40 @@ class Object{
 			break;
 		}
 	}
+/**
+ * Outputs a stack trace with the given options
+ *
+ * @param array $options
+ * @return string
+ */
+	function trace($options = array()) {
+		$backtrace = debug_backtrace();
+		$back = array();
+		foreach ($backtrace as $trace) {
+			$t = '';
+			if (isset($trace['class']) && !empty($trace['class'])) {
+				$t = $trace['class'].'::';
+			}
+			$t .= $trace['function'].'() - (from ';
 
+			if (strpos($trace['file'], CAKE_CORE_INCLUDE_PATH) === 0) {
+				$trace['file'] = r(CAKE_CORE_INCLUDE_PATH, 'CAKE_PATH', $trace['file']);
+			} elseif (strpos($trace['file'], APP) === 0) {
+				$trace['file'] = r(APP, 'APP_PATH/', $trace['file']);
+			}
+			$t .= $trace['file'].', line ' . $trace['line'] . ')';
+			$back[] = $t;
+		}
+
+		$back = array_reverse($back);
+		array_pop($back);
+		$back = array_reverse($back);
+
+		if (isset($options['format']) && $options['format'] == 'array') {
+			return $back;
+		}
+		return join("\n", $back);
+	}
 /**
  * Used to report user friendly errors.
  * If there is a file app/error.php this file will be loaded
