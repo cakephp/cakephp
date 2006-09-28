@@ -39,6 +39,36 @@
 class Helper extends Object {
 
 /**
+ * Base URL
+ *
+ * @var string
+ */
+	var $base = null;
+/**
+ * URL to current action.
+ *
+ * @var string
+ */
+	var $here = null;
+/**
+ * Parameter array.
+ *
+ * @var array
+ */
+	var $params = array();
+/**
+ * Current action.
+ *
+ * @var string
+ */
+	var $action = null;
+/**
+ * Enter description here...
+ *
+ * @var array
+ */
+	var $data = null;
+/**
  * Holds tag templates.
  *
  * @access public
