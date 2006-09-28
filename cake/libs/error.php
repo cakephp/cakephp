@@ -48,8 +48,13 @@ class ErrorHandler extends Object{
 	function __construct($method, $messages) {
 		parent::__construct();
 		static $__previousError = null;
+
+		$allow = array('.', '/', '_');
+	    if(substr(PHP_OS,0,3) == "WIN") {
+            $allow = array_merge($allow, array('\\', ':') );
+        }
 		$clean = new Sanitize();
-		$messages = $clean->paranoid($messages, array('.', '/', '_'));
+		$messages = $clean->paranoid($messages, $allow);
 		$this->__dispatch =& new Dispatcher();
 
 		if ($__previousError != array($method, $messages)) {
