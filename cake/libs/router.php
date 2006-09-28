@@ -78,7 +78,22 @@ class Router extends Overloadable {
  * @var array
  */
 	var $__currentRoute = array();
- /**
+
+/**
+ * Maintains the parameter stack for the current request
+ *
+ * @var array
+ */
+	var $__params = array();
+
+/**
+ * Maintains the path stack for the current request
+ *
+ * @var array
+ */
+	var $__paths = array();
+
+/**
   * Initialize the Router object
   *
   */
@@ -140,10 +155,14 @@ class Router extends Overloadable {
 			$default['action'] = 'index';
 		}
 
+		if (!isset($default['plugin']) || empty($default['plugin'])) {
+			$default['plugin'] = null;
+		}
+
 		$r = null;
 		if (($route == '') || ($route == '/')) {
 			$regexp = '/^[\/]*$/';
-			$_this->routes[] = array($route, $regexp, array(), $default);
+			$_this->routes[] = array($route, $regexp, array(), $default, array());
 		} else {
 			$elements = array();
 
@@ -178,7 +197,7 @@ class Router extends Overloadable {
 			}
 
 			$regexp = '#^' . join('', $parsed) . '[\/]*$#';
-			$_this->routes[] = array($route, $regexp, $names, $default);
+			$_this->routes[] = array($route, $regexp, $names, $default, $params);
 		}
 		return $_this->routes;
 	}
@@ -280,7 +299,21 @@ class Router extends Overloadable {
  */
 	function setParams($params) {
 		$_this =& Router::getInstance();
+		if (!isset($params[1]['plugin'])) {
+			$params[1]['plugin'] = null;
+		}
 		list($_this->__params[], $_this->__paths[]) = $params;
+	}
+/**
+ * Reloads default Router settings
+ *
+ * @return void
+ */
+	function reload() {
+		$_this =& Router::getInstance();
+		foreach (get_class_vars('Router') as $key => $val) {
+			$_this->{$key} = $val;
+		}
 	}
 /**
  * Finds URL for specified action.
@@ -301,18 +334,13 @@ class Router extends Overloadable {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 
-		$base = strip_plugin($this->base, $this->plugin);
-		$extension = null;
 		$params = $_this->__params[0];
 		$path = $_this->__paths[0];
+		$base = strip_plugin($path['base'], $path['plugin']);
+		$extension = null;
+		$mapped = null;
 
 		if (is_array($url) && !empty($url)) {
-			if (isset($url['?']) && !empty($url['?'])) {
-				$url['?'] = '?' . $url['?'];
-			} else {
-				$url['?'] = null;
-			}
-
 			if (!isset($url['action'])) {
 				if (!isset($url['controller']) || $params['controller'] == $url['controller']) {
 					$url['action'] = $params['action'];
@@ -341,8 +369,38 @@ class Router extends Overloadable {
 				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
 				} else {
-					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext', '?'))) { // CAKE_ADMIN
-						$named[] = array($keys[$i], $url[$keys[$i]]);
+					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext', '?'))) {
+						//if (defined('CAKE_ADMIN') && $keys[$i] != CAKE_ADMIN) {
+							$named[] = array($keys[$i], $url[$keys[$i]]);
+						//}
+					}
+				}
+			}
+
+			if (empty($named) && empty($args) && $url['action'] == 'index') {
+				$url['action'] = null;
+			}
+
+			foreach ($this->routes as $route) {
+				$diff = array_diff_assoc($url, $route[3]);
+				if (empty($diff)) {
+					$match = true;
+					foreach ($route[4] as $key => $pattern) {
+						if (isset($url[$key])) {
+							if (!preg_match($pattern, $url[$key])) {
+								$match = false;
+								break;
+							}
+						} elseif (isset($route[2]) && $route[2] == null) {
+							$match = false;
+							break;
+						}
+					}
+					if ($match) {
+						$mapped = $_this->mapRouteElements($route, $url);
+						foreach (array_keys($route[3]) as $key) {
+							$url[$key] = '';
+						}
 					}
 				}
 			}
@@ -365,8 +423,10 @@ class Router extends Overloadable {
 				$combined = join('/', $named);
 			}
 
-			if (empty($named) && empty($args) && $url['action'] == 'index') {
-				$url['action'] = null;
+			if (isset($url['?']) && !empty($url['?'])) {
+				$url['?'] = '?' . $url['?'];
+			} else {
+				$url['?'] = null;
 			}
 
 			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
@@ -380,17 +440,27 @@ class Router extends Overloadable {
 			}
 
 			if (empty($url)) {
-				return $context->here;
+				return $path['here'];
 			} elseif($url{0} == '/') {
 				$output = $base . $url;
 			} else {
-				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
+				$output = $base . '/' . strtolower($params['controller']) . '/' . $url;
 			}
 		}
 		if ($full) {
 			$output = FULL_BASE_URL . $output;
 		}
 		return $output . $extension;
+	}
+/**
+ * Maps a URL array onto a route and returns the string result, of false if no match
+ *
+ * @param array Route
+ * @param array URL
+ * @return mixed
+ */
+	function mapRouteElements($route, $url) {
+		
 	}
 /**
  * Returns the route matching the current request URL
