@@ -318,13 +318,11 @@ class FormHelper extends Helper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			$keys = array_keys($options);
-			$vals = array_values($options);
-			array_unshift($keys, '');
-			array_unshift($vals, $showEmpty);
-			$options = array_combine($keys, $vals);
+			$options = array_reverse($options, true);
+			$options[] = $showEmpty;
+			$options = array_reverse($options, true);
 		}
-		$select = am($select, $this->__selectOptions(array_reverse($options), $selected, array(), $showParents));
+		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));		
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
@@ -335,7 +333,6 @@ class FormHelper extends Helper {
  */
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null) {
 		$select = array();
-		
 		foreach($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
@@ -367,7 +364,7 @@ class FormHelper extends Helper {
 			}
 		}
 		
-		return array_reverse($select);
+		return array_reverse($select, true);
 	}
 /**
  * Returns a formatted INPUT tag for HTML FORMs.
