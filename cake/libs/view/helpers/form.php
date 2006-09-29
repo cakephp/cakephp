@@ -128,9 +128,14 @@ class FormHelper extends Helper {
  * @return string
  */
 	function input($tagName, $options = array()) {
+
+		$this->setFormTag($tagName);
+
 		if (!isset($options['type'])) {
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
+			} elseif ($this->field() == 'passwd' || $this->field() == 'password') {
+				$options['type'] = 'password';
 			} else {
 				$options['type'] = 'text';
 			}
@@ -166,6 +171,9 @@ class FormHelper extends Helper {
 			case 'text':
 				$out .= $this->text($tagName);
 			break;
+			case 'password':
+				$out .= $this->password($tagName);
+			break;
 			case 'file':
 				$out .= $this->Html->file($tagName);
 			break;
@@ -174,6 +182,10 @@ class FormHelper extends Helper {
 				$empty = (isset($options['empty']) ? $options['empty'] : '');
 				unset($options['options'], $options['empty']);
 				$out .= $this->select($tagName, $list, null, $options, $empty);
+			break;
+			case 'textarea':
+			default:
+				$out .= $this->textarea($tagName);
 			break;
 		}
 
@@ -185,18 +197,6 @@ class FormHelper extends Helper {
 			$out = $this->Html->div($divOptions['class'], $out);
 		}
 		return $this->output($out);
-	}
-/**
- * @deprecated
- */
-	function divTag($class, $text) {
-		return sprintf(TAG_DIV, $class, $text);
-	}
-/**
- * @deprecated
- */
-	function pTag($class, $text) {
-		return sprintf(TAG_P_CLASS, $class, $text);
 	}
 /**
  * Creates a text input widget.
@@ -217,6 +217,21 @@ class FormHelper extends Helper {
 			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
 		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates a password input widget.
+ *
+ * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param  array	$htmlAttributes Array of HTML attributes.
+ * @return string
+ */
+	function password($fieldName, $htmlAttributes = null) {
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+		}
+		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a textarea widget.
@@ -711,6 +726,18 @@ class FormHelper extends Helper {
 			}
 		}
 		return $strFormFields;
+	}
+/**
+ * @deprecated
+ */
+	function divTag($class, $text) {
+		return sprintf(TAG_DIV, $class, $text);
+	}
+/**
+ * @deprecated
+ */
+	function pTag($class, $text) {
+		return sprintf(TAG_P_CLASS, $class, $text);
 	}
 }
 ?>
