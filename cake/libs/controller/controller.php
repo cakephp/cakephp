@@ -968,7 +968,7 @@ class Controller extends Object {
 			return array();
 		}
 
-		$options = am($this->params, $this->passedArgs);
+		$options = am($this->params, $this->params['url'], $this->passedArgs);
 		if (isset($this->pagination[$object->name])) {
 			$defaults = $this->paginate[$object->name];
 		} else {
