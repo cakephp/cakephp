@@ -281,7 +281,7 @@ class Controller extends Object {
  *
  */
 	function constructClasses() {
-		if (empty($this->params['pass'])) {
+		if (empty($this->params['pass']) || !isset($this->params['pass']['0'])) {
 			$id = false;
 		} else {
 			$id = $this->params['pass']['0'];
