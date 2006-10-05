@@ -247,7 +247,7 @@ class Scaffold extends Object{
 								$this->controllerClass->Session->setFlash(
 									'The ' . Inflector::humanize($this->modelKey) . ' has been ' . $success . '.');
 								$this->controllerClass->redirect(
-									Inflector::underscore($this->controllerClass->viewPath));
+									'/' . Inflector::underscore($this->controllerClass->viewPath));
 						  } else {
 								return $this->controllerClass->flash(
 											 'The ' . Inflector::humanize($this->modelKey) . ' has been ' . $success
@@ -303,7 +303,7 @@ class Scaffold extends Object{
 						  $this->controllerClass->Session->setFlash(
 							  'The ' . Inflector::humanize($this->modelKey) . ' with id: ' . $id
 								  . ' has been deleted.');
-						  $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+						  $this->controllerClass->redirect('/' . Inflector::underscore($this->controllerClass->viewPath));
 					 } else {
 						  return $this->controllerClass->flash(
 										'The ' . Inflector::humanize($this->modelKey) . ' with id: ' . $id
@@ -315,7 +315,7 @@ class Scaffold extends Object{
 						  $this->controllerClass->Session->setFlash(
 							  'There was an error deleting the ' . Inflector::humanize($this->modelKey)
 								  . ' with the id ' . $id);
-						  $this->controllerClass->redirect(Inflector::underscore($this->controllerClass->viewPath));
+						  $this->controllerClass->redirect('/' . Inflector::underscore($this->controllerClass->viewPath));
 					 } else {
 						  return $this->controllerClass->flash(
 										'There was an error deleting the ' . Inflector::humanize($this->modelKey)
