@@ -302,12 +302,11 @@ class FormHelper extends Helper {
  * Returns a formatted SELECT element.
  *
  * @param string $fieldName Name attribute of the SELECT
- * @param array $optionElements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
+ * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
  * @param mixed $selected Selected option
- * @param array $selectAttr Array of HTML options for the opening SELECT element
- * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
+ * @param array $attributes
  * @param boolean $show_empty If true, the empty select option is shown
- * @param  boolean $return         Whether this method should return a value
+ * @param boolean $showParents
  * @return string Formatted SELECT element
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '', $showParents = null) {
@@ -315,7 +314,7 @@ class FormHelper extends Helper {
 		$attributes = $this->domId($attributes);
 
 		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
+			$attributes = $this->Html->addClass($attributes, 'form_error');
 		}
 
 		if (!isset($selected)) {
