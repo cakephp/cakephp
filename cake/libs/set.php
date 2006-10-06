@@ -105,6 +105,11 @@ class Set extends Object {
 	}
 
 	function __map($value, $class, $identity = null) {
+
+		if (is_object($value)) {
+			return $value;
+		}
+
 		if (!empty($value) && Set::numeric(array_keys($value))) {
 			$ret = array();
 			foreach ($value as $key => $val) {
@@ -124,7 +129,7 @@ class Set extends Object {
 		$keys = array_keys($value);
 		foreach ($value as $key => $val) {
 			if (!is_numeric($key) && strlen($key) > 1) {
-				if ($key{0} == strtoupper($key{0}) && $key{1} == strtolower($key{1})) {
+				if ($key{0} == strtoupper($key{0}) && $key{1} == strtolower($key{1}) && (is_array($val) || is_object($val))) {
 					if ($key == $keys[0]) {
 						$ret = Set::__map($val, $class, $key);
 					} else {
