@@ -36,15 +36,14 @@
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
  * Each define has a commented line of code that explains what you would change.
- *
  */
 	if (!defined('ROOT')) {
-		 //define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
-		 //You should also use the DS define to seperate your directories
+		 //define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED. DO NOT ADD A TRAILING DIRECTORY SEPARATOR');
+		 //You should also use the DS define to separate your directories
 		 define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
 	if (!defined('APP_DIR')) {
-		 //define('APP_DIR', 'DIRECTORY NAME OF APPLICATION';
+		 //define('APP_DIR', 'DIRECTORY NAME OF APPLICATION');
 		 define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
 /**
@@ -52,8 +51,8 @@
  * outside of the distributed directory structure.
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		 //define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
-		 //You should also use the DS define to seperate your directories
+		 //define ('CAKE_CORE_INCLUDE_PATH', 'FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED. DO NOT ADD A TRAILING DIRECTORY SEPARATOR');
+		 //You should also use the DS define to separate your directories
 		 define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
 ///////////////////////////////
