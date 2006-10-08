@@ -107,7 +107,11 @@ class Helper extends Object {
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {
-		$base = strip_plugin($this->base, $this->plugin);
+		if (isset($this->plugin)) {
+			$base = strip_plugin($this->base, $this->plugin);
+		} else {
+			$base = $this->base;
+		}
 		$extension = null;
 
 		if (is_array($url) && !empty($url)) {
@@ -271,7 +275,20 @@ class Helper extends Object {
  * @param string $tagValue A field name, like "Modelname/fieldname"
  */
 	function setFormTag($tagValue) {
-		return list($this->view->model, $this->view->field) = explode("/", $tagValue);
+		$parts = explode("/", $tagValue);
+		if (count($parts) == 1) {
+			$this->view->field = $parts[0];
+		} elseif (count($parts) == 2 && is_numeric($parts[0])) {
+			$this->view->modelId = $parts[0];
+			$this->view->field = $parts[1];
+		} elseif (count($parts) == 2) {
+			$this->view->model = $parts[0];
+			$this->view->field = $parts[1];
+		} elseif (count($parts) == 3) {
+			$this->view->model   = $parts[0];
+			$this->view->modelId = $parts[1];
+			$this->view->field   = $parts[2];
+		}
 	}
 /**
  * Enter description here...
@@ -313,7 +330,7 @@ class Helper extends Object {
  * @return array
  */
 	function domId($options = array(), $id = 'id') {
-		if (!isset($options[$id])) {
+		if (is_array($options) && !isset($options[$id])) {
 			$options[$id] = $this->model() . Inflector::camelize($this->field());
 		}
 		return $options;
@@ -346,7 +363,7 @@ class Helper extends Object {
 			$result = h($this->data[$this->model()][$this->field()]);
 		}
 
-		if ($options !== 0) {
+		if ($options !== 0 && is_array($options)) {
 			$options[$key] = $result;
 			return $options;
 		} else {
