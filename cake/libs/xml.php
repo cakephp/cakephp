@@ -27,6 +27,7 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('set');
 
 /**
  * XML handling.
@@ -96,7 +97,22 @@ class XML extends XMLNode {
 		$this->childNodes = array();
 
 		if($input != null) {
-			$this->load($input);
+			$vars = null;
+			if (is_string($input)) {
+				$this->load($input);
+			} elseif (is_array($input)) {
+				$vars = $this->__objectToNode(Set::map($input));
+			} elseif (is_object($input)) {
+				$vars = $this->__objectToNode($input);
+			}
+
+			if ($vars != null) {
+				$this->childNodes = $vars;
+			}
+
+			if (!is_array($this->childNodes)) {
+				$this->childNodes = array($this->childNodes);
+			}
 		}
 
 		foreach ($options as $key => $val) {
@@ -121,23 +137,29 @@ class XML extends XMLNode {
 		$this->__rawData = null;
 		$this->header = null;
 
-		if(strstr($in, "<")) {
-			// Input is raw xml data
-			$this->__rawData = $in;
-		} else {
-			// Input is an xml file
-			if(strpos($in, '://') || file_exists($in)) {
-				$this->__rawData = @file_get_contents($in);
-				if ($this->__rawData == null) {
-					$this->error("XML file $in is empty or could not be read (possible permissions error).");
+		if (is_string($in)) {
+
+			if(strstr($in, "<")) {
+				// Input is raw xml data
+				$this->__rawData = $in;
+			} else {
+				// Input is an xml file
+				if(strpos($in, '://') || file_exists($in)) {
+					$this->__rawData = @file_get_contents($in);
+					if ($this->__rawData == null) {
+						$this->error("XML file $in is empty or could not be read (possible permissions error).");
+						return false;
+					}
+				} else {
+					$this->error("XML file $in does not exist");
 					return false;
 				}
-			} else {
-				$this->error("XML file $in does not exist");
-				return false;
 			}
+			return $this->parse();
+
+		} elseif (is_object($in)) {
+		
 		}
-		return $this->parse();
 	}
 /**
  * Parses and creates XML nodes from the __rawData property.
@@ -209,14 +231,22 @@ class XML extends XMLNode {
  * @return string XML data
  */
 	function compose($useHeader = true) {
-		$header =  '<'.'?'.$this->header.' ?'.'>'."\n";
+		if (!empty($this->__header)) {
+			$header =  '<'.'?'.$this->__header.' ?'.'>'."\n";
+		} else {
+			$header =  '<'.'?xml version="'.$this->version.'" encoding="'.$this->encoding.'" ?'.'>'."\n";
+		}
 		if (!$this->hasChildNodes() && !$useHeader) {
 			return null;
 		} elseif (!$this->hasChildNodes()) {
 			return $header;
 		}
 
-		$data = $this->childNodes[0]->__toString();
+		$data = '';
+		foreach ($this->childNodes as $i => $node) {
+			$data .= $this->childNodes[$i]->__toString();
+		}
+
 		if ($useHeader) {
 			return $header.$data;
 		}
@@ -352,6 +382,61 @@ class XMLNode extends Object {
 				unset($child);
 			}
 		}
+	}
+/**
+ * Gets the XML element properties from an object
+ *
+ * @param object $object
+ * @return array
+ */
+	function __objectToNode($object) {
+
+		if (is_array($object)) {
+			$objects = array();
+			foreach ($object as $obj) {
+				$objects[] = $this->__objectToNode($obj);
+			}
+			return $objects;
+		}
+
+		if (isset($object->__identity__) && !empty($object->__identity__)) {
+			$name = $object->__identity__;
+		} elseif (isset($object->name) && $object->name != null) {
+			$name = $object->name;
+		} else {
+			$name = get_class($object);
+		}
+		if ($name != low($name)) {
+			$name = Inflector::underscore($name);
+		}
+
+		if (is_object($object)) {
+			$attributes = get_object_vars($object);
+		} elseif (is_array($object)) {
+			$attributes = $object[$name];
+			if (is_object($attributes)) {
+				$attributes = get_object_vars($attributes);
+			}
+		}
+
+		$children = array();
+		$attr = $attributes;
+
+		foreach ($attr as $key => $val) {
+			if (is_array($val)) {
+				foreach ($val as $i => $obj2) {
+					$children[] = $this->__objectToNode($obj2);
+					unset($attributes[$key]);
+				}
+			} elseif (is_object($val)) {
+				$children[] = $this->__objectToNode($val);
+				unset($attributes[$key]);
+			}
+		}
+		unset($attributes['__identity__']);
+
+		$node = new XMLNode($name, $attributes, null, $children);
+		return $node;
 	}
 /**
  * Sets the parent node of this XMLNode
