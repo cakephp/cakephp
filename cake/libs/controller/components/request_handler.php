@@ -117,20 +117,22 @@ class RequestHandlerComponent extends Object{
  * @return void
  */
 	function startup(&$controller) {
+
 		if ($this->disableStartup || !$this->enabled) {
 			return;
 		}
+
 		$this->setView($controller);
 		$controller->params['isAjax'] = $this->isAjax();
 
-		if (isset($this->params['url']['ext'])) {
+		if (isset($this->params['url']['ext']) && !empty($this->params['url']['ext'])) {
 			$ext = $this->params['url']['ext'];
-			if (in_array($ext, array_keys($this->__requestContent))) {
-				if ($ext != 'html' && $ext != 'htm' && !empty($ext)) {
-					$controller->ext = '.ctp';
-				}
+			if (in_array($ext, array_keys($this->__requestContent)) && !in_array($ext, array('html', 'htm'))) {
+
+				$controller->ext = '.ctp';
 				$controller->viewPath .= '/' . $ext;
 				$controller->layoutPath = $ext;
+
 				if (in_array($ext, array_keys($this->__requestContent))) {
 					$this->respondAs($ext);
 				}
@@ -141,6 +143,13 @@ class RequestHandlerComponent extends Object{
 					}
 				}
 			}
+		}
+
+		if ($this->requestedWith('xml')) {
+			if (!class_exists('xmlnode') && !class_exists('XMLNode')) {
+				uses('xml');
+			}
+			$controller->data = new XML(trim(file_get_contents('php://input')));
 		}
 	}
 /**
@@ -333,6 +342,7 @@ class RequestHandlerComponent extends Object{
 	function accepts($type = null) {
 		if ($type == null) {
 			return $this->mapType($this->__acceptTypes);
+
 		} else if(is_array($type)) {
 			foreach($type as $t) {
 				if ($this->accepts($t) == true) {
@@ -362,6 +372,34 @@ class RequestHandlerComponent extends Object{
 		}
 	}
 /**
+ * Determines the content type of the data the client has sent (i.e. in a POST request)
+ *
+ * @param mixed $type Can be null (or no parameter), a string type name, or an
+ *					array of types
+ * @access public
+ */
+	function requestedWith($type = null) {
+
+		if (!$this->isPost() && !$this->isPut()) {
+			return null;
+		}
+
+		if ($type == null) {
+			return $this->mapType(env('CONTENT_TYPE'));
+
+		} else if(is_array($type)) {
+			foreach($type as $t) {
+				if ($this->requestedWith($t)) {
+					return $this->mapType($t);
+				}
+			}
+			return false;
+		} else if(is_string($type)) {
+
+			return ($type == $this->mapType(env('CONTENT_TYPE')));
+		}
+	}
+/**
  * Determines which content types the client prefers
  *
  * @param mixed $type
@@ -370,7 +408,15 @@ class RequestHandlerComponent extends Object{
  */
 	function prefers($type = null) {
 		if ($type == null) {
-			return $this->accepts(null);
+			if (!isset($this->params['url']['ext'])) {
+				$accept = $this->accepts(null);
+				if (is_array($accept)) {
+					return $accept[0];
+				}
+				return $accept;
+			} else {
+				return $this->params['url']['ext'];
+			}
 		}
 
 		$types = normalizeList($type, false);
