@@ -128,9 +128,9 @@ class CakeSession extends Object{
 
 		$this->__initSession();
 		session_cache_limiter ("must-revalidate");
+		session_start();
 
 		if (!isset($_SESSION)) {
-			session_start();
 			$this->__begin();
 		}
 		$this->__checkValid();
