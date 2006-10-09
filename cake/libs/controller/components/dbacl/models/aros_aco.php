@@ -38,6 +38,8 @@
  */
 
 class ArosAco extends AppModel {
+
+	var $useDbConfig = ACL_DATABASE;
 /**
  * Enter description here...
  *

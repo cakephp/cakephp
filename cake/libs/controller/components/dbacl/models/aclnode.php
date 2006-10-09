@@ -36,6 +36,9 @@
  *
  */
 class AclNode extends AppModel {
+
+	var $useDbConfig = ACL_DATABASE;
+
 	var $cacheQueries = false;
 /**
  * Creates a new ARO/ACO node
