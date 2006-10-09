@@ -119,7 +119,7 @@ class Component extends Object {
 				}
 
 				if ($componentCn == 'SessionComponent') {
-					$param = $this->controller->base . '/';
+					$param = strip_plugin($this->controller->base, $this->controller->plugin) . '/';
 				} else {
 					$param = null;
 				}
