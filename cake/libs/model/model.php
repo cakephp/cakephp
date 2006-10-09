@@ -31,7 +31,7 @@
 /**
  * Included libs
  */
-uses('class_registry', 'validators', 'overloadable', 'model' . DS . 'behavior');
+uses('class_registry', 'validators', 'overloadable', 'model' . DS . 'behavior', 'set');
 
 /**
  * Object-relational mapper.
@@ -677,6 +677,29 @@ class Model extends Overloadable {
  * @return unknown
  */
 	function set($one, $two = null) {
+
+		if (is_object($one)) {
+			if (is_a($one, 'xmlnode') || is_a($one, 'XMLNode')) {
+				if ($one->name != Inflector::underscore($this->name)) {
+					if (is_object($one->getChild(Inflector::underscore($this->name)))) {
+						$one = $one->getChild(Inflector::underscore($this->name));
+						$one = $one->attributes;
+					} else {
+						return null;
+					}
+				}
+			} elseif (is_a($one, 'stdclass') || is_a($one, 'stdClass')) {
+				$one = get_object_vars($one);
+				$keys = array_keys($one);
+				$count = count($keys);
+				for ($i = 0; $i < $count; $i++) {
+					if ($keys[$i] == '__identity__' || is_array($one[$keys[$i]]) || is_object($one[$keys[$i]])) {
+						unset($one[$keys[$i]]);
+					}
+				}
+			}
+		}
+
 		if (is_array($one)) {
 			if (countdim($one) == 1) {
 				$data = array($this->name => $one);
@@ -884,13 +907,7 @@ class Model extends Overloadable {
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if ($data) {
-			if (countdim($data) == 1) {
-				$this->set(array($this->name => $data));
-			} else {
-				$this->set($data);
-			}
-		}
+		$this->set($data);
 
 		$whitelist = !(empty($fieldList) || count($fieldList) == 0);
 
@@ -1065,6 +1082,16 @@ class Model extends Overloadable {
 				}
 			}
 		}
+	}
+/**
+ * Allows model records to be updated based on a set of conditions
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @return boolean True on success, false on failure
+ */
+	function updateAll($conditions, $fields) {
+		
 	}
 /**
  * Synonym for del().
