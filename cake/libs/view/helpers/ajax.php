@@ -73,7 +73,7 @@ class AjaxHelper extends Helper {
  *
  * @var array
  */
-	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverClass', 'ghosting', 'dropOnEmpty', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tree', 'treeTag', 'onUpdate', 'onChange');
+	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverclass', 'ghosting', 'dropOnEmpty', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tree', 'treeTag', 'onUpdate', 'onChange');
 /**
  * Options for slider.
  *
