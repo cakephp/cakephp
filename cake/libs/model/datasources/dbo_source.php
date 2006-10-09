@@ -80,11 +80,16 @@ class DboSource extends DataSource {
 /**
  * Constructor
  */
-	function __construct($config = null) {
+	function __construct($config = null, $autoConnect = true) {
 		$this->debug = DEBUG > 0;
 		$this->fullDebug = DEBUG > 1;
 		parent::__construct($config);
-		return $this->connect();
+		
+		if ($autoConnect) {
+			return $this->connect();
+		} else {
+			return true;
+		}
 	}
 /**
  * Reconnects to database server with optional new settings
@@ -1083,7 +1088,7 @@ class DboSource extends DataSource {
 					}
 
 					$joinFields = array();
-					if (isset($assocData['with']) && !empty($assocData['with'])) {
+					if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
 						$joinName = array_keys($assocData['with']);
 						$joinFields = $assocData['with'][$joinName[0]];
 
@@ -1099,7 +1104,7 @@ class DboSource extends DataSource {
 					$sql .= ' JOIN ' . $joinTbl;
 
 					$joinAssoc = $joinTbl;
-					if (isset($assocData['with']) && !empty($assocData['with'])) {
+					if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
 						$joinAssoc = $joinName[0];
 						$sql .= $this->alias . $this->name($joinAssoc);
 					}
@@ -1344,7 +1349,12 @@ class DboSource extends DataSource {
 
 					for($i = 0; $i < $pregCount; $i++) {
 						if (!empty($match['1'][$i])) {
-							$conditions = preg_replace('/' . $match['0'][$i] . '/', $this->name($match['1'][$i]), $conditions);
+							$conditions = preg_replace('/^' . $match['0'][$i] . '/', ' '.$this->name($match['1'][$i]), $conditions);
+							if (strpos($conditions, '(' . $match['0'][$i]) === false) {
+								$conditions = preg_replace('/[^\w]' . $match['0'][$i] . '/', ' '.$this->name($match['1'][$i]), $conditions);
+							} else {
+								$conditions = preg_replace('/' . $match['0'][$i] . '/', ' '.$this->name($match['1'][$i]), $conditions);
+							}
 						}
 					}
 				}
