@@ -317,6 +317,9 @@ class Bake {
 		while ($prefix == '') {
 			$prefix = $this->getInput('Enter a table prefix?', null, 'n');
 		}
+		if(low($prefix) == 'n') {
+			$prefix = '';
+		}
 
 		$this->stdout('');
 		$this->hr();
@@ -328,7 +331,6 @@ class Bake {
 		$this->stdout("User:          $login");
 		$this->stdout("Pass:          " . str_repeat('*', strlen($password)));
 		$this->stdout("Database:      $database");
-		if($prefix != '')
 		$this->stdout("Table prefix:  $prefix");
 		$this->hr();
 		$looksGood = $this->getInput('Look okay?', array('y', 'n'), 'y');
@@ -360,14 +362,14 @@ class Bake {
 		if ($usePrefix) {
 			$tables = array();
 			foreach ($db->listSources() as $table) {
-				if (! strncmp($table, $usePrefix, strlen($usePrefix))) {
+				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
 					$tables[] = substr($table, strlen($usePrefix));
 				}
 			}
 		} else {
 			$tables = $db->listSources();
 		}
-
+	
 		$this->stdout('Possible models based on your current database:');
 
 		for ($i = 0; $i < count($tables); $i++) {
@@ -393,9 +395,10 @@ class Bake {
 		}
 		
 		$currentTableName = Inflector::tableize($currentModelName);
-		
-		$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $currentTableName . "'.");
-		$tableIsGood = $this->getInput('Is this correct?', array('y','n'), 'y');
+		if(array_search($currentTableName, $tables) === false) {
+			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $currentTableName . "'.");
+			$tableIsGood = $this->getInput('Is this correct?', array('y','n'), 'y');
+		}
 
 		if (strtolower($tableIsGood) == 'n' || strtolower($tableIsGood) == 'no') {
 			$table = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
@@ -409,7 +412,7 @@ class Bake {
 		
 		$validate = array();
 
-		if (array_search($currentModelName, $tables) !== false && (strtolower($wannaDoValidation) == 'y' || strtolower($wannaDoValidation) == 'yes')) {
+		if (array_search($currentTableName, $tables) !== false && (strtolower($wannaDoValidation) == 'y' || strtolower($wannaDoValidation) == 'yes')) {
 			foreach($modelFields as $field) {
 				$this->stdout('');
 				$prompt .= 'Name: ' . $field['name'] . "\n";
@@ -1120,9 +1123,11 @@ class Bake {
 					$otherModelName = $this->__modelName($relation['className']);
 					$otherSingularName = $this->__singularName($associationName);
 					$otherPluralName = $this->__pluralName($associationName);
-			
+					$otherModelKey = Inflector::underscore($otherModelName);
+					$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
+					$actions .= "\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
+					$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->__selectedArray(\$this->data['{$associationName}']['{$associationName}'],  '{$otherModelObj->primaryKey}'));\n";
 				}
 			}
 			foreach($modelObj->belongsTo as $associationName => $relation) {
@@ -1158,7 +1163,7 @@ class Bake {
 					$otherPluralName = $this->__pluralName($associationName);
 			
 					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\t\t\if(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
+					$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
 					$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
 				}
 			}
@@ -1193,7 +1198,7 @@ class Bake {
 			$actions .= "\t}\n";
 			$actions .= "\n";
 			if(!empty($modelObj->hasAndBelongsToMany)) {
-			$actions .= "\tfunction _selectedArray(\$data, \$key) {\n";
+			$actions .= "\tfunction __selectedArray(\$data, \$key) {\n";
 			$actions .= "\t\t\$array = array();\n";
 			$actions .= "\t\tif(!empty(\$data)) {\n";
 			$actions .= "\t\t\tforeach(\$data as \$var) {\n";
@@ -1300,7 +1305,7 @@ class Bake {
 		$out .= "\t\t'host' => '{$host}',\n";
 		$out .= "\t\t'login' => '{$login}',\n";
 		$out .= "\t\t'password' => '{$password}',\n";
-		$out .= "\t\t'database' => '{$database}' \n";
+		$out .= "\t\t'database' => '{$database}', \n";
 		$out .= "\t\t'prefix' => '{$prefix}' \n";
 		$out .= "\t);\n";
 		$out .= "}\n";
@@ -1960,7 +1965,7 @@ class Bake {
 			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$pluralName}, \$html->tagValue('{$tagName}'), " . $this->attributesToArray($selectAttr) . ");?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.') ?>\n";
 		} else {
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$pluralName}, \$selected_{$controller}, array('multiple' => 'multiple', 'class' => 'selectMultiple'));?>\n";
+			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$pluralName}, \$selected_{$pluralName}, array('multiple' => 'multiple', 'class' => 'selectMultiple'));?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		}
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
