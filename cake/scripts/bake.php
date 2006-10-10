@@ -64,11 +64,21 @@
 			case '-project':
 				$project = true;
 				$projectPath = $argv[$i + 1];
+				$app = $argv[$i + 1];
 			break;
 		}
 	}
-	if(!$app) $app = $argv[1];
-	if($project) $app = $projectPath;
+	if(!$app) {
+		$app = $argv[1];
+	}
+	if(!is_dir($app)) {
+		$project = true;
+		$projectPath = $app;
+	
+	}
+	if($project) {
+		$app = $projectPath;
+	}
 	$shortPath = str_replace($root, '', $app);
 	$shortPath = str_replace('../', '', $shortPath);
 	$shortPath = str_replace('//', '/', $shortPath);
@@ -1095,6 +1105,7 @@ class Bake {
 					$otherPluralName = $this->__pluralName($associationName);
 				
 					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+					$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
 					$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
 				}
 			}
@@ -2070,11 +2081,11 @@ class Bake {
  *
  * @param string $projectPath
  */
-	function project($projectPath) {
+	function project($projectPath = null) {
 		if($projectPath != '') {
 			while ($this->__checkPath($projectPath) === true) {
 				$projectPath = $this->getInput('Directory exists please choose another name:');
-				$this->__buildDirLayout($projectPath);
+				$this->__buildDirLayout(null, null);
 				exit();
 			}
 		} else {
@@ -2169,7 +2180,7 @@ class Bake {
 		} elseif (strtolower($looksGood) == 'q' || strtolower($looksGood) == 'quit') {
 			$this->stdout('Bake Aborted.');
 		} else {
-			$this->project($projectPath);
+			$this->project();
 		}
 	}
 /**
