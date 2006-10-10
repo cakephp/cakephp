@@ -1467,7 +1467,10 @@ class Model extends Overloadable {
  */
 	function validates($data = array()) {
 		$errors = $this->invalidFields($data);
-		return ($errors === false || count($errors) === 0);
+		if (is_array($errors)) {
+			return count($errors) === 0;
+		}
+		return $errors;
 	}
 /**
  * Returns an array of invalid fields.
