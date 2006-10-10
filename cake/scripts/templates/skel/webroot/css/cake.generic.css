@@ -2,7 +2,7 @@
 margin:0;
 padding:0;
 }
-
+/* General Style Info */
 body{
 font-family:"frutiger linotype","lucida grande",helvetica,arial,sans-serif;
 text-align:center;
@@ -10,11 +10,11 @@ color:#333;
 font-size: 76%;
 }
 
-/* General Style Info */
 a{
 color:#003d4c;
 text-decoration:underline;
 }
+
 a:hover{
 color:#003d4c;
 text-decoration:none;
@@ -62,7 +62,6 @@ margin: 0 12px;
 }
 
 /* Layout */
-
 #container{
 text-align:left;
 }
@@ -78,6 +77,7 @@ padding: 0px 40px 10px 40px;
 background-color: #fff;
 color: #333;
 }
+
 #footer{
 clear:both;
 padding: 6px 10px;
@@ -85,7 +85,6 @@ text-align: right;
 }
 
 /* tables */
-
 table {
 width: 100%;
 border-top: 1px solid #ccc;
@@ -94,28 +93,33 @@ border-bottom: 1px solid #ccc;
 color:#333;
 background-color: #fff;
 clear:both;
-padding: 0;
-margin: 0 0 2em 0;
-white-space: normal;
+margin-bottom: 10px;
 }
+
 th {
-background-color: #e2e2e2;
+background-color: #f2f2f2;
 border-top: 1px solid #fff;
 border-left: 1px solid #fff;
-border-right: 1px solid #003d4c;
-border-bottom: 1px solid #003d4c;
+border-right: 1px solid #bbb;
+border-bottom: 1px solid #bbb;
 text-align: center;
 padding:1px 4px;
 }
+
 table tr td {
 border-right: 1px solid #ddd;
 padding:4px 4px;
 vertical-align:top;
 text-align: center;
 }
+
 table tr.altRow td {
 background: #f4f4f4;
 }
+td a{
+padding: 0 4px;
+}
+
 #cakeSqlLog td {
 text-align: left;
 padding: 4px 8px;
@@ -124,29 +128,111 @@ border-bottom: 2px solid #ccc;
 }
 
 /* scaffold show */
-
-div.related {
-clear:both;
-display:block;
-}
 dl {
 line-height:2em;
 margin:0em 1em;
 float:left;
 width: 400px;
 }
+
 dt {
 font-weight: bold;
 vertical-align:top;
 }
+
 dd {
 margin-left:10em;
 margin-top:-2em;
 vertical-align:top;
 }
 
-/* notices and errors */
+div.related {
+clear:both;
+display:block;
+}
 
+/* forms */
+form {
+margin-top: 0em;
+padding: 0;
+float: left;
+}
+
+form div{
+vertical-align: text-top;
+margin-left: 1em;
+margin-bottom:2em;
+overflow: auto;
+}
+
+form div.date{
+margin-left: 0em;
+}
+
+label {
+display: block;
+float:left;
+width: 140px;
+font-size: 14px;
+padding-right: 20px;
+}
+
+input[type=checkbox] {
+float: left;
+clear: left;
+margin: 2px 6px 7px 2px;
+}
+
+input, textarea {
+clear: both;
+display:block;
+font-size: 14px;
+font-family: inherit;
+}
+
+select {
+clear: both;
+vertical-align: text-bottom;
+font-size: 14px;
+font-family: inherit;
+}
+
+option {
+font-size: 14px;
+font-family: inherit;
+padding: 0 0.3em;
+}
+
+input[type=submit] {
+display: inline;
+vertical-align: bottom;
+}
+
+form .required, form .optional{
+clear:both;
+padding: 10px;
+margin-bottom:10px;
+min-height:15px;
+}
+
+.required{
+color:#333;
+font-weight:bold;
+background: #f2f2f2;
+}
+
+.optional{
+color:#444;
+background: #f8f8f8;
+}
+
+.submit {
+clear: both;
+margin-top: 10px;
+margin-left: 140px;
+}
+
+/* notices and errors */
 #flashMessage, .error, .error_message {
 color:#900;
 font-size: 16px;
@@ -154,13 +240,16 @@ background-color: #fff;
 margin: 8px 0px;
 font-weight: bold;
 }
+
 .error_message {
 clear: both;
 }
+
 .error em {
 font-size: 18px;
 color: #003d4c;
 }
+
 .notice {
 color: #656565;
 font-size: 14px;
@@ -169,81 +258,26 @@ padding: 0.5em;
 margin: 1em 0;
 display:block;
 }
+
 .tip {
 color: #656565;
 background-color: #ddd;
 }
 
-/* forms */
-
-form {
-margin-top: 2em;
-}
-form div{
-vertical-align: text-top;
-margin-left: 1em;
-margin-bottom:2em;
-overflow: auto;
-}
-form div.date{
-margin-left: 0em;
-}
-label {
-display: block;
-float:left;
-width: 140px;
-font-size: 14px;
-padding-right: 20px;
-}
-input[type=checkbox] {
-float: left;
-clear: left;
-margin: 2px 6px 7px 2px;
-}
-input, textarea {
-clear: both;
-display:block;
-font-size: 14px;
-font-family: inherit;
-}
-select {
-clear: both;
-vertical-align: text-bottom;
-font-size: 14px;
-font-family: inherit;
-}
-option {
-font-size: 14px;
-font-family: inherit;
-padding: 0 0.3em;
-}
-input[type=submit] {
-display: inline;
-vertical-align: bottom;
-}
-.required{
-clear: both;
-color:#222;
-font-weight:bold;
-}
-.optional{
-clear: both;
-color:#555;
-}
-.submit {
-clear: both;
-margin-top: 40px;
-margin-left: 140px;
-}
 /* action links */
 ul.actions {
 float: left;
-margin-left:20px;
+margin: 0px 20px;
 width: 200px;
 }
+
 ul.actions li {
-margin-top: 4px;
+margin: 4px 0;
+list-style-type: circle;
 }
+
+
+/* others */
 pre {
 padding: 1em;
 }
