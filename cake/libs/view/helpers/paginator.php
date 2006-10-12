@@ -47,7 +47,7 @@ class PaginatorHelper extends Helper {
  */
 	var $__defaultModel = null;
 
-	function __params($model = null) {
+	function params($model = null) {
 		if ($model == null) {
 			$model = $this->defaultModel();
 		}
@@ -66,7 +66,7 @@ class PaginatorHelper extends Helper {
 		if ($model == null) {
 			$model = $this->defaultModel();
 		}
-		$params = $this->__params[$model];
+		$params = $this->params[$model];
 		if (isset($params['options']['page'])) {
 			return $params['options']['page'];
 		}
@@ -111,7 +111,7 @@ class PaginatorHelper extends Helper {
 			),
 			$options
 		);
-		$paging = $this->__params($options['model']);
+		$paging = $this->params($options['model']);
 
 		if ($this->{$check}() || $disabledTitle !== null || !empty($disabledOptions)) {
 			if (!$this->{$check}()) {
@@ -120,17 +120,17 @@ class PaginatorHelper extends Helper {
 					$title = $disabledTitle;
 				}
 			}
-
-			$keys = array('url', 'model', 'escape');
-			foreach ($keys as $key) {
-				${$key} = null;
-				if (isset($options[$key])) {
-					${$key} = $options[$key];
-					unset($options[$key]);
-				}
-			}
 		} else {
 			return null;
+		}
+
+		$keys = array('url', 'model', 'escape');
+		foreach ($keys as $key) {
+			${$key} = null;
+			if (isset($options[$key])) {
+				${$key} = $options[$key];
+				unset($options[$key]);
+			}
 		}
 
 		if (is_array($url)) {
@@ -160,7 +160,7 @@ class PaginatorHelper extends Helper {
  * Returns true if the given result set is not at the first page
  *
  * @param  string $model
- * @return return boolean
+ * @return boolean
  */
 	function hasPrev($model = null) {
 		return $this->__hasPage($model, 'prev');
@@ -169,10 +169,29 @@ class PaginatorHelper extends Helper {
  * Returns true if the given result set is not at the last page
  *
  * @param  string $model
- * @return return boolean
+ * @return boolean
  */
 	function hasNext($model = null) {
 		return $this->__hasPage($model, 'next');
+	}
+/**
+ * Returns true if the given result set has the page number given by $page
+ *
+ * @param  string $model
+ * @param  int $page
+ * @return boolean
+ */
+	function hasPage($model = null, $page = 1) {
+		if (is_numeric($model)) {
+			$page = $model;
+			$model = null;
+		}
+		if ($model == null) {
+			$model = $this->defaultModel();
+		}
+
+		$paging = $this->params($model);
+		return $page <= $paging['pageCount'];
 	}
 /**
  * Protected method
@@ -218,7 +237,7 @@ class PaginatorHelper extends Helper {
 			$options
 		);
 
-		$paging = $this->__params($options['model']);
+		$paging = $this->params($options['model']);
 		$start = $paging['options']['page'] > 1 ? ($paging['options']['page'] - 1) * ($paging['options']['limit']) + 1 : '1';
 		$end = ($paging['count'] < ($start + $paging['options']['limit'] - 1)) ? $paging['count'] : ($start + $paging['options']['limit'] - 1);
 
