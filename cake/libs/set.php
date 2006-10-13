@@ -175,7 +175,7 @@ class Set extends Object {
 	function extract($array, $name = null) {
 		if(!empty($array)) {
 			$name = $array;
-			$array = $this->_value;
+			$array = Set::get();
 		}
 		if(empty($array)) {
 			return false;
