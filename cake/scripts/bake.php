@@ -1759,6 +1759,7 @@ class Bake {
 						if(!isset( $field['options'])) {
 							$field['options'] = null;
 						}
+						$this->__modelAlias = null;
 						if(isset($field['foreignKey'])) {
 							$modelKey = Inflector::underscore($field['model']);
 							$modelObj =& ClassRegistry::getObject($modelKey);
