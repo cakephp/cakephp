@@ -76,9 +76,11 @@
 		$projectPath = $app;
 	
 	}
+	
 	if($project) {
 		$app = $projectPath;
 	}
+	
 	$shortPath = str_replace($root, '', $app);
 	$shortPath = str_replace('../', '', $shortPath);
 	$shortPath = str_replace('//', '/', $shortPath);
@@ -87,8 +89,16 @@
 	$rootDir = str_replace($appDir, '', $shortPath);
 	$rootDir = str_replace('//', '', $rootDir);
 	
+	if(!$rootDir) {
+		$rootDir = $root;
+		$projectPath = $root.DS.$appDir;
+	}
 	define ('ROOT', $rootDir);
 	define ('APP_DIR', $appDir);
+	
+	echo ROOT;
+	
+	echo APP_DIR;
 	define ('DEBUG', 1);;
 	define('CAKE_CORE_INCLUDE_PATH', $root);
 	
@@ -2098,7 +2108,7 @@ class Bake {
 			}
 		}
 		while ($this->__checkPath($projectPath) === true || $projectPath == '') {
-			$projectPath = $this->getInput('Directory path exists please choose another:');
+				$projectPath = $this->getInput('Directory path exists please choose another:');
 			while ($projectPath == '') {
 				$projectPath = $this->getInput('The directory path you supplied was empty. Please try again.');
 			}
