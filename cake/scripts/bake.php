@@ -85,8 +85,9 @@
 	$shortPath = str_replace('../', '', $shortPath);
 	$shortPath = str_replace('//', '/', $shortPath);
 	
-	$appDir = basename($shortPath);
-	$rootDir = str_replace($appDir, '', $shortPath);
+	$pathArray = explode('/', $shortPath);
+	$appDir = array_pop($pathArray);
+	$rootDir = implode('/', $pathArray);
 	$rootDir = str_replace('//', '', $rootDir);
 	
 	if(!$rootDir) {
@@ -706,6 +707,7 @@ class Bake {
 				loadModels();
 				$controllerObj->constructClasses();
 				$currentModelName = $controllerObj->modelClass;
+				$this->__modelClass = $currentModelName; 
 				$modelKey = Inflector::underscore($currentModelName);
 				$modelObj =& ClassRegistry::getObject($modelKey);
 				
@@ -1711,6 +1713,7 @@ class Bake {
 	function generateFields( $fields, $readOnly = false ) {
 		$strFormFields = '';
 		foreach( $fields as $field) {
+			
 			if(isset( $field['type'])) {
 				if(!isset($field['required'])) {
 					$field['required'] = false;
@@ -1761,13 +1764,12 @@ class Bake {
 						}
 						$this->__modelAlias = null;
 						if(isset($field['foreignKey'])) {
-							$modelKey = Inflector::underscore($field['model']);
+							$modelKey = Inflector::underscore($this->__modelClass);
 							$modelObj =& ClassRegistry::getObject($modelKey);
-							foreach($modelObj->belongsTo as $associationName=>$value) {
-								if($field['foreignKey'] == $value['foreignKey']) {
+							foreach($modelObj->belongsTo as $associationName =>$value) {
+								if($field['model'] == $value['className']) {
 									$this->__modelAlias = $this->__modelName($associationName);
-								} else {
-									$this->__modelAlias = $this->__modelNameFromKey($field['foreignKey']);
+									break;
 								}
 							}
 						}
@@ -1790,6 +1792,7 @@ class Bake {
 						$strFormFields = $strFormFields.$strFieldSet;
 					break;
 					case "hidden";
+						$currentModelName = $field['model'];
 						//$strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
 					break;
 					case "date":
