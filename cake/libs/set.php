@@ -173,9 +173,12 @@ class Set extends Object {
  * @uses NeatArray::value
  */
 	function extract($array, $name = null) {
-		if(!is_array($array)) {
+		if(!empty($array)) {
 			$name = $array;
-			$array = $this->get();
+			$array = $this->_value;
+		}
+		if(empty($array)) {
+			return false;
 		}	
 		$out = array();
 		foreach($array as $val) {
