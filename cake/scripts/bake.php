@@ -1765,7 +1765,6 @@ class Bake {
 							foreach($modelObj->belongsTo as $associationName=>$value) {
 								if($field['foreignKey'] == $value['foreignKey']) {
 									$this->__modelAlias = $this->__modelName($associationName);
-									break;
 								} else {
 									$this->__modelAlias = $this->__modelNameFromKey($field['foreignKey']);
 								}
