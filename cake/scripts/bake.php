@@ -674,6 +674,7 @@ class Bake {
 		}
 		
 		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
+			require(CONFIGS.'core.php');
 			if(defined('CAKE_ADMIN')) {
 				$admin = CAKE_ADMIN.'_';
 			} else {
@@ -1037,12 +1038,13 @@ class Bake {
 
 		}
 		
-		$admin = null;
-		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoScaffold) == 'yes') {
+		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 			$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
 		}
 		
+		$admin = null;
 		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
+			require(CONFIGS.'core.php');
 			if(defined('CAKE_ADMIN')) {
 				$admin = CAKE_ADMIN.'_';
 			} else {
@@ -1052,195 +1054,10 @@ class Bake {
 		}
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
-			
-			$currentModelName = $this->__modelName($controllerName);
-			$modelKey = Inflector::underscore($currentModelName);
-			$singularName = $this->__singularName($currentModelName);
-			$singularHumanName = $this->__singularHumanName($currentModelName);
-			$pluralHumanName = $this->__pluralHumanName($controllerName);
-			
-			loadModels();
-
-			if(!class_exists($currentModelName)) {
-				$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
-				exit;
-			}
-			$modelObj = new $currentModelName();
-			$actions .= "\n";
-			$actions .= "\tfunction {$admin}index() {\n";
-			$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
-			$actions .= "\t\t\$this->set('{$controllerPath}', \$this->{$currentModelName}->findAll());\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
-			$actions .= "\tfunction {$admin}view(\$id = null) {\n";
-			$actions .= "\t\tif(!\$id) {\n";
-			$actions .= "\t\t\treturn false;\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
-			
-			$actions .= "\tfunction {$admin}add() {\n";
-			$actions .= "\t\tif(empty(\$this->data)) {\n";
-
-			foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', null);\n";
-				}
-			}
-			foreach($modelObj->belongsTo as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					if($currentModelName != $otherModelName) {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					} else {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-					}
-				}
-			}
-			$actions .= "\t\t\t\$this->render();\n";
-			$actions .= "\t\t} else {\n";
-			$actions .= "\t\t\t\$this->cleanUpFields();\n";
-			$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
-			if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
-			$actions .= "\t\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
-			} else {
-			$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerPath}/index');\n";
-			}
-			$actions .= "\t\t\t} else {\n";
-			if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
-			}
-
-			foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-				
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-					$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
-				}
-			}
-			foreach($modelObj->belongsTo as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					if($currentModelName != $otherModelName) {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					} else {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-					}
-				}
-			}
-			$actions .= "\t\t\t}\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
-			$actions .= "\tfunction {$admin}edit(\$id) {\n";
-			$actions .= "\t\tif(empty(\$this->data)) {\n";
-			$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
-
-			foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					$otherModelKey = Inflector::underscore($otherModelName);
-					$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-					$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->__selectedArray(\$this->data['{$associationName}']['{$associationName}'],  '{$otherModelObj->primaryKey}'));\n";
-				}
-			}
-			foreach($modelObj->belongsTo as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					if($currentModelName != $otherModelName) {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					} else {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-					}
-				}
-			}
-			$actions .= "\t\t} else {\n";
-			$actions .= "\t\t\t\$this->cleanUpFields();\n";
-			$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
-			if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
-			$actions .= "\t\t\t\t\$this->redirect('/{$controllerName}/index');\n";
-			} else {
-			$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerName}/index');\n";
-			}
-			$actions .= "\t\t\t} else {\n";
-			if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
-			}
-
-			foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-			
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-					$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
-				}
-			}
-			foreach($modelObj->belongsTo as $associationName => $relation) {
-				if(!empty($relation['className'])) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralName = $this->__pluralName($associationName);
-					if($currentModelName != $otherModelName) {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-					} else {
-						$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-					}
-				}
-			}
-			$actions .= "\t\t\t}\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
-			$actions .= "\tfunction delete(\$id = null) {\n";
-			$actions .= "\t\tif(!\$id) {\n";
-			$actions .= "\t\t\treturn false;\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
-			if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." deleted: id '.\$id.'');\n";
-			$actions .= "\t\t\t\$this->redirect('/{$controllerName}/index');\n";
-			} else {
-			$actions .= "\t\t\t\$this->flash('{$currentModelName} deleted: id '.\$id.'.', '/{$controllerPath}/index');\n";
-			}
-			$actions .= "\t\t}\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
-			if(!empty($modelObj->hasAndBelongsToMany)) {
-			$actions .= "\tfunction __selectedArray(\$data, \$key) {\n";
-			$actions .= "\t\t\$array = array();\n";
-			$actions .= "\t\tif(!empty(\$data)) {\n";
-			$actions .= "\t\t\tforeach(\$data as \$var) {\n";
-			$actions .= "\t\t\t\t\$array[\$var[\$key]] = \$var[\$key];\n";
-			$actions .= "\t\t\t}\n";
-			$actions .= "\t\t}\n";
-			$actions .= "\t\treturn \$array;\n";
-			$actions .= "\t}\n";
-			$actions .= "\n";
+				loadModels();
+				$actions = $this->__bakeActions($controllerName, null, $wannaUseSession);
+			if($admin) {
+				$actions .= $this->__bakeActions($controllerName, $admin, $wannaUseSession);
 			}
 		}
 
@@ -1302,6 +1119,186 @@ class Bake {
 			$this->bakeController($controllerName, $uses, $helpers, $components, $actions);
 			exit();
 		}
+	}
+	
+	function __bakeActions($controllerName, $admin, $wannaUseSession) {
+		$currentModelName = $this->__modelName($controllerName);
+		$modelKey = Inflector::underscore($currentModelName);
+		$singularName = $this->__singularName($currentModelName);
+		$singularHumanName = $this->__singularHumanName($currentModelName);
+		$pluralHumanName = $this->__pluralHumanName($controllerName);
+		
+
+		if(!class_exists($currentModelName)) {
+			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
+			exit;
+		}
+		$modelObj = & new $currentModelName();
+		$actions .= "\n";
+		$actions .= "\tfunction {$admin}index() {\n";
+		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
+		$actions .= "\t\t\$this->set('{$controllerPath}', \$this->{$currentModelName}->findAll());\n";
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
+		$actions .= "\t\tif(!\$id) {\n";
+		$actions .= "\t\t\treturn false;\n";
+		$actions .= "\t\t}\n";
+		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		
+		$actions .= "\tfunction {$admin}add() {\n";
+		$actions .= "\t\tif(empty(\$this->data)) {\n";
+
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				
+				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', null);\n";
+			}
+		}
+		foreach($modelObj->belongsTo as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				if($currentModelName != $otherModelName) {
+					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				} else {
+					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
+				}
+			}
+		}
+		$actions .= "\t\t\t\$this->render();\n";
+		$actions .= "\t\t} else {\n";
+		$actions .= "\t\t\t\$this->cleanUpFields();\n";
+		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
+		$actions .= "\t\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
+		} else {
+		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerPath}/index');\n";
+		}
+		$actions .= "\t\t\t} else {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
+		}
+
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+			
+				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
+				$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
+			}
+		}
+		foreach($modelObj->belongsTo as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				if($currentModelName != $otherModelName) {
+					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				} else {
+					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
+				}
+			}
+		}
+		$actions .= "\t\t\t}\n";
+		$actions .= "\t\t}\n";
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		$actions .= "\tfunction {$admin}edit(\$id) {\n";
+		$actions .= "\t\tif(empty(\$this->data)) {\n";
+		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
+
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				$otherModelKey = Inflector::underscore($otherModelName);
+				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				$actions .= "\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
+				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->__selectedArray(\$this->data['{$associationName}']['{$associationName}']));\n";
+			}
+		}
+		foreach($modelObj->belongsTo as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				if($currentModelName != $otherModelName) {
+					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				} else {
+					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
+				}
+			}
+		}
+		$actions .= "\t\t} else {\n";
+		$actions .= "\t\t\t\$this->cleanUpFields();\n";
+		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
+		$actions .= "\t\t\t\t\$this->redirect('/{$controllerName}/index');\n";
+		} else {
+		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerName}/index');\n";
+		}
+		$actions .= "\t\t\t} else {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
+		}
+
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+		
+				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
+				$actions .= "\t\t\t\t\$this->set('selected_{$otherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
+			}
+		}
+		foreach($modelObj->belongsTo as $associationName => $relation) {
+			if(!empty($relation['className'])) {
+				$otherModelName = $this->__modelName($relation['className']);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralName($associationName);
+				if($currentModelName != $otherModelName) {
+					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				} else {
+					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
+				}
+			}
+		}
+		$actions .= "\t\t\t}\n";
+		$actions .= "\t\t}\n";
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
+		$actions .= "\t\tif(!\$id) {\n";
+		$actions .= "\t\t\treturn false;\n";
+		$actions .= "\t\t}\n";
+		$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+			$actions .= "\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." deleted: id '.\$id.'');\n";
+			$actions .= "\t\t\t\$this->redirect('/{$controllerName}/index');\n";
+		} else {
+			$actions .= "\t\t\t\$this->flash('{$currentModelName} deleted: id '.\$id.'.', '/{$controllerPath}/index');\n";
+		}
+		$actions .= "\t\t}\n";
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		return $actions;
 	}
 /**
  * Action to create a Unit Test.
