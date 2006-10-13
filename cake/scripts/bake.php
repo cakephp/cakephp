@@ -93,12 +93,10 @@
 		$rootDir = $root;
 		$projectPath = $root.DS.$appDir;
 	}
+	
 	define ('ROOT', $rootDir);
 	define ('APP_DIR', $appDir);
-	
-	echo ROOT;
-	
-	echo APP_DIR;
+
 	define ('DEBUG', 1);;
 	define('CAKE_CORE_INCLUDE_PATH', $root);
 	
