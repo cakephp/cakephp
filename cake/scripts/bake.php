@@ -677,6 +677,7 @@ class Bake {
 				$admin = CAKE_ADMIN.'_';
 			} else {
 				$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				exit();
 			}
 		}
 		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoScaffold) == 'yes') {
@@ -927,14 +928,24 @@ class Bake {
 				if(!file_exists(VIEWS.$controllerPath)) {
 					mkdir(VIEWS.$controllerPath);
 				}
+				if($admin) {
+					$filename = VIEWS . $controllerPath . DS . $admin . 'index.thtml';
+					$this->createFile($filename, $indexView);
+					$filename = VIEWS . $controllerPath . DS . $admin . 'view.thtml';
+					$this->createFile($filename, $viewView);
+					$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
+					$this->createFile($filename, $addView);
+					$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
+					$this->createFile($filename, $editView);
+				}
 				
-				$filename = VIEWS . $controllerPath . DS . $admin . 'index.thtml';
+				$filename = VIEWS . $controllerPath . DS . 'index.thtml';
 				$this->createFile($filename, $indexView);
-				$filename = VIEWS . $controllerPath . DS . $admin . 'view.thtml';
+				$filename = VIEWS . $controllerPath . DS . 'view.thtml';
 				$this->createFile($filename, $viewView);
-				$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
+				$filename = VIEWS . $controllerPath . DS . 'add.thtml';
 				$this->createFile($filename, $addView);
-				$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
+				$filename = VIEWS . $controllerPath . DS . 'edit.thtml';
 				$this->createFile($filename, $editView);
 				$this->hr();
 				$this->stdout('');
@@ -1034,6 +1045,7 @@ class Bake {
 				$admin = CAKE_ADMIN.'_';
 			} else {
 				$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				exit;
 			}
 		}
 

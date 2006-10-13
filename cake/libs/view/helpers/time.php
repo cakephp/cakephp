@@ -413,6 +413,10 @@ class TimeHelper extends Helper {
 		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
 		return $return;
 	}
+	
+	function format($format = 'd-m-Y', $date) {
+		return date($format, $this->fromString($date));
+	}
 }
 
 ?>

@@ -165,6 +165,26 @@ class Set extends Object {
 		}
 		return $numeric;
 	}
+/**
+ * Extracts a value from all array items.
+ *
+ * @return array
+ * @access public
+ * @uses NeatArray::value
+ */
+	function extract($array, $name = null) {
+		if(!is_array($array)) {
+			$name = $array;
+			$array = $this->get();
+		}	
+		$out = array();
+		foreach($array as $val) {
+			if (isset($val[$name])){
+				$out[] = $val[$name];
+			}
+		}
+		return $out;
+	}	
 }
 
 ?>
