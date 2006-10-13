@@ -173,7 +173,7 @@ class Set extends Object {
  * @uses NeatArray::value
  */
 	function extract($array, $name = null) {
-		if(!empty($array)) {
+		if(empty($array)) {
 			$name = $array;
 			$array = Set::get();
 		}
