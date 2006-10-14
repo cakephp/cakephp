@@ -310,7 +310,7 @@ class DboMssql extends DboSource {
 					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
 				} else {
 					$build = explode('.', $fields[$i]);
-					$fields[$i]=$this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
+					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
 				}
 			}
 		}
@@ -523,12 +523,12 @@ class DboMssql extends DboSource {
 		$j = 0;
 
 		while($j < $num_fields) {
-			$column = mssql_fetch_field($results, $j);
+			$column = mssql_field_name($results, $j);
 
-			if (strpos($column->name, '__')) {
-				$this->map[$index++] = explode('__', $column->name);
+			if (strpos($column, '__')) {
+				$this->map[$index++] = explode('__', $column);
 			} else {
-				$this->map[$index++] = array(0, $column->name);
+				$this->map[$index++] = array(0, $column);
 			}
 
 			$j++;
@@ -547,7 +547,7 @@ class DboMssql extends DboSource {
 
 			foreach($row as $index => $field) {
 				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column]=$row[$index];
+				$resultRow[$table][$column] = $row[$index];
 				$i++;
 			}
 

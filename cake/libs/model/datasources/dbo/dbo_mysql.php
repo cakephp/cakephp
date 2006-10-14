@@ -348,8 +348,7 @@ class DboMysql extends DboSource {
 	function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
-			if (isset($real['limit']))
-			{
+			if (isset($real['limit'])) {
 				$col .= '('.$real['limit'].')';
 			}
 			return $col;
