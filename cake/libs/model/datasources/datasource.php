@@ -437,42 +437,6 @@ class DataSource extends Object{
 		return $model->name . $key;
 	}
 /**
- * Gets a value from an array or object.
- * The special {n}, as seen in the Model::generateList method, is taken care of here.
- *
- * @param array $data
- * @param mixed $path	As an array, or as a dot-separated string.
- * @return array
- */
-	function getFieldValue($data, $path) {
-		if (!is_array($path)) {
-			$path = explode('.', $path);
-		}
-		$tmp = array();
-
-		foreach($path as $i => $key) {
-			if (intval($key) > 0 || $key == '0') {
-				if (isset($data[intval($key)])) {
-					$data = $data[intval($key)];
-				} else {
-					return null;
-				}
-			} elseif ($key == '{n}') {
-				foreach($data as $j => $val) {
-					$tmp[] = DataSource::getFieldValue($val, array_slice($path, $i + 1));
-				}
-				return $tmp;
-			} else {
-				if (isset($data[$key])) {
-					$data = $data[$key];
-				} else {
-					return null;
-				}
-			}
-		}
-		return $data;
-	}
-/**
  * Closes the current datasource.
  *
  */

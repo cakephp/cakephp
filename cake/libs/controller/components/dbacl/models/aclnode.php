@@ -98,7 +98,7 @@ class AclNode extends AppModel {
 		}
 
 		$children = $this->findAll(array("{$class}.rght" => "< {$result[$class]['rght']}", "{$class}.lft" => "> {$result[$class]['lft']}"), 'id', null, null, null, -1);
-		$idList = DataSource::getFieldValue($children, '{n}.' . $class . '.id');
+		$idList = Set::extract($children, '{n}.' . $class . '.id');
 		$idList[] = $result[$class]['id'];
 
 		// Delete associated permissions.
@@ -258,8 +258,8 @@ class AclNode extends AppModel {
 			}
 		}
 
-		$db->query('UPDATE ' . $db->fullTableName($this) . ' SET ' . $db->name('rght') . ' = ' . $db->name('rght') . ' ' . $dir . ' ' . $shift . ' WHERE ' . $db->name('rght') . ' > ' . $rght);
-		$db->query('UPDATE ' . $db->fullTableName($this) . ' SET ' . $db->name('lft') . ' = ' . $db->name('lft') . '  ' . $dir . ' ' . $shift . ' WHERE ' . $db->name('lft') . '  > ' . $lft);
+		$db->query('UPDATE ' . $db->fullTableName($this) . ' SET ' . $db->name('rght') . ' = ' . $db->name('rght') . ' ' . $dir . ' ' . $shift . ' WHERE ' . $db->name('rght') . ' > ' . $lft);
+		$db->query('UPDATE ' . $db->fullTableName($this) . ' SET ' . $db->name('lft')  . ' = ' . $db->name('lft')  . ' ' . $dir . ' ' . $shift . ' WHERE ' . $db->name('lft') .  ' > ' . $lft);
 	}
 /**
  * Private method.  Infers data based on the currently-intantiated subclass.

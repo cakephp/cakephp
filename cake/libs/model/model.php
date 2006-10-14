@@ -1575,14 +1575,14 @@ class Model extends Overloadable {
 			$valuePath = '{n}.' . $this->name . '.' . $this->displayField;
 		}
 
-		$keys = $db->getFieldValue($result, $keyPath);
-		$vals = $db->getFieldValue($result, $valuePath);
+		$keys = Set::extract($result, $keyPath);
+		$vals = Set::extract($result, $valuePath);
 
 		if (!empty($keys) && !empty($vals)) {
 			$out = array();
 
 			if ($groupPath != null) {
-				$group = $db->getFieldValue($result, $groupPath);
+				$group = Set::extract($result, $groupPath);
 				if (!empty($group)) {
 					$c = count($keys);
 					for ($i = 0; $i < $c; $i++) {

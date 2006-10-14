@@ -166,28 +166,41 @@ class Set extends Object {
 		return $numeric;
 	}
 /**
- * Extracts a value from all array items.
+ * Gets a value from an array or object.
+ * The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
+ * @param array $data
+ * @param mixed $path	As an array, or as a dot-separated string.
  * @return array
- * @access public
- * @uses NeatArray::value
  */
-	function extract($array, $name = null) {
-		if(empty($array)) {
-			$name = $array;
-			$array = Set::get();
+	function extract($data, $path) {
+		if (!is_array($path)) {
+			$path = explode('.', $path);
 		}
-		if(empty($array)) {
-			return false;
-		}	
-		$out = array();
-		foreach($array as $val) {
-			if (isset($val[$name])){
-				$out[] = $val[$name];
+		$tmp = array();
+
+		foreach($path as $i => $key) {
+			if (intval($key) > 0 || $key == '0') {
+				if (isset($data[intval($key)])) {
+					$data = $data[intval($key)];
+				} else {
+					return null;
+				}
+			} elseif ($key == '{n}') {
+				foreach($data as $j => $val) {
+					$tmp[] = Set::extract($val, array_slice($path, $i + 1));
+				}
+				return $tmp;
+			} else {
+				if (isset($data[$key])) {
+					$data = $data[$key];
+				} else {
+					return null;
+				}
 			}
 		}
-		return $out;
-	}	
+		return $data;
+	}
 }
 
 ?>
