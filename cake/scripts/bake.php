@@ -269,22 +269,22 @@ class Bake {
 
 		switch($driver) {
 			case 'mysql':
-			$connect = 'mysql_pconnect';
+			$connect = 'mysql_connect';
 			break;
 			case 'mysqli':
 			$connect = 'mysqli_connect';
 			break;
 			case 'mssql':
-			$connect = 'mssql_pconnect';
+			$connect = 'mssql_connect';
 			break;
 			case 'sqlite':
-			$connect = 'sqlite_popen';
+			$connect = 'sqlite_open';
 			break;
 			case 'postgres':
-			$connect = 'pg_pconnect';
+			$connect = 'pg_connect';
 			break;
 			case 'odbc':
-			$connect = 'odbc_pconnect';
+			$connect = 'odbc_connect';
 			break;
 			default:
 			$this->stdout('The connection parameter could not be set.');
