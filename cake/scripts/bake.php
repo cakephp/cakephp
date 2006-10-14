@@ -2315,7 +2315,7 @@ class Bake {
 			}
 		} else {
 			return false;
-		} 
+		}
 	}
 /**
  * Outputs an ASCII art banner to standard output.
