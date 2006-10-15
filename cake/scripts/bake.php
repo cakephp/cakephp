@@ -483,9 +483,9 @@ class Bake {
 			//Look for belongsTo
 			$i = 0;
 			foreach($modelFields as $field) {
-				if($field['type'] == 'integer'){
-					$possibleKeys[] = $field['name']; 
-				}
+				$tm = $this->__modelName($otherTable);
+				$possibleKeys[$tm][] = $field['name']; 
+				
 				$offset = strpos($field['name'], '_id');
 				if($offset !== false) {
 					$tmpModelName = $this->__modelNameFromKey($field['name']);
@@ -502,9 +502,8 @@ class Bake {
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				$j = 0;
 				foreach($modelFieldsTemp as $field) {
-					if($field['type'] == 'integer'){
-						$possibleKeys[] = $field['name']; 
-					}
+					$tm = $this->__modelName($otherTable);
+					$possibleKeys[$tm][] = $field['name']; 
 					if($field['name'] == $this->__modelKey($currentModelName)) {
 						$tmpModelName = $this->__modelName($otherTable);
 						$hasOne[$j]['alias'] = $tmpModelName;
@@ -666,8 +665,8 @@ class Bake {
 				$associationName = $this->getInput('What is the name of this association?');
 				$className = $this->getInput('What className will '.$associationName.' use?');
 				$this->stdout('A helpful List of possible keys');
-				for ($i = 0; $i < count($possibleKeys); $i++) {
-					$this->stdout($i + 1 . ". " . $possibleKeys[$i]);
+				for ($i = 0; $i < count($possibleKeys[$className]); $i++) {
+					$this->stdout($i + 1 . ". " . $possibleKeys[$className][$i]);
 				}
 				$foreignKey = $this->getInput('What is the foreignKey? Choose a number or specify your own.', null, $this->__modelKey($associationName));
 				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
