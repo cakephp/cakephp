@@ -698,7 +698,7 @@ class Bake {
 		$this->stdout("Model Table:   " . $currentTableName);
 		$this->stdout("Validation:    " . print_r($validate, true));
 
-		if(count($belongsTo) || count($hasOne) || count($hasMany) || count($hasAndBelongsToMany)) {
+		if(!empty($modelAssociations)) {
 			$this->stdout("Associations:");
 
 			if(count($modelAssociations['belongsTo'])) {
