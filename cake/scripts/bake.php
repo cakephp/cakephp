@@ -479,9 +479,13 @@ class Bake {
 
 		if((strtolower($wannaDoAssoc) == 'y' || strtolower($wannaDoAssoc) == 'yes')) {
 			$this->stdout('One moment while I try to detect any associations...');
+			$possibleKeys = array();
 			//Look for belongsTo
 			$i = 0;
 			foreach($modelFields as $field) {
+				if($field['type'] == 'integer'){
+					$possibleKeys[] = $field['name']; 
+				}
 				$offset = strpos($field['name'], '_id');
 				if($offset !== false) {
 					$tmpModelName = $this->__modelNameFromKey($field['name']);
@@ -498,6 +502,9 @@ class Bake {
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				$j = 0;
 				foreach($modelFieldsTemp as $field) {
+					if($field['type'] == 'integer'){
+						$possibleKeys[] = $field['name']; 
+					}
 					if($field['name'] == $this->__modelKey($currentModelName)) {
 						$tmpModelName = $this->__modelName($otherTable);
 						$hasOne[$j]['alias'] = $tmpModelName;
@@ -560,10 +567,7 @@ class Bake {
 						}
 						if($response == 'y') {
 							$modelAssociations['belongsTo'][$i] = $belongsTo[$i];
-							$modelAssociations['belongsTo'][$i]['alias'] = $belongsToAlias;
-							//$modelAssociations['belongsTo'][$i]['className'] = $belongsTo[$i]['className'];
-							//$modelAssociations['belongsTo'][$i]['foreignKey'] = $belongsTo[$i]['foreignKey'];
-							
+							$modelAssociations['belongsTo'][$i]['alias'] = $belongsToAlias;							
 						}
 					}
 				}
@@ -587,10 +591,7 @@ class Bake {
 
 						if($response == 'y') {
 							$modelAssociations['hasOne'][$i] = $hasOne[$i];
-							$modelAssociations['hasOne'][$i]['alias'] = $hasOneAlias;
-							//$modelAssociations['hasOne'][$i]['className'] = $hasOne[$i]['className'];
-							//$modelAssociations['hasOne'][$i]['foreignKey'] = $hasOne[$i]['foreignKey'];
-							
+							$modelAssociations['hasOne'][$i]['alias'] = $hasOneAlias;							
 						}
 					}
 				}
@@ -614,10 +615,7 @@ class Bake {
 
 						if($response == 'y') {
 							$modelAssociations['hasMany'][$i] = $hasMany[$i];
-							$modelAssociations['hasMany'][$i]['alias'] = $hasManyAlias;
-							//$modelAssociations['hasMany'][$i]['className'] = $hasMany[$i]['className'];
-							//$modelAssociations['hasMany'][$i]['foreignKey'] = $hasMany[$i]['foreignKey'];
-							
+							$modelAssociations['hasMany'][$i]['alias'] = $hasManyAlias;							
 						}
 					}
 				}
@@ -642,10 +640,6 @@ class Bake {
 						if($response == 'y') {
 							$modelAssociations['hasAndBelongsToMany'][$i] = $hasAndBelongsToMany[$i];
 							$modelAssociations['hasAndBelongsToMany'][$i]['alias'] = $hasAndBelongsToManyAlias;
-							//$modelAssociations['hasAndBelongsToMany'][$i]['className'] = $hasAndBelongsToMany[$i]['className'];
-							//$modelAssociations['hasAndBelongsToMany'][$i]['foreignKey'] = $hasAndBelongsToMany[$i]['foreignKey'];
-							//$modelAssociations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $hasAndBelongsToMany[$i]['associationForeignKey'];
-							//$modelAssociations['hasAndBelongsToMany'][$i]['joinTable'] = $hasAndBelongsToMany[$i]['joinTable'];
 						}
 					}
 				}
@@ -671,7 +665,14 @@ class Bake {
 				}
 				$associationName = $this->getInput('What is the name of this association?');
 				$className = $this->getInput('What className will '.$associationName.' use?');
-				$foreignKey = $this->getInput('What is the foreignKey?', null, $this->__modelKey($associationName));
+				$this->stdout('A helpful List of possible keys');
+				for ($i = 0; $i < count($possibleKeys); $i++) {
+					$this->stdout($i + 1 . ". " . $possibleKeys[$i]);
+				}
+				$foreignKey = $this->getInput('What is the foreignKey? Choose a number or specify your own.', null, $this->__modelKey($associationName));
+				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
+					$foreignKey = $possibleKeys[intval($foreignKey) - 1];
+				} 
 				if($assocType == '4') {
 					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
 					$joinTable = $this->getInput('What is the joinTable?');
@@ -1726,8 +1727,10 @@ class Bake {
 							mkdir($unixPath.implode(DS, $build));
 						}
 					}
+				} else {
+					return false;
 				}
-			}
+			} 
 			$this->createFile($unixPath.$path.DS.$filename, $out);
 		}
 	}
