@@ -697,7 +697,6 @@ class Bake {
 					$joinTable = $this->getInput('What is the joinTable?');
 				}
 				$associations[$assocs[$assocType]] = array_values($associations[$assocs[$assocType]]);
-				pr($associations[$assocs[$assocType]]);
 				$count = count($associations[$assocs[$assocType]]);
 				$i = ($count > 0) ? $count : 0;
 				$associations[$assocs[$assocType]][$i]['alias'] = $associationName;
