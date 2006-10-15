@@ -390,8 +390,9 @@ class Bake {
 		}
 
 		$this->stdout('Possible models based on your current database:');
-
+		$__modelNames = array();
 		for ($i = 0; $i < count($tables); $i++) {
+			$__modelNames[] = $this->__modelName($tables[$i]);
 			$this->stdout($i + 1 . ". " . $this->__modelName($tables[$i]));
 		}
 
@@ -479,81 +480,172 @@ class Bake {
 		if((strtolower($wannaDoAssoc) == 'y' || strtolower($wannaDoAssoc) == 'yes')) {
 			$this->stdout('One moment while I try to detect any associations...');
 			//Look for belongsTo
+			$i = 0;
 			foreach($modelFields as $field) {
 				$offset = strpos($field['name'], '_id');
 				if($offset !== false) {
-					$belongsToClasses[] = $this->__modelNameFromKey($field['name']);
+					$tmpModelName = $this->__modelNameFromKey($field['name']);
+					$belongsTo[$i]['alias'] = $tmpModelName;
+					$belongsTo[$i]['className'] = $tmpModelName;
+					$belongsTo[$i]['foreignKey'] = $field['name'];
+					$i++;
 				}
 			}
 			//Look for hasOne and hasMany and hasAndBelongsToMany
+			$i = 0;
 			foreach($tables as $otherTable) {
 				$tempOtherModel = new Model(false, $otherTable);
 				$modelFieldsTemp = $db->describe($tempOtherModel);
-
+				$j = 0;
 				foreach($modelFieldsTemp as $field) {
 					if($field['name'] == $this->__modelKey($currentModelName)) {
-						$hasOneClasses[] = $this->__modelName($otherTable);
-						$hasManyClasses[] = $this->__modelName($otherTable);
+						$tmpModelName = $this->__modelName($otherTable);
+						$hasOne[$j]['alias'] = $tmpModelName;
+						$hasOne[$j]['className'] = $tmpModelName;
+						$hasOne[$j]['foreignKey'] = $field['name'];
+						
+						$hasMany[$j]['alias'] = $tmpModelName;
+						$hasMany[$j]['className'] = $tmpModelName;
+						$hasMany[$j]['foreignKey'] = $field['name'];
+						$j++;
 					}
 				}
 				$offset = strpos($otherTable, $currentTableName . '_');
 				if($offset !== false) {
 					$offset = strlen($currentTableName . '_');
-					echo $this->__modelName(substr($otherTable, $offset));
-					$hasAndBelongsToManyClasses[] = $this->__modelName(substr($otherTable, $offset));
+					$tmpModelName = $this->__modelName(substr($otherTable, $offset));
+					$hasAndBelongsToMany[$i]['alias'] = $tmpModelName;
+					$hasAndBelongsToMany[$i]['className'] = $tmpModelName;
+					$hasAndBelongsToMany[$i]['foreignKey'] = $this->__modelKey($currentModelName);
+					$hasAndBelongsToMany[$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);					
+					$hasAndBelongsToMany[$i]['joinTable'] = $otherTable;
+					$i++;
 				}
 				$offset = strpos($otherTable, '_' . $currentTableName);
 				if ($offset !== false) {
-					echo $this->__modelName(substr($otherTable, 0, $offset));
-					$hasAndBelongsToManyClasses[] = $this->__modelName(substr($otherTable, 0, $offset));
+					$tmpModelName = $this->__modelName(substr($otherTable, 0, $offset));
+					$hasAndBelongsToMany[$i]['alias'] = $tmpModelName;
+					$hasAndBelongsToMany[$i]['className'] = $tmpModelName;
+					$hasAndBelongsToMany[$i]['foreignKey'] = $this->__modelKey($currentModelName);
+					$hasAndBelongsToMany[$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);					
+					$hasAndBelongsToMany[$i]['joinTable'] = $otherTable;
+					$i++;
 				}
 			}
 
 			$this->stdout('Done.');
 			$this->hr();
 			//if none found...
-			if(count($hasOneClasses) < 1 && count($hasManyClasses) < 1 && count($hasAndBelongsToManyClasses) < 1 && count($belongsToClasses) < 1) {
+			if(count($hasOne) < 1 && count($hasMany) < 1 && count($hasAndBelongsToMany) < 1 && count($belongsTo) < 1) {
 				$this->stdout('None found.');
 			} else {
 				$this->stdout('Please confirm the following associations:');
 				$this->hr();
 
-				if(count($belongsToClasses)) {
-					for($i = 0; $i < count($belongsToClasses); $i++) {
-						$response = $this->getInput("$currentModelName belongsTo {$belongsToClasses[$i]}?", array('y','n'), 'y');
-
+				if(count($belongsTo)) {
+					for($i = 0; $i < count($belongsTo); $i++) {
+						if($currentModelName == $belongsTo[$i]['alias']) {
+							$response = $this->getInput("{$currentModelName} belongsTo {$belongsTo[$i]['className']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							if($response == 'y') {
+								$belongsToAlias = $this->getInput("So what is the alias?", null, $belongsTo[$i]['alias']);
+							}
+							if($belongsToAlias) {
+								$response = $this->getInput("$currentModelName belongsTo {$belongsToAlias}?", array('y','n'), 'y');
+							} else {
+								$reponse = 'n';
+							}
+						} else {
+							$belongsToAlias = $belongsTo[$i]['className'];
+							$response = $this->getInput("$currentModelName belongsTo {$belongsTo[$i]['alias']}?", array('y','n'), 'y');
+						}
 						if($response == 'y') {
-							$modelAssociations['belongsTo'][] = $belongsToClasses[$i];
+							$modelAssociations['belongsTo'][$i] = $belongsTo[$i];
+							$modelAssociations['belongsTo'][$i]['alias'] = $belongsToAlias;
+							//$modelAssociations['belongsTo'][$i]['className'] = $belongsTo[$i]['className'];
+							//$modelAssociations['belongsTo'][$i]['foreignKey'] = $belongsTo[$i]['foreignKey'];
+							
 						}
 					}
 				}
 
-				if(count($hasOneClasses)) {
-					for($i = 0; $i < count($hasOneClasses); $i++) {
-						$response = $this->getInput("$currentModelName hasOne {$hasOneClasses[$i]}?", array('y','n'), 'y');
+				if(count($hasOne)) {
+					for($i = 0; $i < count($hasOne); $i++) {
+						if($currentModelName == $hasOne[$i]['alias']) {
+							$response = $this->getInput("{$currentModelName} hasOne {$hasOne[$i]['className']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							if($response == 'y') {
+								$hasOneAlias = $this->getInput("So what is the alias?", null, $hasOne[$i]['alias']);
+							}
+							if($hasOneAlias) {
+								$response = $this->getInput("$currentModelName hasOne {$hasOneAlias}?", array('y','n'), 'y');
+							} else {
+								$reponse = 'n';
+							}
+						} else {
+							$hasOneAlias = $hasOne[$i]['className'];
+							$response = $this->getInput("$currentModelName hasOne {$hasOne[$i]['className']}?", array('y','n'), 'y');
+						}
 
 						if($response == 'y') {
-							$modelAssociations['hasOne'][] = $hasOneClasses[$i];
+							$modelAssociations['hasOne'][$i] = $hasOne[$i];
+							$modelAssociations['hasOne'][$i]['alias'] = $hasOneAlias;
+							//$modelAssociations['hasOne'][$i]['className'] = $hasOne[$i]['className'];
+							//$modelAssociations['hasOne'][$i]['foreignKey'] = $hasOne[$i]['foreignKey'];
+							
 						}
 					}
 				}
 
-				if(count($hasManyClasses)) {
-					for($i = 0; $i < count($hasManyClasses); $i++) {
-						$response = $this->getInput("$currentModelName hasMany {$hasManyClasses[$i]}?", array('y','n'), 'y');
+				if(count($hasMany)) {
+					for($i = 0; $i < count($hasMany); $i++) {
+						if($currentModelName == $hasMany[$i]['alias']) {
+							$response = $this->getInput("{$currentModelName} hasMany {$hasMany[$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							if($response == 'y') {
+								$hasManyAlias = $this->getInput("So what is the alias?", null, $hasMany[$i]['alias']);
+							}
+							if($hasManyAlias) {
+								$response = $this->getInput("$currentModelName hasMany {$hasManyAlias}?", array('y','n'), 'y');
+							} else {
+								$reponse = 'n';
+							}
+						} else {
+							$hasManyAlias = $hasMany[$i]['alias'];
+							$response = $this->getInput("$currentModelName hasMany {$hasMany[$i]['className']}?", array('y','n'), 'y');
+						}
 
 						if($response == 'y') {
-							$modelAssociations['hasMany'][] = $hasManyClasses[$i];
+							$modelAssociations['hasMany'][$i] = $hasMany[$i];
+							$modelAssociations['hasMany'][$i]['alias'] = $hasManyAlias;
+							//$modelAssociations['hasMany'][$i]['className'] = $hasMany[$i]['className'];
+							//$modelAssociations['hasMany'][$i]['foreignKey'] = $hasMany[$i]['foreignKey'];
+							
 						}
 					}
 				}
 
-				if(count($hasAndBelongsToManyClasses)) {
-					for($i = 0; $i < count($hasAndBelongsToManyClasses); $i++) {
-						$response = $this->getInput("$currentModelName hasAndBelongsToMany {$hasAndBelongsToManyClasses[$i]}?", array('y','n'), 'y');
+				if(count($hasAndBelongsToMany)) {
+					for($i = 0; $i < count($hasAndBelongsToMany); $i++) {
+						if($currentModelName == $hasAndBelongsToMany[$i]['alias']) {
+							$response = $this->getInput("{$currentModelName} hasAndBelongsToMany {$hasAndBelongsToMany[$i]}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							if($response == 'y') {
+								$hasAndBelongsToManyAlias = $this->getInput("So what is the alias?", null, $hasAndBelongsToMany[$i]['alias']);
+							}
+							if($hasAndBelongsToManyAlias) {
+								$response = $this->getInput("$currentModelName hasAndBelongsToMany {$hasAndBelongsToManyAlias}?", array('y','n'), 'y');
+							} else {
+								$reponse = 'n';
+							}
+						} else {
+							$hasAndBelongsToManyAlias = $hasAndBelongsToMany[$i]['className'];
+							$response = $this->getInput("$currentModelName hasAndBelongsToMany {$hasAndBelongsToMany[$i]['className']}?", array('y','n'), 'y');
+						}
 
 						if($response == 'y') {
-							$modelAssociations['hasAndBelongsToMany'][] = $hasAndBelongsToManyClasses[$i];
+							$modelAssociations['hasAndBelongsToMany'][$i] = $hasAndBelongsToMany[$i];
+							$modelAssociations['hasAndBelongsToMany'][$i]['alias'] = $hasAndBelongsToManyAlias;
+							//$modelAssociations['hasAndBelongsToMany'][$i]['className'] = $hasAndBelongsToMany[$i]['className'];
+							//$modelAssociations['hasAndBelongsToMany'][$i]['foreignKey'] = $hasAndBelongsToMany[$i]['foreignKey'];
+							//$modelAssociations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $hasAndBelongsToMany[$i]['associationForeignKey'];
+							//$modelAssociations['hasAndBelongsToMany'][$i]['joinTable'] = $hasAndBelongsToMany[$i]['joinTable'];
 						}
 					}
 				}
@@ -577,9 +669,23 @@ class Bake {
 						$bad = false;
 					}
 				}
-				$assocClassName = $this->getInput('Classname of associated Model?');
-				$modelAssociations[$assocs[$assocType]][] = $assocClassName;
-				$this->stdout("Association '$currentModelName {$assocs[$assocType]} $assocClassName' defined.");
+				$associationName = $this->getInput('What is the name of this association?');
+				$className = $this->getInput('What className will '.$associationName.' use?');
+				$foreignKey = $this->getInput('What is the foreignKey?', null, $this->__modelKey($associationName));
+				if($assocType == '4') {
+					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
+					$joinTable = $this->getInput('What is the joinTable?');
+				}
+				
+				$count = count($modelAssociations[$assocs[$assocType]]);
+				$i = ($count > 0) ? $count + 1 : 0;
+				$modelAssociations[$assocs[$assocType]][$i]['alias'] = $associationName;
+				$modelAssociations[$assocs[$assocType]][$i]['className'] = $className;
+				$modelAssociations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
+				if($assocType == '4') {
+					$modelAssociations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
+					$modelAssociations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
+				}
 				$wannaDoMoreAssoc = $this->getInput('Define another association?', array('y','n'), 'y');
 			}
 		}
@@ -592,30 +698,30 @@ class Bake {
 		$this->stdout("Model Table:   " . $currentTableName);
 		$this->stdout("Validation:    " . print_r($validate, true));
 
-		if(count($belongsToClasses) || count($hasOneClasses) || count($hasManyClasses) || count($hasAndBelongsToManyClasses)) {
+		if(count($belongsTo) || count($hasOne) || count($hasMany) || count($hasAndBelongsToMany)) {
 			$this->stdout("Associations:");
 
 			if(count($modelAssociations['belongsTo'])) {
 				for($i = 0; $i < count($modelAssociations['belongsTo']); $i++) {
-					$this->stdout("            $currentModelName belongsTo {$modelAssociations['belongsTo'][$i]}");
+					$this->stdout("            $currentModelName belongsTo {$modelAssociations['belongsTo'][$i]['alias']}");
 				}
 			}
 
 			if(count($modelAssociations['hasOne'])) {
 				for($i = 0; $i < count($modelAssociations['hasOne']); $i++) {
-					$this->stdout("            $currentModelName hasOne	{$modelAssociations['hasOne'][$i]}");
+					$this->stdout("            $currentModelName hasOne	{$modelAssociations['hasOne'][$i]['alias']}");
 				}
 			}
 
 			if(count($modelAssociations['hasMany'])) {
 				for($i = 0; $i < count($modelAssociations['hasMany']); $i++) {
-					$this->stdout("            $currentModelName hasMany   {$modelAssociations['hasMany'][$i]}");
+					$this->stdout("            $currentModelName hasMany   {$modelAssociations['hasMany'][$i]['alias']}");
 				}
 			}
 
 			if(count($modelAssociations['hasAndBelongsToMany'])) {
 				for($i = 0; $i < count($modelAssociations['hasAndBelongsToMany']); $i++) {
-					$this->stdout("            $currentModelName hasAndBelongsToMany {$modelAssociations['hasAndBelongsToMany'][$i]}");
+					$this->stdout("            $currentModelName hasAndBelongsToMany {$modelAssociations['hasAndBelongsToMany'][$i]['alias']}");
 				}
 			}
 		}
@@ -1406,12 +1512,12 @@ class Bake {
 				$out .= "\tvar \$belongsTo = array(\n";
 
 				for($i = 0; $i < count($modelAssociations['belongsTo']); $i++) {
-					$out .= "\t\t\t'{$modelAssociations['belongsTo'][$i]}' =>\n";
-					$out .= "\t\t\t array('className' => '{$modelAssociations['belongsTo'][$i]}',\n";
+					$out .= "\t\t\t'{$modelAssociations['belongsTo'][$i]['alias']}' =>\n";
+					$out .= "\t\t\t array('className' => '{$modelAssociations['belongsTo'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '{$modelAssociations['belongsTo'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
 					$out .= "\t\t\t\t\t'counterCache' => ''),\n\n";
 				}
 				$out .= "\t);\n\n";
@@ -1421,9 +1527,9 @@ class Bake {
 				$out .= "\tvar \$hasOne = array(\n";
 
 				for($i = 0; $i < count($modelAssociations['hasOne']); $i++) {
-					$out .= "\t\t\t'{$modelAssociations['hasOne'][$i]}' =>\n";
-					$out .= "\t\t\t array('className' => '{$modelAssociations['hasOne'][$i]}',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
+					$out .= "\t\t\t'{$modelAssociations['hasOne'][$i]['alias']}' =>\n";
+					$out .= "\t\t\t array('className' => '{$modelAssociations['hasOne'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '{$modelAssociations['hasOne'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
@@ -1436,9 +1542,9 @@ class Bake {
 				$out .= "\tvar \$hasMany = array(\n";
 
 				for($i = 0; $i < count($modelAssociations['hasMany']); $i++) {
-					$out .= "\t\t\t'{$modelAssociations['hasMany'][$i]}' =>\n";
-					$out .= "\t\t\t array('className' => '{$modelAssociations['hasMany'][$i]}',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
+					$out .= "\t\t\t'{$modelAssociations['hasMany'][$i]['alias']}' =>\n";
+					$out .= "\t\t\t array('className' => '{$modelAssociations['hasMany'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '{$modelAssociations['hasMany'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
@@ -1456,11 +1562,11 @@ class Bake {
 				$out .= "\tvar \$hasAndBelongsToMany = array(\n";
 
 				for($i = 0; $i < count($modelAssociations['hasAndBelongsToMany']); $i++) {
-					$out .= "\t\t\t'{$modelAssociations['hasAndBelongsToMany'][$i]}' =>\n";
-					$out .= "\t\t\t array('className' => '{$modelAssociations['hasAndBelongsToMany'][$i]}',\n";
-					$out .= "\t\t\t\t\t'joinTable' => '',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '',\n";
-					$out .= "\t\t\t\t\t'associationForeignKey' => '',\n";
+					$out .= "\t\t\t'{$modelAssociations['hasAndBelongsToMany'][$i]['alias']}' =>\n";
+					$out .= "\t\t\t array('className' => '{$modelAssociations['hasAndBelongsToMany'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t'joinTable' => '{$modelAssociations['hasAndBelongsToMany'][$i]['joinTable']}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '{$modelAssociations['hasAndBelongsToMany'][$i]['foreignKey']}',\n";
+					$out .= "\t\t\t\t\t'associationForeignKey' => '{$modelAssociations['hasAndBelongsToMany'][$i]['associationForeignKey']}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
