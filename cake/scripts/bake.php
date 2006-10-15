@@ -665,12 +665,19 @@ class Bake {
 				$associationName = $this->getInput('What is the name of this association?');
 				$className = $this->getInput('What className will '.$associationName.' use?');
 				$this->stdout('A helpful List of possible keys');
-				for ($i = 0; $i < count($possibleKeys[$className]); $i++) {
-					$this->stdout($i + 1 . ". " . $possibleKeys[$className][$i]);
+				if($assocType == 1) {
+					$showKeys = $possibleKeys[$currentModelName];
+				} else if($assocType < 4) {
+					$showKeys = $possibleKeys[$className];
+				} else {
+					$showKeys = null;
+				}
+				for ($i = 0; $i < count($showKeys); $i++) {
+					$this->stdout($i + 1 . ". " . $showKeys[$i]);
 				}
 				$foreignKey = $this->getInput('What is the foreignKey? Choose a number or specify your own.', null, $this->__modelKey($associationName));
 				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
-					$foreignKey = $possibleKeys[intval($foreignKey) - 1];
+					$foreignKey = $showKeys[intval($foreignKey) - 1];
 				} 
 				if($assocType == '4') {
 					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
@@ -678,7 +685,7 @@ class Bake {
 				}
 				
 				$count = count($modelAssociations[$assocs[$assocType]]);
-				$i = ($count > 0) ? $count + 1 : 0;
+				$i = ($count > 0) ? $count : 0;
 				$modelAssociations[$assocs[$assocType]][$i]['alias'] = $associationName;
 				$modelAssociations[$assocs[$assocType]][$i]['className'] = $className;
 				$modelAssociations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
