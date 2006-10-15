@@ -657,10 +657,14 @@ class Bake {
 						$bad = false;
 					}
 				}
+				$this->stdout('For the following inputs be very careful to match your setup exactly. Any spelling mistakes will cause errors.');
+				$this->hr();
 				$associationName = $this->getInput('What is the name of this association?');
-				$className = $this->getInput('What className will '.$associationName.' use?');
+				$className = $this->getInput('What className will '.$associationName.' use?', null, $associationName );
+				$suggestedForeignKey = null;
 				if($assocType == '1') {
 					$showKeys = $possibleKeys[$useTable];
+					$suggestedForeignKey = $this->__modelKey($associationName);
 				} else {
 					$otherTable = Inflector::tableize($className);
 					if(in_array($otherTable, $tables)) {
@@ -669,7 +673,11 @@ class Bake {
 						} else {
 							$showKeys = null;
 						}
+					} else {
+						$otherTable = $this->getInput('What is the table for this class?');
+						$showKeys = $possibleKeys[$otherTable];
 					}
+					$suggestedForeignKey = $this->__modelKey($currentModelName);
 				}
 				if(!empty($showKeys)) {
 					$this->stdout('A helpful List of possible keys');
@@ -682,13 +690,14 @@ class Bake {
 					} 
 				} 
 				if(!isset($foreignKey)) {
-					$foreignKey = $this->getInput('What is the foreignKey? Specify your own.', null, $this->__modelKey($associationName));
+					$foreignKey = $this->getInput('What is the foreignKey? Specify your own.', null, $suggestedForeignKey);
 				}
 				if($assocType == '4') {
 					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
 					$joinTable = $this->getInput('What is the joinTable?');
 				}
-				
+				$associations[$assocs[$assocType]] = array_values($associations[$assocs[$assocType]]);
+				pr($associations[$assocs[$assocType]]);
 				$count = count($associations[$assocs[$assocType]]);
 				$i = ($count > 0) ? $count : 0;
 				$associations[$assocs[$assocType]][$i]['alias'] = $associationName;
@@ -1534,7 +1543,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'counterCache' => ''),\n\n";
+					$out .= "\t\t\t\t\t'counterCache' => ''\n),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1549,7 +1558,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'dependent' => ''),\n\n";
+					$out .= "\t\t\t\t\t'dependent' => ''\n),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1569,7 +1578,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'dependent' => '',\n";
 					$out .= "\t\t\t\t\t'exclusive' => '',\n";
 					$out .= "\t\t\t\t\t'finderSql' => '',\n";
-					$out .= "\t\t\t\t\t'counterSql' => ''),\n\n";
+					$out .= "\t\t\t\t\t'counterSql' => ''\n),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1591,7 +1600,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'uniq' => '',\n";
 					$out .= "\t\t\t\t\t'finderQuery' => '',\n";
 					$out .= "\t\t\t\t\t'deleteQuery' => '',\n";
-					$out .= "\t\t\t\t\t'insertQuery' => ''),\n\n";
+					$out .= "\t\t\t\t\t'insertQuery' => ''\n),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
