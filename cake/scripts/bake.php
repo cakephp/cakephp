@@ -483,9 +483,6 @@ class Bake {
 			//Look for belongsTo
 			$i = 0;
 			foreach($modelFields as $field) {
-				$tm = $this->__modelName($otherTable);
-				$possibleKeys[$tm][] = $field['name']; 
-				
 				$offset = strpos($field['name'], '_id');
 				if($offset !== false) {
 					$tmpModelName = $this->__modelNameFromKey($field['name']);
@@ -502,8 +499,9 @@ class Bake {
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				$j = 0;
 				foreach($modelFieldsTemp as $field) {
-					$tm = $this->__modelName($otherTable);
-					$possibleKeys[$tm][] = $field['name']; 
+					if($field['type'] == 'integer' || $field['type'] == 'string') {
+						$possibleKeys[$otherTable][] = $field['name']; 
+					}
 					if($field['name'] == $this->__modelKey($currentModelName)) {
 						$tmpModelName = $this->__modelName($otherTable);
 						$hasOne[$j]['alias'] = $tmpModelName;
@@ -537,8 +535,7 @@ class Bake {
 					$hasAndBelongsToMany[$i]['joinTable'] = $otherTable;
 					$i++;
 				}
-			}
-
+			}			
 			$this->stdout('Done.');
 			$this->hr();
 			//if none found...
@@ -664,21 +661,31 @@ class Bake {
 				}
 				$associationName = $this->getInput('What is the name of this association?');
 				$className = $this->getInput('What className will '.$associationName.' use?');
-				$this->stdout('A helpful List of possible keys');
-				if($assocType == 1) {
-					$showKeys = $possibleKeys[$currentModelName];
-				} else if($assocType < 4) {
-					$showKeys = $possibleKeys[$className];
+				if($assocType == '1') {
+					$showKeys = $possibleKeys[$currentTableName];
 				} else {
-					$showKeys = null;
+					$otherTable = Inflector::tableize($className);
+					if(in_array($otherTable, $tables)) {
+						if($assocType < '4') {
+							$showKeys = $possibleKeys[$otherTable];
+						} else {
+							$showKeys = null;
+						}
+					}
 				}
-				for ($i = 0; $i < count($showKeys); $i++) {
-					$this->stdout($i + 1 . ". " . $showKeys[$i]);
-				}
-				$foreignKey = $this->getInput('What is the foreignKey? Choose a number or specify your own.', null, $this->__modelKey($associationName));
-				if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
-					$foreignKey = $showKeys[intval($foreignKey) - 1];
+				if(!empty($showKeys)) {
+					$this->stdout('A helpful List of possible keys');
+					for ($i = 0; $i < count($showKeys); $i++) {
+						$this->stdout($i + 1 . ". " . $showKeys[$i]);
+					}
+					$foreignKey = $this->getInput('What is the foreignKey? Choose a number.');
+					if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
+						$foreignKey = $showKeys[intval($foreignKey) - 1];
+					} 
 				} 
+				if(!isset($foreignKey)) {
+					$foreignKey = $this->getInput('What is the foreignKey? Specify your own.', null, $this->__modelKey($associationName));
+				}
 				if($assocType == '4') {
 					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
 					$joinTable = $this->getInput('What is the joinTable?');
