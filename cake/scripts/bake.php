@@ -411,7 +411,7 @@ class Bake {
 		if (intval($enteredModel) > 0 && intval($enteredModel) <= $i ) {
 			$currentModelName = $this->__modelName($tables[intval($enteredModel) - 1]);
 		} else {
-			$currentModelName = $this->__modelName($enteredModel);
+			$currentModelName = $enteredModel;
 		}
 
 		$currentTableName = Inflector::tableize($currentModelName);
