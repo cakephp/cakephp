@@ -421,7 +421,7 @@ class Bake {
 		}
 
 		if (strtolower($tableIsGood) == 'n' || strtolower($tableIsGood) == 'no') {
-			$table = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
+			$currentTableName = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
 		}
 
 
