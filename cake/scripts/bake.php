@@ -733,7 +733,7 @@ class Bake {
 				// set it to null...
 				// putting $useTable in the model
 				// is unnecessary.
-				$modelTableName = null;
+				$currentTableName = null;
 			}
 			$this->bakeModel($currentModelName, $dbConnection, $currentTableName, $validate, $modelAssociations);
 
