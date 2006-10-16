@@ -24,6 +24,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('set');
+
 /**
  * XML Helper class for easy output of XML structures.
  *
@@ -268,6 +270,33 @@ class XmlHelper extends Helper {
 			$out .= $content->__toString();
 		}
 		return $out;
+	}
+/**
+ * Serializes a model resultset into XML
+ *
+ * @param  mixed  $data The content to be converted to XML
+ * @param  array  $options The data formatting options
+ * @return string A copy of $data in XML format
+ */
+	function serialize($data, $options = array()) {
+		if (!class_exists('XML') && !class_exists('xml')) {
+			uses('xml');
+		}
+
+		$options = am(
+			array('attributes' => false, 'format' => 'xml'),
+			$options
+		);
+
+		switch ($options['format']) {
+			case 'xml':
+			break;
+			case 'attributes':
+			break;
+		}
+
+		$data = new XML($data);
+		return $data->compose(false);
 	}
 }
 

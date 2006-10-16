@@ -96,6 +96,13 @@ class Controller extends Object {
  */
 	var $data = array();
 /**
+ * POST'ed model data
+ *
+ * @var array
+ * @access public
+ */
+	var $paginate = array('limit' => 20);
+/**
  * Sub-path for view files
  *
  * @var string

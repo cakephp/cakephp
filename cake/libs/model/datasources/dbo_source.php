@@ -1132,9 +1132,10 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param array $fields
  * @param array $values
+ * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = array()) {
+	function update(&$model, $fields = array(), $values = array(), $conditions = null) {
 		$updates = array();
 		$combined = array_combine($fields, $values);
 
@@ -1159,9 +1160,10 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param mixed $id Primary key id number to remove.
+ * @param mixed $conditions
  * @return boolean Success
  */
-	function delete(&$model, $id = null) {
+	function delete(&$model, $id = null, $conditions = null) {
 		$_id = $model->id;
 		if ($id != null) {
 			$model->id = $id;

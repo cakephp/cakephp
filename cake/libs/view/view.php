@@ -40,7 +40,7 @@ uses (DS . 'view' . DS . 'helper');
  * @package			cake
  * @subpackage		cake.cake.libs.view
  */
-class View extends Object{
+class View extends Object {
 /**
  * Name of the controller.
  *
