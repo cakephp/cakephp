@@ -32,13 +32,13 @@ if (!defined('REQUEST_MOBILE_UA')) {
 }
 
 /**
- * Request object for handling alternative HTTP requests
+ * Request object for handling HTTP requests
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller.components
  *
  */
-class RequestHandlerComponent extends Object{
+class RequestHandlerComponent extends Object {
 
 	var $ajaxLayout = 'ajax';
 
@@ -91,10 +91,12 @@ class RequestHandlerComponent extends Object{
 		parent::__construct();
 	}
 /**
- * Initialize
+ * Initializes the component, gets a reference to Controller::$parameters, and
+ * checks to see if a file extension has been parsed by the Router.
  *
  * @param object A reference to the controller
  * @return void
+ * @see Router::parseExtensions()
  */
 	function initialize(&$controller) {
 		$this->params =& $controller->params;
@@ -111,7 +113,18 @@ class RequestHandlerComponent extends Object{
 	}
 
 /**
- * Startup
+ * The startup method of the RequestHandler enables several automatic behaviors
+ * related to the detection of certain properties of the HTTP request, including:
+ *
+ * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
+ * - If Router::parseExtensions() is enabled, the layout and template type are
+ *   switched based on the parsed extension.  For example, if controller/action.xml
+ *   is requested, the view path becomes <i>app/views/controller/xml/action.ctp</i>.
+ * - If a helper with the same name as the extension exists, it is added to the controller.
+ * - If the extension is of a type that RequestHandler understands, it will set that
+ *   Content-type in the response header.
+ * - If the XML data is POSTed, the data is parsed into an XML object, which is assigned
+ *   to the $data property of the controller, which can then be saved to a model object.
  *
  * @param object A reference to the controller
  * @return void
@@ -164,7 +177,8 @@ class RequestHandlerComponent extends Object{
 		}
 	}
 /**
- * Sets a controller's layout based on whether or not the current call is Ajax
+ * Sets a controller's layout based on whether or not the current call is Ajax.
+ * Also sets the Content-type to html with UTF-8 encoding for IE6/XPsp2 bug.
  *
  * @param object The controller object
  * @return boolean True if call is Ajax, otherwise false
@@ -180,7 +194,7 @@ class RequestHandlerComponent extends Object{
 		return false;
 	}
 /**
- * Returns true if the current call is from Ajax, false otherwise
+ * Returns true if the current HTTP request is Ajax, false otherwise
  *
  * @return bool True if call is Ajax
  */
@@ -204,7 +218,7 @@ class RequestHandlerComponent extends Object{
 		return $this->prefers('rss');
 	}
 /**
- * Returns true if the current call accepts an RSS response, false otherwise
+ * Returns true if the current call accepts an Atom response, false otherwise
  *
  * @return bool True if client accepts an RSS response
  */
@@ -212,7 +226,8 @@ class RequestHandlerComponent extends Object{
 		return $this->prefers('atom');
 	}
 /**
- * Returns true if user agent string matches a mobile web browser, or if the client accepts WAP content
+ * Returns true if user agent string matches a mobile web browser, or if the
+ * client accepts WAP content.
  *
  * @return bool True if user agent is a mobile web browser
  */
@@ -272,10 +287,14 @@ class RequestHandlerComponent extends Object{
 		return false;
 	}
 /**
- * Adds/sets the Content-type(s) for the given name
+ * Adds/sets the Content-type(s) for the given name.  This method allows
+ * content-types to be mapped to friendly aliases (or extensions), which allows
+ * RequestHandler to automatically respond to requests of that type in the
+ * startup method.
  *
  * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
- * @param mixed $type The Content-type or array of Content-types assigned to the name
+ * @param mixed $type The Content-type or array of Content-types assigned to the name,
+ *                    i.e. "text/html", or "application/xml"
  * @return void
  */
 	function setContent($name, $type) {
@@ -329,7 +348,9 @@ class RequestHandlerComponent extends Object{
 		return trim($ipaddr);
 	}
 /**
- * Determines which content types the client accepts
+ * Determines which content types the client accepts.  Acceptance is based on
+ * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
+ * header.
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an
  *					array of types
@@ -338,6 +359,7 @@ class RequestHandlerComponent extends Object{
  *				if the client accepts it.  If an array is passed, returns true
  *				if the client accepts one or more elements in the array.
  * @access public
+ * @see RequestHandlerComponent::setContent()
  */
 	function accepts($type = null) {
 		if ($type == null) {
@@ -400,11 +422,19 @@ class RequestHandlerComponent extends Object{
 		}
 	}
 /**
- * Determines which content types the client prefers
+ * Determines which content-types the client prefers.  If no parameters are given,
+ * the content-type that the client most likely prefers is returned.  If $type is
+ * an array, the first item in the array that the client accepts is returned.
+ * Preference is determined primarily by the file extension parsed by the Router
+ * if provided, and secondarily by the list of content-types provided in
+ * HTTP_ACCEPT.
  *
- * @param mixed $type
- * @returns mixed
+ * @param mixed $type An optional array of 'friendly' content-type names, i.e.
+ *                     'html', 'xml', 'js', etc.
+ * @returns mixed If $type is null or not provided, the first content-type in the
+ *                list, based on preference, is returned.
  * @access public
+ * @see RequestHandlerComponent::setContent()
  */
 	function prefers($type = null) {
 		if ($type == null) {
@@ -437,39 +467,49 @@ class RequestHandlerComponent extends Object{
 		}
 	}
 /**
- * Sets the response header based on type map index name
+ * Sets the response header based on type map index name.  If DEBUG is greater
+ * than 2, the header is not set.
  *
- * @param mixed $type
- * @param mixed $index
- * @return boolean
+ * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full
+ *                    content-type, like 'application/x-shockwave'.
+ * @param mixed $index If $type is a friendly type name that is associated with
+ *                     more than one type of content, $index is used to select
+ *                     which content-type to use.
+ * @return boolean Returns false if the friendly type name given in $type does
+ *                 not exist in the type map, or if the Content-type header has
+ *                 already been set by this method.
  * @access public
+ * @see RequestHandlerComponent::setContent()
  */
 	function respondAs($type, $index = 0) {
 		if ($this->__responseTypeSet != null) {
 			return false;
 		}
-		if (!array_key_exists($type, $this->__requestContent)) {
+		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
 
-		$cType = null;
-		if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$index]['content'])) {
-			$cType = $this->__requestContent[$type][$index];
-		} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0]['content'])) {
-			pr($this->__requestContent[$type]);
-			$cType = $this->__requestContent[$type][0];
-		} elseif (isset($this->__requestContent[$type]['content'])) {
-			$cType = $this->__requestContent[$type]['content'];
-		} else {
-			return false;
-		}
-
-		if (is_array($cType)) {
-			if ($this->prefers($cType)) {
-				$cType = $this->prefers($cType);
+		if (strpos($type, '/') === false) {
+			$cType = null;
+			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$index]['content'])) {
+				$cType = $this->__requestContent[$type][$index];
+			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0]['content'])) {
+				$cType = $this->__requestContent[$type][0];
+			} elseif (isset($this->__requestContent[$type]['content'])) {
+				$cType = $this->__requestContent[$type]['content'];
 			} else {
-				$cType = $cType[0];
+				return false;
 			}
+	
+			if (is_array($cType)) {
+				if ($this->prefers($cType)) {
+					$cType = $this->prefers($cType);
+				} else {
+					$cType = $cType[0];
+				}
+			}
+		} else {
+			$cType = $type;
 		}
 
 		if ($cType != null) {
