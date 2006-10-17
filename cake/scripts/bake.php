@@ -1178,7 +1178,9 @@ class Bake {
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 			$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
-		}
+		} else {
+			$wannaUseScaffold = $this->getInput("Would you like to use scaaffolding?", array('y','n'), 'y');
+		} 
 
 		$admin = null;
 		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
@@ -1257,7 +1259,7 @@ class Bake {
 			$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
 
 			if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
-				$this->bakeController($controllerName, $uses, $helpers, $components, $actions);
+				$this->bakeController($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
 
 				if ($this->doUnitTest()) {
 					$this->bakeUnitTest('controller', $controllerName);
@@ -1266,15 +1268,19 @@ class Bake {
 				$this->stdout('Bake Aborted.');
 			}
 		} else {
-			$this->bakeController($controllerName, $uses, $helpers, $components, $actions);
+			$this->bakeController($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
+			if ($this->doUnitTest()) {
+				$this->bakeUnitTest('controller', $controllerName);
+			}
 			exit();
 		}
 	}
 
 	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
-		$modelKey = Inflector::underscore($currentModelName);
-		$pluralName = $this->__pluralrName($currentModelName);
+		$modelObj =& new $currentModelName();
+		$controllerPath = $this->__controllerPath($currentModelName);
+		$pluralName = $this->__pluralName($currentModelName);
 		$singularName = $this->__singularName($currentModelName);
 		$singularHumanName = $this->__singularHumanName($currentModelName);
 		$pluralHumanName = $this->__pluralHumanName($controllerName);
@@ -1282,7 +1288,6 @@ class Bake {
 			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
 			exit;
 		}
-		$modelObj = & new $currentModelName();
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}index() {\n";
 		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
@@ -1291,7 +1296,12 @@ class Bake {
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id) {\n";
-		$actions .= "\t\t\treturn false;\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\$this->Session->setFlash('Invalid ".Inflector::humanize($currentModelName)." id.');\n";
+		$actions .= "\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
+		} else {
+		$actions .= "\t\t\t\$this->flash('Invalid {$currentModelName} id.', '/{$controllerPath}/index');\n";
+		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
@@ -1364,8 +1374,17 @@ class Bake {
 		$actions .= "\t\t}\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
-		$actions .= "\tfunction {$admin}edit(\$id) {\n";
+		//EDIT FORM
+		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
+		$actions .= "\t\t\tif(!\$id) {\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('Invalid ".Inflector::humanize($currentModelName)." id.');\n";
+		$actions .= "\t\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
+		} else {
+		$actions .= "\t\t\t\t\$this->flash('Invalid {$currentModelName} id.', '/{$controllerPath}/index');\n";
+		}
+		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
@@ -1397,9 +1416,9 @@ class Bake {
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
 		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect('/{$controllerName}/index');\n";
+		$actions .= "\t\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
 		} else {
-		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerName}/index');\n";
+		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '/{$controllerPath}/index');\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
@@ -1435,12 +1454,17 @@ class Bake {
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id) {\n";
-		$actions .= "\t\t\treturn false;\n";
+		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\$this->Session->setFlash('Invalid ".Inflector::humanize($currentModelName)." id.');\n";
+		$actions .= "\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
+		} else {
+		$actions .= "\t\t\t\$this->flash('Invalid {$currentModelName} id.', '/{$controllerPath}/index');\n";
+		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
 		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." deleted: id '.\$id.'');\n";
-			$actions .= "\t\t\t\$this->redirect('/{$controllerName}/index');\n";
+			$actions .= "\t\t\t\$this->redirect('/{$controllerPath}/index');\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('{$currentModelName} deleted: id '.\$id.'.', '/{$controllerPath}/index');\n";
 		}
@@ -1633,10 +1657,12 @@ class Bake {
  * @param array $components
  * @param string $actions
  */
-	function bakeController($controllerName, $uses, $helpers, $components, $actions = '') {
+	function bakeController($controllerName, $uses, $helpers, $components, $actions = '', $wannaUseScaffold = 'y') {
 		$out = "<?php\n";
 		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
-		$out .= "\t//var \$scaffold;\n";
+		if($wannaUseScaffold == low('y') || $wannaUseScaffold == low('yes')) {
+		$out .= "\tvar \$scaffold;\n";
+		}
 		$out .= "\tvar \$name = '$controllerName';\n";
 
 		if (count($uses)) {
