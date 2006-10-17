@@ -1515,7 +1515,7 @@ class Bake {
 			$out .= "\tvar \$useTable = '$useTable';\n";
 		}
 		
-		if ($primaryKey != null) {
+		if ($primaryKey != 'id') {
 			$out .= "\tvar \$primaryKey = '$primaryKey';\n";
 		}
 		
