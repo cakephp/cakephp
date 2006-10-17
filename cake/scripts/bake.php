@@ -1542,7 +1542,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'counterCache' => ''\n),\n\n";
+					$out .= "\t\t\t\t\t'counterCache' => ''\n\t\t\t),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1557,7 +1557,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t'dependent' => ''\n),\n\n";
+					$out .= "\t\t\t\t\t'dependent' => ''\n\t\t\t),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1577,7 +1577,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'dependent' => '',\n";
 					$out .= "\t\t\t\t\t'exclusive' => '',\n";
 					$out .= "\t\t\t\t\t'finderSql' => '',\n";
-					$out .= "\t\t\t\t\t'counterSql' => ''\n),\n\n";
+					$out .= "\t\t\t\t\t'counterSql' => ''\n\t\t\t),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1599,7 +1599,7 @@ class Bake {
 					$out .= "\t\t\t\t\t'uniq' => '',\n";
 					$out .= "\t\t\t\t\t'finderQuery' => '',\n";
 					$out .= "\t\t\t\t\t'deleteQuery' => '',\n";
-					$out .= "\t\t\t\t\t'insertQuery' => ''\n),\n\n";
+					$out .= "\t\t\t\t\t'insertQuery' => ''\n\t\t\t),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
