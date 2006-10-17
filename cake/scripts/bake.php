@@ -1271,14 +1271,13 @@ class Bake {
 		}
 	}
 
-	function __bakeActions($controllerName, $admin, $wannaUseSession) {
+	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
 		$modelKey = Inflector::underscore($currentModelName);
+		$pluralName = $this->__pluralrName($currentModelName);
 		$singularName = $this->__singularName($currentModelName);
 		$singularHumanName = $this->__singularHumanName($currentModelName);
 		$pluralHumanName = $this->__pluralHumanName($controllerName);
-
-
 		if(!class_exists($currentModelName)) {
 			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
 			exit;
@@ -1287,7 +1286,7 @@ class Bake {
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}index() {\n";
 		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
-		$actions .= "\t\t\$this->set('{$controllerPath}', \$this->{$currentModelName}->findAll());\n";
+		$actions .= "\t\t\$this->set('{$pluralName}', \$this->{$currentModelName}->findAll());\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
