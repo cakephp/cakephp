@@ -849,10 +849,9 @@ class Bake {
 				$this->__modelClass = $currentModelName;
 				$modelKey = Inflector::underscore($currentModelName);
 				$modelObj =& ClassRegistry::getObject($modelKey);
-
 				$singularName = $this->__singularName($currentModelName);
 				$pluralName = $this->__pluralName($currentModelName);
-				$singularHumanName = $this->__singularHumanName($modelObj->name);
+				$singularHumanName = $this->__singularHumanName($currentModelName);
 				$pluralHumanName = $this->__pluralHumanName($controllerName);
 
 				$fieldNames = $controllerObj->generateFieldNames(null, false);
@@ -942,10 +941,10 @@ class Bake {
 						if($otherModelName != $currentModelName) {
 							$otherControllerName = $this->__controllerName($otherModelName);
 							$otherControllerPath = $this->__controllerPath($otherControllerName);
-							$singularHumanName = $this->__singularHumanName($value['controller']);
-							$pluralHumanName = $this->__pluralHumanName($value['controller']);
-							$viewView .= "\t<li><?php echo \$html->link('List " . $pluralHumanName . "', '/" . $otherControllerPath . "/index/')?> </li>\n";
-							$viewView .= "\t<li><?php echo \$html->link('New " . $singularHumanName . "', '/" . $otherControllerPath . "/add/')?> </li>\n";
+							$otherSingularHumanName = $this->__singularHumanName($value['controller']);
+							$otherPluralHumanName = $this->__pluralHumanName($value['controller']);
+							$viewView .= "\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', '/" . $otherControllerPath . "/index/')?> </li>\n";
+							$viewView .= "\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', '/" . $otherControllerPath . "/add/')?> </li>\n";
 						}
 					}
 				}
@@ -1037,12 +1036,12 @@ class Bake {
 						$otherControllerName = $this->__controllerName($otherModelName);
 						$otherControllerPath = $this->__controllerPath($otherModelName);
 						$otherSingularName = $this->__singularName($associationName);
-						$addView .= "<li><?php echo \$html->link('View " . $this->__pluralHumanName($associationName) . "', '/" .$otherControllerPath."/index/');?></li>\n";
+						$otherPluralName = $this->__pluralHumanName($associationName);
+						$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '/" .$otherControllerPath."/index/');?></li>\n";
+						$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '/" .$otherControllerPath."/add/');?></li>\n";
 					}
 				}
 				$addView .= "</ul>\n";
-
-
 				//-------------------------[EDIT]-------------------------//
 				$editView = null;
 				$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
@@ -1060,7 +1059,9 @@ class Bake {
 						$otherControllerName = $this->__controllerName($otherModelName);
 						$otherControllerPath = $this->__controllerPath($otherModelName);
 						$otherSingularName = $this->__singularName($associationName);
-						$editView .= "<li><?php echo \$html->link('View " . $this->__pluralHumanName($associationName) . "', '/" .$otherControllerPath."/index/');?></li>\n";
+						$otherPluralName = $this->__pluralHumanName($associationName);
+						$editView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '/" .$otherControllerPath."/index/');?></li>\n";
+						$editView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '/" .$otherControllerPath."/add/');?></li>\n";
 					}
 				}
 				$editView .= "</ul>\n";
