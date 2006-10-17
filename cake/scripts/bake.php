@@ -371,7 +371,6 @@ class Bake {
 		$this->hr();
 		$this->interactive = true;
 		
-		$useDbConfig = 'default';
 		$useTable = null;
 		$primaryKey = 'id';
 		$validate = array();
@@ -381,25 +380,9 @@ class Bake {
 		{
 			$useDbConfig = $this->getInput('Please provide the name of the connection you wish to use.');
 		}*/
-		$db =& ConnectionManager::getDataSource($useDbConfig);
-		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		if ($usePrefix) {
-			$tables = array();
-			foreach ($db->listSources() as $table) {
-				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
-					$tables[] = substr($table, strlen($usePrefix));
-				}
-			}
-		} else {
-			$tables = $db->listSources();
-		}
-
-		$this->stdout('Possible models based on your current database:');
-		$__modelNames = array();
-		for ($i = 0; $i < count($tables); $i++) {
-			$__modelNames[] = $this->__modelName($tables[$i]);
-			$this->stdout($i + 1 . ". " . $this->__modelName($tables[$i]));
-		}
+		$useDbConfig = 'default';
+		$this->doList($useDbConfig);
+		
 
 		$enteredModel = '';
 
@@ -775,17 +758,29 @@ class Bake {
 		$uses = array();
 		$wannaUseSession = 'y';
 		$wannaDoScaffold = 'y';
+		
+		
+		$useDbConfig = 'default';
+		$this->doList($useDbConfig, 'Controllers');
+		
+		$enteredController = '';
 
-		$controllerName = '';
-		while ($controllerName == '') {
-			$controllerName = $this->getInput('Controller Name? (plural)');
+		while ($enteredController == '') {
+			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
 
-			if ($controllerName == '') {
-				$this->stdout('The controller name you supplied was empty. Please try again.');
+			if ($enteredController == '' || intval($enteredController) > $i) {
+				$this->stdout('Error:');
+				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$enteredController = '';
 			}
 		}
+
+		if (intval($enteredController) > 0 && intval($enteredController) <= $i ) {
+			$controllerName = $this->__controllerName($tables[intval($enteredController) - 1]);
+		} else {
+			$controllerName = $enteredController;
+		}
 		$controllerPath = $this->__controllerPath($controllerName);
-		$controllerName = $this->__controllerName($controllerName);
 
 		$doItInteractive = $this->getInput("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerClassName} views if it exist.", array('y','n'), 'y');
 
@@ -1134,16 +1129,27 @@ class Bake {
 		$wannaUseSession = 'y';
 		$wannaDoScaffolding = 'y';
 
-		$controllerName = '';
-		while ($controllerName == '') {
-			$controllerName = $this->getInput('Controller name? Remember that Cake controller names are plural.');
+		$useDbConfig = 'default';
+		$this->doList($useDbConfig, 'Controllers');
+		
+		$enteredController = '';
 
-			if ($controllerName == '') {
-				$this->stdout('The controller name you supplied was empty. Please try again.');
+		while ($enteredController == '') {
+			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
+
+			if ($enteredController == '' || intval($enteredController) > $i) {
+				$this->stdout('Error:');
+				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$enteredController = '';
 			}
 		}
+
+		if (intval($enteredController) > 0 && intval($enteredController) <= $i ) {
+			$controllerName = $this->__controllerName($tables[intval($enteredController) - 1]);
+		} else {
+			$controllerName = $enteredController;
+		}
 		$controllerPath = $this->__controllerPath($controllerName);
-		$controllerName = $this->__controllerName($controllerName);
 
 		$doItInteractive = $this->getInput("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
 
@@ -2579,6 +2585,40 @@ class Bake {
  */
 	function __pluralHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
+	}
+/**
+ * outputs the a list of model or controller options
+ *
+ * @param string $useDbConfig
+ * @param string $type = Models or Controllers
+ * @return output
+ */
+	function doList($useDbConfig = 'default', $type = 'Models') {
+		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
+		if ($usePrefix) {
+			$tables = array();
+			foreach ($db->listSources() as $table) {
+				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
+					$tables[] = substr($table, strlen($usePrefix));
+				}
+			}
+		} else {
+			$tables = $db->listSources();
+		}
+
+		$this->stdout('Possible controllers based on your current database:');
+		$this->__controllerNames = array();
+		$this->__modelNames = array();
+		for ($i = 0; $i < count($tables); $i++) {
+			if($type == 'Controllers') {
+				$this->__controllerNames[] = $this->__controllerName($tables[$i]);
+				$this->stdout($i + 1 . ". " . $this->__controllerNames[$i]);
+			} else {
+				$this->__modelNames[] = $this->__modelName($tables[$i]);
+				$this->stdout($i + 1 . ". " . $this->__modelNames[$i]);
+			}
+		}
 	}
 
 }
