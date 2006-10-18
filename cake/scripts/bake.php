@@ -370,7 +370,7 @@ class Bake {
 		$this->stdout('Model Bake:');
 		$this->hr();
 		$this->interactive = true;
-		
+
 		$useTable = null;
 		$primaryKey = 'id';
 		$validate = array();
@@ -382,7 +382,7 @@ class Bake {
 		}*/
 		$useDbConfig = 'default';
 		$this->doList($useDbConfig);
-		
+
 
 		$enteredModel = '';
 
@@ -413,7 +413,7 @@ class Bake {
 		}
 
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
-		
+
 		$tempModel = new Model(false, $useTable);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$modelFields = $db->describe($tempModel);
@@ -490,14 +490,14 @@ class Bake {
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				foreach($modelFieldsTemp as $field) {
 					if($field['type'] == 'integer' || $field['type'] == 'string') {
-						$possibleKeys[$otherTable][] = $field['name']; 
+						$possibleKeys[$otherTable][] = $field['name'];
 					}
 					if($field['name'] == $this->__modelKey($currentModelName)) {
 						$tmpModelName = $this->__modelName($otherTable);
 						$associations['hasOne'][$j]['alias'] = $tmpModelName;
 						$associations['hasOne'][$j]['className'] = $tmpModelName;
 						$associations['hasOne'][$j]['foreignKey'] = $field['name'];
-						
+
 						$associations['hasMany'][$j]['alias'] = $tmpModelName;
 						$associations['hasMany'][$j]['className'] = $tmpModelName;
 						$associations['hasMany'][$j]['foreignKey'] = $field['name'];
@@ -511,7 +511,7 @@ class Bake {
 					$associations['hasAndBelongsToMany'][$i]['alias'] = $tmpModelName;
 					$associations['hasAndBelongsToMany'][$i]['className'] = $tmpModelName;
 					$associations['hasAndBelongsToMany'][$i]['foreignKey'] = $this->__modelKey($currentModelName);
-					$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);					
+					$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);
 					$associations['hasAndBelongsToMany'][$i]['joinTable'] = $otherTable;
 					$i++;
 				}
@@ -521,11 +521,11 @@ class Bake {
 					$associations['hasAndBelongsToMany'][$i]['alias'] = $tmpModelName;
 					$associations['hasAndBelongsToMany'][$i]['className'] = $tmpModelName;
 					$associations['hasAndBelongsToMany'][$i]['foreignKey'] = $this->__modelKey($currentModelName);
-					$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);					
+					$associations['hasAndBelongsToMany'][$i]['associationForeignKey'] = $this->__modelKey($tmpModelName);
 					$associations['hasAndBelongsToMany'][$i]['joinTable'] = $otherTable;
 					$i++;
 				}
-			}			
+			}
 			$this->stdout('Done.');
 			$this->hr();
 			//if none found...
@@ -554,6 +554,7 @@ class Bake {
 							unset($associations['belongsTo'][$i]);
 						}
 					}
+					$associations['belongsTo'] = array_merge($associations['belongsTo']);
 				}
 
 				if(!empty($associations['hasOne'])) {
@@ -576,6 +577,7 @@ class Bake {
 							unset($associations['hasOne'][$i]);
 						}
 					}
+					$associations['hasOne'] = array_merge($associations['hasOne']);
 				}
 
 				if(!empty($associations['hasMany'])) {
@@ -598,6 +600,7 @@ class Bake {
 							unset($associations['hasMany'][$i]);
 						}
 					}
+					$associations['hasMany'] = array_merge($associations['hasMany']);
 				}
 
 				if(!empty($associations['hasAndBelongsToMany'])) {
@@ -620,6 +623,7 @@ class Bake {
 							unset($associations['hasAndBelongsToMany'][$i]);
 						}
 					}
+					$associations['hasAndBelongsToMany'] = array_merge($associations['hasAndBelongsToMany']);
 				}
 			}
 			$wannaDoMoreAssoc = $this->getInput('Would you like to define some additional model associations?', array('y','n'), 'y');
@@ -671,8 +675,8 @@ class Bake {
 					$foreignKey = $this->getInput('What is the foreignKey? Choose a number.');
 					if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
 						$foreignKey = $showKeys[intval($foreignKey) - 1];
-					} 
-				} 
+					}
+				}
 				if(!isset($foreignKey)) {
 					$foreignKey = $this->getInput('What is the foreignKey? Specify your own.', null, $suggestedForeignKey);
 				}
@@ -759,11 +763,11 @@ class Bake {
 		$uses = array();
 		$wannaUseSession = 'y';
 		$wannaDoScaffold = 'y';
-		
-		
+
+
 		$useDbConfig = 'default';
 		$this->doList($useDbConfig, 'Controllers');
-		
+
 		$enteredController = '';
 
 		while ($enteredController == '') {
@@ -1132,7 +1136,7 @@ class Bake {
 
 		$useDbConfig = 'default';
 		$this->doList($useDbConfig, 'Controllers');
-		
+
 		$enteredController = '';
 
 		while ($enteredController == '') {
@@ -1188,7 +1192,7 @@ class Bake {
 			$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
 		} else {
 			$wannaUseScaffold = $this->getInput("Would you like to use scaaffolding?", array('y','n'), 'y');
-		} 
+		}
 
 		$admin = null;
 		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
@@ -1545,11 +1549,11 @@ class Bake {
 		if ($useTable != null) {
 			$out .= "\tvar \$useTable = '$useTable';\n";
 		}
-		
+
 		if ($primaryKey != 'id') {
 			$out .= "\tvar \$primaryKey = '$primaryKey';\n";
 		}
-		
+
 
 		if (count($validate)) {
 			$out .= "\tvar \$validate = array(\n";
@@ -1785,7 +1789,7 @@ class Bake {
 				} else {
 					return false;
 				}
-			} 
+			}
 			$this->createFile($unixPath.$path.DS.$filename, $out);
 		}
 	}
