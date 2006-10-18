@@ -33,8 +33,6 @@
  */
 vendor ('adodb' . DS . 'adodb.inc');
 
-uses ('model' . DS . 'datasources' . DS . 'dbo_source');
-
 /**
  * AdoDB DBO implementation.
  *

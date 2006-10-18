@@ -27,12 +27,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
- * Include DBO.
- */
-uses('model'.DS.'datasources'.DS.'dbo_source');
-
 /**
  * DBO implementation for the SQLite DBMS.
  *

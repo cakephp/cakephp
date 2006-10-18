@@ -29,11 +29,6 @@
  */
 
 /**
- * Include DBO.
- */
-uses ('model' . DS . 'datasources' . DS . 'dbo_source');
-
-/**
  * PostgreSQL layer for DBO.
  *
  * Long description for class
