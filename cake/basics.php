@@ -1,4 +1,4 @@
-<?php
+Ä<?php
 /* SVN FILE: $Id$ */
 /**
  * Basic Cake functionality.
@@ -1046,10 +1046,11 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
-			echo I18n::translate($msg, $msg2=NULL, $domain=NULL, $category=NULL, $count=NULL, $dir);
+			echo I18n::translate($msg, null, null, null, null, $dir);
 		} else {
-			return I18n::translate($msg, $msg2=NULL, $domain=NULL, $category=NULL, $count=NULL, $dir);
+			return I18n::translate($msg, null, null, null, null, $dir);
 		}
 	}
 /**
@@ -1069,10 +1070,11 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
-			echo I18n::translate($msg1, $msg2, NULL, NULL, $count, $dir);
+			echo I18n::translate($msg1, $msg2, null, null, $count, $dir);
 		} else {
-			return I18n::translate($msg1, $msg2, NULL, NULL, $count, $dir);
+			return I18n::translate($msg1, $msg2, null, null, $count, $dir);
 		}
 	}
 /**
@@ -1094,10 +1096,11 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
-			echo I18n::translate($msg1, $msg2, $domain, NULL, $count, $dir);;
+			echo I18n::translate($msg1, $msg2, $domain, null, $count, $dir);;
 		} else {
-			return I18n::translate($msg1, $msg2, $domain, NULL, $count, $dir);
+			return I18n::translate($msg1, $msg2, $domain, null, $count, $dir);
 		}
 	}
 /**
@@ -1133,6 +1136,7 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
 			echo I18n::translate($msg1, $msg2, $domain, $category, $count, $dir);
 		} else {
@@ -1168,10 +1172,11 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
-			echo I18n::translate($msg, NULL, $domain, $category, NULL, $dir);
+			echo I18n::translate($msg, null, $domain, $category, null, $dir);
 		} else {
-			return I18n::translate($msg, NULL, $domain, $category, NULL, $dir);
+			return I18n::translate($msg, null, $domain, $category, null, $dir);
 		}
 	}
 /**
@@ -1189,10 +1194,11 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+
 		if(is_null($return)) {
-			echo I18n::translate($msg, NULL, $domain, NULL, NULL, $dir);
+			echo I18n::translate($msg, null, $domain, null, null, $dir);
 		} else {
-			return I18n::translate($msg, NULL, $domain, NULL, NULL, $dir);
+			return I18n::translate($msg, null, $domain, null, null, $dir);
 		}
     }
 /**
