@@ -435,7 +435,7 @@ class Router extends Overloadable {
 			}
 			$output = $base . '/' . join('/', $urlOut);
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || $url == '#') {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (strpos($url, '#') === 0)) {
 				return $url;
 			}
 
