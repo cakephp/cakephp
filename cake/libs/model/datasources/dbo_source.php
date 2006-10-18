@@ -1135,20 +1135,35 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = array(), $conditions = null) {
+	function update(&$model, $fields = array(), $values = null, $conditions = null) {
 		$updates = array();
-		$combined = array_combine($fields, $values);
+		if ($values == null) {
+			$combined = $fields;
+		} else {
+			$combined = array_combine($fields, $values);
+		}
 
 		foreach($combined as $field => $value) {
 			if ($value === null) {
 				$updates[] = $this->name($field) . ' = NULL';
 			} else {
-				$updates[] = $this->name($field) . ' = ' . $this->value($value, $model->getColumnType($field));
+				$update = $this->name($field) . ' = ';
+				if ($conditions == null) {
+					$update .= $this->value($value, $model->getColumnType($field));
+				} else {
+					$update .= $value;
+				}
+				$updates[] =  $update;
 			}
 		}
 		$sql = 'UPDATE ' . $this->fullTableName($model);
 		$sql .= ' SET ' . join(',', $updates);
-		$sql .= ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($model->getID(), $model->getColumnType($model->primaryKey));
+
+		if ($conditions == null) {
+			$sql .=  ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($model->getID(), $model->getColumnType($model->primaryKey));
+		} else {
+			$sql .= $this->conditions($conditions);
+		}
 		if (!$this->execute($sql)) {
 			$model->onError();
 			return false;
