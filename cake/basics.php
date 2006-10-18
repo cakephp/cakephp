@@ -1,4 +1,4 @@
-Ä<?php
+<?php
 /* SVN FILE: $Id$ */
 /**
  * Basic Cake functionality.
