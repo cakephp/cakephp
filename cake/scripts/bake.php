@@ -1588,7 +1588,7 @@ class Bake {
 				for($i = 0; $i < count($associations['hasOne']); $i++) {
 					$out .= "\t\t\t'{$associations['hasOne'][$i]['alias']}' =>\n";
 					$out .= "\t\t\t array('className' => '{$associations['hasOne'][$i]['className']}',\n";
-					$out .= "\t\t\t\t\t'foreignKey' => '{$associations['hasOne'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t'foreignKey' => '{$associations['hasOne'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t'conditions' => '',\n";
 					$out .= "\t\t\t\t\t'fields' => '',\n";
 					$out .= "\t\t\t\t\t'order' => '',\n";
