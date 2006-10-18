@@ -389,21 +389,21 @@ class Bake {
 		while ($enteredModel == '') {
 			$enteredModel = $this->getInput('Enter a number from the list above, or type in the name of another model.');
 
-			if ($enteredModel == '' || intval($enteredModel) > $i) {
+			if ($enteredModel == '' || intval($enteredModel) > count($this->__modelNames)) {
 				$this->stdout('Error:');
 				$this->stdout("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredModel = '';
 			}
 		}
 
-		if (intval($enteredModel) > 0 && intval($enteredModel) <= $i ) {
-			$currentModelName = $this->__modelName($tables[intval($enteredModel) - 1]);
+		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->__modelNames)) {
+			$currentModelName = $this->__modelNames[intval($enteredModel) - 1];
 		} else {
 			$currentModelName = $enteredModel;
 		}
 
 		$useTable = Inflector::tableize($currentModelName);
-		if(array_search($useTable, $tables) === false) {
+		if(array_search($useTable, $this->__tables) === false) {
 			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $useTable . "'.");
 			$tableIsGood = $this->getInput('Is this correct?', array('y','n'), 'y');
 		}
@@ -413,15 +413,16 @@ class Bake {
 		}
 
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
-
+		
 		$tempModel = new Model(false, $useTable);
+		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$modelFields = $db->describe($tempModel);
 		if(!isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
 			$primaryKey = $this->getInput('What is the primaryKey', null, 'id');
 		}
 		$validate = array();
 
-		if (array_search($useTable, $tables) !== false && (strtolower($wannaDoValidation) == 'y' || strtolower($wannaDoValidation) == 'yes')) {
+		if (array_search($useTable, $this->__tables) !== false && (strtolower($wannaDoValidation) == 'y' || strtolower($wannaDoValidation) == 'yes')) {
 			foreach($modelFields as $field) {
 				$this->stdout('');
 				$prompt .= 'Name: ' . $field['name'] . "\n";
@@ -484,7 +485,7 @@ class Bake {
 			//Look for hasOne and hasMany and hasAndBelongsToMany
 			$i = 0;
 			$j = 0;
-			foreach($tables as $otherTable) {
+			foreach($this->__tables as $otherTable) {
 				$tempOtherModel = & new Model(false, $otherTable);
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				foreach($modelFieldsTemp as $field) {
@@ -650,7 +651,7 @@ class Bake {
 					$suggestedForeignKey = $this->__modelKey($associationName);
 				} else {
 					$otherTable = Inflector::tableize($className);
-					if(in_array($otherTable, $tables)) {
+					if(in_array($otherTable, $this->__tables)) {
 						if($assocType < '4') {
 							$showKeys = $possibleKeys[$otherTable];
 						} else {
@@ -768,15 +769,15 @@ class Bake {
 		while ($enteredController == '') {
 			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
 
-			if ($enteredController == '' || intval($enteredController) > $i) {
+			if ($enteredController == '' || intval($enteredController) > count($this->__controllerNames)) {
 				$this->stdout('Error:');
 				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredController = '';
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= $i ) {
-			$controllerName = $this->__controllerName($tables[intval($enteredController) - 1]);
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->__controllerNames) ) {
+			$controllerName = $this->__controllerNames[intval($enteredController) - 1];
 		} else {
 			$controllerName = $enteredController;
 		}
@@ -1137,15 +1138,15 @@ class Bake {
 		while ($enteredController == '') {
 			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
 
-			if ($enteredController == '' || intval($enteredController) > $i) {
+			if ($enteredController == '' || intval($enteredController) > count($this->__controllerNames)) {
 				$this->stdout('Error:');
 				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredController = '';
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= $i ) {
-			$controllerName = $this->__controllerName($tables[intval($enteredController) - 1]);
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->__controllerNames) ) {
+			$controllerName = $this->__controllerNames[intval($enteredController) - 1];
 		} else {
 			$controllerName = $enteredController;
 		}
@@ -2606,11 +2607,12 @@ class Bake {
 		} else {
 			$tables = $db->listSources();
 		}
-
+		$this->__tables = $tables;
 		$this->stdout('Possible controllers based on your current database:');
 		$this->__controllerNames = array();
 		$this->__modelNames = array();
-		for ($i = 0; $i < count($tables); $i++) {
+		$count = count($tables);
+		for ($i = 0; $i < $count; $i++) {
 			if($type == 'Controllers') {
 				$this->__controllerNames[] = $this->__controllerName($tables[$i]);
 				$this->stdout($i + 1 . ". " . $this->__controllerNames[$i]);
