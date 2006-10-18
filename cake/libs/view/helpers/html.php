@@ -189,7 +189,7 @@ class HtmlHelper extends Helper {
  * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
  * @return string	An <a /> element.
  */
-	function link($title, $url = null, $htmlAttributes = null, $confirmMessage = false, $escapeTitle = true) {
+	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
 		if ($escapeTitle) {
 			$title = htmlspecialchars($title, ENT_QUOTES);
 		}
@@ -240,7 +240,7 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function submit($caption = 'Submit', $htmlAttributes = null) {
+	function submit($caption = 'Submit', $htmlAttributes = array()) {
 		$htmlAttributes['value'] = $caption;
 		return $this->output(sprintf($this->tags['submit'], $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
@@ -251,7 +251,7 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function password($fieldName, $htmlAttributes = null) {
+	function password($fieldName, $htmlAttributes = array()) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		if ($this->tagIsInvalid()) {
@@ -289,7 +289,7 @@ class HtmlHelper extends Helper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function checkbox($fieldName, $title = null, $htmlAttributes = null) {
+	function checkbox($fieldName, $title = null, $htmlAttributes = array()) {
 		$value = $this->tagValue($fieldName);
 		$notCheckedValue = 0;
 
@@ -328,7 +328,7 @@ class HtmlHelper extends Helper {
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function file($fieldName, $htmlAttributes = null) {
+	function file($fieldName, $htmlAttributes = array()) {
 		if (strpos($fieldName, '/')) {
 			$this->setFormTag($fieldName);
 			$htmlAttributes = $this->domId($htmlAttributes);
@@ -377,7 +377,7 @@ class HtmlHelper extends Helper {
  * @param array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function image($path, $htmlAttributes = null) {
+	function image($path, $htmlAttributes = array()) {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
@@ -396,7 +396,7 @@ class HtmlHelper extends Helper {
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function input($fieldName, $htmlAttributes = null) {
+	function input($fieldName, $htmlAttributes = array()) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 
@@ -606,7 +606,7 @@ class HtmlHelper extends Helper {
  * @return string An formatted opening FORM tag.
  * @deprecated This is very WYSIWYG unfriendly, use HtmlHelper::url() to get contents of "action" attribute. Version 0.9.2.
  */
-	function formTag($target = null, $type = 'post', $htmlAttributes = null) {
+	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
 		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
@@ -629,7 +629,7 @@ class HtmlHelper extends Helper {
  * @return string
  * @deprecated This seems useless. Version 0.9.2.
  */
-	function guiListTree($data, $htmlAttributes = null, $bodyKey = 'body', $childrenKey = 'children') {
+	function guiListTree($data, $htmlAttributes = array(), $bodyKey = 'body', $childrenKey = 'children') {
 		$out="<ul" . $this->_parseAttributes($htmlAttributes) . ">\n";
 		foreach($data as $item) {
 			$out .= "<li>{$item[$bodyKey]}\n";

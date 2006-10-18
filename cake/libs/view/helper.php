@@ -107,83 +107,7 @@ class Helper extends Object {
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {
-		if (isset($this->plugin)) {
-			$base = strip_plugin($this->base, $this->plugin);
-		} else {
-			$base = $this->base;
-		}
-		$extension = null;
-
-		if (is_array($url) && !empty($url)) {
-			if (!isset($url['action'])) {
-				$url['action'] = $this->params['action'];
-			}
-			if (!isset($url['controller'])) {
-				$url['controller'] = $this->params['controller'];
-			}
-			if (!isset($url['plugin'])) {
-				$url['plugin'] = $this->plugin;
-			}
-			if (isset($url['ext'])) {
-				$extension = '.' . $url['ext'];
-			}
-			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($this->params['admin'])) {
-				$url[CAKE_ADMIN] = $this->params['admin'];
-			}
-
-			$named = $args = array();
-			$keys = array_keys($url);
-			$count = count($keys);
-			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
-					$args[] = $url[$keys[$i]];
-				} else {
-					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext'))) {
-						$named[] = array($keys[$i], $url[$keys[$i]]);
-					}
-				}
-			}
-
-			$combined = '';
-			if ($this->namedArgs) {
-				if ($this->namedArgs === true) {
-					$sep = $this->argSeparator;
-				} elseif (is_array($this->namedArgs)) {
-					$sep = '/';
-				}
-
-				$count = count($named);
-				for ($i = 0; $i < $count; $i++) {
-					$named[$i] = join($this->argSeparator, $named[$i]);
-				}
-				if (defined('CAKE_ADMIN') && isset($named[CAKE_ADMIN])) {
-					unset($named[CAKE_ADMIN]);
-				}
-				$combined = join('/', $named);
-			}
-
-			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
-			if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
-				array_unshift($urlOut, CAKE_ADMIN);
-			}
-			$output = $base . '/' . join('/', $urlOut);
-		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || $url == '#') {
-				return $this->output($url);
-			}
-
-			if (empty($url)) {
-				return $this->here;
-			} elseif($url{0} == '/') {
-				$output = $base . $url;
-			} else {
-				$output = $base . '/' . strtolower($this->params['controller']) . '/' . $url;
-			}
-		}
-		if ($full) {
-			$output = FULL_BASE_URL . $output;
-		}
-		return $this->output($output . $extension);
+		return Router::url($url, $full);
 	}
 /**
  * Returns a space-delimited string with items of the $options array. If a
@@ -343,7 +267,9 @@ class Helper extends Object {
  * @return array
  */
 	function __value($options = array(), $field = null, $key = 'value') {
-		if (is_string($options)) {
+		if ($options === null) {
+			$options = array();
+		} elseif (is_string($options)) {
 			$field = $options;
 			$options = 0;
 		}
@@ -363,7 +289,7 @@ class Helper extends Object {
 			$result = h($this->data[$this->model()][$this->field()]);
 		}
 
-		if ($options !== 0 && is_array($options)) {
+		if (is_array($options)) {
 			$options[$key] = $result;
 			return $options;
 		} else {
