@@ -1564,8 +1564,10 @@ class Model extends Overloadable {
 		} else {
 			$fields = null;
 		}
-
-		$result = $this->findAll($conditions, $fields, $order, $limit, 1, 0);
+		if($this->recursive >= 1) {
+			$this->recursive = -1;
+		}
+		$result = $this->findAll($conditions, $fields, $order, $limit);
 
 		if ($keyPath == null) {
 			$keyPath = '{n}.' . $this->name . '.' . $this->primaryKey;
