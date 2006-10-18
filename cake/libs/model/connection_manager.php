@@ -132,14 +132,23 @@ class ConnectionManager extends Object {
 /**
  * Loads the DataSource class for the given connection name
  *
- * @param string $connName The name of the connection, as defined in Connections config
- * @return boolean True on success, false on failure or if the class is already loaded
+ * @param mixed $connName A string name of the connection, as defined in Connections config,
+ *                        or an array containing the file and class name of the object.
+ * @return boolean True on success, null on failure or false if the class is already loaded
  */
 	function loadDataSource($connName) {
-
 		$_this =& ConnectionManager::getInstance();
-		$connections = $_this->enumConnectionObjects();
-		$conn = $connections[$connName];
+
+		if (is_array($connName)) {
+			$conn = $connName;
+		} else {
+			$connections = $_this->enumConnectionObjects();
+			$conn = $connections[$connName];
+		}
+
+		if (isset($conn['parent']) && !empty($conn['parent'])) {
+			$_this->loadDataSource($conn['parent']);
+		}
 
 		if (class_exists($conn['classname'])) {
 			return false;
@@ -148,7 +157,7 @@ class ConnectionManager extends Object {
 		if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else if(file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (MODELS . 'datasources' . DS . 'datasources' . DS . $conn['filename'] . '.php');
+			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
 			trigger_error('Unable to load DataSource file ' . $conn['filename'] . '.php', E_USER_ERROR);
 			return null;
@@ -201,6 +210,8 @@ class ConnectionManager extends Object {
  * Returns the file and class name for the given driver
  */
 	function __getDriver($config) {
+		$_this =& ConnectionManager::getInstance();
+
 		if (!isset($config['datasource'])) {
 			$config['datasource'] = 'dbo';
 		}
@@ -208,11 +219,13 @@ class ConnectionManager extends Object {
 		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
 			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
 			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
+			$parent = $_this->__getDriver(array('datasource' => $config['datasource']));
 		} else {
 			$filename = $config['datasource'] . '_source';
 			$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
+			$parent = null;
 		}
-		return array('filename'  => $filename, 'classname' => $classname);
+		return array('filename'  => $filename, 'classname' => $classname, 'parent' => $parent);
 	}
 /**
  * Destructor.
