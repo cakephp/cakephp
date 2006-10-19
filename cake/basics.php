@@ -866,8 +866,14 @@
 			}
 			$res = @fopen($fileName, 'w+b');
 			if ($res) {
-				@fwrite($res, $data);
+				$write = @fwrite($res, $data);
+				if($write === false) {
+					return false;
+				} else {
+					return $write;
+				}
 			}
+			return false;
 		}
 	}
 /**
