@@ -36,7 +36,6 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	require(CAKE . 'basics.php');
 	require(LIBS . 'folder.php');
 	require(LIBS . 'file.php');
-	require(LIBS . 'legacy.php');
 /**
  * Enter description here...
  *

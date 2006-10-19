@@ -37,14 +37,14 @@
 	define('MONTH', 30 * DAY);
 	define('YEAR', 365 * DAY);
 /**
- * Patch for PHP < 4.3
+ * Patch for PHP < 5.0
  */
-	if (!function_exists("ob_get_clean")) {
-		function ob_get_clean() {
-			$ob_contents = ob_get_contents();
-			ob_end_clean();
-			return $ob_contents;
-		}
+	if (version_compare(phpversion(), '5.0') < 0) {
+		 eval ('
+		function clone($object)
+		{
+			return $object;
+		}');
 	}
 /**
  * Loads all models.
@@ -850,35 +850,6 @@
 			break;
 		}
 		return null;
-	}
-/**
- * Returns contents of a file as a string.
- *
- * @param  string  $fileName		Name of the file.
- * @param  boolean $useIncludePath Wheter the function should use the include path or not.
- * @return mixed	Boolean false or contents of required file.
- */
-	if (!function_exists('file_get_contents')) {
-		function file_get_contents($fileName, $useIncludePath = false) {
-			$res=fopen($fileName, 'rb', $useIncludePath);
-
-			if ($res === false) {
-				trigger_error('file_get_contents() failed to open stream: No such file or directory', E_USER_WARNING);
-				return false;
-			}
-			clearstatcache();
-
-			if ($fileSize = @filesize($fileName)) {
-				$data = fread($res, $fileSize);
-			} else {
-				$data = '';
-
-				while(!feof($res)) {
-					$data .= fread($res, 8192);
-				}
-			}
-			return "$data\n";
-		}
 	}
 /**
  * Writes data into file.
