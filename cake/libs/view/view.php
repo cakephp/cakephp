@@ -384,14 +384,16 @@ class View extends Object {
  * and the $params array is used to send data to be used in the
  * Element.
  *
- * @link http://wiki.cakephp.org/docs:view:renderelement
+ * @link 
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string Rendered output
  */
 	function renderElement($name, $params = array()) {
 		$fn = ELEMENTS . $name . $this->ext;
-
+		if(isset($params['plugin'])) {
+			$this->plugin = $params['plugin'];
+		}
 		if (!is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext)) {
 				$fn = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
