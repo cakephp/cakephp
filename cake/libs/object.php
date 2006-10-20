@@ -145,6 +145,12 @@ class Object{
 		$back = array();
 		foreach ($backtrace as $trace) {
 			$t = '';
+			if (!isset($trace['line'])) {
+				$trace['line'] = '??';
+			}
+			if (!isset($trace['file'])) {
+				$trace['file'] = '[internal]';
+			}
 			if (isset($trace['class']) && !empty($trace['class'])) {
 				$t = $trace['class'].'::';
 			}
