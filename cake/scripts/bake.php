@@ -1225,9 +1225,9 @@ class Bake {
 
 		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 			loadModels();
-			$actions = $this->__bakeActions($controllerName, null, $wannaUseSession);
+			$actions = $this->__bakeActions($controllerName, null, null, $wannaUseSession);
 			if($admin) {
-				$actions .= $this->__bakeActions($controllerName, $admin, $wannaUseSession);
+				$actions .= $this->__bakeActions($controllerName, $admin, $admin_url, $wannaUseSession);
 			}
 		}
 
@@ -1294,7 +1294,7 @@ class Bake {
 		}
 	}
 
-	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
+	function __bakeActions($controllerName, $admin = null, $admin_url = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
 		$modelObj =& new $currentModelName();
 		$controllerPath = $this->__controllerPath($currentModelName);
