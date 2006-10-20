@@ -392,11 +392,25 @@ class Model extends Overloadable {
 			$this->actsAs = normalizeList($this->actsAs);
 
 			foreach ($this->actsAs as $behavior => $config) {
+				$className = $behavior . 'Behavior';
+
 				if (!loadBehavior($behavior)) {
 					// Raise an error
 				} else {
-					$className = $behavior . 'Behavior';
-					$this->behaviors[$behavior] =& new $className;
+					if (ClassRegistry::isKeySet($className)) {
+						if (PHP5) {
+							$this->behaviors[$behavior] = ClassRegistry::getObject($className);
+						} else {
+							$this->behaviors[$behavior] =& ClassRegistry::getObject($className);
+						}
+					} else {
+						if (PHP5) {
+							$this->behaviors[$behavior] = new $className;
+						} else {
+							$this->behaviors[$behavior] =& new $className;
+						}
+						ClassRegistry::addObject($className, $this->behaviors[$behavior]);
+					}
 					$this->behaviors[$behavior]->setup($this, $config);
 
 					$methods = $this->behaviors[$behavior]->mapMethods;
@@ -432,17 +446,22 @@ class Model extends Overloadable {
 	function __call__($method, $params) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		$methods = array_keys($this->__behaviorMethods);
+		$methods = array_map('strtolower', array_keys($this->__behaviorMethods));
 		$call = array_values($this->__behaviorMethods);
+		$map = array();
+		
+		if (!empty($methods) && !empty($call)) {
+			$map = array_combine($methods, $call);
+		}
 		$count = count($call);
 
+		if (in_array(low($method), $methods)) {
+			return $this->behaviors[$map[low($method)][1]]->{$map[low($method)][0]}($this, $params);
+		}
+
 		for($i = 0; $i < $count; $i++) {
-			if (strpos($methods[$i], '/') === 0) {
-				if (preg_match($methods[$i], $method)) {
-					return $this->behaviors[$call[$i][1]]->{$call[$i][0]}($this, $params, $method);
-				}
-			} elseif (strtolower($methods[$i]) == strtolower($method)) {
-				return $this->behaviors[$call[$i][1]]->{$call[$i][0]}($this, $params);
+			if (strpos($methods[$i], '/') === 0 && preg_match($methods[$i] . 'i', $method)) {
+				return $this->behaviors[$call[$i][1]]->{$call[$i][0]}($this, $params, $method);
 			}
 		}
 
@@ -1002,8 +1021,6 @@ class Model extends Overloadable {
 						}
 					}
 
-					$this->__insertID = $db->lastInsertId($this->tablePrefix . $this->table, $this->primaryKey);
-
 					if (!$this->__insertID && $newID != null) {
 						$this->__insertID = $newID;
 						$this->id = $newID;
@@ -1091,7 +1108,8 @@ class Model extends Overloadable {
  * @return boolean True on success, false on failure
  */
 	function updateAll($conditions, $fields) {
-		
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		return $db->update($this, $fields, null, $conditions);
 	}
 /**
  * Synonym for del().
@@ -1655,6 +1673,15 @@ class Model extends Overloadable {
  */
 	function getInsertID() {
 		return $this->__insertID;
+	}
+/**
+ * Sets the ID of the last record this Model inserted
+ *
+ * @param mixed $id
+ * @return void
+ */
+	function setInsertID($id) {
+		$this->__insertID = $id;
 	}
 /**
  * Returns the number of rows returned from the last query

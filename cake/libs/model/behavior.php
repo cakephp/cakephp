@@ -30,7 +30,7 @@
 class ModelBehavior extends Object {
 
 	var $mapMethods = array();
-	
+
 	function setup(&$model, $config = array()) { }
 
 	function beforeFind(&$model, &$query) { }

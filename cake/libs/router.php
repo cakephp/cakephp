@@ -305,6 +305,32 @@ class Router extends Overloadable {
 		list($_this->__params[], $_this->__paths[]) = $params;
 	}
 /**
+ * Gets parameter information
+ *
+ * @param boolean $current
+ * @return array
+ */
+	function getParams($current = false) {
+		$_this =& Router::getInstance();
+		if ($current) {
+			return $_this->__params[count($this->__params) - 1];
+		}
+		return $_this->__params[0];
+	}
+/**
+ * Gets path information
+ *
+ * @param boolean $current
+ * @return array
+ */
+	function getPaths($current = false) {
+		$_this =& Router::getInstance();
+		if ($current) {
+			return $_this->__paths[count($this->__paths) - 1];
+		}
+		return $_this->__paths[0];
+	}
+/**
  * Reloads default Router settings
  *
  * @return void

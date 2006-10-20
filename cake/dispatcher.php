@@ -93,11 +93,16 @@ class Dispatcher extends Object {
 				$pluginName = Inflector::camelize($params['action']);
 				if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
 					if(preg_match('/([\\.]+)/', $ctrlName)) {
+						Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
+
 						return $this->cakeError('error404', array(
-														array('url' => strtolower($ctrlName),
-																'message' => 'Was not found on this server',
-																'base' => $this->base)));
-																exit();
+							array(
+								'url' => strtolower($ctrlName),
+								'message' => 'Was not found on this server',
+								'base' => $this->base
+							)
+						));
+						exit();
 					} elseif(!class_exists($ctrlClass)) {
 						$missingController = true;
 					}
@@ -142,16 +147,20 @@ class Dispatcher extends Object {
 					$params['action'] = CAKE_ADMIN.'_'.$params['action'];
 				}
 			} elseif (strpos($params['action'], CAKE_ADMIN) === 0) {
-					$privateAction = true;
+				$privateAction = true;
 			}
 		}
 
 		if ($missingController) {
+			Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 			return $this->cakeError('missingController', array(
-											array('className' => Inflector::camelize($params['controller']."Controller"),
-													'webroot' => $this->webroot,
-													'url' => $url,
-													'base' => $this->base)));
+				array(
+					'className' => Inflector::camelize($params['controller']."Controller"),
+					'webroot' => $this->webroot,
+					'url' => $url,
+					'base' => $this->base
+				)
+			));
 		} else {
 			$controller =& new $ctrlClass();
 		}
@@ -172,11 +181,11 @@ class Dispatcher extends Object {
 		}
 
 		if (in_array(strtolower($params['action']), array('toString', 'requestAction', 'log',
-																			'cakeError', 'constructClasses', 'redirect',
-																			'set', 'setAction', 'validate', 'validateErrors',
-																			'render', 'referer', 'flash', 'flashOut',
-																			'generateFieldNames', 'postConditions', 'cleanUpFields',
-																			'beforefilter', 'beforerender', 'afterfilter'))) {
+															'cakeError', 'constructClasses', 'redirect',
+															'set', 'setAction', 'validate', 'validateErrors',
+															'render', 'referer', 'flash', 'flashOut',
+															'generateFieldNames', 'postConditions', 'cleanUpFields',
+															'beforefilter', 'beforerender', 'afterfilter'))) {
 			$missingAction = true;
 		}
 
@@ -260,27 +269,34 @@ class Dispatcher extends Object {
 		$controller->_initComponents();
 		$controller->constructClasses();
 
+		Router::setParams(array($params, array('base' => $controller->base, 'here' => $controller->here, 'webroot' => $controller->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
+
 		if ($missingAction && !in_array('scaffold', array_keys($classVars))){
 			$this->start($controller);
 			return $this->cakeError('missingAction', array(
-											array('className' => Inflector::camelize($params['controller']."Controller"),
-													'action' => $params['action'],
-													'webroot' => $this->webroot,
-													'url' => $url,
-													'base' => $this->base)));
+				array(
+					'className' => Inflector::camelize($params['controller']."Controller"),
+					'action' => $params['action'],
+					'webroot' => $this->webroot,
+					'url' => $url,
+					'base' => $this->base
+				)
+			));
 		}
 
 		if ($privateAction) {
 			$this->start($controller);
 			return $this->cakeError('privateAction', array(
-											array('className' => Inflector::camelize($params['controller']."Controller"),
-													'action' => $params['action'],
-													'webroot' => $this->webroot,
-													'url' => $url,
-													'base' => $this->base)));
+				array(
+					'className' => Inflector::camelize($params['controller']."Controller"),
+					'action' => $params['action'],
+					'webroot' => $this->webroot,
+					'url' => $url,
+					'base' => $this->base
+				)
+			));
 		}
 
-		Router::setParams(array($params, array('base' => $controller->base, 'here' => $controller->here, 'webroot' => $controller->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		return $this->_invoke($controller, $params, $missingAction);
 	}
 /**

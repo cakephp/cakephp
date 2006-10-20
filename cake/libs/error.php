@@ -65,6 +65,7 @@ class ErrorHandler extends Object{
 			}
 
 			$this->controller =& new AppController();
+			
 			$this->controller->_initComponents();
 			$this->__dispatch->start($this->controller);
 
@@ -128,7 +129,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingController($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->webroot = $webroot;
 		$this->controller->viewPath ='errors';
@@ -145,7 +148,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingAction($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->webroot = $webroot;
 		$this->controller->viewPath = 'errors';
@@ -161,7 +166,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function privateAction($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->webroot = $webroot;
 		$this->controller->viewPath = 'errors';
@@ -177,7 +184,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingTable($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('model' => $className,
@@ -192,7 +201,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingDatabase($params = array()) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('title' => 'Scaffold Missing Database Connection'));
@@ -205,7 +216,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingView($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -222,7 +235,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingLayout($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -238,7 +253,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingConnection($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('model' => $className,
@@ -252,7 +269,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingHelperFile($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -268,7 +287,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingHelperClass($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -284,7 +305,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingComponentFile($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -301,7 +324,9 @@ class ErrorHandler extends Object{
  * @param array $params
  */
 	function missingComponentClass($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -318,7 +343,9 @@ class ErrorHandler extends Object{
  * @param unknown_type $params
  */
 	function missingModel($params) {
-		extract($params);
+		extract(Router::getPaths());
+		extract($params, EXTR_OVERWRITE);
+
 		$this->controller->base = $base;
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
@@ -337,4 +364,5 @@ class ErrorHandler extends Object{
 		return $this->__dispatch->webroot;
 	}
 }
+
 ?>
