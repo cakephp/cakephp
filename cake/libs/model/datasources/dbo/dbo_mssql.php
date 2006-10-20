@@ -43,59 +43,63 @@ class DboMssql extends DboSource {
  * @var unknown_type
  */
 	var $description = "MS SQL DBO Driver";
-
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $startQuote = "[";
-
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $endQuote = "]";
-
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $goofyLimit = true;
-
+ /**
+ * Creates a map between field aliases and numeric indexes.  Workaround for the
+ * SQL Server driver's 30-character column name limitation.
+ *
+ * @var array
+ */
+	var $__fieldMappings = array();
 /**
  * Base configuration settings for MS SQL driver
  *
  * @var array
  */
-	var $_baseConfig = array('persistent' => true,
-				'host' => 'localhost',
-				'login' => 'root',
-				'password' => '',
-				'database' => 'cake',
-				'port' => '1433',
-				'connect' => 'mssql_pconnect'
-		);
-
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '1433',
+		'connect' => 'mssql_pconnect'
+	);
 /**
  * MS SQL column definition
  *
  * @var array
  */
-	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
-				'string'	=> array('name'  => 'varchar', 'limit' => '255'),
-				'text'		=> array('name' => 'text'),
-				'integer'	=> array('name'      => 'int', 'limit'     => '11', 'formatter' => 'intval'),
-				'float'		=> array('name'      => 'float', 'formatter' => 'floatval'),
-				'datetime'	=> array('name' => 'datetime', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
-				'timestamp' => array('name'      => 'timestamp', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
-				'time'		=> array('name' => 'datetime', 'format'    => 'H:i:s', 'formatter' => 'date'),
-				'date'		=> array('name' => 'datetime', 'format'    => 'Y-m-d', 'formatter' => 'date'),
-				'binary'	=> array('name' => 'image'),
-				'boolean'	=> array('name' => 'bit')
-		);
+	var $columns = array(
+		'primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
+		'string'	=> array('name'  => 'varchar', 'limit' => '255'),
+		'text'		=> array('name' => 'text'),
+		'integer'	=> array('name'      => 'int', 'limit'     => '11', 'formatter' => 'intval'),
+		'float'		=> array('name'      => 'float', 'formatter' => 'floatval'),
+		'datetime'	=> array('name' => 'datetime', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name'      => 'timestamp', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time'		=> array('name' => 'datetime', 'format'    => 'H:i:s', 'formatter' => 'date'),
+		'date'		=> array('name' => 'datetime', 'format'    => 'Y-m-d', 'formatter' => 'date'),
+		'binary'	=> array('name' => 'image'),
+		'boolean'	=> array('name' => 'bit')
+	);
 
 /**
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
@@ -300,12 +304,15 @@ class DboMssql extends DboSource {
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
 			for($i = 0; $i < $count; $i++) {
 				$dot = strrpos($fields[$i], '.');
+				$fieldAlias = count($this->__fieldMappings);
 
 				if ($dot === false) {
-					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fields[$i]);
+					$this->__fieldMappings[] = $fields[$i];
+					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fieldAlias);
 				} else {
 					$build = explode('.', $fields[$i]);
-					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
+					$this->__fieldMappings[] = $build[0];
+					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
 				}
 			}
 		}
@@ -521,7 +528,12 @@ class DboMssql extends DboSource {
 			$column = mssql_field_name($results, $j);
 
 			if (strpos($column, '__')) {
-				$this->map[$index++] = explode('__', $column);
+				$map = explode('__', $column);
+				if (is_numeric($map[1])) {
+					$map[1] = $this->__fieldMappings[intval($map[1])];
+				}
+
+				$this->map[$index++] = $map;
 			} else {
 				$this->map[$index++] = array(0, $column);
 			}
@@ -529,7 +541,19 @@ class DboMssql extends DboSource {
 			$j++;
 		}
 	}
-
+/**
+ * Returns an array of all result rows for a given SQL query.
+ * Returns false if no rows matched.
+ *
+ * @param string $sql SQL statement
+ * @param boolean $cache Enables returning/storing cached query results
+ * @return array Array of resultset rows, or false if no rows matched
+ */
+	function fetchAll($sql, $cache = true, $modelName = null) {
+		$results = parent::fetchAll($sql, $cache, $modelName);
+		$this->__fieldMappings = array();
+		return $results;
+	}
 /**
  * Fetches the next row from the current result set
  *
