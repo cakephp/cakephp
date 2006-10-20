@@ -201,24 +201,6 @@ class AjaxHelper extends Helper {
 
 		return $return;
 	}
-
-	function linkToRemote($title, $options = array(), $html_options = array()) {
-		//trigger_error('Deprecated function: use AjaxHelper::link', E_USER_WARNING);
-		$href = '#';
-
-		if (!empty($options['fallback']) && isset($options['fallback'])) {
-			$href = $options['fallback'];
-		}
-
-		if (isset($html_options['id'])) {
-				return $this->Html->link($title, $href, $html_options) .
-						$this->Javascript->event("$('{$html_options['id']}')", "click", $this->remoteFunction($options));
-		} else {
-			$html_options['onclick'] = $this->remoteFunction($options) . "; return false;";
-			return $this->Html->link($title, $href, $html_options);
-		}
-	}
-
 /**
  * Creates JavaScript function for remote AJAX call
  *
