@@ -360,9 +360,9 @@ class Router extends Overloadable {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 
-		$params = $_this->__params[0];
-		$path = $_this->__paths[0];
-		$base = strip_plugin($path['base'], $path['plugin']);
+		$params = isset($_this->__params[0]) ? $_this->__params[0] : null;
+		$path = isset($_this->__paths[0]) ? $_this->__paths[0] : null;
+		$base = strip_plugin($path['base'], $params['plugin']);
 		$extension = null;
 		$mapped = null;
 
