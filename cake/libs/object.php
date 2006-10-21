@@ -141,9 +141,20 @@ class Object{
  * @return string
  */
 	function trace($options = array()) {
+		$options = am(array(
+				'depth' => null,
+				'format' => ''
+			),
+			$options
+		);
+
 		$backtrace = debug_backtrace();
 		$back = array();
+		$c = 0;
 		foreach ($backtrace as $trace) {
+			if ($options['depth'] != null && $c > $options['depth']) {
+				break;
+			}
 			$t = '';
 			if (!isset($trace['line'])) {
 				$trace['line'] = '??';
@@ -163,6 +174,7 @@ class Object{
 			}
 			$t .= $trace['file'].', line ' . $trace['line'] . ')';
 			$back[] = $t;
+			$c++;
 		}
 
 		$back = array_reverse($back);
