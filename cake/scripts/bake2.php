@@ -88,7 +88,12 @@
 	
 	function executeTask($taskName, $params) {
 		$class = getTaskClass($taskName);
-		$class->execute($params);
+		
+		if ($class != null) {
+			$class->execute($params);
+		} else {
+			echo "Task not found: " . $taskName . "\n";
+		}
 	}
 	
 	function getAppPath($appPathShortcut) {
@@ -108,16 +113,23 @@
 	function getTaskClass($taskName) {
 		$scriptDir = dirname(__FILE__);
 		$taskPath = 'tasks'.DS.$taskName.'_task.php';
+		$fileExists = true;
 		require($scriptDir.DS.'tasks'.DS.'bake_task.php');
 		
 		if (file_exists(VENDORS.$taskPath)) {
 			require(VENDORS.$taskPath);
-		} else {
+		} elseif (file_exists($scriptDir.DS.$taskPath)) {
 			require($scriptDir.DS.$taskPath);	
+		} else {
+			$fileExists = false;
 		}
 		
-		$className = $taskName.'Task';
-		return new $className;
+		if ($fileExists) {
+			$className = $taskName.'Task';
+			return new $className;
+		}
+		
+		return null;
 	}
 	
 	function includeCoreFiles($cakePath) {
