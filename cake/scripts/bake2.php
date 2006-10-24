@@ -88,8 +88,8 @@
 	
 	function executeTask($taskName, $params) {
 		$class = getTaskClass($taskName);
-		
-		if ($class != null) {
+
+		if ($class !== null) {
 			$class->execute($params);
 		} else {
 			echo "Task not found: " . $taskName . "\n";
