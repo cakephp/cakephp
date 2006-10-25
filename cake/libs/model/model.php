@@ -1020,13 +1020,6 @@ class Model extends Overloadable {
 							}
 						}
 					}
-					$this->__insertID = $db->lastInsertId($this->tablePrefix . $this->table, $this->primaryKey);
-					if (!$this->__insertID && $newID != null) {
-						$this->__insertID = $newID;
-						$this->id = $newID;
-					} else {
-						$this->id = $this->__insertID;
-					}
 
 					if (!empty($joined)) {
 						$this->__saveMulti($joined, $this->id);

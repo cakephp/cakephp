@@ -274,13 +274,19 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Returns a row from given resultset as an array .
+ * Returns a row from current resultset as an array .
  *
- * @param bool $assoc Associative array only, or both?
  * @return array The fetched row as an array
  */
-	function fetchRow($assoc = false) {
-		if (is_resource($this->_result)) {
+	function fetchRow($sql = null) {
+
+		if (!empty($sql) && is_string($sql) && strlen($sql) > 5) {
+			if (!$this->execute($sql)) {
+				return null;
+			}
+		}
+
+		if (is_resource($this->_result) || is_object($this->_result)) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
 			return $resultRow;
@@ -289,29 +295,18 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * Returns a single row of results from the _last_ SQL query.
- *
- * @param resource $res
- * @return array A single row of results
+ * @deprecated
+ * @see DboSource::fetchRow
  */
-	function fetchArray($assoc = false) {
-		if ($assoc === false) {
-			return $this->fetchRow();
-		} else {
-			return $this->fetchRow($assoc);
-		}
+	function fetchArray() {
+		return $this->fetchRow();
 	}
 /**
- * Returns a single row of results for a _given_ SQL query.
- *
- * @param string $sql SQL statement
- * @return array A single row of results
+ * @deprecated
+ * @see DboSource::fetchRow
  */
 	function one($sql) {
-		if ($this->execute($sql)) {
-			return $this->fetchArray();
-		}
-		return false;
+		return $this->fetchRow($sql);
 	}
 /**
  * Returns an array of all result rows for a given SQL query.
@@ -331,7 +326,7 @@ class DboSource extends DataSource {
 		if ($this->execute($sql)) {
 			$out = array();
 
-			while($item = $this->fetchArray(true)) {
+			while($item = $this->fetchRow()) {
 				$out[] = $item;
 			}
 
@@ -354,7 +349,7 @@ class DboSource extends DataSource {
  * @return unknown
  */
 	function field($name, $sql) {
-		$data = $this->one($sql);
+		$data = $this->fetchRow($sql);
 
 		if (empty($data[$name])) {
 			return false;
@@ -471,6 +466,7 @@ class DboSource extends DataSource {
 	function create(&$model, $fields = null, $values = null) {
 		$fieldInsert = array();
 		$valueInsert = array();
+		$id = null;
 
 		if ($fields == null) {
 			unset($fields, $values);
@@ -478,24 +474,31 @@ class DboSource extends DataSource {
 			$values = array_values($model->data);
 		}
 
-		foreach($fields as $field) {
-			$fieldInsert[] = $this->name($field);
+		$count = count($fields);
+		for ($i = 0; $i < $count; $i++) {
+			$fieldInsert[] = $this->name($fields[$i]);
+			if ($fields[$i] == $model->primaryKey) {
+				$id = $values[$i];
+			}
 		}
 
-		$count = 0;
-		foreach($values as $value) {
-			$set = $this->value($value, $model->getColumnType($fields[$count]));
+		$count = count($values);
+		for ($i = 0; $i < $count; $i++) {
+			$set = $this->value($values[$i], $model->getColumnType($fields[$i]));
 
 			if ($set === "''") {
-				unset ($fieldInsert[$count]);
+				unset ($fieldInsert[$i]);
 			} else {
 				$valueInsert[] = $set;
 			}
-
-			$count++;
 		}
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
+			if ($id === null) {
+				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
+			}
+			$model->setInsertID($id);
+			$model->id = $id;
 			return true;
 		} else {
 			$model->onError();
@@ -856,6 +859,9 @@ class DboSource extends DataSource {
 
 		if ($model->name == $linkModel->name) {
 			$joinedOnSelf = true;
+		}
+		if (is_string($queryData['conditions'])) {
+			$queryData['conditions'] = array($queryData['conditions']);
 		}
 
 		switch($type) {
@@ -1613,7 +1619,7 @@ class DboSource extends DataSource {
  */
 	function hasAny($model, $sql) {
 		$sql = $this->conditions($sql);
-		$out = $this->one("SELECT COUNT(*) " . $this->alias . "count FROM " . $this->fullTableName($model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1'));
+		$out = $this->fetchRow("SELECT COUNT(*) " . $this->alias . "count FROM " . $this->fullTableName($model) . ' ' . ($sql ? ' ' . $sql : 'WHERE 1 = 1'));
 
 		if (is_array($out)) {
 			return $out[0]['count'];

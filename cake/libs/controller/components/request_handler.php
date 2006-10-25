@@ -63,6 +63,7 @@ class RequestHandlerComponent extends Object {
 		'xml'			=> array('application/xml', 'text/xml'),
 		'rss'			=> 'application/rss+xml',
 		'atom'			=> 'application/atom+xml',
+		'amf'			=> 'application/x-amf',
 		'wap'			=> array('text/vnd.wap.wml', 'text/vnd.wap.wmlscript', 'image/vnd.wap.wbmp'),
 		'wml'			=> 'text/vnd.wap.wml',
 		'wmlscript'		=> 'text/vnd.wap.wmlscript',
