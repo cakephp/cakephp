@@ -418,21 +418,6 @@ class DboMysqli extends DboSource {
 		}
 	}
 /**
- * Returns a row from given resultset as an array .
- *
- * @param bool $assoc Associative array only, or both?
- * @return array The fetched row as an array
-*/
-	function fetchRow($assoc = false) {
-		if (is_object($this->_result)) {
-			$this->resultSet($this->_result);
-			$resultRow = $this->fetchResult();
-			return $resultRow;
-		} else {
-			return null;
-		}
-	}
-/**
  * Enter description here...
  *
  * @param unknown_type $schema
