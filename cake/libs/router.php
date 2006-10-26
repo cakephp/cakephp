@@ -313,7 +313,7 @@ class Router extends Overloadable {
 	function getParams($current = false) {
 		$_this =& Router::getInstance();
 		if ($current) {
-			return $_this->__params[count($this->__params) - 1];
+			return $_this->__params[count($_this->__params) - 1];
 		}
 		return $_this->__params[0];
 	}
@@ -326,7 +326,7 @@ class Router extends Overloadable {
 	function getPaths($current = false) {
 		$_this =& Router::getInstance();
 		if ($current) {
-			return $_this->__paths[count($this->__paths) - 1];
+			return $_this->__paths[count($_this->__paths) - 1];
 		}
 		return $_this->__paths[0];
 	}
@@ -383,8 +383,8 @@ class Router extends Overloadable {
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
 			}
-			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($this->params['admin'])) {
-				$url[CAKE_ADMIN] = $this->params['admin'];
+			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params['admin'])) {
+				$url[CAKE_ADMIN] = $params['admin'];
 			}
 
 			$named = $args = array();
@@ -407,7 +407,7 @@ class Router extends Overloadable {
 				$url['action'] = null;
 			}
 
-			foreach ($this->routes as $route) {
+			foreach ($_this->routes as $route) {
 				$diff = array_diff_assoc($url, $route[3]);
 				if (empty($diff)) {
 					$match = true;
