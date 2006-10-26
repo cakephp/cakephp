@@ -368,7 +368,7 @@ class AclCLI {
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
 				);";
-		if ($db->query($sql) === false) {
+		if ($db->query($sql2) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
 
