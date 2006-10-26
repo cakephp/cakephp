@@ -1414,7 +1414,7 @@ class Bake {
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
 				$actions .= "\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->__selectedArray(\$this->data['{$associationName}']['{$associationName}']));\n";
+				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->_selectedArray(\$this->data['{$associationName}']['{$associationName}']));\n";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {

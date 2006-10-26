@@ -1098,6 +1098,23 @@ class Controller extends Object {
 	function _scaffoldError($method) {
 		return false;
 	}
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $data
+ * @param unknown_type $key
+ * @return unknown
+ */
+	function _selectedArray($data, $key = 'id') {
+		$array = array();
+		if(!empty($data)) {
+			foreach($data as $var) {
+				$array[$var[$key]] = $var[$key];
+			}
+		}
+		return $array;
+	}
 }
 
 ?>
