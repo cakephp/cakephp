@@ -449,7 +449,7 @@ class Model extends Overloadable {
 		$methods = array_map('strtolower', array_keys($this->__behaviorMethods));
 		$call = array_values($this->__behaviorMethods);
 		$map = array();
-		
+
 		if (!empty($methods) && !empty($call)) {
 			$map = array_combine($methods, $call);
 		}
@@ -1078,8 +1078,8 @@ class Model extends Overloadable {
 
 		$total = count($joinTable);
 
-		if(is_array($newValue)){
-			foreach ($newValue as $loopAssoc=>$val) {
+		if(is_array($newValue)) {
+			foreach ($newValue as $loopAssoc => $val) {
 				$db =& ConnectionManager::getDataSource($this->useDbConfig);
 				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
 				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
@@ -1430,7 +1430,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if (!is_null($conditions)) {
-				$conditions = $conditions . ' AND ';
+			$conditions = $conditions . ' AND ';
 		}
 
 		@list($prev) = Model::findAll($conditions . $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1, null, 0);
