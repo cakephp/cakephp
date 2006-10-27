@@ -817,7 +817,7 @@ class Model extends Overloadable {
  * Initializes the model for writing a new record.
  *
  * @param array $data Optional data to assign to the model after it is created
- * @return boolean True
+ * @return array The current data of the model
  */
 	function create($data = null) {
 		$this->id = false;
