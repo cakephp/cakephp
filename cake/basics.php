@@ -264,13 +264,20 @@
  */
 	function loadHelper($name) {
 		$paths = Configure::getInstance();
+		if (!class_exists('AppHelper')) {
+			if (file_exists(APP . 'app_helper.php')) {
+				require(APP . 'app_helper.php');
+			} else {
+				require(CAKE . 'app_helper.php');
+			}
+		}
 
 		if ($name === null) {
 			return true;
 		}
 
 		if (!class_exists($name . 'Helper')) {
-			$name=Inflector::underscore($name);
+			$name = Inflector::underscore($name);
 
 			foreach($paths->helperPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
