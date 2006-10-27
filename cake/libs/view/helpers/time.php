@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class TimeHelper extends Helper {
+class TimeHelper extends AppHelper {
 
 /**
  * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.

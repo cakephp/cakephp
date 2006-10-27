@@ -36,7 +36,7 @@
  * @package 	cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class NumberHelper extends Helper {
+class NumberHelper extends AppHelper {
 /**
  * Formats a number with a level of precision.
  *

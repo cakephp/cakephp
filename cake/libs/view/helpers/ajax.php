@@ -36,7 +36,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class AjaxHelper extends Helper {
+class AjaxHelper extends AppHelper {
 
 /**
  * Included helpers.
@@ -105,8 +105,6 @@ class AjaxHelper extends Helper {
  * (using the url() format) that's called in the background using
  * XMLHttpRequest. The result of that request can then be inserted into a
  * DOM object whose id can be specified with <i>options[update]</i>.
- * Usually, the result would be a partial prepared by the controller with
- * either renderPartial or renderPartialCollection.
  *
  * Examples:
  * <code>

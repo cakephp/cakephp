@@ -36,7 +36,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class CacheHelper extends Helper{
+class CacheHelper extends AppHelper {
 /**
  * Array of strings replaced in cached views.
  * The strings are found between <cake:nocache><cake:nocache> in views

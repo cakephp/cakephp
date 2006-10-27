@@ -53,7 +53,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class FormHelper extends Helper {
+class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
 

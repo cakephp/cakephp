@@ -35,8 +35,9 @@
  * @subpackage	cake.cake.libs.view.helpers
  */
 
-class JavascriptHelper extends Helper{
+class JavascriptHelper extends AppHelper {
 
+	var $__scriptBuffer = null;
 	var $_cachedEvents = array();
 	var $_cacheEvents = false;
 	var $_cacheToFile = false;
@@ -57,11 +58,18 @@ class JavascriptHelper extends Helper{
 			$this->_cachedEvents[] = $script;
 		} else {
 			$block = ($script !== null);
-			if ($safe || $this->safe) {
+			if (($safe || $this->safe) && !($this->_cacheAll && $allowCache)) {
 				$script  = "\n" . '<!--//--><![CDATA[//><!--' . "\n" . $script;
 				if ($block) {
 					$script .= "\n" . '//--><!]]>' . "\n";
 				}
+			}
+
+			if ($script === null && $this->_cacheAll && $allowCache) {
+				$this->__scriptBuffer = @ob_get_contents();
+				@ob_end_clean();
+				ob_start();
+				return null;
 			}
 
 			if ($block) {
@@ -70,6 +78,24 @@ class JavascriptHelper extends Helper{
 				return sprintf($this->tags['javascriptstart'], $script);
 			}
 		}
+	}
+/**
+ * Ends a block of cached JavaScript code
+ *
+ * @return mixed
+ */
+	function blockEnd() {
+		$script = @ob_get_contents();
+		@ob_end_clean();
+		ob_start();
+		echo $this->__scriptBuffer;
+		$this->__scriptBuffer = null;
+
+		if (!empty($script)) {
+			$this->_cachedEvents[] = $script;
+		}
+
+		
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element)

@@ -37,7 +37,7 @@
  * @subpackage	cake.cake.libs.view.helpers
  *
  */
-class SessionHelper extends Helper{
+class SessionHelper extends AppHelper {
 	var $__Session;
 	var $__active = true;
 

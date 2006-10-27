@@ -34,7 +34,7 @@ uses('set');
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class XmlHelper extends Helper {
+class XmlHelper extends AppHelper {
 
 	var $helpers = array('Html');
 /**

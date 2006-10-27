@@ -45,7 +45,7 @@ if (!class_exists('HtmlHelper')) {
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class TextHelper extends Helper {
+class TextHelper extends AppHelper {
 
 /**
  * Highlights a given phrase in a text.

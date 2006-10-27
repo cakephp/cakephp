@@ -29,6 +29,11 @@
  */
 
 /**
+ * Included libs
+ */
+uses('overloadable');
+
+/**
  * Backend for helpers.
  *
  * Long description for class
@@ -36,7 +41,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view
  */
-class Helper extends Object {
+class Helper extends Overloadable {
 
 /**
  * Base URL

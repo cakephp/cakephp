@@ -32,7 +32,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  */
-class HtmlHelper extends Helper {
+class HtmlHelper extends AppHelper {
 /*************************************************************************
  * Public variables
  *************************************************************************/

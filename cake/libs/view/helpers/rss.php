@@ -150,6 +150,7 @@ class RssHelper extends XmlHelper {
 
 		$out = '';
 		$c = count($items);
+
 		for ($i = 0; $i < $c; $i++) {
 			$out .= $this->item(array(), $items[$i]);
 		}
@@ -165,6 +166,7 @@ class RssHelper extends XmlHelper {
 	function item($attrib = array(), $elements = array()) {
 		$content = null;
 		foreach ($elements as $key => $val) {
+
 			$attrib = array();
 			switch ($key) {
 				case 'pubDate' :
@@ -208,6 +210,11 @@ class RssHelper extends XmlHelper {
 			}
 			$elements[$key] = $this->elem($key, array(), $val);
 		}
+
+		if (isset($elements['link']) && !isset($elements['guid'])) {
+			$elements['guid'] = $elements['link'];
+		}
+
 		if (!empty($elements)) {
 			$content = join('', $elements);
 		}
