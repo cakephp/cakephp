@@ -84,6 +84,7 @@
 	}
 	
 	function defineConstants() {
+		define('PHP5', (phpversion() >= 5));
 		define('DS', DIRECTORY_SEPARATOR);
 		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH.DS);
