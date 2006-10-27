@@ -838,7 +838,7 @@ class Model extends Overloadable {
 			$this->set($data);
 		}
 
-		return true;
+		return $this->data;
 	}
 /**
  * Returns a list of fields from the database
@@ -1082,12 +1082,12 @@ class Model extends Overloadable {
 			foreach ($newValue as $loopAssoc=>$val) {
 				$db =& ConnectionManager::getDataSource($this->useDbConfig);
 				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
-				$db->execute("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
+				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
 
 				if (!empty($newValue[$loopAssoc])) {
 					$secondCount = count($newValue[$loopAssoc]);
 					for($x = 0; $x < $secondCount; $x++) {
-						$db->execute("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
+						$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
 					}
 				}
 			}
@@ -1140,7 +1140,6 @@ class Model extends Overloadable {
 				return true;
 			}
 		}
-
 		return false;
 	}
 /**
@@ -1204,7 +1203,7 @@ class Model extends Overloadable {
 	function _deleteMulti($id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		foreach($this->hasAndBelongsToMany as $assoc => $data) {
-			$db->execute("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
+			$db->query("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
 		}
 	}
 /**
@@ -1213,22 +1212,10 @@ class Model extends Overloadable {
  * @return boolean True if such a record exists
  */
 	function exists() {
-		if ($this->id) {
-			$id = $this->id;
-
-			if (is_array($id)) {
-				if (isset($id[0])) {
-					$id = $id[0];
-				} else {
-					$vals = array_values($id);
-					$id = $vals[0];
-				}
-			}
-
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
-			return $db->hasAny($this, array($this->primaryKey => $id));
+		if ($this->getID() === false) {
+			return false;
 		}
-		return false;
+		return $this->hasAny(array($this->name . '.' . $this->primaryKey => $this->getID()));
 	}
 /**
  * Returns true if a record that meets given conditions exists
@@ -1633,6 +1620,10 @@ class Model extends Overloadable {
  * @return mixed The ID of the current record
  */
 	function getID($list = 0) {
+		if ($this->id === false || $this->id === null) {
+			return false;
+		}
+
 		if (!is_array($this->id)) {
 			return $this->id;
 		}
