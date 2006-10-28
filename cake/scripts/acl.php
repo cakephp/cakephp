@@ -362,7 +362,7 @@ class AclCLI {
 		fwrite($this->stdout, "Creating access request objects table (aros)...\n");
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
-				".$db->name('user_id')." ".$db->column($db->columns['integer'])." default NULL,
+				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
@@ -523,7 +523,7 @@ class AclCLI {
 
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = ($class == 'aro' ? 'user_id' : 'object_id');
+		$vars['secondary_id'] = ($class == 'aro' ? 'foreign_key' : 'object_id');
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;

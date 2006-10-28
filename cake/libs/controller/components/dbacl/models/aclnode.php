@@ -270,7 +270,7 @@ class AclNode extends AppModel {
 		$vars = array();
 		$class = strtolower(get_class($this));
 		if ($class == 'aro') {
-				$vars['secondary_id'] = 'user_id';
+				$vars['secondary_id'] = 'foreign_key';
 		} else {
 				$vars['secondary_id'] = 'object_id';
 		}

@@ -235,7 +235,7 @@ class DB_ACL extends AclBase {
 		$obj = new $object;
 
 		if (is_numeric($id)) {
-			$key = 'user_id';
+			$key = 'foreign_key';
 			if ($object == 'Aco') {
 				$key = 'object_id';
 			}
