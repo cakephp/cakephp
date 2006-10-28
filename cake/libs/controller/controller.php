@@ -349,7 +349,6 @@ class Controller extends Object {
 						$this->_persist($modelClass . 'registry', true, $object, 'registry');
 						$this->_persist($modelClass, true, $object);
 						$this->modelNames[] = $modelClass;
-						return true;
 					}
 				} else {
 					return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
