@@ -1851,6 +1851,13 @@ class Model extends Overloadable {
 		$return = array_keys(get_object_vars($this));
 		return $return;
 	}
+/**
+ * Called when unserializing a model
+ *
+ * @return void
+ */
+	function __wakeup() {
+	}
 }
 
 Overloadable::overload('Model');
