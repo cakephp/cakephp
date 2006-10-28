@@ -836,262 +836,12 @@ class Bake {
 				die();
 			} else {
 				loadController($controllerName);
-				$controllerClassName = $controllerName.'Controller';
-				$controllerObj = & new $controllerClassName();
-
-				if(!in_array('Html', $controllerObj->helpers)) {
-					$controllerObj->helpers[] = 'Html';
-				}
-				if(!in_array('Form', $controllerObj->helpers)) {
-					$controllerObj->helpers[] = 'Form';
-				}
-
 				loadModels();
-				$controllerObj->constructClasses();
-				$currentModelName = $controllerObj->modelClass;
-				$this->__modelClass = $currentModelName;
-				$modelKey = Inflector::underscore($currentModelName);
-				$modelObj =& ClassRegistry::getObject($modelKey);
-				$singularName = $this->__singularName($currentModelName);
-				$pluralName = $this->__pluralName($currentModelName);
-				$singularHumanName = $this->__singularHumanName($currentModelName);
-				$pluralHumanName = $this->__pluralHumanName($controllerName);
-
-				$fieldNames = $controllerObj->generateFieldNames(null, false);
-
-				//-------------------------[INDEX]-------------------------//
-				$indexView = null;
-				if(!empty($modelObj->alias)) {
-					foreach ($modelObj->alias as $key => $value) {
-						$alias[] = $key;
-					}
-				}
-				$indexView .= "<div class=\"{$pluralName}\">\n";
-				$indexView .= "<h2>List " . $pluralHumanName . "</h2>\n\n";
-				$indexView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
-				$indexView .= "<tr>\n";
-
-				foreach ($fieldNames as $fieldName) {
-					$indexView .= "\t<th>".$fieldName['prompt']."</th>\n";
-				}
-				$indexView .= "\t<th>Actions</th>\n";
-				$indexView .= "</tr>\n";
-				$indexView .= "<?php foreach (\${$pluralName} as \${$singularName}): ?>\n";
-				$indexView .= "<tr>\n";
-				$count = 0;
-				foreach($fieldNames as $field => $value) {
-					if(isset($value['foreignKey'])) {
-						$otherModelName = $this->__modelName($value['model']);
-						$otherModelKey = Inflector::underscore($otherModelName);
-						$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-						$otherControllerName = $this->__controllerName($otherModelName);
-						$otherControllerPath = $this->__controllerPath($otherControllerName);
-						if(is_object($otherModelObj)) {
-							$displayField = $otherModelObj->getDisplayField();
-							$indexView .= "\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></td>\n";
-						} else {
-							$indexView .= "\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
-						}
-						$count++;
-					} else {
-						$indexView .= "\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
-					}
-				}
-				$indexView .= "\t<td nowrap>\n";
-				$indexView .= "\t\t<?php echo \$html->link('View','{$admin_url}/{$controllerPath}/view/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
-				$indexView .= "\t\t<?php echo \$html->link('Edit','{$admin_url}/{$controllerPath}/edit/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
-				$indexView .= "\t\t<?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'], null, 'Are you sure you want to delete id ' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
-				$indexView .= "\t</td>\n";
-				$indexView .= "</tr>\n";
-				$indexView .= "<?php endforeach; ?>\n";
-				$indexView .= "</table>\n\n";
-				$indexView .= "<ul class=\"actions\">\n";
-				$indexView .= "\t<li><?php echo \$html->link('New {$singularHumanName}', '{$admin_url}/{$controllerPath}/add'); ?></li>\n";
-				$indexView .= "</ul>\n";
-				$indexView .= "</div>";
-
-				//-------------------------[VIEW]-------------------------//
-				$viewView = null;
-
-				$viewView .= "<div class=\"{$singularName}\">\n";
-				$viewView .= "<h2>View " . $singularHumanName . "</h2>\n\n";
-				$viewView .= "<dl>\n";
-				$count = 0;
-				foreach($fieldNames as $field => $value) {
-					$viewView .= "\t<dt>" . $value['prompt'] . "</dt>\n";
-					if(isset($value['foreignKey'])) {
-						$otherModelName = $this->__modelName($value['model']);
-						$otherModelKey = Inflector::underscore($otherModelName);
-						$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-						$otherControllerName = $this->__controllerName($otherModelName);
-						$otherControllerPath = $this->__controllerPath($otherControllerName);
-						$displayField = $otherModelObj->getDisplayField();
-						$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></dd>\n";
-						$count++;
-					} else {
-						$viewView .= "\t<dd>&nbsp;<?php echo \$".$singularName."['{$modelObj->name}']['{$field}']?></dd>\n";
-					}
-				}
-				$viewView .= "</dl>\n";
-				$viewView .= "<ul class=\"actions\">\n";
-				$viewView .= "\t<li><?php echo \$html->link('Edit " . $singularHumanName . "',   '{$admin_url}/{$controllerPath}/edit/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}']) ?> </li>\n";
-				$viewView .= "\t<li><?php echo \$html->link('Delete " . $singularHumanName . "', '{$admin_url}/{$controllerPath}/delete/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'] . '?') ?> </li>\n";
-				$viewView .= "\t<li><?php echo \$html->link('List " . $pluralHumanName ."',   '{$admin_url}/{$controllerPath}/index') ?> </li>\n";
-				$viewView .= "\t<li><?php echo \$html->link('New " . $singularHumanName . "',	'{$admin_url}/{$controllerPath}/add') ?> </li>\n";
-				foreach( $fieldNames as $field => $value ) {
-					if( isset( $value['foreignKey'] ) ) {
-						$otherModelName = $this->__modelName($value['model']);
-						if($otherModelName != $currentModelName) {
-							$otherControllerName = $this->__controllerName($otherModelName);
-							$otherControllerPath = $this->__controllerPath($otherControllerName);
-							$otherSingularHumanName = $this->__singularHumanName($value['controller']);
-							$otherPluralHumanName = $this->__pluralHumanName($value['controller']);
-							$viewView .= "\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', '{$admin_url}/" . $otherControllerPath . "/index/')?> </li>\n";
-							$viewView .= "\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', '{$admin_url}/" . $otherControllerPath . "/add/')?> </li>\n";
-						}
-					}
-				}
-				$viewView .= "</ul>\n\n";
-
-				$viewView .= "</div>\n";
-
-
-				foreach ($modelObj->hasOne as $associationName => $relation) {
-					$new = true;
-
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherControllerName = $this->__controllerName($otherModelName);
-					$otherControllerPath = $this->__controllerPath($otherModelName);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralHumanName = $this->__pluralHumanName($associationName);
-					$otherSingularHumanName = $this->__singularHumanName($associationName);
-
-					$viewView .= "<div class=\"related\">\n";
-					$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-					$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])): ?>\n";
-					$viewView .= "<dl>\n";
-					$viewView .= "\t<?php foreach(\$".$singularName."['{$associationName}'] as \$field => \$value): ?>\n";
-					$viewView .= "\t\t<dt><?php echo \$field ?></dt>\n";
-					$viewView .= "\t\t<dd>&nbsp;<?php echo \$value ?></dd>\n";
-					$viewView .= "\t<?php endforeach; ?>\n";
-					$viewView .= "</dl>\n";
-					$viewView .= "<?php endif; ?>\n";
-					$viewView .= "<ul class=\"actions\">\n";
-					$viewView .= "\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/edit/' . \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']);?></li>\n";
-					$viewView .= "\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/add/');?> </li>\n";
-					$viewView .= "</ul>\n";
-					$viewView .= "</div>\n";
-				}
-				$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
-
-				foreach($relations as $associationName => $relation) {
-					$otherModelName = $this->__modelName($relation['className']);
-					$otherControllerName = $this->__controllerName($otherModelName);
-					$otherControllerPath = $this->__controllerPath($otherModelName);
-					$otherSingularName = $this->__singularName($associationName);
-					$otherPluralHumanName = $this->__pluralHumanName($associationName);
-					$otherSingularHumanName = $this->__singularHumanName($associationName);
-					$otherModelKey = Inflector::underscore($otherModelName);
-					$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-
-					$viewView .= "<div class=\"related\">\n";
-					$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-					$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])):?>\n";
-					$viewView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
-					$viewView .= "<tr>\n";
-					$viewView .= "<?php foreach(\$".$singularName."['{$associationName}']['0'] as \$column => \$value): ?>\n";
-					$viewView .= "<th><?php echo \$column?></th>\n";
-					$viewView .= "<?php endforeach; ?>\n";
-					$viewView .= "<th>Actions</th>\n";
-					$viewView .= "</tr>\n";
-					$viewView .= "<?php foreach(\$".$singularName."['{$associationName}'] as \$".$otherSingularName."):?>\n";
-					$viewView .= "<tr>\n";
-					$viewView .= "\t<?php foreach(\$".$otherSingularName." as \$column => \$value):?>\n";
-					$viewView .= "\t\t<td><?php echo \$value;?></td>\n";
-					$viewView .= "\t<?php endforeach;?>\n";
-					$viewView .= "\t<td nowrap>\n";
-					$viewView .= "\t\t<?php echo \$html->link('View', '{$admin_url}/" . $otherControllerPath . "/view/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
-					$viewView .= "\t\t<?php echo \$html->link('Edit', '{$admin_url}/" . $otherControllerPath . "/edit/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
-					$viewView .= "\t\t<?php echo \$html->link('Delete', '{$admin_url}/" . $otherControllerPath . "/delete/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?');?>\n";
-					$viewView .= "\t</td>\n";
-					$viewView .= "</tr>\n";
-					$viewView .= "<?php endforeach; ?>\n";
-					$viewView .= "</table>\n";
-					$viewView .= "<?php endif; ?>\n\n";
-					$viewView .= "<ul class=\"actions\">\n";
-					$viewView .= "\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/add/');?> </li>\n";
-					$viewView .= "</ul>\n";
-
-					$viewView .= "</div>\n";
-				}
-				//-------------------------[ADD]-------------------------//
-				$addView = null;
-				$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
-				$addView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/add'); ?>\" method=\"post\">\n";
-				$addView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
-				$addView .= $this->generateSubmitDiv('Add');
-				$addView .= "</form>\n";
-				$addView .= "<ul class=\"actions\">\n";
-				$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
-				foreach ($modelObj->belongsTo as $associationName => $relation) {
-					$otherModelName = $this->__modelName($relation['className']);
-					if($otherModelName != $currentModelName) {
-						$otherControllerName = $this->__controllerName($otherModelName);
-						$otherControllerPath = $this->__controllerPath($otherModelName);
-						$otherSingularName = $this->__singularName($associationName);
-						$otherPluralName = $this->__pluralHumanName($associationName);
-						$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
-						$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
-					}
-				}
-				$addView .= "</ul>\n";
-				//-------------------------[EDIT]-------------------------//
-				$editView = null;
-				$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
-				$editView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/edit/'.\$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')); ?>\" method=\"post\">\n";
-				$editView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
-				$editView .= "<?php echo \$html->hidden('{$modelObj->name}/{$modelObj->primaryKey}')?>\n";
-				$editView .= $this->generateSubmitDiv('Save');
-				$editView .= "</form>\n";
-				$editView .= "<ul class=\"actions\">\n";
-				$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
-				$editView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
-				foreach ($modelObj->belongsTo as $associationName => $relation) {
-					$otherModelName = $this->__modelName($relation['className']);
-					if($otherModelName != $currentModelName) {
-						$otherControllerName = $this->__controllerName($otherModelName);
-						$otherControllerPath = $this->__controllerPath($otherModelName);
-						$otherSingularName = $this->__singularName($associationName);
-						$otherPluralName = $this->__pluralHumanName($associationName);
-						$editView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
-						$editView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
-					}
-				}
-				$editView .= "</ul>\n";
-
-				//------------------------------------------------------------------------------------//
-				if(!file_exists(VIEWS.$controllerPath)) {
-					mkdir(VIEWS.$controllerPath);
-				}
 				if($admin) {
-					$filename = VIEWS . $controllerPath . DS . $admin . 'index.thtml';
-					$this->createFile($filename, $indexView);
-					$filename = VIEWS . $controllerPath . DS . $admin . 'view.thtml';
-					$this->createFile($filename, $viewView);
-					$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
-					$this->createFile($filename, $addView);
-					$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
-					$this->createFile($filename, $editView);
+					$this->__bakeViews($controllerName, $controllerPath, $admin, $admin_url);
 				}
-
-				$filename = VIEWS . $controllerPath . DS . 'index.thtml';
-				$this->createFile($filename, $indexView);
-				$filename = VIEWS . $controllerPath . DS . 'view.thtml';
-				$this->createFile($filename, $viewView);
-				$filename = VIEWS . $controllerPath . DS . 'add.thtml';
-				$this->createFile($filename, $addView);
-				$filename = VIEWS . $controllerPath . DS . 'edit.thtml';
-				$this->createFile($filename, $editView);
+				$this->__bakeViews($controllerName, $controllerPath, null, null);
+				
 				$this->hr();
 				$this->stdout('');
 				$this->stdout('View Scaffolding Complete.'."\n");
@@ -1122,6 +872,254 @@ class Bake {
 				$this->stdout('Bake Aborted.');
 			}
 		}
+	}
+	
+	function __bakeViews($controllerName, $controllerPath, $admin= null, $admin_url = null) {		
+		$controllerClassName = $controllerName.'Controller';
+		$controllerObj = & new $controllerClassName();
+
+		if(!in_array('Html', $controllerObj->helpers)) {
+			$controllerObj->helpers[] = 'Html';
+		}
+		if(!in_array('Form', $controllerObj->helpers)) {
+			$controllerObj->helpers[] = 'Form';
+		}
+
+		$controllerObj->constructClasses();
+		$currentModelName = $controllerObj->modelClass;
+		$this->__modelClass = $currentModelName;
+		$modelKey = Inflector::underscore($currentModelName);
+		$modelObj =& ClassRegistry::getObject($modelKey);
+		$singularName = $this->__singularName($currentModelName);
+		$pluralName = $this->__pluralName($currentModelName);
+		$singularHumanName = $this->__singularHumanName($currentModelName);
+		$pluralHumanName = $this->__pluralHumanName($controllerName);
+
+		$fieldNames = $controllerObj->generateFieldNames(null, false);
+
+		//-------------------------[INDEX]-------------------------//
+		$indexView = null;
+		if(!empty($modelObj->alias)) {
+			foreach ($modelObj->alias as $key => $value) {
+				$alias[] = $key;
+			}
+		}
+		$indexView .= "<div class=\"{$pluralName}\">\n";
+		$indexView .= "<h2>List " . $pluralHumanName . "</h2>\n\n";
+		$indexView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
+		$indexView .= "<tr>\n";
+
+		foreach ($fieldNames as $fieldName) {
+			$indexView .= "\t<th>".$fieldName['prompt']."</th>\n";
+		}
+		$indexView .= "\t<th>Actions</th>\n";
+		$indexView .= "</tr>\n";
+		$indexView .= "<?php foreach (\${$pluralName} as \${$singularName}): ?>\n";
+		$indexView .= "<tr>\n";
+		$count = 0;
+		foreach($fieldNames as $field => $value) {
+			if(isset($value['foreignKey'])) {
+				$otherModelName = $this->__modelName($value['model']);
+				$otherModelKey = Inflector::underscore($otherModelName);
+				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherControllerName);
+				if(is_object($otherModelObj)) {
+					$displayField = $otherModelObj->getDisplayField();
+					$indexView .= "\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></td>\n";
+				} else {
+					$indexView .= "\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
+				}
+				$count++;
+			} else {
+				$indexView .= "\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
+			}
+		}
+		$indexView .= "\t<td nowrap>\n";
+		$indexView .= "\t\t<?php echo \$html->link('View','{$admin_url}/{$controllerPath}/view/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
+		$indexView .= "\t\t<?php echo \$html->link('Edit','{$admin_url}/{$controllerPath}/edit/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
+		$indexView .= "\t\t<?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'], null, 'Are you sure you want to delete id ' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])?>\n";
+		$indexView .= "\t</td>\n";
+		$indexView .= "</tr>\n";
+		$indexView .= "<?php endforeach; ?>\n";
+		$indexView .= "</table>\n\n";
+		$indexView .= "<ul class=\"actions\">\n";
+		$indexView .= "\t<li><?php echo \$html->link('New {$singularHumanName}', '{$admin_url}/{$controllerPath}/add'); ?></li>\n";
+		$indexView .= "</ul>\n";
+		$indexView .= "</div>";
+
+		//-------------------------[VIEW]-------------------------//
+		$viewView = null;
+
+		$viewView .= "<div class=\"{$singularName}\">\n";
+		$viewView .= "<h2>View " . $singularHumanName . "</h2>\n\n";
+		$viewView .= "<dl>\n";
+		$count = 0;
+		foreach($fieldNames as $field => $value) {
+			$viewView .= "\t<dt>" . $value['prompt'] . "</dt>\n";
+			if(isset($value['foreignKey'])) {
+				$otherModelName = $this->__modelName($value['model']);
+				$otherModelKey = Inflector::underscore($otherModelName);
+				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherControllerName);
+				$displayField = $otherModelObj->getDisplayField();
+				$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></dd>\n";
+				$count++;
+			} else {
+				$viewView .= "\t<dd>&nbsp;<?php echo \$".$singularName."['{$modelObj->name}']['{$field}']?></dd>\n";
+			}
+		}
+		$viewView .= "</dl>\n";
+		$viewView .= "<ul class=\"actions\">\n";
+		$viewView .= "\t<li><?php echo \$html->link('Edit " . $singularHumanName . "',   '{$admin_url}/{$controllerPath}/edit/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}']) ?> </li>\n";
+		$viewView .= "\t<li><?php echo \$html->link('Delete " . $singularHumanName . "', '{$admin_url}/{$controllerPath}/delete/' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'] . '?') ?> </li>\n";
+		$viewView .= "\t<li><?php echo \$html->link('List " . $pluralHumanName ."',   '{$admin_url}/{$controllerPath}/index') ?> </li>\n";
+		$viewView .= "\t<li><?php echo \$html->link('New " . $singularHumanName . "',	'{$admin_url}/{$controllerPath}/add') ?> </li>\n";
+		foreach( $fieldNames as $field => $value ) {
+			if( isset( $value['foreignKey'] ) ) {
+				$otherModelName = $this->__modelName($value['model']);
+				if($otherModelName != $currentModelName) {
+					$otherControllerName = $this->__controllerName($otherModelName);
+					$otherControllerPath = $this->__controllerPath($otherControllerName);
+					$otherSingularHumanName = $this->__singularHumanName($value['controller']);
+					$otherPluralHumanName = $this->__pluralHumanName($value['controller']);
+					$viewView .= "\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', '{$admin_url}/" . $otherControllerPath . "/index/')?> </li>\n";
+					$viewView .= "\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', '{$admin_url}/" . $otherControllerPath . "/add/')?> </li>\n";
+				}
+			}
+		}
+		$viewView .= "</ul>\n\n";
+
+		$viewView .= "</div>\n";
+
+
+		foreach ($modelObj->hasOne as $associationName => $relation) {
+			$new = true;
+
+			$otherModelName = $this->__modelName($relation['className']);
+			$otherControllerName = $this->__controllerName($otherModelName);
+			$otherControllerPath = $this->__controllerPath($otherModelName);
+			$otherSingularName = $this->__singularName($associationName);
+			$otherPluralHumanName = $this->__pluralHumanName($associationName);
+			$otherSingularHumanName = $this->__singularHumanName($associationName);
+
+			$viewView .= "<div class=\"related\">\n";
+			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
+			$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])): ?>\n";
+			$viewView .= "<dl>\n";
+			$viewView .= "\t<?php foreach(\$".$singularName."['{$associationName}'] as \$field => \$value): ?>\n";
+			$viewView .= "\t\t<dt><?php echo \$field ?></dt>\n";
+			$viewView .= "\t\t<dd>&nbsp;<?php echo \$value ?></dd>\n";
+			$viewView .= "\t<?php endforeach; ?>\n";
+			$viewView .= "</dl>\n";
+			$viewView .= "<?php endif; ?>\n";
+			$viewView .= "<ul class=\"actions\">\n";
+			$viewView .= "\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/edit/' . \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']);?></li>\n";
+			$viewView .= "\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/add/');?> </li>\n";
+			$viewView .= "</ul>\n";
+			$viewView .= "</div>\n";
+		}
+		$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
+
+		foreach($relations as $associationName => $relation) {
+			$otherModelName = $this->__modelName($relation['className']);
+			$otherControllerName = $this->__controllerName($otherModelName);
+			$otherControllerPath = $this->__controllerPath($otherModelName);
+			$otherSingularName = $this->__singularName($associationName);
+			$otherPluralHumanName = $this->__pluralHumanName($associationName);
+			$otherSingularHumanName = $this->__singularHumanName($associationName);
+			$otherModelKey = Inflector::underscore($otherModelName);
+			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+
+			$viewView .= "<div class=\"related\">\n";
+			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
+			$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])):?>\n";
+			$viewView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
+			$viewView .= "<tr>\n";
+			$viewView .= "<?php foreach(\$".$singularName."['{$associationName}']['0'] as \$column => \$value): ?>\n";
+			$viewView .= "<th><?php echo \$column?></th>\n";
+			$viewView .= "<?php endforeach; ?>\n";
+			$viewView .= "<th>Actions</th>\n";
+			$viewView .= "</tr>\n";
+			$viewView .= "<?php foreach(\$".$singularName."['{$associationName}'] as \$".$otherSingularName."):?>\n";
+			$viewView .= "<tr>\n";
+			$viewView .= "\t<?php foreach(\$".$otherSingularName." as \$column => \$value):?>\n";
+			$viewView .= "\t\t<td><?php echo \$value;?></td>\n";
+			$viewView .= "\t<?php endforeach;?>\n";
+			$viewView .= "\t<td nowrap>\n";
+			$viewView .= "\t\t<?php echo \$html->link('View', '{$admin_url}/" . $otherControllerPath . "/view/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
+			$viewView .= "\t\t<?php echo \$html->link('Edit', '{$admin_url}/" . $otherControllerPath . "/edit/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
+			$viewView .= "\t\t<?php echo \$html->link('Delete', '{$admin_url}/" . $otherControllerPath . "/delete/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?');?>\n";
+			$viewView .= "\t</td>\n";
+			$viewView .= "</tr>\n";
+			$viewView .= "<?php endforeach; ?>\n";
+			$viewView .= "</table>\n";
+			$viewView .= "<?php endif; ?>\n\n";
+			$viewView .= "<ul class=\"actions\">\n";
+			$viewView .= "\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/add/');?> </li>\n";
+			$viewView .= "</ul>\n";
+
+			$viewView .= "</div>\n";
+		}
+		//-------------------------[ADD]-------------------------//
+		$addView = null;
+		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
+		$addView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/add'); ?>\" method=\"post\">\n";
+		$addView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
+		$addView .= $this->generateSubmitDiv('Add');
+		$addView .= "</form>\n";
+		$addView .= "<ul class=\"actions\">\n";
+		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
+		foreach ($modelObj->belongsTo as $associationName => $relation) {
+			$otherModelName = $this->__modelName($relation['className']);
+			if($otherModelName != $currentModelName) {
+				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherModelName);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralHumanName($associationName);
+				$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
+				$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
+			}
+		}
+		$addView .= "</ul>\n";
+		//-------------------------[EDIT]-------------------------//
+		$editView = null;
+		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
+		$editView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/edit/'.\$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')); ?>\" method=\"post\">\n";
+		$editView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
+		$editView .= "<?php echo \$html->hidden('{$modelObj->name}/{$modelObj->primaryKey}')?>\n";
+		$editView .= $this->generateSubmitDiv('Save');
+		$editView .= "</form>\n";
+		$editView .= "<ul class=\"actions\">\n";
+		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
+		$editView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
+		foreach ($modelObj->belongsTo as $associationName => $relation) {
+			$otherModelName = $this->__modelName($relation['className']);
+			if($otherModelName != $currentModelName) {
+				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherModelName);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralHumanName($associationName);
+				$editView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
+				$editView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
+			}
+		}
+		$editView .= "</ul>\n";
+
+		//------------------------------------------------------------------------------------//
+		
+		if(!file_exists(VIEWS.$controllerPath)) {
+			mkdir(VIEWS.$controllerPath);
+		}
+		$filename = VIEWS . $controllerPath . DS .  $admin . 'index.thtml';
+		$this->createFile($filename, $indexView);
+		$filename = VIEWS . $controllerPath . DS . $admin . 'view.thtml';
+		$this->createFile($filename, $viewView);
+		$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
+		$this->createFile($filename, $addView);
+		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
+		$this->createFile($filename, $editView);		
 	}
 /**
  * Action to create a Controller.
@@ -1324,7 +1322,7 @@ class Bake {
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
-
+		/* ADD ACTION */
 		$actions .= "\tfunction {$admin}add() {\n";
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
 
@@ -1355,7 +1353,7 @@ class Bake {
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (strtolower($wannaUseSession) == 'y' || strtolower($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";
 		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index');\n";
 		} else {
 		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
@@ -1392,7 +1390,7 @@ class Bake {
 		$actions .= "\t\t}\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
-		//EDIT FORM
+		/* EDIT ACTION */
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
 		$actions .= "\t\t\tif(!\$id) {\n";
@@ -1413,8 +1411,8 @@ class Bake {
 				$otherModelKey = Inflector::underscore($otherModelName);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->_selectedArray(\$this->data['{$associationName}']['{$associationName}']));\n";
+				$actions .= "\t\t\tif(empty(\$this->data['{$associationName}'])) { \$this->data['{$associationName}'] = null; }\n";
+				$actions .= "\t\t\t\$this->set('selected_{$otherPluralName}', \$this->_selectedArray(\$this->data['{$associationName}']));\n";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
@@ -1837,9 +1835,9 @@ class Bake {
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
-			fwrite($this->stdout, $string . "\n");
+			fwrite($this->stdout, __($string, true) . "\n");
 		} else {
-			fwrite($this->stdout, $string);
+			fwrite($this->stdout, __($string, true));
 		}
 	}
 /**
@@ -1848,7 +1846,7 @@ class Bake {
  * @param string $string Error text to output.
  */
 	function stderr($string) {
-		fwrite($this->stderr, $string);
+		fwrite($this->stderr, __($string, true));
 	}
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
@@ -1872,17 +1870,17 @@ class Bake {
 		echo "\nCreating file $shortPath\n";
 		$path = str_replace('//', '/', $path);
 		if (is_file($path) && $this->interactive === true) {
-			fwrite($this->stdout, "File {$shortPath} exists, overwrite? (y/n/q):");
+			fwrite($this->stdout, __("File exists, overwrite?", true). " {$shortPath} (y/n/q):");
 			$key = trim(fgets($this->stdin));
 
 			if ($key=='q') {
-				fwrite($this->stdout, "Quitting.\n");
+				fwrite($this->stdout, __("Quitting.", true) ."\n");
 				exit;
 			} elseif ($key == 'a') {
 				$this->dont_ask = true;
 			} elseif ($key == 'y') {
 			} else {
-				fwrite($this->stdout, "Skip   {$shortPath}\n");
+				fwrite($this->stdout, __("Skip", true) ." {$shortPath}\n");
 				return false;
 			}
 		}
@@ -1890,10 +1888,10 @@ class Bake {
 		if ($f = fopen($path, 'w')) {
 			fwrite($f, $contents);
 			fclose($f);
-			fwrite($this->stdout, "Wrote   {$shortPath}\n");
+			fwrite($this->stdout, __("Wrote", true) ."{$shortPath}\n");
 			return true;
 		} else {
-			fwrite($this->stderr, "Error! Couldn't open {$shortPath} for writing.\n");
+			fwrite($this->stderr, __("Error! Could not write to", true)." {$shortPath}.\n");
 			return false;
 		}
 	}
