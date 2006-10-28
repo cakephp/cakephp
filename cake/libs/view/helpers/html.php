@@ -588,7 +588,7 @@ class HtmlHelper extends AppHelper {
 				$optionsHere['selected'] = 'selected';
 			}
 
-			$select[] = sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($optionsHere), $title);
+			$select[] = sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($optionsHere), h($title));
 		}
 
 		$select[] = sprintf($this->tags['selectend']);

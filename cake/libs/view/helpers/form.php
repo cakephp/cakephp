@@ -373,7 +373,7 @@ class FormHelper extends AppHelper {
 				}
 				
 				if($showParents || (!in_array($title, $parents))) {
-					$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), $title);
+					$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), h($title));
 				}
 			}
 		}
