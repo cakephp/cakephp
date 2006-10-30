@@ -69,7 +69,13 @@ class SessionComponent extends Object{
  * @param unknown_type $value
  * @return unknown
  */
-	function write($name, $value) {
+	function write($name, $value = null) {
+		if (is_array($name)) {
+			foreach ($name as $key => $val) {
+				$this->CakeSession->writeSessionVar($key, $val);
+			}
+			return;
+		}
 		return $this->CakeSession->writeSessionVar($name, $value);
 	}
 /**
