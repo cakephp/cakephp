@@ -31,7 +31,7 @@
 	$cakeDir = CORE_PATH.DS.'cake'.DS;
 	$argCount = count($argv);
 	
-	if ($argCount == 1 || $argv[1] == 'help') {
+	if ($argCount == 1 || isHelpParam($argv[1])) {
 		showHelp();
 	} else {
 		$taskName = $argv[1];
@@ -40,7 +40,7 @@
 		$showHelp = false;
 		
 		if ($argCount > 2) {
-			if ($argv[2] == 'help') {
+			if (isHelpParam($argv[2])) {
 				$showHelp = true;
 			} else {
 				$appPath = getAppPath($argv[2]);
@@ -139,6 +139,10 @@
 	function includeCoreFiles($cakePath) {
 		require($cakePath.'basics.php');
 		require($cakePath.'config'.DS.'paths.php');
+	}
+	
+	function isHelpParam($param) {
+		return ($param == 'help' || $param == '--help');
 	}
 	
 	function prepareParams($originalParams, $elementsToRemove) {
