@@ -129,10 +129,8 @@ class CakeSession extends Object{
 		$this->__initSession();
 		session_cache_limiter ("must-revalidate");
 		session_start();
+		header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 
-		if (!isset($_SESSION)) {
-			$this->__begin();
-		}
 		$this->__checkValid();
 		parent::__construct();
 	}
@@ -235,14 +233,6 @@ class CakeSession extends Object{
 		$expression = $this->__sessionVarNames($name);
 		$expression .= " = \$value;";
 		eval ($expression);
-	}
-/**
- * Begins a session.
- *
- * @access private
- */
-	function __begin() {
-		header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 	}
 /**
  * Enter description here...
