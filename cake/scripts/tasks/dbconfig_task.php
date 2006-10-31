@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+define('DB_CONFIG_FILE', CONFIGS.'database.php');
+define('DB_CONFIG_FILE_DEFAULT', CONFIGS.'database.php.default'); 
+ 
 class DbconfigTask extends BakeTask {
 	
 	var $database;
@@ -50,7 +53,11 @@ class DbconfigTask extends BakeTask {
 				$this->handleParams($params);
 			}
 			
-			$this->createFile(CONFIGS.'database.php', $this->getFileContent());
+			if (!file_exists(DB_CONFIG_FILE) && file_exists(DB_CONFIG_FILE_DEFAULT)) {
+				rename(DB_CONFIG_FILE_DEFAULT, DB_CONFIG_FILE);
+			}
+			
+			$this->createFile(DB_CONFIG_FILE, $this->getFileContent());
 			
 		} else {
 			$this->help();
