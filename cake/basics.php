@@ -91,12 +91,13 @@
 
 		Overloadable::overload($pluginAppModel);
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
-		$loadedPluginModels = array();
 
 		foreach(listClasses($pluginModelDir)as $modelFileName) {
-			if (!key_exists($modelFileName, $loadedPluginModels)) {
+			list($name) = explode('.', $modelFileName);
+			$className = Inflector::camelize($name);
+
+			if (!class_exists($className)) {
 				require($pluginModelDir . $modelFileName);
-				$loadedPluginModels[$modelFileName] = $modelFileName;
 			}
 		}
 	}
@@ -233,9 +234,11 @@
 		}
 
 		if (empty($controller)) {
-			if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-				require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-				return true;
+			if (!class_exists($plugin . 'Controller')) {
+				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
+					return true;
+				}
 			}
 		}
 
