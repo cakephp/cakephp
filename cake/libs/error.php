@@ -65,8 +65,8 @@ class ErrorHandler extends Object{
 			}
 
 			$this->controller =& new AppController();
-
 			$this->controller->_initComponents();
+			$this->controller->cacheAction = false;
 			$this->__dispatch->start($this->controller);
 
 			if (method_exists($this->controller, 'apperror')) {
@@ -74,6 +74,7 @@ class ErrorHandler extends Object{
 			}
 		} else {
 			$this->controller =& new Controller();
+			$this->controller->cacheAction = false;
 		}
 		if (DEBUG > 0 || $method == 'error') {
 			call_user_func_array(array(&$this, $method), $messages);
