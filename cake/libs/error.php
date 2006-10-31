@@ -49,7 +49,7 @@ class ErrorHandler extends Object{
 		parent::__construct();
 		static $__previousError = null;
 
-		$allow = array('.', '/', '_');
+		$allow = array('.', '/', '_', ' ');
 	    if(substr(PHP_OS,0,3) == "WIN") {
             $allow = array_merge($allow, array('\\', ':') );
         }
@@ -65,7 +65,7 @@ class ErrorHandler extends Object{
 			}
 
 			$this->controller =& new AppController();
-			
+
 			$this->controller->_initComponents();
 			$this->__dispatch->start($this->controller);
 
