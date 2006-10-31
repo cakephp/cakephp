@@ -384,7 +384,7 @@ class View extends Object {
  * and the $params array is used to send data to be used in the
  * Element.
  *
- * @link 
+ * @link
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string Rendered output
@@ -779,8 +779,7 @@ class View extends Object {
 					}
 				}
 
-				$replace = strtolower(substr($helper, 0, 1));
-				$camelBackedHelper = preg_replace('/\\w/', $replace, $helper, 1);
+				$camelBackedHelper = Inflector::variable($helper);
 
 				${$camelBackedHelper}			=& new $helperCn;
 				${$camelBackedHelper}->view		=& $this;
