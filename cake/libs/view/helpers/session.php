@@ -47,7 +47,7 @@ class SessionHelper extends AppHelper {
  */
 	function __construct($base = null) {
 		if (!defined('AUTO_SESSION') || AUTO_SESSION == true) {
-			$this->__Session =& new CakeSession($base);
+			$this->__Session =& new CakeSession($base, false);
 		} else {
 			$this->__active = false;
 		}

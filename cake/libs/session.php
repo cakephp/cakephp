@@ -99,39 +99,40 @@ class CakeSession extends Object{
  *
  * @param string $base The base path for the Session
  */
-	function __construct($base = null) {
-		$this->host = env('HTTP_HOST');
+	function __construct($base = null, $start = true) {
+		if($start === true) {
+			$this->host = env('HTTP_HOST');
 
-		if (empty($base)) {
-			$this->path = '/';
-		} else {
-			$this->path = $base;
+			if (empty($base)) {
+				$this->path = '/';
+			} else {
+				$this->path = $base;
+			}
+
+			if (strpos($this->host, ':') !== false) {
+				$this->host = substr($this->host, 0, strpos($this->host, ':'));
+			}
+
+			if (env('HTTP_USER_AGENT') != null) {
+				$this->_userAgent = md5(env('HTTP_USER_AGENT') . CAKE_SESSION_STRING);
+			} else {
+				$this->_userAgent = "";
+			}
+
+			$this->time = time();
+			$this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
+			$this->security = CAKE_SECURITY;
+
+			if (function_exists('session_write_close')) {
+				session_write_close();
+			}
+
+			$this->__initSession();
+			session_cache_limiter ("must-revalidate");
+			session_start();
+			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
+			$this->__checkValid();
 		}
-
-		if (strpos($this->host, ':') !== false) {
-			$this->host = substr($this->host, 0, strpos($this->host, ':'));
-		}
-
-		if (env('HTTP_USER_AGENT') != null) {
-			$this->_userAgent = md5(env('HTTP_USER_AGENT') . CAKE_SESSION_STRING);
-		} else {
-			$this->_userAgent = "";
-		}
-
-		$this->time = time();
-		$this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
-		$this->security = CAKE_SECURITY;
-
-		if (function_exists('session_write_close')) {
-			session_write_close();
-		}
-
-		$this->__initSession();
-		session_cache_limiter ("must-revalidate");
-		session_start();
-		header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-
-		$this->__checkValid();
 		parent::__construct();
 	}
 /**
