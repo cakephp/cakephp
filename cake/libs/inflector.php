@@ -379,6 +379,18 @@ class Inflector extends Object {
 		$replace = Inflector::camelize(Inflector::singularize($tableName));
 		return $replace;
 	}
+/**
+ * Returns camelBacked version of a string.
+ *
+ * @param string $string
+ * @return string
+ */
+	function variable($string) {
+		$string = Inflector::camelize(Inflector::underscore($string));
+		$replace = strtolower(substr($string, 0, 1));
+		$variable = preg_replace('/\\w/', $replace, $string, 1);
+		return $variable;
+	}
 }
 
 /**
