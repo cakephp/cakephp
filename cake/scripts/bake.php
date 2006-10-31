@@ -1615,8 +1615,8 @@ class Bake {
 					$out .= "\t\t\t\t\t'offset' => '',\n";
 					$out .= "\t\t\t\t\t'dependent' => '',\n";
 					$out .= "\t\t\t\t\t'exclusive' => '',\n";
-					$out .= "\t\t\t\t\t'finderSql' => '',\n";
-					$out .= "\t\t\t\t\t'counterSql' => ''\n\t\t\t),\n\n";
+					$out .= "\t\t\t\t\t'finderQuery' => '',\n";
+					$out .= "\t\t\t\t\t'counterQuery' => ''\n\t\t\t),\n\n";
 				}
 				$out .= "\t);\n\n";
 			}
