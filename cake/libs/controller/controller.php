@@ -113,7 +113,7 @@ class Controller extends Object {
  *
  * @var string
  */
-	var $layoutPath = '';
+	var $layoutPath = null;
 /**
  * Variables for the view
  *
@@ -623,7 +623,6 @@ class Controller extends Object {
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;
 		$table = $this->{$model}->table;
-		//$association = array_search($table, $this->{$model}->alias);
 		$objRegistryModel =& ClassRegistry::getObject($modelKey);
 
 		foreach($objRegistryModel->_tableInfo as $tables) {
@@ -637,7 +636,6 @@ class Controller extends Object {
 					}
 					$fkNames = $this->{$model}->keyToTable[$tabl['name']];
 					$fieldNames[$tabl['name']]['table'] = $fkNames[0];
-					//$association = array_search($fieldNames[$tabl['name']]['table'], $this->{$model}->alias);
 					$fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($niceName);
 					$fieldNames[$tabl['name']]['model'] = $fkNames[1];
 					$fieldNames[$tabl['name']]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']];
@@ -749,6 +747,7 @@ class Controller extends Object {
 					case "date":
 					case "datetime":
 					case "time":
+					case "year":
 						if (0 != strncmp("created", $tabl['name'], 7) && 0 != strncmp("modified", $tabl['name'], 8)) {
 							$fieldNames[$tabl['name']]['type'] = $type;
 						}
