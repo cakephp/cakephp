@@ -90,6 +90,7 @@ class Object{
 			if (in_array('return', $extra)) {
 				$extra['return'] = 0;
 				$extra['bare'] = 1;
+				$extra['requested'] = 1;
 				ob_start();
 				$out = $dispatcher->dispatch($url, $extra);
 				$out = ob_get_clean();
@@ -97,6 +98,7 @@ class Object{
 			} else {
 				$extra['return'] = 1;
 				$extra['bare'] = 1;
+				$extra['requested'] = 1;
 				return $dispatcher->dispatch($url, $extra);
 			}
 		} else {
