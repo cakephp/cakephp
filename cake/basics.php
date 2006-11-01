@@ -273,6 +273,7 @@
 			} else {
 				require(CAKE . 'app_helper.php');
 			}
+			Overloadable::overload('AppHelper');
 		}
 
 		if ($name === null) {
