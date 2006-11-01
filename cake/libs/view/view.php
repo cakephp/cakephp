@@ -111,7 +111,7 @@ class View extends Object {
  *
  * @var string Path to Layout
  */
-	var $layoutPath = '';
+	var $layoutPath = null;
 
 /**
  * Variables for the view
@@ -390,24 +390,27 @@ class View extends Object {
  * @return string Rendered output
  */
 	function renderElement($name, $params = array()) {
-		$fn = ELEMENTS . $name . $this->ext;
+		$params = array_merge_recursive($params, $this->loaded);
+
 		if(isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 		}
+
 		if (!is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext)) {
-				$fn = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
-				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($fn, array_merge($this->_viewVars, $params), false);
+				$elementFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
+				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
 			}
 		}
 
-		if (!file_exists($fn)) {
-				return "(Error rendering {$name})";
+		$paths = Configure::getInstance();
+		foreach($paths->viewPaths as $path) {
+			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
+				$elementFileName = $path . 'elements' . DS . $name . $this->ext;
+				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
+			}
 		}
-
-		$params=array_merge_recursive($params, $this->loaded);
-		return $this->_render($fn, array_merge($this->_viewVars, $params), false);
+		return "(Error rendering Element: {$name})";
 	}
 
 	function element($name) {
@@ -631,32 +634,30 @@ class View extends Object {
 			$type = null;
 		}
 
+		if(!is_null($this->layoutPath)){
+			$this->layoutPath = $this->layoutPath . DS;
+		}
+
 		if (isset($this->plugin) && !is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
 				$layoutFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
 				return $layoutFileName;
 			}
 		}
+		$paths = Configure::getInstance();
 
-		if (!empty($this->layoutPath)) {
-			$path = $this->layoutPath . DS;
-			if (file_exists(LAYOUTS . $this->subDir . $this->layoutPath . $type . "{$this->layout}{$this->ext}")) {
-				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "{$this->layout}{$this->ext}";
-			} elseif (file_exists(LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}")) {
-				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}";
-			} elseif ($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $path . "default{$this->ext}")) {
-			} else {
-				$layoutFileName = LAYOUTS . $this->subDir . $path . $type . "default{$this->ext}";
-			}
-		} else {
-			if (file_exists(LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext")) {
-				$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
-			} elseif($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . "{$this->layout}.thtml")) {
-			} else {
-				$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
+		foreach($paths->viewPaths as $path) {
+			if (file_exists($path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . $this->ext)) {
+				$layoutFileName = $path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . $this->ext;
+				return $layoutFileName;
 			}
 		}
 
+
+		if($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.thtml')) {
+		} else {
+			$layoutFileName = LAYOUTS . $type . $this->layout . $this->ext;
+		}
 		return $layoutFileName;
 	}
 
