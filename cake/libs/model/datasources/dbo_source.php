@@ -84,7 +84,7 @@ class DboSource extends DataSource {
 		$this->debug = DEBUG > 0;
 		$this->fullDebug = DEBUG > 1;
 		parent::__construct($config);
-		
+
 		if ($autoConnect) {
 			return $this->connect();
 		} else {
@@ -265,7 +265,10 @@ class DboSource extends DataSource {
 		$this->took = round((getMicrotime() - $t) * 1000, 0);
 		$this->error = $this->lastError();
 		$this->numRows = $this->lastNumRows($this->_result);
-		$this->logQuery($sql);
+
+		if($this->fullDebug) {
+			$this->logQuery($sql);
+		}
 
 		if ($this->error) {
 			return false;
