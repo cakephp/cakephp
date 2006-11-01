@@ -53,12 +53,14 @@ class DbconfigTask extends BakeTask {
 				$this->handleParams($params);
 			}
 			
-			if (!file_exists(DB_CONFIG_FILE) && file_exists(DB_CONFIG_FILE_DEFAULT)) {
+			if (file_exists(DB_CONFIG_FILE)) {
+				$this->insertOrUpdateConfiguration();
+			} elseif (file_exists(DB_CONFIG_FILE_DEFAULT)) {
 				rename(DB_CONFIG_FILE_DEFAULT, DB_CONFIG_FILE);
+				$this->insertOrUpdateConfiguration();
+			} else {
+				$this->createFile(DB_CONFIG_FILE, $this->getFileContent());
 			}
-			
-			$this->createFile(DB_CONFIG_FILE, $this->getFileContent());
-			
 		} else {
 			$this->help();
 		}
@@ -86,10 +88,8 @@ class DbconfigTask extends BakeTask {
 		return false;
 	}
 	
-	function getFileContent() {
-		$out = "<?php\n";
-		$out .= "class DATABASE_CONFIG {\n\n";
-		$out .= "\tvar \${$this->configName} = array(\n";
+	function getConfiguration() {
+		$out = "\tvar \${$this->configName} = array(\n";
 		$out .= "\t\t'driver' => '{$this->databaseDriver}',\n";
 		$out .= "\t\t'host' => '{$this->host}',\n";
 		
@@ -103,10 +103,30 @@ class DbconfigTask extends BakeTask {
 		$out .= "\t\t'persistent' => {$this->persistent}, \n";
 		$out .= "\t\t'prefix' => '{$this->prefix}' \n";
 		$out .= "\t);\n";
+		
+		return $out;
+	}
+	
+	function getFileContent() {
+		$out = "<?php\n";
+		$out .= "class DATABASE_CONFIG {\n\n";
+		$out .= $this->getConfiguration();
 		$out .= "}\n";
 		$out .= "?>";
 		
 		return $out;
+	}
+	
+	function insertOrUpdateConfiguration() {
+		$data = file_get_contents(DB_CONFIG_FILE);
+				
+		if (strpos($data, 'var $'.$this->configName) === false) {
+			$data = str_replace('}', "\n".$this->getConfiguration()."}", $data);
+		} else {
+			$data = preg_replace('/\tvar \$'.$this->configName.' (\S|\s)*\);/s', $this->getConfiguration(), $data);
+		}
+		
+		$this->createFile(DB_CONFIG_FILE, $data);
 	}
 	
 	function handleParams($params) {
