@@ -603,10 +603,6 @@ class Model extends Overloadable {
 		foreach($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
 
-			//if (isset($this->{$type}[$assocKey]['className']) && $this->{$type}[$assocKey]['className'] !== null) {
-			//	$class = $this->{$type}[$assocKey]['className'];
-			//}
-
 			foreach($this->__associationKeys[$type] as $key) {
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] == null) {
 					$data = '';
