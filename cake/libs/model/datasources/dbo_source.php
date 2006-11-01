@@ -1141,6 +1141,29 @@ class DboSource extends DataSource {
 		return null;
 	}
 /**
+ * Private method
+ *
+ * @return array
+ */
+	function __mergeConditions(&$queryData, $assocData) {
+		if (isset($assocData['conditions']) && !empty($assocData['conditions'])) {
+			if (is_array($queryData['conditions'])) {
+				$queryData['conditions'] = array_merge((array)$assocData['conditions'], $queryData['conditions']);
+			} else {
+				if (!empty($queryData['conditions'])) {
+					$queryData['conditions'] = array($queryData['conditions']);
+					if (is_array($assocData['conditions'])) {
+						$queryData['conditions'] = array_merge($queryData['conditions'], $assocData['conditions']);
+					} else {
+						$queryData['conditions'][] = $assocData['conditions'];
+					}
+				} else {
+					$queryData['conditions'] = $assocData['conditions'];
+				}
+			}
+		}
+	}
+/**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
  * @param Model $model
