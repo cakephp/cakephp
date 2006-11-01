@@ -381,17 +381,24 @@ class DboSource extends DataSource {
 		}
 
 		if ($this->_queriesCnt > 1) {
-				$text = 'queries';
+			$text = 'queries';
 		} else {
-				$text = 'query';
+			$text = 'query';
 		}
-		print ("<table id=\"cakeSqlLog\" cellspacing=\"0\" border = \"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
-		print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
-
-		foreach($log as $k => $i) {
+		
+		if (php_sapi_name() != 'cli') {
+			print ("<table id=\"cakeSqlLog\" cellspacing=\"0\" border = \"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
+			print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
+	
+			foreach($log as $k => $i) {
 				print ("<tr><td>" . ($k + 1) . "</td><td>{$i['query']}</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n");
+			}
+			print ("</table>\n");
+		} else {
+			foreach($log as $k => $i) {
+				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
+			}
 		}
-		print ("</table>\n");
 	}
 /**
  * Log given SQL query.
