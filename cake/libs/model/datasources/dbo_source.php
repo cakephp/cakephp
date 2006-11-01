@@ -833,7 +833,6 @@ class DboSource extends DataSource {
  * @return unknown
  */
 	function generateAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
-
 		$this->__scrubQueryData($queryData);
 		$this->__scrubQueryData($assocData);
 		$joinedOnSelf = false;
@@ -848,9 +847,8 @@ class DboSource extends DataSource {
 				} else {
 					$joinFields = null;
 				}
-				// Generates primary query
-				$sql = 'SELECT ';
 
+				$sql = 'SELECT ';
 				if ($this->goofyLimit) {
 					$sql .= $this->limit($queryData['limit'], $queryData['offset']);
 				}
@@ -1426,12 +1424,18 @@ class DboSource extends DataSource {
 					$keys = array_keys($value);
 					if ($keys[0] === 0) {
 						$data = $this->name($key) . ' IN (';
-						foreach($value as $valElement) {
-							$data .= $this->value($valElement) . ', ';
+						if	(strpos($value[0], '-!') === 0){
+							$value[0] = str_replace('-!', '', $value[0]);
+							$data .= $value[0];
+							$data .= ')';
+						} else {
+							foreach($value as $valElement) {
+								$data .= $this->value($valElement) . ', ';
+							}
+							$data[strlen($data) - 2] = ')';
 						}
-						$data[strlen($data) - 2] = ')';
 					} else {
-						$out[] = '(' . join(')' . $join . '(', $this->conditionKeysToString($value)) . ')';
+						$out[] = '(' . join(') AND (', $this->conditionKeysToString($value)) . ')';
 					}
 				} elseif(is_numeric($key)) {
 					$data = ' ' . $value;
@@ -1439,7 +1443,7 @@ class DboSource extends DataSource {
 					$data = $this->name($key) . ' IS NULL';
 				} elseif($value === '') {
 					$data = $this->name($key) . " = ''";
-				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:not\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
+				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:not\\x20)|(?:in\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
 					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
 						$clause = $regs['1'];
 						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
