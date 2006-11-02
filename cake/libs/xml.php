@@ -282,7 +282,7 @@ class XML extends XMLNode {
  *
  * @return unknown
  */
-	function &nextSibling() {
+	function &next() {
 		return null;
 	}
 /**
@@ -290,7 +290,7 @@ class XML extends XMLNode {
  *
  * @return null
  */
-	function &previousSibling() {
+	function &previous() {
 		return null;
 	}
 /**
@@ -298,7 +298,7 @@ class XML extends XMLNode {
  *
  * @return null
  */
-	function &parentNode() {
+	function &parent() {
 		return null;
 	}
 
@@ -368,17 +368,17 @@ class XMLNode extends Object {
 		$c = count($children);
 		for ($i = 0; $i < $c; $i++) {
 			if (is_a($children[$i], 'XMLNode') || is_a($children[$i], 'xmlnode')) {
-				$this->appendChild($children[$i]);
+				$this->append($children[$i]);
 			} elseif (is_array($children[$i])) {
 				$cName = '';
 				$cAttr = $cChildren = array();
 				list($cName, $cAttr, $cChildren) = $children[$i];
 				$node = new XMLNode($name, $cAttr, $cChildren);
-				$this->appendChild($node);
+				$this->append($node);
 				unset($node);
 			} else {
 				$child = $children[$i];
-				$this->appendChild($child);
+				$this->append($child);
 				unset($child);
 			}
 		}
@@ -459,7 +459,7 @@ class XMLNode extends Object {
  *
  * @param XMLNode $child
  */
-	function &appendChild(&$child) {
+	function &append(&$child) {
 		if (is_object($child)) {
 			$this->childNodes[] =& $child;
 		} elseif (is_string($child)) {
@@ -478,7 +478,7 @@ class XMLNode extends Object {
  *
  * @return XMLNode
  */
-	function &firstChild() {
+	function &first() {
 		if(isset($this->childNodes[0])) {
 			return $this->childNodes[0];
 		} else {
@@ -490,7 +490,7 @@ class XMLNode extends Object {
  *
  * @return XMLNode
  */
-	function &lastChild() {
+	function &last() {
 		if(count($this->childNodes) > 0) {
 			return $this->childNodes[count($this->childNodes) - 1];
 		} else {
@@ -504,7 +504,7 @@ class XMLNode extends Object {
  * @return XMLNode
  *
  */
-	function &getChild($id) {
+	function &child($id) {
 		if(is_int($id)) {
 			if(isset($this->childNodes[$id])) {
 				return $this->childNodes[$id];
@@ -528,7 +528,7 @@ class XMLNode extends Object {
  * @param string $name Tag name of child nodes
  * @return array An array of XMLNodes with the given tag name
  */
-	function getChildren($name) {
+	function children($name) {
 		$nodes = array();
 		$count = count($this->childNodes);
 		for($i = 0; $i < $count; $i++) {
@@ -575,7 +575,7 @@ class XMLNode extends Object {
  *
  * @return XMLNode
  */
-	function &parentNode() {
+	function &parent() {
 		return $this->__parentNode;
 	}
 /**
@@ -583,7 +583,7 @@ class XMLNode extends Object {
  *
  * @return boolean
  */
-	function hasChildNodes() {
+	function hasChildren() {
 		if(is_array($this->childNodes) && count($this->childNodes) > 0) {
 			return true;
 		}
