@@ -1367,6 +1367,8 @@ class Model extends Overloadable {
 
 		if (isset($data[0]['count'])) {
 			return $data[0]['count'];
+		} elseif (isset($data[$this->name]['count'])) {
+			return $data[$this->name]['count'];
 		}
 
 		return false;
