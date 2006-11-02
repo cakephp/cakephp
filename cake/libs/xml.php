@@ -94,7 +94,7 @@ class XML extends XMLNode {
 		xml_parser_set_option($this->__parser, XML_OPTION_CASE_FOLDING, 0);
 		xml_parser_set_option($this->__parser, XML_OPTION_SKIP_WHITE, 1);
 
-		$this->childNodes = array();
+		$this->children = array();
 
 		if($input != null) {
 			$vars = null;
@@ -107,11 +107,11 @@ class XML extends XMLNode {
 			}
 
 			if ($vars != null) {
-				$this->childNodes = $vars;
+				$this->children = $vars;
 			}
 
-			if (!is_array($this->childNodes)) {
-				$this->childNodes = array($this->childNodes);
+			if (!is_array($this->children)) {
+				$this->children = array($this->children);
 			}
 		}
 
@@ -189,13 +189,13 @@ class XML extends XMLNode {
 					}
 
 					$tmpXML->setParent($xml);
-					$ct = count($xml->childNodes);
-					$xml->childNodes[$ct] = $tmpXML;
-					$xml =& $xml->childNodes[$ct];
+					$ct = count($xml->children);
+					$xml->children[$ct] = $tmpXML;
+					$xml =& $xml->children[$ct];
 				break;
 
 				case "close" :
-					$xml =& $xml->parentNode();
+					$xml =& $xml->parent();
 				break;
 
 				case "complete" :
@@ -209,8 +209,8 @@ class XML extends XMLNode {
 						$tmpXML->attributes = $data['attributes'];
 					}
 
-					$tmpXML->__parentNode =& $xml;
-					$xml->childNodes[] = $tmpXML;
+					$tmpXML->__parent =& $xml;
+					$xml->children[] = $tmpXML;
 				break;
 				case 'cdata':
 					if (is_string($xml->value)) {
@@ -221,7 +221,7 @@ class XML extends XMLNode {
 				break;
 			}
 		}
-		$this->childNodes =& $xml->childNodes;
+		$this->children =& $xml->children;
 		return true;
 	}
 /**
@@ -236,15 +236,15 @@ class XML extends XMLNode {
 		} else {
 			$header =  '<'.'?xml version="'.$this->version.'" encoding="'.$this->encoding.'" ?'.'>'."\n";
 		}
-		if (!$this->hasChildNodes() && !$useHeader) {
+		if (!$this->hasChildren() && !$useHeader) {
 			return null;
-		} elseif (!$this->hasChildNodes()) {
+		} elseif (!$this->hasChildren()) {
 			return $header;
 		}
 
 		$data = '';
-		foreach ($this->childNodes as $i => $node) {
-			$data .= $this->childNodes[$i]->__toString();
+		foreach ($this->children as $i => $node) {
+			$data .= $this->children[$i]->__toString();
 		}
 
 		if ($useHeader) {
@@ -346,13 +346,13 @@ class XMLNode extends Object {
  *
  * @var array
  */
-	var $childNodes = array();
+	var $children = array();
 /**
  * Reference to parent node.
  *
  * @var XMLNode
  */
-	var $__parentNode = null;
+	var $__parent = null;
 /**
  * Constructor.
  *
@@ -444,7 +444,7 @@ class XMLNode extends Object {
  * @return XMLNode
  */
 	function setParent(&$parent) {
-		$this->__parentNode =& $parent;
+		$this->__parent =& $parent;
 	}
 /**
  * Returns a copy of self.
@@ -461,7 +461,7 @@ class XMLNode extends Object {
  */
 	function &append(&$child) {
 		if (is_object($child)) {
-			$this->childNodes[] =& $child;
+			$this->children[] =& $child;
 		} elseif (is_string($child)) {
 			$attr = array();
 			if (func_num_args() >= 2 && is_array(func_get_arg(1))) {
@@ -479,8 +479,8 @@ class XMLNode extends Object {
  * @return XMLNode
  */
 	function &first() {
-		if(isset($this->childNodes[0])) {
-			return $this->childNodes[0];
+		if(isset($this->children[0])) {
+			return $this->children[0];
 		} else {
 			return null;
 		}
@@ -491,8 +491,8 @@ class XMLNode extends Object {
  * @return XMLNode
  */
 	function &last() {
-		if(count($this->childNodes) > 0) {
-			return $this->childNodes[count($this->childNodes) - 1];
+		if(count($this->children) > 0) {
+			return $this->children[count($this->children) - 1];
 		} else {
 			return null;
 		}
@@ -506,15 +506,15 @@ class XMLNode extends Object {
  */
 	function &child($id) {
 		if(is_int($id)) {
-			if(isset($this->childNodes[$id])) {
-				return $this->childNodes[$id];
+			if(isset($this->children[$id])) {
+				return $this->children[$id];
 			} else {
 				return null;
 			}
 		} elseif(is_string($id)) {
-			for($i = 0; $i < count($this->childNodes); $i++) {
-				if($this->childNodes[$i]->name == $id) {
-					return $this->childNodes[$i];
+			for($i = 0; $i < count($this->children); $i++) {
+				if($this->children[$i]->name == $id) {
+					return $this->children[$i];
 				}
 			}
 			return null;
@@ -530,10 +530,10 @@ class XMLNode extends Object {
  */
 	function children($name) {
 		$nodes = array();
-		$count = count($this->childNodes);
+		$count = count($this->children);
 		for($i = 0; $i < $count; $i++) {
-			if($this->childNodes[$i]->name == $name) {
-				$nodes[] =& $this->childNodes[$i];
+			if($this->children[$i]->name == $name) {
+				$nodes[] =& $this->children[$i];
 			}
 		}
 		return $nodes;
@@ -544,13 +544,13 @@ class XMLNode extends Object {
  * @return XMLNode A reference to the XMLNode object
  */
 	function &nextSibling() {
-		$count = count($this->__parentNode->childNodes);
+		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
-			if ($this->__parentNode->childNodes === $this) {
-				if ($i >= $count - 1 || !isset($this->__parentNode->childNodes[$i + 1])) {
+			if ($this->__parent->children === $this) {
+				if ($i >= $count - 1 || !isset($this->__parent->children[$i + 1])) {
 					return null;
 				}
-				return $this->__parentNode->childNodes[$i + 1];
+				return $this->__parent->children[$i + 1];
 			}
 		}
 	}
@@ -560,13 +560,13 @@ class XMLNode extends Object {
  * @return XMLNode A reference to the XMLNode object
  */
 	function &previousSibling() {
-		$count = count($this->__parentNode->childNodes);
+		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
-			if ($this->__parentNode->childNodes === $this) {
-				if ($i == 0 || !isset($this->__parentNode->childNodes[$i - 1])) {
+			if ($this->__parent->children === $this) {
+				if ($i == 0 || !isset($this->__parent->children[$i - 1])) {
 					return null;
 				}
-				return $this->__parentNode->childNodes[$i - 1];
+				return $this->__parent->children[$i - 1];
 			}
 		}
 	}
@@ -576,7 +576,7 @@ class XMLNode extends Object {
  * @return XMLNode
  */
 	function &parent() {
-		return $this->__parentNode;
+		return $this->__parent;
 	}
 /**
  * Returns true if this structure has child nodes.
@@ -584,7 +584,7 @@ class XMLNode extends Object {
  * @return boolean
  */
 	function hasChildren() {
-		if(is_array($this->childNodes) && count($this->childNodes) > 0) {
+		if(is_array($this->children) && count($this->children) > 0) {
 			return true;
 		}
 		return false;
@@ -605,7 +605,7 @@ class XMLNode extends Object {
 			}
 		}
 
-		if(!$this->hasChildNodes() && empty($this->value)) {
+		if(!$this->hasChildren() && empty($this->value)) {
 			if($this->name != '') {
 				$d .= " />\n";
 			}
@@ -613,28 +613,28 @@ class XMLNode extends Object {
 			if($this->name != '') {
 				$d .= ">";
 			}
-			if($this->hasChildNodes()) {
+			if($this->hasChildren()) {
 				if (is_string($this->value) || empty($this->value)) {
 					if (!empty($this->value)) {
 						$d .= $this->value;
 					}
-					$count = count($this->childNodes);
+					$count = count($this->children);
 
 					for($i = 0; $i < $count; $i++) {
-						$d .= $this->childNodes[$i]->toString();
+						$d .= $this->children[$i]->toString();
 					}
 				} elseif (is_array($this->value)) {
 					$count = count($this->value);
 					for($i = 0; $i < $count; $i++) {
 						$d .= $this->value[$i];
-						if (isset($this->childNodes[$i])) {
-							$d .= $this->childNodes[$i]->toString();
+						if (isset($this->children[$i])) {
+							$d .= $this->children[$i]->toString();
 						}
 					}
-					$count = count($this->childNodes);
+					$count = count($this->children);
 					if ($i < $count) {
 						for ($i = $i; $i < $count; $i++) {
-							$d .= $this->childNodes[$i]->toString();
+							$d .= $this->children[$i]->toString();
 						}
 					}
 				}
@@ -644,7 +644,7 @@ class XMLNode extends Object {
 				$d .= $this->value;
 			}
 
-			if($this->name != '' && ($this->hasChildNodes() || !empty($this->value))) {
+			if($this->name != '' && ($this->hasChildren() || !empty($this->value))) {
 				$d .= "</" . $this->name . ">\n";
 			}
 		}
@@ -659,16 +659,16 @@ class XMLNode extends Object {
 		return $this->toString();
 	}
 /**
- * Debug method. Deletes the parentNode. Also deletes this node's children,
+ * Debug method. Deletes the parent. Also deletes this node's children,
  * if given the $recursive parameter.
  *
  * @param boolean $recursive
  */
 	function __killParent($recursive = true) {
-		unset($this->__parentNode);
-		if($recursive && $this->hasChildNodes()) {
-			for($i = 0; $i < count($this->childNodes); $i++) {
-				$this->childNodes[$i]->__killParent(true);
+		unset($this->__parent);
+		if($recursive && $this->hasChildren()) {
+			for($i = 0; $i < count($this->children); $i++) {
+				$this->children[$i]->__killParent(true);
 			}
 		}
 	}
