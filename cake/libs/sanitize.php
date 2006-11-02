@@ -206,7 +206,7 @@ class Sanitize{
 		//Replace odd spaces with safe ones
 		$val = str_replace(" ", " ", $val);
 		$val = str_replace(chr(0xCA), "", $val);
-		//Encode any HTML to entities (including \n --> <br />)
+		//Encode any HTML to entities.
 		$val = $this->html($val);
 		//Double-check special chars and remove carriage returns
 		//For increased SQL security
