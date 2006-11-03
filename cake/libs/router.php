@@ -360,13 +360,18 @@ class Router extends Overloadable {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 
-		$params = isset($_this->__params[0]) ? $_this->__params[0] : null;
-		$path = isset($_this->__paths[0]) ? $_this->__paths[0] : null;
+		$params = isset($_this->__params[0]) ? $_this->__params[0] : array();
+		$path = isset($_this->__paths[0]) ? $_this->__paths[0] : array();
 		$base = strip_plugin($path['base'], $params['plugin']);
 		$extension = null;
 		$mapped = null;
 
 		if (is_array($url) && !empty($url)) {
+			if (isset($url['full_base']) && $url['full_base'] == true) {
+				$full = true;
+				unset($url['full_base']);
+			}
+
 			if (!isset($url['action'])) {
 				if (!isset($url['controller']) || $params['controller'] == $url['controller']) {
 					$url['action'] = $params['action'];
@@ -486,7 +491,9 @@ class Router extends Overloadable {
  * @return mixed
  */
 	function mapRouteElements($route, $url) {
-		
+		$url = am(array('action' => 'index'), $url);
+		$route[3] = am(array('action' => 'index'), $route[3]);
+		$match = false;
 	}
 /**
  * Returns the route matching the current request URL
@@ -507,7 +514,12 @@ class Router extends Overloadable {
 		return $_this->__currentRoute[count($_this->__currentRoute) - 1];
 	}
 /**
- * Instructs the router to parse out file extensions from the URL
+ * Instructs the router to parse out file extensions from the URL. For example,
+ * http://example.com/posts.rss?show=50 would yield an file extension of "rss".
+ * The file extension itself is made available in the controller as
+ * $this->params['url']['ext'], and is used by the RequestHandler component to
+ * automatically switch to alternate layouts and templates, and load helpers
+ * corresponding to the given content, i.e. RssHelper.
  *
  * @return void
  */
