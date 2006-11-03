@@ -1665,6 +1665,22 @@ class DboSource extends DataSource {
 		}
 	}
 /**
+ * Gets the 'meta' definition of the given database table, where $model is either
+ * a model object, or the full table name.
+ *
+ * @param mixed $model
+ * @return array
+ */
+	function getDefinition($model) {
+		if (is_string($model)) {
+			$table = $model;
+		} else {
+			$table = $this->fullTableName($model, false);
+		}
+
+		
+	}
+/**
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated

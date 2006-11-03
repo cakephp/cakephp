@@ -490,7 +490,7 @@ class DboPostgres extends DboSource {
 
 			if (strpos($columnName, '__')) {
 				$parts = explode('__', $columnName);
-				$this->map[$index++]=array($parts[0], $parts[1]);
+				$this->map[$index++] = array($parts[0], $parts[1]);
 			} else {
 				$this->map[$index++] = array(0, $columnName);
 			}
