@@ -210,6 +210,9 @@ class AclCLI {
 			case 'initdb':
 				$this->initdb();
 			break;
+			case 'upgrade':
+				$this->upgradedb();
+			break;
 			case 'help':
 				$this->help();
 			break;
@@ -389,6 +392,25 @@ class AclCLI {
 
 		fwrite($this->stdout, "\nDone.\n");
 	}
+
+/**
+ * Enter description here...
+ *
+ */
+	function upgrade() {
+		$db =& ConnectionManager::getDataSource($this->dataSource);
+		fwrite($this->stdout, "Initializing Database...\n");
+		fwrite($this->stdout, "Upgrading table (aros)...\n");
+		$sql = "ALTER TABLE ".$db->fullTableName('aros')."
+				CHANGE ".$db->name('user_id')."
+				".$db->name('foreign_key')."
+				INT( 10 ) UNSIGNED NULL DEFAULT NULL;";
+
+		if ($db->query($sql) === false) {
+			die("Error: " . $db->lastError() . "\n\n");
+		}
+	}
+
 /**
  * Enter description here...
  *
