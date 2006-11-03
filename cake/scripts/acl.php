@@ -409,6 +409,7 @@ class AclCLI {
 		if ($db->query($sql) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
+		fwrite($this->stdout, "\nDatabase upgrade is complete.\n");
 	}
 
 /**
