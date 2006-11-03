@@ -1310,8 +1310,8 @@ class Bake {
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
@@ -1320,15 +1320,11 @@ class Bake {
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
-				if($currentModelName != $otherModelName) {
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				} else {
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-				}
+				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
 			}
 		}
 		$actions .= "\t\t\t\$this->render();\n";
@@ -1347,8 +1343,8 @@ class Bake {
 		}
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
@@ -1358,15 +1354,11 @@ class Bake {
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
-				if($currentModelName != $otherModelName) {
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				} else {
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-				}
+				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
 			}
 		}
 		$actions .= "\t\t\t}\n";
@@ -1387,8 +1379,8 @@ class Bake {
 		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
 				$otherModelKey = Inflector::underscore($otherModelName);
@@ -1400,15 +1392,11 @@ class Bake {
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
-				if($currentModelName != $otherModelName) {
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				} else {
-					$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-				}
+				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
 			}
 		}
 		$actions .= "\t\t} else {\n";
@@ -1426,8 +1414,8 @@ class Bake {
 		}
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
@@ -1437,15 +1425,11 @@ class Bake {
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($relation['className'])) {
-				$otherModelName = $this->__modelName($relation['className']);
+			if(!empty($associationName)) {
+				$otherModelName = $this->__modelName($associationName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralName($associationName);
-				if($currentModelName != $otherModelName) {
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				} else {
-					$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->generateList());\n";
-				}
+				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
 			}
 		}
 		$actions .= "\t\t\t}\n";
