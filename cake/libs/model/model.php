@@ -1560,8 +1560,10 @@ class Model extends Overloadable {
 		} else {
 			$fields = null;
 		}
-		if($this->recursive >= 1) {
+		if($groupPath == null && $this->recursive >= 1) {
 			$this->recursive = -1;
+		} else if($groupPath && $this->recursive >= 1){
+			$this->recursive = 0;
 		}
 		$result = $this->findAll($conditions, $fields, $order, $limit);
 
