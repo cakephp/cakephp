@@ -397,7 +397,7 @@ class AclCLI {
  * Enter description here...
  *
  */
-	function upgrade() {
+	function upgradedb() {
 		$db =& ConnectionManager::getDataSource($this->dataSource);
 		fwrite($this->stdout, "Initializing Database...\n");
 		fwrite($this->stdout, "Upgrading table (aros)...\n");
