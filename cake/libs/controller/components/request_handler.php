@@ -60,6 +60,7 @@ class RequestHandlerComponent extends Object {
 		'form'			=> 'application/x-www-form-urlencoded',
 		'file'			=> 'multipart/form-data',
 		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
+		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
 		'xml'			=> array('application/xml', 'text/xml'),
 		'rss'			=> 'application/rss+xml',
 		'atom'			=> 'application/atom+xml',
@@ -93,7 +94,9 @@ class RequestHandlerComponent extends Object {
 	}
 /**
  * Initializes the component, gets a reference to Controller::$parameters, and
- * checks to see if a file extension has been parsed by the Router.
+ * checks to see if a file extension has been parsed by the Router.  If yes, the
+ * corresponding content-type is pushed onto the list of accepted content-types
+ * as the first item.
  *
  * @param object A reference to the controller
  * @return void
@@ -189,8 +192,7 @@ class RequestHandlerComponent extends Object {
 			$controller->layout = $this->ajaxLayout;
 
 			// Add UTF-8 header for IE6 on XPsp2 bug
-			header ('Content-Type: text/html; charset=UTF-8');
-			return true;
+			return $this->respondAs('html', array('charset' => 'UTF-8'));
 		}
 		return false;
 	}
@@ -201,6 +203,14 @@ class RequestHandlerComponent extends Object {
  */
 	function isAjax() {
 		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
+	}
+/**
+ * Returns true if the current request is over HTTPS, false otherwise.
+ *
+ * @return bool
+ */
+	function isSSL() {
+		return env('HTTPS');
 	}
 /**
  * Returns true if the current call accepts an XML response, false otherwise
@@ -473,7 +483,7 @@ class RequestHandlerComponent extends Object {
  *
  * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full
  *                    content-type, like 'application/x-shockwave'.
- * @param mixed $index If $type is a friendly type name that is associated with
+ * @param array $options If $type is a friendly type name that is associated with
  *                     more than one type of content, $index is used to select
  *                     which content-type to use.
  * @return boolean Returns false if the friendly type name given in $type does
@@ -482,7 +492,7 @@ class RequestHandlerComponent extends Object {
  * @access public
  * @see RequestHandlerComponent::setContent()
  */
-	function respondAs($type, $index = 0) {
+	function respondAs($type, $options = array()) {
 		if ($this->__responseTypeSet != null) {
 			return false;
 		}
@@ -490,10 +500,18 @@ class RequestHandlerComponent extends Object {
 			return false;
 		}
 
-		if (strpos($type, '/') === false) {
+		$options = am(
+			array(
+				'index' => 0,
+				'charset' => null
+			),
+			$options
+		);
+
+		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;
-			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$index]['content'])) {
-				$cType = $this->__requestContent[$type][$index];
+			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$options['index']]['content'])) {
+				$cType = $this->__requestContent[$type][$options['index']];
 			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0]['content'])) {
 				$cType = $this->__requestContent[$type][0];
 			} elseif (isset($this->__requestContent[$type]['content'])) {
@@ -501,7 +519,6 @@ class RequestHandlerComponent extends Object {
 			} else {
 				return false;
 			}
-	
 			if (is_array($cType)) {
 				if ($this->prefers($cType)) {
 					$cType = $this->prefers($cType);
@@ -514,8 +531,13 @@ class RequestHandlerComponent extends Object {
 		}
 
 		if ($cType != null) {
+			$header = 'Content-type: ' . $cType;
+
+			if ($options['charset'] != null) {
+				$header .= '; charset=' . $options['charset'];
+			}
 			if (DEBUG < 2) {
-				header('Content-type: ' . $cType);
+				header($header);
 			}
 			$this->__responseTypeSet = $cType;
 			return true;
