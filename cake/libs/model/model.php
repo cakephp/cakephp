@@ -590,7 +590,7 @@ class Model extends Overloadable {
 		}
 
 		$this->alias[$assoc] = $this->{$assoc}->table;
-		$this->tableToModel[$this->{$assoc}->table] = $assoc;
+		$this->tableToModel[$this->{$assoc}->table] = $className;
 		$this->modelToTable[$assoc] = $this->{$assoc}->table;
 	}
 /**
