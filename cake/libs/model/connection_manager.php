@@ -154,10 +154,10 @@ class ConnectionManager extends Object {
 			return false;
 		}
 
-		if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
-		} else if(file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
+		if(file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
+		} else if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
+			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
 			trigger_error('Unable to load DataSource file ' . $conn['filename'] . '.php', E_USER_ERROR);
 			return null;
