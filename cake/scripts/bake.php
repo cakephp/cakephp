@@ -824,7 +824,7 @@ class Bake {
 					$this->__bakeViews($controllerName, $controllerPath, $admin, $admin_url);
 				}
 				$this->__bakeViews($controllerName, $controllerPath, null, null);
-				
+
 				$this->hr();
 				$this->stdout('');
 				$this->stdout('View Scaffolding Complete.'."\n");
@@ -856,8 +856,8 @@ class Bake {
 			}
 		}
 	}
-	
-	function __bakeViews($controllerName, $controllerPath, $admin= null, $admin_url = null) {		
+
+	function __bakeViews($controllerName, $controllerPath, $admin= null, $admin_url = null) {
 		$controllerClassName = $controllerName.'Controller';
 		$controllerObj = & new $controllerClassName();
 
@@ -1091,7 +1091,7 @@ class Bake {
 		$editView .= "</ul>\n";
 
 		//------------------------------------------------------------------------------------//
-		
+
 		if(!file_exists(VIEWS.$controllerPath)) {
 			mkdir(VIEWS.$controllerPath);
 		}
@@ -1102,7 +1102,7 @@ class Bake {
 		$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
 		$this->__createFile($filename, $addView);
 		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
-		$this->__createFile($filename, $editView);		
+		$this->__createFile($filename, $editView);
 	}
 /**
  * Action to create a Controller.
@@ -1463,7 +1463,7 @@ class Bake {
  * @return Success
  */
 	function doUnitTest() {
-		if (is_dir('vendors'.DS.'simpletest') || is_dir(APP_PATH.'vendors'.DS.'simpletest')) {
+		if (is_dir('vendors'.DS.'simpletest') || is_dir(APP_DIR.DS.'vendors'.DS.'simpletest')) {
 			return true;
 		}
 		$unitTest = $this->getInput('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
@@ -2191,7 +2191,7 @@ class Bake {
  * @param string $text
  * @return Generated HTML.
  */
-	function divTag($class, $text) {		
+	function divTag($class, $text) {
 		return sprintf('<div class="%s">%s</div>', $class, $text ) . "\n";
 	}
 /**
