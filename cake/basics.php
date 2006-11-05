@@ -57,9 +57,8 @@
 			} else {
 				require(CAKE . 'app_model.php');
 			}
+			Overloadable::overload('AppModel');
 		}
-
-		Overloadable::overload('AppModel');
 		$loadedModels = array();
 
 		foreach($path->modelPaths as $path) {
@@ -67,6 +66,7 @@
 				if (!key_exists($model_fn, $loadedModels)) {
 					require($path . $model_fn);
 					list($name) = explode('.', $model_fn);
+					Overloadable::overload(Inflector::camelize($name));
 					$loadedModels[$model_fn] = $model_fn;
 				}
 			}
@@ -87,9 +87,9 @@
 			} else {
 				die('Plugins must have a class named ' . $pluginAppModel);
 			}
+			Overloadable::overload($pluginAppModel);
 		}
 
-		Overloadable::overload($pluginAppModel);
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
 
 		foreach(listClasses($pluginModelDir)as $modelFileName) {
@@ -98,6 +98,7 @@
 
 			if (!class_exists($className)) {
 				require($pluginModelDir . $modelFileName);
+				Overloadable::overload($className);
 			}
 		}
 	}
@@ -147,6 +148,7 @@
 			foreach($paths->modelPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					require($path . $name . '.php');
+					Overloadable::overload($className);
 					return true;
 				}
 			}
