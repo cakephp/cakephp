@@ -73,7 +73,7 @@
 		}
 	}
 /**
- * Loads a loadPluginController.
+ * Loads all plugin models.
  *
  * @param  string  $plugin Name of plugin
  * @return
@@ -130,23 +130,30 @@
  * Loads a model by CamelCase name.
  */
 	function loadModel($name) {
-		$name = Inflector::underscore($name);
-		$paths = Configure::getInstance();
 		if (!class_exists('AppModel')) {
 			if (file_exists(APP . 'app_model.php')) {
 				require(APP . 'app_model.php');
 			} else {
 				require(CAKE . 'app_model.php');
 			}
+			Overloadable::overload('AppModel');
 		}
 
-		foreach($paths->modelPaths as $path) {
-			if (file_exists($path . $name . '.php')) {
-				require($path . $name . '.php');
-				return true;
+		if (!class_exists($name)) {
+			$className = $name;
+			$name = Inflector::underscore($name);
+			$paths = Configure::getInstance();
+
+			foreach($paths->modelPaths as $path) {
+				if (file_exists($path . $name . '.php')) {
+					require($path . $name . '.php');
+					return true;
+				}
 			}
+			return false;
+		} else {
+			return true;
 		}
-		return false;
 	}
 /**
  * Loads all controllers.
@@ -216,7 +223,7 @@
 		}
 	}
 /**
- * Loads a loadPluginController.
+ * Loads a plugin's controller.
  *
  * @param  string  $plugin Name of plugin
  * @param  string  $controller Name of controller to load
