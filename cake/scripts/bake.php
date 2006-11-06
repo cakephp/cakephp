@@ -1175,7 +1175,7 @@ class Bake {
 		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
 			$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
 		} else {
-			$wannaUseScaffold = $this->getInput("Would you like to use scaaffolding?", array('y','n'), 'y');
+			$wannaUseScaffold = $this->getInput("Would you like to use scaffolding?", array('y','n'), 'y');
 		}
 
 		$admin = null;
@@ -1463,7 +1463,7 @@ class Bake {
  * @return Success
  */
 	function doUnitTest() {
-		if (is_dir('vendors'.DS.'simpletest') || is_dir(APP_DIR.DS.'vendors'.DS.'simpletest')) {
+		if (is_dir(VENDORS.'simpletest') || is_dir(ROOT.DS.APP_DIR.DS.'vendors'.DS.'simpletest')) {
 			return true;
 		}
 		$unitTest = $this->getInput('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
@@ -1715,19 +1715,20 @@ class Bake {
 				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
 				$out .= "\t\t\$result = \$this->object->doSomething();\n";
 				$out .= "\t\t\$expected = 1;\n";
-				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
+				$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
 				$path = MODEL_TESTS;
 				$filename = $this->__singularName($className).'.test.php';
 			break;
 			case 'controller':
+				$out .= "loadController('$className');\n\n";
 				$out .= "class {$className}ControllerTestCase extends UnitTestCase {\n";
 				$out .= "\tvar \$object = null;\n\n";
-				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
+				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}Controller();\n";
 				$out .= "\t}\n\n\tfunction tearDown()\n\t{\n\t\tunset(\$this->object);\n\t}\n";
 				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
 				$out .= "\t\t\$result = \$this->object->doSomething();\n";
 				$out .= "\t\t\$expected = 1;\n";
-				$out .= "\t\t\$this->assertEquals(\$result, \$expected);\n\t}\n\t*/\n}";
+				$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
 				$path = CONTROLLER_TESTS;
 				$filename = $this->__pluralName($className.'Controller').'.test.php';
 			break;
