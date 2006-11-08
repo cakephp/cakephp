@@ -127,20 +127,27 @@ class Validation extends Object {
 	}
 /**
  * Returns false if field is left blank -OR- only whitespace characters are present in it's value
- * Whitespace characters include Space, Tab, Carriage Return, Newline, Formfeed
+ * Whitespace characters include Space, Tab, Carriage Return, Newline
  *
- * @param array or string $check
+ * $check can be passed as an array:
+ * array('check' => 'valueToCheck');
+ *
+ * @param mixed $check
  * @return boolean
  */
 	function blank($check) {
 		if (is_array($check)) {
 			$this->_extract($check);
-			$this->regex = '/\\S*/';
 		} else {
 			$this->check = $check;
-			$this->regex = '/\\S*/';
 		}
-		return $this->_check();
+
+		$this->regex = '/[^\\s]/';
+		if($this->_check() === true){
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	function cc($check, $regex = null, $type = 'fast') {
