@@ -39,40 +39,43 @@
 
 class Validation extends Object {
 /**
- * Enter description here...
+ * Set the the value of methods $check param.
  *
- * @var unknown_type
+ * @var string
  */
 	var $check = null;
 /**
- * Enter description here...
+ * Set to a valid regular expression in the class methods.
+ * Can be set from $regex param also
  *
- * @var unknown_type
+ * @var string
  */
 	var $regex = null;
 /**
- * Enter description here...
+ * Some class methods use a country to determine proper validation.
+ * This can be passed to methods in the $country param
  *
- * @var unknown_type
+ * @var string
  */
 	var $country = null;
 /**
- * Enter description here...
+ * Some class methods use a deeper validation when set to true
  *
- * @var unknown_type
+ * @var string
  */
  	var $deep = null;
 /**
- * Enter description here...
+ * Some class methods use the $type param to determine which validation to perfom in the method
  *
- * @var unknown_type
+ * @var string
  */
 	var $type = null;
 
 /**
- * Enter description here...
+ * Holds an array of errors messages set in this class.
+ * These are used for debugging purposes
  *
- * @var unknown_type
+ * @var array
  */
 	var $errors = array();
 
@@ -90,6 +93,7 @@ class Validation extends Object {
  *
  * @param mixed $check
  * @return boolean
+ * @access public
  */
 	function alphaNumeric($check) {
 		$this->__reset();
@@ -117,6 +121,7 @@ class Validation extends Object {
  * @param int $min
  * @param int $max
  * @return boolean
+ * @access public
  */
 	function between($check, $min, $max) {
 		$length = strlen($check);
@@ -136,6 +141,7 @@ class Validation extends Object {
  *
  * @param mixed $check
  * @return boolean
+ * @access public
  */
 	function blank($check) {
 		$this->__reset();
@@ -238,20 +244,22 @@ class Validation extends Object {
 /**
  * Used to compare 2 numeric values
  *
- * @param int $check1
+ * @param mixed $check1 if string is passed for a string must also be passed for $check2
+ * 							used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
  * @param string $operator Can be either a word or operand
  * 								is greater >, is less <, greater or equal >=
  * 								less or equal <=, is less <, equal to ==, not equal !=
  *
- * @param int $check2
- * @return unknown
+ * @param int $check2 only needed if $check1 is a string
+ * @return boolean
+ * @access public
  */
 	function comparison($check1, $operator = null, $check2 = null) {
 		$return = false;
-		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", low($operator));
 		if (is_array($check1)) {
-			extract($params, EXTR_OVERWRITE);
+			extract($check1, EXTR_OVERWRITE);
 		}
+		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", low($operator));
 
 		switch($operator) {
 			case 'isgreater':
@@ -289,16 +297,33 @@ class Validation extends Object {
 				if($check1 != $check2) {
 					$return = true;
 				}
-				break;
+			break;
+			default:
+				$this->errors[] = __('You must define the $operator parameter for Validation::comparison()', true);
+				$return = false;
+			break;
 		}
 		return $return;
 	}
 
+/**
+ * Used when a custom regular expression is needed.
+ *
+ * @param mixed $check When used as a string, $regex must also be a valid regular expression.
+ *								As and array: array('check' => value, 'regex' => 'valid regular expression')
+ * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
+ * @return boolean
+ * @access public
+ */
 	function custom($check, $regex = null) {
 		$this->check = $check;
 		$this->regex = $regex;
 		if (is_array($check)) {
 			$this->_extract($check);
+		}
+		if($this->regex === null){
+			$this->errors[] = __('You must define a regular expression for Validation::custom()');
+			return false;
 		}
 		return $this->_check();
 	}
