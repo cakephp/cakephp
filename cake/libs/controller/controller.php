@@ -96,12 +96,12 @@ class Controller extends Object {
  */
 	var $data = array();
 /**
- * POST'ed model data
+ * Pagination defaults
  *
  * @var array
  * @access public
  */
-	var $paginate = array('limit' => 20);
+	var $paginate = array('limit' => 20, 'page' => 1);
 /**
  * Sub-path for view files
  *
@@ -417,7 +417,9 @@ class Controller extends Object {
 				header("HTTP/1.1 {$status} " . $codes[$status]);
 			}
 		}
-		header('Location: ' . Router::url($url, defined('SERVER_IIS')));
+		if ($url !== null) {
+			header('Location: ' . Router::url($url, defined('SERVER_IIS')));
+		}
 	}
 /**
  * Saves a variable to use inside a template.
@@ -560,8 +562,10 @@ class Controller extends Object {
 	}
 /**
  * @deprecated
+ * @see Controller::set
  */
 	function _setTitle($pageTitle) {
+		trigger_error('Deprecated: Use Controller::set("title", "...") instead', E_USER_WARNING);
 		$this->pageTitle = $pageTitle;
 	}
 /**
@@ -933,7 +937,6 @@ class Controller extends Object {
  * Handles automatic pagination of model records
  *
  * @param mixed $object
- * @param array $options
  * @param mixed $scope
  * @param array $whitelist
  * @return array Model query results
@@ -1016,7 +1019,7 @@ class Controller extends Object {
 			$defaults['conditions'] = array();
 		}
 
-		extract(am($defaults, $options));
+		extract(am(array('page' => 1, 'limit' => 20), $defaults, $options));
 		if ((is_array($scope) || is_string($scope)) && !empty($scope)) {
 			$conditions = array($conditions, $scope);
 		}

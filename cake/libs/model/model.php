@@ -716,7 +716,7 @@ class Model extends Overloadable {
 		}
 
 		if (is_array($one)) {
-			if (countdim($one) == 1) {
+			if (Set::countDim($one) == 1) {
 				$data = array($this->name => $one);
 			} else {
 				$data = $one;
@@ -1259,6 +1259,10 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->id = $this->getID();
 		$offset = null;
+
+		if (empty($page) || !is_numeric($page) || intval($page) < 1) {
+			$page = 1;
+		}
 
 		if ($page > 1 && $limit != null) {
 			$offset = ($page - 1) * $limit;
