@@ -150,36 +150,64 @@ class Validation extends Object {
 		}
 	}
 
-	function cc($check, $regex = null, $type = 'fast') {
+/**
+ * Validation of credit card numbers
+ *
+ * Returns true if $check is in the proper credit card format
+ *
+ *
+ * @param mixed $check credit card number to validate
+ * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
+ * 							if an array is used only the values of the array are checked.
+ * 							Example: array('amex', 'bankcard', 'maestro')
+ * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
+ * @see Validation::_luhn()
+ * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
+ * @return boolean
+ * @access public
+ */
+	function cc($check, $type = 'fast', $deep = false, $regex = null) {
+		$this->check = $check;
 		$this->type = $type;
+		$this->deep = $deep;
+		$this->regex = $regex;
+
 		if (is_array($check)) {
 			$this->_extract($check);
-		} else {
-			$this->check = $check;
 		}
 
-		if(isset($this->regex)) {
+		$this->check = str_replace(array('-', ' '), '', $this->check);
+
+		if(strlen($this->check) < 13){
+			return false;
+		}
+
+		if(!is_null($this->regex)) {
 			return $this->_check();
 		}
 
-		$cards = array('all' => array('visa'    => '/^4\\d{12}(\\d{3})?$/',
-												'mc'      => '/^5[1-5]\\d{14}$/',
-												'disc'    => '/^6011\\d{12}$/',
-												'amex'    => '/^3[4|7]\\d{13}$/',
-												'diners'  => '/^3[0|6|8]\\d{12}$/',
-												'enroute' => '/^2[014|149]\\d{11}$/',
-												'jcb'     => '/^3[088|096|112|158|337|528]\\d{12}$/',
-												'switch'  => '/^(49030[2-9]|49033[5-9]|49110[1-2]|4911(7[4-9]|8[1-2])|4936[0-9]{2}|564182|6333[0-4][0-9]|6759[0-9]{2})\\d{10}(\\d{2,3})?$/',
-												'delta'   => '/^4(1373[3-7]|462[0-9]{2}|5397[8|9]|54313|5443[2-5]|54742|567(2[5-9]|3[0-9]|4[0-5])|658[3-7][0-9]|659(0[1-9]|[1-4][0-9]|50)|844[09|10]|909[6-7][0-9]|9218[1|2]|98824)\\d{10}$/',
-												'solo'    => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/'),
-												'fast'   => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/');
+		$cards = array('all' => array('amex'     => '/^3[4|7]\\d{13}$/',
+												'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
+												'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
+												'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
+												'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
+												'enroute'  => '/^2(?:014|149)\\d{11}$/',
+												'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
+												'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
+												'mc'       => '/^5[1-5]\\d{14}$/',
+												'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
+												'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
+												'visa'     => '/^4\\d{12}(\\d{3})?$/',
+												'voyager'  => '/^8699[0-9]{11}$/'),
+							'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/');
 
 		if (is_array($this->type)) {
 			foreach ($this->type as $key => $value) {
-				$card = low($key);
+				$card = low($value);
 				$this->regex = $cards['all'][$card];
+
 				if($this->_check()) {
-					return true;
+					return $this->_luhn();
 				}
 			}
 		} else {
@@ -188,14 +216,49 @@ class Validation extends Object {
 					$this->regex = $value;
 
 					if($this->_check()) {
-						return true;
+						return $this->_luhn();
 					}
 				}
 			} else {
 				$this->regex = $cards['fast'];
-				return $this->_check();
+
+				if($this->_check()) {
+					return $this->_luhn();
+				}
 			}
 		}
+	}
+
+/**
+ * Luhn algorithm
+ *
+ * @see http://en.wikipedia.org/wiki/Luhn_algorithm
+ * @return boolean
+ * @access protected
+ */
+	function _luhn() {
+		if($this->deep === true){
+			$sum = 0;
+			$length = strlen($this->check);
+
+			for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
+				$sum += substr($this->check, $position, 1);
+			}
+
+			for ($position = ($length % 2); $position < $length; $position += 2) {
+				$number = substr($this->check, $position, 1) * 2;
+				if ($number < 10) {
+					$sum += $number;
+				} else {
+					$sum += $number - 9;
+				}
+			}
+
+			if ($sum % 10 != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function comparison($check1, $operator = null, $check2 = null) {
