@@ -175,9 +175,15 @@ class Set extends Object {
  */
 	function extract($data, $path) {
 		if (!is_array($path)) {
-			$path = explode('.', $path);
+			if (strpos($path, '/') !== 0 && strpos($path, './') === false) {
+				$path = explode('.', $path);
+			} else {
+			}
 		}
 		$tmp = array();
+		if (!is_array($path) || empty($path)) {
+			return null;
+		}
 
 		foreach($path as $i => $key) {
 			if (intval($key) > 0 || $key == '0') {
@@ -200,6 +206,32 @@ class Set extends Object {
 			}
 		}
 		return $data;
+	}
+
+	function isEqual($val1, $val2 = null) {
+		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+			$val2 = $val1;
+			$val1 = $this->get();
+		}
+	}
+/**
+ * Counts the dimensions of an array
+ *
+ * @param array $array
+ * @return int The number of dimensions in $array
+ */
+	function countDim($array = null) {
+		if ($array === null) {
+			$array = $this->get();
+		} elseif (is_object($array) && is_a($array, 'set')) {
+			$array = $array->get();
+		}
+		if (is_array(reset($array))) {
+			$return = Set::countDim(reset($array)) + 1;
+		} else {
+			$return = 1;
+		}
+		return $return;
 	}
 }
 
