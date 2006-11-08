@@ -362,7 +362,7 @@ class Router extends Overloadable {
 
 		$params = isset($_this->__params[0]) ? $_this->__params[0] : array();
 		$path = isset($_this->__paths[0]) ? $_this->__paths[0] : array();
-		$base = strip_plugin($path['base'], $params['plugin']);
+		$base = $_this->stripPlugin($path['base'], $params['plugin']);
 		$extension = null;
 		$mapped = null;
 
@@ -484,7 +484,7 @@ class Router extends Overloadable {
 		return $output . $extension;
 	}
 /**
- * Maps a URL array onto a route and returns the string result, of false if no match
+ * Maps a URL array onto a route and returns the string result, or false if no match
  *
  * @param array Route
  * @param array URL
@@ -493,7 +493,23 @@ class Router extends Overloadable {
 	function mapRouteElements($route, $url) {
 		$url = am(array('action' => 'index'), $url);
 		$route[3] = am(array('action' => 'index'), $route[3]);
+		$elements = array_diff_assoc($url, $route[3]);
+		$diffs  = array_diff_assoc($route[3], $url);
 		$match = false;
+
+		if ($route[3] === $url) {
+			return $route[0];
+		} elseif (empty($diffs)) {
+			
+		}
+
+		// if ($match == false) { ... }
+		
+		if ($match) {
+			
+		} else {
+			$url = false;
+		}
 	}
 /**
  * Returns the route matching the current request URL
@@ -512,6 +528,26 @@ class Router extends Overloadable {
 	function currentRoute() {
 		$_this =& Router::getInstance();
 		return $_this->__currentRoute[count($_this->__currentRoute) - 1];
+	}
+/**
+ * removes the plugin name from the base url
+ *
+ * @param string $base
+ * @param string $plugin
+ * @return base url with plugin name removed if present
+ */
+	function stripPlugin($base, $plugin) {
+		if ($plugin != null) {
+			$base = preg_replace('/' . $plugin . '/', '', $base);
+			$base = str_replace('//', '', $base);
+			$pos1 = strrpos($base, '/');
+			$char = strlen($base) - 1;
+
+			if ($pos1 == $char) {
+				$base = substr($base, 0, $char);
+			}
+		}
+		return $base;
 	}
 /**
  * Instructs the router to parse out file extensions from the URL. For example,
