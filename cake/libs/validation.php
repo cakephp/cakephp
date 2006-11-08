@@ -183,7 +183,9 @@ class Validation extends Object {
 		}
 
 		if(!is_null($this->regex)) {
-			return $this->_check();
+			if($this->_check()) {
+				return $this->_luhn();
+			}
 		}
 
 		$cards = array('all' => array('amex'     => '/^3[4|7]\\d{13}$/',
@@ -238,6 +240,9 @@ class Validation extends Object {
  */
 	function _luhn() {
 		if($this->deep === true){
+			if($this->check == 0) {
+				return false;
+			}
 			$sum = 0;
 			$length = strlen($this->check);
 
