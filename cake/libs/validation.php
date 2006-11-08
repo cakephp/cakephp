@@ -92,10 +92,11 @@ class Validation extends Object {
  * @return boolean
  */
 	function alphaNumeric($check) {
+		$this->__reset();
+		$this->check = $check;
+
 		if (is_array($check)) {
 			$this->_extract($check);
-		} else {
-			$this->check = $check;
 		}
 
 		$this->regex = '/[^\\dA-Z]/i';
@@ -119,6 +120,7 @@ class Validation extends Object {
  */
 	function between($check, $min, $max) {
 		$length = strlen($check);
+
 		if ($length >= $min && $length <= $max) {
 			return true;
 		} else {
@@ -136,10 +138,11 @@ class Validation extends Object {
  * @return boolean
  */
 	function blank($check) {
+		$this->__reset();
+		$this->check = $check;
+
 		if (is_array($check)) {
 			$this->_extract($check);
-		} else {
-			$this->check = $check;
 		}
 
 		$this->regex = '/[^\\s]/';
@@ -167,6 +170,7 @@ class Validation extends Object {
  * @access public
  */
 	function cc($check, $type = 'fast', $deep = false, $regex = null) {
+		$this->__reset();
 		$this->check = $check;
 		$this->type = $type;
 		$this->deep = $deep;
@@ -232,73 +236,56 @@ class Validation extends Object {
 	}
 
 /**
- * Luhn algorithm
+ * Used to compare 2 numeric values
  *
- * @see http://en.wikipedia.org/wiki/Luhn_algorithm
- * @return boolean
- * @access protected
+ * @param int $check1
+ * @param string $operator Can be either a word or operand
+ * 								is greater >, is less <, greater or equal >=
+ * 								less or equal <=, is less <, equal to ==, not equal !=
+ *
+ * @param int $check2
+ * @return unknown
  */
-	function _luhn() {
-		if($this->deep === true){
-			if($this->check == 0) {
-				return false;
-			}
-			$sum = 0;
-			$length = strlen($this->check);
-
-			for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
-				$sum += substr($this->check, $position, 1);
-			}
-
-			for ($position = ($length % 2); $position < $length; $position += 2) {
-				$number = substr($this->check, $position, 1) * 2;
-				if ($number < 10) {
-					$sum += $number;
-				} else {
-					$sum += $number - 9;
-				}
-			}
-
-			if ($sum % 10 != 0) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	function comparison($check1, $operator = null, $check2 = null) {
 		$return = false;
+		$operator = str_replace(array(" ", "\t", "\n", "\r", "\0", "\x0B"), "", low($operator));
 		if (is_array($check1)) {
 			extract($params, EXTR_OVERWRITE);
 		}
 
 		switch($operator) {
-			case 'is greater':
+			case 'isgreater':
+			case '>':
 				if($check1 > $check2) {
 					$return = true;
 				}
 			break;
-			case 'is less':
+			case 'isless':
+			case '<':
 				if($check1 < $check2) {
 					$return = true;
 				}
 			break;
-			case 'greater or equal':
+			case 'greaterorequal':
+			case '>=':
 				if($check1 >= $check2) {
 					$return = true;
 				}
 			break;
-			case 'less or equal':
-				if($check1 > $check2) {
+			case 'lessorequal':
+			case '<=':
+				if($check1 <= $check2) {
 					$return = true;
 				}
 			break;
-			case 'equal to':
+			case 'equalto':
+			case '==':
 				if($check1 == $check2) {
 					$return = true;
 				}
 			break;
-			case 'not equal':
+			case 'notequal':
+			case '!=':
 				if($check1 != $check2) {
 					$return = true;
 				}
@@ -308,11 +295,10 @@ class Validation extends Object {
 	}
 
 	function custom($check, $regex = null) {
+		$this->check = $check;
+		$this->regex = $regex;
 		if (is_array($check)) {
 			$this->_extract($check);
-		} else {
-			$this->check = $check;
-			$this->regex = $regex;
 		}
 		return $this->_check();
 	}
@@ -512,6 +498,49 @@ class Validation extends Object {
 		if (isset($type)) {
 			$this->type = $type;
 		}
+	}
+
+/**
+ * Luhn algorithm
+ *
+ * @see http://en.wikipedia.org/wiki/Luhn_algorithm
+ * @return boolean
+ * @access protected
+ */
+	function _luhn() {
+		if($this->deep === true){
+			if($this->check == 0) {
+				return false;
+			}
+			$sum = 0;
+			$length = strlen($this->check);
+
+			for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
+				$sum += substr($this->check, $position, 1);
+			}
+
+			for ($position = ($length % 2); $position < $length; $position += 2) {
+				$number = substr($this->check, $position, 1) * 2;
+				if ($number < 10) {
+					$sum += $number;
+				} else {
+					$sum += $number - 9;
+				}
+			}
+
+			if ($sum % 10 != 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function __reset(){
+		$this->check = null;
+		$this->regex = null;
+		$this->country = null;
+		$this->deep = null;
+		$this->type = null;
 	}
 }
 ?>
