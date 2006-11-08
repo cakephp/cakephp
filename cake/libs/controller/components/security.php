@@ -44,6 +44,8 @@ class SecurityComponent extends Object {
 
 	var $requirePost = array();
 
+	var $requireSecure = array();
+
 	var $requireAuth = array();
 
 	var $requireLogin = array();
@@ -74,6 +76,18 @@ class SecurityComponent extends Object {
 
 				if (!$this->RequestHandler->isPost()) {
 					if (!$this->blackHole($controller, 'post')) {
+						return null;
+					}
+				}
+			}
+		}
+
+		// Check requireSecure
+		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
+			if (in_array($controller->action, $this->requireSecure) || $this->requireSecure == array('*')) {
+
+				if (!$this->RequestHandler->isSSL()) {
+					if (!$this->blackHole($controller, 'secure')) {
 						return null;
 					}
 				}
@@ -163,11 +177,11 @@ class SecurityComponent extends Object {
  */
 	function blackHole(&$controller, $error = '') {
 		if ($this->blackHoleCallback == null) {
+			$code = 404;
 			if ($error == 'login') {
-				header('HTTP/1.0 401 Unauthorized');
-			} else {
-				header('HTTP/1.0 404 Not Found');
+				$code = 401;
 			}
+			$controller->redirect(null, $code);
 			exit();
 		} else {
 			return $this->__callback($controller, $this->blackHoleCallback, array($error));
@@ -181,6 +195,16 @@ class SecurityComponent extends Object {
 		$this->requirePost = func_get_args();
 		if (empty($this->requirePost)) {
 			$this->requirePost = array('*');
+		}
+	}
+/**
+ * Sets the actions that require a request that is SSL-secured, or empty for all actions
+ *
+ */
+	function requireSecure() {
+		$this->requireSecure = func_get_args();
+		if (empty($this->requireSecure)) {
+			$this->requireSecure = array('*');
 		}
 	}
 /**
