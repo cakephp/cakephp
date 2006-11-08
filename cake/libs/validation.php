@@ -80,10 +80,43 @@ class Validation extends Object {
 		parent::__construct();
 	}
 
+/**
+ * Checks that a string contains only integer or letters
+ *
+ * Returns true if string contains only integer or letters
+ *
+ * $check can be passed as an array:
+ * array('check' => 'valueToCheck');
+ *
+ * @param mixed $check
+ * @return boolean
+ */
 	function alphaNumeric($check) {
+		if (is_array($check)) {
+			$this->_extract($check);
+		} else {
+			$this->check = $check;
+		}
 
+		$this->regex = '/[^\\dA-Z]/i';
+		if($this->_check() === true){
+			return false;
+		} else {
+			return true;
+		}
 	}
 
+/**
+ * Checks that a string is within s specified range.
+
+ * Spaces are included in the character count
+ * Returns true is string matches value min, max, or between min and max,
+ *
+ * @param string $check
+ * @param int $min
+ * @param int $max
+ * @return boolean
+ */
 	function between($check, $min, $max) {
 		$length = strlen($check);
 		if ($length >= $min && $length <= $max) {
