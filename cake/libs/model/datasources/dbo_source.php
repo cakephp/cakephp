@@ -302,6 +302,7 @@ class DboSource extends DataSource {
  * @see DboSource::fetchRow
  */
 	function fetchArray() {
+		trigger_error('Deprecated: Use DboSource::fetchRow() instead', E_USER_WARNING);
 		return $this->fetchRow();
 	}
 /**
@@ -309,6 +310,7 @@ class DboSource extends DataSource {
  * @see DboSource::fetchRow
  */
 	function one($sql) {
+		trigger_error('Deprecated: Use DboSource::fetchRow($sql) instead', E_USER_WARNING);
 		return $this->fetchRow($sql);
 	}
 /**
@@ -504,7 +506,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($this->execute('INSERT INTO ' . $this->fullTableName($model) . ' (' . join(',', $fieldInsert). ') VALUES (' . join(',', $valueInsert) . ')')) {
-			if ($id === null) {
+			if (empty($id)) {
 				$id = $this->lastInsertId($this->fullTableName($model, false), $model->primaryKey);
 			}
 			$model->setInsertID($id);
@@ -639,8 +641,6 @@ class DboSource extends DataSource {
 						}
 
 						if (isset($model->{$className}) && is_object($model->{$className})) {
-							$data = $model->{$className}->afterFind(array(array($key => $results[$i][$key])), false);
-						} else {
 							$data = $model->{$className}->afterFind(array(array($key => $results[$i][$key])), false);
 						}
 						$results[$i][$key] = $data[0][$key];
@@ -1549,7 +1549,7 @@ class DboSource extends DataSource {
 		}
 
 		if (is_array($keys)) {
-			if (countdim($keys) > 1) {
+			if (Set::countDim($keys) > 1) {
 				$new = array();
 
 				foreach($keys as $val) {
