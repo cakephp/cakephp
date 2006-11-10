@@ -194,7 +194,7 @@ class Dispatcher extends Object {
 		}
 
 		$controller->base = $this->base;
-		$base = strip_plugin($this->base, $this->plugin);
+		$base = Router::stripPlugin($this->base, $this->plugin);
 		if(defined("BASE_URL")) {
 			$controller->here = $base . $this->admin . $url;
 		} else {

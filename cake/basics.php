@@ -1199,12 +1199,11 @@
 		}
     }
 /**
- * Counts the dimensions of an array
- *
- * @param array $array
- * @return int The number of dimensions in $array
+ * @deprecated
+ * @see Set::countDim
  */
 	function countdim($array) {
+		trigger_error('Deprecated: Use Set::countDim instead', E_USER_WARNING);
 		if (is_array(reset($array))) {
 			$return = countdim(reset($array)) + 1;
 		} else {
@@ -1298,25 +1297,5 @@
 		} else {
 			return false;
 		}
-	}
-/**
- * removed the plugin name from the base url
- *
- * @param string $base
- * @param string $plugin
- * @return base url with plugin name removed if present
- */
-	function strip_plugin($base, $plugin){
-		if ($plugin != null) {
-			$base = preg_replace('/' . $plugin . '/', '', $base);
-			$base = str_replace('//', '', $base);
-			$pos1 = strrpos($base, '/');
-			$char = strlen($base) - 1;
-
-			if ($pos1 == $char) {
-				$base = substr($base, 0, $char);
-			}
-		}
-		return $base;
 	}
 ?>

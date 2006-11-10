@@ -364,12 +364,19 @@ class Router extends Overloadable {
 		$path = isset($_this->__paths[0]) ? $_this->__paths[0] : array();
 		$base = $_this->stripPlugin($path['base'], $params['plugin']);
 		$extension = null;
+		$output = null;
 		$mapped = null;
+		$q = null;
 
 		if (is_array($url) && !empty($url)) {
 			if (isset($url['full_base']) && $url['full_base'] == true) {
 				$full = true;
 				unset($url['full_base']);
+			}
+
+			if (isset($url['?'])) {
+				$q = $url['?'];
+				unset($url['?']);
 			}
 
 			if (!isset($url['action'])) {
@@ -392,6 +399,17 @@ class Router extends Overloadable {
 				$url[CAKE_ADMIN] = $params['admin'];
 			}
 
+			foreach ($_this->routes as $route) {
+				$match = $_this->mapRouteElements($route, $url);
+				if ($match !== false) {
+					list($output, $url) = $match;
+					if ($output{0} == '/') {
+						$output = substr($output, 1);
+					}
+					break;
+				}
+			}
+
 			$named = $args = array();
 			$keys = array_keys($url);
 			$count = count($keys);
@@ -408,31 +426,9 @@ class Router extends Overloadable {
 				}
 			}
 
-			if (empty($named) && empty($args) && $url['action'] == 'index') {
-				$url['action'] = null;
-			}
-
-			foreach ($_this->routes as $route) {
-				$diff = array_diff_assoc($url, $route[3]);
-				if (empty($diff)) {
-					$match = true;
-					foreach ($route[4] as $key => $pattern) {
-						if (isset($url[$key])) {
-							if (!preg_match($pattern, $url[$key])) {
-								$match = false;
-								break;
-							}
-						} elseif (isset($route[2]) && $route[2] == null) {
-							$match = false;
-							break;
-						}
-					}
-					if ($match) {
-						$mapped = $_this->mapRouteElements($route, $url);
-						foreach (array_keys($route[3]) as $key) {
-							$url[$key] = '';
-						}
-					}
+			if ($match === false) {
+				if (empty($named) && empty($args) && $url['action'] == 'index') {
+					$url['action'] = null;
 				}
 			}
 
@@ -454,17 +450,17 @@ class Router extends Overloadable {
 				$combined = join('/', $named);
 			}
 
-			if (isset($url['?']) && !empty($url['?'])) {
-				$url['?'] = '?' . $url['?'];
-			} else {
-				$url['?'] = null;
+			if ($match === false) {
+				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+				if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
+					array_unshift($urlOut, CAKE_ADMIN);
+				}
+				$output = join('/', $urlOut);
+			} elseif (!empty($combined)) {
+				$output .= '/' . $combined;
 			}
 
-			$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
-			if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
-				array_unshift($urlOut, CAKE_ADMIN);
-			}
-			$output = $base . '/' . join('/', $urlOut);
+			$output = $base . '/' . $output;
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (strpos($url, '#') === 0)) {
 				return $url;
@@ -481,7 +477,7 @@ class Router extends Overloadable {
 		if ($full) {
 			$output = FULL_BASE_URL . $output;
 		}
-		return $output . $extension;
+		return $output . $extension . $_this->queryString($q);
 	}
 /**
  * Maps a URL array onto a route and returns the string result, or false if no match
@@ -495,21 +491,51 @@ class Router extends Overloadable {
 		$route[3] = am(array('action' => 'index'), $route[3]);
 		$elements = array_diff_assoc($url, $route[3]);
 		$diffs  = array_diff_assoc($route[3], $url);
-		$match = false;
+		$diffed = array_keys($diffs);
 
-		if ($route[3] === $url) {
-			return $route[0];
-		} elseif (empty($diffs)) {
-			
+		if ($route[3] == $url) {
+			return array($route[0], array());
+		} elseif (!empty($diffs)) {
+			if (isset($route[3]['controller']) && in_array('controller', $diffed)) {
+				return false;
+			}
+			if (isset($route[3]['action']) && in_array('action', $diffed)) {
+				return false;
+			}
 		}
 
-		// if ($match == false) { ... }
-		
-		if ($match) {
-			
-		} else {
-			$url = false;
+		$required = array_diff(array_diff($route[2], array_keys($route[3])), array_keys($url));
+		if (!empty($required)) {
+			return false;
 		}
+
+		foreach ($route[4] as $key => $reg) {
+			if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
+				pr($route[0].':break4');
+				return false;
+			}
+		}
+
+		$out = str_replace(array('/bare', '/*', '/ajax'), '', $route[0]);
+		foreach ($route[2] as $key) {
+			$out = str_replace(':' . $key, $url[$key], $out);
+			unset($url[$key]);
+		}
+		$_this =& Router::getInstance();
+		return array($out, $url);
+	}
+/**
+ * Generates a well-formed querystring from $q
+ *
+ * @param mixed Querystring
+ * @param array Extra querystring parameters
+ * @return array
+ */
+	function queryString($q, $extra = array()) {
+		if (empty($q)) {
+			return null;
+		}
+		return '?' . $q;
 	}
 /**
  * Returns the route matching the current request URL

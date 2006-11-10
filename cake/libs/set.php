@@ -207,12 +207,46 @@ class Set extends Object {
 		}
 		return $data;
 	}
-
+/**
+ * Determines if two Sets or arrays are equal
+ *
+ * @param array $val1
+ * @param array $val2
+ * @return boolean
+ */
 	function isEqual($val1, $val2 = null) {
 		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
 			$val2 = $val1;
 			$val1 = $this->get();
 		}
+	}
+/**
+ * Determines if one Set or array contains the exact keys and values of another.
+ *
+ * @param array $val1
+ * @param array $val2
+ * @return boolean
+ */
+	function contains($val1, $val2 = null) {
+		if ($val2 == null && is_a($this, 'set')) {
+			$val2 = $val1;
+			$val1 = $this->get();
+		} elseif ($val2 != null && is_object($val2) && is_a($val2, 'set')) {
+			$val2 = $val2->get();
+		}
+
+		foreach ($val2 as $key => $val) {
+			if (is_numeric($key)) {
+				if (!in_array($val, $val1)) {
+					return false;
+				}
+			} else {
+				if (!isset($val1[$key]) || $val1[$key] != $val) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 /**
  * Counts the dimensions of an array
