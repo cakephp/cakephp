@@ -100,12 +100,23 @@ class JavascriptHelper extends AppHelper {
 /**
  * Returns a JavaScript include tag (SCRIPT element)
  *
- * @param  string  $url URL to JavaScript file.
+ * @param  mixed  $url String URL to JavaScript file, or an array of URLs.
  * @param  boolean $inline If true, the <script /> tag will be printed inline,
  *                         otherwise it will be printed in the <head />
  * @return string
  */
 	function link($url, $inline = true) {
+		if (is_array($url)) {
+			$out = '';
+			foreach ($url as $i) {
+				$out .= "\n\t" . $this->link($i, $inline);
+			}
+			if ($inline)  {
+				return $out . "\n";
+			}
+			return;
+		}
+
 		if (strpos($url, '.') === false && strpos($url, '?') === false) {
 			$url .= '.js';
 		}
@@ -126,8 +137,10 @@ class JavascriptHelper extends AppHelper {
  * @param  string $url URL to JavaScript file.
  * @return string
  * @deprecated As of 1.2, use JavascriptHelper::link()
+ * @see JavascriptHelper::link
  */
 	function linkOut($url) {
+		trigger_error('(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead', E_USER_WARNING);
 		if (strpos($url, ".") === false) {
 			$url .= ".js";
 		}
