@@ -36,42 +36,6 @@ uses('set');
  */
 class XmlHelper extends AppHelper {
 
-	var $helpers = array('Html');
-/**
- * Base URL
- *
- * @access public
- * @var string
- */
-	var $base = null;
-/**
- * URL to current action.
- *
- * @access public
- * @var string
- */
-	var $here = null;
-/**
- * Parameter array.
- *
- * @access public
- * @var array
- */
-	var $params = array();
-/**
- * Current action.
- *
- * @access public
- * @var string
- */
-	var $action = null;
-/**
- * POSTed model data
- *
- * @access public
- * @var array
- */
-	var $data = null;
 /**
  * Name of the current model
  *
@@ -254,7 +218,7 @@ class XmlHelper extends AppHelper {
 					$out .= $this->__composeContent($content[$keys[$i]]);
 				} elseif (is_array($content[$keys[$i]])) {
 					$attr = $child = array();
-					if (countdim($content[$keys[$i]]) >= 2) {
+					if (Set::countDim($content[$keys[$i]]) >= 2) {
 						
 					} else {
 						

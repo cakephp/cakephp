@@ -36,7 +36,11 @@ uses('view' . DS . 'helpers' . DS . 'xml');
 
 class RssHelper extends XmlHelper {
 
-	var $helpers = array('Html', 'Text', 'Time');
+	var $Html = null;
+
+	var $Time = null;
+
+	var $helpers = array('Time');
 /**
  * Base URL
  *
@@ -180,14 +184,14 @@ class RssHelper extends XmlHelper {
 						unset($attrib['url']);
 						$val = $val['url'];
 					}
-					$val = $this->Html->url($val, true);
+					$val = Router::url($val, true);
 				break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
-						$attrib['url'] = $this->Html->url($val['url'], true);
+						$attrib['url'] = Router::url($val['url'], true);
 						$val = $val['title'];
 					} elseif (is_array($val)) {
-						$attrib['url'] = $this->Html->url($val[0], true);
+						$attrib['url'] = Router::url($val[0], true);
 						$val = $val[1];
 					}
 				break;
@@ -200,7 +204,7 @@ class RssHelper extends XmlHelper {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
 						}
 					}
-					$val['url'] = $html->Html->url($val['url'], true);
+					$val['url'] = Router::url($val['url'], true);
 					$attrib = $val;
 					$val = null;
 				break;

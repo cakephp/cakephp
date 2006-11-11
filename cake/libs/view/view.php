@@ -522,6 +522,7 @@ class View extends Object {
  * @deprecated
  */
 	function setLayout($layout) {
+		trigger_error('(View::setLayout) Deprecated: Use $this->layout = "..." instead', E_USER_WARNING);
 		$this->layout = $layout;
 	}
 /**
