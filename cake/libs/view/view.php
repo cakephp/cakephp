@@ -727,7 +727,7 @@ class View extends Object {
 				$cache->base			= $this->base;
 				$cache->here			= $this->here;
 				$cache->action			= $this->action;
-				$cache->controllerName	= $this->params['controller'];
+				$cache->controllerName	= $this->name;
 				$cache->cacheAction		= $this->controller->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}

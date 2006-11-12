@@ -288,9 +288,7 @@ class Helper extends Overloadable {
 		}
 
 		$result = null;
-		if (isset($this->params['data'][$this->model()][$this->field()])) {
-			$result = h($this->params['data'][$this->model()][$this->field()]);
-		} elseif(isset($this->data[$this->model()][$this->field()])) {
+		if (isset($this->data[$this->model()][$this->field()])) {
 			$result = h($this->data[$this->model()][$this->field()]);
 		}
 

@@ -485,9 +485,7 @@ class HtmlHelper extends AppHelper {
  */
 	function tagValue($fieldName) {
 		$this->setFormTag($fieldName);
-		if (isset($this->params['data'][$this->model()][$this->field()])) {
-			return h($this->params['data'][$this->model()][$this->field()]);
-		} elseif(isset($this->data[$this->model()][$this->field()])) {
+		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);
 		}
 		return false;
@@ -836,7 +834,7 @@ class HtmlHelper extends AppHelper {
 				$hourValue = 12;
 			}
 		}
-		
+
 		if ($format24Hours) {
 			$hours = array('00' => '00', '01' => '01', '02' => '02', '03' => '03', '04' => '04', '05' => '05', '06' => '06', '07' => '07', '08' => '08', '09' => '09', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23');
 		} else {
@@ -908,7 +906,7 @@ class HtmlHelper extends AppHelper {
 		if (empty($selected)) {
 			$selected = $this->tagValue($tagName);
 		}
-		
+
 		if (!empty($selected)) {
 
 			if (is_int($selected)) {
