@@ -76,6 +76,8 @@ class RequestHandlerComponent extends Object {
 
 	var $__acceptTypes = array();
 
+	var $ext = null;
+
 	function __construct() {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
 
@@ -103,11 +105,10 @@ class RequestHandlerComponent extends Object {
  * @see Router::parseExtensions()
  */
 	function initialize(&$controller) {
-		$this->params =& $controller->params;
-		if (isset($this->params['url']['ext'])) {
-			$ext = $this->params['url']['ext'];
-			if (isset($this->__requestContent[$ext])) {
-				$content = $this->__requestContent[$ext]['content'];
+		if (isset($controller->params['url']['ext'])) {
+			$this->ext = $controller->params['url']['ext'];
+			if (isset($this->__requestContent[$this->ext])) {
+				$content = $this->__requestContent[$this->ext];
 				if (is_array($content)) {
 					$content = $content[0];
 				}
@@ -115,7 +116,6 @@ class RequestHandlerComponent extends Object {
 			}
 		}
 	}
-
 /**
  * The startup method of the RequestHandler enables several automatic behaviors
  * related to the detection of certain properties of the HTTP request, including:
@@ -142,21 +142,20 @@ class RequestHandlerComponent extends Object {
 		$this->setView($controller);
 		$controller->params['isAjax'] = $this->isAjax();
 
-		if (isset($this->params['url']['ext']) && !empty($this->params['url']['ext'])) {
-			$ext = $this->params['url']['ext'];
-			if (in_array($ext, array_keys($this->__requestContent)) && !in_array($ext, array('html', 'htm'))) {
+		if (!empty($this->ext)) {
+			if (!in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
 
 				$controller->ext = '.ctp';
-				$controller->viewPath .= '/' . $ext;
-				$controller->layoutPath = $ext;
+				$controller->viewPath .= '/' . $this->ext;
+				$controller->layoutPath = $this->ext;
 
-				if (in_array($ext, array_keys($this->__requestContent))) {
-					$this->respondAs($ext);
+				if (in_array($this->ext, array_keys($this->__requestContent))) {
+					$this->respondAs($this->ext);
 				}
 
-				if (!in_array(ucfirst($ext), $controller->helpers)) {
-					if (file_exists(HELPERS . $ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $ext . '.php')) {
-						$controller->helpers[] = ucfirst($ext);
+				if (!in_array(ucfirst($this->ext), $controller->helpers)) {
+					if (file_exists(HELPERS . $this->ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $this->ext . '.php')) {
+						$controller->helpers[] = ucfirst($this->ext);
 					}
 				}
 			}
@@ -309,13 +308,6 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	function setContent($name, $type) {
-		if (!is_array($type) || isset($type[0])) {
-			$type = array(
-				'layout'	=> Inflector::underscore($name),
-				'view'		=> Inflector::camelize($name),
-				'content'	=> $type
-			);
-		}
 		$this->__requestContent[$name] = $type;
 	}
 /**
@@ -389,7 +381,7 @@ class RequestHandlerComponent extends Object {
 				return false;
 			}
 
-			$content = $this->__requestContent[$type]['content'];
+			$content = $this->__requestContent[$type];
 
 			if (is_array($content)) {
 				foreach($content as $c) {
@@ -449,14 +441,14 @@ class RequestHandlerComponent extends Object {
  */
 	function prefers($type = null) {
 		if ($type == null) {
-			if (!isset($this->params['url']['ext'])) {
+			if (!empty($this->ext)) {
 				$accept = $this->accepts(null);
 				if (is_array($accept)) {
 					return $accept[0];
 				}
 				return $accept;
 			} else {
-				return $this->params['url']['ext'];
+				return $this->ext;
 			}
 		}
 
@@ -499,23 +491,16 @@ class RequestHandlerComponent extends Object {
 		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
-
-		$options = am(
-			array(
-				'index' => 0,
-				'charset' => null
-			),
-			$options
-		);
+		$options = am(array('index' => 0, 'charset' => null), $options);
 
 		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;
-			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$options['index']]['content'])) {
+			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$options['index']])) {
 				$cType = $this->__requestContent[$type][$options['index']];
-			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0]['content'])) {
+			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0])) {
 				$cType = $this->__requestContent[$type][0];
-			} elseif (isset($this->__requestContent[$type]['content'])) {
-				$cType = $this->__requestContent[$type]['content'];
+			} elseif (isset($this->__requestContent[$type])) {
+				$cType = $this->__requestContent[$type];
 			} else {
 				return false;
 			}
@@ -581,9 +566,9 @@ class RequestHandlerComponent extends Object {
 				$name = $keys[$i];
 				$type = $this->__requestContent[$name];
 
-				if (is_array($type['content']) && in_array($ctype, $type['content'])) {
+				if (is_array($type) && in_array($ctype, $type)) {
 					return $name;
-				} elseif (!is_array($type['content']) && $type['content'] == $ctype) {
+				} elseif (!is_array($type) && $type == $ctype) {
 					return $name;
 				}
 			}
