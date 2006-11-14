@@ -577,7 +577,7 @@ class Router extends Overloadable {
 	}
 /**
  * Instructs the router to parse out file extensions from the URL. For example,
- * http://example.com/posts.rss?show=50 would yield an file extension of "rss".
+ * http://example.com/posts.rss would yield an file extension of "rss".
  * The file extension itself is made available in the controller as
  * $this->params['url']['ext'], and is used by the RequestHandler component to
  * automatically switch to alternate layouts and templates, and load helpers
