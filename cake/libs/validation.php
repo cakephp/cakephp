@@ -341,7 +341,7 @@ class Validation extends Object {
  * 							Mdy December 27, 2006 or Dec 27, 2006 comma is optional
  * 							My December 2006 or Dec 2006
  * 							my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
- * @param string $regex
+ * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean
  * @access public
  */
@@ -349,6 +349,11 @@ class Validation extends Object {
 		$this->__reset();
 		$this->check = $check;
 		$this->regex = $regex;
+
+		if(!is_null($this->regex)) {
+			return $this->_check();
+		}
+
 		$search = array();
 
 		if(is_array($format)){
