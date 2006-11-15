@@ -381,9 +381,31 @@ class Validation extends Object {
 		return false;
 	}
 
-	function decimal($check, $type, $regex= null) {
-		//Validates a simple decimal format
-		//Validate a complex decimal format.
+/**
+ * Checks that a value is a valid decimal. If $places is null, the $check is allow to be a scientific float
+ * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
+ *
+ * @param integer $check The value the test for decimal
+ * @param integer $places if set $check value must have exactly $places after the decimal point
+ * @param string $regex If a custom regular expression is used this is the only validation that will occur.
+ * @return boolean
+ * @access public
+ */
+	function decimal($check, $places = null, $regex = null) {
+		$this->regex = $regex;
+		$this->check = $check;
+
+		if(!is_null($this->regex)) {
+			return $this->_check();
+		}
+
+		if(is_null($places)) {
+			$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/s';
+			return $this->_check();
+		}
+
+		$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/s';
+		return $this->_check();
 	}
 
 	function email($check, $regex= null, $deep = false) {
