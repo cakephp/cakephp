@@ -202,17 +202,17 @@ class RssHelper extends XmlHelper {
 						}
 						if (!isset($val['type']) && function_exists('mime_content_type')) {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
-						}
+						}			
+						$val['url'] = Router::url($val['url'], true);
+						$attrib = $val;
 					}
-					$val['url'] = Router::url($val['url'], true);
-					$attrib = $val;
 					$val = null;
 				break;
 			}
 			if ($val != null) {
 				$val = h($val);
 			}
-			$elements[$key] = $this->elem($key, array(), $val);
+			$elements[$key] = $this->elem($key, $attrib, $val);
 		}
 
 		if (isset($elements['link']) && !isset($elements['guid'])) {
@@ -222,6 +222,7 @@ class RssHelper extends XmlHelper {
 		if (!empty($elements)) {
 			$content = join('', $elements);
 		}
+		
 		return $this->output($this->elem('item', $attrib, $content, !($content === null)));
 	}
 /**
