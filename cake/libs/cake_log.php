@@ -48,9 +48,9 @@ class CakeLog{
  * @return boolean Success
  */
 	function write($type, $msg) {
-		$filename=LOGS . $type . '.log';
-		$output=date('y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
-		$log=new File($filename);
+		$filename = LOGS . $type . '.log';
+		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
+		$log = new File($filename);
 		return $log->append($output);
 	}
 }
