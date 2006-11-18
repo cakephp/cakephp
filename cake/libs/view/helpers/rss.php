@@ -202,13 +202,13 @@ class RssHelper extends XmlHelper {
 						}
 						if (!isset($val['type']) && function_exists('mime_content_type')) {
 							$val['type'] = mime_content_type(WWW_ROOT . $val['url']);
-						}			
-						$val['url'] = Router::url($val['url'], true);
-						$attrib = $val;
+						}
 					}
+					$val['url'] = Router::url($val['url'], true);
+					$attrib = $val;
 					$val = null;
 				break;
-			}
+			}			
 			if ($val != null) {
 				$val = h($val);
 			}
