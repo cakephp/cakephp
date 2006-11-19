@@ -61,7 +61,7 @@ class SessionComponent extends Object{
 		$this->plugin = $controller->plugin;
 	}
 /**
- * Enter description here...
+ * Writes a variable to the session.
  *
  * Use like this. $this->Session->write('Controller.sessKey', 'session value');
  *
@@ -79,7 +79,7 @@ class SessionComponent extends Object{
 		return $this->CakeSession->writeSessionVar($name, $value);
 	}
 /**
- * Enter description here...
+ * Reads a variable from the session.
  *
  * Use like this. $this->Session->read('Controller.sessKey');
  * Calling the method without a param will return all session vars
@@ -91,7 +91,7 @@ class SessionComponent extends Object{
 		return $this->CakeSession->readSessionVar($name);
 	}
 /**
- * Enter description here...
+ * Removes a variable from the session.
  *
  * Use like this. $this->Session->del('Controller.sessKey');
  *
@@ -102,7 +102,8 @@ class SessionComponent extends Object{
 		return $this->CakeSession->delSessionVar($name);
 	}
 /**
- * Enter description here...
+ * Identical to del().
+ * 
  * @param unknown_type $name
  * @return unknown
  */
@@ -110,7 +111,7 @@ class SessionComponent extends Object{
 		return $this->del($name);
 	}
 /**
- * Enter description here...
+ * Checks whether the variable is set in the session.
  *
  * Use like this. $this->Session->check('Controller.sessKey');
  *
@@ -179,7 +180,7 @@ class SessionComponent extends Object{
 		}
 	}
 /**
- * Enter description here...
+ * Renews session.
  *
  * Use like this. $this->Session->renew();
  * This will renew sessions
@@ -190,7 +191,7 @@ class SessionComponent extends Object{
 		$this->CakeSession->renew();
 	}
 /**
- * Enter description here...
+ * Checks whether the session is valid.
  *
  * Use like this. $this->Session->valid();
  * This will return true if session is valid
@@ -202,7 +203,7 @@ class SessionComponent extends Object{
 		return $this->CakeSession->isValid();
 	}
 /**
- * Enter description here...
+ * Destroys session.
  *
  * Use like this. $this->Session->destroy();
  * Used to destroy Sessions
