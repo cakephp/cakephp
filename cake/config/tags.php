@@ -28,115 +28,119 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
+$tags = array(
+
 // Tag template for a link tag.
-$tags['metalink'] = '<link href="%s" title="%s"%s />';
+'metalink' => '<link href="%s" title="%s"%s />',
 
 // Tag template for a link.
-$tags['link'] = '<a href="%s" %s>%s</a>';
+'link' => '<a href="%s" %s>%s</a>',
 
 // Tag template for a mailto: link.
-$tags['mailto'] = '<a href="mailto:%s" %s>%s</a>';
+'mailto' => '<a href="mailto:%s" %s>%s</a>',
 
 // Tag template for opening form tag.
-$tags['form'] = '<form %s>';
+'form' => '<form %s>',
 
 // Tag template for an input type='text' tag.
-$tags['input'] = '<input name="data[%s][%s]" %s/>';
+'input' => '<input name="data[%s][%s]" %s/>',
 
 // Tag template for an input type='textarea' tag
-$tags['textarea'] = '<textarea name="data[%s][%s]" %s>%s</textarea>';
+'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
 
 // Tag template for an input type='hidden' tag.
-$tags['hidden'] = '<input type="hidden" name="data[%s][%s]" %s/>';
+'hidden' => '<input type="hidden" name="data[%s][%s]" %s/>',
 
 // Tag template for a textarea tag.
-$tags['textarea'] = '<textarea name="data[%s][%s]" %s>%s</textarea>';
+'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
 
 // Tag template for a input type='checkbox ' tag.
-$tags['checkbox'] = '<input type="checkbox" name="data[%s][%s]" %s/>';
+'checkbox' => '<input type="checkbox" name="data[%s][%s]" %s/>',
 
 // Tag template for a input type='radio' tag.
-$tags['radio'] = '<input type="radio" name="data[%s][%s]" id="%s" %s />%s';
+'radio' => '<input type="radio" name="data[%s][%s]" id="%s" %s />%s',
 
 // Tag template for a select opening tag.
-$tags['selectstart'] = '<select name="data[%s][%s]" %s>';
+'selectstart' => '<select name="data[%s][%s]" %s>',
 
 // Tag template for a select opening tag.
-$tags['selectmultiplestart'] = '<select name="data[%s][%s][]" %s>';
+'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
 
 // Tag template for an empty select option tag.
-$tags['selectempty'] = '<option value="" %s>&nbsp;</option>';
+'selectempty' => '<option value="" %s>&nbsp,</option>',
 
 // Tag template for a select option tag.
-$tags['selectoption'] = '<option value="%s" %s>%s</option>';
+'selectoption' => '<option value="%s" %s>%s</option>',
 
 // Tag template for a closing select tag.
-$tags['selectend'] = '</select>';
+'selectend' => '</select>',
 
 // Tag template for a option group tag.
-$tags['optiongroup'] = '<optgroup label="%s"%s>';
-$tags['optiongroupend'] = '</optgroup>';
+'optiongroup' => '<optgroup label="%s"%s>',
+'optiongroupend' => '</optgroup>',
 
 // Tag template for a password tag.
-$tags ['password'] = '<input type="password" name="data[%s][%s]" %s/>';
+'password' => '<input type="password" name="data[%s][%s]" %s/>',
 
 // Tag template for a file input tag.
-$tags ['file'] = '<input type="file" name="data[%s][%s]" %s/>';
+'file' => '<input type="file" name="data[%s][%s]" %s/>',
 
 // Tag template for a file input tag with no associated model.
-$tags ['file_no_model'] = '<input type="file" name="%s" %s/>';
+'file_no_model' => '<input type="file" name="%s" %s/>',
 
 // Tag template for a submit button tag.
-$tags ['submit'] = '<input type="submit" %s/>';
+'submit' => '<input type="submit" %s/>',
 
 // Tag template for a image input tag.
-$tags['submitimage'] = '<input type="image" src="%s" %s/>';
+'submitimage' => '<input type="image" src="%s" %s/>',
 
 // Tag template for an image tag.
-$tags ['image'] = '<img src="%s" %s/>';
+'image' => '<img src="%s" %s/>',
 
 // Tag template for a table header tag.
-$tags ['tableheader'] = '<th%s>%s</th>';
+'tableheader' => '<th%s>%s</th>',
 
 // Tag template for table headers row tag.
-$tags ['tableheaderrow'] = '<tr%s>%s</tr>';
+'tableheaderrow' => '<tr%s>%s</tr>',
 
 // Tag template for a table cell tag.
-$tags ['tablecell'] = '<td%s>%s</td>';
+'tablecell' => '<td%s>%s</td>',
 
 // Tag template for a table row tag.
-$tags ['tablerow'] = '<tr%s>%s</tr>';
+'tablerow' => '<tr%s>%s</tr>',
 
 // Tag templates for a block-level element (DIV).
-$tags ['block'] = '<div%s>%s</div>';
-$tags ['blockstart'] = '<div%s>';
-$tags ['blockend'] = '</div>';
+'block' => '<div%s>%s</div>',
+'blockstart' => '<div%s>',
+'blockend' => '</div>',
 
 // Tag templates for a paragraph element.
-$tags['para'] = '<p%s>%s</p>';
-$tags['parastart'] = '<p%s>';
+'para' => '<p%s>%s</p>',
+'parastart' => '<p%s>',
 
 // Tag templates for a label element.
-$tags['label'] = '<label for="%s"%s>%s</label>';
+'label' => '<label for="%s"%s>%s</label>',
 
 // Tag templates for fieldset and legend element.
-$tags['fieldset'] = '<fieldset><legend>%s</legend>%s</fieldset>';
-$tags['fieldsetstart'] = '<fieldset><legend>%s</legend>';
-$tags['fieldsetend'] = '</fieldset>';
-$tags['legend'] = '<legend>%s</legend>';
+'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
+'fieldsetstart' => '<fieldset><legend>%s</legend>',
+'fieldsetend' => '</fieldset>',
+'legend' => '<legend>%s</legend>',
 
 // Tag template for a CSS link tag.
-$tags ['css'] = '<link rel="%s" type="text/css" href="%s" %s/>';
+'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
 
 // Tag template for a CSS tag block.
-$tags ['style'] = '<style type="text/css"%s>%s</style>';
+'style' => '<style type="text/css"%s>%s</style>',
 
 // Tag template for a charset meta-tag.
-$tags ['charset'] = '<meta http-equiv="Content-Type" content="text/html; charset=%s" />';
+'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
 
 // Tag template for inline JavaScript.
-$tags ['javascriptblock'] = '<script type="text/javascript">%s</script>';
-$tags['javascriptstart'] = '<script type="text/javascript">';
+'javascriptblock' => '<script type="text/javascript">%s</script>',
+'javascriptstart' => '<script type="text/javascript">',
 
 // Tag template for included JavaScript.
-$tags ['javascriptlink'] = '<script type="text/javascript" src="%s"></script>';
+'javascriptlink' => '<script type="text/javascript" src="%s"></script>'
+
+);
