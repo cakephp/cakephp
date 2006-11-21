@@ -105,13 +105,13 @@ if (!defined('PHP5')) {
 	}
 
 	require CAKE . 'dispatcher.php';
-	require LIBS . 'model' . DS . 'connection_manager.php';
-	config('database');
+	//require LIBS . 'model' . DS . 'connection_manager.php';
+	//config('database');
 
-	if (!class_exists('AppModel')) {
-		require LIBS . 'model' . DS . 'model.php';
-		loadModels();
-	}
+	//if (!class_exists('AppModel')) {
+	//	require LIBS . 'model' . DS . 'model.php';
+	//	loadModels();
+	//}
 	if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
 		if (empty($uri)) {
 			$uri = setUri();

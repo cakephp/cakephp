@@ -50,6 +50,9 @@
  * Loads all models.
  */
 	function loadModels() {
+		if(!class_exists('Model')){
+			require LIBS . 'model' . DS . 'model.php';
+		}
 		$path = Configure::getInstance();
 		if (!class_exists('AppModel')) {
 			if (file_exists(APP . 'app_model.php')) {
@@ -79,6 +82,9 @@
  * @return
  */
 	function loadPluginModels($plugin) {
+		if(!class_exists('Model')){
+			require LIBS . 'model' . DS . 'model.php';
+		}
 		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
 		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
 		if (!class_exists($pluginAppModel)) {
@@ -131,6 +137,9 @@
  * Loads a model by CamelCase name.
  */
 	function loadModel($name) {
+		if(!class_exists('Model')){
+			require LIBS . 'model' . DS . 'model.php';
+		}
 		if (!class_exists('AppModel')) {
 			if (file_exists(APP . 'app_model.php')) {
 				require(APP . 'app_model.php');

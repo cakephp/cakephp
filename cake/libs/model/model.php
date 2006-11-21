@@ -31,7 +31,7 @@
 /**
  * Included libs
  */
-uses('class_registry', 'validators', 'overloadable', 'model' . DS . 'behavior', 'set');
+uses('class_registry', 'validators', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
 
 /**
  * Object-relational mapper.
@@ -570,6 +570,7 @@ class Model extends Overloadable {
  */
 	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
+		loadModel($className);
 
 		if (ClassRegistry::isKeySet($colKey)) {
 			if (!PHP5) {

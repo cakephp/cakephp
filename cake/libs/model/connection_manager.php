@@ -38,6 +38,7 @@
  */
 
 uses ('model' . DS . 'datasources' . DS . 'datasource');
+config('database');
 
 class ConnectionManager extends Object {
 

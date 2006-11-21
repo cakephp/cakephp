@@ -296,6 +296,12 @@ class Controller extends Object {
 		$cached = false;
 		$object = null;
 
+		if ($this->persistModel === true){
+			loadModels();
+		} elseif($this->uses === false) {
+			loadModel($this->modelClass);
+		}
+
 		if (class_exists($this->modelClass) && ($this->uses === false)) {
 			if ($this->persistModel === true) {
 				$cached = $this->_persist($this->modelClass, null, $object);
@@ -329,6 +335,7 @@ class Controller extends Object {
 				$cached = false;
 				$object = null;
 				$modelKey = Inflector::underscore($modelClass);
+				loadModel($modelClass);
 
 				if (class_exists($modelClass)) {
 					if ($this->persistModel === true) {
