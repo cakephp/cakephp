@@ -46,6 +46,11 @@ class Dispatcher extends Object {
  */
 	var $base = false;
 /**
+ * Current URL
+ * @var string
+ */
+	var $here = false;
+/**
  * @var string
  */
 	var $admin = false;
@@ -150,6 +155,12 @@ class Dispatcher extends Object {
 				$privateAction = true;
 			}
 		}
+		$base = Router::stripPlugin($this->base, $this->plugin);
+		if(defined('BASE_URL')) {
+			$this->here = $base . $this->admin . $url;
+		} else {
+			$this->here = $base . $this->admin . '/' . $url;
+		}
 
 		if ($missingController) {
 			Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
@@ -194,12 +205,7 @@ class Dispatcher extends Object {
 		}
 
 		$controller->base = $this->base;
-		$base = Router::stripPlugin($this->base, $this->plugin);
-		if(defined("BASE_URL")) {
-			$controller->here = $base . $this->admin . $url;
-		} else {
-			$controller->here = $base . $this->admin . '/' . $url;
-		}
+		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
 		$controller->params = $params;
 		$controller->action = $params['action'];
@@ -266,10 +272,9 @@ class Dispatcher extends Object {
 			array_push($controller->helpers, $controller->webservices);
 			$component =& new Component($controller);
 		}
+		Router::setParams(array($params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		$controller->_initComponents();
 		$controller->constructClasses();
-
-		Router::setParams(array($params, array('base' => $controller->base, 'here' => $controller->here, 'webroot' => $controller->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 
 		if ($missingAction && !in_array('scaffold', array_keys($classVars))){
 			$this->start($controller);
@@ -363,7 +368,7 @@ class Dispatcher extends Object {
 		$Route = Router::getInstance();
 		extract(Router::getNamedExpressions());
 		include CONFIGS.'routes.php';
-		$params = $Route->parse ($from_url);
+		$params = Router::parse($from_url);
 
 		if (ini_get('magic_quotes_gpc') == 1) {
 			if(!empty($_POST)) {

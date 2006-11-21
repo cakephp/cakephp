@@ -298,10 +298,16 @@ class Router extends Overloadable {
  * @return void
  */
 	function setParams($params) {
+		
 		$_this =& Router::getInstance();
-		if (!isset($params[1]['plugin'])) {
-			$params[1]['plugin'] = null;
-		}
+		$params[1] = am(
+			array(
+				'plugin' => null,
+				'controller' => null,
+				'action' => null
+			),
+			$params[1]
+		);
 		list($_this->__params[], $_this->__paths[]) = $params;
 	}
 /**
@@ -511,7 +517,6 @@ class Router extends Overloadable {
 
 		foreach ($route[4] as $key => $reg) {
 			if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
-				pr($route[0].':break4');
 				return false;
 			}
 		}
