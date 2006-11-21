@@ -39,7 +39,7 @@ class Set extends Object {
  * @var array
  * @access public
  */
-	var $__value = array();
+	var $value = array();
 /**
  * Constructor. Defaults to an empty array.
  *
@@ -47,9 +47,9 @@ class Set extends Object {
  */
 	function __construct() {
 		if (func_num_args() == 1 && is_array(func_get_arg(0))) {
-			$this->__value = func_get_arg(0);
+			$this->value = func_get_arg(0);
 		} else {
-			$this->__value = func_get_args();
+			$this->value = func_get_args();
 		}
 	}
 /**
@@ -58,7 +58,7 @@ class Set extends Object {
  * @access public
  */
 	function get() {
-		return $this->__value;
+		return $this->value;
 	}
 /**
  * Merges the contents of the array object with $array
@@ -72,7 +72,7 @@ class Set extends Object {
 			return array_merge_recursive($array, $array2);
 		}
 		if ($array == null) {
-			$array = $this->__value;
+			$array = $this->value;
 		} elseif (is_object($array) && (is_a($array, 'set') || is_a($array, 'Set'))) {
 			$array = $array->get();
 		} elseif (is_object($array)) {
@@ -80,8 +80,8 @@ class Set extends Object {
 		} elseif (!is_array($array)) {
 			$array = array($array);
 		}
-		$this->__value = array_merge_recursive($this->__value, $array);
-		return $this->__value;
+		$this->value = array_merge_recursive($this->value, $array);
+		return $this->value;
 	}
 /**
  * Maps the contents of the Set object to an object hierarchy
@@ -173,7 +173,12 @@ class Set extends Object {
  * @param mixed $path	As an array, or as a dot-separated string.
  * @return array
  */
-	function extract($data, $path) {
+	function extract($data, $path = null) {
+		if ($path === null && is_a($this, 'set')) {
+			$path = $data;
+			$data = $this->get();
+		}
+
 		if (!is_array($path)) {
 			if (strpos($path, '/') !== 0 && strpos($path, './') === false) {
 				$path = explode('.', $path);

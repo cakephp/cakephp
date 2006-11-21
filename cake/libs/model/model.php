@@ -213,7 +213,7 @@ class Model extends Overloadable {
  * @var boolean
  * @access public
  */
-	var $cacheQueries = true;
+	var $cacheQueries = false;
 
 /**
  * belongsTo association
@@ -755,7 +755,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe')) {
-			$this->_tableInfo = new NeatArray($db->describe($this));
+			$this->_tableInfo = new Set($db->describe($this));
 		}
 		return $this->_tableInfo;
 	}
@@ -806,9 +806,9 @@ class Model extends Overloadable {
 		}
 
 		if ($this->_tableInfo != null) {
-			return $this->_tableInfo->findIn('name', $name);
+			return in_array($name, $this->_tableInfo->extract('{n}.name'));
 		}
-		return null;
+		return false;
 	}
 /**
  * Initializes the model for writing a new record.
@@ -1202,6 +1202,16 @@ class Model extends Overloadable {
 		foreach($this->hasAndBelongsToMany as $assoc => $data) {
 			$db->query("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
 		}
+	}
+/**
+ * Allows model records to be deleted based on a set of conditions
+ *
+ * @param mixed $conditions
+ * @param mixed $fields
+ * @return boolean True on success, false on failure
+ */
+	function deleteAll($conditions, $cascade = true) {
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 	}
 /**
  * Returns true if a record with set id exists.
