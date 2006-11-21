@@ -86,8 +86,8 @@ class Helper extends Overloadable {
  * @return void
  */
 	function loadConfig() {
-		$config = fileExistsInPath(CAKE . 'config' . DS . 'tags.ini.php');
-		$cakeConfig = $this->readConfigFile($config);
+		require(CAKE . 'config' . DS . 'tags.php');
+		$cakeConfig = $tags;
 
 		if (file_exists(APP . 'config' . DS . 'tags.ini.php')) {
 			$appConfig = $this->readConfigFile(APP . 'config' . DS . 'tags.ini.php');
