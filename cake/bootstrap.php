@@ -41,7 +41,7 @@ if (!defined('PHP5')) {
 	require LIBS . 'object.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
-	require LIBS . 'neat_array.php';
+	//require LIBS . 'neat_array.php';
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();

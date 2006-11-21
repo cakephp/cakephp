@@ -30,11 +30,11 @@
 ?>
 <p class="notice">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
 <?php if (!empty($filePresent)):?>
-<?php $db = ConnectionManager::getInstance(); ?>
+<?php uses('model' . DS . 'connection_manager'); $db = ConnectionManager::getInstance(); ?>
 <?php $connected = $db->getDataSource('default'); ?>
 <p class="notice">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
 <br />
-<?php endif; ?>     
+<?php endif; ?>
 <h2>CakePHP release information is on CakeForge</h2>
 <a href="http://cakeforge.org/projects/cakephp">Read the release notes and get the latest version</a>
 
