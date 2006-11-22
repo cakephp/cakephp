@@ -45,6 +45,13 @@ class AjaxHelper extends AppHelper {
  */
 	var $helpers = array('Html', 'Javascript');
 /**
+ * html tags used by this helper.
+ *
+ * @var array
+ */
+	var $tags = array('blockstart' => '<div%s>',
+							'blockend' => '</div>');
+/**
  * Names of Javascript callback functions.
  *
  * @var array

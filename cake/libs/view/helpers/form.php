@@ -56,6 +56,23 @@
 class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
+/**
+ * html tags used by this helper.
+ *
+ * @var array
+ */
+	var $tags = array('form' => '<form %s>',
+							'label' => '<label for="%s"%s>%s</label>',
+							'input' => '<input name="data[%s][%s]" %s/>',
+							'password' => '<input type="password" name="data[%s][%s]" %s/>',
+							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
+							'submitimage' => '<input type="image" src="%s" %s/>',
+							'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
+							'selectstart' => '<select name="data[%s][%s]" %s>',
+							'selectend' => '</select>',
+							'optiongroupend' => '</optgroup>',
+							'optiongroup' => '<optgroup label="%s"%s>',
+							'selectoption' => '<option value="%s" %s>%s</option>');
 
 /**
  * Returns an HTML FORM element.
@@ -336,7 +353,7 @@ class FormHelper extends AppHelper {
 			$options[] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
-		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));		
+		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
@@ -371,13 +388,13 @@ class FormHelper extends AppHelper {
 				} else if(is_array($selected) && in_array($name, $selected)) {
 					$htmlOptions['selected'] = 'selected';
 				}
-				
+
 				if($showParents || (!in_array($title, $parents))) {
 					$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), h($title));
 				}
 			}
 		}
-		
+
 		return array_reverse($select, true);
 	}
 /**

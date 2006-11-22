@@ -743,12 +743,7 @@ class View extends Object {
  * @return array
  */
 	function &_loadHelpers(&$loaded, $helpers) {
-		static $tags;
 		$helpers[] = 'Session';
-		if (empty($tags)) {
-			$helperTags = new Helper();
-			$tags = $helperTags->loadConfig();
-		}
 
 		foreach($helpers as $helper) {
 			$pos = strpos($helper, '/');
@@ -785,7 +780,6 @@ class View extends Object {
 
 				${$camelBackedHelper} =& new $helperCn();
 				${$camelBackedHelper}->view =& $this;
-				//${$camelBackedHelper}->tags = $tags;
 
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin', 'namedArgs', 'argSeparator');
 				$c = count($vars);
