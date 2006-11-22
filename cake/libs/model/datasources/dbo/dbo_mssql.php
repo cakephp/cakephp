@@ -329,7 +329,7 @@ class DboMssql extends DboSource {
 	function begin(&$model) {
 		if (parent::begin($model)) {
 			if ($this->execute('BEGIN TRANSACTION')) {
-				$this->__transactionStarted=true;
+				$this->__transactionStarted = true;
 				return true;
 			}
 		}
@@ -346,7 +346,7 @@ class DboMssql extends DboSource {
  */
 	function commit(&$model) {
 		if (parent::commit($model)) {
-			$this->__transactionStarted;
+			$this->__transactionStarted = false;
 			return $this->execute('COMMIT');
 		}
 		return false;

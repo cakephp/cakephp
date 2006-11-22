@@ -251,7 +251,7 @@ class DboSybase extends DboSource {
  */
 	function commit(&$model) {
 		if (parent::commit($model)) {
-			$this->__transactionStarted;
+			$this->__transactionStarted = false;
 			return $this->execute('COMMIT');
 		}
 		return false;
