@@ -1,7 +1,7 @@
 <?php
 $output = "<p class=\"notice\">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . \$filePresent = ' ' : ' not present.'; ?></p>\n";
 $output .= "<?php if (!empty(\$filePresent)):?>\n";
-$output .= "<?php \$db = ConnectionManager::getInstance(); ?>\n";
+$output .= "<?php uses('model' . DS . 'connection_manager'); \$db = ConnectionManager::getInstance(); ?>\n";
 $output .= "<?php \$connected = \$db->getDataSource('default'); ?>\n";
 $output .= "<p class=\"notice\">Cake<?php echo \$connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>\n";
 $output .= "<br />\n";
