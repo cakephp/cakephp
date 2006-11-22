@@ -30,9 +30,10 @@
  * Included libraries.
  *
  */
-	if (!class_exists('Object')) {
-		 uses ('object');
-	}
+if (!class_exists('Object')) {
+	 uses ('object');
+}
+
 /**
  * Parses the request URL into controller, action, and parameters.
  *
@@ -277,9 +278,7 @@ class Router extends Overloadable {
 						$out[$names[$ii]] = $found;
 					} else {
 						// unnamed elements go in as 'pass'
-						$pass = new NeatArray(explode('/', $found));
-						$pass->cleanup();
-						$out['pass'] = $pass->value;
+						$out['pass'] = array_filter(explode('/', $found));
 					}
 					$ii++;
 				}
