@@ -44,6 +44,14 @@ class JavascriptHelper extends AppHelper {
 	var $_cacheAll = false;
 	var $_rules = array();
 	var $safe = false;
+/**
+ * html tags used by this helper.
+ *
+ * @var array
+ */
+	var $tags = array('javascriptblock' => '<script type="text/javascript">%s</script>',
+							'javascriptstart' => '<script type="text/javascript">',
+							'javascriptlink' => '<script type="text/javascript" src="%s"></script>');
 
 /**
  * Returns a JavaScript script tag.
@@ -95,7 +103,7 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 		}
 
-		
+
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element)

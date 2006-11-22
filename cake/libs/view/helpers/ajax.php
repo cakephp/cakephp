@@ -45,13 +45,6 @@ class AjaxHelper extends AppHelper {
  */
 	var $helpers = array('Html', 'Javascript');
 /**
- * html tags used by this helper.
- *
- * @var array
- */
-	var $tags = array('blockstart' => '<div%s>',
-							'blockend' => '</div>');
-/**
  * Names of Javascript callback functions.
  *
  * @var array
@@ -483,7 +476,7 @@ class AjaxHelper extends AppHelper {
 			}
 		}
 		$attr = $this->_parseAttributes(am($options, array('id' => $id)));
-		return $this->output(sprintf($this->tags['blockstart'], $attr));
+		return $this->output(sprintf($this->Html->tags['blockstart'], $attr));
 	}
 /**
  * Closes an Ajax-updateable DIV element
@@ -501,7 +494,7 @@ class AjaxHelper extends AppHelper {
 				return '';
 			}
 		}
-		return $this->output($this->tags['blockend']);
+		return $this->output($this->Html->tags['blockend']);
 	}
 /**
  * Detects Ajax requests

@@ -56,23 +56,6 @@
 class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
-/**
- * html tags used by this helper.
- *
- * @var array
- */
-	var $tags = array('form' => '<form %s>',
-							'label' => '<label for="%s"%s>%s</label>',
-							'input' => '<input name="data[%s][%s]" %s/>',
-							'password' => '<input type="password" name="data[%s][%s]" %s/>',
-							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
-							'submitimage' => '<input type="image" src="%s" %s/>',
-							'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
-							'selectstart' => '<select name="data[%s][%s]" %s>',
-							'selectend' => '</select>',
-							'optiongroupend' => '</optgroup>',
-							'optiongroup' => '<optgroup label="%s"%s>',
-							'selectoption' => '<option value="%s" %s>%s</option>');
 
 /**
  * Returns an HTML FORM element.
@@ -92,7 +75,7 @@ class FormHelper extends AppHelper {
 			$token = $this->Html->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
 		}
 
-		return sprintf($this->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, '')) . $token;
+		return sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, '')) . $token;
 	}
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
@@ -114,7 +97,7 @@ class FormHelper extends AppHelper {
  * @deprecated
  */
 	function labelTag($tagName, $text) {
-		return sprintf($this->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
+		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
  * Returns a formatted LABEL element for HTML FORMs.
@@ -135,7 +118,7 @@ class FormHelper extends AppHelper {
 		if (strpos($tagName, '/') !== false) {
 			$tagName = Inflector::camelize(r('/', '_', $tagName));
 		}
-		return $this->output(sprintf($this->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
+		return $this->output(sprintf($this->Html->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
 	}
 /**
  * Generates a form input element complete with label and wrapper div
@@ -233,7 +216,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
-		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a password input widget.
@@ -248,7 +231,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
 		}
-		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a textarea widget.
@@ -268,7 +251,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
 		}
-		return $this->output(sprintf($this->tags['textarea'], $this->model(), $this->field(), $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
+		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a button tag.
@@ -313,7 +296,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
 		}
-		return $this->output(sprintf($this->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
+		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
  /**
  * Returns a formatted SELECT element.
@@ -339,9 +322,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
-			$tag = $this->tags['selectmultiplestart'];
+			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {
-			$tag = $this->tags['selectstart'];
+			$tag = $this->Html->tags['selectstart'];
 		}
 		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->parseHtmlOptions($attributes));
 
@@ -354,7 +337,7 @@ class FormHelper extends AppHelper {
 			$options = array_reverse($options, true);
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
-		$select[] = sprintf($this->tags['selectend']);
+		$select[] = sprintf($this->Html->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
 /**
@@ -368,12 +351,12 @@ class FormHelper extends AppHelper {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
 				if (!empty($name)) {
-					$select[] = $this->tags['optiongroupend'];
+					$select[] = $this->Html->tags['optiongroupend'];
 					$parents[] = $name;
 				}
 				$select = am($select, $this->__selectOptions($title, $selected, $parents, $showParents));
 				if (!empty($name)) {
-					$select[] = sprintf($this->tags['optiongroup'], $name, '');
+					$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
 				}
 				$name = null;
 			} elseif (is_array($title)) {
@@ -390,7 +373,7 @@ class FormHelper extends AppHelper {
 				}
 
 				if($showParents || (!in_array($title, $parents))) {
-					$select[] = sprintf($this->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), h($title));
+					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), h($title));
 				}
 			}
 		}
