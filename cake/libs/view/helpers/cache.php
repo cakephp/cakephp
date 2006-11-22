@@ -201,6 +201,7 @@ class CacheHelper extends AppHelper {
 		$cache = convertSlash($this->here) . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php
 					loadController(\'' . $this->view->name . '\');
+					loadModels();
 					$this->controller = new ' . $this->view->name . 'Controller();
 					$this->helpers = unserialize(\'' . serialize($this->view->helpers) . '\');
 					$this->base = \'' . $this->view->base . '\';
