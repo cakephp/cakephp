@@ -62,11 +62,13 @@
 			}
 			Overloadable::overload('AppModel');
 		}
-		$loadedModels = array();
 
 		foreach($path->modelPaths as $path) {
 			foreach(listClasses($path)as $model_fn) {
-				if (!key_exists($model_fn, $loadedModels)) {
+				list($name) = explode('.', $model_fn);
+				$className = Inflector::camelize($name);
+
+				if (!class_exists($className)) {
 					require($path . $model_fn);
 					list($name) = explode('.', $model_fn);
 					Overloadable::overload(Inflector::camelize($name));
