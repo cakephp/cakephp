@@ -79,21 +79,61 @@ class Helper extends Overloadable {
  * @access public
  * @var array
  */
-	var $tags = array();
+	var $tags = array('metalink' => '<link href="%s" title="%s"%s />',
+							'link' => '<a href="%s" %s>%s</a>',
+							'mailto' => '<a href="mailto:%s" %s>%s</a>',
+							'form' => '<form %s>',
+							'input' => '<input name="data[%s][%s]" %s/>',
+							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
+							'hidden' => '<input type="hidden" name="data[%s][%s]" %s/>',
+							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
+							'checkbox' => '<input type="checkbox" name="data[%s][%s]" %s/>',
+							'radio' => '<input type="radio" name="data[%s][%s]" id="%s" %s />%s',
+							'selectstart' => '<select name="data[%s][%s]" %s>',
+							'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
+							'selectempty' => '<option value="" %s>&nbsp;</option>',
+							'selectoption' => '<option value="%s" %s>%s</option>',
+							'selectend' => '</select>',
+							'optiongroup' => '<optgroup label="%s"%s>',
+							'optiongroupend' => '</optgroup>',
+							'password' => '<input type="password" name="data[%s][%s]" %s/>',
+							'file' => '<input type="file" name="data[%s][%s]" %s/>',
+							'file_no_model' => '<input type="file" name="%s" %s/>',
+							'submit' => '<input type="submit" %s/>',
+							'submitimage' => '<input type="image" src="%s" %s/>',
+							'image' => '<img src="%s" %s/>',
+							'tableheader' => '<th%s>%s</th>',
+							'tableheaderrow' => '<tr%s>%s</tr>',
+							'tablecell' => '<td%s>%s</td>',
+							'tablerow' => '<tr%s>%s</tr>',
+							'block' => '<div%s>%s</div>',
+							'blockstart' => '<div%s>',
+							'blockend' => '</div>',
+							'para' => '<p%s>%s</p>',
+							'parastart' => '<p%s>',
+							'label' => '<label for="%s"%s>%s</label>',
+							'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
+							'fieldsetstart' => '<fieldset><legend>%s</legend>',
+							'fieldsetend' => '</fieldset>',
+							'legend' => '<legend>%s</legend>',
+							'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
+							'style' => '<style type="text/css"%s>%s</style>',
+							'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
+							'javascriptblock' => '<script type="text/javascript">%s</script>',
+							'javascriptstart' => '<script type="text/javascript">',
+							'javascriptlink' => '<script type="text/javascript" src="%s"></script>');
+
 /**
  * Parses tag templates into $this->tags.
  *
  * @return void
  */
 	function loadConfig() {
-		require(CAKE . 'config' . DS . 'tags.php');
-		$cakeConfig = $tags;
-
 		if (file_exists(APP . 'config' . DS . 'tags.ini.php')) {
 			$appConfig = $this->readConfigFile(APP . 'config' . DS . 'tags.ini.php');
-			$cakeConfig = am($cakeConfig, $appConfig);
+			$this->tags = am($this->tags, $appConfig);
 		}
-		return $cakeConfig;
+		return $this->tags;
 	}
 /**
  * Finds URL for specified action.

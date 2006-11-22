@@ -41,7 +41,6 @@ if (!defined('PHP5')) {
 	require LIBS . 'object.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
-	//require LIBS . 'neat_array.php';
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();
@@ -105,13 +104,7 @@ if (!defined('PHP5')) {
 	}
 
 	require CAKE . 'dispatcher.php';
-	//require LIBS . 'model' . DS . 'connection_manager.php';
-	//config('database');
 
-	//if (!class_exists('AppModel')) {
-	//	require LIBS . 'model' . DS . 'model.php';
-	//	loadModels();
-	//}
 	if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
 		if (empty($uri)) {
 			$uri = setUri();
