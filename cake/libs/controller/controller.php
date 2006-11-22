@@ -300,7 +300,9 @@ class Controller extends Object {
 			loadModels();
 			uses('neat_array');
 		} elseif($this->uses === false) {
-			loadModel($this->modelClass);
+			if(!class_exists($this->modelClass)){
+				loadModel($this->modelClass);
+			}
 		}
 
 		if (class_exists($this->modelClass) && ($this->uses === false)) {
