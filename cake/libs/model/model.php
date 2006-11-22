@@ -1575,12 +1575,15 @@ class Model extends Overloadable {
 		} else {
 			$fields = null;
 		}
-		if($groupPath == null && $this->recursive >= 1) {
+		$recursive = $this->recursive;
+
+		if($groupPath == null && $recursive >= 1) {
 			$this->recursive = -1;
-		} else if($groupPath && $this->recursive >= 1){
+		} else if($groupPath && $recursive >= 1){
 			$this->recursive = 0;
 		}
 		$result = $this->findAll($conditions, $fields, $order, $limit);
+		$this->recursive = $recursive;
 
 		if ($keyPath == null) {
 			$keyPath = '{n}.' . $this->name . '.' . $this->primaryKey;
