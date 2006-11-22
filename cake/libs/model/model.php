@@ -1159,6 +1159,8 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasMany($id, $cascade) {
+		$records = array();
+
 		foreach($this->hasMany as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
@@ -1180,6 +1182,8 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasOne($id, $cascade) {
+		$records = array();
+
 		foreach($this->hasOne as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
