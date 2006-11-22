@@ -298,6 +298,7 @@ class Controller extends Object {
 
 		if ($this->persistModel === true){
 			loadModels();
+			uses('neat_array');
 		} elseif($this->uses === false) {
 			loadModel($this->modelClass);
 		}
@@ -335,7 +336,10 @@ class Controller extends Object {
 				$cached = false;
 				$object = null;
 				$modelKey = Inflector::underscore($modelClass);
-				loadModel($modelClass);
+
+				if(!class_exists($modelClass)){
+					loadModel($modelClass);
+				}
 
 				if (class_exists($modelClass)) {
 					if ($this->persistModel === true) {

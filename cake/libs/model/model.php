@@ -570,7 +570,10 @@ class Model extends Overloadable {
  */
 	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
-		loadModel($className);
+
+		if(!class_exists($className)){
+			loadModel($className);
+		}
 
 		if (ClassRegistry::isKeySet($colKey)) {
 			if (!PHP5) {
