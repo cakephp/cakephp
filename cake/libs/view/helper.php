@@ -87,9 +87,9 @@ class Helper extends Overloadable {
  * @return void
  */
 	function loadConfig() {
-		if (file_exists(APP . 'config' . DS . 'tags.ini.php')) {
-			$appConfig = $this->readConfigFile(APP . 'config' . DS . 'tags.ini.php');
-			$this->tags = am($this->tags, $appConfig);
+		if (file_exists(APP . 'config' . DS . 'tags.php')) {
+			require(APP . 'config' . DS . 'tags.php');
+			$this->tags = am($this->tags, $tags);
 		}
 		return $this->tags;
 	}
@@ -336,47 +336,6 @@ class Helper extends Overloadable {
  */
 	function assign($keyName, $values) {
 		return str_replace('%%' . array_keys($values) . '%%', array_values($values), $this->tags[$keyName]);
-	}
-/**
- * Returns an array of settings in given INI file.
- *
- * @param string $fileName
- * @return array
- */
-	function readConfigFile($fileName) {
-		$fileLineArray = file($fileName);
-
-		foreach($fileLineArray as $fileLine) {
-			$dataLine = trim($fileLine);
-			$firstChar = substr($dataLine, 0, 1);
-
-			if ($firstChar != ';' && $dataLine != '') {
-				if ($firstChar == '[' && substr($dataLine, -1, 1) == ']') {
-					// [section block] we might use this later do not know for sure
-					// this could be used to add a key with the section block name
-					// but it adds another array level
-				} else {
-					$delimiter = strpos($dataLine, '=');
-
-					if ($delimiter > 0) {
-						$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
-						$value = trim(stripcslashes(substr($dataLine, $delimiter + 1)));
-
-						if (substr($value, 0, 1) == '"' && substr($value, -1) == '"') {
-							$value = substr($value, 1, -1);
-						}
-
-						$iniSetting[$key] = $value;
-
-					} else {
-						$iniSetting[strtolower(trim($dataLine))] = '';
-					}
-				}
-			} else {
-			}
-		}
-
-		return $iniSetting;
 	}
 /**
  * Before render callback.  Overridden in subclasses.
