@@ -68,8 +68,11 @@
 			break;
 		}
 	}
-	if(!$app) {
+
+	if(!$app && isset($argv[1])) {
 		$app = $argv[1];
+	} elseif(!$app) {
+		$app = 'app';
 	}
 	if(!is_dir($app)) {
 		$project = true;
@@ -82,13 +85,18 @@
 	}
 
 	$shortPath = str_replace($root, '', $app);
-	$shortPath = str_replace('../', '', $shortPath);
-	$shortPath = str_replace('//', '/', $shortPath);
+	$shortPath = str_replace('..'.DS, '', $shortPath);
+	$shortPath = str_replace(DS.DS, DS, $shortPath);
 
-	$pathArray = explode('/', $shortPath);
-	$appDir = array_pop($pathArray);
-	$rootDir = implode('/', $pathArray);
-	$rootDir = str_replace('//', '', $rootDir);
+	$pathArray = explode(DS, $shortPath);
+	if(end($pathArray) != '') {
+		$appDir = array_pop($pathArray);
+	} else {
+		array_pop($pathArray);
+		$appDir = array_pop($pathArray);
+	}
+	$rootDir = implode(DS, $pathArray);
+	$rootDir = str_replace(DS.DS, DS, $rootDir);
 
 	if(!$rootDir) {
 		$rootDir = $root;
@@ -197,12 +205,18 @@ class Bake {
  *
  */
 	function main() {
+
+		$this->stdout('');
+		$this->stdout('');
+		$this->stdout('Baking...');
+		$this->hr();
+		$this->stdout('Name: '. APP_DIR);
+		$this->stdout('Path: '. ROOT.DS.APP_DIR);
+		$this->hr();
+
 		if(!file_exists(CONFIGS.'database.php')) {
 			$this->stdout('');
-			$this->stdout('');
 			$this->stdout('Your database configuration was not found. Take a moment to create one:');
-			$this->stdout('');
-			$this->stdout('');
 			$this->doDbConfig();
 		}
 		require_once (CONFIGS.'database.php');
@@ -213,7 +227,7 @@ class Bake {
 		$invalidSelection = true;
 
 		while ($invalidSelection) {
-			$classToBake = strtoupper($this->getInput('Please select a class to Bake:', array('M', 'V', 'C')));
+			$classToBake = strtoupper($this->getInput('What would you like to Bake?', array('M', 'V', 'C')));
 			switch($classToBake) {
 				case 'M':
 					$invalidSelection = false;
@@ -238,7 +252,7 @@ class Bake {
  */
 	function doDbConfig() {
 		$this->hr();
-		$this->stdout('Database Configuration Bake:');
+		$this->stdout('Database Configuration:');
 		$this->hr();
 
 		$driver = '';
@@ -295,7 +309,7 @@ class Bake {
 		$blankPassword = false;
 
 		while ($password == '' && $blankPassword == false) {
-			$password = $this->getInput('What is the database password?', null, 'password');
+			$password = $this->getInput('What is the database password?');
 			if ($password == '') {
 				$blank = $this->getInput('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
 				if($blank == 'y')
@@ -1055,7 +1069,7 @@ class Bake {
 		$addView .= "<ul class=\"actions\">\n";
 		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->__modelName($relation['className']);
+			$otherModelName = $this->__modelName($associationName);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
 				$otherControllerPath = $this->__controllerPath($otherModelName);
@@ -1078,7 +1092,7 @@ class Bake {
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
 		$editView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->__modelName($relation['className']);
+			$otherModelName = $this->__modelName($associationName);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
 				$otherControllerPath = $this->__controllerPath($otherModelName);
@@ -1708,6 +1722,7 @@ class Bake {
 		$error = false;
 		switch ($type) {
 			case 'model':
+				$out .= "loadModel('$className');\n\n";
 				$out .= "class {$className}TestCase extends UnitTestCase {\n";
 				$out .= "\tvar \$object = null;\n\n";
 				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
@@ -1926,7 +1941,7 @@ class Bake {
 						if(isset($field['foreignKey'])) {
 							$modelKey = Inflector::underscore($this->__modelClass);
 							$modelObj =& ClassRegistry::getObject($modelKey);
-							foreach($modelObj->belongsTo as $associationName =>$value) {
+							foreach($modelObj->belongsTo as $associationName => $value) {
 								if($field['model'] == $value['className']) {
 									$this->__modelAlias = $this->__modelName($associationName);
 									break;
@@ -2019,8 +2034,7 @@ class Bake {
  * @return Generated HTML and PHP.
  */
 	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null ) {
-		$htmlOptions['class'] = "inputCheckbox";
-
+		$htmlAttributes = $htmlOptions;
 		$strLabel = "\n\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$strLabel .= "\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$str = "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please check the {$prompt}.');?>\n";
@@ -2154,13 +2168,17 @@ class Bake {
 			$tagArray = explode('/', $tagName);
 			$pluralName = $this->__pluralName($this->__modelNameFromKey($tagArray[1]));
 		}
-
+		$showEmpty = 'true';
+		if($required) {
+			$showEmpty = 'false';
+		}
 		if($selectAttr['multiple'] != 'multiple') {
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$pluralName}, \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($selectAttr) . ");?>\n";
+			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$pluralName}, \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.') ?>\n";
 		} else {
 			$selectedPluralName = 'selected' . ucfirst($pluralName);
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$pluralName}, \${$selectedPluralName}, array('multiple' => 'multiple', 'class' => 'selectMultiple'));?>\n";
+			$selectAttr = am(array('multiple' => 'multiple', 'class' => 'selectMultiple'), $selectAttr);
+			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$pluralName}, \${$selectedPluralName}, " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		}
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
@@ -2258,7 +2276,12 @@ class Bake {
 	function project($projectPath = null) {
 		if($projectPath != '') {
 			while ($this->__checkPath($projectPath) === true) {
-				$projectPath = $this->getInput('Directory exists please choose another name:');
+				$response = $this->getInput('Bake -app in '.$projectPath, array('y','n'), 'y');
+				if(low($response) == 'y') {
+					$this->main();
+				} else {
+					$projectPath = $this->getInput("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
+				}
 			}
 		} else {
 			while ($projectPath == '') {
@@ -2270,7 +2293,7 @@ class Bake {
 			}
 		}
 		while ($this->__checkPath($projectPath) === true || $projectPath == '') {
-				$projectPath = $this->getInput('Directory path exists please choose another:');
+				$projectPath = $this->getInput('Directory '.$projectPath.'  exists please choose another:');
 			while ($projectPath == '') {
 				$projectPath = $this->getInput('The directory path you supplied was empty. Please try again.');
 			}
