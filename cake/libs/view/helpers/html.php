@@ -508,7 +508,7 @@ class HtmlHelper extends AppHelper {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
-		$count = 0;
+		static $count = 0;
 
 		foreach($data as $line) {
 			$count++;
