@@ -211,7 +211,7 @@ class Sanitize{
 		//Double-check special chars and remove carriage returns
 		//For increased SQL security
 		$val = preg_replace("/\\\$/", "$", $val);
-		$val = preg_replace("/\r/", "", $val);
+		$val = preg_replace("/\r\n/", "", $val);
 		$val = str_replace("!", "!", $val);
 		$val = str_replace("'", "'", $val);
 		//Allow unicode (?)
