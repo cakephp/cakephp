@@ -138,7 +138,7 @@
 /**
  * Loads a model by CamelCase name.
  */
-	function loadModel($name) {
+	function loadModel($name = null) {
 		if(!class_exists('Model')){
 			require LIBS . 'model' . DS . 'model.php';
 		}
@@ -151,7 +151,7 @@
 			Overloadable::overload('AppModel');
 		}
 
-		if (!class_exists($name)) {
+		if (!is_null($name) && !class_exists($name)) {
 			$className = $name;
 			$name = Inflector::underscore($name);
 			$paths = Configure::getInstance();
