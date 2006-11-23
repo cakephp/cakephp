@@ -523,7 +523,7 @@ class HtmlHelper extends AppHelper {
 		return $this->output(join("\n", $out));
 	}
 /**
- * Returns value of $fieldName. Null if the tag does not exist.
+ * Returns value of $fieldName. False if the tag does not exist.
  *
  * @param string $fieldName		Fieldname as "Modelname/fieldname" string
  * @return unknown Value of the named tag.
