@@ -80,6 +80,16 @@ class Helper extends Overloadable {
  * @var array
  */
 	var $tags = array();
+/**
+ * Default overload methods
+ *
+ * @access protected
+ */
+	function __get__($name) {}
+	function __set__($name, $value) {}
+	function __call__($method, $params) {
+		trigger_error('Method ' . get_class($this) . '::' . $method . ' does not exist', E_USER_ERROR);
+	}
 
 /**
  * Parses tag templates into $this->tags.
