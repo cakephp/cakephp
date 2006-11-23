@@ -260,13 +260,12 @@ class SecurityComponent extends Object {
 
 			} elseif (function_exists('apache_request_headers')) {
 				$headers = apache_request_headers();
-				if (isset($headers['Authorization']) && !empty($headers['Authorization'])) {
-					if (substr($headers['Authorization'], 0, 7) == 'Digest ') {
-						$digest = substr($headers['Authorization'], 7);
-					}
+				if (isset($headers['Authorization']) && !empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+					$digest = substr($headers['Authorization'], 7);
 				}
 			} else {
 				// Server doesn't support digest-auth headers
+				trigger_error('SecurityComponent::loginCredentials() - Server does not support digest authentication', E_USER_WARNING);
 				return null;
 			}
 
@@ -283,21 +282,16 @@ class SecurityComponent extends Object {
  *
  */
 	function __setLoginDefaults(&$options) {
-		if (!isset($options['type']) || empty($options['type'])) {
-			$options['type'] = 'basic';
-		}
-		if (!isset($options['realm']) || empty($options['realm'])) {
-			$options['realm'] = env('SERVER_NAME');
-		}
-		if (!isset($options['qop']) || empty($options['qop'])) {
-			$options['qop'] = 'auth';
-		}
-		if (!isset($options['nonce']) || empty($options['nonce'])) {
-			$options['nonce'] = uniqid();
-		}
-		if (!isset($options['opaque']) || empty($options['opaque'])) {
-			$options['opaque'] = md5($options['realm']);
-		}
+		$options = am(
+			array(
+				'type'		=> 'basic',
+				'realm'		=> env('SERVER_NAME'),
+				'qop'		=> 'auth',
+				'nonce'		=> uniqid()
+			),
+			array_filter($options)
+		);
+		$options = am(array('opaque' => md5($options['realm'])), $options);
 	}
 /**
  * Generates the text of an HTTP-authentication request header from an array of options
