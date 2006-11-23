@@ -1484,7 +1484,7 @@ class Bake {
 		$result = low($unitTest) == 'y' || low($unitTest) == 'yes';
 
 		if ($result) {
-			$this->stdout("\nYou can download the Cake test suite from http://cakeforge.org/frs/?group_id=62", true);
+			$this->stdout("\nYou can download the Cake test suite from http://cakeforge.org/projects/testsuite/", true);
 		}
 		return $result;
 	}
@@ -1725,9 +1725,9 @@ class Bake {
 				$out .= "loadModel('$className');\n\n";
 				$out .= "class {$className}TestCase extends UnitTestCase {\n";
 				$out .= "\tvar \$object = null;\n\n";
-				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}();\n";
-				$out .= "\t}\n\n\tfunction tearDown()\n\t{\n\t\tunset(\$this->object);\n\t}\n";
-				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
+				$out .= "\tfunction setUp() {\n\t\t\$this->object = new {$className}();\n";
+				$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->object);\n\t}\n";
+				$out .= "\n\t/*\n\tfunction testMe() {\n";
 				$out .= "\t\t\$result = \$this->object->doSomething();\n";
 				$out .= "\t\t\$expected = 1;\n";
 				$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
@@ -1738,14 +1738,14 @@ class Bake {
 				$out .= "loadController('$className');\n\n";
 				$out .= "class {$className}ControllerTestCase extends UnitTestCase {\n";
 				$out .= "\tvar \$object = null;\n\n";
-				$out .= "\tfunction setUp()\n\t{\n\t\t\$this->object = new {$className}Controller();\n";
-				$out .= "\t}\n\n\tfunction tearDown()\n\t{\n\t\tunset(\$this->object);\n\t}\n";
-				$out .= "\n\t/*\n\tfunction testMe()\n\t{\n";
+				$out .= "\tfunction setUp() {\n\t\t\$this->object = new {$className}Controller();\n";
+				$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->object);\n\t}\n";
+				$out .= "\n\t/*\n\tfunction testMe() {\n";
 				$out .= "\t\t\$result = \$this->object->doSomething();\n";
 				$out .= "\t\t\$expected = 1;\n";
 				$out .= "\t\t\$this->assertEqual(\$result, \$expected);\n\t}\n\t*/\n}";
 				$path = CONTROLLER_TESTS;
-				$filename = $this->__pluralName($className.'Controller').'.test.php';
+				$filename = $this->__pluralName($className).'_controller.test.php';
 			break;
 			default:
 				$error = true;
