@@ -1159,6 +1159,10 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasMany($id, $cascade) {
+		if (isset($this->__backAssociation)) {
+			$savedAssociatons = $this->__backAssociation;
+			unset ($this->__backAssociation);
+		}
 		foreach($this->hasMany as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
@@ -1173,6 +1177,9 @@ class Model extends Overloadable {
 				}
 			}
 		}
+		if (isset($savedAssociatons)) {
+			$this->__backAssociation = $savedAssociatons;
+		}
 	}
 /**
  * Cascades model deletes to hasOne relationships.
@@ -1182,6 +1189,10 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasOne($id, $cascade) {
+		if (isset($this->__backAssociation)) {
+			$savedAssociatons = $this->__backAssociation;
+			unset ($this->__backAssociation);
+		}
 		foreach($this->hasOne as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
@@ -1195,6 +1206,9 @@ class Model extends Overloadable {
 					}
 				}
 			}
+		}
+		if (isset($savedAssociatons)) {
+			$this->__backAssociation = $savedAssociatons;
 		}
 	}
 /**
