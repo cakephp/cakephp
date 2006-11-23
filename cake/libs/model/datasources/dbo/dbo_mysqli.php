@@ -110,6 +110,7 @@ class DboMysqli extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
+		@mysqli_free_result($this->results);
 		$this->connected = !@mysqli_close($this->connection);
 		return !$this->connected;
 	}
