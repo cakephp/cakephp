@@ -1159,17 +1159,17 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasMany($id, $cascade) {
-		$records = array();
-
 		foreach($this->hasMany as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
 				$field = $model->escapeField($data['foreignKey']);
 				$model->recursive = 0;
-				$records        = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
+				$records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
-				foreach($records as $record) {
-					$model->del($record[$data['className']][$model->primaryKey]);
+				if($records != false){
+					foreach($records as $record) {
+						$model->del($record[$data['className']][$model->primaryKey]);
+					}
 				}
 			}
 		}
@@ -1182,8 +1182,6 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteHasOne($id, $cascade) {
-		$records = array();
-
 		foreach($this->hasOne as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 				$model =& $this->{$data['className']};
@@ -1191,8 +1189,10 @@ class Model extends Overloadable {
 				$model->recursive = 0;
 				$records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
-				foreach($records as $record) {
-					$model->del($record[$data['className']][$model->primaryKey]);
+				if($records != false){
+					foreach($records as $record) {
+						$model->del($record[$data['className']][$model->primaryKey]);
+					}
 				}
 			}
 		}
