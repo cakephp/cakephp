@@ -99,22 +99,22 @@ class Component extends Object {
 				if (!class_exists($componentCn)) {
 					if (is_null($plugin) || !loadPluginComponent($plugin, $component)) {
 						if (!loadComponent($component)) {
-							return $this->cakeError('missingComponentFile', array(array(
-								'className' => $this->controller->name,
-								'component' => $component,
-								'file' => Inflector::underscore($component) . '.php',
-								'base' => $this->controller->base
-							)));
+							$this->cakeError('missingComponentFile', array(array(
+													'className' => $this->controller->name,
+													'component' => $component,
+													'file' => Inflector::underscore($component) . '.php',
+													'base' => $this->controller->base)));
+							exit();
 						}
 					}
 
 					if (!class_exists($componentCn)) {
-						return $this->cakeError('missingComponentClass', array(array(
-							'className' => $this->controller->name,
-							'component' => $component,
-							'file' => Inflector::underscore($component) . '.php',
-							'base' => $this->controller->base
-						)));
+						$this->cakeError('missingComponentClass', array(array(
+												'className' => $this->controller->name,
+												'component' => $component,
+												'file' => Inflector::underscore($component) . '.php',
+												'base' => $this->controller->base)));
+						exit();
 					}
 				}
 
