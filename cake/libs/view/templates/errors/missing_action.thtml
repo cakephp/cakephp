@@ -30,34 +30,14 @@
 ?>
 
 <h1>Missing Method in <?php echo $controller;?></h1>
+<p class="error">You are seeing this error because the action <em><?php echo $action;?></em> is not defined in controller <em><?php echo $controller;?></em></p>
+<p><span class="notice">If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_action.thtml"; ?>.</span></p>
+<p><span class="notice"><strong>Fatal</strong>: Confirm you have created the <?php echo $controller;?>::<?php echo $action;?>() in file : <?php echo APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php"; ?></p>
 
-<p class="error">You are seeing this error because the action <em><?php echo $action;?></em>
-  is not defined in controller <em><?php echo $controller;?></em>
-</p>
-
-
-<p>
-<span class="notice"><strong>Notice:</strong> this error is being rendered by the <strong>app/views/errors/missing_action.thtml</strong>
-view file, a user-customizable error page for handling invalid action dispatches.</span>
-</p>
-
-<p>
-<strong>Fatal</strong>: Create Method:
-</p>
 <p>&lt;?php<br />
-&nbsp;&nbsp;&nbsp;&nbsp;class <?php echo $controller;?> extends AppController<br />
-&nbsp;&nbsp;&nbsp;&nbsp;{<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function <?php echo $action;?>()<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br /><br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
-&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+class <?php echo $controller;?> extends AppController {<br />
+&nbsp;&nbsp;&nbsp;<strong>function <?php echo $action;?>() {<br />
+&nbsp;&nbsp;&nbsp;}</strong><br />
+}<br />
 ?&gt;<br />
-</p>
-<p>
-in file : <?php echo "app".DS."controllers".DS.Inflector::underscore($controller).".php"; ?>
-</p>
-
-<p>
-<strong>Error</strong>: Unable to execute action <em><?php echo $action;?></em> in
-<em><?php echo $controller;?></em>
 </p>

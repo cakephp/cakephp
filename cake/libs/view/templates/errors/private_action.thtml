@@ -30,6 +30,5 @@
 ?>
 <h1>Private Method in <?php echo $controller;?></h1>
 
-<p class="error">You are seeing this error because the private class method <em><?php echo $action;?></em>
-  should not be accessed directly
-</p>
+<p class="error">You are seeing this error because the private class method <em><?php echo $action;?></em> should not be accessed directly</p>
+<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/private_action.thtml"; ?>.</span></p>
