@@ -333,7 +333,7 @@ class FormHelper extends AppHelper {
 				$showEmpty = '';
 			}
 			$options = array_reverse($options, true);
-			$options[] = $showEmpty;
+			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
