@@ -233,7 +233,7 @@ class CacheHelper extends AppHelper {
 						$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
 					}
 					?>' . $file;
-		  return cache('views' . DS . $cache, $file, $timestamp);
+		return cache('views' . DS . $cache, $file, $timestamp);
 	 }
 }
 ?>
