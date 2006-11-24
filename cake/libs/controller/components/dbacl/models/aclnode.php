@@ -35,6 +35,7 @@
  * @subpackage	cake.cake.libs.controller.components.dbacl.models
  *
  */
+loadModel();
 class AclNode extends AppModel {
 
 	var $useDbConfig = ACL_DATABASE;

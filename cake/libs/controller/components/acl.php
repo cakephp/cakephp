@@ -59,6 +59,11 @@ class AclComponent extends Object {
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
 		}
+		
+		if($classname == 'DB_ACL') {
+			$this->Aro = new Aro();
+			$this->Aco = new Aro();
+		}
 
 		return $this->_instance;
 	}
@@ -71,6 +76,9 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL check instance.
  *
+ * @param string $aro
+ * @param string $aco
+ * @param string $action : default = *
  * @return boolean
  */
 	function check($aro, $aco, $action = "*") {
@@ -79,6 +87,9 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL allow instance.
  *
+ * @param string $aro
+ * @param string $aco
+ * @param string $action : default = *
  * @return boolean
  */
 	function allow($aro, $aco, $action = "*") {
@@ -87,6 +98,9 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL deny instance.
  *
+ * @param string $aro
+ * @param string $aco
+ * @param string $action : default = *
  * @return boolean
  */
 	function deny($aro, $aco, $action = "*") {
@@ -103,6 +117,9 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL grant instance.
  *
+ * @param string $aro
+ * @param string $aco
+ * @param string $action : default = *
  * @return boolean
  */
 	function grant($aro, $aco, $action = "*") {
@@ -111,14 +128,37 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL grant instance.
  *
+ * @param string $aro
+ * @param string $aco
+ * @param string $action : default = *
  * @return boolean
  */
 	function revoke($aro, $aco, $action = "*") {
 		return $this->_instance->revoke($aro, $aco, $action);
 	}
 /**
- * Pass-thru function for ACL getAro instance.
+ * Sets the current ARO instance to object from getAro
  *
+ * @param string $id
+ * @return boolean
+ */
+	function setAro($id) {
+		return $this->Aro = $this->_instance->getAro($id);
+	}
+/**
+* Sets the current ACO instance to object from getAco
+ *
+ * @param string $id
+ * @return boolean
+ */
+	function setAco($id) {
+		return $this->Aco = $this->_instance->getAco($id);
+	}
+/**
+ * Pass-thru function for ACL getAro instance
+ * that gets an ARO object from the given id or alias
+ *
+ * @param string $id
  * @return Aro
  */
 	function getAro($id) {
@@ -126,7 +166,9 @@ class AclComponent extends Object {
 	}
 /**
  * Pass-thru function for ACL getAco instance.
+ * that gets an ACO object from the given id or alias
  *
+ * @param string $id
  * @return Aco
  */
 	function getAco($id) {
