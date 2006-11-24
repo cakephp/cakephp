@@ -731,6 +731,8 @@ class View extends Object {
 				$cache->cacheAction		= $this->controller->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}
+			$replace = array('<cake:nocache>', '</cake:nocache>');
+			$out = str_replace($replace, '', $out);
 		}
 
 		return $out;
@@ -841,9 +843,9 @@ class View extends Object {
 			} else {
 				if($this->layout === 'xml'){
 					header('Content-type: text/xml');
-					$out = preg_replace('/^<!--cachetime:(\\d+)-->/', '', $out);
 				}
-				$out = str_replace('<!--cachetime:'.$match['1'].'-->','',$out);
+				$replace = array('<!--cachetime:'.$match['1'].'-->', '<cake:nocache>', '</cake:nocache>');
+				$out = str_replace($replace, '', $out);
 				e($out);
 				die();
 			}
