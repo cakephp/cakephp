@@ -30,7 +30,7 @@
 /**
  * Included libraries.
  */
-uses ('view' . DS . 'helper');
+uses ('view' . DS . 'helper', 'class_registry');
 
 /**
  * View, the V in the MVC triad.
@@ -253,7 +253,7 @@ class View extends Object {
  * @var array
  * @access protected
  */
-	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator');
+	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
 /**
  * Constructor
  *
@@ -330,7 +330,7 @@ class View extends Object {
 			}
 
 			if (strpos($action, 'missingView') === false) {
-				return $this->cakeError('missingView', array(array('className' => $this->controller->name,
+				return $this->cakeError('missingView', array(array('className' => $this->name,
 							'action' => $action,
 							'file' => $viewFileName,
 							'base' => $this->base
@@ -365,7 +365,7 @@ class View extends Object {
 			if ($out !== false) {
 				if ($this->layout && $this->autoLayout) {
 					$out = $this->renderLayout($out);
-					if (isset($this->loaded['cache']) && ((isset($this->controller) && $this->controller->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
 						$replace = array('<cake:nocache>', '</cake:nocache>');
 						$out = str_replace($replace, '', $out);
 					}
@@ -720,7 +720,7 @@ class View extends Object {
 
 		$out = ob_get_clean();
 
-		if (isset($this->loaded['cache']) && ((isset($this->controller) && $this->controller->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
 
@@ -732,7 +732,8 @@ class View extends Object {
 				$cache->here			= $this->here;
 				$cache->action			= $this->action;
 				$cache->controllerName	= $this->name;
-				$cache->cacheAction		= $this->controller->cacheAction;
+				$cache->layout	= $this->layout;
+				$cache->cacheAction		= $this->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}
 		}
@@ -817,7 +818,7 @@ class View extends Object {
 			$this->render($action, $layout, $viewFileName);
 		} else {
 			return $this->cakeError('missingView', array(array(
-						'className' => $this->controller->name,
+						'className' => $this->name,
 						'action' => $action,
 						'file' => $viewFileName,
 						'base' => $this->base

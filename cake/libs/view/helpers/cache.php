@@ -191,7 +191,6 @@ class CacheHelper extends AppHelper {
  */
 	function __writeFile($file, $timestamp) {
 		$now = time();
-		$view =& ClassRegistry::getObject('_view_');
 
 		if (is_numeric($timestamp)) {
 			$cacheTime = $now + $timestamp;
@@ -201,21 +200,21 @@ class CacheHelper extends AppHelper {
 
 		$cache = convertSlash($this->here) . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php
-					loadController(\'' . $view->name . '\');
+					loadController(\'' . $this->controllerName . '\');
 					loadModels();
-					$this->controller = new ' . $view->name . 'Controller();
-					$this->helpers = unserialize(\'' . serialize($view->helpers) . '\');
-					$this->base = \'' . $view->base . '\';
-					$this->layout = \'' . $view->layout. '\';
-					$this->webroot = \'' . $view->webroot . '\';
-					$this->here = \'' . $view->here . '\';
-					$this->namedArgs  = \'' . $view->namedArgs . '\';
-					$this->argSeparator = \'' . $view->argSeparator . '\';
-					$this->params = unserialize(\'' . serialize($view->params) . '\');
-					$this->action = unserialize(\'' . serialize($view->action) . '\');
-					$this->data = unserialize(\'' . serialize($view->data) . '\');
-					$this->themeWeb = \'' . $view->themeWeb . '\';
-					$this->plugin = \'' . $view->plugin . '\';
+					$this->controller = new ' . $this->controllerName . 'Controller();
+					$this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
+					$this->base = \'' . $this->base . '\';
+					$this->layout = \'' . $this->layout. '\';
+					$this->webroot = \'' . $this->webroot . '\';
+					$this->here = \'' . $this->here . '\';
+					$this->namedArgs  = \'' . $this->namedArgs . '\';
+					$this->argSeparator = \'' . $this->argSeparator . '\';
+					$this->params = unserialize(\'' . serialize($this->params) . '\');
+					$this->action = unserialize(\'' . serialize($this->action) . '\');
+					$this->data = unserialize(\'' . serialize($this->data) . '\');
+					$this->themeWeb = \'' . $this->themeWeb . '\';
+					$this->plugin = \'' . $this->plugin . '\';
 					$loadedHelpers = array();
 					$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
 					foreach(array_keys($loadedHelpers) as $helper)
