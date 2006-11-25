@@ -301,10 +301,6 @@ class View extends Object {
 			$viewFileName = $this->_getViewFileName($action);
 		}
 
-		if (!is_null($this->plugin) && is_null($file)) {
-			return $this->pluginView($action, $layout);
-		}
-
 		if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === '/' || $viewFileName === '\\') {
 			if (strpos($action, 'missingAction') !== false) {
 				$errorAction = 'missingAction';
@@ -609,6 +605,26 @@ class View extends Object {
 			$action='..' . DS . implode(DS, $action);
 		}
 
+		if (!is_null($this->plugin)) {
+			$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
+
+			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext)) {
+				$viewFileName = APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext;
+				return $viewFileName;
+
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext)) {
+				$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
+				return $viewFileName;
+
+			} else {
+				return $this->cakeError('missingView', array(array(
+												'className' => $this->name,
+												'action' => $action,
+												'file' => $viewFileName,
+												'base' => $this->base)));
+			}
+		}
+
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
 				$viewFileName = $path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
@@ -642,12 +658,18 @@ class View extends Object {
 			$this->layoutPath = $this->layoutPath . DS;
 		}
 
-		if (isset($this->plugin) && !is_null($this->plugin)) {
-			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
+		if (!is_null($this->plugin)) {
+			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $action . $this->ext)) {
+				$layoutFileName = APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $action . $this->ext;
+				return $layoutFileName;
+
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
 				$layoutFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
 				return $layoutFileName;
+
 			}
 		}
+
 		$paths = Configure::getInstance();
 
 		foreach($paths->viewPaths as $path) {
@@ -802,28 +824,6 @@ class View extends Object {
 			}
 		}
 		return $loaded;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $action
- * @param unknown_type $layout
- * @return unknown
- */
-	function pluginView($action, $layout) {
-		$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
-
-		if (file_exists($viewFileName)) {
-			$this->render($action, $layout, $viewFileName);
-		} else {
-			return $this->cakeError('missingView', array(array(
-						'className' => $this->name,
-						'action' => $action,
-						'file' => $viewFileName,
-						'base' => $this->base
-			)));
-		}
 	}
 
 	function renderCache($filename, $timeStart) {
