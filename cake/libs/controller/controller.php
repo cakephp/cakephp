@@ -175,7 +175,7 @@ class Controller extends Object {
  *
  * @var unknown_type
  */
-	var $components = array('Session');
+	var $components = array();
 /**
  * Enter description here...
  *
@@ -272,10 +272,8 @@ class Controller extends Object {
 	}
 
 	function _initComponents(){
-		if (!empty($this->components)) {
-			$component = new Component();
-			$component->init($this);
-		}
+		$component = new Component();
+		$component->init($this);
 	}
 
 /**

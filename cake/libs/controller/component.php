@@ -60,6 +60,7 @@ class Component extends Object {
 		$this->controller =& $controller;
 		if ($this->controller->components !== false) {
 			$loaded = array();
+			$this->controller->components = array_merge($this->controller->components, array('Session'));
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
 			foreach(array_keys($loaded) as $component) {
@@ -83,6 +84,8 @@ class Component extends Object {
  * @return unknown
  */
 	function &_loadComponents(&$loaded, $components) {
+		$components[] = 'Session';
+
 		foreach($components as $component) {
 			$pos = strpos($component, '/');
 			if ($pos === false) {
