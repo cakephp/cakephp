@@ -27,7 +27,7 @@
 /**
  * Include files
  */
-	uses(DS . 'controller' . DS . 'component', DS . 'view' . DS . 'view');
+	uses('controller' . DS . 'component', 'view' . DS . 'view');
 /**
  * Controller
  *
