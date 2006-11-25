@@ -27,25 +27,23 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
- * Short description for file.
+ * Session Component.
  *
- * Long description for file
+ * Session handling from the controller.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller.components
  *
  */
-class SessionComponent extends Object{
-
+class SessionComponent extends CakeSession {
 /**
- * Enter description here...
+ * Class constructor
  *
+ * @param string $base
  */
 	function __construct($base = null) {
-		$this->CakeSession = new CakeSession($base);
-		parent::__construct();
+		parent::__construct($base);
 	}
 /**
  * Startup method.  Copies controller data locally for rendering flash messages.
@@ -61,86 +59,84 @@ class SessionComponent extends Object{
 		$this->plugin = $controller->plugin;
 	}
 /**
- * Writes a variable to the session.
+ * Used to write a value to a session key.
  *
- * Use like this. $this->Session->write('Controller.sessKey', 'session value');
+ * In your controller: $this->Session->write('Controller.sessKey', 'session value');
  *
- * @param unknown_type $name
- * @param unknown_type $value
- * @return unknown
+ * @param string $name The name of the key your are setting in the session.
+ * 							This should be in a Controller.key format for better organizing
+ * @param string $value The value you want to store in a session.
  */
-	function write($name, $value = null) {
-		if (is_array($name)) {
-			foreach ($name as $key => $val) {
-				$this->CakeSession->writeSessionVar($key, $val);
-			}
-			return;
-		}
-		return $this->CakeSession->writeSessionVar($name, $value);
+	function write($name, $value) {
+		$this->writeSessionVar($name, $value);
 	}
 /**
- * Reads a variable from the session.
+ * Used to read a session values for a key or return values for all keys.
  *
- * Use like this. $this->Session->read('Controller.sessKey');
+ * In your controller: $this->Session->read('Controller.sessKey');
  * Calling the method without a param will return all session vars
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name the name of the session key you want to read
+ *
+ * @return values from the session vars
  */
 	function read($name = null) {
-		return $this->CakeSession->readSessionVar($name);
+		return $this->readSessionVar($name);
 	}
 /**
- * Removes a variable from the session.
+ * Used to delete a session variable.
  *
- * Use like this. $this->Session->del('Controller.sessKey');
+ * In your controller: $this->Session->del('Controller.sessKey');
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name
+ * @return boolean, true is session variable is set and can be deleted, false is variable was not set.
  */
 	function del($name) {
-		return $this->CakeSession->delSessionVar($name);
+		return $this->delSessionVar($name);
 	}
 /**
- * Identical to del().
- * 
- * @param unknown_type $name
- * @return unknown
+ * Wrapper for SessionComponent::del();
+ *
+ * In your controller: $this->Session->delete('Controller.sessKey');
+ *
+ * @param string $name
+ * @return boolean, true is session variable is set and can be deleted, false is variable was not set.
  */
 	function delete($name) {
 		return $this->del($name);
 	}
 /**
- * Checks whether the variable is set in the session.
+ * Used to check if a session variable is set
  *
- * Use like this. $this->Session->check('Controller.sessKey');
+ * In your controller: $this->Session->check('Controller.sessKey');
  *
- * @param unknown_type $name
- * @return unknown
+ * @param string $name
+ * @return boolean true is session variable is set, false if not
  */
 	function check($name) {
-		return $this->CakeSession->checkSessionVar($name);
+		return $this->checkSessionVar($name);
 	}
 /**
- * Enter description here...
+ * Used to determine the last error in a session.
  *
- * Use like this. $this->Session->error();
+ * In your controller: $this->Session->error();
  *
  * @return string Last session error
  */
 	function error() {
-		return $this->CakeSession->getLastError();
+		return $this->getLastError();
 	}
 /**
- * Enter description here...
+ * Used to set a session variable that can be used to output messages in the view.
  *
- * Use like this. $this->Session->setFlash('This has been saved');
+ * In your controller: $this->Session->setFlash('This has been saved');
+ *
+ * Additional params below can be passed to customize the output, or the Message.[key]
  *
  * @param string $flashMessage Message to be flashed
  * @param string $layout Layout to wrap flash message in
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
- * @return string Last session error
  */
 	function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
 		if ($layout == 'default') {
@@ -166,10 +162,12 @@ class SessionComponent extends Object{
 		$this->write('Message.' . $key, $out);
 	}
 /**
- * Use like this. $this->Session->flash();
+ * This method is deprecated.
+ * You should use $session->flash('key'); in your views
  *
  * @param string $key Optional message key
- * @return null
+ * @return boolean or renders output directly.
+ * @deprecated
  */
 	function flash($key = 'flash') {
 		if ($this->check('Message.' . $key)) {
@@ -180,37 +178,30 @@ class SessionComponent extends Object{
 		}
 	}
 /**
- * Renews session.
+ * Used to renew a session id
  *
- * Use like this. $this->Session->renew();
- * This will renew sessions
- *
- * @return boolean
+ * In your controller: $this->Session->renew();
  */
 	function renew() {
-		$this->CakeSession->renew();
+		parent::renew();
 	}
 /**
- * Checks whether the session is valid.
+ * Used to check for a valid session.
  *
- * Use like this. $this->Session->valid();
- * This will return true if session is valid
- * false if session is invalid
+ * In your controller: $this->Session->valid();
  *
- * @return boolean
+ * @return boolean true is session is valid, false is session is invalid
  */
 	function valid() {
-		return $this->CakeSession->isValid();
+		return $this->isValid();
 	}
 /**
- * Destroys session.
+ * Used to destroy sessions
  *
- * Use like this. $this->Session->destroy();
- * Used to destroy Sessions
- *
+ * In your controller:. $this->Session->destroy();
  */
 	function destroy() {
-		$this->CakeSession->destroyInvalid();
+		$this->destroyInvalid();
 	}
 }
 

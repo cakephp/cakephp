@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
@@ -27,59 +26,91 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
- * Short description for file.
+ * Session Helper.
  *
- * Long description for file
+ * Session reading from the view.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
  *
  */
-class SessionHelper extends AppHelper {
-	var $__Session;
-	var $__active = true;
-
+class SessionHelper extends CakeSession {
 /**
- * Enter description here...
+ * Used to determine if methods implementation is used, or bypassed
  *
+ * @var boolean
+ */
+	var $__active = true;
+/**
+ * Class constructor
+ *
+ * @param string $base
  */
 	function __construct($base = null) {
 		if (!defined('AUTO_SESSION') || AUTO_SESSION == true) {
-			$this->__Session =& new CakeSession($base, false);
+			parent::__construct($base, false);
 		} else {
 			$this->__active = false;
 		}
-		parent::__construct();
 	}
-
+/**
+ * Used to read a session values set in a controller for a key or return values for all keys.
+ *
+ * In your view: $session->read('Controller.sessKey');
+ * Calling the method without a param will return all session vars
+ *
+ * @param string $name the name of the session key you want to read
+ *
+ * @return values from the session vars
+ */
 	function read($name = null) {
 		if ($this->__active === true) {
-			return $this->__Session->readSessionVar($name);
+			return $this->readSessionVar($name);
 		}
 		return false;
 	}
-
+/**
+ * Used to check is a session key has been set
+ *
+ * In your view: $session->check('Controller.sessKey');
+ *
+ * @param string $name
+ * @return boolean
+ */
 	function check($name) {
 		if ($this->__active === true) {
-			return $this->__Session->checkSessionVar($name);
+			return $this->checkSessionVar($name);
 		}
 		return false;
 	}
-
+/**
+ * Returns last error encountered in a session
+ *
+ * In your view: $session->error();
+ *
+ * @return string last error
+ */
 	function error() {
 		if ($this->__active === true) {
-			return $this->__Session->getLastError();
+			return $this->getLastError();
 		}
 		return false;
 	}
-
+/**
+ * Used to render the message set in Controller::Session::setFlash()
+ *
+ * In your view: $session->flash('somekey');
+ * 					Will default to flash if no param is passed
+ *
+ * @param string $key The [Message.]key you are rendering in the view.
+ * @return string Will echo the value if $key is set, or false if not set.
+ */
 	function flash($key = 'flash') {
 		if ($this->__active === true) {
-			if ($this->__Session->checkSessionVar('Message.' . $key)) {
-				e($this->__Session->readSessionVar('Message.' . $key));
-				$this->__Session->delSessionVar('Message.' . $key);
+			if ($this->checkSessionVar('Message.' . $key)) {
+				e($this->readSessionVar('Message.' . $key));
+				$this->delSessionVar('Message.' . $key);
 			} else {
 				return false;
 			}
@@ -87,9 +118,15 @@ class SessionHelper extends AppHelper {
 		return false;
 	}
 
+/**
+ * Used to check is a session is valid in a view
+ *
+ *
+ * @return boolean
+ */
 	function valid() {
 		if ($this->__active === true) {
-		return $this->__Session->isValid();
+		return $this->isValid();
 		}
 	}
 }
