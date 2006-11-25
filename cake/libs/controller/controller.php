@@ -175,7 +175,7 @@ class Controller extends Object {
  *
  * @var unknown_type
  */
-	var $components = array();
+	var $components = array('Session');
 /**
  * Enter description here...
  *
@@ -257,10 +257,6 @@ class Controller extends Object {
 
 		$this->modelClass = ucwords(Inflector::singularize($this->name));
 		$this->modelKey = Inflector::underscore($this->modelClass);
-
-		if (!defined('AUTO_SESSION') || AUTO_SESSION == true) {
-			$this->components[] = 'Session';
-		}
 
 		if (is_subclass_of($this, 'AppController')) {
 			$appVars = get_class_vars('AppController');

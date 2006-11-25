@@ -48,7 +48,7 @@ class SessionHelper extends CakeSession {
  * @param string $base
  */
 	function __construct($base = null) {
-		if (!defined('AUTO_SESSION') || AUTO_SESSION == true) {
+		if (!defined('AUTO_SESSION') || AUTO_SESSION === true) {
 			parent::__construct($base, false);
 		} else {
 			$this->__active = false;

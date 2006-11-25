@@ -243,7 +243,7 @@ class Scaffold extends Object{
 
 				if ($this->controllerClass->{$this->modelKey}->save($this->controllerClass->params['data'])) {
 					 if ($this->controllerClass->_afterScaffoldSave($type)) {
-						  if (is_object($this->controllerClass->Session)) {
+						  if (is_object($this->controllerClass->Session) && $this->controllerClass->Session->valid != false) {
 								$this->controllerClass->Session->setFlash(
 									'The ' . Inflector::humanize($this->modelKey) . ' has been ' . $success . '.');
 								$this->controllerClass->redirect(
@@ -258,7 +258,7 @@ class Scaffold extends Object{
 						  return $this->controllerClass->_afterScaffoldSaveError($type);
 					 }
 				} else {
-					 if (is_object($this->controllerClass->Session)) {
+					 if (is_object($this->controllerClass->Session) && $this->controllerClass->Session->valid != false) {
 						  $this->controllerClass->Session->setFlash('Please correct errors below.');
 					 }
 
@@ -299,7 +299,7 @@ class Scaffold extends Object{
 				$id=$params['pass'][0];
 
 				if ($this->controllerClass->{$this->modelKey}->del($id)) {
-					 if (is_object($this->controllerClass->Session)) {
+					 if (is_object($this->controllerClass->Session) && $this->controllerClass->Session->valid != false) {
 						  $this->controllerClass->Session->setFlash(
 							  'The ' . Inflector::humanize($this->modelKey) . ' with id: ' . $id
 								  . ' has been deleted.');
@@ -311,7 +311,7 @@ class Scaffold extends Object{
 										'/' . Inflector::underscore($this->controllerClass->viewPath));
 					 }
 				} else {
-					 if (is_object($this->controllerClass->Session)) {
+					 if (is_object($this->controllerClass->Session) && $this->controllerClass->Session->valid != false) {
 						  $this->controllerClass->Session->setFlash(
 							  'There was an error deleting the ' . Inflector::humanize($this->modelKey)
 								  . ' with the id ' . $id);

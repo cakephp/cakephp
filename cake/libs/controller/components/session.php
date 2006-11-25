@@ -38,12 +38,22 @@
  */
 class SessionComponent extends CakeSession {
 /**
+ * Used to determine if methods implementation is used, or bypassed
+ *
+ * @var boolean
+ */
+	var $__active = true;
+/**
  * Class constructor
  *
  * @param string $base
  */
 	function __construct($base = null) {
-		parent::__construct($base);
+		if (!defined('AUTO_SESSION') || AUTO_SESSION === true) {
+			parent::__construct($base);
+		} else {
+			$this->__active = false;
+		}
 	}
 /**
  * Startup method.  Copies controller data locally for rendering flash messages.
@@ -68,7 +78,9 @@ class SessionComponent extends CakeSession {
  * @param string $value The value you want to store in a session.
  */
 	function write($name, $value) {
-		$this->writeSessionVar($name, $value);
+		if ($this->__active === true) {
+			$this->writeSessionVar($name, $value);
+		}
 	}
 /**
  * Used to read a session values for a key or return values for all keys.
@@ -81,7 +93,10 @@ class SessionComponent extends CakeSession {
  * @return values from the session vars
  */
 	function read($name = null) {
-		return $this->readSessionVar($name);
+		if ($this->__active === true) {
+			return $this->readSessionVar($name);
+		}
+		return false;
 	}
 /**
  * Used to delete a session variable.
@@ -92,7 +107,10 @@ class SessionComponent extends CakeSession {
  * @return boolean, true is session variable is set and can be deleted, false is variable was not set.
  */
 	function del($name) {
-		return $this->delSessionVar($name);
+		if ($this->__active === true) {
+			return $this->delSessionVar($name);
+		}
+		return false;
 	}
 /**
  * Wrapper for SessionComponent::del();
@@ -103,7 +121,10 @@ class SessionComponent extends CakeSession {
  * @return boolean, true is session variable is set and can be deleted, false is variable was not set.
  */
 	function delete($name) {
-		return $this->del($name);
+		if ($this->__active === true) {
+			return $this->del($name);
+		}
+		return false;
 	}
 /**
  * Used to check if a session variable is set
@@ -114,7 +135,10 @@ class SessionComponent extends CakeSession {
  * @return boolean true is session variable is set, false if not
  */
 	function check($name) {
-		return $this->checkSessionVar($name);
+		if ($this->__active === true) {
+			return $this->checkSessionVar($name);
+		}
+		return false;
 	}
 /**
  * Used to determine the last error in a session.
@@ -124,7 +148,10 @@ class SessionComponent extends CakeSession {
  * @return string Last session error
  */
 	function error() {
-		return $this->getLastError();
+		if ($this->__active === true) {
+			return $this->getLastError();
+		}
+		return false;
 	}
 /**
  * Used to set a session variable that can be used to output messages in the view.
@@ -139,27 +166,29 @@ class SessionComponent extends CakeSession {
  * @param string $key Message key, default is 'flash'
  */
 	function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
-		if ($layout == 'default') {
-			$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
-		} else if($layout == '' || $layout == null) {
-			$out = $flashMessage;
-		} else {
-			$ctrl = null;
-			$view = new View($ctrl);
-			$view->base			= $this->base;
-			$view->webroot		= $this->webroot;
-			$view->here			= $this->here;
-			$view->params		= $this->params;
-			$view->action		= $this->action;
-			$view->data			= $this->data;
-			$view->plugin		= $this->plugin;
-			$view->helpers		= array('Html');
-			$view->layout		= $layout;
-			$view->pageTitle	= '';
-			$view->_viewVars	= $params;
-			$out = $view->renderLayout($flashMessage);
+		if ($this->__active === true) {
+			if ($layout == 'default') {
+				$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
+			} elseif ($layout == '' || $layout == null) {
+				$out = $flashMessage;
+			} else {
+				$ctrl = null;
+				$view = new View($ctrl);
+				$view->base			= $this->base;
+				$view->webroot		= $this->webroot;
+				$view->here			= $this->here;
+				$view->params		= $this->params;
+				$view->action		= $this->action;
+				$view->data			= $this->data;
+				$view->plugin		= $this->plugin;
+				$view->helpers		= array('Html');
+				$view->layout		= $layout;
+				$view->pageTitle	= '';
+				$view->_viewVars	= $params;
+				$out = $view->renderLayout($flashMessage);
+			}
+			$this->write('Message.' . $key, $out);
 		}
-		$this->write('Message.' . $key, $out);
 	}
 /**
  * This method is deprecated.
@@ -170,12 +199,14 @@ class SessionComponent extends CakeSession {
  * @deprecated
  */
 	function flash($key = 'flash') {
-		if ($this->check('Message.' . $key)) {
-			e($this->read('Message.' . $key));
-			$this->del('Message.' . $key);
-		} else {
-			return false;
+		if ($this->__active === true) {
+			if ($this->check('Message.' . $key)) {
+				e($this->read('Message.' . $key));
+				$this->del('Message.' . $key);
+				return;
+			}
 		}
+		return false;
 	}
 /**
  * Used to renew a session id
@@ -183,7 +214,9 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->renew();
  */
 	function renew() {
-		parent::renew();
+		if ($this->__active === true) {
+			parent::renew();
+		}
 	}
 /**
  * Used to check for a valid session.
@@ -193,7 +226,10 @@ class SessionComponent extends CakeSession {
  * @return boolean true is session is valid, false is session is invalid
  */
 	function valid() {
-		return $this->isValid();
+		if ($this->__active === true) {
+			return $this->isValid();
+		}
+		return false;
 	}
 /**
  * Used to destroy sessions
@@ -201,7 +237,9 @@ class SessionComponent extends CakeSession {
  * In your controller:. $this->Session->destroy();
  */
 	function destroy() {
-		$this->destroyInvalid();
+		if ($this->__active === true) {
+			$this->destroyInvalid();
+		}
 	}
 }
 
