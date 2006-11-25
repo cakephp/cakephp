@@ -1,8 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
- * Base controller class.
  *
  * PHP versions 4 and 5
  *
@@ -27,23 +25,16 @@
  */
 ?>
 <h1>New <?php echo Inflector::humanize($this->name)?></h1>
-
 <?php
-if(is_null($this->plugin))
-{
+if(is_null($this->plugin)) {
 	$path = '/';
-}
-else
-{
+} else {
 	$path = '/'.$this->plugin.'/';
 }
 echo $form->create($path. Inflector::underscore($this->name).'/create');
 echo $form->generateFields( $fieldNames );
-echo $form->generateSubmitDiv( 'Add' )
-?>
+echo $form->generateSubmitDiv( 'Add' );?>
 </form>
 <ul class='actions'>
-<?php
-echo "<li>".$html->link('List  '.Inflector::humanize($this->name), $path.$this->viewPath.'/index')."</li>";
-?>
+<?php echo "<li>".$html->link('List  '.Inflector::humanize($this->name), $path.$this->viewPath.'/index')."</li>"; ?>
 </ul>

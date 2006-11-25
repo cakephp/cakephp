@@ -1,8 +1,6 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
- * Base controller class.
  *
  * PHP versions 4 and 5
  *
@@ -25,50 +23,34 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 $modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = $modelName;
-if(is_null($this->plugin))
-{
+if(is_null($this->plugin)) {
 	$path = '/';
-}
-else
-{
+} else {
 	$path = '/'.$this->plugin.'/';
-}
-
-?>
+}?>
 <h1><?php echo $type.' '.Inflector::humanize($modelName);?></h1>
-
 <?php
-if($type == 'Edit')
-{
+if($type == 'Edit') {
 	echo $form->create($path . Inflector::underscore($this->name) .'/update');
-}
-else
-{
+} else {
 	echo $form->create($path. Inflector::underscore($this->name).'/create');
 }
 echo $form->generateFields( $fieldNames );
-echo $form->generateSubmitDiv( 'Save' )
-?>
+echo $form->generateSubmitDiv( 'Save' ); ?>
 </form>
 <ul class='actions'>
 <?php
-if($type == 'Edit')
-{
+if($type == 'Edit') {
 	echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), $path.$this->viewPath.'/delete/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
 }
 echo "<li>".$html->link('List  '.Inflector::humanize($modelName), $path.$this->viewPath.'/index')."</li>";
-if($type == 'Edit')
-{
-	foreach($fieldNames as $field => $value)
-	{
-		if(isset($value['foreignKey']))
-		{
+if($type == 'Edit') {
+	foreach($fieldNames as $field => $value) {
+		if(isset($value['foreignKey'])) {
 			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/view/".$data[$modelKey][$field] )."</li>";
 		}
 	}
-}
-?>
+}?>
 </ul>
