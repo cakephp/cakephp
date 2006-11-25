@@ -44,6 +44,10 @@ class AjaxHelper extends AppHelper {
  * @var array
  */
 	var $helpers = array('Html', 'Javascript');
+
+	var $Html = null;
+
+	var $Javascript = null;
 /**
  * Names of Javascript callback functions.
  *
@@ -203,10 +207,9 @@ class AjaxHelper extends AppHelper {
  * Creates JavaScript function for remote AJAX call
  *
  * This function creates the javascript needed to make a remote call
- * it is primarily used as a helper for linkToRemote.
+ * it is primarily used as a helper for AjaxHelper::link.
  *
- * @see linkToRemote() for docs on options parameter.
- *
+ * @see AjaxHelper::link() for docs on options parameter.
  * @param array $options options for javascript
  * @return string html code for link to remote action
  */
