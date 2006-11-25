@@ -112,12 +112,12 @@ if (!defined('PHP5')) {
 		$filename = CACHE . 'views' . DS . convertSlash($uri) . '.php';
 
 		if (file_exists($filename)) {
-			uses(DS . 'controller' . DS . 'component', DS . 'view' . DS . 'view');
+			uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
 			$v = null;
 			$view = new View($v);
 			$view->renderCache($filename, $TIME_START);
 		} elseif(file_exists(CACHE . 'views' . DS . convertSlash($uri) . '_index.php')) {
-			uses(DS . 'controller' . DS . 'component', DS . 'view' . DS . 'view');
+			uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
 			$v = null;
 			$view = new View($v);
 			$view->renderCache(CACHE . 'views' . DS . convertSlash($uri) . '_index.php', $TIME_START);

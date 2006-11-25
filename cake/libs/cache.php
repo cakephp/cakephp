@@ -31,7 +31,7 @@
  *
  */
 	if (!class_exists('Model')) {
-		 uses(DS . 'model' . DS . 'model');
+		 uses('model' . DS . 'model');
 	}
 /**
  * Caching for Cake.

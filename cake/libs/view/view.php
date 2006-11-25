@@ -30,7 +30,7 @@
 /**
  * Included libraries.
  */
-uses (DS . 'view' . DS . 'helper');
+uses ('view' . DS . 'helper');
 
 /**
  * View, the V in the MVC triad.

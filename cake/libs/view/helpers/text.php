@@ -34,7 +34,7 @@
  */
 
 if (!class_exists('HtmlHelper')) {
-	uses(DS . 'view' . DS . 'helpers' . DS . 'html');
+	uses('view' . DS . 'helpers' . DS . 'html');
 }
 
 /**

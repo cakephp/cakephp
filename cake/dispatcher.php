@@ -317,7 +317,7 @@ class Dispatcher extends Object {
 		$classVars = get_object_vars($controller);
 
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
-			uses(DS.'controller'.DS.'scaffold');
+			uses('controller'. DS . 'scaffold');
 			return new Scaffold($controller, $params);
 		} else {
 			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
