@@ -87,6 +87,9 @@
 		if(!class_exists('Model')){
 			require LIBS . 'model' . DS . 'model.php';
 		}
+		if(!class_exists('AppModel')){
+			loadModel();
+		}
 		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
 		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
 		if (!class_exists($pluginAppModel)) {
