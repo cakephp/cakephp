@@ -84,9 +84,6 @@
  * @return
  */
 	function loadPluginModels($plugin) {
-		if(!class_exists('Model')){
-			require LIBS . 'model' . DS . 'model.php';
-		}
 		if(!class_exists('AppModel')){
 			loadModel();
 		}
