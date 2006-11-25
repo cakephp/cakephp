@@ -136,7 +136,8 @@ class JavascriptHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$this->view->addScript($out);
+			$view =& ClassRegistry::getObject('_view_');
+			$view->addScript($out);
 		}
 	}
 /**

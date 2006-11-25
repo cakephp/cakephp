@@ -261,15 +261,14 @@ class View extends Object {
  */
 	function __construct(&$controller) {
 		if(is_object($controller)) {
-			$this->controller   =& $controller;
-
-			$c = count($this->__passedVars);
-			for ($j = 0; $j < $c; $j++) {
+			$count = count($this->__passedVars);
+			for ($j = 0; $j < $count; $j++) {
 				$var = $this->__passedVars[$j];
 				$this->{$var} = $controller->{$var};
 			}
 		}
 		parent::__construct();
+		ClassRegistry::addObject('_view_', $this);
 	}
 
 /**
@@ -686,8 +685,9 @@ class View extends Object {
 
 				${$camelBackedHelper} =& $loadedHelpers[$helper];
 
-				if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers)) {
-					foreach(${$camelBackedHelper}->helpers as $subHelper) {
+				if (is_array(${$camelBackedHelper}->helpers) && !empty(${$camelBackedHelper}->helpers)) {
+					$subHelpers = ${$camelBackedHelper}->helpers;
+					foreach($subHelpers as $subHelper) {
 						${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
 					}
 				}
@@ -781,9 +781,7 @@ class View extends Object {
 				}
 
 				$camelBackedHelper = Inflector::variable($helper);
-
 				${$camelBackedHelper} =& new $helperCn();
-				${$camelBackedHelper}->view =& $this;
 
 				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin', 'namedArgs', 'argSeparator');
 				$c = count($vars);
@@ -797,7 +795,7 @@ class View extends Object {
 
 				$loaded[$helper] =& ${$camelBackedHelper};
 
-				if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers)) {
+				if (is_array(${$camelBackedHelper}->helpers)) {
 					$loaded = &$this->_loadHelpers($loaded, ${$camelBackedHelper}->helpers);
 				}
 			}

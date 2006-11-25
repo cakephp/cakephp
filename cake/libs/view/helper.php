@@ -44,11 +44,29 @@ uses('overloadable');
 class Helper extends Overloadable {
 
 /**
+ * List of helpers used by this helper
+ *
+ * @var array
+ */
+	var $helpers = null;
+/**
  * Base URL
  *
  * @var string
  */
 	var $base = null;
+/**
+ * Webroot path
+ *
+ * @var string
+ */
+	var $webroot = null;
+/**
+ * Theme name
+ *
+ * @var string
+ */
+	var $themeWeb = null;
 /**
  * URL to current action.
  *
@@ -68,11 +86,36 @@ class Helper extends Overloadable {
  */
 	var $action = null;
 /**
- * Enter description here...
+ * Plugin path
+ *
+ * @var string
+ */
+	var $plugin = null;
+/**
+ * POST data for models
  *
  * @var array
  */
 	var $data = null;
+/**
+ * List of named arguments
+ *
+ * @var array
+ */
+	var $namedArgs = null;
+/**
+ * URL argument separator character
+ *
+ * @var string
+ */
+	var $argSeparator = null;
+/**
+ * Contains model validation errors of form post-backs
+ *
+ * @access public
+ * @var array
+ */
+	var $validationErrors = null;
 /**
  * Holds tag templates.
  *
@@ -85,8 +128,8 @@ class Helper extends Overloadable {
  *
  * @access protected
  */
-	function __get__($name) {}
-	function __set__($name, $value) {}
+	function get__($name) {}
+	function set__($name, $value) {}
 	function __call__($method, $params) {
 		trigger_error('Method ' . get_class($this) . '::' . $method . ' does not exist', E_USER_ERROR);
 	}
@@ -212,19 +255,21 @@ class Helper extends Overloadable {
  * @param string $tagValue A field name, like "Modelname/fieldname"
  */
 	function setFormTag($tagValue) {
+		$view =& ClassRegistry::getObject('_view_');
 		$parts = explode("/", $tagValue);
+
 		if (count($parts) == 1) {
-			$this->view->field = $parts[0];
+			$view->field = $parts[0];
 		} elseif (count($parts) == 2 && is_numeric($parts[0])) {
-			$this->view->modelId = $parts[0];
-			$this->view->field = $parts[1];
+			$view->modelId = $parts[0];
+			$view->field = $parts[1];
 		} elseif (count($parts) == 2) {
-			$this->view->model = $parts[0];
-			$this->view->field = $parts[1];
+			$view->model = $parts[0];
+			$view->field = $parts[1];
 		} elseif (count($parts) == 3) {
-			$this->view->model   = $parts[0];
-			$this->view->modelId = $parts[1];
-			$this->view->field   = $parts[2];
+			$view->model   = $parts[0];
+			$view->modelId = $parts[1];
+			$view->field   = $parts[2];
 		}
 	}
 /**
@@ -233,7 +278,8 @@ class Helper extends Overloadable {
  * @return string
  */
 	function model() {
-		return $this->view->model;
+		$view =& ClassRegistry::getObject('_view_');
+		return $view->model;
 	}
 /**
  * Enter description here...
@@ -241,7 +287,8 @@ class Helper extends Overloadable {
  * @return string
  */
 	function field() {
-		return $this->view->field;
+		$view =& ClassRegistry::getObject('_view_');
+		return $view->field;
 	}
 /**
  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.

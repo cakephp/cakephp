@@ -45,46 +45,49 @@ class HtmlHelper extends AppHelper {
  *
  * @var array
  */
-	var $tags = array('metalink' => '<link href="%s" title="%s"%s />',
-							'link' => '<a href="%s" %s>%s</a>',
-							'mailto' => '<a href="mailto:%s" %s>%s</a>',
-							'form' => '<form %s>',
-							'input' => '<input name="data[%s][%s]" %s/>',
-							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
-							'hidden' => '<input type="hidden" name="data[%s][%s]" %s/>',
-							'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
-							'checkbox' => '<input type="checkbox" name="data[%s][%s]" %s/>',
-							'radio' => '<input type="radio" name="data[%s][%s]" id="%s" %s />%s',
-							'selectstart' => '<select name="data[%s][%s]" %s>',
-							'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
-							'selectempty' => '<option value="" %s>&nbsp;</option>',
-							'selectoption' => '<option value="%s" %s>%s</option>',
-							'selectend' => '</select>',
-							'optiongroup' => '<optgroup label="%s"%s>',
-							'optiongroupend' => '</optgroup>',
-							'password' => '<input type="password" name="data[%s][%s]" %s/>',
-							'file' => '<input type="file" name="data[%s][%s]" %s/>',
-							'file_no_model' => '<input type="file" name="%s" %s/>',
-							'submit' => '<input type="submit" %s/>',
-							'submitimage' => '<input type="image" src="%s" %s/>',
-							'image' => '<img src="%s" %s/>',
-							'tableheader' => '<th%s>%s</th>',
-							'tableheaderrow' => '<tr%s>%s</tr>',
-							'tablecell' => '<td%s>%s</td>',
-							'tablerow' => '<tr%s>%s</tr>',
-							'block' => '<div%s>%s</div>',
-							'blockstart' => '<div%s>',
-							'blockend' => '</div>',
-							'para' => '<p%s>%s</p>',
-							'parastart' => '<p%s>',
-							'label' => '<label for="%s"%s>%s</label>',
-							'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
-							'fieldsetstart' => '<fieldset><legend>%s</legend>',
-							'fieldsetend' => '</fieldset>',
-							'legend' => '<legend>%s</legend>',
-							'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
-							'style' => '<style type="text/css"%s>%s</style>',
-							'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />');
+	var $tags = array(
+		'metalink' => '<link href="%s" title="%s"%s />',
+		'link' => '<a href="%s" %s>%s</a>',
+		'mailto' => '<a href="mailto:%s" %s>%s</a>',
+		'form' => '<form %s>',
+		'formend' => '</form>',
+		'input' => '<input name="data[%s][%s]" %s/>',
+		'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
+		'hidden' => '<input type="hidden" name="data[%s][%s]" %s/>',
+		'textarea' => '<textarea name="data[%s][%s]" %s>%s</textarea>',
+		'checkbox' => '<input type="checkbox" name="data[%s][%s]" %s/>',
+		'radio' => '<input type="radio" name="data[%s][%s]" id="%s" %s />%s',
+		'selectstart' => '<select name="data[%s][%s]" %s>',
+		'selectmultiplestart' => '<select name="data[%s][%s][]" %s>',
+		'selectempty' => '<option value="" %s>&nbsp;</option>',
+		'selectoption' => '<option value="%s" %s>%s</option>',
+		'selectend' => '</select>',
+		'optiongroup' => '<optgroup label="%s"%s>',
+		'optiongroupend' => '</optgroup>',
+		'password' => '<input type="password" name="data[%s][%s]" %s/>',
+		'file' => '<input type="file" name="data[%s][%s]" %s/>',
+		'file_no_model' => '<input type="file" name="%s" %s/>',
+		'submit' => '<input type="submit" %s/>',
+		'submitimage' => '<input type="image" src="%s" %s/>',
+		'image' => '<img src="%s" %s/>',
+		'tableheader' => '<th%s>%s</th>',
+		'tableheaderrow' => '<tr%s>%s</tr>',
+		'tablecell' => '<td%s>%s</td>',
+		'tablerow' => '<tr%s>%s</tr>',
+		'block' => '<div%s>%s</div>',
+		'blockstart' => '<div%s>',
+		'blockend' => '</div>',
+		'para' => '<p%s>%s</p>',
+		'parastart' => '<p%s>',
+		'label' => '<label for="%s"%s>%s</label>',
+		'fieldset' => '<fieldset><legend>%s</legend>%s</fieldset>',
+		'fieldsetstart' => '<fieldset><legend>%s</legend>',
+		'fieldsetend' => '</fieldset>',
+		'legend' => '<legend>%s</legend>',
+		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
+		'style' => '<style type="text/css"%s>%s</style>',
+		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />'
+	);
 /**
  * Base URL
  *
@@ -206,7 +209,8 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$this->view->addScript($out);
+			$view =& ClassRegistry::getObject('_view_');
+			$view->addScript($out);
 		}
 	}
 /**
@@ -275,7 +279,8 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$this->view->addScript($out);
+			$view =& ClassRegistry::getObject('_view_');
+			$view->addScript($out);
 		}
 	}
 /**
@@ -647,9 +652,11 @@ class HtmlHelper extends AppHelper {
  * @param string $type		FORM type (POST/GET).
  * @param array  $htmlAttributes
  * @return string An formatted opening FORM tag.
- * @deprecated This is very WYSIWYG unfriendly, use HtmlHelper::url() to get contents of "action" attribute. Version 0.9.2.
+ * @deprecated
+ * @see FormHelper::create
  */
 	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
+		trigger_error('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead', E_USER_WARNING);
 		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
@@ -691,9 +698,11 @@ class HtmlHelper extends AppHelper {
  * @param string $email E-mail address if different from title.
  * @param array  $options
  * @return string Formatted A tag
- * @deprecated This should be done using a content filter. Version 0.9.2.
+ * @deprecated
+ * @see HtmlHelper::link
  */
 	function linkEmail($title, $email = null, $options = null) {
+		trigger_error('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead', E_USER_WARNING);
 		// if no $email, then title contains the email.
 		if (empty($email)) {
 			$email = $title;
