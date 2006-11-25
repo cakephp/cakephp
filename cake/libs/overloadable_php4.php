@@ -59,12 +59,56 @@ class Overloadable extends Object {
 	}
 
 	function __call($method, $params, &$return) {
-		// if(!method_exists('__call__')) Error!
+		if(!method_exists($this, '__call__')) {
+			trigger_error('Magic method handler __call__ not defined in ' . get_class($this), E_USER_ERROR);
+		}
 		$return = $this->__call__($method, $params);
 		return true;
 	}
 }
-
 Overloadable::overload('Overloadable');
+
+class Overloadable2 extends Object {
+
+	function __construct() {
+		$this->overload();
+		parent::__construct();
+	}
+
+	function overload() {
+		if (function_exists('overload')) {
+			if (func_num_args() > 0) {
+				foreach (func_get_args() as $class) {
+					if (is_object($class)) {
+						overload(get_class($class));
+					} elseif (is_string($class)) {
+						overload($class);
+					}
+				}
+			} else {
+				overload(get_class($this));
+			}
+		}
+	}
+
+	function __call($method, $params, &$return) {
+		if(!method_exists($this, '__call__')) {
+			trigger_error('Magic method handler __call__ not defined in ' . get_class($this), E_USER_ERROR);
+		}
+		$return = $this->__call__($method, $params);
+		return true;
+	}
+
+	function __get($name, &$value) {
+		$value = $this->__get__($name);
+		return true;
+	}
+
+	function __set($name, $value) {
+		$this->__set__($name, $value);
+		return true;
+	}
+}
+Overloadable::overload('Overloadable2');
 
 ?>
