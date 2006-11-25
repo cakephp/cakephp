@@ -102,17 +102,37 @@ class ThemeView extends View {
 				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
 				$params = array_merge_recursive($params, $this->loaded);
 				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . '.thtml')) {
+				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . '.thtml';
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml')) {
+				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml';
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
 			}
 		}
-
-		if (!file_exists($file)) {
-			$file = ELEMENTS.$name.$this->ext;
-			if (!file_exists($file)) {
-				return "(Error rendering {$name})";
+		
+		$paths = Configure::getInstance();
+		foreach($paths->viewPaths as $path) {
+			if (file_exists($file)) {
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+			} elseif (file_exists($path . 'elements' . DS . $name . $this->ext)) {
+				$file = $path . 'elements' . DS . $name . $this->ext;
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+			} elseif (file_exists($this->themeElement . $name . '.thtml')) {
+				$file = $this->themeElement . $name . '.thtml';
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
+				$file = $path . 'elements' . DS . $name . '.thtml';
+				$params = array_merge_recursive($params, $this->loaded);
+				return $this->_render($file, array_merge($this->_viewVars, $params), false);
 			}
 		}
-		$params=array_merge_recursive($params, $this->loaded);
-		return $this->_render($file, array_merge($this->_viewVars, $params), false);
+		return "(Error rendering Element: {$name})";
 	}
 
 /**
@@ -141,19 +161,39 @@ class ThemeView extends View {
 			unset($action[$i]);
 			$action='..' . DS . implode(DS, $action);
 		}
+		if (!is_null($this->plugin)) {
+			$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->theme . DS . $this->viewPath . DS . $action . $this->ext;
+			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext)) {
+				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext;
+			} elseif (file_exists($viewFileName)) {
+				return $viewFileName;
+			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . '.thtml')) {
+				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . '.thtml';
+			} 	elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . '.thtml')) {
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . '.thtml';
+			} else {
+				return $this->cakeError('missingView', array(array(
+												'className' => $this->name,
+												'action' => $action,
+												'file' => $viewFileName,
+												'base' => $this->base)));
+			}
+		}		
 
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . $this->themePath . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
-				$viewFileName = $path . $this->themePath .  $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
-				return $viewFileName;
+				return $path . $this->themePath .  $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
-				$viewFileName = $path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
-				return $viewFileName;
+				return $path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
+			} elseif (file_exists($path . $this->themePath . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml')) {
+				return $path . $this->themePath .  $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
+			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml')) {
+				return $path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
 			}
 		}
 
-		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.thtml')) {
-		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.thtml')) {
+		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
+		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
 		} else {
 			$viewFileName =  $this->themePath . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
 		}
@@ -175,48 +215,30 @@ class ThemeView extends View {
 
 		if (isset($this->plugin) && !is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS .  $this->theme . DS . $this->layout . $this->ext)) {
-				$layoutFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
-				return $layoutFileName;
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext)) {
-				$layoutFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
-				return $layoutFileName;
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . $this->ext;
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS .  $this->theme . DS . $this->layout . '.thtml')) {
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . '.thtml';
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . '.thtml')) {
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->layout . '.thtml';
 			}
 		}
 
-		if (file_exists($this->themeLayout . $this->subDir . $type . "{$this->layout}$this->ext")) {
-			$layoutFileName = $this->themeLayout . $this->subDir . $type . "{$this->layout}$this->ext";
-		}  elseif (file_exists(LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext")) {
-			$layoutFileName = LAYOUTS . $this->subDir . $type . "{$this->layout}$this->ext";
-		}  elseif ($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . $type . "{$this->layout}.thtml")) {
+		if (file_exists($this->themeLayout . $this->subDir . $type . $this->layout . $this->ext)) {
+			$layoutFileName = $this->themeLayout . $this->subDir . $type . $this->layout . $this->ext;
+		} elseif (file_exists(LAYOUTS . $this->subDir . $type . $this->layout . $this->ext)) {
+			$layoutFileName = LAYOUTS . $this->subDir . $type . $this->layout . $this->ext;
+		} elseif (file_exists($this->themeLayout . $this->subDir . $type . $this->layout . '.thtml')) {
+			$layoutFileName = $this->themeLayout . $this->subDir . $type . $this->layout . '.thtml';
+		} elseif (file_exists(LAYOUTS . $this->subDir . $type . $this->layout . '.thtml')) {
+			$layoutFileName = LAYOUTS . $this->subDir . $type . $this->layout . '.thtml';
+		}elseif ($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp')) {
 		} else {
-			$layoutFileName = LAYOUTS . $type . "{$this->layout}$this->ext";
+			$layoutFileName = LAYOUTS . $type . $this->layout . $this->ext;
 		}
 
 		return $layoutFileName;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $action
- * @param unknown_type $layout
- * @return unknown
- */
-	function pluginView($action, $layout) {
-		$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->theme . DS . $this->viewPath . DS . $action . $this->ext;
-
-		if (file_exists($viewFileName)) {
-			$this->render($action, $layout, $viewFileName);
-		} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext)) {
-			$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
-			$this->render($action, $layout, $viewFileName);
-		} else{
-			return $this->cakeError('missingView', array(array(
-											'className' => $this->controller->name,
-											'action' => $action,
-											'file' => $viewFileName,
-											'base' => $this->base)));
-		}
 	}
 }
 

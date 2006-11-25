@@ -187,7 +187,7 @@ class Controller extends Object {
  *
  * @var array
  */
-	var $ext = '.thtml';
+	var $ext = '.ctp';
 /**
  * Enter description here...
  *
@@ -887,57 +887,53 @@ class Controller extends Object {
 		if ($modelClass == null) {
 			$modelClass = $this->modelClass;
 		}
+		foreach($this->{$modelClass}->_tableInfo->value as $field) {
+			if ('date' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_year'])) {
+				$newDate = $this->data[$modelClass][$field['name'] . '_year'] . '-';
+				$newDate .= $this->data[$modelClass][$field['name'] . '_month'] . '-';
+				$newDate .= $this->data[$modelClass][$field['name'] . '_day'];
+				unset($this->data[$modelClass][$field['name'] . '_year']);
+				unset($this->data[$modelClass][$field['name'] . '_month']);
+				unset($this->data[$modelClass][$field['name'] . '_day']);
+				unset($this->data[$modelClass][$field['name'] . '_hour']);
+				unset($this->data[$modelClass][$field['name'] . '_min']);
+				unset($this->data[$modelClass][$field['name'] . '_meridian']);
+				$this->data[$modelClass][$field['name']] = $newDate;
+				$this->data[$modelClass][$field['name']] = $newDate;
 
-		foreach($this->{$modelClass}->_tableInfo as $table) {
-			foreach($table as $field) {
+			} elseif('datetime' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_year'])) {
+				$hour = $this->data[$modelClass][$field['name'] . '_hour'];
 
-				if ('date' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_year'])) {
-					$newDate = $this->data[$modelClass][$field['name'] . '_year'] . '-';
-					$newDate .= $this->data[$modelClass][$field['name'] . '_month'] . '-';
-					$newDate .= $this->data[$modelClass][$field['name'] . '_day'];
-					unset($this->data[$modelClass][$field['name'] . '_year']);
-					unset($this->data[$modelClass][$field['name'] . '_month']);
-					unset($this->data[$modelClass][$field['name'] . '_day']);
-					unset($this->data[$modelClass][$field['name'] . '_hour']);
-					unset($this->data[$modelClass][$field['name'] . '_min']);
-					unset($this->data[$modelClass][$field['name'] . '_meridian']);
-					$this->data[$modelClass][$field['name']] = $newDate;
-					$this->data[$modelClass][$field['name']] = $newDate;
-
-				} elseif('datetime' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_year'])) {
-					$hour = $this->data[$modelClass][$field['name'] . '_hour'];
-
-					if ($hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
-						$hour = $hour + 12;
-					}
-
-					$newDate  = $this->data[$modelClass][$field['name'] . '_year'] . '-';
-					$newDate .= $this->data[$modelClass][$field['name'] . '_month'] . '-';
-					$newDate .= $this->data[$modelClass][$field['name'] . '_day'] . ' ';
-					$newDate .= $hour . ':' . $this->data[$modelClass][$field['name'] . '_min'] . ':00';
-					unset($this->data[$modelClass][$field['name'] . '_year']);
-					unset($this->data[$modelClass][$field['name'] . '_month']);
-					unset($this->data[$modelClass][$field['name'] . '_day']);
-					unset($this->data[$modelClass][$field['name'] . '_hour']);
-					unset($this->data[$modelClass][$field['name'] . '_min']);
-					unset($this->data[$modelClass][$field['name'] . '_meridian']);
-					$this->data[$modelClass][$field['name']] = $newDate;
-					$this->data[$modelClass][$field['name']] = $newDate;
-
-				} elseif('time' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_hour'])) {
-					$hour = $this->data[$modelClass][$field['name'] . '_hour'];
-
-					if ($hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
-						$hour = $hour + 12;
-					}
-
-					$newDate = $hour . ':' . $this->data[$modelClass][$field['name'] . '_min'] . ':00';
-					unset($this->data[$modelClass][$field['name'] . '_hour']);
-					unset($this->data[$modelClass][$field['name'] . '_min']);
-					unset($this->data[$modelClass][$field['name'] . '_meridian']);
-					$this->data[$modelClass][$field['name']] = $newDate;
-					$this->data[$modelClass][$field['name']] = $newDate;
+				if ($hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
+					$hour = $hour + 12;
 				}
+
+				$newDate  = $this->data[$modelClass][$field['name'] . '_year'] . '-';
+				$newDate .= $this->data[$modelClass][$field['name'] . '_month'] . '-';
+				$newDate .= $this->data[$modelClass][$field['name'] . '_day'] . ' ';
+				$newDate .= $hour . ':' . $this->data[$modelClass][$field['name'] . '_min'] . ':00';
+				unset($this->data[$modelClass][$field['name'] . '_year']);
+				unset($this->data[$modelClass][$field['name'] . '_month']);
+				unset($this->data[$modelClass][$field['name'] . '_day']);
+				unset($this->data[$modelClass][$field['name'] . '_hour']);
+				unset($this->data[$modelClass][$field['name'] . '_min']);
+				unset($this->data[$modelClass][$field['name'] . '_meridian']);
+				$this->data[$modelClass][$field['name']] = $newDate;
+				$this->data[$modelClass][$field['name']] = $newDate;
+
+			} elseif('time' == $field['type'] && isset($this->data[$modelClass][$field['name'] . '_hour'])) {
+				$hour = $this->data[$modelClass][$field['name'] . '_hour'];
+
+				if ($hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
+					$hour = $hour + 12;
+				}
+
+				$newDate = $hour . ':' . $this->data[$modelClass][$field['name'] . '_min'] . ':00';
+				unset($this->data[$modelClass][$field['name'] . '_hour']);
+				unset($this->data[$modelClass][$field['name'] . '_min']);
+				unset($this->data[$modelClass][$field['name'] . '_meridian']);
+				$this->data[$modelClass][$field['name']] = $newDate;
+				$this->data[$modelClass][$field['name']] = $newDate;
 			}
 		}
 	}
@@ -1028,7 +1024,9 @@ class Controller extends Object {
 		}
 
 		extract(am(array('page' => 1, 'limit' => 20), $defaults, $options));
-		if ((is_array($scope) || is_string($scope)) && !empty($scope)) {
+		if (is_array($scope) && !empty($scope)) {
+			$conditions = am($conditions, $scope);
+		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
