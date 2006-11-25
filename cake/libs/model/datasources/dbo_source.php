@@ -209,7 +209,7 @@ class DboSource extends DataSource {
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				$query[$args[2]->name . '.' . $f] = $params[$c++];
+				$query[$args[2]->name . '.' . $f] = '= ' . $params[$c++];
 			}
 
 			if ($or) {
@@ -1193,15 +1193,11 @@ class DboSource extends DataSource {
 				$updates[] =  $update;
 			}
 		}
-		$sql = 'UPDATE ' . $this->fullTableName($model);
-		$sql .= ' SET ' . join(',', $updates);
-
 		if ($conditions == null) {
-			$sql .=  ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($model->getID(), $model->getColumnType($model->primaryKey));
-		} else {
-			$sql .= $this->conditions($conditions);
+			$conditions = array($model->primaryKey => $model->getID());
 		}
-		if (!$this->execute($sql)) {
+
+		if (!$this->execute('UPDATE '.$this->fullTableName($model).' SET '.join(',', $updates).$this->conditions($conditions))) {
 			$model->onError();
 			return false;
 		}
@@ -1215,7 +1211,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	function delete(&$model, $id = null, $conditions = null) {
+	function delete(&$model, $conditions = null) {
 		$_id = $model->id;
 		if ($id != null) {
 			$model->id = $id;
