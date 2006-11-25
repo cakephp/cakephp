@@ -37,7 +37,7 @@ else
 {
 	$path = '/'.$this->plugin.'/';
 }
-echo $html->formTag($path. Inflector::underscore($this->name).'/create');
+echo $form->create($path. Inflector::underscore($this->name).'/create');
 echo $form->generateFields( $fieldNames );
 echo $form->generateSubmitDiv( 'Add' )
 ?>
