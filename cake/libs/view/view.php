@@ -300,7 +300,6 @@ class View extends Object {
 		} else {
 			$viewFileName = $this->_getViewFileName($action);
 		}
-
 		if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === '/' || $viewFileName === '\\') {
 			if (strpos($action, 'missingAction') !== false) {
 				$errorAction = 'missingAction';
@@ -319,7 +318,6 @@ class View extends Object {
 				} else {
 					$missingViewFileName = false;
 				}
-
 				$missingViewExists = is_file($missingViewFileName);
 
 				if ($missingViewExists) {
@@ -328,32 +326,16 @@ class View extends Object {
 			}
 
 			if (strpos($action, 'missingView') === false) {
+
 				return $this->cakeError('missingView', array(array('className' => $this->name,
-							'action' => $action,
-							'file' => $viewFileName,
-							'base' => $this->base
-				)));
-
-				$isFatal = isset($this->isFatal) ? $this->isFatal : false;
-
-				if (!$isFatal) {
-					$viewFileName = $missingViewFileName;
-				}
-			} else {
-				$missingViewExists = false;
-			}
-			if (!$missingViewExists || $isFatal) {
-				if (DEBUG) {
-					trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
-				} else {
-					$this->error('404', 'Not found', sprintf("The requested address %s was not found on this server.", '', "missing view \"{$action}\""));
-				}
-				die();
+												'action' => $action,
+												'file' => $viewFileName,
+												'base' => $this->base)));
 			}
 		}
 
 		if ($viewFileName && !$this->hasRendered) {
-			if (substr($viewFileName, -4) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
+			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
 				$out = View::_render($viewFileName, $this->_viewVars);
 			} else {
 				$out = $this->_render($viewFileName, $this->_viewVars);
@@ -431,7 +413,7 @@ class View extends Object {
  */
 	function renderLayout($content_for_layout) {
 		$layout_fn = $this->_getLayoutFileName();
-		
+
 		if (DEBUG > 2 && $this->controller != null) {
 			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->controller), false);
 		} else {
@@ -614,22 +596,25 @@ class View extends Object {
 
 		if (!is_null($this->plugin)) {
 			$viewFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
+
 			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext)) {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext;
-			} elseif (file_exists($viewFileName)) {
-				return $viewFileName;
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext)) {
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . '.thtml')) {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . '.thtml';
 			} 	elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . '.thtml')) {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . '.thtml';
 			} else {
-				return $this->cakeError('missingView', array(array(
-												'className' => $this->name,
-												'action' => $action,
-												'file' => $viewFileName,
-												'base' => $this->base)));
+				$this->cakeError('missingView', array(array(
+										'className' => $this->name,
+										'action' => $action,
+										'file' => $viewFileName,
+										'base' => $this->base)));
+				exit();
 			}
 		}
+
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
@@ -637,14 +622,13 @@ class View extends Object {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
 			}
 		}
-		
-		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
-		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
-		} else {
-			$viewFileName = VIEWS . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext;
-		}
 
-		return $viewFileName;
+		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
+			return $viewFileName;
+		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
+			return $viewFileName;
+		}
+		return APP . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
 	}
 
 /**
@@ -686,9 +670,9 @@ class View extends Object {
 			}
 		}
 
-		if($layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp')) {
-		} else {
-			$layoutFileName = LAYOUTS . $type . $this->layout . $this->ext;
+		$layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
+		if(is_null($layoutFileName)) {
+			return 'missingLayout';
 		}
 		return $layoutFileName;
 	}
