@@ -255,7 +255,7 @@ class Controller extends Object {
 			$this->viewPath = Inflector::underscore($this->name);
 		}
 
-		$this->modelClass = ucwords(Inflector::singularize($this->name));
+		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
 
 		if (is_subclass_of($this, 'AppController')) {
@@ -633,139 +633,146 @@ class Controller extends Object {
 		$fieldNames = array();
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;
-		$table = $this->{$model}->table;
-		$objRegistryModel =& ClassRegistry::getObject($modelKey);
-
-		foreach($objRegistryModel->_tableInfo->value as $tabl) {
-
-			if ($objRegistryModel->isForeignKey($tabl['name'])) {
-				if(false !== strpos($tabl['name'], "_id")) {
-					$niceName = substr($tabl['name'], 0, strpos($tabl['name'], "_id" ));
+		$modelObj =& ClassRegistry::getObject($modelKey);
+		
+		foreach($modelObj->_tableInfo->value as $column) {
+ 			if ($modelObj->isForeignKey($column['name'])) {
+				if(false !== strpos($column['name'], "_id")) {
+					$niceName = substr($column['name'], 0, strpos($column['name'], "_id" ));
 				} else {
-					$niceName = $niceName = $tabl['name'];
+					$niceName = $column['name'];
 				}
-				$fkNames = $this->{$model}->keyToTable[$tabl['name']];
-				$fieldNames[$tabl['name']]['table'] = $fkNames[0];
-				$fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($niceName);
-				$fieldNames[$tabl['name']]['model'] = $fkNames[1];
-				$fieldNames[$tabl['name']]['modelKey'] = $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']];
-				$fieldNames[$tabl['name']]['controller'] = Inflector::pluralize($this->{$model}->tableToModel[$fkNames[0]]);
-				$fieldNames[$tabl['name']]['foreignKey'] = true;
+				$fkNames = $modelObj->keyToTable[$column['name']];
+				$fieldNames[$column['name']]['table'] = $fkNames[0];
+				$fieldNames[$column['name']]['prompt'] = Inflector::humanize($niceName);
+				$fieldNames[$column['name']]['model'] = Inflector::classify($niceName);
+				$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
+				$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
+				$fieldNames[$column['name']]['foreignKey'] = true;
 
-			} else if('created' != $tabl['name'] && 'updated' != $tabl['name']) {
-				$fieldNames[$tabl['name']]['prompt'] = Inflector::humanize($tabl['name']);
-			} else if('created' == $tabl['name']) {
-				$fieldNames[$tabl['name']]['prompt'] = 'Created';
-			} else if('updated' == $tabl['name']) {
-				$fieldNames[$tabl['name']]['prompt'] = 'Modified';
+			} else if('created' != $column['name'] && 'updated' != $column['name']) {
+				$fieldNames[$column['name']]['prompt'] = Inflector::humanize($column['name']);
+			} else if('created' == $column['name']) {
+				$fieldNames[$column['name']]['prompt'] = 'Created';
+			} else if('updated' == $column['name']) {
+				$fieldNames[$column['name']]['prompt'] = 'Modified';
 			}
-			$fieldNames[$tabl['name']]['tagName'] = $model . '/' . $tabl['name'];
-			$validationFields = $objRegistryModel->validate;
+			$fieldNames[$column['name']]['tagName'] = $model . '/' . $column['name'];
+			$validationFields = $modelObj->validate;
 
-			if (isset($validationFields[$tabl['name']])) {
-				if (VALID_NOT_EMPTY == $validationFields[$tabl['name']]) {
-					$fieldNames[$tabl['name']]['required'] = true;
-					$fieldNames[$tabl['name']]['errorMsg'] = "Required Field";
+			if (isset($validationFields[$column['name']])) {
+				if (VALID_NOT_EMPTY == $validationFields[$column['name']]) {
+					$fieldNames[$column['name']]['required'] = true;
+					$fieldNames[$column['name']]['errorMsg'] = "Required Field";
 				}
 			}
-			$lParenPos = strpos($tabl['type'], '(');
-			$rParenPos = strpos($tabl['type'], ')');
+			$lParenPos = strpos($column['type'], '(');
+			$rParenPos = strpos($column['type'], ')');
 
 			if (false != $lParenPos) {
-				$type = substr($tabl['type'], 0, $lParenPos);
-				$fieldLength = substr($tabl['type'], $lParenPos + 1, $rParenPos - $lParenPos - 1);
+				$type = substr($column['type'], 0, $lParenPos);
+				$fieldLength = substr($column['type'], $lParenPos + 1, $rParenPos - $lParenPos - 1);
 			} else {
-				$type = $tabl['type'];
+				$type = $column['type'];
 			}
 
 			switch($type) {
 				case "text":
-					$fieldNames[$tabl['name']]['type'] = 'area';
+					$fieldNames[$column['name']]['type'] = 'area';
 				break;
 				case "string":
-					if (isset($fieldNames[$tabl['name']]['foreignKey'])) {
-						$fieldNames[$tabl['name']]['type'] = 'select';
-						$fieldNames[$tabl['name']]['options'] = array();
-						$otherModel =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+					if (isset($fieldNames[$column['name']]['foreignKey'])) {
+						$fieldNames[$column['name']]['type'] = 'select';
+						$fieldNames[$column['name']]['options'] = array();
+						$otherModelObj =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$column['name']]['modelKey']));
 
-						if (is_object($otherModel)) {
+						if (is_object($otherModelObj)) {
 
 							if ($doCreateOptions) {
-								$otherDisplayField = $otherModel->getDisplayField();
-								$otherModel->recursive = 0;
-								$rec = $otherModel->findAll();
+								$otherDisplayField = $otherModelObj->getDisplayField();
+								$otherModelObj->recursive = 0;
+								$rec = $otherModelObj->findAll();
 
 								foreach($rec as $pass) {
 									foreach($pass as $key => $value) {
-										if ($key == $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']] && isset($value[$otherModel->primaryKey]) && isset($value[$otherDisplayField])) {
-												$fieldNames[$tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
+										if ($key == $modelObj->tableToModel[$fieldNames[$column['name']]['table']] && isset($value[$otherModelObj->primaryKey]) && isset($value[$otherDisplayField])) {
+											if(empty($value[$otherDisplayField])) {
+												$fieldNames[$column['name']]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherModelObj->primaryKey];
+											} else {
+												$fieldNames[$column['name']]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherDisplayField];
+											}
 										}
 									}
 								}
 							}
-							$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
+							$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
 						}
 					} else {
-						$fieldNames[$tabl['name']]['type'] = 'input';
+						$fieldNames[$column['name']]['type'] = 'input';
 					}
 				break;
 				case "boolean":
-						$fieldNames[$tabl['name']]['type'] = 'checkbox';
+						$fieldNames[$column['name']]['type'] = 'checkbox';
 				break;
 				case "integer":
 				case "float":
-					if (strcmp($tabl['name'], $this->$model->primaryKey) == 0) {
-						$fieldNames[$tabl['name']]['type'] = 'hidden';
-					} else if(isset($fieldNames[$tabl['name']]['foreignKey'])) {
-						$fieldNames[$tabl['name']]['type'] = 'select';
-						$fieldNames[$tabl['name']]['options'] = array();
-						$otherModel =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$tabl['name']]['modelKey']));
+					if (strcmp($column['name'], $this->$model->primaryKey) == 0) {
+						$fieldNames[$column['name']]['type'] = 'hidden';
+					} else if(isset($fieldNames[$column['name']]['foreignKey'])) {
+						$fieldNames[$column['name']]['type'] = 'select';
+						$fieldNames[$column['name']]['options'] = array();
+						$otherModelObj =& ClassRegistry::getObject($fieldNames[$column['name']]['modelKey']);
 
-						if (is_object($otherModel)) {
+						if (is_object($otherModelObj)) {
 							if ($doCreateOptions) {
-								$otherDisplayField = $otherModel->getDisplayField();
-								$otherModel->recursive = 0;
-								$rec = $otherModel->findAll();
-
-								foreach($rec as $pass) {
-									foreach($pass as $key => $value) {
-										if ($key == $this->{$model}->tableToModel[$fieldNames[$tabl['name']]['table']] && isset($value[$otherModel->primaryKey]) && isset($value[$otherDisplayField])) {
-											$fieldNames[$tabl['name']]['options'][$value[$otherModel->primaryKey]] = $value[$otherDisplayField];
+								$otherDisplayField = $otherModelObj->getDisplayField();
+								$otherModelObj->recursive = 0;
+								$rec = $otherModelObj->findAll();
+								if(is_array($rec)) {
+									foreach($rec as $pass) {
+										foreach($pass as $key => $value) {
+											if ($key == $modelObj->tableToModel[$fieldNames[$column['name']]['table']] && isset($value[$otherModelObj->primaryKey]) && isset($value[$otherDisplayField])) {
+												if(empty($value[$otherDisplayField])) {
+													$fieldNames[$column['name']]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherModelObj->primaryKey];
+												} else {
+													$fieldNames[$column['name']]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherDisplayField];
+												}
+											}
 										}
 									}
 								}
 							}
-							$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
+							$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
 						}
 					} else {
-						$fieldNames[$tabl['name']]['type'] = 'input';
+						$fieldNames[$column['name']]['type'] = 'input';
 					}
 
 				break;
 				case "enum":
-					$fieldNames[$tabl['name']]['type'] = 'select';
-					$fieldNames[$tabl['name']]['options'] = array();
+					$fieldNames[$column['name']]['type'] = 'select';
+					$fieldNames[$column['name']]['options'] = array();
 					$enumValues = split(',', $fieldLength);
 
 					foreach($enumValues as $enum) {
 						$enum = trim($enum, "'");
-						$fieldNames[$tabl['name']]['options'][$enum] = $enum;
+						$fieldNames[$column['name']]['options'][$enum] = $enum;
 					}
 
-					$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
+					$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
 				break;
 				case "date":
 				case "datetime":
 				case "time":
 				case "year":
-					if (0 != strncmp("created", $tabl['name'], 7) && 0 != strncmp("modified", $tabl['name'], 8)) {
-						$fieldNames[$tabl['name']]['type'] = $type;
+					if (0 != strncmp("created", $column['name'], 7) && 0 != strncmp("modified", $column['name'], 8)) {
+						$fieldNames[$column['name']]['type'] = $type;
 					}
 
-					if (isset($data[$model][$tabl['name']])) {
-						$fieldNames[$tabl['name']]['selected'] = $data[$model][$tabl['name']];
+					if (isset($data[$model][$column['name']])) {
+						$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
 					} else {
-						$fieldNames[$tabl['name']]['selected'] = null;
+						$fieldNames[$column['name']]['selected'] = null;
 					}
 
 				break;
@@ -774,32 +781,35 @@ class Controller extends Object {
 			}
 		}
 
-		foreach($objRegistryModel->hasAndBelongsToMany as $relation => $relData) {
-			$modelName = $relData['className'];
-			$manyAssociation = $relation;
-			$modelKeyM = Inflector::underscore($modelName);
-			$modelObject =& new $modelName();
-
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
+			$otherModelClass = $associationName;
+			$otherModelKey = Inflector::underscore($associationName);
+			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
-				$otherDisplayField = $modelObject->getDisplayField();
-				$fieldNames[$modelKeyM]['model'] = $modelName;
-				$fieldNames[$modelKeyM]['prompt'] = "Related " . Inflector::humanize(Inflector::pluralize($modelName));
-				$fieldNames[$modelKeyM]['type'] = "selectMultiple";
-				$fieldNames[$modelKeyM]['tagName'] = $manyAssociation . '/' . $manyAssociation;
-				$modelObject->recursive = 0;
-				$rec = $modelObject->findAll();
-
-				foreach($rec as $pass) {
-					foreach($pass as $key => $value) {
-						if ($key == $modelName && isset($value[$modelObject->primaryKey]) && isset($value[$otherDisplayField])) {
-							$fieldNames[$modelKeyM]['options'][$value[$modelObject->primaryKey]] = $value[$otherDisplayField];
+				$otherDisplayField = $otherModelObj->getDisplayField();
+				$fieldNames[$otherModelKey]['model'] = $otherModelClass;
+				$fieldNames[$otherModelKey]['prompt'] = "Related " . Inflector::humanize(Inflector::pluralize($otherModelClass));
+				$fieldNames[$otherModelKey]['type'] = "selectMultiple";
+				$fieldNames[$otherModelKey]['tagName'] = $associationName . '/' . $associationName;
+				$otherModelObj->recursive = 0;
+				$rec = $otherModelObj->findAll();
+				if(is_array($rec)) {
+					foreach($rec as $pass) {
+						foreach($pass as $key => $value) {
+							if ($key == $otherModelClass && isset($value[$otherModelObj->primaryKey]) && isset($value[$otherDisplayField])) {
+								if(empty($value[$otherDisplayField])) {
+									$fieldNames[$otherModelKey]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherModelObj->primaryKey];
+								} else {
+									$fieldNames[$otherModelKey]['options'][$value[$otherModelObj->primaryKey]] = $value[$otherDisplayField];
+								}
+							}
 						}
 					}
 				}
 
-				if (isset($data[$manyAssociation])) {
-					foreach($data[$manyAssociation] as $key => $row) {
-						$fieldNames[$modelKeyM]['selected'][$row[$modelObject->primaryKey]] = $row[$modelObject->primaryKey];
+				if (isset($data[$associationName])) {
+					foreach($data[$associationName] as $key => $row) {
+						$fieldNames[$otherModelKey]['selected'][$row[$otherModelObj->primaryKey]] = $row[$otherModelObj->primaryKey];
 					}
 				}
 			}

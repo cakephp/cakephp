@@ -24,65 +24,69 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>List <?php echo Inflector::humanize($this->name)?></h1>
+<h2>List <?php echo $humanPluralName;?></h2>
 <?php
+/* remove
 $model = ucwords(Inflector::singularize($this->name));
 $modelKey = $model;
 $humanName = Inflector::humanize($this->name);
 $humanSingularName = Inflector::singularize( $humanName );
+*/
+
+$modelObj =& ClassRegistry::getObject($modelKey);
+/*
 if(is_null($this->plugin)) {
 	$path = '/';
 } else {
 	$path = '/'.$this->plugin.'/';
-}
-if(!empty($this->controller->{$model}->alias)) {
-	foreach ($this->controller->{$model}->alias as $key => $value) {
-		$alias[] = $key;
-	}
+}*/
+
+if(!empty($modelObj->alias)) {
+	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
 }?>
-<table class="inav" cellpadding="0" cellspacing="0">
+<table class="scaffold" cellpadding="0" cellspacing="0">
 <thead>
-<tr>
-<?php
-foreach ($fieldNames as $fieldName) {?>
-	<th><?php echo $fieldName['prompt'];?></th>
-<?php }?>
-<th>Actions</th>
-</tr>
+	<tr>
+	<?php foreach ($fieldNames as $fieldName) {?>
+		<th><?php echo $fieldName['prompt'];?></th>
+	<?php }?>
+		<th>Actions</th>
+	</tr>
 </thead>
 <tbody>
 <?php
-$iRowIndex = 0;
+$i = 0;
 if(is_array($data)) {
 	foreach ($data as $row) {
-		if($iRowIndex++ % 2 == 0) {
-			echo "<tr>";
+		if($i++ % 2 == 0) {
+			echo '<tr>';
 		} else {
-			echo "<tr class='altRow'>";
+			echo '<tr class="altRow"">';
 		}
-		$count = 0;
-		foreach($fieldNames as $field=>$value) { ?>
+		foreach($fieldNames as $field => $value) { //pr($value);
+		?>
 			<td>
-<?php
-			if(isset($value['foreignKey'])) {
-				$otherModelKey = Inflector::underscore($value['modelKey']);
-				$otherControllerName = $value['controller'];
-				$otherModelObject =& ClassRegistry::getObject( $otherModelKey );
-				if(is_object($otherModelObject)) {
-					$displayText = $row[$alias[$count]][ $otherModelObject->getDisplayField() ];
-				} else {
-					$displayText = $row[$alias[$count]][$field];
-				}
-				echo $html->link( $displayText, $path.Inflector::underscore($otherControllerName)."/view/".$row[$modelKey][$field] );
-				$count++;
-			} else {
-				echo $row[$modelKey][$field];
-			}?>
+				<?php
+					if(isset($value['foreignKey'])) {
+						$otherControllerName = $value['controller'];
+						$otherControllerPath = Inflector::underscore($value['controller']);
+						$otherModelObject =& ClassRegistry::getObject($value['modelKey']);
+						if(is_object($otherModelObject)) {
+							$displayText = $row[$alias[$value['model']]][$otherModelObject->getDisplayField()];
+						} else {
+							$displayText = $row[$alias[$value['model']]][$field];
+						}
+						echo $html->link($displayText, '/'.Inflector::underscore($otherControllerName)."/view/".$row[$modelClass][$field]);
+					} else {
+						echo $row[$modelClass][$field];
+					}
+				?>
 			</td>
 <?php } ?>
-		<td class="listactions"><?php echo $html->link('View',$path.$this->viewPath."/view/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-			<?php echo $html->link('Edit',$path.$this->viewPath."/edit/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/")?>
-			<?php echo $html->link('Delete',$path.$this->viewPath."/delete/{$row[$modelKey][$this->controller->{$model}->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$modelKey][$this->controller->{$model}->primaryKey].' ?')?>
+		<td class="actions">
+			<?php echo $html->link('View', '/'.$viewPath."/view/{$row[$modelClass][$modelObj->primaryKey]}/")?>
+			<?php echo $html->link('Edit', '/'.$viewPath."/edit/{$row[$modelClass][$modelObj->primaryKey]}/")?>
+			<?php echo $html->link('Delete', '/'.$viewPath."/delete/{$row[$modelClass][$modelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$modelClass][$modelObj->primaryKey].' ?')?>
 		</td>
 		</tr>
 <?php
@@ -91,5 +95,5 @@ if(is_array($data)) {
 </tbody>
 </table>
 <ul class="actions">
-	<li><?php echo $html->link('New '.$humanSingularName, $path.$this->viewPath.'/add'); ?></li>
+	<li><?php echo $html->link('New '.$humanSingularName, '/'.$viewPath.'/add'); ?></li>
 </ul>

@@ -23,33 +23,37 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+/*
 $modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = $modelName;
+*/
+$modelObj =& ClassRegistry::getObject($modelKey);
 if(is_null($this->plugin)) {
 	$path = '/';
 } else {
 	$path = '/'.$this->plugin.'/';
 }?>
-<h1><?php echo $type.' '.Inflector::humanize($modelName);?></h1>
+<h2><?php echo $formName.' '.Inflector::humanize($modelClass);?></h2>
 <?php
-if($type == 'Edit') {
-	echo $form->create($path . Inflector::underscore($this->name) .'/update');
+if($formName == 'Edit') {
+	echo $form->create($path . $viewPath .'/update');
 } else {
-	echo $form->create($path. Inflector::underscore($this->name).'/create');
+	echo $form->create($path. $viewPath.'/create');
 }
-echo $form->generateFields( $fieldNames );
+echo $form->generateFields($fieldNames);
 echo $form->generateSubmitDiv( 'Save' ); ?>
 </form>
 <ul class='actions'>
 <?php
-if($type == 'Edit') {
-	echo "<li>".$html->link('Delete  '.Inflector::humanize($modelName), $path.$this->viewPath.'/delete/'.$data[$modelKey][$this->controller->{$modelName}->primaryKey])."</li>";
+if($formName == 'Edit') {
+	echo "<li>".$html->link('Delete  '.Inflector::humanize($modelClass), $path . $viewPath.'/delete/'.$data[$modelClass][$modelObj->primaryKey], null, 'Are you sure you want to delete '.$data[$modelClass][$modelObj->getDisplayField()])."</li>";
 }
-echo "<li>".$html->link('List  '.Inflector::humanize($modelName), $path.$this->viewPath.'/index')."</li>";
-if($type == 'Edit') {
+echo "<li>".$html->link('List  '.Inflector::humanize($viewPath), $path . $viewPath.'/index')."</li>";
+if($formName == 'Edit') {
 	foreach($fieldNames as $field => $value) {
 		if(isset($value['foreignKey'])) {
-			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/view/".$data[$modelKey][$field] )."</li>";
+			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path . Inflector::underscore($value['controller'])."/index")."</li>";
+			echo "<li>".$html->link( "Add ".Inflector::humanize($value['modelKey']), $path . Inflector::underscore($value['controller'])."/add/")."</li>";
 		}
 	}
 }?>

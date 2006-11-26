@@ -25,41 +25,41 @@
  */
 ?>
 <?php
+/*
 $modelName = ucwords(Inflector::singularize($this->name));
 $modelKey = Inflector::underscore($modelName);
-$objModel =& ClassRegistry::getObject($modelKey);
+
+*/
 if(is_null($this->plugin)) {
 	$path = '/';
 } else {
 	$path = '/'.$this->plugin.'/';
 }
-if(!empty($objModel->alias)) {
-	foreach ($objModel->alias as $key => $value) {
-		$alias[] = $key;
-	}
-	$count = 0;
+$modelObj =& ClassRegistry::getObject($modelKey);
+if(!empty($modelObj->alias)) {
+	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
 }?>
-<h1>View
-<?php echo Inflector::humanize($modelName)?>
+<h1>View <?php echo $humanSingularName?>
 </h1>
 <dl>
 <?php
 foreach($fieldNames as $field => $value) {
 	echo "<dt>".$value['prompt']."</dt>";
 	if(isset($value['foreignKey'])) {
-		$otherModelObject =& ClassRegistry::getObject(Inflector::underscore($objModel->tableToModel[$value['table']]));
-		$displayField = $otherModelObject->getDisplayField();
-		$displayText = $data[$alias[$count]][$displayField];
-		if(!empty($data[$objModel->tableToModel[$objModel->table]][$field]) && (isset($displayText))) {
-			echo "<dd>".$html->link($displayText, $path.Inflector::underscore($value['controller']).'/view/'
-							.$data[$objModel->tableToModel[$objModel->table]][$field] )."</dd>";
+		$otherControllerName = $value['controller'];
+		$otherControllerPath = Inflector::underscore($value['controller']);
+		$otherModelObj =& ClassRegistry::getObject($value['modelKey']);
+		$othereDisplayField = $otherModelObj->getDisplayField();
+		$displayText = $data[$alias[$value['model']]][$othereDisplayField];
+		if(!empty($data[$modelClass][$field]) && (isset($displayText))) {
+			echo "<dd>".$html->link($displayText, $path . $otherControllerPath.'/view/'
+							.$data[$modelClass][$field] )."</dd>";
 		} else {
 			echo "<dd>&nbsp;</dd>";
 		}
-		$count++;
 	} else {
-		if( !empty($data[$objModel->tableToModel[$objModel->table]][$field])) {
-			echo "<dd>".$data[$objModel->tableToModel[$objModel->table]][$field]."</dd>";
+		if( !empty($data[$modelClass][$field])) {
+			echo "<dd>".$data[$modelClass][$field]."</dd>";
 		} else {
 			echo "<dd>&nbsp;</dd>";
 		}
@@ -68,29 +68,29 @@ foreach($fieldNames as $field => $value) {
 </dl>
 <ul class='actions'>
 <?php
-echo "<li>".$html->link('Edit '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/edit/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey])."</li>";
-echo "<li>".$html->link('Delete  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/delete/'.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey], null, 'Are you sure you want to delete id '.$data[$objModel->tableToModel[$objModel->table]][$this->controller->{$modelName}->primaryKey].' ?')."</li>";
-echo "<li>".$html->link('List  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/index')."</li>";
-echo "<li>".$html->link('New  '.Inflector::humanize($objModel->name), $path.$this->viewPath.'/add')."</li>";
+echo "<li>".$html->link('Edit '.$humanSingularName, $path . $viewPath.'/edit/'.$data[$modelClass][$modelObj->primaryKey])."</li>";
+echo "<li>".$html->link('Delete  '.$humanSingularName, $path . $viewPath.'/delete/'.$data[$modelClass][$modelObj->primaryKey], null, 'Are you sure you want to delete id '.$data[$modelClass][$modelObj->primaryKey].' ?')."</li>";
+echo "<li>".$html->link('List  '.Inflector::pluralize($humanSingularName), $path . $viewPath.'/index')."</li>";
+echo "<li>".$html->link('New  '.$humanSingularName, $path . $viewPath.'/add')."</li>";
 
 foreach( $fieldNames as $field => $value ) {
 	if( isset( $value['foreignKey'] ) ) {
-		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), $path.Inflector::underscore($value['controller'])."/index/")."</li>";
+		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/index/")."</li>";
 	}
 }?>
 </ul>
 
 <!--hasOne relationships -->
 <?php
-foreach ($objModel->hasOne as $association => $relation) {
-	$model = $relation['className'];
-	$otherModelName = $objModel->tableToModel[$objModel->{$model}->table];
-	$controller = Inflector::pluralize($model);
+foreach ($modelObj->hasOne as $associationNameName => $relation) {
+	$otherModelKey = Inflector::underscore($relation['className']);
+	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+	$otherControllerPath = Inflector::pluralize($otherModelKey);
 	$new = true;
-	echo "<div class='related'><H2>Related ".Inflector::humanize($association)."</H2>";
+	echo "<div class='related'><H2>Related ".Inflector::humanize($associationNameName)."</H2>";
 	echo "<dl>";
-	if(isset($data[$association]) && is_array($data[$association])) {
-		foreach($data[$association] as $field => $value) {
+	if(isset($data[$associationNameName]) && is_array($data[$associationNameName])) {
+		foreach($data[$associationNameName] as $field => $value) {
 			if(isset($value)) {
 				echo "<dt>".Inflector::humanize($field)."</dt>";
 				if(!empty($value)) {
@@ -103,9 +103,9 @@ foreach ($objModel->hasOne as $association => $relation) {
 		}
 		echo "</dl>";
 		if($new == null) {
-			echo "<ul class='actions'><li>".$html->link('Edit '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/edit/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
+			echo "<ul class='actions'><li>".$html->link('Edit '.Inflector::humanize($associationNameName), $path . $otherControllerPath."/edit/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
 		} else {
-			echo "<ul class='actions'><li>".$html->link('New '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/add/{$data[$association][$objModel->{$model}->primaryKey]}")."</li></ul></div>";
+			echo "<ul class='actions'><li>".$html->link('New '.Inflector::humanize($associationNameName), $path . $otherControllerPath."/add/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
 		}
 	}
 }
@@ -113,46 +113,51 @@ foreach ($objModel->hasOne as $association => $relation) {
 
 <!-- HAS MANY AND HASANDBELONGSTOMANY -->
 <?php
-$relations = array_merge($objModel->hasMany, $objModel->hasAndBelongsToMany);
-foreach($relations as $association => $relation) {
-	$model = $relation['className'];
-	$count = 0;
-	$otherModelName = Inflector::singularize($model);
-	$controller = Inflector::pluralize($model);
+$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
+foreach($relations as $associationName => $relation) {
+	
+	$otherModelKey = Inflector::underscore($relation['className']);
+	$otherModelObj = &ClassRegistry::getObject($otherModelKey);
+	$otherControllerPath = Inflector::pluralize($otherModelKey);
+	
+	$otherModelName = $relation['className'];
 
-	echo "<div class='related'><H2>Related ".Inflector::humanize(Inflector::pluralize($association))."</H2>";
-	if(isset($data[$association][0]) && is_array($data[$association])) {?>
+	echo "<div class='related'><h2>Related ".Inflector::humanize($otherControllerPath)."</h2>";
+	if(isset($data[$associationName][0]) && is_array($data[$associationName])) {?>
 		<table class="inav" cellspacing="0">
 			<tr>
 <?php
 		$bFound = false;
-		foreach($data[$association][0] as $column=>$value) {
+		foreach($data[$associationName][0] as $column => $value) {
+			if(false !== strpos($column, "_id")) {
+				$column = substr($column, 0, strpos($column, "_id" ));
+			} 
 			echo "<th>".Inflector::humanize($column)."</th>";
 		}?>
 				<th>Actions</th>
 			</tr>
 <?php
-		foreach($data[$association] as $row) {
+		foreach($data[$associationName] as $row) {
 			echo "<tr>";
-			foreach($row as $column=>$value) {
+			foreach($row as $column => $value) {
 				echo "<td>".$value."</td>";
 			}
-			if (isset($this->controller->{$modelName}->{$association})) {?>
-				<td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
-																"/view/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
-										<?php echo $html->link('Edit',$path.Inflector::underscore($controller).
-																"/edit/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/")?>
-										<?php echo $html->link('Delete',$path.Inflector::underscore($controller).
-																"/delete/{$row[$this->controller->{$modelName}->{$association}->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$this->controller->{$modelName}->{$association}->primaryKey].' ?')?>
+			if (isset($otherModelObj->{$associationName})) {?>
+				<td class="listactions"><?php echo $html->link('View', $path . $otherControllerPath .
+																"/view/{$row[$otherModelObj->primaryKey]}/")?>
+										<?php echo $html->link('Edit', $path . $otherControllerPath .
+																"/edit/{$row[$otherModelObj->primaryKey]}/")?>
+										<?php echo $html->link('Delete', $path . $otherControllerPath .
+																"/delete/{$row[$otherModelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$otherModelObj->primaryKey].' ?')?>
 				</td>
 <?php
 			} else {?>
-				<td class="listactions"><?php echo $html->link('View',$path.Inflector::underscore($controller).
-																"/view/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
-										<?php echo $html->link('Edit',$path.Inflector::underscore($controller).
-																"/edit/{$row[$this->controller->{$modelName}->primaryKey]}/")?>
-										<?php echo $html->link('Delete',$path.Inflector::underscore($controller).
-																"/delete/{$row[$this->controller->{$modelName}->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$this->controller->{$modelName}->primaryKey].' ?')?>
+				<td class="listactions"><?php echo $html->link('View', $path . $otherControllerPath .
+																"/view/{$row[$otherModelObj->primaryKey]}/")?>
+										<?php echo $html->link('Edit', $path . $otherControllerPath .
+																"/edit/{$row[$otherModelObj->primaryKey]}/")?>
+										<?php echo $html->link('Delete', $path . $otherControllerPath .
+																"/delete/{$row[$otherModelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$otherModelObj->primaryKey].' ?')?>
 				</td>
 <?php
 			}
@@ -161,6 +166,6 @@ foreach($relations as $association => $relation) {
 	}?>
 </table>
 <ul class="actions">
-<?php echo "<li>".$html->link('New '.Inflector::humanize($association),$path.Inflector::underscore($controller)."/add/")."</li>";?>
+<?php echo "<li>".$html->link('New '.Inflector::humanize($associationName), $path . $otherControllerPath ."/add/")."</li>";?>
 </ul></div>
 <?php }?>

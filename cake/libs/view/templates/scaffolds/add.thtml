@@ -24,17 +24,25 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>New <?php echo Inflector::humanize($this->name)?></h1>
+<h2>New <?php echo Inflector::humanize($modelClass)?></h2>
 <?php
 if(is_null($this->plugin)) {
 	$path = '/';
 } else {
 	$path = '/'.$this->plugin.'/';
 }
-echo $form->create($path. Inflector::underscore($this->name).'/create');
-echo $form->generateFields( $fieldNames );
-echo $form->generateSubmitDiv( 'Add' );?>
+echo $form->create($path . $viewPath.'/create');
+echo $form->generateFields($fieldNames);
+echo $form->generateSubmitDiv('Add');?>
 </form>
 <ul class='actions'>
-<?php echo "<li>".$html->link('List  '.Inflector::humanize($this->name), $path.$this->viewPath.'/index')."</li>"; ?>
+<?php echo "<li>".$html->link('List  '.Inflector::humanize($viewPath), $path . $viewPath.'/index')."</li>"; ?>
+<?php
+foreach($fieldNames as $field => $value) {
+	if(isset($value['foreignKey'])) {
+		echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path . Inflector::underscore($value['controller'])."/index")."</li>";
+		echo "<li>".$html->link( "Add ".Inflector::humanize($value['modelKey']), $path . Inflector::underscore($value['controller'])."/add/")."</li>";
+	}
+}
+?>
 </ul>
