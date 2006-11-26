@@ -255,7 +255,7 @@ class Scaffold extends Object {
 			$this->controller->set('fieldNames', $this->controller->generateFieldNames());
 			$this->controller->cleanUpFields();
 
-			if ($type == 'create') {
+			if ($action == 'create') {
 				$this->ScaffoldModel->create();
 				$viewFileName = 'add';
 				$formName = 'Add';
@@ -263,7 +263,7 @@ class Scaffold extends Object {
 			}
 			
 			if ($this->ScaffoldModel->save($this->controller->data)) {
-				if ($this->controller->_afterScaffoldSave($type)) {
+				if ($this->controller->_afterScaffoldSave($action)) {
 					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
 						$this->controller->Session->setFlash('The ' . Inflector::humanize($this->modelClass) . ' has been ' . $success . '.');
 						$this->controller->redirect('/' . $this->viewPath);
@@ -271,7 +271,7 @@ class Scaffold extends Object {
 						return $this->controller->flash('The ' . Inflector::humanize($this->modelClass) . ' has been ' . $success. '.','/' . $this->viewPath);
 					}
 				} else {
-					return $this->controller->_afterScaffoldSaveError($type);
+					return $this->controller->_afterScaffoldSaveError($action);
 				}
 			} else {
 				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
