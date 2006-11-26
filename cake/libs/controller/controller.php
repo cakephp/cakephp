@@ -260,18 +260,25 @@ class Controller extends Object {
 
 		if (is_subclass_of($this, 'AppController')) {
 			$appVars = get_class_vars('AppController');
+			$uses = $appVars['uses'];
+			$merge = array('components', 'helpers');
 
-			foreach(array('components', 'helpers', 'uses') as $var) {
+			if ($uses == $this->uses) {
+				array_unshift($this->uses, $this->modelClass);
+			} elseif ($this->uses !== null && $this->uses !== false) {
+				$merge[] = 'uses';
+			}
+
+			foreach($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$diff = array_diff($appVars[$var], $this->{$var});
-					$this->{$var} = array_merge($this->{$var}, $diff);
+					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 				}
 			}
 		}
 		parent::__construct();
 	}
 
-	function _initComponents(){
+	function _initComponents() {
 		$component = new Component();
 		$component->init($this);
 	}
@@ -290,11 +297,10 @@ class Controller extends Object {
 		$cached = false;
 		$object = null;
 
-		if ($this->persistModel === true){
+		if ($this->persistModel === true) {
 			loadModels();
-			uses('neat_array');
 		} elseif($this->uses === false) {
-			if(!class_exists($this->modelClass)){
+			if(!class_exists($this->modelClass)) {
 				loadModel($this->modelClass);
 			}
 		}
@@ -517,15 +523,21 @@ class Controller extends Object {
 			loadView($this->view);
 		}
 		$this->beforeRender();
-		$this->_viewClass =& new $viewClass($this);
+		$this->params['models'] = array();
 
 		if (!empty($this->modelNames)) {
-			foreach($this->modelNames as $model) {
+			$count = count($this->modelNames);
+			for ($i = 0; $i < $count; $i++) {
+				$model = $this->modelNames[$i];
 				if (!empty($this->{$model}->validationErrors)) {
 					$this->_viewClass->validationErrors[$model] = &$this->{$model}->validationErrors;
 				}
 			}
+			$this->params['models'] = $this->modelNames;
 		}
+
+		$this->_viewClass =& new $viewClass($this);
+		// Could we destroy the model objects once we get here?
 		$this->autoRender = false;
 		return $this->_viewClass->render($action, $layout, $file);
 	}
@@ -540,7 +552,7 @@ class Controller extends Object {
 		$ref = env('HTTP_REFERER');
 		$base = FULL_BASE_URL . $this->webroot;
 
-		if ($ref != null && (defined(FULL_BASE_URL) || FULL_BASE_URL)) {
+		if ($ref != null && defined('FULL_BASE_URL')) {
 			if (strpos($ref, $base) === 0) {
 				return substr($ref, strlen($base) - 1);
 			} elseif(!$local) {

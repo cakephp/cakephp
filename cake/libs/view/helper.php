@@ -273,7 +273,7 @@ class Helper extends Overloadable {
 		}
 	}
 /**
- * Enter description here...
+ * Gets the currently-used model of the rendering context.
  *
  * @return string
  */
@@ -282,7 +282,7 @@ class Helper extends Overloadable {
 		return $view->model;
 	}
 /**
- * Enter description here...
+ * Gets the currently-used model field of the rendering context.
  *
  * @return string
  */

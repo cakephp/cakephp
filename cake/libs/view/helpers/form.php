@@ -57,25 +57,85 @@ class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
 
+	var $Html = null;
+
 /**
  * Returns an HTML FORM element.
  *
- * @param string $target URL for the FORM's ACTION attribute.
- * @param string $type		FORM type (POST/GET).
- * @param array  $htmlAttributes
+ * @param string $model The model object which the form is being defined for
+ * @param array  $options
  * @return string An formatted opening FORM tag.
  */
-	function create($target = null, $type = 'post', $htmlAttributes = null) {
-		$htmlAttributes['action'] = $this->url($target);
-		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
-		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
-		$token = '';
+	function create($model = null, $options = array()) {
+		if (empty($model)) {
+			$models = $this->params['models'];
+			$model = $models[0];
+		}
+		if (ClassRegistry::isKeySet($model)) {
+			$object =& ClassRegistry::getObject($model);
+		} else {
+			trigger_error('Model '.$model.' does not exist', E_USER_WARNING);
+			return;
+		}
+		$this->setFormTag($model . '/');
 
-		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$token = $this->Html->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+		$append = '';
+		$created = false;
+		$fields = $object->loadInfo();
+		$data = array(
+			'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
+			'key' => $object->primaryKey,
+			'validates' => array_keys($object->validate)
+		);
+
+		if (isset($this->data[$model]) && isset($this->data[$model][$object['key']]) && !empty($this->data[$model][$object['key']])) {
+			$created = true;
+		}
+		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . 'Form', 'action' => array()), $options);
+
+		if (empty($options['action']) || is_array($options['action'])) {
+			$actionDefaults = array(
+				'controller' => Inflector::underscore($this->params['controller']),
+				'action' => $created ? 'edit' : 'create'
+			);
+			$options['action'] = am($actionDefaults, $options['action']);
 		}
 
-		return sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, '')) . $token;
+		switch (low($options['type'])) {
+			case 'get':
+				$htmlAttributes['method'] = 'GET';
+			break;
+			case 'put':
+			case 'delete':
+				$append .= $this->hidden('method/method', array('value' => up($options['type'])));
+				$htmlAttributes['method'] = 'POST';
+			break;
+			case 'file':
+				$htmlAttributes['enctype'] = 'multipart/form-data';
+			default:
+			case 'post':
+				$htmlAttributes['method'] = 'POST';
+			break;
+		}
+		$htmlAttributes['action'] = $this->url($options['action']);
+		unset($options['type'], $options['action']);
+		$htmlAttributes = am($options, $htmlAttributes);
+
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']));
+		}
+		return $this->output(sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, ''))) . $append;
+	}
+/**
+ * Closes an HTML form.
+ *
+ * @return string A closing FORM tag.
+ */
+	function end($model = null) {
+		if (empty($model)) {
+			$models = $this->params['models'][0];
+		}
+		return $this->output($this->Html->tags['formend']);
 	}
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
@@ -87,7 +147,7 @@ class FormHelper extends AppHelper {
 		$error = 1;
 		$this->setFormTag($field);
 
-		if ($error == $this->Html->tagIsInvalid()) {
+		if ($error == $this->tagIsInvalid()) {
 			return true;
 		} else {
 			return false;
@@ -95,8 +155,10 @@ class FormHelper extends AppHelper {
 	}
 /**
  * @deprecated
+ * @see FormHelper::label()
  */
 	function labelTag($tagName, $text) {
+		trigger_error('Deprecated: Use FormHelper::label() instead', E_USER_WARNING);
 		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
@@ -214,7 +276,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
 		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
@@ -229,7 +291,7 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
 		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
@@ -241,17 +303,30 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function textarea($fieldName, $htmlAttributes = null) {
-		$value = $this->Html->tagValue($fieldName);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+
 		if (!empty($htmlAttributes['value'])) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
 		}
-		$htmlAttributes = $this->domId($htmlAttributes);
 
 		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->Html->addClass($htmlAttributes, 'form_error');
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
 		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
+	}
+/**
+ * Creates a hidden input field.
+ *
+ * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param  array	$htmlAttributes Array of HTML attributes.
+ * @return string
+ */
+	function hidden($fieldName, $htmlAttributes = array()) {
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		return $this->output(sprintf($this->Html->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a button tag.
@@ -303,18 +378,28 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
- * @param mixed $selected Selected option
- * @param array $attributes
- * @param boolean $show_empty If true, the empty select option is shown
- * @param boolean $showParents
+ * @param mixed $selected The option selected by default.  If null, the default value
+ *                        from POST data will be used when available.
+ * @param array $attributes  The HTML attributes of the select element.  If
+ *                           'showParents' is included in the array and set to true,
+ *                           an additional option element will be added for the parent
+ *                           of each option group.
+ * @param mixed $showEmpty If true, the empty select option is shown.  If a string,
+ *                         that string is displayed as the empty element.
  * @return string Formatted SELECT element
  */
-	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '', $showParents = null) {
+	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+		$showParents = false;
 		$this->setFormTag($fieldName);
 		$attributes = $this->domId($attributes);
 
 		if ($this->tagIsInvalid()) {
-			$attributes = $this->Html->addClass($attributes, 'form_error');
+			$attributes = $this->addClass($attributes, 'form-error');
+		}
+
+		if (isset($attributes['showParents']) && $attributes['showParents']) {
+			unset($attributes['showParents']);
+			$showParents = true;
 		}
 
 		if (!isset($selected)) {
@@ -381,17 +466,11 @@ class FormHelper extends AppHelper {
 		return array_reverse($select, true);
 	}
 /**
- * Returns a formatted INPUT tag for HTML FORMs.
- *
- * @param string $tagName	This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is a required field.
- * @param string $errorMsg	Text that will appear if an error has occurred.
- * @param int $size Size attribute for INPUT element
- * @param array $htmlOptions	HTML options array.
- * @return string The formatted INPUT element, with a label and wrapped in a div.
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateInputDiv($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null) {
+		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::text() instead', E_USER_WARNING);
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['size'] = $size;
@@ -411,16 +490,11 @@ class FormHelper extends AppHelper {
 		return $this->divTag($divClass, $divTagInside);
 	}
 /**
- * Returns a formatted CHECKBOX tag inside a DIV for HTML FORMs.
- *
- * @param string $tagName This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is a required field.
- * @param string $errorMsg Text that will appear if an error has occurred.
- * @param array $htmlOptions	HTML options array.
- * @return string The formatted checkbox div
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateCheckboxDiv($tagName, $prompt, $required = false, $errorMsg = null, $htmlOptions = null) {
+		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead', E_USER_WARNING);
 		$htmlOptions['class'] = "inputCheckbox";
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->checkbox($tagName, null, $htmlOptions);
@@ -439,18 +513,11 @@ class FormHelper extends AppHelper {
 		return $this->divTag($divClass, $divTagInside);
 	}
 /**
- * Returns a formatted date option element for HTML FORMs.
- *
- * @param string $tagName	This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is a required field.
- * @param string $errorMsg	Text that will appear if an error has occurred.
- * @param int $size Not used.
- * @todo  Remove the $size parameter from this method.
- * @param array $htmlOptions HTML options array
- * @return string Date option wrapped in a div.
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateDate($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
+		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
@@ -469,18 +536,11 @@ class FormHelper extends AppHelper {
 		return $this->divTag("date", $requiredDiv);
 	}
 /**
- * Returns a formatted date option element for HTML FORMs.
- *
- * @param string $tagName	This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is a required field.
- * @param string $errorMsg	Text that will appear if an error has occurred.
- * @param int $size Not used.
- * @todo  Remove the $size parameter from this method.
- * @param array $htmlOptions HTML options array
- * @return string Date option wrapped in a div.
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
+		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
@@ -497,25 +557,12 @@ class FormHelper extends AppHelper {
 		$requiredDiv = $this->divTag($divClass, $divTagInside);
 		return $this->divTag("time", $requiredDiv);
 	}
-
-
-
-
-
 /**
- * Returns a formatted datetime option element for HTML FORMs.
- *
- * @param string $tagName This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field.
- * @param bool $required True if this field is required.
- * @param string $errorMsg Text that will appear if an error has occurred.
- * @param int $size Not used.
- * @todo  Remove the $size parameter from this method.
- * @param array $htmlOptions  HTML options array
- * @param array $selected Selected index in the dateTimeOption tag.
- * @return string The formatted datetime option element wrapped in a div.
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
+		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
@@ -534,18 +581,11 @@ class FormHelper extends AppHelper {
 		return $this->divTag("date", $requiredDiv);
 	}
 /**
- * Returns a formatted TEXTAREA inside a DIV for use with HTML forms.
- *
- * @param string $tagName	This should be "Modelname/fieldname"
- * @param string $prompt	Text that will appear in the label field.
- * @param boolean $required	True if this field is required.
- * @param string $errorMsg	ext that will appear if an error has occurred.
- * @param integer $cols		Number of columns.
- * @param integer $rows		Number of rows.
- * @param array $htmlOptions	HTML options array.
- * @return string The formatted TEXTAREA element, wrapped in a div.
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateAreaDiv($tagName, $prompt, $required = false, $errorMsg = null, $cols = 60, $rows = 10, $htmlOptions = null) {
+		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['cols'] = $cols;
@@ -567,19 +607,11 @@ class FormHelper extends AppHelper {
 		return $this->divTag($divClass, $divTagInside);
 	}
 /**
- * Returns a formatted SELECT tag for HTML FORMs.
- *
- * @param string $tagName This should be "Modelname/fieldname"
- * @param string $prompt Text that will appear in the label field
- * @param array $options Options to be contained in SELECT element
- * @param string $selected Currently selected item
- * @param array $selectAttr Array of HTML attributes for the SELECT element
- * @param array $optionAttr Array of HTML attributes for the OPTION elements
- * @param bool $required True if this field is required
- * @param string $errorMsg Text that will appear if an error has occurred
- * @return string The formatted INPUT element, wrapped in a div
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateSelectDiv($tagName, $prompt, $options, $selected = null, $selectAttr = null, $optionAttr = null, $required = false, $errorMsg = null) {
+		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::select() instead', E_USER_WARNING);
 		$selectAttr['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->selectTag($tagName, $options, $selected, $selectAttr, $optionAttr);
 		$strLabel = $this->label($tagName, $prompt);
@@ -598,23 +630,19 @@ class FormHelper extends AppHelper {
 		return $this->divTag($divClass, $divTagInside);
 	}
 /**
- * Returns a formatted submit widget for HTML FORMs.
- *
- * @param string $displayText Text that will appear on the widget
- * @param array $htmlOptions HTML options array
- * @return string The formatted submit widget
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
+		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::submit() instead', E_USER_WARNING);
 		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
 	}
 /**
- * Generates a form to go onto a HtmlHelper object.
- *
- * @param array $fields An array of form field definitions
- * @param boolean $readOnly True if the form should be rendered as READONLY
- * @return string The completed form specified by the $fields parameter
+ * @deprecated
+ * @see FormHelper::input()
  */
 	function generateFields($fields, $readOnly = false) {
+		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$strFormFields = '';
 
 		foreach($fields as $field) {
@@ -728,15 +756,20 @@ class FormHelper extends AppHelper {
 	}
 /**
  * @deprecated
+ * @see HtmlHelper::div
  */
 	function divTag($class, $text) {
+		trigger_error('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead', E_USER_WARNING);
 		return sprintf(TAG_DIV, $class, $text);
 	}
 /**
  * @deprecated
+ * @see HtmlHelper::para
  */
 	function pTag($class, $text) {
+		trigger_error('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead', E_USER_WARNING);
 		return sprintf(TAG_P_CLASS, $class, $text);
 	}
 }
+
 ?>
