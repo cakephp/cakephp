@@ -313,6 +313,8 @@ class View extends Object {
 
 				if (file_exists(VIEWS . $viewDir . DS . $errorAction . $this->ext)) {
 					$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . $this->ext;
+				} elseif (file_exists(VIEWS . $viewDir . DS . $errorAction . '.thtml')) {
+						$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . '.thtml';
 				} elseif($missingViewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $viewDir . DS . $errorAction . '.ctp')) {
 				} else {
 					$missingViewFileName = false;
