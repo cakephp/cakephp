@@ -133,7 +133,7 @@ dl {
 line-height:2em;
 margin:0em 1em;
 float:left;
-width: 400px;
+width: 70%;
 }
 
 dt {
@@ -157,6 +157,7 @@ form {
 margin-top: 0em;
 padding: 0;
 float: left;
+width: 70%;
 }
 
 form div{
@@ -268,7 +269,6 @@ background-color: #ddd;
 ul.actions {
 float: left;
 margin: 0px 20px;
-width: 200px;
 }
 
 ul.actions li {
