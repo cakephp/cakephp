@@ -340,7 +340,6 @@ class View extends Object {
 			} else {
 				$missingViewExists = false;
 			}
-			echo $viewFileName;
 			if (!$missingViewExists || $isFatal) {
 				if (DEBUG) {
 					trigger_error(sprintf(__("No template file for view %s (expected %s), create it first'"), $action, $viewFileName), E_USER_ERROR);
