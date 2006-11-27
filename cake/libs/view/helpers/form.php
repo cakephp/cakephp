@@ -87,8 +87,8 @@ class FormHelper extends AppHelper {
 			'key' => $object->primaryKey,
 			'validates' => array_keys($object->validate)
 		);
-
-		if (isset($this->data[$model]) && isset($this->data[$model][$object['key']]) && !empty($this->data[$model][$object['key']])) {
+		
+		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
 		}
 		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . 'Form', 'action' => array()), $options);
@@ -237,6 +237,8 @@ class FormHelper extends AppHelper {
 		if (isset($options['label'])) {
 			$label = $options['label'];
 			unset($options['label']);
+		} else {
+			$label = Inflector::humanize($this->field());
 		}
 		
 		$out = $this->label($tagName, $label);
@@ -245,7 +247,9 @@ class FormHelper extends AppHelper {
 		if (isset($options['error'])) {
 			$error = $options['error'];
 			unset($options['error']);
-		} 
+		} else {
+			$error = $label . ' is required';
+		}
 		
 		$selected = null;
 		if (isset($options['selected'])) {
