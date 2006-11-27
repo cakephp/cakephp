@@ -132,7 +132,7 @@ class FormHelper extends AppHelper {
  * @return string A closing FORM tag.
  */
 	function end($model = null) {
-		if (empty($model)) {
+		if (empty($model) && !empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
 		return $this->output($this->Html->tags['formend']);
