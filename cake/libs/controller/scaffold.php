@@ -156,7 +156,7 @@ class Scaffold extends Object {
  */
 	 function __scaffoldView($params) {
 		  if ($this->controller->_beforeScaffold('view')) {
-				$this->controller->data = $this->ScaffoldModel->find();
+				$this->controller->data = $this->ScaffoldModel->read();
 				$this->controller->set('data', $this->controller->data);
 				$this->controller->set('fieldNames',
 										$this->controller->generateFieldNames($this->controller->data, false));
@@ -220,7 +220,7 @@ class Scaffold extends Object {
 				$this->controller->set('formName', ucwords($action));
 				
 				if ($action == 'edit') {
-					 	$this->controller->data = $this->ScaffoldModel->find();
+					 	$this->controller->data = $this->ScaffoldModel->read();
 					 $this->controller->set('fieldNames',
 											$this->controller->generateFieldNames($this->controller->data));
 					 $this->controller->set('data', $this->controller->data);
