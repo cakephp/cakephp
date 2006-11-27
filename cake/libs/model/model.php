@@ -464,8 +464,13 @@ class Model extends Overloadable {
 				return $this->behaviors[$call[$i][1]]->{$call[$i][0]}($this, $params, $method);
 			}
 		}
-
-		return $db->query($method, $params, $this);
+		$return = $db->query($method, $params, $this);
+		if (!PHP5) {
+			if (isset($this->__backAssociation)) {
+				$this->__resetAssociations();
+			}
+		}
+		return $return;
 	}
 /**
  * Bind model associations on the fly.
