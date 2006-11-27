@@ -297,43 +297,11 @@ class View extends Object {
 
 		if ($file) {
 			$viewFileName = $file;
+			$this->_missingView($viewFileName, $action);
 		} else {
 			$viewFileName = $this->_getViewFileName($action);
 		}
-		if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === '/' || $viewFileName === '\\') {
-			if (strpos($action, 'missingAction') !== false) {
-				$errorAction = 'missingAction';
-			} else {
-				$errorAction = 'missingView';
-			}
-
-			foreach(array($this->name, 'errors') as $viewDir) {
-				$errorAction = Inflector::underscore($errorAction);
-
-				if (file_exists(VIEWS . $viewDir . DS . $errorAction . $this->ext)) {
-					$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . $this->ext;
-				} elseif (file_exists(VIEWS . $viewDir . DS . $errorAction . '.thtml')) {
-						$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . '.thtml';
-				} elseif($missingViewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $viewDir . DS . $errorAction . '.ctp')) {
-				} else {
-					$missingViewFileName = false;
-				}
-				$missingViewExists = is_file($missingViewFileName);
-
-				if ($missingViewExists) {
-					break;
-				}
-			}
-
-			if (strpos($action, 'missingView') === false) {
-
-				return $this->cakeError('missingView', array(array('className' => $this->name,
-												'action' => $action,
-												'file' => $viewFileName,
-												'base' => $this->base)));
-			}
-		}
-
+		
 		if ($viewFileName && !$this->hasRendered) {
 			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
 				$out = View::_render($viewFileName, $this->_viewVars);
@@ -443,7 +411,7 @@ class View extends Object {
 				$data_for_layout = array_merge($data_for_layout, $this->loaded);
 			}
 
-			if (substr($layout_fn, -4) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
+			if (substr($layout_fn, -3) === 'ctp' || substr($layout_fn, -5) === 'thtml') {
 				$out = View::_render($layout_fn, $data_for_layout, $loadHelpers, true);
 			} else {
 				$out = $this->_render($layout_fn, $data_for_layout, $loadHelpers);
@@ -622,13 +590,16 @@ class View extends Object {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
 			}
 		}
-
+		
 		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
 			return $viewFileName;
 		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
 			return $viewFileName;
+		} else {
+			$viewFileName = APP . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
+			$this->_missingView($viewFileName, $action);
 		}
-		return APP . DS . 'views' . DS . $this->viewPath . DS . $action . $this->ext;
+		return false;
 	}
 
 /**
@@ -815,7 +786,13 @@ class View extends Object {
 		}
 		return $loaded;
 	}
-
+/**
+ * Render cached view
+ *
+ * @param string $filename the cache file to include
+ * @param string $timeStart the page render start time
+ * @return void
+ */
 	function renderCache($filename, $timeStart) {
 		ob_start();
 		include ($filename);
@@ -838,6 +815,47 @@ class View extends Object {
 				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);
 				e($out);
 				die();
+			}
+		}
+	}
+/**
+ * Return a misssing view error message
+ *
+ * @param string $viewFileName the filename that should exist
+ * @return cakeError
+ */	
+	function _missingView($viewFileName = null, $action = null) {	
+		if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === '/' || $viewFileName === '\\') {
+			if (strpos($action, 'missingAction') !== false) {
+				$errorAction = 'missingAction';
+			} else {
+				$errorAction = 'missingView';
+			}
+			
+			foreach(array($this->name, 'errors') as $viewDir) {
+				$errorAction = Inflector::underscore($errorAction);
+				if (file_exists(VIEWS . $viewDir . DS . $errorAction . $this->ext)) {
+					$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . $this->ext;
+				} elseif (file_exists(VIEWS . $viewDir . DS . $errorAction . '.thtml')) {
+					$missingViewFileName = VIEWS . $viewDir . DS . $errorAction . '.thtml';
+				} elseif ($missingViewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $viewDir . DS . $errorAction . '.ctp')) {
+				} else {
+					$missingViewFileName = false;
+				}
+				$missingViewExists = is_file($missingViewFileName);
+
+				if ($missingViewExists) {
+					break;
+				}
+			}
+
+			if (strpos($action, 'missingView') === false) {
+				return $this->cakeError('missingView', array(
+											array('className' => $this->name,
+												'action' => $this->action,
+												'file' => $viewFileName,
+												'base' => $this->base)));
+				exit();
 			}
 		}
 	}

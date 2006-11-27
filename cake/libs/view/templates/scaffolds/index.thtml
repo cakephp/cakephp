@@ -26,29 +26,16 @@
 ?>
 <h2>List <?php echo $humanPluralName;?></h2>
 <?php
-/* remove
-$model = ucwords(Inflector::singularize($this->name));
-$modelKey = $model;
-$humanName = Inflector::humanize($this->name);
-$humanSingularName = Inflector::singularize( $humanName );
-*/
-
 $modelObj =& ClassRegistry::getObject($modelKey);
-/*
-if(is_null($this->plugin)) {
-	$path = '/';
-} else {
-	$path = '/'.$this->plugin.'/';
-}*/
-
 if(!empty($modelObj->alias)) {
 	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
-}?>
+}
+?>
 <table class="scaffold" cellpadding="0" cellspacing="0">
 <thead>
 	<tr>
 	<?php foreach ($fieldNames as $fieldName) {?>
-		<th><?php echo $fieldName['prompt'];?></th>
+		<th><?php echo $fieldName['label'];?></th>
 	<?php }?>
 		<th>Actions</th>
 	</tr>
@@ -63,7 +50,7 @@ if(is_array($data)) {
 		} else {
 			echo '<tr class="altRow"">';
 		}
-		foreach($fieldNames as $field => $value) { //pr($value);
+		foreach($fieldNames as $field => $value) {
 		?>
 			<td>
 				<?php
@@ -76,7 +63,7 @@ if(is_array($data)) {
 						} else {
 							$displayText = $row[$alias[$value['model']]][$field];
 						}
-						echo $html->link($displayText, '/'.Inflector::underscore($otherControllerName)."/view/".$row[$modelClass][$field]);
+						echo $html->link($displayText, $path . $otherControllerPath . "/view/".$row[$modelClass][$field]);
 					} else {
 						echo $row[$modelClass][$field];
 					}
@@ -84,9 +71,9 @@ if(is_array($data)) {
 			</td>
 <?php } ?>
 		<td class="actions">
-			<?php echo $html->link('View', '/'.$viewPath."/view/{$row[$modelClass][$modelObj->primaryKey]}/")?>
-			<?php echo $html->link('Edit', '/'.$viewPath."/edit/{$row[$modelClass][$modelObj->primaryKey]}/")?>
-			<?php echo $html->link('Delete', '/'.$viewPath."/delete/{$row[$modelClass][$modelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$modelClass][$modelObj->primaryKey].' ?')?>
+			<?php echo $html->link('View', $path . $viewPath."/view/{$row[$modelClass][$modelObj->primaryKey]}/")?>
+			<?php echo $html->link('Edit', $path . $viewPath."/edit/{$row[$modelClass][$modelObj->primaryKey]}/")?>
+			<?php echo $html->link('Delete', $path . $viewPath."/delete/{$row[$modelClass][$modelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$modelClass][$modelObj->primaryKey].' ?')?>
 		</td>
 		</tr>
 <?php
@@ -95,5 +82,5 @@ if(is_array($data)) {
 </tbody>
 </table>
 <ul class="actions">
-	<li><?php echo $html->link('New '.$humanSingularName, '/'.$viewPath.'/add'); ?></li>
+	<li><?php echo $html->link('New '.$humanSingularName, $path . $viewPath.'/add'); ?></li>
 </ul>

@@ -25,16 +25,6 @@
  */
 ?>
 <?php
-/*
-$modelName = ucwords(Inflector::singularize($this->name));
-$modelKey = Inflector::underscore($modelName);
-
-*/
-if(is_null($this->plugin)) {
-	$path = '/';
-} else {
-	$path = '/'.$this->plugin.'/';
-}
 $modelObj =& ClassRegistry::getObject($modelKey);
 if(!empty($modelObj->alias)) {
 	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
@@ -44,14 +34,14 @@ if(!empty($modelObj->alias)) {
 <dl>
 <?php
 foreach($fieldNames as $field => $value) {
-	echo "<dt>".$value['prompt']."</dt>";
+	echo "<dt>".$value['label']."</dt>";
 	if(isset($value['foreignKey'])) {
 		$otherControllerName = $value['controller'];
 		$otherControllerPath = Inflector::underscore($value['controller']);
 		$otherModelObj =& ClassRegistry::getObject($value['modelKey']);
 		$othereDisplayField = $otherModelObj->getDisplayField();
 		$displayText = $data[$alias[$value['model']]][$othereDisplayField];
-		if(!empty($data[$modelClass][$field]) && (isset($displayText))) {
+		if(!empty($data[$modelClass][$field]) && (!empty($displayText))) {
 			echo "<dd>".$html->link($displayText, $path . $otherControllerPath.'/view/'
 							.$data[$modelClass][$field] )."</dd>";
 		} else {
@@ -70,12 +60,13 @@ foreach($fieldNames as $field => $value) {
 <?php
 echo "<li>".$html->link('Edit '.$humanSingularName, $path . $viewPath.'/edit/'.$data[$modelClass][$modelObj->primaryKey])."</li>";
 echo "<li>".$html->link('Delete  '.$humanSingularName, $path . $viewPath.'/delete/'.$data[$modelClass][$modelObj->primaryKey], null, 'Are you sure you want to delete id '.$data[$modelClass][$modelObj->primaryKey].' ?')."</li>";
-echo "<li>".$html->link('List  '.Inflector::pluralize($humanSingularName), $path . $viewPath.'/index')."</li>";
+echo "<li>".$html->link('List  '.$humanPluralName, $path . $viewPath.'/index')."</li>";
 echo "<li>".$html->link('New  '.$humanSingularName, $path . $viewPath.'/add')."</li>";
 
 foreach( $fieldNames as $field => $value ) {
 	if( isset( $value['foreignKey'] ) ) {
 		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/index/")."</li>";
+		echo "<li>".$html->link( "Add ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/add/")."</li>";
 	}
 }?>
 </ul>

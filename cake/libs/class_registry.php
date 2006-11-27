@@ -64,7 +64,7 @@ class ClassRegistry{
  */
 	function addObject($key, &$object) {
 		$_this =& ClassRegistry::getInstance();
-		$key = strtolower($key);
+		$key = Inflector::underscore($key);
 		if (array_key_exists($key, $_this->_objects) === false) {
 			$_this->_objects[$key] = &$object;
 		}
@@ -77,7 +77,7 @@ class ClassRegistry{
  */
 	function removeObject($key) {
 		$_this =& ClassRegistry::getInstance();
-		$key = strtolower($key);
+		$key = Inflector::underscore($key);
 		if (array_key_exists($key, $_this->_objects) === true) {
 			unset($_this->_objects[$key]);
 		}
@@ -90,7 +90,7 @@ class ClassRegistry{
  */
 	function isKeySet($key) {
 		$_this =& ClassRegistry::getInstance();
-		$key = strtolower($key);
+		$key = Inflector::underscore($key);
 		return array_key_exists($key, $_this->_objects);
 	}
 /**
@@ -101,7 +101,7 @@ class ClassRegistry{
  */
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
-		$key = strtolower($key);
+		$key = Inflector::underscore($key);
 		return $_this->_objects[$key];
 	}
 }

@@ -182,6 +182,23 @@ class FormHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->Html->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
 	}
+/* Will display all the fields passed in an array expects tagName as an array key
+ * replaces generateFields
+ *
+ * @param array $fields works well with Controller::generateFieldNames();
+ * @return output 
+ */	
+	function displayFields($fields) {
+		$out = null;
+		foreach($fields as $name => $options) {
+			if(isset($options['tagName'])){
+				$tagName = $options['tagName'];
+				unset($options['tagName']);
+			}
+			$out .= $this->input($tagName, $options);
+		}
+		return $this->output($out);
+	}
 /**
  * Generates a form input element complete with label and wrapper div
  *
@@ -190,7 +207,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function input($tagName, $options = array()) {
-
+		
 		$this->setFormTag($tagName);
 
 		if (!isset($options['type'])) {
@@ -221,20 +238,35 @@ class FormHelper extends AppHelper {
 			$label = $options['label'];
 			unset($options['label']);
 		}
+		
 		$out = $this->label($tagName, $label);
 
 		$error = null;
 		if (isset($options['error'])) {
 			$error = $options['error'];
 			unset($options['error']);
+		} 
+		
+		$selected = null;
+		if (isset($options['selected'])) {
+			$selected = $options['selected'];
+			unset($options['selected']);
 		}
-
+		
 		switch ($options['type']) {
+			case 'hidden':
+				$wrap = false;
+				$out = $this->hidden($tagName);
+			break;
+			case 'checkbox':
+				$out = $this->Html->checkbox($tagName);
+				$out .= $this->label($tagName, $label);
+			break;
 			case 'text':
-				$out .= $this->text($tagName);
+				$out .= $this->text($tagName, $options);
 			break;
 			case 'password':
-				$out .= $this->password($tagName);
+				$out .= $this->password($tagName, $options);
 			break;
 			case 'file':
 				$out .= $this->Html->file($tagName);
@@ -245,9 +277,18 @@ class FormHelper extends AppHelper {
 				unset($options['options'], $options['empty']);
 				$out .= $this->select($tagName, $list, null, $options, $empty);
 			break;
+			case 'time':
+				$out .= $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, false);
+			break;
+			case 'date':
+				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, false);
+			break;
+			case 'datetime':
+				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, false);
+			break;
 			case 'textarea':
 			default:
-				$out .= $this->textarea($tagName);
+				$out .= $this->textarea($tagName, $options);
 			break;
 		}
 
@@ -305,7 +346,8 @@ class FormHelper extends AppHelper {
 	function textarea($fieldName, $htmlAttributes = null) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
-
+		
+		$value = null;
 		if (!empty($htmlAttributes['value'])) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
@@ -405,7 +447,6 @@ class FormHelper extends AppHelper {
 		if (!isset($selected)) {
 			$selected = $this->__value($fieldName);
 		}
-
 		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
 			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {
@@ -564,7 +605,7 @@ class FormHelper extends AppHelper {
 	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
-		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions);
+		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions, null, false);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
@@ -634,7 +675,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::submit() instead', E_USER_WARNING);
+		//trigger_error('Deprecated: Use FormHelper::input() or FormHelper::submit() instead', E_USER_WARNING);
 		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
 	}
 /**
@@ -759,7 +800,7 @@ class FormHelper extends AppHelper {
  * @see HtmlHelper::div
  */
 	function divTag($class, $text) {
-		trigger_error('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead', E_USER_WARNING);
+		//trigger_error('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead', E_USER_WARNING);
 		return sprintf(TAG_DIV, $class, $text);
 	}
 /**
@@ -767,7 +808,7 @@ class FormHelper extends AppHelper {
  * @see HtmlHelper::para
  */
 	function pTag($class, $text) {
-		trigger_error('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead', E_USER_WARNING);
+		//trigger_error('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead', E_USER_WARNING);
 		return sprintf(TAG_P_CLASS, $class, $text);
 	}
 }

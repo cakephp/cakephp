@@ -73,7 +73,7 @@ class Scaffold extends Object {
  *
  * @var string
  */
-	 var $modeKey = null;
+	 var $modelKey = null;
 	
 /**
  * View path for scaffolded controller
@@ -104,7 +104,13 @@ class Scaffold extends Object {
 		$this->scaffoldTitle = Inflector::humanize($this->name);
 		$this->viewPath = Inflector::underscore($this->name);
 		$this->controller->pageTitle= 'Scaffold :: ' . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
-		
+		$path = '/';
+		/*if(is_null($controller->plugin)) {
+			$path = '/';
+		} else {
+			$path = '/'.$controller->plugin.'/';
+		}*/
+		$this->controller->set('path', $path);
 		$this->controller->set('controllerName', $this->name);
 		$this->controller->set('controllerAction', $this->action);
 		$this->controller->set('modelClass', $this->modelClass);
@@ -114,10 +120,15 @@ class Scaffold extends Object {
 		$this->controller->set('humanPluralName', $this->scaffoldTitle);
 		
 		if (!in_array('Form', $this->controller->helpers)) {
-		$this->controller->helpers[] = 'Form';
+			$this->controller->helpers[] = 'Form';
 		}
 		$this->controller->constructClasses();
-		$this->ScaffoldModel = &$this->controller->{$this->modelClass};
+		$this->ScaffoldModel = &$this->controller->{$this->modelClass};		
+		
+		$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
+		$this->controller->set('alias', $alias);
+		$this->controller->set('primaryKey', $this->ScaffoldModel->primaryKey);
+		$this->controller->set('displayField', $this->ScaffoldModel->getDisplayfield());
 		
 		$this->__scaffold($params);
 	 }
@@ -130,16 +141,8 @@ class Scaffold extends Object {
  * @access private
  */
 	 function __scaffoldView($params) {
-	
 		  if ($this->controller->_beforeScaffold('view')) {
-				
-				$this->controller->set('modelClass', $this->modelClass);
-				$this->controller->set('modelKey', $this->modelKey);
-				$this->controller->set('humanSingularName', Inflector::humanize($this->modelClass));
-				$this->controller->set('humanPluralName', $this->scaffoldTitle);
-				
-				
-				$this->controller->data = $this->ScaffoldModel->read();
+				$this->controller->data = $this->ScaffoldModel->find();
 				$this->controller->set('data', $this->controller->data);
 				$this->controller->set('fieldNames',
 										$this->controller->generateFieldNames($this->controller->data, false));
@@ -203,7 +206,7 @@ class Scaffold extends Object {
 				$this->controller->set('formName', ucwords($action));
 				
 				if ($action == 'edit') {
-					 $this->controller->data = $this->ScaffoldModel->read();
+					 $this->controller->data = $this->ScaffoldModel->find();
 					 $this->controller->set('fieldNames',
 											$this->controller->generateFieldNames($this->controller->data));
 					 $this->controller->set('data', $this->controller->data);
@@ -246,7 +249,7 @@ class Scaffold extends Object {
 		
 		$this->controller->set('formName', $formName);
 		
-		if ($this->controller->_beforeScaffold($formAction)) {
+		if ($this->controller->_beforeScaffold($action)) {
 		
 			if (empty($this->controller->data)) {
 				return $this->__scaffoldForm($params, $formAction);
@@ -257,9 +260,6 @@ class Scaffold extends Object {
 
 			if ($action == 'create') {
 				$this->ScaffoldModel->create();
-				$viewFileName = 'add';
-				$formName = 'Add';
-				$success = 'saved';
 			}
 			
 			if ($this->ScaffoldModel->save($this->controller->data)) {
@@ -290,7 +290,7 @@ class Scaffold extends Object {
 				  return $this->controller->render($viewFileName, '', LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . 'edit.thtml');
 				}
 			}
-		} else if($this->controller->_scaffoldError($formAction) === false) {
+		} else if($this->controller->_scaffoldError($action) === false) {
 			return $this->__scaffoldError();
 		}
 	}
@@ -368,8 +368,7 @@ class Scaffold extends Object {
 						  $count=0;
 
 						  foreach($field[$model] as $value) {
-								$params[$model][$count][$this->ScaffoldModel->primaryKey]
-								= $value;
+								$params[$model][$count][$this->ScaffoldModel->primaryKey] = $value;
 								$count++;
 						  }
 
@@ -446,10 +445,10 @@ class Scaffold extends Object {
 						  }
 				} else {
 					 return $this->cakeError('missingAction', array(
-								array('className' => $this->controller->name . "Controller"),
-								 'base' => $this->controller->base,
-								 'action' => $this->action,
-								 'webroot' => $this->controller->webroot
+								array('className' => $this->controller->name . "Controller",
+									 'base' => $this->controller->base,
+									 'action' => $this->action,
+									 'webroot' => $this->controller->webroot)
 									)
 								);
 				}

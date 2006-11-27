@@ -23,32 +23,24 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/*
-$modelName = ucwords(Inflector::singularize($this->name));
-$modelKey = $modelName;
-*/
 $modelObj =& ClassRegistry::getObject($modelKey);
-if(is_null($this->plugin)) {
-	$path = '/';
-} else {
-	$path = '/'.$this->plugin.'/';
-}?>
-<h2><?php echo $formName.' '.Inflector::humanize($modelClass);?></h2>
+?>
+<h2><?php echo $formName.' '.$humanSingularName;?></h2>
 <?php
 if($formName == 'Edit') {
-	echo $form->create($path . $viewPath .'/update');
+	echo $form->create($modelClass, array('action' => 'update'));
 } else {
-	echo $form->create($path. $viewPath.'/create');
+	echo $form->create($modelClass, array('action' => 'create'));
 }
-echo $form->generateFields($fieldNames);
-echo $form->generateSubmitDiv( 'Save' ); ?>
+echo $form->displayFields($fieldNames);
+echo $form->generateSubmitDiv('Save'); ?>
 </form>
 <ul class='actions'>
 <?php
 if($formName == 'Edit') {
-	echo "<li>".$html->link('Delete  '.Inflector::humanize($modelClass), $path . $viewPath.'/delete/'.$data[$modelClass][$modelObj->primaryKey], null, 'Are you sure you want to delete '.$data[$modelClass][$modelObj->getDisplayField()])."</li>";
+	echo "<li>".$html->link('Delete  '.$humanSingularName, $path . $viewPath.'/delete/'.$data[$modelClass][$primaryKey], null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
 }
-echo "<li>".$html->link('List  '.Inflector::humanize($viewPath), $path . $viewPath.'/index')."</li>";
+echo "<li>".$html->link('List  '.$humanPluralName, $path . $viewPath.'/index')."</li>";
 if($formName == 'Edit') {
 	foreach($fieldNames as $field => $value) {
 		if(isset($value['foreignKey'])) {
