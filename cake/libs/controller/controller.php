@@ -644,20 +644,22 @@ class Controller extends Object {
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;
 		$modelObj =& ClassRegistry::getObject($modelKey);
+		
 		foreach($modelObj->_tableInfo->value as $column) {
  			if ($modelObj->isForeignKey($column['name'])) {
-				if(false !== strpos($column['name'], "_id")) {
-					$niceName = substr($column['name'], 0, strpos($column['name'], "_id" ));
-				} else {
-					$niceName = $column['name'];
+				foreach($modelObj->belongsTo as $associationName => $assoc) {
+					if($column['name'] == $assoc['foreignKey']) {
+						$fkNames = $modelObj->keyToTable[$column['name']];
+						$fieldNames[$column['name']]['table'] = $fkNames[0];
+						$fieldNames[$column['name']]['label'] = Inflector::humanize($associationName);
+						$fieldNames[$column['name']]['model'] = Inflector::classify($associationName);
+						$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
+						$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
+						$fieldNames[$column['name']]['foreignKey'] = true;
+						break;
+					}
 				}
-				$fkNames = $modelObj->keyToTable[$column['name']];
-				$fieldNames[$column['name']]['table'] = $fkNames[0];
-				$fieldNames[$column['name']]['label'] = Inflector::humanize($niceName);
-				$fieldNames[$column['name']]['model'] = Inflector::classify($niceName);
-				$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
-				$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
-				$fieldNames[$column['name']]['foreignKey'] = true;
+				
 
 			} else {
 				$fieldNames[$column['name']]['label'] = Inflector::humanize($column['name']);
