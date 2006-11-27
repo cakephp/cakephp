@@ -268,7 +268,7 @@ class View extends Object {
 			}
 		}
 		parent::__construct();
-		ClassRegistry::addObject('_view_', $this);
+		ClassRegistry::addObject('view', $this);
 	}
 
 /**
