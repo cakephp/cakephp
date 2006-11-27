@@ -1207,27 +1207,20 @@ class DboSource extends DataSource {
  * Generates and executes an SQL DELETE statement for given id on given model.
  *
  * @param Model $model
- * @param mixed $id Primary key id number to remove.
  * @param mixed $conditions
  * @return boolean Success
  */
 	function delete(&$model, $conditions = null) {
-		$_id = $model->id;
-		if ($id != null) {
-			$model->id = $id;
+		if (empty($model->id) && empty($conditions)) {
+			return false;
+		} elseif (empty($conditions)) {
+			$conditions = array($model->primaryKey => (array)$model->id);
 		}
-
-		if (!is_array($model->id)) {
-			$model->id = array($model->id);
+		if ($this->execute('DELETE FROM ' . $this->fullTableName($model) . $this->conditions($conditions)) === false) {
+			$model->onError();
+			return false;
 		}
-
-		foreach($model->id as $id) {
-			$result = $this->execute('DELETE FROM ' . $this->fullTableName($model) . ' WHERE ' . $this->name($model->primaryKey) . ' = ' . $this->value($id));
-			if ($result === false) {
-				$model->onError();
-			}
-		}
-		return ($result !== false);
+		return true;
 	}
 /**
  * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)
