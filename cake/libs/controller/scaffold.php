@@ -296,10 +296,10 @@ class Scaffold extends Object {
 				$this->controller->set('fieldNames', $this->controller->generateFieldNames($this->__rebuild($this->controller->data)));
 				$this->controller->validateErrors($this->ScaffoldModel);
 
-				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.' . $action . '.thtml')) {
-				  return $this->controller->render($viewFileName, '', APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.' . $thtml . '.thtml');
-				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.' . $action . '.thtml')) {
-				  return $this->controller->render($viewFileName, '', APP . 'views' . DS . 'scaffold' . DS . 'scaffold.' . $action . '.thtml');
+				if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.' . $viewFileName . '.thtml')) {
+				  return $this->controller->render($viewFileName, '', APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.' . $viewFileName . '.thtml');
+				} elseif(file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.' . $viewFileName . '.thtml')) {
+				  return $this->controller->render($viewFileName, '', APP . 'views' . DS . 'scaffold' . DS . 'scaffold.' . $viewFileName . '.thtml');
 				} else {
 				  return $this->controller->render($viewFileName, '', LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . 'edit.thtml');
 				}
