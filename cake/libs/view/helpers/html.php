@@ -209,7 +209,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$view =& ClassRegistry::getObject('_view_');
+			$view =& ClassRegistry::getObject('view');
 			$view->addScript($out);
 		}
 	}
@@ -279,7 +279,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$view =& ClassRegistry::getObject('_view_');
+			$view =& ClassRegistry::getObject('view');
 			$view->addScript($out);
 		}
 	}

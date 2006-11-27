@@ -523,8 +523,9 @@ class Controller extends Object {
 			loadView($this->view);
 		}
 		$this->beforeRender();
-		$this->params['models'] = array();
+		$this->params['models'] = $this->modelNames;
 
+		$this->_viewClass =& new $viewClass($this);
 		if (!empty($this->modelNames)) {
 			$count = count($this->modelNames);
 			for ($i = 0; $i < $count; $i++) {
@@ -533,11 +534,8 @@ class Controller extends Object {
 					$this->_viewClass->validationErrors[$model] = &$this->{$model}->validationErrors;
 				}
 			}
-			$this->params['models'] = $this->modelNames;
 		}
 
-		$this->_viewClass =& new $viewClass($this);
-		// Could we destroy the model objects once we get here?
 		$this->autoRender = false;
 		return $this->_viewClass->render($action, $layout, $file);
 	}

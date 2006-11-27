@@ -255,7 +255,7 @@ class Helper extends Overloadable {
  * @param string $tagValue A field name, like "Modelname/fieldname"
  */
 	function setFormTag($tagValue) {
-		$view =& ClassRegistry::getObject('_view_');
+		$view =& ClassRegistry::getObject('view');
 		$parts = explode("/", $tagValue);
 
 		if (count($parts) == 1) {
@@ -278,7 +278,7 @@ class Helper extends Overloadable {
  * @return string
  */
 	function model() {
-		$view =& ClassRegistry::getObject('_view_');
+		$view =& ClassRegistry::getObject('view');
 		return $view->model;
 	}
 /**
@@ -287,7 +287,7 @@ class Helper extends Overloadable {
  * @return string
  */
 	function field() {
-		$view =& ClassRegistry::getObject('_view_');
+		$view =& ClassRegistry::getObject('view');
 		return $view->field;
 	}
 /**
