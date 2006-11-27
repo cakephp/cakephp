@@ -100,14 +100,10 @@ class Dispatcher extends Object {
 					if(preg_match('/([\\.]+)/', $ctrlName)) {
 						Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 
-						return $this->cakeError('error404', array(
-							array(
-								'url' => strtolower($ctrlName),
-								'message' => 'Was not found on this server',
-								'base' => $this->base
-							)
-						));
-						exit();
+						return $this->cakeError('error404',
+														array(array('url' => strtolower($ctrlName),
+																'message' => 'Was not found on this server',
+																'base' => $this->base)));
 					} elseif(!class_exists($ctrlClass)) {
 						$missingController = true;
 					}
