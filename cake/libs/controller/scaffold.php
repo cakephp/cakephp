@@ -101,8 +101,8 @@ class Scaffold extends Object {
 		$this->action = $controller->action;
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->scaffoldTitle = Inflector::humanize($this->name);
 		$this->viewPath = Inflector::underscore($this->name);
+		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->controller->pageTitle= 'Scaffold :: ' . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 		$path = '/';
 		/*if(is_null($controller->plugin)) {
@@ -116,17 +116,20 @@ class Scaffold extends Object {
 		$this->controller->set('modelClass', $this->modelClass);
 		$this->controller->set('modelKey', $this->modelKey);
 		$this->controller->set('viewPath', $this->viewPath);
-		$this->controller->set('humanSingularName', Inflector::humanize($this->modelClass));
-		$this->controller->set('humanPluralName', $this->scaffoldTitle);
+		$this->controller->set('humanSingularName', Inflector::humanize($this->modelKey));
+		$this->controller->set('humanPluralName', Inflector::humanize($this->viewPath));
 		
 		if (!in_array('Form', $this->controller->helpers)) {
 			$this->controller->helpers[] = 'Form';
 		}
 		$this->controller->constructClasses();
 		$this->ScaffoldModel = &$this->controller->{$this->modelClass};		
-		
-		$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
+		$alias = null;
+		if(!empty($this->ScaffoldModel->alias)) {
+			$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
+		}
 		$this->controller->set('alias', $alias);
+		
 		$this->controller->set('primaryKey', $this->ScaffoldModel->primaryKey);
 		$this->controller->set('displayField', $this->ScaffoldModel->getDisplayfield());
 		
@@ -206,7 +209,7 @@ class Scaffold extends Object {
 				$this->controller->set('formName', ucwords($action));
 				
 				if ($action == 'edit') {
-					 $this->controller->data = $this->ScaffoldModel->find();
+					 	$this->controller->data = $this->ScaffoldModel->find();
 					 $this->controller->set('fieldNames',
 											$this->controller->generateFieldNames($this->controller->data));
 					 $this->controller->set('data', $this->controller->data);

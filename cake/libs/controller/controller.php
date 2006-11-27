@@ -73,7 +73,7 @@ class Controller extends Object {
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
-	var $uses = null;
+	var $uses = false;
 /**
  * An array of names of built-in helpers to include.
  *
@@ -263,7 +263,7 @@ class Controller extends Object {
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
-			if ($uses == $this->uses && $this->uses !== null) {
+			if ($uses == $this->uses && $this->uses !== false) {
 				array_unshift($this->uses, $this->modelClass);
 			} elseif ($this->uses !== null && $this->uses !== false) {
 				$merge[] = 'uses';
@@ -304,7 +304,7 @@ class Controller extends Object {
 				loadModel($this->modelClass);
 			}
 		}
-
+		
 		if (class_exists($this->modelClass) && ($this->uses === false)) {
 			if ($this->persistModel === true) {
 				$cached = $this->_persist($this->modelClass, null, $object);
@@ -693,7 +693,7 @@ class Controller extends Object {
 					if (isset($fieldNames[$column['name']]['foreignKey'])) {
 						$fieldNames[$column['name']]['type'] = 'select';
 						$fieldNames[$column['name']]['options'] = array();
-						$otherModelObj =& ClassRegistry::getObject(Inflector::underscore($fieldNames[$column['name']]['modelKey']));
+						$otherModelObj =& ClassRegistry::getObject($fieldNames[$column['name']]['modelKey']);
 						if (is_object($otherModelObj)) {
 							if ($doCreateOptions) {
 								$fieldNames[$column['name']]['options'] = $otherModelObj->generateList();
