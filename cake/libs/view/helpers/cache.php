@@ -195,7 +195,7 @@ class CacheHelper extends AppHelper {
 		if (is_numeric($timestamp)) {
 			$cacheTime = $now + $timestamp;
 		} else {
-			$cacheTime = $now + strtotime($timestamp);
+			$cacheTime = strtotime($timestamp, $now);
 		}
 
 		$cache = convertSlash($this->here) . '.php';

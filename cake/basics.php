@@ -921,9 +921,10 @@
 		if (defined('DISABLE_CACHE')) {
 			return null;
 		}
+		$now = time();
 
 		if (!is_numeric($expires)) {
-			$expires = strtotime($expires);
+			$expires = strtotime($expires, $now);
 		}
 
 		switch(strtolower($target)) {
@@ -934,9 +935,9 @@
 				$filename = WWW_ROOT . $path;
 			break;
 		}
-		$now = time();
-		$timediff=$expires - $now;
-		$filetime=@filemtime($filename);
+
+		$timediff = $expires - $now;
+		$filetime = @filemtime($filename);
 
 		if ($data == null) {
 			// Read data from file
