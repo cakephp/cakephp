@@ -48,7 +48,7 @@ if(is_array($data)) {
 		if($i++ % 2 == 0) {
 			echo '<tr>';
 		} else {
-			echo '<tr class="altRow"">';
+			echo '<tr class="altrow"">';
 		}
 		foreach($fieldNames as $field => $value) {
 		?>

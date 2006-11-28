@@ -578,7 +578,7 @@ class HtmlHelper extends AppHelper {
 		$error = 1;
 		$this->setFormTag($field);
 		if ($error == $this->tagIsInvalid()) {
-			return sprintf('<div class="error_message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
+			return sprintf('<div class="error-message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
 		} else {
 			return null;
 		}
@@ -616,7 +616,6 @@ class HtmlHelper extends AppHelper {
 		if (!isset($selected)) {
 			$selected = $this->tagValue($fieldName);
 		}
-
 		if (isset($selectAttr) && array_key_exists("multiple", $selectAttr)) {
 			$select[] = sprintf($this->tags['selectmultiplestart'], $this->model(), $this->field(), $this->parseHtmlOptions($selectAttr));
 		} else {

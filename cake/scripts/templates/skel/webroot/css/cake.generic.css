@@ -76,7 +76,6 @@ clear:both;
 padding: 0px 40px 10px 40px;
 background-color: #fff;
 color: #333;
-overflow: hidden;
 }
 
 #footer{
@@ -114,7 +113,7 @@ vertical-align:top;
 text-align: center;
 }
 
-table tr.altRow td {
+table tr.altrow td {
 background: #f4f4f4;
 }
 td a{
@@ -235,14 +234,14 @@ margin-left: 140px;
 }
 
 /* notices and errors */
-#flashMessage, .error, .error_message {
+#flashMessage, .error, .error-message, .form-error {
 color:#900;
 font-size: 16px;
 margin: 8px 0px;
 font-weight: bold;
 }
 
-.error_message {
+.error-message {
 clear: both;
 }
 

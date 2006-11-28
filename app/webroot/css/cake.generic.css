@@ -87,13 +87,13 @@ text-align: right;
 
 /* tables */
 table {
+clear:both;
 width: 100%;
 border-top: 1px solid #ccc;
 border-left: 1px solid #ccc;
 border-bottom: 1px solid #ccc;
 color:#333;
 background-color: #fff;
-clear:both;
 margin-bottom: 10px;
 }
 
@@ -114,7 +114,7 @@ vertical-align:top;
 text-align: center;
 }
 
-table tr.altRow td {
+table tr.altrow td {
 background: #f4f4f4;
 }
 td a{
@@ -210,7 +210,7 @@ display: inline;
 vertical-align: bottom;
 }
 
-form .required, form .optional{
+form .required, form .optional, form .input{
 clear:both;
 padding: 10px;
 margin-bottom:10px;
@@ -223,7 +223,7 @@ font-weight:bold;
 background: #f2f2f2;
 }
 
-.optional{
+.optional, .input {
 color:#444;
 background: #f8f8f8;
 }
@@ -235,14 +235,14 @@ margin-left: 140px;
 }
 
 /* notices and errors */
-#flashMessage, .error, .error_message {
+#flashMessage, .error, .error-message {
 color:#900;
 font-size: 16px;
 margin: 8px 0px;
 font-weight: bold;
 }
 
-.error_message {
+.error-message {
 clear: both;
 }
 
