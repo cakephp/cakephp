@@ -184,7 +184,7 @@ class SessionComponent extends CakeSession {
 				$view->helpers		= array('Html');
 				$view->layout		= $layout;
 				$view->pageTitle	= '';
-				$view->_viewVars	= $params;
+				$view->viewVars	= $params;
 				$out = $view->renderLayout($flashMessage);
 			}
 			$this->write('Message.' . $key, $out);

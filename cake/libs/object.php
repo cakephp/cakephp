@@ -243,15 +243,14 @@ class Object{
 		}
 	}
 /**
- * When a Model::persist; is set to true, a file with the model name it auto created.
- * If used in other locations of the model you should choose a unique name for the persistent file
+ * You should choose a unique name for the persistent file
+ *
  * There are many uses for this method, see manual for examples
  *
- * @param string $name name used for object to cach
- * @param string $object the object to persist
+ * @param string $name name used for object to cache
+ * @param object $object the object to persist
  * @return true on save, throws error if file can not be created
- * @access public
- * @todo add examples to manual
+ * @access protected
  */
 	function _savePersistent($name, &$object) {
 		$file = 'persistent' . DS . strtolower($name) . '.php';
@@ -262,8 +261,10 @@ class Object{
 	}
 /**
  * Open the persistent class file for reading
+ * Used by Object::_persist()
  *
- * @param string $name name of the class
+ * @param string $name
+ * @param string $type
  * @access private
  */
 	function __openPersistent($name, $type = null) {
@@ -274,13 +275,20 @@ class Object{
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach($vars['0'] as $key => $value) {
+					loadModel(Inflector::classify($key));
+				}
+				unset($vars);
+				$vars = unserialize(${$name});
+				foreach($vars['0'] as $key => $value) {
 					ClassRegistry::addObject($key, $value);
 					unset ($value);
 				}
+				unset($vars);
 			break;
 			default:
 				$vars = unserialize(${$name});
 				$this->{$name} = $vars['0'];
+				unset($vars);
 			break;
 		}
 	}

@@ -44,20 +44,22 @@ class Controller extends Object {
 /**
  * Name of the controller.
  *
- * @var unknown_type
+ * @var string
  * @access public
  */
 	var $name = null;
 /**
  * Stores the current URL (for links etc.)
  *
- * @var string Current URL
+ * @var string
+ * @access public
  */
 	var $here = null;
 /**
  * The webroot of the application
  *
  * @var string
+ * @access public
  */
 	var $webroot = null;
 /**
@@ -118,14 +120,14 @@ class Controller extends Object {
  * Variables for the view
  *
  * @var array
- * @access private
+ * @access public
  */
-	var $_viewVars = array();
+	var $viewVars = array();
 /**
  * Web page title
  *
  * @var boolean
- * @access private
+ * @access public
  */
 	var $pageTitle = false;
 /**
@@ -136,9 +138,9 @@ class Controller extends Object {
  */
 	var $modelNames = array();
 /**
- * Enter description here...
+ * Base url path
  *
- * @var unknown_type
+ * @var string
  * @access public
  */
 	var $base = null;
@@ -157,66 +159,70 @@ class Controller extends Object {
  */
 	var $autoRender = true;
 /**
- * Enter description here...
+ * Automatically render the layout
  *
  * @var boolean
  * @access public
  */
 	var $autoLayout = true;
 /**
- * Enter description here...
+ * Array of components a controller will use
  *
- * @var string
+ * @var array
  * @access public
- */
-	var $beforeFilter = null;
-/**
- * Enter description here...
- *
- * @var unknown_type
  */
 	var $components = array();
 /**
- * Enter description here...
+ * The name of the View class a controller sends output to
  *
- * @var unknown_type
+ * @var string
+ * @access public
  */
 	var $view = 'View';
 /**
  * File extension for view templates. Defaults to Cake's conventional ".thtml".
  *
- * @var array
+ * @var string
+ * @access public
  */
 	var $ext = '.ctp';
 /**
- * Enter description here...
+ * Instance of $view class create by a controller
  *
- * @var unknown_type
+ * @var object
+ * @access private
  */
-	var $_viewClass = null;
+	var $__viewClass = null;
 /**
  * The output of the requested action.  Contains either a variable
  * returned from the action, or the data of the rendered view;
+ * You can use this var in Child classes afterFilter() to alter output.
  *
- * @var unknown_type
+ * @var string
+ * @access public
  */
 	var $output = null;
 /**
- * Enter description here...
+ * Automatically set to the name of a plugin.
  *
- * @var unknown_type
+ * @var string
+ * @access public
  */
 	var $plugin = null;
 /**
- * Enter description here...
+ * Used to set methods a controller will allow the View to cache
  *
- * @var unknown_type
+ * @var mixed
+ * @access public
  */
 	var $cacheAction = false;
 /**
- * Enter description here...
+ * Used to create cached instances of models a controller uses.
+ * When set to true all models related to the controller will be cached,
+ * this can increase performance in many cases
  *
  * @var boolean
+ * @access public
  */
 	var $persistModel = false;
 /**
@@ -282,13 +288,18 @@ class Controller extends Object {
 		$component = new Component();
 		$component->init($this);
 	}
-
 /**
- * Loads and instantiates classes required by this controller,
- * including components and models
+ * Loads and instantiates models required by this controller.
+ * If Controller::persistModel; is true, controller will create cached model instances on first request,
+ * additional request will used cached models
  *
+ * @return mixed true when single model found and instance created error returned if models not found.
+ * @access public
  */
 	function constructClasses() {
+		if($this->uses === null || ($this->uses === array())){
+			return false;
+		}
 		if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
 			$id = false;
 		} else {
@@ -297,14 +308,15 @@ class Controller extends Object {
 		$cached = false;
 		$object = null;
 
-		if ($this->persistModel === true) {
-			loadModels();
-		} elseif($this->uses === false) {
-			if(!class_exists($this->modelClass)) {
+		if ($this->persistModel === true){
+			uses('neat_array');
+		}
+		if($this->uses === false) {
+			if(!class_exists($this->modelClass)){
 				loadModel($this->modelClass);
 			}
 		}
-		
+
 		if (class_exists($this->modelClass) && ($this->uses === false)) {
 			if ($this->persistModel === true) {
 				$cached = $this->_persist($this->modelClass, null, $object);
@@ -367,14 +379,16 @@ class Controller extends Object {
 					return $this->cakeError('missingModel', array(array('className' => $modelClass, 'webroot' => '', 'base' => $this->base)));
 				}
 			}
+			return true;
 		}
 	}
 /**
- * Redirects to given $url, after turning off $this->autoRender. Please notice that the script execution is not stopped
- * after the redirect.
+ * Redirects to given $url, after turning off $this->autoRender.
+ * Please notice that the script execution is not stopped after the redirect.
  *
  * @param string $url
  * @param integer $status
+ * @access public
  */
 	function redirect($url, $status = null) {
 		$this->autoRender = false;
@@ -459,7 +473,7 @@ class Controller extends Object {
 			if ($name == 'title') {
 				$this->pageTitle = $value;
 			} else {
-				$this->_viewVars[$name] = $value;
+				$this->viewVars[$name] = $value;
 			}
 		}
 	}
@@ -525,19 +539,19 @@ class Controller extends Object {
 		$this->beforeRender();
 		$this->params['models'] = $this->modelNames;
 
-		$this->_viewClass =& new $viewClass($this);
+		$this->__viewClass =& new $viewClass($this);
 		if (!empty($this->modelNames)) {
 			$count = count($this->modelNames);
 			for ($i = 0; $i < $count; $i++) {
 				$model = $this->modelNames[$i];
 				if (!empty($this->{$model}->validationErrors)) {
-					$this->_viewClass->validationErrors[$model] = &$this->{$model}->validationErrors;
+					$this->__viewClass->validationErrors[$model] = &$this->{$model}->validationErrors;
 				}
 			}
 		}
 
 		$this->autoRender = false;
-		return $this->_viewClass->render($action, $layout, $file);
+		return $this->__viewClass->render($action, $layout, $file);
 	}
 /**
  * Gets the referring URL of this request
@@ -644,7 +658,7 @@ class Controller extends Object {
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;
 		$modelObj =& ClassRegistry::getObject($modelKey);
-		
+
 		foreach($modelObj->_tableInfo->value as $column) {
  			if ($modelObj->isForeignKey($column['name'])) {
 				foreach($modelObj->belongsTo as $associationName => $assoc) {
@@ -659,7 +673,7 @@ class Controller extends Object {
 						break;
 					}
 				}
-				
+
 
 			} else {
 				$fieldNames[$column['name']]['label'] = Inflector::humanize($column['name']);
@@ -702,7 +716,7 @@ class Controller extends Object {
 						}
 					} else {
 						$fieldNames[$column['name']]['type'] = 'text';
-						$fieldNames[$column['name']]['size'] = '60';						
+						$fieldNames[$column['name']]['size'] = '60';
 					}
 				break;
 				case "boolean":
@@ -715,7 +729,7 @@ class Controller extends Object {
 					} else if(isset($fieldNames[$column['name']]['foreignKey'])) {
 						$fieldNames[$column['name']]['type'] = 'select';
 						$fieldNames[$column['name']]['options'] = array();
-						
+
 						$otherModelObj =& ClassRegistry::getObject($fieldNames[$column['name']]['modelKey']);
 						if (is_object($otherModelObj)) {
 							if ($doCreateOptions) {

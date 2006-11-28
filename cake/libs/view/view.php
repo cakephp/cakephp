@@ -119,7 +119,7 @@ class View extends Object {
  * @var array
  * @access private
  */
-	var $_viewVars = array();
+	var $viewVars = array();
 
 /**
  * Scripts (and/or other <head /> tags) for the layout
@@ -253,7 +253,7 @@ class View extends Object {
  * @var array
  * @access protected
  */
-	var $__passedVars = array('_viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
 /**
  * Constructor
  *
@@ -301,12 +301,12 @@ class View extends Object {
 		} else {
 			$viewFileName = $this->_getViewFileName($action);
 		}
-		
+
 		if ($viewFileName && !$this->hasRendered) {
 			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
-				$out = View::_render($viewFileName, $this->_viewVars);
+				$out = View::_render($viewFileName, $this->viewVars);
 			} else {
-				$out = $this->_render($viewFileName, $this->_viewVars);
+				$out = $this->_render($viewFileName, $this->viewVars);
 			}
 
 			if ($out !== false) {
@@ -321,7 +321,7 @@ class View extends Object {
 				print $out;
 				$this->hasRendered = true;
 			} else {
-				$out = $this->_render($viewFileName, $this->_viewVars);
+				$out = $this->_render($viewFileName, $this->viewVars);
 				trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
 			}
 			return true;
@@ -349,10 +349,10 @@ class View extends Object {
 		if (!is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext)) {
 				$elementFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
-				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml')) {
 				$elementFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml';
-				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
 			}
 		}
 
@@ -360,10 +360,10 @@ class View extends Object {
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$elementFileName = $path . 'elements' . DS . $name . $this->ext;
-				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
 				$elementFileName = $path . 'elements' . DS . $name . '.thtml';
-				return $this->_render($elementFileName, array_merge($this->_viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
 			}
 		}
 		return "(Error rendering Element: {$name})";
@@ -394,7 +394,7 @@ class View extends Object {
 			$pageTitle = Inflector::humanize($this->viewPath);
 		}
 
-		$data_for_layout = array_merge($this->_viewVars,
+		$data_for_layout = array_merge($this->viewVars,
 			array(
 				'title_for_layout'   => $pageTitle,
 				'content_for_layout' => $content_for_layout,
@@ -441,7 +441,7 @@ class View extends Object {
  * @access public
  */
 	function getVars() {
-		return array_keys($this->_viewVars);
+		return array_keys($this->viewVars);
 	}
 /**
  * Returns the contents of the given View variable(s)
@@ -450,10 +450,10 @@ class View extends Object {
  * @access public
  */
 	function getVar($var) {
-		if (!isset($this->_viewVars[$var])) {
+		if (!isset($this->viewVars[$var])) {
 			return null;
 		} else {
-			return $this->_viewVars[$var];
+			return $this->viewVars[$var];
 		}
 	}
 /**
@@ -511,7 +511,7 @@ class View extends Object {
 			if ($name == 'title') {
 				$this->pageTitle = $value;
 			} else {
-				$this->_viewVars[$name] = $value;
+				$this->viewVars[$name] = $value;
 			}
 		}
 	}
@@ -590,7 +590,7 @@ class View extends Object {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
 			}
 		}
-		
+
 		if ($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . $type . $action . '.ctp')) {
 			return $viewFileName;
 		} elseif($viewFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . $this->viewPath . DS . $type . $action . '.ctp')) {
@@ -823,15 +823,15 @@ class View extends Object {
  *
  * @param string $viewFileName the filename that should exist
  * @return cakeError
- */	
-	function _missingView($viewFileName = null, $action = null) {	
+ */
+	function _missingView($viewFileName = null, $action = null) {
 		if (!is_file($viewFileName) && !fileExistsInPath($viewFileName) || $viewFileName === '/' || $viewFileName === '\\') {
 			if (strpos($action, 'missingAction') !== false) {
 				$errorAction = 'missingAction';
 			} else {
 				$errorAction = 'missingView';
 			}
-			
+
 			foreach(array($this->name, 'errors') as $viewDir) {
 				$errorAction = Inflector::underscore($errorAction);
 				if (file_exists(VIEWS . $viewDir . DS . $errorAction . $this->ext)) {
