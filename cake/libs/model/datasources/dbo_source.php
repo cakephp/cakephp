@@ -1520,7 +1520,7 @@ class DboSource extends DataSource {
  * @return string ORDER BY clause
  */
 	function order($keys, $direction = 'ASC') {
-		if (is_string($keys) && strpos($keys, ',')) {
+		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
 			$keys = explode(',', $keys);
 			array_map('trim', $keys);
 		}
