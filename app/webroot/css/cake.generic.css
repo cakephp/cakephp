@@ -76,7 +76,6 @@ clear:both;
 padding: 0px 40px 10px 40px;
 background-color: #fff;
 color: #333;
-overflow: hidden;
 }
 
 #footer{
@@ -164,7 +163,6 @@ form div{
 vertical-align: text-top;
 margin-left: 1em;
 margin-bottom:2em;
-overflow: auto;
 }
 
 form div.date{
