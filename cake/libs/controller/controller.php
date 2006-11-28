@@ -269,9 +269,9 @@ class Controller extends Object {
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
-			if ($uses == $this->uses && $this->uses !== false) {
+			if ($uses == $this->uses && !empty($this->uses)) {
 				array_unshift($this->uses, $this->modelClass);
-			} elseif ($this->uses !== null && $this->uses !== false) {
+			} elseif (!empty($this->uses)) {
 				$merge[] = 'uses';
 			}
 
@@ -336,8 +336,8 @@ class Controller extends Object {
 				$this->_persist($this->modelClass . 'registry', true, $object, 'registry');
 				$this->_persist($this->modelClass, true, $object);
 				$this->modelNames[] = $this->modelClass;
-				return true;
 			}
+			return true;
 		} elseif ($this->uses === false) {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelClass, 'webroot' => '', 'base' => $this->base)));
 		}

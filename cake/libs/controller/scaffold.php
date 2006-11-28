@@ -102,7 +102,10 @@ class Scaffold extends Object {
 		if (!in_array('Form', $this->controller->helpers)) {
 			$this->controller->helpers[] = 'Form';
 		}
-		$this->controller->constructClasses();
+		if($this->controller->constructClasses() === false) {
+			return $this->cakeError('missingModel', array(array('className' => $this->modelKey, 'webroot' => '', 'base' => $this->controller->base)));
+		}
+
 		if(!empty($controller->uses) && class_exists($controller->uses[0])) {
 			$controller->modelClass = $controller->uses[0];
 			$controller->modelKey = Inflector::underscore($controller->modelClass);
@@ -114,7 +117,7 @@ class Scaffold extends Object {
 		if(!is_object($this->controller->{$this->modelClass})) {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelClass, 'webroot' => '', 'base' => $controller->base)));
 		}
-		$this->ScaffoldModel = &$this->controller->{$this->modelClass};
+		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
 
 		$this->viewPath = Inflector::underscore($this->name);
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
