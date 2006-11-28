@@ -124,12 +124,17 @@
 	require_once (CORE_PATH.'cake'.DS.'config'.DS.'paths.php');
 	require_once (CORE_PATH.'cake'.DS.'dispatcher.php');
 	require_once (CORE_PATH.'cake'.DS.'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php');
-	uses ('inflector', 'model'.DS.'model');
+	/*uses ('inflector', 'model'.DS.'model');
 	require_once (CORE_PATH.'cake'.DS.'app_model.php');
-	require_once (CORE_PATH.'cake'.DS.'app_controller.php');
-	uses ('neat_array', 'model'.DS.'connection_manager', 'controller'.DS.'controller', 'session',
-			'configure', 'security', DS.'controller'.DS.'scaffold');
-
+	require_once (CORE_PATH.'cake'.DS.'app_controller.php');*/
+	
+	/*uses ('inflector', 'model'.DS.'model');*/
+	
+	/*uses ('neat_array', 'model'.DS.'connection_manager', 'controller'.DS.'controller', 'session',
+			'configure', 'security', DS.'controller'.DS.'scaffold');*/
+	
+	uses('session', 'configure', 'inflector', 'model'.DS.'connection_manager');
+	
 	$pattyCake = new Bake();
 	if($help === true)
 	{
@@ -859,7 +864,7 @@ class Bake {
 			$this->hr();
 			$this->stdout("Controller Name: $controllerName");
 			$this->stdout("Action Name:     $actionName");
-			$this->stdout("Path:            app/views/" . $controllerPath . DS . Inflector::underscore($actionName) . '.thtml');
+			$this->stdout("Path:            app/views/" . $controllerPath . DS . Inflector::underscore($actionName) . '.ctp');
 			$this->hr();
 			$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
 
@@ -874,7 +879,7 @@ class Bake {
 	function __bakeViews($controllerName, $controllerPath, $admin= null, $admin_url = null) {
 		$controllerClassName = $controllerName.'Controller';
 		$controllerObj = & new $controllerClassName();
-
+		
 		if(!in_array('Html', $controllerObj->helpers)) {
 			$controllerObj->helpers[] = 'Html';
 		}
@@ -885,7 +890,7 @@ class Bake {
 		$controllerObj->constructClasses();
 		$currentModelName = $controllerObj->modelClass;
 		$this->__modelClass = $currentModelName;
-		$modelKey = Inflector::underscore($currentModelName);
+		$modelKey = $controllerObj->modelKey;
 		$modelObj =& ClassRegistry::getObject($modelKey);
 		$singularName = $this->__singularName($currentModelName);
 		$pluralName = $this->__pluralName($currentModelName);
@@ -917,9 +922,9 @@ class Bake {
 		foreach($fieldNames as $field => $value) {
 			if(isset($value['foreignKey'])) {
 				$otherModelName = $this->__modelName($value['model']);
-				$otherModelKey = Inflector::underscore($otherModelName);
+				$otherModelKey = Inflector::underscore($value['modelKey']);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerName = $this->__controllerName($value['modelKey']);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				if(is_object($otherModelObj)) {
 					$displayField = $otherModelObj->getDisplayField();
@@ -956,9 +961,9 @@ class Bake {
 			$viewView .= "\t<dt>" . $value['prompt'] . "</dt>\n";
 			if(isset($value['foreignKey'])) {
 				$otherModelName = $this->__modelName($value['model']);
-				$otherModelKey = Inflector::underscore($otherModelName);
-				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherModelKey = Inflector::underscore($value['modelKey']);
+				$otherModelObj =& ClassRegistry::getObject($value['modelKey']);
+				$otherControllerName = $this->__controllerName($value['modelKey']);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$displayField = $otherModelObj->getDisplayField();
 				$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></dd>\n";
@@ -1020,13 +1025,13 @@ class Bake {
 		$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
 
 		foreach($relations as $associationName => $relation) {
-			$otherModelName = $this->__modelName($relation['className']);
-			$otherControllerName = $this->__controllerName($otherModelName);
-			$otherControllerPath = $this->__controllerPath($otherModelName);
+			$otherModelName = $associationName;
+			$otherControllerName = $this->__controllerName($relation['className']);
+			$otherControllerPath = $this->__controllerPath($otherControllerName);
 			$otherSingularName = $this->__singularName($associationName);
 			$otherPluralHumanName = $this->__pluralHumanName($associationName);
 			$otherSingularHumanName = $this->__singularHumanName($associationName);
-			$otherModelKey = Inflector::underscore($otherModelName);
+			$otherModelKey = Inflector::underscore($relation['className']);
 			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 
 			$viewView .= "<div class=\"related\">\n";
@@ -1059,12 +1064,13 @@ class Bake {
 
 			$viewView .= "</div>\n";
 		}
+		$fields = $controllerObj->generateFieldNames(null, true);
 		//-------------------------[ADD]-------------------------//
 		$addView = null;
 		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
 		$addView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/add'); ?>\" method=\"post\">\n";
-		$addView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
-		$addView .= $this->generateSubmitDiv('Add');
+		$addView .= $this->displayFields($fields);
+		$addView .= "\t<?php echo \$this->generateSubmitDiv('Add');?>";
 		$addView .= "</form>\n";
 		$addView .= "<ul class=\"actions\">\n";
 		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
@@ -1072,7 +1078,7 @@ class Bake {
 			$otherModelName = $this->__modelName($associationName);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
-				$otherControllerPath = $this->__controllerPath($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
 				$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
@@ -1084,9 +1090,8 @@ class Bake {
 		$editView = null;
 		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
 		$editView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/edit/'.\$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')); ?>\" method=\"post\">\n";
-		$editView .= $this->generateFields($controllerObj->generateFieldNames(null, true));
-		$editView .= "<?php echo \$html->hidden('{$modelObj->name}/{$modelObj->primaryKey}')?>\n";
-		$editView .= $this->generateSubmitDiv('Save');
+		$editView .= $this->displayFields($fields);
+		$addView .= "\t<?php echo \$this->generateSubmitDiv('Update');?>";
 		$editView .= "</form>\n";
 		$editView .= "<ul class=\"actions\">\n";
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
@@ -1095,7 +1100,7 @@ class Bake {
 			$otherModelName = $this->__modelName($associationName);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
-				$otherControllerPath = $this->__controllerPath($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
 				$editView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
@@ -1109,15 +1114,80 @@ class Bake {
 		if(!file_exists(VIEWS.$controllerPath)) {
 			mkdir(VIEWS.$controllerPath);
 		}
-		$filename = VIEWS . $controllerPath . DS .  $admin . 'index.thtml';
+		$filename = VIEWS . $controllerPath . DS .  $admin . 'index.ctp';
 		$this->__createFile($filename, $indexView);
-		$filename = VIEWS . $controllerPath . DS . $admin . 'view.thtml';
+		$filename = VIEWS . $controllerPath . DS . $admin . 'view.ctp';
 		$this->__createFile($filename, $viewView);
-		$filename = VIEWS . $controllerPath . DS . $admin . 'add.thtml';
+		$filename = VIEWS . $controllerPath . DS . $admin . 'add.ctp';
 		$this->__createFile($filename, $addView);
-		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.thtml';
+		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.ctp';
 		$this->__createFile($filename, $editView);
 	}
+	
+	/**
+	 * returns the fields to be display in the baked forms.
+	 * 
+	 * @param array $fields
+	 */
+	function displayFields($fields = array()) {
+		
+		foreach($fields as $name => $options) {
+			if(isset($options['tagName'])){
+				$tagName = $options['tagName'];
+				unset($options['tagName']);
+			}
+			$formOptions = array();
+			
+			if(isset($options['type'])){
+				$type = $options['type'];
+				unset($options['type']);
+				$formOptions[] = "'type' => '{$type}'";
+			}
+			
+			if(isset($options['class']) && $options['class'] == 'required'){
+				$class = $options['class'];
+				unset($options['class']);
+				$formOptions[] = "'class' => '{$class}'";
+			}
+			
+			if(isset($options['options'])){
+				$fieldOptions = $this->__pluralName($options['model']);
+				unset($options['options']);
+				$formOptions[] = "'options' => \${$fieldOptions}";
+				if(isset($options['multiple'])){
+					$selected = 'selected' . ucfirst($fieldOptions);
+					$formOptions[] = "'selected' => \${$selected}";
+					$formOptions[] = "'multiple' => 'multiple'";
+				}
+			}
+			if(isset($options['size'])){
+				$size = $options['size'];
+				unset($options['class']);
+				$formOptions[] = "'size' => '{$size}'";
+			}
+			if(isset($options['cols'])){
+				$cols = $options['cols'];
+				unset($options['cols']);
+				$formOptions[] = "'cols' => '{$cols}'";
+			}
+			if(isset($options['rows'])){
+				$rows = $options['rows'];
+				unset($options['rows']);
+				$formOptions[] = "'rows' => '{$rows}'";
+			}
+			
+			
+			if(!empty($formOptions)) {
+				$formOptions = ", array(".join(', ', $formOptions).")";
+			} else {
+				$formOptions = null;
+			}
+			
+			$displayFields .= "\t<?php echo \$form->input('{$tagName}'{$formOptions});?>\n";
+		}
+		return $displayFields;
+	}
+	
 /**
  * Action to create a Controller.
  *
@@ -1395,9 +1465,9 @@ class Bake {
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
 			if(!empty($associationName)) {
 				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$otherModelKey = Inflector::underscore($otherModelName);
+				$otherSingularName = $this->__singularName($relation['className']);
+				$otherPluralName = $this->__pluralName($relation['className']);
+				$otherModelKey = Inflector::underscore($relation['className']);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
 				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
@@ -1642,12 +1712,12 @@ class Bake {
  * @param string $content
  */
 	function bakeView($controllerName, $actionName, $content = '') {
-		$out = "<h2>$actionName</h2>\n";
+		$out = "<h2>{$actionName}</h2>\n";
 		$out .= $content;
 		if(!file_exists(VIEWS.$this->__controllerPath($controllerName))) {
 			mkdir(VIEWS.$this->__controllerPath($controllerName));
 		}
-		$filename = VIEWS . $this->__controllerPath($controllerName) . DS . Inflector::underscore($actionName) . '.thtml';
+		$filename = VIEWS . $this->__controllerPath($controllerName) . DS . Inflector::underscore($actionName) . '.ctp';
 		$this->__createFile($filename, $out);
 	}
 /**
@@ -1822,9 +1892,9 @@ class Bake {
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
-			fwrite($this->stdout, __($string, true) . "\n");
+			fwrite($this->stdout, $string . "\n");
 		} else {
-			fwrite($this->stdout, __($string, true));
+			fwrite($this->stdout, $string);
 		}
 	}
 /**
@@ -1878,6 +1948,7 @@ class Bake {
 			return false;
 		}
 	}
+
 /**
  * Takes an array of database fields, and generates an HTML form for a View.
  * This is an extraction from the Scaffold functionality.
@@ -1959,17 +2030,6 @@ class Bake {
 						}
 						$strFormFields = $strFormFields.$this->generateAreaDiv( $field['tagName'], $field['prompt'], $field['required'], $field['errorMsg'], $field['cols'], $field['rows'], $field['htmlOptions'] );
 					break;
-					case "fieldset";
-						$strFieldsetFields = $this->generateFields( $field['fields'] );
-						$strFieldSet = sprintf( '
-						<fieldset><legend>%s</legend><div class="notes"><h4>%s</h4><p class="last">%s</p></div>%s</fieldset>',
-						$field['legend'], $field['noteHeading'], $field['note'], $strFieldsetFields );
-						$strFormFields = $strFormFields.$strFieldSet;
-					break;
-					case "hidden";
-						$currentModelName = $field['model'];
-						//$strFormFields = $strFormFields . $this->Html->hiddenTag( $field['tagName']);
-					break;
 					case "date":
 						if (!isset($field['selected'])) {
 							$field['selected'] = null;
@@ -2007,11 +2067,10 @@ class Bake {
  * @param array $htmlOptions
  * @return Generated HTML and PHP.
  */
-	function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlOptions=null ) {
-		$htmlAttributes = $htmlOptions;
+	function generateAreaDiv($tagName, $prompt, $required=false, $errorMsg=null, $cols=60, $rows=10,  $htmlAttributes=null ) {
 		$htmlAttributes['cols'] = $cols;
 		$htmlAttributes['rows'] = $rows;
-		$str = "\t<?php echo \$html->textarea('{$tagName}', " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
+		$str = "\t<?php echo \$form->textarea('{$tagName}', " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label( '{$tagName}', '{$prompt}' );?>\n";
 		$divClass = "optional";
@@ -2033,8 +2092,7 @@ class Bake {
  * @param array $htmlOptions
  * @return Generated HTML and PHP.
  */
-	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlOptions=null ) {
-		$htmlAttributes = $htmlOptions;
+	function generateCheckboxDiv($tagName, $prompt, $required=false, $errorMsg=null, $htmlAttributes=null ) {
 		$strLabel = "\n\t<?php echo \$html->checkbox('{$tagName}', null, " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$strLabel .= "\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$str = "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please check the {$prompt}.');?>\n";
@@ -2059,8 +2117,8 @@ class Bake {
  * @param string $selected
  * @return Generated HTML and PHP.
  */
-	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected=null ) {
-		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , 'NONE', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlOptions) . ");?>\n";
+	function generateDate($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlAttributes=null, $selected=null ) {
+		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , 'NONE', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
@@ -2084,8 +2142,8 @@ class Bake {
  * @param string $selected
  * @return Generated HTML and PHP.
  */
-	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		$str = "\n\t\<?php echo \$html->dateTimeOptionTag('{$tagName}', 'NONE', '24', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlOptions) . ");?>\n";
+	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlAttributes = null, $selected = null) {
+		$str = "\n\t\<?php echo \$html->dateTimeOptionTag('{$tagName}', 'NONE', '24', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$strLabel = "\n\t<?php echo \$form->labelTag('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
 		if ($required) {
@@ -2107,8 +2165,8 @@ class Bake {
  * @param string $selected
  * @return Generated HTML and PHP.
  */
-	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null, $selected = null ) {
-		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlOptions) . ");?>\n";
+	function generateDateTime($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlAttributes=null, $selected = null ) {
+		$str = "\t<?php echo \$html->dateTimeOptionTag('{$tagName}', 'MDY' , '12', \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
@@ -2131,10 +2189,9 @@ class Bake {
  * @param array $htmlOptions
  * @return Generated HTML and PHP.
  */
-	function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlOptions=null ) {
-		$htmlAttributes = $htmlOptions;
+	function generateInputDiv($tagName, $prompt, $required=false, $errorMsg=null, $size=20, $htmlAttributes=null ) {
 		$htmlAttributes['size'] = $size;
-		$str = "\t<?php echo \$html->input('{$tagName}', " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
+		$str = "\t<?php echo \$form->text('{$tagName}', " . $this->__attributesToArray($htmlAttributes) . ");?>\n";
 		$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please enter the {$prompt}.');?>\n";
 		 $strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
 		$divClass = "optional";
@@ -2173,12 +2230,12 @@ class Bake {
 			$showEmpty = 'false';
 		}
 		if($selectAttr['multiple'] != 'multiple') {
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', " . "\${$pluralName}, \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
+			$str = "\t<?php echo \$form->select('{$tagName}', " . "\${$pluralName}, \$html->tagValue('{$tagName}'), " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.') ?>\n";
 		} else {
 			$selectedPluralName = 'selected' . ucfirst($pluralName);
 			$selectAttr = am(array('multiple' => 'multiple', 'class' => 'selectMultiple'), $selectAttr);
-			$str = "\t<?php echo \$html->selectTag('{$tagName}', \${$pluralName}, \${$selectedPluralName}, " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
+			$str = "\t<?php echo \$form->select('{$tagName}', \${$pluralName}, \${$selectedPluralName}, " . $this->__attributesToArray($selectAttr) . ", " . $this->__attributesToArray($optionAttr) . ", " . $showEmpty . ");?>\n";
 			$str .= "\t<?php echo \$html->tagErrorMsg('{$tagName}', 'Please select the {$prompt}.');?>\n";
 		}
 		$strLabel = "\n\t<?php echo \$form->label('{$tagName}', '{$prompt}');?>\n";
@@ -2199,7 +2256,7 @@ class Bake {
  * @return Generated HTML.
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		$str = "\n\t<?php echo \$html->submit('{$displayText}');?>\n";
+		$str = "\n\t<?php echo \$form->button('{$displayText}', 'submit');?>\n";
 		$divTagInside = sprintf( "%s", $str );
 		return $this->divTag( 'submit', $divTagInside);
 	}
@@ -2492,8 +2549,8 @@ class Bake {
  */
 	function __defaultHome($dir, $app) {
 		$path = $dir.DS.'views'.DS.'pages'.DS;
-		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'views'.DS.'home.thtml');
-		$this->__createFile($path.'home.thtml', $output);
+		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'views'.DS.'home.ctp');
+		$this->__createFile($path.'home.ctp', $output);
 	}
 /**
  * creates the proper pluralize controller for the url
