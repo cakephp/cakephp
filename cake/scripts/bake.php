@@ -1436,8 +1436,7 @@ class Bake {
 				$otherPluralName = $this->__pluralName($associationName);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
 				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
+				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
@@ -1474,8 +1473,7 @@ class Bake {
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
 				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\tif(empty(\$this->data['{$associationName}'])) { \$this->data['{$associationName}'] = null; }\n";
-				$actions .= "\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray(\$this->data['{$associationName}']));\n";
+				$actions .= "\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
@@ -1507,8 +1505,7 @@ class Bake {
 				$otherPluralName = $this->__pluralName($associationName);
 				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
 				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\tif(empty(\$this->data['{$associationName}']['{$associationName}'])) { \$this->data['{$associationName}']['{$associationName}'] = null; }\n";
-				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->data['{$associationName}']['{$associationName}']);\n";
+				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {

@@ -250,10 +250,10 @@ class FormHelper extends AppHelper {
 		}
 		
 		$selected = null;
-		if (isset($options['selected'])) {
+		if (array_key_exists('selected', $options)) {
 			$selected = $options['selected'];
 			unset($options['selected']);
-		}
+		}		
 		
 		switch ($options['type']) {
 			case 'hidden':
@@ -277,7 +277,7 @@ class FormHelper extends AppHelper {
 				$list = (isset($options['options']) ? $options['options'] : array());
 				$empty = (isset($options['empty']) ? $options['empty'] : '');
 				unset($options['options'], $options['empty']);
-				$out .= $this->select($tagName, $list, null, $options, $empty);
+				$out .= $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
 				$out .= $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, false);
@@ -289,7 +289,8 @@ class FormHelper extends AppHelper {
 				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, false);
 			break;
 			case 'submit':
-				$out .= $this->Html->submit($label);
+				$divOptions['class'] = 'submit';
+				$out = $this->Html->submit($label);
 			break;
 			case 'textarea':
 			default:
@@ -352,12 +353,14 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		
+		if (isset($htmlAttributes['type'])) {
+			unset($htmlAttributes['type']);
+		}
 		$value = null;
-		if (!empty($htmlAttributes['value'])) {
+		if (array_key_exists('value', $htmlAttributes)) {
 			$value = $htmlAttributes['value'];
 			unset($htmlAttributes['value']);
 		}
-
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
@@ -446,14 +449,18 @@ class FormHelper extends AppHelper {
 		if(!is_array($options)) {
 			$options = array();
 		}
+		if (isset($attributes['type'])) {
+			unset($attributes['type']);
+		}
 		if (isset($attributes['showParents']) && $attributes['showParents']) {
 			unset($attributes['showParents']);
 			$showParents = true;
 		}
-
+		
 		if (!isset($selected)) {
 			$selected = $this->__value($fieldName);
 		}
+		
 		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
 			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {

@@ -702,7 +702,7 @@ class Controller extends Object {
 			switch($type) {
 				case "text":
 					$fieldNames[$column['name']]['type'] = 'textarea';
-					$fieldNames[$column['name']]['cols'] = '60';
+					$fieldNames[$column['name']]['cols'] = '30';
 					$fieldNames[$column['name']]['rows'] = '10';
 				break;
 				case "string":
@@ -718,7 +718,6 @@ class Controller extends Object {
 						}
 					} else {
 						$fieldNames[$column['name']]['type'] = 'text';
-						$fieldNames[$column['name']]['size'] = '60';
 					}
 				break;
 				case "boolean":
@@ -753,7 +752,6 @@ class Controller extends Object {
 						$enum = trim($enum, "'");
 						$fieldNames[$column['name']]['options'][$enum] = $enum;
 					}
-
 					$fieldNames[$column['name']]['selected'] = $data[$model][$column['name']];
 				break;
 				case "date":
@@ -777,11 +775,10 @@ class Controller extends Object {
 		}
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
-			$otherModelClass = $associationName;
 			$otherModelKey = Inflector::underscore($associationName);
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
-				$fieldNames[$otherModelKey]['model'] = $otherModelClass;
+				$fieldNames[$otherModelKey]['model'] = $associationName;
 				$fieldNames[$otherModelKey]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($otherModelClass));
 				$fieldNames[$otherModelKey]['prompt'] = $fieldNames[$otherModelKey]['label'];
 				$fieldNames[$otherModelKey]['type'] = "select";
@@ -1101,6 +1098,15 @@ class Controller extends Object {
  * @return unknown
  */
 	function _selectedArray($data, $key = 'id') {
+		if(!is_array($data)) {
+			$model = $data;
+			if(!empty($this->data[$model][$model])) {
+				return $this->data[$model][$model];
+			}
+			if(!empty($this->data[$model])) {
+				$data = $this->data[$model];
+			}
+		}
 		$array = array();
 		if(!empty($data)) {
 			foreach($data as $var) {
@@ -1108,7 +1114,7 @@ class Controller extends Object {
 			}
 		}
 		return $array;
-	}
+	}	
 }
 
 ?>
