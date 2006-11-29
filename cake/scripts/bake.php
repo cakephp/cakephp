@@ -1627,14 +1627,14 @@ class Bake {
 				$out .= "\tvar \$belongsTo = array(\n";
 
 				for($i = 0; $i < count($associations['belongsTo']); $i++) {
-					$out .= "\t\t\t'{$associations['belongsTo'][$i]['alias']}' =>\n";
-					$out .= "\t\t\t\tarray('className' => '{$associations['belongsTo'][$i]['className']}',\n";
-					$out .= "\t\t\t\t\t\t'foreignKey' => '{$associations['belongsTo'][$i]['foreignKey']}',\n";
-					$out .= "\t\t\t\t\t\t'conditions' => '',\n";
-					$out .= "\t\t\t\t\t\t'fields' => '',\n";
-					$out .= "\t\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t\t'counterCache' => ''\n";
-					$out .= "\t\t\t\t),\n\n";
+					$out .= "\t\t\t'{$associations['belongsTo'][$i]['alias']}' =>";
+					$out .= "array('className' => '{$associations['belongsTo'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['belongsTo'][$i]['foreignKey']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'fields' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'order' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'counterCache' => ''";
+					$out .= "),\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1643,14 +1643,14 @@ class Bake {
 				$out .= "\tvar \$hasOne = array(\n";
 
 				for($i = 0; $i < count($associations['hasOne']); $i++) {
-					$out .= "\t\t\t'{$associations['hasOne'][$i]['alias']}' =>\n";
-					$out .= "\t\t\t\tarray('className' => '{$associations['hasOne'][$i]['className']}',\n";
-					$out .= "\t\t\t\t\t\t'foreignKey' => '{$associations['hasOne'][$i]['foreignKey']}',\n";
-					$out .= "\t\t\t\t\t\t'conditions' => '',\n";
-					$out .= "\t\t\t\t\t\t'fields' => '',\n";
-					$out .= "\t\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t\t'dependent' => ''\n";
-					$out .= "\t\t\t\t),\n\n";
+					$out .= "\t\t\t'{$associations['hasOne'][$i]['alias']}' =>";
+					$out .= "array('className' => '{$associations['hasOne'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['hasOne'][$i]['foreignKey']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'fields' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'order' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'dependent' => ''";
+					$out .= "),\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1659,19 +1659,19 @@ class Bake {
 				$out .= "\tvar \$hasMany = array(\n";
 
 				for($i = 0; $i < count($associations['hasMany']); $i++) {
-					$out .= "\t\t\t'{$associations['hasMany'][$i]['alias']}' =>\n";
-					$out .= "\t\t\t\tarray('className' => '{$associations['hasMany'][$i]['className']}',\n";
-					$out .= "\t\t\t\t\t\t'foreignKey' => '{$associations['hasMany'][$i]['foreignKey']}',\n";
-					$out .= "\t\t\t\t\t\t'conditions' => '',\n";
-					$out .= "\t\t\t\t\t\t'fields' => '',\n";
-					$out .= "\t\t\t\t\t\t'order' => '',\n";
-					$out .= "\t\t\t\t\t\t'limit' => '',\n";
-					$out .= "\t\t\t\t\t\t'offset' => '',\n";
-					$out .= "\t\t\t\t\t\t'dependent' => '',\n";
-					$out .= "\t\t\t\t\t\t'exclusive' => '',\n";
-					$out .= "\t\t\t\t\t\t'finderQuery' => '',\n";
-					$out .= "\t\t\t\t\t\t'counterQuery' => ''\n";
-					$out .= "\t\t\t\t),\n\n";
+					$out .= "\t\t\t'{$associations['hasMany'][$i]['alias']}' =>";
+					$out .= "array('className' => '{$associations['hasMany'][$i]['className']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['hasMany'][$i]['foreignKey']}',\n";
+					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'fields' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'order' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'limit' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'offset' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'dependent' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'exclusive' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'finderQuery' => '',\n";
+					$out .= "\t\t\t\t\t\t\t\t'counterQuery' => ''";
+					$out .= "),\n";
 				}
 				$out .= "\t);\n\n";
 			}
@@ -1680,8 +1680,8 @@ class Bake {
 				$out .= "\tvar \$hasAndBelongsToMany = array(\n";
 
 				for($i = 0; $i < count($associations['hasAndBelongsToMany']); $i++) {
-					$out .= "\t\t\t'{$associations['hasAndBelongsToMany'][$i]['alias']}' =>\n";
-					$out .= "\t\t\t\tarray('className' => '{$associations['hasAndBelongsToMany'][$i]['className']}',\n";
+					$out .= "\t\t\t'{$associations['hasAndBelongsToMany'][$i]['alias']}' =>";
+					$out .= "array('className' => '{$associations['hasAndBelongsToMany'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t\t'joinTable' => '{$associations['hasAndBelongsToMany'][$i]['joinTable']}',\n";
 					$out .= "\t\t\t\t\t\t'foreignKey' => '{$associations['hasAndBelongsToMany'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t\t'associationForeignKey' => '{$associations['hasAndBelongsToMany'][$i]['associationForeignKey']}',\n";
@@ -1693,8 +1693,8 @@ class Bake {
 					$out .= "\t\t\t\t\t\t'uniq' => '',\n";
 					$out .= "\t\t\t\t\t\t'finderQuery' => '',\n";
 					$out .= "\t\t\t\t\t\t'deleteQuery' => '',\n";
-					$out .= "\t\t\t\t\t\t'insertQuery' => ''\n";
-					$out .= "\t\t\t\t),\n\n";
+					$out .= "\t\t\t\t\t\t'insertQuery' => ''";
+					$out .= "),\n";
 				}
 				$out .= "\t);\n\n";
 			}

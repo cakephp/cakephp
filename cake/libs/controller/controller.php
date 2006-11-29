@@ -666,6 +666,7 @@ class Controller extends Object {
 						$fkNames = $modelObj->keyToTable[$column['name']];
 						$fieldNames[$column['name']]['table'] = $fkNames[0];
 						$fieldNames[$column['name']]['label'] = Inflector::humanize($associationName);
+						$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 						$fieldNames[$column['name']]['model'] = Inflector::classify($associationName);
 						$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
 						$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
@@ -677,6 +678,7 @@ class Controller extends Object {
 
 			} else {
 				$fieldNames[$column['name']]['label'] = Inflector::humanize($column['name']);
+				$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 			}
 			$fieldNames[$column['name']]['tagName'] = $model . '/' . $column['name'];
 			$fieldNames[$column['name']]['class'] = 'optional';
@@ -781,6 +783,7 @@ class Controller extends Object {
 			if ($doCreateOptions) {
 				$fieldNames[$otherModelKey]['model'] = $otherModelClass;
 				$fieldNames[$otherModelKey]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($otherModelClass));
+				$fieldNames[$otherModelKey]['prompt'] = $fieldNames[$otherModelKey]['label'];
 				$fieldNames[$otherModelKey]['type'] = "select";
 				$fieldNames[$otherModelKey]['multiple'] = "multiple";
 				$fieldNames[$otherModelKey]['tagName'] = $associationName . '/' . $associationName;
