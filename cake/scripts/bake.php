@@ -1068,9 +1068,9 @@ class Bake {
 		//-------------------------[ADD]-------------------------//
 		$addView = null;
 		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
-		$addView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/add'); ?>\" method=\"post\">\n";
+		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'add'));?>\n";
 		$addView .= $this->displayFields($fields);
-		$addView .= "\t<?php echo \$this->generateSubmitDiv('Add');?>";
+		$addView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
 		$addView .= "</form>\n";
 		$addView .= "<ul class=\"actions\">\n";
 		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
@@ -1089,9 +1089,9 @@ class Bake {
 		//-------------------------[EDIT]-------------------------//
 		$editView = null;
 		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
-		$editView .= "<form action=\"<?php echo \$html->url('{$admin_url}/{$controllerPath}/edit/'.\$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')); ?>\" method=\"post\">\n";
-		$editView .= $this->displayFields($fields);
-		$addView .= "\t<?php echo \$this->generateSubmitDiv('Update');?>";
+		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'edit'));?>\n";
+		$addView .= $this->displayFields($fields);
+		$addView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
 		$editView .= "</form>\n";
 		$editView .= "<ul class=\"actions\">\n";
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
