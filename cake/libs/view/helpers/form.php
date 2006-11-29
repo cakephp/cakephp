@@ -274,7 +274,7 @@ class FormHelper extends AppHelper {
 				$out .= $this->Html->file($tagName);
 			break;
 			case 'select':
-				$list = $options['options'];
+				$list = (isset($options['options']) ? $options['options'] : array());
 				$empty = (isset($options['empty']) ? $options['empty'] : '');
 				unset($options['options'], $options['empty']);
 				$out .= $this->select($tagName, $list, null, $options, $empty);
