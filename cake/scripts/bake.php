@@ -1089,9 +1089,9 @@ class Bake {
 		//-------------------------[EDIT]-------------------------//
 		$editView = null;
 		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
-		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'edit'));?>\n";
-		$addView .= $this->displayFields($fields);
-		$addView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
+		$editView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'edit'));?>\n";
+		$editView .= $this->displayFields($fields);
+		$editView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
 		$editView .= "</form>\n";
 		$editView .= "<ul class=\"actions\">\n";
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
