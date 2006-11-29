@@ -97,39 +97,39 @@ class ThemeView extends View {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . $this->ext)) {
 				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . $this->ext;
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext)) {
 				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . '.thtml')) {
 				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $this->theme . DS . $name . '.thtml';
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml')) {
 				$file = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml';
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			}
 		}
-		
+
 		$paths = Configure::getInstance();
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($file)) {
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists($this->themeElement . $name . '.thtml')) {
 				$file = $this->themeElement . $name . '.thtml';
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
 				$file = $path . 'elements' . DS . $name . '.thtml';
 				$params = array_merge_recursive($params, $this->loaded);
-				return $this->_render($file, array_merge($this->_viewVars, $params), false);
+				return $this->_render($file, array_merge($this->viewVars, $params), false);
 			}
 		}
 		return "(Error rendering Element: {$name})";
@@ -178,7 +178,7 @@ class ThemeView extends View {
 												'file' => $viewFileName,
 												'base' => $this->base)));
 			}
-		}		
+		}
 
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . $this->themePath . $this->viewPath . DS . $this->subDir . $type . $action . $this->ext)) {
