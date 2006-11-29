@@ -980,7 +980,7 @@ class Bake {
 		$viewView .= "\t<li><?php echo \$html->link('New " . $singularHumanName . "',	'{$admin_url}/{$controllerPath}/add') ?> </li>\n";
 		foreach( $fieldNames as $field => $value ) {
 			if( isset( $value['foreignKey'] ) ) {
-				$otherModelName = $this->__modelName($value['model']);
+				$otherModelName = $this->__modelName($value['modelKey']);
 				if($otherModelName != $currentModelName) {
 					$otherControllerName = $this->__controllerName($otherModelName);
 					$otherControllerPath = $this->__controllerPath($otherControllerName);
@@ -1076,7 +1076,7 @@ class Bake {
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
 		$editView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->__modelName($associationName);
+			$otherModelName = $this->__modelName($relation['className']);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
@@ -1098,7 +1098,7 @@ class Bake {
 		$addView .= "<ul class=\"actions\">\n";
 		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->__modelName($associationName);
+			$otherModelName = $this->__modelName($relation['className']);
 			if($otherModelName != $currentModelName) {
 				$otherControllerName = $this->__controllerName($otherModelName);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
