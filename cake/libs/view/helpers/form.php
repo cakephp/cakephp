@@ -31,6 +31,7 @@
 
 /**
  * Tag template for a div with a class attribute.
+ * @deprecated 
  */
 	define('TAG_DIV', '<div class="%s">%s</div>');
 /**
@@ -62,15 +63,17 @@ class FormHelper extends AppHelper {
 /**
  * Returns an HTML FORM element.
  *
+ * @access public
  * @param string $model The model object which the form is being defined for
  * @param array  $options
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
-		if (empty($model)) {
+		if (empty($model) || is_string($model)) {
 			$models = $this->params['models'];
 			$model = $models[0];
 		}
+		
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		} else {
@@ -129,6 +132,7 @@ class FormHelper extends AppHelper {
 /**
  * Closes an HTML form.
  *
+ * @access public
  * @return string A closing FORM tag.
  */
 	function end($model = null) {
@@ -140,6 +144,7 @@ class FormHelper extends AppHelper {
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
+ * @access public
  * @param string $field This should be "Modelname/fieldname"
  * @return bool If there are errors this method returns true, else false.
  */
@@ -152,14 +157,6 @@ class FormHelper extends AppHelper {
 		} else {
 			return false;
 		}
-	}
-/**
- * @deprecated
- * @see FormHelper::label()
- */
-	function labelTag($tagName, $text) {
-		trigger_error('Deprecated: Use FormHelper::label() instead', E_USER_WARNING);
-		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
  * Returns a formatted LABEL element for HTML FORMs.
@@ -185,10 +182,11 @@ class FormHelper extends AppHelper {
 /* Will display all the fields passed in an array expects tagName as an array key
  * replaces generateFields
  *
+ * @access public
  * @param array $fields works well with Controller::generateFieldNames();
  * @return output 
  */	
-	function displayFields($fields) {
+	function fields($fields) {
 		$out = null;
 		foreach($fields as $name => $options) {
 			if(isset($options['tagName'])){
@@ -289,6 +287,9 @@ class FormHelper extends AppHelper {
 			break;
 			case 'datetime':
 				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, false);
+			break;
+			case 'submit':
+				$out .= $this->Html->submit($label);
 			break;
 			case 'textarea':
 			default:
@@ -442,7 +443,9 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$attributes = $this->addClass($attributes, 'form-error');
 		}
-
+		if(!is_array($options)) {
+			$options = array();
+		}
 		if (isset($attributes['showParents']) && $attributes['showParents']) {
 			unset($attributes['showParents']);
 			$showParents = true;
@@ -462,9 +465,7 @@ class FormHelper extends AppHelper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			$options = array_reverse($options, true);
-			$options[''] = $showEmpty;
-			$options = array_reverse($options, true);
+			array_unshift($options, ' ');
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->Html->tags['selectend']);
@@ -684,7 +685,7 @@ class FormHelper extends AppHelper {
 	}
 /**
  * @deprecated
- * @see FormHelper::input()
+ * @see FormHelper::fields()
  */
 	function generateFields($fields, $readOnly = false) {
 		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
@@ -798,6 +799,14 @@ class FormHelper extends AppHelper {
 			}
 		}
 		return $strFormFields;
+	}
+/**
+ * @deprecated will not be available after 1.1.x.x
+ * @see FormHelper::label()
+ */
+	function labelTag($tagName, $text) {
+		trigger_error('Deprecated: Use FormHelper::label() instead', E_USER_WARNING);
+		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
  * @deprecated

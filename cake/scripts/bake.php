@@ -1065,33 +1065,12 @@ class Bake {
 			$viewView .= "</div>\n";
 		}
 		$fields = $controllerObj->generateFieldNames(null, true);
-		//-------------------------[ADD]-------------------------//
-		$addView = null;
-		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
-		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'add'));?>\n";
-		$addView .= $this->displayFields($fields);
-		$addView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
-		$addView .= "</form>\n";
-		$addView .= "<ul class=\"actions\">\n";
-		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
-		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->__modelName($associationName);
-			if($otherModelName != $currentModelName) {
-				$otherControllerName = $this->__controllerName($otherModelName);
-				$otherControllerPath = $this->__controllerPath($otherControllerName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralHumanName($associationName);
-				$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
-				$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
-			}
-		}
-		$addView .= "</ul>\n";
 		//-------------------------[EDIT]-------------------------//
 		$editView = null;
 		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
 		$editView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'edit'));?>\n";
 		$editView .= $this->displayFields($fields);
-		$editView .= "\t<?php echo \$form->generateSubmitDiv('Add');?>\n";
+		$editView .= "\t<?php echo \$form->input('{$currentModelName}/update', array('type'=>'submit'));?>\n";
 		$editView .= "</form>\n";
 		$editView .= "<ul class=\"actions\">\n";
 		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
@@ -1108,6 +1087,29 @@ class Bake {
 			}
 		}
 		$editView .= "</ul>\n";
+		//-------------------------[ADD]-------------------------//
+		unset($fields[$modelObj->primaryKey]);
+		$addView = null;
+		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
+		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'add'));?>\n";
+		$addView .= $this->displayFields($fields);
+		$addView .= "\t<?php echo \$form->input('{$currentModelName}/add', array('type'=>'submit'));?>\n";
+		$addView .= "</form>\n";
+		$addView .= "<ul class=\"actions\">\n";
+		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
+		foreach ($modelObj->belongsTo as $associationName => $relation) {
+			$otherModelName = $this->__modelName($associationName);
+			if($otherModelName != $currentModelName) {
+				$otherControllerName = $this->__controllerName($otherModelName);
+				$otherControllerPath = $this->__controllerPath($otherControllerName);
+				$otherSingularName = $this->__singularName($associationName);
+				$otherPluralName = $this->__pluralHumanName($associationName);
+				$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
+				$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
+			}
+		}
+		$addView .= "</ul>\n";
+		
 
 		//------------------------------------------------------------------------------------//
 
@@ -1124,11 +1126,12 @@ class Bake {
 		$this->__createFile($filename, $editView);
 	}
 	
-	/**
-	 * returns the fields to be display in the baked forms.
-	 * 
-	 * @param array $fields
-	 */
+/**
+ * returns the fields to be display in the baked forms.
+ * 
+ * @access private
+ * @param array $fields
+ */
 	function displayFields($fields = array()) {
 		
 		foreach($fields as $name => $options) {
