@@ -186,7 +186,7 @@ class FormHelper extends AppHelper {
  * @param array $fields works well with Controller::generateFieldNames();
  * @return output 
  */	
-	function fields($fields) {
+	function displayFields($fields) {
 		$out = null;
 		foreach($fields as $name => $options) {
 			if(isset($options['tagName'])){
