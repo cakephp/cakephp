@@ -615,35 +615,11 @@ class Controller extends Object {
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
 
-		if (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
+		if (file_exists(VIEWS . 'layouts' . DS . 'flash.ctp')) {
+			$flash = VIEWS . 'layouts' . DS . 'flash.ctp';
+		} elseif (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
 			$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
-		} elseif ($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.thtml')) {
-		}
-		$this->render(null, false, $flash);
-	}
-/**
- * Shows a message to the user $time seconds, then redirects to $url
- * Uses flash.thtml as a layout for the messages
- *
- * @param string $message Message to display to the user
- * @param string $url URL to redirect to after the time expires
- * @param int $time Time to show the message
- *
- * @param unknown_type $message
- * @param unknown_type $url
- * @param unknown_type $time
- */
-	function flashOut($message, $url, $pause = 1) {
-		$this->autoRender = false;
-		$this->autoLayout = false;
-		$this->set('url', $url);
-		$this->set('message', $message);
-		$this->set('pause', $pause);
-		$this->set('page_title', $message);
-
-		if (file_exists(VIEWS . 'layouts' . DS . 'flash.thtml')) {
-			$flash = VIEWS . 'layouts' . DS . 'flash.thtml';
-		} elseif($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.thtml')) {
+		} elseif ($flash = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . "layouts" . DS . 'flash.ctp')) {
 		}
 		$this->render(null, false, $flash);
 	}
@@ -779,7 +755,7 @@ class Controller extends Object {
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
 				$fieldNames[$otherModelKey]['model'] = $associationName;
-				$fieldNames[$otherModelKey]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($otherModelClass));
+				$fieldNames[$otherModelKey]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($associationName));
 				$fieldNames[$otherModelKey]['prompt'] = $fieldNames[$otherModelKey]['label'];
 				$fieldNames[$otherModelKey]['type'] = "select";
 				$fieldNames[$otherModelKey]['multiple'] = "multiple";
