@@ -31,7 +31,7 @@
 
 /**
  * Tag template for a div with a class attribute.
- * @deprecated 
+ * @deprecated
  */
 	define('TAG_DIV', '<div class="%s">%s</div>');
 /**
@@ -73,7 +73,7 @@ class FormHelper extends AppHelper {
 			$models = $this->params['models'];
 			$model = $models[0];
 		}
-		
+
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		} else {
@@ -90,7 +90,7 @@ class FormHelper extends AppHelper {
 			'key' => $object->primaryKey,
 			'validates' => array_keys($object->validate)
 		);
-		
+
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
 		}
@@ -184,8 +184,8 @@ class FormHelper extends AppHelper {
  *
  * @access public
  * @param array $fields works well with Controller::generateFieldNames();
- * @return output 
- */	
+ * @return output
+ */
 	function displayFields($fields) {
 		$out = null;
 		foreach($fields as $name => $options) {
@@ -205,7 +205,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function input($tagName, $options = array()) {
-		
+
 		$this->setFormTag($tagName);
 
 		if (!isset($options['type'])) {
@@ -235,10 +235,8 @@ class FormHelper extends AppHelper {
 		if (isset($options['label'])) {
 			$label = $options['label'];
 			unset($options['label']);
-		} else {
-			$label = Inflector::humanize($this->field());
 		}
-		
+
 		$out = $this->label($tagName, $label);
 
 		$error = null;
@@ -248,13 +246,13 @@ class FormHelper extends AppHelper {
 		} else {
 			$error = $label . ' is required';
 		}
-		
+
 		$selected = null;
 		if (array_key_exists('selected', $options)) {
 			$selected = $options['selected'];
 			unset($options['selected']);
-		}		
-		
+		}
+
 		switch ($options['type']) {
 			case 'hidden':
 				$wrap = false;
@@ -352,7 +350,7 @@ class FormHelper extends AppHelper {
 	function textarea($fieldName, $htmlAttributes = null) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
-		
+
 		if (isset($htmlAttributes['type'])) {
 			unset($htmlAttributes['type']);
 		}
@@ -456,11 +454,11 @@ class FormHelper extends AppHelper {
 			unset($attributes['showParents']);
 			$showParents = true;
 		}
-		
+
 		if (!isset($selected)) {
 			$selected = $this->__value($fieldName);
 		}
-		
+
 		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
 			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {
@@ -472,7 +470,9 @@ class FormHelper extends AppHelper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			array_unshift($options, ' ');
+			$options = array_reverse($options, true);
+			$options[''] = $showEmpty;
+			$options = array_reverse($options, true);
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->Html->tags['selectend']);
