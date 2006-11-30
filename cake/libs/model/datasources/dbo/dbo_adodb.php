@@ -219,10 +219,8 @@ class DboAdodb extends DboSource {
 		$cols = $this->_adodb->MetaColumns($this->fullTableName($model, false));
 
 		foreach($cols as $column) {
-			$fields[] = array(
-				'name' => $column->name,
-				'type' => $column->type
-			);
+			$fields[] = array('name' => $column->name,
+									'type' => $this->column($column->type));
 		}
 
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);

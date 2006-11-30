@@ -177,12 +177,9 @@ class DboMysql extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[] = array(
-					'name' => $column[0]['Field'],
-					'type' => $this->column($column[0]['Type']),
-					'null' => $column[0]['Null'],
-					'default' => $column[0]['Default']
-				);
+				$fields[] = array('name' => $column[0]['Field'],
+										'type' => $this->column($column[0]['Type']),
+										'null' => $column[0]['Null']);
 			}
 		}
 
