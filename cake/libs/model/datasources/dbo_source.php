@@ -548,13 +548,14 @@ class DboSource extends DataSource {
 				if ($model->recursive > -1) {
 					$linkModel =& $model->{$assoc};
 
+					$external = isset($assocData['external']);
 					if ($model->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
-						if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null)) {
+						if (true === $this->generateSelfAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
 							$linkedModels[] = $type . '/' . $assoc;
 						}
 					} else {
 						if ($model->useDbConfig == $linkModel->useDbConfig) {
-							if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, false, $null)) {
+							if (true === $this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null)) {
 								$linkedModels[] = $type . '/' . $assoc;
 							}
 						}
@@ -868,23 +869,35 @@ class DboSource extends DataSource {
 		if ($model->name == $linkModel->name) {
 			$joinedOnSelf = true;
 		}
-		if (is_string($queryData['conditions'])) {
-			$queryData['conditions'] = array($queryData['conditions']);
+
+		if ($external && isset($assocData['finderQuery'])) {
+			if (!empty($assocData['finderQuery']) && $assocData['finderQuery'] != null) {
+				return $assocData['finderQuery'];
+			}
+		}
+
+		if (!$external && in_array($type, array('hasOne', 'belongsTo'))) {
+			if ($this->__bypass === false) {
+				$fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+				$this->__assocJoins['fields'][] = $fields;
+			} else {
+				$this->__assocJoins = null;
+			}
+		}
+		$limit = '';
+
+		if (isset($assocData['limit'])) {
+			if (!isset($assocData['offset']) && isset($assocData['page'])) {
+				$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
+			} elseif (!isset($assocData['offset'])) {
+				$assocData['offset'] = null;
+			}
+			$limit = $this->limit($assocData['limit'], $assocData['offset']);
 		}
 
 		switch($type) {
 			case 'hasOne':
-				if ($external || isset($assocData['external'])) {
-					if (isset($assocData['finderQuery'])) {
-						return $assocData['finderQuery'];
-					}
-
-					if (!isset($assocData['fields'])) {
-						$assocData['fields'] = '';
-					}
-
-					$limit = '';
-
+				if ($external) {
 					if (isset($queryData['limit']) && !empty($queryData['limit'])) {
 						$limit = $this->limit($queryData['limit'], $queryData['offset']);
 					}
@@ -910,7 +923,6 @@ class DboSource extends DataSource {
 						if (trim($conditions) != '') {
 							$conditions .= ' AND ';
 						}
-
 						$conditions .= $cond;
 					}
 
@@ -921,33 +933,17 @@ class DboSource extends DataSource {
 					return $sql;
 
 				} else {
-					if (!isset($assocData['fields'])) {
-						$assocData['fields'] = '';
-					}
-
-					if ($this->__bypass === false) {
-						$fields	= join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-						$this->__assocJoins['fields'][] = $fields;
-					} else {
-						$this->__assocJoins = null;
-					}
 
 					$sql = ' LEFT JOIN ' . $this->fullTableName($linkModel);
-					$sql .= ' ' . $this->alias . $this->name($alias) . ' ON ' . $this->name($alias) . '.';
-					$sql .= $this->name($assocData['foreignKey']) . ' = ' . $model->escapeField($model->primaryKey);
+					$sql .= ' ' . $this->alias . $this->name($alias) . ' ON ';
+					$sql .= $this->name($alias) . '.' . $this->name($assocData['foreignKey']);
+					$sql .= ' = ' . $model->escapeField($model->primaryKey);
 
 					if ($assocData['order'] != null) {
 						$queryData['order'][] = $assocData['order'];
 					}
 
-					if (isset($assocData['conditions']) && !empty($assocData['conditions'])) {
-						if (is_array($queryData['conditions'])) {
-							$queryData['conditions'] = array_merge($assocData['conditions'], $queryData['conditions']);
-						} else {
-							$queryData['conditions'] = $assocData['conditions'];
-						}
-					}
-
+					$this->__mergeConditions($queryData, $assocData);
 					if (!in_array($sql, $queryData['joins'])) {
 						$queryData['joins'][] = $sql;
 					}
@@ -955,15 +951,7 @@ class DboSource extends DataSource {
 				}
 			break;
 			case 'belongsTo':
-				if ($external || isset($assocData['external'])) {
-					$limit = '';
-					if (isset($assocData['limit'])) {
-						$limit = $this->limit($assocData['limit'], $queryData['offset']);
-					}
-
-					if (!isset($assocData['fields'])) {
-						$assocData['fields'] = '';
-					}
+				if ($external) {
 
 					$sql = 'SELECT ';
 					if ($this->goofyLimit) {
@@ -978,7 +966,7 @@ class DboSource extends DataSource {
 					$condition .= ' = {$__cakeForeignKey__$}';
 
 					if (is_array($conditions)) {
-							$conditions[] = $condition;
+						$conditions[] = $condition;
 					} else {
 						if (trim($conditions) != '') {
 							$conditions .= ' AND ';
@@ -994,39 +982,13 @@ class DboSource extends DataSource {
 					return $sql;
 
 				} else {
-					if (!isset($assocData['fields'])) {
-						$assocData['fields'] = '';
-					}
-
-					if ($this->__bypass === false) {
-						$fields = join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-						$this->__assocJoins['fields'][] = $fields;
-					} else {
-						$this->__assocJoins = null;
-					}
 
 					$sql = ' LEFT JOIN ' . $this->fullTableName($linkModel);
 					$sql .= ' ' . $this->alias . $this->name($alias) . ' ON ';
 					$sql .= $this->name($model->name) . '.' . $this->name($assocData['foreignKey']);
 					$sql .= ' = ' . $this->name($alias) . '.' . $this->name($linkModel->primaryKey);
 
-					if (isset($assocData['conditions']) && !empty($assocData['conditions'])) {
-						if (is_array($queryData['conditions'])) {
-							$queryData['conditions'] = array_merge((array)$assocData['conditions'], $queryData['conditions']);
-						} else {
-							if (!empty($queryData['conditions'])){
-								$queryData['conditions'] = array($queryData['conditions']);
-								if (is_array($assocData['conditions'])){
-									array_merge($queryData['conditions'],$assocData['conditions']);
-								} else {
-									$queryData['conditions'][] = $assocData['conditions'];
-								}
-							} else {
-								$queryData['conditions'] = $assocData['conditions'];
-							}
-						}
-					}
-
+					$this->__mergeConditions($queryData, $assocData);
 					if (!in_array($sql, $queryData['joins'])) {
 						$queryData['joins'][] = $sql;
 					}
@@ -1035,105 +997,74 @@ class DboSource extends DataSource {
 
 			break;
 			case 'hasMany':
-				if (isset($assocData['finderQuery']) && $assocData['finderQuery'] != null) {
-					$sql = $assocData['finderQuery'];
+
+				$conditions = $assocData['conditions'];
+				$sql = 'SELECT ';
+
+				if ($this->goofyLimit) {
+					$sql .= $limit;
+				}
+
+				$sql .= ' ' . join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
+				$sql .= ' FROM ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
+
+				if (is_array($conditions)) {
+					$conditions[$alias . '.' . $assocData['foreignKey']] = '{$__cakeID__$}';
 				} else {
-
-					$limit = '';
-					if (isset($assocData['limit'])) {
-						if (!isset($assocData['offset']) && isset($assocData['page'])) {
-							$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
-						} elseif (!isset($assocData['offset'])) {
-							$assocData['offset'] = null;
-						}
-						$limit = $this->limit($assocData['limit'], $assocData['offset']);
+					$cond = $this->name($alias) . '.' . $this->name($assocData['foreignKey']);
+					$cond .= ' = {$__cakeID__$}';
+					if (trim($conditions) != '') {
+						$conditions .= ' AND ';
 					}
+					$conditions .= $cond;
+				}
 
-					$conditions = $assocData['conditions'];
-					$sql = 'SELECT ';
+				$sql .= $this->conditions($conditions);
+				$sql .= $this->order($assocData['order']);
 
-					if ($this->goofyLimit) {
-						$sql .= $limit;
-					}
-
-					$sql .= ' ' . join(', ', $this->fields($linkModel, $alias, $assocData['fields']));
-					$sql .= ' FROM ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
-
-					if (is_array($conditions)) {
-						$conditions[$alias . '.' . $assocData['foreignKey']] = '{$__cakeID__$}';
-					} else {
-						$cond = $this->name($alias) . '.' . $this->name($assocData['foreignKey']);
-						$cond .= ' = {$__cakeID__$}';
-						if (trim($conditions) != '') {
-							$conditions .= ' AND ';
-						}
-						$conditions .= $cond;
-					}
-
-					$sql .= $this->conditions($conditions);
-					$sql .= $this->order($assocData['order']);
-
-					if (!$this->goofyLimit) {
-						$sql .= $limit;
-					}
+				if (!$this->goofyLimit) {
+					$sql .= $limit;
 				}
 				return $sql;
 			break;
 			case 'hasAndBelongsToMany':
-				if (isset($assocData['finderQuery']) && $assocData['finderQuery'] != null) {
-					$sql = $assocData['finderQuery'];
-				} else {
-					$joinTbl = $this->fullTableName($assocData['joinTable']);
+				$joinTbl = $this->fullTableName($assocData['joinTable']);
+				$sql = 'SELECT ';
 
-					$limit  = '';
-					if (isset($assocData['limit'])) {
-						if (!isset($assocData['offset']) && isset($assocData['page'])) {
-							$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
-						} elseif (!isset($assocData['offset'])) {
-							$assocData['offset'] = null;
-						}
-						$limit = $this->limit($assocData['limit'], $assocData['offset']);
+				if ($this->goofyLimit) {
+					$sql .= $limit;
+				}
+				$joinFields = array();
+
+				if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
+					$joinName = array_keys($assocData['with']);
+					$joinFields = $assocData['with'][$joinName[0]];
+
+					if (is_array($joinFields) && !empty($joinFields)) {
+						$joinFields = $this->fields($linkModel, $joinName[0], $joinFields);
+					} else {
+						$joinFields = array($this->name($joinName[0]) . '.*');
 					}
+				}
+				$sql .= ' ' . join(', ', am($this->fields($linkModel, $alias, $assocData['fields']), $joinFields));
+				$sql .= ' FROM ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
+				$sql .= ' JOIN ' . $joinTbl;
 
-					$sql = 'SELECT ';
+				$joinAssoc = $joinTbl;
 
-					if ($this->goofyLimit) {
-						$sql .= $limit;
-					}
+				if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
+					$joinAssoc = $joinName[0];
+					$sql .= $this->alias . $this->name($joinAssoc);
+				}
+				$sql .= ' ON ' . $this->name($joinAssoc);
+				$sql .= '.' . $this->name($assocData['foreignKey']) . ' = {$__cakeID__$}';
+				$sql .= ' AND ' . $this->name($joinAssoc) . '.' . $this->name($assocData['associationForeignKey']);
+				$sql .= ' = ' . $this->name($alias) . '.' . $this->name($linkModel->primaryKey);
+				$sql .= $this->conditions($assocData['conditions']);
+				$sql .= $this->order($assocData['order']);
 
-					$joinFields = array();
-					if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
-						$joinName = array_keys($assocData['with']);
-						$joinFields = $assocData['with'][$joinName[0]];
-
-						if (is_array($joinFields) && !empty($joinFields)) {
-							$joinFields = $this->fields($linkModel, $joinName[0], $joinFields);
-						} else {
-							$joinFields = array($this->name($joinName[0]) . '.*');
-						}
-					}
-
-					$sql .= ' ' . join(', ', am($this->fields($linkModel, $alias, $assocData['fields']), $joinFields));
-					$sql .= ' FROM ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
-					$sql .= ' JOIN ' . $joinTbl;
-
-					$joinAssoc = $joinTbl;
-					if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
-						$joinAssoc = $joinName[0];
-						$sql .= $this->alias . $this->name($joinAssoc);
-					}
-
-					$sql .= ' ON ' . $this->name($joinAssoc);
-					$sql .= '.' . $this->name($assocData['foreignKey']) . ' = {$__cakeID__$}';
-					$sql .= ' AND ' . $this->name($joinAssoc) . '.' . $this->name($assocData['associationForeignKey']);
-					$sql .= ' = ' . $this->name($alias) . '.' . $this->name($linkModel->primaryKey);
-
-					$sql .= $this->conditions($assocData['conditions']);
-					$sql .= $this->order($assocData['order']);
-
-					if (!$this->goofyLimit) {
-						$sql .= $limit;
-					}
+				if (!$this->goofyLimit) {
+					$sql .= $limit;
 				}
 				return $sql;
 			break;
