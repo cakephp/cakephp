@@ -208,10 +208,9 @@ class Sanitize{
 		$val = str_replace(chr(0xCA), "", $val);
 		//Encode any HTML to entities.
 		$val = $this->html($val);
-		//Double-check special chars and remove carriage returns
-		//For increased SQL security
+		//Double-check special chars and replace carriage returns with new lines
 		$val = preg_replace("/\\\$/", "$", $val);
-		$val = preg_replace("/\r\n/", "", $val);
+		$val = preg_replace("/\r\n/", "\n", $val);
 		$val = str_replace("!", "!", $val);
 		$val = str_replace("'", "'", $val);
 		//Allow unicode (?)
