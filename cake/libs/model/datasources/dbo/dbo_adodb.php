@@ -20,7 +20,7 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model.dbo
+ * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP v 0.2.9
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -39,7 +39,7 @@ vendor ('adodb' . DS . 'adodb.inc');
  * Database abstraction implementation for the AdoDB library.
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.dbo
+ * @subpackage	cake.cake.libs.model.datasources.dbo
  */
 class DboAdodb extends DboSource {
 /**

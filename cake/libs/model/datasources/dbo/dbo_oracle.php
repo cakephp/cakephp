@@ -19,7 +19,7 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model.dbo
+ * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP v 1.2.0.4041
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -36,7 +36,7 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
  * Long description for class
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.dbo
+ * @subpackage	cake.cake.libs.model.datasources.dbo
  */
 class DboOracle extends DboSource {
  /**

@@ -34,7 +34,7 @@
  * Long description for class
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.dbo
+ * @subpackage	cake.cake.libs.model.datasources.dbo
  */
 class DboOdbc extends DboSource{
 

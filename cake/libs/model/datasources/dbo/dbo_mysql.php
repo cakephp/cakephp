@@ -19,7 +19,7 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model.dbo
+ * @subpackage		cake.cake.libs.model.datasources.dbo
  * @since			CakePHP v 0.10.5.1790
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -33,7 +33,7 @@
  * Long description for class
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.dbo
+ * @subpackage	cake.cake.libs.model.datasources.dbo
  */
 class DboMysql extends DboSource {
 /**
