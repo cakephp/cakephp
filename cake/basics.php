@@ -657,10 +657,7 @@
  */
 	function h($text) {
 		if (is_array($text)) {
-			foreach ($text as $key => $val) {
-				$text[$key] = h($val);
-			}
-			return $text;
+			return array_map('h', $text);
 		}
 		return htmlspecialchars($text);
 	}
