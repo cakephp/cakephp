@@ -97,27 +97,28 @@ class FormHelper extends AppHelper {
 		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . 'Form', 'action' => array()), $options);
 
 		if (empty($options['action']) || is_array($options['action'])) {
+			$options = (array)$options;
 			$actionDefaults = array(
 				'controller' => Inflector::underscore($this->params['controller']),
-				'action' => $created ? 'edit' : 'create'
+				'action' => $created ? 'update' : 'create',
+				'id' => $created ? $this->data[$model][$data['key']] : null
 			);
 			$options['action'] = am($actionDefaults, $options['action']);
 		}
 
 		switch (low($options['type'])) {
 			case 'get':
-				$htmlAttributes['method'] = 'GET';
-			break;
-			case 'put':
-			case 'delete':
-				$append .= $this->hidden('method/method', array('value' => up($options['type'])));
-				$htmlAttributes['method'] = 'POST';
+				$htmlAttributes['method'] = 'get';
 			break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
-			default:
+				$options['type'] = $created ? 'put' : 'post';
 			case 'post':
-				$htmlAttributes['method'] = 'POST';
+			case 'put':
+			case 'delete':
+				$append .= $this->hidden('method/method', array('value' => up($options['type'])));
+			default:
+				$htmlAttributes['method'] = 'post';
 			break;
 		}
 		$htmlAttributes['action'] = $this->url($options['action']);
@@ -470,9 +471,11 @@ class FormHelper extends AppHelper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			$options = array_reverse($options, true);
-			$options[''] = $showEmpty;
-			$options = array_reverse($options, true);
+			if (isset($options['']) && is_array($options[''])) {
+				$options = am($options, $options['']);
+				unset($options['']);
+			}
+			$options = am(array('' => $showEmpty), $options);
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->Html->tags['selectend']);
