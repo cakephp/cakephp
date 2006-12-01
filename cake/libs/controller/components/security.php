@@ -36,51 +36,66 @@
  */
 class SecurityComponent extends Object {
 /**
- * Enter description here...
+ * Holds an instance of the core Security object
  *
- * @var object
+ * @var object Security
+ * @access public
  */
 	var $Security = null;
 /**
- * Enter description here...
+ * The controller method that will be called if this request is black-hole'd
  *
  * @var string
+ * @access public
  */
 	var $blackHoleCallback = null;
 /**
- * Enter description here...
+ * List of controller actions for which a POST request is required
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requirePost()
  */
 	var $requirePost = array();
 /**
- * Enter description here...
+ * List of actions that require an SSL-secured connection
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requireSecure()
  */
 	var $requireSecure = array();
 /**
- * Enter description here...
+ * List of actions that require a valid authentication key
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requireAuth()
  */
 	var $requireAuth = array();
 /**
- * Enter description here...
+ * List of actions that require an HTTP-authenticated login (basic or digest)
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requireLogin()
  */
 	var $requireLogin = array();
 /**
- * Enter description here...
+ * Login options for SecurityComponent::requireLogin()
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requireLogin()
  */
 	var $loginOptions = array('type' => '');
 /**
- * Enter description here...
+ * An associative array of usernames/passwords used for HTTP-authenticated logins.
+ * If using digest authentication, passwords should be MD5-hashed.
  *
  * @var array
+ * @access public
+ * @see SecurityComponent::requireLogin()
  */
 	var $loginUsers = array();
 /**
@@ -209,10 +224,12 @@ class SecurityComponent extends Object {
 		// Add auth key for new form posts
 		$authKey = Security::generateAuthKey();
 		$expires = strtotime('+'.Security::inactiveMins().' minutes');
-		$token = array('key' => $authKey,
-							'expires' => $expires,
-							'allowedControllers' => $this->allowedControllers,
-							'allowedActions' => $this->allowedActions);
+		$token = array(
+			'key' => $authKey,
+			'expires' => $expires,
+			'allowedControllers' => $this->allowedControllers,
+			'allowedActions' => $this->allowedActions
+		);
 
 		if (!isset($controller->params['data'])) {
 			$controller->params['data'] = array();
@@ -242,7 +259,9 @@ class SecurityComponent extends Object {
 	}
 /**
  * Sets the actions that require a POST request, or empty for all actions
+ *
  * @access public
+ * @return void
  */
 	function requirePost() {
 		$this->requirePost = func_get_args();
@@ -252,7 +271,9 @@ class SecurityComponent extends Object {
 	}
 /**
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
+ *
  * @access public
+ * @return void
  */
 	function requireSecure() {
 		$this->requireSecure = func_get_args();
@@ -262,7 +283,9 @@ class SecurityComponent extends Object {
 	}
 /**
  * Sets the actions that require an authenticated request, or empty for all actions
+ *
  * @access public
+ * @return void
  */
 	function requireAuth() {
 		$this->requireAuth = func_get_args();
@@ -272,7 +295,9 @@ class SecurityComponent extends Object {
 	}
 /**
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
+ *
  * @access public
+ * @return void
  */
 	function requireLogin() {
 		$args = func_get_args();
@@ -293,13 +318,13 @@ class SecurityComponent extends Object {
 /**
  * Gets the login credentials for an HTTP-authenticated request
  *
- * @param string $type Either 'basic', 'digest', or empty. If empty, will try both.
+ * @param string $type Either 'basic', 'digest', or null. If null/empty, will try both.
  * @return mixed If successful, returns an array with login name and password, otherwise null.
  * @access public
  */
-	function loginCredentials($type = '') {
+	function loginCredentials($type = null) {
 
-		if ($type == '' || low($type) == 'basic') {
+		if (empty($type) || low($type) == 'basic') {
 			$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
 			if ($login['username'] != null) {
 				return $login;
@@ -338,10 +363,15 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __setLoginDefaults(&$options) {
-		$options = am(array('type' => 'basic',
-									'realm' => env('SERVER_NAME'),
-									'qop' => 'auth',
-									'nonce'		=> uniqid()),array_filter($options));
+		$options = am(
+			array(
+				'type' => 'basic',
+				'realm' => env('SERVER_NAME'),
+				'qop' => 'auth',
+				'nonce' => uniqid()
+			),
+			array_filter($options)
+		);
 		$options = am(array('opaque' => md5($options['realm'])), $options);
 	}
 /**
@@ -356,8 +386,7 @@ class SecurityComponent extends Object {
 			$options = $this->loginOptions;
 		}
 		$this->__setLoginDefaults($options);
-		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']);
-		$data .= ' realm="' . $options['realm'] . '"';
+		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']) . ' realm="' . $options['realm'] . '"';
 
 		return $data;
 	}
@@ -365,7 +394,7 @@ class SecurityComponent extends Object {
  * Parses an HTTP digest authentication response, and returns an array of the data, or null on failure.
  *
  * @param string $digest
- * @return unknown
+ * @return array Digest authentication parameters
  * @access public
  */
 	function parseDigestAuthData($digest) {
@@ -389,7 +418,7 @@ class SecurityComponent extends Object {
 		}
 	}
 /**
- * Enter description here...
+ * Calls a controller callback method
  *
  * @param object $controller
  * @param string $method

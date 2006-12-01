@@ -40,16 +40,53 @@ if (!defined('REQUEST_MOBILE_UA')) {
  */
 class RequestHandlerComponent extends Object {
 
+/**
+ * The layout that will be switched to for Ajax requests
+ *
+ * @var string
+ * @access public
+ * @see RequestHandler::setAjax()
+ */
 	var $ajaxLayout = 'ajax';
-
+/**
+ * Determines whether or not callbacks will be fired on this component
+ *
+ * @var boolean
+ * @access public
+ * @deprecated
+ * @see RequestHandler::$enabled
+ */
 	var $disableStartup = false;
-
+/**
+ * Determines whether or not callbacks will be fired on this component
+ *
+ * @var boolean
+ * @access public
+ */
 	var $enabled = true;
-
+/**
+ * Holds the content-type of the response that is set when using
+ * RequestHandler::respondAs()
+ *
+ * @var string
+ * @access private
+ */
 	var $__responseTypeSet = null;
-
+/**
+ * Holds the copy of Controller::$params
+ *
+ * @var array
+ * @access public
+ */
 	var $params = array();
-
+/**
+ * Friendly content-type mappings used to set response types and determine
+ * request types.  Can be modified with RequestHandler::setContent()
+ *
+ * @var array
+ * @access private
+ * @see RequestHandlerComponent::setContent
+ */
 	var $__requestContent = array(
 		'javascript'	=> 'text/javascript',
 		'js'			=> 'text/javascript',
@@ -73,11 +110,31 @@ class RequestHandlerComponent extends Object {
 		'zip'			=> 'application/x-zip',
 		'tar'			=> 'application/x-tar'
 	);
-
+/**
+ * Content-types accepted by the client.  If extension parsing is enabled in the
+ * Router, and an extension is detected, the corresponding content-type will be
+ * used as the overriding primary content-type accepted.
+ *
+ * @var array
+ * @access private
+ * @see Router::parseExtensions()
+ */
 	var $__acceptTypes = array();
-
+/**
+ * Contains the file extension parsed out by the Router
+ *
+ * @var string
+ * @access public
+ * @see Router::parseExtensions()
+ */
 	var $ext = null;
-
+/**
+ * Constructor.  Parses the accepted content types accepted by the client using
+ * HTTP_ACCEPT
+ *
+ * @access private
+ * @return void
+ */
 	function __construct() {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
 
@@ -86,10 +143,6 @@ class RequestHandlerComponent extends Object {
 				$type = explode(';', $type);
 				$this->__acceptTypes[$i] = $type[0];
 			}
-		}
-
-		foreach ($this->__requestContent as $type => $data) {
-			$this->setContent($type, $data);
 		}
 
 		parent::__construct();
@@ -181,7 +234,7 @@ class RequestHandlerComponent extends Object {
 	}
 /**
  * Sets a controller's layout based on whether or not the current call is Ajax.
- * Also sets the Content-type to html with UTF-8 encoding for IE6/XPsp2 bug.
+ * Also sets the Content-type to HTML with UTF-8 encoding for IE6/XPsp2 bug.
  *
  * @param object The controller object
  * @return boolean True if call is Ajax, otherwise false
@@ -189,8 +242,6 @@ class RequestHandlerComponent extends Object {
 	function setAjax(&$controller) {
 		if ($this->isAjax()) {
 			$controller->layout = $this->ajaxLayout;
-
-			// Add UTF-8 header for IE6 on XPsp2 bug
 			return $this->respondAs('html', array('charset' => 'UTF-8'));
 		}
 		return false;
@@ -306,14 +357,20 @@ class RequestHandlerComponent extends Object {
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
  *                    i.e. "text/html", or "application/xml"
  * @return void
+ * @access public
  */
-	function setContent($name, $type) {
+	function setContent($name, $type = null) {
+		if (is_array($name)) {
+			$this->__requestContent = am($this->__requestContent, $name);
+			return;
+		}
 		$this->__requestContent[$name] = $type;
 	}
 /**
  * Gets the server name from which this request was referred
  *
  * @return string Server address
+ * @access public
  */
 	function getReferrer() {
 		if (env('HTTP_HOST') != null) {
@@ -329,6 +386,7 @@ class RequestHandlerComponent extends Object {
  * Gets remote client IP
  *
  * @return string Client IP address
+ * @access public
  */
 	function getClientIP() {
 		if (env('HTTP_X_FORWARDED_FOR') != null) {
