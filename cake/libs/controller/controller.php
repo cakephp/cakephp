@@ -308,9 +308,6 @@ class Controller extends Object {
 		$cached = false;
 		$object = null;
 
-		if ($this->persistModel === true){
-			uses('neat_array');
-		}
 		if($this->uses === false) {
 			if(!class_exists($this->modelClass)){
 				loadModel($this->modelClass);
@@ -1090,7 +1087,7 @@ class Controller extends Object {
 			}
 		}
 		return $array;
-	}	
+	}
 }
 
 ?>

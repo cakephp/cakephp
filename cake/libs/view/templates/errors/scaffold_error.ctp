@@ -28,6 +28,6 @@
 <p class="error">Your must implement the following method in your controller</p>
 <p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/scaffold_error.thtml"; ?>.</span></p>
 <p>
-&nbsp;&nbsp;&nbsp;function scaffoldError() {<br />
+&nbsp;&nbsp;&nbsp;function _scaffoldError() {<br />
 &nbsp;&nbsp;&nbsp;}<br />
 </p>
