@@ -78,6 +78,13 @@ class Configure extends Object {
  */
 	var $behaviorPaths = array();
 /**
+ * Debug level
+ *
+ * @var integer
+ * @access private
+ */
+	var $__debug = null;
+/**
  * Return a singleton instance of Configure.
  *
  * @return Configure instance
@@ -205,6 +212,30 @@ class Configure extends Object {
 		$_this->__buildComponentPaths($componentPaths);
 		$_this->__buildBehaviorPaths($behaviorPaths);
 	}
+/**
+ * Sets the debug level
+ *
+ * - 1: development
+ * - 2: full debug with sql
+ * - 3: full debug with sql and dump of the current object
+ *
+ * @param string $level
+ * @return void
+ * @access public
+ */
+	function debugLevel($level = DEBUG) {
+		$_this =& Configure::getInstance();
+		$_this->__debug = $level;
+	}
+/**
+ * Return the debug level
+ *
+ * @return interger
+ * @access public
+ */
+	function debug() {
+		$_this =& Configure::getInstance();
+		return $_this->__debug;
+	}
 }
-
 ?>
