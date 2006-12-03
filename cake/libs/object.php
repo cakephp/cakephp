@@ -63,17 +63,7 @@ class Object{
  */
 	function __construct() {
 	}
-/**
- * Used to set the debug level at a class level
- * This will override the DEBUG define
- *
- * @param integer $level defaults to the DEBUG in core.php if no value is set.
- * @return void
- * @access public
- */
-	function debug($level = DEBUG){
-		Configure::debugLevel($level);
-	}
+
 /**
  * Object-to-string conversion.
  * Each class can override this method as necessary.
@@ -153,7 +143,12 @@ class Object{
  * @return string
  */
 	function trace($options = array()) {
-		$options = am(array('depth' => null, 'format' => ''), $options);
+		$options = am(array(
+				'depth' => null,
+				'format' => ''
+			),
+			$options
+		);
 
 		$backtrace = debug_backtrace();
 		$back = array();
