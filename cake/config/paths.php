@@ -93,10 +93,6 @@
  */
 	define ('LIBS', CAKE.'libs'.DS);
 /**
- * Path to the modules directory.
- */
-	define ('MODULES', ROOT.DS.'modules'.DS);
-/**
  * Path to the public directory.
  */
 	define ('CSS', WWW_ROOT.'css'.DS);
