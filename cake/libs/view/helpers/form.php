@@ -471,11 +471,9 @@ class FormHelper extends AppHelper {
 			if($showEmpty === true) {
 				$showEmpty = '';
 			}
-			if (isset($options['']) && is_array($options[''])) {
-				$options = am($options, $options['']);
-				unset($options['']);
-			}
-			$options = am(array('' => $showEmpty), $options);
+			$options = array_reverse($options, true);
+			$options[''] = $showEmpty;
+			$options = array_reverse($options, true);			
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->Html->tags['selectend']);
