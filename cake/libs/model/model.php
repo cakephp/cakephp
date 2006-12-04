@@ -1610,6 +1610,10 @@ class Model extends Overloadable {
 		}
 		$result = $this->findAll($conditions, $fields, $order, $limit);
 		$this->recursive = $recursive;
+		
+		if(!$result) {
+			return false;
+		}
 
 		if ($keyPath == null) {
 			$keyPath = '{n}.' . $this->name . '.' . $this->primaryKey;
@@ -1630,6 +1634,9 @@ class Model extends Overloadable {
 				if (!empty($group)) {
 					$c = count($keys);
 					for ($i = 0; $i < $c; $i++) {
+						if(!isset($group[$i])) {
+							$group[$i] = 0;
+						}
 						if (!isset($out[$group[$i]])) {
 							$out[$group[$i]] = array();
 						}
