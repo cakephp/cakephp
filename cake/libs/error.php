@@ -76,7 +76,7 @@ class ErrorHandler extends Object{
 			$this->controller =& new Controller();
 			$this->controller->cacheAction = false;
 		}
-		if (DEBUG > 0 || $method == 'error') {
+		if (Configure::read() > 0 || $method == 'error') {
 			call_user_func_array(array(&$this, $method), $messages);
 		} else {
 			call_user_func_array(array(&$this, 'error404'), $messages);

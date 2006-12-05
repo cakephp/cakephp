@@ -29,7 +29,7 @@
 <head>
 <title><?php echo $page_title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<?php if(DEBUG == 0) { ?>
+<?php if(Configure::read() == 0) { ?>
 <meta http-equiv="Refresh" content="<?php echo $pause?>;url=<?php echo $url?>"/>
 <?php } ?>
 <style><!--

@@ -566,7 +566,7 @@
  * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
  */
 	function debug($var = false, $showHtml = false) {
-		if (DEBUG) {
+		if (Configure::read() > 0) {
 			print "\n<pre class=\"cake_debug\">\n";
 			ob_start();
 			print_r($var);
@@ -749,7 +749,7 @@
  * @param array	$var
  */
 	function pr($var) {
-		if (DEBUG > 0) {
+		if (Configure::read() > 0) {
 			echo "<pre>";
 			print_r($var);
 			echo "</pre>";

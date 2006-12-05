@@ -62,7 +62,7 @@ class DboPear extends DboSource{
 		  $this->config   =$config;
 		  $dsn            =$config['driver'] . '://' . $config['login'] . ':' . $config['password'] . '@'
 			  . $config['host'] . '/' . $config['database'];
-		  $options=array('debug' => DEBUG - 1,
+		  $options=array('debug' => Configure::read() - 1,
 					  'portability' => DB_PORTABILITY_ALL,);
 
 		  $this->_pear    =&DB::connect($dsn, $options);

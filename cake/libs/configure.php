@@ -92,6 +92,162 @@ class Configure extends Object {
 		return $instance[0];
 	}
 /**
+ * Used to write a dynamic var in the Configure instance.
+ *
+ * Usage
+ * Configure::write('One.key1', 'value of the Configure::One[key1]');
+ * Configure::write(array('One.key1' => 'value of the Configure::One[key1]'));
+ * Configure::write('One', array('key1'=>'value of the Configure::One[key1]', 'key2'=>'value of the Configure::One[key2]');
+ * Configure::write(array('One.key1' => 'value of the Configure::One[key1]', 'One.key2' => 'value of the Configure::One[key2]'));
+ *
+ *
+ * @param array $config
+ * @return void
+ * @access public
+ */
+	function write($config, $value = null){
+		$_this =& Configure::getInstance();
+
+		if(!is_array($config) && $value !== null) {
+			$name = $_this->__configVarNames($config);
+
+			if(count($name) > 1){
+				$_this->{$name[0]}[$name[1]] = $value;
+			} else {
+				$_this->{$name[0]} = $value;
+			}
+		} else {
+
+			foreach($config as $names => $value){
+				$name = $_this->__configVarNames($names);
+				if(count($name) > 1){
+					$_this->{$name[0]}[$name[1]] = $value;
+				} else {
+					$_this->{$name[0]} = $value;
+				}
+			}
+		}
+
+		if ($config == 'debug' || (is_array($config) && in_array('debug', $config))) {
+			if ($_this->debug) {
+				error_reporting(E_ALL);
+
+				if (function_exists('ini_set')) {
+					ini_set('display_errors', 1);
+				}
+			} else {
+				error_reporting(0);
+			}
+		}
+	}
+/**
+ * Used to read Configure::$var
+ *
+ * Usage
+ * Configure::read('Name'); will return all values for Name
+ * Configure::read('Name.key'); will return only the value of Configure::Name[key]
+ *
+ * @param string $var
+ * @return string value of Configure::$var
+ * @access public
+ */
+	function read($var = 'debug'){
+		$_this =& Configure::getInstance();
+		if($var === 'debug') {
+			if(!isset($_this->debug)){
+				$_this->debug = DEBUG;
+			}
+			return $_this->debug;
+		}
+
+		$name = $_this->__configVarNames($var);
+		if(count($name) > 1){
+			return $_this->{$name[0]}[$name[1]];
+		} else {
+			return $_this->{$name[0]};
+		}
+	}
+/**
+ * Used to delete a var from the Configure instance.
+ *
+ * Usage:
+ * Configure::delete('Name'); will delete the entire Configure::Name
+ * Configure::delete('Name.key'); will delete only the Configure::Name[key]
+ *
+ * @param string $var the var to be deleted
+ * @return void
+ * @access public
+ */
+	function delete($var = null){
+		$_this =& Configure::getInstance();
+
+		$name = $_this->__configVarNames($var);
+		if(count($name) > 1){
+			unset($_this->{$name[0]}[$name[1]]);
+		} else {
+			unset($_this->{$name[0]});
+		}
+	}
+/**
+ * Will load a file from app/config/configure_file.php
+ * variables in the files should be formated like:
+ *  $config['name'] = 'value';
+ * These will be used to create dynamic Configure vars.
+ *
+ * Usage Configure::load('configure_file');
+ *
+ * @param string $fileName name of file to load, extension must be .php and only the name should be used, not the extenstion
+ * @return Configure::write
+ * @access public
+ */
+	function load($fileName) {
+		$_this =& Configure::getInstance();
+
+		if(config($fileName) === false) {
+			trigger_error("Configure::load() - $fileName.php not found", E_USER_WARNING);
+			return false;
+		}
+		if(!isset($config)){
+			trigger_error("Configure::load() - no variable \$config found in $fileName.php", E_USER_WARNING);
+			return false;
+		}
+		return $_this->write($config);
+	}
+
+/**
+ * Used to determine the current version of CakePHP
+ *
+ * Usage Configure::version();
+ *
+ * @return string Current version of CakePHP
+ * @access public
+ */
+	function version() {
+		$_this =& Configure::getInstance();
+		if(!isset($_this->Cake['version'])){
+			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
+			$_this->write($config);
+		}
+		return $_this->Cake['version'];
+	}
+/**
+ * Checks $name for dot notation to create dynamic Configure::$var as an array when needed.
+ *
+ * @param mixed $name
+ * @return array
+ * @access private
+ */
+	function __configVarNames($name) {
+		if (is_string($name)) {
+			if (strpos($name, ".")) {
+				$name = explode(".", $name);
+			} else {
+				$name = array($name);
+			}
+		}
+		return $name;
+	}
+/**
  * Sets the var modelPaths
  *
  * @param array $modelPaths

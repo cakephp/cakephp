@@ -93,15 +93,7 @@ if (!defined('PHP5')) {
 		}
 	}
 
-	if (DEBUG) {
-		error_reporting(E_ALL);
-
-		if (function_exists('ini_set')) {
-			ini_set('display_errors', 1);
-		}
-	} else {
-		error_reporting(0);
-	}
+	Configure::write('debug', DEBUG); 
 
 	require CAKE . 'dispatcher.php';
 

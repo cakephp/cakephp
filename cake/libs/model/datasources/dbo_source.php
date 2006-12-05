@@ -81,8 +81,8 @@ class DboSource extends DataSource {
  * Constructor
  */
 	function __construct($config = null, $autoConnect = true) {
-		$this->debug = DEBUG > 0;
-		$this->fullDebug = DEBUG > 1;
+		$this->debug = Configure::read() > 0;
+		$this->fullDebug = Configure::read() > 1;
 		parent::__construct($config);
 
 		if ($autoConnect) {
@@ -135,7 +135,7 @@ class DboSource extends DataSource {
 			return $this->__sources;
 		}
 
-		if (DEBUG > 0) {
+		if (Configure::read() > 0) {
 			$expires = "+30 seconds";
 		} else {
 			$expires = "+999 days";
@@ -670,7 +670,7 @@ class DboSource extends DataSource {
 		if ($query) {
 
 			if (!isset($resultSet) || !is_array($resultSet)) {
-				if (DEBUG) {
+				if (Configure::read() > 0) {
 					e('<div style = "font: Verdana bold 12px; color: #FF0000">SQL Error in model ' . $model->name . ': ');
 					if (isset($this->error) && $this->error != null) {
 						e($this->error);

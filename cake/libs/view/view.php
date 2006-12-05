@@ -382,7 +382,7 @@ class View extends Object {
 	function renderLayout($content_for_layout) {
 		$layout_fn = $this->_getLayoutFileName();
 
-		if (DEBUG > 2 && $this->controller != null) {
+		if (Configure::read() > 2 && $this->controller != null) {
 			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->controller), false);
 		} else {
 			$debug = '';
@@ -685,7 +685,7 @@ class View extends Object {
 
 		ob_start();
 
-		if (DEBUG) {
+		if (Configure::read() > 0) {
 			include ($___viewFn);
 		} else {
 			@include ($___viewFn);
@@ -797,7 +797,7 @@ class View extends Object {
 		ob_start();
 		include ($filename);
 
-		if (DEBUG && $this->layout != 'xml') {
+		if (Configure::read() > 0 && $this->layout != 'xml') {
 			echo "<!-- Cached Render Time: " . round(getMicrotime() - $timeStart, 4) . "s -->";
 		}
 
