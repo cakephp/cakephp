@@ -369,10 +369,17 @@ class View extends Object {
 		return "(Error rendering Element: {$name})";
 	}
 
-	function element($name) {
-		return ELEMENTS . $name . $this->ext;
+/**
+ * Wrapper for View::renderElement();
+ *
+ * @param string $name Name of template file in the/app/views/elements/ folder
+ * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
+ * @return string View::renderElement()
+ * @access public
+ */
+	function element($name, $params = array()) {
+		return $this->renderElement($name, $params);
 	}
-
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
  *
