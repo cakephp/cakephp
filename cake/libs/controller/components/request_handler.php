@@ -132,7 +132,7 @@ class RequestHandlerComponent extends Object {
  * Constructor.  Parses the accepted content types accepted by the client using
  * HTTP_ACCEPT
  *
- * @access private
+ * @access public
  * @return void
  */
 	function __construct() {

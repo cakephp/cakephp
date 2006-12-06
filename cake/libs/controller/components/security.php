@@ -99,21 +99,26 @@ class SecurityComponent extends Object {
  */
 	var $loginUsers = array();
 /**
- * Enter description here...
+ * Controllers from which actions of the current controller are allowed to receive
+ * requests.
  *
  * @var array
+ * @see SecurityComponent::requireAuth()
  */
 	var $allowedControllers = array();
 /**
- * Enter description here...
+ * Actions from which actions of the current controller are allowed to receive
+ * requests.
  *
  * @var array
+ * @see SecurityComponent::requireAuth()
  */
 	var $allowedActions = array();
 /**
- * Enter description here...
+ * Other components used by the Security component
  *
  * @var array
+ * @access public
  */
 	var $components = array('RequestHandler', 'Session');
 /**
@@ -123,7 +128,7 @@ class SecurityComponent extends Object {
 		$this->Security =& Security::getInstance();
 	}
 /**
- * Enter description here...
+ * Component startup.  All security checking happens here.
  *
  * @param object $controller
  * @return unknown
@@ -382,9 +387,7 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginRequest($options = array()) {
-		if (empty($options)) {
-			$options = $this->loginOptions;
-		}
+		$options = am($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
 		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']) . ' realm="' . $options['realm'] . '"';
 
