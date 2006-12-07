@@ -472,7 +472,11 @@ class Router extends Overloadable {
 			} elseif($url{0} == '/') {
 				$output = $base . $url;
 			} else {
-				$output = $base . '/' . strtolower($params['controller']) . '/' . $url;
+				$output = $base . '/';
+				if (defined('CAKE_ADMIN')) {
+					$output .= CAKE_ADMIN . '/';
+				}
+				$output .= strtolower($params['controller']) . '/' . $url;
 			}
 		}
 		if ($full) {
