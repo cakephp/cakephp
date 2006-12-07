@@ -396,7 +396,7 @@ class Router extends Overloadable {
 			}
 			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params[CAKE_ADMIN])) {
 				$url[CAKE_ADMIN] = $params[CAKE_ADMIN];
-			} elseif (defined('CAKE_ADMIN') && $url[CAKE_ADMIN] == false) {
+			} elseif (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN] == false) {
 				unset($url[CAKE_ADMIN]);
 			}
 
@@ -473,7 +473,7 @@ class Router extends Overloadable {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
-				if (defined('CAKE_ADMIN')) {
+				if (defined('CAKE_ADMIN') && isset($params[CAKE_ADMIN])) {
 					$output .= CAKE_ADMIN . '/';
 				}
 				$output .= strtolower($params['controller']) . '/' . $url;
