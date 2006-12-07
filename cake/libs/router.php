@@ -394,8 +394,10 @@ class Router extends Overloadable {
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
 			}
-			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params['admin'])) {
-				$url[CAKE_ADMIN] = $params['admin'];
+			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params[CAKE_ADMIN])) {
+				$url[CAKE_ADMIN] = $params[CAKE_ADMIN];
+			} elseif (defined('CAKE_ADMIN') && $url[CAKE_ADMIN] == false) {
+				unset($url[CAKE_ADMIN]);
 			}
 
 			foreach ($_this->routes as $route) {
@@ -497,6 +499,9 @@ class Router extends Overloadable {
 			}
 		}
 
+		sort($route[3]);
+		sort($url);
+
 		if ($route[3] == $url) {
 			return array(Router::__mapRoute($route, $url), array());
 		} elseif (!empty($params)) {
@@ -507,6 +512,8 @@ class Router extends Overloadable {
 			if ($keysFilled != $params) {
 				return false;
 			}
+		} else {
+			return false;
 		}
 
 		/*if (!empty($diffs)) {
@@ -557,6 +564,7 @@ class Router extends Overloadable {
 			$out = str_replace(':' . $key, $params[$key], $out);
 			unset($params[$key]);
 		}
+
 		// Do something else here for leftover params
 		return $out;
 	}
