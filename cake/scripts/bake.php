@@ -992,29 +992,28 @@ class Bake {
 			}
 		}
 		$viewView .= "</ul>\n\n";
-
 		$viewView .= "</div>\n";
-
-
+		
 		foreach ($modelObj->hasOne as $associationName => $relation) {
 			$new = true;
-
 			$otherModelName = $this->__modelName($relation['className']);
 			$otherControllerName = $this->__controllerName($otherModelName);
 			$otherControllerPath = $this->__controllerPath($otherModelName);
 			$otherSingularName = $this->__singularName($associationName);
 			$otherPluralHumanName = $this->__pluralHumanName($associationName);
 			$otherSingularHumanName = $this->__singularHumanName($associationName);
-
+			$otherModelKey = Inflector::underscore($relation['className']);
+			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
+			
 			$viewView .= "<div class=\"related\">\n";
 			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-			$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])): ?>\n";
-			$viewView .= "<dl>\n";
-			$viewView .= "\t<?php foreach(\$".$singularName."['{$associationName}'] as \$field => \$value): ?>\n";
-			$viewView .= "\t\t<dt><?php echo \$field ?></dt>\n";
-			$viewView .= "\t\t<dd>&nbsp;<?php echo \$value ?></dd>\n";
-			$viewView .= "\t<?php endforeach; ?>\n";
-			$viewView .= "</dl>\n";
+			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])): ?>\n";
+			$viewView .= "\t<dl>\n";
+			foreach($otherModelObj->_tableInfo->value as $column) {
+				$viewView .= "\t\t<dt>".Inflector::humanize($column['name'])."/dd>\n";
+				$viewView .= "\t\t<dd>&nbsp;<?php echo \${$singularName}['{$associationName}']['{$column['name']}'] ?></dd>\n";
+			}			
+			$viewView .= "\t</dl>\n";
 			$viewView .= "<?php endif; ?>\n";
 			$viewView .= "<ul class=\"actions\">\n";
 			$viewView .= "\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', '{$admin_url}/" .$otherControllerPath."/edit/' . \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']);?></li>\n";
@@ -1022,8 +1021,8 @@ class Bake {
 			$viewView .= "</ul>\n";
 			$viewView .= "</div>\n";
 		}
+		
 		$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
-
 		foreach($relations as $associationName => $relation) {
 			$otherModelName = $associationName;
 			$otherControllerName = $this->__controllerName($relation['className']);
@@ -1036,25 +1035,25 @@ class Bake {
 
 			$viewView .= "<div class=\"related\">\n";
 			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-			$viewView .= "<?php if(!empty(\$".$singularName."['{$associationName}'])):?>\n";
+			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])):?>\n";
 			$viewView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
-			$viewView .= "<tr>\n";
-			$viewView .= "<?php foreach(\$".$singularName."['{$associationName}']['0'] as \$column => \$value): ?>\n";
-			$viewView .= "<th><?php echo \$column?></th>\n";
-			$viewView .= "<?php endforeach; ?>\n";
-			$viewView .= "<th>Actions</th>\n";
-			$viewView .= "</tr>\n";
-			$viewView .= "<?php foreach(\$".$singularName."['{$associationName}'] as \$".$otherSingularName."):?>\n";
-			$viewView .= "<tr>\n";
-			$viewView .= "\t<?php foreach(\$".$otherSingularName." as \$column => \$value):?>\n";
-			$viewView .= "\t\t<td><?php echo \$value;?></td>\n";
-			$viewView .= "\t<?php endforeach;?>\n";
-			$viewView .= "\t<td nowrap>\n";
-			$viewView .= "\t\t<?php echo \$html->link('View', '{$admin_url}/" . $otherControllerPath . "/view/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
-			$viewView .= "\t\t<?php echo \$html->link('Edit', '{$admin_url}/" . $otherControllerPath . "/edit/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
-			$viewView .= "\t\t<?php echo \$html->link('Delete', '{$admin_url}/" . $otherControllerPath . "/delete/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?');?>\n";
-			$viewView .= "\t</td>\n";
-			$viewView .= "</tr>\n";
+			$viewView .= "\t<tr>\n";
+			foreach($otherModelObj->_tableInfo->value as $column) {
+				$viewView .= "\t\t<th>".Inflector::humanize($column['name'])."</th>\n";
+			}
+			$viewView .= "\t\t<th>Actions</th>\n";
+			$viewView .= "\t</tr>\n";
+			$viewView .= "<?php foreach(\${$singularName}['{$associationName}'] as \$".$otherSingularName."):?>\n";
+			$viewView .= "\t<tr>\n";
+			foreach($otherModelObj->_tableInfo->value as $column) {
+			$viewView .= "\t\t<td><?php echo \${$otherSingularName}['{$column['name']}'];?></td>\n";
+			}
+			$viewView .= "\t\t<td nowrap>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('View', '{$admin_url}/" . $otherControllerPath . "/view/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('Edit', '{$admin_url}/" . $otherControllerPath . "/edit/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}']);?>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('Delete', '{$admin_url}/" . $otherControllerPath . "/delete/' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'], null, 'Are you sure you want to delete: id ' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?');?>\n";
+			$viewView .= "\t\t</td>\n";
+			$viewView .= "\t</tr>\n";
 			$viewView .= "<?php endforeach; ?>\n";
 			$viewView .= "</table>\n";
 			$viewView .= "<?php endif; ?>\n\n";
@@ -1068,13 +1067,13 @@ class Bake {
 		//-------------------------[EDIT]-------------------------//
 		$editView = null;
 		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
-		$editView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'edit'));?>\n";
-		$editView .= $this->displayFields($fields);
-		$editView .= "\t<?php echo \$form->input('{$currentModelName}/update', array('type'=>'submit'));?>\n";
+		$editView .= "<?php echo \$form->create('{$currentModelName}');?>\n";
+		$editView .= $this->inputs($fields);
+		$editView .= "\t<?php echo \$form->submit('Update');?>\n";
 		$editView .= "</form>\n";
 		$editView .= "<ul class=\"actions\">\n";
-		$editView .= "<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
-		$editView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
+		$editView .= "\t<li><?php echo \$html->link('Delete','{$admin_url}/{$controllerPath}/delete/' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'), null, 'Are you sure you want to delete: id ' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}'));?>\n";
+		$editView .= "\t<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
 			$otherModelName = $this->__modelName($relation['className']);
 			if($otherModelName != $currentModelName) {
@@ -1082,8 +1081,8 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
-				$editView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
-				$editView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
+				$editView .= "\t<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
+				$editView .= "\t<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
 			}
 		}
 		$editView .= "</ul>\n";
@@ -1091,12 +1090,12 @@ class Bake {
 		unset($fields[$modelObj->primaryKey]);
 		$addView = null;
 		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
-		$addView .= "<?php echo \$form->create('{$currentModelName}', array('action'=>'add'));?>\n";
-		$addView .= $this->displayFields($fields);
-		$addView .= "\t<?php echo \$form->input('{$currentModelName}/add', array('type'=>'submit'));?>\n";
+		$addView .= "<?php echo \$form->create('{$currentModelName}');?>\n";
+		$addView .= $this->inputs($fields);
+		$addView .= "\t<?php echo \$form->submit('Add');?>\n";
 		$addView .= "</form>\n";
 		$addView .= "<ul class=\"actions\">\n";
-		$addView .= "<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
+		$addView .= "\t<li><?php echo \$html->link('List {$pluralHumanName}', '{$admin_url}/{$controllerPath}/index')?></li>\n";
 		foreach ($modelObj->belongsTo as $associationName => $relation) {
 			$otherModelName = $this->__modelName($relation['className']);
 			if($otherModelName != $currentModelName) {
@@ -1104,8 +1103,8 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
-				$addView .= "<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
-				$addView .= "<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
+				$addView .= "\t<li><?php echo \$html->link('View " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/index/');?></li>\n";
+				$addView .= "\t<li><?php echo \$html->link('Add " . $otherPluralName . "', '{$admin_url}/" .$otherControllerPath."/add/');?></li>\n";
 			}
 		}
 		$addView .= "</ul>\n";
@@ -1132,11 +1131,12 @@ class Bake {
  * @access private
  * @param array $fields
  */
-	function displayFields($fields = array()) {
+	function inputs($fields = array()) {
 		
 		foreach($fields as $name => $options) {
 			if(isset($options['tagName'])){
-				$tagName = $options['tagName'];
+				$tag = explode('/', $options['tagName']);
+				$tagName = $tag[1];
 				unset($options['tagName']);
 			}
 			$formOptions = array();
@@ -1144,39 +1144,39 @@ class Bake {
 			if(isset($options['type'])){
 				$type = $options['type'];
 				unset($options['type']);
-				$formOptions[] = "'type' => '{$type}'";
+				//$formOptions['type'] = "'type' => '{$type}'";
 			}
 			
 			if(isset($options['class']) && $options['class'] == 'required'){
 				$class = $options['class'];
 				unset($options['class']);
-				$formOptions[] = "'class' => '{$class}'";
+				$formOptions['class'] = "'class' => '{$class}'";
 			}
 			
 			if(isset($options['options'])){
+				unset($formOptions['type']);
 				$fieldOptions = $this->__pluralName($options['model']);
 				unset($options['options']);
-				$formOptions[] = "'options' => \${$fieldOptions}";
+				$formOptions['options'] = "'options' => \${$fieldOptions}";
 				if(isset($options['multiple'])){
-					$selected = 'selected' . ucfirst($fieldOptions);
-					$formOptions[] = "'selected' => \${$selected}";
-					$formOptions[] = "'multiple' => 'multiple'";
+					$formOptions['multiple'] = "'multiple' => 'multiple'";
+					$tagName = $tagName.'/'.$tagName;
 				}
 			}
 			if(isset($options['size'])){
 				$size = $options['size'];
-				unset($options['class']);
-				$formOptions[] = "'size' => '{$size}'";
+				unset($options['size']);
+				//$formOptions['size'] = "'size' => '{$size}'";
 			}
 			if(isset($options['cols'])){
 				$cols = $options['cols'];
 				unset($options['cols']);
-				$formOptions[] = "'cols' => '{$cols}'";
+				//$formOptions['cols'] = "'cols' => '{$cols}'";
 			}
 			if(isset($options['rows'])){
 				$rows = $options['rows'];
 				unset($options['rows']);
-				$formOptions[] = "'rows' => '{$rows}'";
+				//$formOptions['rows'] = "'rows' => '{$rows}'";
 			}
 			
 			
@@ -1392,31 +1392,66 @@ class Bake {
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
+		
 		/* ADD ACTION */
+		$compact = array();
 		$actions .= "\tfunction {$admin}add() {\n";
-		$actions .= "\t\tif(empty(\$this->data)) {\n";
-
+		$actions .= "\t\tif(!empty(\$this->data)) {\n";
+		$actions .= "\t\t\t\$this->cleanUpFields();\n";
+		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
+		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
+		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";
+		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\texit();\n";
+		} else {
+		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\texit();\n";
+		}
+		$actions .= "\t\t\t} else {\n";
+		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
+		}
+		$actions .= "\t\t\t}\n";
+		$actions .= "\t\t}\n";
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
 			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
-				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\$this->set('{$selectedOtherPluralName}', null);\n";
+				$habtmModelName = $this->__modelName($associationName);
+				$habtmSingularName = $this->__singularName($associationName);
+				$habtmPluralName = $this->__pluralName($associationName);
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmoModelName}->generateList();\n";
+				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
 		foreach($modelObj->belongsTo as $associationName => $relation) {
 			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
+				$belongsToModelName = $this->__modelName($associationName);
+				$belongsToPluralName = $this->__pluralName($associationName);
+				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
+				$compact[] = "'{$belongsToPluralName}'";
 			}
 		}
-		$actions .= "\t\t\t\$this->render();\n";
-		$actions .= "\t\t} else {\n";
+		if(!empty($compact)) {
+			$actions .= "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
+		}
+		$actions .= "\t}\n";
+		$actions .= "\n";
+		
+		/* EDIT ACTION */
+		$compact = array();
+		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
+		$actions .= "\t\tif(!\$id && empty(\$this->data)) {\n";
+		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
+		$actions .= "\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index');\n";
+		} else {
+			$actions .= "\t\t\t\$this->flash('Invalid id for {$singularHumanName}', '{$admin_url}/{$controllerPath}/index');\n";
+		}
+		$actions .= "\t\t\texit();\n";
+		$actions .= "\t\t}\n";
+		$actions .= "\t\tif(!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
+		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";
@@ -1424,100 +1459,37 @@ class Bake {
 		} else {
 		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
 		}
+		$actions .= "\t\t\t\texit();\n";
 		$actions .= "\t\t\t} else {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
-		}
-
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
-				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
-			}
-		}
-		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-			}
+			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
 		}
 		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
-		$actions .= "\t}\n";
-		$actions .= "\n";
-		/* EDIT ACTION */
-		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
-		$actions .= "\t\t\tif(!\$id) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
-		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index');\n";
-		} else {
-		$actions .= "\t\t\t\t\$this->flash('Invalid id for {$singularHumanName}', '{$admin_url}/{$controllerPath}/index');\n";
-		}
-		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
-
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($relation['className']);
-				$otherPluralName = $this->__pluralName($relation['className']);
-				$otherModelKey = Inflector::underscore($relation['className']);
-				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
-				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
-			}
-		}
-		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-			}
-		}
-		$actions .= "\t\t} else {\n";
-		$actions .= "\t\t\t\$this->cleanUpFields();\n";
-		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".Inflector::humanize($currentModelName)." has been saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index');\n";
-		} else {
-		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
-		}
-		$actions .= "\t\t\t} else {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
-		}
-
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$selectedOtherPluralName = 'selected' . ucfirst($otherPluralName);
-				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-				$actions .= "\t\t\t\t\$this->set('{$selectedOtherPluralName}', \$this->_selectedArray('{$associationName}'));\n";
-			}
-		}
-		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($associationName)) {
-				$otherModelName = $this->__modelName($associationName);
-				$otherSingularName = $this->__singularName($associationName);
-				$otherPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\t\t\$this->set('{$otherPluralName}', \$this->{$currentModelName}->{$otherModelName}->generateList());\n";
-			}
-		}
-		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
+		
+		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if(!empty($associationName)) {
+				$habtmModelName = $this->__modelName($associationName);
+				$habtmSingularName = $this->__singularName($associationName);
+				$habtmPluralName = $this->__pluralName($associationName);
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmoModelName}->generateList();\n";
+				$compact[] = "'{$habtmPluralName}'";
+			}
+		}
+		foreach($modelObj->belongsTo as $associationName => $relation) {
+			if(!empty($associationName)) {
+				$belongsToModelName = $this->__modelName($associationName);
+				$belongsToPluralName = $this->__pluralName($associationName);
+				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
+				$compact[] = "'{$belongsToPluralName}'";
+			}
+		}
+		if(!empty($compact)) {
+			$actions .= "\t\t\$this->set(compact(".join(',', $compact)."));\n";
+		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
