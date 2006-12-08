@@ -901,11 +901,6 @@ class Bake {
 
 		//-------------------------[INDEX]-------------------------//
 		$indexView = null;
-		if(!empty($modelObj->alias)) {
-			foreach ($modelObj->alias as $key => $value) {
-				$alias[] = $key;
-			}
-		}
 		$indexView .= "<div class=\"{$pluralName}\">\n";
 		$indexView .= "<h2>List " . $pluralHumanName . "</h2>\n\n";
 		$indexView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
@@ -928,7 +923,7 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				if(is_object($otherModelObj)) {
 					$displayField = $otherModelObj->getDisplayField();
-					$indexView .= "\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></td>\n";
+					$indexView .= "\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])?></td>\n";
 				} else {
 					$indexView .= "\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
 				}
@@ -958,7 +953,7 @@ class Bake {
 		$viewView .= "<dl>\n";
 		$count = 0;
 		foreach($fieldNames as $field => $value) {
-			$viewView .= "\t<dt>" . $value['prompt'] . "</dt>\n";
+			$viewView .= "\t<dt>" . $value['label'] . "</dt>\n";
 			if(isset($value['foreignKey'])) {
 				$otherModelName = $this->__modelName($value['model']);
 				$otherModelKey = Inflector::underscore($value['modelKey']);
@@ -966,7 +961,7 @@ class Bake {
 				$otherControllerName = $this->__controllerName($value['modelKey']);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$displayField = $otherModelObj->getDisplayField();
-				$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$alias[$count]}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$alias[$count]}']['{$otherModelObj->primaryKey}'])?></dd>\n";
+				$viewView .= "\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], '{$admin_url}/" . $otherControllerPath . "/view/' .\$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])?></dd>\n";
 				$count++;
 			} else {
 				$viewView .= "\t<dd>&nbsp;<?php echo \$".$singularName."['{$modelObj->name}']['{$field}']?></dd>\n";
