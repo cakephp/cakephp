@@ -383,18 +383,24 @@ class Controller extends Object {
  * Redirects to given $url, after turning off $this->autoRender.
  * Please notice that the script execution is not stopped after the redirect.
  *
- * @param string $url
- * @param integer $status
+ * @param mixed $url A string or array-based URL pointing to another location
+ *                   within the app, or an absolute URL
+ * @param integer $status Optional HTTP status code
+ * @param boolean $exit If true, exit() will be called after the redirect
  * @access public
  */
-	function redirect($url, $status = null) {
+	function redirect($url, $status = null, $exit = false) {
 		$this->autoRender = false;
+
+		if (is_array($status)) {
+			extract($status, EXTR_OVERWRITE);
+		}
 
 		if (function_exists('session_write_close')) {
 			session_write_close();
 		}
 
-		if ($status != null) {
+		if (is_numeric($status) && $status > 0) {
 			$codes = array(
 				100 => "Continue",
 				101 => "Switching Protocols",
@@ -443,6 +449,9 @@ class Controller extends Object {
 		}
 		if ($url !== null) {
 			header('Location: ' . Router::url($url, defined('SERVER_IIS')));
+		}
+		if ($exit) {
+			exit();
 		}
 	}
 /**
