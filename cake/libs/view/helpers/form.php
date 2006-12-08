@@ -100,7 +100,7 @@ class FormHelper extends AppHelper {
 			$options = (array)$options;
 			$actionDefaults = array(
 				'controller' => Inflector::underscore($this->params['controller']),
-				'action' => $created ? 'update' : 'create',
+				'action' => $created ? 'edit' : 'add',
 				'id' => $created ? $this->data[$model][$data['key']] : null
 			);
 			$options['action'] = am($actionDefaults, $options['action']);
@@ -128,6 +128,8 @@ class FormHelper extends AppHelper {
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']));
 		}
+
+		$this->setFormTag($model . '/');
 		return $this->output(sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, ''))) . $append;
 	}
 /**
@@ -166,12 +168,19 @@ class FormHelper extends AppHelper {
  * @param string $text Text that will appear in the label field.
  * @return string The formatted LABEL element
  */
-	function label($tagName, $text = null, $attributes = array()) {
+	function label($tagName = null, $text = null, $attributes = array()) {
+		if (empty($tagName)) {
+			$tagName = implode('/', array_filter(array($this->model(), $this->field())));
+		}
+
 		if ($text == null) {
 			if (strpos($tagName, '/') !== false) {
 				list( , $text) = explode('/', $tagName);
 			} else {
 				$text = $tagName;
+			}
+			if (substr($text, -3) == '_id') {
+				$text = substr($text, 0, strlen($text) - 3);
 			}
 			$text = Inflector::humanize($text);
 		}
@@ -180,23 +189,28 @@ class FormHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->Html->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
 	}
-/* Will display all the fields passed in an array expects tagName as an array key
+/**
+ * Will display all the fields passed in an array expects tagName as an array key
  * replaces generateFields
  *
  * @access public
  * @param array $fields works well with Controller::generateFieldNames();
  * @return output
  */
-	function displayFields($fields) {
+	function inputs($fields) {
 		$out = null;
 		foreach($fields as $name => $options) {
-			if(isset($options['tagName'])){
-				$tagName = $options['tagName'];
+			if (is_numeric($name) && !is_array($options)) {
+				$name = $options;
+				$options = array();
+			}
+			if(is_array($options) && isset($options['tagName'])) {
+				$name = $options['tagName'];
 				unset($options['tagName']);
 			}
-			$out .= $this->input($tagName, $options);
+			$out .= $this->input($name, $options);
 		}
-		return $this->output($out);
+		return $out;
 	}
 /**
  * Generates a form input element complete with label and wrapper div
@@ -210,26 +224,43 @@ class FormHelper extends AppHelper {
 		$this->setFormTag($tagName);
 
 		if (!isset($options['type'])) {
+			$options['type'] = 'text';
+
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
-			} elseif ($this->field() == 'passwd' || $this->field() == 'password') {
+			} elseif (in_array($this->field(), array('passwd', 'password'))) {
 				$options['type'] = 'password';
-			} else {
-				$options['type'] = 'text';
+			} elseif (ClassRegistry::isKeySet($this->model())) {
+				$model =& ClassRegistry::getObject($this->model());
+				$type = $model->getColumnType($this->field());
+
+				$map = array(
+					'string'	=> 'text',		'datetime'	=> 'datetime',
+					'boolean'	=> 'checkbox',	'timestamp'	=> 'datetime',
+					'text'		=> 'textarea',	'time'		=> 'time',
+					'date'		=> 'date'
+				);
+				if (isset($map[$type])) {
+					$options['type'] = $map[$type];
+				}
 			}
 		}
 
-		$wrap = true;
-		if (isset($options['wrap'])) {
-			$wrap = $options['wrap'];
-			unset($options['wrap']);
+		$div = true;
+		if (isset($options['div'])) {
+			$div = $options['div'];
+			unset($options['div']);
 		}
 
 		$divOptions = array();
-		if (!isset($options['class']) || empty($options['class'])) {
+		if ($div === true) {
 			$divOptions['class'] = 'input';
-		} else {
-			$divOptions['class'] = $options['class'];
+		} elseif ($div === false) {
+			unset($divOptions);
+		} elseif (is_string($div)) {
+			$divOptions['class'] = $div;
+		} elseif (is_array($div)) {
+			$divOptions = am(array('class' => 'input'), $div);
 		}
 
 		$label = null;
@@ -237,8 +268,7 @@ class FormHelper extends AppHelper {
 			$label = $options['label'];
 			unset($options['label']);
 		}
-
-		$out = $this->label($tagName, $label);
+		$out = $this->label(null, $label);
 
 		$error = null;
 		if (isset($options['error'])) {
@@ -256,12 +286,11 @@ class FormHelper extends AppHelper {
 
 		switch ($options['type']) {
 			case 'hidden':
-				$wrap = false;
 				$out = $this->hidden($tagName);
+				unset($divOptions);
 			break;
 			case 'checkbox':
-				$out = $this->Html->checkbox($tagName);
-				$out .= $this->label($tagName, $label);
+				$out = $this->Html->checkbox($tagName) . $out;
 			break;
 			case 'text':
 				$out .= $this->text($tagName, $options);
@@ -287,13 +316,9 @@ class FormHelper extends AppHelper {
 			case 'datetime':
 				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, false);
 			break;
-			case 'submit':
-				$divOptions['class'] = 'submit';
-				$out = $this->Html->submit($label);
-			break;
 			case 'textarea':
 			default:
-				$out .= $this->textarea($tagName, $options);
+				$out .= $this->textarea($tagName, am(array('cols' => '30', 'rows' => '10'), $options));
 			break;
 		}
 
@@ -301,10 +326,10 @@ class FormHelper extends AppHelper {
 			$out .= $this->Html->tagErrorMsg($tagName, $error);
 		}
 
-		if ($wrap) {
-			$out = $this->Html->div($divOptions['class'], $out);
+		if (isset($divOptions)) {
+			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
 		}
-		return $this->output($out);
+		return $out;
 	}
 /**
  * Creates a text input widget.
@@ -395,7 +420,7 @@ class FormHelper extends AppHelper {
 					$options['checked'] = 'checked';
 				}
 				$this->setFieldName($options['name']);
-				$options['name'] = 'data['.$this->_model.']['.$this->_field.']';
+				$options['name'] = 'data[' . $this->model() . '][' . $this->field() . ']';
 			}
 		}
 
@@ -406,6 +431,17 @@ class FormHelper extends AppHelper {
 			'tagValue' => $content
 		);
 		return $this->_assign('button', $values);
+	}
+/**
+ * Creates a submit button element.
+ *
+ * @param  string  $caption  The label appearing on the button
+ * @param  array   $options
+ * @return string A HTML submit button
+ */
+	function submit($caption = 'Submit', $options = array()) {
+		$options['value'] = $caption;
+		return $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 	}
 /**
  * Creates an image input widget.
@@ -688,7 +724,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		//trigger_error('Deprecated: Use FormHelper::input() or FormHelper::submit() instead', E_USER_WARNING);
+		trigger_error('Deprecated: Use FormHelper::submit() instead', E_USER_WARNING);
 		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
 	}
 /**
