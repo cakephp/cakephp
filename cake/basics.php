@@ -1208,6 +1208,57 @@
 		}
     }
 /**
+ * Computes the difference of arrays using keys for comparison
+ *
+ * @param array
+ * @param array
+ * @return array
+ */
+	if (!function_exists('array_diff_key')) {
+		function array_diff_key() {
+			$valuesDiff = array();
+			
+			if (func_num_args() < 2) {
+				return false;
+			}
+			
+			foreach (func_get_args() as $param) {
+				if (!is_array($param)) {
+					return false;
+				}
+			}
+
+			$args = func_get_args();
+			foreach ($args[0] as $valueKey => $valueData) {
+				for ($i = 1; $i < func_num_args(); $i++) {
+					if (isset($arg[$i][$valueKey])) {
+						continue 2;
+					}
+				}
+				$valuesDiff[$valueKey] = $valueData;
+			}
+			return $valuesDiff;
+		}
+	}
+/**
+ * Computes the intersection of arrays using keys for comparison
+ *
+ * @param array
+ * @param array
+ * @return array
+ */
+	if (!function_exists('array_intersect_key')) {
+		function array_intersect_key($arr1, $arr2) {
+			$res = array();
+			foreach($arr1 as $key=>$value) {
+				if(array_key_exists($key, $arr2)) {
+					$res[$key] = $arr1[$key];
+				}
+			}
+			return $res;
+		}
+	}
+/**
  * @deprecated
  * @see Set::countDim
  */
