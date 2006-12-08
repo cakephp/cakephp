@@ -1877,8 +1877,8 @@ class Model extends Overloadable {
 			if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
 				$assoc[] = strtolower(Inflector::pluralize($this->name));
 
-				foreach($this->__associations as $key => $asscociation) {
-					foreach($this->$asscociation as $key => $className) {
+				foreach($this->__associations as $key => $association) {
+					foreach($this->$association as $key => $className) {
 						$check = strtolower(Inflector::pluralize($className['className']));
 
 						if (!in_array($check, $assoc)) {
