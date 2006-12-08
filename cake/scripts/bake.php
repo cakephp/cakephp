@@ -1414,7 +1414,7 @@ class Bake {
 				$habtmModelName = $this->__modelName($associationName);
 				$habtmSingularName = $this->__singularName($associationName);
 				$habtmPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmoModelName}->generateList();\n";
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->generateList();\n";
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
@@ -1470,7 +1470,7 @@ class Bake {
 				$habtmModelName = $this->__modelName($associationName);
 				$habtmSingularName = $this->__singularName($associationName);
 				$habtmPluralName = $this->__pluralName($associationName);
-				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmoModelName}->generateList();\n";
+				$actions .= "\t\t\${$habtmPluralName} = \$this->{$currentModelName}->{$habtmModelName}->generateList();\n";
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
