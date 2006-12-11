@@ -757,7 +757,7 @@ class Controller extends Object {
 		}
 
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
-			$otherModelKey = Inflector::underscore($associationName);
+			$otherModelKey = Inflector::underscore($assocData['className']);
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
 				$fieldNames[$otherModelKey]['model'] = $associationName;
