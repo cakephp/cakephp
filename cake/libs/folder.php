@@ -87,7 +87,7 @@ class Folder extends Object{
 	function cd($desiredPath) {
 		$desiredPath = realpath($desiredPath);
 		$newPath = $this->isAbsolute($desiredPath) ? $desiredPath : $this->addPathElement($this->path, $desiredPath);
-		$isDir = is_dir($newPath) ? $this->path = $newPath : false;
+		$isDir = (is_dir($newPath) && file_exists($newPath)) ? $this->path = $newPath : false;
 		return $isDir;
 	 }
 /**
@@ -99,10 +99,9 @@ class Folder extends Object{
  * @return array
  */
 	function ls($sort = true, $noDotFiles = false) {
+		$dirs = $files = array();
 		$dir = opendir($this->path);
 		if ($dir) {
-			$dirs = $files = array();
-
 			while(false !== ($n = readdir($dir))) {
 				if ((!preg_match('#^\.+$#', $n) && $noDotFiles == false) || ($noDotFiles == true && !preg_match('#^\.(.*)$#', $n))) {
 					if (is_dir($this->addPathElement($this->path, $n))) {
@@ -118,11 +117,8 @@ class Folder extends Object{
 				sort ($files);
 			}
 			closedir ($dir);
-			$array = array($dirs,$files);
-			return $array;
-		} else {
-			return false;
-		}
+		} 
+		return array($dirs,$files);
 	}
 /**
  * Returns an array of all matching files in current directory.
@@ -137,7 +133,7 @@ class Folder extends Object{
 			return array();
 		}
 
-		list($dirs, $files)=$data;
+		list($dirs, $files) = $data;
 		$found =  array();
 
 		foreach($files as $file) {
@@ -168,6 +164,7 @@ class Folder extends Object{
  */
 	function _findRecursive($pattern) {
 		list($dirs, $files) = $this->ls();
+		
 		$found = array();
 		foreach($files as $file) {
 			if (preg_match("/^{$pattern}$/i", $file)) {
@@ -175,7 +172,6 @@ class Folder extends Object{
 			}
 		}
 		$start = $this->path;
-
 		foreach($dirs as $dir) {
 			$this->cd($this->addPathElement($start, $dir));
 			$found = array_merge($found, $this->findRecursive($pattern));
