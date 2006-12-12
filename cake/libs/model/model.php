@@ -980,23 +980,23 @@ class Model extends Overloadable {
 			}
 			$count++;
 		}
+		$exists = $this->exists();
 
-		if (empty($this->id) && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
+		if (!$exists && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
+			$colType = $this->getColumnType('created');
 			$fields[] = 'created';
 			$values[] = date('Y-m-d H:i:s');
 		}
 
-		if ($this->hasField('modified') && !in_array('modified', $fields) && ($whitelist && in_array('modified', $fieldList) || !$whitelist)) {
-			$fields[] = 'modified';
-			$values[] = date('Y-m-d H:i:s');
+		foreach (array('modified', 'updated') as $updateCol) {
+			if ($this->hasField($updateCol) && !in_array($updateCol, $fields) && ($whitelist && in_array($updateCol, $fieldList) || !$whitelist)) {
+				$colType = $this->getColumnType($updateCol);
+				$fields[] = $updateCol;
+				$values[] = date('Y-m-d H:i:s');
+			}
 		}
 
-		if ($this->hasField('updated') && !in_array('updated', $fields) && ($whitelist && in_array('updated', $fieldList) || !$whitelist)) {
-			$fields[] = 'updated';
-			$values[] = date('Y-m-d H:i:s');
-		}
-
-		if (!$this->exists()) {
+		if (!$exists) {
 			$this->id = false;
 		}
 
@@ -1248,7 +1248,7 @@ class Model extends Overloadable {
 		if ($this->getID() === false) {
 			return false;
 		}
-		return $this->hasAny(array($this->name . '.' . $this->primaryKey => $this->getID()));
+		return ($this->findCount(array($this->name . '.' . $this->primaryKey => $this->getID()), -1) > 0);
 	}
 /**
  * Returns true if a record that meets given conditions exists
@@ -1404,6 +1404,7 @@ class Model extends Overloadable {
  * @see Model::findAll
  */
 	function findCount($conditions = null, $recursive = 0) {
+		
 		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
@@ -1671,7 +1672,7 @@ class Model extends Overloadable {
  * @return mixed The ID of the current record
  */
 	function getID($list = 0) {
-		if ($this->id === false || $this->id === null) {
+		if (empty($this->id) || (is_array($this->id) && isset($this->id[0]) && empty($this->id[0]))) {
 			return false;
 		}
 
@@ -1683,8 +1684,10 @@ class Model extends Overloadable {
 			return false;
 		}
 
-		if (isset($this->id[$list])) {
+		if (isset($this->id[$list]) && !empty($this->id[$list])) {
 			return $this->id[$list];
+		} elseif (isset($this->id[$list])) {
+			return false;
 		}
 
 		foreach($this->id as $id) {
