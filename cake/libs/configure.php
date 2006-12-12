@@ -203,10 +203,11 @@ class Configure extends Object {
 	function load($fileName) {
 		$_this =& Configure::getInstance();
 
-		if(config($fileName) === false) {
+		if(!file_exists(CONFIGS . $fileName . '.php')) {
 			trigger_error("Configure::load() - $fileName.php not found", E_USER_WARNING);
 			return false;
 		}
+		include(CONFIGS . $fileName . '.php');
 		if(!isset($config)){
 			trigger_error("Configure::load() - no variable \$config found in $fileName.php", E_USER_WARNING);
 			return false;
