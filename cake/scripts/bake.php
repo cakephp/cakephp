@@ -1446,7 +1446,6 @@ class Bake {
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif(!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
-		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";

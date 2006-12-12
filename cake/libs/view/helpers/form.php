@@ -99,7 +99,7 @@ class FormHelper extends AppHelper {
 		if (empty($options['action']) || is_array($options['action'])) {
 			$options = (array)$options;
 			$actionDefaults = array(
-				'controller' => Inflector::underscore($this->params['controller']),
+				'controller' => $this->params['controller'],
 				'action' => $created ? 'edit' : 'add',
 				'id' => $created ? $this->data[$model][$data['key']] : null
 			);
@@ -233,15 +233,17 @@ class FormHelper extends AppHelper {
 			} elseif (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
-
 				$map = array(
-					'string'	=> 'text',		'datetime'	=> 'datetime',
+					'string'	=> 'text',	'datetime'	=> 'datetime',
 					'boolean'	=> 'checkbox',	'timestamp'	=> 'datetime',
 					'text'		=> 'textarea',	'time'		=> 'time',
 					'date'		=> 'date'
 				);
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
+				}
+				if($this->field() == $model->primaryKey) {
+					$options['type'] = 'hidden';
 				}
 			}
 		}
@@ -729,7 +731,7 @@ class FormHelper extends AppHelper {
 	}
 /**
  * @deprecated
- * @see FormHelper::fields()
+ * @see FormHelper::displayFields()
  */
 	function generateFields($fields, $readOnly = false) {
 		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
