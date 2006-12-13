@@ -267,12 +267,39 @@ function slashTerm($path) {
 		}
 	}
 /**
+ * Change the mode on a directory structure recursively.
+ *
+ * @param string $pathname The directory structure to create
+ * @return bool Returns TRUE on success, FALSE on failure
+ */
+	function chmodr($pathname, $mode = 0755) {
+		if (empty($pathname)) {
+			return false;
+		}
+
+		if (is_file($pathname)) {
+			trigger_error('chmodr() File exists', E_USER_WARNING);
+			return false;
+		}
+		
+		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
+		
+		if ($this->chmodr($nextPathname, $mode)) {
+			if(file_exists($pathname)) {
+				umask (0);
+				$chmod = @chmod($pathname, $mode);
+				return true;
+			}
+		}
+		return true;
+	}	
+/**
  * Create a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
  * @return bool Returns TRUE on success, FALSE on failure
  */
-	function mkdirr($pathname, $mode = null) {
+	function mkdirr($pathname, $mode = 0755) {
 		if (is_dir($pathname) || empty($pathname)) {
 			return true;
 		}
@@ -281,7 +308,7 @@ function slashTerm($path) {
 			trigger_error('mkdirr() File exists', E_USER_WARNING);
 			return false;
 		}
-		$nextPathname = substr($pathname, 0, strrpos($pathname, DIRECTORY_SEPARATOR));
+		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
 
 		if ($this->mkdirr($nextPathname, $mode)) {
 			if (!file_exists($pathname)) {
@@ -290,7 +317,7 @@ function slashTerm($path) {
 				return $mkdir;
 			}
 		}
-		return false;
+		return true;
 	}
 /**
  * Returns the size in bytes of this Folder.
