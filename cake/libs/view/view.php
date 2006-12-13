@@ -551,7 +551,7 @@ class View extends Object {
 	function _getViewFileName($action) {
 		$action = Inflector::underscore($action);
 		$paths = Configure::getInstance();
-
+		
 		if (!is_null($this->webservices)) {
 			$type = strtolower($this->webservices) . DS;
 		} else {
@@ -641,10 +641,10 @@ class View extends Object {
 		$paths = Configure::getInstance();
 
 		foreach($paths->viewPaths as $path) {
-			if (file_exists($path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . $this->ext)) {
-				return $path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . $this->ext;
-			} elseif (file_exists($path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . '.thtml')) {
-				return $path . 'layouts' . DS . $this->subDir . $this->layoutPath . $type . $this->layout . '.thtml';
+			if (file_exists($path . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext)) {
+				return $path . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext;
+			} elseif (file_exists($path . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml')) {
+				return $path . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml';
 			}
 		}
 
@@ -867,5 +867,4 @@ class View extends Object {
 		}
 	}
 }
-
 ?>
