@@ -1217,11 +1217,11 @@
 	if (!function_exists('array_diff_key')) {
 		function array_diff_key() {
 			$valuesDiff = array();
-			
+
 			if (func_num_args() < 2) {
 				return false;
 			}
-			
+
 			foreach (func_get_args() as $param) {
 				if (!is_array($param)) {
 					return false;

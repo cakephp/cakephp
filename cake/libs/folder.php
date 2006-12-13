@@ -117,7 +117,7 @@ class Folder extends Object{
 				sort ($files);
 			}
 			closedir ($dir);
-		} 
+		}
 		return array($dirs,$files);
 	}
 /**
@@ -164,7 +164,7 @@ class Folder extends Object{
  */
 	function _findRecursive($pattern) {
 		list($dirs, $files) = $this->ls();
-		
+
 		$found = array();
 		foreach($files as $file) {
 			if (preg_match("/^{$pattern}$/i", $file)) {
@@ -281,9 +281,9 @@ function slashTerm($path) {
 			trigger_error('chmodr() File exists', E_USER_WARNING);
 			return false;
 		}
-		
+
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
-		
+
 		if ($this->chmodr($nextPathname, $mode)) {
 			if(file_exists($pathname)) {
 				umask (0);
@@ -292,7 +292,7 @@ function slashTerm($path) {
 			}
 		}
 		return true;
-	}	
+	}
 /**
  * Create a directory structure recursively.
  *
@@ -351,6 +351,33 @@ function slashTerm($path) {
 			$j = count($stack);
 		}
 		return $size;
+	}
+/**
+ * Recursively Remove directories if system allow.
+ *
+ * @param string $path
+ * @return boolean
+ */
+	function rmdir($path) {
+		if (substr($path, -1, 1) != "/") {
+			$path .= "/";
+		}
+		foreach (glob($path . "*") as $file) {
+			if (is_file($file) === true) {
+				@unlink($file);
+			}
+			elseif (is_dir($file) === true) {
+				if($this->rmdir($file) === false) {
+					return false;
+				}
+			}
+		}
+		if (is_dir($path) === true) {
+			if(rmdir($path) === false) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
 ?>
