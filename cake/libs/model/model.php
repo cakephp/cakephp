@@ -1126,19 +1126,17 @@ class Model extends Overloadable {
  * @return boolean True on success
  */
 	function del($id = null, $cascade = true) {
-		if ($id) {
+		if (!empty($id)) {
 			$this->id = $id;
 		}
 
-		$id = $this->id;
-
-		if ($this->beforeDelete()) {
+		if ($this->exists() && $this->beforeDelete()) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 			if ($this->id && $db->delete($this)) {
-				$this->_deleteMulti($id);
-				$this->_deleteHasMany($id, $cascade);
-				$this->_deleteHasOne($id, $cascade);
+				$this->_deleteMulti($this->id);
+				$this->_deleteHasMany($this->id, $cascade);
+				$this->_deleteHasOne($this->id, $cascade);
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
