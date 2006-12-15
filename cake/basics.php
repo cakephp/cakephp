@@ -184,14 +184,14 @@
 
 		foreach($paths->controllerPaths as $path) {
 			foreach(listClasses($path) as $controller) {
-				if (file_exists($path . $controller . '.php')) {
-					if (!key_exists($controller, $loadedControllers)) {
-						require($path . $controller . '.php');
-						$loadedControllers[$controller] = $controller;
-					}
+				list($name) = explode('.', $controller);
+				$className = Inflector::camelize($name);
+				if (loadController($name)) {
+					$loadedControllers[$controller] = $className;
 				}
 			}
 		}
+		return $loadedControllers;
 	}
 /**
  * Loads a controller and its helper libraries.
@@ -214,7 +214,7 @@
 		}
 
 		if (!class_exists($name . 'Controller')) {
-			$name=Inflector::underscore($name);
+			$name = Inflector::underscore($name);
 
 			foreach($paths->controllerPaths as $path) {
 				if (file_exists($path . $name . '_controller.php')) {
