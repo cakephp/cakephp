@@ -193,13 +193,13 @@ class File extends Object{
 
 		if (file_exists($dir) && is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			if (!touch($this->getFullPath())) {
-				print ("[File] Could not create $this->getName()!");
+				print ("[File] Could not create {$this->getName()}!");
 				return false;
 			} else {
 				return true;
 			}
 		} else {
-			print ("[File] Could not create $this->getName()!");
+			print ("[File] Could not create {$this->getName()}!");
 			return false;
 		}
 	}
