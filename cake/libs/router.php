@@ -300,12 +300,10 @@ class Router extends Overloadable {
  * @return void
  */
 	function setParams($params) {
-		
 		$_this =& Router::getInstance();
-		$params[1] = am(
-			array('plugin' => null, 'controller' => null, 'action' => null),
-			$params[1]
-		);
+		$defaults = array('plugin' => null, 'controller' => null, 'action' => null);
+		$params[0] = am($defaults, $params[0]);
+		$params[1] = am($defaults, $params[1]);
 		list($_this->__params[], $_this->__paths[]) = $params;
 	}
 /**
