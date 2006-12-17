@@ -71,9 +71,10 @@ if(is_array($data)) {
 			</td>
 <?php } ?>
 		<td class="actions">
-			<?php echo $html->link('View', $path . $viewPath."/view/{$row[$modelClass][$modelObj->primaryKey]}/")?>
-			<?php echo $html->link('Edit', $path . $viewPath."/edit/{$row[$modelClass][$modelObj->primaryKey]}/")?>
-			<?php echo $html->link('Delete', $path . $viewPath."/delete/{$row[$modelClass][$modelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$modelClass][$modelObj->primaryKey].' ?')?>
+			<?php $id = $row[$modelClass][$modelObj->primaryKey]; ?>
+			<?php echo $html->link('View', array('action' => 'view', $id)) ?>
+			<?php echo $html->link('Edit', array('action' => 'edit', $id)) ?>
+			<?php echo $html->link('Delete', array('action' => 'view', $id), null, 'Are you sure you want to delete id '.$id.' ?') ?>
 		</td>
 		</tr>
 <?php
@@ -82,5 +83,5 @@ if(is_array($data)) {
 </tbody>
 </table>
 <ul class="actions">
-	<li><?php echo $html->link('New '.$humanSingularName, $path . $viewPath.'/add'); ?></li>
+	<li><?php echo $html->link('New '.$humanSingularName, array('action' => 'add')); ?></li>
 </ul>
