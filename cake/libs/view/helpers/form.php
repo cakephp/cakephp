@@ -99,7 +99,7 @@ class FormHelper extends AppHelper {
 		if (empty($options['action']) || is_array($options['action'])) {
 			$options = (array)$options;
 			$actionDefaults = array(
-				'controller' => $this->params['controller'],
+				'controller' => Inflector::underscore($this->params['controller']),
 				'action' => $created ? 'edit' : 'add',
 				'id' => $created ? $this->data[$model][$data['key']] : null
 			);

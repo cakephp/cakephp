@@ -284,11 +284,8 @@ class HtmlHelper extends AppHelper {
 		}
 	}
 /**
- * Creates a submit widget.
- *
- * @param  string  $caption		Text on submit button
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
+ * @deprecated
+ * @see FormHelper::submit
  */
 	function submit($caption = 'Submit', $htmlAttributes = array()) {
 		$htmlAttributes['value'] = $caption;
