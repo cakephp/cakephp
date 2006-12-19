@@ -465,6 +465,7 @@ class Model extends Overloadable {
 			}
 		}
 		$return = $db->query($method, $params, $this);
+
 		if (!PHP5) {
 			if (isset($this->__backAssociation)) {
 				$this->__resetAssociations();
@@ -809,6 +810,15 @@ class Model extends Overloadable {
  * @return boolean
  */
 	function hasField($name) {
+		if (is_array($name)) {
+			foreach ($name as $n) {
+				if ($this->hasField($n)) {
+					return $n;
+				}
+			}
+			return false;
+		}
+
 		if (empty($this->_tableInfo)) {
 			$this->loadInfo();
 		}
@@ -939,6 +949,16 @@ class Model extends Overloadable {
 			return false;
 		}
 
+		if (!empty($this->behaviors)) {
+			$behaviors = array_keys($this->behaviors);
+			$ct = count($behaviors);
+			for ($i = 0; $i < $ct; $i++) {
+				if ($this->behaviors[$behaviors[$i]]->beforeSave($this) === false) {
+					return false;
+				}
+			}
+		}
+
 		if (!$this->beforeSave()) {
 			return false;
 		}
@@ -1030,6 +1050,13 @@ class Model extends Overloadable {
 						$this->__saveMulti($joined, $this->id);
 					}
 
+					if (!empty($this->behaviors)) {
+						$behaviors = array_keys($this->behaviors);
+						$ct = count($behaviors);
+						for ($i = 0; $i < $ct; $i++) {
+							$this->behaviors[$behaviors[$i]]->afterSave($this);
+						}
+					}
 					$this->afterSave();
 					$this->data = false;
 					$this->_clearCache();
@@ -1133,10 +1160,27 @@ class Model extends Overloadable {
 		if ($this->exists() && $this->beforeDelete()) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-			if ($this->id && $db->delete($this)) {
+			if (!empty($this->behaviors)) {
+				$behaviors = array_keys($this->behaviors);
+				$ct = count($behaviors);
+				for ($i = 0; $i < $ct; $i++) {
+					if ($this->behaviors[$behaviors[$i]]->beforeDelete($this) === false) {
+						return false;
+					}
+				}
+			}
+
+			if ($db->delete($this)) {
 				$this->_deleteMulti($this->id);
 				$this->_deleteHasMany($this->id, $cascade);
 				$this->_deleteHasOne($this->id, $cascade);
+				if (!empty($this->behaviors)) {
+					for ($i = 0; $i < $ct; $i++) {
+						if ($this->behaviors[$behaviors[$i]]->afterDelete($this) === false) {
+							return false;
+						}
+					}
+				}
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -1323,14 +1367,22 @@ class Model extends Overloadable {
 		);
 
 		if (!empty($this->behaviors)) {
-			$b = array_keys($this->behaviors);
-			$c = count($b);
-			for ($i = 0; $i < $c; $i++) {
-				$this->behaviors[$b[$i]]->beforeFind($this, $queryData);
+			$behaviors = array_keys($this->behaviors);
+			$ct = count($behaviors);
+			for ($i = 0; $i < $ct; $i++) {
+				$ret = $this->behaviors[$behaviors[$i]]->beforeFind($this, $queryData);
+				if (is_array($ret)) {
+					$queryData = $ret;
+				} elseif ($ret === false) {
+					return null;
+				}
 			}
 		}
 
-		if (!$this->beforeFind($queryData)) {
+		$ret = $this->beforeFind($queryData);
+		if (is_array($ret)) {
+			$queryData = $ret;
+		} elseif ($ret === false) {
 			return null;
 		}
 
@@ -1340,10 +1392,12 @@ class Model extends Overloadable {
 			$b = array_keys($this->behaviors);
 			$c = count($b);
 			for ($i = 0; $i < $c; $i++) {
-				$this->behaviors[$b[$i]]->afterFind($this, $results, true);
+				$ret = $this->behaviors[$b[$i]]->afterFind($this, $results, true);
+				if (is_array($ret)) {
+					$results = $ret;
+				}
 			}
 		}
-
 		$return = $this->afterFind($results, true);
 
 		if (isset($this->__backAssociation)) {
