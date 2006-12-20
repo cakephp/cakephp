@@ -731,7 +731,7 @@ class FormHelper extends AppHelper {
 	}
 /**
  * @deprecated
- * @see FormHelper::displayFields()
+ * @see FormHelper::inputs()
  */
 	function generateFields($fields, $readOnly = false) {
 		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
