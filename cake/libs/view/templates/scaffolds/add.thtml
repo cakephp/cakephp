@@ -26,12 +26,12 @@
 ?>
 <h2>New <?php echo $humanSingularName?></h2>
 <?php
-echo $form->create($modelClass, array('action' => 'create'));
-echo $form->displayFields($fieldNames);
-echo $form->generateSubmitDiv('Add'); ?>
+echo $form->create($modelClass);
+echo $form->inputs($fieldNames);
+echo $form->submit('Add'); ?>
 </form>
 <ul class='actions'>
-<?php echo "<li>".$html->link('List  '.$humanPluralName, $path . $viewPath.'/index/')."</li>"; ?>
+<?php echo "<li>".$html->link('List  '.$humanPluralName, array('action' => 'index'))."</li>"; ?>
 <?php
 foreach($fieldNames as $field => $value) {
 	if(isset($value['foreignKey'])) {

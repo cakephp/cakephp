@@ -27,25 +27,21 @@ $modelObj =& ClassRegistry::getObject($modelKey);
 ?>
 <h2><?php echo $formName.' '.$humanSingularName;?></h2>
 <?php
-if($formName == 'Edit') {
-	echo $form->create($modelClass, array('action' => 'update'));
-} else {
-	echo $form->create($modelClass, array('action' => 'create'));
-}
-echo $form->displayFields($fieldNames);
-echo $form->generateSubmitDiv('Save'); ?>
+echo $form->create($modelClass);
+echo $form->inputs($fieldNames);
+echo $form->submit('Save'); ?>
 </form>
 <ul class='actions'>
 <?php
 if($formName == 'Edit') {
-	echo "<li>".$html->link('Delete  '.$humanSingularName, $path . $viewPath.'/delete/'.$data[$modelClass][$primaryKey], null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
+	echo "<li>".$html->link('Delete  '.$humanSingularName, array('action' => 'delete', $data[$modelClass][$primaryKey]), null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
 }
-echo "<li>".$html->link('List  '.$humanPluralName, $path . $viewPath.'/index')."</li>";
+echo "<li>".$html->link('List  '.$humanPluralName, array('action' => 'index'))."</li>";
 if($formName == 'Edit') {
 	foreach($fieldNames as $field => $value) {
 		if(isset($value['foreignKey'])) {
-			echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path . Inflector::underscore($value['controller'])."/index")."</li>";
-			echo "<li>".$html->link( "Add ".Inflector::humanize($value['modelKey']), $path . Inflector::underscore($value['controller'])."/add/")."</li>";
+			echo '<li>' . $html->link('View ' . Inflector::humanize($value['controller']), array('action' => 'index')) . '</li>';
+			echo '<li>' . $html->link('Add ' . Inflector::humanize($value['modelKey']), array('action' => 'add')) . '</li>';
 		}
 	}
 }?>

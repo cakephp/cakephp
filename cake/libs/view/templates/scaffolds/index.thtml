@@ -74,7 +74,7 @@ if(is_array($data)) {
 			<?php $id = $row[$modelClass][$modelObj->primaryKey]; ?>
 			<?php echo $html->link('View', array('action' => 'view', $id)) ?>
 			<?php echo $html->link('Edit', array('action' => 'edit', $id)) ?>
-			<?php echo $html->link('Delete', array('action' => 'view', $id), null, 'Are you sure you want to delete id '.$id.' ?') ?>
+			<?php echo $html->link('Delete', array('action' => 'delete', $id), null, 'Are you sure you want to delete id '.$id.' ?') ?>
 		</td>
 		</tr>
 <?php

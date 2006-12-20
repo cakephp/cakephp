@@ -58,14 +58,14 @@ foreach($fieldNames as $field => $value) {
 </dl>
 <ul class='actions'>
 <?php
-echo "<li>".$html->link('Edit '.$humanSingularName, $path . $viewPath.'/edit/'.$data[$modelClass][$modelObj->primaryKey])."</li>";
-echo "<li>".$html->link('Delete  '.$humanSingularName, $path . $viewPath.'/delete/'.$data[$modelClass][$modelObj->primaryKey], null, 'Are you sure you want to delete id '.$data[$modelClass][$modelObj->primaryKey].' ?')."</li>";
-echo "<li>".$html->link('List  '.$humanPluralName, $path . $viewPath.'/index')."</li>";
-echo "<li>".$html->link('New  '.$humanSingularName, $path . $viewPath.'/add')."</li>";
+echo '<li>' . $html->link('Edit '.$humanSingularName, array('action' => 'edit', $data[$modelClass][$modelObj->primaryKey])) . '</li>';
+echo '<li>' . $html->link('Delete  '.$humanSingularName, array('action' => 'delete', $data[$modelClass][$modelObj->primaryKey]), null, 'Are you sure you want to delete id '.$data[$modelClass][$modelObj->primaryKey].' ?') . '</li>';
+echo '<li>' . $html->link('List  '.$humanPluralName, array('action' => 'index')) . '</li>';
+echo '<li>' . $html->link('New  '.$humanSingularName, array('action' => 'add')) . '</li>';
 
-foreach( $fieldNames as $field => $value ) {
-	if( isset( $value['foreignKey'] ) ) {
-		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/index/")."</li>";
+foreach($fieldNames as $field => $value) {
+	if(isset($value['foreignKey'])) {
+		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), array('controller' => $value['controller'], action => 'index')) . '</li>';
 		echo "<li>".$html->link( "Add ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/add/")."</li>";
 	}
 }?>
@@ -157,6 +157,6 @@ foreach($relations as $associationName => $relation) {
 	}?>
 </table>
 <ul class="actions">
-<?php echo "<li>".$html->link('New '.Inflector::humanize($associationName), $path . $otherControllerPath ."/add/")."</li>";?>
+	<?php echo "<li>".$html->link('New '.Inflector::humanize($associationName), $path . $otherControllerPath . '/add') . '</li>'; ?>
 </ul></div>
 <?php }?>
