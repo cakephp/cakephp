@@ -94,7 +94,7 @@ class FormHelper extends AppHelper {
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
 		}
-		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . 'Form', 'action' => array()), $options);
+		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . ($created ? 'Edit' : 'Add') . 'Form', 'action' => array()), $options);
 
 		if (empty($options['action']) || is_array($options['action'])) {
 			$options = (array)$options;
