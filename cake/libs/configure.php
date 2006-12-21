@@ -162,9 +162,15 @@ class Configure extends Object {
 
 		$name = $_this->__configVarNames($var);
 		if(count($name) > 1){
-			return $_this->{$name[0]}[$name[1]];
+			if(isset($_this->{$name[0]}[$name[1]])) {
+				return $_this->{$name[0]}[$name[1]];
+			}
+			return null;
 		} else {
-			return $_this->{$name[0]};
+			if(isset($_this->{$name[0]})) {
+				return $_this->{$name[0]};
+			}
+			return null;
 		}
 	}
 /**

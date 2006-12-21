@@ -20,7 +20,7 @@
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
  * @subpackage		cake.cake.libs
- * @since			CakePHP v 1.2.0.4114
+ * @since			CakePHP v 1.2.0.4116
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -93,10 +93,12 @@ class I18n extends Object {
  */
 	function translate($message, $message2 = null, $domain = null, $category = null, $count = null, $directory) {
 		$_this =& I18n::getInstance();
+		$language = Configure::read('Config.language');
 
 		if(!empty($_SESSION['Config']['locale'])) {
 			$_this->locale = $_SESSION['Config']['locale'];
-		} else {
+		} else{
+			$_this->__l10n->get($language);
 			$_this->locale = $_this->__l10n->locale;
 		}
 
