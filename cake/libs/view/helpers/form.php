@@ -94,7 +94,12 @@ class FormHelper extends AppHelper {
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
 		}
-		$options = am(array('type' => ($created && empty($options['action'])) ? 'put' : 'post', 'id' => $model . ($created ? 'Edit' : 'Add') . 'Form', 'action' => array()), $options);
+		$options = am(array(
+			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
+			'id' => $model . ($created ? 'Edit' : 'Add') . 'Form',
+			'action' => array(),
+			'default' => true),
+		$options);
 
 		if (empty($options['action']) || is_array($options['action'])) {
 			$options = (array)$options;
@@ -122,19 +127,17 @@ class FormHelper extends AppHelper {
 			break;
 		}
 
-		if (isset($options['default'])) {
-			if ($options['default'] == false) {
-				if (isset($htmlAttributes['onSubmit'])) {
-					$htmlAttributes['onSubmit'] .= ' return false;';
-				} else {
-					$htmlAttributes['onSubmit'] = 'return false;';
-				}
-			}
-			unset($options['default']);
-		}
-
 		$htmlAttributes['action'] = $this->url($options['action']);
 		unset($options['type'], $options['action']);
+
+		if ($options['default'] == false) {
+			if (isset($htmlAttributes['onSubmit'])) {
+				$htmlAttributes['onSubmit'] .= ' return false;';
+			} else {
+				$htmlAttributes['onSubmit'] = 'return false;';
+			}
+		}
+		unset($options['default']);
 		$htmlAttributes = am($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {

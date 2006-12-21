@@ -368,6 +368,8 @@ class Router extends Overloadable {
 		$extension = $output = $mapped = $q = null;
 
 		if (is_array($url) && !empty($url)) {
+			$url = array_filter($url);
+
 			if (isset($url['full_base']) && $url['full_base'] == true) {
 				$full = true;
 				unset($url['full_base']);
