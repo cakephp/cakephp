@@ -28,7 +28,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title><?php echo $page_title?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<?php echo $html->charset(); ?>
+
 <?php if(Configure::read() == 0) { ?>
 <meta http-equiv="Refresh" content="<?php echo $pause?>;url=<?php echo $url?>"/>
 <?php } ?>

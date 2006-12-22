@@ -219,7 +219,14 @@ class HtmlHelper extends AppHelper {
  * @param  string  $charset
  * @return string
  */
-	function charset($charset = 'UTF-8') {
+	function charset($charset = null) {
+		if(is_null($charset)){
+			$charset = Configure::read('charset');
+			if(is_null($charset)){
+				$charset = 'utf-8';
+			}
+		}
+
 		return $this->output(sprintf($this->tags['charset'], $charset));
 	}
 /**

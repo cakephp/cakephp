@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>CakePHP: the PHP Rapid Development Framework: <?php echo $title_for_layout;?></title>
-<?php echo $html->charset('UTF-8');?>
+<?php echo $html->charset();?>
+
 <link rel="icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
 <link rel="shortcut icon" href="<?php echo $this->webroot;?>favicon.ico" type="image/x-icon" />
 <?php echo $html->css('cake.generic');?>
@@ -13,14 +14,14 @@
 			<h1>CakePHP: the PHP Rapid Development Framework</h1>
 		</div>
 		<div id="content">
-			<?php 
+			<?php
 				if($session->check('Message.flash')):
 						$session->flash();
 				endif;
 			?>
-			
+
 			<?php echo $content_for_layout;?>
-			
+
 		</div>
 		<div id="footer">
 			<?php echo $html->link(
