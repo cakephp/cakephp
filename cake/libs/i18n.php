@@ -95,7 +95,7 @@ class I18n extends Object {
 		$_this =& I18n::getInstance();
 		$language = Configure::read('Config.language');
 
-		if(!empty($_SESSION['Config']['locale'])) {
+		if($language === null && !empty($_SESSION['Config']['locale'])) {
 			$_this->locale = $_SESSION['Config']['locale'];
 		} else{
 			$_this->__l10n->get($language);
@@ -291,31 +291,36 @@ class I18n extends Object {
 		$_this =& I18n::getInstance();
 		$_this->__noLocal = true;
 
-		$searchPath[] = VIEWS . $domain . DS . 'locale';
-		$searchPath[] = CAKE . 'locale';
-
-		foreach (explode(",",$_this->locale) as $d) {
-			$d = trim($d);
-			$d = strtok($d, "@.-+=%:; ");
-
-			if (strlen($d)) {
-				$dir[] = $d;
-			}
-
-			if (strpos($d, "_")) {
-				$dir[] = strtok($d, "_");
-			}
-		}
+		$searchPath[] = APP . 'locale';
+		$searchPath[] = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale';
 
 		foreach ($searchPath as $directory) {
-			foreach ($dir as $lang) {
+			foreach ($_this->__l10n->languagePath as $lang) {
 				$file = $directory . DS . $lang . DS . 'LC_MESSAGES' . DS . $domain;
+				$default = APP . 'locale'. DS . $lang . DS . 'LC_MESSAGES' . DS . 'default';
+				$core = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale'. DS . $lang . DS . 'LC_MESSAGES' . DS . 'core';
 
 				if (file_exists($fn = "$file.mo") && ($f = fopen($fn, "rb"))) {
 					$_this->__loadMo($f, $domain);
 					$_this->__noLocal = null;
 					break 2;
+				} elseif (file_exists($fn = "$default.mo") && ($f = fopen($fn, "rb"))) {
+					$_this->__loadMo($f, $domain);
+					$_this->__noLocal = null;
+					break 2;
 				} elseif (file_exists($fn = "$file.po") && ($f = fopen($fn, "r"))) {
+					$_this->__loadPo($f, $domain);
+					$_this->__noLocal = null;
+					break 2;
+				} elseif (file_exists($fn = "$default.po") && ($f = fopen($fn, "r"))) {
+					$_this->__loadPo($f, $domain);
+					$_this->__noLocal = null;
+					break 2;
+				} elseif (file_exists($fn = "$core.mo") && ($f = fopen($fn, "rb"))) {
+					$_this->__loadMo($f, $domain);
+					$_this->__noLocal = null;
+					break 2;
+				} elseif (file_exists($fn = "$core.po") && ($f = fopen($fn, "r"))) {
 					$_this->__loadPo($f, $domain);
 					$_this->__noLocal = null;
 					break 2;

@@ -69,7 +69,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $winLocale = 'eng';
+	var $default = null;
 /**
  * Enter description here...
  *
@@ -301,6 +301,9 @@ class L10n extends Object {
  *
  */
 	function __construct() {
+		if (defined('DEFAULT_LANGUAGE')) {
+			$this->default = DEFAULT_LANGUAGE;
+		}
 		parent::__construct();
 	}
 /**
@@ -325,9 +328,8 @@ class L10n extends Object {
 	function __setLanguage($language = null) {
 		if ((!is_null($language)) && (isset($this->__l10nCatalog[$this->__l10nMap[$language]]))) {
 			$this->language = $this->__l10nCatalog[$this->__l10nMap[$language]]['language'];
-			$this->languagePath = array(0 => $this->__l10nCatalog[$language]['locale'],
-													1 => $this->__l10nCatalog[$language]['localeFallback'],
-													2 => $this->__l10nCatalog[DEFAULT_LANGUAGE]['localeFallback']);
+			$this->languagePath = array(0 => $this->__l10nCatalog[$this->__l10nMap[$language]]['locale'],
+													1 => $this->__l10nCatalog[$this->__l10nMap[$language]]['localeFallback']);
 			$this->lang = $language;
 			$this->locale = $this->__l10nCatalog[$this->__l10nMap[$language]]['locale'];
 		} elseif (defined('DEFAULT_LANGUAGE')) {
@@ -337,6 +339,9 @@ class L10n extends Object {
 			$this->lang = DEFAULT_LANGUAGE;
 			$this->locale = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['locale'];
 		}
+		if($this->default) {
+			$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
+		}
 	}
 /**
  * Enter description here...
@@ -344,14 +349,17 @@ class L10n extends Object {
  */
 	function __autoLanguage() {
 		$_detectableLanguages = split ('[,;]', env('HTTP_ACCEPT_LANGUAGE'));
-		foreach ($_detectableLanguages as $langKey => $key) {
+		foreach ($_detectableLanguages as $key => $langKey) {
 			if (isset($this->__l10nCatalog[$langKey])) {
+
 				$this->language = $this->__l10nCatalog[$langKey]['language'];
 				$this->languagePath = array(0 => $this->__l10nCatalog[$langKey]['locale'],
-														1 => $this->__l10nCatalog[$langKey]['localeFallback'],
-														2 => $this->__l10nCatalog[DEFAULT_LANGUAGE]['localeFallback']);
+														1 => $this->__l10nCatalog[$langKey]['localeFallback']);
 				$this->lang = $langKey;
 				$this->locale = $this->__l10nCatalog[$langKey]['locale'];
+				if($this->default) {
+					$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
+				}
 				break;
 			}
 		}

@@ -1039,21 +1039,20 @@
 	}
 /**
  *
- * Returns a translated string if one is found,
- * or the submitted message if not found.
+ * Returns a translated string if one is found, or the submitted message if not found.
  *
- * @param unknown_type $msg
- * @param unknown_type $return
- * @return unknown
+ * @param string $msg
+ * @param boolean $return
+ * @return translated string if $return is false string will be echoed
  */
-	function __($msg, $return = null) {
+	function __($msg, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg, null, null, null, null, $dir);
 		} else {
 			return I18n::translate($msg, null, null, null, null, $dir);
@@ -1064,20 +1063,20 @@
  * Returns correct plural form of message identified by $msg1 and $msg2 for count $count.
  * Some languages have more than one form for plural messages dependent on the count.
  *
- * @param unknown_type $msg1
- * @param unknown_type $msg2
- * @param unknown_type $count
- * @param unknown_type $return
- * @return unknown
+ * @param string $msg1
+ * @param string $msg2
+ * @param integer $count
+ * @param boolean $return
+ * @return plural form of translated string if $return is false string will be echoed
  */
-	function __n($msg1, $msg2, $count, $return = null) {
+	function __n($msg1, $msg2, $count, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg1, $msg2, null, null, $count, $dir);
 		} else {
 			return I18n::translate($msg1, $msg2, null, null, $count, $dir);
@@ -1089,21 +1088,21 @@
  * Returns correct plural form of message identified by $msg1 and $msg2 for count $count
  * from domain $domain
  *
- * @param unknown_type $domain
- * @param unknown_type $msg1
- * @param unknown_type $msg2
- * @param unknown_type $count
- * @param unknown_type $return
- * @return unknown
+ * @param string $domain
+ * @param string $msg1
+ * @param string $msg2
+ * @param integer $count
+ * @param boolean $return
+ * @return plural form of translated string if $return is false string will be echoed
  */
-	function __dn($domain, $msg1, $msg2, $count, $return = null) {
+	function __dn($domain, $msg1, $msg2, $count, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg1, $msg2, $domain, null, $count, $dir);;
 		} else {
 			return I18n::translate($msg1, $msg2, $domain, null, $count, $dir);
@@ -1128,22 +1127,22 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param unknown_type $domain
- * @param unknown_type $msg1
- * @param unknown_type $msg2
- * @param unknown_type $count
- * @param unknown_type $category
- * @param unknown_type $return
- * @return unknown
+ * @param string $domain
+ * @param string $msg1
+ * @param string $msg2
+ * @param integer $count
+ * @param string $category
+ * @param boolean $return
+ * @return plural form of translated string if $return is false string will be echoed
  */
-	function __dcn($domain, $msg1, $msg2, $count, $category, $return = null) {
+	function __dcn($domain, $msg1, $msg2, $count, $category, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg1, $msg2, $domain, $category, $count, $dir);
 		} else {
 			return I18n::translate($msg1, $msg2, $domain, $category, $count, $dir);
@@ -1166,20 +1165,20 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param unknown_type $domain
- * @param unknown_type $msg
- * @param unknown_type $category
- * @param unknown_type $return
- * @return unknown
+ * @param string $domain
+ * @param string $msg
+ * @param string $category
+ * @param boolean $return
+ * @return translated string if $return is false string will be echoed
  */
-	function __dc($domain, $msg, $category, $return = null) {
+	function __dc($domain, $msg, $category, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg, null, $domain, $category, null, $dir);
 		} else {
 			return I18n::translate($msg, null, $domain, $category, null, $dir);
@@ -1194,14 +1193,14 @@
  * @param unknown_type $return
  * @return unknown
  */
-    function __d($domain, $msg, $return = null) {
+    function __d($domain, $msg, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if(is_null($return)) {
+		if($return === false) {
 			echo I18n::translate($msg, null, $domain, null, null, $dir);
 		} else {
 			return I18n::translate($msg, null, $domain, null, null, $dir);
