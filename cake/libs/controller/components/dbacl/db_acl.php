@@ -82,7 +82,7 @@ class DB_ACL extends AclBase {
 		$acoPath = array();
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error('ACO permissions key "' . $action . '" does not exist in DB_ACL::check()', E_USER_NOTICE);
+			trigger_error(sprintf(__("ACO permissions key %s does not exist in DB_ACL::check()", true), $action), E_USER_NOTICE);
 			return false;
 		}
 
@@ -141,7 +141,7 @@ class DB_ACL extends AclBase {
 		$save = array();
 
 		if ($perms == false) {
-			trigger_error('DB_ACL::allow() - Invalid node', E_USER_WARNING);
+			trigger_error(__('DB_ACL::allow() - Invalid node'), E_USER_WARNING);
 			return false;
 		}
 
@@ -159,7 +159,7 @@ class DB_ACL extends AclBase {
 			if (in_array('_' . $action, $permKeys)) {
 				$save['_' . $action] = $value;
 			} else {
-				trigger_error('DB_ACL::allow() - Invalid ACO action', E_USER_WARNING);
+				trigger_error(__('DB_ACL::allow() - Invalid ACO action'), E_USER_WARNING);
 				return false;
 			}
 		}
@@ -228,7 +228,7 @@ class DB_ACL extends AclBase {
  */
 	function __getObject($id = null, $object) {
 		if ($id == null) {
-			trigger_error('Null id provided in DB_ACL::get' . $object, E_USER_WARNING);
+			trigger_error(__('Null id provided in DB_ACL::get') . $object, E_USER_WARNING);
 			return null;
 		}
 

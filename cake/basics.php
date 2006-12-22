@@ -93,7 +93,7 @@
 			if (file_exists($pluginAppModelFile)) {
 				require($pluginAppModelFile);
 			} else {
-				die('Plugins must have a class named ' . $pluginAppModel);
+				die(sprintf(__("Plugins must have a class named %s", true), $pluginAppModel));
 			}
 			Overloadable::overload($pluginAppModel);
 		}
@@ -1262,7 +1262,7 @@
  * @see Set::countDim
  */
 	function countdim($array) {
-		trigger_error('Deprecated: Use Set::countDim instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use Set::countDim instead'), E_USER_WARNING);
 		if (is_array(reset($array))) {
 			$return = countdim(reset($array)) + 1;
 		} else {

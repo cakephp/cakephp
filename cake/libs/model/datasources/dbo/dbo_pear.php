@@ -76,7 +76,7 @@ class DboPear extends DboSource{
  * @return boolean True if the database could be disconnected, else false
  */
 	 function disconnect() {
-		  die ('Please implement DBO::disconnect() first.');
+		  die (__('Please implement DBO::disconnect() first.'));
 	 }
 
 /**
@@ -128,7 +128,7 @@ class DboPear extends DboSource{
 					 $tables[] = $item[0];
 				}
 		  } else {
-				die ('Please implement DBO_Pear::tablesList() for your database driver.');
+				die (__('Please implement DBO_Pear::tablesList() for your database driver.'));
 		  }
 
 		  if (!$result) {

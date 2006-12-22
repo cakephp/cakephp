@@ -41,7 +41,7 @@ class Overloadable extends Object {
 
 	function __call($method, $params) {
 		if(!method_exists($this, '__call__')) {
-			trigger_error('Magic method handler __call__ not defined in ' . get_class($this), E_USER_ERROR);
+			trigger_error(sprintf(__('Magic method handler __call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
 		}
 		return $this->__call__($method, $params);
 	}
@@ -53,7 +53,7 @@ class Overloadable2 extends Object {
 
 	function __call($method, $params) {
 		if(!method_exists($this, '__call__')) {
-			trigger_error('Magic method handler __call__ not defined in ' . get_class($this), E_USER_ERROR);
+			trigger_error(sprintf(__('Magic method handler __call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
 		}
 		return $this->__call__($method, $params);
 	}

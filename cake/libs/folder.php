@@ -278,7 +278,7 @@ function slashTerm($path) {
 		}
 
 		if (is_file($pathname)) {
-			trigger_error('chmodr() File exists', E_USER_WARNING);
+			trigger_error(__('chmodr() File exists'), E_USER_WARNING);
 			return false;
 		}
 
@@ -305,7 +305,7 @@ function slashTerm($path) {
 		}
 
 		if (is_file($pathname)) {
-			trigger_error('mkdirr() File exists', E_USER_WARNING);
+			trigger_error(__('mkdirr() File exists'), E_USER_WARNING);
 			return false;
 		}
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));

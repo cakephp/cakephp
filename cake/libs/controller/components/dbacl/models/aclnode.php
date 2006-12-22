@@ -67,7 +67,7 @@ class AclNode extends AppModel {
 		} else {
 			$parent = $this->find($this->_resolveID($parent_id), null, null, 0);
 			if ($parent == null || count($parent) == 0) {
-				trigger_error("Null parent in {$class}::create()", E_USER_WARNING);
+				trigger_error(sprintf(__("Null parent in %s::create()", true), $class), E_USER_WARNING);
 				return null;
 			}
 			$parent = $parent[$class];

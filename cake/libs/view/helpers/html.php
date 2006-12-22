@@ -670,7 +670,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::create
  */
 	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
-		trigger_error('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead', E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead'), E_USER_WARNING);
 		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
@@ -716,7 +716,7 @@ class HtmlHelper extends AppHelper {
  * @see HtmlHelper::link
  */
 	function linkEmail($title, $email = null, $options = null) {
-		trigger_error('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead', E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead'), E_USER_WARNING);
 		// if no $email, then title contains the email.
 		if (empty($email)) {
 			$email = $title;

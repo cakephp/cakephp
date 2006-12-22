@@ -149,7 +149,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::link
  */
 	function linkOut($url) {
-		trigger_error('(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead', E_USER_WARNING);
+		trigger_error(__('(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead'), E_USER_WARNING);
 		if (strpos($url, ".") === false) {
 			$url .= ".js";
 		}

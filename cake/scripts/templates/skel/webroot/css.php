@@ -65,7 +65,7 @@
 	}
 
 	if (preg_match('|\.\.|', $url) || !preg_match('|^ccss/(.+)$|i', $url, $regs)) {
-		 die('Wrong file name.');
+		 die(__('Wrong file name.'));
 	}
 
 	$filename = 'css/' . $regs[1];
@@ -73,7 +73,7 @@
 	$cachepath = CACHE . 'css' . DS . str_replace(array('/','\\'), '-', $regs[1]);
 
 	if (!file_exists($filepath)) {
-		 die('Wrong file name.');
+		 die(__('Wrong file name.'));
 	}
 
 	if (file_exists($cachepath)) {

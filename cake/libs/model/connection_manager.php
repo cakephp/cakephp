@@ -107,7 +107,7 @@ class ConnectionManager extends Object {
 			$_this->_dataSources[$name] =& new $class($_this->config->{$name});
 			$_this->_dataSources[$name]->configKeyName = $name;
 		} else {
-			trigger_error("ConnectionManager::getDataSource - Non-existent data source {$name}", E_USER_ERROR);
+			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s", true), $name), E_USER_ERROR);
 			return null;
 		}
 
@@ -160,7 +160,7 @@ class ConnectionManager extends Object {
 		} else if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
-			trigger_error('Unable to load DataSource file ' . $conn['filename'] . '.php', E_USER_ERROR);
+			trigger_error(sprintf(__('Unable to load DataSource file %s.php', true), $conn['filename']), E_USER_ERROR);
 			return null;
 		}
 	}

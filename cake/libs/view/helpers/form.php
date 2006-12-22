@@ -85,7 +85,7 @@ class FormHelper extends AppHelper {
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		} else {
-			trigger_error('Model '.$model.' does not exist', E_USER_WARNING);
+			trigger_error(sprintf(__('Model %s does not exist', true), $model), E_USER_WARNING);
 			return;
 		}
 		$this->setFormTag($model . '/');
@@ -467,7 +467,7 @@ class FormHelper extends AppHelper {
  */
 	function button($params, $type = 'button', $options = array()) {
 
-		trigger_error('Don\'t use me yet', E_USER_ERROR);
+		trigger_error(__("Don't use me yet"), E_USER_ERROR);
 		if (isset($options['name'])) {
 			if (strpos($options['name'], "/") !== false) {
 				if ($this->fieldValue($options['name'])) {
@@ -565,7 +565,7 @@ class FormHelper extends AppHelper {
 			}
 			$options = array_reverse($options, true);
 			$options[''] = $showEmpty;
-			$options = array_reverse($options, true);			
+			$options = array_reverse($options, true);
 		}
 		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
 		$select[] = sprintf($this->Html->tags['selectend']);
@@ -642,7 +642,7 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-				
+
 			break;
 			case 'year':
 				$current = intval(date('Y'));
@@ -659,7 +659,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateInputDiv($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null) {
-		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::text() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::text() instead'), E_USER_WARNING);
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['size'] = $size;
@@ -683,7 +683,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateCheckboxDiv($tagName, $prompt, $required = false, $errorMsg = null, $htmlOptions = null) {
-		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead'), E_USER_WARNING);
 		$htmlOptions['class'] = "inputCheckbox";
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->checkbox($tagName, null, $htmlOptions);
@@ -706,7 +706,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateDate($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
@@ -729,7 +729,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
@@ -751,7 +751,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions, null, false);
 		$strLabel = $this->label($tagName, $prompt);
@@ -774,7 +774,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateAreaDiv($tagName, $prompt, $required = false, $errorMsg = null, $cols = 60, $rows = 10, $htmlOptions = null) {
-		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
 		$htmlAttributes = $htmlOptions;
 		$htmlAttributes['cols'] = $cols;
@@ -800,7 +800,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateSelectDiv($tagName, $prompt, $options, $selected = null, $selectAttr = null, $optionAttr = null, $required = false, $errorMsg = null) {
-		trigger_error('Deprecated: Use FormHelper::input() or FormHelper::select() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::select() instead'), E_USER_WARNING);
 		$selectAttr['id'] = strtolower(str_replace('/', '_', $tagName));
 		$str = $this->Html->selectTag($tagName, $options, $selected, $selectAttr, $optionAttr);
 		$strLabel = $this->label($tagName, $prompt);
@@ -823,7 +823,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::input()
  */
 	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		trigger_error('Deprecated: Use FormHelper::submit() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::submit() instead'), E_USER_WARNING);
 		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
 	}
 /**
@@ -831,7 +831,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::inputs()
  */
 	function generateFields($fields, $readOnly = false) {
-		trigger_error('Deprecated: Use FormHelper::input() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$strFormFields = '';
 
 		foreach($fields as $field) {
@@ -948,7 +948,7 @@ class FormHelper extends AppHelper {
  * @see FormHelper::label()
  */
 	function labelTag($tagName, $text) {
-		trigger_error('Deprecated: Use FormHelper::label() instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use FormHelper::label() instead'), E_USER_WARNING);
 		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
 	}
 /**
@@ -956,7 +956,7 @@ class FormHelper extends AppHelper {
  * @see HtmlHelper::div
  */
 	function divTag($class, $text) {
-		//trigger_error('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead', E_USER_WARNING);
+		//trigger_error(__('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead'), E_USER_WARNING);
 		return sprintf(TAG_DIV, $class, $text);
 	}
 /**
@@ -964,7 +964,7 @@ class FormHelper extends AppHelper {
  * @see HtmlHelper::para
  */
 	function pTag($class, $text) {
-		//trigger_error('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead', E_USER_WARNING);
+		//trigger_error(__('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead'), E_USER_WARNING);
 		return sprintf(TAG_P_CLASS, $class, $text);
 	}
 }

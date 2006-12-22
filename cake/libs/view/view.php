@@ -322,7 +322,7 @@ class View extends Object {
 				$this->hasRendered = true;
 			} else {
 				$out = $this->_render($viewFileName, $this->viewVars);
-				trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
+				trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
 			}
 			return true;
 		}
@@ -426,7 +426,7 @@ class View extends Object {
 
 			if ($out === false) {
 				$out = $this->_render($layout_fn, $data_for_layout);
-				trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layout_fn, $out), E_USER_ERROR);
+				trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layout_fn, $out), E_USER_ERROR);
 				return false;
 			} else {
 				return $out;
@@ -485,7 +485,7 @@ class View extends Object {
  * @deprecated
  */
 	function setLayout($layout) {
-		trigger_error('(View::setLayout) Deprecated: Use $this->layout = "..." instead', E_USER_WARNING);
+		trigger_error(__('(View::setLayout) Deprecated: Use $this->layout = "..." instead'), E_USER_WARNING);
 		$this->layout = $layout;
 	}
 /**
@@ -551,7 +551,7 @@ class View extends Object {
 	function _getViewFileName($action) {
 		$action = Inflector::underscore($action);
 		$paths = Configure::getInstance();
-		
+
 		if (!is_null($this->webservices)) {
 			$type = strtolower($this->webservices) . DS;
 		} else {

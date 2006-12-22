@@ -252,7 +252,7 @@ class Controller extends Object {
 			$r = null;
 
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
-				die ("Controller::__construct() : Can't get or parse my own class name, exiting.");
+				die (__("Controller::__construct() : Can't get or parse my own class name, exiting."));
 			}
 			$this->name = $r[1];
 		}
@@ -602,7 +602,7 @@ class Controller extends Object {
  * @see Controller::set
  */
 	function _setTitle($pageTitle) {
-		trigger_error('Deprecated: Use Controller::set("title", "...") instead', E_USER_WARNING);
+		trigger_error(__('Deprecated: Use Controller::set("title", "...") instead'), E_USER_WARNING);
 		$this->pageTitle = $pageTitle;
 	}
 /**

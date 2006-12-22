@@ -349,7 +349,7 @@ class SecurityComponent extends Object {
 				}
 			} else {
 				// Server doesn't support digest-auth headers
-				trigger_error('SecurityComponent::loginCredentials() - Server does not support digest authentication', E_USER_WARNING);
+				trigger_error(__('SecurityComponent::loginCredentials() - Server does not support digest authentication'), E_USER_WARNING);
 				return null;
 			}
 

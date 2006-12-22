@@ -88,7 +88,7 @@
 	if (file_exists( CONFIGS.'database.php' )) {
 		require_once (CONFIGS.'database.php');
 	} else {
-		die("Unable to find /app/config/database.php.  Please create it before continuing.\n\n");
+		die(__("Unable to find /app/config/database.php.  Please create it before continuing.\n\n"));
 	}
 	uses ('object', 'neat_array', 'session', 'security', 'inflector', 'model'.DS.'connection_manager',
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model');
