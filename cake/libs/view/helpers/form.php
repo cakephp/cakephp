@@ -289,6 +289,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
+		$out = '';
 		$div = true;
 		if (isset($options['div'])) {
 			$div = $options['div'];
@@ -319,10 +320,8 @@ class FormHelper extends AppHelper {
 			}
 			$out = $this->label(null, $labelText, $label);
 			$label = $labelText;
-		} elseif ($label != false) {
+		} elseif ($label !== false) {
 			$out = $this->label(null, $label);
-		} else {
-			$out = '';
 		}
 
 		$error = null;
