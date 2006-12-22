@@ -284,6 +284,17 @@ class HtmlHelper extends AppHelper {
 		}
 	}
 /**
+ * Builds CSS style data from an array of CSS properties
+ *
+ * @param array $data
+ * @return string CSS styling data
+ */
+	function style($data) {
+		if (!is_array($data)) {
+			return $data;
+		}
+	}
+/**
  * @deprecated
  * @see FormHelper::submit
  */

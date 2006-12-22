@@ -60,6 +60,11 @@ class FormHelper extends AppHelper {
 
 	var $Html = null;
 
+	var $__options = array(
+		'day' => array(), 'minute' => array(), 'hour' => array(),
+		'month' => array(), 'year' => array(), 'meridian' => array()
+	);
+
 /**
  * Returns an HTML FORM element.
  *
@@ -69,9 +74,12 @@ class FormHelper extends AppHelper {
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
-		if (empty($model) || is_string($model)) {
-			$models = $this->params['models'];
-			$model = $models[0];
+		if (is_array($model) && empty($options)) {
+			$options = $model;
+		}
+
+		if (empty($model) || is_array($model)) {
+			$model = $this->params['models'][0];
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
@@ -303,7 +311,17 @@ class FormHelper extends AppHelper {
 			$label = $options['label'];
 			unset($options['label']);
 		}
-		$out = $this->label(null, $label);
+		if (is_array($label)) {
+			$labelText = null;
+			if (isset($label['text'])) {
+				$labelText = $label['text'];
+				unset($label['text']);
+			}
+			$out = $this->label(null, $labelText, $label);
+			$label = $labelText;
+		} elseif ($label != false) {
+			$out = $this->label(null, $label);
+		}
 
 		$error = null;
 		if (isset($options['error'])) {
@@ -516,7 +534,9 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$attributes = $this->addClass($attributes, 'form-error');
 		}
-		if(!is_array($options)) {
+		if (is_string($options) && isset($this->__options[$options])) {
+			$options = $this->__generateOptions($options);
+		} elseif(!is_array($options)) {
 			$options = array();
 		}
 		if (isset($attributes['type'])) {
@@ -589,6 +609,49 @@ class FormHelper extends AppHelper {
 		}
 
 		return array_reverse($select, true);
+	}
+/**
+ * Generates option lists for common <select /> menus
+ *
+ * @return void
+ */
+	function __generateOptions($name) {
+		if (!empty($this->options[$name])) {
+			return $this->options[$name];
+		}
+		$data = array();
+
+		switch ($name) {
+			case 'minute':
+				for($i = 0; $i < 60; $i++) {
+					$data[$i] = sprintf('%02d', $i);
+				}
+			break;
+			case 'hour':
+				for($i = 0; $i < 31; $i++) {
+					$data[sprintf('%02d', $i)] = $i;
+				}
+			break;
+			case 'meridian':
+				$data = array('am' => 'am', 'pm' => 'pm');
+			break;
+			case 'day':
+				for($i = 0; $i < 31; $i++) {
+					$data[sprintf('%02d', $i)] = $i;
+				}
+			break;
+			case 'month':
+				
+			break;
+			case 'year':
+				$current = intval(date('Y'));
+				for ($i = ($current - 20); $i < ($current + 20); $i++) {
+					$data[$i] = $i;
+				}
+			break;
+		}
+		$this->__options[$name] = $data;
+		return $this->__options[$name];
 	}
 /**
  * @deprecated
