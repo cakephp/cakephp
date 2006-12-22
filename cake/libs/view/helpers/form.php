@@ -321,6 +321,8 @@ class FormHelper extends AppHelper {
 			$label = $labelText;
 		} elseif ($label != false) {
 			$out = $this->label(null, $label);
+		} else {
+			$out = '';
 		}
 
 		$error = null;
