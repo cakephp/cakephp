@@ -616,7 +616,7 @@ class Controller extends Object {
 	function flash($message, $url, $pause = 1) {
 		$this->autoRender = false;
 		$this->autoLayout = false;
-		$this->set('url', $this->base . $url);
+		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
