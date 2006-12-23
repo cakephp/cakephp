@@ -45,10 +45,10 @@ class L10n extends Object {
 /**
  * Enter description here...
  *
- * @var string
+ * @var array
  * @access public
  */
-	var $languagePath = 'eng';
+	var $languagePath = array('eng');
 /**
  * Enter description here...
  *
