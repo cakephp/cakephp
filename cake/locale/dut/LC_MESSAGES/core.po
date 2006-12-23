@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 09:55-0600\n"
+"PO-Revision-Date: 2006-12-23 10:21-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -502,7 +502,7 @@ msgstr "niet aanwezig"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "Cake %s connect to the database."
-msgstr "Cake %s verbindt met de databank."
+msgstr "Cake %s verbinden met de databank."
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is able to"
@@ -518,7 +518,7 @@ msgstr "CakePHP release informatie staat op CakeForge"
 
 #: cake/libs/view/templates/pages/home.ctp:35
 msgid "Read the release notes and get the latest version"
-msgstr "Lees de release notes en gebruik de laatste versie"
+msgstr "Lees de release notes en vind alles over de laatste versie"
 
 #: cake/libs/view/templates/pages/home.ctp:36
 msgid "Editing this Page"
@@ -674,11 +674,11 @@ msgstr "Gelieve onderstaande fouten te corrigeren."
 
 #: cake/libs/controller/scaffold.php:330;333
 msgid "No id set for %s::delete()"
-msgstr "Geen id ingesteeld voor %s::delete()"
+msgstr "Geen id ingesteld voor %s::delete()"
 
 #: cake/libs/controller/scaffold.php:339;342
 msgid "The %1$s with id: %2$d has been deleted."
-msgstr "The %1$s with id: %2$d has been deleted."
+msgstr "De %1$s met id: %2$d is verwijderd."
 
 #: cake/libs/controller/scaffold.php:346;349
 msgid "There was an error deleting the %1$s with id: %2$d"
