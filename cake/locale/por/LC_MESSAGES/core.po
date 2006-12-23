@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 01:27-0600\n"
+"PO-Revision-Date: 2006-12-23 02:00-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -17,13 +17,13 @@ msgstr ""
 #: ;96 cake/libs/overloadable_php5.php:44
 #: ;56
 msgid "Magic method handler __call__ not defined in %s"
-msgstr "MÈtodo m·gico handler __call__ n„o definido em %s"
+msgstr "Método mágico handler __call__ não definido em %s"
 
 #: cake/libs/controller/components/acl_base.php:49
 #: cake/libs/controller/components/dbacl/models/aclnode.php:55
 #: ;125;200;219
 msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
-msgstr "[acl_base] O construtor da classe AclBase foi chamado, ou a classe foi instanciada. Essa classe precisa permanecer abstrata. Por favor consulte a documentaÁ„o do Cake para a configuraÁ„o do ACL"
+msgstr "[acl_base] O construtor da classe AclBase foi chamado, ou a classe foi instanciada. Essa classe precisa permanecer abstrata. Por favor consulte a documentação do Cake para a configuração do ACL"
 
 #: cake/basics.php:96
 msgid "Plugins must have a class named %s"
@@ -35,15 +35,15 @@ msgstr "Depreciado: Use Set::countDim no lugar"
 
 #: cake/libs/configure.php:213
 msgid "Configure::load() - %s.php not found"
-msgstr "Configure::load() - %s.php n„o encontrado"
+msgstr "Configure::load() - %s.php não encontrado"
 
 #: cake/libs/configure.php:219
 msgid "Configure::load() - no variable $config found in %s.php"
-msgstr "Configure::load() - Vari·vel $config n„o encontrada em %s.php"
+msgstr "Configure::load() - Variável $config não encontrada em %s.php"
 
 #: cake/libs/error.php:123
 msgid "The requested address %s was not found on this server."
-msgstr "O endereÁo requisitado %s n„o existe neste servidor"
+msgstr "O endereço requisitado %s não existe neste servidor"
 
 #: cake/libs/folder.php:281
 msgid "chmodr() File exists"
@@ -51,19 +51,19 @@ msgstr "chmodr() O arquivo existe"
 
 #: cake/libs/folder.php:308
 msgid "mkdirr() File exists"
-msgstr "mkdir() O arquivo j· existe"
+msgstr "mkdir() O arquivo já existe"
 
 #: cake/libs/validation.php:302
 msgid "You must define the $operator parameter for Validation::comparison()"
-msgstr "VocÍ precisa definir o par‚metro $operator para Validation::comparison()"
+msgstr "Você precisa definir o parâmetro $operator para Validation::comparison()"
 
 #: cake/libs/validation.php:325
 msgid "You must define a regular expression for Validation::custom()"
-msgstr "VocÍ precisa definir uma express„o regular para Validation::custom()"
+msgstr "Você precisa definir uma expressão regular para Validation::custom()"
 
 #: cake/libs/controller/controller.php:255
 msgid "Controller::__construct() : Can't get or parse my own class name, exiting."
-msgstr "Controller::__construct(): N„o posso pegar ou analisar o meu prÛprio nome de classe. Saindo."
+msgstr "Controller::__construct(): Não posso pegar ou analisar o meu próprio nome de classe. Saindo."
 
 #: cake/libs/controller/controller.php:605
 msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
@@ -71,19 +71,19 @@ msgstr "Depreciado: Use Controller::set(\"title\", \"...\") no lugar"
 
 #: cake/libs/controller/components/security.php:352
 msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
-msgstr "SecurityComponent::loginCredentials() - Servidor n„o suporta autenticaÁ„o digest"
+msgstr "SecurityComponent::loginCredentials() - Servidor não suporta autenticação digest"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:85
 msgid "ACO permissions key %s does not exist in DB_ACL::check()"
-msgstr "A chave de permiss„o ACO %s n„o existe em DB_ACL::check()"
+msgstr "A chave de permissão ACO %s não existe em DB_ACL::check()"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:144
 msgid "DB_ACL::allow() - Invalid node"
-msgstr "DB_ACL::allow() - Nodo Inv·lido"
+msgstr "DB_ACL::allow() - Nodo Inválido"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:162
 msgid "DB_ACL::allow() - Invalid ACO action"
-msgstr "DB_ACL::allow() - AÁ„o ACO inv·lida "
+msgstr "DB_ACL::allow() - Ação ACO inválida "
 
 #: cake/libs/controller/components/dbacl/db_acl.php:231
 msgid "Null id provided in DB_ACL::get"
@@ -95,7 +95,7 @@ msgstr "pai nulo em %s::create()"
 
 #: cake/libs/model/connection_manager.php:110
 msgid "ConnectionManager::getDataSource - Non-existent data source %s"
-msgstr "ConnectionManager::getDataSource - data source %s n„o existente"
+msgstr "ConnectionManager::getDataSource - data source %s não existente"
 
 #: cake/libs/model/connection_manager.php:163
 msgid "Unable to load DataSource file %s.php"
@@ -123,15 +123,15 @@ msgstr "Por favor implemente DBO_Pear::tablesList() para o seu driver de banco d
 
 #: cake/libs/view/helper.php:134
 msgid "Method %s::%s does not exist"
-msgstr "MÈtodo %s::%s n„o existe"
+msgstr "Método %s::%s não existe"
 
 #: cake/libs/view/view.php:325
 msgid "Error in view %s, got: <blockquote>%s</blockquote>"
-msgstr "Erro na view %s, comeÁado: <blockquote>%s</blockquote>"
+msgstr "Erro na view %s, começado: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:429
 msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
-msgstr "Erro no layout %s, comeÁado: <blockquote>%s</blockquote>"
+msgstr "Erro no layout %s, começado: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:488
 msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
@@ -139,11 +139,11 @@ msgstr "(View::setLayout) Depreciado: Use $this->layout = \"...\" no lugar"
 
 #: cake/libs/view/helpers/form.php:88
 msgid "Model %s does not exist"
-msgstr "Model %s n„o existe"
+msgstr "Model %s não existe"
 
 #: cake/libs/view/helpers/form.php:470
 msgid "Don't use me yet"
-msgstr "N„o me use por enquanto"
+msgstr "Não me use por enquanto"
 
 #: cake/libs/view/helpers/form.php:662
 msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
@@ -208,7 +208,7 @@ msgstr "Escreveu"
 
 #: cake/scripts/bake.php:1913
 msgid "Error! Could not write to"
-msgstr "Erro! N„o È possÌvel escrever"
+msgstr "Erro! Não é possível escrever"
 
 #: cake/scripts/templates/skel/webroot/css.php:68
 #: ;76
@@ -217,19 +217,19 @@ msgstr "Nome de arquivo errado"
 
 #: cake/libs/view/templates/pages/home.ctp:34
 msgid "CakePHP release information is on CakeForge"
-msgstr "InformaÁ„o sobre o release do CakePHP est· na CakeForge"
+msgstr "Informação sobre o release do CakePHP está na CakeForge"
 
 #: cake/libs/view/templates/pages/home.ctp:35
 msgid "Read the release notes and get the latest version"
-msgstr "Leia a nota de release e pegue a ˙ltima vers„o"
+msgstr "Leia a nota de release e pegue a última versão"
 
 #: cake/libs/view/templates/pages/home.ctp:36
 msgid "Editing this Page"
-msgstr "Editando essa P·gina"
+msgstr "Editando essa Página"
 
 #: cake/libs/view/templates/pages/home.ctp:38
 msgid "To change the content of this page, create: /app/views/pages/home.thtml."
-msgstr "Para mudar o conte˙do dessa p·gina, crie: /app/views/pages/home.thtml"
+msgstr "Para mudar o conteúdo dessa página, crie: /app/views/pages/home.thtml"
 
 #: cake/libs/view/templates/pages/home.ctp:39
 msgid "To change its layout, create: /app/views/layouts/default.thtml."
@@ -237,11 +237,11 @@ msgstr "Para mudar esse layoutm, crie: /app/views/layouts/default.thtml"
 
 #: cake/libs/view/templates/pages/home.ctp:40
 msgid "See the views section of the manual for more info."
-msgstr "Veja a seÁ„o 'views' do manual para maiores informaÁıes"
+msgstr "Veja a seção 'views' do manual para maiores informações"
 
 #: cake/libs/view/templates/pages/home.ctp:41
 msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
-msgstr "VocÍ pode tambÈm adicionar alguns estilos CSS para suas p·ginas em: app/webroot/css/."
+msgstr "Você pode também adicionar alguns estilos CSS para suas páginas em: app/webroot/css/."
 
 #: cake/libs/view/templates/pages/home.ctp:43
 msgid "More about Cake"
@@ -249,11 +249,11 @@ msgstr "Mais sobre o Cake"
 
 #: cake/libs/view/templates/pages/home.ctp:45
 msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
-msgstr "CakePHP È um framework de desenvolvimento r·pido para PHP que usa os mais conhecidos design patterns como Active Record, Association Data Mapping, Front Controller e MVC."
+msgstr "CakePHP é um framework de desenvolvimento rápido para PHP que usa os mais conhecidos design patterns como Active Record, Association Data Mapping, Front Controller e MVC."
 
 #: cake/libs/view/templates/pages/home.ctp:48
 msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
-msgstr "Nosso objetico prim·rio È prover um framework estruturado que permite usu·rios de PHP de todos os nÌveis desenvolver rapidamente aplicaÁıes web robustas, sem qualquer perda de flexibilidade"
+msgstr "Nosso objetico primário é prover um framework estruturado que permite usuários de PHP de todos os níveis desenvolver rapidamente aplicações web robustas, sem qualquer perda de flexibilidade"
 
 #: cake/libs/view/templates/pages/home.ctp:51
 msgid "Cake Software Foundation"
@@ -285,7 +285,7 @@ msgstr "CakeSchwag"
 
 #: cake/libs/view/templates/pages/home.ctp:58
 msgid "Get your own CakePHP gear - Doughnate to Cake"
-msgstr "Pegue a sua prÛpria fatia do bolo - Doe para o Cake"
+msgstr "Pegue a sua própria fatia do bolo - Doe para o Cake"
 
 #: cake/libs/view/templates/pages/home.ctp:59
 msgid "CakePHP"
@@ -293,7 +293,7 @@ msgstr "CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:60
 msgid "The Rapid Development Framework"
-msgstr "O Framework de Desenvolvimento R·pido"
+msgstr "O Framework de Desenvolvimento Rápido"
 
 #: cake/libs/view/templates/pages/home.ctp:61
 msgid "CakePHP Manual"
@@ -301,7 +301,7 @@ msgstr "Manual do CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:62
 msgid "Your Rapid Development Cookbook"
-msgstr "Seu Livro de Receita de Desenvolvimento R·pido"
+msgstr "Seu Livro de Receita de Desenvolvimento Rápido"
 
 #: cake/libs/view/templates/pages/home.ctp:63
 msgid "CakePHP Wiki"
@@ -317,7 +317,7 @@ msgstr "CakePHP API"
 
 #: cake/libs/view/templates/pages/home.ctp:66
 msgid "Docblock Your Best Friend"
-msgstr "Docblock È seu melhor amigo"
+msgstr "Docblock é seu melhor amigo"
 
 #: cake/libs/view/templates/pages/home.ctp:67
 msgid "CakeForge"
