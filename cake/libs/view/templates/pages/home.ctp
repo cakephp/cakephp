@@ -33,7 +33,7 @@
 <?php endif; ?>
 <h2><?php __('CakePHP release information is on CakeForge'); ?></h2>
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?></a>
-<h2>Editing this Page</h2>
+<h2><?php __('Editing this Page'); ?></h2>
 <p>
 <?php __('To change the content of this page, create: /app/views/pages/home.thtml.'); ?><br />
 <?php __('To change its layout, create: /app/views/layouts/default.thtml.'); ?><br />
