@@ -242,6 +242,10 @@ msgstr ""
 msgid "Read the release notes and get the latest version"
 msgstr ""
 
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr ""
+
 #: cake/libs/view/templates/pages/home.ctp:38
 msgid "To change the content of this page, create: /app/views/pages/home.thtml."
 msgstr ""
