@@ -2,16 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 04:58-0600\n"
-"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"PO-Revision-Date: 2006-12-23 16:42+0100\n"
+"Last-Translator: Daniel Hofstetter <daniel-hofstetter@gmx.ch>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: German\n"
 "X-Poedit-Country: UNITED STATES\n"
 "X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-Language: German\n"
 
 #: cake/libs/overloadable_php4.php:63
 #: ;96 cake/libs/overloadable_php5.php:44
@@ -29,7 +29,7 @@ msgstr "[acl_base] Der Konstruktor von AclBase wurde aufgerufen, oder die Klasse
 #: cake/libs/view/templates/errors/missing_action.ctp:30
 #: cake/libs/view/templates/errors/missing_connection.ctp:31
 msgid "If you want to customize this error message, create %s."
-msgstr ""
+msgstr "Um diese Fehlermeldung anzupassen, erstelle %s."
 
 #: cake/libs/view/templates/errors/missing_action.ctp:31
 #: cake/libs/view/templates/errors/missing_component_class.ctp:33
@@ -43,7 +43,7 @@ msgstr ""
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
 #: cake/libs/view/templates/errors/missing_view.ctp:31
 msgid "Fatal"
-msgstr ""
+msgstr "Fatal"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:31
 #: cake/libs/view/templates/errors/missing_component_file.ctp:29
@@ -58,8 +58,9 @@ msgstr ""
 #: cake/libs/view/templates/errors/missing_view.ctp:29
 #: cake/libs/view/templates/errors/private_action.ctp:29
 #: cake/libs/view/templates/errors/scaffold_error.ctp:29
+#, fuzzy
 msgid "Notice"
-msgstr ""
+msgstr "Hinweis"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:32
 #: cake/libs/view/templates/errors/missing_component_file.ctp:30
@@ -74,7 +75,7 @@ msgstr ""
 #: cake/libs/view/templates/errors/private_action.ctp:30
 #: cake/libs/view/templates/errors/scaffold_error.ctp:30
 msgid "If you want to customize this error message, create %s"
-msgstr ""
+msgstr "Um diese Fehlermeldung anzupassen, erstelle %s"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:34
 #: cake/libs/view/templates/errors/missing_component_file.ctp:32
@@ -83,57 +84,57 @@ msgstr ""
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:32
 #: cake/libs/view/templates/errors/missing_model.ctp:32
 msgid "Create the class below in file: %s"
-msgstr ""
+msgstr "Erstelle die untenstehende Klasse in Datei: %s"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:32
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
 #: cake/libs/view/templates/errors/missing_view.ctp:32
 msgid "Confirm you have created the file: %s"
-msgstr ""
+msgstr "Bestätige, dass die Datei %s erstellt wurde"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:34
 #: cake/libs/view/templates/scaffolds/edit.thtml:39
 msgid "List  "
-msgstr ""
+msgstr "Auflisten"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:38
 #: cake/libs/view/templates/scaffolds/edit.thtml:43
 msgid "View "
-msgstr ""
+msgstr "Anzeigen"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:39
 #: cake/libs/view/templates/scaffolds/edit.thtml:44
 msgid "Add "
-msgstr ""
+msgstr "Hinzufügen"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:75
 #: cake/libs/view/templates/scaffolds/view.thtml:138
 #: ;144
 msgid "View"
-msgstr ""
+msgstr "Anzeigen"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:76
 #: cake/libs/view/templates/scaffolds/view.thtml:139
 #: ;145
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:140
 #: ;146
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 #: ;140;146
 msgid "Are you sure you want to delete id %s?"
-msgstr ""
+msgstr "Soll Id %s gelöscht werden?"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:86
 #: cake/libs/view/templates/scaffolds/view.thtml:155
 msgid "New "
-msgstr ""
+msgstr "Neu"
 
 #: cake/basics.php:96
 msgid "Plugins must have a class named %s"
@@ -297,128 +298,128 @@ msgstr "(JavascriptHelper::linkOut) Deprecated: Verwende stattdessen JavascriptH
 
 #: cake/libs/view/templates/elements/dump.ctp:28
 msgid "Controller dump:"
-msgstr ""
+msgstr "Controller Dump:"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:28
 msgid "Missing Method in %s"
-msgstr ""
+msgstr "Fehlende Methode in %s"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:29
 msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt weil die Action <em>%1$s</em> nicht definiert ist im Controller <em>%2$s</em>"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:32
 msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
-msgstr ""
+msgstr ": Bestätige, dass  %1$s::%2$s in der Datei : %3$s erstellt wurde"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:27
 msgid "Missing Component Class"
-msgstr ""
+msgstr "Fehlende Component Klasse"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:29
 msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt weil die Component Klasse <em>%1$s</em>, definiert in <em>%2$s</em>, nicht gefunden wurde oder nicht existiert."
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:27
 msgid "Missing Component File"
-msgstr ""
+msgstr "Fehlende Component Datei"
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:28
 msgid "You are seeing this error because the component file can not be found or does not exist."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt weil die Component Datei nicht gefunden wurde oder nicht existiert."
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:27
 msgid "Requires a Database Connection"
-msgstr ""
+msgstr "Benötigt eine Datenbankverbindung"
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:28
 #: ;33
 msgid "Confirm you have created the file : %s."
-msgstr ""
+msgstr "Bestätige, dass die Datei  %s erstellt wurde."
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:29
 msgid "Missing Database Connection: %s requires a database connection"
-msgstr ""
+msgstr "Fehlende Datenbankverbindung: %s benötigt eine Datenbankverbindung"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:27
 msgid "Missing controller"
-msgstr ""
+msgstr "Fehlender Controller"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:28
 msgid "You are seeing this error because controller <em>%s</em> could not be found."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil der Controller <em>%s</em> nicht gefunden wurde."
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:27
 msgid "Missing Helper Class"
-msgstr ""
+msgstr "Fehlende Helper Klasse"
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:28
 msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil die View Helper Klasse <em>%s</em> nicht gefunden wurde, oder nicht existiert."
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:27
 msgid "Missing Helper File"
-msgstr ""
+msgstr "Fehlende Helper Datei"
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:28
 msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil die View Helper Datei %s nicht gefunden wurde oder nicht existiert."
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:27
 msgid "Missing Layout"
-msgstr ""
+msgstr "Fehlendes Layout"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:28
 msgid "You are seeing this error because the layout file %s can not be found or does not exist."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil die Layout Datei %s nicht gefunden wurde oder nicht existiert."
 
 #: cake/libs/view/templates/errors/missing_model.ctp:27
 msgid "Missing Model"
-msgstr ""
+msgstr "Fehlendes Model"
 
 #: cake/libs/view/templates/errors/missing_model.ctp:28
 msgid "No class found for the <em>%s</em> model."
-msgstr ""
+msgstr "Es wurde keine Klasse gefunden für das <em>%s</em> Model."
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
 msgid "Scaffold Requires a Database Connection"
-msgstr ""
+msgstr "Scaffold benötigt eine Datenbankverbindung"
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
 msgid "Missing Database Connection: Scaffold Does not work without a database connection"
-msgstr ""
+msgstr "Fehlende Datenbankverbindung: Scaffold funktioniert nicht ohne Datenbankverbindung"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:27
 msgid "Missing Database Table"
-msgstr ""
+msgstr "Fehlende Datenbanktabelle"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:28
 msgid "No Database table for model %1$s (expected %2$s), create it first."
-msgstr ""
+msgstr "Keine Datenbanktabelle für Model %1$s vorhanden (erwartet %2$s). Erstelle zuerst diese Tabelle."
 
 #: cake/libs/view/templates/errors/missing_view.ctp:27
 msgid "Missing view"
-msgstr ""
+msgstr "Fehlende View"
 
 #: cake/libs/view/templates/errors/missing_view.ctp:28
 msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil die View für <em>%1$s::%2$s()</em> nicht gefunden wurde."
 
 #: cake/libs/view/templates/errors/private_action.ctp:27
 msgid "Private Method in %s"
-msgstr ""
+msgstr "Private Methode in %s"
 
 #: cake/libs/view/templates/errors/private_action.ctp:28
 msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
-msgstr ""
+msgstr "Dieser Fehler wird angezeigt, weil auf die private Methode <em>%s</em> nicht direkt zugegriffen werden kann."
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:27
 msgid "Scaffold Error"
-msgstr ""
+msgstr "Scaffold Fehler"
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:28
 msgid "Your must implement the following method in your controller"
-msgstr ""
+msgstr "Folgende Methode muss im Controller implementiert werden"
 
 #: cake/libs/view/templates/layouts/default.ctp:40
 #, fuzzy
@@ -427,51 +428,51 @@ msgstr "Das Rapid Development Framework"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:31
 msgid "Add"
-msgstr ""
+msgstr "Hinzufügen"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:32
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:37
 msgid "Delete  "
-msgstr ""
+msgstr "Löschen"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:40
 msgid "Actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:32
 msgid "View %s"
-msgstr ""
+msgstr "Zeige %s an"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:62
 #: ;98
 msgid "Edit %s"
-msgstr ""
+msgstr "%s bearbeiten"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 msgid "Delete %s"
-msgstr ""
+msgstr "%s löschen"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:64
 #: ;69
 msgid "List %s"
-msgstr ""
+msgstr " %s auflisten"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:65
 #: ;100
 msgid "New %s"
-msgstr ""
+msgstr " %s erstellen"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:70
 msgid "Add %s"
-msgstr ""
+msgstr "%s hinzufügen"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:82
 #: ;117
 msgid "Related %s"
-msgstr ""
+msgstr "Zusammengehörige %s"
 
 #: cake/scripts/acl.php:91
 msgid ""
@@ -510,27 +511,27 @@ msgstr "Falscher Dateiname."
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "Your database configuration file is %s."
-msgstr ""
+msgstr "Die Datenbankkonfigurationsdatei ist %s."
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "present"
-msgstr ""
+msgstr "vorhanden"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "not present"
-msgstr ""
+msgstr "nicht vorhanden"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "Cake %s connect to the database."
-msgstr ""
+msgstr "Cake %s eine Verbindung mit der Datenbank herstellen."
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is able to"
-msgstr ""
+msgstr "kann"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is not able to"
-msgstr ""
+msgstr "kann nicht"
 
 #: cake/libs/view/templates/pages/home.ctp:34
 msgid "CakePHP release information is on CakeForge"
@@ -666,47 +667,50 @@ msgstr "Live Chat über CakePHP"
 
 #: cake/libs/controller/scaffold.php:116
 msgid "Scaffold :: "
-msgstr ""
+msgstr "Scaffold :: "
 
 #: cake/libs/controller/scaffold.php:150
 #: ;153
 msgid "No id set for %s::view()"
-msgstr ""
+msgstr "Keine Id gesetzt für %s::view()"
 
 #: cake/libs/controller/scaffold.php:223
 #: ;226
 msgid "No id set for %s::edit()"
-msgstr ""
+msgstr "Keine Id gesetzt für %s::edit()"
 
 #: cake/libs/controller/scaffold.php:260
 msgid "updated"
-msgstr ""
+msgstr "aktualisiert"
 
 #: cake/libs/controller/scaffold.php:266
 msgid "saved"
-msgstr ""
+msgstr "gespeichert"
 
 #: cake/libs/controller/scaffold.php:287
 #: ;291
+#, fuzzy
 msgid "The %1$s has been %2$s"
-msgstr ""
+msgstr "Der %1$s wurde %2$s"
 
 #: cake/libs/controller/scaffold.php:298
 msgid "Please correct errors below."
-msgstr ""
+msgstr "Bitte die untenstehenden fehler beheben."
 
 #: cake/libs/controller/scaffold.php:330
 #: ;333
 msgid "No id set for %s::delete()"
-msgstr ""
+msgstr "Keine Id gesetzt für %s::delete()"
 
 #: cake/libs/controller/scaffold.php:339
 #: ;342
+#, fuzzy
 msgid "The %1$s with id: %2$d has been deleted."
-msgstr ""
+msgstr "Der %1$s mit Id %2$d wurde gelöscht."
 
 #: cake/libs/controller/scaffold.php:346
 #: ;349
+#, fuzzy
 msgid "There was an error deleting the %1$s with id: %2$d"
-msgstr ""
+msgstr "Es ist ein Fehler aufgetreten beim Löschen von %1$s mit der Id %2$d"
 
