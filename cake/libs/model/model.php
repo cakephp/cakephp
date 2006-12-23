@@ -793,7 +793,6 @@ class Model extends Overloadable {
 	function getColumnType($column) {
 		$columns = $this->loadInfo();
 		$columns = $columns->value;
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$cols = array();
 
 		foreach($columns as $col) {
