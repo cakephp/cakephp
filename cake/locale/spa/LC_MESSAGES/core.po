@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-22 19:24-0600\n"
+"PO-Revision-Date: 2006-12-22 20:14-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -222,6 +222,10 @@ msgstr "La información de liberación de CakePHP está en CakeForge"
 #: cake/libs/view/templates/pages/home.ctp:35
 msgid "Read the release notes and get the latest version"
 msgstr "Lea las notas de liberación y obtenga la última versión"
+
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr "Editando ésta página"
 
 #: cake/libs/view/templates/pages/home.ctp:38
 msgid "To change the content of this page, create: /app/views/pages/home.thtml."
