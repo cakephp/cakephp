@@ -127,14 +127,14 @@
 	/*uses ('inflector', 'model'.DS.'model');
 	require_once (CORE_PATH.'cake'.DS.'app_model.php');
 	require_once (CORE_PATH.'cake'.DS.'app_controller.php');*/
-	
+
 	/*uses ('inflector', 'model'.DS.'model');*/
-	
+
 	/*uses ('neat_array', 'model'.DS.'connection_manager', 'controller'.DS.'controller', 'session',
 			'configure', 'security', DS.'controller'.DS.'scaffold');*/
-	
+
 	uses('session', 'configure', 'inflector', 'model'.DS.'connection_manager');
-	
+
 	$pattyCake = new Bake();
 	if($help === true)
 	{
@@ -879,7 +879,7 @@ class Bake {
 	function __bakeViews($controllerName, $controllerPath, $admin= null, $admin_url = null) {
 		$controllerClassName = $controllerName.'Controller';
 		$controllerObj = & new $controllerClassName();
-		
+
 		if(!in_array('Html', $controllerObj->helpers)) {
 			$controllerObj->helpers[] = 'Html';
 		}
@@ -988,7 +988,7 @@ class Bake {
 		}
 		$viewView .= "</ul>\n\n";
 		$viewView .= "</div>\n";
-		
+
 		foreach ($modelObj->hasOne as $associationName => $relation) {
 			$new = true;
 			$otherModelName = $this->__modelName($relation['className']);
@@ -999,7 +999,7 @@ class Bake {
 			$otherSingularHumanName = $this->__singularHumanName($associationName);
 			$otherModelKey = Inflector::underscore($relation['className']);
 			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-			
+
 			$viewView .= "<div class=\"related\">\n";
 			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
 			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])): ?>\n";
@@ -1007,7 +1007,7 @@ class Bake {
 			foreach($otherModelObj->_tableInfo->value as $column) {
 				$viewView .= "\t\t<dt>".Inflector::humanize($column['name'])."/dd>\n";
 				$viewView .= "\t\t<dd>&nbsp;<?php echo \${$singularName}['{$associationName}']['{$column['name']}'] ?></dd>\n";
-			}			
+			}
 			$viewView .= "\t</dl>\n";
 			$viewView .= "<?php endif; ?>\n";
 			$viewView .= "<ul class=\"actions\">\n";
@@ -1016,7 +1016,7 @@ class Bake {
 			$viewView .= "</ul>\n";
 			$viewView .= "</div>\n";
 		}
-		
+
 		$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
 		foreach($relations as $associationName => $relation) {
 			$otherModelName = $associationName;
@@ -1103,7 +1103,7 @@ class Bake {
 			}
 		}
 		$addView .= "</ul>\n";
-		
+
 
 		//------------------------------------------------------------------------------------//
 
@@ -1119,15 +1119,15 @@ class Bake {
 		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.ctp';
 		$this->__createFile($filename, $editView);
 	}
-	
+
 /**
  * returns the fields to be display in the baked forms.
- * 
+ *
  * @access private
  * @param array $fields
  */
 	function inputs($fields = array()) {
-		
+
 		foreach($fields as $name => $options) {
 			if(isset($options['tagName'])){
 				$tag = explode('/', $options['tagName']);
@@ -1135,19 +1135,19 @@ class Bake {
 				unset($options['tagName']);
 			}
 			$formOptions = array();
-			
+
 			if(isset($options['type'])){
 				$type = $options['type'];
 				unset($options['type']);
 				//$formOptions['type'] = "'type' => '{$type}'";
 			}
-			
+
 			if(isset($options['class']) && $options['class'] == 'required'){
 				$class = $options['class'];
 				unset($options['class']);
 				$formOptions['class'] = "'class' => '{$class}'";
 			}
-			
+
 			if(isset($options['options'])){
 				unset($formOptions['type']);
 				$fieldOptions = $this->__pluralName($options['model']);
@@ -1173,19 +1173,19 @@ class Bake {
 				unset($options['rows']);
 				//$formOptions['rows'] = "'rows' => '{$rows}'";
 			}
-			
-			
+
+
 			if(!empty($formOptions)) {
 				$formOptions = ", array(".join(', ', $formOptions).")";
 			} else {
 				$formOptions = null;
 			}
-			
+
 			$displayFields .= "\t<?php echo \$form->input('{$tagName}'{$formOptions});?>\n";
 		}
 		return $displayFields;
 	}
-	
+
 /**
  * Action to create a Controller.
  *
@@ -1387,7 +1387,7 @@ class Bake {
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
-		
+
 		/* ADD ACTION */
 		$compact = array();
 		$actions .= "\tfunction {$admin}add() {\n";
@@ -1431,7 +1431,7 @@ class Bake {
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
-		
+
 		/* EDIT ACTION */
 		$compact = array();
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
@@ -1463,7 +1463,7 @@ class Bake {
 		$actions .= "\t\tif(empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
 		$actions .= "\t\t}\n";
-		
+
 		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
 			if(!empty($associationName)) {
 				$habtmModelName = $this->__modelName($associationName);
@@ -1869,7 +1869,7 @@ class Bake {
  * @param string $string Error text to output.
  */
 	function stderr($string) {
-		fwrite($this->stderr, __($string, true));
+		fwrite($this->stderr, $string, true);
 	}
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
