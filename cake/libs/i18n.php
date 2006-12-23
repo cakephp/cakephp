@@ -93,13 +93,16 @@ class I18n extends Object {
  */
 	function translate($message, $message2 = null, $domain = null, $category = null, $count = null, $directory) {
 		$_this =& I18n::getInstance();
-		$language = Configure::read('Config.language');
 
-		if($language === null && !empty($_SESSION['Config']['language'])) {
-			$language = $_SESSION['Config']['language'];
+		if(is_null($domain) && $_this->__l10n->found === false) {
+			$language = Configure::read('Config.language');
+
+			if($language === null && !empty($_SESSION['Config']['language'])) {
+				$language = $_SESSION['Config']['language'];
+			}
+			$_this->__l10n->get($language);
+			$_this->locale = $_this->__l10n->locale;
 		}
-		$_this->__l10n->get($language);
-		$_this->locale = $_this->__l10n->locale;
 
 		if(is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {

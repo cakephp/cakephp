@@ -80,6 +80,13 @@ class L10n extends Object {
 /**
  * Enter description here...
  *
+ * @var string
+ * @access public
+ */
+	var $found = false;
+/**
+ * Enter description here...
+ *
  * @var array
  * @access private
  */
@@ -335,13 +342,22 @@ class L10n extends Object {
  * @access private
  */
 	function __setLanguage($language = null) {
-		if ((!is_null($language)) && (isset($this->__l10nCatalog[$this->__l10nMap[$language]]))) {
+		if ((!is_null($language)) && (isset($this->__l10nMap[$language])) && (isset($this->__l10nCatalog[$this->__l10nMap[$language]]))) {
 			$this->language = $this->__l10nCatalog[$this->__l10nMap[$language]]['language'];
 			$this->languagePath = array(0 => $this->__l10nCatalog[$this->__l10nMap[$language]]['locale'],
 													1 => $this->__l10nCatalog[$this->__l10nMap[$language]]['localeFallback']);
 			$this->lang = $language;
 			$this->locale = $this->__l10nCatalog[$this->__l10nMap[$language]]['locale'];
 			$this->charset = $this->__l10nCatalog[$this->__l10nMap[$language]]['charset'];
+
+		} elseif ((!is_null($language)) && (isset($this->__l10nCatalog[$language]))) {
+			$this->language = $this->__l10nCatalog[$language]['language'];
+			$this->languagePath = array(0 => $this->__l10nCatalog[$language]['locale'],
+													1 => $this->__l10nCatalog[$language]['localeFallback']);
+			$this->lang = $language;
+			$this->locale = $this->__l10nCatalog[$language]['locale'];
+			$this->charset = $this->__l10nCatalog[$language]['charset'];
+
 		} elseif (defined('DEFAULT_LANGUAGE')) {
 			$this->language = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['language'];
 			$this->languagePath = array(0 => $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['locale'],
@@ -350,9 +366,11 @@ class L10n extends Object {
 			$this->locale = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['locale'];
 			$this->charset = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['charset'];
 		}
+
 		if($this->default) {
 			$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
 		}
+		$this->found = true;
 		Configure::write('Config.language', $this->lang);
 		Configure::write('charset', $this->charset);
 	}
@@ -376,6 +394,7 @@ class L10n extends Object {
 				if($this->default) {
 					$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
 				}
+				$this->found = true;
 				Configure::write('Config.language', $this->lang);
 				Configure::write('charset', $this->charset);
 				return true;
