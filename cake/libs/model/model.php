@@ -1455,8 +1455,7 @@ class Model extends Overloadable {
  * @see Model::findAll
  */
 	function findCount($conditions = null, $recursive = 0) {
-		
-		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
+		list($data) = $this->findAll($conditions, 'COUNT(' . $this->name . '.' . $this->primaryKey . ') AS count', null, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
 			return $data[0]['count'];
@@ -1859,7 +1858,7 @@ class Model extends Overloadable {
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
  * @return boolean True if the operation should continue, false if it should abort
  */
-	function beforeFind(&$queryData) {
+	function beforeFind($queryData) {
 		return true;
 	}
 /**
