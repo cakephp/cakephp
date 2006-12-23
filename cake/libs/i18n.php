@@ -95,12 +95,11 @@ class I18n extends Object {
 		$_this =& I18n::getInstance();
 		$language = Configure::read('Config.language');
 
-		if($language === null && !empty($_SESSION['Config']['locale'])) {
-			$_this->locale = $_SESSION['Config']['locale'];
-		} else{
-			$_this->__l10n->get($language);
-			$_this->locale = $_this->__l10n->locale;
+		if($language === null && !empty($_SESSION['Config']['language'])) {
+			$language = $_SESSION['Config']['language'];
 		}
+		$_this->__l10n->get($language);
+		$_this->locale = $_this->__l10n->locale;
 
 		if(is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {

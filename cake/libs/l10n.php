@@ -55,7 +55,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $lang = 'en-us';
+	var $lang = 'eng';
 /**
  * Enter description here...
  *
@@ -324,8 +324,9 @@ class L10n extends Object {
 	function get($language = null) {
 		if (!is_null($language)) {
 			return $this->__setLanguage($language);
+		} elseif ($this->__autoLanguage() === false){
+			return $this->__setLanguage($language);
 		}
-		return $this->__autoLanguage();
 	}
 /**
  * Enter description here...
@@ -352,6 +353,7 @@ class L10n extends Object {
 		if($this->default) {
 			$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
 		}
+		Configure::write('Config.language', $this->lang);
 		Configure::write('charset', $this->charset);
 	}
 /**
@@ -374,10 +376,12 @@ class L10n extends Object {
 				if($this->default) {
 					$this->languagePath = array(2 => $this->__l10nCatalog[$this->default]['localeFallback']);
 				}
-				break;
+				Configure::write('Config.language', $this->lang);
+				Configure::write('charset', $this->charset);
+				return true;
 			}
 		}
-		Configure::write('charset', $this->charset);
+		return false;
 	}
 }
 ?>
