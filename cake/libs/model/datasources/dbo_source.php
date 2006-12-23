@@ -1349,14 +1349,14 @@ class DboSource extends DataSource {
 		$c = 0;
 		$data = null;
 		$out = array();
-		$bool = array('and', 'or', 'and not', 'or not', 'xor', '||', '&&');
+		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
 		$join = ' AND ';
 
 		foreach($conditions as $key => $value) {
 			if (in_array(strtolower(trim($key)), $bool)) {
 				$join = ' ' . strtoupper($key) . ' ';
 				$value = $this->conditionKeysToString($value);
-				if (strpos($join, 'NOT')) {
+				if (strpos($join, 'NOT') !== false) {
 					$out[] = 'NOT (' . join(') ' . strtoupper($key) . ' (', $value) . ')';
 				} else {
 					$out[] = '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
