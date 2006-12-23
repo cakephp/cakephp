@@ -29,7 +29,8 @@ $modelObj =& ClassRegistry::getObject($modelKey);
 if(!empty($modelObj->alias)) {
 	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
 }?>
-<h1>View <?php echo $humanSingularName?>
+<h1>View <?php echo sprintf(__("View %s", true), $humanSingularName)?>
+
 </h1>
 <dl>
 <?php
@@ -58,15 +59,15 @@ foreach($fieldNames as $field => $value) {
 </dl>
 <ul class='actions'>
 <?php
-echo '<li>' . $html->link('Edit '.$humanSingularName, array('action' => 'edit', $data[$modelClass][$modelObj->primaryKey])) . '</li>';
-echo '<li>' . $html->link('Delete  '.$humanSingularName, array('action' => 'delete', $data[$modelClass][$modelObj->primaryKey]), null, 'Are you sure you want to delete id '.$data[$modelClass][$modelObj->primaryKey].' ?') . '</li>';
-echo '<li>' . $html->link('List  '.$humanPluralName, array('action' => 'index')) . '</li>';
-echo '<li>' . $html->link('New  '.$humanSingularName, array('action' => 'add')) . '</li>';
+echo '<li>' . $html->link(sprintf(__("Edit %s", true), $humanSingularName), array('action' => 'edit', $data[$modelClass][$modelObj->primaryKey])) . '</li>';
+echo '<li>' . $html->link(sprintf(__("Delete %s", true), $humanSingularName), array('action' => 'delete', $data[$modelClass][$modelObj->primaryKey]), null, sprintf(__("Are you sure you want to delete id %s?", true), $data[$modelClass][$modelObj->primaryKey])) . '</li>';
+echo '<li>' . $html->link(sprintf(__("List %s", true), $humanPluralName), array('action' => 'index')) . '</li>';
+echo '<li>' . $html->link(sprintf(__("New %s", true), $humanSingularName), array('action' => 'add')) . '</li>';
 
 foreach($fieldNames as $field => $value) {
 	if(isset($value['foreignKey'])) {
-		echo "<li>".$html->link( "List ".Inflector::humanize($value['controller']), array('controller' => $value['controller'], action => 'index')) . '</li>';
-		echo "<li>".$html->link( "Add ".Inflector::humanize($value['controller']), $path . $value['controller'] ."/add/")."</li>";
+		echo "<li>".$html->link(sprintf(__("List %s", true), Inflector::humanize($value['controller'])), array('controller' => $value['controller'], action => 'index')) . '</li>';
+		echo "<li>".$html->link(sprintf(__("Add %s", true), Inflector::humanize($value['controller'])), $path . $value['controller'] ."/add/")."</li>";
 	}
 }?>
 </ul>
@@ -78,7 +79,7 @@ foreach ($modelObj->hasOne as $associationNameName => $relation) {
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
 	$new = true;
-	echo "<div class='related'><H2>Related ".Inflector::humanize($associationNameName)."</H2>";
+	echo "<div class='related'><H2>".sprintf(__("Related %s", true), Inflector::humanize($associationNameName))."</H2>";
 	echo "<dl>";
 	if(isset($data[$associationNameName]) && is_array($data[$associationNameName])) {
 		foreach($data[$associationNameName] as $field => $value) {
@@ -94,9 +95,9 @@ foreach ($modelObj->hasOne as $associationNameName => $relation) {
 		}
 		echo "</dl>";
 		if($new == null) {
-			echo "<ul class='actions'><li>".$html->link('Edit '.Inflector::humanize($associationNameName), $path . $otherControllerPath."/edit/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
+			echo "<ul class='actions'><li>".$html->link(sprintf(__("Edit %s", true), Inflector::humanize($associationNameName)), $path . $otherControllerPath."/edit/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
 		} else {
-			echo "<ul class='actions'><li>".$html->link('New '.Inflector::humanize($associationNameName), $path . $otherControllerPath."/add/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
+			echo "<ul class='actions'><li>".$html->link(sprintf(__("New %s", true), Inflector::humanize($associationNameName)), $path . $otherControllerPath."/add/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
 		}
 	}
 }
@@ -106,14 +107,14 @@ foreach ($modelObj->hasOne as $associationNameName => $relation) {
 <?php
 $relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
 foreach($relations as $associationName => $relation) {
-	
+
 	$otherModelKey = Inflector::underscore($relation['className']);
 	$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
-	
+
 	$otherModelName = $relation['className'];
 
-	echo "<div class='related'><h2>Related ".Inflector::humanize($otherControllerPath)."</h2>";
+	echo "<div class='related'><h2>".sprintf(__("Related %s", true), Inflector::humanize($otherControllerPath))."</h2>";
 	if(isset($data[$associationName][0]) && is_array($data[$associationName])) {?>
 		<table class="inav" cellspacing="0">
 			<tr>
@@ -122,7 +123,7 @@ foreach($relations as $associationName => $relation) {
 		foreach($data[$associationName][0] as $column => $value) {
 			if(false !== strpos($column, "_id")) {
 				$column = substr($column, 0, strpos($column, "_id" ));
-			} 
+			}
 			echo "<th>".Inflector::humanize($column)."</th>";
 		}?>
 				<th>Actions</th>
@@ -134,21 +135,15 @@ foreach($relations as $associationName => $relation) {
 				echo "<td>".$value."</td>";
 			}
 			if (isset($otherModelObj->{$associationName})) {?>
-				<td class="listactions"><?php echo $html->link('View', $path . $otherControllerPath .
-																"/view/{$row[$otherModelObj->primaryKey]}/")?>
-										<?php echo $html->link('Edit', $path . $otherControllerPath .
-																"/edit/{$row[$otherModelObj->primaryKey]}/")?>
-										<?php echo $html->link('Delete', $path . $otherControllerPath .
-																"/delete/{$row[$otherModelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$otherModelObj->primaryKey].' ?')?>
+				<td class="listactions"><?php echo $html->link(__('View', true), $path . $otherControllerPath . "/view/{$row[$otherModelObj->primaryKey]}/")?>
+				<?php echo $html->link(__('Edit', true), $path . $otherControllerPath . "/edit/{$row[$otherModelObj->primaryKey]}/")?>
+				<?php echo $html->link(__('Delete', true), $path . $otherControllerPath . "/delete/{$row[$otherModelObj->primaryKey]}/", null, sprintf(__("Are you sure you want to delete id %s?", true), $row[$otherModelObj->primaryKey]))?>
 				</td>
 <?php
 			} else {?>
-				<td class="listactions"><?php echo $html->link('View', $path . $otherControllerPath .
-																"/view/{$row[$otherModelObj->primaryKey]}/")?>
-										<?php echo $html->link('Edit', $path . $otherControllerPath .
-																"/edit/{$row[$otherModelObj->primaryKey]}/")?>
-										<?php echo $html->link('Delete', $path . $otherControllerPath .
-																"/delete/{$row[$otherModelObj->primaryKey]}/", null, 'Are you sure you want to delete id '.$row[$otherModelObj->primaryKey].' ?')?>
+				<td class="listactions"><?php echo $html->link(__('View', true), $path . $otherControllerPath . "/view/{$row[$otherModelObj->primaryKey]}/")?>
+				<?php echo $html->link(__('Edit', true), $path . $otherControllerPath . "/edit/{$row[$otherModelObj->primaryKey]}/")?>
+				<?php echo $html->link(__('Delete', true), $path . $otherControllerPath . "/delete/{$row[$otherModelObj->primaryKey]}/", null, sprintf(__("Are you sure you want to delete id %s?", true), $row[$otherModelObj->primaryKey]))?>
 				</td>
 <?php
 			}
@@ -157,6 +152,6 @@ foreach($relations as $associationName => $relation) {
 	}?>
 </table>
 <ul class="actions">
-	<?php echo "<li>".$html->link('New '.Inflector::humanize($associationName), $path . $otherControllerPath . '/add') . '</li>'; ?>
+	<?php echo "<li>".$html->link(__('New ', true).Inflector::humanize($associationName), $path . $otherControllerPath . '/add') . '</li>'; ?>
 </ul></div>
 <?php }?>

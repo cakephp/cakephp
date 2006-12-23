@@ -24,7 +24,9 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Missing view</h1>
-<p class="error">You are seeing this error because the view for <em><?php echo $controller.'Controller';?>::<?php echo $action;?>()</em> could not be found.</p>
-<p><span class="notice">If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_view.thtml"; ?>.</span></p>
-<p><span class="notice"><strong>Fatal</strong>: Confirm you have created the file : <?php echo $file;?></p>
+<h1><?php __('Missing view'); ?></h1>
+<p class="error"><?php echo sprintf(__('You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found.', true), $controller.'Controller', $action);?></p>
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_view.thtml");?></span></p>
+<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
+<?php echo sprintf(__('Confirm you have created the file: %s', true), $file);?></span></p>

@@ -28,15 +28,15 @@
 <?php
 echo $form->create($modelClass);
 echo $form->inputs($fieldNames);
-echo $form->submit('Add'); ?>
+echo $form->submit(__('Add', true)); ?>
 </form>
 <ul class='actions'>
-<?php echo "<li>".$html->link('List  '.$humanPluralName, array('action' => 'index'))."</li>"; ?>
+<?php echo "<li>".$html->link(__('List  ', true).$humanPluralName, array('action' => 'index'))."</li>"; ?>
 <?php
 foreach($fieldNames as $field => $value) {
 	if(isset($value['foreignKey'])) {
-		echo "<li>".$html->link( "View ".Inflector::humanize($value['controller']), $path . Inflector::underscore($value['controller'])."/index/")."</li>";
-		echo "<li>".$html->link( "Add ".Inflector::humanize($value['modelKey']), $path . Inflector::underscore($value['controller'])."/add/")."</li>";
+		echo "<li>".$html->link(__("View ", true).Inflector::humanize($value['controller']), $path . Inflector::underscore($value['controller'])."/index/")."</li>";
+		echo "<li>".$html->link(__("Add ", true).Inflector::humanize($value['modelKey']), $path . Inflector::underscore($value['controller'])."/add/")."</li>";
 	}
 }
 ?>

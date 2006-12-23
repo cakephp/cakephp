@@ -24,11 +24,11 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<p class="notice">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . $filePresent = ' ' : ' not present.'; ?></p>
+<p class="notice"><?php echo sprintf(__('Your database configuration file is %s.', true), file_exists(CONFIGS.'database.php') ? __('present', true) . $filePresent = ' ' : __('not present', true));?></p>
 <?php if (!empty($filePresent)):?>
 <?php uses('model' . DS . 'connection_manager'); $db = ConnectionManager::getInstance(); ?>
 <?php $connected = $db->getDataSource('default'); ?>
-<p class="notice">Cake<?php echo $connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>
+<p class="notice"><?php echo sprintf(__('Cake %s connect to the database.', true), $connected->isConnected() ? __('is able to', true) : __('is not able to', true));?></p>
 <br />
 <?php endif; ?>
 <h2><?php __('CakePHP release information is on CakeForge'); ?></h2>

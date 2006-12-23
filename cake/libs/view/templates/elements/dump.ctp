@@ -25,7 +25,7 @@
  */
 ?>
 <div id="cakeControllerDump">
-	<h2>Controller dump:</h2>
+	<h2><?php __('Controller dump:'); ?></h2>
 		<pre>
 			<?php print_r($this->controller); ?>
 		</pre>

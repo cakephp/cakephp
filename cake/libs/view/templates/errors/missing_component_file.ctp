@@ -24,10 +24,12 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Missing Component File</h1>
-<p class="error">You are seeing this error because the component file can't be found or doesn't exist.</p>
-<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_component_file.thtml"; ?>.</span></p>
-<p><span class="notice"><strong>Fatal</strong>: Create the class below in file : <?php echo APP_DIR.DS."controllers".DS."components".DS.$file; ?></p>
+<h1><?php __('Missing Component File'); ?></h1>
+<p class="error"><?php __("You are seeing this error because the component file can not be found or does not exist."); ?></p>
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_component_file.thtml");?></span></p>
+<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
+<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS."components".DS.$file);?></span></p>
 <p>&lt;?php<br />
 class <?php echo $component;?>Component extends Object {<br />
 

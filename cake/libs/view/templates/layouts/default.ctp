@@ -37,7 +37,7 @@
 <body>
 	<div id="container">
 		<div id="header">
-			<h1>CakePHP Rapid Development</h1>
+			<h1><?php __('CakePHP Rapid Development'); ?></h1>
 		</div>
 		<div id="content">
 			<?php if ($session->check('Message.flash'))

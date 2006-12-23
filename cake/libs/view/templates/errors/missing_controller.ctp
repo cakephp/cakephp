@@ -24,10 +24,13 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Missing controller</h1>
-<p class="error">You are seeing this error because controller <em><?php echo $controller;?></em> could not be found.</p>
-<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_controller.thtml"; ?>.</span></p>
-<p><span class="notice"><strong>Fatal</strong>: Create the class below in file : <?php echo APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php"; ?></p>
+<h1><?php __('Missing controller'); ?></h1>
+<p class="error"><?php echo sprintf(__('You are seeing this error because controller <em>%s</em> could not be found.', true), $controller);?></p>
+
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_controller.thtml");?></span></p>
+<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
+<?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php");?></span></p>
 <p>&lt;?php<br />
 class <?php echo $controller;?> extends AppController {<br />
 &nbsp;&nbsp;&nbsp;var $name = '<?php echo $controllerName;?>';<br />

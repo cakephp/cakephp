@@ -24,7 +24,10 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Requires a Database Connection</h1>
-<p class="error">Missing Database Connection: <?php echo $model;?> requires a database connection</p>
-<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_database.thtml"; ?>.</span></p>
-<p><span class="notice"><strong>Fatal</strong>: Confirm you have created the file : <?php echo APP_DIR.DS."config".DS."database.php"; ?></p>
+<h1><?php __('Requires a Database Connection'); ?></h1>
+<?php echo sprintf(__('Confirm you have created the file : %s.', true), APP_DIR.DS."config".DS."database.php");?>
+<p class="error"><?php echo sprintf(__('Missing Database Connection: %s requires a database connection', true), $model);?></p>
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s.', true), APP_DIR.DS."views/errors/missing_database.thtml");?></span></p>
+<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
+<?php echo sprintf(__('Confirm you have created the file : %s.', true), APP_DIR.DS."config".DS."database.php");?></span></p>

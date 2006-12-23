@@ -24,7 +24,9 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Missing Layout</h1>
-<p class="error">You are seeing this error because the layout file <?php echo $file;?> can't be found or doesn't exist.</p>
-<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/missing_layout.thtml"; ?>.</span></p>
-<p><span class="notice"><strong>Fatal</strong>: Confirm you have created the file : <?php echo $file;?></p>
+<h1><?php __('Missing Layout'); ?></h1>
+<p class="error"><?php echo sprintf(__("You are seeing this error because the layout file %s can not be found or does not exist.", true), $file);?></p>
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_layout.thtml");?></span></p>
+<p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
+<?php echo sprintf(__('Confirm you have created the file: %s', true), $file);?></span></p>

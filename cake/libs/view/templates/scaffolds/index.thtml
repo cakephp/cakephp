@@ -37,7 +37,7 @@ if(!empty($modelObj->alias)) {
 	<?php foreach ($fieldNames as $fieldName) {?>
 		<th><?php echo $fieldName['label'];?></th>
 	<?php }?>
-		<th>Actions</th>
+		<th><?php __('Actions'); ?></th>
 	</tr>
 </thead>
 <tbody>
@@ -72,9 +72,9 @@ if(is_array($data)) {
 <?php } ?>
 		<td class="actions">
 			<?php $id = $row[$modelClass][$modelObj->primaryKey]; ?>
-			<?php echo $html->link('View', array('action' => 'view', $id)) ?>
-			<?php echo $html->link('Edit', array('action' => 'edit', $id)) ?>
-			<?php echo $html->link('Delete', array('action' => 'delete', $id), null, 'Are you sure you want to delete id '.$id.' ?') ?>
+			<?php echo $html->link(__('View', true), array('action' => 'view', $id)) ?>
+			<?php echo $html->link(__('Edit', true), array('action' => 'edit', $id)) ?>
+			<?php echo $html->link(__('Delete', true), array('action' => 'delete', $id), null, sprintf(__("Are you sure you want to delete id %s?", true), $id)) ?>
 		</td>
 		</tr>
 <?php
@@ -83,5 +83,5 @@ if(is_array($data)) {
 </tbody>
 </table>
 <ul class="actions">
-	<li><?php echo $html->link('New '.$humanSingularName, array('action' => 'add')); ?></li>
+	<li><?php echo $html->link(__('New ', true).$humanSingularName, array('action' => 'add')); ?></li>
 </ul>

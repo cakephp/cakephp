@@ -252,7 +252,7 @@ class Controller extends Object {
 			$r = null;
 
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
-				die (__("Controller::__construct() : Can't get or parse my own class name, exiting."));
+				die (__("Controller::__construct() : Can not get or parse my own class name, exiting."));
 			}
 			$this->name = $r[1];
 		}

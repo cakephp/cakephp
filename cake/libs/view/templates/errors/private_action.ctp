@@ -24,6 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h1>Private Method in <?php echo $controller;?></h1>
-<p class="error">You are seeing this error because the private class method <em><?php echo $action;?></em> should not be accessed directly</p>
-<p><span class="notice"><strong>Notice:</strong> If you want to customize this error message, create <?php echo APP_DIR.DS."views/errors/private_action.thtml"; ?>.</span></p>
+<h1><?php echo sprintf(__('Private Method in %s', true), $controller);?></h1>
+<p class="error"><?php echo sprintf(__("You are seeing this error because the private class method <em>%s</em> should not be accessed directly.", true), $action);?></p>
+<p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/private_action.thtml");?></span></p>
