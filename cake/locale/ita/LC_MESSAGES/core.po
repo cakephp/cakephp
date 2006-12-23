@@ -1,0 +1,346 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP 1.2.x.x\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2006-12-23 01:10-0600\n"
+"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: Italian\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: cake/libs/overloadable_php4.php:63
+#: ;96 cake/libs/overloadable_php5.php:44
+#: ;56
+msgid "Magic method handler __call__ not defined in %s"
+msgstr "Il metodo magico __call__ non è definito in %s"
+
+#: cake/libs/controller/components/acl_base.php:49
+#: cake/libs/controller/components/dbacl/models/aclnode.php:55
+#: ;125;200;219
+msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
+msgstr "[acl_base] Il costruttore della classe AclBase è stato chiamato, o la classe è stata istanziata. Questa classe deve rimanere astratta. Per favore, fai riferimento alla documentazione di Cake per la configurazione ACL."
+
+#: cake/basics.php:96
+msgid "Plugins must have a class named %s"
+msgstr "I plugins deve avere una classe chiamata %s"
+
+#: cake/basics.php:1265
+msgid "Deprecated: Use Set::countDim instead"
+msgstr "Deprecato: Utilizzare Set::countDim al suo posto"
+
+#: cake/libs/configure.php:213
+msgid "Configure::load() - %s.php not found"
+msgstr "Configure::load() - %s.php non trovato"
+
+#: cake/libs/configure.php:219
+msgid "Configure::load() - no variable $config found in %s.php"
+msgstr "configure::load() - nessuna variabile $config trovata in %s.php"
+
+#: cake/libs/error.php:123
+msgid "The requested address %s was not found on this server."
+msgstr "L'indirizzo richiesto %s non è stato trovato su questo server."
+
+#: cake/libs/folder.php:281
+msgid "chmodr() File exists"
+msgstr "chmodr() Il file esiste"
+
+#: cake/libs/folder.php:308
+msgid "mkdirr() File exists"
+msgstr "mkdirr() Il file esiste"
+
+#: cake/libs/validation.php:302
+msgid "You must define the $operator parameter for Validation::comparison()"
+msgstr "Devi definire il parametro $operator per Validation::comparison()"
+
+#: cake/libs/validation.php:325
+msgid "You must define a regular expression for Validation::custom()"
+msgstr "Devi definire una espressione regolare per Validation::custom()"
+
+#: cake/libs/controller/controller.php:255
+msgid "Controller::__construct() : Can't get or parse my own class name, exiting."
+msgstr "Controller::__construct(): Non è possibile prendere o parsare il mio nome della classe, uscita."
+
+#: cake/libs/controller/controller.php:605
+msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
+msgstr "Deprecato: Utilizza Controller::set(\"title\", \"...\") al suo posto"
+
+#: cake/libs/controller/components/security.php:352
+msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+msgstr "SecurityComponent::loginCredentials() - Il server non supporta l'autenticazione digest"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:85
+msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+msgstr "La chiave dei permessi ACO non esiste in DB_ACL::check()"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:144
+msgid "DB_ACL::allow() - Invalid node"
+msgstr "DB_ACL::allow() - Nodo non valido"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:162
+msgid "DB_ACL::allow() - Invalid ACO action"
+msgstr "DB_ACL::allow() - Azione ACO non valida"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:231
+msgid "Null id provided in DB_ACL::get"
+msgstr "E' stato fornito un id nullo in DB_ACL::get"
+
+#: cake/libs/controller/components/dbacl/models/aclnode.php:70
+msgid "Null parent in %s::create()"
+msgstr "Genitore nullo in %s::create()"
+
+#: cake/libs/model/connection_manager.php:110
+msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+msgstr "ConnectionManager::getDataSource - La sorgente dati %s non esiste"
+
+#: cake/libs/model/connection_manager.php:163
+msgid "Unable to load DataSource file %s.php"
+msgstr "Non è possibile caricare il file DataSource %s.php"
+
+#: cake/libs/model/datasources/dbo_source.php:305
+msgid "Deprecated: Use DboSource::fetchRow() instead"
+msgstr "Deprecato: Utilizza DboSource::fetchRow()"
+
+#: cake/libs/model/datasources/dbo_source.php:313
+msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
+msgstr "Deprecato: Utilizza DboSource::fetchRow($sql)"
+
+#: cake/libs/model/datasources/dbo_source.php:1557
+msgid "Implement in DBO"
+msgstr "Implementa in DBO"
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:79
+msgid "Please implement DBO::disconnect() first."
+msgstr "Per favore, implementa DBO::disconnect() prima"
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:131
+msgid "Please implement DBO_Pear::tablesList() for your database driver."
+msgstr "Per favore, implementa DBO::disconnect() per il tuo database driver"
+
+#: cake/libs/view/helper.php:134
+msgid "Method %s::%s does not exist"
+msgstr "Il metodo %s::%s non esiste"
+
+#: cake/libs/view/view.php:325
+msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+msgstr "Errore nella vista %s, ricevuto: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:429
+msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+msgstr "Errore nel layout %s, ricevuto: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:488
+msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
+msgstr "(View::setLayout) Deprecato: Utilizza $this->layout = \"...\" al suo posto"
+
+#: cake/libs/view/helpers/form.php:88
+msgid "Model %s does not exist"
+msgstr "Il modello %s non esiste"
+
+#: cake/libs/view/helpers/form.php:470
+msgid "Don't use me yet"
+msgstr "Non utilizzarmi per ora"
+
+#: cake/libs/view/helpers/form.php:662
+msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
+msgstr "Deprecato: Utilizza FormHelper::input() oppure FormHelper::text() al suo posto"
+
+#: cake/libs/view/helpers/form.php:686
+msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
+msgstr "Deprecato: Utilizza FormHelper::input() oppure FormHelper::checkbox() al suo posto"
+
+#: cake/libs/view/helpers/form.php:709
+#: ;732;754;777;834
+msgid "Deprecated: Use FormHelper::input() instead"
+msgstr "Deprecato: Utilizza FormHelper::input() al suo posto"
+
+#: cake/libs/view/helpers/form.php:803
+msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
+msgstr "Deprecato: Utilizza FormHelper::input() oppure FormHelper::select() al suo posto"
+
+#: cake/libs/view/helpers/form.php:826
+msgid "Deprecated: Use FormHelper::submit() instead"
+msgstr "Deprecato: Utilizza FormHelper::submit() al suo posto"
+
+#: cake/libs/view/helpers/form.php:951
+msgid "Deprecated: Use FormHelper::label() instead"
+msgstr "Deprecato: Utilizza FormHelper::label() al suo posto"
+
+#: cake/libs/view/helpers/html.php:673
+msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
+msgstr "(HtmlHelper::formTag) Deprecato: Utilizza FormHelper::create al suo posto"
+
+#: cake/libs/view/helpers/html.php:719
+msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
+msgstr "(HtmlHelper::linkEmail) Deprecato: Utilizza HtmlHelper::link al suo posto"
+
+#: cake/libs/view/helpers/javascript.php:152
+msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
+msgstr "(JavascriptHelper::linkOut) Deprecato: Utilizza JavascriptHelper::link al suo posto"
+
+#: cake/scripts/acl.php:91
+msgid ""
+"Unable to find /app/config/database.php.  Please create it before continuing.\n"
+"\n"
+msgstr ""
+"Impossibile trovare /app/config/database.php. Per favore, crearlo prima di continuare.\n"
+"\n"
+
+#: cake/scripts/bake.php:1892
+msgid "File exists, overwrite?"
+msgstr "Il file esiste, lo sovrascrivo?"
+
+#: cake/scripts/bake.php:1896
+msgid "Quitting."
+msgstr "Uscita."
+
+#: cake/scripts/bake.php:1902
+msgid "Skip"
+msgstr "Salta"
+
+#: cake/scripts/bake.php:1910
+msgid "Wrote"
+msgstr "Ha scritto"
+
+#: cake/scripts/bake.php:1913
+msgid "Error! Could not write to"
+msgstr "Errore! Impossibile scrivere su"
+
+#: cake/scripts/templates/skel/webroot/css.php:68
+#: ;76
+msgid "Wrong file name."
+msgstr "Nome del file errato."
+
+#: cake/libs/view/templates/pages/home.ctp:34
+msgid "CakePHP release information is on CakeForge"
+msgstr "Le informazioni sui rilasci di CakePHP sono su CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:35
+msgid "Read the release notes and get the latest version"
+msgstr "Leggi le note di rilascio e scarica l'ultima versione"
+
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr "Modifica di questa Pagina"
+
+#: cake/libs/view/templates/pages/home.ctp:38
+msgid "To change the content of this page, create: /app/views/pages/home.thtml."
+msgstr "Per modifica il contenuto di questa pagina, crea: /app/views/pages/home.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:39
+msgid "To change its layout, create: /app/views/layouts/default.thtml."
+msgstr "Per cambiare questo layout, crea: /app/views/layouts/default.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:40
+msgid "See the views section of the manual for more info."
+msgstr "Consulta la sezione del manuale riguardante le viste per ulteriori informazioni"
+
+#: cake/libs/view/templates/pages/home.ctp:41
+msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
+msgstr "Puoi anche aggiungere degli stili CSS per le tue pagine in: app/webroot/css/."
+
+#: cake/libs/view/templates/pages/home.ctp:43
+msgid "More about Cake"
+msgstr "Ulteriori informazioni su Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:45
+msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+msgstr "CakePHP è un rapid development framework per PHP che utilizza comuni e conosciuti metodi di sviluppo come Active Record, Association Data Mapping, Front Controller e MVC"
+
+#: cake/libs/view/templates/pages/home.ctp:48
+msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+msgstr "Il nostro obiettivo primario è di fornire un framework strutturato che abilita gli utenti PHP a tutti i livelli di sviluppare rapidamente applicazioni robuste, senza alcuna perdita di flessibilità"
+
+#: cake/libs/view/templates/pages/home.ctp:51
+msgid "Cake Software Foundation"
+msgstr "Cake Software Foundation"
+
+#: cake/libs/view/templates/pages/home.ctp:52
+msgid "Promoting development related to CakePHP"
+msgstr "Promuovere lo sviluppo con CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:53
+msgid "The Bakery"
+msgstr "The Bakery"
+
+#: cake/libs/view/templates/pages/home.ctp:54
+msgid "Everything CakePHP"
+msgstr "Everything CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:55
+msgid "Book Store"
+msgstr "Negozio di Libri"
+
+#: cake/libs/view/templates/pages/home.ctp:56
+msgid "Recommended Software Books"
+msgstr "Libri sui Software Raccomandati"
+
+#: cake/libs/view/templates/pages/home.ctp:57
+msgid "CakeSchwag"
+msgstr "CakeSchwag"
+
+#: cake/libs/view/templates/pages/home.ctp:58
+msgid "Get your own CakePHP gear - Doughnate to Cake"
+msgstr "Ottieni il tuo gadget di CakePHP - Dona a Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:59
+#: cake/libs/view/templates/pages/home.ctp:60
+msgid "The Rapid Development Framework"
+msgstr "Il Framework di Sviluppo Rapido"
+
+#: cake/libs/view/templates/pages/home.ctp:61
+msgid "CakePHP Manual"
+msgstr "Manuale di CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:62
+msgid "Your Rapid Development Cookbook"
+msgstr "Il tuo Libro di Ricette per lo Sviluppo Rapido"
+
+#: cake/libs/view/templates/pages/home.ctp:63
+msgid "CakePHP Wiki"
+msgstr "Il Wiki di CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:64
+msgid "The Community for CakePHP"
+msgstr "La Comunità di CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:65
+msgid "CakePHP API"
+msgstr "Le API di CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:66
+msgid "Docblock Your Best Friend"
+msgstr "Dockblock, il Tuo Miglior Amico"
+
+#: cake/libs/view/templates/pages/home.ctp:67
+msgid "CakeForge"
+msgstr "CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:68
+msgid "Open Development for CakePHP"
+msgstr "Sviluppo Aperto per CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:69
+msgid "CakePHP Trac"
+msgstr "CakePHP Trac"
+
+#: cake/libs/view/templates/pages/home.ctp:70
+msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr "Per lo Sviluppo di CakePHP (Tickets, navigatore SVN, Roadmap, Changelogs)"
+
+#: cake/libs/view/templates/pages/home.ctp:71
+msgid "CakePHP Google Group"
+msgstr "Gruppo Google di CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:72
+msgid "Community mailing list"
+msgstr "Mailing list della Comunità"
+
+#: cake/libs/view/templates/pages/home.ctp:74
+msgid "Live chat about CakePHP"
+msgstr "Chat dal vivo su CakePHP"
+
