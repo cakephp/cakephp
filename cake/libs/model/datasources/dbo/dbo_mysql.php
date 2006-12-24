@@ -59,13 +59,15 @@ class DboMysql extends DboSource {
  *
  * @var array
  */
-	var $_baseConfig = array('persistent' => true,
-								'host' => 'localhost',
-								'login' => 'root',
-								'password' => '',
-								'database' => 'cake',
-								'port' => '3306',
-								'connect' => 'mysql_pconnect');
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '3306',
+		'connect' => 'mysql_pconnect'
+	);
 /**
  * MySQL column definition
  *
