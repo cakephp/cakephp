@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 22:43-0600\n"
-"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"PO-Revision-Date: 2006-12-23 09:48-0600\n"
+"Last-Translator: Eric_Zou <xeboy@126.com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -17,18 +17,18 @@ msgstr ""
 #: ;96 cake/libs/overloadable_php5.php:44
 #: ;56
 msgid "Magic method handler __call__ not defined in %s"
-msgstr "åœ¨%sä¸­æ²¡æœ‰å®šä¹‰Magic method handler __call__ "
+msgstr "ÔÚ%sÖĞÃ»ÓĞ¶¨ÒåMagic method handler __call__ "
 
 #: cake/libs/controller/components/acl_base.php:49
 #: cake/libs/controller/components/dbacl/models/aclnode.php:55
 #: ;125;200;219
 msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
-msgstr "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. è¯·å‚è€ƒCakeçš„æ–‡æ¡£æŸ¥æ‰¾ï¼¡ï¼£ï¼¬çš„é…ç½®æ–¹æ³•."
+msgstr "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Çë²Î¿¼CakeµÄÎÄµµ²éÕÒ£Á£Ã£ÌµÄÅäÖÃ·½·¨."
 
 #: cake/libs/view/templates/errors/missing_action.ctp:30
 #: cake/libs/view/templates/errors/missing_connection.ctp:31
 msgid "If you want to customize this error message, create %s."
-msgstr "å¦‚æœæ‚¨æƒ³ä¸ªæ€§åˆ¶å®šæ‚¨çš„errorä¿¡æ¯,è¯·åˆ›å»º%s."
+msgstr "Èç¹ûÄúÏë¸öĞÔÖÆ¶¨ÄúµÄerrorĞÅÏ¢,Çë´´½¨%s."
 
 #: cake/libs/view/templates/errors/missing_action.ctp:31
 #: cake/libs/view/templates/errors/missing_component_class.ctp:33
@@ -42,7 +42,7 @@ msgstr "å¦‚æœæ‚¨æƒ³ä¸ªæ€§åˆ¶å®šæ‚¨çš„errorä¿¡æ¯,è¯·åˆ›å»º%s."
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
 #: cake/libs/view/templates/errors/missing_view.ctp:31
 msgid "Fatal"
-msgstr "è‡´å‘½çš„"
+msgstr "ÖÂÃüµÄ"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:31
 #: cake/libs/view/templates/errors/missing_component_file.ctp:29
@@ -58,7 +58,7 @@ msgstr "è‡´å‘½çš„"
 #: cake/libs/view/templates/errors/private_action.ctp:29
 #: cake/libs/view/templates/errors/scaffold_error.ctp:29
 msgid "Notice"
-msgstr "æ³¨æ„"
+msgstr "×¢Òâ"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:32
 #: cake/libs/view/templates/errors/missing_component_file.ctp:30
@@ -73,7 +73,7 @@ msgstr "æ³¨æ„"
 #: cake/libs/view/templates/errors/private_action.ctp:30
 #: cake/libs/view/templates/errors/scaffold_error.ctp:30
 msgid "If you want to customize this error message, create %s"
-msgstr "å¦‚æœæ‚¨æƒ³ä¸ªæ€§åˆ¶å®šæ‚¨çš„errorä¿¡æ¯,è¯·åˆ›å»º%s."
+msgstr "Èç¹ûÄúÏë¸öĞÔÖÆ¶¨ÄúµÄerrorĞÅÏ¢,Çë´´½¨%s."
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:34
 #: cake/libs/view/templates/errors/missing_component_file.ctp:32
@@ -82,93 +82,93 @@ msgstr "å¦‚æœæ‚¨æƒ³ä¸ªæ€§åˆ¶å®šæ‚¨çš„errorä¿¡æ¯,è¯·åˆ›å»º%s."
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:32
 #: cake/libs/view/templates/errors/missing_model.ctp:32
 msgid "Create the class below in file: %s"
-msgstr "åœ¨%sæ–‡ä»¶ä¸­åˆ›å»ºä¸‹åˆ—class"
+msgstr "ÔÚ%sÎÄ¼şÖĞ´´½¨ÏÂÁĞclass"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:32
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
 #: cake/libs/view/templates/errors/missing_view.ctp:32
 msgid "Confirm you have created the file: %s"
-msgstr "ç¡®è®¤æ‚¨å·²ç»åˆ›å»ºäº†è¯¥%sæ–‡ä»¶"
+msgstr "È·ÈÏÄúÒÑ¾­´´½¨ÁË¸Ã%sÎÄ¼ş"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:34
 #: cake/libs/view/templates/scaffolds/edit.thtml:39
 msgid "List  "
-msgstr "åˆ—è¡¨"
+msgstr "ÁĞ±í"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:38
 #: cake/libs/view/templates/scaffolds/edit.thtml:43
 msgid "View "
-msgstr "æŸ¥çœ‹"
+msgstr "²é¿´"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:39
 #: cake/libs/view/templates/scaffolds/edit.thtml:44
 msgid "Add "
-msgstr "å¢åŠ "
+msgstr "Ôö¼Ó"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:75
 #: cake/libs/view/templates/scaffolds/view.thtml:138
 #: ;144
 msgid "View"
-msgstr "æŸ¥çœ‹"
+msgstr "²é¿´"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:76
 #: cake/libs/view/templates/scaffolds/view.thtml:139
 #: ;145
 msgid "Edit"
-msgstr "ç¼–è¾‘"
+msgstr "±à¼­"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:140
 #: ;146
 msgid "Delete"
-msgstr "åˆ é™¤"
+msgstr "É¾³ı"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 #: ;140;146
 msgid "Are you sure you want to delete id %s?"
-msgstr "æ‚¨ç¡®å®šè¦åˆ é™¤è®°å½•id %s?"
+msgstr "ÄúÈ·¶¨ÒªÉ¾³ı¼ÇÂ¼id %s?"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:86
 #: cake/libs/view/templates/scaffolds/view.thtml:155
 msgid "New "
-msgstr "æ–°å»º"
+msgstr "ĞÂ½¨"
 
 #: cake/basics.php:96
 msgid "Plugins must have a class named %s"
-msgstr "Pluginså¿…é¡»æœ‰ä¸€ä¸ªåä¸º%sçš„class"
+msgstr "Plugins±ØĞëÓĞÒ»¸öÃûÎª%sµÄclass"
 
 #: cake/basics.php:1265
 msgid "Deprecated: Use Set::countDim instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨Use Set::countDimä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃUse Set::countDim´úÌæ"
 
 #: cake/libs/configure.php:213
 msgid "Configure::load() - %s.php not found"
-msgstr "æ— æ³•æ‰¾åˆ°Configure::load() - %s.php"
+msgstr "ÎŞ·¨ÕÒµ½Configure::load() - %s.php"
 
 #: cake/libs/configure.php:219
 msgid "Configure::load() - no variable $config found in %s.php"
-msgstr "Configure::load() - æ²¡æœ‰åœ¨%s.phpä¸­æ‰¾åˆ°å˜é‡$config"
+msgstr "Configure::load() - Ã»ÓĞÔÚ%s.phpÖĞÕÒµ½±äÁ¿$config"
 
 #: cake/libs/error.php:123
 msgid "The requested address %s was not found on this server."
-msgstr "æ‚¨è¯·æ±‚çš„åœ°å€æ— æ³•åœ¨æœåŠ¡å™¨ä¸Šæ‰¾åˆ°"
+msgstr "ÄúÇëÇóµÄµØÖ·ÎŞ·¨ÔÚ·şÎñÆ÷ÉÏÕÒµ½"
 
 #: cake/libs/folder.php:281
 msgid "chmodr() File exists"
-msgstr "chmodr()æ–‡ä»¶å­˜åœ¨"
+msgstr "chmodr()ÎÄ¼ş´æÔÚ"
 
 #: cake/libs/folder.php:308
 msgid "mkdirr() File exists"
-msgstr "mkdirr()æ–‡ä»¶å­˜åœ¨"
+msgstr "mkdirr()ÎÄ¼ş´æÔÚ"
 
 #: cake/libs/validation.php:302
 msgid "You must define the $operator parameter for Validation::comparison()"
-msgstr "æ‚¨ä½¿ç”¨Validation::comparison()æ—¶,å¿…é¡»å®šä¹‰$operatorçš„å‚æ•°"
+msgstr "ÄúÊ¹ÓÃValidation::comparison()Ê±,±ØĞë¶¨Òå$operatorµÄ²ÎÊı"
 
 #: cake/libs/validation.php:325
 msgid "You must define a regular expression for Validation::custom()"
-msgstr "æ‚¨ä½¿ç”¨Validation::custom()æ—¶,å¿…é¡»å®šä¹‰ä¸€ä¸ªregular expression"
+msgstr "ÄúÊ¹ÓÃValidation::custom()Ê±,±ØĞë¶¨ÒåÒ»¸öregular expression"
 
 #: cake/libs/controller/controller.php:255
 msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
@@ -176,23 +176,23 @@ msgstr "Controller::__construct() : Can not get or parse my own class name, exit
 
 #: cake/libs/controller/controller.php:605
 msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨ã€€Use Controller::set(\"title\", \"...\")ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃ¡¡Use Controller::set(\"title\", \"...\")´úÌæ"
 
 #: cake/libs/controller/components/security.php:352
 msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
-msgstr "SecurityComponent::loginCredentials() - æœåŠ¡å™¨ä¸æ”¯æŒdigestè®¤è¯"
+msgstr "SecurityComponent::loginCredentials() - ·şÎñÆ÷²»Ö§³ÖdigestÈÏÖ¤"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:85
 msgid "ACO permissions key %s does not exist in DB_ACL::check()"
-msgstr "åœ¨DB_ACL::check()ä¸­ä¸å­˜åœ¨ACO permissions key %s"
+msgstr "ÔÚDB_ACL::check()ÖĞ²»´æÔÚACO permissions key %s"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:144
 msgid "DB_ACL::allow() - Invalid node"
-msgstr "DB_ACL::allow() - æ— æ•ˆçš„ node"
+msgstr "DB_ACL::allow() - ÎŞĞ§µÄ node"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:162
 msgid "DB_ACL::allow() - Invalid ACO action"
-msgstr "DB_ACL::allow() - æ— æ•ˆçš„ ACO action"
+msgstr "DB_ACL::allow() - ÎŞĞ§µÄ ACO action"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:231
 msgid "Null id provided in DB_ACL::get"
@@ -204,19 +204,19 @@ msgstr "Null parent in %s::create()"
 
 #: cake/libs/model/connection_manager.php:110
 msgid "ConnectionManager::getDataSource - Non-existent data source %s"
-msgstr "ConnectionManager::getDataSource - ä¸å­˜åœ¨çš„æ•°æ®æº %s"
+msgstr "ConnectionManager::getDataSource - ²»´æÔÚµÄÊı¾İÔ´ %s"
 
 #: cake/libs/model/connection_manager.php:163
 msgid "Unable to load DataSource file %s.php"
-msgstr "æ— æ³•è·å–DataSourceæ–‡ä»¶ %s.php"
+msgstr "ÎŞ·¨»ñÈ¡DataSourceÎÄ¼ş %s.php"
 
 #: cake/libs/model/datasources/dbo_source.php:305
 msgid "Deprecated: Use DboSource::fetchRow() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨DboSource::fetchRow()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃDboSource::fetchRow()´úÌæ"
 
 #: cake/libs/model/datasources/dbo_source.php:313
 msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨DboSource::fetchRow($sql)ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃDboSource::fetchRow($sql)´úÌæ"
 
 #: cake/libs/model/datasources/dbo_source.php:1557
 msgid "Implement in DBO"
@@ -224,72 +224,72 @@ msgstr "Implement in DBO"
 
 #: cake/libs/model/datasources/dbo/dbo_pear.php:79
 msgid "Please implement DBO::disconnect() first."
-msgstr "è¯·å…ˆç¡®ä¿DBO::disconnect()æœ‰æ•ˆ"
+msgstr "ÇëÏÈÈ·±£DBO::disconnect()ÓĞĞ§"
 
 #: cake/libs/model/datasources/dbo/dbo_pear.php:131
 msgid "Please implement DBO_Pear::tablesList() for your database driver."
-msgstr "ä¸ºäº†ä½¿ç”¨æ‚¨çš„database driver,è¯·å…ˆç¡®ä¿DBO_Pear::tablesList()æœ‰æ•ˆ"
+msgstr "ÎªÁËÊ¹ÓÃÄúµÄdatabase driver,ÇëÏÈÈ·±£DBO_Pear::tablesList()ÓĞĞ§"
 
 #: cake/libs/view/helper.php:134
 msgid "Method %1$s::%2$s does not exist"
-msgstr "Method %1$s::%2$s ä¸å­˜åœ¨"
+msgstr "Method %1$s::%2$s ²»´æÔÚ"
 
 #: cake/libs/view/view.php:325
 msgid "Error in view %s, got: <blockquote>%s</blockquote>"
-msgstr "é”™è¯¯ï¼šview%sæ–‡ä»¶,got: <blockquote>%s</blockquote>"
+msgstr "´íÎó£ºview%sÎÄ¼ş,got: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:429
 msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
-msgstr "é”™è¯¯ï¼šlayout %s,got: <blockquote>%s</blockquote>"
+msgstr "´íÎó£ºlayout %s,got: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:488
 msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
-msgstr "(View::setLayout)è¿‡æœŸï¼šä½¿ç”¨$this->layout = \"...\"ä»£æ›¿"
+msgstr "(View::setLayout)¹ıÆÚ£ºÊ¹ÓÃ$this->layout = \"...\"´úÌæ"
 
 #: cake/libs/view/helpers/form.php:88
 msgid "Model %s does not exist"
-msgstr "Modelã€€%sä¸å­˜åœ¨"
+msgstr "Model¡¡%s²»´æÔÚ"
 
 #: cake/libs/view/helpers/form.php:470
 msgid "Don't use me yet"
-msgstr "è¯·å…ˆä¸è¦ä½¿ç”¨æˆ‘"
+msgstr "ÇëÏÈ²»ÒªÊ¹ÓÃÎÒ"
 
 #: cake/libs/view/helpers/form.php:662
 msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::input()æˆ–è€…FormHelper::text()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::input()»òÕßFormHelper::text()´úÌæ"
 
 #: cake/libs/view/helpers/form.php:686
 msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::input() æˆ–è€… FormHelper::checkbox()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::input() »òÕß FormHelper::checkbox()´úÌæ"
 
 #: cake/libs/view/helpers/form.php:709
 #: ;732;754;777;834
 msgid "Deprecated: Use FormHelper::input() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::input() ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::input() ´úÌæ"
 
 #: cake/libs/view/helpers/form.php:803
 msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::input()æˆ–è€…FormHelper::select()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::input()»òÕßFormHelper::select()´úÌæ"
 
 #: cake/libs/view/helpers/form.php:826
 msgid "Deprecated: Use FormHelper::submit() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::submit()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::submit()´úÌæ"
 
 #: cake/libs/view/helpers/form.php:951
 msgid "Deprecated: Use FormHelper::label() instead"
-msgstr "è¿‡æœŸï¼šä½¿ç”¨FormHelper::label()ä»£æ›¿"
+msgstr "¹ıÆÚ£ºÊ¹ÓÃFormHelper::label()´úÌæ"
 
 #: cake/libs/view/helpers/html.php:673
 msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
-msgstr "(HtmlHelper::formTag)è¿‡æœŸï¼šä½¿ç”¨FormHelper::createä»£æ›¿"
+msgstr "(HtmlHelper::formTag)¹ıÆÚ£ºÊ¹ÓÃFormHelper::create´úÌæ"
 
 #: cake/libs/view/helpers/html.php:719
 msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
-msgstr "(HtmlHelper::linkEmail)è¿‡æœŸï¼šä½¿ç”¨HtmlHelper::linkä»£æ›¿"
+msgstr "(HtmlHelper::linkEmail)¹ıÆÚ£ºÊ¹ÓÃHtmlHelper::link´úÌæ"
 
 #: cake/libs/view/helpers/javascript.php:152
 msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
-msgstr "(JavascriptHelper::linkOut)è¿‡æœŸ: ä½¿ç”¨ JavascriptHelper::linkä»£æ›¿"
+msgstr "(JavascriptHelper::linkOut)¹ıÆÚ: Ê¹ÓÃ JavascriptHelper::link´úÌæ"
 
 #: cake/libs/view/templates/elements/dump.ctp:28
 msgid "Controller dump:"
@@ -297,124 +297,124 @@ msgstr "Controller dump:"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:28
 msgid "Missing Method in %s"
-msgstr "åœ¨%sç¼ºå°‘Method"
+msgstr "ÔÚ%sÈ±ÉÙMethod"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:29
 msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºaction <em>%1$s</em>æ²¡æœ‰åœ¨controller <em>%2$s</em>å®šä¹‰"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªaction <em>%1$s</em>Ã»ÓĞÔÚcontroller <em>%2$s</em>¶¨Òå"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:32
 msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
-msgstr "ç¡®è®¤æ‚¨å·²ç»åœ¨%3$såˆ›å»ºäº† %1$s::%2$s"
+msgstr "È·ÈÏÄúÒÑ¾­ÔÚ%3$s´´½¨ÁË %1$s::%2$s"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:27
 msgid "Missing Component Class"
-msgstr "ç¼ºå°‘Component Class"
+msgstr "È±ÉÙComponent Class"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:29
 msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºcomponent class <em>%1$s</em>æ²¡æœ‰åœ¨ <em>%2$s</em>è®¾ç½®,æˆ–è€…è¯¥æ–‡ä»¶ä¸å­˜åœ¨ã€‚"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªcomponent class <em>%1$s</em>Ã»ÓĞÔÚ <em>%2$s</em>ÉèÖÃ,»òÕß¸ÃÎÄ¼ş²»´æÔÚ¡£"
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:27
 msgid "Missing Component File"
-msgstr "ç¼ºå°‘Componentæ–‡ä»¶"
+msgstr "È±ÉÙComponentÎÄ¼ş"
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:28
 msgid "You are seeing this error because the component file can not be found or does not exist."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºcomponentæ–‡ä»¶æ²¡æœ‰æ‰¾åˆ°æˆ–è€…è¯¥æ–‡ä»¶ä¸å­˜åœ¨ã€‚"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªcomponentÎÄ¼şÃ»ÓĞÕÒµ½»òÕß¸ÃÎÄ¼ş²»´æÔÚ¡£"
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:27
 msgid "Requires a Database Connection"
-msgstr "éœ€è¦ä¸€ä¸ªæ•°æ®åº“è¿æ¥"
+msgstr "ĞèÒªÒ»¸öÊı¾İ¿âÁ¬½Ó"
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:28
 #: ;33
 msgid "Confirm you have created the file : %s."
-msgstr "è¯·ç¡®è®¤æ‚¨å·²ç»åˆ›å»ºäº†æ–‡ä»¶ %s."
+msgstr "ÇëÈ·ÈÏÄúÒÑ¾­´´½¨ÁËÎÄ¼ş %s."
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:29
 msgid "Missing Database Connection: %s requires a database connection"
-msgstr "ç¼ºå°‘æ•°æ®åº“è¿æ¥ï¼š%s éœ€è¦ä¸€ä¸ªæ•°æ®åº“è¿æ¥"
+msgstr "È±ÉÙÊı¾İ¿âÁ¬½Ó£º%s ĞèÒªÒ»¸öÊı¾İ¿âÁ¬½Ó"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:27
 msgid "Missing controller"
-msgstr "ç¼ºå°‘controller"
+msgstr "È±ÉÙcontroller"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:28
 msgid "You are seeing this error because controller <em>%s</em> could not be found."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºcontroller <em>%s</em>æ²¡æœ‰æ‰¾åˆ°"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªcontroller <em>%s</em>Ã»ÓĞÕÒµ½"
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:27
 msgid "Missing Helper Class"
-msgstr "ç¼ºå°‘Hellper Class"
+msgstr "È±ÉÙHellper Class"
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:28
 msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºview helper class <em>%s</em>æ— æ³•æ‰¾åˆ°æˆ–è€…è¯¥æ–‡ä»¶ä¸å­˜åœ¨ã€‚ "
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªview helper class <em>%s</em>ÎŞ·¨ÕÒµ½»òÕß¸ÃÎÄ¼ş²»´æÔÚ¡£ "
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:27
 msgid "Missing Helper File"
-msgstr "ç¼ºå°‘Helperæ–‡ä»¶"
+msgstr "È±ÉÙHelperÎÄ¼ş"
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:28
 msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºview helper %sæ–‡ä»¶æ— æ³•æ‰¾åˆ°æˆ–è€…è¯¥æ–‡ä»¶ä¸å­˜åœ¨"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªview helper %sÎÄ¼şÎŞ·¨ÕÒµ½»òÕß¸ÃÎÄ¼ş²»´æÔÚ"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:27
 msgid "Missing Layout"
-msgstr "ç¼ºå°‘Layout"
+msgstr "È±ÉÙLayout"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:28
 msgid "You are seeing this error because the layout file %s can not be found or does not exist."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸º%s layoutæ–‡ä»¶æ— æ³•æ‰¾åˆ°æˆ–è€…è¯¥æ–‡ä»¶ä¸å­˜åœ¨ã€‚"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎª%s layoutÎÄ¼şÎŞ·¨ÕÒµ½»òÕß¸ÃÎÄ¼ş²»´æÔÚ¡£"
 
 #: cake/libs/view/templates/errors/missing_model.ctp:27
 msgid "Missing Model"
-msgstr "ç¼ºå°‘Model"
+msgstr "È±ÉÙModel"
 
 #: cake/libs/view/templates/errors/missing_model.ctp:28
 msgid "No class found for the <em>%s</em> model."
-msgstr "åœ¨<em>%s</em> modelä¸­æ²¡æœ‰æ‰¾åˆ°class"
+msgstr "ÔÚ<em>%s</em> modelÖĞÃ»ÓĞÕÒµ½class"
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
 msgid "Scaffold Requires a Database Connection"
-msgstr "Scaffoldéœ€è¦ä¸€ä¸ªæ•°æ®åº“è¿æ¥"
+msgstr "ScaffoldĞèÒªÒ»¸öÊı¾İ¿âÁ¬½Ó"
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
 msgid "Missing Database Connection: Scaffold Does not work without a database connection"
-msgstr "æ— æ³•è¿æ¥åˆ°æ•°æ®åº“ï¼šScaffoldå¿…é¡»æœ‰æ•°æ®åº“è¿æ¥"
+msgstr "ÎŞ·¨Á¬½Óµ½Êı¾İ¿â£ºScaffold±ØĞëÓĞÊı¾İ¿âÁ¬½Ó"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:27
 msgid "Missing Database Table"
-msgstr "ç¼ºå°‘æ•°æ®åº“è¡¨å•"
+msgstr "È±ÉÙÊı¾İ¿â±íµ¥"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:28
 msgid "No Database table for model %1$s (expected %2$s), create it first."
-msgstr "åœ¨model%1$s (åº”è¯¥ä¸º %2$s)ä¸­æ— æ³•æ‰¾åˆ°æ•°æ®åº“è¡¨å•,é¦–å…ˆåˆ›å»ºè¯¥è¡¨å•ã€‚"
+msgstr "ÔÚmodel%1$s (Ó¦¸ÃÎª %2$s)ÖĞÎŞ·¨ÕÒµ½Êı¾İ¿â±íµ¥,Ê×ÏÈ´´½¨¸Ã±íµ¥¡£"
 
 #: cake/libs/view/templates/errors/missing_view.ctp:27
 msgid "Missing view"
-msgstr "ç¼ºå°‘viewæ–‡ä»¶"
+msgstr "È±ÉÙviewÎÄ¼ş"
 
 #: cake/libs/view/templates/errors/missing_view.ctp:28
 msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯æ˜¯å› ä¸ºæ— æ³•æ‰¾åˆ°<em>%1$s::%2$s()</em>çš„viewæ–‡ä»¶ã€‚"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎóÊÇÒòÎªÎŞ·¨ÕÒµ½<em>%1$s::%2$s()</em>µÄviewÎÄ¼ş¡£"
 
 #: cake/libs/view/templates/errors/private_action.ctp:27
 msgid "Private Method in %s"
-msgstr "%sä¸­çš„ç§æœ‰æ–¹æ³•"
+msgstr "%sÖĞµÄË½ÓĞ·½·¨"
 
 #: cake/libs/view/templates/errors/private_action.ctp:28
 msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
-msgstr "æ‚¨ä¹‹æ‰€ä»¥çœ‹åˆ°è¿™ä¸ªé”™è¯¯,æ˜¯å› ä¸ºè¿™ä¸ªç§æœ‰çš„æ–¹æ³• <em>%s</em>ä¸èƒ½è¢«ç›´æ¥è®¿é—®ã€‚"
+msgstr "ÄúÖ®ËùÒÔ¿´µ½Õâ¸ö´íÎó,ÊÇÒòÎªÕâ¸öË½ÓĞµÄ·½·¨ <em>%s</em>²»ÄÜ±»Ö±½Ó·ÃÎÊ¡£"
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:27
 msgid "Scaffold Error"
-msgstr "Scaffold é”™è¯¯"
+msgstr "Scaffold ´íÎó"
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:28
 msgid "Your must implement the following method in your controller"
-msgstr "æ‚¨å¿…é¡»åœ¨æ‚¨çš„controllerä¸­ä½¿æ‚¨çš„methodæœ‰æ•ˆ"
+msgstr "Äú±ØĞëÔÚÄúµÄcontrollerÖĞÊ¹ÄúµÄmethodÓĞĞ§"
 
 #: cake/libs/view/templates/layouts/default.ctp:40
 msgid "CakePHP Rapid Development"
@@ -422,148 +422,148 @@ msgstr "CakePHP Rapid Development"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:31
 msgid "Add"
-msgstr "å¢åŠ "
+msgstr "Ôö¼Ó"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:32
 msgid "Save"
-msgstr "ä¿å­˜"
+msgstr "±£´æ"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:37
 msgid "Delete  "
-msgstr "åˆ é™¤"
+msgstr "É¾³ı"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:40
 msgid "Actions"
-msgstr "åŠŸèƒ½"
+msgstr "¹¦ÄÜ"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:32
 msgid "View %s"
-msgstr "æŸ¥çœ‹ %s"
+msgstr "²é¿´ %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:62
 #: ;98
 msgid "Edit %s"
-msgstr "ç¼–è¾‘ %s"
+msgstr "±à¼­ %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 msgid "Delete %s"
-msgstr "åˆ é™¤ %s"
+msgstr "É¾³ı %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:64
 #: ;69
 msgid "List %s"
-msgstr "åˆ—è¡¨ %s"
+msgstr "ÁĞ±í %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:65
 #: ;100
 msgid "New %s"
-msgstr "æ–°å»º %s"
+msgstr "ĞÂ½¨ %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:70
 msgid "Add %s"
-msgstr "å¢åŠ  %s"
+msgstr "Ôö¼Ó %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:82
 #: ;117
 msgid "Related %s"
-msgstr "ç›¸å…³çš„ %s"
+msgstr "Ïà¹ØµÄ %s"
 
 #: cake/scripts/acl.php:91
 msgid ""
 "Unable to find /app/config/database.php.  Please create it before continuing.\n"
 "\n"
 msgstr ""
-"æ— æ³•æ‰¾åˆ° /app/config/database.php. è¯·åœ¨ç»§ç»­å‰åˆ›å»ºè¯¥æ–‡ä»¶.\n"
+"ÎŞ·¨ÕÒµ½ /app/config/database.php. ÇëÔÚ¼ÌĞøÇ°´´½¨¸ÃÎÄ¼ş.\n"
 "\n"
 
 #: cake/scripts/bake.php:1892
 msgid "File exists, overwrite?"
-msgstr "æ–‡ä»¶å·²ç»å­˜åœ¨,æ˜¯å¦è¦†ç›–ï¼Ÿ"
+msgstr "ÎÄ¼şÒÑ¾­´æÔÚ,ÊÇ·ñ¸²¸Ç£¿"
 
 #: cake/scripts/bake.php:1896
 msgid "Quitting."
-msgstr "é€€å‡º"
+msgstr "ÍË³ö"
 
 #: cake/scripts/bake.php:1902
 msgid "Skip"
-msgstr "è·³è¿‡"
+msgstr "Ìø¹ı"
 
 #: cake/scripts/bake.php:1910
 msgid "Wrote"
-msgstr "å†™å…¥"
+msgstr "Ğ´Èë"
 
 #: cake/scripts/bake.php:1913
 msgid "Error! Could not write to"
-msgstr "é”™è¯¯ï¼ä¸èƒ½å†™å…¥"
+msgstr "´íÎó£¡²»ÄÜĞ´Èë"
 
 #: cake/scripts/templates/skel/webroot/css.php:68
 #: ;76
 msgid "Wrong file name."
-msgstr "é”™è¯¯çš„æ–‡ä»¶"
+msgstr "´íÎóµÄÎÄ¼ş"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "Your database configuration file is %s."
-msgstr "æ‚¨çš„æ•°æ®åº“é…ç½®çŠ¶æ€"
+msgstr "ÄúµÄÊı¾İ¿âÅäÖÃ×´Ì¬"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "present"
-msgstr "åˆ›å»ºæˆåŠŸ"
+msgstr "´´½¨³É¹¦"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "not present"
-msgstr "æ²¡æœ‰åˆ›å»ºæˆåŠŸ"
+msgstr "Ã»ÓĞ´´½¨³É¹¦"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "Cake %s connect to the database."
-msgstr "Cake %s è¿æ¥åˆ°æ‚¨çš„æ•°æ®åº“"
+msgstr "Cake %s Á¬½Óµ½ÄúµÄÊı¾İ¿â"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is able to"
-msgstr "å¯ä»¥"
+msgstr "¿ÉÒÔ"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is not able to"
-msgstr "ä¸å¯ä»¥"
+msgstr "²»¿ÉÒÔ"
 
 #: cake/libs/view/templates/pages/home.ctp:34
 msgid "CakePHP release information is on CakeForge"
-msgstr "æœ‰å…³CakePHPçš„å‘å¸ƒä¿¡æ¯,å¯ä»¥æŸ¥é˜…CakeForge"
+msgstr "ÓĞ¹ØCakePHPµÄ·¢²¼ĞÅÏ¢,¿ÉÒÔ²éÔÄCakeForge"
 
 #: cake/libs/view/templates/pages/home.ctp:35
 msgid "Read the release notes and get the latest version"
-msgstr "é˜…è¯»å‘å¸ƒä¿¡æ¯,å¹¶ä¸”è·å–æœ€æ–°ç‰ˆæœ¬"
+msgstr "ÔÄ¶Á·¢²¼ĞÅÏ¢,²¢ÇÒ»ñÈ¡×îĞÂ°æ±¾"
 
 #: cake/libs/view/templates/pages/home.ctp:36
 msgid "Editing this Page"
-msgstr "ç¼–è¾‘æ­¤é¡µ"
+msgstr "±à¼­´ËÒ³"
 
 #: cake/libs/view/templates/pages/home.ctp:38
 msgid "To change the content of this page, create: /app/views/pages/home.thtml."
-msgstr "å¦‚æœè¦æ›´æ”¹æ­¤é¡µå†…å®¹,è¯·åˆ›å»ºã€ä¿®æ”¹/app/views/pages/home.thtmlæ–‡ä»¶."
+msgstr "Èç¹ûÒª¸ü¸Ä´ËÒ³ÄÚÈİ,Çë´´½¨¡¢ĞŞ¸Ä/app/views/pages/home.thtmlÎÄ¼ş."
 
 #: cake/libs/view/templates/pages/home.ctp:39
 msgid "To change its layout, create: /app/views/layouts/default.thtml."
-msgstr "å¦‚æœè¦æ›´æ”¹é¡µé¢å¸ƒå±€,è¯·åˆ›å»ºã€ä¿®æ”¹/app/views/layouts/default.thtmlæ–‡ä»¶."
+msgstr "Èç¹ûÒª¸ü¸ÄÒ³Ãæ²¼¾Ö,Çë´´½¨¡¢ĞŞ¸Ä/app/views/layouts/default.thtmlÎÄ¼ş."
 
 #: cake/libs/view/templates/pages/home.ctp:40
 msgid "See the views section of the manual for more info."
-msgstr "æŸ¥çœ‹æ‰‹å†Œæœ‰å…³viewséƒ¨åˆ†è·å–ç›¸å…³æ›´å¤šä¿¡æ¯"
+msgstr "²é¿´ÊÖ²áÓĞ¹Øviews²¿·Ö»ñÈ¡Ïà¹Ø¸ü¶àĞÅÏ¢"
 
 #: cake/libs/view/templates/pages/home.ctp:41
 msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
-msgstr "ä½ ä¹Ÿå¯ä»¥åœ¨ app/webroot/css/ ä¸‹,ä¸ºæ‚¨çš„é¡µé¢å®šä¹‰è‡ªå·±çš„CSSæ ·å¼è¡¨ "
+msgstr "ÄãÒ²¿ÉÒÔÔÚ app/webroot/css/ ÏÂ,ÎªÄúµÄÒ³Ãæ¶¨Òå×Ô¼ºµÄCSSÑùÊ½±í "
 
 #: cake/libs/view/templates/pages/home.ctp:43
 msgid "More about Cake"
-msgstr "æ›´å¤šå…³äºCake"
+msgstr "¸ü¶à¹ØÓÚCake"
 
 #: cake/libs/view/templates/pages/home.ctp:45
 msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
-msgstr "CakePHPæ˜¯åŸºäºPHPè¯­è¨€çš„ä¸€ä¸ªå¿«é€Ÿå¼€å‘æ¡†æ¶,é‡‡ç”¨äº†å¤§å®¶ç†ŸçŸ¥çš„è®¾è®¡æ¨¡å‹ï¼šActive Record,Association Data Mapping, Front Controller and MVC."
+msgstr "CakePHPÊÇ»ùÓÚPHPÓïÑÔµÄÒ»¸ö¿ìËÙ¿ª·¢¿ò¼Ü,²ÉÓÃÁË´ó¼ÒÊìÖªµÄÉè¼ÆÄ£ĞÍ£ºActive Record,Association Data Mapping, Front Controller and MVC."
 
 #: cake/libs/view/templates/pages/home.ctp:48
 msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
-msgstr "æˆ‘ä»¬çš„ä¸»è¦ç›®æ ‡æ˜¯ä¸ºæ‰€æœ‰PHPè¯­è¨€å¼€å‘è€…æä¾›ä¸€ä¸ªå¼€æºæ¡†æ¶,å®ƒå¯ä»¥ä½¿æ‚¨å¿«é€Ÿä½†å¹¶ä¸ä¸§å¤±çµæ´»æ€§çš„å¼€å‘Webåº”ç”¨ç¨‹åº."
+msgstr "ÎÒÃÇµÄÖ÷ÒªÄ¿±êÊÇÎªËùÓĞPHPÓïÑÔ¿ª·¢ÕßÌá¹©Ò»¸ö¿ªÔ´¿ò¼Ü,Ëü¿ÉÒÔÊ¹Äú¿ìËÙµ«²¢²»É¥Ê§Áé»îĞÔµÄ¿ª·¢WebÓ¦ÓÃ³ÌĞò."
 
 #: cake/libs/view/templates/pages/home.ctp:51
 msgid "Cake Software Foundation"
@@ -571,7 +571,7 @@ msgstr "Cake Software Foundation"
 
 #: cake/libs/view/templates/pages/home.ctp:52
 msgid "Promoting development related to CakePHP"
-msgstr "ä¿ƒè¿›å‘å±•CakePHP"
+msgstr "´Ù½ø·¢Õ¹CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:53
 msgid "The Bakery"
@@ -579,7 +579,7 @@ msgstr "The Bakery"
 
 #: cake/libs/view/templates/pages/home.ctp:54
 msgid "Everything CakePHP"
-msgstr "ä»»ä½•æœ‰å…³CakePHPçš„èµ„æ–™"
+msgstr "ÈÎºÎÓĞ¹ØCakePHPµÄ×ÊÁÏ"
 
 #: cake/libs/view/templates/pages/home.ctp:55
 msgid "Book Store"
@@ -587,7 +587,7 @@ msgstr "Book Store"
 
 #: cake/libs/view/templates/pages/home.ctp:56
 msgid "Recommended Software Books"
-msgstr "æ¨èå‚è€ƒä¹¦ç›®"
+msgstr "ÍÆ¼ö²Î¿¼ÊéÄ¿"
 
 #: cake/libs/view/templates/pages/home.ctp:57
 msgid "CakeSchwag"
@@ -595,7 +595,7 @@ msgstr "CakeSchwag"
 
 #: cake/libs/view/templates/pages/home.ctp:58
 msgid "Get your own CakePHP gear - Doughnate to Cake"
-msgstr "è´­ä¹°æ‚¨çš„CakePHPè£…å¤‡ - èµ„åŠ©Cake"
+msgstr "¹ºÂòÄúµÄCakePHP×°±¸ - ×ÊÖúCake"
 
 #: cake/libs/view/templates/pages/home.ctp:59
 msgid "CakePHP"
@@ -603,15 +603,15 @@ msgstr "CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:60
 msgid "The Rapid Development Framework"
-msgstr "å¿«é€Ÿå¼€å‘æ¡†æ¶"
+msgstr "¿ìËÙ¿ª·¢¿ò¼Ü"
 
 #: cake/libs/view/templates/pages/home.ctp:61
 msgid "CakePHP Manual"
-msgstr "CakePHP æ‰‹å†Œ"
+msgstr "CakePHP ÊÖ²á"
 
 #: cake/libs/view/templates/pages/home.ctp:62
 msgid "Your Rapid Development Cookbook"
-msgstr "æ‚¨çš„å¿«é€Ÿå¼€å‘å‚è€ƒæ‰‹å†Œ"
+msgstr "ÄúµÄ¿ìËÙ¿ª·¢²Î¿¼ÊÖ²á"
 
 #: cake/libs/view/templates/pages/home.ctp:63
 msgid "CakePHP Wiki"
@@ -619,7 +619,7 @@ msgstr "CakePHP Wiki"
 
 #: cake/libs/view/templates/pages/home.ctp:64
 msgid "The Community for CakePHP"
-msgstr "CakePHPå¼€æºç¤¾åŒº"
+msgstr "CakePHP¿ªÔ´ÉçÇø"
 
 #: cake/libs/view/templates/pages/home.ctp:65
 msgid "CakePHP API"
@@ -627,7 +627,7 @@ msgstr "CakePHP API"
 
 #: cake/libs/view/templates/pages/home.ctp:66
 msgid "Docblock Your Best Friend"
-msgstr "Docblock ä½ æœ€å¥½çš„æœ‹å‹"
+msgstr "Docblock Äã×îºÃµÄÅóÓÑ"
 
 #: cake/libs/view/templates/pages/home.ctp:67
 msgid "CakeForge"
@@ -643,7 +643,7 @@ msgstr "CakePHP Trac"
 
 #: cake/libs/view/templates/pages/home.ctp:70
 msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
-msgstr "æœ‰å…³CakePHPçš„å¼€å‘ä¿¡æ¯ (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr "ÓĞ¹ØCakePHPµÄ¿ª·¢ĞÅÏ¢ (Tickets, SVN browser, Roadmap, Changelogs)"
 
 #: cake/libs/view/templates/pages/home.ctp:71
 msgid "CakePHP Google Group"
@@ -651,11 +651,11 @@ msgstr "CakePHP Google Group"
 
 #: cake/libs/view/templates/pages/home.ctp:72
 msgid "Community mailing list"
-msgstr "ç¤¾åŒºé‚®ä»¶åˆ—è¡¨"
+msgstr "ÉçÇøÓÊ¼şÁĞ±í"
 
 #: cake/libs/view/templates/pages/home.ctp:74
 msgid "Live chat about CakePHP"
-msgstr "æœ‰å…³CakePHPçš„å³æ—¶èŠå¤©"
+msgstr "ÓĞ¹ØCakePHPµÄ¼´Ê±ÁÄÌì"
 
 #: cake/libs/controller/scaffold.php:116
 msgid "Scaffold :: "
@@ -664,20 +664,20 @@ msgstr "Scaffold ::"
 #: cake/libs/controller/scaffold.php:150
 #: ;153
 msgid "No id set for %s::view()"
-msgstr "ä½¿ç”¨%s::view()åŠŸèƒ½æ—¶æ²¡æœ‰è®¾ç½®id"
+msgstr "Ê¹ÓÃ%s::view()¹¦ÄÜÊ±Ã»ÓĞÉèÖÃid"
 
 #: cake/libs/controller/scaffold.php:223
 #: ;226
 msgid "No id set for %s::edit()"
-msgstr "ä½¿ç”¨%s::edit()åŠŸèƒ½æ—¶æ²¡æœ‰è®¾ç½®id"
+msgstr "Ê¹ÓÃ%s::edit()¹¦ÄÜÊ±Ã»ÓĞÉèÖÃid"
 
 #: cake/libs/controller/scaffold.php:260
 msgid "updated"
-msgstr "æ›´æ–°"
+msgstr "¸üĞÂ"
 
 #: cake/libs/controller/scaffold.php:266
 msgid "saved"
-msgstr "ä¿å­˜"
+msgstr "±£´æ"
 
 #: cake/libs/controller/scaffold.php:287
 #: ;291
@@ -686,20 +686,20 @@ msgstr "The %1$s has been %2$s"
 
 #: cake/libs/controller/scaffold.php:298
 msgid "Please correct errors below."
-msgstr "è¯·æ›´æ­£ä¸‹åˆ—é”™è¯¯"
+msgstr "Çë¸üÕıÏÂÁĞ´íÎó"
 
 #: cake/libs/controller/scaffold.php:330
 #: ;333
 msgid "No id set for %s::delete()"
-msgstr "ä½¿ç”¨%s::delete()æ—¶æ²¡æœ‰è®¾ç½®id"
+msgstr "Ê¹ÓÃ%s::delete()Ê±Ã»ÓĞÉèÖÃid"
 
 #: cake/libs/controller/scaffold.php:339
 #: ;342
 msgid "The %1$s with id: %2$d has been deleted."
-msgstr "%1$s id: %2$d å·²ç»æˆåŠŸè¢«åˆ é™¤äº†."
+msgstr "%1$s id: %2$d ÒÑ¾­³É¹¦±»É¾³ıÁË."
 
 #: cake/libs/controller/scaffold.php:346
 #: ;349
 msgid "There was an error deleting the %1$s with id: %2$d"
-msgstr "åˆ é™¤ %1$s id: %2$d æ—¶å‘ç”Ÿé”™è¯¯"
+msgstr "É¾³ı %1$s id: %2$d Ê±·¢Éú´íÎó"
 

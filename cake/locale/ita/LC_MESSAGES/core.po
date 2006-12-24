@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 11:42-0600\n"
+"PO-Revision-Date: 2006-12-23 22:44-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -234,7 +234,7 @@ msgstr "Per favore, implementa DBO::disconnect() per il tuo database driver"
 #: cake/libs/view/helper.php:134
 #, fuzzy
 msgid "Method %1$s::%2$s does not exist"
-msgstr "Il metodo %s::%s non esiste"
+msgstr "Il metodo %1$s::%2$s non esiste"
 
 #: cake/libs/view/view.php:325
 msgid "Error in view %s, got: <blockquote>%s</blockquote>"
@@ -506,7 +506,7 @@ msgstr "Nome del file errato."
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "Your database configuration file is %s."
-msgstr "Il tuo file di configurazione dal database è %s."
+msgstr "Il tuo file di configurazione del database è %s."
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "present"
@@ -518,7 +518,7 @@ msgstr "non presente"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "Cake %s connect to the database."
-msgstr "Cake %s si puo' connettere al database."
+msgstr "Cake %s connettersi al database."
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is able to"
@@ -546,7 +546,7 @@ msgstr "Per modificare il contenuto di questa pagina, crea: /app/views/pages/hom
 
 #: cake/libs/view/templates/pages/home.ctp:39
 msgid "To change its layout, create: /app/views/layouts/default.thtml."
-msgstr "Per cambiare questo layout, crea: /app/views/layouts/default.thtml."
+msgstr "Per cambiare il suo layout, crea: /app/views/layouts/default.thtml."
 
 #: cake/libs/view/templates/pages/home.ctp:40
 msgid "See the views section of the manual for more info."
@@ -562,7 +562,7 @@ msgstr "Ulteriori informazioni su Cake"
 
 #: cake/libs/view/templates/pages/home.ctp:45
 msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
-msgstr "CakePHP e' un rapid development framework per PHP che utilizza comuni e conosciuti metodi di sviluppo come Active Record, Association Data Mapping, Front Controller e MVC"
+msgstr "CakePHP e' un framework per lo sviluppo rapido per PHP che utilizza comuni e conosciuti metodi di sviluppo come Active Record, Association Data Mapping, Front Controller e MVC"
 
 #: cake/libs/view/templates/pages/home.ctp:48
 msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
