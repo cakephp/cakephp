@@ -1,0 +1,685 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP 1.2.x.x\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2006-12-23 23:51-0600\n"
+"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n%100/10==1 ? 2 : n%10==1 ? 0 : (n+9)%10>3 ? 2 : 1;\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
+
+#: cake/libs/overloadable_php4.php:63;96
+#: cake/libs/overloadable_php5.php:44;56
+msgid "Magic method handler __call__ not defined in %s"
+msgstr "Magic method handler __call__ není definován v %s"
+
+#: cake/libs/controller/components/acl_base.php:49
+#: cake/libs/controller/components/dbacl/models/aclnode.php:55;125;200;219
+msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
+msgstr "[acl_base] Byl volán konstruktor třídy AclBase, nebo byla vytvořena její instance. Tato třída musí zůstat abstraktní. Vyhledejte v dokumentaci k Cake sekci týkající se konfigurace ACL, prosím."
+
+#: cake/libs/view/templates/errors/missing_action.ctp:30
+#: cake/libs/view/templates/errors/missing_connection.ctp:31
+msgid "If you want to customize this error message, create %s."
+msgstr "Chcete-li upravit toto chybové hlášení, vytvořte %s."
+
+#: cake/libs/view/templates/errors/missing_action.ctp:31
+#: cake/libs/view/templates/errors/missing_component_class.ctp:33
+#: cake/libs/view/templates/errors/missing_component_file.ctp:31
+#: cake/libs/view/templates/errors/missing_connection.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:31
+#: cake/libs/view/templates/errors/missing_layout.ctp:31
+#: cake/libs/view/templates/errors/missing_model.ctp:31
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
+#: cake/libs/view/templates/errors/missing_view.ctp:31
+msgid "Fatal"
+msgstr "Fatal"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:31
+#: cake/libs/view/templates/errors/missing_component_file.ctp:29
+#: cake/libs/view/templates/errors/missing_connection.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:29
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:29
+#: cake/libs/view/templates/errors/missing_layout.ctp:29
+#: cake/libs/view/templates/errors/missing_model.ctp:29
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:29
+#: cake/libs/view/templates/errors/missing_table.ctp:29
+#: cake/libs/view/templates/errors/missing_view.ctp:29
+#: cake/libs/view/templates/errors/private_action.ctp:29
+#: cake/libs/view/templates/errors/scaffold_error.ctp:29
+msgid "Notice"
+msgstr "Upozornění"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:32
+#: cake/libs/view/templates/errors/missing_component_file.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:30
+#: cake/libs/view/templates/errors/missing_layout.ctp:30
+#: cake/libs/view/templates/errors/missing_model.ctp:30
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:30
+#: cake/libs/view/templates/errors/missing_table.ctp:30
+#: cake/libs/view/templates/errors/missing_view.ctp:30
+#: cake/libs/view/templates/errors/private_action.ctp:30
+#: cake/libs/view/templates/errors/scaffold_error.ctp:30
+msgid "If you want to customize this error message, create %s"
+msgstr "Chcete-li upravit toto chybové hlášení, vytvořte %s."
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:34
+#: cake/libs/view/templates/errors/missing_component_file.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:33
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:32
+#: cake/libs/view/templates/errors/missing_model.ctp:32
+msgid "Create the class below in file: %s"
+msgstr "Vytvořte následující třídu v souboru: %s"
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:32
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
+#: cake/libs/view/templates/errors/missing_view.ctp:32
+msgid "Confirm you have created the file: %s"
+msgstr "Potvrďte, že jste vytvořil(a) soubor: %s"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:34
+#: cake/libs/view/templates/scaffolds/edit.thtml:39
+msgid "List  "
+msgstr "Přehled"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:38
+#: cake/libs/view/templates/scaffolds/edit.thtml:43
+msgid "View "
+msgstr "Zobrazit"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:39
+#: cake/libs/view/templates/scaffolds/edit.thtml:44
+msgid "Add "
+msgstr "Přidat"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:75
+#: cake/libs/view/templates/scaffolds/view.thtml:138;144
+msgid "View"
+msgstr "Zobrazit"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:76
+#: cake/libs/view/templates/scaffolds/view.thtml:139;145
+msgid "Edit"
+msgstr "Upravit"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:140;146
+msgid "Delete"
+msgstr "Smazat"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:63;140;146
+msgid "Are you sure you want to delete id %s?"
+msgstr "Jste si jistý(á), že chcete smazat id %s?"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:86
+#: cake/libs/view/templates/scaffolds/view.thtml:155
+msgid "New "
+msgstr "Nový"
+
+#: cake/basics.php:96
+msgid "Plugins must have a class named %s"
+msgstr "Pluginy musejí mít třídu nazvanou %s"
+
+#: cake/basics.php:1265
+msgid "Deprecated: Use Set::countDim instead"
+msgstr "Deprecated: Použijte Set::countDim"
+
+#: cake/libs/configure.php:213
+msgid "Configure::load() - %s.php not found"
+msgstr "Configure::load() - soubor %s.php nenalezen"
+
+#: cake/libs/configure.php:219
+msgid "Configure::load() - no variable $config found in %s.php"
+msgstr "Configure::load() - nenalezena proměnná $config v %s.php"
+
+#: cake/libs/error.php:123
+msgid "The requested address %s was not found on this server."
+msgstr "Požadovaná adresa %s nebyla na tomto serveru nalezena."
+
+#: cake/libs/folder.php:281
+msgid "chmodr() File exists"
+msgstr "chmodr() Soubor existuje"
+
+#: cake/libs/folder.php:308
+msgid "mkdirr() File exists"
+msgstr "mkdirr() Soubor existuje"
+
+#: cake/libs/validation.php:302
+msgid "You must define the $operator parameter for Validation::comparison()"
+msgstr "Musíte definovat parametr $operator pro Validation::comparison()"
+
+#: cake/libs/validation.php:325
+msgid "You must define a regular expression for Validation::custom()"
+msgstr "Musíte definovat regulární výraz pro Validation::custom()"
+
+#: cake/libs/controller/controller.php:255
+msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
+msgstr "Controller::__construct() : Nelze získat nebo zjistit jméno třídy, skript přerušen."
+
+#: cake/libs/controller/controller.php:605
+msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
+msgstr "Deprecated: Použijte Controller::set(\"title\", \"...\")"
+
+#: cake/libs/controller/components/security.php:352
+msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+msgstr "SecurityComponent::loginCredentials() - Server nepodporuje digest autentizaci"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:85
+msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+msgstr "ACO oprávnění %s neexistuje v DB_ACL::check()"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:144
+msgid "DB_ACL::allow() - Invalid node"
+msgstr "DB_ACL::allow() - neplatný uzel"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:162
+msgid "DB_ACL::allow() - Invalid ACO action"
+msgstr "DB_ACL::allow() - neplatná ACO akce"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:231
+msgid "Null id provided in DB_ACL::get"
+msgstr "DB_ACL::get vrací null id"
+
+#: cake/libs/controller/components/dbacl/models/aclnode.php:70
+msgid "Null parent in %s::create()"
+msgstr "Null nadřízený uzel v %s::create()"
+
+#: cake/libs/model/connection_manager.php:110
+msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+msgstr "ConnectionManager::getDataSource - neexistující zdroj dat %s"
+
+#: cake/libs/model/connection_manager.php:163
+msgid "Unable to load DataSource file %s.php"
+msgstr "Nelze nalézt soubor %s.php se zdrojem dat"
+
+#: cake/libs/model/datasources/dbo_source.php:305
+msgid "Deprecated: Use DboSource::fetchRow() instead"
+msgstr "Deprecated: Použijte DboSource::fetchRow()"
+
+#: cake/libs/model/datasources/dbo_source.php:313
+msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
+msgstr "Deprecated: Použijte DboSource::fetchRow($sql)"
+
+#: cake/libs/model/datasources/dbo_source.php:1557
+msgid "Implement in DBO"
+msgstr "Implementovat v DBO"
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:79
+msgid "Please implement DBO::disconnect() first."
+msgstr "Implementujte nejdříve DBO::disconnect(), prosím."
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:131
+msgid "Please implement DBO_Pear::tablesList() for your database driver."
+msgstr "Implementujte DBO_Pear::tablesList() pro váš databázový ovladač, prosím."
+
+#: cake/libs/view/helper.php:134
+msgid "Method %1$s::%2$s does not exist"
+msgstr "Metoda %1$s::%2$s neexistuje"
+
+#: cake/libs/view/view.php:325
+msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+msgstr "Chyba v pohledu %s, obdrženo: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:429
+msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+msgstr "Chyba v layoutu %s, obdrženo: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:488
+msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
+msgstr "(View::setLayout) Deprecated: Použijte $this->layout = \"...\""
+
+#: cake/libs/view/helpers/form.php:88
+msgid "Model %s does not exist"
+msgstr "Model %s neexistuje"
+
+#: cake/libs/view/helpers/form.php:470
+msgid "Don't use me yet"
+msgstr "Zatím nepoužívat"
+
+#: cake/libs/view/helpers/form.php:662
+msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
+msgstr "Deprecated: Použijte FormHelper::input() nebo FormHelper::text()"
+
+#: cake/libs/view/helpers/form.php:686
+msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
+msgstr "Deprecated: Použijte FormHelper::input() nebo FormHelper::checkbox()"
+
+#: cake/libs/view/helpers/form.php:709;732;754;777;834
+msgid "Deprecated: Use FormHelper::input() instead"
+msgstr "Deprecated: Použijte FormHelper::input()"
+
+#: cake/libs/view/helpers/form.php:803
+msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
+msgstr "Deprecated: Použijte FormHelper::input() nebo FormHelper::select()"
+
+#: cake/libs/view/helpers/form.php:826
+msgid "Deprecated: Use FormHelper::submit() instead"
+msgstr "Deprecated: Použijte FormHelper::submit()"
+
+#: cake/libs/view/helpers/form.php:951
+msgid "Deprecated: Use FormHelper::label() instead"
+msgstr "Deprecated: Použijte FormHelper::label()"
+
+#: cake/libs/view/helpers/html.php:673
+msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
+msgstr "(HtmlHelper::formTag) Deprecated: Použijte FormHelper::create"
+
+#: cake/libs/view/helpers/html.php:719
+msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
+msgstr "(HtmlHelper::linkEmail) Deprecated: Použijte HtmlHelper::link"
+
+#: cake/libs/view/helpers/javascript.php:152
+msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
+msgstr "(JavascriptHelper::linkOut) Deprecated: Použijte JavascriptHelper::link"
+
+#: cake/libs/view/templates/elements/dump.ctp:28
+msgid "Controller dump:"
+msgstr "Výpis řadiče:"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:28
+msgid "Missing Method in %s"
+msgstr "Chybějící metoda v %s"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:29
+msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
+msgstr "Toto chybové hlášení je zobrazeno, protože metoda <em>%1$s</em> není v řadiči <em>%2$s</em> definována"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:32
+msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
+msgstr ": Potvrďte, že jste vytvořil(a) %1$s::%2$s v souboru : %3$s."
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:27
+msgid "Missing Component Class"
+msgstr "Chybějící třída s komponentou"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:29
+msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
+msgstr "Toto chybové hlášení je zobrazeno, protože třída komponenty <em>%1$s</em> použité v <em>%2$s</em> nebyla nalezena nebo neexistuje."
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:27
+msgid "Missing Component File"
+msgstr "Chybějící soubor s komponentou"
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:28
+msgid "You are seeing this error because the component file can not be found or does not exist."
+msgstr "Toto chybové hlášení je zobrazeno, protože soubor s komponentou nebyl nalezen nebo neexistuje."
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:27
+msgid "Requires a Database Connection"
+msgstr "Vyžaduje připojení k databázi"
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:28;33
+msgid "Confirm you have created the file : %s."
+msgstr "Potvrďte, že jste vytvořil(a) soubor : %s."
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:29
+msgid "Missing Database Connection: %s requires a database connection"
+msgstr "Chybějící databázové připojení: %s vyžaduje připojení k databázi"
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:27
+msgid "Missing controller"
+msgstr "Chybějící řadič"
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:28
+msgid "You are seeing this error because controller <em>%s</em> could not be found."
+msgstr "Toto chybové hlášení je zobrazeno, protože nelze nalézt řadič <em>%s</em>"
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:27
+msgid "Missing Helper Class"
+msgstr "Chybějící třída helperu"
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:28
+msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
+msgstr "Toto chybové hlášení je zobrazeno, protože třída helperu <em>%s</em> nebyla nalezena nebo neexistuje."
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:27
+msgid "Missing Helper File"
+msgstr "Chybějící soubor s helperem"
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:28
+msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
+msgstr "Toto chybové hlášení je zobrazeno, protože soubor %s s helperem nebyl nalezen nebo neexistuje."
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:27
+msgid "Missing Layout"
+msgstr "Chybějící layout"
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:28
+msgid "You are seeing this error because the layout file %s can not be found or does not exist."
+msgstr "Toto chybové hlášení je zobrazeno, protože soubor %s s layoutem nebyl nalezen nebo neexistuje."
+
+#: cake/libs/view/templates/errors/missing_model.ctp:27
+msgid "Missing Model"
+msgstr "Chybějící model"
+
+#: cake/libs/view/templates/errors/missing_model.ctp:28
+msgid "No class found for the <em>%s</em> model."
+msgstr "Nenalezena třída pro model <em>%s</em>."
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
+msgid "Scaffold Requires a Database Connection"
+msgstr "Scaffold vyžaduje databázové připojení"
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
+msgid "Missing Database Connection: Scaffold Does not work without a database connection"
+msgstr "Chybějící databázové připojení: Scaffold nepracuje bez připojení k databázi"
+
+#: cake/libs/view/templates/errors/missing_table.ctp:27
+msgid "Missing Database Table"
+msgstr "Chybějící databázová tabulka"
+
+#: cake/libs/view/templates/errors/missing_table.ctp:28
+msgid "No Database table for model %1$s (expected %2$s), create it first."
+msgstr "Nenalezena databázová tabulka pro model %1$s (očekávám %2$s), nejdříve ji vytvořte"
+
+#: cake/libs/view/templates/errors/missing_view.ctp:27
+msgid "Missing view"
+msgstr "Chybějící pohled"
+
+#: cake/libs/view/templates/errors/missing_view.ctp:28
+msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
+msgstr "Toto chybové hlášení je zobrazeno, protože pohled pro <em>%1$s::%2$s()</em> nebyl nalezen."
+
+#: cake/libs/view/templates/errors/private_action.ctp:27
+msgid "Private Method in %s"
+msgstr "Privátní metoda v %s"
+
+#: cake/libs/view/templates/errors/private_action.ctp:28
+msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
+msgstr "Toto chybové hlášení je zobrazeno, protože privátní metodu <em>%s</em> nelze použít tímto způsobem."
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:27
+msgid "Scaffold Error"
+msgstr "Scaffold Error"
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:28
+msgid "Your must implement the following method in your controller"
+msgstr "Musíte v řadiči implementovat následující metodu"
+
+#: cake/libs/view/templates/layouts/default.ctp:40
+msgid "CakePHP Rapid Development"
+msgstr "CakePHP Rapid Development"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:31
+msgid "Add"
+msgstr "Přidat"
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:32
+msgid "Save"
+msgstr "Uložit"
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:37
+msgid "Delete  "
+msgstr "Smazat"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:40
+msgid "Actions"
+msgstr "Akce"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:32
+msgid "View %s"
+msgstr "Zobrazit %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:62;98
+msgid "Edit %s"
+msgstr "Upravit %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:63
+msgid "Delete %s"
+msgstr "Smazat %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:64;69
+msgid "List %s"
+msgstr "Přehled %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:65;100
+msgid "New %s"
+msgstr "Nový %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:70
+msgid "Add %s"
+msgstr "Přidat %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:82;117
+msgid "Related %s"
+msgstr "Související %s"
+
+#: cake/scripts/acl.php:91
+msgid ""
+"Unable to find /app/config/database.php.  Please create it before continuing.\n"
+"\n"
+msgstr ""
+"Nelze nalézt soubor /app/config/database.php. Před pokračováním jej prosím vytvořte.\n"
+"\n"
+
+#: cake/scripts/bake.php:1892
+msgid "File exists, overwrite?"
+msgstr "Soubor existuje, přepsat?"
+
+#: cake/scripts/bake.php:1896
+msgid "Quitting."
+msgstr "Ukončeno."
+
+#: cake/scripts/bake.php:1902
+msgid "Skip"
+msgstr "Přeskočit"
+
+#: cake/scripts/bake.php:1910
+msgid "Wrote"
+msgstr "Zapsáno"
+
+#: cake/scripts/bake.php:1913
+msgid "Error! Could not write to"
+msgstr "Chyba! Nelze zapisovat do"
+
+#: cake/scripts/templates/skel/webroot/css.php:68;76
+msgid "Wrong file name."
+msgstr "Špatné jméno souboru."
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "Your database configuration file is %s."
+msgstr "Váš soubor s konfigurací databáze je %s."
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "present"
+msgstr "dostupný"
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "not present"
+msgstr "nedostupný"
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "Cake %s connect to the database."
+msgstr "Cake %s připojit k databázi."
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is able to"
+msgstr "se může"
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is not able to"
+msgstr "se nemůže"
+
+#: cake/libs/view/templates/pages/home.ctp:34
+msgid "CakePHP release information is on CakeForge"
+msgstr "Poznámky k vydání CakePHP jsou na CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:35
+msgid "Read the release notes and get the latest version"
+msgstr "Čtěte poznámky k vydání a získejte poslední verzi"
+
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr "Úpravy této stránky"
+
+#: cake/libs/view/templates/pages/home.ctp:38
+msgid "To change the content of this page, create: /app/views/pages/home.thtml."
+msgstr "Chcete-li změnit obsah této stránky, vytvořte soubor: /app/views/pages/home.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:39
+msgid "To change its layout, create: /app/views/layouts/default.thtml."
+msgstr "Chcete-li změnit tento layout, vytvořte soubor: /app/views/layouts/default.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:40
+msgid "See the views section of the manual for more info."
+msgstr "Pro další informace čtěte manuál, sekci views."
+
+#: cake/libs/view/templates/pages/home.ctp:41
+msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
+msgstr "Také můžete přidat CSS stylopisy pro vaše stránky do: app/webroot/css/."
+
+#: cake/libs/view/templates/pages/home.ctp:43
+msgid "More about Cake"
+msgstr "Více o Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:45
+msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+msgstr "CakePHP je framework pro rychlý vývoj aplikací v PHP, používající široce známé návrhové vzory jako Active Record, Association Data Mapping, Front Controller a MVC."
+
+#: cake/libs/view/templates/pages/home.ctp:48
+msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+msgstr "Naším prvořadým cílem je poskytnout strukturovaný framework, umožňující PHP programátorům rychlý vývoj robustních webových aplikací beze ztráty flexibility."
+
+#: cake/libs/view/templates/pages/home.ctp:51
+msgid "Cake Software Foundation"
+msgstr "Cake Software Foundation"
+
+#: cake/libs/view/templates/pages/home.ctp:52
+msgid "Promoting development related to CakePHP"
+msgstr "Propagace vývoje souvisejícího s CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:53
+msgid "The Bakery"
+msgstr "The Bakery"
+
+#: cake/libs/view/templates/pages/home.ctp:54
+msgid "Everything CakePHP"
+msgstr "Vše o CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:55
+msgid "Book Store"
+msgstr "Book Store"
+
+#: cake/libs/view/templates/pages/home.ctp:56
+msgid "Recommended Software Books"
+msgstr "Doporučené knihy o tvorbě software"
+
+#: cake/libs/view/templates/pages/home.ctp:57
+msgid "CakeSchwag"
+msgstr "CakeSchwag"
+
+#: cake/libs/view/templates/pages/home.ctp:58
+msgid "Get your own CakePHP gear - Doughnate to Cake"
+msgstr "CakePHP reklamní předměty - podpořte Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:59
+msgid "CakePHP"
+msgstr "CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:60
+msgid "The Rapid Development Framework"
+msgstr "Framework pro rychlý vývoj aplikací"
+
+#: cake/libs/view/templates/pages/home.ctp:61
+msgid "CakePHP Manual"
+msgstr "CakePHP Manuál"
+
+#: cake/libs/view/templates/pages/home.ctp:62
+msgid "Your Rapid Development Cookbook"
+msgstr "Vaše kuchařka pro rychlý vývoj aplikací"
+
+#: cake/libs/view/templates/pages/home.ctp:63
+msgid "CakePHP Wiki"
+msgstr "CakePHP Wiki"
+
+#: cake/libs/view/templates/pages/home.ctp:64
+msgid "The Community for CakePHP"
+msgstr "Komunita uživatelů CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:65
+msgid "CakePHP API"
+msgstr "CakePHP API"
+
+#: cake/libs/view/templates/pages/home.ctp:66
+msgid "Docblock Your Best Friend"
+msgstr "Dokumentační komentář: váš nejlepší přítel"
+
+#: cake/libs/view/templates/pages/home.ctp:67
+msgid "CakeForge"
+msgstr "CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:68
+msgid "Open Development for CakePHP"
+msgstr "Open source vývoj pro CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:69
+msgid "CakePHP Trac"
+msgstr "CakePHP Trac"
+
+#: cake/libs/view/templates/pages/home.ctp:70
+msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr "Správa projektu CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+
+#: cake/libs/view/templates/pages/home.ctp:71
+msgid "CakePHP Google Group"
+msgstr "CakePHP Google Group"
+
+#: cake/libs/view/templates/pages/home.ctp:72
+msgid "Community mailing list"
+msgstr "Community mailing list"
+
+#: cake/libs/view/templates/pages/home.ctp:74
+msgid "Live chat about CakePHP"
+msgstr "IRC kanál o CakePHP"
+
+#: cake/libs/controller/scaffold.php:116
+msgid "Scaffold :: "
+msgstr "Scaffold :: "
+
+#: cake/libs/controller/scaffold.php:150;153
+msgid "No id set for %s::view()"
+msgstr "Nezadáno id pro %s::view()"
+
+#: cake/libs/controller/scaffold.php:223;226
+msgid "No id set for %s::edit()"
+msgstr "Nezadáno id pro %s::edit()"
+
+#: cake/libs/controller/scaffold.php:260
+msgid "updated"
+msgstr "upraven"
+
+#: cake/libs/controller/scaffold.php:266
+msgid "saved"
+msgstr "uložen"
+
+#: cake/libs/controller/scaffold.php:287;291
+msgid "The %1$s has been %2$s"
+msgstr "Záznam %1$s byl %2$s"
+
+#: cake/libs/controller/scaffold.php:298
+msgid "Please correct errors below."
+msgstr "Opravte následující chyby, prosím."
+
+#: cake/libs/controller/scaffold.php:330;333
+msgid "No id set for %s::delete()"
+msgstr "Nezadáno id pro %s::delete()"
+
+#: cake/libs/controller/scaffold.php:339;342
+msgid "The %1$s with id: %2$d has been deleted."
+msgstr "Záznam %1$s s id: %2$d byl smazán."
+
+#: cake/libs/controller/scaffold.php:346;349
+msgid "There was an error deleting the %1$s with id: %2$d"
+msgstr "Při mazání %1$s s id: %2$d se vyskytla chyba"
+
