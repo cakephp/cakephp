@@ -387,6 +387,7 @@ class Router extends Overloadable {
 					$url['action'] = 'index';
 				}
 			}
+
 			$url = am(
 				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
 				$url
@@ -396,6 +397,7 @@ class Router extends Overloadable {
 			}
 			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params[CAKE_ADMIN])) {
 				$url[CAKE_ADMIN] = $params[CAKE_ADMIN];
+				$url['action'] = str_replace(CAKE_ADMIN . '_', '', $url['action']);
 			} elseif (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN] == false) {
 				unset($url[CAKE_ADMIN]);
 			}
@@ -420,9 +422,9 @@ class Router extends Overloadable {
 					$args[] = $url[$keys[$i]];
 				} else {
 					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext', '?'))) {
-						//if (defined('CAKE_ADMIN') && $keys[$i] != CAKE_ADMIN) {
+						if (defined('CAKE_ADMIN') && isset($keys[$i]) && $keys[$i] != CAKE_ADMIN) {
 							$named[] = array($keys[$i], $url[$keys[$i]]);
-						//}
+						}
 					}
 				}
 			}
@@ -434,7 +436,7 @@ class Router extends Overloadable {
 			}
 
 			$combined = '';
-			if (isset($path['namedArgs']) && $path['namedArgs']) {
+			if (isset($path['namedArgs']) && !empty($path['namedArgs'])) {
 				if ($path['namedArgs'] === true) {
 					$sep = $path['argSeparator'];
 				} elseif (is_array($path['namedArgs'])) {
@@ -445,9 +447,7 @@ class Router extends Overloadable {
 				for ($i = 0; $i < $count; $i++) {
 					$named[$i] = join($path['argSeparator'], $named[$i]);
 				}
-				if (defined('CAKE_ADMIN') && isset($named[CAKE_ADMIN])) {
-					unset($named[CAKE_ADMIN]);
-				}
+
 				$combined = join('/', $named);
 			}
 
@@ -463,7 +463,7 @@ class Router extends Overloadable {
 
 			$output = $base . '/' . $output;
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (strpos($url, '#') === 0)) {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || ($url{0} == '#')) {
 				return $url;
 			}
 
