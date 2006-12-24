@@ -338,6 +338,9 @@ class FormHelper extends AppHelper {
 			unset($options['selected']);
 		}
 
+		$empty = (isset($options['empty']) ? $options['empty'] : '');
+		unset($options['empty']);
+
 		switch ($options['type']) {
 			case 'hidden':
 				$out = $this->hidden($tagName);
@@ -357,12 +360,11 @@ class FormHelper extends AppHelper {
 			break;
 			case 'select':
 				$list = (isset($options['options']) ? $options['options'] : array());
-				$empty = (isset($options['empty']) ? $options['empty'] : '');
 				unset($options['options'], $options['empty']);
 				$out .= $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out .= $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, false);
+				$out .= $this->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, false);
 			break;
 			case 'date':
 				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, false);
@@ -450,11 +452,23 @@ class FormHelper extends AppHelper {
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
+ * @access public
  */
 	function hidden($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
+		$htmlAttributes = $this->domId($this->__value($htmlAttributes, $fieldName));
 		return $this->output(sprintf($this->Html->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates file input widget.
+ *
+ * @param string $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param array $htmlAttributes Array of HTML attributes.
+ * @return string
+ * @access public
+ */
+	function file($fieldName, $htmlAttributes = array()) {
+		$htmlAttributes = $this->domId($this->__value($htmlAttributes, $fieldName));
+		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Creates a button tag.
@@ -464,6 +478,7 @@ class FormHelper extends AppHelper {
  * @param  string $type    Type of the button (button, submit or reset).
  * @param  array  $options Array of options.
  * @return string A HTML button tag.
+ * @access public
  */
 	function button($params, $type = 'button', $options = array()) {
 
@@ -495,7 +510,30 @@ class FormHelper extends AppHelper {
  */
 	function submit($caption = 'Submit', $options = array()) {
 		$options['value'] = $caption;
-		return $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+
+		$div = true;
+		if (isset($options['div'])) {
+			$div = $options['div'];
+			unset($options['div']);
+		}
+
+		$divOptions = array();
+		if ($div === true) {
+			$divOptions['class'] = 'submit';
+		} elseif ($div === false) {
+			unset($divOptions);
+		} elseif (is_string($div)) {
+			$divOptions['class'] = $div;
+		} elseif (is_array($div)) {
+			$divOptions = am(array('class' => 'submit'), $div);
+		}
+		
+		$out =  $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+		if (isset($divOptions)) {
+			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
+		}
+
+		return $out;
 	}
 /**
  * Creates an image input widget.
