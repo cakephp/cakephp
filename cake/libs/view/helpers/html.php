@@ -898,7 +898,7 @@ class HtmlHelper extends AppHelper {
 			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('H')) : $selected;
 		} else {
 			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('g')) : $selected;
-			if (intval($hourValue) == 0 && !$showEmpty) {
+			if (isset($selected) && intval($hourValue) == 0 && !$showEmpty) {
 				$hourValue = 12;
 			}
 		}
