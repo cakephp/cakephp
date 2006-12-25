@@ -1,0 +1,703 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP 1.2.x.x\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2006-12-23 03:28-0600\n"
+"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: cake/libs/overloadable_php4.php:63
+#: ;96 cake/libs/overloadable_php5.php:44
+#: ;56
+msgid "Magic method handler __call__ not defined in %s"
+msgstr ""
+
+#: cake/libs/controller/components/acl_base.php:49
+#: cake/libs/controller/components/dbacl/models/aclnode.php:55
+#: ;125;200;219
+msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_action.ctp:30
+#: cake/libs/view/templates/errors/missing_connection.ctp:31
+msgid "If you want to customize this error message, create %s."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_action.ctp:31
+#: cake/libs/view/templates/errors/missing_component_class.ctp:33
+#: cake/libs/view/templates/errors/missing_component_file.ctp:31
+#: cake/libs/view/templates/errors/missing_connection.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:31
+#: cake/libs/view/templates/errors/missing_layout.ctp:31
+#: cake/libs/view/templates/errors/missing_model.ctp:31
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
+#: cake/libs/view/templates/errors/missing_view.ctp:31
+msgid "Fatal"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:31
+#: cake/libs/view/templates/errors/missing_component_file.ctp:29
+#: cake/libs/view/templates/errors/missing_connection.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:29
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:29
+#: cake/libs/view/templates/errors/missing_layout.ctp:29
+#: cake/libs/view/templates/errors/missing_model.ctp:29
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:29
+#: cake/libs/view/templates/errors/missing_table.ctp:29
+#: cake/libs/view/templates/errors/missing_view.ctp:29
+#: cake/libs/view/templates/errors/private_action.ctp:29
+#: cake/libs/view/templates/errors/scaffold_error.ctp:29
+msgid "Notice"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:32
+#: cake/libs/view/templates/errors/missing_component_file.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:30
+#: cake/libs/view/templates/errors/missing_layout.ctp:30
+#: cake/libs/view/templates/errors/missing_model.ctp:30
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:30
+#: cake/libs/view/templates/errors/missing_table.ctp:30
+#: cake/libs/view/templates/errors/missing_view.ctp:30
+#: cake/libs/view/templates/errors/private_action.ctp:30
+#: cake/libs/view/templates/errors/scaffold_error.ctp:30
+msgid "If you want to customize this error message, create %s"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:34
+#: cake/libs/view/templates/errors/missing_component_file.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:33
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:32
+#: cake/libs/view/templates/errors/missing_model.ctp:32
+msgid "Create the class below in file: %s"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:32
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
+#: cake/libs/view/templates/errors/missing_view.ctp:32
+msgid "Confirm you have created the file: %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/add.thtml:34
+#: cake/libs/view/templates/scaffolds/edit.thtml:39
+msgid "List  "
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/add.thtml:38
+#: cake/libs/view/templates/scaffolds/edit.thtml:43
+msgid "View "
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/add.thtml:39
+#: cake/libs/view/templates/scaffolds/edit.thtml:44
+msgid "Add "
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:75
+#: cake/libs/view/templates/scaffolds/view.thtml:138
+#: ;144
+msgid "View"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:76
+#: cake/libs/view/templates/scaffolds/view.thtml:139
+#: ;145
+msgid "Edit"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:140
+#: ;146
+msgid "Delete"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:63
+#: ;140;146
+msgid "Are you sure you want to delete id %s?"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:86
+#: cake/libs/view/templates/scaffolds/view.thtml:155
+msgid "New "
+msgstr ""
+
+#: cake/basics.php:96
+msgid "Plugins must have a class named %s"
+msgstr ""
+
+#: cake/basics.php:1265
+msgid "Deprecated: Use Set::countDim instead"
+msgstr ""
+
+#: cake/libs/configure.php:213
+msgid "Configure::load() - %s.php not found"
+msgstr ""
+
+#: cake/libs/configure.php:219
+msgid "Configure::load() - no variable $config found in %s.php"
+msgstr ""
+
+#: cake/libs/error.php:123
+msgid "The requested address %s was not found on this server."
+msgstr ""
+
+#: cake/libs/folder.php:281
+msgid "chmodr() File exists"
+msgstr ""
+
+#: cake/libs/folder.php:308
+msgid "mkdirr() File exists"
+msgstr ""
+
+#: cake/libs/validation.php:302
+msgid "You must define the $operator parameter for Validation::comparison()"
+msgstr ""
+
+#: cake/libs/validation.php:325
+msgid "You must define a regular expression for Validation::custom()"
+msgstr ""
+
+#: cake/libs/controller/controller.php:255
+msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
+msgstr ""
+
+#: cake/libs/controller/controller.php:605
+msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
+msgstr ""
+
+#: cake/libs/controller/components/security.php:352
+msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+msgstr ""
+
+#: cake/libs/controller/components/dbacl/db_acl.php:85
+msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+msgstr ""
+
+#: cake/libs/controller/components/dbacl/db_acl.php:144
+msgid "DB_ACL::allow() - Invalid node"
+msgstr ""
+
+#: cake/libs/controller/components/dbacl/db_acl.php:162
+msgid "DB_ACL::allow() - Invalid ACO action"
+msgstr ""
+
+#: cake/libs/controller/components/dbacl/db_acl.php:231
+msgid "Null id provided in DB_ACL::get"
+msgstr ""
+
+#: cake/libs/controller/components/dbacl/models/aclnode.php:70
+msgid "Null parent in %s::create()"
+msgstr ""
+
+#: cake/libs/model/connection_manager.php:110
+msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+msgstr ""
+
+#: cake/libs/model/connection_manager.php:163
+msgid "Unable to load DataSource file %s.php"
+msgstr ""
+
+#: cake/libs/model/datasources/dbo_source.php:305
+msgid "Deprecated: Use DboSource::fetchRow() instead"
+msgstr ""
+
+#: cake/libs/model/datasources/dbo_source.php:313
+msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
+msgstr ""
+
+#: cake/libs/model/datasources/dbo_source.php:1557
+msgid "Implement in DBO"
+msgstr ""
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:79
+msgid "Please implement DBO::disconnect() first."
+msgstr ""
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:131
+msgid "Please implement DBO_Pear::tablesList() for your database driver."
+msgstr ""
+
+#: cake/libs/view/helper.php:134
+msgid "Method %1$s::%2$s does not exist"
+msgstr ""
+
+#: cake/libs/view/view.php:325
+msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+msgstr ""
+
+#: cake/libs/view/view.php:429
+msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+msgstr ""
+
+#: cake/libs/view/view.php:488
+msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:88
+msgid "Model %s does not exist"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:470
+msgid "Don't use me yet"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:662
+msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:686
+msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:709
+#: ;732;754;777;834
+msgid "Deprecated: Use FormHelper::input() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:803
+msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:826
+msgid "Deprecated: Use FormHelper::submit() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/form.php:951
+msgid "Deprecated: Use FormHelper::label() instead"
+msgstr ""
+
+#: cake/libs/view/helpers/html.php:673
+msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
+msgstr ""
+
+#: cake/libs/view/helpers/html.php:719
+msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
+msgstr ""
+
+#: cake/libs/view/helpers/javascript.php:152
+msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
+msgstr ""
+
+#: cake/libs/view/templates/elements/dump.ctp:28
+msgid "Controller dump:"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_action.ctp:28
+msgid "Missing Method in %s"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_action.ctp:29
+msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_action.ctp:32
+msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:27
+msgid "Missing Component Class"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:29
+msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:27
+msgid "Missing Component File"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:28
+msgid "You are seeing this error because the component file can not be found or does not exist."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:27
+msgid "Requires a Database Connection"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:28
+#: ;33
+msgid "Confirm you have created the file : %s."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:29
+msgid "Missing Database Connection: %s requires a database connection"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:27
+msgid "Missing controller"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:28
+msgid "You are seeing this error because controller <em>%s</em> could not be found."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:27
+msgid "Missing Helper Class"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:28
+msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:27
+msgid "Missing Helper File"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:28
+msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:27
+msgid "Missing Layout"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:28
+msgid "You are seeing this error because the layout file %s can not be found or does not exist."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_model.ctp:27
+msgid "Missing Model"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_model.ctp:28
+msgid "No class found for the <em>%s</em> model."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
+msgid "Scaffold Requires a Database Connection"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
+msgid "Missing Database Connection: Scaffold Does not work without a database connection"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_table.ctp:27
+msgid "Missing Database Table"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_table.ctp:28
+msgid "No Database table for model %1$s (expected %2$s), create it first."
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_view.ctp:27
+msgid "Missing view"
+msgstr ""
+
+#: cake/libs/view/templates/errors/missing_view.ctp:28
+msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
+msgstr ""
+
+#: cake/libs/view/templates/errors/private_action.ctp:27
+msgid "Private Method in %s"
+msgstr ""
+
+#: cake/libs/view/templates/errors/private_action.ctp:28
+msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
+msgstr ""
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:27
+msgid "Scaffold Error"
+msgstr ""
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:28
+msgid "Your must implement the following method in your controller"
+msgstr ""
+
+#: cake/libs/view/templates/layouts/default.ctp:40
+msgid "CakePHP Rapid Development"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/add.thtml:31
+msgid "Add"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:32
+msgid "Save"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:37
+msgid "Delete  "
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/index.thtml:40
+msgid "Actions"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:32
+msgid "View %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:62
+#: ;98
+msgid "Edit %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:63
+msgid "Delete %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:64
+#: ;69
+msgid "List %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:65
+#: ;100
+msgid "New %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:70
+msgid "Add %s"
+msgstr ""
+
+#: cake/libs/view/templates/scaffolds/view.thtml:82
+#: ;117
+msgid "Related %s"
+msgstr ""
+
+#: cake/scripts/acl.php:91
+msgid ""
+"Unable to find /app/config/database.php.  Please create it before continuing.\n"
+"\n"
+msgstr ""
+
+#: cake/scripts/bake.php:1892
+msgid "File exists, overwrite?"
+msgstr ""
+
+#: cake/scripts/bake.php:1896
+msgid "Quitting."
+msgstr ""
+
+#: cake/scripts/bake.php:1902
+msgid "Skip"
+msgstr ""
+
+#: cake/scripts/bake.php:1910
+msgid "Wrote"
+msgstr ""
+
+#: cake/scripts/bake.php:1913
+msgid "Error! Could not write to"
+msgstr ""
+
+#: cake/scripts/templates/skel/webroot/css.php:68
+#: ;76
+msgid "Wrong file name."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "Your database configuration file is %s."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "present"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "not present"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "Cake %s connect to the database."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is able to"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is not able to"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:34
+msgid "CakePHP release information is on CakeForge"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:35
+msgid "Read the release notes and get the latest version"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:38
+msgid "To change the content of this page, create: /app/views/pages/home.thtml."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:39
+msgid "To change its layout, create: /app/views/layouts/default.thtml."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:40
+msgid "See the views section of the manual for more info."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:41
+msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:43
+msgid "More about Cake"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:45
+msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:48
+msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:51
+msgid "Cake Software Foundation"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:52
+msgid "Promoting development related to CakePHP"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:53
+msgid "The Bakery"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:54
+msgid "Everything CakePHP"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:55
+msgid "Book Store"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:56
+msgid "Recommended Software Books"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:57
+msgid "CakeSchwag"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:58
+msgid "Get your own CakePHP gear - Doughnate to Cake"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:59
+msgid "CakePHP"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:60
+msgid "The Rapid Development Framework"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:61
+msgid "CakePHP Manual"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:62
+msgid "Your Rapid Development Cookbook"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:63
+msgid "CakePHP Wiki"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:64
+msgid "The Community for CakePHP"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:65
+msgid "CakePHP API"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:66
+msgid "Docblock Your Best Friend"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:67
+msgid "CakeForge"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:68
+msgid "Open Development for CakePHP"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:69
+msgid "CakePHP Trac"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:70
+msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:71
+msgid "CakePHP Google Group"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:72
+msgid "Community mailing list"
+msgstr ""
+
+#: cake/libs/view/templates/pages/home.ctp:74
+msgid "Live chat about CakePHP"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:116
+msgid "Scaffold :: "
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:150
+#: ;153
+msgid "No id set for %s::view()"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:223
+#: ;226
+msgid "No id set for %s::edit()"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:260
+msgid "updated"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:266
+msgid "saved"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:287
+#: ;291
+msgid "The %1$s has been %2$s"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:298
+msgid "Please correct errors below."
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:330
+#: ;333
+msgid "No id set for %s::delete()"
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:339
+#: ;342
+msgid "The %1$s with id: %2$d has been deleted."
+msgstr ""
+
+#: cake/libs/controller/scaffold.php:346
+#: ;349
+msgid "There was an error deleting the %1$s with id: %2$d"
+msgstr ""
+
