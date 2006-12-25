@@ -337,6 +337,7 @@ class Validation extends Object {
  * @access public
  */
 	function custom($check, $regex = null) {
+		$this->__reset();
 		$this->check = $check;
 		$this->regex = $regex;
 		if (is_array($check)) {
@@ -403,7 +404,7 @@ class Validation extends Object {
 	}
 
 /**
- * Checks that a value is a valid decimal. If $places is null, the $check is allow to be a scientific float
+ * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
  * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
  *
  * @param integer $check The value the test for decimal
@@ -413,6 +414,7 @@ class Validation extends Object {
  * @access public
  */
 	function decimal($check, $places = null, $regex = null) {
+		$this->__reset();
 		$this->regex = $regex;
 		$this->check = $check;
 
@@ -421,39 +423,50 @@ class Validation extends Object {
 		}
 
 		if(is_null($places)) {
-			$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/s';
+			$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
 			return $this->_check();
 		}
 
-		$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/s';
+		$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
 		return $this->_check();
 	}
 
-	function email($check, $regex= null, $deep = false) {
+/**
+ * Enter description here...
+ *
+ * @param string $check
+ * @param boolean $deep
+ * @param string $regex
+ * @return boolean
+ * @access public
+ */
+	function email($check, $deep = false, $regex= null) {
+		$this->__reset();
+		$this->check = $check;
+		$this->regex = $regex;
+		$this->deep = $deep;
+
 		if (is_array($check)) {
 			$this->_extract($check);
-		} else {
-			$this->check = $check;
-			$this->regex = $regex;
-			$this->deep = $deep;
 		}
 
 		if(is_null($this->regex)) {
 			$this->regex = '/\\A(?:^([a-z0-9][a-z0-9_\\-\\.\\+]*)@([a-z0-9][a-z0-9\\.\\-]{0,63}\\.(com|org|net|biz|info|name|net|pro|aero|coop|museum|[a-z]{2,4}))$)\\z/i';
 		}
+		$return = $this->_check();
 
-		if($this->_check() && $this->deep) {
-			if (preg_match('/@([a-z0-9][a-z0-9\\.\\-]{0,63}\\.([a-z]*))/', $check, $regs)) {
-				$host = gethostbynamel($regs[1]);
-				if (is_array($host)) {
-					$this->error[] = false;
-					return true;
-				} else {
-					$this->error[] = true;
-					return false;
-				}
+		if($this->deep === false || $this->deep === null) {
+			return $return;
+		}
+
+		if ($return === true && preg_match('/@([a-z0-9][a-z0-9\\.\\-]{0,63}\\.([a-z]*))/', $this->check, $regs)) {
+			$host = gethostbynamel($regs[1]);
+			if (is_array($host)) {
+				return true;
 			}
 		}
+
+		return false;
 	}
 
 	function equalTo($check, $comparedTo) {
