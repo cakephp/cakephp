@@ -347,6 +347,10 @@ class DboPostgres extends DboSource {
  * @return int
  */
 	function lastInsertId($source, $field = 'id') {
+		if(strpos($this->__descriptions[$source][0]['default'], 'nextval') === false) {
+			return null;
+		}
+
 		$sql = "SELECT last_value AS max FROM {$source}_{$field}_seq";
 		$res = $this->rawQuery($sql);
 		$data = $this->fetchRow($res);

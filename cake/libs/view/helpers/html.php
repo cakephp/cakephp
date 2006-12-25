@@ -646,7 +646,7 @@ class HtmlHelper extends AppHelper {
 
 			if (($selected != null) && ($selected == $name)) {
 				$optionsHere['selected'] = 'selected';
-			} else if(is_array($selected) && in_array($name, $selected)) {
+			} else if(is_array($selected) && in_array($title, $selected)) {
 				$optionsHere['selected'] = 'selected';
 			}
 

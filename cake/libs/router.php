@@ -396,8 +396,8 @@ class Router extends Overloadable {
 				$extension = '.' . $url['ext'];
 			}
 			if (defined('CAKE_ADMIN') && !isset($url[CAKE_ADMIN]) && isset($params[CAKE_ADMIN])) {
-				$url[CAKE_ADMIN] = $params[CAKE_ADMIN];
-				$url['action'] = str_replace(CAKE_ADMIN . '_', '', $url['action']);
+				$url[CAKE_ADMIN] = CAKE_ADMIN;
+				$url['action'] = str_replace(CAKE_ADMIN.'_', '', $url['action']);
 			} elseif (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN] == false) {
 				unset($url[CAKE_ADMIN]);
 			}
@@ -414,21 +414,21 @@ class Router extends Overloadable {
 			}
 
 			$named = $args = array();
-			$keys = array_keys($url);
+			$skip = array('action', 'controller', 'plugin', 'ext', '?');
+			if(defined('CAKE_ADMIN')) {
+				$skip[] = CAKE_ADMIN;
+			}						
+			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
-
 			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
+				if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
+				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))){
+					$named[] = array($keys[$i], $url[$keys[$i]]);
 				} else {
-					if (!in_array($keys[$i], array('action', 'controller', 'plugin', 'ext', '?'))) {
-						if (defined('CAKE_ADMIN') && isset($keys[$i]) && $keys[$i] != CAKE_ADMIN) {
-							$named[] = array($keys[$i], $url[$keys[$i]]);
-						}
-					}
+					$args[] = $keys[$i] . $path['argSeparator'] .$url[$keys[$i]];
 				}
 			}
-
 			if ($match === false) {
 				if (empty($named) && empty($args) && $url['action'] == 'index') {
 					$url['action'] = null;
@@ -436,13 +436,7 @@ class Router extends Overloadable {
 			}
 
 			$combined = '';
-			if (isset($path['namedArgs']) && !empty($path['namedArgs'])) {
-				if ($path['namedArgs'] === true) {
-					$sep = $path['argSeparator'];
-				} elseif (is_array($path['namedArgs'])) {
-					$sep = '/';
-				}
-
+			if (!empty($path['namedArgs'])) {
 				$count = count($named);
 				for ($i = 0; $i < $count; $i++) {
 					$named[$i] = join($path['argSeparator'], $named[$i]);
@@ -450,20 +444,22 @@ class Router extends Overloadable {
 
 				$combined = join('/', $named);
 			}
-
+			
 			if ($match === false) {
 				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+				if($url['plugin'] == $url['controller']) {
+					array_shift($urlOut);
+				}
 				if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
 					array_unshift($urlOut, CAKE_ADMIN);
 				}
 				$output = join('/', $urlOut);
 			} elseif (!empty($combined)) {
-				$output .= '/' . $combined;
+				$output .=  $combined;
 			}
-
 			$output = $base . '/' . $output;
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || ($url{0} == '#')) {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (isset($url{0}) && $url{0} == '#')) {
 				return $url;
 			}
 
@@ -493,22 +489,27 @@ class Router extends Overloadable {
  */
 	function mapRouteElements($route, $url) {
 		$params = $route[2];
-		$defaults = am(array('plugin' => null), $route[3]);
+		$defaults = am(array('controller'=> null, 'plugin' => null), $route[3]);
 		$required = array_diff_key($defaults, $params);
-		$url = am(array('action' => 'index', 'plugin' => null), $url);
-
-		foreach ($defaults as $key => $val) {
+		$url = am(array('controller'=> null,'action' => 'index', 'plugin' => null), $url);
+	//	$url = am($required, $url);
+	/*	foreach ($defaults as $key => $val) {
 			if (!is_numeric($key) && !isset($url[$key])) {
 				$url[$key] = $val;
 			}
-		}
-
-		sort($route[3]);
-		sort($url);
-
-		if ($route[3] == $url) {
+		}*/
+		ksort($defaults);
+		ksort($url);
+		if ($defaults == $url) {
 			return array(Router::__mapRoute($route, $url), array());
-		} elseif (!empty($params)) {
+		} elseif(!empty($params)) {
+			if(array_key_exists(0, $url)) {
+				return false;
+			}
+			$required = array_diff_key($required, $url);
+			if(!empty($required)) {
+			 	return false;
+			}
 			$filled = array_intersect_key($url, array_combine($params, array_keys($params)));
 			$keysFilled = array_keys($filled);
 			sort($params);
@@ -516,10 +517,13 @@ class Router extends Overloadable {
 			if ($keysFilled != $params) {
 				return false;
 			}
+			if (!empty($url['plugin']) && $keysFilled === $params) {
+				return false;
+			}
 		} else {
 			return false;
 		}
-
+		
 		/*if (!empty($diffs)) {
 			if (isset($route[3]['controller']) && in_array('controller', $diffed)) {
 				return false;
@@ -534,10 +538,11 @@ class Router extends Overloadable {
 		if (!empty($required)) {
 			return false;
 		}*/
-
-		foreach ($route[4] as $key => $reg) {
-			if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
-				return false;
+		if(!empty($route[4])){
+			foreach ($route[4] as $key => $reg) {
+				if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
+					return false;
+				}
 			}
 		}
 
@@ -557,20 +562,28 @@ class Router extends Overloadable {
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}
-
+		
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $route[0]);
 		} else {
 			$out = $route[0] . $params['pass'];
 		}
-
 		foreach ($route[2] as $key) {
 			$out = str_replace(':' . $key, $params[$key], $out);
 			unset($params[$key]);
 		}
-
 		// Do something else here for leftover params
-		return $out;
+		$skip = array('action', 'controller', 'plugin', 'ext', '?', 'pass');
+		if(defined('CAKE_ADMIN')) {
+			$skip[] = CAKE_ADMIN;
+		}				
+		$args = array();
+		$keys = array_values(array_diff(array_keys($params), $skip));
+		$count = count($keys);
+		for ($i = 0; $i < $count; $i++) {
+			$args[] = $keys[$i] . ':'  .$params[$keys[$i]];
+		}
+		return $out . join('/', array_filter($args));
 	}
 /**
  * Generates a well-formed querystring from $q

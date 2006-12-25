@@ -180,7 +180,10 @@ class SessionComponent extends CakeSession {
 				$view->params		= $this->params;
 				$view->action		= $this->action;
 				$view->data			= $this->data;
+				$view->themeWeb     = '';
 				$view->plugin		= $this->plugin;
+				$view->namedArgs    = array();
+				$view->argSeparator = array();
 				$view->helpers		= array('Html');
 				$view->layout		= $layout;
 				$view->pageTitle	= '';

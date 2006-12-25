@@ -215,19 +215,37 @@ class Dispatcher extends Object {
 		if (!empty($controller->params['pass'])) {
 			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
-			if (is_array($controller->namedArgs) && in_array($params['action'], array_keys($controller->namedArgs))) {
-
-				$this->passedArgs =& $controller->params['pass'];
-				$this->_getNamedArgs($controller->namedArgs[$params['action']]);
-
-				$controller->passedArgs =& $this->passedArgs;
-				$controller->namedArgs =& $this->namedArgs;
-			} elseif ($controller->namedArgs === true) {
+			
+			if (is_array($controller->namedArgs) ) {
+				if(array_key_exists($params['action'], $controller->namedArgs)) {
+					$args = $controller->namedArgs[$params['action']];
+				} else {
+					$args = $controller->namedArgs;
+				}
+				foreach($args as $arg => $value) {
+					if($controller->argSeparator === '/') {
+						if(in_array($arg, $controller->passedArgs)) {
+							$argKey = array_search($arg, $controller->passedArgs);
+							$argVal = $argKey + 1; 
+							$controller->passedArgs[$controller->passedArgs[$argKey]] = $controller->passedArgs[$argVal];
+							$controller->namedArgs[$controller->passedArgs[$argKey]] = $controller->passedArgs[$argVal];
+							unset($controller->passedArgs[$argKey], $controller->passedArgs[$argVal]);
+							unset($params['pass'][$argKey], $params['pass'][$argVal]);
+						}
+					} else {
+						$named = true;
+						$controller->passedArgs[$arg] = $value;
+						$controller->namedArgs[$arg] = $value;
+					}
+				}
+			}
+			if($controller->namedArgs === true || $named = true) {
 				$c = count($controller->passedArgs);
 				for ($i = $c - 1; $i > -1; $i--) {
-					if (strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
+					if (isset($controller->passedArgs[$i]) && strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
 						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
 						$controller->passedArgs[$argKey] = $argVal;
+						$controller->namedArgs[$argKey] = $argVal;
 						unset($controller->passedArgs[$i]);
 						unset($params['pass'][$i]);
 					}
@@ -236,6 +254,17 @@ class Dispatcher extends Object {
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
+			if (is_array($controller->namedArgs) ) {
+				if(array_key_exists($params['action'], $controller->namedArgs)) {
+					$args = $controller->namedArgs[$params['action']];
+				} else {
+					$args = $controller->namedArgs;
+				}
+				foreach($args as $arg => $value) {
+					$controller->passedArgs[$arg] = $value;
+					$controller->namedArgs[$arg] = $value;
+				}
+			}
 		}
 
 		if (!empty($params['bare'])) {
@@ -485,37 +514,6 @@ class Dispatcher extends Object {
 			$params['action'] = null;
 		}
 		return $params;
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $params
- * @return unknown
- */
-	function _getNamedArgs($args) {
-		if(!is_array($args)) {
-			$args = func_get_args();
-		}
-		if(!is_array($args)) {
-			$args = explode(',',$controller->namedArgs[$params['action']]);
-		}
-
-		$this->namedArgs = array();
-
-		if(is_array($this->passedArgs) && is_array($args)) {
-			foreach ($args as $arg) {
-				if(in_array($arg, $this->passedArgs)) {
-					$key = array_search($arg,$this->passedArgs);
-					$value = $key + 1;
-					$this->namedArgs[$arg] = $this->passedArgs[$value];
-
-					unset($this->passedArgs[$key]);
-					unset($this->passedArgs[$value]);
-				}
-			}
-			$this->passedArgs = array_values($this->passedArgs);
-			return $this->namedArgs;
-		}
 	}
 }
 

@@ -27,7 +27,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Short description for file.
  *
@@ -38,33 +37,176 @@
  *
  */
 class EmailComponent extends Object{
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $to = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $from = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $replyTo = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $return = null;
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
 	var $cc = array();
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
 	var $bcc = array();
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $subject = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $additionalParams = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $template = 'default';
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $sendAs = 'text';  //html, text, both
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $delivery = 'mail'; //mail, smtp, debug
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $charset = 'ISO-8859-15';
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
 	var $attachments = array();
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $xMailer = 'CakePHP Email Component';
+/**
+ * Enter description here...
+ *
+ * @var array
+ * @access public
+ */
 	var $filePaths = array();
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access protected
+ */
 	var $_debug = false;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access protected
+ */
 	var $_error = false;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access protected
+ */
 	var $_newLine = "\r\n";
+/**
+ * Enter description here...
+ *
+ * @var integer
+ * @access protected
+ */
 	var $_lineLength = 75;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access private
+ */
 	var $__header = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access private
+ */
 	var $__boundary = null;
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access private
+ */
 	var $__message = null;
-
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $controller
+ * @access public
+ */
 	function startup(&$controller){
 		$this->Controller = $controller;
 	}
-
+/**
+ * Enter description here...
+ *
+ * @param mixed $content
+ * @return unknown
+ * @access public
+ */
 	function send($content = null){
 		$this->__createBoundary();
 		$this->__createHeader();
@@ -93,7 +235,11 @@ class EmailComponent extends Object{
 		$__method = '__'.$this->delivery;
 		return $this->$__method();
 	}
-
+/**
+ * Enter description here...
+ *
+ * @access public
+ */
 	function reset() {
 		$this->to = null;
 		$this->from = null;
@@ -107,7 +253,13 @@ class EmailComponent extends Object{
 		$this->__boundary = null;
 		$this->__message = null;
 	}
-
+/**
+ * Enter description here...
+ *
+ * @param string $content
+ * @return unknown
+ * @access private
+ */
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
 		if($this->sendAs === 'both'){
@@ -131,11 +283,19 @@ class EmailComponent extends Object{
 			return $View->renderLayout($content);
 		}
 	}
-
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
 	function __createBoundary(){
 		$this->__boundary = md5(uniqid(time()));
 	}
-
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
 	function __createHeader(){
 		$this->__header .= 'From: ' . $this->from . $this->_newLine;
 		$this->__header .= 'Reply-To: ' . $this->replyTo . $this->_newLine;
@@ -170,7 +330,12 @@ class EmailComponent extends Object{
 			$this->__header .= 'Content-Type: multipart/alternative; boundary=' . $this->__boundary . $this->_newLine;
 		}
 	}
-
+/**
+ * Enter description here...
+ *
+ * @param string $message
+ * @access private
+ */
 	function __formatMessage($message){
 		$message = $this->__wrap($message);
 
@@ -191,7 +356,11 @@ class EmailComponent extends Object{
 			$this->__message .= $message . $this->_newLine;
 		}
 	}
-
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
 	function __attachFiles(){
 		foreach($this->attachments as $attachment) {
 			$files[] = $this->__findFiles($attachment);
@@ -210,7 +379,13 @@ class EmailComponent extends Object{
 			$this->__message .= $data . $this->_newLine . $this->_newLine;
 		}
 	}
-
+/**
+ * Enter description here...
+ *
+ * @param string $attachment
+ * @return unknown
+ * @access private
+ */
 	function __findFiles($attachment){
 		foreach($this->filePaths as $path) {
 			if (file_exists($path . DS . $attachment)) {
@@ -219,7 +394,13 @@ class EmailComponent extends Object{
 			}
 		}
 	}
-
+/**
+ * Enter description here...
+ *
+ * @param string $message
+ * @return unknown
+ * @access private
+ */
 	function __wrap($message) {
 		$message = str_replace(array('\r','\n'), '\n', $message);
 		$words = explode('\n', $message);
@@ -230,15 +411,29 @@ class EmailComponent extends Object{
 		}
 		return $formated;
 	}
-
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ * @access private
+ */
 	function __mail(){
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
-
+/**
+ * Enter description here...
+ *
+ * @access private
+ */
 	function __smtp(){
 
 	}
-
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ * @access private
+ */
 	function __debug() {
 		$fm = '<pre>';
 		$fm .= sprintf('%s %s', 'To:', $this->to);
