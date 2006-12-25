@@ -37,7 +37,7 @@
  * @subpackage	cake.cake.libs.controller.components
  *
  */
-class EmailComponent extends Object {
+class EmailComponent extends Object{
 	var $to = null;
 	var $from = null;
 	var $replyTo = null;
@@ -45,25 +45,30 @@ class EmailComponent extends Object {
 	var $cc = array();
 	var $bcc = array();
 	var $subject = null;
+	var $additionalParams = null;
 	var $template = 'default';
-	var $sendAs = 'text';
-	var $delivery = 'mail';
+	var $sendAs = 'text';  //html, text, both
+	var $delivery = 'mail'; //mail, smtp, debug
 	var $charset = 'ISO-8859-15';
 	var $attachments = array();
-	var $xMailer = 'CakePHP EmailComponent';
+	var $xMailer = 'CakePHP Email Component';
 	var $filePaths = array();
-
 	var $_debug = false;
 	var $_error = false;
 	var $_newLine = "\r\n";
 	var $_lineLength = 75;
-
 	var $__header = null;
 	var $__boundary = null;
 	var $__message = null;
 
+	function startup(&$controller){
+		$this->Controller = $controller;
+	}
 
-	function send($content){
+	function send($content = null){
+		$this->__createBoundary();
+		$this->__createHeader();
+
 		if($this->template === null) {
 			if(is_array($content)){
 				$message = null;
@@ -73,19 +78,20 @@ class EmailComponent extends Object {
 			} else {
 				$message = $content;
 			}
+			$this->__formatMessage($message);
 		} else {
-			$message = $this->__renderTemplate($content);
+			$this->__message = $this->__renderTemplate($content);
 		}
-
-		$this->__createBoundary();
-		$this->__createHeader();
-		$this->__formatMessage($message);
 
 		if(!empty($this->attachments)) {
 			$this->__attachFiles();
 		}
+
+		if ($this->_debug){
+			$this->delivery = 'debug';
+		}
 		$__method = '__'.$this->delivery;
-		$this->$__method();
+		return $this->$__method();
 	}
 
 	function reset() {
@@ -96,15 +102,39 @@ class EmailComponent extends Object {
 		$this->cc = array();
 		$this->bcc = array();
 		$this->subject = null;
+		$this->additionalParams = null;
 		$this->__header = null;
 		$this->__boundary = null;
 		$this->__message = null;
 	}
 
+	function __renderTemplate($content) {
+		$View = new View($this->Controller);
+		if($this->sendAs === 'both'){
+			$msg = '--' . $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content));
+			$View->layoutPath = 'email' . DS . 'html';
+			$msg .= $View->renderLayout($content);
+
+			$msg .= '--' .  $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content));
+			$View->layoutPath = 'email' . DS . 'text';
+			$msg .= $View->renderLayout($content);
+			return $msg;
+		} else {
+			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content));
+			$View->layoutPath = 'email' . DS . $this->sendAs;
+			return $View->renderLayout($content);
+		}
+	}
+
 	function __createBoundary(){
 		$this->__boundary = md5(uniqid(time()));
 	}
-
 
 	function __createHeader(){
 		$this->__header .= 'From: ' . $this->from . $this->_newLine;
@@ -117,14 +147,14 @@ class EmailComponent extends Object {
 				$addresses .= $cc . ', ';
 			}
 			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
-			$this->to .= ', ' . $addresses;
+			//$this->to .= ', ' . $addresses;
 		}
 		if(!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
 				$addresses .= $bcc . ', ';
 			}
 			$this->__header .= 'Bcc: ' . $addresses . $this->_newLine;
-			$this->to .= ', ' . $addresses;
+			//$this->to .= ', ' . $addresses;
 		}
 
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
@@ -144,7 +174,7 @@ class EmailComponent extends Object {
 	function __formatMessage($message){
 		$message = $this->__wrap($message);
 
-		if($this->sendAs === 'html'){
+		if($this->sendAs === 'both'){
 			$this->__message = '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
@@ -152,7 +182,7 @@ class EmailComponent extends Object {
 			$this->__message .= 'preferred message format from HTML to plain text.'.$this->_newLine.$this->_newLine;
 			$this->__message .=  strip_tags($message) . $this->_newLine;
 
-			$this->__message = '--' .  $this->__boundary . $this->_newLine;
+			$this->__message .= '--' .  $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$this->__message .= $message . $this->_newLine;
@@ -202,11 +232,24 @@ class EmailComponent extends Object {
 	}
 
 	function __mail(){
-		return @mail($this->to, $this->subject, $this->__message, $this->__header);
+		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 
 	function __smtp(){
 
+	}
+
+	function __debug() {
+		$fm = '<pre>';
+		$fm .= sprintf('%s %s', 'To:', $this->to);
+		$fm .= sprintf('%s %s', 'Subject:', $this->subject);
+		$fm .= sprintf('%s\n\n%s', 'Header:', $this->__header);
+		$fm .= sprintf('%s\n\n%s', 'Parameters:', $this->additionalParams);
+		$fm .= sprintf('%s\n\n%s', 'Message:', $this->__message);
+		$fm .= '</pre>';
+
+		$this->Controller->Session->setFlash($fm, 'default', null, 'email');
+		return true;
 	}
 }
 ?>
