@@ -31,7 +31,7 @@
 /**
  * Included libs
  */
-uses('class_registry', 'validators', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
+uses('class_registry', 'validation', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
 
 /**
  * Object-relational mapper.
@@ -1131,7 +1131,11 @@ class Model extends Overloadable {
  * @param mixed $fields
  * @return boolean True on success, false on failure
  */
-	function updateAll($conditions, $fields) {
+	function updateAll($conditions, $fields = null) {
+		if (empty($fields)) {
+			$fields = $conditions;
+			$conditions = true;
+		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->update($this, $fields, null, $conditions);
 	}
@@ -1571,27 +1575,52 @@ class Model extends Overloadable {
 			$data = $this->data;
 		}
 
-		if (!$this->beforeValidate()) {
+		if (empty($data) || !$this->beforeValidate()) {
 			return false;
 		}
 
-		if (!isset($this->validate)) {
+		if (!isset($this->validate) || empty($this->validate)) {
 			return true;
-		}
-
-		if (!empty($data)) {
-			$data = $data;
-		} elseif (isset($this->data)) {
-			$data = $this->data;
 		}
 
 		if (isset($data[$this->name])) {
 			$data = $data[$this->name];
 		}
 
-		foreach($this->validate as $field_name => $validator) {
-			if (isset($data[$field_name]) && !preg_match($validator, $data[$field_name])) {
-				$this->invalidate($field_name);
+		$Validation = new Validation();
+
+		foreach($this->validate as $fieldName => $validator) {
+			if (is_array($validator)) {
+				$validator = am(array(
+					'allowEmpty' => true,
+					'message' => 'This field cannot be left blank',
+					'rule' => 'blank'
+				), $validator);
+
+				if (!isset($data[$fieldName]) && $validator['allowEmpty'] == false) {
+					$this->invalidate($fieldName, $validator['message']);
+				} elseif (isset($data[$fieldName])) {
+					if (is_array($validator['rule'])) {
+						$rule = $validator['rule'][0];
+						unset($validator['rule'][0]);
+						$ruleParams = am(array($data[$fieldName]), array_values($validator['rule']));
+					} else {
+						$rule = $validator['rule'];
+						$ruleParams = array($data[$fieldName]);
+					}
+
+					if (
+						(method_exists($this, $rule) && !call_user_func_array(array(&$this, $rule), $ruleParams)) ||
+						(method_exists($Validation, $rule) && !call_user_func_array(array(&$Validation, $rule), $ruleParams)) ||
+						(!is_array($validator['rule']) && !preg_match($rule, $data[$fieldName]))
+					) {
+						$this->invalidate($fieldName, $validator['message']);
+					}
+				}
+			} else {
+				if (isset($data[$fieldName]) && !preg_match($validator, $data[$fieldName])) {
+					$this->invalidate($fieldName);
+				}
 			}
 		}
 		return $this->validationErrors;
@@ -1600,13 +1629,14 @@ class Model extends Overloadable {
  * Sets a field as invalid
  *
  * @param string $field The name of the field to invalidate
+ * @param mixed $value
  * @return void
  */
-	function invalidate($field) {
+	function invalidate($field, $value = 1) {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
 		}
-		$this->validationErrors[$field] = 1;
+		$this->validationErrors[$field] = $value;
 	}
 /**
  * Returns true if given field name is a foreign key in this Model.
