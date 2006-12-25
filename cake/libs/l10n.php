@@ -36,56 +36,58 @@
  */
 class L10n extends Object {
 /**
- * Enter description here...
+ * The language for current locale
  *
  * @var string
  * @access public
  */
 	var $language = 'English (United States)';
 /**
- * Enter description here...
+ * Locale search paths
  *
  * @var array
  * @access public
  */
 	var $languagePath = array('eng');
 /**
- * Enter description here...
+ * ISO 639-3 for current locale
  *
  * @var string
  * @access public
  */
 	var $lang = 'eng';
 /**
- * Enter description here...
+ * Locale
  *
  * @var string
  * @access public
  */
 	var $locale = 'en_us';
 /**
- * Enter description here...
+ * Default ISO 639-3 language.
+ *
+ * DEFAULT_LANGUAGE is defined in an application this will be set as a fall back
  *
  * @var string
  * @access public
  */
 	var $default = null;
 /**
- * Enter description here...
+ * Encoding used for current locale
  *
  * @var string
  * @access public
  */
 	var $charset = 'utf-8';
 /**
- * Enter description here...
+ * Set to true if a locale is found
  *
  * @var string
  * @access public
  */
 	var $found = false;
 /**
- * Enter description here...
+ * Maps ISO 639-3 to I10n::__l10nCatalog
  *
  * @var array
  * @access private
@@ -168,9 +170,11 @@ class L10n extends Object {
 								/* Yiddish */ 'yid' => 'yi',
 								/* Zulu */  'zul' => 'zu');
 /**
- * Enter description here...
+ * HTTP_ACCEPT_LANGUAGE catalog
  *
- * @var unknown_type
+ * holds all information related to a language
+ *
+ * @var array
  * @access private
  */
 	var $__l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8'),
@@ -312,8 +316,7 @@ class L10n extends Object {
 										'zh-tw' => array('language' => 'Chinese (Taiwan)', 'locale' => 'zh_tw', 'localeFallback' => 'chi', 'charset' => 'utf-8'),
 										'zu' => array('language' => 'Zulu', 'locale' => 'zul', 'localeFallback' => 'zul', 'charset' => 'utf-8'));
 /**
- * Enter description here...
- *
+ * Class constructor
  */
 	function __construct() {
 		if (defined('DEFAULT_LANGUAGE')) {
@@ -322,10 +325,12 @@ class L10n extends Object {
 		parent::__construct();
 	}
 /**
- * Enter description here...
+ * Gets the settings for $language.
+ * If $language is null it attempt to get settings from I10n::__autoLanguage(); if this fails
+ * the method will get the settings from I10n::__setLanguage();
  *
  * @param string $language
- * @return unknown
+ * @return void
  * @access private
  */
 	function get($language = null) {
@@ -336,7 +341,8 @@ class L10n extends Object {
 		}
 	}
 /**
- * Enter description here...
+ * Sets the class vars to correct values for $language.
+ * If $language is null it will use the DEFAULT_LANGUAGE if defined
  *
  * @param string $language
  * @access private
@@ -375,7 +381,7 @@ class L10n extends Object {
 		Configure::write('charset', $this->charset);
 	}
 /**
- * Enter description here...
+ * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
  * @access private
  */
 	function __autoLanguage() {
