@@ -1084,6 +1084,26 @@
 	}
 /**
  *
+ * Allows you to override the current domain for a single message lookup.
+ *
+ * @param string $domain
+ * @param string $msg
+ * @param string $return
+ * @return translated string if $return is false string will be echoed
+ */
+	function __d($domain, $msg, $return = false) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+
+		if($return === false) {
+			echo I18n::translate($msg, null, $domain);
+		} else {
+			return I18n::translate($msg, null, $domain);
+		}
+    }
+/**
+ *
  * Allows you to override the current domain for a single plural message lookup
  * Returns correct plural form of message identified by $singular and $plural for count $count
  * from domain $domain
@@ -1099,13 +1119,45 @@
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
 
 		if($return === false) {
-			echo I18n::translate($singular, $plural, $domain, 5, $count, $dir);;
+			echo I18n::translate($singular, $plural, $domain, 5, $count);
 		} else {
-			return I18n::translate($singular, $plural, $domain, 5, $count, $dir);
+			return I18n::translate($singular, $plural, $domain, 5, $count);
+		}
+	}
+/**
+ *
+ * Allows you to override the current domain for a single message lookup.
+ * It also allows you to specify a category.
+ *
+ * The category argument allows a specific category of the locale settings to be used for fetching a message.
+ * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
+ *
+ * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
+ * LC_CTYPE     0
+ * LC_NUMERIC   1
+ * LC_TIME      2
+ * LC_COLLATE   3
+ * LC_MONETARY  4
+ * LC_MESSAGES  5
+ * LC_ALL       6
+ *
+ * @param string $domain
+ * @param string $msg
+ * @param string $category
+ * @param boolean $return
+ * @return translated string if $return is false string will be echoed
+ */
+	function __dc($domain, $msg, $category, $return = false) {
+		if(!class_exists('I18n')) {
+			uses('i18n');
+		}
+
+		if($return === false) {
+			echo I18n::translate($msg, null, $domain, $category);
+		} else {
+			return I18n::translate($msg, null, $domain, $category);
 		}
 	}
 /**
@@ -1139,73 +1191,13 @@
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
 
 		if($return === false) {
-			echo I18n::translate($singular, $plural, $domain, $category, $count, $dir);
+			echo I18n::translate($singular, $plural, $domain, $category, $count);
 		} else {
-			return I18n::translate($singular, $plural, $domain, $category, $count, $dir);
+			return I18n::translate($singular, $plural, $domain, $category, $count);
 		}
 	}
-/**
- *
- * Allows you to override the current domain for a single message lookup.
- * It also allows you to specify a category.
- *
- * The category argument allows a specific category of the locale settings to be used for fetching a message.
- * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
- *
- * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
- *
- * @param string $domain
- * @param string $msg
- * @param string $category
- * @param boolean $return
- * @return translated string if $return is false string will be echoed
- */
-	function __dc($domain, $msg, $category, $return = false) {
-		if(!class_exists('I18n')) {
-			uses('i18n');
-		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
-
-		if($return === false) {
-			echo I18n::translate($msg, null, $domain, $category, null, $dir);
-		} else {
-			return I18n::translate($msg, null, $domain, $category, null, $dir);
-		}
-	}
-/**
- *
- * Allows you to override the current domain for a single message lookup.
- *
- * @param string $domain
- * @param string $msg
- * @param string $return
- * @return translated string if $return is false string will be echoed
- */
-	function __d($domain, $msg, $return = false) {
-		if(!class_exists('I18n')) {
-			uses('i18n');
-		}
-		$calledFrom = debug_backtrace();
-		$dir = dirname($calledFrom[0]['file']);
-
-		if($return === false) {
-			echo I18n::translate($msg, null, $domain, 5, null, $dir);
-		} else {
-			return I18n::translate($msg, null, $domain, 5, null, $dir);
-		}
-    }
 /**
  *
  * The category argument allows a specific category of the locale settings to be used for fetching a message.

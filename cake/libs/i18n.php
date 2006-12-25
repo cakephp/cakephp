@@ -104,7 +104,7 @@ class I18n extends Object {
  * @return translated strings.
  * @access public
  */
-	function translate($singular, $plural = null, $domain = null, $category, $count = null, $directory) {
+	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
 
