@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CakePHP 1.2.x.x\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 18:30-0600\n"
+"PO-Revision-Date: 2006-12-25 16:44-0600\n"
 "Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
 "Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -10,25 +10,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: Danish\n"
-"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-Country: Denmark\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: cake/libs/overloadable_php4.php:63
 #: ;96 cake/libs/overloadable_php5.php:44
 #: ;56
 msgid "Magic method handler __call__ not defined in %s"
-msgstr ""
+msgstr "Den magiske metode __call__ er ikke defineret i %s"
 
 #: cake/libs/controller/components/acl_base.php:49
 #: cake/libs/controller/components/dbacl/models/aclnode.php:55
 #: ;125;200;219
 msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
-msgstr ""
+msgstr "[acl_base] KunstruktÃžren i AclBase blev kaldt eller instancieret. Denne klasse skal forblive abstrakt. Se Cake dokumentationen for nÃŠrmere information om ACL indstillinger."
 
 #: cake/libs/view/templates/errors/missing_action.ctp:30
 #: cake/libs/view/templates/errors/missing_connection.ctp:31
 msgid "If you want to customize this error message, create %s."
-msgstr ""
+msgstr "Hvis du vil tilpasse denne fejlbesked, opret filen %s."
 
 #: cake/libs/view/templates/errors/missing_action.ctp:31
 #: cake/libs/view/templates/errors/missing_component_class.ctp:33
@@ -42,7 +42,7 @@ msgstr ""
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
 #: cake/libs/view/templates/errors/missing_view.ctp:31
 msgid "Fatal"
-msgstr ""
+msgstr "Fatal"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:31
 #: cake/libs/view/templates/errors/missing_component_file.ctp:29
@@ -58,7 +58,7 @@ msgstr ""
 #: cake/libs/view/templates/errors/private_action.ctp:29
 #: cake/libs/view/templates/errors/scaffold_error.ctp:29
 msgid "Notice"
-msgstr ""
+msgstr "Meddelelse"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:32
 #: cake/libs/view/templates/errors/missing_component_file.ctp:30
@@ -73,7 +73,7 @@ msgstr ""
 #: cake/libs/view/templates/errors/private_action.ctp:30
 #: cake/libs/view/templates/errors/scaffold_error.ctp:30
 msgid "If you want to customize this error message, create %s"
-msgstr ""
+msgstr "Opret filen %s hvis du vil tilpasse denne fejl besked"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:34
 #: cake/libs/view/templates/errors/missing_component_file.ctp:32
@@ -82,622 +82,622 @@ msgstr ""
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:32
 #: cake/libs/view/templates/errors/missing_model.ctp:32
 msgid "Create the class below in file: %s"
-msgstr ""
+msgstr "Opret klassen nedenunder i filen: %s"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:32
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
 #: cake/libs/view/templates/errors/missing_view.ctp:32
 msgid "Confirm you have created the file: %s"
-msgstr ""
+msgstr "BekrÃŠft du har oprettet filen: %s"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:34
 #: cake/libs/view/templates/scaffolds/edit.thtml:39
 msgid "List  "
-msgstr ""
+msgstr "Liste "
 
 #: cake/libs/view/templates/scaffolds/add.thtml:38
 #: cake/libs/view/templates/scaffolds/edit.thtml:43
 msgid "View "
-msgstr ""
+msgstr "Se "
 
 #: cake/libs/view/templates/scaffolds/add.thtml:39
 #: cake/libs/view/templates/scaffolds/edit.thtml:44
 msgid "Add "
-msgstr ""
+msgstr "TilfÃžj "
 
 #: cake/libs/view/templates/scaffolds/index.thtml:75
 #: cake/libs/view/templates/scaffolds/view.thtml:138
 #: ;144
 msgid "View"
-msgstr ""
+msgstr "Se"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:76
 #: cake/libs/view/templates/scaffolds/view.thtml:139
 #: ;145
 msgid "Edit"
-msgstr ""
+msgstr "Ret"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:140
 #: ;146
 msgid "Delete"
-msgstr ""
+msgstr "Slet"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:77
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 #: ;140;146
 msgid "Are you sure you want to delete id %s?"
-msgstr ""
+msgstr "Er du sikker pÃ¥ du vil slette id %s?"
 
 #: cake/libs/view/templates/scaffolds/index.thtml:86
 #: cake/libs/view/templates/scaffolds/view.thtml:155
 msgid "New "
-msgstr ""
+msgstr "Ny "
 
 #: cake/basics.php:96
 msgid "Plugins must have a class named %s"
-msgstr ""
+msgstr "Udvidelser skal have en klasse kaldet %s"
 
 #: cake/basics.php:1265
 msgid "Deprecated: Use Set::countDim instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug Set::countDim i stedet"
 
 #: cake/libs/configure.php:213
 msgid "Configure::load() - %s.php not found"
-msgstr ""
+msgstr "Configure::Load() - %s.php blev ikke fundet"
 
 #: cake/libs/configure.php:219
 msgid "Configure::load() - no variable $config found in %s.php"
-msgstr ""
+msgstr "Configure::load() - ingen variabel $config blev fundet i %s.php"
 
 #: cake/libs/error.php:123
 msgid "The requested address %s was not found on this server."
-msgstr ""
+msgstr "Adressen %s blev ikke fundet pÃ¥ denne server"
 
 #: cake/libs/folder.php:281
 msgid "chmodr() File exists"
-msgstr ""
+msgstr "chmodr() Filen findes"
 
 #: cake/libs/folder.php:308
 msgid "mkdirr() File exists"
-msgstr ""
+msgstr "mkdirr() Filen findes"
 
 #: cake/libs/validation.php:302
 msgid "You must define the $operator parameter for Validation::comparison()"
-msgstr ""
+msgstr "Du skal definere $opreator parameteret i Validation::comparison() "
 
 #: cake/libs/validation.php:325
 msgid "You must define a regular expression for Validation::custom()"
-msgstr ""
+msgstr "Du skal definere en regular expressin i Validation::custom()"
 
 #: cake/libs/controller/controller.php:255
 msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
-msgstr ""
+msgstr "Controller::__construct() : Kan ikke finde eller tolke mit eget klassenavn, stopper."
 
 #: cake/libs/controller/controller.php:605
 msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug Controller::set(\"title\", \"...\") i stedet"
 
 #: cake/libs/controller/components/security.php:352
 msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
-msgstr ""
+msgstr "SecurityComponent::loginCredentials() - Serveren understÃžtter ikke 'digest authentication'"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:85
 msgid "ACO permissions key %s does not exist in DB_ACL::check()"
-msgstr ""
+msgstr "ACO adgangsnÃžglen %s findes ikke i DB_ACL::check()"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:144
 msgid "DB_ACL::allow() - Invalid node"
-msgstr ""
+msgstr "DB_ACL::allow() - Ugyldig node"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:162
 msgid "DB_ACL::allow() - Invalid ACO action"
-msgstr ""
+msgstr "DB_ACL::allow() - Ugyldig ACO handling"
 
 #: cake/libs/controller/components/dbacl/db_acl.php:231
 msgid "Null id provided in DB_ACL::get"
-msgstr ""
+msgstr "Null id givet i DB_ACL::get"
 
 #: cake/libs/controller/components/dbacl/models/aclnode.php:70
 msgid "Null parent in %s::create()"
-msgstr ""
+msgstr "Null forÃŠldre i %s::create()"
 
 #: cake/libs/model/connection_manager.php:110
 msgid "ConnectionManager::getDataSource - Non-existent data source %s"
-msgstr ""
+msgstr "ConnectionManager::getDataSource  - %s er ikke en gyldig datakilde"
 
 #: cake/libs/model/connection_manager.php:163
 msgid "Unable to load DataSource file %s.php"
-msgstr ""
+msgstr "Kan ikke inkludere datakilde filen %s.php"
 
 #: cake/libs/model/datasources/dbo_source.php:305
 msgid "Deprecated: Use DboSource::fetchRow() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug DboSource::fetchRow() i stedet"
 
 #: cake/libs/model/datasources/dbo_source.php:313
 msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug DboSource::fetchRow($sql) i stedet"
 
 #: cake/libs/model/datasources/dbo_source.php:1557
 msgid "Implement in DBO"
-msgstr ""
+msgstr "Implementer i DBO"
 
 #: cake/libs/model/datasources/dbo/dbo_pear.php:79
 msgid "Please implement DBO::disconnect() first."
-msgstr ""
+msgstr "Implementer venligst DBO::disconnect() fÃžrst."
 
 #: cake/libs/model/datasources/dbo/dbo_pear.php:131
 msgid "Please implement DBO_Pear::tablesList() for your database driver."
-msgstr ""
+msgstr "Implementer venligst DBO_Pear::tablesList() i din database driver."
 
 #: cake/libs/view/helper.php:134
 msgid "Method %1$s::%2$s does not exist"
-msgstr ""
+msgstr "Metoden %1$s::%2$s findes ikke"
 
 #: cake/libs/view/view.php:325
 msgid "Error in view %s, got: <blockquote>%s</blockquote>"
-msgstr ""
+msgstr "Fejl i view %s, fik: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:429
 msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
-msgstr ""
+msgstr "Fejl i layout, fik: <blockquote>%s</blockquote>"
 
 #: cake/libs/view/view.php:488
 msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
-msgstr ""
+msgstr "(View::setLayout) UdgÃ¥et: Brug $this->layout = \"..\""
 
 #: cake/libs/view/helpers/form.php:88
 msgid "Model %s does not exist"
-msgstr ""
+msgstr "Modellen %s findes ikke"
 
 #: cake/libs/view/helpers/form.php:470
 msgid "Don't use me yet"
-msgstr ""
+msgstr "Brug mig ikke endnu"
 
 #: cake/libs/view/helpers/form.php:662
 msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::input() eller FormHelper::text()"
 
 #: cake/libs/view/helpers/form.php:686
 msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::input() eller FormHelper::checkbox()"
 
 #: cake/libs/view/helpers/form.php:709
 #: ;732;754;777;834
 msgid "Deprecated: Use FormHelper::input() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::input()"
 
 #: cake/libs/view/helpers/form.php:803
 msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::input() eller FormHelper::select()"
 
 #: cake/libs/view/helpers/form.php:826
 msgid "Deprecated: Use FormHelper::submit() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::submit()"
 
 #: cake/libs/view/helpers/form.php:951
 msgid "Deprecated: Use FormHelper::label() instead"
-msgstr ""
+msgstr "UdgÃ¥et: Brug FormHelper::label()"
 
 #: cake/libs/view/helpers/html.php:673
 msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
-msgstr ""
+msgstr "(HtmlHelper::formTag) UdgÃ¥et: Brug FormHelper::create"
 
 #: cake/libs/view/helpers/html.php:719
 msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
-msgstr ""
+msgstr "(HtmlHelper::linkEmail) UdgÃ¥et: Brug HtmlHelper::link"
 
 #: cake/libs/view/helpers/javascript.php:152
 msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
-msgstr ""
+msgstr "(JavascriptHelper::linkOut) UdgÃ¥et: Brug JavascriptHelper::link"
 
 #: cake/libs/view/templates/elements/dump.ctp:28
 msgid "Controller dump:"
-msgstr ""
+msgstr "Controller data:"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:28
 msgid "Missing Method in %s"
-msgstr ""
+msgstr "Manglende metode i %s"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:29
 msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
-msgstr ""
+msgstr "Du ser denne fejl fordi handlingen <em>%1$s</em> ikke er defineret i controlleren <em>%2$s</em>"
 
 #: cake/libs/view/templates/errors/missing_action.ctp:32
 msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
-msgstr ""
+msgstr ": BekrÃŠft du har oprettet %1$s::%s$s i filen : %3$s."
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:27
 msgid "Missing Component Class"
-msgstr ""
+msgstr "Manglende Component klasse"
 
 #: cake/libs/view/templates/errors/missing_component_class.ctp:29
 msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
-msgstr ""
+msgstr "Du ser denne fejl fordi component klassen <em>%1$s</em> defineret i <em>%2$s</em> ikke kan findes."
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:27
 msgid "Missing Component File"
-msgstr ""
+msgstr "Manglende Component fil"
 
 #: cake/libs/view/templates/errors/missing_component_file.ctp:28
 msgid "You are seeing this error because the component file can not be found or does not exist."
-msgstr ""
+msgstr "Du ser denne fejl fordi component filen ikke kan findes"
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:27
 msgid "Requires a Database Connection"
-msgstr ""
+msgstr "KrÃŠver en database forbindelse"
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:28
 #: ;33
 msgid "Confirm you have created the file : %s."
-msgstr ""
+msgstr "BekrÃŠft du har oprettet filen : % s."
 
 #: cake/libs/view/templates/errors/missing_connection.ctp:29
 msgid "Missing Database Connection: %s requires a database connection"
-msgstr ""
+msgstr "Manglende database forbindelse: %s krÃŠver database forbindelse"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:27
 msgid "Missing controller"
-msgstr ""
+msgstr "Manglende controller"
 
 #: cake/libs/view/templates/errors/missing_controller.ctp:28
 msgid "You are seeing this error because controller <em>%s</em> could not be found."
-msgstr ""
+msgstr "Du ser denne fejl fordi controller <em>%s</em> ikke kunne findes."
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:27
 msgid "Missing Helper Class"
-msgstr ""
+msgstr "Manglede Helper klasse"
 
 #: cake/libs/view/templates/errors/missing_helper_class.ctp:28
 msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
-msgstr ""
+msgstr "Du ser denne fejl fordi view helper klassen <em>%s</em> ikke kan findes."
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:27
 msgid "Missing Helper File"
-msgstr ""
+msgstr "Manglende Helper fil"
 
 #: cake/libs/view/templates/errors/missing_helper_file.ctp:28
 msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
-msgstr ""
+msgstr "Du ser denne fejl fordi view helper filen %s ikke kan findes."
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:27
 msgid "Missing Layout"
-msgstr ""
+msgstr "Manglede layout"
 
 #: cake/libs/view/templates/errors/missing_layout.ctp:28
 msgid "You are seeing this error because the layout file %s can not be found or does not exist."
-msgstr ""
+msgstr "Du ser denne fejl fordi layout filen %s ikke kan findes"
 
 #: cake/libs/view/templates/errors/missing_model.ctp:27
 msgid "Missing Model"
-msgstr ""
+msgstr "Manglende model"
 
 #: cake/libs/view/templates/errors/missing_model.ctp:28
 msgid "No class found for the <em>%s</em> model."
-msgstr ""
+msgstr "Ingen klasse fundet for modellen <em>%s</em>"
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
 msgid "Scaffold Requires a Database Connection"
-msgstr ""
+msgstr "Scaffold krÃŠver database forbindelse"
 
 #: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
 msgid "Missing Database Connection: Scaffold Does not work without a database connection"
-msgstr ""
+msgstr "Manglende database forbindelse: Scaffold virker ikke uden database forbindelse"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:27
 msgid "Missing Database Table"
-msgstr ""
+msgstr "Manglende database tabel"
 
 #: cake/libs/view/templates/errors/missing_table.ctp:28
 msgid "No Database table for model %1$s (expected %2$s), create it first."
-msgstr ""
+msgstr "Ingen database tabel fundet for %1$s (Forventede: %2$s)."
 
 #: cake/libs/view/templates/errors/missing_view.ctp:27
 msgid "Missing view"
-msgstr ""
+msgstr "Manglende view"
 
 #: cake/libs/view/templates/errors/missing_view.ctp:28
 msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
-msgstr ""
+msgstr "Du ser denne fejl fordi view'et for <em>%1$s::%2$s()</em> ikke kunne findes."
 
 #: cake/libs/view/templates/errors/private_action.ctp:27
 msgid "Private Method in %s"
-msgstr ""
+msgstr "Privat metode i %s"
 
 #: cake/libs/view/templates/errors/private_action.ctp:28
 msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
-msgstr ""
+msgstr "Du ser denne fejl fordi du ikke kan tilgÃ¥ den private metode <em>%s</em> direkte."
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:27
 msgid "Scaffold Error"
-msgstr ""
+msgstr "Scaffold fejl"
 
 #: cake/libs/view/templates/errors/scaffold_error.ctp:28
 msgid "Your must implement the following method in your controller"
-msgstr ""
+msgstr "Du skal implementere fÃžlgende metoder i din controller"
 
 #: cake/libs/view/templates/layouts/default.ctp:40
 msgid "CakePHP Rapid Development"
-msgstr ""
+msgstr "CakePHP Rapid Development"
 
 #: cake/libs/view/templates/scaffolds/add.thtml:31
 msgid "Add"
-msgstr ""
+msgstr "TilfÃžj"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:32
 msgid "Save"
-msgstr ""
+msgstr "Gem"
 
 #: cake/libs/view/templates/scaffolds/edit.thtml:37
 msgid "Delete  "
-msgstr ""
+msgstr "Slet "
 
 #: cake/libs/view/templates/scaffolds/index.thtml:40
 msgid "Actions"
-msgstr ""
+msgstr "Handlinger"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:32
 msgid "View %s"
-msgstr ""
+msgstr "Se %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:62
 #: ;98
 msgid "Edit %s"
-msgstr ""
+msgstr "Ret %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:63
 msgid "Delete %s"
-msgstr ""
+msgstr "Slet %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:64
 #: ;69
 msgid "List %s"
-msgstr ""
+msgstr "List %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:65
 #: ;100
 msgid "New %s"
-msgstr ""
+msgstr "Ny %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:70
 msgid "Add %s"
-msgstr ""
+msgstr "TilfÃžj %s"
 
 #: cake/libs/view/templates/scaffolds/view.thtml:82
 #: ;117
 msgid "Related %s"
-msgstr ""
+msgstr "Releaterede %s"
 
 #: cake/scripts/acl.php:91
 msgid ""
 "Unable to find /app/config/database.php.  Please create it before continuing.\n"
 "\n"
-msgstr ""
+msgstr "Kan ikke finde /app/config/database.php. Opret venligst filen fÃžr du fortsÃŠtter.\n"
 
 #: cake/scripts/bake.php:1892
 msgid "File exists, overwrite?"
-msgstr ""
+msgstr "Filen findes allerede, overskriv?"
 
 #: cake/scripts/bake.php:1896
 msgid "Quitting."
-msgstr ""
+msgstr "Afslutter."
 
 #: cake/scripts/bake.php:1902
 msgid "Skip"
-msgstr ""
+msgstr "Spring over"
 
 #: cake/scripts/bake.php:1910
 msgid "Wrote"
-msgstr ""
+msgstr "Skrev"
 
 #: cake/scripts/bake.php:1913
 msgid "Error! Could not write to"
-msgstr ""
+msgstr "Fejl! Kan ikke skrive til"
 
 #: cake/scripts/templates/skel/webroot/css.php:68
 #: ;76
 msgid "Wrong file name."
-msgstr ""
+msgstr "Forkert filnavn"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "Your database configuration file is %s."
-msgstr ""
+msgstr "Din database konfigurations file er %s."
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "present"
-msgstr ""
+msgstr "til stede"
 
 #: cake/libs/view/templates/pages/home.ctp:27
 msgid "not present"
-msgstr ""
+msgstr "ikke til stede"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "Cake %s connect to the database."
-msgstr ""
+msgstr "Cake %s forbinde til databasen."
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is able to"
-msgstr ""
+msgstr "kan godt"
 
 #: cake/libs/view/templates/pages/home.ctp:31
 msgid "is not able to"
-msgstr ""
+msgstr "kan ikke"
 
 #: cake/libs/view/templates/pages/home.ctp:34
 msgid "CakePHP release information is on CakeForge"
-msgstr ""
+msgstr "CakePHP udgivelses informationer pÃ¥ CakeForge"
 
 #: cake/libs/view/templates/pages/home.ctp:35
 msgid "Read the release notes and get the latest version"
-msgstr ""
+msgstr "LÃŠs udgivelses informationer og hent den nyeste version"
 
 #: cake/libs/view/templates/pages/home.ctp:36
 msgid "Editing this Page"
-msgstr ""
+msgstr "Retter denne side"
 
 #: cake/libs/view/templates/pages/home.ctp:38
 msgid "To change the content of this page, create: /app/views/pages/home.thtml."
-msgstr ""
+msgstr "Opret /app/views/pages/home.thtml for at ÃŠndre indholdet af denne siden."
 
 #: cake/libs/view/templates/pages/home.ctp:39
 msgid "To change its layout, create: /app/views/layouts/default.thtml."
-msgstr ""
+msgstr "Opret /app/views/layouts/defautlt.thtml for at ÃŠndre layoutet."
 
 #: cake/libs/view/templates/pages/home.ctp:40
 msgid "See the views section of the manual for more info."
-msgstr ""
+msgstr "Se sektionen om views i manualen for mere information"
 
 #: cake/libs/view/templates/pages/home.ctp:41
 msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
-msgstr ""
+msgstr "Du kan ogsÃ¥ tilfÃžje CSS til dine sider i: app/webrot/css/."
 
 #: cake/libs/view/templates/pages/home.ctp:43
 msgid "More about Cake"
-msgstr ""
+msgstr "Mere om Cake"
 
 #: cake/libs/view/templates/pages/home.ctp:45
 msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
-msgstr ""
+msgstr "CakePHP er et hurtigt udviklings framework til PHP der bruger kendte design patterns som Active Record, Association Data Mapping, Front Controller og MVC."
 
 #: cake/libs/view/templates/pages/home.ctp:48
 msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
-msgstr ""
+msgstr "Vores primÃŠre mÃ¥l er at tilbyde et strukturert framework der gÃžr det muligt for PHP brugere pÃ¥ alle niveauer hurtigt at udvikle web applikationer, uden at miste fleksibilitet."
 
 #: cake/libs/view/templates/pages/home.ctp:51
 msgid "Cake Software Foundation"
-msgstr ""
+msgstr "Cake Software fonden"
 
 #: cake/libs/view/templates/pages/home.ctp:52
 msgid "Promoting development related to CakePHP"
-msgstr ""
+msgstr "Fremmer udvikling relatered til CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:53
 msgid "The Bakery"
-msgstr ""
+msgstr "Bageriet"
 
 #: cake/libs/view/templates/pages/home.ctp:54
 msgid "Everything CakePHP"
-msgstr ""
+msgstr "Alt CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:55
 msgid "Book Store"
-msgstr ""
+msgstr "Boghandel"
 
 #: cake/libs/view/templates/pages/home.ctp:56
 msgid "Recommended Software Books"
-msgstr ""
+msgstr "Anbefalede software bÃžger"
 
 #: cake/libs/view/templates/pages/home.ctp:57
 msgid "CakeSchwag"
-msgstr ""
+msgstr "CakeSchwag"
 
 #: cake/libs/view/templates/pages/home.ctp:58
 msgid "Get your own CakePHP gear - Doughnate to Cake"
-msgstr ""
+msgstr "FÃ¥ dit eget CakePHP udstyr - Doughnate til Cake"
 
 #: cake/libs/view/templates/pages/home.ctp:59
 msgid "CakePHP"
-msgstr ""
+msgstr "CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:60
 msgid "The Rapid Development Framework"
-msgstr ""
+msgstr "The Rapid Development Framework"
 
 #: cake/libs/view/templates/pages/home.ctp:61
 msgid "CakePHP Manual"
-msgstr ""
+msgstr "CakePHP manualen"
 
 #: cake/libs/view/templates/pages/home.ctp:62
 msgid "Your Rapid Development Cookbook"
-msgstr ""
+msgstr "Din Rapid Development kogebog"
 
 #: cake/libs/view/templates/pages/home.ctp:63
 msgid "CakePHP Wiki"
-msgstr ""
+msgstr "CakePHP Wiki"
 
 #: cake/libs/view/templates/pages/home.ctp:64
 msgid "The Community for CakePHP"
-msgstr ""
+msgstr "CakePHP fÃŠlleskabet"
 
 #: cake/libs/view/templates/pages/home.ctp:65
 msgid "CakePHP API"
-msgstr ""
+msgstr "CakePHP API"
 
 #: cake/libs/view/templates/pages/home.ctp:66
 msgid "Docblock Your Best Friend"
-msgstr ""
+msgstr "Docblock din beste ven"
 
 #: cake/libs/view/templates/pages/home.ctp:67
 msgid "CakeForge"
-msgstr ""
+msgstr "CakeForge"
 
 #: cake/libs/view/templates/pages/home.ctp:68
 msgid "Open Development for CakePHP"
-msgstr ""
+msgstr "Ãben udvikling til CakePHP"
 
 #: cake/libs/view/templates/pages/home.ctp:69
 msgid "CakePHP Trac"
-msgstr ""
+msgstr "CakePHP Trac"
 
 #: cake/libs/view/templates/pages/home.ctp:70
 msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
-msgstr ""
+msgstr "Til udvikling af CakePHP (Support, SVN browser, Roadmap, historik)"
 
 #: cake/libs/view/templates/pages/home.ctp:71
 msgid "CakePHP Google Group"
-msgstr ""
+msgstr "CakePHP google gruppe"
 
 #: cake/libs/view/templates/pages/home.ctp:72
 msgid "Community mailing list"
-msgstr ""
+msgstr "FÃŠlleskabets post liste"
 
 #: cake/libs/view/templates/pages/home.ctp:74
 msgid "Live chat about CakePHP"
-msgstr ""
+msgstr "Live chat om CakePHP"
 
 #: cake/libs/controller/scaffold.php:116
 msgid "Scaffold :: "
-msgstr ""
+msgstr "Scaffold :: "
 
 #: cake/libs/controller/scaffold.php:150
 #: ;153
 msgid "No id set for %s::view()"
-msgstr ""
+msgstr "Ingen id sat i %s::view()"
 
 #: cake/libs/controller/scaffold.php:223
 #: ;226
 msgid "No id set for %s::edit()"
-msgstr ""
+msgstr "Ingen id sat i %s::edit()"
 
 #: cake/libs/controller/scaffold.php:260
 msgid "updated"
-msgstr ""
+msgstr "opdateret"
 
 #: cake/libs/controller/scaffold.php:266
 msgid "saved"
-msgstr ""
+msgstr "gemt"
 
 #: cake/libs/controller/scaffold.php:287
 #: ;291
 msgid "The %1$s has been %2$s"
-msgstr ""
+msgstr "%1$s er blevet %2$s"
 
 #: cake/libs/controller/scaffold.php:298
 msgid "Please correct errors below."
-msgstr ""
+msgstr "Ret venligst nedestÃ¥ende fejl"
 
 #: cake/libs/controller/scaffold.php:330
 #: ;333
 msgid "No id set for %s::delete()"
-msgstr ""
+msgstr "Ingen id sat i %s::delete()"
 
 #: cake/libs/controller/scaffold.php:339
 #: ;342
 msgid "The %1$s with id: %2$d has been deleted."
-msgstr ""
+msgstr "%1$s med id: %2$d er blevet slettet."
 
 #: cake/libs/controller/scaffold.php:346
 #: ;349
 msgid "There was an error deleting the %1$s with id: %2$d"
-msgstr ""
+msgstr "Der opstod en fejl ved sletning af %1$s med id: %2$d"
 
