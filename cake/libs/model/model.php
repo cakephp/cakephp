@@ -443,7 +443,7 @@ class Model extends Overloadable {
  * @return unknown
  * @access protected
  */
-	function __call__($method, $params) {
+	function call__($method, $params) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		$methods = array_map('strtolower', array_keys($this->__behaviorMethods));
@@ -1691,7 +1691,7 @@ class Model extends Overloadable {
 		}
 		$result = $this->findAll($conditions, $fields, $order, $limit);
 		$this->recursive = $recursive;
-		
+
 		if(!$result) {
 			return false;
 		}

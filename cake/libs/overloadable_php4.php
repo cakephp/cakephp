@@ -59,10 +59,10 @@ class Overloadable extends Object {
 	}
 
 	function __call($method, $params, &$return) {
-		if(!method_exists($this, '__call__')) {
-			trigger_error(sprintf(__('Magic method handler __call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
+		if(!method_exists($this, 'call__')) {
+			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
 		}
-		$return = $this->__call__($method, $params);
+		$return = $this->call__($method, $params);
 		return true;
 	}
 }
@@ -92,20 +92,20 @@ class Overloadable2 extends Object {
 	}
 
 	function __call($method, $params, &$return) {
-		if(!method_exists($this, '__call__')) {
-			trigger_error(sprintf(__('Magic method handler __call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
+		if(!method_exists($this, 'call__')) {
+			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
 		}
-		$return = $this->__call__($method, $params);
+		$return = $this->call__($method, $params);
 		return true;
 	}
 
 	function __get($name, &$value) {
-		$value = $this->__get__($name);
+		$value = $this->get__($name);
 		return true;
 	}
 
 	function __set($name, $value) {
-		$this->__set__($name, $value);
+		$this->set__($name, $value);
 		return true;
 	}
 }
