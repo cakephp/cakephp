@@ -263,7 +263,6 @@ class Router extends Overloadable {
 				foreach($names as $name) {
 					$out[$name] = null;
 				}
-				$ii = 0;
 
 				if (is_array($defaults)) {
 					foreach($defaults as $name => $value) {
@@ -275,15 +274,16 @@ class Router extends Overloadable {
 					}
 				}
 
-				foreach($r as $found) {
+				foreach($r as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
-					if (isset($names[$ii])) {
-						$out[$names[$ii]] = $found;
+					if (isset($names[$key]) && !empty($found)) {
+						$out[$names[$key]] = $found;
+					} else if (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])){
+						break; //leave the default values;
 					} else {
 						// unnamed elements go in as 'pass'
 						$out['pass'] = array_filter(explode('/', $found));
 					}
-					$ii++;
 				}
 				break;
 			}
@@ -425,7 +425,7 @@ class Router extends Overloadable {
 					$args[] = $url[$keys[$i]];
 				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))){
 					$named[] = array($keys[$i], $url[$keys[$i]]);
-				} else {
+				} else if ($match === false) {
 					$args[] = $keys[$i] . $path['argSeparator'] .$url[$keys[$i]];
 				}
 			}
@@ -441,7 +441,6 @@ class Router extends Overloadable {
 				for ($i = 0; $i < $count; $i++) {
 					$named[$i] = join($path['argSeparator'], $named[$i]);
 				}
-
 				$combined = join('/', $named);
 			}
 
@@ -497,12 +496,12 @@ class Router extends Overloadable {
 			if (!is_numeric($key) && !isset($url[$key])) {
 				$url[$key] = $val;
 			}
-		}*/
+		}*/		
 		ksort($defaults);
 		ksort($url);
 		if ($defaults == $url) {
 			return array(Router::__mapRoute($route, $url), array());
-		} elseif(!empty($params)) {
+		} elseif(!empty($params) && !empty($route[3])) {
 			if(array_key_exists(0, $url)) {
 				return false;
 			}
@@ -568,6 +567,7 @@ class Router extends Overloadable {
 		} else {
 			$out = $route[0] . $params['pass'];
 		}
+		
 		foreach ($route[2] as $key) {
 			$out = str_replace(':' . $key, $params[$key], $out);
 			unset($params[$key]);
