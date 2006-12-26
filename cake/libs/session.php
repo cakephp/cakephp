@@ -36,6 +36,10 @@
 	if (!defined('CAKE_SESSION_TABLE')) {
 		 define('CAKE_SESSION_TABLE', 'cake_sessions');
 	}
+
+	if (CAKE_SESSION_SAVE === 'database') {
+		uses('model' . DS . 'connection_manager');
+	}
 /**
  * Session class for Cake.
  *
@@ -45,59 +49,69 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class CakeSession extends Object{
+class CakeSession extends Object {
 /**
  * True if the Session is still valid
  *
  * @var boolean
+ * @access public
  */
 	var $valid = false;
 /**
  * Error messages for this session
  *
  * @var array
+ * @access public
  */
 	var $error = false;
 /**
  * User agent string
  *
  * @var string
+ * @access protected
  */
 	var $_userAgent = false;
 /**
  * Path to where the session is active.
  *
  * @var string
+ * @access public
  */
 	var $path = false;
 /**
  * Error number of last occurred error
  *
  * @var integer
+ * @access public
  */
 	var $lastError = null;
 /**
  * CAKE_SECURITY setting, "high", "medium", or "low".
  *
  * @var string
+ * @access public
  */
 	var $security = null;
 /**
  * Start time for this session.
  *
  * @var integer
+ * @access public
  */
 	var $time = false;
 /**
  * Time when this session becomes invalid.
  *
  * @var integer
+ * @access public
  */
 	var $sessionTime = false;
 /**
  * Constructor.
  *
  * @param string $base The base path for the Session
+ * @param boolean $start
+ * @access public
  */
 	function __construct($base = null, $start = true) {
 		if($start === true) {
@@ -140,6 +154,7 @@ class CakeSession extends Object{
  *
  * @param string $name Variable name to check for
  * @return boolean True if variable is there
+ * @access public
  */
 	function checkSessionVar($name) {
 		$expression = "return isset(" . $this->__sessionVarNames($name) . ");";
@@ -150,6 +165,7 @@ class CakeSession extends Object{
  *
  * @param string $name Session variable to remove
  * @return boolean Success
+ * @access public
  */
 	function delSessionVar($name) {
 		if ($this->checkSessionVar($name)) {
@@ -165,6 +181,7 @@ class CakeSession extends Object{
  *
  * @param int $errorNumber
  * @return string Error as string
+ * @access public
  */
 	function getError($errorNumber) {
 		if (!is_array($this->error) || !array_key_exists($errorNumber, $this->error)) {
@@ -177,6 +194,7 @@ class CakeSession extends Object{
  * Returns last occurred error as a string, if any.
  *
  * @return mixed Error description as a string, or false.
+ * @access public
  */
 	function getLastError() {
 		if ($this->lastError) {
@@ -189,6 +207,7 @@ class CakeSession extends Object{
  * Returns true if session is valid.
  *
  * @return boolean
+ * @access public
  */
 	function isValid() {
 		return $this->valid;
@@ -196,8 +215,9 @@ class CakeSession extends Object{
 /**
  * Returns given session variable, or all of them, if no parameters given.
  *
- * @param mixed $name
- * @return unknown
+ * @param mixed $name The name of the session variable
+ * @return mixed The value of the session variable
+ * @access public
  */
 	function readSessionVar($name = null) {
 		if (is_null($name)) {
@@ -215,6 +235,7 @@ class CakeSession extends Object{
  * Returns all session variables.
  *
  * @return mixed Full $_SESSION array, or false on error.
+ * @access public
  */
 	function returnSessionVars() {
 		if (!empty($_SESSION)) {
@@ -229,6 +250,7 @@ class CakeSession extends Object{
  *
  * @param mixed $name
  * @param string $value
+ * @return void
  */
 	function writeSessionVar($name, $value) {
 		$expression = $this->__sessionVarNames($name);
@@ -236,18 +258,21 @@ class CakeSession extends Object{
 		eval ($expression);
 	}
 /**
- * Enter description here...
+ * Method called on close of a database
+ * session
  *
+ * @return boolean
  * @access private
  */
 	function __close() {
 		return true;
 	}
 /**
- * Enter description here...
+ * Method called on the destruction of a
+ * database session
  *
- * @param unknown_type $key
- * @return unknown
+ * @param integer $key
+ * @return boolean
  * @access private
  */
 	function __destroy($key) {
@@ -257,8 +282,9 @@ class CakeSession extends Object{
 		return true;
 	}
 /**
- * Private helper method to destroy invalid sessions.
+ * Helper method to destroy invalid sessions.
  *
+ * @return void
  * @access private
  */
 	function destroyInvalid() {
@@ -277,10 +303,11 @@ class CakeSession extends Object{
 		$this->renew();
 	}
 /**
- * Enter description here...
+ * Helper function called on gc for
+ * database sessions
  *
  * @param unknown_type $expires
- * @return unknown
+ * @return boolean
  * @access private
  */
 	function __gc($expires) {
@@ -290,8 +317,9 @@ class CakeSession extends Object{
 		return true;
 	 }
 /**
- * Private helper method to initialize a session, based on Cake core settings.
+ * Helper method to initialize a session, based on Cake core settings.
  *
+ * @return void
  * @access private
  */
 	function __initSession() {
@@ -373,8 +401,9 @@ class CakeSession extends Object{
 		}
 	}
 /**
- * Private helper method to create a new session.
+ * Helper method to create a new session.
  *
+ * @return void
  * @access private
  *
  */
@@ -398,8 +427,10 @@ class CakeSession extends Object{
 		}
 	}
 /**
- * Enter description here... To be implemented.
+ * Method called on open of a database
+ * sesson
  *
+ * @return boolean
  * @access private
  *
  */
@@ -407,10 +438,11 @@ class CakeSession extends Object{
 		return true;
 	}
 /**
- * Enter description here...
+ * Method used to read from a database
+ * session
  *
- * @param unknown_type $key
- * @return unknown
+ * @param mixed $key The key of the value to read
+ * @return mixed The value of the key or false if it does not exist
  * @access private
  */
 	function __read($key) {
@@ -429,11 +461,10 @@ class CakeSession extends Object{
 		}
 	}
 /**
- * Private helper method to restart a session.
+ * Helper method to restart a session.
  *
- *
+ * @return void
  * @access private
- *
  */
 	function __regenerateId() {
 		$oldSessionId = session_id();
@@ -461,18 +492,18 @@ class CakeSession extends Object{
 /**
  * Restarts this session.
  *
+ * @return void
  * @access public
- *
  */
 	function renew() {
 		$this->__regenerateId();
 	}
-
 /**
- * Private helper method to extract variable names.
+ * Helper method to extract variable names from the session
+ * variable
  *
  * @param mixed $name Variable names as array or string.
- * @return string
+ * @return string The expression to eval to get the value or false
  * @access private
  */
 	function __sessionVarNames($name) {
@@ -493,10 +524,11 @@ class CakeSession extends Object{
 		return false;
 	}
 /**
- * Private helper method to set an internal error message.
+ * Helper method to set an internal error message.
  *
  * @param int $errorNumber Number of the error
  * @param string $errorMessage Description of the error
+ * @return void
  * @access private
  */
 	function __setError($errorNumber, $errorMessage) {
@@ -507,16 +539,17 @@ class CakeSession extends Object{
 		$this->lastError = $errorNumber;
 	}
 /**
- * Enter description here...
+ * Helper function called on write for database
+ * sessions
  *
- * @param unknown_type $key
- * @param unknown_type $value
- * @return unknown
+ * @param mixed $key The name of the var
+ * @param mixed $value The value of the var
+ * @return boolean
  * @access private
  */
 	function __write($key, $value) {
 		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
+		$table = $db->fullTableName(CAKE_SESSION_TABLE);
 
 		switch(CAKE_SECURITY) {
 			case 'high':
@@ -551,5 +584,4 @@ class CakeSession extends Object{
 		return true;
 	}
 }
-
 ?>

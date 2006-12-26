@@ -417,7 +417,7 @@ class Router extends Overloadable {
 			$skip = array('action', 'controller', 'plugin', 'ext', '?');
 			if(defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
-			}						
+			}
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
@@ -444,7 +444,7 @@ class Router extends Overloadable {
 
 				$combined = join('/', $named);
 			}
-			
+
 			if ($match === false) {
 				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
 				if($url['plugin'] == $url['controller']) {
@@ -523,7 +523,7 @@ class Router extends Overloadable {
 		} else {
 			return false;
 		}
-		
+
 		/*if (!empty($diffs)) {
 			if (isset($route[3]['controller']) && in_array('controller', $diffed)) {
 				return false;
@@ -562,7 +562,7 @@ class Router extends Overloadable {
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}
-		
+
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $route[0]);
 		} else {
@@ -576,7 +576,7 @@ class Router extends Overloadable {
 		$skip = array('action', 'controller', 'plugin', 'ext', '?', 'pass');
 		if(defined('CAKE_ADMIN')) {
 			$skip[] = CAKE_ADMIN;
-		}				
+		}
 		$args = array();
 		$keys = array_values(array_diff(array_keys($params), $skip));
 		$count = count($keys);
