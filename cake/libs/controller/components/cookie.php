@@ -115,8 +115,9 @@ class CookieComponent extends Object {
 /**
  * Values stored in the cookie.
  *
- * Accessed in the controller using $this->Cookie->read('Name,key');
+ * Accessed in the controller using $this->Cookie->read('Name.key');
  *
+ * @see CookieComponent::read();
  * @var string
  * @access private
  */
