@@ -366,14 +366,14 @@ class HtmlHelper extends AppHelper {
 				$notCheckedValue = -1;
 			}
 		} else {
-			if (isset($htmlAttributes['value']) || (!class_exists($this->model()) && !loadModel($this->model()))) {
+			$model = $this->model();
+			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
 				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
 
 				if ($htmlAttributes['value'] == '0') {
 					$notCheckedValue = -1;
 				}
 			} else {
-				$model = $this->model();
 				$model = new $model;
 				$db =& ConnectionManager::getDataSource($model->useDbConfig);
 				$value = $db->boolean($value);
