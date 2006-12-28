@@ -121,18 +121,16 @@ class I18n extends Object {
 		if(is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
 				$domain = $regs[1];
-				$directory = null;
 			} elseif (preg_match('/controllers{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
-				$domain = ($regs[1]);
-				$directory = null;
+				$domain = $regs[1];
 			}
 
 			if(isset($domain) && $domain == 'templates') {
 				if (preg_match('/templates{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
-					$domain = ($regs[1]);
-					$directory = null;
+					$domain = $regs[1];
 				}
 			}
+			$directory = null;
 		}
 
 		if(!isset($_this->__domains[$_this->category][$domain])) {
