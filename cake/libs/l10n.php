@@ -290,7 +290,7 @@ class L10n extends Object {
 										'ro' => array('language' => 'Russian', 'locale' => 'rus', 'localeFallback' => 'rus', 'charset' => 'utf-8'),
 										'ro-mo' => array('language' => 'Romanian (Moldavia)', 'locale' => 'ro_mo', 'localeFallback' => 'rum', 'charset' => 'utf-8'),
 										'ru-mo' => array('language' => 'Russian (Moldavia)', 'locale' => 'ru_mo', 'localeFallback' => 'rus', 'charset' => 'utf-8'),
-										'sb' => array('language' => 'Slovenian', 'locale' => 'wen', 'localeFallback' => 'wen', 'charset' => 'utf-8'),
+										'sb' => array('language' => 'Sorbian', 'locale' => 'wen', 'localeFallback' => 'wen', 'charset' => 'utf-8'),
 										'sk' => array('language' => 'Slovack', 'locale' => 'slo', 'localeFallback' => 'slo', 'charset' => 'utf-8'),
 										'sl' => array('language' => 'Slovenian', 'locale' => 'slv', 'localeFallback' => 'slv', 'charset' => 'utf-8'),
 										'sq' => array('language' => 'Albanian', 'locale' => 'alb', 'localeFallback' => 'alb', 'charset' => 'utf-8'),

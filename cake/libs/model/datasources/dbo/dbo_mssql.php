@@ -211,7 +211,7 @@ class DboMssql extends DboSource {
 		foreach($cols as $column) {
 			$fields[] = array(
 				'name' => $column[0]['Field'],
-				'type' => $this->column($column[0]['Type'] . $column[0]['Length']),
+				'type' => $this->column($column[0]['Type']),
 				'null' => up($column[0]['Null']),
 				'default' => $column[0]['Default']
 			);

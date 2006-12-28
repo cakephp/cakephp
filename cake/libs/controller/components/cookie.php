@@ -43,16 +43,6 @@ if(!class_exists('Security')){
  */
 class CookieComponent extends Object {
 /**
- * Force creating one cookie for all values
- *
- * By default a new cookie will be wrote for each
- * call to CookieComponent::write();
- *
- * @var string
- * @access protected
- */
-	var $_oneCookie = false;
-/**
  * The name of the cookie.
  *
  * Overridden with the controller var $cookieName;
