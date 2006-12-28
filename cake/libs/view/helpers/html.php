@@ -366,7 +366,7 @@ class HtmlHelper extends AppHelper {
 				$notCheckedValue = -1;
 			}
 		} else {
-			if (isset($htmlAttributes['value'])) {
+			if (isset($htmlAttributes['value']) || (!class_exists($this->model) && !loadModel($this->model))) {
 				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
 
 				if ($htmlAttributes['value'] == '0') {
