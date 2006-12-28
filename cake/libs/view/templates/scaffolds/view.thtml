@@ -66,7 +66,7 @@ echo '<li>' . $html->link(sprintf(__("New %s", true), $humanSingularName), array
 
 foreach($fieldNames as $field => $value) {
 	if(isset($value['foreignKey'])) {
-		echo "<li>".$html->link(sprintf(__("List %s", true), Inflector::humanize($value['controller'])), array('controller' => $value['controller'], action => 'index')) . '</li>';
+		echo "<li>".$html->link(sprintf(__("List %s", true), Inflector::humanize($value['controller'])), array('controller' => $value['controller'], 'action' => 'index')) . '</li>';
 		echo "<li>".$html->link(sprintf(__("Add %s", true), Inflector::humanize($value['controller'])), $path . $value['controller'] ."/add/")."</li>";
 	}
 }?>
