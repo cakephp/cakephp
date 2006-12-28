@@ -1331,18 +1331,9 @@
  * @return string with underscore remove from start and end of string
  */
 	function convertSlash($string) {
+		$string = trim($string,"/");
 		$string = preg_replace('/\/\//', '/', $string);
 		$string = str_replace('/', '_', $string);
-		$pos = strpos($string, '_');
-		$pos1 = strrpos($string, '_');
-		$char = strlen($string) - 1;
-		if ($pos1 == $char) {
-			$string = substr($string, 0, $char);
-		}
-
-		if ($pos === 0) {
-			$string = substr($string, 1);
-		}
 		return $string;
 	}
 /**
