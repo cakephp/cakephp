@@ -475,15 +475,20 @@ class Model extends Overloadable {
 	}
 /**
  * Bind model associations on the fly.
- * @link http://cakebaker.wordpress.com/2006/02/22/new-feature-bindmodelunbindmodel/
+ *
+ * If $reset is false, association will not be reset
+ * to the originals defined in the model
  *
  * @param array $params
+ * @param boolean $reset
  * @return boolean Always true
  */
-	function bindModel($params) {
+	function bindModel($params, $reset = true) {
 
 		foreach($params as $assoc => $model) {
-			$this->__backAssociation[$assoc] = $this->{$assoc};
+			if($reset === true){
+				$this->__backAssociation[$assoc] = $this->{$assoc};
+			}
 
 			foreach($model as $key => $value) {
 				$assocName = $key;
@@ -503,19 +508,24 @@ class Model extends Overloadable {
 /**
  * Turn off associations on the fly.
  *
- * Example: Turn off the associated Model Supportrequest,
+ * If $reset is false, association will not be reset
+ * to the originals defined in the model
+ *
+ * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
  * <code>
  * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) );
  * </code>
  *
- * @link http://cakebaker.wordpress.com/2006/02/22/new-feature-bindmodelunbindmodel/
  * @param array $params
+ * @param boolean $reset
  * @return boolean Always true
  */
-	function unbindModel($params) {
+	function unbindModel($params, $reset = true) {
 		foreach($params as $assoc => $models) {
-			$this->__backAssociation[$assoc] = $this->{$assoc};
+			if($reset === true){
+				$this->__backAssociation[$assoc] = $this->{$assoc};
+			}
 
 			foreach($models as $model) {
 				$this->__backAssociation = array_merge($this->__backAssociation, $this->{$assoc});
