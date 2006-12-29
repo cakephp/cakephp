@@ -246,10 +246,18 @@ class HtmlHelper extends AppHelper {
  * @return string	An <a /> element.
  */
 	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
-		if ($escapeTitle) {
-			$title = htmlspecialchars($title, ENT_QUOTES);
+		if($url !== null) {
+			$url = $this->url($url);
+		} else {
+			$url = $this->url($title);
+			$title = $url;
+			$escapeTitle = false;
 		}
-		$url = $url ? $url : $title;
+		if($escapeTitle === true) {
+			$title = htmlspecialchars($title, ENT_QUOTES);
+		} else if (is_string($escapeTitle)) {
+			$title = htmlentities($title, $escapeTitle);
+		}
 
 		if ($confirmMessage) {
 			$confirmMessage = htmlspecialchars($confirmMessage, ENT_NOQUOTES);
@@ -258,7 +266,7 @@ class HtmlHelper extends AppHelper {
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
 		}
 
-		$output = sprintf($this->tags['link'], $this->url($url), $this->_parseAttributes($htmlAttributes), $title);
+		$output = sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title);
 		return $this->output($output);
 	}
 /**

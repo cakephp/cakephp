@@ -423,7 +423,7 @@ class Router extends Overloadable {
 			for ($i = 0; $i < $count; $i++) {
 				if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
-				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))){
+				} else if(is_array($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))){
 					$named[] = array($keys[$i], $url[$keys[$i]]);
 				} else if ($match === false) {
 					$args[] = $keys[$i] . $path['argSeparator'] .$url[$keys[$i]];
@@ -435,17 +435,15 @@ class Router extends Overloadable {
 				}
 			}
 
-			$combined = '';
 			if (!empty($path['namedArgs'])) {
 				$count = count($named);
 				for ($i = 0; $i < $count; $i++) {
 					$named[$i] = join($path['argSeparator'], $named[$i]);
 				}
-				$combined = join('/', $named);
+				$named = join('/', $named);
 			}
-
 			if ($match === false) {
-				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $combined));
+				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $named));
 				if($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
 				}
@@ -453,8 +451,8 @@ class Router extends Overloadable {
 					array_unshift($urlOut, CAKE_ADMIN);
 				}
 				$output = join('/', $urlOut);
-			} elseif (!empty($combined)) {
-				$output .=  $combined;
+			} else if (!empty($named)) {
+				$output .=  $named;
 			}
 			$output = $base . '/' . $output;
 		} else {
@@ -491,12 +489,6 @@ class Router extends Overloadable {
 		$defaults = am(array('controller'=> null, 'plugin' => null), $route[3]);
 		$required = array_diff_key($defaults, $params);
 		$url = am(array('controller'=> null,'action' => 'index', 'plugin' => null), $url);
-	//	$url = am($required, $url);
-	/*	foreach ($defaults as $key => $val) {
-			if (!is_numeric($key) && !isset($url[$key])) {
-				$url[$key] = $val;
-			}
-		}*/		
 		ksort($defaults);
 		ksort($url);
 		if ($defaults == $url) {
@@ -522,21 +514,6 @@ class Router extends Overloadable {
 		} else {
 			return false;
 		}
-
-		/*if (!empty($diffs)) {
-			if (isset($route[3]['controller']) && in_array('controller', $diffed)) {
-				return false;
-			}
-			if (isset($route[3]['action']) && in_array('action', $diffed)) {
-				return false;
-			}
-		}*/
-
-		//$required = array_diff(array_diff($route[2], array_keys($route[3])), array_keys($url));
-		/*sort($required);
-		if (!empty($required)) {
-			return false;
-		}*/
 		if(!empty($route[4])){
 			foreach ($route[4] as $key => $reg) {
 				if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
@@ -544,8 +521,6 @@ class Router extends Overloadable {
 				}
 			}
 		}
-
-		//$out = str_replace(array('/bare', '/*', '/ajax'), '', $route[0]);
 		return array(Router::__mapRoute($route, $url), $url);
 	}
 /**
@@ -567,7 +542,7 @@ class Router extends Overloadable {
 		} else {
 			$out = $route[0] . $params['pass'];
 		}
-		
+
 		foreach ($route[2] as $key) {
 			$out = str_replace(':' . $key, $params[$key], $out);
 			unset($params[$key]);
