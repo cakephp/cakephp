@@ -239,12 +239,13 @@ class Dispatcher extends Object {
 					}
 				}
 			}
-			if($controller->namedArgs === true || $named = true) {
+			if($controller->namedArgs === true || $named == true) {
 				$c = count($controller->passedArgs);
 				for ($i = $c - 1; $i > -1; $i--) {
 					if (isset($controller->passedArgs[$i]) && strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
 						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
 						$controller->passedArgs[$argKey] = $argVal;
+						$controller->namedArgs = array();
 						$controller->namedArgs[$argKey] = $argVal;
 						unset($controller->passedArgs[$i]);
 						unset($params['pass'][$i]);
