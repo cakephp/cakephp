@@ -215,6 +215,7 @@ class Dispatcher extends Object {
 		if (!empty($controller->params['pass'])) {
 			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
+			$named = false;
 			
 			if (is_array($controller->namedArgs) ) {
 				if(array_key_exists($params['action'], $controller->namedArgs)) {
