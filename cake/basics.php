@@ -1145,7 +1145,7 @@
  *
  * @param string $domain
  * @param string $msg
- * @param string $category
+ * @param integer $category
  * @param boolean $return
  * @return translated string if $return is false string will be echoed
  */
@@ -1183,7 +1183,7 @@
  * @param string $singular
  * @param string $plural
  * @param integer $count
- * @param string $category
+ * @param integer $category
  * @param boolean $return
  * @return plural form of translated string if $return is false string will be echoed
  */
@@ -1212,12 +1212,12 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param string $domain
  * @param string $msg
+ * @param integer $category
  * @param string $return
  * @return translated string if $return is false string will be echoed
  */
-	function __c($category, $msg, $return = false) {
+	function __c($msg, $category, $return = false) {
 		if(!class_exists('I18n')) {
 			uses('i18n');
 		}
