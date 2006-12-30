@@ -43,7 +43,7 @@ class AjaxHelper extends AppHelper {
  *
  * @var array
  */
-	var $helpers = array('Html', 'Javascript');
+	var $helpers = array('Html', 'Javascript', 'Form');
 
 	var $Html = null;
 
@@ -316,8 +316,9 @@ class AjaxHelper extends AppHelper {
 		}
 
 		$options['url'] = $action;
+		$htmlOptions['type'] = $type;
 
-		return $this->Html->formTag($htmlOptions['action'], $type, $htmlOptions)
+		return $this->Form->create(null, $htmlOptions)
 			. $this->Javascript->event("'" . $htmlOptions['id']. "'", "submit", $this->remoteFunction($options));
 	}
 
