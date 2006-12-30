@@ -215,9 +215,8 @@ class Dispatcher extends Object {
 		if (!empty($controller->params['pass'])) {
 			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
-			$named = false;
 			
-			if (is_array($controller->namedArgs) ) {
+			if (is_array($controller->namedArgs)) {
 				if(array_key_exists($params['action'], $controller->namedArgs)) {
 					$args = $controller->namedArgs[$params['action']];
 				} else {
@@ -234,19 +233,20 @@ class Dispatcher extends Object {
 							unset($params['pass'][$argKey], $params['pass'][$argVal]);
 						}
 					} else {
-						$named = true;
 						$controller->passedArgs[$arg] = $value;
 						$controller->namedArgs[$arg] = $value;
 					}
 				}
+			} else if($controller->namedArgs === true) {
+				$controller->namedArgs = array();
 			}
-			if($controller->namedArgs === true || $named == true) {
+
+			if (is_array($controller->namedArgs)) {
 				$c = count($controller->passedArgs);
 				for ($i = $c - 1; $i > -1; $i--) {
 					if (isset($controller->passedArgs[$i]) && strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
 						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
 						$controller->passedArgs[$argKey] = $argVal;
-						$controller->namedArgs = array();
 						$controller->namedArgs[$argKey] = $argVal;
 						unset($controller->passedArgs[$i]);
 						unset($params['pass'][$i]);
@@ -256,7 +256,7 @@ class Dispatcher extends Object {
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
-			if (is_array($controller->namedArgs) ) {
+			if (is_array($controller->namedArgs)) {
 				if(array_key_exists($params['action'], $controller->namedArgs)) {
 					$args = $controller->namedArgs[$params['action']];
 				} else {
@@ -271,8 +271,6 @@ class Dispatcher extends Object {
 
 		if (!empty($params['bare'])) {
 			$controller->autoLayout = !$params['bare'];
-		} else {
-			$controller->autoLayout = $controller->autoLayout;
 		}
 
 		$controller->webservices = $params['webservices'];

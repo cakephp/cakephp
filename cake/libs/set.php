@@ -213,6 +213,30 @@ class Set extends Object {
 		return $data;
 	}
 /**
+ * Computes the difference between a Set and an array, two Sets, or two arrays
+ *
+ * @param mixed $val1
+ * @param mixed $val2
+ * @return array
+ */
+	function diff($val1, $val2 = null) {
+		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
+			$val2 = $val1;
+			$val1 = $this->get();
+		}
+		if (is_object($val2) && (is_a($val2, 'set') || is_a($val2, 'Set'))) {
+			
+		}
+
+		$out = array();
+		foreach ($val1 as $key => $val) {
+			if (!isset($val2[$key]) || $val2[$key] != $val) {
+				$out[$key] = $val;
+			}
+		}
+		return $out;
+	}
+/**
  * Determines if two Sets or arrays are equal
  *
  * @param array $val1

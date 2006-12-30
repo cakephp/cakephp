@@ -40,6 +40,10 @@ class PaginatorHelper extends AppHelper {
  * @var array
  */
 	var $helpers = array('Html', 'Ajax');
+
+	var $Html = null;
+
+	var $Ajax = null;
 /**
  * Holds the default model for paged recordsets
  *
@@ -138,12 +142,21 @@ class PaginatorHelper extends AppHelper {
 				$options['step'] *= -1;
 			}
 			$url = am(
-				array_diff_assoc($paging['options'], $paging['defaults']),
-				array('page' => ($paging['options']['page'] + $options['step'])),
+				array_filter(Set::diff($paging['options'], $paging['defaults'])),
+				array('page' => ($paging['page'] + $options['step'])),
 				$url
 			);
+
+			if (isset($url['order'])) {
+				$sort = $direction = null;
+				if (is_array($url['order'])) {
+					list($sort, $direction) = array(preg_replace('/.*\./', '', key($url['order'])), current($url['order']));
+				}
+				unset($url['order']);
+				$url = am($url, compact('sort', 'direction'));
+			}
 		} elseif (is_string($url)) {
-			$url .= '/' . ($paging['options']['page'] + $options['step']);
+			$url .= '/' . ($paging['page'] + $options['step']);
 		}
 
 		if ($this->{$check}()) {

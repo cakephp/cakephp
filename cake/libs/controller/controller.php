@@ -789,7 +789,7 @@ class Controller extends Object {
 	function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if ((!is_array($data) || empty($data)) && empty($this->data)) {
 			return null;
-		} elseif ((!is_array($data) || empty($data)) && !empty($this->data)) {
+		} elseif (!empty($this->data)) {
 			$data = $this->data;
 		}
 
@@ -1000,12 +1000,13 @@ class Controller extends Object {
 
 		$count = $object->findCount($conditions);
 		$paging = array(
+			'page'		=> $page,
 			'current'	=> count($results),
 			'count'		=> $count,
 			'prevPage'	=> ($page > 1),
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> ceil($count / $limit),
-			'defaults'	=> $defaults,
+			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
 		$this->params['paging'][$object->name] = $paging;
