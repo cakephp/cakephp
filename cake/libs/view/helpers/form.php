@@ -168,20 +168,36 @@ class FormHelper extends AppHelper {
 		return $this->output($this->Html->tags['formend']);
 	}
 /**
- * Returns a formatted error message for given FORM field, NULL if no errors.
+ * Returns true if there is an error for the given field, otherwise false
  *
  * @access public
  * @param string $field This should be "Modelname/fieldname"
  * @return bool If there are errors this method returns true, else false.
  */
 	function isFieldError($field) {
-		$error = 1;
+		$this->setFormTag($field);
+		return (bool)$this->tagIsInvalid();
+	}
+/**
+ * Returns a formatted error message for given FORM field, NULL if no errors.
+ *
+ * @param string $field A field name, like "Modelname/fieldname"
+ * @param string $text		Error message
+ * @param array $options	Rendering options for <div /> wrapper tag
+ * @return string If there are errors this method returns an error message, otherwise null.
+ */
+	function error($field, $text = null, $options = array()) {
 		$this->setFormTag($field);
 
 		if ($error == $this->tagIsInvalid()) {
-			return true;
+			if ($text != null) {
+				$error = $text;
+			} elseif (is_numeric($error)) {
+				$error = 'Error in field ' . Inflector::humanize($this->field());
+			}
+			return $this->Html->div('error-message', $error);
 		} else {
-			return false;
+			return null;
 		}
 	}
 /**
@@ -341,13 +357,16 @@ class FormHelper extends AppHelper {
 		$empty = (isset($options['empty']) ? $options['empty'] : '');
 		unset($options['empty']);
 
-		switch ($options['type']) {
+		$type = $options['type'];
+		unset($options['type']);
+
+		switch ($type) {
 			case 'hidden':
-				$out = $this->hidden($tagName);
+				$out = $this->hidden($tagName, $options);
 				unset($divOptions);
 			break;
 			case 'checkbox':
-				$out = $this->Html->checkbox($tagName) . $out;
+				$out = $this->Html->checkbox($tagName, null, $options) . $out;
 			break;
 			case 'text':
 				$out .= $this->text($tagName, $options);
@@ -414,7 +433,7 @@ class FormHelper extends AppHelper {
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
-	function password($fieldName, $htmlAttributes = null) {
+	function password($fieldName, $htmlAttributes = array()) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		if ($this->tagIsInvalid()) {
@@ -429,7 +448,7 @@ class FormHelper extends AppHelper {
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string An HTML text input element
  */
-	function textarea($fieldName, $htmlAttributes = null) {
+	function textarea($fieldName, $htmlAttributes = array()) {
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 
@@ -542,7 +561,7 @@ class FormHelper extends AppHelper {
  * @param  array   $htmlAttributes Array of HTML attributes.
  * @return string  HTML submit image element
  */
-	function submitImage($path, $htmlAttributes = null) {
+	function submitImage($path, $htmlAttributes = array()) {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
