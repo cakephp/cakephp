@@ -320,6 +320,19 @@ class Router extends Overloadable {
 		return $_this->__params[0];
 	}
 /**
+ * Gets URL parameter by name
+ *
+ * @param string $name
+ * @return string
+ */
+	function getParam($name = 'controller') {
+		$_this =& Router::getInstance();
+		if ($current) {
+			return $_this->__params[count($_this->__params) - 1];
+		}
+		return $_this->__params[0];
+	}
+/**
  * Gets path information
  *
  * @param boolean $current

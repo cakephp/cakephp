@@ -67,12 +67,54 @@ class PaginatorHelper extends AppHelper {
  * @return string
  */
 	function current($model = null) {
-		if ($model == null) {
-			$model = $this->defaultModel();
+		$params = $this->params($model);
+
+		if (isset($params['page'])) {
+			return $params['page'];
 		}
-		$params = $this->params[$model];
-		if (isset($params['options']['page'])) {
-			return $params['options']['page'];
+		return 1;
+	}
+/**
+ * Gets the current key by which the recordset is sorted
+ *
+ * @param  string $model
+ * @return string
+ */
+	function sortKey($model = null, $options = array()) {
+		if (empty($options)) {
+			$params = $this->params($model);
+			$options = am($params['defaults'], $params['options']);
+		}
+
+		if (isset($options['sort'])) {
+			return $options['sort'];
+		} elseif (isset($options['order']) && is_array($options['order'])) {
+			return preg_replace('/.*\./', '', key($options['order']));
+		}
+		return null;
+	}
+/**
+ * Gets the current direction the recordset is sorted
+ *
+ * @param  string $model
+ * @return string
+ */
+	function sortDir($model = null, $options = array()) {
+		if (empty($options)) {
+			$params = $this->params($model);
+			$options = am($params['defaults'], $params['options']);
+		}
+
+		if (isset($options['direction'])) {
+			$dir = low($options['direction']);
+		} elseif (isset($options['order']) && is_array($options['order'])) {
+			$dir = low(current($options['order']));
+		}
+
+		if ($dir == 'desc') {
+			return 'desc';
+		} else {
+			return 'asc';
 		}
 		return null;
 	}
@@ -101,70 +143,89 @@ class PaginatorHelper extends AppHelper {
 		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
 /**
- * Protected method
+ * Generates a sorting link
+ *
+ * @param  string $title
+ * @param  string $key
+ * @param  array $options
+ * @return string
+ */
+	function sort($title, $key = null, $options = array()) {
+		$options = am(array('url' => array(), 'model' => null), $options);
+		$url = $options['url'];
+		unset($options['url']);
+
+		if (empty($key)) {
+			$key = $title;
+			$title = Inflector::humanize($title);
+		}
+
+		$dir = 'asc';
+		if ($this->sortKey($options['model']) == $key && $this->sortDir($options['model']) == 'asc') {
+			$dir = 'desc';
+		}
+
+		$url = am(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
+		return $this->link($title, $url, $options);
+	}
+/**
+ * Generates a plain or Ajax link with pagination parameters
+ *
+ * @param  string $title
+ * @param  mixed $url
+ * @param  array $options
+ * @return string
+ */
+	function link($title, $url = array(), $options = array()) {
+		$options = am(array('model' => null, 'escape' => true), $options);
+		$model = $options['model'];
+		unset($options['model']);
+
+		$paging = $this->params($model);
+		$url = am(array_filter(Set::diff($paging['options'], $paging['defaults'])), $url);
+
+		if (isset($url['order'])) {
+			$sort = $direction = null;
+			if (is_array($url['order'])) {
+				list($sort, $direction) = array($this->sortKey($model, $url), current($url['order']));
+			}
+			unset($url['order']);
+			$url = am($url, compact('sort', 'direction'));
+		}
+		$obj = isset($options['update']) ? 'Ajax' : 'Html';
+		$url = am(array('page' => $this->current($model)), $url);
+		return $this->{$obj}->link($title, $url, $options);
+	}
+/**
+ * Protected method for generating prev/next links
  *
  */
 	function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
-		$options = am(
-			array(
-				'model' => $this->defaultModel(),
-				'step' => 1,
-				'url' => array(),
-				'escape' => true
-			),
-			$options
+		$_defaults = array(
+			'url' => array(), 'step' => 1,
+			'escape' => true, 'model' => null
 		);
+		$options = am($_defaults, $options);
 		$paging = $this->params($options['model']);
 
-		if ($this->{$check}() || $disabledTitle !== null || !empty($disabledOptions)) {
-			if (!$this->{$check}()) {
-				$options = am($options, $disabledOptions);
-				if (!empty($disabledTitle) && $disabledTitle !== true) {
-					$title = $disabledTitle;
-				}
+		if (!$this->{$check}() && (!empty($disabledTitle) || !empty($disabledOptions))) {
+			if (!empty($disabledTitle) && $disabledTitle !== true) {
+				$title = $disabledTitle;
 			}
-		} else {
+			$options = am($options, $disabledOptions);
+		} elseif (!$this->{$check}()) {
 			return null;
 		}
 
-		$keys = array('url', 'model', 'escape');
-		foreach ($keys as $key) {
-			${$key} = null;
-			if (isset($options[$key])) {
-				${$key} = $options[$key];
-				unset($options[$key]);
-			}
+		foreach (array_keys($_defaults) as $key) {
+			${$key} = $options[$key];
+			unset($options[$key]);
 		}
-
-		if (is_array($url)) {
-			if ($which == 'Prev') {
-				$options['step'] *= -1;
-			}
-			$url = am(
-				array_filter(Set::diff($paging['options'], $paging['defaults'])),
-				array('page' => ($paging['page'] + $options['step'])),
-				$url
-			);
-
-			if (isset($url['order'])) {
-				$sort = $direction = null;
-				if (is_array($url['order'])) {
-					list($sort, $direction) = array(preg_replace('/.*\./', '', key($url['order'])), current($url['order']));
-				}
-				unset($url['order']);
-				$url = am($url, compact('sort', 'direction'));
-			}
-		} elseif (is_string($url)) {
-			$url .= '/' . ($paging['page'] + $options['step']);
-		}
+		$url = am(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}()) {
-			$obj = 'Html';
-			if (isset($options['update'])) {
-				$obj = 'Ajax';
-			}
-			return $this->{$obj}->link($title, $url, $options, false, $escape);
+			return $this->link($title, $url, am($options, array('escape' => $escape)));
 		} else {
 			return $this->Html->div(null, $title, $options, $escape);
 		}
@@ -199,10 +260,6 @@ class PaginatorHelper extends AppHelper {
 			$page = $model;
 			$model = null;
 		}
-		if ($model == null) {
-			$model = $this->defaultModel();
-		}
-
 		$paging = $this->params($model);
 		return $page <= $paging['pageCount'];
 	}
@@ -211,11 +268,9 @@ class PaginatorHelper extends AppHelper {
  *
  */
 	function __hasPage($model, $page) {
-		if ($model == null) {
-			$model = $this->defaultModel();
-		}
-		if (is_array($this->params['paging'][$model])) {
-			if ($this->params['paging'][$model]["{$page}Page"] == true) {
+		$params = $this->params($model);
+		if (!empty($params)) {
+			if ($params["{$page}Page"] == true) {
 				return true;
 			}
 		}
@@ -230,8 +285,10 @@ class PaginatorHelper extends AppHelper {
 		if ($this->__defaultModel != null) {
 			return $this->__defaultModel;
 		}
-		$models = array_keys($this->params['paging']);
-		$this->__defaultModel = $models[0];
+		if (empty($this->params['paging'])) {
+			return null;
+		}
+		list($this->__defaultModel) = array_keys($this->params['paging']);
 		return $this->__defaultModel;
 	}
 /**
