@@ -78,26 +78,28 @@ class FormHelper extends AppHelper {
 			$options = $model;
 		}
 
-		if (empty($model) || is_array($model)) {
+		if (!is_null($model) && (empty($model) || is_array($model))) {
 			$model = $this->params['models'][0];
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		} else {
-			trigger_error(sprintf(__('Model %s does not exist', true), $model), E_USER_WARNING);
-			return;
+			//trigger_error(sprintf(__('Model %s does not exist', true), $model), E_USER_WARNING);
+			//return;
 		}
 		$this->setFormTag($model . '/');
 
 		$append = '';
 		$created = false;
-		$fields = $object->loadInfo();
-		$data = array(
-			'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
-			'key' => $object->primaryKey,
-			'validates' => array_keys($object->validate)
-		);
+		if(!is_null($model)) {
+			$fields = $object->loadInfo();
+			$data = array(
+				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
+				'key' => $object->primaryKey,
+				'validates' => array_keys($object->validate)
+			);
+		}
 
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
@@ -353,7 +355,9 @@ class FormHelper extends AppHelper {
 			$selected = $options['selected'];
 			unset($options['selected']);
 		}
-
+		if(isset($options['rows']) || isset($options['cols'])) {
+			$options['type'] = 'textarea';
+		}
 		$empty = (isset($options['empty']) ? $options['empty'] : '');
 		unset($options['empty']);
 
@@ -546,7 +550,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = am(array('class' => 'submit'), $div);
 		}
-		
+
 		$out =  $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 		if (isset($divOptions)) {
 			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
@@ -600,8 +604,7 @@ class FormHelper extends AppHelper {
 		if (isset($attributes['type'])) {
 			unset($attributes['type']);
 		}
-		if (isset($attributes['showParents']) && $attributes['showParents']) {
-			unset($attributes['showParents']);
+		if (in_array('showParents', $attributes)) {
 			$showParents = true;
 		}
 
