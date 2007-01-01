@@ -236,7 +236,7 @@ class Controller extends Object {
  *
  * @var mixed
  */
-	var $namedArgs = false;
+	var $namedArgs = true;
 /**
  * Enter description here...
  *

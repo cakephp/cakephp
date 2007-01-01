@@ -212,60 +212,57 @@ class Dispatcher extends Object {
 			$controller->data = null;
 		}
 
+		$namedArgs = array();
+		if (is_array($controller->namedArgs)) {
+			if(array_key_exists($params['action'], $controller->namedArgs)) {
+				$namedArgs = $controller->namedArgs[$params['action']];
+			} else {
+				$namedArgs = $controller->namedArgs;
+			}
+			$controller->namedArgs = true;
+		}
 		if (!empty($controller->params['pass'])) {
 			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
-			
-			if (is_array($controller->namedArgs)) {
-				if(array_key_exists($params['action'], $controller->namedArgs)) {
-					$args = $controller->namedArgs[$params['action']];
-				} else {
-					$args = $controller->namedArgs;
-				}
-				foreach($args as $arg => $value) {
-					if($controller->argSeparator === '/') {
-						if(in_array($arg, $controller->passedArgs)) {
-							$argKey = array_search($arg, $controller->passedArgs);
-							$argVal = $argKey + 1; 
-							$controller->passedArgs[$controller->passedArgs[$argKey]] = $controller->passedArgs[$argVal];
-							$controller->namedArgs[$controller->passedArgs[$argKey]] = $controller->passedArgs[$argVal];
-							unset($controller->passedArgs[$argKey], $controller->passedArgs[$argVal]);
-							unset($params['pass'][$argKey], $params['pass'][$argVal]);
-						}
-					} else {
-						$controller->passedArgs[$arg] = $value;
-						$controller->namedArgs[$arg] = $value;
-					}
-				}
-			} else if($controller->namedArgs === true) {
-				$controller->namedArgs = array();
-			}
 
-			if (is_array($controller->namedArgs)) {
+			if ($controller->namedArgs === true) {
+				$controller->namedArgs = array();
 				$c = count($controller->passedArgs);
-				for ($i = $c - 1; $i > -1; $i--) {
+				for ($i = 0; $i <= $c; $i++) {
 					if (isset($controller->passedArgs[$i]) && strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
 						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
-						$controller->passedArgs[$argKey] = $argVal;
-						$controller->namedArgs[$argKey] = $argVal;
-						unset($controller->passedArgs[$i]);
-						unset($params['pass'][$i]);
+						if(empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
+							$controller->passedArgs[$argKey] = $argVal;
+							$controller->namedArgs[$argKey] = $argVal;
+							unset($controller->passedArgs[$i]);
+							unset($params['pass'][$i]);
+						}
+					} else if($controller->argSeparator === '/') {
+						$ii = $i + 1;
+						if(isset($controller->passedArgs[$i]) && isset($controller->passedArgs[$ii])) {
+							$argKey = $controller->passedArgs[$i];
+							$argVal = $controller->passedArgs[$ii];
+							if(empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
+								$controller->passedArgs[$argKey] = $argVal;
+								$controller->namedArgs[$argKey] = $argVal;
+								unset($controller->passedArgs[$i], $controller->passedArgs[$ii]);
+								unset($params['pass'][$i], $params['pass'][$ii]);
+							}
+						}
 					}
 				}
+				$controller->passedArgs = am($namedArgs, $controller->passedArgs);
+				$controller->namedArgs = am($namedArgs, $controller->namedArgs);
 			}
 		} else {
 			$controller->passed_args = null;
 			$controller->passedArgs = null;
-			if (is_array($controller->namedArgs)) {
-				if(array_key_exists($params['action'], $controller->namedArgs)) {
-					$args = $controller->namedArgs[$params['action']];
-				} else {
-					$args = $controller->namedArgs;
-				}
-				foreach($args as $arg => $value) {
-					$controller->passedArgs[$arg] = $value;
-					$controller->namedArgs[$arg] = $value;
-				}
+			/* set default namedArgs if they exist*/
+			if ($controller->namedArgs === true) {
+				$controller->passedArgs = array();
+				$controller->namedArgs = array();
+				$controller->passedArgs = am($namedArgs, $controller->passedArgs);
+				$controller->namedArgs = am($namedArgs, $controller->namedArgs);
 			}
 		}
 
