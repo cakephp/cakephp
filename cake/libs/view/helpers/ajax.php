@@ -761,7 +761,11 @@ class AjaxHelper extends AppHelper {
 			if (isset($options[$callback])) {
 				$name = 'on' . ucfirst($callback);
 				$code = $options[$callback];
-				$callbacks[$name] = "function(request){" . $code . "}";
+				if ($name == 'onComplete') {
+					$callbacks[$name] = "function(request, json){" . $code . "}";
+				} else {
+					$callbacks[$name] = "function(request){" . $code . "}";
+				}
 				if (isset($options['bind'])) {
 					if ((is_array($options['bind']) && in_array($callback, $options['bind'])) || (is_string($options['bind']) && strpos($options['bind'], $callback) !== false)) {
 						$callbacks[$name] .= ".bind(this)";
