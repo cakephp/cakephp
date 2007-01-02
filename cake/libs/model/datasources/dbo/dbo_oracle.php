@@ -53,6 +53,15 @@ class DboOracle extends DboSource {
  * @access public
  */
 	var $alias = '';
+	
+ /**
+  * The name of the model's sequence
+  *
+  * @var unknown_type
+  */
+ 
+	var $sequence = '';
+	
  /**
  * Enter description here...
  *
@@ -60,13 +69,13 @@ class DboOracle extends DboSource {
  * @access public
  */
 	var $columns = array('primary_key' => array('name' => 'number NOT NULL'),
-								'string' => array('name' => 'varchar', 'limit' => '255'),
+								'string' => array('name' => 'varchar2', 'limit' => '255'),
 								'text' => array('name' => 'varchar2'),
 								'integer' => array('name' => 'numeric'),
 								'float' => array('name' => 'float'),
-								'datetime' => array('name' => 'timestamp'),
-								'timestamp' => array('name' => 'timestamp'),
-								'time' => array('name' => 'time'),
+								'datetime' => array('name' => 'date'),
+								'timestamp' => array('name' => 'date'),
+								'time' => array('name' => 'date'),
 								'date' => array('name' => 'date'),
 								'binary' => array('name' => 'bytea'),
 								'boolean' => array('name' => 'boolean'),
@@ -138,11 +147,13 @@ class DboOracle extends DboSource {
 		}
 		if($this->_conn){
 			$this->connected = true;
+			$this->execute('alter session set nls_sort=binary_ci');
 		}
 		if (!$this->connected) {
 			return false;
 		}
 	}
+
 /**
  * Disconnects from database.
  *
@@ -217,6 +228,7 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
+	    #print $sql;
 		$this->_scrapeSQL($sql);
 		$this->_statementId = ociparse($this->_conn, $sql);
 
@@ -232,19 +244,24 @@ class DboOracle extends DboSource {
 			print 'commit';
 		}
 */
-		$mode = OCI_COMMIT_ON_SUCCESS;
-
+		//$mode = OCI_COMMIT_ON_SUCCESS;
+		$mode = OCI_DEFAULT;
+		
 		if (!ociexecute($this->_statementId, $mode)) {
 			return false;
 		}
 		// THIS CAN BE REPLACED WITH a check from ocistatementtype()
-		if (strpos($sql, 'INSERT') === 0) {
+		// we're really only executing this for DESCRIBE and SELECT
+		if (strpos(strtoupper($sql), 'INSERT') === 0) {
 			return $this->_statementId;
 		}
-		if (strpos($sql, 'UPDATE') === 0) {
+		if (strpos(strtoupper($sql), 'UPDATE') === 0) {
 			return $this->_statementId;
 		}
-		if (strpos($sql, 'DELETE') === 0) {
+		if (strpos(strtoupper($sql), 'DELETE') === 0) {
+			return $this->_statementId;
+		}
+		if (strpos(strtoupper($sql), 'ALTER') === 0) {
 			return $this->_statementId;
 		}
 /*
@@ -259,6 +276,7 @@ class DboOracle extends DboSource {
 		}
 		// fetch occurs here instead of fetchResult in order to get the number of rows
 		$this->_numRows = ocifetchstatement($this->_statementId, $this->_results, $this->_offset, $this->_limit, OCI_NUM | OCI_FETCHSTATEMENT_BY_ROW);
+		#debug($this->_results);
 		$this->_currentRow = 0;
 		return $this->_statementId;
 	}
@@ -270,6 +288,7 @@ class DboOracle extends DboSource {
  */
 	function fetchRow() {
 		if ($this->_currentRow >= $this->_numRows) {
+		    ocifreestatement($this->_statementId);
 			return false;
 		}
 		$resultRow = array();
@@ -382,6 +401,51 @@ class DboOracle extends DboSource {
 */
 	}
 /**
+ * Begin a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions).
+ */
+	function begin(&$model) {
+		//if (parent::begin($model)) {
+			//if ($this->execute('BEGIN')) {
+				$this->__transactionStarted = true;
+				return true;
+			//}
+		//}
+		return false;
+	}
+/**
+ * Rollback a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+	function rollback(&$model) {
+		if (parent::rollback($model)) {
+			return ocirollback($this->_conn);
+		}
+		return false;
+	}
+/**
+ * Commit a transaction
+ *
+ * @param unknown_type $model
+ * @return boolean True on success, false on fail
+ * (i.e. if the database/model does not support transactions,
+ * or a transaction has not started).
+ */
+	function commit(&$model) {
+		if (parent::commit($model)) {
+			$this->__transactionStarted;
+			return ocicommit($this->_conn);
+		}
+		return false;
+	}
+/**
  * Converts database-layer column types to basic types
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
@@ -396,7 +460,10 @@ class DboOracle extends DboSource {
 				$col .= '('.$real['limit'].')';
 			}
 			return $col;
+		} else {
+			$real = strtolower($real);
 		}
+		
 		$col = r(')', '', $real);
 		$limit = null;
 
@@ -435,10 +502,17 @@ class DboOracle extends DboSource {
  * @return string Quoted and escaped
  * @access public
  */
-	function value($data) {
-		$data2 = str_replace("'", "''", $data);
-		return "'".$data2."'";
+	function value($data, $column_type = null) {
+		switch ($column_type) {
+			case 'date':
+				$date = date('Y-m-d H:i:s', strtotime($data));
+				return "TO_DATE('$date', 'YYYY-MM-DD HH24:MI:SS')";
+			default:
+				$data2 = str_replace("'", "''", $data);		
+				return "'".$data2."'";
+		}
 	}
+	
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -447,7 +521,8 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastInsertId($source) {
-		$sql = "SELECT pk_$source.currval FROM dual";
+		$sequence = (!empty($this->sequence)) ? $this->sequence : 'pk_'.$source;
+		$sql = "SELECT $sequence.currval FROM dual";
 		$stid = ociparse($this->_conn, $sql);
 		$r = ociexecute($stid, OCI_DEFAULT);
 
