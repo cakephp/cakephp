@@ -1,0 +1,703 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP 1.2.x.x\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2007-01-03 12:57-0600\n"
+"Last-Translator: Larry E. Masters <phpnut (at) gmail (dot) com>\n"
+"Language-Team: CakePHP I18N & I10N Team <i10n.cakephp@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Language: Indonesian\n"
+"X-Poedit-Country: INDONESIA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: cake/libs/overloadable_php4.php:63
+#: ;96 cake/libs/overloadable_php5.php:44
+#: ;56
+msgid "Magic method handler __call__ not defined in %s"
+msgstr "Magic method handler __call__ tidak di definisikan di %s"
+
+#: cake/libs/controller/components/acl_base.php:49
+#: cake/libs/controller/components/dbacl/models/aclnode.php:55
+#: ;125;200;219
+msgid "[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."
+msgstr "[acl_base] Kelas Konstruktor AclBase telah di panggil, atau Kelas telah di aktifkan. Kelas ini seharusnya tetap abstrak. Harap perhatikan dokumentasi Cake untuk konfigurasi ACL."
+
+#: cake/libs/view/templates/errors/missing_action.ctp:30
+#: cake/libs/view/templates/errors/missing_connection.ctp:31
+msgid "If you want to customize this error message, create %s."
+msgstr "Jika kamu ingin merubah pesan kesalahan ini, buat %s."
+
+#: cake/libs/view/templates/errors/missing_action.ctp:31
+#: cake/libs/view/templates/errors/missing_component_class.ctp:33
+#: cake/libs/view/templates/errors/missing_component_file.ctp:31
+#: cake/libs/view/templates/errors/missing_connection.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:31
+#: cake/libs/view/templates/errors/missing_layout.ctp:31
+#: cake/libs/view/templates/errors/missing_model.ctp:31
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:31
+#: cake/libs/view/templates/errors/missing_view.ctp:31
+msgid "Fatal"
+msgstr "Gagal"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:31
+#: cake/libs/view/templates/errors/missing_component_file.ctp:29
+#: cake/libs/view/templates/errors/missing_connection.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:29
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:29
+#: cake/libs/view/templates/errors/missing_layout.ctp:29
+#: cake/libs/view/templates/errors/missing_model.ctp:29
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:29
+#: cake/libs/view/templates/errors/missing_table.ctp:29
+#: cake/libs/view/templates/errors/missing_view.ctp:29
+#: cake/libs/view/templates/errors/private_action.ctp:29
+#: cake/libs/view/templates/errors/scaffold_error.ctp:29
+msgid "Notice"
+msgstr "Perhatikan"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:32
+#: cake/libs/view/templates/errors/missing_component_file.ctp:30
+#: cake/libs/view/templates/errors/missing_controller.ctp:31
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:30
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:30
+#: cake/libs/view/templates/errors/missing_layout.ctp:30
+#: cake/libs/view/templates/errors/missing_model.ctp:30
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:30
+#: cake/libs/view/templates/errors/missing_table.ctp:30
+#: cake/libs/view/templates/errors/missing_view.ctp:30
+#: cake/libs/view/templates/errors/private_action.ctp:30
+#: cake/libs/view/templates/errors/scaffold_error.ctp:30
+msgid "If you want to customize this error message, create %s"
+msgstr "Jika kamu ingin merubah pesan kesalahan ini, buat %s"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:34
+#: cake/libs/view/templates/errors/missing_component_file.ctp:32
+#: cake/libs/view/templates/errors/missing_controller.ctp:33
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:32
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:32
+#: cake/libs/view/templates/errors/missing_model.ctp:32
+msgid "Create the class below in file: %s"
+msgstr "Buat kelas di bawah ini di file: %s"
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:32
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:32
+#: cake/libs/view/templates/errors/missing_view.ctp:32
+msgid "Confirm you have created the file: %s"
+msgstr "Benar kamu telah membuat file: %s"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:34
+#: cake/libs/view/templates/scaffolds/edit.thtml:39
+msgid "List  "
+msgstr "Daftar"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:38
+#: cake/libs/view/templates/scaffolds/edit.thtml:43
+msgid "View "
+msgstr "Tampilan"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:39
+#: cake/libs/view/templates/scaffolds/edit.thtml:44
+msgid "Add "
+msgstr "Tambah"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:75
+#: cake/libs/view/templates/scaffolds/view.thtml:138
+#: ;144
+msgid "View"
+msgstr "Lihat"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:76
+#: cake/libs/view/templates/scaffolds/view.thtml:139
+#: ;145
+msgid "Edit"
+msgstr "Rubah"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:140
+#: ;146
+msgid "Delete"
+msgstr "Hapus"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:77
+#: cake/libs/view/templates/scaffolds/view.thtml:63
+#: ;140;146
+msgid "Are you sure you want to delete id %s?"
+msgstr "Apakah kamu yakin ingin meng-hapus id %s?"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:86
+#: cake/libs/view/templates/scaffolds/view.thtml:155
+msgid "New "
+msgstr "Baru"
+
+#: cake/basics.php:96
+msgid "Plugins must have a class named %s"
+msgstr "Plugins harus punya nama kelas %s"
+
+#: cake/basics.php:1265
+msgid "Deprecated: Use Set::countDim instead"
+msgstr "Sudahlampau: Selanjutnya gunakan Set::countDim "
+
+#: cake/libs/configure.php:213
+msgid "Configure::load() - %s.php not found"
+msgstr "Configure::load() - %s.php tidak ditemukan"
+
+#: cake/libs/configure.php:219
+msgid "Configure::load() - no variable $config found in %s.php"
+msgstr "Configure::load() - tidak ada variable $config ditemukan di %s.php"
+
+#: cake/libs/error.php:123
+msgid "The requested address %s was not found on this server."
+msgstr "Permintaan di alamat %s telah tidak ada di server ini."
+
+#: cake/libs/folder.php:281
+msgid "chmodr() File exists"
+msgstr "chmodr() File ada"
+
+#: cake/libs/folder.php:308
+msgid "mkdirr() File exists"
+msgstr "mkdirr() File ada"
+
+#: cake/libs/validation.php:302
+msgid "You must define the $operator parameter for Validation::comparison()"
+msgstr "Kamu harus men-definisikan parameter $operator untuk Validation::comparison()"
+
+#: cake/libs/validation.php:325
+msgid "You must define a regular expression for Validation::custom()"
+msgstr "Kamu harus men-definisikan ekspresi regular untuk Validation::custom()"
+
+#: cake/libs/controller/controller.php:255
+msgid "Controller::__construct() : Can not get or parse my own class name, exiting."
+msgstr "Controller::__construct() : Tidak dapat di ambil atau di urai nama kelasnya, keluar."
+
+#: cake/libs/controller/controller.php:605
+msgid "Deprecated: Use Controller::set(\"title\", \"...\") instead"
+msgstr "Sudahlampau: Selanjutnya gunakan  Controller::set(\"title\", \"...\")"
+
+#: cake/libs/controller/components/security.php:352
+msgid "SecurityComponent::loginCredentials() - Server does not support digest authentication"
+msgstr "SecurityComponent::loginCredentials() - Server tidak men-support autentikasi digest"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:85
+msgid "ACO permissions key %s does not exist in DB_ACL::check()"
+msgstr "Kunci perizinan ACO %s tidak ada di DB_ACL::check()"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:144
+msgid "DB_ACL::allow() - Invalid node"
+msgstr "DB_ACL::allow() - node tidak sesuai"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:162
+msgid "DB_ACL::allow() - Invalid ACO action"
+msgstr "DB_ACL::allow() - aksi ACO tidak sesuai"
+
+#: cake/libs/controller/components/dbacl/db_acl.php:231
+msgid "Null id provided in DB_ACL::get"
+msgstr "id Null diberikan di DB_ACL::get"
+
+#: cake/libs/controller/components/dbacl/models/aclnode.php:70
+msgid "Null parent in %s::create()"
+msgstr "Parent Null di %s::create()"
+
+#: cake/libs/model/connection_manager.php:110
+msgid "ConnectionManager::getDataSource - Non-existent data source %s"
+msgstr "ConnectionManager::getDataSource - Sumber data %s tidak ada"
+
+#: cake/libs/model/connection_manager.php:163
+msgid "Unable to load DataSource file %s.php"
+msgstr "Tidak dapat meload SumberData file %s.php"
+
+#: cake/libs/model/datasources/dbo_source.php:305
+msgid "Deprecated: Use DboSource::fetchRow() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan DboSource::fetchRow()"
+
+#: cake/libs/model/datasources/dbo_source.php:313
+msgid "Deprecated: Use DboSource::fetchRow($sql) instead"
+msgstr "Sudahlampau: Selanjutnya gunakan DboSource::fetchRow($sql)"
+
+#: cake/libs/model/datasources/dbo_source.php:1557
+msgid "Implement in DBO"
+msgstr "Diimplementasikan di DBO"
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:79
+msgid "Please implement DBO::disconnect() first."
+msgstr "Harap terapkan DBO::disconnect() dulu."
+
+#: cake/libs/model/datasources/dbo/dbo_pear.php:131
+msgid "Please implement DBO_Pear::tablesList() for your database driver."
+msgstr "Harap terapkan  DBO_Pear::tablesList() untuk driver database kamu."
+
+#: cake/libs/view/helper.php:134
+msgid "Method %1$s::%2$s does not exist"
+msgstr "Method %1$s::%2$s tidak ada"
+
+#: cake/libs/view/view.php:325
+msgid "Error in view %s, got: <blockquote>%s</blockquote>"
+msgstr "Kesalahan di view %s, terdapat di: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:429
+msgid "Error in layout %s, got: <blockquote>%s</blockquote>"
+msgstr "Kesalahan di layout %s, terdapat di: <blockquote>%s</blockquote>"
+
+#: cake/libs/view/view.php:488
+msgid "(View::setLayout) Deprecated: Use $this->layout = \"...\" instead"
+msgstr "(View::setLayout) Sudahlampau: Selanjutnya gunakan $this->layout = \"...\""
+
+#: cake/libs/view/helpers/form.php:88
+msgid "Model %s does not exist"
+msgstr "Model %s tidak ada"
+
+#: cake/libs/view/helpers/form.php:470
+msgid "Don't use me yet"
+msgstr "Jangan gunakan saya dulu"
+
+#: cake/libs/view/helpers/form.php:662
+msgid "Deprecated: Use FormHelper::input() or FormHelper::text() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::input() atau FormHelper::text() "
+
+#: cake/libs/view/helpers/form.php:686
+msgid "Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::input() atau FormHelper::checkbox() "
+
+#: cake/libs/view/helpers/form.php:709
+#: ;732;754;777;834
+msgid "Deprecated: Use FormHelper::input() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::input() "
+
+#: cake/libs/view/helpers/form.php:803
+msgid "Deprecated: Use FormHelper::input() or FormHelper::select() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::input() atau FormHelper::select()"
+
+#: cake/libs/view/helpers/form.php:826
+msgid "Deprecated: Use FormHelper::submit() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::submit()"
+
+#: cake/libs/view/helpers/form.php:951
+msgid "Deprecated: Use FormHelper::label() instead"
+msgstr "Sudahlampau: Selanjutnya gunakan FormHelper::label()"
+
+#: cake/libs/view/helpers/html.php:673
+msgid "(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead"
+msgstr "(HtmlHelper::formTag) Sudahlampau: Selanjutnya gunakan FormHelper::create"
+
+#: cake/libs/view/helpers/html.php:719
+msgid "(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead"
+msgstr "(HtmlHelper::linkEmail) Sudahlampau: Selanjutnya gunakan HtmlHelper::link"
+
+#: cake/libs/view/helpers/javascript.php:152
+msgid "(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead"
+msgstr "(JavascriptHelper::linkOut) Sudahlampau: Selanjutnya gunakan JavascriptHelper::link"
+
+#: cake/libs/view/templates/elements/dump.ctp:28
+msgid "Controller dump:"
+msgstr "Controller buangan:"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:28
+msgid "Missing Method in %s"
+msgstr "Method tidak ada %s"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:29
+msgid "You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>"
+msgstr "Kamu melihat kesalahan ini karena -action- <em>%1$s</em> tidak di definisikan di controller <em>%2$s</em>"
+
+#: cake/libs/view/templates/errors/missing_action.ctp:32
+msgid ": Confirm you have created the %1$s::%2$s in file : %3$s."
+msgstr ": Benar kamu telah membuat %1$s::%2$s in file : %3$s."
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:27
+msgid "Missing Component Class"
+msgstr "Kelas Component tidak ada"
+
+#: cake/libs/view/templates/errors/missing_component_class.ctp:29
+msgid "You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can't be found or doesn't exist."
+msgstr "Kamu melihat kesalahan ini karena -component class- <em>%1$s</em> yang kamu set di <em>%2$s</em> tidak di temukan atau tidak ada."
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:27
+msgid "Missing Component File"
+msgstr "File Component tidak ada"
+
+#: cake/libs/view/templates/errors/missing_component_file.ctp:28
+msgid "You are seeing this error because the component file can not be found or does not exist."
+msgstr "Kamu melihat kesalahan ini karena file component tidak di temukan atau tidak ada."
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:27
+msgid "Requires a Database Connection"
+msgstr "Membutuhkan sebuah Koneksi Database"
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:28
+#: ;33
+msgid "Confirm you have created the file : %s."
+msgstr "Benar kamu telah membuat file : %s"
+
+#: cake/libs/view/templates/errors/missing_connection.ctp:29
+msgid "Missing Database Connection: %s requires a database connection"
+msgstr "Tidak ada Koneksi Database: %s dibutuhkan sebuah koneksi database"
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:27
+msgid "Missing controller"
+msgstr "Tidak ada controller"
+
+#: cake/libs/view/templates/errors/missing_controller.ctp:28
+msgid "You are seeing this error because controller <em>%s</em> could not be found."
+msgstr "Kamu melihat kesalahan ini karena controller <em>%s</em> tidak dapat di temukan."
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:27
+msgid "Missing Helper Class"
+msgstr "Tidak ada kelas Helper"
+
+#: cake/libs/view/templates/errors/missing_helper_class.ctp:28
+msgid "You are seeing this error because the view helper class <em>%s</em> can not be found or does not exist."
+msgstr "Kamu melihat kesalahan ini karena kelas view helper <em>%s</em> tidak ditemukan atau tidak ada."
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:27
+msgid "Missing Helper File"
+msgstr "Tidak ada kelas Helper"
+
+#: cake/libs/view/templates/errors/missing_helper_file.ctp:28
+msgid "You are seeing this error because the view helper file %s can not be found or does not exist."
+msgstr "Kamu melihat kesalahan ini karena file view helper %s tidak ditemukan atau tidak ada."
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:27
+msgid "Missing Layout"
+msgstr "Tidak ada Layout"
+
+#: cake/libs/view/templates/errors/missing_layout.ctp:28
+msgid "You are seeing this error because the layout file %s can not be found or does not exist."
+msgstr "Kamu melihat kesalahan ini karena file layout %s tidak ditemukan atau tidak ada."
+
+#: cake/libs/view/templates/errors/missing_model.ctp:27
+msgid "Missing Model"
+msgstr "Tidak ada Model"
+
+#: cake/libs/view/templates/errors/missing_model.ctp:28
+msgid "No class found for the <em>%s</em> model."
+msgstr "Tidak ditemukan kelas untuk model <em>%s</em>."
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:27
+msgid "Scaffold Requires a Database Connection"
+msgstr "Perancah/Rangka-pembuatan membutuhkan sebuah koneksi database"
+
+#: cake/libs/view/templates/errors/missing_scaffolddb.ctp:28
+msgid "Missing Database Connection: Scaffold Does not work without a database connection"
+msgstr "Tidak ada Koneksi ke Database: Perancah/Rangka-pembuatan tidak bisa kerja tanpa koneksi ke database"
+
+#: cake/libs/view/templates/errors/missing_table.ctp:27
+msgid "Missing Database Table"
+msgstr "Tidak ada Table di Database"
+
+#: cake/libs/view/templates/errors/missing_table.ctp:28
+msgid "No Database table for model %1$s (expected %2$s), create it first."
+msgstr "Tidak ada table database untuk model %1$s (seharusnya %2$s), buat dulu. "
+
+#: cake/libs/view/templates/errors/missing_view.ctp:27
+msgid "Missing view"
+msgstr "Tidak ada view"
+
+#: cake/libs/view/templates/errors/missing_view.ctp:28
+msgid "You are seeing this error because the view for <em>%1$s::%2$s()</em>, could not be found."
+msgstr "Kamu melihat kesalahan ini karena view untuk <em>%1$s::%2$s()</em>, tidak dapat di temukan."
+
+#: cake/libs/view/templates/errors/private_action.ctp:27
+msgid "Private Method in %s"
+msgstr "Private Method di %s"
+
+#: cake/libs/view/templates/errors/private_action.ctp:28
+msgid "You are seeing this error because the private class method <em>%s</em> should not be accessed directly."
+msgstr "Kamu melihat kesalahan ini karena method kelas private <em>%s</em> seharusnya tidak boleh di akses langsung."
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:27
+msgid "Scaffold Error"
+msgstr "Error di Perancah/Ranka-pembuatan"
+
+#: cake/libs/view/templates/errors/scaffold_error.ctp:28
+msgid "Your must implement the following method in your controller"
+msgstr "Kamu harus menerapkan method-method ini di kontroller kamu"
+
+#: cake/libs/view/templates/layouts/default.ctp:40
+msgid "CakePHP Rapid Development"
+msgstr "CakePHP Development yang sangat cepat"
+
+#: cake/libs/view/templates/scaffolds/add.thtml:31
+msgid "Add"
+msgstr "Tambah"
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:32
+msgid "Save"
+msgstr "Simpan"
+
+#: cake/libs/view/templates/scaffolds/edit.thtml:37
+msgid "Delete  "
+msgstr "Hapus"
+
+#: cake/libs/view/templates/scaffolds/index.thtml:40
+msgid "Actions"
+msgstr "Aksi-aksi"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:32
+msgid "View %s"
+msgstr "Tampilan %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:62
+#: ;98
+msgid "Edit %s"
+msgstr "Rubah %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:63
+msgid "Delete %s"
+msgstr "Hapus %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:64
+#: ;69
+msgid "List %s"
+msgstr "Daftar %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:65
+#: ;100
+msgid "New %s"
+msgstr "Barus %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:70
+msgid "Add %s"
+msgstr "Tambah %s"
+
+#: cake/libs/view/templates/scaffolds/view.thtml:82
+#: ;117
+msgid "Related %s"
+msgstr "Hubungan %s"
+
+#: cake/scripts/acl.php:91
+msgid ""
+"Unable to find /app/config/database.php.  Please create it before continuing.\n"
+"\n"
+msgstr "Tidak dapat menemukan /app/config/database.php.  Harap dibuat dulu sebelum melanjutkan.\n"
+
+#: cake/scripts/bake.php:1892
+msgid "File exists, overwrite?"
+msgstr "File sudah ada, tiban/timpa?"
+
+#: cake/scripts/bake.php:1896
+msgid "Quitting."
+msgstr "Meninggalkan"
+
+#: cake/scripts/bake.php:1902
+msgid "Skip"
+msgstr "Lewatkan"
+
+#: cake/scripts/bake.php:1910
+msgid "Wrote"
+msgstr "Tertulis"
+
+#: cake/scripts/bake.php:1913
+msgid "Error! Could not write to"
+msgstr "Gagal! Tidak dapat menulis"
+
+#: cake/scripts/templates/skel/webroot/css.php:68
+#: ;76
+msgid "Wrong file name."
+msgstr "Nama file salah."
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "Your database configuration file is %s."
+msgstr "File konfigurasi database anda adalah %s."
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "present"
+msgstr "ada"
+
+#: cake/libs/view/templates/pages/home.ctp:27
+msgid "not present"
+msgstr "tidak ada"
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "Cake %s connect to the database."
+msgstr "Cake %s koneksi ke database"
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is able to"
+msgstr "apakah bisa untuk"
+
+#: cake/libs/view/templates/pages/home.ctp:31
+msgid "is not able to"
+msgstr "apakah tidak bisa untuk"
+
+#: cake/libs/view/templates/pages/home.ctp:34
+msgid "CakePHP release information is on CakeForge"
+msgstr "Informasi release CakePHP di CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:35
+msgid "Read the release notes and get the latest version"
+msgstr "Baca catatan release dan ambil versi terbaru"
+
+#: cake/libs/view/templates/pages/home.ctp:36
+msgid "Editing this Page"
+msgstr "Merubah Halaman ini"
+
+#: cake/libs/view/templates/pages/home.ctp:38
+msgid "To change the content of this page, create: /app/views/pages/home.thtml."
+msgstr "Untuk merubah isi dari page ini, buat: /app/views/pages/home.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:39
+msgid "To change its layout, create: /app/views/layouts/default.thtml."
+msgstr "Untuk merubah layoutnya, buat: /app/views/layouts/default.thtml."
+
+#: cake/libs/view/templates/pages/home.ctp:40
+msgid "See the views section of the manual for more info."
+msgstr "Lihat di manual seksi views untuk informasi tambahan"
+
+#: cake/libs/view/templates/pages/home.ctp:41
+msgid "You can also add some CSS styles for your pages at: app/webroot/css/."
+msgstr "Kamu dapat juga menambahkan beberapa style CSS untuk halaman kamu di: app/webroot/css/."
+
+#: cake/libs/view/templates/pages/home.ctp:43
+msgid "More about Cake"
+msgstr "Lebih banyak tentang Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:45
+msgid "CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC."
+msgstr "CakePHP adalah kerangkakerja development yang sangat cepat untuk PHP menggunakan patterns design umum seperti Active Record, Association Data Mapping, Front Controller dan MVC."
+
+#: cake/libs/view/templates/pages/home.ctp:48
+msgid "Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility."
+msgstr "Tujuan utama kami adalah untuk menyediakan kerangkakerja terstruktur agar pengguna PHP dari semua level dapat secara cepat men-develop aplikasi web tanpa kehilangan flexsibilitas"
+
+#: cake/libs/view/templates/pages/home.ctp:51
+msgid "Cake Software Foundation"
+msgstr "Yayasan Software Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:52
+msgid "Promoting development related to CakePHP"
+msgstr "Mempromosikan Development yang berhubungan dengan CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:53
+msgid "The Bakery"
+msgstr "Tukang Kue"
+
+#: cake/libs/view/templates/pages/home.ctp:54
+msgid "Everything CakePHP"
+msgstr "Semua mengenai CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:55
+msgid "Book Store"
+msgstr "Toko Buku"
+
+#: cake/libs/view/templates/pages/home.ctp:56
+msgid "Recommended Software Books"
+msgstr "Buku-buku Software yang di rekomendasikan"
+
+#: cake/libs/view/templates/pages/home.ctp:57
+msgid "CakeSchwag"
+msgstr "CakeSchwag"
+
+#: cake/libs/view/templates/pages/home.ctp:58
+msgid "Get your own CakePHP gear - Doughnate to Cake"
+msgstr "Berpartisipasilah kamu di CakePHP - Donatnya Cake"
+
+#: cake/libs/view/templates/pages/home.ctp:59
+msgid "CakePHP"
+msgstr "CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:60
+msgid "The Rapid Development Framework"
+msgstr "KerangkaKerja Development yang sangat cepat"
+
+#: cake/libs/view/templates/pages/home.ctp:61
+msgid "CakePHP Manual"
+msgstr "Manual CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:62
+msgid "Your Rapid Development Cookbook"
+msgstr "BukuCatatan Kamu untuk Development yang sangat cepat"
+
+#: cake/libs/view/templates/pages/home.ctp:63
+msgid "CakePHP Wiki"
+msgstr "Wiki CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:64
+msgid "The Community for CakePHP"
+msgstr "Komunitas untuk CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:65
+msgid "CakePHP API"
+msgstr "CakePHP API"
+
+#: cake/libs/view/templates/pages/home.ctp:66
+msgid "Docblock Your Best Friend"
+msgstr "Docblock Teman Baik-mu"
+
+#: cake/libs/view/templates/pages/home.ctp:67
+msgid "CakeForge"
+msgstr "CakeForge"
+
+#: cake/libs/view/templates/pages/home.ctp:68
+msgid "Open Development for CakePHP"
+msgstr "Development terbuka untuk CakePHP"
+
+#: cake/libs/view/templates/pages/home.ctp:69
+msgid "CakePHP Trac"
+msgstr "CakePHP Trac"
+
+#: cake/libs/view/templates/pages/home.ctp:70
+msgid "For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)"
+msgstr "Untuk Development di CakePHP (NotePerbaikan, browse SVN, PetaJalan, LogPerubahan)"
+
+#: cake/libs/view/templates/pages/home.ctp:71
+msgid "CakePHP Google Group"
+msgstr "CakePHP Google Group"
+
+#: cake/libs/view/templates/pages/home.ctp:72
+msgid "Community mailing list"
+msgstr "Komunitas mailing list"
+
+#: cake/libs/view/templates/pages/home.ctp:74
+msgid "Live chat about CakePHP"
+msgstr "Ngobrol langsung tentang CakePHP"
+
+#: cake/libs/controller/scaffold.php:116
+msgid "Scaffold :: "
+msgstr "Perancah/Rangka-pembuatan ::"
+
+#: cake/libs/controller/scaffold.php:150
+#: ;153
+msgid "No id set for %s::view()"
+msgstr "Tidak ada id diset untuk %s::view()"
+
+#: cake/libs/controller/scaffold.php:223
+#: ;226
+msgid "No id set for %s::edit()"
+msgstr "Tidak ada id diset untuk %s::edit()"
+
+#: cake/libs/controller/scaffold.php:260
+msgid "updated"
+msgstr "diperbaharu"
+
+#: cake/libs/controller/scaffold.php:266
+msgid "saved"
+msgstr "disimpan"
+
+#: cake/libs/controller/scaffold.php:287
+#: ;291
+msgid "The %1$s has been %2$s"
+msgstr "dari %1$s dulunya %2$s"
+
+#: cake/libs/controller/scaffold.php:298
+msgid "Please correct errors below."
+msgstr "Harap diperbaiki kesalahan di bawah ini"
+
+#: cake/libs/controller/scaffold.php:330
+#: ;333
+msgid "No id set for %s::delete()"
+msgstr "Tidak ada id diset untuk %s::delete()"
+
+#: cake/libs/controller/scaffold.php:339
+#: ;342
+msgid "The %1$s with id: %2$d has been deleted."
+msgstr "dari %1$s dengan id: %2$d telah terhapus."
+
+#: cake/libs/controller/scaffold.php:346
+#: ;349
+msgid "There was an error deleting the %1$s with id: %2$d"
+msgstr "Telah ada kegagalan menghapus %1$s dengan id: %2$d"
+
