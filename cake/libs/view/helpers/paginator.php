@@ -308,7 +308,7 @@ class PaginatorHelper extends AppHelper {
 		);
 
 		$paging = $this->params($options['model']);
-		$start = $paging['options']['page'] > 1 ? ($paging['options']['page'] - 1) * ($paging['options']['limit']) + 1 : '1';
+		$start = $paging['page'] > 1 ? ($paging['page'] - 1) * ($paging['options']['limit']) + 1 : '1';
 		$end = ($paging['count'] < ($start + $paging['options']['limit'] - 1)) ? $paging['count'] : ($start + $paging['options']['limit'] - 1);
 
 		switch ($options['format']) {
@@ -319,11 +319,11 @@ class PaginatorHelper extends AppHelper {
 				$out = $start . $options['separator'][0] . $end . $options['separator'][1] . $paging['count'];
 			break;
 			case 'pages':
-				$out = $paging['options']['page'] . $options['separator'] . $paging['pageCount'];
+				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
 			break;
 			default:
 				$replace = array(
-					'%page%' => $paging['options']['page'],
+					'%page%' => $paging['page'],
 					'%pages%' => $paging['pageCount'],
 					'%current%' => $paging['current'],
 					'%count%' => $paging['count'],
