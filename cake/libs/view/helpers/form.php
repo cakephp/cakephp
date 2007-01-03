@@ -77,22 +77,18 @@ class FormHelper extends AppHelper {
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 		}
-
 		if (!is_null($model) && (empty($model) || is_array($model))) {
 			$model = $this->params['models'][0];
 		}
-
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
-		} else {
-			//trigger_error(sprintf(__('Model %s does not exist', true), $model), E_USER_WARNING);
-			//return;
 		}
-		$this->setFormTag($model . '/');
 
+		$this->setFormTag($model . '/');
 		$append = '';
 		$created = false;
-		if(!is_null($model)) {
+
+		if(isset($object)) {
 			$fields = $object->loadInfo();
 			$data = array(
 				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
