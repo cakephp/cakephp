@@ -266,7 +266,7 @@ class DboSource extends DataSource {
 		$this->error = $this->lastError();
 		$this->numRows = $this->lastNumRows($this->_result);
 
-		if($this->fullDebug) {
+		if($this->fullDebug && Configure::read() > 1) {
 			$this->logQuery($sql);
 		}
 
@@ -395,7 +395,7 @@ class DboSource extends DataSource {
 			foreach($log as $k => $i) {
 				print ("<tr><td>" . ($k + 1) . "</td><td>{$i['query']}</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n");
 			}
-			print ("</table>\n");
+			print ("</tbody></table>\n");
 		} else {
 			foreach($log as $k => $i) {
 				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
@@ -432,11 +432,11 @@ class DboSource extends DataSource {
  */
 	function showQuery($sql) {
 		$error = $this->error;
-		if (strlen($sql) > 200 && !$this->fullDebug) {
+		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if ($this->debug || $error) {
+		if (($this->debug && Configure::read() > 0) || $error) {
 			print ("<p style = \"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 			if ($error) {
 				print ("<br /><span style = \"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
@@ -1544,7 +1544,7 @@ class DboSource extends DataSource {
  *
  */
 	function close() {
-		if ($this->fullDebug) {
+		if ($this->fullDebug && Configure::read() > 1) {
 			$this->showLog();
 		}
 		$this->disconnect();
