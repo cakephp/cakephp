@@ -315,11 +315,11 @@ class AjaxHelper extends AppHelper {
 			$options['with'] = "Form.serialize('{$htmlOptions['id']}')";
 		}
 
-		$options['url'] = $action;
+		$options['url'] = $htmlOptions['action'] = $action;
 		$htmlOptions['type'] = $type;
 
-		return $this->Form->create(null, $htmlOptions)
-			. $this->Javascript->event("'" . $htmlOptions['id']. "'", "submit", $this->remoteFunction($options));
+		return $this->Form->create($htmlOptions)
+			. $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $this->remoteFunction($options));
 	}
 
 /**
