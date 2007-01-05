@@ -629,7 +629,7 @@ class HtmlHelper extends AppHelper {
  * @param boolean $show_empty If true, the empty select option is shown
  * @return string Formatted SELECT element
  */
-	function selectTag($fieldName, $optionElements, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function selectTag($fieldName, $optionElements, $selected = array(), $selectAttr = array(), $optionAttr = array(), $showEmpty = true) {
 		$this->setFormTag($fieldName);
 		if ($this->tagIsInvalid()) {
 			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
