@@ -253,12 +253,21 @@ class HtmlHelper extends AppHelper {
 			$title = $url;
 			$escapeTitle = false;
 		}
+
+		if(isset($htmlAttributes['escape'])) {
+			$escapeTitle = $htmlAttributes['escape'];
+			unset($htmlAttributes['escape']);
+		}
 		if($escapeTitle === true) {
 			$title = htmlspecialchars($title, ENT_QUOTES);
 		} else if (is_string($escapeTitle)) {
 			$title = htmlentities($title, $escapeTitle);
 		}
 
+		if(!empty($htmlAttributes['confirm'])) {
+			$confirmMessage = $htmlAttributes['confirm'];
+			unset($htmlAttributes['confirm']);
+		}
 		if ($confirmMessage) {
 			$confirmMessage = htmlspecialchars($confirmMessage, ENT_NOQUOTES);
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
@@ -266,8 +275,7 @@ class HtmlHelper extends AppHelper {
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
 		}
 
-		$output = sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title);
-		return $this->output($output);
+		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
 /**
  * Creates a link element for CSS stylesheets.
