@@ -1420,10 +1420,10 @@ class Bake {
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}.');\n";
-		$actions .= "\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+		$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
+		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\$this->flash('Invalid id for {$singularHumanName}', '{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
@@ -1438,11 +1438,11 @@ class Bake {
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
+		$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		$actions .= "\t\t\t\texit();\n";
 		} else {
-		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', array('action'=>'index'));\n";
 		$actions .= "\t\t\t\texit();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
@@ -1479,10 +1479,10 @@ class Bake {
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id && empty(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
-		$actions .= "\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+		$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
+		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-			$actions .= "\t\t\t\$this->flash('Invalid id for {$singularHumanName}', '{$admin_url}/{$controllerPath}/index');\n";
+			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t\texit();\n";
 		$actions .= "\t\t}\n";
@@ -1490,10 +1490,10 @@ class Bake {
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." has been saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." saved');\n";
+		$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', '{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." saved.', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t\t\texit();\n";
 		$actions .= "\t\t\t} else {\n";
@@ -1532,17 +1532,17 @@ class Bake {
 		$actions .= "\t\tif(!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 		$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
-		$actions .= "\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\$this->flash('Invalid id for {$singularHumanName}', '{$admin_url}/{$controllerPath}/index');\n";
+		$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\$this->Session->setFlash('The ".$this->__singularHumanName($currentModelName)." deleted: id '.\$id.'');\n";
-			$actions .= "\t\t\t\$this->redirect('{$admin_url}/{$controllerPath}/index', null, true);\n";
+			$actions .= "\t\t\t\$this->Session->setFlash('".$singularHumanName." #'.\$id.' deleted');\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-			$actions .= "\t\t\t\$this->flash('{$currentModelName} deleted: id '.\$id.'.', '{$admin_url}/{$controllerPath}/index');\n";
+			$actions .= "\t\t\t\$this->flash('".$singularHumanName." #'.\$id.' deleted', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t}\n";
