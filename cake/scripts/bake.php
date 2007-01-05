@@ -937,7 +937,7 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				if(is_object($otherModelObj)) {
 					$displayField = $otherModelObj->getDisplayField();
-					$indexView .= "\t\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></td>\n";
+					$indexView .= "\t\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></td>\n";
 				} else {
 					$indexView .= "\t\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
 				}
@@ -978,7 +978,7 @@ class Bake {
 				$otherControllerName = $this->__controllerName($value['modelKey']);
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$displayField = $otherModelObj->getDisplayField();
-				$viewView .= "\t\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></dd>\n";
+				$viewView .= "\t\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></dd>\n";
 				$count++;
 			} else {
 				$viewView .= "\t\t<dd>&nbsp;<?php echo \$".$singularName."['{$modelObj->name}']['{$field}']?></dd>\n";
@@ -1000,8 +1000,8 @@ class Bake {
 					$otherControllerPath = $this->__controllerPath($otherControllerName);
 					$otherSingularHumanName = $this->__singularHumanName($value['controller']);
 					$otherPluralHumanName = $this->__pluralHumanName($value['controller']);
-					$viewView .= "\t\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', array('action'=>'index')); ?> </li>\n";
-					$viewView .= "\t\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', array('action'=>'add')); ?> </li>\n";
+					$viewView .= "\t\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+					$viewView .= "\t\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 				}
 			}
 		}
@@ -1031,7 +1031,7 @@ class Bake {
 			$viewView .= "<?php endif; ?>\n";
 			$viewView .= "\t<div class=\"actions\">\n";
 			$viewView .= "\t\t<ul>\n";
-			$viewView .= "\t\t\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', array('action'=>'edit', \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']));?></li>\n";
+			$viewView .= "\t\t\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']));?></li>\n";
 			$viewView .= "\t\t</ul>\n";
 			$viewView .= "\t</div>\n";
 			$viewView .= "</div>\n";
@@ -1064,9 +1064,9 @@ class Bake {
 			$viewView .= "\t\t<td><?php echo \${$otherSingularName}['{$column['name']}'];?></td>\n";
 			}
 			$viewView .= "\t\t<td class=\"actions\">\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('View', array('action'=>'view', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('Edit', array('action'=>'edit', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('Delete', array('action'=>'delete', \$".$otherSingularName."['{$otherModelObj->primaryKey}']), null, 'Are you sure you want to delete #' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?'); ?>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('View', array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('Edit', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
+			$viewView .= "\t\t\t<?php echo \$html->link('Delete', array('controller'=> '{$otherControllerPath}', 'action'=>'delete', \$".$otherSingularName."['{$otherModelObj->primaryKey}']), null, 'Are you sure you want to delete #' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?'); ?>\n";
 			$viewView .= "\t\t</td>\n";
 			$viewView .= "\t</tr>\n";
 			$viewView .= "<?php endforeach; ?>\n";
@@ -1074,7 +1074,7 @@ class Bake {
 			$viewView .= "<?php endif; ?>\n\n";
 			$viewView .= "\t<div class=\"actions\">\n";
 			$viewView .= "\t\t<ul>\n";
-			$viewView .= "\t\t\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', array('action'=>'add'));?> </li>\n";
+			$viewView .= "\t\t\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add'));?> </li>\n";
 			$viewView .= "\t\t</ul>\n";
 			$viewView .= "\t</div>\n";
 			$viewView .= "</div>\n";
@@ -1100,8 +1100,8 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
-				$editView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('action'=>'view')); ?></li>\n";
-				$editView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('action'=>'add')); ?></li>\n";
+				$editView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view')); ?></li>\n";
+				$editView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?></li>\n";
 			}
 		}
 		$editView .= "\t</ul>\n";
@@ -1126,8 +1126,8 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
-				$addView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('action'=>'view'));? ></li>\n";
-				$addView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('action'=>'add')); ?></li>\n";
+				$addView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view'));? ></li>\n";
+				$addView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?></li>\n";
 			}
 		}
 		$addView .= "\t</ul>\n";
