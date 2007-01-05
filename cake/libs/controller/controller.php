@@ -961,7 +961,15 @@ class Controller extends Object {
 		if (isset($options['sort']) && isset($options['direction'])) {
 			$options['order'] = array($options['sort'] => $options['direction']);
 		} elseif (isset($options['sort'])) {
-			$options['order'] = $options['sort'];
+			$options['order'] = array($options['sort'] => 'asc');
+		}
+
+		if (!empty($options['order']) && is_array($options['order'])) {
+			$key = key($options['order']);
+			if (strpos($key, '.') === false && $object->hasField($key)) {
+				$options['order'][$object->name . '.' . $key] = $options['order'][$key];
+				unset($options['order'][$key]);
+			}
 		}
 
 		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
