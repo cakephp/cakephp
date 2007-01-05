@@ -1019,7 +1019,7 @@ class Controller extends Object {
 		);
 		$this->params['paging'][$object->name] = $paging;
 
-		if (!in_array('Paginator', $this->helpers)) {
+		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
 		}
 
