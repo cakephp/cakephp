@@ -106,11 +106,11 @@
 	define ('ROOT', $rootDir);
 	define ('APP_DIR', $appDir);
 	define ('DEBUG', 1);
-	
+
 	if(!empty($core)){
 		define('CAKE_CORE_INCLUDE_PATH', dirname($core));
 	}else{
-		define('CAKE_CORE_INCLUDE_PATH', $root);       
+		define('CAKE_CORE_INCLUDE_PATH', $root);
 	}
 
 	if(function_exists('ini_set')) {
@@ -1246,25 +1246,26 @@ class Bake {
 		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->__controllerNames) ) {
 			$controllerName = $this->__controllerNames[intval($enteredController) - 1];
 		} else {
-			$controllerName = $enteredController;
+			$controllerName = Inflector::camelize($enteredController);
 		}
-		$controllerPath = $this->__controllerPath($controllerName);
+
+		$controllerPath = low(Inflector::underscore($controllerName));
 
 		$doItInteractive = $this->getInput("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
-			
+
 			$wannaUseScaffold = $this->getInput("Would you like to use scaffolding?", array('y','n'), 'y');
-						
+
 			if (low($wannaUseScaffold) == 'n' || low($wannaUseScaffold) == 'no') {
-			
+
 				$wannaDoScaffolding = $this->getInput("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
-			
+
 				if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
 					$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
 				}
-				
+
 				$wannaDoUses = $this->getInput("Would you like this controller to use other models besides '" . $this->__modelName($controllerName) .  "'?", array('y','n'), 'n');
 
 				if (low($wannaDoUses) == 'y' || low($wannaDoUses) == 'yes') {
@@ -1293,7 +1294,7 @@ class Bake {
 			}
 		} else {
 			$wannaDoScaffolding = $this->getInput("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'y');
-		
+
 			if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
 				$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'y');
 			}
@@ -1743,7 +1744,7 @@ class Bake {
 		if(low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
 		$out .= "\tvar \$scaffold;\n";
 		} else {
-		
+
 			if (count($uses)) {
 				$out .= "\tvar \$uses = array('" . $this->__modelName($controllerName) . "', ";
 
