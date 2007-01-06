@@ -476,6 +476,19 @@ class Model extends Overloadable {
 /**
  * Bind model associations on the fly.
  *
+ * If $permenant is true, association will not be reset
+ * to the originals defined in the model
+ *
+ * @param array $params
+ * @param boolean $permenant
+ * @return void
+ */
+	function bind($assoc, $params, $permenant = true) {
+		
+	}
+/**
+ * Bind model associations on the fly.
+ *
  * If $reset is false, association will not be reset
  * to the originals defined in the model
  *
@@ -1564,10 +1577,12 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
- * @param array $data POST data
  * @return boolean True if there are no errors
  */
 	function validates($data = array()) {
+		if (!empty($data)) {
+			trigger_error(__('(Model::validates) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
+		}
 		$errors = $this->invalidFields($data);
 		if (is_array($errors)) {
 			return count($errors) === 0;
@@ -1583,6 +1598,8 @@ class Model extends Overloadable {
 	function invalidFields($data = array()) {
 		if (empty($data)) {
 			$data = $this->data;
+		} else {
+			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
 		}
 
 		if (empty($data) || !$this->beforeValidate()) {
@@ -1590,7 +1607,7 @@ class Model extends Overloadable {
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
-			return true;
+			return array();
 		}
 
 		if (isset($data[$this->name])) {
@@ -1600,13 +1617,18 @@ class Model extends Overloadable {
 		$Validation = new Validation();
 
 		foreach($this->validate as $fieldName => $validator) {
-			if (is_array($validator)) {
-				$validator = am(array(
-					'allowEmpty' => true,
-					'message' => 'This field cannot be left blank',
-					'rule' => 'blank'
-				), $validator);
+			if (!is_array($validator) && isset($data[$fieldName])) {
+				$validator = array('rule' => $validator);
+			}
 
+			$validator = am(array(
+				'allowEmpty' => true,
+				'message' => 'This field cannot be left blank',
+				'rule' => 'blank',
+				'on' => null
+			), $validator);
+
+			if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
 				if (!isset($data[$fieldName]) && $validator['allowEmpty'] == false) {
 					$this->invalidate($fieldName, $validator['message']);
 				} elseif (isset($data[$fieldName])) {
@@ -1619,17 +1641,17 @@ class Model extends Overloadable {
 						$ruleParams = array($data[$fieldName]);
 					}
 
-					if (
-						(method_exists($this, $rule) && !call_user_func_array(array(&$this, $rule), $ruleParams)) ||
-						(method_exists($Validation, $rule) && !call_user_func_array(array(&$Validation, $rule), $ruleParams)) ||
-						(!is_array($validator['rule']) && !preg_match($rule, $data[$fieldName]))
-					) {
+					$valid = true;
+					if (method_exists($this, $rule)) {
+						$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
+					} elseif (method_exists($Validation, $rule)) {
+						$valid = call_user_func_array(array(&$Validation, $rule), $ruleParams);
+					} elseif (!is_array($validator['rule'])) {
+						$valid = preg_match($rule, $data[$fieldName]);
+					}
+					if (!$valid) {
 						$this->invalidate($fieldName, $validator['message']);
 					}
-				}
-			} else {
-				if (isset($data[$fieldName]) && !preg_match($validator, $data[$fieldName])) {
-					$this->invalidate($fieldName);
 				}
 			}
 		}
