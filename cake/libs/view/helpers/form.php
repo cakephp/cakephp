@@ -93,7 +93,7 @@ class FormHelper extends AppHelper {
 			$data = array(
 				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
 				'key' => $object->primaryKey,
-				'validates' => array_keys($object->validate)
+				'validates' => (empty($object->validate) ? array() : array_keys($object->validate))
 			);
 		}
 
