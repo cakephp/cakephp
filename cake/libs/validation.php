@@ -481,12 +481,26 @@ class Validation extends Object {
 
 	}
 
+	/**
+	 * Checks whether the length of a string is greater or equal to a minimal length.
+	 * 
+	 * @param string $check The string to test
+	 * @param int $min The minimal string length
+	 */
 	function minLength($check, $min) {
 		$length = strlen($check);
+		return ($length >= $min);
 	}
 
+	/**
+	 * Checks whether the length of a string is smaller or equal to a maximal length..
+	 * 
+	 * @param string $check The string to test
+	 * @param int $max The maximal string length
+	 */
 	function maxLength($check, $max) {
 		$length = strlen($check);
+		return ($length <= $max);
 	}
 
     function money($check, $symbolPosition = 'left') {
