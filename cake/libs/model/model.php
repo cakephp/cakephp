@@ -476,14 +476,14 @@ class Model extends Overloadable {
 /**
  * Bind model associations on the fly.
  *
- * If $permenant is true, association will not be reset
+ * If $permanent is true, association will not be reset
  * to the originals defined in the model
  *
  * @param array $params
- * @param boolean $permenant
+ * @param boolean $permanent
  * @return void
  */
-	function bind($assoc, $params, $permenant = true) {
+	function bind($assoc, $params, $permanent = true) {
 		
 	}
 /**
