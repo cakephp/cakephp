@@ -52,24 +52,33 @@ class Sanitize{
 
 		if (is_array($string)) {
 			foreach($string as $key => $clean) {
-				$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", "", $clean);
+				$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $clean);
 			}
 		} else {
-			$cleaned = preg_replace("/[^{$allow}a-zA-Z0-9]/", "", $string);
+			$cleaned = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $string);
 		}
 		return $cleaned;
 	}
 /**
- * Makes a string SQL-safe by adding slashes (if needed).
- *
- * @param string $string
- * @return string
+ * @deprecated
+ * @see Sanitize::escape()
  */
 	function sql($string) {
 		if (!ini_get('magic_quotes_gpc')) {
 			$string = addslashes($string);
 		}
 		return $string;
+	}
+/**
+ * Makes a string SQL-safe.
+ *
+ * @param string $string
+ * @param string $connection
+ * @return string
+ */
+	function escape($string, $connection = 'default') {
+		$db = ConnectionManager::getDataSource($connection);
+		return $db->value($string);
 	}
 /**
  * Returns given string safe for display as HTML. Renders entities.
@@ -146,20 +155,15 @@ class Sanitize{
 		return $str;
 	}
 /**
- * Recursively sanitizes given array of data for safe input.
- *
- * @param mixed $toClean
- * @return mixed
+ * @deprecated
+ * @see Sanitize::clean
  */
 	function cleanArray(&$toClean) {
 		return $this->cleanArrayR($toClean);
 	}
 /**
- * Private method used for recursion (see cleanArray()).
- *
- * @param array $toClean
- * @return array
- * @see cleanArray
+ * @deprecated
+ * @see Sanitize::clean
  */
 	function cleanArrayR(&$toClean) {
 		if (is_array($toClean)) {
@@ -175,29 +179,8 @@ class Sanitize{
 		}
 	}
 /**
- * Do we really need to sanitize array keys? If so, we can use this code...
-	function cleanKey($key) {
-		if ($key == "")
-		{
-			return "";
-		}
-		//URL decode and convert chars to HTML entities
-		$key = htmlspecialchars(urldecode($key));
-		//Remove ..
-		$key = preg_replace( "/\.\./", "", $key );
-		//Remove __FILE__, etc.
-		$key = preg_replace( "/\_\_(.+?)\_\_/", "", $key );
-		//Trim word chars, '.', '-', '_'
-		$key = preg_replace( "/^([\w\.\-\_]+)$/", "$1", $key );
-		return $key;
-	}
- */
-
-/**
- * Method used by cleanArray() to sanitize array nodes.
- *
- * @param string $val
- * @return string
+ * @deprecated
+ * @see Sanitize::clean
  */
 	function cleanValue($val) {
 		if ($val == "") {
@@ -221,7 +204,45 @@ class Sanitize{
 		$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
 		return $val;
 	}
+/**
+ * Sanitizes given array or value for safe input.
+ *
+ * @param mixed $data
+ * @param string $connection
+ * @return mixed
+ */
+	function clean($data, $connection = 'default') {
+		if (is_array($data)) {
+			foreach ($data as $key => $val) {
+				$data[$key] = Sanitize::clean($val);
+			}
+		} else {
+			if (empty($data)) {
+				return $data;
+			}
 
+			//Replace odd spaces with safe ones
+			$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
+			//Encode any HTML to entities.
+			$val = Sanitize::html($val);
+
+			//Double-check special chars and remove carriage returns
+			//For increased SQL security
+			$val = preg_replace("/\\\$/", "$", $val);
+			$val = preg_replace("/\r/", "", $val);
+			$val = str_replace("'", "'", str_replace("!", "!", $val));
+
+			//Allow unicode (?)
+			$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
+
+			// Escape for DB output
+			$val = Sanitize::escape($val, $connection);
+
+			//Swap user-inputted backslashes (?)
+			$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+			return $val;
+		}
+	}
 /**
  * Formats column data from definition in DBO's $columns array
  *
