@@ -477,8 +477,25 @@ class Validation extends Object {
 
 	}
 
+	/**
+	 * Validation of an IPv4 address.
+	 * 
+	 * @param string $check The string to test.
+	 * @return boolean
+ 	 * @access public
+	 */
 	function ip($check) {
-
+		$bytes = explode('.', $check);
+		if (count($bytes) == 4) {
+			$returnValue = true;
+			foreach ($bytes as $byte) {
+				if (!(is_numeric($byte) && $byte >= 0 && $byte <= 255)) {
+					$returnValue = false;
+				}
+			}
+			return $returnValue;
+		}
+		return false;
 	}
 
 	/**
@@ -486,6 +503,8 @@ class Validation extends Object {
 	 * 
 	 * @param string $check The string to test
 	 * @param int $min The minimal string length
+	 * @return boolean
+ 	 * @access public
 	 */
 	function minLength($check, $min) {
 		$length = strlen($check);
@@ -497,6 +516,8 @@ class Validation extends Object {
 	 * 
 	 * @param string $check The string to test
 	 * @param int $max The maximal string length
+	 * @return boolean
+ 	 * @access public
 	 */
 	function maxLength($check, $max) {
 		$length = strlen($check);
