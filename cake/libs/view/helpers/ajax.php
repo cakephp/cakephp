@@ -648,6 +648,20 @@ class AjaxHelper extends AppHelper {
  */
 	function __optionsForAjax($options = array()) {
 
+		if (isset($options['indicator'])) {
+			if (isset($options['loading'])) {
+				$options['loading']  .= "Element.show('{$options['indicator']}');";
+			} else {
+				$options['loading']   = "Element.show('{$options['indicator']}');";
+			}
+			if (isset($options['complete'])) {
+				$options['complete'] .= "Element.hide('{$options['indicator']}');";
+			} else {
+				$options['complete']  = "Element.hide('{$options['indicator']}');";
+			}
+			unset($options['indicator']);
+		}
+
 		$js_options = $this->_buildCallbacks($options);
 
 		if (!isset($js_options['asynchronous'])) {
