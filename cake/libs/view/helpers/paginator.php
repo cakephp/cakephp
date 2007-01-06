@@ -40,17 +40,24 @@ class PaginatorHelper extends AppHelper {
  * @var array
  */
 	var $helpers = array('Html', 'Ajax');
-
-	var $Html = null;
-
-	var $Ajax = null;
 /**
  * Holds the default model for paged recordsets
  *
  * @var string
  */
 	var $__defaultModel = null;
-
+/**
+ * Holds the default options for pagination links
+ *
+ * @var array
+ */
+	var $options = array();
+/**
+ * Gets the current page of the in the recordset for the given model
+ *
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @return string The current page number of the paginated resultset.
+ */
 	function params($model = null) {
 		if ($model == null) {
 			$model = $this->defaultModel();
@@ -61,10 +68,22 @@ class PaginatorHelper extends AppHelper {
 		return $this->params['paging'][$model];
 	}
 /**
+ * Sets default options for all pagination links
+ *
+ * @param  mixed $options
+ * @return void
+ */
+	function options($options = array()) {
+		if (is_string($options)) {
+			$options = array('update' => $options);
+		}
+		$this->options = array_filter(am($this->options, $options));
+	}
+/**
  * Gets the current page of the in the recordset for the given model
  *
- * @param  string $model
- * @return string
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @return string The current page number of the paginated resultset.
  */
 	function current($model = null) {
 		$params = $this->params($model);
@@ -77,8 +96,9 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current key by which the recordset is sorted
  *
- * @param  string $model
- * @return string
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @return string The name of the key by which the resultset is being sorted, or
+ *                null if the results are not currently sorted.
  */
 	function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
@@ -157,7 +177,7 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($key)) {
 			$key = $title;
-			$title = Inflector::humanize($title);
+			$title = Inflector::humanize(preg_replace('/_id$/', '', $title));
 		}
 
 		$dir = 'asc';
@@ -192,6 +212,10 @@ class PaginatorHelper extends AppHelper {
 			unset($url['order']);
 			$url = am($url, compact('sort', 'direction'));
 		}
+		if(!empty($this->options)) {
+			$options = am($options, $this->options);
+		}
+
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
 		$url = am(array('page' => $this->current($model)), $url);
 		return $this->{$obj}->link($title, $url, $options);
@@ -298,14 +322,17 @@ class PaginatorHelper extends AppHelper {
  * @return string
  */
 	function counter($options = array()) {
+		if (is_string($options)) {
+			$options = array('format' => $options);
+		}
+
 		$options = am(
 			array(
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
 				'separator' => ' of '
 			),
-			$options
-		);
+		$options);
 
 		$paging = $this->params($options['model']);
 		$start = $paging['page'] > 1 ? ($paging['page'] - 1) * ($paging['options']['limit']) + 1 : '1';
