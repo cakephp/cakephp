@@ -198,10 +198,11 @@ class CacheHelper extends AppHelper {
 			$cacheTime = strtotime($timestamp, $now);
 		}
 
-		if($this->here === '/'){
+		$cache = convertSlash($this->here);
+		if(empty($cache)){
 			return;
 		}
-		$cache = convertSlash($this->here) . '.php';
+		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php
 					loadController(\'' . $this->controllerName . '\');
 					loadModels();
