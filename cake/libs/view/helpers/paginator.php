@@ -213,7 +213,7 @@ class PaginatorHelper extends AppHelper {
 			$url = am($url, compact('sort', 'direction'));
 		}
 		if(!empty($this->options)) {
-			$options = am($options, $this->options);
+			$options = am($this->options, $options);
 		}
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
