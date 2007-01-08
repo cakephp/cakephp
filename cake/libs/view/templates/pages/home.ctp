@@ -60,8 +60,6 @@
 	<ul><li><?php __('The Rapid Development Framework'); ?></li></ul></li>
 	<li><a href="http://manual.cakephp.org"><?php __('CakePHP Manual'); ?> </a>
 	<ul><li><?php __('Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://wiki.cakephp.org"><?php __('CakePHP Wiki'); ?> </a>
-	<ul><li><?php __('The Community for CakePHP'); ?></li></ul></li>
 	<li><a href="http://api.cakephp.org"><?php __('CakePHP API'); ?> </a>
 	<ul><li><?php __('Docblock Your Best Friend'); ?></li></ul></li>
 	<li><a href="http://www.cakeforge.org"><?php __('CakeForge'); ?> </a>

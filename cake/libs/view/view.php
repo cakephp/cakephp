@@ -228,7 +228,7 @@ class View extends Object {
 /**
  * Plugin name. A Plugin is a sub-application. New in Cake RC4.
  *
- * @link http://wiki.cakephp.org/docs:plugins
+ * @link http://manual.cakephp.org/chapter/plugins
  * @var string
  */
 	var $plugin = null;
