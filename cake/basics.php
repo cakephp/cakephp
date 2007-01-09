@@ -154,10 +154,19 @@
 		if (!is_null($name) && !class_exists($name)) {
 			$className = $name;
 			$name = Inflector::underscore($name);
-			$paths = Configure::getInstance();
+			$models = Configure::read('Models');
+			if(is_array($models)) {
+				if(array_key_exists($className, $models)) {
+					require($models[$className]['path'] . $name . '.php');
+					Overloadable::overload($className);
+					return true;
+				}
+			}
 
+			$paths = Configure::getInstance();
 			foreach($paths->modelPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
+					Configure::store('Models', 'class.paths', array($className => array('path' => $path)));
 					require($path . $name . '.php');
 					Overloadable::overload($className);
 					return true;

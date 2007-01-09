@@ -44,6 +44,8 @@ if (!defined('PHP5')) {
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();
+	Configure::store(null, 'class.paths');
+	Configure::load('class.paths');
 /**
  * Enter description here...
  */
@@ -93,7 +95,7 @@ if (!defined('PHP5')) {
 		}
 	}
 
-	Configure::write('debug', DEBUG); 
+	Configure::write('debug', DEBUG);
 
 	require CAKE . 'dispatcher.php';
 

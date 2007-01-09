@@ -209,19 +209,21 @@ class Configure extends Object {
 	function load($fileName) {
 		$_this =& Configure::getInstance();
 
-		if(!file_exists(CONFIGS . $fileName . '.php')) {
+		if (file_exists(CONFIGS . $fileName . '.php')) {
+			include(CONFIGS . $fileName . '.php');
+		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
+			include(CACHE . 'persistent' . DS . $fileName . '.php');
+		} else {
 			trigger_error(sprintf(__("Configure::load() - %s.php not found", true), $fileName), E_USER_WARNING);
 			return false;
 		}
 
-		include(CONFIGS . $fileName . '.php');
 		if(!isset($config)){
 			trigger_error(sprintf(__("Configure::load() - no variable \$config found in %s.php", true), $fileName), E_USER_WARNING);
 			return false;
 		}
 		return $_this->write($config);
 	}
-
 /**
  * Used to determine the current version of CakePHP
  *
@@ -237,6 +239,57 @@ class Configure extends Object {
 			$_this->write($config);
 		}
 		return $_this->Cake['version'];
+	}
+/**
+ * Used to write a config file to the server.
+ *
+ * Configure::store('Model', 'class.paths', array('Users' => array('path' => 'users', 'plugin' => true)));
+ *
+ * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
+ * @param string $name file name.
+ * @param array $data array of values to store.
+ * @access public
+ */
+	function store($type, $name, $data = array()) {
+		$_this =& Configure::getInstance();
+		$write = true;
+		$content = '';
+		foreach ($data as $key => $value) {
+			$content .= "\$config['$type']['$key'] = array(";
+			if(is_array($value)){
+				foreach($value as $key1 => $value2){
+					$content .= "'$key1' => '$value2', ";
+				}
+			} else {
+				$content .= "'$key' => '$value'";
+			}
+			$content .= ");\n";
+		}
+		if(is_null($type)) {
+			$write = false;
+		}
+		$_this->__writeConfig($content, $name, $write);
+	}
+/**
+ * Creates a cached version of a configuration file.
+ * Appends values passed from Configure::store() to the cached file
+ *
+ * @param string $content
+ * @param string $name
+ * @access private
+ */
+	function __writeConfig($content, $name, $write = true){
+		$file = CACHE . 'persistent' . DS . $name . '.php';
+		if(!file_exists($file)){
+			cache('persistent' . DS . $name . '.php', "<?php\n");
+		}
+		if($write === true){
+			if(!class_exists('File')){
+				uses('File');
+			}
+			$fileClass = new File($file);
+			$fileClass->append($content);
+		}
 	}
 /**
  * Checks $name for dot notation to create dynamic Configure::$var as an array when needed.
