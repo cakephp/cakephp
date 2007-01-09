@@ -9,8 +9,8 @@ $output .= "<?php endif; ?>\n";
 $output .= "<h1>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h1>\n";
 $output .= "<h2>Editing this Page</h2>\n";
 $output .= "<p>\n";
-$output .= "To change the content of this page, edit: ".$dir.DS."views".DS."pages".DS."home.thtml.<br />\n";
-$output .= "To change its layout, edit: ".$dir.DS."views".DS."layouts".DS."default.thtml.<br />\n";
+$output .= "To change the content of this page, edit: ".$dir.DS."views".DS."pages".DS."home.ctp.<br />\n";
+$output .= "To change its layout, edit: ".$dir.DS."views".DS."layouts".DS."default.ctp.<br />\n";
 $output .= "You can also add some CSS styles for your pages at: ".$dir.DS."webroot/css/.\n";
 $output .= "</p>\n";
 ?>
