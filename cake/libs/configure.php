@@ -102,6 +102,7 @@ class Configure extends Object {
  *
  *
  * @param array $config
+ * @param mixed $value
  * @return void
  * @access public
  */
@@ -276,6 +277,7 @@ class Configure extends Object {
  *
  * @param string $content
  * @param string $name
+ * @param boolean $write
  * @access private
  */
 	function __writeConfig($content, $name, $write = true){
