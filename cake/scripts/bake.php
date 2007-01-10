@@ -1126,7 +1126,7 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				$otherSingularName = $this->__singularName($associationName);
 				$otherPluralName = $this->__pluralHumanName($associationName);
-				$addView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view'));? ></li>\n";
+				$addView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view'));?></li>\n";
 				$addView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?></li>\n";
 			}
 		}
