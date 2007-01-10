@@ -944,7 +944,7 @@
 
 		$timediff = $expires - $now;
 		$filetime = @filemtime($filename);
-
+		
 		if ($data == null) {
 			// Read data from file
 			if (file_exists($filename) && $filetime !== false) {
@@ -955,7 +955,7 @@
 					$data = file_get_contents($filename);
 				}
 			}
-		} else {
+		} else if(is_writable(dirname($filename))) {
 			file_put_contents($filename, $data);
 		}
 		return $data;
