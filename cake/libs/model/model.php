@@ -685,24 +685,20 @@ class Model extends Overloadable {
  * @param string $tableName Name of the custom table
  */
 	function setSource($tableName) {
+		$this->setDataSource($this->useDbConfig);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		if ($db->isInterfaceSupported('listSources')) {
-			$prefix = '';
-
-			if ($this->tablePrefix) {
-				$prefix = $this->tablePrefix;
-			}
-
 			$sources = $db->listSources();
-			if (is_array($sources) && !in_array(low($prefix . $tableName), array_map('low', $sources))) {
+			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
 				return $this->cakeError('missingTable', array(array(
 						'className' => $this->name,
-						'table' => $prefix . $tableName
+						'table' => $this->tablePrefix . $tableName
 				)));
 			} else {
 				$this->table = $tableName;
 				$this->tableToModel[$this->table] = $this->name;
+				$this->_tableInfo = null;
 				$this->loadInfo();
 			}
 
@@ -725,13 +721,16 @@ class Model extends Overloadable {
  * @return unknown
  */
 	function set($one, $two = null) {
-
 		if (is_object($one)) {
 			if (is_a($one, 'xmlnode') || is_a($one, 'XMLNode')) {
 				if ($one->name != Inflector::underscore($this->name)) {
-					if (is_object($one->getChild(Inflector::underscore($this->name)))) {
-						$one = $one->getChild(Inflector::underscore($this->name));
+					if (is_object($one->child(Inflector::underscore($this->name)))) {
+						$one = $one->child(Inflector::underscore($this->name));
 						$one = $one->attributes;
+					} else if (is_object($one->child('data'))) {
+							$one = $one->child('data');
+							$one = $one->child(Inflector::underscore($this->name));
+							$one = $one->attributes;
 					} else {
 						return null;
 					}
@@ -916,8 +915,12 @@ class Model extends Overloadable {
 		if ($conditions === null) {
 			$conditions = array($this->name . '.' . $this->primaryKey => $this->id);
 		}
-
-		if ($data = $this->find($conditions, $name, $order, 0)) {
+		if($this->recursive >= 1) {
+			$recursive = -1;
+		} else {
+			$recursive = $this->recursive;
+		}
+		if ($data = $this->find($conditions, $name, $order, $recursive)) {
 
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->name][$name])) {
@@ -1860,13 +1863,13 @@ class Model extends Overloadable {
  * @return boolean True on success
  */
 	function setDataSource($dataSource = null) {
-		if ($dataSource == null) {
-			$dataSource = $this->useDbConfig;
+		if ($dataSource != null) {
+			$this->useDbConfig = $dataSource;
 		}
 
-		$db =& ConnectionManager::getDataSource($dataSource);
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (!empty($db->config['prefix']) && $this->tablePrefix == null) {
+		if (isset($db->config['prefix'])) {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 

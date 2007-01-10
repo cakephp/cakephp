@@ -283,7 +283,7 @@ class Configure extends Object {
 	function __writeConfig($content, $name, $write = true){
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 		if(!file_exists($file)){
-			cache('persistent' . DS . $name . '.php', "<?php\n");
+			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n");
 		}
 		if($write === true){
 			if(!class_exists('File')){
