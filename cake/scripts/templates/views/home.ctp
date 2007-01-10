@@ -1,13 +1,39 @@
 <?php
-$output = "<p class=\"notice\">Your database configuration file is <?php echo  file_exists(CONFIGS.'database.php') ?' present.' . \$filePresent = ' ' : ' not present.'; ?></p>\n";
-$output .= "<?php if (!empty(\$filePresent)):?>\n";
-$output .= "<?php uses('model' . DS . 'connection_manager'); \$db = ConnectionManager::getInstance(); ?>\n";
-$output .= "<?php \$connected = \$db->getDataSource('default'); ?>\n";
-$output .= "<p class=\"notice\">Cake<?php echo \$connected->isConnected() ? ' is able to' : ' is not able to';?> connect to the database.</p>\n";
-$output .= "<br />\n";
-$output .= "<?php endif; ?>\n";
-$output .= "<h1>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h1>\n";
-$output .= "<h2>Editing this Page</h2>\n";
+$output =
+"<p>
+	<span class=\"notice\">
+		Your database configuration file is
+		<?php
+			\$filePresent = null;
+			if(file_exists(CONFIGS.'database.php')):
+				echo 'present';
+				\$filePresent = true;
+			else:
+				echo 'NOT present';
+			endif;
+		?>
+	</span>
+</p>
+<?php if (!empty(\$filePresent)):
+ 	uses('model' . DS . 'connection_manager');
+	\$db = &ConnectionManager::getInstance();
+ 	\$connected = \$db->getDataSource('default');
+?>
+<p>
+	<span class=\"notice\">
+		Cake
+		<?php if(\$connected->isConnected()):
+		 		echo ' is able to';
+			else:
+				echo ' is not able to';
+			endif;
+		?>
+		connect to the database.
+	</span>
+</p>\n";
+$output .= "<?php endif;?>";
+$output .= "<h2>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h2>\n";
+$output .= "<h3>Editing this Page</h3>\n";
 $output .= "<p>\n";
 $output .= "To change the content of this page, edit: ".$dir.DS."views".DS."pages".DS."home.ctp.<br />\n";
 $output .= "To change its layout, edit: ".$dir.DS."views".DS."layouts".DS."default.ctp.<br />\n";
