@@ -727,10 +727,6 @@ class Model extends Overloadable {
 					if (is_object($one->child(Inflector::underscore($this->name)))) {
 						$one = $one->child(Inflector::underscore($this->name));
 						$one = $one->attributes;
-					} else if (is_object($one->child('data'))) {
-							$one = $one->child('data');
-							$one = $one->child(Inflector::underscore($this->name));
-							$one = $one->attributes;
 					} else {
 						return null;
 					}

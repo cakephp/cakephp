@@ -218,7 +218,12 @@ class RequestHandlerComponent extends Object {
 			if (!class_exists('xmlnode') && !class_exists('XMLNode')) {
 				uses('xml');
 			}
-			$controller->data = new XML(trim(file_get_contents('php://input')));
+			$xml = new XML(trim(file_get_contents('php://input')));
+			if (is_object($xml->child('data')) && count($xml->children) == 1) {
+					$controller->data = $xml->child('data');
+			} else {
+				$controller->data = $xml;
+			}
 		}
 	}
 /**
