@@ -23,7 +23,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-$modelObj =& ClassRegistry::getObject($modelKey);
 ?>
 <h2><?php echo $formName.' '.$humanSingularName;?></h2>
 <?php
@@ -31,7 +30,8 @@ echo $form->create($modelClass);
 echo $form->inputs($fieldNames);
 echo $form->submit(__('Save', true)); ?>
 </form>
-<ul class='actions'>
+<div class='actions'>
+<ul>
 <?php
 if($formName == 'Edit') {
 	echo "<li>".$html->link(__('Delete  ', true).$humanSingularName, array('action' => 'delete', $data[$modelClass][$primaryKey]), null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
@@ -46,3 +46,4 @@ if($formName == 'Edit') {
 	}
 }?>
 </ul>
+</div>

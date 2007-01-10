@@ -26,16 +26,18 @@
 ?>
 <?php
 $modelObj =& ClassRegistry::getObject($modelKey);
-if(!empty($modelObj->alias)) {
-	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
-}?>
-<h1>View <?php echo sprintf(__("View %s", true), $humanSingularName)?>
-
-</h1>
+?>
+<h2><?php echo sprintf(__("View %s", true), $humanSingularName)?></h2>
 <dl>
 <?php
+$i = 0;
 foreach($fieldNames as $field => $value) {
-	echo "<dt>".$value['label']."</dt>";
+	if($i++ % 2 == 0) {
+		$class = 'class="altrow"';
+	} else {
+		$class = null;
+	}
+	echo "<dt {$class}>".$value['label']."</dt>";
 	if(isset($value['foreignKey'])) {
 		$otherControllerName = $value['controller'];
 		$otherControllerPath = Inflector::underscore($value['controller']);
@@ -43,21 +45,22 @@ foreach($fieldNames as $field => $value) {
 		$othereDisplayField = $otherModelObj->getDisplayField();
 		$displayText = $data[$alias[$value['model']]][$othereDisplayField];
 		if(!empty($data[$modelClass][$field]) && (!empty($displayText))) {
-			echo "<dd>".$html->link($displayText, $path . $otherControllerPath.'/view/'
+			echo "<dd {$class}>".$html->link($displayText, $path . $otherControllerPath.'/view/'
 							.$data[$modelClass][$field] )."</dd>";
 		} else {
-			echo "<dd>&nbsp;</dd>";
+			echo "<dd {$class}>&nbsp;</dd>";
 		}
 	} else {
 		if( !empty($data[$modelClass][$field])) {
-			echo "<dd>".$data[$modelClass][$field]."</dd>";
+			echo "<dd {$class}>".$data[$modelClass][$field]."</dd>";
 		} else {
-			echo "<dd>&nbsp;</dd>";
+			echo "<dd {$class}>&nbsp;</dd>";
 		}
 	}
 }?>
 </dl>
-<ul class='actions'>
+<div class='actions'>
+<ul>
 <?php
 echo '<li>' . $html->link(sprintf(__("Edit %s", true), $humanSingularName), array('action' => 'edit', $data[$modelClass][$modelObj->primaryKey])) . '</li>';
 echo '<li>' . $html->link(sprintf(__("Delete %s", true), $humanSingularName), array('action' => 'delete', $data[$modelClass][$modelObj->primaryKey]), null, sprintf(__("Are you sure you want to delete id %s?", true), $data[$modelClass][$modelObj->primaryKey])) . '</li>';
@@ -67,43 +70,55 @@ echo '<li>' . $html->link(sprintf(__("New %s", true), $humanSingularName), array
 foreach($fieldNames as $field => $value) {
 	if(isset($value['foreignKey'])) {
 		echo "<li>".$html->link(sprintf(__("List %s", true), Inflector::humanize($value['controller'])), array('controller' => $value['controller'], 'action' => 'index')) . '</li>';
-		echo "<li>".$html->link(sprintf(__("Add %s", true), Inflector::humanize($value['controller'])), $path . $value['controller'] ."/add/")."</li>";
+		echo "<li>".$html->link(sprintf(__("Add %s", true), Inflector::humanize($value['controller'])), array('controller' => $value['controller'], 'action'=>'add'))."</li>";
 	}
 }?>
 </ul>
-
+</div>
 <!--hasOne relationships -->
 <?php
+$j = 0;
 foreach ($modelObj->hasOne as $associationNameName => $relation) {
 	$otherModelKey = Inflector::underscore($relation['className']);
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
 	$new = true;
-	echo "<div class='related'><H2>".sprintf(__("Related %s", true), Inflector::humanize($associationNameName))."</H2>";
-	echo "<dl>";
-	if(isset($data[$associationNameName]) && is_array($data[$associationNameName])) {
+	if($j++ % 2 == 0) {
+		$class = 'class="altrow"';
+	} else {
+		$class = null;
+	}
+	echo "<div class=\"related\">";
+	echo "<h3>".sprintf(__("Related %s", true), Inflector::humanize($associationNameName))."</h3>";
+	if(!empty($data[$associationNameName])) {
+		echo "<dl>";
 		foreach($data[$associationNameName] as $field => $value) {
 			if(isset($value)) {
-				echo "<dt>".Inflector::humanize($field)."</dt>";
+				echo "<dt {$class}>".Inflector::humanize($field)."</dt>";
 				if(!empty($value)) {
-					echo "<dd>".$value."</dd>";
+					echo "<dd {$class}>".$value."</dd>";
 				} else {
-					echo "<dd>&nbsp;</dd>";
+					echo "<dd {$class}>&nbsp;</dd>";
 				}
 				$new = null;
 			}
 		}
 		echo "</dl>";
-		if($new == null) {
-			echo "<ul class='actions'><li>".$html->link(sprintf(__("Edit %s", true), Inflector::humanize($associationNameName)), $path . $otherControllerPath."/edit/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
-		} else {
-			echo "<ul class='actions'><li>".$html->link(sprintf(__("New %s", true), Inflector::humanize($associationNameName)), $path . $otherControllerPath."/add/{$data[$associationNameName][$otherModelObj->primaryKey]}")."</li></ul></div>";
-		}
 	}
+	echo "<div class=\"actions\">";
+		echo "<ul>";
+		if($new == null) {
+			echo "<li>".$html->link(sprintf(__("Edit %s", true), Inflector::humanize($associationNameName)), array('controller'=> $otherControllerPath, 'action'=>'edit', $data[$associationNameName][$otherModelObj->primaryKey]))."</li>";
+		} else {
+			echo "<li>".$html->link(sprintf(__("New %s", true), Inflector::humanize($associationNameName)), array('controller'=> $otherControllerPath, 'action'=>'add'))."</li>";
+		}
+		echo "</ul>";
+	echo "</div>";
+echo "</div>";
 }
 ?>
 
-<!-- HAS MANY AND HASANDBELONGSTOMANY -->
+<!--hasMany and  hasAndBelongsToMany relationships -->
 <?php
 $relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
 foreach($relations as $associationName => $relation) {
@@ -114,9 +129,10 @@ foreach($relations as $associationName => $relation) {
 
 	$otherModelName = $relation['className'];
 
-	echo "<div class='related'><h2>".sprintf(__("Related %s", true), Inflector::humanize($otherControllerPath))."</h2>";
+	echo "<div class=\"related\">";
+	echo "<h3>".sprintf(__("Related %s", true), Inflector::humanize($otherControllerPath))."</h3>";
 	if(isset($data[$associationName][0]) && is_array($data[$associationName])) {?>
-		<table class="inav" cellspacing="0">
+		<table cellspacing="0">
 			<tr>
 <?php
 		$bFound = false;
@@ -134,24 +150,24 @@ foreach($relations as $associationName => $relation) {
 			foreach($row as $column => $value) {
 				echo "<td>".$value."</td>";
 			}
-			if (isset($otherModelObj->{$associationName})) {?>
-				<td class="listactions"><?php echo $html->link(__('View', true), $path . $otherControllerPath . "/view/{$row[$otherModelObj->primaryKey]}/")?>
-				<?php echo $html->link(__('Edit', true), $path . $otherControllerPath . "/edit/{$row[$otherModelObj->primaryKey]}/")?>
-				<?php echo $html->link(__('Delete', true), $path . $otherControllerPath . "/delete/{$row[$otherModelObj->primaryKey]}/", null, sprintf(__("Are you sure you want to delete id %s?", true), $row[$otherModelObj->primaryKey]))?>
+
+?>				
+				<td class="actions">
+					<?php echo $html->link(__('View', true), array('controller'=> $otherControllerPath, 'action'=>'view', $row[$otherModelObj->primaryKey]))?>
+					<?php echo $html->link(__('Edit', true), array('controller'=> $otherControllerPath, 'action'=>'edit', $row[$otherModelObj->primaryKey]))?>
+					<?php echo $html->link(__('Delete', true), array('controller'=> $otherControllerPath, 'action'=>'delete', $row[$otherModelObj->primaryKey]), null, sprintf(__("Are you sure you want to delete id %s?", true), $row[$otherModelObj->primaryKey]))?>
 				</td>
 <?php
-			} else {?>
-				<td class="listactions"><?php echo $html->link(__('View', true), $path . $otherControllerPath . "/view/{$row[$otherModelObj->primaryKey]}/")?>
-				<?php echo $html->link(__('Edit', true), $path . $otherControllerPath . "/edit/{$row[$otherModelObj->primaryKey]}/")?>
-				<?php echo $html->link(__('Delete', true), $path . $otherControllerPath . "/delete/{$row[$otherModelObj->primaryKey]}/", null, sprintf(__("Are you sure you want to delete id %s?", true), $row[$otherModelObj->primaryKey]))?>
-				</td>
-<?php
-			}
 			echo "</tr>";
 		}
+?>
+		</table>
+<?php
 	}?>
-</table>
-<ul class="actions">
-	<?php echo "<li>".$html->link(__('New ', true).Inflector::humanize($associationName), $path . $otherControllerPath . '/add') . '</li>'; ?>
-</ul></div>
+	<div class="actions">
+		<ul>
+		<?php echo "<li>".$html->link(__('New ', true).Inflector::humanize($associationName), array('controller'=> $otherControllerPath, 'action'=>'add')) . '</li>'; ?>
+		</ul>
+	</div>
+</div>
 <?php }?>

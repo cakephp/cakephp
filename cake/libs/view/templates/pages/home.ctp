@@ -24,14 +24,55 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<p class="notice"><?php echo sprintf(__('Your database configuration file is %s.', true), file_exists(CONFIGS.'database.php') ? __('present', true) . $filePresent = ' ' : __('not present', true));?></p>
-<?php if (!empty($filePresent)):?>
-<?php uses('model' . DS . 'connection_manager'); $db = ConnectionManager::getInstance(); ?>
-<?php $connected = $db->getDataSource('default'); ?>
-<p class="notice"><?php echo sprintf(__('Cake %s connect to the database.', true), $connected->isConnected() ? __('is able to', true) : __('is not able to', true));?></p>
-<br />
+<p>
+	<span class="notice">
+		<?php 
+			__('Your /app/tmp directory is ');
+			if(is_writable(TMP)): 
+				__('writable.');
+			else:
+				__('NOT writable.');
+			endif;
+		?>
+	</span>
+</p>
+<p>
+	<span class="notice">
+		<?php 
+			__('Your database configuration file is ');
+			$filePresent = null;
+			if(file_exists(CONFIGS.'database.php')): 
+				__('present.');
+				$filePresent = true;
+			else:
+				__('NOT present.');
+				echo '<br/>';
+				__('Rename /app/config/database.php.default to /app/config/database.php');
+			endif;
+		?>
+	</span>
+</p>
+<?php 
+if (!empty($filePresent)):
+ 	uses('model' . DS . 'connection_manager'); 
+	$db = ConnectionManager::getInstance();
+ 	$connected = $db->getDataSource('default');
+?>
+<p>
+	<span class="notice">
+		<?php 
+			__('Cake');
+			if($connected->isConnected()):
+		 		__(' is able to ');
+			else: 
+				__(' is NOT able to ');
+			endif;
+			__('connect to the database.');
+		?> 
+	</span>
+</p>
 <?php endif; ?>
-<h2><?php __('CakePHP release information is on CakeForge'); ?></h2>
+<h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <h2><?php __('Editing this Page'); ?></h2>
 <p>
@@ -39,6 +80,12 @@
 <?php __('To change its layout, create: /app/views/layouts/default.ctp.'); ?><br />
 <a href="http://manual.cakephp.org/"><?php __('See the views section of the manual for more info.'); ?> </a><br />
 <?php __('You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
+</p>
+<h2><?php __('Getting Started'); ?></h2>
+<p>
+<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
+<a href="http://hades.phparch.com/ceres/public/article/index.php/art::cakephp::overview"><?php __('Overview of CakePHP'); ?></a><br />
+<a href="http://www.sitepoint.com/article/application-development-cakephp"><?php __('Your First Bite'); ?></a>
 </p>
 <h2><?php __('More about Cake'); ?></h2>
 <p>

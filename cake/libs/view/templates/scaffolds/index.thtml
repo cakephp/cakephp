@@ -27,15 +27,22 @@
 <h2>List <?php echo $humanPluralName;?></h2>
 <?php
 $modelObj =& ClassRegistry::getObject($modelKey);
-if(!empty($modelObj->alias)) {
-	$alias = array_combine(array_keys($modelObj->alias), array_keys($modelObj->alias));
-}
 ?>
+<p><?php 
+echo $paginator->counter(array(
+'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
+)); 
+?></p>
 <table class="scaffold" cellpadding="0" cellspacing="0">
 <thead>
 	<tr>
-	<?php foreach ($fieldNames as $fieldName) {?>
-		<th><?php echo $fieldName['label'];?></th>
+	<?php foreach ($fieldNames as $fieldName) { ?>
+		<th>
+			<?php 
+				$tag = explode('/', $fieldName['tagName']);
+				echo $paginator->sort($tag[1]);
+			?>
+		</th>
 	<?php }?>
 		<th><?php __('Actions'); ?></th>
 	</tr>
@@ -48,7 +55,7 @@ if(is_array($data)) {
 		if($i++ % 2 == 0) {
 			echo '<tr>';
 		} else {
-			echo '<tr class="altrow"">';
+			echo '<tr class="altrow">';
 		}
 		foreach($fieldNames as $field => $value) {
 		?>
@@ -76,12 +83,21 @@ if(is_array($data)) {
 			<?php echo $html->link(__('Edit', true), array('action' => 'edit', $id)) ?>
 			<?php echo $html->link(__('Delete', true), array('action' => 'delete', $id), null, sprintf(__("Are you sure you want to delete id %s?", true), $id)) ?>
 		</td>
-		</tr>
+	</tr>
 <?php
 	}
 }?>
 </tbody>
 </table>
-<ul class="actions">
-	<li><?php echo $html->link(__('New ', true).$humanSingularName, array('action' => 'add')); ?></li>
-</ul>
+<div class="paging">
+	<?php echo $paginator->prev('<< previous', array(), null, array('class'=>'disabled'));?>
+ |
+	<?php echo $paginator->next('next >>', array(), null, array('class'=>'disabled'));?>
+</div>
+<div class="actions">
+	<ul>
+		<li>
+			<?php echo $html->link(__('New ', true).$humanSingularName, array('action' => 'add')); ?>
+		</li>
+	</ul>
+</div>

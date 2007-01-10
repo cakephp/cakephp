@@ -1,281 +1,321 @@
-*{
+* {
 margin:0;
 padding:0;
 }
+
 /* General Style Info */
-body{
-font-family:"frutiger linotype","lucida grande",helvetica,arial,sans-serif;
-text-align:center;
-color:#333;
-font-size: 76%;
+body {
+	background-color: #2C6877;
+	color: #fff;
+	font-family: "frutiger linotype", "lucida grande", "helvetica", "arial", sans-serif;
+	font-size: 76%;
 }
-
-a{
-color:#003d4c;
-text-decoration:underline;
+a {
+	background-color: #fff;
+	color: #003d4c;
+	text-decoration: underline;
 }
-
-a:hover{
-color:#003d4c;
-text-decoration:none;
+a:hover {
+	background-color: #fff;
+	color: #003d4c;
+	text-decoration:none;
 }
-
-a img{
-border:none;
+a img {
+	border:none;
 }
-
-h1, h2, h3, h4{
-font-weight:normal;
-}
-
-h1{
-color: #003d4c;
-margin:0.3em 0;
-font-size: 180%;
-}
-
-h2{
-color:#c6c65b;
-padding-top: 1em;
-margin:0.3em 0;
-font-size: 180%;
-}
-
-h3{
-color:#c6c65b;
-padding-top:2em;
-font-size: 140%;
-}
-
-h4{
-color:#c6c65b;
-padding-top:0.5em;
-font-weight:normal;
-}
-
 em {
-font-size: 12px;
+	font-size: 12px;
 }
-
+h1, h2, h3, h4 {
+	background-color: #fff;
+	font-weight:normal;
+}
+h1 {
+	color: #003d4c;
+	font-size: 180%;
+	margin: 0.3em 0;
+}
+h2 {
+	color: #2C6877;
+	font-size: 180%;
+	margin: 0.3em 0;
+	padding-top: 1em;
+}
+h3 {
+	color: #c6c65b;
+	font-size: 140%;
+	padding-top: 2em;
+}
+h4 {
+	color: #c6c65b;
+	font-weight: normal;
+	padding-top: 0.5em;
+}
 ul, li {
-margin: 0 12px;
+	margin: 0 12px;
 }
 
 /* Layout */
-#container{
-text-align:left;
+#container {
+	text-align: left;
 }
 
 #header{
-margin-top: 1em;
-padding: 4px 20px;
+	background-color: #2C6877;
+	padding: 10px 20px 0 20px;
 }
-
+#header h1 { 
+	color: #ffffff;
+	background: url('../img/cake.icon.png') no-repeat;
+	padding: 5px 50px;
+	height: 60px;
+}
+#header h1 a { 
+	color: #ffffff;
+	background: #2C6877;
+	text-decoration: none;
+}
+#header h1 a:hover { 
+	color: #ffffff;
+	background: #003d4c;
+	text-decoration: none;
+}
 #content{
-clear:both;
-padding: 0px 40px 10px 40px;
-background-color: #fff;
-color: #333;
+	background-color: #fff;
+	clear: both;
+	color: #333;
+	padding: 0px 40px 40px 40px;
+	overflow: auto;
+}
+#footer {
+	clear: both;
+	padding: 6px 10px;
+	text-align: right;
 }
 
-#footer{
-clear:both;
-padding: 6px 10px;
-text-align: right;
-}
-
-/* tables */
+/* Tables */
 table {
-clear:both;
-width: 100%;
-border-top: 1px solid #ccc;
-border-left: 1px solid #ccc;
-border-bottom: 1px solid #ccc;
-color:#333;
-background-color: #fff;
-margin-bottom: 10px;
+	background-color: #fff;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	clear: both;
+	color: #333;
+	margin-bottom: 10px;
+	width: 100%;
 }
-
 th {
-background-color: #f2f2f2;
-border-top: 1px solid #fff;
-border-left: 1px solid #fff;
-border-right: 1px solid #bbb;
-border-bottom: 1px solid #bbb;
-text-align: center;
-padding:1px 4px;
+	background-color: #f2f2f2;
+	border-top: 1px solid #fff;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	padding: 1px 4px;
+	text-align: center;
 }
-
 table tr td {
-border-right: 1px solid #ddd;
-padding:4px 4px;
-vertical-align:top;
-text-align: center;
+	border-right: 1px solid #ddd;
+	padding: 4px 4px;
+	text-align: center;
+	vertical-align: top;
 }
-
 table tr.altrow td {
-background: #f4f4f4;
+	background: #f4f4f4;
 }
-td a{
-padding: 0 4px;
+td.actions {
+	white-space: nowrap;
 }
-
+td.actions a {
+	padding: 0 6px;
+}
 #cakeSqlLog td {
-text-align: left;
-padding: 4px 8px;
-background: #fff;
-border-bottom: 2px solid #ccc;
+	background: #fff;
+	border-bottom: 2px solid #ccc;
+	padding: 4px 8px;
+	text-align: left;
 }
 
-/* scaffold show */
+/* Paging */
+div.paging {
+	color: #ccc;
+}
+div.paging div.disabled {
+	color: #ddd;
+	display: inline;
+}
+
+/* Scaffold View */
 dl {
-line-height:2em;
-margin:0em 1em;
-float:left;
-width: 70%;
+	line-height: 2em;
+	margin: 0em 0em;
+	width: 50%;
 }
-
+dl .altrow {
+	background: #f4f4f4;
+}
 dt {
-font-weight: bold;
-vertical-align:top;
+	font-weight: bold;
+	padding-left: 4px;
+	vertical-align: top;
 }
-
 dd {
-margin-left:10em;
-margin-top:-2em;
-vertical-align:top;
+	margin-left: 10em;
+	margin-top: -2em;
+	vertical-align: top;
 }
 
-div.related {
-clear:both;
-display:block;
-}
-
-/* forms */
+/* Forms */
 form {
-margin-top: 0em;
-padding: 0;
-float: left;
-width: 70%;
+	margin-top: 0;
+	margin-right: 20px;
+	padding: 0;
+	width: 50%;
 }
-
-form div{
-vertical-align: text-top;
-margin-left: 1em;
-margin-bottom:2em;
+form div {
+	border: 1px solid #ddd;
+	clear: both;
+	margin-bottom: 1em;
+	padding: .8em 2em 1em 1.4em;
+	vertical-align: text-top;
 }
-
-form div.date{
-margin-left: 0em;
+form div.required {
+	color: #333;
+	background: #f2f2f2;
+	font-weight: bold;
 }
-
+form div.optional, form div.input {
+	background: #f6f6f6;
+	color: #444;
+}
+form div.submit {
+	border: 0;
+	clear: both;
+	margin-top: 10px;
+	margin-left: 140px;
+}
 label {
-display: block;
-float:left;
-width: 140px;
-font-size: 14px;
-padding-right: 20px;
+	display: block;
+	font-size: 14px;
+	padding-right: 20px;
 }
-
-input[type=checkbox] {
-float: left;
-clear: left;
-margin: 2px 6px 7px 2px;
-}
-
 input, textarea {
-clear: both;
-display:block;
-font-size: 14px;
-font-family: inherit;
+	clear: both;
+	display: block;
+	font-size: 14px;
+	width: 100%;
 }
-
 select {
-clear: both;
-vertical-align: text-bottom;
-font-size: 14px;
-font-family: inherit;
+	clear: both;
+	font-size: 14px;
+	vertical-align: text-bottom;
 }
-
+select[multiple=multiple] {
+	width: 100%;
+}
 option {
-font-size: 14px;
-font-family: inherit;
-padding: 0 0.3em;
+	font-size: 14px;
+	padding: 0 0.3em;
 }
-
+input[type=checkbox] {
+	clear: left;
+	float: left;
+	margin: 2px 6px 7px 2px;
+	width: auto;
+}
 input[type=submit] {
-display: inline;
-vertical-align: bottom;
+	display: inline;
+	padding: 0 .4em;
+	width: auto;
+	vertical-align: bottom;
 }
 
-form .required, form .optional, form .input{
-clear:both;
-padding: 10px;
-margin-bottom:10px;
-min-height:15px;
+/* Notices and Errors */
+div.message, p.error, div.error-message {
+	color: #900;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 8px 0px;
+}
+div.error-message {
+	clear: both;
+}
+div.error em {
+	font-size: 18px;
+	color: #003d4c;
+}
+span.notice {
+	background-color: #c6c65b;
+	color: #fff;
+	display: block;
+	font-size: 16px;
+	padding: 0.5em;
+	margin: 1em 0;
 }
 
-.required{
-color:#333;
-font-weight:bold;
-background: #f2f2f2;
+/* Actions */
+div.actions {
+	position: absolute;
+	top: 75px;
+	left: 23px;
+	text-align: left;
+}
+div.actions ul {
+	margin: 0;
+	padding: 2px 6px;
+	list-style-type: none;
+	display: inline;
+}
+div.actions li {
+	display: inline;
+	list-style-type: none;
+	margin: 1px 0px 4px 0px;
+	padding: 2px 6px;
+}
+div.actions ul li a{
+	background:#2C6877;
+	color: #fff;
+	padding: 2px 6px;
+	text-decoration: none;
+}
+div.actions ul li a:hover {
+	background:#fff;
+	color: #2C6877;
 }
 
-.optional, .input {
-color:#444;
-background: #f8f8f8;
+/* Related */
+div.related {
+	clear: both;
+	display: block;
+}
+div.related div.actions {
+	position: relative;
+	top: 4px;
+	left: 0;
+	text-align: left;
+}
+div.related div.actions ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+div.related div.actions li {
+	list-style-type: none;
+	margin: 0 0 4px 0px;
+	padding: 0;
+}
+div.related div.actions ul li a{
+	background:#fff;
+	color: #2C6877;
+	padding: 0;
+	text-decoration: underline;
+}
+div.related div.actions ul li a:hover {
+	background:#fff;
+	color: #2C6877;
+	text-decoration: none;
 }
 
-.submit {
-clear: both;
-margin-top: 10px;
-margin-left: 140px;
-}
-
-/* notices and errors */
-#flashMessage, .error, .error-message {
-color:#900;
-font-size: 16px;
-margin: 8px 0px;
-font-weight: bold;
-}
-
-.error-message {
-clear: both;
-}
-
-.error em {
-font-size: 18px;
-color: #003d4c;
-}
-
-.notice {
-color: #656565;
-font-size: 14px;
-background-color: #f4f4f4;
-padding: 0.5em;
-margin: 1em 0;
-display:block;
-}
-
-.tip {
-color: #656565;
-background-color: #ddd;
-}
-
-/* action links */
-ul.actions {
-float: left;
-margin: 0px 20px;
-}
-
-ul.actions li {
-margin: 4px 0;
-list-style-type: circle;
-}
-
-
-/* others */
+/* Other */
 pre {
-padding: 1em;
+	padding: 1em;
 }
