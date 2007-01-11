@@ -63,6 +63,7 @@ ul, li {
 #header{
 	background-color: #2C6877;
 	padding: 10px 20px 0 20px;
+	height: 83px;
 }
 #header h1 { 
 	color: #ffffff;
@@ -133,15 +134,6 @@ td.actions a {
 	border-bottom: 2px solid #ccc;
 	padding: 4px 8px;
 	text-align: left;
-}
-
-/* Paging */
-div.paging {
-	color: #ccc;
-}
-div.paging div.disabled {
-	color: #ddd;
-	display: inline;
 }
 
 /* Scaffold View */
@@ -256,7 +248,7 @@ span.notice {
 div.actions {
 	position: absolute;
 	top: 75px;
-	left: 23px;
+	left: 25px;
 	text-align: left;
 }
 div.actions ul {
@@ -268,18 +260,20 @@ div.actions ul {
 div.actions li {
 	display: inline;
 	list-style-type: none;
-	margin: 1px 0px 4px 0px;
-	padding: 2px 6px;
+	margin: 0px 0px 3px 0px;
+	padding: 0px 2px;
 }
 div.actions ul li a{
-	background:#2C6877;
-	color: #fff;
-	padding: 2px 6px;
+	background: #003d4c;
+	border: 0px solid #656565;
+	border-width: 1px 1px 0px 1px;
+	color: #ddd;
+	padding: 3px 8px;
 	text-decoration: none;
 }
 div.actions ul li a:hover {
 	background:#fff;
-	color: #2C6877;
+	color: #003d4c;
 }
 
 /* Related */
