@@ -354,8 +354,12 @@ class FormHelper extends AppHelper {
 		if(isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
-		$empty = (isset($options['empty']) ? $options['empty'] : '');
-		unset($options['empty']);
+		
+		$empty = false;
+		if(isset($options['empty'])) {
+			$empty = $options['empty'];
+			unset($options['empty']);
+		}
 
 		$type = $options['type'];
 		unset($options['type']);
@@ -378,18 +382,21 @@ class FormHelper extends AppHelper {
 				$out .= $this->Html->file($tagName);
 			break;
 			case 'select':
-				$list = (isset($options['options']) ? $options['options'] : array());
-				unset($options['options'], $options['empty']);
+				$list = array();
+				if(isset($options['options'])) {
+					$list = $options['options'];
+					unset($options['options']);
+				}
 				$out .= $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out .= $this->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, false);
+				$out .= $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, $empty);
 			break;
 			case 'date':
-				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, false);
+				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, $empty);
 			break;
 			case 'datetime':
-				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, false);
+				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, $empty);
 			break;
 			case 'textarea':
 			default:
