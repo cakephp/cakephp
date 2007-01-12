@@ -215,7 +215,6 @@ class Configure extends Object {
 		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
 			include(CACHE . 'persistent' . DS . $fileName . '.php');
 		} else {
-			trigger_error(sprintf(__("Configure::load() - %s.php not found", true), $fileName), E_USER_WARNING);
 			return false;
 		}
 
@@ -259,9 +258,11 @@ class Configure extends Object {
 			$content .= "\$config['$type']['$key'] = array(";
 			if(is_array($value)){
 				foreach($value as $key1 => $value2){
+					$value2 = addslashes($value2);
 					$content .= "'$key1' => '$value2', ";
 				}
 			} else {
+				$value = addslashes($value);
 				$content .= "'$key' => '$value'";
 			}
 			$content .= ");\n";
