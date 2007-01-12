@@ -283,11 +283,10 @@ class Configure extends Object {
  */
 	function __writeConfig($content, $name, $write = true){
 		$file = CACHE . 'persistent' . DS . $name . '.php';
-		$cached = false;
 		if(!file_exists($file)){
-			$cached = cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n");
+			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n");
 		}
-		if($write === true && $cached){
+		if($write === true){
 			if(!class_exists('File')){
 				uses('File');
 			}

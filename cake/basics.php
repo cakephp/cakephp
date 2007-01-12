@@ -957,8 +957,6 @@
 			}
 		} else if(is_writable(dirname($filename))) {
 			file_put_contents($filename, $data);
-		} else {
-			return false;
 		}
 		return $data;
 	}
