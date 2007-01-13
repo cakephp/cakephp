@@ -180,7 +180,7 @@ class AuthComponent extends Object {
 			}
 			return;
 		} else {
-			if (!$this->Session->check($this->sessionKey)) {
+			if (!$this->Session->check($this->sessionKey . '.' . $this->_model->primaryKey)) {
 
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $controller->params['url']['url']);
@@ -234,7 +234,7 @@ class AuthComponent extends Object {
 		$this->_model =& $this->getUserModel();
 
 		if (empty($this->sessionKey) && !empty($this->_model)) {
-			$this->sessionKey = 'Auth.' . $this->userModel . '.' . $this->_model->primaryKey;
+			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
 	}
 /**
