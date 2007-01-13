@@ -157,7 +157,11 @@
 			$models = Configure::read('Models');
 			if(is_array($models)) {
 				if(array_key_exists($className, $models)) {
-					require($models[$className]['path'] . $name . '.php');
+					require($models[$className]['path']);
+					Overloadable::overload($className);
+					return true;
+				} elseif(array_key_exists($className, $models['Core'])) {
+					require($models['Core'][$className]['path']);
 					Overloadable::overload($className);
 					return true;
 				}
@@ -166,7 +170,7 @@
 			$paths = Configure::getInstance();
 			foreach($paths->modelPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
-					Configure::store('Models', 'class.paths', array($className => array('path' => $path)));
+					Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
 					Overloadable::overload($className);
 					return true;
@@ -176,6 +180,49 @@
 		} else {
 			return true;
 		}
+	}
+
+	function paths(){
+		$directories = Configure::getInstance();
+		$paths = array();
+
+		foreach($directories->modelPaths as $path) {
+			$paths['Models'][] = $path;
+		}
+		foreach($directories->behaviorPaths as $path) {
+			$paths['Behaviors'][] = $path;
+		}
+		foreach($directories->controllerPaths as $path) {
+			$paths['Controllers'][] = $path;
+		}
+		foreach($directories->componentPaths as $path) {
+			$paths['Components'][] = $path;
+		}
+		foreach($directories->helperPaths as $path) {
+			$paths['Helpers'][] = $path;
+		}
+
+		if(!class_exists('Folder')){
+			uses('Folder');
+		}
+
+		$folder =& new Folder(APP.'plugins'.DS);
+		$plugins = $folder->ls();
+		$classPaths = array('models', 'models'.DS.'behaviors',  'controllers', 'controllers'.DS.'components', 'views'.DS.'helpers');
+
+		foreach($plugins[0] as $plugin){
+			foreach($classPaths as $path){
+				if(strpos($path, DS) !== false){
+					$key = explode(DS, $path);
+					$key = $key[1];
+				} else {
+					$key = $path;
+				}
+				$folder->path = APP.'plugins'.DS.$plugin.DS.$path;
+				$paths[Inflector::camelize($plugin)][Inflector::camelize($key)][] = $folder->path;
+			}
+		}
+		return $paths;
 	}
 /**
  * Loads all controllers.
@@ -209,7 +256,6 @@
  * @return boolean Success
  */
 	function loadController($name) {
-		$paths = Configure::getInstance();
 		if (!class_exists('AppController')) {
 			if (file_exists(APP . 'app_controller.php')) {
 				require(APP . 'app_controller.php');
@@ -217,24 +263,37 @@
 				require(CAKE . 'app_controller.php');
 			}
 		}
-
 		if ($name === null) {
 			return true;
 		}
 
-		if (!class_exists($name . 'Controller')) {
-			$name = Inflector::underscore($name);
-
-			foreach($paths->controllerPaths as $path) {
-				if (file_exists($path . $name . '_controller.php')) {
-					require($path . $name . '_controller.php');
+		$className = $name . 'Controller';
+		if (!class_exists($className)) {
+			$name = Inflector::underscore($className);
+			$controllers = Configure::read('Controllers');
+			if(is_array($controllers)) {
+				if(array_key_exists($className, $controllers)) {
+					require($controllers[$className]['path']);
+					return true;
+				} elseif(array_key_exists($className, $controllers['Core'])) {
+					require($controllers['Core'][$className]['path']);
 					return true;
 				}
 			}
 
-			if ($controller_fn = fileExistsInPath(LIBS . 'controller' . DS . $name . '_controller.php')) {
-				if (file_exists($controller_fn)) {
-					require($controller_fn);
+			$paths = Configure::getInstance();
+			foreach($paths->controllerPaths as $path) {
+				if (file_exists($path . $name . '.php')) {
+					Configure::store('Controllers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
+					require($path . $name . '.php');
+					return true;
+				}
+			}
+
+			if ($controllerFilename = fileExistsInPath(LIBS . 'controller' . DS . $name . '.php')) {
+				if (file_exists($controllerFilename)) {
+					Configure::store('Controllers\'][\'Core', 'class.paths', array($className => array('path' => $controllerFilename)));
+					require($controllerFilename);
 					return true;
 				} else {
 					return false;
@@ -295,7 +354,6 @@
  * @return boolean Success
  */
 	function loadHelper($name) {
-		$paths = Configure::getInstance();
 		if (!class_exists('AppHelper')) {
 			if (file_exists(APP . 'app_helper.php')) {
 				require(APP . 'app_helper.php');
@@ -309,19 +367,34 @@
 			return true;
 		}
 
-		if (!class_exists($name . 'Helper')) {
+		$className = $name . 'Helper';
+		if (!class_exists($className)) {
 			$name = Inflector::underscore($name);
+			$helpers = Configure::read('Helpers');
 
+			if(is_array($helpers)) {
+				if(array_key_exists($className, $helpers)) {
+					require($helpers[$className]['path']);
+					return true;
+				} elseif(array_key_exists($className, $helpers['Core'])) {
+					require($helpers['Core'][$className]['path']);
+					return true;
+				}
+			}
+
+			$paths = Configure::getInstance();
 			foreach($paths->helperPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
+					Configure::store('Helpers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
 					return true;
 				}
 			}
 
-			if ($helper_fn = fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $name . '.php')) {
-				if (file_exists($helper_fn)) {
-					require($helper_fn);
+			if ($helperFilename = fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $name . '.php')) {
+				if (file_exists($helperFilename)) {
+					Configure::store('Helpers\'][\'Core', 'class.paths', array($className => array('path' => $helperFilename)));
+					require($helperFilename);
 					return true;
 				} else {
 					return false;
@@ -359,25 +432,39 @@
  * @return boolean Success
  */
 	function loadComponent($name) {
-		$paths = Configure::getInstance();
 
 		if ($name === null) {
 			return true;
 		}
 
-		if (!class_exists($name . 'Component')) {
-			$name=Inflector::underscore($name);
+		$className = $name . 'Component';
+		if (!class_exists($className)) {
+			$name = Inflector::underscore($name);
+			$components = Configure::read('Components');
 
+			if(is_array($components)) {
+				if(array_key_exists($className, $components)) {
+					require($components[$className]['path']);
+					return true;
+				} elseif(array_key_exists($className, $components['Core'])) {
+					require($components['Core'][$className]['path']);
+					return true;
+				}
+			}
+
+			$paths = Configure::getInstance();
 			foreach($paths->componentPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
+					Configure::store('Components', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
 					return true;
 				}
 			}
 
-			if ($component_fn = fileExistsInPath(LIBS . 'controller' . DS . 'components' . DS . $name . '.php')) {
-				if (file_exists($component_fn)) {
-					require($component_fn);
+			if ($componentFilename = fileExistsInPath(LIBS . 'controller' . DS . 'components' . DS . $name . '.php')) {
+				if (file_exists($componentFilename)) {
+					Configure::store('Components\'][\'Core', 'class.paths', array($className => array('path' => $componentFilename)));
+					require($componentFilename);
 					return true;
 				} else {
 					return false;
@@ -944,7 +1031,7 @@
 
 		$timediff = $expires - $now;
 		$filetime = @filemtime($filename);
-		
+
 		if ($data == null) {
 			// Read data from file
 			if (file_exists($filename) && $filetime !== false) {
