@@ -151,6 +151,10 @@
 			Overloadable::overload('AppModel');
 		}
 
+		if(strpos($name, '.') !== false){
+			list($plugin, $name) = explode('.', $name);
+		}
+
 		if (!is_null($name) && !class_exists($name)) {
 			$className = $name;
 			$name = Inflector::underscore($name);
@@ -266,6 +270,9 @@
 		if ($name === null) {
 			return true;
 		}
+		if(strpos($name, '.') !== false){
+			list($plugin, $name) = explode('.', $name);
+		}
 
 		$className = $name . 'Controller';
 		if (!class_exists($className)) {
@@ -366,6 +373,9 @@
 		if ($name === null) {
 			return true;
 		}
+		if(strpos($name, '.') !== false){
+			list($plugin, $name) = explode('.', $name);
+		}
 
 		$className = $name . 'Helper';
 		if (!class_exists($className)) {
@@ -435,6 +445,9 @@
 
 		if ($name === null) {
 			return true;
+		}
+		if(strpos($name, '.') !== false){
+			list($plugin, $name) = explode('.', $name);
 		}
 
 		$className = $name . 'Component';
