@@ -168,7 +168,7 @@ class XmlHelper extends AppHelper {
 		}
 		$out = "<{$ns}{$name}" . $this->__composeAttributes($attrib);
 
-		if ((empty($content) || $content == null) && $endTag) {
+		if (empty($content) && $endTag) {
 			$out .= ' />';
 		} else {
 			$out .= '>' . $this->__composeContent($content);

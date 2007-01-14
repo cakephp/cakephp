@@ -260,7 +260,7 @@ class FormHelper extends AppHelper {
 
 		$this->setFormTag($tagName);
 
-		if (!isset($options['type']) || ($options['type'] == 'select' && !isset($options['options']))) {
+		if ((!isset($options['type']) || $options['type'] == 'select') && !isset($options['options'])) {
 			if (ClassRegistry::isKeySet($this->model())) {
 
 				$model =& ClassRegistry::getObject($this->model());
@@ -354,7 +354,7 @@ class FormHelper extends AppHelper {
 		if(isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
-		
+
 		$empty = false;
 		if(isset($options['empty'])) {
 			$empty = $options['empty'];
