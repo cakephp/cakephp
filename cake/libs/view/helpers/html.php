@@ -273,8 +273,16 @@ class HtmlHelper extends AppHelper {
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '&quot;', $confirmMessage);
 			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
+		} elseif (isset($htmlAttributes['default'])) {
+			if ($htmlAttributes['default'] == false) {
+				if (isset($htmlAttributes['onclick'])) {
+					$htmlAttributes['onclick'] .= ' return false;';
+				} else {
+					$htmlAttributes['onclick'] = 'return false;';
+				}
+				unset($htmlAttributes['default']);
+			}
 		}
-
 		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
 	}
 /**
