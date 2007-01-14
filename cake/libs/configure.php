@@ -283,9 +283,18 @@ class Configure extends Object {
  */
 	function __writeConfig($content, $name, $write = true){
 		$file = CACHE . 'persistent' . DS . $name . '.php';
-		if(!file_exists($file)){
-			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n");
+
+		if (Configure::read() > 0) {
+			$expires = "+10 seconds";
+		} else {
+			$expires = "+999 days";
 		}
+
+		$cache = cache('persistent' . DS . $name . '.php', null, $expires);
+		if($cache === null){
+			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n", $expires);
+		}
+
 		if($write === true){
 			if(!class_exists('File')){
 				uses('File');

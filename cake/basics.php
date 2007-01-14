@@ -164,7 +164,7 @@
 					require($models[$className]['path']);
 					Overloadable::overload($className);
 					return true;
-				} elseif(array_key_exists($className, $models['Core'])) {
+				} elseif(isset($models['Core']) && array_key_exists($className, $models['Core'])) {
 					require($models['Core'][$className]['path']);
 					Overloadable::overload($className);
 					return true;
@@ -282,7 +282,7 @@
 				if(array_key_exists($className, $controllers)) {
 					require($controllers[$className]['path']);
 					return true;
-				} elseif(array_key_exists($className, $controllers['Core'])) {
+				} elseif(isset($controllers['Core']) && array_key_exists($className, $controllers['Core'])) {
 					require($controllers['Core'][$className]['path']);
 					return true;
 				}
@@ -386,7 +386,7 @@
 				if(array_key_exists($className, $helpers)) {
 					require($helpers[$className]['path']);
 					return true;
-				} elseif(array_key_exists($className, $helpers['Core'])) {
+				} elseif(isset($helpers['Core']) && array_key_exists($className, $helpers['Core'])) {
 					require($helpers['Core'][$className]['path']);
 					return true;
 				}
@@ -459,7 +459,7 @@
 				if(array_key_exists($className, $components)) {
 					require($components[$className]['path']);
 					return true;
-				} elseif(array_key_exists($className, $components['Core'])) {
+				} elseif(isset($components['Core']) && array_key_exists($className, $components['Core'])) {
 					require($components['Core'][$className]['path']);
 					return true;
 				}
