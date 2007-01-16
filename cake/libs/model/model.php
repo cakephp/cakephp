@@ -648,7 +648,7 @@ class Model extends Overloadable {
 						case 'foreignKey':
 							$data = Inflector::singularize($this->table) . '_id';
 							if ($type == 'belongsTo') {
-								$data = Inflector::singularize($this->{$class}->table) . '_id';
+								$data = Inflector::singularize($assocKey) . '_id';
 							}
 						break;
 
@@ -851,25 +851,22 @@ class Model extends Overloadable {
  * @param array $data Optional data to assign to the model after it is created
  * @return array The current data of the model
  */
-	function create($data = null) {
+	function create($data = array()) {
 		$this->id = false;
-		unset ($this->data);
 		$this->data = array();
+		$defaults = array();
 
 		$cols = $this->loadInfo();
 		if (array_key_exists('default', $cols->value[0])) {
 			$count = count($cols->value);
 			for ($i = 0; $i < $count; $i++) {
 				if ($cols->value[$i]['name'] != $this->primaryKey) {
-					$this->data[$this->name][$cols->value[$i]['name']] = $cols->value[$i]['default'];
+					$defaults[$cols->value[$i]['name']] = $cols->value[$i]['default'];
 				}
 			}
 		}
 
-		if (!empty($data) && $data !== null) {
-			$this->set($data);
-		}
-
+		$this->set(am(array_filter($defaults), $data));
 		return $this->data;
 	}
 /**
@@ -1886,6 +1883,7 @@ class Model extends Overloadable {
 /**
  * Gets all the models with which this model is associated
  *
+ * @param string $type
  * @return array
  */
 	function getAssociated($type = null) {
@@ -1908,6 +1906,12 @@ class Model extends Overloadable {
 		} else {
 			$assoc = am($this->hasOne, $this->hasMany, $this->belongsTo, $this->hasAndBelongsToMany);
 			if (array_key_exists($type, $assoc)) {
+				foreach ($this->__associations as $a) {
+					if (isset($this->{$a}[$type])) {
+						$assoc[$type]['association'] = $a;
+						break;
+					}
+				}
 				return $assoc[$type];
 			}
 			return null;
