@@ -77,9 +77,11 @@ class FormHelper extends AppHelper {
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 		}
-		if (!is_null($model) && (empty($model) || is_array($model))) {
+
+		if ($model !== false) {
 			$model = $this->params['models'][0];
 		}
+
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		}
