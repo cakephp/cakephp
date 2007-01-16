@@ -261,6 +261,13 @@ class FormHelper extends AppHelper {
 	function input($tagName, $options = array()) {
 
 		$this->setFormTag($tagName);
+		$options = am(
+			array(
+				'before' => null,
+				'between' => null,
+				'after' => null
+			),
+		$options);
 
 		if ((!isset($options['type']) || $options['type'] == 'select') && !isset($options['options'])) {
 			if (ClassRegistry::isKeySet($this->model())) {
@@ -363,8 +370,11 @@ class FormHelper extends AppHelper {
 			unset($options['empty']);
 		}
 
-		$type = $options['type'];
-		unset($options['type']);
+		$type    = $options['type'];
+		$before  = $options['before'];
+		$between = $options['between'];
+		$after   = $options['after'];
+		unset($options['type'], $options['before'], $options['between'], $options['after']);
 
 		switch ($type) {
 			case 'hidden':
@@ -372,44 +382,42 @@ class FormHelper extends AppHelper {
 				unset($divOptions);
 			break;
 			case 'checkbox':
-				$out = $this->Html->checkbox($tagName, null, $options) . $out;
+				$out = $before . $this->Html->checkbox($tagName, null, $options) . $between . $out;
 			break;
 			case 'text':
-				$out .= $this->text($tagName, $options);
-			break;
 			case 'password':
-				$out .= $this->password($tagName, $options);
+				$out = $before . $out . $between . $this->{$type}($tagName, $options);
 			break;
 			case 'file':
-				$out .= $this->Html->file($tagName);
+				$out = $before . $out . $between . $this->Html->file($tagName);
 			break;
 			case 'select':
-				$list = array();
-				if(isset($options['options'])) {
-					$list = $options['options'];
-					unset($options['options']);
-				}
-				$out .= $this->select($tagName, $list, $selected, $options, $empty);
+				$options = am(array('list' => array()), $options);
+				$list = $options['options'];
+				unset($options['options']);
+				$out = $before . $out . $between . $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out .= $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->Html->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, $empty);
 			break;
 			case 'date':
-				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->Html->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, $empty);
 			break;
 			case 'datetime':
-				$out .= $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, $empty);
 			break;
 			case 'textarea':
 			default:
-				$out .= $this->textarea($tagName, am(array('cols' => '30', 'rows' => '10'), $options));
+				$out = $before . $out . $between . $this->textarea($tagName, am(array('cols' => '30', 'rows' => '10'), $options));
 			break;
 		}
 
 		if ($error != null) {
 			$out .= $this->Html->tagErrorMsg($tagName, $error);
 		}
-
+		if ($type != 'hidden') {
+			$out .= $after;
+		}
 		if (isset($divOptions)) {
 			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
 		}
