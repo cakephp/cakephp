@@ -134,6 +134,14 @@ class AuthComponent extends Object {
  */
 	var $type = 'actions';
 /**
+ * Error to display when user login fails.  For security purposes, only one error is used for all
+ * login failures, so as not to expose information on why the login failed.
+ *
+ * @var strong
+ * @access public
+ */
+	var $loginError = 'Login failed.  Invalid username or password.';
+/**
  * Main execution method.  Handles redirecting of invalid users, and processing
  * of login form data.
  *
@@ -152,7 +160,13 @@ class AuthComponent extends Object {
 			return false;
 		}
 
-		if ($this->loginAction == $controller->params['url']['url']) {
+		if (!isset($controller->params['url']['url'])) {
+			$url = '';
+		} else {
+			$url = $controller->params['url']['url'];
+		}
+
+		if ($this->loginAction == $url) {
 
 			// We're already at the login action
 			if (empty($controller->data)) {
@@ -175,7 +189,7 @@ class AuthComponent extends Object {
 					}
 					$controller->redirect('/' . $redir, null, true);
 				} else {
-					die('Login failed');
+					$this->Session->setFlash(__($this->loginError), 'default', array(), 'Auth.login');
 				}
 			}
 			return;
@@ -183,7 +197,7 @@ class AuthComponent extends Object {
 			if (!$this->Session->check($this->sessionKey . '.' . $this->_model->primaryKey)) {
 
 				if (!$this->RequestHandler->isAjax()) {
-					$this->Session->write('Auth.redirect', $controller->params['url']['url']);
+					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect('/' . $this->loginAction, null, true);
 				} elseif ($this->ajaxLogin != null) {
 					$this->viewPath = 'elements';
