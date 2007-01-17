@@ -1040,6 +1040,9 @@
 			case 'public':
 				$filename = WWW_ROOT . $path;
 			break;
+			case 'tmp':
+				$filename = TMP . $path;
+			break;
 		}
 
 		$timediff = $expires - $now;
