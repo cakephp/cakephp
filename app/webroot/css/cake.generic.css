@@ -136,6 +136,15 @@ td.actions a {
 	text-align: left;
 }
 
+/* Paging */
+div.paging {
+	color: #ccc;
+}
+div.paging div.disabled {
+	color: #ddd;
+	display: inline;
+}
+
 /* Scaffold View */
 dl {
 	line-height: 2em;

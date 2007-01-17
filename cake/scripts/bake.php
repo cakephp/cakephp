@@ -800,9 +800,10 @@ class Bake {
 		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->__controllerNames) ) {
 			$controllerName = $this->__controllerNames[intval($enteredController) - 1];
 		} else {
-			$controllerName = $enteredController;
+			$controllerName = Inflector::camelize($enteredController);
 		}
-		$controllerPath = $this->__controllerPath($controllerName);
+
+		$controllerPath = low(Inflector::underscore($controllerName));
 
 		$doItInteractive = $this->getInput("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerClassName} views if it exist.", array('y','n'), 'y');
 
@@ -921,7 +922,7 @@ class Bake {
 		$indexView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
 		$indexView .= "\t<tr>\n";
 		foreach ($fieldNames as $fieldName) {
-			$indexView .= "\t\t<th>".$fieldName['prompt']."</th>\n";
+			$indexView .= "\t\t<th><?php echo \$paginator->sort('{$fieldName['name']}');?></th>\n";
 		}
 		$indexView .= "\t\t<th>Actions</th>\n";
 		$indexView .= "\t</tr>\n";
@@ -937,7 +938,7 @@ class Bake {
 				$otherControllerPath = $this->__controllerPath($otherControllerName);
 				if(is_object($otherModelObj)) {
 					$displayField = $otherModelObj->getDisplayField();
-					$indexView .= "\t\t<td>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></td>\n";
+					$indexView .= "\t\t<td><?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></td>\n";
 				} else {
 					$indexView .= "\t\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
 				}
@@ -954,8 +955,11 @@ class Bake {
 		$indexView .= "\t</tr>\n";
 		$indexView .= "<?php endforeach; ?>\n";
 		$indexView .= "</table>\n\n";
-		$indexView .= "<?php echo \$paginator->prev(); ?> |\n";
-		$indexView .= "<?php echo \$paginator->next(); ?>\n\n";
+		$indexView .= "</div>\n";
+		$indexView .= "<div class=\"paging\">\n";
+		$indexView .= "<?php echo \$paginator->prev('<< previous', array(), null, array('class'=>'disabled'));?>\n";
+		$indexView .= "|\n";
+		$indexView .= "<?php echo \$paginator->next('next >>', array(), null, array('class'=>'disabled'));?>\n";
 		$indexView .= "</div>\n";
 		$indexView .= "<div class=\"actions\">\n";
 		$indexView .= "\t<ul>\n";
@@ -1180,9 +1184,9 @@ class Bake {
 				unset($formOptions['type']);
 				$fieldOptions = $this->__pluralName($options['model']);
 				unset($options['options']);
-				//$formOptions['options'] = "'options' => \${$fieldOptions}";
+				$formOptions['options'] = "'options' => \${$fieldOptions}";
 				if(isset($options['multiple'])){
-					//$formOptions['multiple'] = "'multiple' => 'multiple'";
+					$formOptions['multiple'] = "'multiple' => 'multiple'";
 					$tagName = $tagName.'/'.$tagName;
 				}
 			}
@@ -1440,7 +1444,6 @@ class Bake {
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
 		$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
-		$actions .= "\t\t\t\texit();\n";
 		} else {
 		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', array('action'=>'index'));\n";
 		$actions .= "\t\t\t\texit();\n";
@@ -1479,23 +1482,23 @@ class Bake {
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id && empty(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
-		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
 			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
+			$actions .= "\t\t\texit();\n";
 		}
-		$actions .= "\t\t\texit();\n";
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif(!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." saved');\n";
+			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." saved.', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." saved.', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\texit();\n";
 		}
-		$actions .= "\t\t\t\texit();\n";
 		$actions .= "\t\t\t} else {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";

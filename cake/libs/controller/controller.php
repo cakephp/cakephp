@@ -663,6 +663,7 @@ class Controller extends Object {
 				$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 			}
 			$fieldNames[$column['name']]['tagName'] = $model . '/' . $column['name'];
+			$fieldNames[$column['name']]['name'] = $column['name'];
 			$fieldNames[$column['name']]['class'] = 'optional';
 			$validationFields = $modelObj->validate;
 			if (isset($validationFields[$column['name']])) {
@@ -766,6 +767,7 @@ class Controller extends Object {
 				$fieldNames[$otherModelKey]['type'] = "select";
 				$fieldNames[$otherModelKey]['multiple'] = "multiple";
 				$fieldNames[$otherModelKey]['tagName'] = $associationName . '/' . $associationName;
+				$fieldNames[$otherModelKey]['name'] = $associationName;
 				$fieldNames[$otherModelKey]['class'] = 'optional';
 				$fieldNames[$otherModelKey]['options'] = $otherModelObj->generateList();
 				if (isset($data[$associationName])) {
