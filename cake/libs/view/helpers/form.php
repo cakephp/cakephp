@@ -392,7 +392,7 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->Html->file($tagName);
 			break;
 			case 'select':
-				$options = am(array('list' => array()), $options);
+				$options = am(array('options' => array()), $options);
 				$list = $options['options'];
 				unset($options['options']);
 				$out = $before . $out . $between . $this->select($tagName, $list, $selected, $options, $empty);
@@ -625,7 +625,7 @@ class FormHelper extends AppHelper {
 			$selected = $this->__value($fieldName);
 		}
 
-		if (isset($attributes) && array_key_exists("multiple", $attributes)) {
+		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
 			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {
 			$tag = $this->Html->tags['selectstart'];

@@ -600,7 +600,7 @@ class Validation extends Object {
 		return $this->_check();
 	}
 
-	function ssn($check, $regex= null, $country = null) {
+	function ssn($check, $regex = null, $country = null) {
 		if (is_array($check)) {
 			$this->_extract($check);
 		} else {
