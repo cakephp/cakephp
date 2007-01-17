@@ -189,7 +189,7 @@ class FormHelper extends AppHelper {
 	function error($field, $text = null, $options = array()) {
 		$this->setFormTag($field);
 
-		if ($error == $this->tagIsInvalid()) {
+		if ($error = $this->tagIsInvalid()) {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
@@ -351,8 +351,6 @@ class FormHelper extends AppHelper {
 		if (isset($options['error'])) {
 			$error = $options['error'];
 			unset($options['error']);
-		} else {
-			$error = $label . ' is required';
 		}
 
 		$selected = null;
@@ -412,10 +410,8 @@ class FormHelper extends AppHelper {
 			break;
 		}
 
-		if ($error != null) {
-			$out .= $this->Html->tagErrorMsg($tagName, $error);
-		}
 		if ($type != 'hidden') {
+			$out .= $this->error($tagName, $error);
 			$out .= $after;
 		}
 		if (isset($divOptions)) {
