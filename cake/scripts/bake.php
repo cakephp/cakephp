@@ -1638,7 +1638,7 @@ class Bake {
 				$out .= "\tvar \$belongsTo = array(\n";
 
 				for($i = 0; $i < count($associations['belongsTo']); $i++) {
-					$out .= "\t\t\t'{$associations['belongsTo'][$i]['alias']}' =>";
+					$out .= "\t\t\t'{$associations['belongsTo'][$i]['alias']}' => ";
 					$out .= "array('className' => '{$associations['belongsTo'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['belongsTo'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
@@ -1654,7 +1654,7 @@ class Bake {
 				$out .= "\tvar \$hasOne = array(\n";
 
 				for($i = 0; $i < count($associations['hasOne']); $i++) {
-					$out .= "\t\t\t'{$associations['hasOne'][$i]['alias']}' =>";
+					$out .= "\t\t\t'{$associations['hasOne'][$i]['alias']}' => ";
 					$out .= "array('className' => '{$associations['hasOne'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['hasOne'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
@@ -1670,7 +1670,7 @@ class Bake {
 				$out .= "\tvar \$hasMany = array(\n";
 
 				for($i = 0; $i < count($associations['hasMany']); $i++) {
-					$out .= "\t\t\t'{$associations['hasMany'][$i]['alias']}' =>";
+					$out .= "\t\t\t'{$associations['hasMany'][$i]['alias']}' => ";
 					$out .= "array('className' => '{$associations['hasMany'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'foreignKey' => '{$associations['hasMany'][$i]['foreignKey']}',\n";
 					$out .= "\t\t\t\t\t\t\t\t'conditions' => '',\n";
@@ -1691,7 +1691,7 @@ class Bake {
 				$out .= "\tvar \$hasAndBelongsToMany = array(\n";
 
 				for($i = 0; $i < count($associations['hasAndBelongsToMany']); $i++) {
-					$out .= "\t\t\t'{$associations['hasAndBelongsToMany'][$i]['alias']}' =>";
+					$out .= "\t\t\t'{$associations['hasAndBelongsToMany'][$i]['alias']}' => ";
 					$out .= "array('className' => '{$associations['hasAndBelongsToMany'][$i]['className']}',\n";
 					$out .= "\t\t\t\t\t\t'joinTable' => '{$associations['hasAndBelongsToMany'][$i]['joinTable']}',\n";
 					$out .= "\t\t\t\t\t\t'foreignKey' => '{$associations['hasAndBelongsToMany'][$i]['foreignKey']}',\n";
