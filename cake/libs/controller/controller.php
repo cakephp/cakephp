@@ -400,6 +400,9 @@ class Controller extends Object {
 			session_write_close();
 		}
 
+		if ($url !== null) {
+			header('Location: ' . Router::url($url, true));
+		}
 		if (is_numeric($status) && $status > 0) {
 			$codes = array(
 				100 => "Continue",
@@ -446,9 +449,6 @@ class Controller extends Object {
 			if (isset($codes[$status])) {
 				header("HTTP/1.1 {$status} " . $codes[$status]);
 			}
-		}
-		if ($url !== null) {
-			header('Location: ' . Router::url($url, defined('SERVER_IIS')));
 		}
 		if ($exit) {
 			exit();
