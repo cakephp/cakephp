@@ -375,7 +375,9 @@ class Dispatcher extends Object {
 
 		foreach($controller->components as $c) {
 			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup'))) {
-				$controller->{$c}->startup($controller);
+				if (!array_key_exists('enabled', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
+					$controller->{$c}->startup($controller);
+				}
 			}
 		}
 	}
