@@ -648,7 +648,7 @@ class Model extends Overloadable {
 						case 'foreignKey':
 							$data = Inflector::singularize($this->table) . '_id';
 							if ($type == 'belongsTo') {
-								$data = Inflector::singularize($assocKey) . '_id';
+								$data = Inflector::underscore($assocKey) . '_id';
 							}
 						break;
 
