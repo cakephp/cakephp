@@ -271,7 +271,7 @@ class Controller extends Object {
 
 			if ($uses == $this->uses && !empty($this->uses)) {
 				array_unshift($this->uses, $this->modelClass);
-			} elseif (!empty($this->uses)) {
+			} elseif ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
 			}
 
