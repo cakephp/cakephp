@@ -389,7 +389,7 @@ class Model extends Overloadable {
 
 		if ($this->actsAs !== null && empty($this->behaviors)) {
 			$callbacks = array('setup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete', 'afterError');
-			$this->actsAs = normalizeList($this->actsAs);
+			$this->actsAs = Set::normalize($this->actsAs);
 
 			foreach ($this->actsAs as $behavior => $config) {
 				$className = $behavior . 'Behavior';
@@ -669,7 +669,7 @@ class Model extends Overloadable {
 
 					$this->{$type}[$assocKey][$key] = $data;
 				} elseif ($key == 'with') {
-					$this->{$type}[$assocKey][$key] = normalizeList($this->{$type}[$assocKey][$key]);
+					$this->{$type}[$assocKey][$key] = Set::normalize($this->{$type}[$assocKey][$key]);
 				}
 
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {

@@ -631,6 +631,7 @@
  * @return array
  */
 	function normalizeList($list, $assoc = true, $sep = ',', $trim = true) {
+		trigger_error('normalizeList Deprecated: use Set::normalize');
 		if (is_string($list)) {
 			$list = explode($sep, $list);
 			if ($trim) {

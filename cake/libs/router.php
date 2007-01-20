@@ -327,10 +327,11 @@ class Router extends Overloadable {
  */
 	function getParam($name = 'controller') {
 		$_this =& Router::getInstance();
-		if ($current) {
-			return $_this->__params[count($_this->__params) - 1];
+		$params = Router::getParams();
+		if (isset($params[$name])) {
+			return $params[$name];
 		}
-		return $_this->__params[0];
+		return null;
 	}
 /**
  * Gets path information
