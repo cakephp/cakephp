@@ -1701,7 +1701,7 @@ class Bake {
 					$out .= "\t\t\t\t\t\t'order' => '',\n";
 					$out .= "\t\t\t\t\t\t'limit' => '',\n";
 					$out .= "\t\t\t\t\t\t'offset' => '',\n";
-					$out .= "\t\t\t\t\t\t'uniq' => '',\n";
+					$out .= "\t\t\t\t\t\t'unique' => '',\n";
 					$out .= "\t\t\t\t\t\t'finderQuery' => '',\n";
 					$out .= "\t\t\t\t\t\t'deleteQuery' => '',\n";
 					$out .= "\t\t\t\t\t\t'insertQuery' => ''";
