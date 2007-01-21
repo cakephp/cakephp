@@ -76,6 +76,7 @@
 				}
 			}
 		}
+		return $loadedModels;
 	}
 /**
  * Loads all plugin models.
