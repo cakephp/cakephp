@@ -129,7 +129,7 @@ class FormHelper extends AppHelper {
 			case 'post':
 			case 'put':
 			case 'delete':
-				$append .= $this->hidden('method/method', array('value' => up($options['type'])));
+				$append .= $this->hidden('_method', array('value' => up($options['type'])));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
@@ -387,7 +387,7 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->{$type}($tagName, $options);
 			break;
 			case 'file':
-				$out = $before . $out . $between . $this->Html->file($tagName);
+				$out = $before . $out . $between . $this->file($tagName);
 			break;
 			case 'select':
 				$options = am(array('options' => array()), $options);
@@ -488,7 +488,12 @@ class FormHelper extends AppHelper {
  */
 	function hidden($fieldName, $htmlAttributes = array()) {
 		$htmlAttributes = $this->domId($this->__value($htmlAttributes, $fieldName));
-		return $this->output(sprintf($this->Html->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		$model = $this->model();
+		if (in_array($fieldName, array('_method'))) {
+			$model = null;
+			unset($htmlAttributes['id']);
+		}
+		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates file input widget.

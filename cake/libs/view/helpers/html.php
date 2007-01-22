@@ -418,6 +418,7 @@ class HtmlHelper extends AppHelper {
  * @return string
  */
 	function file($fieldName, $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::file) Deprecated: Use FormHelper::file instead'), E_USER_WARNING);
 		if (strpos($fieldName, '/')) {
 			$this->setFormTag($fieldName);
 			$htmlAttributes = $this->domId($htmlAttributes);
