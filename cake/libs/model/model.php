@@ -1489,6 +1489,44 @@ class Model extends Overloadable {
 		return false;
 	}
 /**
+ * False if any fields passed match any (by default, all if $or = false) of their matching values.
+ *
+ * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
+ * @param boolean $or If false, all fields specified must match in order for a false return value
+ * @return boolean False if any records matching any fields are found
+ */
+	function isUnique($fields, $or = true) {
+		if (!is_array($fields)) {
+			$fields = func_get_args();
+			if (is_bool($fields[count($fields) - 1])) {
+				$or = $fields[count($fields) - 1];
+				unset($fields[count($fields) - 1]);
+			}
+		}
+
+		foreach ($fields as $field => $value) {
+			if (is_numeric($field)) {
+				unset($fields[$field]);
+
+				$field = $value;
+				if (isset($this->data[$this->name][$field])) {
+					$value = $this->data[$this->name][$field];
+				} else {
+					$value = null;
+				}
+			}
+			
+			if (strpos($field, '.') === false) {
+				unset($fields[$field]);
+				$fields[$this->name . '.' . $field] = $value;
+			}
+		}
+		if ($or) {
+			$fields = array('or' => $fields);
+		}
+		return ($this->findCount($fields) == 0);
+	}
+/**
  * Special findAll variation for tables joined to themselves.
  * The table needs the fields id and parent_id to work.
  *
