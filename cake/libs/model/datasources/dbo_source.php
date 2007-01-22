@@ -1382,7 +1382,7 @@ class DboSource extends DataSource {
 					}
 				} elseif(is_numeric($key)) {
 					$data = ' ' . $value;
-				} elseif($value === null) {
+				} elseif($value === null || (is_array($value) && empty($value))) {
 					$data = $this->name($key) . ' IS NULL';
 				} elseif($value === '') {
 					$data = $this->name($key) . " = ''";
