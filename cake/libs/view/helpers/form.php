@@ -76,9 +76,10 @@ class FormHelper extends AppHelper {
 	function create($model = null, $options = array()) {
 		if (is_array($model) && empty($options)) {
 			$options = $model;
+			$model = null;
 		}
 
-		if ($model !== false) {
+		if (empty($model) && $model !== false) {
 			$model = $this->params['models'][0];
 		}
 
