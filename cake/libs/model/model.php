@@ -865,6 +865,7 @@ class Model extends Overloadable {
 				}
 			}
 		}
+		$this->validationErrors = array();
 
 		$this->set(am(array_filter($defaults), $data));
 		return $this->data;
