@@ -93,13 +93,17 @@
  */
 	define ('LIBS', CAKE.'libs'.DS);
 /**
- * Path to the public directory.
+ * Path to the public CSS directory.
  */
 	define ('CSS', WWW_ROOT.'css'.DS);
 /**
- * Path to the public directory.
+ * Path to the public JavaScript directory.
  */
 	define ('JS', WWW_ROOT.'js'.DS);
+/**
+ * Path to the public images directory.
+ */
+	define ('IMAGES', WWW_ROOT.'img'.DS);
 /**
  * Path to the scripts direcotry.
  */

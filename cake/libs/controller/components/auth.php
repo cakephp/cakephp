@@ -316,6 +316,18 @@ class AuthComponent extends Object {
 		return $this->_loggedIn;
 	}
 /**
+ * Get the current user from the session.
+ *
+ * @access public
+ * @return array User record, or null if no user is logged in.
+ */
+	function user() {
+		if (!$this->Session->check($this->sessionKey)) {
+			return null;
+		}
+		return array($this->userModel => $this->Session->read($this->sessionKey));
+	}
+/**
  * Gets the authentication redirect URL
  *
  * @access public
