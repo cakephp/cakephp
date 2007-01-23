@@ -142,6 +142,13 @@ class AuthComponent extends Object {
  */
 	var $loginError = 'Login failed.  Invalid username or password.';
 /**
+ * Maintains current user login state.
+ *
+ * @var boolean
+ * @access private
+ */
+	var $_loggedIn = false;
+/**
  * Controller actions for which user validation is not required.
  *
  * @var array
@@ -163,14 +170,21 @@ class AuthComponent extends Object {
 			return;
 		}
 
+		// Hash incoming passwords
+		if (isset($controller->data[$this->userModel])) {
+			if (isset($controller->data[$this->userModel][$this->fields['username']]) && isset($controller->data[$this->userModel][$this->fields['password']])) {
+				$model =& $this->getUserModel();
+				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
+			}
+		}
+		$this->_setDefaults($controller);
+
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return;
 		}
 
-		$this->_setDefaults($controller);
-
 		if (empty($this->userModel)) {
-			return false;
+			return;
 		}
 
 		if (!isset($controller->params['url']['url'])) {
@@ -188,20 +202,13 @@ class AuthComponent extends Object {
 
 			$data = array(
 				$this->userModel . '.' . $this->fields['username'] => $controller->data[$this->userModel][$this->fields['username']],
-				$this->userModel . '.' . $this->fields['password'] => Security::hash($controller->data[$this->userModel][$this->fields['password']])
+				$this->userModel . '.' . $this->fields['password'] => $controller->data[$this->userModel][$this->fields['password']]
 			);
 
-			if ($user = $this->identify($data)) {
-				$this->Session->write($this->sessionKey, $user);
-				if ($this->Session->check('Auth.redirect')) {
-					$redir = $this->Session->read('Auth.redirect');
-					$this->Session->delete('Auth.redirect');
-				} else {
-					$redir = $this->loginRedirect;
-				}
-				$controller->redirect('/' . $redir, null, true);
+			if ($this->login($data)) {
+				$controller->redirect($this->redirect(), null, true);
 			} else {
-				$this->Session->setFlash(__($this->loginError), 'default', array(), 'Auth.login');
+				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
 			}
 			return;
 
@@ -213,6 +220,7 @@ class AuthComponent extends Object {
 					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect('/' . $this->loginAction, null, true);
 				} elseif ($this->ajaxLogin != null) {
+					$this->_loggedIn = true;
 					$this->viewPath = 'elements';
 					$this->render($this->ajaxLogin, 'ajax');
 					exit();
@@ -232,8 +240,9 @@ class AuthComponent extends Object {
 			case 'objects':
 				
 			break;
-			case null:  break;
-			case false: break;
+			case null:
+			case false:
+			break;
 			default:
 				trigger_error(__('Auth::startup() - $type is set to an incorrect value.  Should be "actions", "objects", or null.'), E_USER_WARNING);
 			break;
@@ -266,15 +275,16 @@ class AuthComponent extends Object {
 		if (empty($this->sessionKey) && !empty($this->userModel)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
+		$this->data = $controller->data;
 	}
 /**
  * Takes a list of actions in the current controller for which validation is not required, or
  * no parameters to allow all actions.
  *
  * @access public
- * @param string $action
- * @param string $action
- * @param string ...
+ * @param string $action Controller action name
+ * @param string $action Controller action name
+ * @param string ... etc.
  * @return void
  */
 	function allow() {
@@ -284,6 +294,41 @@ class AuthComponent extends Object {
 		} else {
 			$this->allowedActions = $args;
 		}
+	}
+/**
+ * Manually log-in a user with the given parameter data.
+ *
+ * @access public
+ * @param mixed $data User object
+ * @return boolean True on login success, false on failure
+ */
+	function login($data = null) {
+		$this->_loggedIn = false;
+
+		if (empty($data)) {
+			$data = $this->data;
+		}
+
+		if ($user = $this->identify($data)) {
+			$this->Session->write($this->sessionKey, $user);
+			$this->_loggedIn = true;
+		}
+		return $this->_loggedIn;
+	}
+/**
+ * Gets the authentication redirect URL
+ *
+ * @access public
+ * @return string Redirect URL
+ */
+	function redirect() {
+		if ($this->Session->check('Auth.redirect')) {
+			$redir = $this->Session->read('Auth.redirect');
+			$this->Session->delete('Auth.redirect');
+		} else {
+			$redir = $this->loginRedirect;
+		}
+		return $redir;
 	}
 /**
  * Validates a user against an abstract object.
@@ -362,13 +407,31 @@ class AuthComponent extends Object {
 	function identify($user = null) {
 		if ($user == null) {
 			$model =& $this->getUserModel();
-		} else if (is_object($user) && is_a($user, 'model')) {
-			
+		} else if (is_object($user) && is_a($user, 'Model')) {
+			if (!$user->exists()) {
+				return null;
+			}
+			$user = $user->read();
+			$user = $user[$this->userModel];
 		} else if (is_array($user) && isset($user[$this->userModel])) {
 			$user = $user[$this->userModel];
-		} else if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
+		}
+
+		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
+			if (isset($user[$this->fields['username']])) {
+				$find = array(
+					$this->fields['username'] => $user[$this->fields['username']],
+					$this->fields['password'] => $user[$this->fields['password']]
+				);
+			} else {
+				$find = array(
+					$this->fields['username'] => $user[$this->userModel . '.' . $this->fields['username']],
+					$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
+				);
+			}
+
 			$model =& $this->getUserModel();
-			$data = $model->find($user, null, null, -1);
+			$data = $model->find(am($find, $this->userScope), null, null, -1);
 
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
@@ -403,6 +466,18 @@ class AuthComponent extends Object {
 					$this->{$key} = $val;
 				}
 			}
+		}
+	}
+/**
+ * Component shutdown.  If user is logged in, wipe out redirect.
+ *
+ * @access public
+ * @param object $controller
+ * @return void
+ */
+	function shutdown(&$controller) {
+		if ($this->_loggedIn) {
+			$this->Session->del('Auth.redirect');
 		}
 	}
 /**
