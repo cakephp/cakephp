@@ -142,20 +142,29 @@ class DboMysql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-
+		$tables = array();
 		$result = mysql_list_tables($this->config['database'], $this->connection);
-		if (!$result) {
-			return array();
-		} else {
 
-			$tables = array();
+		if ($result) {
 			while ($line = mysql_fetch_array($result)) {
 				$tables[] = $line[0];
 			}
-
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		if (empty($tables)) {
+			$result = $this->query('SHOW TABLES');
+			$key1 = $key2 = null;
+			foreach ($result as $item) {
+				if (empty($key1)) {
+					$key1 = key($item);
+					$key2 = key($item[$key1]);
+				}
+				$tables[] = $item[$key1][$key2];
+			}
+		}
+
+		parent::listSources($tables);
+		return $tables;
 	}
 /**
  * Returns an array of the fields in given table name.
