@@ -149,6 +149,13 @@ class AuthComponent extends Object {
  */
 	var $_loggedIn = false;
 /**
+ * Determines whether AuthComponent will automatically redirect and exit if login is successful.
+ *
+ * @var boolean
+ * @access public
+ */
+	var $autoRedirect = true;
+/**
  * Controller actions for which user validation is not required.
  *
  * @var array
@@ -177,13 +184,8 @@ class AuthComponent extends Object {
 				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
 			}
 		}
-		$this->_setDefaults($controller);
 
-		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
-			return;
-		}
-
-		if (empty($this->userModel)) {
+		if (!$this->_setDefaults($controller)) {
 			return;
 		}
 
@@ -215,12 +217,10 @@ class AuthComponent extends Object {
 		} else {
 
 			if (!$this->Session->check($this->sessionKey)) {
-
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect('/' . $this->loginAction, null, true);
 				} elseif ($this->ajaxLogin != null) {
-					$this->_loggedIn = true;
 					$this->viewPath = 'elements';
 					$this->render($this->ajaxLogin, 'ajax');
 					exit();
@@ -257,6 +257,10 @@ class AuthComponent extends Object {
  * @return void
  */
 	function _setDefaults(&$controller) {
+		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
+			return false;
+		}
+
 		if (empty($this->userModel)) {
 			$classes = array_values(array_intersect(
 				array_map('strtolower', get_declared_classes()),
@@ -268,6 +272,10 @@ class AuthComponent extends Object {
 			}
 		}
 
+		if (empty($this->userModel)) {
+			return false;
+		}
+
 		if (empty($this->loginAction)) {
 			$this->loginAction = Inflector::underscore(Inflector::pluralize($this->userModel)) . '/login';
 		}
@@ -276,6 +284,8 @@ class AuthComponent extends Object {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
 		$this->data = $controller->data;
+
+		return true;
 	}
 /**
  * Takes a list of actions in the current controller for which validation is not required, or
@@ -316,6 +326,18 @@ class AuthComponent extends Object {
 		return $this->_loggedIn;
 	}
 /**
+ * Logs a user out, and returns the login action to redirect to.
+ *
+ * @access public
+ * @param mixed $url Optional URL to redirect the user to after logout
+ * @return string AuthComponent::$loginAction
+ */
+	function logout() {
+		$this->Session->del($this->sessionKey, $user);
+		$this->_loggedIn = false;
+		return $this->_normalizeURL($this->loginAction);
+	}
+/**
  * Get the current user from the session.
  *
  * @access public
@@ -340,7 +362,7 @@ class AuthComponent extends Object {
 		} else {
 			$redir = $this->loginRedirect;
 		}
-		return $redir;
+		return $this->_normalizeURL('/' . $redir);
 	}
 /**
  * Validates a user against an abstract object.
@@ -501,7 +523,12 @@ class AuthComponent extends Object {
 			$paths = Router::getPaths();
 			$url = r($paths['base'], '', $url);
 		}
-		return r('//', '/', '/' . $url . '/');
+		$url = '/' . $url . '/';
+
+		while (strpos($url, '//') !== false) {
+			$url = r('//', '/', $url);
+		}
+		return $url;
 	}
 }
 
