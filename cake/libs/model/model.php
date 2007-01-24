@@ -484,7 +484,7 @@ class Model extends Overloadable {
  * @return void
  */
 	function bind($assoc, $params, $permanent = true) {
-		
+
 	}
 /**
  * Bind model associations on the fly.
@@ -1516,7 +1516,7 @@ class Model extends Overloadable {
 					$value = null;
 				}
 			}
-			
+
 			if (strpos($field, '.') === false) {
 				unset($fields[$field]);
 				$fields[$this->name . '.' . $field] = $value;
