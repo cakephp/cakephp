@@ -288,7 +288,7 @@ class AuthComponent extends Object {
 		return true;
 	}
 /**
- * Takes a list of actions in the current controller for which validation is not required, or
+ * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
  * @access public
@@ -306,7 +306,12 @@ class AuthComponent extends Object {
 		}
 	}
 /**
- * Manually log-in a user with the given parameter data.
+ * Manually log-in a user with the given parameter data.  The $data provided can be any data
+ * structure used to identify a user in AuthComponent::identify().  If $data is empty or not
+ * specified, POST data from Controller::$data will be used automatically.
+ *
+ * After (if) login is successful, the user record is written to the session key specified in
+ * AuthComponent::$sessionKey.
  *
  * @access public
  * @param mixed $data User object
@@ -331,6 +336,7 @@ class AuthComponent extends Object {
  * @access public
  * @param mixed $url Optional URL to redirect the user to after logout
  * @return string AuthComponent::$loginAction
+ * @see AuthComponent::$loginAction
  */
 	function logout() {
 		$this->Session->del($this->sessionKey, $user);
