@@ -185,7 +185,12 @@ class HtmlHelper extends AppHelper {
  * @return string
  */
 	function meta($title = null, $url = null, $attributes = array(), $inline = true) {
-		$types = array('html' => 'text/html', 'rss' => 'application/rss+xml', 'atom' => 'application/atom+xml');
+		$types = array(
+			'html'	=> 'text/html',
+			'rss'	=> 'application/rss+xml',
+			'atom'	=> 'application/atom+xml',
+			'icon'	=> 'image/x-icon'
+		);
 
 		if (!isset($attributes['type']) && is_array($url) && isset($url['ext'])) {
 			if (in_array($url['ext'], array_keys($types))) {
@@ -193,7 +198,7 @@ class HtmlHelper extends AppHelper {
 			} else {
 				$attributes['type'] = 'rss';
 			}
-		} else {
+		} elseif (!isset($attributes['type'])) {
 			$attributes['type'] = 'rss';
 		}
 
