@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('set');
 /**
  * DboSource
  *
@@ -361,6 +362,21 @@ class DboSource extends DataSource {
 		} else {
 			return $data[$name];
 		}
+	}
+/**
+ * Strips fields out of SQL functions before quoting.
+ *
+ * @param string $data
+ * @return string SQL field
+ */
+	function name($data) {
+		if (preg_match_all('/(.*)\((.*)\)/', $data, $fields)) {
+			$fields = Set::extract($fields, '{n}.0');
+			if (isset($fields[1]) && isset($fields[2])) {
+				return $fields[1] . '(' . $this->name($fields[2]) . ')';
+			}
+		}
+		return null;
 	}
 /**
  * Checks if it's connected to the database
@@ -1343,7 +1359,12 @@ class DboSource extends DataSource {
 			return $clause . ' (' . join(') AND (', $out) . ')';
 		}
 	}
-
+/**
+ * Creates a WHERE clause by parsing given conditions array.  Used by DboSource::conditions().
+ *
+ * @param array $conditions Array or string of conditions
+ * @return string SQL fragment
+ */
 	function conditionKeysToString($conditions) {
 
 		$c = 0;
@@ -1363,7 +1384,6 @@ class DboSource extends DataSource {
 				}
 			} else {
 				if (is_array($value) && !empty($value)) {
-
 					$keys = array_keys($value);
 					if ($keys[0] === 0) {
 						$data = $this->name($key) . ' IN (';

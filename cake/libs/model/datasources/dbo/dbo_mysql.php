@@ -208,6 +208,11 @@ class DboMysql extends DboSource {
  * @return string Quoted for MySQL
  */
 	function name($data) {
+		$tmp = parent::name($data);
+		if (!empty($tmp)) {
+			return $tmp;
+		}
+
 		if ($data == '*') {
 			return '*';
 		}
