@@ -257,6 +257,8 @@ class AuthComponent extends Object {
  * @return void
  */
 	function _setDefaults(&$controller) {
+		$this->data = $controller->data;
+
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return false;
 		}
@@ -280,11 +282,9 @@ class AuthComponent extends Object {
 			$this->loginAction = Inflector::underscore(Inflector::pluralize($this->userModel)) . '/login';
 		}
 
-		if (empty($this->sessionKey) && !empty($this->userModel)) {
+		if (empty($this->sessionKey)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
-		$this->data = $controller->data;
-
 		return true;
 	}
 /**
@@ -339,7 +339,8 @@ class AuthComponent extends Object {
  * @see AuthComponent::$loginAction
  */
 	function logout() {
-		$this->Session->del($this->sessionKey, $user);
+		$this->Session->del($this->sessionKey);
+		$this->Session->del('Auth.redirect');
 		$this->_loggedIn = false;
 		return $this->_normalizeURL($this->loginAction);
 	}
@@ -349,11 +350,21 @@ class AuthComponent extends Object {
  * @access public
  * @return array User record, or null if no user is logged in.
  */
-	function user() {
+	function user($key = null) {
 		if (!$this->Session->check($this->sessionKey)) {
 			return null;
 		}
-		return array($this->userModel => $this->Session->read($this->sessionKey));
+		if ($key == null) {
+			return array($this->userModel => $this->Session->read($this->sessionKey));
+		} else {
+			$user = $this->Session->read($this->sessionKey);
+
+			if (isset($user[$key])) {
+				return $user[$key];
+			} else {
+				return null;
+			}
+		}
 	}
 /**
  * Gets the authentication redirect URL
