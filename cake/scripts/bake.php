@@ -1028,7 +1028,7 @@ class Bake {
 			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])): ?>\n";
 			$viewView .= "\t<dl>\n";
 			foreach($otherModelObj->_tableInfo->value as $column) {
-				$viewView .= "\t\t<dt>".Inflector::humanize($column['name'])."</dd>\n";
+				$viewView .= "\t\t<dt>".Inflector::humanize($column['name'])."</dt>\n";
 				$viewView .= "\t\t<dd>&nbsp;<?php echo \${$singularName}['{$associationName}']['{$column['name']}'] ?></dd>\n";
 			}
 			$viewView .= "\t</dl>\n";
