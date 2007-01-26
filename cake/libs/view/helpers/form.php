@@ -271,20 +271,13 @@ class FormHelper extends AppHelper {
 		$options);
 
 		if ((!isset($options['type']) || $options['type'] == 'select') && !isset($options['options'])) {
-			if (ClassRegistry::isKeySet($this->model())) {
+			$view =& ClassRegistry::getObject('view');
+			$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
+			$varOptions = $view->getVar($varName);
 
-				$model =& ClassRegistry::getObject($this->model());
-				if ($model->isForeignKey($this->field())) {
-
-					$view =& ClassRegistry::getObject('view');
-					$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
-					$varOptions = $view->getVar($varName);
-
-					if (is_array($options)) {
-						$options['type'] = 'select';
-						$options['options'] = $varOptions;
-					}
-				}
+			if (is_array($varOptions)) {
+				$options['type'] = 'select';
+				$options['options'] = $varOptions;
 			}
 		}
 
