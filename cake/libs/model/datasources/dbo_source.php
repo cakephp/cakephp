@@ -210,7 +210,12 @@ class DboSource extends DataSource {
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				$query[$args[2]->name . '.' . $f] = '= ' . $params[$c++];
+				if (!is_array($params[$c])) {
+					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
+				} else {
+					$query[$args[2]->name . '.' . $f] = $params[$c];
+				}
+				$c++;
 			}
 
 			if ($or) {
