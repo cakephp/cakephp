@@ -49,9 +49,12 @@ class JavascriptHelper extends AppHelper {
  *
  * @var array
  */
-	var $tags = array('javascriptblock' => '<script type="text/javascript">%s</script>',
-							'javascriptstart' => '<script type="text/javascript">',
-							'javascriptlink' => '<script type="text/javascript" src="%s"></script>');
+	var $tags = array(
+		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptstart' => '<script type="text/javascript">',
+		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptend' => '</script>',
+	);
 
 /**
  * Returns a JavaScript script tag.
@@ -103,7 +106,7 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents[] = $script;
 		}
 
-
+		return $this->tags['javascriptend'];
 	}
 /**
  * Returns a JavaScript include tag (SCRIPT element)
@@ -244,11 +247,14 @@ class JavascriptHelper extends AppHelper {
 /**
  * Write cached JavaScript events
  *
+ * @param boolean $inline If true, returns JavaScript event code.  Otherwise it is added to the
+ *                        output of $scripts_for_layout in the layout.
  * @return string
  */
-	function writeEvents() {
-
+	function writeEvents($inline = true) {
+		$out = '';
 		$rules = array();
+
 		if (!empty($this->_rules)) {
 			foreach ($this->_rules as $sel => $event) {
 				$rules[] = "\t'{$sel}': function(element, event) {\n\t\t{$event}\n\t}";
@@ -257,7 +263,6 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		if ($this->_cacheEvents) {
-
 			$this->_cacheEvents = false;
 			$events = $this->_cachedEvents;
 			$data = implode("\n", $events);
@@ -273,9 +278,15 @@ class JavascriptHelper extends AppHelper {
 					if (!file_exists(JS . $filename . '.js')) {
 						cache(r(WWW_ROOT, '', JS) . $filename . '.js', $data, '+999 days', 'public');
 					}
-					return $this->link($filename);
+					$out = $this->link($filename);
 				} else {
-					return $this->codeBlock("\n" . $data . "\n");
+					$out = $this->codeBlock("\n" . $data . "\n");
+				}
+				if ($inline) {
+					return $out;
+				} else {
+					$view =& ClassRegistry::getObject('view');
+					$view->addScript($out);
 				}
 			}
 		}
@@ -378,7 +389,7 @@ class JavascriptHelper extends AppHelper {
  * @return null
  */
 	function afterRender() {
-		echo $this->writeEvents();
+		echo $this->writeEvents(true);
 	}
 }
 
