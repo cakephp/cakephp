@@ -2068,6 +2068,8 @@ class Model extends Overloadable {
 	}
 }
 
-Overloadable::overload('Model');
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	Overloadable::overload('Model');
+}
 
 ?>
