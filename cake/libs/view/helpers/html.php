@@ -300,6 +300,16 @@ class HtmlHelper extends AppHelper {
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  */
 	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
+		if (is_array($path)) {
+			$out = '';
+			foreach ($path as $i) {
+				$out .= "\n\t" . $this->css($i, $rel, $htmlAttributes, $inline);
+			}
+			if ($inline)  {
+				return $out . "\n";
+			}
+			return;
+		}
 		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
 
 		if ($rel == 'import') {
