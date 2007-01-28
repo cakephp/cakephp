@@ -19,8 +19,8 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model.datasources.dbo
- * @since			CakePHP v 1.2.0.4041
+ * @subpackage		cake.cake.libs.model.dbo
+ * @since			CakePHP v 1.1.11.4041
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -36,7 +36,7 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
  * Long description for class
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.datasources.dbo
+ * @subpackage	cake.cake.libs.model.dbo
  */
 class DboOracle extends DboSource {
  /**
@@ -59,8 +59,14 @@ class DboOracle extends DboSource {
   *
   * @var unknown_type
   */
- 
 	var $sequence = '';
+	
+/**
+ * Transaction in progress flag
+ *
+ * @var boolean
+ */
+	var $__transactionStarted = false;
 	
  /**
  * Enter description here...
@@ -87,7 +93,7 @@ class DboOracle extends DboSource {
  * @var unknown_type
  * @access protected
  */
-	var $_conn;
+	var $connection;
  /**
  * Enter description here...
  *
@@ -137,21 +143,19 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function connect() {
-		if ($this->connected) {
-			return true;
-		}
-		$config = $this->config;
+        $config = $this->config;
+        $connect = $config['connect'];
+        $this->connected = false;
+        $this->connection = $connect($config['login'], $config['password'], $config['database']);              
 
-		if ($config) {
-			$this->_conn = ociplogon($config['login'], $config['password'], $config['database']);
-		}
-		if($this->_conn){
+		if ($this->connection) {
 			$this->connected = true;
-			$this->execute('alter session set nls_sort=binary_ci');
+			$this->execute('ALTER SESSION SET NLS_SORT=BINARY_CI');
+			$this->execute('ALTER SESSION SET NLS_COMP=ANSI');
+		} else {
+			$this->connected = false;
 		}
-		if (!$this->connected) {
-			return false;
-		}
+		return $this->connected;
 	}
 
 /**
@@ -161,8 +165,8 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function disconnect() {
-		if ($this->_conn) {
-			return ocilogoff($this->_conn);
+		if ($this->connection) {
+			return ocilogoff($this->connection);
 		}
 	}
 /**
@@ -174,18 +178,26 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	function _scrapeSQL($sql) {
-		if (strpos($sql, 'SELECT') === false) {
-			return false;
-		}
-		$sql = str_replace("\"", '', $sql);
-		$preFrom = explode('FROM', $sql);
-		$preFrom = $preFrom[0];
-		$find	 = array('SELECT');
-		$replace = array('');
-		$fieldList = trim(str_replace($find, $replace, $preFrom));
-		$fields = explode(', ', $fieldList);
-		$this->_map = array();
 
+		$sql       = str_replace("\"", '', $sql);
+		$preFrom   = explode('FROM', $sql);
+		$preFrom   = $preFrom[0];
+		$find	   = array('SELECT');
+		$replace   = array('');
+		$fieldList = trim(str_replace($find, $replace, $preFrom));
+		$fields    = explode(', ', $fieldList);
+						
+		// clean fields of functions
+		foreach ($fields as &$value) {
+		  if ($value != 'COUNT(*) AS count') {
+		      preg_match_all('/[[:alnum:]_]+\.[[:alnum:]_]+/', $value, $matches);
+		      if ($matches[0]) {
+		          $value = $matches[0][0];
+		      }
+		  }
+		}
+		
+		$this->_map = array();
 		foreach ($fields as $f) {
 			$e = explode('.', $f);
 			if (count($e) > 1) {
@@ -220,6 +232,7 @@ class DboOracle extends DboSource {
 	function lastNumRows() {
 		return $this->_numRows;
 	}
+
 /**
  * Executes given SQL statement. This is an overloaded method.
  *
@@ -227,56 +240,34 @@ class DboOracle extends DboSource {
  * @return resource Result resource identifier or null
  * @access protected
  */
-	function _execute($sql) {
-	    #print $sql;
-		$this->_scrapeSQL($sql);
-		$this->_statementId = ociparse($this->_conn, $sql);
-
+	function _execute($sql) {	    
+		$this->_statementId = ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
 			return null;
 		}
-/*
 		if ($this->__transactionStarted) {
 			$mode = OCI_DEFAULT;
-			print 'default';
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
-			print 'commit';
 		}
-*/
-		//$mode = OCI_COMMIT_ON_SUCCESS;
-		$mode = OCI_DEFAULT;
-		
 		if (!ociexecute($this->_statementId, $mode)) {
 			return false;
 		}
-		// THIS CAN BE REPLACED WITH a check from ocistatementtype()
-		// we're really only executing this for DESCRIBE and SELECT
-		if (strpos(strtoupper($sql), 'INSERT') === 0) {
-			return $this->_statementId;
+		// fetch occurs here instead of fetchResult in order to get the number of rows
+		switch (ocistatementtype($this->_statementId)) {
+		    case 'DESCRIBE':
+		    case 'SELECT':
+		        $this->_scrapeSQL($sql);
+		        break;
+		    default:
+		        return $this->_statementId;   
 		}
-		if (strpos(strtoupper($sql), 'UPDATE') === 0) {
-			return $this->_statementId;
-		}
-		if (strpos(strtoupper($sql), 'DELETE') === 0) {
-			return $this->_statementId;
-		}
-		if (strpos(strtoupper($sql), 'ALTER') === 0) {
-			return $this->_statementId;
-		}
-/*
-		if (strpos($sql, 'CREATE') >= (int)0) {
-			return $this->_statementId;
-		}
-*/
 		if ($this->_limit >= 1) {
 			ocisetprefetch($this->_statementId, $this->_limit);
 		} else {
 			ocisetprefetch($this->_statementId, 3000);
 		}
-		// fetch occurs here instead of fetchResult in order to get the number of rows
 		$this->_numRows = ocifetchstatement($this->_statementId, $this->_results, $this->_offset, $this->_limit, OCI_NUM | OCI_FETCHSTATEMENT_BY_ROW);
-		#debug($this->_results);
 		$this->_currentRow = 0;
 		return $this->_statementId;
 	}
@@ -292,10 +283,9 @@ class DboOracle extends DboSource {
 			return false;
 		}
 		$resultRow = array();
-
 		foreach ($this->_results[$this->_currentRow] as $index => $field) {
 			list($table, $column) = $this->_map[$index];
-			if (strpos($column, 'count')) {
+			if (strpos($column, ' count')) {
 				$resultRow[0]['count'] = $field;
 			} else {
 				$resultRow[$table][$column] = $this->_results[$this->_currentRow][$index];
@@ -305,26 +295,35 @@ class DboOracle extends DboSource {
 		return $resultRow;
 	}
 /**
- * Enter description here...
+ * Checks to see if a named sequence exists
  *
- * @param unknown_type $sql
- * @return unknown
+ * @param string $sequence
+ * @return boolean
  * @access public
  */
-/*
-	function query($sql) {
-		$stid = ociparse($this->_conn, $sql);
-		$r = ociexecute($stid, OCI_DEFAULT);
-		if (!$r) {
-			return false;
-		}
-		$result = array();
-		while (ocifetchinto($stid, $row, OCI_ASSOC)) {
-			$result[] = $row;
-		}
-		return $result;
-		}
-*/
+	function sequenceExists($sequence) {
+	    $sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
+	    if (!$this->execute($sql)) return false;
+	    return $this->fetchRow();
+	}
+	
+/**
+ * Creates a database sequence
+ *
+ * @param string $sequence
+ * @return boolean
+ * @access public
+ */
+    function createSequence($sequence) {
+        $sql = "CREATE SEQUENCE $sequence";
+        return $this->execute($sql);
+    }
+    
+    function createTrigger($table) {
+        $sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
+        return $this->execute($sql);
+    }
+
 /**
  * Returns an array of tables in the database. If there are no tables, an error is
  * raised and the application exits.
@@ -333,19 +332,20 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function listSources() {
+	    $cache = parent::listSources();
+		if ($cache != null) {
+			return $cache;
+		}
 		$sql = 'SELECT view_name AS name FROM user_views UNION SELECT table_name AS name FROM user_tables';
-		$stid = ociparse($this->_conn, $sql);
-		$r = ociexecute($stid, OCI_DEFAULT);
-
-		if (!$r) {
-			return false;
+		if (!$this->execute($sql)) {
+		    return false;
 		}
-		$tables = array();
-
-		while (ocifetchinto($stid, $row, OCI_ASSOC)) {
-			$tables[] = $row['NAME'];
+		$sources = array();
+		while ($r = $this->fetchRow()) {
+		    $sources[] = $r[0]['view_name AS name'];
 		}
-		return $tables;
+		parent::listSources($sources);
+		return $sources;
 	}
 /**
  * Returns an array of the fields in given table name.
@@ -356,49 +356,43 @@ class DboOracle extends DboSource {
  */
 	function describe(&$model) {
 		$cache = parent::describe($model);
-
 		if ($cache != null) {
 			return $cache;
 		}
-		$sql = 'SELECT * FROM user_tab_columns WHERE table_name = \'';
+		$sql = 'SELECT COLUMN_NAME, DATA_TYPE FROM user_tab_columns WHERE table_name = \'';
 		$sql .= strtoupper($model->table) . '\'';
-
-		if (!$stid = ociparse($this->_conn, $sql)) {
-			return false;
-		}
-		if (!$r = ociexecute($stid, OCI_DEFAULT)) {
-			return false;
-		}
+        if (!$this->execute($sql)) {
+            return false;
+        }
 		$fields = array();
-
-		for ($i=0; ocifetchinto($stid, $row, OCI_ASSOC); $i++) {
-			$fields[$i]['name'] = strtolower($row['COLUMN_NAME']);
-			$fields[$i]['type'] = $this->column($row['DATA_TYPE']);
+		for ($i=0; $row = $this->fetchRow(); $i++) {
+			$fields[$i]['name'] = strtolower($row[0]['COLUMN_NAME']);
+			$fields[$i]['type'] = $this->column($row[0]['DATA_TYPE']);
 		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->__cacheDescription($model->tablePrefix.$model->table, $fields);
+		//$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 /**
- * DANGEROUS. This method quotes Oracle identifiers. This will break all scaffolding
- * compatibility and all of Cake's default assumptions.
+ * This method should quote Oracle identifiers. Well it doesn't.  
+ * It would break all scaffolding and all of Cake's default assumptions.
  *
  * @param unknown_type $var
  * @return unknown
  * @access public
  */
 	function name($var) {
-		return $var;
-/*
-		#print "$var<br>";
-		if (strpos($var, '.')) {
-			return $var;
-		}
-		if (strpos($var, "\"") === false) {
-			return "\"" . $var . "\"";
-		} else {
-			return $var;
-		}
-*/
+	    switch ($var) {
+	        /* the acl creation script uses illegal identifiers w/o quoting. the following
+	           quotes only the illegal identifiers */
+	        case '_create':
+	        case '_read':
+	        case '_update':
+	        case '_delete':
+	           return "\"$var\"";
+	        default:
+	           return $var;
+	    }
 	}
 /**
  * Begin a transaction
@@ -424,11 +418,11 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function rollback(&$model) {
-		if (parent::rollback($model)) {
-			return ocirollback($this->_conn);
-		}
-		return false;
+	function rollback() {
+		//if (parent::rollback($model)) {
+			return ocirollback($this->connection);
+		//}
+		//return false;
 	}
 /**
  * Commit a transaction
@@ -439,11 +433,11 @@ class DboOracle extends DboSource {
  * or a transaction has not started).
  */
 	function commit(&$model) {
-		if (parent::commit($model)) {
-			$this->__transactionStarted;
-			return ocicommit($this->_conn);
-		}
-		return false;
+		//if (parent::commit($model)) {
+			$this->__transactionStarted = false;
+			return ocicommit($this->connection);
+		//}
+		//return false;
 	}
 /**
  * Converts database-layer column types to basic types
@@ -503,6 +497,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function value($data, $column_type = null) {
+	    // this can also be accomplished through an Oracle NLS parameter
 		switch ($column_type) {
 			case 'date':
 				$date = date('Y-m-d H:i:s', strtotime($data));
@@ -523,49 +518,15 @@ class DboOracle extends DboSource {
 	function lastInsertId($source) {
 		$sequence = (!empty($this->sequence)) ? $this->sequence : 'pk_'.$source;
 		$sql = "SELECT $sequence.currval FROM dual";
-		$stid = ociparse($this->_conn, $sql);
-		$r = ociexecute($stid, OCI_DEFAULT);
-
-		if (!$r) {
-			return false;
+		if (!$this->execute($sql)) {
+		    return false;
 		}
-		$result = array();
-
-		while (ocifetchinto($stid, $row, OCI_ASSOC)) {
-			$result[] = $row;
+		while ($row = $this->fetchRow()) {
+		    return $row[$sequence]['currval'];
 		}
-		return $result[0]['CURRVAL'];
+		return false;
 	}
-/**
- * Returns an array of the fields in given table name.
- *
- * @param object model to inspect
- * @param string alias
- * @param string fields
- * @return array Fields in table. Keys are name and type
- * @access public
- */
-/*
-	function fields ($model, $alias, $f) {
-		$sql = "SELECT column_name FROM user_tab_columns ";
-		$sql .= "WHERE table_name = '" . strtoupper($model->table) . "'";
 
-		if (!$stid = ociparse($this->_conn, $sql)) {
-			return false;
-		}
-		if (!$r = ociexecute($stid, OCI_DEFAULT)) {
-			return false;
-		}
-		// not sure if this is supposed to be an array or string
-		$fields = $f;
-
-		while (ocifetchinto($stid, $row)) {
-			$fields[] = $model->name .'.'. $row[0];
-		}
-		return $fields;
-		}
-*/
-# THE METHODS BELOW HAVE NOT BEEN TESTED!!!
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -574,8 +535,7 @@ class DboOracle extends DboSource {
  */
 	function lastError() {
 		$errors = ocierror();
-
-		if( ($errors != null) && (isSet($errors["message"])) ) {
+		if( ($errors != null) && (isset($errors["message"])) ) {
 			return($errors["message"]);
 		}
 		return null;
@@ -587,7 +547,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastAffected() {
-		return $this->_statementId? ocirowcount($this->_statementId): false;
+		return $this->_statementId ? ocirowcount($this->_statementId): false;
 	}
 }
 ?>
