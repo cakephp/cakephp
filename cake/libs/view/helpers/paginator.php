@@ -25,9 +25,9 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Html Helper class for easy use of HTML widgets.
+ * Pagination Helper class for easy generation of pagination links.
  *
- * HtmlHelper encloses all methods needed while working with HTML pages.
+ * PaginationHelper encloses all methods needed when working with pagination.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.view.helpers
@@ -48,6 +48,21 @@ class PaginatorHelper extends AppHelper {
 	var $__defaultModel = null;
 /**
  * Holds the default options for pagination links
+ *
+ * The values that may be specified are:
+ * - <i>$options['sort']</i>  the key that the recordset is sorted.
+ * - <i>$options['direction']</i> Direction of the sorting (default: 'asc').
+ * - <i>$options['format']</i> Format of the counter. Supported formats are 'range' and 'pages'
+ *                             and custom (default). In the default mode the supplied string is
+ *                             parsed and constants are replaced by their actual values.
+ *                             Constants: %page%, %pages%, %current%, %count%, %start%, %end% .
+ * - <i>$options['separator']</i> The separator of the actual page and number of pages (default: ' of ').
+ * - <i>$options['url']</i> Url of the action. See Router::url()
+ * - <i>$options['model']</i> The name of the model.
+ * - <i>$options['escape']</i> Defines if the title field for the link should be escaped (default: true).
+ * - <i>$options['update']</i> DOM id of the element updated with the results of the AJAX call.
+ *                             If this key isn't specified Paginator will use plain HTML links.
+ * - <i>$options['indicator']</i> DOM id of the element that will be shown when doing AJAX requests.
  *
  * @var array
  */
@@ -70,7 +85,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Sets default options for all pagination links
  *
- * @param  mixed $options
+ * @param  mixed $options Default options for pagination links. If a string is supplied - it
+ *                        is used as the DOM id element to update. See #options for list of keys.
  * @return void
  */
 	function options($options = array()) {
@@ -80,10 +96,10 @@ class PaginatorHelper extends AppHelper {
 		$this->options = array_filter(am($this->options, $options));
 	}
 /**
- * Gets the current page of the in the recordset for the given model
+ * Gets the current page of the recordset for the given model
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return string The current page number of the paginated resultset.
+ * @return string The current page number of the recordset.
  */
 	function current($model = null) {
 		$params = $this->params($model);
@@ -97,7 +113,8 @@ class PaginatorHelper extends AppHelper {
  * Gets the current key by which the recordset is sorted
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return string The name of the key by which the resultset is being sorted, or
+ * @param  mixed $options Options for pagination links. See #options for list of keys.
+ * @return string The name of the key by which the recordset is being sorted, or
  *                null if the results are not currently sorted.
  */
 	function sortKey($model = null, $options = array()) {
@@ -116,8 +133,10 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the current direction the recordset is sorted
  *
- * @param  string $model
- * @return string
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @param  mixed $options Options for pagination links. See #options for list of keys.
+ * @return string The direction by which the recordset is being sorted, or
+ *                null if the results are not currently sorted.
  */
 	function sortDir($model = null, $options = array()) {
 		if (empty($options)) {
@@ -141,11 +160,11 @@ class PaginatorHelper extends AppHelper {
 /**
  * Generates a "previous" link for a set of paged records
  *
- * @param  string $title
- * @param  array $options
- * @param  string $disabledTitle
- * @param  array $disabledOptions
- * @return string
+ * @param  string $title Title for the link. Defaults to '<< Previous'.
+ * @param  mixed $options Options for pagination link. See #options for list of keys.
+ * @param  string $disabledTitle Title when the link is disabled.
+ * @param  mixed $disabledOptions Options for the disabled pagination link. See #options for list of keys.
+ * @return string A "previous" link or $disabledTitle text if the link is disabled.
  */
 	function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		return $this->__pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
@@ -153,11 +172,11 @@ class PaginatorHelper extends AppHelper {
 /**
  * Generates a "next" link for a set of paged records
  *
- * @param  string $title
- * @param  array $options
- * @param  string $disabledTitle
- * @param  array $disabledOptions
- * @return string
+ * @param  string $title Title for the link. Defaults to 'Next >>'.
+ * @param  mixed $options Options for pagination link. See #options for list of keys.
+ * @param  string $disabledTitle Title when the link is disabled.
+ * @param  mixed $disabledOptions Options for the disabled pagination link. See #options for list of keys.
+ * @return string A "next" link or or $disabledTitle text if the link is disabled.
  */
 	function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
@@ -165,10 +184,11 @@ class PaginatorHelper extends AppHelper {
 /**
  * Generates a sorting link
  *
- * @param  string $title
- * @param  string $key
- * @param  array $options
- * @return string
+ * @param  string $title Title for the link.
+ * @param  string $key The name of the key that the recordset should be sorted.
+ * @param  array $options Options for sorting link. See #options for list of keys.
+ * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified
+ *                key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
 		$options = am(array('url' => array(), 'model' => null), $options);
@@ -191,10 +211,10 @@ class PaginatorHelper extends AppHelper {
 /**
  * Generates a plain or Ajax link with pagination parameters
  *
- * @param  string $title
- * @param  mixed $url
- * @param  array $options
- * @return string
+ * @param  string $title Title for the link.
+ * @param  mixed $url Url for the action. See Router::url()
+ * @param  array $options Options for the link. See #options for list of keys.
+ * @return string A link with pagination parameters.
  */
 	function link($title, $url = array(), $options = array()) {
 		$options = am(array('model' => null, 'escape' => true), $options);
@@ -257,8 +277,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the first page
  *
- * @param  string $model
- * @return boolean
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @return boolean True if the result set is not at the first page.
  */
 	function hasPrev($model = null) {
 		return $this->__hasPage($model, 'prev');
@@ -266,8 +286,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the last page
  *
- * @param  string $model
- * @return boolean
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @return boolean True if the result set is not at the last page.
  */
 	function hasNext($model = null) {
 		return $this->__hasPage($model, 'next');
@@ -275,9 +295,9 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set has the page number given by $page
  *
- * @param  string $model
- * @param  int $page
- * @return boolean
+ * @param  string $model Optional model name.  Uses the default if none is specified.
+ * @param  int $page The page number - if not set defaults to 1.
+ * @return boolean True if the given result set has the specified page number.
  */
 	function hasPage($model = null, $page = 1) {
 		if (is_numeric($model)) {
@@ -303,7 +323,7 @@ class PaginatorHelper extends AppHelper {
 /**
  * Gets the default model of the paged sets
  *
- * @return string
+ * @return string Model name or null if the pagination isn't initialized.
  */
 	function defaultModel() {
 		if ($this->__defaultModel != null) {
@@ -318,8 +338,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns a counter string for the paged result set
  *
- * @param  array $options
- * @return string
+ * @param  mixed $options Options for the counter string. See #options for list of keys.
+ * @return string Counter string.
  */
 	function counter($options = array()) {
 		if (is_string($options)) {
