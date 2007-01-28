@@ -1057,14 +1057,12 @@ class DboSource extends DataSource {
 				}
 				$joinFields = array();
 
-				if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
-					$joinName = array_keys($assocData['with']);
-					$joinFields = $assocData['with'][$joinName[0]];
+				if (isset($assocData['with']) && !empty($assocData['with'])) {
+					$joinFields = $model->{$assocData['with']}->loadInfo();
+					$joinFields = $joinFields->extract('{n}.name');
 
 					if (is_array($joinFields) && !empty($joinFields)) {
-						$joinFields = $this->fields($linkModel, $joinName[0], $joinFields);
-					} else {
-						$joinFields = array($this->name($joinName[0]) . '.*');
+						$joinFields = $this->fields($model->{$assocData['with']}, $model->{$assocData['with']}->name, $joinFields);
 					}
 				}
 				$sql .= ' ' . join(', ', am($this->fields($linkModel, $alias, $assocData['fields']), $joinFields));
@@ -1073,8 +1071,8 @@ class DboSource extends DataSource {
 
 				$joinAssoc = $joinTbl;
 
-				if (isset($assocData['with']) && is_array($assocData['with']) && !empty($assocData['with'])) {
-					$joinAssoc = $joinName[0];
+				if (isset($assocData['with']) && !empty($assocData['with'])) {
+					$joinAssoc = $model->{$assocData['with']}->name;
 					$sql .= $this->alias . $this->name($joinAssoc);
 				}
 				$sql .= ' ON ' . $this->name($joinAssoc);

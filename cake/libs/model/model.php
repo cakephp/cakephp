@@ -556,7 +556,6 @@ class Model extends Overloadable {
 
 		// Convert all string-based associations to array based
 		foreach($this->__associations as $type) {
-
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
 
@@ -581,10 +580,11 @@ class Model extends Overloadable {
 					$className = $value['className'];
 				}
 				$this->__constructLinkedModel($assoc, $className);
-			}
-		}
 
-		foreach($this->__associations as $type) {
+				if (isset($value['with']) && !empty($value['with'])) {
+					$this->__constructLinkedModel($value['with'], $value['with']);
+				}
+			}
 			$this->__generateAssociation($type);
 		}
 	}
