@@ -74,6 +74,7 @@ class FormHelper extends AppHelper {
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
+		$data = array('fields' => '','key' => '', 'validates' => '');
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 			$model = null;
