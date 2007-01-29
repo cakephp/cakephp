@@ -207,10 +207,10 @@ class XmlHelper extends AppHelper {
  * @return string XML
  */
 	function __composeContent($content) {
-		$out = '';
 		if (is_string($content)) {
-			$out .= $content;
+			return $content;
 		} elseif (is_array($content)) {
+			$out = '';
 			$keys = array_keys($content);
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
@@ -226,14 +226,17 @@ class XmlHelper extends AppHelper {
 					//$out .= $this->elem($keys[$i]
 				}
 			}
+			return $out;
 		} elseif (is_object($content) && (is_a($content, 'XMLNode') || is_a($content, 'xmlnode'))) {
-			$out .= $content->toString();
+			return $content->toString();
 		} elseif (is_object($content) && method_exists($content, 'toString')) {
-			$out .= $content->toString();
-		} elseif (is_object($content) && method_exists($content, '__toString')) {
-			$out .= $content->__toString();
+			return $content->toString();
+		} elseif (is_object($content) && method_exists($content, 'toString')) {
+			return $content->toString();
+		} else {
+			return $content;
 		}
-		return $out;
+		return false;
 	}
 /**
  * Serializes a model resultset into XML
