@@ -515,7 +515,7 @@ class RequestHandlerComponent extends Object {
 			}
 		}
 
-		$types = normalizeList($type, false);
+		$types = Set::normalize($type, false);
 		$accepts = array();
 		foreach ($types as $type) {
 			if ($this->accepts($type)) {
