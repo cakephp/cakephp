@@ -1487,4 +1487,18 @@
 			return false;
 		}
 	}
+/**
+ * Wraps ternary operations.  If $condition is a non-empty value, $val1 is returned, otherwise $val2.
+ *
+ * @param mixed $condition Conditional expression
+ * @param mixed $val1
+ * @param mixed $val2
+ * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
+ */
+	function ife($condition, $val1 = null, $val2 = null) {
+		if (!empty($condition)) {
+			return $val1;
+		}
+		return $val2;
+	}
 ?>
