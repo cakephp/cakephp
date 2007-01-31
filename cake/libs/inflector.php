@@ -202,6 +202,7 @@ class Inflector extends Object {
 
 		$_this =& Inflector::getInstance();
 		$coreSingularRules = array('/(s)tatuses$/i' => '\1\2tatus',
+									'/(s)tatus$/i' => '\1\2tatus',
 									'/(matr)ices$/i' => '\1ix',
 									'/(vert|ind)ices$/i' => '\1ex',
 									'/^(ox)en/i' => '\1',
