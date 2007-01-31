@@ -97,7 +97,7 @@ class FormHelper extends AppHelper {
 			$data = array(
 				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
 				'key' => $object->primaryKey,
-				'validates' => (empty($object->validate) ? array() : array_keys($object->validate))
+				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
 		}
 
@@ -106,7 +106,7 @@ class FormHelper extends AppHelper {
 		}
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
-			'id' => $model . ($created ? 'Edit' : 'Add') . 'Form',
+			'id' => $model . ife($created, 'Edit', 'Add') . 'Form',
 			'action' => array(),
 			'default' => true),
 		$options);
@@ -127,11 +127,11 @@ class FormHelper extends AppHelper {
 			break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
-				$options['type'] = $created ? 'put' : 'post';
+				$options['type'] = ife($created, 'put', 'post');
 			case 'post':
 			case 'put':
 			case 'delete':
-				$append .= $this->hidden('_method', array('value' => up($options['type'])));
+				$append .= $this->hidden('_method', array('value' => up($options['type']), 'id' => $options['id'] . 'Method'));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
@@ -151,7 +151,7 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = am($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']));
+			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => $options['id'] . 'Token'));
 		}
 
 		$this->setFormTag($model . '/');
@@ -486,7 +486,6 @@ class FormHelper extends AppHelper {
 		$model = $this->model();
 		if (in_array($fieldName, array('_method'))) {
 			$model = null;
-			unset($htmlAttributes['id']);
 		}
 		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
