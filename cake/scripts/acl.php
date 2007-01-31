@@ -236,6 +236,7 @@ class AclCLI {
 			break;
 			default:
 				fwrite($this->stderr, "Unknown ACL command '$command'.\nFor usage, try 'php acl.php help'.\n\n");
+			break;
 		}
 	}
 /**
@@ -261,7 +262,7 @@ class AclCLI {
 		$this->checkArgNumber(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$this->Acl->{$class}->del($this->args[1]);
+		$this->Acl->{$class}->delete($this->args[1]);
 		$this->stdout("$class deleted.\n\n");
 	}
 
@@ -320,7 +321,7 @@ class AclCLI {
 		//add existence checks for nodes involved
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
-		$this->Acl->allow($aro, $aco, $this->args[2]);
+		$this->Acl->deny($aro, $aco, $this->args[2]);
 		$this->stdout("Requested permission successfully denied.\n");
 	}
 /**
@@ -328,7 +329,11 @@ class AclCLI {
  *
  */
 	function inherit() {
-		$this->stdout("not implemented. sorry.\n");
+		$this->checkArgNumber(3, 'inherit');
+		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
+		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
+		$this->Acl->inherit($aro, $aco, $this->args[2]);
+		$this->stdout("Requested permission successfully inherited.\n");
 	}
 /**
  * Enter description here...
@@ -338,7 +343,11 @@ class AclCLI {
 		$this->checkArgNumber(2, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$conditions = $this->Acl->{$class}->_resolveID($this->args[1]);
+		if (!is_null($this->args[1])) {
+			$conditions = $this->Acl->{$class}->_resolveID($this->args[1]);
+		} else {
+			$conditions = null;
+		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
 		$right = array();
 
@@ -423,7 +432,14 @@ class AclCLI {
 				CHANGE ".$db->name('user_id')."
 				".$db->name('foreign_key')."
 				INT( 10 ) UNSIGNED NULL DEFAULT NULL;";
-
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_create') 
+				. " " . $db->name('_create') . " CHAR(2) NOT NULL DEFAULT '0';";
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_update') 
+				. " " . $db->name('_update') . " CHAR(2) NOT NULL DEFAULT '0';";
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_read') 
+				. " " . $db->name('_read') . " CHAR(2) NOT NULL DEFAULT '0';";
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_delete') 
+				. " " . $db->name('_delete') . " CHAR(2) NOT NULL DEFAULT '0';";
 		if ($db->query($sql) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
@@ -475,7 +491,7 @@ class AclCLI {
 		$out .= "\t\tspecified ACO action (and the ACO's children, if any).\n";
 		$out .= "\n";
 		$out .= "\n";
-		$out .= "\tinherit <aro_id> \n";
+		$out .= "\tinherit <aro_id> <aco_id> <aco_action> \n";
 		$out .= "\t\tUse this command to force a child ARO object to inherit its\n";
 		$out .= "\t\tpermissions settings from its parent.\n";
 		$out .= "\n";
