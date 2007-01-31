@@ -522,9 +522,8 @@ class AjaxHelper extends AppHelper {
 			$var = 'var ' . $options['var'] . ' = ';
 			unset($options['var']);
 		}
-		$options = $this->_optionsToString($options, array('handle', 'constraint'));
-		$options = $this->_buildOptions($options, $this->dragOptions);
-		return $this->Javascript->codeBlock("{$var}new Draggable('$id', " . $this->_optionsForDraggable($options) . ");");
+		$options = $this->_buildOptions($this->_optionsToString($options, array('handle', 'constraint')), $this->dragOptions);
+		return $this->Javascript->codeBlock("{$var}new Draggable('$id', " .$options . ");");
 	}
 /**
  * For a reference on the options for this function, check out
