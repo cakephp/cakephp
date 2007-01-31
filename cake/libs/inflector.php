@@ -141,9 +141,9 @@ class Inflector extends Object {
 
 		if (file_exists(CONFIGS . 'inflections.php')) {
 			include(CONFIGS.'inflections.php');
-			$pluralRules = array_merge($pluralRules, $corePluralRules);
-			$uninflected = array_merge($uninflectedPlural, $coreUninflectedPlural);
-			$irregular = array_merge($irregularPlural, $coreIrregularPlural);
+			$pluralRules = array_merge($corePluralRules, $pluralRules);
+			$uninflected = array_merge($coreUninflectedPlural, $uninflectedPlural);
+			$irregular = array_merge($coreIrregularPlural, $irregularPlural);
 		}
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
@@ -277,9 +277,9 @@ class Inflector extends Object {
 
 		if (file_exists(CONFIGS . 'inflections.php')) {
 			include(CONFIGS.'inflections.php');
-			$singularRules = array_merge($singularRules, $coreSingularRules);
-			$uninflected = array_merge($uninflectedSingular, $coreUninflectedSingular);
-			$irregular = array_merge($irregularSingular, $coreIrregularSingular);
+			$singularRules = array_merge($coreSingularRules, $singularRules);
+			$uninflected = array_merge($coreUninflectedSingular, $uninflectedSingular);
+			$irregular = array_merge($coreIrregularSingular, $irregularSingular);
 		}
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
@@ -296,7 +296,7 @@ class Inflector extends Object {
 		if (!isset($_this->singularRules) || empty($_this->singularRules)) {
 			$_this->__initSingularRules();
 		}
-		
+
 		if (isset($_this->singularized[$word])) {
 			return $_this->singularized[$word];
 		}
