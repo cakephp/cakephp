@@ -483,8 +483,33 @@ class Model extends Overloadable {
  * @param boolean $permanent
  * @return void
  */
-	function bind($assoc, $params, $permanent = true) {
+	function bind($model, $options, $permanent = true) {
+		if (!is_array($model)) {
+			$model = array($model => $options);
+		}
 
+		foreach($model as $name => $options) {
+			if (isset($options['type'])) {
+				$assoc = $options['type'];
+			} elseif (isset($options[0])) {
+				$assoc = $options[0];
+			}
+			if(!$permenant) {
+				$this->__backAssociation[$assoc] = $this->{$assoc};
+			}
+			foreach($model as $key => $value) {
+				$assocName = $key;
+				$modelName = $key;
+
+				if (isset($value['className'])) {
+					$modelName = $value['className'];
+				}
+
+				$this->__constructLinkedModel($assocName, $modelName);
+				$this->{$assoc}[$assocName] = $model[$assocName];
+				$this->__generateAssociation($assoc);
+			}
+		}
 	}
 /**
  * Bind model associations on the fly.
@@ -499,7 +524,7 @@ class Model extends Overloadable {
 	function bindModel($params, $reset = true) {
 
 		foreach($params as $assoc => $model) {
-			if($reset === true){
+			if($reset === true) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 
@@ -573,7 +598,6 @@ class Model extends Overloadable {
 					$value = array();
 					$this->{$type}[$assoc] = $value;
 				}
-
 				$className = $assoc;
 
 				if (isset($value['className']) && !empty($value['className'])) {
@@ -600,7 +624,7 @@ class Model extends Overloadable {
 	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
 
-		if(!class_exists($className)){
+		if(!class_exists($className)) {
 			loadModel($className);
 		}
 
@@ -629,7 +653,7 @@ class Model extends Overloadable {
 /**
  * Build array-based association from string.
  *
- * @param string $type "Belongs", "One", "Many", "ManyTo"
+ * @param string $type 'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  * @access private
  */
 	function __generateAssociation($type) {
@@ -646,10 +670,7 @@ class Model extends Overloadable {
 						break;
 
 						case 'foreignKey':
-							$data = Inflector::singularize($this->table) . '_id';
-							if ($type == 'belongsTo') {
-								$data = Inflector::underscore($assocKey) . '_id';
-							}
+							$data = ife($type == 'belongsTo', Inflector::underscore($assocKey) . '_id', Inflector::singularize($this->table) . '_id');
 						break;
 
 						case 'associationForeignKey':
@@ -666,16 +687,17 @@ class Model extends Overloadable {
 							$data = $class;
 						break;
 					}
-
 					$this->{$type}[$assocKey][$key] = $data;
-				} elseif ($key == 'with') {
-					$this->{$type}[$assocKey][$key] = Set::normalize($this->{$type}[$assocKey][$key]);
 				}
 
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
 				}
+			}
+			if (isset($this->{$type}[$assocKey]['with'])) {
+				$with = $this->{$type}[$assocKey]['with'];
+				$this->{$type}[$assocKey]['joinTable'] = $this->{$with}->table;
 			}
 		}
 	}
@@ -692,8 +714,8 @@ class Model extends Overloadable {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
 				return $this->cakeError('missingTable', array(array(
-						'className' => $this->name,
-						'table' => $this->tablePrefix . $tableName
+					'className' => $this->name,
+					'table' => $this->tablePrefix . $tableName
 				)));
 			} else {
 				$this->table = $tableName;
@@ -701,7 +723,6 @@ class Model extends Overloadable {
 				$this->_tableInfo = null;
 				$this->loadInfo();
 			}
-
 		} else {
 			$this->table = $tableName;
 			$this->tableToModel[$this->table] = $this->name;
@@ -1022,16 +1043,16 @@ class Model extends Overloadable {
 		$exists = $this->exists();
 
 		if (!$exists && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
-			$colType = $this->getColumnType('created');
+			$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType('created')]);
 			$fields[] = 'created';
-			$values[] = date('Y-m-d H:i:s');
+			$values[] = $colType['formatter']($colType['format']);
 		}
 
 		foreach (array('modified', 'updated') as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields) && ($whitelist && in_array($updateCol, $fieldList) || !$whitelist)) {
-				$colType = $this->getColumnType($updateCol);
+				$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
 				$fields[] = $updateCol;
-				$values[] = date('Y-m-d H:i:s');
+				$values[] = $colType['formatter']($colType['format']);
 			}
 		}
 
@@ -1194,9 +1215,8 @@ class Model extends Overloadable {
 			}
 
 			if ($db->delete($this)) {
-				$this->_deleteMulti($this->id);
-				$this->_deleteHasMany($this->id, $cascade);
-				$this->_deleteHasOne($this->id, $cascade);
+				$this->_deleteLinks($this->id);
+				$this->_deleteDependent($this->id, $cascade);
 				if (!empty($this->behaviors)) {
 					for ($i = 0; $i < $ct; $i++) {
 						if ($this->behaviors[$behaviors[$i]]->afterDelete($this) === false) {
@@ -1222,57 +1242,28 @@ class Model extends Overloadable {
 		return $this->del($id, $cascade);
 	}
 /**
- * Cascades model deletes to hasMany relationships.
+ * Cascades model deletes to hasMany and hasOne relationships.
  *
  * @param string $id
  * @return null
  * @access protected
  */
-	function _deleteHasMany($id, $cascade) {
+	function _deleteDependent($id, $cascade) {
 		if (isset($this->__backAssociation)) {
 			$savedAssociatons = $this->__backAssociation;
 			unset ($this->__backAssociation);
 		}
-		foreach($this->hasMany as $assoc => $data) {
+		foreach(am($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
-				$model =& $this->{$data['className']};
-				$field = $model->escapeField($data['foreignKey']);
-				$model->recursive = 0;
-				$records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
 
-				if($records != false){
-					foreach($records as $record) {
-						$model->del($record[$data['className']][$model->primaryKey]);
-					}
-				}
-			}
-		}
-		if (isset($savedAssociatons)) {
-			$this->__backAssociation = $savedAssociatons;
-		}
-	}
-/**
- * Cascades model deletes to hasOne relationships.
- *
- * @param string $id
- * @return null
- * @access protected
- */
-	function _deleteHasOne($id, $cascade) {
-		if (isset($this->__backAssociation)) {
-			$savedAssociatons = $this->__backAssociation;
-			unset ($this->__backAssociation);
-		}
-		foreach($this->hasOne as $assoc => $data) {
-			if ($data['dependent'] === true && $cascade === true) {
-				$model =& $this->{$data['className']};
+				$model =& $this->{$assoc};
 				$field = $model->escapeField($data['foreignKey']);
-				$model->recursive = 0;
-				$records = $model->findAll("$field = '$id'", $model->primaryKey, null, null);
+				$model->recursive = -1;
+				$records = $model->findAll(array($field => $id), $model->primaryKey);
 
-				if($records != false){
+				if(!empty($records)) {
 					foreach($records as $record) {
-						$model->del($record[$data['className']][$model->primaryKey]);
+						$model->delete($record[$model->name][$model->primaryKey]);
 					}
 				}
 			}
@@ -1288,10 +1279,23 @@ class Model extends Overloadable {
  * @return null
  * @access protected
  */
-	function _deleteMulti($id) {
+	function _deleteLinks($id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		foreach($this->hasAndBelongsToMany as $assoc => $data) {
-			$db->query("DELETE FROM " . $db->name($db->fullTableName($data['joinTable'])) . " WHERE " . $db->name($data['foreignKey']) . " = '{$id}'");
+			if (isset($data['with'])) {
+				$model =& $this->{$data['with']};
+				$records = $model->findAll(array($data['foreignKey'] => $id), $model->primaryKey, null, null, null, -1);
+
+				if (!empty($records)) {
+					foreach($records as $record) {
+						$model->delete($record[$model->name][$model->primaryKey]);
+					}
+				}
+			} else {
+				$table = $db->name($db->fullTableName($data['joinTable']));
+				$conditions = $db->name($data['foreignKey']) . ' = ' . $db->value($id);
+				$db->query("DELETE FROM {$table} WHERE {$conditions}");
+			}
 		}
 	}
 /**
@@ -1479,7 +1483,7 @@ class Model extends Overloadable {
  * @see Model::findAll
  */
 	function findCount($conditions = null, $recursive = 0) {
-		list($data) = $this->findAll($conditions, 'COUNT(' . $this->name . '.' . $this->primaryKey . ') AS count', null, null, 1, $recursive);
+		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', null, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
 			return $data[0]['count'];

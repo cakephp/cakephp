@@ -36,7 +36,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class ClassRegistry{
+class ClassRegistry {
 /**
  * Names of classes with their objects.
  *
@@ -105,4 +105,5 @@ class ClassRegistry{
 		return $_this->_objects[$key];
 	}
 }
+
 ?>
