@@ -109,8 +109,8 @@ class AclNode extends AppModel {
 		$this->query("DELETE FROM {$table} WHERE {$table}.lft >= {$result[$class]['lft']} AND {$table}.rght <= {$result[$class]['rght']}");
 
 		$shift = 1 + $result[$class]['rght'] - $result[$class]['lft'];
-		$this->query('UPDATE ' . $table . ' SET `rght` = `rght` - ' . $shift . ' WHERE `rght` > ' . $result[$class]['rght']);
-		$this->query('UPDATE ' . $table . ' SET `lft` = `lft` - ' . $shift . ' WHERE `lft` > ' . $result[$class]['lft']);
+		$this->query('UPDATE ' . $table . ' SET ' . $db->name('rght') . ' = ' . $db->name('rght') . ' - ' . $shift . ' WHERE ' . $db->name('rght') . ' > ' . $result[$class]['rght']);
+		$this->query('UPDATE ' . $table . ' SET ' . $db->name('lft') . ' = ' . $db->name('lft') . ' - ' . $shift . ' WHERE ' . $db->name('lft') . ' > ' . $result[$class]['lft']);
 		return true;
 	}
 /**
