@@ -202,7 +202,6 @@ class Inflector extends Object {
 
 		$_this =& Inflector::getInstance();
 		$coreSingularRules = array('/(s)tatuses$/i' => '\1\2tatus',
-									'/(s)tatus$/i' => '\1\2tatus',
 									'/(matr)ices$/i' => '\1ix',
 									'/(vert|ind)ices$/i' => '\1ex',
 									'/^(ox)en/i' => '\1',
@@ -231,7 +230,7 @@ class Inflector extends Object {
 									'/(n)ews$/i' => '\1\2ews',
 									'/s$/i' => '');
 
-		$coreUninflectedSingular = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', 'Amoyese',
+		$coreUninflectedSingular = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*rice', '.*sheep', '.*us', '.*ss', 'Amoyese',
 											'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
 											'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
 											'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
