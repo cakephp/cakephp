@@ -104,7 +104,7 @@ class TextHelper extends AppHelper {
 		}
 		$options .= ')';
 
-		$text = preg_replace_callback('#((?:http|https|ftp|nntp)://[^ ]+)#', create_function('$matches',
+		$text=preg_replace_callback('#((?:http|https|ftp|nntp)://[^ <]+)#', create_function('$matches',
 			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $options . ');'), $text);
 
 		return preg_replace_callback('#(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])#',
