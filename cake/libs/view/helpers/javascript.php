@@ -355,7 +355,7 @@ class JavascriptHelper extends AppHelper {
 			if (is_array($val) || is_object($val)) {
 				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
 			} else {
-				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys)) || (!$quoteKeys && !in_array($key, $stringKeys)) && $val !== null) {
+				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys, true)) || (!$quoteKeys && !in_array($key, $stringKeys, true))) {
 					$val = $q . $this->escapeString($val) . $q;
 				}
 				if ($val == null) {
