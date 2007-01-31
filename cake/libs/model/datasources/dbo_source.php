@@ -73,6 +73,12 @@ class DboSource extends DataSource {
  */
 	var $alias = 'AS ';
 /**
+ * The set of valid SQL operations usable in a WHERE statement
+ *
+ * @var array
+ */
+	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
+/**
  * Enter description here...
  *
  * @var unknown_type
@@ -1369,7 +1375,6 @@ class DboSource extends DataSource {
  * @return string SQL fragment
  */
 	function conditionKeysToString($conditions) {
-
 		$c = 0;
 		$data = null;
 		$out = array();
@@ -1409,7 +1414,7 @@ class DboSource extends DataSource {
 					$data = $this->name($key) . ' IS NULL';
 				} elseif($value === '') {
 					$data = $this->name($key) . " = ''";
-				} elseif(preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:like\\x20)|(?:or\\x20)|(?:not\\x20)|(?:in\\x20)|(?:between\\x20)|(?:regexp\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
+				} elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|[<> = !]{1,3}\\x20?)?(.*)/i', $value, $match)) {
 					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
 						$clause = $regs['1'];
 						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
