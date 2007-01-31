@@ -33,6 +33,7 @@
 	if (function_exists('ini_set')) {
 		ini_set('display_errors', '1');
 		ini_set('error_reporting', '7');
+		ini_set('max_execution_time',60*5);
 	}
 
 	$app = null;
@@ -411,7 +412,7 @@ class Bake {
 		$useTable = Inflector::tableize($currentModelName);
 		if(array_search($useTable, $this->__tables) === false) {
 			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $useTable . "'.");
-			$tableIsGood = $this->getInput('Is this correct?', array('y','n'), 'y');
+			$tableIsGood = $this->getInput('do you want to use this table?', array('y','n'), 'y');
 		}
 
 		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
@@ -431,11 +432,14 @@ class Bake {
 			}
 		}
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
-		loadModel();
-		$tempModel = new Model(false, $useTable);
-		$modelFields = $db->describe($tempModel);
-		if(!isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
-			$primaryKey = $this->getInput('What is the primaryKey', null, 'id');
+		
+		if(array_search($useTable, $this->__tables)) {
+			$tempModel = new Model(false, $useTable);
+			$db =& ConnectionManager::getDataSource($useDbConfig);
+			$modelFields = $db->describe($tempModel);
+			if(!isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
+				$primaryKey = $this->getInput('What is the primaryKey', null, 'id');
+			}
 		}
 		$validate = array();
 
@@ -643,7 +647,7 @@ class Bake {
 					$associations['hasAndBelongsToMany'] = array_merge($associations['hasAndBelongsToMany']);
 				}
 			}
-			$wannaDoMoreAssoc = $this->getInput('Would you like to define some additional model associations?', array('y','n'), 'y');
+			$wannaDoMoreAssoc = $this->getInput('Would you like to define some additional model associations?', array('y','n'), 'n');
 
 			while((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
 				$assocs = array(1=>'belongsTo', 2=>'hasOne', 3=>'hasMany', 4=>'hasAndBelongsToMany');
@@ -854,7 +858,7 @@ class Bake {
 				die();
 			} else {
 				loadController($controllerName);
-				loadModels();
+				//loadModels();
 				if($admin) {
 					$this->__bakeViews($controllerName, $controllerPath, $admin, $admin_url);
 				}
@@ -1330,8 +1334,8 @@ class Bake {
 			}
 		}
 
-		if ((low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes')) {
-			loadModels();
+		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
+			//loadModels();
 			$actions = $this->__bakeActions($controllerName, null, null, $wannaUseSession);
 			if($admin) {
 				$actions .= $this->__bakeActions($controllerName, $admin, $admin_url, $wannaUseSession);
@@ -1405,6 +1409,7 @@ class Bake {
 
 	function __bakeActions($controllerName, $admin = null, $admin_url = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
+		loadModel($currentModelName);
 		$modelObj =& new $currentModelName();
 		$controllerPath = $this->__controllerPath($currentModelName);
 		$pluralName = $this->__pluralName($currentModelName);
