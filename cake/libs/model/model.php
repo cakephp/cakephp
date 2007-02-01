@@ -1632,7 +1632,7 @@ class Model extends Overloadable {
  * Returns an array of invalid fields.
  *
  * @param array $data
- * @return array Array of invalid fields
+ * @return array Array of invalid fields or boolean case any error occurs
  */
 	function invalidFields($data = array()) {
 		if (empty($data)) {
