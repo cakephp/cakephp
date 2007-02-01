@@ -400,9 +400,6 @@ class Controller extends Object {
 			session_write_close();
 		}
 
-		if ($url !== null) {
-			header('Location: ' . Router::url($url, true));
-		}
 		if (is_numeric($status) && $status > 0) {
 			$codes = array(
 				100 => "Continue",
@@ -443,12 +440,14 @@ class Controller extends Object {
 				501 => "Not Implemented",
 				502 => "Bad Gateway",
 				503 => "Service Unavailable",
-				504 => "Gateway Time-out"
-			);
+				504 => "Gateway Time-out");
 
 			if (isset($codes[$status])) {
-				header("HTTP/1.1 {$status} " . $codes[$status]);
+				header("HTTP/1.1 $status " . $codes[$status]);
 			}
+		}
+		if ($url !== null) {
+			header('Location: ' . Router::url($url, true));
 		}
 		if ($exit) {
 			exit();
