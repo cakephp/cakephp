@@ -521,26 +521,23 @@ class Model extends Overloadable {
  * @param boolean $reset
  * @return boolean Always true
  */
-	function bindModel($params, $reset = true) {
+	function bindModel($params) {
 
 		foreach($params as $assoc => $model) {
-			if($reset === true) {
-				$this->__backAssociation[$assoc] = $this->{$assoc};
-			}
+			$this->__backAssociation[$assoc] = $this->{$assoc};
 
 			foreach($model as $key => $value) {
 				$assocName = $key;
-				$modelName = $key;
 
-				if (isset($value['className'])) {
-					$modelName = $value['className'];
+				if (is_numeric($key)) {
+					$assocName = $value;
+					$value = array();
 				}
-
-				$this->__constructLinkedModel($assocName, $modelName);
-				$this->{$assoc}[$assocName] = $model[$assocName];
-				$this->__generateAssociation($assoc);
+				$modelName = $assocName;
+				$this->{$assoc}[$assocName] = $value;
 			}
 		}
+		$this->__createLinks();
 		return true;
 	}
 /**
