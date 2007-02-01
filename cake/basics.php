@@ -1051,7 +1051,7 @@
 		$timediff = $expires - $now;
 		$filetime = @filemtime($filename);
 
-		if ($data == null) {
+		if ($data === null) {
 			// Read data from file
 			if (file_exists($filename) && $filetime !== false) {
 				if ($filetime + $timediff < $now) {
