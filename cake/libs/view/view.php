@@ -720,6 +720,7 @@ class View extends Object {
 
 				$cache->base			= $this->base;
 				$cache->here			= $this->here;
+				$cache->helpers			= $this->helpers;
 				$cache->action			= $this->action;
 				$cache->controllerName	= $this->name;
 				$cache->layout	= $this->layout;

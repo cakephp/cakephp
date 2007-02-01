@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
@@ -27,7 +26,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Short description for file.
  *
@@ -42,28 +40,30 @@ class CacheHelper extends AppHelper {
  * The strings are found between <cake:nocache><cake:nocache> in views
  *
  * @var array
+ * @access private
  */
-	 var $replace = array();
+	 var $__replace = array();
 /**
  * Array of string that are replace with there var replace above.
  * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
  *
  * @var array
+ * @access private
  */
-	 var $match = array();
+	 var $__match = array();
 /**
  * holds the View object passed in final call to CacheHelper::cache()
  *
  * @var object
+ * @access public
  */
 	 var $view;
-
 /**
- * Enter description here...
+ * Main method used to cache a view
  *
- * @param string $file
- * @param string $out
- * @param string $cache
+ * @param string $file File to cache
+ * @param string $out output to cache
+ * @param boolean $cache
  * @return view ouput
  */
 	function cache($file, $out, $cache = false) {
@@ -123,10 +123,11 @@ class CacheHelper extends AppHelper {
 		}
 	}
 /**
- * Enter description here...
+ * Parse file searching for no cache tags
  *
  * @param string $file
  * @param boolean $cache
+ * @access private
  */
 	function __parseFile($file, $cache) {
 		if (is_file($file)) {
@@ -143,24 +144,25 @@ class CacheHelper extends AppHelper {
 
 			foreach($result['0'] as $result) {
 				if (isset($oresult['0'][$count])) {
-					$this->replace[] = $result;
-					$this->match[] = $oresult['0'][$count];
+					$this->__replace[] = $result;
+					$this->__match[] = $oresult['0'][$count];
 				}
 				$count++;
 			}
 		}
 	}
 /**
- * Enter description here...
+ * Parse the output and replace cache tags
  *
  * @param sting $cache
  * @return string with all replacements made to <cake:nocache><cake:nocache>
+ * @access private
  */
 	function __parseOutput($cache) {
 		$count = 0;
-		if (!empty($this->match)) {
+		if (!empty($this->__match)) {
 
-			foreach($this->match as $found) {
+			foreach($this->__match as $found) {
 				$original = $cache;
 				$length = strlen($found);
 				$position = 0;
@@ -170,7 +172,7 @@ class CacheHelper extends AppHelper {
 
 						if($position !== false) {
 							$cache = substr($original, 0, $position);
-							$cache .= $this->replace[$count];
+							$cache .= $this->__replace[$count];
 							$cache .= substr($original, $position + $length);
 						} else {
 							break;
@@ -183,11 +185,12 @@ class CacheHelper extends AppHelper {
 		return $cache;
 	}
 /**
- * Enter description here...
+ * Write a cached version of the file
  *
  * @param string $file
  * @param sting $timestamp
  * @return cached view
+ * @access private
  */
 	function __writeFile($file, $timestamp) {
 		$now = time();
@@ -214,9 +217,9 @@ class CacheHelper extends AppHelper {
 					$this->here = \'' . $this->here . '\';
 					$this->namedArgs  = \'' . $this->namedArgs . '\';
 					$this->argSeparator = \'' . $this->argSeparator . '\';
-					$this->params = unserialize(\'' . serialize($this->params) . '\');
+					$this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
 					$this->action = unserialize(\'' . serialize($this->action) . '\');
-					$this->data = unserialize(\'' . serialize($this->data) . '\');
+					$this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
 					$this->themeWeb = \'' . $this->themeWeb . '\';
 					$this->plugin = \'' . $this->plugin . '\';
 					$loadedHelpers = array();
