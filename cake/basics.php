@@ -1050,7 +1050,10 @@
 		}
 
 		$timediff = $expires - $now;
-		$filetime = @filemtime($filename);
+		$filetime = false;
+		if(file_exists($filename)) {
+			$filetime = @filemtime($filename);
+		}
 
 		if ($data === null) {
 			// Read data from file
