@@ -262,8 +262,10 @@ class AclCLI {
 		$this->checkArgNumber(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$this->Acl->{$class}->delete($this->args[1]);
-		$this->stdout("$class deleted.\n\n");
+		if(!$this->Acl->{$class}->delete($this->args[1])) {
+			$this->displayError("Node Not Deleted", "There was an error deleting the ".$class.". Check that the node exists.\n");
+		}
+		$this->stdout("{$class} deleted.\n\n");
 	}
 
 /**
@@ -288,14 +290,11 @@ class AclCLI {
 		$this->checkArgNumber(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$suppliedNode = $this->nodeExists($this->args[0], $this->args[1]);
-
-		if (!$suppliedNode) {
-			$this->displayError("Supplied Node '".$args[1]."' not found. No tree returned.");
-		}
 		$id = (is_numeric($this->args[2])) ? intval($this->args[1]) : $this->args[1];
 		$nodes = $this->Acl->{$class}->getPath($id);
-
+		if (empty($nodes)) {
+			$this->displayError("Supplied Node '".$this->args[1]."' not found", "No tree returned.");
+		}
 		for ($i = 0; $i < count($nodes); $i++) {
 			$this->stdout(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
 		}
@@ -340,7 +339,7 @@ class AclCLI {
  *
  */
 	function view() {
-		$this->checkArgNumber(2, 'view');
+		$this->checkArgNumber(1, 'view'); 
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (!is_null($this->args[1])) {
@@ -349,6 +348,9 @@ class AclCLI {
 			$conditions = null;
 		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
+		if (empty($nodes)) {
+			$this->displayError($this->args[1]." not found", "No tree returned.");
+		}
 		$right = array();
 
 		$this->stdout($class . " tree:\n");
@@ -534,7 +536,7 @@ class AclCLI {
  * @param unknown_type $command
  */
 	function checkArgNumber($expectedNum, $command) {
-		if (count($this->args) != $expectedNum) {
+		if (count($this->args) < $expectedNum) {
 			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'php acl.php help\' for help on usage of the '.$command.' command.');
 		}
 	}
@@ -557,13 +559,9 @@ class AclCLI {
 	function nodeExists($type, $id) {
 		//$this->stdout("Check to see if $type with ID = $id exists...\n");
 		extract($this->__dataVars($type));
-		$possibility = $this->Acl->{$class}->find('id = ' . $id);
-
-		if (empty($possibility[$class]['id'])) {
-			return false;
-		} else {
-			return $possibility;
-		}
+		$conditions = $this->Acl->{$class}->_resolveID($id);
+		$possibility = $this->Acl->{$class}->findAll($conditions);
+		return $possibility;
 	}
 
 /**
