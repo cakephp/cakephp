@@ -76,6 +76,7 @@ class CacheHelper extends AppHelper {
 			$check = str_replace($replace, '', $check);
 			$check = str_replace('_' . $this->controllerName . '_', '', $check);
 			$check = convertSlash($check);
+			$check = preg_replace('/^_+/', '', $check);
 			$keys = str_replace('/', '_', array_keys($this->cacheAction));
 			$found = array_keys($this->cacheAction);
 			$index = null;
@@ -192,7 +193,7 @@ class CacheHelper extends AppHelper {
  * @return cached view
  * @access private
  */
-	function __writeFile($file, $timestamp) {
+	function __writeFile($content, $timestamp) {
 		$now = time();
 
 		if (is_numeric($timestamp)) {
@@ -205,11 +206,28 @@ class CacheHelper extends AppHelper {
 		if(empty($cache)){
 			return;
 		}
+
 		$cache = $cache . '.php';
-		$file = '<!--cachetime:' . $cacheTime . '--><?php
-					loadController(\'' . $this->controllerName . '\');
-					loadModels();
-					$this->controller = new ' . $this->controllerName . 'Controller();
+		$file = '<!--cachetime:' . $cacheTime . '--><?php';
+		if(empty($this->plugin)) {
+			$file .= '
+			loadController(\'' . $this->controllerName. '\');
+			loadModels();
+			';
+		} else {
+			$file .= '
+			if (!class_exists(\'AppController\')) {
+				if (file_exists(\'' . APP . 'app_controller.php\')) {
+					require(\''. APP . 'app_controller.php\');
+				} else {
+					require(\''.CAKE . 'app_controller.php\');
+				}
+			}
+			loadPluginController(\''.$this->plugin.'\',\''.$this->controllerName.'\');
+			loadPluginModels(\''.$this->plugin.'\');
+			';
+		}
+        $file .= '$this->controller = new ' . $this->controllerName . 'Controller();
 					$this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
 					$this->base = \'' . $this->base . '\';
 					$this->layout = \'' . $this->layout. '\';
@@ -239,7 +257,7 @@ class CacheHelper extends AppHelper {
 						}
 						$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
 					}
-					?>' . $file;
+					?>' . $content;
 		return cache('views' . DS . $cache, $file, $timestamp);
 	 }
 }
