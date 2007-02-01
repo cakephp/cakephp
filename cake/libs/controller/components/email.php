@@ -162,7 +162,7 @@ class EmailComponent extends Object{
  * @var string
  * @access protected
  */
-	var $_newLine = "\r\n";
+	var $_newLine = "\n";
 /**
  * Enter description here...
  *
@@ -208,7 +208,6 @@ class EmailComponent extends Object{
  * @access public
  */
 	function send($content = null){
-		$this->__createBoundary();
 		$this->__createHeader();
 
 		if($this->template === null) {
@@ -227,6 +226,10 @@ class EmailComponent extends Object{
 
 		if(!empty($this->attachments)) {
 			$this->__attachFiles();
+		}
+
+		if (!is_null($this->__boundary)) {
+			$this->__message .= '--' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
 		}
 
 		if ($this->_debug){
@@ -265,17 +268,18 @@ class EmailComponent extends Object{
 		if($this->sendAs === 'both'){
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content));
+			$View->layoutPath = 'email' . DS . 'text';
+			$msg .= $View->renderLayout($content) . $this->_newLine;
+
+			$msg .= '--' . $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content));
 			$View->layoutPath = 'email' . DS . 'html';
 			$msg .= $View->renderLayout($content);
 
-			$msg .= '--' .  $this->__boundary . $this->_newLine;
-			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content));
-			$View->layoutPath = 'email' . DS . 'text';
-			$msg .= $View->renderLayout($content);
 			return $msg;
 		} else {
 			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content));
@@ -320,14 +324,20 @@ class EmailComponent extends Object{
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
 		if(!empty($this->attachments) && $this->sendAs === 'text') {
+			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/mixed; boundary=' . $this->__boundary . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"' . $this->_newLine;
 		} elseif(!empty($this->attachments) && $this->sendAs === 'html') {
+			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/related; boundary=' . $this->__boundary . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__boundary . '"' . $this->_newLine;
 		} elseif($this->sendAs === 'html') {
+			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+		} elseif($this->sendAs === 'both') {
+			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/alternative; boundary=' . $this->__boundary . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/alternative; boundary="' . $this->__boundary . '"' . $this->_newLine;
 		}
 	}
 /**
