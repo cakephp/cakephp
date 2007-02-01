@@ -521,10 +521,12 @@ class Model extends Overloadable {
  * @param boolean $reset
  * @return boolean Always true
  */
-	function bindModel($params) {
+	function bindModel($params, $reset = true) {
 
 		foreach($params as $assoc => $model) {
-			$this->__backAssociation[$assoc] = $this->{$assoc};
+			if($reset === true) {
+				$this->__backAssociation[$assoc] = $this->{$assoc};
+			}
 
 			foreach($model as $key => $value) {
 				$assocName = $key;
