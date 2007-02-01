@@ -1905,7 +1905,7 @@ class Model extends Overloadable {
 
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (isset($db->config['prefix'])) {
+		if (!empty($db->config['prefix']) && $this->tablePrefix == null) {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 
