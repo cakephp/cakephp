@@ -479,7 +479,7 @@ class Validation extends Object {
 
 	/**
 	 * Validation of an IPv4 address.
-	 * 
+	 *
 	 * @param string $check The string to test.
 	 * @return boolean
  	 * @access public
@@ -500,7 +500,7 @@ class Validation extends Object {
 
 	/**
 	 * Checks whether the length of a string is greater or equal to a minimal length.
-	 * 
+	 *
 	 * @param string $check The string to test
 	 * @param int $min The minimal string length
 	 * @return boolean
@@ -513,7 +513,7 @@ class Validation extends Object {
 
 	/**
 	 * Checks whether the length of a string is smaller or equal to a maximal length..
-	 * 
+	 *
 	 * @param string $check The string to test
 	 * @param int $max The maximal string length
 	 * @return boolean
@@ -627,7 +627,7 @@ class Validation extends Object {
 
 	function url($check) {
 		$this->check = $check;
-		$this->regex = '/\\A(?:(https?|ftps?|file|news|gopher):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&:\/~\\+#]*[\\w\\-\\@?^=%&\/~\\+#])?)\\z/i';
+		$this->regex = '/\\A(?:(https?|ftps?|file|news|gopher):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,\'@?^=%&:;\/~\\+#]*[\\w\\-\\@?^=%&\/~\\+#])?)\\z/i';
 		return $this->_check();
 	}
 
