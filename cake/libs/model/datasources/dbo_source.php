@@ -901,12 +901,10 @@ class DboSource extends DataSource {
 			}
 		}
 
-		if (!$external && in_array($type, array('hasOne', 'belongsTo'))) {
-			if ($this->__bypass === false) {
-				$fields = $this->fields($linkModel, $alias, $assocData['fields']);
-			} else {
-				$fields = array();
-			}
+		if ((!$external && in_array($type, array('hasOne', 'belongsTo')) && $this->__bypass === false) || $external) {
+			$fields = $this->fields($linkModel, $alias, $assocData['fields']);
+		} else {
+			$fields = array();
 		}
 		$limit = '';
 
