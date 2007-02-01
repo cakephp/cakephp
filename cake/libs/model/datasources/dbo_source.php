@@ -1122,7 +1122,7 @@ class DboSource extends DataSource {
 		}
 		$conditions = $this->defaultConditions($model, $conditions);
 
-		if ($query === false) {
+		if ($conditions === false) {
 			return false;
 		}
 		$fields = join(',', $updates);
