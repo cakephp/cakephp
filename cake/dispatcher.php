@@ -106,6 +106,9 @@ class Dispatcher extends Object {
 																'base' => $this->base)));
 					} elseif(!class_exists($ctrlClass)) {
 						$missingController = true;
+					} else {
+						$params['plugin'] = null;
+						$this->plugin = null;
 					}
 				} else {
 					$params['plugin'] = Inflector::underscore($ctrlName);

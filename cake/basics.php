@@ -346,15 +346,16 @@
 			if (file_exists($file)) {
 				require($file);
 				return true;
-			} elseif (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
-				require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
-				return true;
-			} else {
-				return false;
+			} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
+				if(file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
+					return true;
+				} else {
+					return false;
+				}
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Loads a helper
