@@ -266,7 +266,11 @@ class DboMssql extends DboSource {
 				$data = $this->boolean((bool)$data);
 			break;
 			default:
-				$data = stripslashes(r("'", "''", $data));
+				if (get_magic_quotes_gpc()) {
+					$data = stripslashes(r("'", "''", $data));
+				} else {
+					$data = r("'", "''", $data);
+				}
 			break;
 		}
 		return "'" . $data . "'";
