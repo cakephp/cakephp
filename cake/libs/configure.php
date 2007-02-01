@@ -78,6 +78,13 @@ class Configure extends Object {
  */
 	var $behaviorPaths = array();
 /**
+ * Enter description here...
+ *
+ * @var integer
+ * @access public
+ */
+	var $debug = null;
+/**
  * Return a singleton instance of Configure.
  *
  * @return Configure instance
