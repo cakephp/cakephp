@@ -347,7 +347,13 @@ class DboPostgres extends DboSource {
  * @return int
  */
 	function lastInsertId($source, $field = 'id') {
-		if(strpos($this->__descriptions[$source][0]['default'], 'nextval') === false) {
+		foreach ($this->__descriptions[$source] as $sourceinfo) {
+			if (strcasecmp($sourceinfo['name'], $field) == 0) {
+				break;
+			}
+		}
+
+		if(strpos($sourceinfo['default'], 'nextval') === false) {
 			return null;
 		}
 
