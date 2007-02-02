@@ -66,7 +66,7 @@
 	}
 	if (!defined('CORE_PATH')) {
 		 if (function_exists('ini_set')) {
-			  ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS);
+			  ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS . PATH_SEPARATOR . ini_get('include_path'));
 			  define('APP_PATH', null);
 			  define('CORE_PATH', null);
 		 } else {
