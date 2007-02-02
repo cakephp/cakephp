@@ -355,8 +355,10 @@ class PaginatorHelper extends AppHelper {
 		$options);
 
 		$paging = $this->params($options['model']);
-		$start = $paging['page'] > 1 ? ($paging['page'] - 1) * ($paging['options']['limit']) + 1 : '1';
-		$end = ($paging['count'] < ($start + $paging['options']['limit'] - 1)) ? $paging['count'] : ($start + $paging['options']['limit'] - 1);
+		$paging['pageCount'] = ife($paging['pageCount'] == 0, 1, $paging['pageCount']);
+
+		$start = ife($paging['page'] > 1, ($paging['page'] - 1) * ($paging['options']['limit']) + 1, '1');
+		$end = ife(($paging['count'] < ($start + $paging['options']['limit'] - 1)), $paging['count'], ($start + $paging['options']['limit'] - 1));
 
 		switch ($options['format']) {
 			case 'range':
