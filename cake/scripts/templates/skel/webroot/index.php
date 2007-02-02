@@ -36,15 +36,14 @@
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
  * Each define has a commented line of code that explains what you would change.
- *
  */
 	if (!defined('ROOT')) {
-		 //define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
-		 //You should also use the DS define to seperate your directories
+		 //define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED. DO NOT ADD A TRAILING DIRECTORY SEPARATOR');
+		 //You should also use the DS define to separate your directories
 		 define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
 	if (!defined('APP_DIR')) {
-		 //define('APP_DIR', 'DIRECTORY NAME OF APPLICATION';
+		 //define('APP_DIR', 'DIRECTORY NAME OF APPLICATION');
 		 define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
 /**
@@ -52,8 +51,8 @@
  * outside of the distributed directory structure.
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		 //define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
-		 //You should also use the DS define to seperate your directories
+		 //define ('CAKE_CORE_INCLUDE_PATH', 'FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED. DO NOT ADD A TRAILING DIRECTORY SEPARATOR');
+		 //You should also use the DS define to separate your directories
 		 define('CAKE_CORE_INCLUDE_PATH', ROOT);
 	}
 ///////////////////////////////
@@ -67,7 +66,7 @@
 	}
 	if (!defined('CORE_PATH')) {
 		 if (function_exists('ini_set')) {
-			  ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS);
+			  ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS . PATH_SEPARATOR . ini_get('include_path'));
 			  define('APP_PATH', null);
 			  define('CORE_PATH', null);
 		 } else {
@@ -81,7 +80,7 @@
 		 $Dispatcher=new Dispatcher();
 		 $Dispatcher->dispatch($url);
 	}
-	if (Configure::read()) {
+	if (Configure::read() > 0) {
 		 echo "<!-- " . round(getMicrotime() - $TIME_START, 4) . "s -->";
 	}
 ?>
