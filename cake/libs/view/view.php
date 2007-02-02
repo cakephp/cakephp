@@ -339,20 +339,20 @@ class View extends Object {
  * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
  * @return string Rendered output
  */
-	function renderElement($name, $params = array()) {
+	function renderElement($name, $params = array(), $loadHelpers = false) {
 		$params = array_merge_recursive($params, $this->loaded);
 
-		if(isset($params['plugin'])) {
+		if (isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 		}
 
 		if (!is_null($this->plugin)) {
 			if (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext)) {
 				$elementFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . $this->ext;
-				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), $loadHelpers);
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml')) {
 				$elementFileName = APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'elements' . DS . $name . '.thtml';
-				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), $loadHelpers);
 			}
 		}
 
@@ -360,10 +360,10 @@ class View extends Object {
 		foreach($paths->viewPaths as $path) {
 			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$elementFileName = $path . 'elements' . DS . $name . $this->ext;
-				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), $loadHelpers);
 			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
 				$elementFileName = $path . 'elements' . DS . $name . '.thtml';
-				return $this->_render($elementFileName, array_merge($this->viewVars, $params), false);
+				return $this->_render($elementFileName, array_merge($this->viewVars, $params), $loadHelpers);
 			}
 		}
 		return "(Error rendering Element: {$name})";

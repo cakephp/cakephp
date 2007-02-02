@@ -269,20 +269,20 @@ class EmailComponent extends Object{
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content));
+			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
 			$msg .= '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content));
+			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'html';
 			$msg .= $View->renderLayout($content);
 
 			return $msg;
 		} else {
-			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content));
+			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . $this->sendAs;
 			return $View->renderLayout($content);
 		}
