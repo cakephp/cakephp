@@ -131,7 +131,7 @@ class FormHelper extends AppHelper {
 			case 'post':
 			case 'put':
 			case 'delete':
-				$append .= $this->hidden('_method', array('value' => up($options['type']), 'id' => $options['id'] . 'Method'));
+				//$append .= $this->hidden('_method', array('value' => up($options['type']), 'id' => $options['id'] . 'Method'));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
