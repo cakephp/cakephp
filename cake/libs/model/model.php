@@ -1641,7 +1641,7 @@ class Model extends Overloadable {
 		}
 
 		if (empty($data) || !$this->beforeValidate()) {
-			$this->validationErrors;
+			return $this->validationErrors;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
