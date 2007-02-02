@@ -535,7 +535,8 @@ class Controller extends Object {
 
 		$errors = array();
 		foreach($objects as $object) {
-			$errors = array_merge($errors, $this->{$object->name}->invalidFields($object->data));
+			$this->{$object->name}->set($object->data);
+			$errors = array_merge($errors, $this->{$object->name}->invalidFields());
 		}
 		return $this->validationErrors = (count($errors) ? $errors : false);
 	}
