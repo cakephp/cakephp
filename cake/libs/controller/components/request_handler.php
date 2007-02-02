@@ -7,8 +7,8 @@
  * These units have no use for Ajax requests, and this Component can tell how Cake should respond to the different
  * needs of a handheld computer and a desktop machine.
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2007, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,11 +16,11 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs.controller.components
- * @since			CakePHP v 0.10.4.1076
+ * @since			CakePHP(tm) v 0.10.4.1076
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$

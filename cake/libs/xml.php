@@ -8,8 +8,8 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c) 2005, Cake Software Foundation, Inc. 
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2007, Cake Software Foundation, Inc. 
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
  * 
@@ -17,15 +17,15 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright    Copyright (c) 2005, Cake Software Foundation, Inc.
- * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright    Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @link         http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package      cake
  * @subpackage   cake.cake.libs
  * @since        CakePHP v .0.10.3.1400
- * @version      $Revision$
- * @modifiedby   $LastChangedBy$
- * @lastmodified $Date$
- * @license      http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
+ * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 uses('set');
 

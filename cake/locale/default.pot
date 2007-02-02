@@ -1,7 +1,7 @@
 # SVN FILE: $Id$
 # LANGUAGE translation of CakePHP Application
-# CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
-# Copyright (c)	2006, Cake Software Foundation, Inc.
+# CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+# Copyright 2006-2007, Cake Software Foundation, Inc.
 # 								1785 E. Sahara Avenue, Suite 490-204
 # 								Las Vegas, Nevada 89104
 #

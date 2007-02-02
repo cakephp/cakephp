@@ -3,8 +3,8 @@
 /**
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2007, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -12,11 +12,11 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.app
- * @since			CakePHP v 0.10.0.1076
+ * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$

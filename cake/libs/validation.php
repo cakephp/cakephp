@@ -7,8 +7,8 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2007, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,11 +16,11 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.libs
- * @since			CakePHP v 1.2.0.3830
+ * @since			CakePHP(tm) v 1.2.0.3830
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -184,7 +184,6 @@ class Validation extends Object {
  * Validation of credit card numbers
  *
  * Returns true if $check is in the proper credit card format
- *
  *
  * @param mixed $check credit card number to validate
  * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
