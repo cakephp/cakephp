@@ -126,7 +126,7 @@ class DboSource extends DataSource {
 				$out[$keys[$i]] = $this->value($data[$keys[$i]]);
 			}
 			return $out;
-		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'))) {
+		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
 		} else {
 			return null;
@@ -216,7 +216,7 @@ class DboSource extends DataSource {
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				if (!is_array($params[$c])) {
+				if (!is_array($params[$c]) && !empty($params[$c])) {
 					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
 				} else {
 					$query[$args[2]->name . '.' . $f] = $params[$c];
