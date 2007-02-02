@@ -1434,10 +1434,8 @@ class DboSource extends DataSource {
 						$match['2'] = str_replace('-!', '', $match['2']);
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
-						if ($match['2'] != '' && !is_numeric($match['2'])) {
-							$match['2'] = $this->value($match['2']);
-							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
-						}
+						$match['2'] = $this->value($match['2']);
+						$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					}
 				}
