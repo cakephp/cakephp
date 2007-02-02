@@ -157,7 +157,11 @@ class CakeSession extends Object {
  * @access public
  */
 	function checkSessionVar($name) {
-		$expression = "return isset(" . $this->__sessionVarNames($name) . ");";
+		$var = $this->__sessionVarNames($name);
+		if (empty($var)) {
+		  return false;
+		}
+		$expression = "return isset(" . $var . ");";
 		return eval($expression);
 	}
 /**
@@ -170,6 +174,9 @@ class CakeSession extends Object {
 	function delSessionVar($name) {
 		if ($this->checkSessionVar($name)) {
 			$var = $this->__sessionVarNames($name);
+			if (empty($var)) {
+				return false;
+			}
 			eval ("unset($var);");
 			return true;
 		}
@@ -224,7 +231,11 @@ class CakeSession extends Object {
 			return $this->returnSessionVars();
 		}
 		if ($this->checkSessionVar($name)) {
-			$result = eval("return " . $this->__sessionVarNames($name) . ";");
+			$var = $this->__sessionVarNames($name);
+			if (empty($var)) {
+				return false;
+			}
+			$result = eval("return " . $var . ";");
 			return $result;
 		}
 		$this->__setError(2, "$name doesn't exist");
@@ -253,8 +264,11 @@ class CakeSession extends Object {
  * @return void
  */
 	function writeSessionVar($name, $value) {
-		$expression = $this->__sessionVarNames($name);
-		$expression .= " = \$value;";
+		$var = $this->__sessionVarNames($name);
+		if (empty($var)) {
+		  return false;
+		}
+		$expression = $var . " = \$value;";
 		eval ($expression);
 	}
 /**
@@ -507,7 +521,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __sessionVarNames($name) {
-		if (is_string($name)) {
+		if (is_string($name) && preg_match("/^[0-9a-zA-Z._-]+$/", $name)) {
 			if (strpos($name, ".")) {
 				$names = explode(".", $name);
 			} else {
