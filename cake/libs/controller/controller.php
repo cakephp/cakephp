@@ -400,7 +400,7 @@ class Controller extends Object {
 			session_write_close();
 		}
 
-		if (is_numeric($status) && $status > 0) {
+		if (!empty($status)) {
 			$codes = array(
 				100 => "Continue",
 				101 => "Switching Protocols",
@@ -440,14 +440,27 @@ class Controller extends Object {
 				501 => "Not Implemented",
 				502 => "Bad Gateway",
 				503 => "Service Unavailable",
-				504 => "Gateway Time-out");
-
-			if (isset($codes[$status])) {
-				header("HTTP/1.1 $status " . $codes[$status]);
+				504 => "Gateway Time-out"
+			);
+			if (is_string($status)) {
+				$codes = array_combine(array_values($codes), array_keys($codes));
 			}
+			if (isset($codes[$status])) {
+				$code = ife(is_numeric($status), $status, $codes[$status]);
+				$msg  = ife(is_string($status),  $status, $codes[$status]);
+				$status = "HTTP/1.1 {$code} {$msg}";
+			} else {
+				$status = null;
+			}
+		}
+		if (!empty($status)) {
+			header($status);
 		}
 		if ($url !== null) {
 			header('Location: ' . Router::url($url, true));
+		}
+		if (!empty($status)) {
+			header($status);
 		}
 		if ($exit) {
 			exit();
