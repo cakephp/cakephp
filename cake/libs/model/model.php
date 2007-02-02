@@ -1641,11 +1641,11 @@ class Model extends Overloadable {
 		}
 
 		if (empty($data) || !$this->beforeValidate()) {
-			return false;
+			$this->validationErrors;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
-			return array();
+			return $this->validationErrors;
 		}
 
 		if (isset($data[$this->name])) {
