@@ -108,11 +108,10 @@ class DboMssql extends DboSource {
  * @return boolean True if connected successfully, false on error
  */
 	function __construct($config) {
-		mssql_min_message_severity (15);
-		mssql_min_error_severity (2);
+		mssql_min_message_severity(15);
+		mssql_min_error_severity(2);
 		return parent::__construct($config);
 	}
-
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -145,7 +144,6 @@ class DboMssql extends DboSource {
 			$this->connected = true;
 		}
 	}
-
 /**
  * Disconnects from database.
  *
@@ -191,7 +189,6 @@ class DboMssql extends DboSource {
 			return $tables;
 		}
 	}
-
 /**
  * Returns an array of the fields in given table name.
  *
@@ -239,7 +236,6 @@ class DboMssql extends DboSource {
 
 		return r(']]', ']', r('[[', '[', $data));
 	}
-
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -275,7 +271,6 @@ class DboMssql extends DboSource {
 		}
 		return "'" . $data . "'";
 	}
-
 /**
  * Generates the fields list of an SQL query.
  *
@@ -322,7 +317,6 @@ class DboMssql extends DboSource {
 		}
 		return $fields;
 	}
-
 /**
  * Begin a transaction
  *
@@ -339,7 +333,6 @@ class DboMssql extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Commit a transaction
  *
@@ -355,7 +348,6 @@ class DboMssql extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Rollback a transaction
  *
@@ -370,7 +362,6 @@ class DboMssql extends DboSource {
 		}
 		return false;
 	}
-
 /**
  * Removes Identity (primary key) column from update data before returning to parent
  *
@@ -387,10 +378,8 @@ class DboMssql extends DboSource {
 				break;
 			}
 		}
-
 		return parent::update($model, $fields, $values);
 	}
-
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -404,10 +393,8 @@ class DboMssql extends DboSource {
 				return $error;
 			}
 		}
-
 		return null;
 	}
-
 /**
  * Returns number of affected rows in previous database operation. If no previous operation exists,
  * this returns false.
@@ -420,7 +407,6 @@ class DboMssql extends DboSource {
 		}
 		return null;
 	}
-
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
  * this returns false.
@@ -433,7 +419,6 @@ class DboMssql extends DboSource {
 		}
 		return null;
 	}
-
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -444,7 +429,6 @@ class DboMssql extends DboSource {
 		$id = $this->fetchAll('SELECT SCOPE_IDENTITY() AS insertID', false);
 		return $id[0][0]['insertID'];
 	}
-
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
@@ -462,10 +446,8 @@ class DboMssql extends DboSource {
 			$rt .= ' ' . $limit;
 			return $rt;
 		}
-
 		return null;
 	}
-
 /**
  * Converts database-layer column types to basic types
  *
@@ -482,9 +464,9 @@ class DboMssql extends DboSource {
 
 			return $col;
 		}
-		$col               =r(')', '', $real);
-		$limit             =null;
-		@list($col, $limit)=explode('(', $col);
+		$col                = r(')', '', $real);
+		$limit              = null;
+		@list($col, $limit) = explode('(', $col);
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
@@ -515,7 +497,6 @@ class DboMssql extends DboSource {
 		}
 		return 'text';
 	}
-
 /**
  * Enter description here...
  *
@@ -541,7 +522,6 @@ class DboMssql extends DboSource {
 			} else {
 				$this->map[$index++] = array(0, $column);
 			}
-
 			$j++;
 		}
 	}
@@ -553,8 +533,8 @@ class DboMssql extends DboSource {
  * @param boolean $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
-	function fetchAll($sql, $cache = true, $modelName = null) {
-		$results = parent::fetchAll($sql, $cache, $modelName);
+	function read(&$model, $queryData = array(), $recursive = null) {
+		$results = parent::read($model, $queryData, $recursive);
 		$this->__fieldMappings = array();
 		return $results;
 	}
