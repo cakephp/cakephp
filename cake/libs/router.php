@@ -699,13 +699,18 @@ class Router extends Overloadable {
  * An array of valid extension can be passed to this method. $extensions = array('rss', 'xml')
  * If null is passed anything after a . in the url will be considered an extension
  *
- * @param mixed $extensions
+ * @param string $ext
+ * @param string $ext
+ * @param string $ext
+ * @param string ...
  * @return void
  */
-	function parseExtensions($extensions = null) {
+	function parseExtensions() {
 		$_this =& Router::getInstance();
 		$_this->__parseExtensions = true;
-		$_this->__validExtensions = $extensions;
+		if (func_num_args() > 0) {
+			$_this->__validExtensions = func_get_args();
+		}
 	}
 }
 
