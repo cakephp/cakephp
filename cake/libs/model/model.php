@@ -801,8 +801,10 @@ class Model extends Overloadable {
 	function loadInfo() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe')) {
+		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe') && $this->useTable !== false) {
 			$this->_tableInfo = new Set($db->describe($this));
+		} elseif ($this->useTable === false) {
+			return new Set();
 		}
 		return $this->_tableInfo;
 	}
