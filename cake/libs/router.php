@@ -362,6 +362,14 @@ class Router extends Overloadable {
 			$_this->{$key} = $val;
 		}
 	}
+
+	function __notEmpty($var){
+		if($var === '0' || !empty($var)){
+			return true;
+		} else {
+			return false;
+		}
+	}
 /**
  * Finds URL for specified action.
  *
@@ -395,7 +403,6 @@ class Router extends Overloadable {
 		$extension = $output = $mapped = $q = null;
 
 		if (is_array($url) && !empty($url)) {
-			$url = array_filter($url);
 
 			if (isset($url['full_base']) && $url['full_base'] == true) {
 				$full = true;
@@ -471,7 +478,8 @@ class Router extends Overloadable {
 				if(!isset($url['action'])) {
 					$url['action'] = null;
 				}
-				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args)), $named));
+				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args, array($_this, "__notEmpty"))), $named), array($_this, "__notEmpty"));
+
 				if($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
 				}
