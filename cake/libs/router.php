@@ -62,11 +62,11 @@ class Router extends Overloadable {
  */
 	var $__parseExtensions = false;
 /**
- * Array of valid extensions to parse from a url
+ * List of valid extensions to parse from a URL.  If null, any extension is allowed.
  *
- * @var boolean
+ * @var array
  */
-	var $__validExtensions = array();
+	var $__validExtensions = null;
 /**
  * 'Constant' regular expression definitions for named route elements
  *
@@ -261,7 +261,7 @@ class Router extends Overloadable {
 		if ($_this->__parseExtensions) {
 			if(preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
 				$match = substr($match[0], 1);
-				if(is_null($_this->__validExtensions)) {
+				if(empty($_this->__validExtensions)) {
 					$url = substr($url, 0, strpos($url, '.' . $match));
 					$ext = $match;
 				} else {
