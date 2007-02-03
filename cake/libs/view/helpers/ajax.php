@@ -301,24 +301,25 @@ class AjaxHelper extends AppHelper {
 		} else {
 			$action = $params;
 		}
+		$htmlOptions = am(
+			array(
+				'id'		=> 'form' . intval(rand()),
+				'action'	=> $action,
+				'onsubmit'	=> "return false;",
+				'type'		=> $type
+			),
+			$this->__getHtmlOptions($options)
+		);
+		$options = am(
+			array(
+				'url' => $htmlOptions['action'],
+				'model' => false,
+				'with' => "Form.serialize('{$htmlOptions['id']}')"
+			),
+			$options
+		);
 
-		$htmlOptions = $this->__getHtmlOptions($options);
-		$htmlOptions['action'] = $action;
-
-		if (!isset($htmlOptions['id'])) {
-			$htmlOptions['id'] = 'form' . intval(rand());
-		}
-
-		$htmlOptions['onsubmit'] = "return false;";
-
-		if (!isset($options['with'])) {
-			$options['with'] = "Form.serialize('{$htmlOptions['id']}')";
-		}
-
-		$options['url'] = $htmlOptions['action'] = $action;
-		$htmlOptions['type'] = $type;
-
-		return $this->Form->create($htmlOptions)
+		return $this->Form->create($options['model'], $htmlOptions)
 			. $this->Javascript->event("'" . $htmlOptions['id']. "'", 'submit', $this->remoteFunction($options));
 	}
 
