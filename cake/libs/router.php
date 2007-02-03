@@ -62,6 +62,12 @@ class Router extends Overloadable {
  */
 	var $__parseExtensions = false;
 /**
+ * Array of valid extensions to parse from a url
+ *
+ * @var boolean
+ */
+	var $__validExtensions = array();
+/**
  * 'Constant' regular expression definitions for named route elements
  *
  * @var array
@@ -251,9 +257,22 @@ class Router extends Overloadable {
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
-		if ($_this->__parseExtensions && preg_match('/\.[0-9a-zA-Z]*$/', $url, $ext) == 1) {
-			$ext = substr($ext[0], 1);
-			$url = substr($url, 0, strpos($url, '.' . $ext));
+
+		if ($_this->__parseExtensions) {
+			if(preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
+				$match = substr($match[0], 1);
+				if(is_null($_this->__validExtensions)) {
+					$url = substr($url, 0, strpos($url, '.' . $match));
+					$ext = $match;
+				} else {
+					foreach($_this->__validExtensions AS $name) {
+						if(strcasecmp($name, $match) === 0) {
+							$url = substr($url, 0, strpos($url, '.' . $name));
+							$ext = $match;
+						}
+					}
+				}
+			}
 		}
 
 		foreach($_this->routes as $route) {
@@ -677,11 +696,16 @@ class Router extends Overloadable {
  * automatically switch to alternate layouts and templates, and load helpers
  * corresponding to the given content, i.e. RssHelper.
  *
+ * An array of valid extension can be passed to this method. $extensions = array('rss', 'xml')
+ * If null is passed anything after a . in the url will be considered an extension
+ *
+ * @param mixed $extensions
  * @return void
  */
-	function parseExtensions() {
+	function parseExtensions($extensions = null) {
 		$_this =& Router::getInstance();
 		$_this->__parseExtensions = true;
+		$_this->__validExtensions = $extensions;
 	}
 }
 
