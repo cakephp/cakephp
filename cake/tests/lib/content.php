@@ -27,9 +27,8 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
-<div id="wrapper">
 	<div id="content">
-		<h1>CakePHP(tm) Test Suite v 1.2.0.0</h1>
+		<h1>CakePHP Test Suite v 1.2.0.0</h1>
 			<ul>
 				<li><a href='<?php echo $groups;?>'>Core Test Groups</a></li>
 				<li><a href='<?php echo $cases;?>'>Core Test Cases</a></li>
@@ -38,3 +37,5 @@
 				<li><a href='<?php echo $groups;?>&amp;app=true'>App Test Groups</a></li>
 				<li><a href='<?php echo $cases;?>&amp;app=true'>App Test Cases</a></li>
 			</ul>
+	
+	

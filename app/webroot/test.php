@@ -189,7 +189,10 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 			break;
 		}
 	}
-
+	
+	CakePHPTestHeader();
+	CakePHPTestSuiteHeader();
+	
 	if (isset($_GET['group'])) {
 		if ('all' == $_GET['group']) {
 			TestManager::runAllTests(CakeTestsGetReporter());
@@ -211,9 +214,6 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 		CakePHPTestSuiteFooter();
 		exit();
 	}
-
-	CakePHPTestHeader();
-	CakePHPTestSuiteHeader();
 
 	if (isset($_GET['show']) && $_GET['show'] == 'cases') {
 		CakePHPTestCaseList();

@@ -31,7 +31,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv='content-Type' content='text/html; charset=iso-8859-1' />
-		<title>CakePHP(tm) Test Suite v 1.2.0.0</title>
+		<title>CakePHP Test Suite v 1.2.0.0</title>
 		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>/css/cake.generic.css" />
+		<style>
+			h3 {font-size: 150%}
+			a {font-size: 120%}
+			li {line-height: 140%}
+		</style>
 	</head>
 	<body>
+		<div id="container">
+			<div id="header">
+				<h1>CakePHP: the PHP Rapid Development Framework</h1>
+			</div>

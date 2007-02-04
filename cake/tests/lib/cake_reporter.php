@@ -51,19 +51,6 @@ class CakeHtmlReporter extends HtmlReporter {
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
 		$baseUrl = BASE_URL;
-		print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
-		print "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
-		print "<head>\n";
-		print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=" . $this->_character_set . "\" />\n";
-		print "<title>CakePHP(tm) Test Suite v 1.2.0.0 :: $testName</title>\n";
-		print "<link rel=\"stylesheet\" type=\"text/css\" href=\"$baseUrl/css/cake.generic.css\" />\n";
-		print "<style type=\"text/css\">\n";
-		print $this->_getCss() . "\n";
-		print "</style>\n";
-		print "</head>\n<body>\n";
-		print "<div id=\"wrapper\">\n";
-		print "<div id=\"content\">\n";
-		print "<h1>CakePHP(tm) Test Suite v 1.2.0.0</h1>\n";
 		print "<h2>$testName</h2>\n";
 		flush();
 	}

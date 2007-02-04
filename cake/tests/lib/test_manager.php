@@ -313,14 +313,14 @@ class HtmlTestManager extends TestManager {
 		$groupTests =& $manager->_getTestGroupList($directory);
 
 		if (1 > count($groupTests)) {
-			$noGroupTests = "<p>No test cases set up!</p>";
+			$noGroupTests = "<h3>No test cases set up!</h3>";
 			return $noGroupTests;
 		}
 
 		if (isset($_GET['app'])){
-			$buffer = "<p>Available App Test Groups:</p>\n<ul>";
+			$buffer = "<h3>Available App Test Groups:</h3>\n<ul>";
 		} else {
-			$buffer = "<p>Available Core Test Groups:</p>\n<ul>";
+			$buffer = "<h3>Available Core Test Groups:</h3>\n<ul>";
 		}
 		$buffer .= "<li><a href='" . $manager->getBaseURL() . "?group=all$userApp'>All tests</a></li>\n";
 
@@ -340,13 +340,13 @@ class HtmlTestManager extends TestManager {
 		$testCases =& $manager->_getTestCaseList($directory);
 
 		if (1 > count($testCases)) {
-			$noTestCases = "<p>No test cases set up!</p>";
+			$noTestCases = "<h3>No test cases set up!</h3>";
 			return $noTestCases;
 		}
 		if (isset($_GET['app'])) {
-			$buffer = "<p>Available App Test Cases:</p>\n<ul>";
+			$buffer = "<h3>Available App Test Cases:</h3>\n<ul>";
 		} else {
-			$buffer = "<p>Available Core Test Cases:</p>\n<ul>";
+			$buffer = "<h3>Available Core Test Cases:</h3>\n<ul>";
 		}
 		foreach ($testCases as $testCaseFile => $testCase) {
 			$buffer .= "<li><a href='" . $manager->getBaseURL() . "?case=" . urlencode($testCase) . $userApp ."'>" . $testCase . "</a></li>\n";

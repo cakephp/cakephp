@@ -27,16 +27,12 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
- 		</div>
+		</div>
  		<div id="footer">
- 			<p>
- 				<a href="https://trac.cakephp.org/wiki/Developement/TestSuite">CakePHP(tm) Test Suite </a> ::
- 				<a href="http://www.cakefoundation.org/"> &copy; 2005-2007, Cake Software Foundation, Inc.</a></p>
- 			<p>
  			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
  			<a href="http://www.cakephp.org/" target="_new">
  				<img src="<?php echo $baseUrl; ?>/img/cake.power.png" alt="CakePHP(tm) :: Rapid Development Framework" height = "15" width = "80" /></a></p>
  		</div>
- 		</div>
- 	</body>
- 	</html>
+	</div>
+</body>
+</html>
