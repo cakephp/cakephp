@@ -312,6 +312,11 @@ class HtmlTestManager extends TestManager {
 		$manager =& new HtmlTestManager();
 		$groupTests =& $manager->_getTestGroupList($directory);
 
+		if (1 > count($groupTests)) {
+			$noGroupTests = "<p>No test cases set up!</p>";
+			return $noGroupTests;
+		}
+
 		if (isset($_GET['app'])){
 			$buffer = "<p>Available App Test Groups:</p>\n<ul>";
 		} else {
