@@ -43,5 +43,7 @@
 		<div id="container">
 			<div id="header">
 				<h1>CakePHP: the PHP Rapid Development Framework</h1>
-				<h2>CakePHP Test Suite v 1.2.0.0</h2>
 			</div>
+			<div id="content">
+			<h2>CakePHP Test Suite v 1.2.0.0</h2>
+			

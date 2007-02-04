@@ -27,7 +27,6 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
-	<div id="content">
 			<ul>
 				<li><a href='<?php echo $groups;?>'>Core Test Groups</a></li>
 				<li><a href='<?php echo $cases;?>'>Core Test Cases</a></li>
