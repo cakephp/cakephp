@@ -129,11 +129,11 @@ class DboSourceTest extends UnitTestCase {
 
 	function testStringConditionsParsing() {
 		$result = $this->db->conditions("Candy.name LIKE 'a' AND HardCandy.name LIKE 'c'");
-		$expected = " WHERE  `Candy`.`name` LIKE 'a' AND  `HardCandy`.`name` LIKE 'c'";
+		$expected = " WHERE  `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("HardCandy.name LIKE 'a' AND Candy.name LIKE 'c'");
-		$expected = " WHERE  `HardCandy`.`name` LIKE 'a' AND  `Candy`.`name` LIKE 'c'";
+		$expected = " WHERE  `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("Post.title = '1.1'");
@@ -153,7 +153,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("Aro.rght = Aro.lft + 1.1");
-		$expected = " WHERE  `Aro`.`rght` =  `Aro`.`lft` + 1.1";
+		$expected = " WHERE  `Aro`.`rght` = `Aro`.`lft` + 1.1";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
@@ -161,33 +161,33 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
-		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND  `Sportstaette`.`sportstaettenart_id` = 2';
+		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
-		$expected = ' WHERE  `Sportstaette`.`sportstaettenart_id` = 2 AND  `Sportstaette`.`sportstaette` LIKE "%ru%"';
+		$expected = ' WHERE  `Sportstaette`.`sportstaettenart_id` = 2 AND `Sportstaette`.`sportstaette` LIKE "%ru%"';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('SUM(Post.comments_count) > 500 AND NOT Post.title IS NULL AND NOT Post.extended_title IS NULL');
-		$expected = ' WHERE SUM( `Post`.`comments_count`) > 500 AND NOT  `Post`.`title` IS NULL AND NOT  `Post`.`extended_title` IS NULL';
+		$expected = ' WHERE SUM( `Post`.`comments_count`) > 500 AND NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.title IS NULL AND NOT Post.extended_title IS NULL AND SUM(Post.comments_count) > 500');
-		$expected = ' WHERE NOT  `Post`.`title` IS NULL AND NOT  `Post`.`extended_title` IS NULL AND SUM( `Post`.`comments_count`) > 500';
+		$expected = ' WHERE NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL AND SUM( `Post`.`comments_count`) > 500';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.extended_title IS NULL AND NOT Post.title IS NULL AND Post.title != "" AND SPOON(SUM(Post.comments_count) + 1.1) > 500');
-		$expected = ' WHERE NOT  `Post`.`extended_title` IS NULL AND NOT  `Post`.`title` IS NULL AND  `Post`.`title` != "" AND SPOON(SUM( `Post`.`comments_count`) + 1.1) > 500';
+		$expected = ' WHERE NOT `Post`.`extended_title` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title` != "" AND SPOON(SUM( `Post`.`comments_count`) + 1.1) > 500';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
-		$expected = ' WHERE NOT  `Post`.`title_extended` IS NULL AND NOT  `Post`.`title` IS NULL AND  `Post`.`title_extended` !=  `Post`.`title`';
+		$expected = ' WHERE NOT `Post`.`title_extended` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title_extended` != `Post`.`title`';
 		$this->assertEqual($result, $expected);
 	}
 
 	function testArrayConditionsParsing() {
 		$result = $this->db->conditions(array('Candy.name' => 'LIKE a', 'HardCandy.name' => 'LIKE c'));
-		$expected = " WHERE `Candy`.`name` LIKE  'a' AND `HardCandy`.`name` LIKE  'c'";
+		$expected = " WHERE `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE  'c'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('HardCandy.name' => 'LIKE a', 'Candy.name' => 'LIKE c'));
