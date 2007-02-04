@@ -50,8 +50,7 @@ class ModelTest extends UnitTestCase {
 	function testIdentity() {
 		$result = $this->test->name;
 		$expected = 'Test';
-		$this->assertEqual($result, $expected, "Identity test failed, got {$result}, expected {$expected}.");
+		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>

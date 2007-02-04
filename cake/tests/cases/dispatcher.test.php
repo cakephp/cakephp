@@ -39,12 +39,12 @@ class DispatcherTest extends UnitTestCase {
 	function testParseParamsWithoutZerosAndEmptyPost() {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/testcontroller/testaction/params1/params2/params3");
-		$this->assertIdentical($test['controller'], 'testcontroller', "%s");
-		$this->assertIdentical($test['action'], 'testaction', "%s");
-		$this->assertIdentical($test['pass'][0], 'params1', "%s");
-		$this->assertIdentical($test['pass'][1], 'params2', "%s");
-		$this->assertIdentical($test['pass'][2], 'params3', "%s");
-		$this->assertFalse(!empty($test['form']), "%s");
+		$this->assertIdentical($test['controller'], 'testcontroller');
+		$this->assertIdentical($test['action'], 'testaction');
+		$this->assertIdentical($test['pass'][0], 'params1');
+		$this->assertIdentical($test['pass'][1], 'params2');
+		$this->assertIdentical($test['pass'][2], 'params3');
+		$this->assertFalse(!empty($test['form']));
 	}
 
 	function testParseParamsReturnsPostedData() {
@@ -52,50 +52,50 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/");
 		$this->assertTrue($test['form'], "Parsed URL not returning post data");
-		$this->assertIdentical($test['form']['testdata'], "My Posted Content", "%s");
+		$this->assertIdentical($test['form']['testdata'], "My Posted Content");
 	}
 
 	function testParseParamsWithSingleZero() {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/testcontroller/testaction/1/0/23");
-		$this->assertIdentical($test['controller'], 'testcontroller', "%s");
-		$this->assertIdentical($test['action'], 'testaction', "%s");
-		$this->assertIdentical($test['pass'][0], '1', "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1], "%s");
-		$this->assertIdentical($test['pass'][2], '23', "%s");
+		$this->assertIdentical($test['controller'], 'testcontroller');
+		$this->assertIdentical($test['action'], 'testaction');
+		$this->assertIdentical($test['pass'][0], '1');
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1]);
+		$this->assertIdentical($test['pass'][2], '23');
 	}
 
 	function testParseParamsWithManySingleZeros() {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/testcontroller/testaction/0/0/0/0/0/0");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][0], "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1], "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][2], "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][3], "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][4], "%s");
-		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][5], "%s");
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][0]);
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1]);
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][2]);
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][3]);
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][4]);
+		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][5]);
 	}
 
 	function testParseParamsWithManyZerosInEachSectionOfUrl() {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
-		$this->assertPattern('/\\A(?:000)\\z/', $test['pass'][0], "%s");
-		$this->assertPattern('/\\A(?:0000)\\z/', $test['pass'][1], "%s");
-		$this->assertPattern('/\\A(?:00000)\\z/', $test['pass'][2], "%s");
-		$this->assertPattern('/\\A(?:000000)\\z/', $test['pass'][3], "%s");
-		$this->assertPattern('/\\A(?:000000)\\z/', $test['pass'][4], "%s");
-		$this->assertPattern('/\\A(?:0000000)\\z/', $test['pass'][5], "%s");
+		$this->assertPattern('/\\A(?:000)\\z/', $test['pass'][0]);
+		$this->assertPattern('/\\A(?:0000)\\z/', $test['pass'][1]);
+		$this->assertPattern('/\\A(?:00000)\\z/', $test['pass'][2]);
+		$this->assertPattern('/\\A(?:000000)\\z/', $test['pass'][3]);
+		$this->assertPattern('/\\A(?:000000)\\z/', $test['pass'][4]);
+		$this->assertPattern('/\\A(?:0000000)\\z/', $test['pass'][5]);
 	}
 
 	function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
 		$dispatcher =& new Dispatcher();
 		$test = $dispatcher->parseParams("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
-		$this->assertPattern('/\\A(?:01)\\z/', $test['pass'][0], "%s");
-		$this->assertPattern('/\\A(?:0403)\\z/', $test['pass'][1], "%s");
-		$this->assertPattern('/\\A(?:04010)\\z/', $test['pass'][2], "%s");
-		$this->assertPattern('/\\A(?:000002)\\z/', $test['pass'][3], "%s");
-		$this->assertPattern('/\\A(?:000030)\\z/', $test['pass'][4], "%s");
-		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5], "%s");
+		$this->assertPattern('/\\A(?:01)\\z/', $test['pass'][0]);
+		$this->assertPattern('/\\A(?:0403)\\z/', $test['pass'][1]);
+		$this->assertPattern('/\\A(?:04010)\\z/', $test['pass'][2]);
+		$this->assertPattern('/\\A(?:000002)\\z/', $test['pass'][3]);
+		$this->assertPattern('/\\A(?:000030)\\z/', $test['pass'][4]);
+		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5]);
 	}
 }
 ?>

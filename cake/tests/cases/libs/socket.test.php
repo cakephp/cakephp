@@ -40,24 +40,23 @@ class SocketTest extends UnitTestCase {
 	}
 
 	function testSocketConnection() {
-		$this->assertTrue($this->socket->connected, 'Socket connection error: socket not connected when it should be');
+		$this->assertTrue($this->socket->connected);
 		$this->socket->disconnect();
-		$this->assertFalse($this->socket->connected, 'Socket connection error: socket connected when it should not be');
+		$this->assertFalse($this->socket->connected);
 		$this->socket->connect();
-		$this->assertTrue($this->socket->connected, 'Socket connection error: socket not connected when it should be');
+		$this->assertTrue($this->socket->connected);
 	}
 
 	function testSocketHost() {
-		$this->assertEqual($this->socket->address(), '127.0.0.1', 'Socket address does not resolve to localhost IP (127.0.0.1)');
-		$this->assertEqual($this->socket->addresses(), array('127.0.0.1'), 'Socket address group does not resolve to localhost IP (127.0.0.1)');
-		$this->assertEqual($this->socket->host(), 'localhost', 'Socket host is not localhost');
-		$this->assertEqual($this->socket->lastError(), null, 'Socket connection error, expected null');
+		$this->assertEqual($this->socket->address(), '127.0.0.1');
+		$this->assertEqual($this->socket->addresses(), array('127.0.0.1'));
+		$this->assertEqual($this->socket->host(), 'localhost');
+		$this->assertEqual($this->socket->lastError(), null);
 	}
 
 	function testSocketWriting() {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
-		$this->assertTrue($this->socket->write($request), 'Couldn\'t write to socket');
+		$this->assertTrue($this->socket->write($request));
 	}
 }
-
 ?>

@@ -50,12 +50,11 @@ class AjaxTest extends UnitTestCase {
 	function testDraggable() {
 		$result = $this->ajax->drag('id', array('handle' => 'other_id'));
 		$expected = '<script type="text/javascript">new Draggable(\'id\', {handle:\'other_id\'});</script>';
-		$this->assertEqual($result, $expected, "Error generating script.aculo.us draggable object, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
 	}
 
 	function tearDown() {
 		unset($this->ajax);
 	}
 }
-
 ?>

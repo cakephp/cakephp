@@ -37,6 +37,7 @@
 			h3 {font-size: 150%}
 			a {font-size: 120%}
 			li {line-height: 140%}
+			.fail { background-color: inherit; color: red; }
 		</style>
 	</head>
 	<body>
@@ -46,4 +47,3 @@
 			</div>
 			<div id="content">
 			<h2>CakePHP Test Suite v 1.2.0.0</h2>
-			
