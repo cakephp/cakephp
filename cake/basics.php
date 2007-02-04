@@ -614,15 +614,17 @@
 	function vendor($name) {
 		$args = func_get_args();
 		$c = func_num_args();
-
 		for ($i = 0; $i < $c; $i++) {
 			$arg = $args[$i];
 			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
 				require_once(APP . 'vendors' . DS . $arg . '.php');
-			} else {
+			} elseif (file_exists(VENDORS . $arg . '.php')) {
 				require_once(VENDORS . $arg . '.php');
+			} else {
+				return false;
 			}
 		}
+		return true;
 	}
 /**
  * Normalizes a string or array list

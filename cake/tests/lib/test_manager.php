@@ -26,10 +26,10 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-define ('CORE_TEST_CASES', CAKE_CORE_INCLUDE_PATH .'cake' . DS . 'tests' .DS. 'cases');
-define ('CORE_TEST_GROUPS', CAKE_CORE_INCLUDE_PATH  .'cake' . DS . 'tests' .DS. 'groups');
-define ('APP_TEST_CASES', ROOT . APP_DIR . 'tests' .DS. 'cases');
-define ('APP_TEST_GROUPS', ROOT . APP_DIR . 'tests' .DS. 'groups');
+define ('CORE_TEST_CASES', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS .  'tests' . DS . 'cases');
+define ('CORE_TEST_GROUPS', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS .  'tests' . DS . 'groups');
+define ('APP_TEST_CASES', APP . 'tests' .DS. 'cases');
+define ('APP_TEST_GROUPS', APP . 'tests' .DS. 'groups');
 /**
  * Short description for class.
  *
@@ -50,7 +50,7 @@ class TestManager {
 
 	function _installSimpleTest() {
 		vendor('simpletest'.DS.'unit_tester', 'simpletest'.DS.'web_tester', 'simpletest'.DS.'mock_objects');
-		require_once(LIB_TESTS.'cake_web_test_case.php');
+		require_once(LIB_TESTS . 'cake_web_test_case.php');
 	}
 
 	function runAllTests(&$reporter) {

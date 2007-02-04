@@ -29,34 +29,24 @@
 error_reporting(E_ALL);
 set_time_limit(600);
 ini_set('memory_limit','128M');
-class CakeDummyTestClass{
-
-}
-
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 if (!defined('ROOT')) {
-	//define('ROOT', 'FULL PATH TO DIRECTORY WHERE APP DIRECTORY IS LOCATED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
-	define('ROOT', dirname(dirname(dirname(dirname(__FILE__)))).DS);
+	define('ROOT', dirname(dirname(dirname(__FILE__))));
 }
 if (!defined('APP_DIR')) {
-	//define('APP_DIR', 'DIRECTORY NAME OF APPLICATION';
-	define ('APP_DIR', basename(dirname(dirname(dirname(__FILE__)))).DS);
+	define('APP_DIR', basename(dirname(dirname(__FILE__))));
 }
-/**
- * This only needs to be changed if the cake installed libs are located
- * outside of the distributed directory structure.
- */
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-	//define ('CAKE_CORE_INCLUDE_PATH', FULL PATH TO DIRECTORY WHERE CAKE CORE IS INSTALLED DO NOT ADD A TRAILING DIRECTORY SEPARATOR';
 	define('CAKE_CORE_INCLUDE_PATH', ROOT);
 }
 if (!defined('WEBROOT_DIR')) {
-	define ('WEBROOT_DIR', basename(dirname(dirname(__FILE__))));
+	define('WEBROOT_DIR', basename(dirname(__FILE__)));
 }
-define('WWW_ROOT', dirname(dirname(__FILE__)));
-
+if (!defined('WWW_ROOT')) {
+	define('WWW_ROOT', dirname(__FILE__) . DS);
+}
 if (!defined('CORE_PATH')) {
 	if (function_exists('ini_set')) {
 		ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS . PATH_SEPARATOR . ini_get('include_path'));
@@ -68,15 +58,17 @@ if (!defined('CORE_PATH')) {
 	}
 }
 
-require_once APP_PATH . 'core.php';
+ini_set('display_errors', 1);
+require_once CORE_PATH . 'cake' . DS . 'bootstrap.php';
+require_once CAKE . 'basics.php';
+require_once CAKE . 'config' . DS . 'paths.php';
+require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 if(DEBUG < 1) {
 	die('Invalid url.');
 }
-require_once 'cake' . DS . 'bootstrap.php';
-require_once 'cake' . DS . 'basics.php';
-require_once 'cake' . DS . 'config' . DS . 'paths.php';
-require_once 'cake' . DS . 'tests' . DS . 'lib' . DS . 'test_manager.php';
-vendor('simpletest' . DS . 'reporter');
+if(!vendor('simpletest' . DS . 'reporter')) {
+	die('SimpleTest is not installed.');
+}
 
 if (!isset($_SERVER['SERVER_NAME'])) {
 	$_SERVER['SERVER_NAME'] = '';
@@ -107,7 +99,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 		if (!$Reporter) {
 			switch (CAKE_TEST_OUTPUT) {
 				case CAKE_TEST_OUTPUT_HTML:
-					require_once TESTS . 'lib'.DS.'cake_reporter.php';
+					require_once LIB_TESTS . 'cake_reporter.php';
 					$Reporter = new CakeHtmlReporter();
 				break;
 				default:
@@ -170,7 +162,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				$baseUrl = BASE_URL;
-				include 'cake' . DS . 'tests' . DS . 'lib' . DS . 'header.php';
+				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:
 			default:
@@ -184,7 +176,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 			case CAKE_TEST_OUTPUT_HTML:
 				$groups = $_SERVER['PHP_SELF'].'?show=groups';
 				$cases = $_SERVER['PHP_SELF'].'?show=cases';
-				include 'cake' . DS . 'tests' . DS . 'lib' . DS . 'content.php';
+				include CAKE . 'tests' . DS . 'lib' . DS . 'content.php';
 			break;
 		}
 	}
@@ -192,7 +184,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 	function CakePHPTestSuiteFooter() {
 		switch ( CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
-				include 'cake' . DS . 'tests' . DS . 'lib' . DS . 'footer.php';
+				include CAKE . 'tests' . DS . 'lib' . DS . 'footer.php';
 			break;
 		}
 	}

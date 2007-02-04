@@ -131,7 +131,7 @@
 /**
  * Path to the lib test directory.
  */
-	define ('LIB_TESTS', TESTS.'lib'.DS);
+	define ('LIB_TESTS', CAKE.'tests'.DS.'lib'.DS);
 /**
  * Path to the temporary files directory.
  */
