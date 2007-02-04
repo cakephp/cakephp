@@ -662,32 +662,28 @@ class AjaxHelper extends AppHelper {
 			unset($options['indicator']);
 		}
 
-		$js_options = $this->_buildCallbacks($options);
-
-		if (!isset($js_options['asynchronous'])) {
-			$js_options['asynchronous'] = 'true';
-		}
-
-		if (!isset($js_options['evalScripts'])) {
-			$js_options['evalScripts'] = 'true';
-		}
-
+		$jsOptions = am(
+			array('asynchronous' => 'true', 'evalScripts'  => 'true'),
+			$this->_buildCallbacks($options)
+		);
 		$options = $this->_optionsToString($options, array('method'));
 
 		foreach($options as $key => $value) {
 			switch($key) {
 				case 'type':
-					$js_options['asynchronous'] = ($value == 'synchronous') ? 'false' : 'true';
+					$jsOptions['asynchronous'] = ife(($value == 'synchronous'), 'false', 'true');
 				break;
-
+				case 'evalScripts':
+					$jsOptions['evalScripts'] = ife($value, 'true', 'false');
+				break;
 				case 'position':
-					$js_options['insertion'] = "Insertion." . Inflector::camelize($options['position']);
+					$jsOptions['insertion'] = "Insertion." . Inflector::camelize($options['position']);
 				break;
 				case 'with':
-					$js_options['parameters'] = $options['with'];
+					$jsOptions['parameters'] = $options['with'];
 				break;
 				case 'form':
-					$js_options['parameters'] = 'Form.serialize(this)';
+					$jsOptions['parameters'] = 'Form.serialize(this)';
 				break;
 				case 'requestHeaders':
 					$keys = array();
@@ -695,13 +691,21 @@ class AjaxHelper extends AppHelper {
 						$keys[] = "'" . $key . "'";
 						$keys[] = "'" . $val . "'";
 					}
-					$js_options['requestHeaders'] = '[' . join(', ', $keys) . ']';
+					$jsOptions['requestHeaders'] = '[' . join(', ', $keys) . ']';
 				break;
 			}
 		}
-		return $this->_buildOptions($js_options, $this->ajaxOptions);
+		return $this->_buildOptions($jsOptions, $this->ajaxOptions);
 	}
-
+/**
+ * Private Method to return a string of html options
+ * option data as a JavaScript options hash.
+ *
+ * @param array $options	Options in the shape of keys and values
+ * @param array $extra	Array of legal keys in this options context
+ * @return array Array of html options
+ * @access private
+ */
 	function __getHtmlOptions($options, $extra = array()) {
 		foreach($this->ajaxOptions as $key) {
 			if (isset($options[$key])) {
