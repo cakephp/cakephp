@@ -19,7 +19,7 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake
- * @subpackage		cake.cake.tests.lib
+ * @subpackage		cake.cake.tests.libs
  * @since			CakePHP(tm) v 1.2.0.4433
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -28,12 +28,11 @@
  */
 ?>
 	<div id="content">
-			<ul>
-				<li><a href='<?php echo $groups;?>'>Core Test Groups</a></li>
-				<li><a href='<?php echo $cases;?>'>Core Test Cases</a></li>
-			</ul>
-			<ul>
-				<li><a href='<?php echo $groups;?>&amp;app=true'>App Test Groups</a></li>
-				<li><a href='<?php echo $cases;?>&amp;app=true'>App Test Cases</a></li>
-			</ul>
-
+		<h2>SimpleTest is not installed</h2>
+		<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
+		<p>SimpleTest can be placed in one of the follwing directories.</p>
+		<ul>
+			<li><?php echo CAKE; ?>vendors </li>
+			<li><?php echo APP_DIR . DS; ?>vendors</li>
+		</ul>
+		<p><a href="http://www.simpletest.org/en/download.html" target="_new">Download SimpleTest</a></p>

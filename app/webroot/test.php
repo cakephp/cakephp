@@ -66,9 +66,6 @@ require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 if(DEBUG < 1) {
 	die('Invalid url.');
 }
-if(!vendor('simpletest' . DS . 'reporter')) {
-	die('SimpleTest is not installed.');
-}
 
 if (!isset($_SERVER['SERVER_NAME'])) {
 	$_SERVER['SERVER_NAME'] = '';
@@ -92,6 +89,13 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_HTML);
 } else {
 	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_TEXT);
+}
+
+if(!vendor('simpletest' . DS . 'reporter')) {
+	CakePHPTestHeader();
+	include CAKE . 'tests' . DS . 'lib' . DS . 'simpletest.php';
+	CakePHPTestSuiteFooter();
+	exit();
 }
 
 	function &CakeTestsGetReporter() {
@@ -162,6 +166,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				$baseUrl = BASE_URL;
+				$characterSet = 'ISO-8859-1';
 				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:
@@ -189,10 +194,10 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 			break;
 		}
 	}
-	
+
 	CakePHPTestHeader();
 	CakePHPTestSuiteHeader();
-	
+
 	if (isset($_GET['group'])) {
 		if ('all' == $_GET['group']) {
 			TestManager::runAllTests(CakeTestsGetReporter());

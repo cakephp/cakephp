@@ -31,7 +31,10 @@
 	}
 	require_once LIBS.'model'.DS.'model.php';
 
-	class Test extends Model { var $useTable = false; }
+	class Test extends Model {
+		var $useTable = false;
+		var $name = 'Test';
+	}
 /**
  * Short description for class.
  *

@@ -30,7 +30,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<meta http-equiv='content-Type' content='text/html; charset=iso-8859-1' />
+		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
 		<title>CakePHP Test Suite v 1.2.0.0</title>
 		<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl; ?>/css/cake.generic.css" />
 		<style>
@@ -43,4 +43,5 @@
 		<div id="container">
 			<div id="header">
 				<h1>CakePHP: the PHP Rapid Development Framework</h1>
+				<h2>CakePHP Test Suite v 1.2.0.0</h2>
 			</div>
