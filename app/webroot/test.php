@@ -184,6 +184,7 @@ if(isset($_GET['output']) && $_GET['output'] == 'html') {
 	function CakePHPTestSuiteFooter() {
 		switch ( CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
+				$baseUrl = BASE_URL;
 				include CAKE . 'tests' . DS . 'lib' . DS . 'footer.php';
 			break;
 		}
