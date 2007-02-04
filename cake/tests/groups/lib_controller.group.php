@@ -33,9 +33,9 @@
  * @subpackage	cake.tests.groups
  */
 class LibControllerGroupTest extends GroupTest {
+	var $label = 'All cake/libs/controller/* (Not yet implemented)';
 
 	function LibControllerGroupTest() {
-		$this->GroupTest('All cake/libs/controller/*');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller');
 	}
 }

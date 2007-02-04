@@ -117,7 +117,21 @@ if(!vendor('simpletest' . DS . 'reporter')) {
 	function CakePHPTestRunMore() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
-				echo "<p><a href='" . $_SERVER['PHP_SELF'] . "'>Run more tests</a></p>\n";
+				if (isset($_GET['group'])) {
+					if(isset($_GET['app'])) {
+						$show = '?show=groups&amp;app=true';
+					} else {
+						$show = '?show=groups';
+					}
+				}
+				if (isset($_GET['case'])) {
+					if(isset($_GET['app'])) {
+						$show = '??show=cases&amp;app=truee';
+					} else {
+						$show = '?show=cases';
+					}
+				}
+				echo "<p><a href='" . $_SERVER['PHP_SELF'] . $show . "'>Run more tests</a></p>\n";
 			break;
 		}
 	}

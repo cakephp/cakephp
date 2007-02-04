@@ -105,7 +105,11 @@ class TestManager {
 		$test =& new GroupTest($groupTestName . ' group test');
 
 		foreach ($manager->_getGroupTestClassNames($filePath) as $groupTest) {
-			$test->addTestCase(new $groupTest());
+			$testCase = new $groupTest();
+			$test->addTestCase($testCase);
+			if(isset($testCase->label)) {
+				$test->_label = $testCase->label;
+			}
 		}
 		$test->run($reporter);
 	}
@@ -116,6 +120,11 @@ class TestManager {
 		foreach ($testCases as $testCase) {
 			$groupTest->addTestFile($testCase);
 		}
+	}
+
+	function addTestFile(&$groupTest, $file) {
+		$manager =& new TestManager();
+		$groupTest->addTestFile($file.'.test.php');
 	}
 
 	function &getTestCaseList($directory = '.') {

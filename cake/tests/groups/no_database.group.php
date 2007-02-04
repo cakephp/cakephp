@@ -33,11 +33,17 @@
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
-class AllCoreLibGroupTest extends GroupTest {
-	var $label = 'All cake/libs/* (Not yet implemented)';
+class AllCoreWithOutDatabaseGroupTest extends GroupTest {
+	var $label = 'All Test without a database connection';
 
-	function AllCoreLibGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs');
+	function AllCoreWithOutDatabaseGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'validation');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'paginator');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'ajax');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
 	}
 }
 ?>

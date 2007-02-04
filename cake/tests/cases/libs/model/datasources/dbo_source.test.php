@@ -130,98 +130,98 @@ class DboSourceTest extends UnitTestCase {
 	function testStringConditionsParsing() {
 		$result = $this->db->conditions("Candy.name LIKE 'a' AND HardCandy.name LIKE 'c'");
 		$expected = " WHERE  `Candy`.`name` LIKE 'a' AND  `HardCandy`.`name` LIKE 'c'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("HardCandy.name LIKE 'a' AND Candy.name LIKE 'c'");
 		$expected = " WHERE  `HardCandy`.`name` LIKE 'a' AND  `Candy`.`name` LIKE 'c'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("Post.title = '1.1'");
 		$expected = " WHERE  `Post`.`title` = '1.1'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("SUM(Post.comments_count) > 500");
 		$expected = " WHERE SUM( `Post`.`comments_count`) > 500";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("Aro.rght = Aro.lft + 1.1");
 		$expected = " WHERE  `Aro`.`rght` =  `Aro`.`lft` + 1.1";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
 		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND  `Sportstaette`.`sportstaettenart_id` = 2';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '" . r('%', '_', $expected) . "', got '" . r('%', '_', $result) . "'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
 		$expected = ' WHERE  `Sportstaette`.`sportstaettenart_id` = 2 AND  `Sportstaette`.`sportstaette` LIKE "%ru%"';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '" . r('%', '_', $expected) . "', got '" . r('%', '_', $result) . "'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('SUM(Post.comments_count) > 500 AND NOT Post.title IS NULL AND NOT Post.extended_title IS NULL');
 		$expected = ' WHERE SUM( `Post`.`comments_count`) > 500 AND NOT  `Post`.`title` IS NULL AND NOT  `Post`.`extended_title` IS NULL';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('NOT Post.title IS NULL AND NOT Post.extended_title IS NULL AND SUM(Post.comments_count) > 500');
 		$expected = ' WHERE NOT  `Post`.`title` IS NULL AND NOT  `Post`.`extended_title` IS NULL AND SUM( `Post`.`comments_count`) > 500';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('NOT Post.extended_title IS NULL AND NOT Post.title IS NULL AND Post.title != "" AND SPOON(SUM(Post.comments_count) + 1.1) > 500');
 		$expected = ' WHERE NOT  `Post`.`extended_title` IS NULL AND NOT  `Post`.`title` IS NULL AND  `Post`.`title` != "" AND SPOON(SUM( `Post`.`comments_count`) + 1.1) > 500';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
 		$expected = ' WHERE NOT  `Post`.`title_extended` IS NULL AND NOT  `Post`.`title` IS NULL AND  `Post`.`title_extended` !=  `Post`.`title`';
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 	}
 
 	function testArrayConditionsParsing() {
 		$result = $this->db->conditions(array('Candy.name' => 'LIKE a', 'HardCandy.name' => 'LIKE c'));
 		$expected = " WHERE `Candy`.`name` LIKE  'a' AND `HardCandy`.`name` LIKE  'c'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions(array('HardCandy.name' => 'LIKE a', 'Candy.name' => 'LIKE c'));
 		$expected = " WHERE `HardCandy`.`name` LIKE  'a' AND `Candy`.`name` LIKE  'c'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions(array('score' => 'BETWEEN 90.1 AND 95.7'));
 		$expected = " WHERE `score` BETWEEN  '90.1' AND '95.7'";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions(array('Post.title' => 1.1));
 		$expected = " WHERE `Post`.`title`  =  1.1";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 
 		$result = $this->db->conditions(array('SUM(Post.comments_count)' => '> 500'));
 		$expected = " WHERE SUM(`Post`.`comments_count`) >  500";
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::conditions(), %s");
 	}
 
 	function testFieldParsing() {
 		$result = $this->db->fields($this->model, 'Post', "CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name, Node.created");
 		$expected = array("CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", "`Node`.`created`");
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), expected '{$expected[0]}', got '{$result[0]}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), %s");
 
 		$result = $this->db->fields($this->model, 'Post', "Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name");
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), expected '{$expected[0]}', got '{$result[0]}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), %s");
 
 		$result = $this->db->fields($this->model, 'Post', "2.2,COUNT(*), SUM(Something.else) as sum, Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name,Post.title,Post.1,1.1");
 		$expected = array(
 			'2.2', 'COUNT(*)', 'SUM(`Something`.`else`) as sum', '`Node`.`created`',
 			"CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", '`Post`.`title`', '`Post`.`1`', '1.1'
 		);
-		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), expected '{$expected[0]}', got '{$result[0]}'.");
+		$this->assertEqual($result, $expected, "Error quoting field names in DboSource::fields(), %s");
 	}
 
 	function testMagicMethodQuerying() {
@@ -231,15 +231,15 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->model);
 		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
-		$this->assertEqual($result, $expected, "Error computing conditions from magic method with array value.");
+		$this->assertEqual($result, $expected, "Error computing conditions from magic method with array value. %s");
 
 		$result = $this->db->query('findByFieldName', array(null), $this->model);
 		$expected = array('TestModel.field_name' => null);
-		$this->assertEqual($result, $expected, "Error computing conditions from magic method with null value.");
+		$this->assertEqual($result, $expected, "Error computing conditions from magic method with null value. %s");
 
 		$result = $this->db->query('findByFieldName', array('= a'), $this->model);
 		$expected = array('TestModel.field_name' => '= = a');
-		$this->assertEqual($result, $expected, "Error computing conditions from magic method with string value.");
+		$this->assertEqual($result, $expected, "Error computing conditions from magic method with string value. %s");
 	}
 
 	function testSomething() {
