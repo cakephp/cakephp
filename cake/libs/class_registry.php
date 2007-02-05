@@ -43,7 +43,14 @@ class ClassRegistry {
  * @var array
  * @access private
  */
-	var $_objects = array();
+	var $__objects = array();
+/**
+ * Names of class names mapped to the object in the registry.
+ *
+ * @var array
+ * @access private
+ */
+	var $__map = array();
 /**
  * Return a singleton instance of the ClassRegistry.
  *
@@ -52,7 +59,7 @@ class ClassRegistry {
 	function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] = &new ClassRegistry;
+			$instance[0] =& new ClassRegistry();
 		}
 		 return $instance[0];
 	}
@@ -65,8 +72,8 @@ class ClassRegistry {
 	function addObject($key, &$object) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (array_key_exists($key, $_this->_objects) === false) {
-			$_this->_objects[$key] = &$object;
+		if (array_key_exists($key, $_this->__objects) === false) {
+			$_this->__objects[$key] = &$object;
 		}
 	}
 /**
@@ -78,8 +85,8 @@ class ClassRegistry {
 	function removeObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (array_key_exists($key, $_this->_objects) === true) {
-			unset($_this->_objects[$key]);
+		if (array_key_exists($key, $_this->__objects) === true) {
+			unset($_this->__objects[$key]);
 		}
 	}
 /**
@@ -91,7 +98,12 @@ class ClassRegistry {
 	function isKeySet($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		return array_key_exists($key, $_this->_objects);
+		if(array_key_exists($key, $_this->__objects)) {
+			return true;
+		} elseif (array_key_exists($key, $_this->__map)) {
+			return true;
+		}
+		return false;
 	}
 /**
  * Return object which corresponds to given key.
@@ -102,8 +114,42 @@ class ClassRegistry {
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		return $_this->_objects[$key];
+		if(isset($_this->__objects[$key])){
+			return $_this->__objects[$key];
+		} else {
+			$key = $_this->__getMap($key);
+			if(isset($_this->__objects[$key])){
+				return $_this->__objects[$key];
+			}
+		}
+		return false;
+	}
+/**
+ * Add a key name pair to the registry to map name to class in the regisrty.
+ *
+ * @param string $key
+ * @param string $name
+ * @return void
+ */
+	function map($key, $name){
+		$_this =& ClassRegistry::getInstance();
+		$key = Inflector::underscore($key);
+		$name = Inflector::underscore($name);
+		if (array_key_exists($key, $_this->__map) === false) {
+			$_this->__map[$key] = $name;
+		}
+	}
+/**
+ * Return the name of a class in the registry.
+ *
+ * @param string $key
+ * @return string
+ */
+	function __getMap($key){
+		$_this =& ClassRegistry::getInstance();
+		if (array_key_exists($key, $_this->__map)) {
+			return $_this->__map[$key];
+		}
 	}
 }
-
 ?>

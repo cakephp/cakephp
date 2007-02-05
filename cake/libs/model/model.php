@@ -350,6 +350,7 @@ class Model extends Overloadable {
 		$this->currentModel = Inflector::underscore($this->name);
 
 		ClassRegistry::addObject($this->currentModel, $this);
+		ClassRegistry::map($this->currentModel, $this->currentModel);
 		$this->id = $id;
 
 		if ($this->useTable !== false) {
@@ -631,9 +632,11 @@ class Model extends Overloadable {
 			if (!PHP5) {
 				$this->{$assoc} =& ClassRegistry::getObject($colKey);
 				$this->{$className} =& $this->{$assoc};
+				ClassRegistry::map($assoc, $colKey);
 			} else {
 				$this->{$assoc} = ClassRegistry::getObject($colKey);
 				$this->{$className} = $this->{$assoc};
+				ClassRegistry::map($assoc, $colKey);
 			}
 		} else {
 			if (!PHP5) {

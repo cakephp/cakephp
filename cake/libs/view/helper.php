@@ -345,6 +345,11 @@ class Helper extends Overloadable {
 		$result = null;
 		if (isset($this->data[$this->model()][$this->field()])) {
 			$result = h($this->data[$this->model()][$this->field()]);
+		} elseif (isset($this->data[$this->field()]) && is_array($this->data[$this->field()])) {
+			if (ClassRegistry::isKeySet($this->field())) {
+				$key =& ClassRegistry::getObject($this->field());
+				$result = $this->__selectedArray($this->data[$this->field()], $key->primaryKey);
+			}
 		}
 
 		if (is_array($options)) {
@@ -422,6 +427,31 @@ class Helper extends Overloadable {
  */
 	function afterLayout() {
 	}
+/**
+ * Enter description here...
+ *
+ * @param mixed $data
+ * @param string $key
+ * @return array
+ * @access private
+ */
+	function __selectedArray($data, $key = 'id') {
+		if(!is_array($data)) {
+			$model = $data;
+			if(!empty($this->data[$model][$model])) {
+				return $this->data[$model][$model];
+			}
+			if(!empty($this->data[$model])) {
+				$data = $this->data[$model];
+			}
+		}
+		$array = array();
+		if(!empty($data)) {
+			foreach($data as $var) {
+				$array[$var[$key]] = $var[$key];
+			}
+		}
+		return $array;
+	}
 }
-
 ?>
