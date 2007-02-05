@@ -197,25 +197,21 @@ class AuthComponent extends Object {
 
 		if ($this->_normalizeURL($this->loginAction) == $this->_normalizeURL($url)) {
 			// We're already at the login action
-
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				return;
 			}
-
 			$data = array(
-				$this->userModel . '.' . $this->fields['username'] => $controller->data[$this->userModel][$this->fields['username']],
-				$this->userModel . '.' . $this->fields['password'] => $controller->data[$this->userModel][$this->fields['password']]
+				$this->userModel . '.' . $this->fields['username'] => '= ' . $controller->data[$this->userModel][$this->fields['username']],
+				$this->userModel . '.' . $this->fields['password'] => '= ' . $controller->data[$this->userModel][$this->fields['password']]
 			);
-
 			if ($this->login($data)) {
 				$controller->redirect($this->redirect(), null, true);
 			} else {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
+				unset($controller->data[$this->userModel][$this->fields['password']]);
 			}
 			return;
-
 		} else {
-
 			if (!$this->Session->check($this->sessionKey)) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
@@ -225,11 +221,6 @@ class AuthComponent extends Object {
 					$this->render($this->ajaxLogin, 'ajax');
 					exit();
 				}
-	
-			} else {
-	
-				$this->UserData = $this->Session->read('Contact');
-				$this->set('UserData', $this->UserData);
 			}
 		}
 
@@ -242,6 +233,7 @@ class AuthComponent extends Object {
 			break;
 			case null:
 			case false:
+				return;
 			break;
 			default:
 				trigger_error(__('Auth::startup() - $type is set to an incorrect value.  Should be "actions", "objects", or null.'), E_USER_WARNING);
@@ -275,6 +267,7 @@ class AuthComponent extends Object {
 		}
 
 		if (empty($this->userModel)) {
+			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().'), E_USER_WARNING);
 			return false;
 		}
 
