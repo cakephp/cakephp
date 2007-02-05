@@ -434,6 +434,7 @@ class Bake {
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
 		
 		if(array_search($useTable, $this->__tables)) {
+			loadModel();
 			$tempModel = new Model(false, $useTable);
 			$db =& ConnectionManager::getDataSource($useDbConfig);
 			$modelFields = $db->describe($tempModel);
