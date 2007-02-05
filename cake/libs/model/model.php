@@ -495,7 +495,7 @@ class Model extends Overloadable {
 			} elseif (isset($options[0])) {
 				$assoc = $options[0];
 			}
-			if(!$permenant) {
+			if(!$permanent) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 			foreach($model as $key => $value) {
