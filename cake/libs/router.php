@@ -481,7 +481,7 @@ class Router extends Overloadable {
 				}
 			}
 			if ($match === false) {
-				if (empty($named) && empty($args) && $url['action'] == 'index') {
+				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
 				}
 			}
