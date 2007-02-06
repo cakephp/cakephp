@@ -505,6 +505,8 @@ class XMLNode extends Object {
  *
  */
 	function &child($id) {
+		$null = null;
+
 		if(is_int($id)) {
 			if(isset($this->children[$id])) {
 				return $this->children[$id];
@@ -517,9 +519,9 @@ class XMLNode extends Object {
 					return $this->children[$i];
 				}
 			}
-			return null;
+			return $null;
 		} else {
-			return null;
+			return $null;
 		}
 	}
 /**
