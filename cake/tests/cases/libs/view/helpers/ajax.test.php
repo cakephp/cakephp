@@ -47,6 +47,18 @@ class AjaxTest extends UnitTestCase {
 		$this->ajax->Javascript = new JavascriptHelper();
 	}
 
+	function testEvalScripts() {
+		$result = $this->ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$this->assertEqual($result, $expected);
+	}
+
+	function testAsynchronous() {
+		$result = $this->ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'type' => 'synchronous'));
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:false, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testDraggable() {
 		$result = $this->ajax->drag('id', array('handle' => 'other_id'));
 		$expected = '<script type="text/javascript">new Draggable(\'id\', {handle:\'other_id\'});</script>';
