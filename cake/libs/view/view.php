@@ -83,6 +83,12 @@ class View extends Object {
  */
 	var $field = null;
 /**
+ * Name of current model ID this view context is attached to
+ *
+ * @var string
+ */
+	var $modelId = null;
+/**
  * An array of names of models the particular controller wants to use.
  *
  * @var mixed A single name as a string or a list of names as an array.
