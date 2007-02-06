@@ -41,8 +41,17 @@ class InflectorTest extends UnitTestCase {
 	}
 
 	function testInflectingStuff() {
-		$this->assertEqual($this->inflector->pluralize('Bus'), 'Buses', 'Badness!');
-		$this->assertEqual($this->inflector->pluralize('bus'), 'buses', 'Badness!');
+		$result = $this->inflector->pluralize('Bus');
+		$expected = 'Buses';
+		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
+
+		$result = $this->inflector->pluralize('bus');
+		$expected = 'buses';
+		$this->assertEqual($this->inflector->pluralize('bus'), 'buses', "Badness! Expected '{$expected}', got '{$result}'");
+
+		$result = $this->inflector->singularize('menus');
+		$expected = 'menu';
+		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
 	}
 
 	function tearDown() {
