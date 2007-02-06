@@ -51,6 +51,10 @@ class AjaxTest extends UnitTestCase {
 		$result = $this->ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
 		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content'));
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testAsynchronous() {
