@@ -405,7 +405,7 @@ class FormHelper extends AppHelper {
 			break;
 		}
 
-		if ($type != 'hidden') {
+		if ($type != 'hidden' && $error !== false) {
 			$out .= $this->error($tagName, $error);
 			$out .= $after;
 		}
