@@ -1063,6 +1063,8 @@ class Model extends Overloadable {
 		if (!$exists) {
 			$this->id = false;
 		}
+		$success = false;
+		$created = false;
 
 		if (count($fields)) {
 			if (!empty($this->id)) {
@@ -1070,13 +1072,7 @@ class Model extends Overloadable {
 					if (!empty($joined)) {
 						$this->__saveMulti($joined, $this->id);
 					}
-
-					$this->afterSave();
-					$this->data = false;
-					$this->_clearCache();
-					return true;
-				} else {
-					return false;
+					$success = true;
 				}
 			} else {
 				if ($db->create($this, $fields, $values)) {
@@ -1085,7 +1081,7 @@ class Model extends Overloadable {
 						foreach ($this->belongsTo as $parent => $assoc) {
 							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
 								$parentObj =& $this->{$assoc['className']};
-
+								
 							}
 						}
 					}
@@ -1093,26 +1089,26 @@ class Model extends Overloadable {
 					if (!empty($joined)) {
 						$this->__saveMulti($joined, $this->id);
 					}
-
-					if (!empty($this->behaviors)) {
-						$behaviors = array_keys($this->behaviors);
-						$ct = count($behaviors);
-						for ($i = 0; $i < $ct; $i++) {
-							$this->behaviors[$behaviors[$i]]->afterSave($this);
-						}
-					}
-					$this->afterSave();
-					$this->data = false;
-					$this->_clearCache();
-					$this->validationErrors = array();
-					return true;
-				} else {
-					return false;
+					$success = $created = true;
 				}
 			}
-		} else {
-			return false;
+
+			if ($success) {
+				if (!empty($this->behaviors)) {
+					$behaviors = array_keys($this->behaviors);
+					$ct = count($behaviors);
+					for ($i = 0; $i < $ct; $i++) {
+						$this->behaviors[$behaviors[$i]]->afterSave($this, $created);
+					}
+				}
+				$this->afterSave($created);
+				$this->data = false;
+				$this->_clearCache();
+				$this->validationErrors = array();
+				return true;
+			}
 		}
+		return $success;
 	}
 /**
  * Saves model hasAndBelongsToMany data to the database.
@@ -1994,10 +1990,10 @@ class Model extends Overloadable {
 /**
  * After save callback
  *
+ * @param boolean $created True if this save created a new record
  * @return void
  */
-	function afterSave() {
-		return true;
+	function afterSave($created) {
 	}
 /**
  * Before delete callback
@@ -2013,7 +2009,6 @@ class Model extends Overloadable {
  * @return void
  */
 	function afterDelete() {
-		return true;
 	}
 /**
  * Before validate callback
