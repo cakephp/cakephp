@@ -40,7 +40,17 @@ class InflectorTest extends UnitTestCase {
 		$this->inflector = new Inflector();
 	}
 
-	function testInflectingStuff() {
+	function testInflectingSingulars() {
+		$result = $this->inflector->singularize('menus');
+		$expected = 'menu';
+		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
+
+		$result = $this->inflector->singularize('quizzes');
+		$expected = 'quiz';
+		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
+	}
+
+	function testInflectingPlurals() {
 		$result = $this->inflector->pluralize('Bus');
 		$expected = 'Buses';
 		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
@@ -49,8 +59,12 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'buses';
 		$this->assertEqual($this->inflector->pluralize('bus'), 'buses', "Badness! Expected '{$expected}', got '{$result}'");
 
-		$result = $this->inflector->singularize('menus');
-		$expected = 'menu';
+		$result = $this->inflector->pluralize('menu');
+		$expected = 'menus';
+		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
+
+		$result = $this->inflector->pluralize('quiz');
+		$expected = 'quizzes';
 		$this->assertEqual($result, $expected, "Badness! Expected '{$expected}', got '{$result}'");
 	}
 
