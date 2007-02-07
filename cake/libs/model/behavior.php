@@ -58,7 +58,7 @@ class ModelBehavior extends Object {
 
 	function beforeSave(&$model) { }
 
-	function afterSave(&$model) { }
+	function afterSave(&$model, $created) { }
 
 	function beforeDelete(&$model) { }
 
