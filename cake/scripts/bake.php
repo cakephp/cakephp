@@ -422,18 +422,18 @@ class Bake {
 		while($tableIsGood == false && low($useTable) != 'null') {
 			$db =& ConnectionManager::getDataSource($useDbConfig);
 			$fullTableName = $db->fullTableName($useTable, false);
-			$sources = $db->listSources();
-			if (is_array($sources) && !in_array(low($fullTableName), array_map('low', $sources))) {
+			if (is_array($this->__tables) && !in_array($fullTableName, $this->__tables)) {
 				$this->stdout($fullTableName . ' does not exist.');
 				$useTable = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
 				$tableIsGood = false;
 			} else {
+				$useTable = $fullTableName;
 				$tableIsGood = true;
 			}
 		}
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
 		
-		if(array_search($useTable, $this->__tables)) {
+		if(in_array($useTable, $this->__tables)) {
 			loadModel();
 			$tempModel = new Model(false, $useTable);
 			$db =& ConnectionManager::getDataSource($useDbConfig);
