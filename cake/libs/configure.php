@@ -261,17 +261,18 @@ class Configure extends Object {
 		$write = true;
 		$content = '';
 		foreach ($data as $key => $value) {
-			$content .= "\$config['$type']['$key'] = array(";
+			$content .= "\$config['$type']['$key']";
 			if(is_array($value)){
+				$content .= " = array(";
 				foreach($value as $key1 => $value2){
 					$value2 = addslashes($value2);
 					$content .= "'$key1' => '$value2', ";
 				}
+				$content .= ");\n";
 			} else {
 				$value = addslashes($value);
-				$content .= "'$key' => '$value'";
+				$content .= " = '$value';\n";
 			}
-			$content .= ");\n";
 		}
 		if(is_null($type)) {
 			$write = false;
