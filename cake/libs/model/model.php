@@ -455,14 +455,24 @@ class Model extends Overloadable {
 			$map = array_combine($methods, $call);
 		}
 		$count = count($call);
+		$pass = array(&$this);
+
+		if (!in_array(low($method), $methods)) {
+			$pass[] = $method;
+		}
+		foreach ($params as $param) {
+			$pass[] = $param;
+		}
 
 		if (in_array(low($method), $methods)) {
-			return $this->behaviors[$map[low($method)][1]]->{$map[low($method)][0]}($this, $params);
+			$it = $map[low($method)];
+			return call_user_func_array(array(&$this->behaviors[$it[1]], $it[0]), $pass);
+			return $this->behaviors[$it[1]]->{$it[0]}($this, $params);
 		}
 
 		for($i = 0; $i < $count; $i++) {
 			if (strpos($methods[$i], '/') === 0 && preg_match($methods[$i] . 'i', $method)) {
-				return $this->behaviors[$call[$i][1]]->{$call[$i][0]}($this, $params, $method);
+				return call_user_func_array(array($this->behaviors[$call[$i][1]], $call[$i][0]), $pass);
 			}
 		}
 		$return = $db->query($method, $params, $this);
@@ -916,7 +926,8 @@ class Model extends Overloadable {
 		}
 
 		if ($this->id !== null && $this->id !== false) {
-			return $this->find(array($this->name . '.' . $this->primaryKey => $id), $fields);
+			$this->data = $this->find(array($this->name . '.' . $this->primaryKey => $id), $fields);
+			return $this->data;
 		} else {
 			return false;
 		}
@@ -1306,7 +1317,22 @@ class Model extends Overloadable {
  * @return boolean True on success, false on failure
  */
 	function deleteAll($conditions, $cascade = true) {
+		if (empty($conditions)) {
+			return false;
+		}
+		$records = $this->findAll($conditions, array($this->escapeField()), null, null, null, 0);
+		if (empty($records)) {
+			return false;
+		}
+		$ids = Set::extract($records, "{n}.{$this->name}.{$this->primaryKey}");
+
+		foreach ($ids as $id) {
+			$this->_deleteLinks($id);
+			$this->_deleteDependent($id, $cascade);
+		}
+
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		return $db->delete($this, $conditions);
 	}
 /**
  * Returns true if a record with set id exists.
@@ -1809,9 +1835,12 @@ class Model extends Overloadable {
  * @param unknown_type $field
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
  */
-	function escapeField($field, $alias = null) {
-		if ($alias == null) {
+	function escapeField($field = null, $alias = null) {
+		if (empty($alias)) {
 			$alias = $this->name;
+		}
+		if (empty($field)) {
+			$field = $this->primaryKey;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->name($alias) . '.' . $db->name($field);
