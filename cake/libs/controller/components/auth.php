@@ -479,7 +479,6 @@ class AuthComponent extends Object {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
-			return $data[$this->userModel];
 		} else if (is_numeric($user)) {
 			// Assume it's a user's ID
 			$model =& $this->getUserModel();
@@ -487,6 +486,11 @@ class AuthComponent extends Object {
 
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
+			}
+		}
+		if (isset($data) && !empty($data)) {
+			if(!empty($data[$this->userModel][$this->fields['password']])) {
+				unset($data[$this->userModel][$this->fields['password']]);
 			}
 			return $data[$this->userModel];
 		} else {
