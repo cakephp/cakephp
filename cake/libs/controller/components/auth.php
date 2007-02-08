@@ -172,8 +172,10 @@ class AuthComponent extends Object {
  * @return void
  */
 	function startup(&$controller) {
-
 		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && DEBUG > 0)) {
+			return;
+		}
+		if (!$this->_setDefaults($controller)) {
 			return;
 		}
 
@@ -184,9 +186,10 @@ class AuthComponent extends Object {
 				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
 			}
 		}
+		$this->data = $controller->data;
 
-		if (!$this->_setDefaults($controller)) {
-			return;
+		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
+			return false;
 		}
 
 		if (!isset($controller->params['url']['url'])) {
@@ -249,12 +252,6 @@ class AuthComponent extends Object {
  * @return void
  */
 	function _setDefaults(&$controller) {
-		$this->data = $controller->data;
-
-		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
-			return false;
-		}
-
 		if (empty($this->userModel)) {
 			$classes = array_values(array_intersect(
 				array_map('strtolower', get_declared_classes()),
@@ -388,7 +385,7 @@ class AuthComponent extends Object {
  */
 	function validate($object, $user = null) {
 		$user = $this->identify($user);
-		if ($user == null) {
+		if (empty($user)) {
 			return false;
 		}
 		pr($user);
@@ -449,8 +446,11 @@ class AuthComponent extends Object {
  * @return array User record data, or null, if the user could not be identified.
  */
 	function identify($user = null) {
-		if ($user == null) {
-			$model =& $this->getUserModel();
+		if (empty($user)) {
+			$user = $this->user();
+			if (empty($user)) {
+				return null;
+			}
 		} else if (is_object($user) && is_a($user, 'Model')) {
 			if (!$user->exists()) {
 				return null;
