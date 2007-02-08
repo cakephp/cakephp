@@ -33,7 +33,7 @@
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode.php';
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco.php';
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aro.php';
-	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aros_aco.php';
+	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'permission.php';
 /**
  * Short description for class.
  *

@@ -249,11 +249,7 @@ class XmlHelper extends AppHelper {
 		if (!class_exists('XML') && !class_exists('xml')) {
 			uses('xml');
 		}
-
-		$options = am(
-			array('attributes' => false, 'format' => 'xml'),
-			$options
-		);
+		$options = am(array('attributes' => false, 'format' => 'xml'), $options);
 
 		switch ($options['format']) {
 			case 'xml':

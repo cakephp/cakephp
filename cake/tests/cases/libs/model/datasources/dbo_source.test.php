@@ -183,6 +183,10 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
 		$expected = ' WHERE NOT `Post`.`title_extended` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title_extended` != `Post`.`title`';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions("Comment.id = 'a'");
+		$expected = " WHERE  `Comment`.`id` = 'a'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testArrayConditionsParsing() {
@@ -204,6 +208,14 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->conditions(array('SUM(Post.comments_count)' => '> 500'));
 		$expected = " WHERE SUM(`Post`.`comments_count`) >  500";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('title' => 'LIKE %hello'));
+		$expected = " WHERE  (`title` LIKE  '%hello')";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('Post.name' => 'mad(g)ik'));
+		$expected = " WHERE  (`Post`.`name` mad(g) 'ik')";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -229,6 +241,10 @@ class DboSourceTest extends UnitTestCase {
 		$expected = array('TestModel.field_name' => '= value');
 		$this->assertEqual($result, $expected);
 
+		$result = $this->db->query('findAllById', array('a'), $this->model);
+		$expected = array('TestModel.id' => '= value');
+		$this->assertEqual($result, $expected);
+
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->model);
 		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
 		$this->assertEqual($result, $expected);
@@ -239,6 +255,12 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->query('findByFieldName', array('= a'), $this->model);
 		$expected = array('TestModel.field_name' => '= = a');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testOrderParsing() {
+		$result = $this->db->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
+		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
 		$this->assertEqual($result, $expected);
 	}
 
