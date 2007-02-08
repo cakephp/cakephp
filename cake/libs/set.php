@@ -178,6 +178,9 @@ class Set extends Object {
 			$path = $data;
 			$data = $this->get();
 		}
+		if (is_object($data)) {
+			$data = get_object_vars($data);
+		}
 
 		if (!is_array($path)) {
 			if (strpos($path, '/') !== 0 && strpos($path, './') === false) {
