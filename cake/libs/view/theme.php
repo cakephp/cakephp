@@ -59,10 +59,12 @@ class ThemeView extends View {
 	function __construct (&$controller) {
 		parent::__construct($controller);
     	$this->theme =& $controller->theme;
-    	$this->themeWeb = 'themed/'.$this->theme.'/';
-    	$this->themeElement = VIEWS.'themed'.DS.$this->theme.DS.'elements'.DS;
-    	$this->themeLayout =  VIEWS.'themed'.DS.$this->theme.DS.'layouts'.DS;
-    	$this->themePath = VIEWS.'themed'.DS.$this->theme.DS;
+    	if($this->theme !== null) {
+    		$this->themeWeb = 'themed/'.$this->theme.'/';
+    		$this->themeElement = VIEWS.'themed'.DS.$this->theme.DS.'elements'.DS;
+    		$this->themeLayout =  VIEWS.'themed'.DS.$this->theme.DS.'layouts'.DS;
+    		$this->themePath = VIEWS.'themed'.DS.$this->theme.DS;
+    	}
 	}
 
 /**
