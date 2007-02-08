@@ -1183,11 +1183,7 @@ class Model extends Overloadable {
  * @param mixed $fields
  * @return boolean True on success, false on failure
  */
-	function updateAll($conditions, $fields = null) {
-		if (empty($fields)) {
-			$fields = $conditions;
-			$conditions = true;
-		}
+	function updateAll($fields, $conditions = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->update($this, $fields, null, $conditions);
 	}
