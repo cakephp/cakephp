@@ -132,7 +132,7 @@ class JavascriptHelper extends AppHelper {
 			$url .= '.js';
 		}
 		if (strpos($url, '://') === false) {
-			$url = $this->webroot . $this->themeWeb . JS_URL . $url;
+			$url = $this->webroot(JS_URL . $url);
 		}
 		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
 

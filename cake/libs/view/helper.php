@@ -166,6 +166,28 @@ class Helper extends Overloadable {
 		return Router::url($url, $full);
 	}
 /**
+ * Checks if a file exists when theme is used, if no file is found default location is returned
+ *
+ * @param  string  $file
+ * @return string  $webPath web path to file.
+ */
+	function webroot($file) {
+		$webPath = "{$this->webroot}" . $file;
+		if(!empty($this->themeWeb)) {
+			$os = env('OS');
+			if (!empty($os) && strpos($os, 'Windows') !== false) {
+				$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
+			} else {
+				$path = WWW_ROOT . $this->themeWeb  . $file;
+			}
+			if(file_exists($path)){
+				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
+			}
+		}
+		return $webPath;
+	}
+
+/**
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
  *	+ 'compact'

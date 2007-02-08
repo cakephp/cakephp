@@ -577,7 +577,7 @@ class FormHelper extends AppHelper {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
-			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
+			$url = $this->webroot(IMAGES_URL . $path);
 		}
 		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}

@@ -310,8 +310,7 @@ class HtmlHelper extends AppHelper {
 			}
 			return;
 		}
-		$url = "{$this->webroot}" . (COMPRESS_CSS ? 'c' : '') . $this->themeWeb  . CSS_URL . $path . ".css";
-
+		$url = $this->webroot((COMPRESS_CSS ? 'c' : '') . CSS_URL . $path . ".css");
 		if ($rel == 'import') {
 			$out = sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
@@ -486,7 +485,7 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
-			$url = $this->webroot . $this->themeWeb . IMAGES_URL . $path;
+			$url = $this->webroot(IMAGES_URL . $path);
 		}
 
 		if (!isset($htmlAttributes['alt'])) {
