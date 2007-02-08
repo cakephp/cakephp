@@ -191,7 +191,6 @@ class AuthComponent extends Object {
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return false;
 		}
-
 		if (!isset($controller->params['url']['url'])) {
 			$url = '';
 		} else {
@@ -207,7 +206,7 @@ class AuthComponent extends Object {
 				$this->userModel . '.' . $this->fields['username'] => '= ' . $controller->data[$this->userModel][$this->fields['username']],
 				$this->userModel . '.' . $this->fields['password'] => '= ' . $controller->data[$this->userModel][$this->fields['password']]
 			);
-			if ($this->login($data)) {
+			if ($this->login($data) && $this->autoRedirect) {
 				$controller->redirect($this->redirect(), null, true);
 			} else {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
