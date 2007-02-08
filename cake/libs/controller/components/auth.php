@@ -495,24 +495,6 @@ class AuthComponent extends Object {
 		}
 	}
 /**
- * Allows setting of multiple properties of AuthComponent in a single line of code.
- *
- * @access public
- * @param array $properties An associative array containing AuthComponent
- *                          properties and corresponding values.
- * @return void
- */
-	function set($properties = array()) {
-		if (is_array($properties) && !empty($properties)) {
-			$vars = get_object_vars($this);
-			foreach ($properties as $key => $val) {
-				if (array_key_exists($key, $vars)) {
-					$this->{$key} = $val;
-				}
-			}
-		}
-	}
-/**
  * Component shutdown.  If user is logged in, wipe out redirect.
  *
  * @access public

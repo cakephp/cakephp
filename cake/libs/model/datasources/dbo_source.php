@@ -1326,8 +1326,8 @@ class DboSource extends DataSource {
 			}
 		}
 
-		if (is_string($conditions)) {
-			if (trim($conditions) == '') {
+		if (is_string($conditions) || empty($conditions) || $conditions === true) {
+			if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
 				$conditions = ' 1 = 1';
 			} else {
 				$start = null;
@@ -1365,7 +1365,7 @@ class DboSource extends DataSource {
 			$clause = ' WHERE ';
 			$out   = $this->conditionKeysToString($conditions);
 			if (empty($out)) {
-				return $clause . ' (1 = 1)';
+				return $clause . ' 1 = 1';
 			}
 			return $clause . ' (' . join(') AND (', $out) . ')';
 		}

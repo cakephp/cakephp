@@ -189,6 +189,24 @@ class Object{
 		return join("\n", $back);
 	}
 /**
+ * Allows setting of multiple properties of the object in a single line of code.
+ *
+ * @access public
+ * @param array $properties An associative array containing AuthComponent
+ *                          properties and corresponding values.
+ * @return void
+ */
+	function set($properties = array()) {
+		if (is_array($properties) && !empty($properties)) {
+			$vars = get_object_vars($this);
+			foreach ($properties as $key => $val) {
+				if (array_key_exists($key, $vars)) {
+					$this->{$key} = $val;
+				}
+			}
+		}
+	}
+/**
  * Used to report user friendly errors.
  * If there is a file app/error.php this file will be loaded
  * error.php is the AppError class it should extend ErrorHandler class.
