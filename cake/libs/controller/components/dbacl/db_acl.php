@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'acl
 uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aco');
 uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'acoaction');
 uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aro');
-uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aros_aco');
+uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'permission');
 
 /**
  * In this file you can extend the AclBase.
@@ -62,7 +62,7 @@ class DB_ACL extends AclBase {
  * @return unknown
  */
 	function check($aro, $aco, $action = "*") {
-		$Perms = new ArosAco();
+		$Perms = new Permission();
 		$Aro = new Aro();
 		$Aco = new Aco();
 
@@ -92,8 +92,8 @@ class DB_ACL extends AclBase {
 
 		for($i = count($aroPath) - 1; $i >= 0; $i--) {
 			$perms = $Perms->findAll(array(
-				'ArosAco.aro_id' => $aroPath[$i]['Aro']['id'],
-				'ArosAco.aco_id' => $acoPath), null,
+				'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
+				'Permission.aco_id' => $acoPath), null,
 				'Aco.lft desc'
 			);
 
@@ -104,8 +104,8 @@ class DB_ACL extends AclBase {
 					if ($action == '*') {
 						// ARO must be cleared for ALL ACO actions
 						foreach($permKeys as $key) {
-							if (isset($perm['ArosAco'])) {
-								if ($perm['ArosAco'][$key] != 1) {
+							if (isset($perm['Permission'])) {
+								if ($perm['Permission'][$key] != 1) {
 										return false;
 								}
 							}
@@ -113,7 +113,7 @@ class DB_ACL extends AclBase {
 
 						return true;
 					} else {
-						switch($perm['ArosAco']['_' . $action]) {
+						switch($perm['Permission']['_' . $action]) {
 							case -1:
 								return false;
 							case 0:
@@ -135,7 +135,7 @@ class DB_ACL extends AclBase {
  * @return boolean
  */
 	function allow($aro, $aco, $action = "*", $value = 1) {
-		$Perms = new ArosAco();
+		$Perms = new Permission();
 		$perms = $this->getAclLink($aro, $aco);
 		$permKeys = $this->_getAcoKeys($Perms->loadInfo());
 		$save = array();
@@ -146,7 +146,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if (isset($perms[0])) {
-			$save = $perms[0]['ArosAco'];
+			$save = $perms[0]['Permission'];
 		}
 
 		if ($action == "*") {
@@ -168,9 +168,9 @@ class DB_ACL extends AclBase {
 		$save['aco_id'] = $perms['aco'];
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
-			$save['id'] = $perms['link'][0]['ArosAco']['id'];
+			$save['id'] = $perms['link'][0]['Permission']['id'];
 		}
-		return $Perms->save(array('ArosAco' => $save));
+		return $Perms->save(array('Permission' => $save));
 	}
 /**
  * Deny
@@ -259,7 +259,7 @@ class DB_ACL extends AclBase {
 	function getAclLink($aro, $aco) {
 		$Aro = new Aro();
 		$Aco = new Aco();
-		$Link = new ArosAco();
+		$Link = new Permission();
 
 		$obj = array();
 		$obj['Aro'] = $Aro->find($Aro->_resolveID($aro));
@@ -275,8 +275,8 @@ class DB_ACL extends AclBase {
 			'aro' => $obj['Aro']['id'],
 			'aco'  => $obj['Aco']['id'],
 			'link' => $Link->findAll(array(
-				'ArosAco.aro_id' => $obj['Aro']['id'],
-				'ArosAco.aco_id' => $obj['Aco']['id']
+				'Permission.aro_id' => $obj['Aro']['id'],
+				'Permission.aco_id' => $obj['Aco']['id']
 			))
 		);
 	}
@@ -288,11 +288,11 @@ class DB_ACL extends AclBase {
  */
 	function _getAcoKeys($keys) {
 		$newKeys = array();
-		$keys = $keys->value;
+		$keys = $keys->extract('{n}.name');
 
 		foreach($keys as $key) {
-			if ($key['name'] != 'id' && $key['name'] != 'aro_id' && $key['name'] != 'aco_id') {
-				$newKeys[] = $key['name'];
+			if (!in_array($key, array('id', 'aro_id', 'aco_id'))) {
+				$newKeys[] = $key;
 			}
 		}
 		return $newKeys;

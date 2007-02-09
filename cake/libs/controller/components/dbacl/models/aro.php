@@ -44,12 +44,13 @@ class Aro extends AclNode {
  *
  * @var unknown_type
  */
-	 var $name = 'Aro';
+	var $name = 'Aro';
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	 var $hasMany = 'ArosAco';
+	var $hasAndBelongsToMany = array('Aco' => array('with' => 'Permission'));
 }
+
 ?>

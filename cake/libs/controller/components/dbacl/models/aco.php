@@ -37,13 +37,19 @@
  * @subpackage	cake.cake.libs.controller.components.dbacl.models
  *
  */
-class Aco extends AclNode{
-	 var $name = 'Aco';
+class Aco extends AclNode {
 /**
- * Enter description here...
+ * Model name
  *
- * @var unknown_type
+ * @var string
  */
-	 var $hasMany = 'ArosAco';
+	var $name = 'Aco';
+/**
+ * Binds to ARO nodes through permissions settings
+ *
+ * @var array
+ */
+	var $hasAndBelongsToMany = array('Aro' => array('with' => 'Permission'));
 }
+
 ?>
