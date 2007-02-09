@@ -89,26 +89,26 @@
 		if(!class_exists('AppModel')){
 			loadModel();
 		}
+
 		$pluginAppModel = Inflector::camelize($plugin . '_app_model');
 		$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
 		if (!class_exists($pluginAppModel)) {
 			if (file_exists($pluginAppModelFile)) {
 				require($pluginAppModelFile);
-			} else {
-				die(sprintf(__("Plugins must have a class named %s", true), $pluginAppModel));
+				Overloadable::overload($pluginAppModel);
 			}
-			Overloadable::overload($pluginAppModel);
 		}
 
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
+		if(is_dir($pluginModelDir)) {
+			foreach(listClasses($pluginModelDir)as $modelFileName) {
+				list($name) = explode('.', $modelFileName);
+				$className = Inflector::camelize($name);
 
-		foreach(listClasses($pluginModelDir)as $modelFileName) {
-			list($name) = explode('.', $modelFileName);
-			$className = Inflector::camelize($name);
-
-			if (!class_exists($className)) {
-				require($pluginModelDir . $modelFileName);
-				Overloadable::overload($className);
+				if (!class_exists($className)) {
+					require($pluginModelDir . $modelFileName);
+					Overloadable::overload($className);
+				}
 			}
 		}
 	}
