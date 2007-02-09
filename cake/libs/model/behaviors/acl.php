@@ -26,6 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+if (!defined('ACL_DATABASE')) {
+	define('ACL_DATABASE', 'default');
+}
 /**
  * Short description for file
  *
