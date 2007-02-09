@@ -45,12 +45,14 @@ class AclBehavior extends ModelBehavior {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
-		$this->settings[$model->name] = am(array('type' => 'Requester'), $config);
+		$this->settings[$model->name] = am(array('type' => 'requester'), $config);
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 
 		if (!ClassRegistry::isKeySet($type)) {
 			uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aclnode');
-			uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . low($type));
+			uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aco');
+			uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'aro');
+			uses('controller' . DS . 'components' . DS . 'dbacl' . DS . 'models' . DS . 'permission');
 			$object =& new $type();
 		} else {
 			$object =& ClassRegistry::getObject($type);
