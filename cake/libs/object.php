@@ -196,7 +196,7 @@ class Object{
  *                          properties and corresponding values.
  * @return void
  */
-	function set($properties = array()) {
+	function _set($properties = array()) {
 		if (is_array($properties) && !empty($properties)) {
 			$vars = get_object_vars($this);
 			foreach ($properties as $key => $val) {
