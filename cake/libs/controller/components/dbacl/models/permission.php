@@ -58,5 +58,11 @@ class Permission extends AppModel {
  * @var unknown_type
  */
 	 var $useTable = 'aros_acos';
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+	 var $actsAs = null;
 }
 ?>

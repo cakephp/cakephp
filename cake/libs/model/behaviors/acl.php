@@ -62,7 +62,6 @@ class AclBehavior extends ModelBehavior {
 			trigger_error("Callback parentNode() not defined in {$model->name}", E_USER_WARNING);
 		}
 	}
-
 /**
  * Retrieves the Aro/Aco node for this model
  *
@@ -105,7 +104,12 @@ class AclBehavior extends ModelBehavior {
 		}
 		return $result;
 	}
-
+/**
+ * Creates a new ARO/ACO node bound to this record
+ *
+ * @param boolean $created True if this is a new record
+ * @return void
+ */
 	function afterSave(&$model, $created) {
 		if ($created) {
 			$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
@@ -116,7 +120,11 @@ class AclBehavior extends ModelBehavior {
 			));
 		}
 	}
-
+/**
+ * Destroys the ARO/ACO node bound to the deleted record
+ *
+ * @return void
+ */
 	function afterDelete(&$model) {
 		$node = $this->node($model);
 		$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];

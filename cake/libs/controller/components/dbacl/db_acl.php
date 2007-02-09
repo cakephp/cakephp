@@ -262,12 +262,10 @@ class DB_ACL extends AclBase {
 		$Link = new Permission();
 
 		$obj = array();
-		$obj['Aro'] = $Aro->find($Aro->_resolveID($aro));
-		$obj['Aco'] = $Aco->find($Aco->_resolveID($aco));
-		$obj['Aro'] = $obj['Aro']['Aro'];
-		$obj['Aco'] = $obj['Aco']['Aco'];
+		$obj['Aro'] = $Aro->node($aro);
+		$obj['Aco'] = $Aco->node($aco);
 
-		if ($obj['Aro'] == null || count($obj['Aro']) == 0 || $obj['Aco'] == null || count($obj['Aco']) == 0) {
+		if (empty($obj['Aro']) || empty($obj['Aco'])) {
 			return false;
 		}
 
