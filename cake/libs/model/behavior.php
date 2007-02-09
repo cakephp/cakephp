@@ -27,6 +27,14 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+/**
+ * Short description for file
+ *
+ * Long description for file
+ *
+ * @package		cake
+ * @subpackage	cake.cake.libs.model
+ */
 class ModelBehavior extends Object {
 
 /**

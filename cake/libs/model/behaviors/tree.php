@@ -20,12 +20,20 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model
- * @since			CakePHP v 1.2.0.0
+ * @subpackage		cake.cake.libs.model.behaviors
+ * @since			CakePHP v 1.2.0.4487
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
+ */
+/**
+ * Short description for file
+ *
+ * Long description for file
+ *
+ * @package		cake
+ * @subpackage	cake.cake.libs.model.behaviors
  */
 class TreeBehavior extends ModelBehavior {
 

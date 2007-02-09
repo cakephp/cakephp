@@ -228,7 +228,7 @@ class Set extends Object {
 			$val1 = $this->get();
 		}
 		if (is_object($val2) && (is_a($val2, 'set') || is_a($val2, 'Set'))) {
-			
+
 		}
 
 		$out = array();

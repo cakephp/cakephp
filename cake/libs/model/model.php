@@ -1092,7 +1092,7 @@ class Model extends Overloadable {
 						foreach ($this->belongsTo as $parent => $assoc) {
 							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
 								$parentObj =& $this->{$assoc['className']};
-								
+
 							}
 						}
 					}
