@@ -75,31 +75,6 @@ class Object{
 		return $class;
 	}
 /**
- * Return a value from an array list if the key exists.
- *
- * If a comma separated $list is passed arrays are numeric with the key of the first being 0
- * $list = 'no, yes' would translate to  $list = array(0 => 'no', 1 => 'yes');
- *
- * If an array is used, keys can be strings example: array('no' => 0, 'yes' => 1);
- *
- * $list defaults to 0 = no 1 = yes if param is not passed
- *
- * @param string $selected
- * @param mixed $list can be an array or a comma separated list.
- * @return string the value of the array key or null if no match
- */
-	function enum($select, $list = array('no', 'yes')) {
-		$return = null;
-		if(is_string($list)) {
-			$list = explode(',', $list);
-		}
-
-		if (array_key_exists($select, $list)) {
-			$return = $list[$select];
-		}
-		return $return;
-	}
-/**
  * Calls a controller's method from any location.
  *
  * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
