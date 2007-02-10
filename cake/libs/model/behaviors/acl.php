@@ -1,9 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Tree behavior class.
+ * ACL behavior class.
  *
- * Enables a model object to act as a node-based tree.
+ * Enables objects to easily tie into an ACL system
  *
  * PHP versions 4 and 5
  *
@@ -95,9 +95,17 @@ class AclBehavior extends ModelBehavior {
 	function afterSave(&$model, $created) {
 		if ($created) {
 			$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
+			$parent = $this->node($model, $model->parentNode());
+
+			if(isset($parent['id'])) {
+				$parent = $parent['id'];
+			} else {
+				$parent = null;
+			}
+
 			$model->{$type}->create();
 			$model->{$type}->save(array(
-				'parent_id'		=> $model->parentNode(),
+				'parent_id'		=> $parent,
 				'model'			=> $model->name,
 				'foreign_key'	=> $model->id
 			));

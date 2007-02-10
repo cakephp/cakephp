@@ -56,15 +56,12 @@ class AuthComponent extends Object {
  */
 	var $ajaxLogin = null;
 /**
- * The name of the model that represents users which will be authenticated.  If
- * this value is unspecified, AuthComponent will look for one of the following:
- * 'User', 'Person', 'Contact', 'Member', 'Customer', 'Account', 'Client',
- * 'Employee', 'Staff', or 'Friend', in that order.
+ * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
  *
  * @var string
  * @access public
  */
-	var $userModel = null;
+	var $userModel = 'User';
 /**
  * Additional query conditions to use when looking up and authenticating users,
  * i.e. array('User.is_active' => 1).
@@ -93,12 +90,12 @@ class AuthComponent extends Object {
  * If using action-based access control, this defines how the paths to action
  * ACO nodes is computed.  If, for example, all controller nodes are nested
  * under an ACO node named 'Controllers', $actionPath should be set to
- * "Controllers/:controller/:action".
+ * "Controllers/".
  *
  * @var string
  * @access public
  */
-	var $actionPath = ':controller/:action';
+	var $actionPath = null;
 /**
  * A URL (defined as a string or array) to the controller action that handles
  * logins.
@@ -164,6 +161,20 @@ class AuthComponent extends Object {
  */
 	var $allowedActions = array();
 /**
+ * Form data from Controller::$data
+ *
+ * @var array
+ * @access public
+ */
+	var $data = array();
+/**
+ * Parameter data from Controller::$params
+ *
+ * @var array
+ * @access public
+ */
+	var $params = array();
+/**
  * Main execution method.  Handles redirecting of invalid users, and processing
  * of login form data.
  *
@@ -178,15 +189,9 @@ class AuthComponent extends Object {
 		if (!$this->_setDefaults($controller)) {
 			return;
 		}
-
-		// Hash incoming passwords
-		if (isset($controller->data[$this->userModel])) {
-			if (isset($controller->data[$this->userModel][$this->fields['username']]) && isset($controller->data[$this->userModel][$this->fields['password']])) {
-				$model =& $this->getUserModel();
-				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
-			}
-		}
+		$this->hashPasswords($controller);
 		$this->data = $controller->data;
+		$this->params = $controller->params;
 
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return false;
@@ -214,23 +219,37 @@ class AuthComponent extends Object {
 			}
 			return;
 		} else {
-			if (!$this->Session->check($this->sessionKey)) {
+			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect('/' . $this->loginAction, null, true);
-				} elseif ($this->ajaxLogin != null) {
+					$controller->redirect('/' . $this->loginAction);
+				} elseif (!empty($this->ajaxLogin)) {
 					$this->viewPath = 'elements';
 					$this->render($this->ajaxLogin, 'ajax');
-					exit();
 				}
+				exit();
 			}
 		}
 
-		switch ($this->validate) {
+		$object = $assoc = null;
+		if (is_array($this->validate)) {
+			$type = key($this->validate);
+			$object = $this->validate[$type];
+			if (isset($this->validate[0])) {
+				$assoc = $this->validate[0];
+			}
+		} elseif (is_string($this->validate)) {
+			$type = $this->validate;
+		}
+
+		switch ($type) {
 			case 'actions':
-				
+				$valid = $this->validateAction();
 			break;
 			case 'objects':
+				
+			break;
+			case 'association':
 				
 			break;
 			case null:
@@ -238,7 +257,7 @@ class AuthComponent extends Object {
 				return;
 			break;
 			default:
-				trigger_error(__('Auth::startup() - $type is set to an incorrect value.  Should be "actions", "objects", or null.'), E_USER_WARNING);
+				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Should be "actions", "objects", "association" or null.'), E_USER_WARNING);
 			break;
 		}
 	}
@@ -251,17 +270,6 @@ class AuthComponent extends Object {
  * @return void
  */
 	function _setDefaults(&$controller) {
-		if (empty($this->userModel)) {
-			$classes = array_values(array_intersect(
-				array_map('strtolower', get_declared_classes()),
-				array('user', 'person', 'contact', 'member', 'customer', 'account', 'client', 'employee', 'staff', 'friend')
-			));
-
-			if (!empty($classes)) {
-				$this->userModel = ucwords($classes[0]);
-			}
-		}
-
 		if (empty($this->userModel)) {
 			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().'), E_USER_WARNING);
 			return false;
@@ -383,11 +391,13 @@ class AuthComponent extends Object {
  * @return boolean True if the user validates, false otherwise.
  */
 	function validate($object, $user = null) {
-		$user = $this->identify($user);
+		if (empty($user)) {
+			$user = $this->user();
+		}
 		if (empty($user)) {
 			return false;
 		}
-		pr($user);
+		return $this->Acl->check($user, $object);
 	}
 /**
  * Validates a user against a controller action.
@@ -403,13 +413,14 @@ class AuthComponent extends Object {
  * @see AuthComponent::validate()
  * @return boolean True if the user validates, false otherwise.
  */
-	function validateAction($action = null, $user = null) {
-		$path = r(
+	function validateAction($action = ':controller/:action', $user = null) {
+		$action = $this->actionPath . $action;
+		$action = r(
 			array(':controller', ':action'),
-			array($this->params['controller'], $this->params['action']),
-			$path
+			array(Inflector::camelize($this->params['controller']), $this->params['action']),
+			$action
 		);
-		return $this->validate($path, $user);
+		return $this->validate($action, $user);
 	}
 /**
  * Returns a reference to the model object specified by $userModel, and attempts
@@ -495,6 +506,21 @@ class AuthComponent extends Object {
 			return $data[$this->userModel];
 		} else {
 			return null;
+		}
+	}
+/**
+ * Hash any passwords found in Controller::$data.
+ *
+ * @access public
+ * @param object $controller
+ * @return void
+ */
+	function hashPasswords(&$controller) {
+		if (isset($controller->data[$this->userModel])) {
+			if (isset($controller->data[$this->userModel][$this->fields['username']]) && isset($controller->data[$this->userModel][$this->fields['password']])) {
+				$model =& $this->getUserModel();
+				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
+			}
 		}
 	}
 /**

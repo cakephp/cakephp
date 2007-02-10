@@ -86,10 +86,19 @@ class AclNode extends AppModel {
 			}
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
+		} elseif (is_array($ref) && !isset($ref['model'])) {
+			$name = key($ref);
+			if (!ClassRegistry::isKeySet($name)) {
+				return null;
+			}
+			$model =& ClassRegistry::getObject($name);
+			$ref = array('model' => $name, 'foreign_key' => $ref[$name][$model->primaryKey]);
 		}
-
 		if (is_array($ref)) {
-			list($result) = array_values($this->find($ref, null, null, -1));
+			$result = $this->find($ref, null, null, -1);
+			if ($result) {
+				list($result) = array_values($result);
+			}
 		}
 		return $result;
 	}

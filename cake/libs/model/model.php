@@ -1204,8 +1204,6 @@ class Model extends Overloadable {
  * @return boolean True on success
  */
 	function del($id = null, $cascade = true) {
-		pr($this->name);
-		pr($this->trace());
 		if (!empty($id)) {
 			$this->id = $id;
 		}
