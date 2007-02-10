@@ -75,6 +75,22 @@ class Object{
 		return $class;
 	}
 /**
+ * Return a value from an array list.
+ *
+ * @param string $selected
+ * @param array $list
+ * @return string the value of the array key
+ */
+	function enum($select, $list = array('no', 'yes')) {
+		$return = null;
+		if(is_array($list)){
+			if (array_key_exists($select, $list)) {
+				$return = $list[$select];
+			}
+		}
+		return $return;
+	}
+/**
  * Calls a controller's method from any location.
  *
  * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
