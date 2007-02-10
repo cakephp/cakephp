@@ -99,7 +99,7 @@ class AclBehavior extends ModelBehavior {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		}
 
-		if (is_array($ref)) {
+		if (is_array($ref) && !empty($ref)) {
 			list($result) = array_values($axo->find($ref, null, null, -1));
 		}
 		return $result;
@@ -113,6 +113,7 @@ class AclBehavior extends ModelBehavior {
 	function afterSave(&$model, $created) {
 		if ($created) {
 			$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
+			$model->{$type}->create();
 			$model->{$type}->save(array(
 				'parent_id'		=> $model->parentNode(),
 				'model'			=> $model->name,
