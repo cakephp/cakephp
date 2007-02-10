@@ -65,7 +65,7 @@ class AclNode extends AppModel {
 		$prefix = $this->tablePrefix;
 
 		if (empty($ref)) {
-			$ref = array('model' => $this->name, 'foreign_key' => $this->id);
+			return null;
 		} elseif (is_string($ref)) {
 			$path = explode('/', $ref);
 			$start = $path[count($path) - 1];

@@ -1204,6 +1204,8 @@ class Model extends Overloadable {
  * @return boolean True on success
  */
 	function del($id = null, $cascade = true) {
+		pr($this->name);
+		pr($this->trace());
 		if (!empty($id)) {
 			$this->id = $id;
 		}
@@ -1226,9 +1228,7 @@ class Model extends Overloadable {
 				$this->_deleteDependent($this->id, $cascade);
 				if (!empty($this->behaviors)) {
 					for ($i = 0; $i < $ct; $i++) {
-						if ($this->behaviors[$behaviors[$i]]->afterDelete($this) === false) {
-							return false;
-						}
+						$this->behaviors[$behaviors[$i]]->afterDelete($this);
 					}
 				}
 				$this->afterDelete();

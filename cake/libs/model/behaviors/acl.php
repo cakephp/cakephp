@@ -39,8 +39,19 @@ if (!defined('ACL_DATABASE')) {
  */
 class AclBehavior extends ModelBehavior {
 
+/**
+ * Maps ACL type options to ACL models
+ *
+ * @var array
+ * @access protected
+ */
 	var $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco');
-
+/**
+ * Sets up the configuation for the model, and loads ACL models if they haven't been already
+ *
+ * @param mixed $config
+ * @return void
+ */
 	function setup(&$model, $config = array()) {
 		if (is_string($config)) {
 			$config = array('type' => $config);
@@ -69,40 +80,11 @@ class AclBehavior extends ModelBehavior {
  * @return array
  */
 	function node(&$model, $ref = null) {
-		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
-		$table = low($type) . 's';
-		$prefix = $model->tablePrefix;
-		$axo =& $model->{$type};
-
 		if (empty($ref)) {
 			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
-		} elseif (is_string($ref)) {
-			$path = explode('/', $ref);
-			$start = $path[count($path) - 1];
-			unset($path[count($path) - 1]);
-
-			$query = "SELECT {$type}0.* From {$prefix}{$table} AS {$type}0 ";
-			foreach ($path as $i => $alias) {
-				$j = $i - 1;
-				$k = $i + 1;
-				$query .= "LEFT JOIN {$prefix}{$table} AS {$type}{$k} ";
-				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft && {$type}{$k}.rght < {$type}{$i}.rght ";
-				$query .= "AND {$type}{$k}.alias = " . $db->value($alias) . " ";
-			}
-			$result = $axo->query("{$query} WHERE {$type}0.alias = " . $db->value($start));
-
-			if (!empty($result)) {
-				$result = $result[0]["{$type}0"];
-			}
-		} elseif (is_object($ref) && is_a($ref, 'Model')) {
-			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		}
-
-		if (is_array($ref) && !empty($ref)) {
-			list($result) = array_values($axo->find($ref, null, null, -1));
-		}
-		return $result;
+		return $model->{$type}->node($ref);
 	}
 /**
  * Creates a new ARO/ACO node bound to this record
