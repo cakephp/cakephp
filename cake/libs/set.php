@@ -261,6 +261,11 @@ class Set extends Object {
 		}
 
 		$out = array();
+		if (empty($val1)) {
+			return (array)$val2;
+		} elseif (empty($val2)) {
+			return (array)$val1;
+		}
 		foreach ($val1 as $key => $val) {
 			if (!isset($val2[$key]) || $val2[$key] != $val) {
 				$out[$key] = $val;
