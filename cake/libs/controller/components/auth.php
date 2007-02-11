@@ -63,6 +63,13 @@ class AuthComponent extends Object {
  */
 	var $userModel = 'User';
 /**
+ * The name of the model that represents objects which users can be authorized for against.
+ *
+ * @var string
+ * @access public
+ */
+	var $objectModel = null;
+/**
  * Additional query conditions to use when looking up and authenticating users,
  * i.e. array('User.is_active' => 1).
  *
@@ -114,13 +121,6 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $loginRedirect = null;
-/**
- * Holds a reference to the model object specified by $userModel.
- *
- * @var object
- * @access private
- */
-	var $_model = null;
 /**
  * The type of automatic ACL validation to perform, where 'actions' validates
  * the controller action of the current request, 'objects' validates against
@@ -214,6 +214,9 @@ class AuthComponent extends Object {
 		if ($this->_normalizeURL($this->loginAction) == $this->_normalizeURL($url)) {
 			// We're already at the login action
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
+				if(!$this->Session->check('Auth.redirect')) {
+					$this->Session->write('Auth.redirect', $controller->referer());
+				}
 				return;
 			}
 			$data = array(
@@ -233,8 +236,8 @@ class AuthComponent extends Object {
 					$this->Session->write('Auth.redirect', $url);
 					$controller->redirect('/' . $this->loginAction);
 				} elseif (!empty($this->ajaxLogin)) {
-					$this->viewPath = 'elements';
-					$this->render($this->ajaxLogin, 'ajax');
+					$controller->viewPath = 'elements';
+					$controller->render($this->ajaxLogin, 'ajax');
 				}
 				exit();
 			}
@@ -251,9 +254,24 @@ class AuthComponent extends Object {
 			$type = $this->validate;
 		}
 
+		if (($type == 'objects' || $type == 'association')) {
+			if (!isset($this->params['id'])) {
+				return;
+			} elseif (empty($this->objectModel)) {
+				if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+					$this->objectModel = $controller->modelClass;
+				} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+					$this->objectModel = $controller->uses[0];
+				} else {
+					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().'), E_USER_WARNING);
+					return;
+				}
+			}
+		}
+
 		switch ($type) {
 			case 'actions':
-				$valid = $this->validateAction();
+				$valid = $this->Acl->check($this->user(), $this->action());
 			break;
 			case 'objects':
 				
@@ -306,8 +324,28 @@ class AuthComponent extends Object {
 		if (empty($args)) {
 			$this->allowedActions = array('*');
 		} else {
-			$this->allowedActions = $args;
+			$this->allowedActions = am($this->allowedActions, $args);
 		}
+	}
+/**
+ * Removes items from the list of allowed actions.
+ *
+ * @access public
+ * @param string $action Controller action name
+ * @param string $action Controller action name
+ * @param string ... etc.
+ * @return void
+ * @see AuthComponent::allow()
+ */
+	function deny() {
+		$args = func_get_args();
+		foreach ($args as $arg) {
+			$i = array_search($arg, $this->allowedActions);
+			if (is_int($i)) {
+				unset($this->allowedActions[$i]);
+			}
+		}
+		$this->allowedActions = array_values($this->allowedActions);
 	}
 /**
  * Manually log-in a user with the given parameter data.  The $data provided can be any data
@@ -373,12 +411,16 @@ class AuthComponent extends Object {
 		}
 	}
 /**
- * Gets the authentication redirect URL
+ * If no parameter is passed, gets the authentication redirect URL.
  *
+ * @param mixed $url Optional URL to write as the login redirect URL.
  * @access public
  * @return string Redirect URL
  */
-	function redirect() {
+	function redirect($url = null) {
+		if(!is_null($url)) {
+			return $this->Session->write('Auth.redirect', $url);
+		}
 		if ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
@@ -407,30 +449,23 @@ class AuthComponent extends Object {
 		if (empty($user)) {
 			return false;
 		}
-		return $this->Acl->check($user, $object);
+		return $this->Acl->check($user, $object, $action);
 	}
 /**
- * Validates a user against a controller action.
+ * Returns the path to the ACO node bound to a controller/action.
  *
  * @access public
  * @param string $action  Optional.  The controller/action path to validate the
  *                        user against.  The current request action is used if
  *                        none is specified.
- * @param mixed  $user    Optional.  The identity of the user to be validated.
- *                        Uses the current user session if none specified.  For
- *                        valid forms of identifying users, see
- *                        AuthComponent::identify().
- * @see AuthComponent::validate()
- * @return boolean True if the user validates, false otherwise.
+ * @return boolean ACO node path
  */
-	function validateAction($action = ':controller/:action', $user = null) {
-		$action = $this->actionPath . $action;
-		$action = r(
+	function action($action = ':controller/:action') {
+		return r(
 			array(':controller', ':action'),
 			array(Inflector::camelize($this->params['controller']), $this->params['action']),
-			$action
+			$this->actionPath . $action
 		);
-		return $this->validate($action, $user);
 	}
 /**
  * Returns a reference to the model object specified by $userModel, and attempts
@@ -502,7 +537,6 @@ class AuthComponent extends Object {
 					$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
 				);
 			}
-
 			$model =& $this->getUserModel();
 			$data = $model->find(am($find, $this->userScope), null, null, -1);
 
@@ -512,7 +546,7 @@ class AuthComponent extends Object {
 		} else if (is_numeric($user)) {
 			// Assume it's a user's ID
 			$model =& $this->getUserModel();
-			$data = $model->find(array($this->userModel . $model->primaryKey => $user));
+			$data = $model->find(am(array($model->escapeField() => $user), $this->userScope));
 
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
