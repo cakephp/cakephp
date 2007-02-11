@@ -638,7 +638,7 @@ class AjaxHelper extends AppHelper {
 			$options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options) . '}';
 		}
 
-		$options = $this->_optionsToString($options, array('handle', 'tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag'));
+		$options = $this->_optionsToString($options, array('tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag'));
 		$options = $this->_buildOptions($options, $this->sortOptions);
 		return $this->Javascript->codeBlock("Sortable.create('$id', $options);");
 	}
