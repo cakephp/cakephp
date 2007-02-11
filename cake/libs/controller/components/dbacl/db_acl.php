@@ -71,49 +71,49 @@ class DB_ACL extends AclBase {
 		}
 
 		$permKeys = $this->_getAcoKeys($Perms->loadInfo());
-		$aroPath = $Aro->getPath($aro);
-		$tmpAcoPath = $Aco->getPath($aco);
+		$aroNode = $Aro->node($aro);
+		$acoNode = $Aco->node($aco);
 
-		if ($tmpAcoPath === null) {
+		if (empty($aroNode) ||  empty($acoNode)) {
+			trigger_error('DB_ACL::check() - Attempted to check permissions on a node that does not exist', E_USER_WARNING);
 			return false;
 		}
+		$aroPath = $Aro->getPath($aroNode['id']);
+		$acoPath = new Set($Aco->getPath($acoNode['id']));
 
-		$tmpAcoPath = array_reverse($tmpAcoPath);
-		$acoPath = array();
-
+		if ($acoPath->get() == null || $acoPath->get() == array()) {
+			return false;
+		}
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(sprintf(__("ACO permissions key %s does not exist in DB_ACL::check()", true), $action), E_USER_NOTICE);
 			return false;
 		}
 
-		foreach($tmpAcoPath as $a) {
-			$acoPath[] = $a['Aco']['id'];
-		}
-
 		for($i = count($aroPath) - 1; $i >= 0; $i--) {
-			$perms = $Perms->findAll(array(
-				'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
-				'Permission.aco_id' => $acoPath), null,
-				'Aco.lft desc'
+			$perms = $Perms->findAll(
+				array(
+					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
+					'Permission.aco_id' => $acoPath->extract('{n}.Aco.id')
+				),
+				null, array('Aco.lft' => 'desc'), null, null, 0
 			);
 
-			if ($perms == null || count($perms) == 0) {
+			if (empty($perms)) {
 				continue;
 			} else {
-				foreach($perms as $perm) {
+				foreach(Set::extract($perms, '{n}.Permission') as $perm) {
 					if ($action == '*') {
 						// ARO must be cleared for ALL ACO actions
 						foreach($permKeys as $key) {
-							if (isset($perm['Permission'])) {
-								if ($perm['Permission'][$key] != 1) {
-										return false;
+							if (!empty($perm)) {
+								if ($perm[$key] != 1) {
+									return false;
 								}
 							}
 						}
-
 						return true;
 					} else {
-						switch($perm['Permission']['_' . $action]) {
+						switch($perm['_' . $action]) {
 							case -1:
 								return false;
 							case 0:

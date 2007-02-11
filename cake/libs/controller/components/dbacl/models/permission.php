@@ -63,6 +63,12 @@ class Permission extends AppModel {
  *
  * @var unknown_type
  */
+	 var $belongsTo = 'Aro,Aco';
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	 var $actsAs = null;
 }
 ?>
