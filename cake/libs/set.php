@@ -269,8 +269,10 @@ class Set extends Object {
 			}
 			if ($i == count($path) - 1) {
 				$_list[$key] = $data;
-			} elseif (!isset($_list[$key])) {
-				$_list[$key] = array();
+			} else {
+				if (!isset($_list[$key])) {
+					$_list[$key] = array();
+				}
 				$_list =& $_list[$key];
 			}
 		}

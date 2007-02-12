@@ -263,12 +263,8 @@ class CakeSession extends Object {
  * @return void
  */
 	function writeSessionVar($name, $value) {
-		$var = $this->__sessionVarNames($name);
-		if (empty($var)) {
-		  return false;
-		}
-		$expression = 'return ' . $var  . " = \$value;";
-		eval ($expression);
+		$result = Set::insert($_SESSION, $name, $value);
+		return (!empty($result));
 	}
 /**
  * Method called on close of a database
@@ -432,9 +428,9 @@ class CakeSession extends Object {
 			}
 		} else {
 			srand ((double)microtime() * 1000000);
-			$this->writeSessionVar('Config.rand', rand());
-			$this->writeSessionVar("Config.time", $this->sessionTime);
 			$this->writeSessionVar("Config.userAgent", $this->_userAgent);
+			$this->writeSessionVar("Config.time", $this->sessionTime);
+			$this->writeSessionVar('Config.rand', rand());
 			$this->valid = true;
 			$this->__setError(1, "Session is valid");
 		}
