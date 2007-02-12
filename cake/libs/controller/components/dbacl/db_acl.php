@@ -75,7 +75,7 @@ class DB_ACL extends AclBase {
 		$acoNode = $Aco->node($aco);
 
 		if (empty($aroNode) ||  empty($acoNode)) {
-			trigger_error('DB_ACL::check() - Attempted to check permissions on a node that does not exist', E_USER_WARNING);
+			trigger_error("DB_ACL::check() - Attempted to check permissions on/with a node that does not exist.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 		$aroPath = $Aro->getPath($aroNode['id']);
@@ -211,6 +211,7 @@ class DB_ACL extends AclBase {
  * @return Aro
  */
 	function getAro($id = null) {
+		trigger_error(__('DB_ACL::getAro() - Usage deprecated.  Use AclComponent::$Aro::node().'), E_USER_WARNING);
 		return $this->__getObject($id, 'Aro');
 	}
 /**
@@ -220,6 +221,7 @@ class DB_ACL extends AclBase {
  * @return Aco
  */
 	function getAco($id = null) {
+		trigger_error(__('DB_ACL::getAco() - Usage deprecated.  Use AclComponent::$Aco::node().'), E_USER_WARNING);
 		return $this->__getObject($id, 'Aco');
 	}
 /**
@@ -235,14 +237,9 @@ class DB_ACL extends AclBase {
 		$obj = new $object;
 
 		if (is_numeric($id)) {
-			$key = 'foreign_key';
-			if ($object == 'Aco') {
-				$key = 'object_id';
-			}
-
-			$conditions = array($object . '.' . $key => $id);
+			$conditions = array("{$object}.foreign_key" => $id);
 		} else {
-			$conditions = array($object . '.alias' => $id);
+			$conditions = array("{$object}.alias" => $id);
 		}
 
 		$tmp = $obj->find($conditions);

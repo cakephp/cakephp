@@ -97,7 +97,18 @@ class AclNode extends AppModel {
 			} else {
 				$model =& ClassRegistry::getObject($name);
 			}
-			$ref = array('model' => $name, 'foreign_key' => $ref[$name][$model->primaryKey]);
+			$tmpRef = null;
+			if (method_exists($model, 'bindNode')) {
+				$tmpRef = $model->bindNode($ref);
+			}
+			if (empty($tmpRef)) {
+				$ref = array('model' => $name, 'foreign_key' => $ref[$name][$model->primaryKey]);
+			} else {
+				if (is_string($tmpRef)) {
+					return $this->node($tmpRef);
+				}
+				$ref = $tmpRef;
+			}
 		}
 		if (is_array($ref)) {
 			$result = $this->find($ref, null, null, -1);

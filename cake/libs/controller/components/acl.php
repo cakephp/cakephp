@@ -59,12 +59,10 @@ class AclComponent extends Object {
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
 		}
-		
 		if($classname == 'DB_ACL') {
 			$this->Aro = new Aro();
 			$this->Aco = new Aco();
 		}
-
 		return $this->_instance;
 	}
 /**

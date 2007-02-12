@@ -145,7 +145,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $authError = 'You are not authorized to access that URL.';
+	var $authError = 'You are not authorized to access that location.';
 /**
  * Maintains current user login state.
  *
@@ -431,7 +431,16 @@ class AuthComponent extends Object {
  * @return void
  */
 	function mapActions($map = array()) {
-		$this->actionMap = am($this->actionMap, $map);
+		$crud = array('create', 'read', 'update', 'delete');
+		foreach ($map as $action => $type) {
+			if (in_array($action, $crud) && is_array($type)) {
+				foreach ($type as $typedAction) {
+					$this->actionMap[$typedAction] = $action;
+				}
+			} else {
+				$this->actionMap[$action] = $type;
+			}
+		}
 	}
 /**
  * Manually log-in a user with the given parameter data.  The $data provided can be any data
