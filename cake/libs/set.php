@@ -245,6 +245,38 @@ class Set extends Object {
 		return $data;
 	}
 /**
+ * Inserts $data into an array as defined by $path.
+ *
+ * @param mixed $list
+ * @param array $data
+ * @param mixed $path A dot-separated string.
+ * @return array
+ */
+	function insert(&$list, $path, $data = null) {
+		if (empty($data) && is_a($this, 'Set')) {
+			$data = $path;
+			$path = $list;
+			$list = $this->get();
+		}
+		if (!is_array($path)) {
+			$path = explode('.', $path);
+		}
+		$_list =& $list;
+
+		foreach($path as $i => $key) {
+			if (intval($key) > 0 || $key == '0') {
+				$key = intval($key);
+			}
+			if ($i == count($path) - 1) {
+				$_list[$key] = $data;
+			} elseif (!isset($_list[$key])) {
+				$_list[$key] = array();
+				$_list =& $_list[$key];
+			}
+		}
+		return $list;
+	}
+/**
  * Computes the difference between a Set and an array, two Sets, or two arrays
  *
  * @param mixed $val1
