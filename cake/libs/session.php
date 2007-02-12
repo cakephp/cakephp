@@ -157,7 +157,7 @@ class CakeSession extends Object {
  * @return boolean True if variable is there
  * @access public
  */
-	function checkSessionVar($name) {
+	function check($name) {
 		$var = $this->__validateKeys($name);
 		if (empty($var)) {
 		  return false;
@@ -192,8 +192,8 @@ class CakeSession extends Object {
  * @return boolean Success
  * @access public
  */
-	function delSessionVar($name) {
-		if ($this->checkSessionVar($name)) {
+	function del($name) {
+		if ($this->check($name)) {
 			$var = $this->__sessionVarNames($name);
 			if (empty($var)) {
 				return false;
@@ -247,7 +247,7 @@ class CakeSession extends Object {
  * @return mixed The value of the session variable
  * @access public
  */
-	function readSessionVar($name = null) {
+	function read($name = null) {
 		if (is_null($name)) {
 			return $this->returnSessionVars();
 		}
@@ -282,7 +282,7 @@ class CakeSession extends Object {
  * @param string $value
  * @return void
  */
-	function writeSessionVar($name, $value) {
+	function write($name, $value) {
 		$var = $this->__validateKeys($name);
 
 		if (empty($var)) {
@@ -321,7 +321,7 @@ class CakeSession extends Object {
  * @return void
  * @access private
  */
-	function destroyInvalid() {
+	function destroy() {
 		$sessionpath = session_save_path();
 		if (empty($sessionpath)) {
 			$sessionpath = "/tmp";
@@ -442,20 +442,20 @@ class CakeSession extends Object {
  *
  */
 	function __checkValid() {
-		if ($this->readSessionVar("Config")) {
-			if ($this->_userAgent == $this->readSessionVar("Config.userAgent") && $this->time <= $this->readSessionVar("Config.time")) {
-				$this->writeSessionVar("Config.time", $this->sessionTime);
+		if ($this->read("Config")) {
+			if ($this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+				$this->write("Config.time", $this->sessionTime);
 				$this->valid = true;
 			} else {
 				$this->valid = false;
 				$this->__setError(1, "Session Highjacking Attempted !!!");
-				$this->destroyInvalid();
+				$this->destroy();
 			}
 		} else {
 			srand ((double)microtime() * 1000000);
-			$this->writeSessionVar("Config.userAgent", $this->_userAgent);
-			$this->writeSessionVar("Config.time", $this->sessionTime);
-			$this->writeSessionVar('Config.rand', rand());
+			$this->write("Config.userAgent", $this->_userAgent);
+			$this->write("Config.time", $this->sessionTime);
+			$this->write('Config.rand', rand());
 			$this->valid = true;
 			$this->__setError(1, "Session is valid");
 		}

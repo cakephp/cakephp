@@ -72,7 +72,7 @@ class SessionHelper extends CakeSession {
  */
 	function read($name = null) {
 		if ($this->__active === true) {
-			return $this->readSessionVar($name);
+			return parent::read($name);
 		}
 		return false;
 	}
@@ -86,7 +86,7 @@ class SessionHelper extends CakeSession {
  */
 	function check($name) {
 		if ($this->__active === true) {
-			return $this->checkSessionVar($name);
+			return parent::check($name);
 		}
 		return false;
 	}
@@ -99,7 +99,7 @@ class SessionHelper extends CakeSession {
  */
 	function error() {
 		if ($this->__active === true) {
-			return $this->getLastError();
+			return parent::getLastError();
 		}
 		return false;
 	}
@@ -114,16 +114,15 @@ class SessionHelper extends CakeSession {
  */
 	function flash($key = 'flash') {
 		if ($this->__active === true) {
-			if ($this->checkSessionVar('Message.' . $key)) {
-				e($this->readSessionVar('Message.' . $key));
-				$this->delSessionVar('Message.' . $key);
+			if (parent::check('Message.' . $key)) {
+				e(parent::read('Message.' . $key));
+				parent::del('Message.' . $key);
 			} else {
 				return false;
 			}
 		}
 		return false;
 	}
-
 /**
  * Used to check is a session is valid in a view
  *
@@ -131,7 +130,7 @@ class SessionHelper extends CakeSession {
  */
 	function valid() {
 		if ($this->__active === true) {
-		return $this->isValid();
+		return parent::isValid();
 		}
 	}
 }

@@ -81,13 +81,13 @@ class SessionComponent extends CakeSession {
 		if ($this->__active === true) {
 			if(is_array($name)) {
 				foreach($name as $key => $value) {
-					if ($this->writeSessionVar($key, $value) === false) {
+					if (parent::write($key, $value) === false) {
 						return false;
 					}
 				}
 				return true;
 			}
-			if ($this->writeSessionVar($name, $value) === false) {
+			if (parent::write($name, $value) === false) {
 				return false;
 			}
 			return true;
@@ -106,7 +106,7 @@ class SessionComponent extends CakeSession {
  */
 	function read($name = null) {
 		if ($this->__active === true) {
-			return $this->readSessionVar($name);
+			return parent::read($name);
 		}
 		return false;
 	}
@@ -120,7 +120,7 @@ class SessionComponent extends CakeSession {
  */
 	function del($name) {
 		if ($this->__active === true) {
-			return $this->delSessionVar($name);
+			return parent::del($name);
 		}
 		return false;
 	}
@@ -148,7 +148,7 @@ class SessionComponent extends CakeSession {
  */
 	function check($name) {
 		if ($this->__active === true) {
-			return $this->checkSessionVar($name);
+			return parent::check($name);
 		}
 		return false;
 	}
@@ -161,7 +161,7 @@ class SessionComponent extends CakeSession {
  */
 	function error() {
 		if ($this->__active === true) {
-			return $this->getLastError();
+			return parent::getLastError();
 		}
 		return false;
 	}
@@ -242,7 +242,7 @@ class SessionComponent extends CakeSession {
  */
 	function valid() {
 		if ($this->__active === true) {
-			return $this->isValid();
+			return parent::isValid();
 		}
 		return false;
 	}
@@ -253,7 +253,7 @@ class SessionComponent extends CakeSession {
  */
 	function destroy() {
 		if ($this->__active === true) {
-			$this->destroyInvalid();
+			parent::destroy();
 		}
 	}
 }
