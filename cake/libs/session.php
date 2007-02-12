@@ -184,7 +184,7 @@ class CakeSession extends Object {
 		}
 		$this->__setError(3, "$name is not a string");
 		return false;
-}
+	}
 /**
  * Removes a variable from session.
  *
@@ -211,7 +211,7 @@ class CakeSession extends Object {
  * @return string Error as string
  * @access public
  */
-	function getError($errorNumber) {
+	function __error($errorNumber) {
 		if (!is_array($this->error) || !array_key_exists($errorNumber, $this->error)) {
 			return false;
 		} else {
@@ -224,9 +224,9 @@ class CakeSession extends Object {
  * @return mixed Error description as a string, or false.
  * @access public
  */
-	function getLastError() {
+	function error() {
 		if ($this->lastError) {
-			return $this->getError($this->lastError);
+			return $this->__error($this->lastError);
 		} else {
 			return false;
 		}
@@ -237,7 +237,7 @@ class CakeSession extends Object {
  * @return boolean
  * @access public
  */
-	function isValid() {
+	function valid() {
 		return $this->valid;
 	}
 /**
@@ -249,7 +249,7 @@ class CakeSession extends Object {
  */
 	function read($name = null) {
 		if (is_null($name)) {
-			return $this->returnSessionVars();
+			return $this->__returnSessionVars();
 		}
 		if (empty($name)) {
 			return false;
@@ -268,7 +268,7 @@ class CakeSession extends Object {
  * @return mixed Full $_SESSION array, or false on error.
  * @access public
  */
-	function returnSessionVars() {
+	function __returnSessionVars() {
 		if (!empty($_SESSION)) {
 			return $_SESSION;
 		}

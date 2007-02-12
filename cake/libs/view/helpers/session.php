@@ -99,7 +99,7 @@ class SessionHelper extends CakeSession {
  */
 	function error() {
 		if ($this->__active === true) {
-			return parent::getLastError();
+			return parent::error();
 		}
 		return false;
 	}
@@ -130,9 +130,8 @@ class SessionHelper extends CakeSession {
  */
 	function valid() {
 		if ($this->__active === true) {
-		return parent::isValid();
+		return parent::valid();
 		}
 	}
 }
-
 ?>
