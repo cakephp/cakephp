@@ -77,10 +77,23 @@ class SessionComponent extends CakeSession {
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
  */
-	function write($name, $value) {
+	function write($name, $value = null) {
 		if ($this->__active === true) {
-			$this->writeSessionVar($name, $value);
+			if(is_array($name)) {
+				foreach($name as $key => $value) {
+					if ($this->writeSessionVar($key, $value) === false) {
+						return false;
+					}
+				}
+				return true;
+			}
+			if ($this->writeSessionVar($name, $value) === false) {
+				die(debug($this));
+				return false;
+			}
+			return true;
 		}
+		return false;
 	}
 /**
  * Used to read a session values for a key or return values for all keys.

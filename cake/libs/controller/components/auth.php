@@ -274,10 +274,10 @@ class AuthComponent extends Object {
 				$valid = $this->Acl->check($this->user(), $this->action());
 			break;
 			case 'objects':
-				
+
 			break;
 			case 'association':
-				
+
 			break;
 			case null:
 			case false:
@@ -486,7 +486,7 @@ class AuthComponent extends Object {
 				$user = new $model();
 			}
 		}
-		
+
 		if (empty($user)) {
 			if (PHP5) {
 				$user = ClassRegistry::getObject($this->userModel);

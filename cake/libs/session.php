@@ -230,17 +230,16 @@ class CakeSession extends Object {
 		if (is_null($name)) {
 			return $this->returnSessionVars();
 		}
-		if ($this->checkSessionVar($name)) {
-			$var = $this->__sessionVarNames($name);
-			if (empty($var)) {
-				return false;
-			}
-			$result = eval("return " . $var . ";");
+		if (empty($name)) {
+			return false;
+		}
+		$result = Set::extract($_SESSION, $name);
+
+		if (!is_null($result)) {
 			return $result;
 		}
 		$this->__setError(2, "$name doesn't exist");
-		$return = null;
-		return $return;
+		return null;
 	}
 /**
  * Returns all session variables.
@@ -250,8 +249,7 @@ class CakeSession extends Object {
  */
 	function returnSessionVars() {
 		if (!empty($_SESSION)) {
-			$result = eval("return \$_SESSION;");
-			return $result;
+			return $_SESSION;
 		}
 		$this->__setError(2, "No Session vars set");
 		return false;
@@ -268,7 +266,7 @@ class CakeSession extends Object {
 		if (empty($var)) {
 		  return false;
 		}
-		$expression = $var . " = \$value;";
+		$expression = 'return ' . $var  . " = \$value;";
 		eval ($expression);
 	}
 /**
