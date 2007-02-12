@@ -40,6 +40,7 @@
 	if (CAKE_SESSION_SAVE === 'database') {
 		uses('model' . DS . 'connection_manager');
 	}
+	uses('set');
 /**
  * Session class for Cake.
  *
