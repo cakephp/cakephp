@@ -139,6 +139,14 @@ class AuthComponent extends Object {
  */
 	var $loginError = 'Login failed.  Invalid username or password.';
 /**
+ * Error to display when user attempts to access an object or action to which they do not have
+ * acccess.
+ *
+ * @var string
+ * @access public
+ */
+	var $authError = 'You are not authorized to access that URL.';
+/**
  * Maintains current user login state.
  *
  * @var boolean
@@ -160,6 +168,20 @@ class AuthComponent extends Object {
  * @see AuthComponent::allow()
  */
 	var $allowedActions = array();
+/**
+ * Maps actions to CRUD operations.  Used for controller-based validation ($validate = 'controller').
+ *
+ * @var array
+ * @access public
+ * @see AuthComponent::mapActions()
+ */
+	var $actionMap = array(
+		'index'		=> 'read',
+		'add'		=> 'create',
+		'edit'		=> 'update',
+		'view'		=> 'read',
+		'remove'	=> 'delete'
+	);
 /**
  * Form data from Controller::$data
  *
@@ -183,6 +205,22 @@ class AuthComponent extends Object {
  */
 	function initialize(&$controller) {
 		$this->params = $controller->params;
+		$crud = array('create', 'read', 'update', 'delete');
+		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
+
+		if (defined('CAKE_ADMIN')) {
+			$this->actionMap = am($this->actionMap, array(
+				CAKE_ADMIN . '_index'	=> 'read',
+				CAKE_ADMIN . '_add'		=> 'create',
+				CAKE_ADMIN . '_edit'	=> 'update',
+				CAKE_ADMIN . '_view'	=> 'read',
+				CAKE_ADMIN . '_remove'	=> 'delete',
+				CAKE_ADMIN . '_create'	=> 'create',
+				CAKE_ADMIN . '_read'	=> 'read',
+				CAKE_ADMIN . '_update'	=> 'update',
+				CAKE_ADMIN . '_delete'	=> 'delete'
+			));
+		}
 	}
 /**
  * Main execution method.  Handles redirecting of invalid users, and processing
@@ -242,50 +280,9 @@ class AuthComponent extends Object {
 				exit();
 			}
 		}
-
-		$object = $assoc = null;
-		if (is_array($this->validate)) {
-			$type = key($this->validate);
-			$object = $this->validate[$type];
-			if (isset($this->validate[0])) {
-				$assoc = $this->validate[0];
-			}
-		} else {
-			$type = $this->validate;
-		}
-
-		if (($type == 'objects' || $type == 'association')) {
-			if (!isset($this->params['id'])) {
-				return;
-			} elseif (empty($this->objectModel)) {
-				if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-					$this->objectModel = $controller->modelClass;
-				} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-					$this->objectModel = $controller->uses[0];
-				} else {
-					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().'), E_USER_WARNING);
-					return;
-				}
-			}
-		}
-
-		switch ($type) {
-			case 'actions':
-				$valid = $this->Acl->check($this->user(), $this->action());
-			break;
-			case 'objects':
-
-			break;
-			case 'association':
-
-			break;
-			case null:
-			case false:
-				return;
-			break;
-			default:
-				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Should be "actions", "objects", "association" or null.'), E_USER_WARNING);
-			break;
+		if (!$this->isAuthorized($controller)) {
+			$this->Session->setFlash($this->authError);
+			$controller->redirect($controller->referer(), null, true);
 		}
 	}
 /**
@@ -308,6 +305,85 @@ class AuthComponent extends Object {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
 		return true;
+	}
+/**
+ * Determines whether the given user is authorized to perform an action.  The type of authorization
+ * used is based on the value of AuthComponent::$validate.
+ *
+ * @access public
+ * @param object $controller
+ * @param mixed $user  The user to check the authorization of
+ * @param string $type
+ * @return boolean True if $user is authorized, otherwise false
+ */
+	function isAuthorized(&$controller, $type = null, $user = null) {
+		if (empty($user)) {
+			$user = $this->user();
+		}
+		extract($this->__authType($type));
+
+		if (($type == 'objects' || $type == 'association')) {
+			if (!isset($this->params['id'])) {
+				return;
+			} elseif (empty($this->objectModel)) {
+				if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+					$this->objectModel = $controller->modelClass;
+				} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+					$this->objectModel = $controller->uses[0];
+				} else {
+					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().'), E_USER_WARNING);
+					return;
+				}
+			}
+		}
+
+		$valid = false;
+		switch ($type) {
+			case 'actions':
+				$valid = $this->Acl->check($this->user(), $this->action());
+			break;
+			case 'objects':
+
+			break;
+			case 'association':
+
+			break;
+			case 'controller':
+				$this->mapActions();
+				if (!isset($this->actionMap[$this->params['action']])) {
+					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '"', E_USER_WARNING);
+				} else {
+					$valid = $this->Acl->check($this->user(), $this->action(':controller'), $this->actionMap[$this->params['action']]);
+				}
+			break;
+			case null:
+			case false:
+				return;
+			break;
+			default:
+				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Allowed settings are: "controller", "actions", "objects", "association" or null.'), E_USER_WARNING);
+			break;
+		}
+		return $valid;
+	}
+
+	function __authType($auth = null) {
+		if (empty($auth)) {
+			$auth = $this->validate;
+		}
+		$object = $assoc = null;
+
+		if (is_array($auth)) {
+			$type = key($auth);
+			$object = $auth[$type];
+
+			if (isset($auth[0])) {
+				$assoc = $auth[0];
+			}
+		} else {
+			$type = $auth;
+		}
+		return compact('type', 'object', 'assoc');
 	}
 /**
  * Takes a list of actions in the current controller for which authentication is not required, or
@@ -346,6 +422,16 @@ class AuthComponent extends Object {
 			}
 		}
 		$this->allowedActions = array_values($this->allowedActions);
+	}
+/**
+ * Maps action names to CRUD operations.  Used for controller-based authentication.
+ *
+ * @param array $map
+ * @access public
+ * @return void
+ */
+	function mapActions($map = array()) {
+		$this->actionMap = am($this->actionMap, $map);
 	}
 /**
  * Manually log-in a user with the given parameter data.  The $data provided can be any data

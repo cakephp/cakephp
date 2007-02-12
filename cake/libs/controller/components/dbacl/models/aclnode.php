@@ -89,10 +89,14 @@ class AclNode extends AppModel {
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
 			if (!ClassRegistry::isKeySet($name)) {
-				trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->name} object", E_USER_WARNING);
-				return null;
+				if (!loadModel($name)) {
+					trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->name} object", E_USER_WARNING);
+					return null;
+				}
+				$model =& new $name();
+			} else {
+				$model =& ClassRegistry::getObject($name);
 			}
-			$model =& ClassRegistry::getObject($name);
 			$ref = array('model' => $name, 'foreign_key' => $ref[$name][$model->primaryKey]);
 		}
 		if (is_array($ref)) {
