@@ -158,13 +158,33 @@ class CakeSession extends Object {
  * @access public
  */
 	function checkSessionVar($name) {
-		$var = $this->__sessionVarNames($name);
+		$var = $this->__validateKeys($name);
 		if (empty($var)) {
 		  return false;
 		}
-		$expression = "return isset(" . $var . ");";
-		return eval($expression);
+		$result = Set::extract($_SESSION, $var);
+		return (!empty($result));
 	}
+
+/**
+ * Temp method until we are able to remove the last eval()
+ */
+	function __sessionVarNames($name) {
+		if (is_string($name) && preg_match("/^[0-9a-zA-Z._-]+$/", $name)) {
+			if (strpos($name, ".")) {
+				$names = explode(".", $name);
+			} else {
+				$names = array($name);
+			}
+			$expression="\$_SESSION";
+			foreach($names as $item) {
+				$expression .= is_numeric($item) ? "[$item]" : "['$item']";
+			}
+			return $expression;
+		}
+		$this->__setError(3, "$name is not a string");
+		return false;
+}
 /**
  * Removes a variable from session.
  *
@@ -263,7 +283,12 @@ class CakeSession extends Object {
  * @return void
  */
 	function writeSessionVar($name, $value) {
-		$result = Set::insert($_SESSION, $name, $value);
+		$var = $this->__validateKeys($name);
+
+		if (empty($var)) {
+			return false;
+		}
+		$result = Set::insert($_SESSION, $var, $value);
 		return (!empty($result));
 	}
 /**
@@ -508,26 +533,16 @@ class CakeSession extends Object {
 		$this->__regenerateId();
 	}
 /**
- * Helper method to extract variable names from the session
- * variable
+ * Validate that the $name is in correct dot notation
+ * example: $name = 'ControllerName.key';
  *
- * @param mixed $name Variable names as array or string.
- * @return string The expression to eval to get the value or false
+ * @param string $name Session key names as string.
+ * @return boolean false is $name is not correct format
  * @access private
  */
-	function __sessionVarNames($name) {
+	function __validateKeys($name) {
 		if (is_string($name) && preg_match("/^[0-9a-zA-Z._-]+$/", $name)) {
-			if (strpos($name, ".")) {
-				$names = explode(".", $name);
-			} else {
-				$names = array($name);
-			}
-			$expression="\$_SESSION";
-
-			foreach($names as $item) {
-				$expression .= is_numeric($item) ? "[$item]" : "['$item']";
-			}
-			return $expression;
+			return $name;
 		}
 		$this->__setError(3, "$name is not a string");
 		return false;

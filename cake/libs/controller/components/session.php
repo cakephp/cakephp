@@ -88,7 +88,6 @@ class SessionComponent extends CakeSession {
 				return true;
 			}
 			if ($this->writeSessionVar($name, $value) === false) {
-				die(debug($this));
 				return false;
 			}
 			return true;
