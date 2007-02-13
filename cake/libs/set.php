@@ -279,6 +279,71 @@ class Set extends Object {
 		return $list;
 	}
 /**
+ * Removes an element from a Set or array
+ *
+ * @param mixed $list
+ * @param array $data
+ * @param mixed $path A dot-separated string.
+ * @return array
+ */
+	function remove(&$list, $path, $data = null) {
+		if (empty($data) && is_a($this, 'Set')) {
+			$data = $path;
+			$path = $list;
+			$list = $this->get();
+		}
+		if (!is_array($path)) {
+			$path = explode('.', $path);
+		}
+		$_list =& $list;
+
+		foreach($path as $i => $key) {
+			if (intval($key) > 0 || $key == '0') {
+				$key = intval($key);
+			}
+			if ($i == count($path) - 1) {
+				unset($_list[$key]);
+			} else {
+				if (!isset($_list[$key])) {
+					return $list;
+				}
+				$_list =& $_list[$key];
+			}
+		}
+		return $list;
+	}
+/**
+ * Checks if a particular path is set in an array
+ *
+ * @param mixed $data
+ * @param mixed $path A dot-separated string.
+ * @return array
+ */
+	function check($data, $path = null) {
+		if (empty($path) && is_a($this, 'Set')) {
+			$path = $data;
+			$data = $this->get();
+		}
+		if (!is_array($path)) {
+			$path = explode('.', $path);
+		}
+
+		foreach($path as $i => $key) {
+			if (intval($key) > 0 || $key == '0') {
+				$key = intval($key);
+			}
+			if ($i == count($path) - 1) {
+				return isset($data[$key]);
+			} else {
+				if (!isset($data[$key])) {
+					return false;
+				}
+				$data =& $data[$key];
+			}
+		}
+		return true;
+	}
+/**
  * Computes the difference between a Set and an array, two Sets, or two arrays
  *
  * @param mixed $val1
