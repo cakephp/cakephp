@@ -77,7 +77,7 @@ class AjaxHelper extends AppHelper {
  *
  * @var array
  */
-	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverclass', 'ghosting', 'dropOnEmpty', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tree', 'treeTag', 'onUpdate', 'onChange');
+	var $sortOptions = array('tag', 'only', 'overlap', 'constraint', 'containment', 'handle', 'hoverclass', 'ghosting', 'dropOnEmpty', 'scroll', 'scrollSensitivity', 'scrollSpeed', 'tree', 'treeTag', 'onUpdate', 'onChange', 'update', 'change');
 /**
  * Options for slider.
  *
@@ -634,7 +634,9 @@ class AjaxHelper extends AppHelper {
  */
 	function sortable($id, $options = array()) {
 		if (!empty($options['url'])) {
-			$options['with'] = "Sortable.serialize('$id')";
+			if (empty($options['with'])) {
+				$options['with'] = "Sortable.serialize('$id')";
+			}
 			$options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options) . '}';
 		}
 
