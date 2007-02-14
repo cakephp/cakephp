@@ -53,7 +53,6 @@ class TreeBehavior extends ModelBehavior {
 		}*/
 		$this->settings[$model->name] = $settings;
 	}
-
 /**
  * Sets the parent of the given node
  *

@@ -71,7 +71,9 @@ class AclNode extends AppModel {
 			$start = $path[count($path) - 1];
 			unset($path[count($path) - 1]);
 
-			$query = "SELECT {$type}0.* From {$prefix}{$table} AS {$type}0 ";
+			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
+			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
+			$query .= "ON {$type}0.alias = " . $db->value($start) . " ";
 			foreach ($path as $i => $alias) {
 				$j = $i - 1;
 				$k = $i + 1;
@@ -79,11 +81,7 @@ class AclNode extends AppModel {
 				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft && {$type}{$k}.rght < {$type}{$i}.rght ";
 				$query .= "AND {$type}{$k}.alias = " . $db->value($alias) . " ";
 			}
-			$result = $this->query("{$query} WHERE {$type}0.alias = " . $db->value($start));
-
-			if (!empty($result)) {
-				$result = $result[0]["{$type}0"];
-			}
+			$result = $this->query("{$query} WHERE {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ORDER BY {$type}.lft DESC");
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
@@ -111,9 +109,19 @@ class AclNode extends AppModel {
 			}
 		}
 		if (is_array($ref)) {
-			$result = $this->find($ref, null, null, -1);
-			if ($result) {
-				list($result) = array_values($result);
+			foreach ($ref as $key => $val) {
+				if (strpos($key, $type) !== 0) {
+					unset($ref[$key]);
+					$ref["{$type}0.{$key}"] = $val;
+				}
+			}
+			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
+			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
+			$query .= "ON {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ";
+			$result = $this->query("{$query} " . $db->conditions($ref) ." ORDER BY {$type}.lft DESC");
+
+			if (!$result) {
+				trigger_error("AclNode::node() - Couldn't find {$type} node identified by \"" . print_r($ref, true) . "\"", E_USER_WARNING);
 			}
 		}
 		return $result;

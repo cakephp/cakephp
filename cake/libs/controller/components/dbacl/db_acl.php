@@ -71,19 +71,21 @@ class DB_ACL extends AclBase {
 		}
 
 		$permKeys = $this->_getAcoKeys($Perms->loadInfo());
-		$aroNode = $Aro->node($aro);
-		$acoNode = $Aco->node($aco);
+		$aroPath = $Aro->node($aro);
+		$acoPath = new Set($Aco->node($aco));
 
-		if (empty($aroNode) ||  empty($acoNode)) {
+		if (empty($aroPath) ||  empty($acoPath)) {
 			trigger_error("DB_ACL::check() - Attempted to check permissions on/with a node that does not exist.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
-		$aroPath = $Aro->getPath($aroNode['id']);
-		$acoPath = new Set($Aco->getPath($acoNode['id']));
-
 		if ($acoPath->get() == null || $acoPath->get() == array()) {
 			return false;
 		}
+
+		$aroNode = $aroPath[0];
+		$acoNode = $acoPath->get();
+		$acoNode = $acoNode[0];
+
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
 			trigger_error(sprintf(__("ACO permissions key %s does not exist in DB_ACL::check()", true), $action), E_USER_NOTICE);
 			return false;

@@ -1096,7 +1096,6 @@ class Model extends Overloadable {
 							}
 						}
 					}
-
 					if (!empty($joined)) {
 						$this->__saveMulti($joined, $this->id);
 					}
@@ -1158,7 +1157,6 @@ class Model extends Overloadable {
 				}
 			}
 		}
-
 		$total = count($joinTable);
 
 		if(is_array($newValue)) {

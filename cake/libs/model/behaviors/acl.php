@@ -97,15 +97,9 @@ class AclBehavior extends ModelBehavior {
 			$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
 			$parent = $this->node($model, $model->parentNode());
 
-			if(isset($parent['id'])) {
-				$parent = $parent['id'];
-			} else {
-				$parent = null;
-			}
-
 			$model->{$type}->create();
 			$model->{$type}->save(array(
-				'parent_id'		=> $parent,
+				'parent_id'		=> Set::extract($parent, "0.{$type}.id"),
 				'model'			=> $model->name,
 				'foreign_key'	=> $model->id
 			));
@@ -117,9 +111,11 @@ class AclBehavior extends ModelBehavior {
  * @return void
  */
 	function afterDelete(&$model) {
-		$node = $this->node($model);
 		$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
-		$model->{$type}->delete($node['id']);
+		$node = Set::extract($this->node($model), "0.{$type}.id");
+		if (!empty($node)) {
+			$model->{$type}->delete($node);
+		}
 	}
 }
 
