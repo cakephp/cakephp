@@ -75,10 +75,11 @@ class DB_ACL extends AclBase {
 		$acoPath = new Set($Aco->node($aco));
 
 		if (empty($aroPath) ||  empty($acoPath)) {
-			trigger_error("DB_ACL::check() - Attempted to check permissions on/with a node that does not exist.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 		if ($acoPath->get() == null || $acoPath->get() == array()) {
+			trigger_error("DB_ACL::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 

@@ -351,7 +351,7 @@ class AuthComponent extends Object {
 			case 'controller':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '"', E_USER_WARNING);
+					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '" in controller "' . $this->params['controller'] . '"', E_USER_WARNING);
 				} else {
 					$valid = $this->Acl->check($this->user(), $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
