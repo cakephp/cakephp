@@ -286,9 +286,8 @@ class Set extends Object {
  * @param mixed $path A dot-separated string.
  * @return array
  */
-	function remove(&$list, $path, $data = null) {
-		if (empty($data) && is_a($this, 'Set')) {
-			$data = $path;
+	function remove($list, $path = null) {
+		if (empty($path) && is_a($this, 'Set')) {
 			$path = $list;
 			$list = $this->get();
 		}
@@ -310,7 +309,13 @@ class Set extends Object {
 				$_list =& $_list[$key];
 			}
 		}
-		return $list;
+
+		if (is_a($this, 'Set')) {
+			$this->value = $list;
+			return $this;
+		} else {
+			return $list;
+		}
 	}
 /**
  * Checks if a particular path is set in an array
