@@ -154,12 +154,14 @@ class DboMysql extends DboSource {
 		if (empty($tables)) {
 			$result = $this->query('SHOW TABLES');
 			$key1 = $key2 = null;
-			foreach ($result as $item) {
-				if (empty($key1)) {
-					$key1 = key($item);
-					$key2 = key($item[$key1]);
+			if ($result) {
+				foreach ($result as $item) {
+					if (empty($key1)) {
+						$key1 = key($item);
+						$key2 = key($item[$key1]);
+					}
+					$tables[] = $item[$key1][$key2];
 				}
-				$tables[] = $item[$key1][$key2];
 			}
 		}
 

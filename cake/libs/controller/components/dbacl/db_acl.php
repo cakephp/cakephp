@@ -270,11 +270,11 @@ class DB_ACL extends AclBase {
 		}
 
 		return array(
-			'aro' => $obj['Aro']['id'],
-			'aco'  => $obj['Aco']['id'],
+			'aro' => Set::extract($obj, 'Aro.0.Aro.id'),
+			'aco'  => Set::extract($obj, 'Aco.0.Aco.id'),
 			'link' => $Link->findAll(array(
-				'Permission.aro_id' => $obj['Aro']['id'],
-				'Permission.aco_id' => $obj['Aco']['id']
+				'Permission.aro_id' => Set::extract($obj, 'Aro.0.Aro.id'),
+				'Permission.aco_id' => Set::extract($obj, 'Aco.0.Aco.id')
 			))
 		);
 	}

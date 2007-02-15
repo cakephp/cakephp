@@ -121,6 +121,7 @@ class AclNode extends AppModel {
 			$result = $this->query("{$query} " . $db->conditions($ref) ." ORDER BY {$type}.lft DESC");
 
 			if (!$result) {
+				pr($this->trace());
 				trigger_error("AclNode::node() - Couldn't find {$type} node identified by \"" . print_r($ref, true) . "\"", E_USER_WARNING);
 			}
 		}

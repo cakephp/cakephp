@@ -61,6 +61,9 @@ class TreeBehavior extends ModelBehavior {
  */
 	function setparent(&$model, $parent_id = null) {
 		extract($this->settings[$model->name]);
+		if ($parent_id == $model->field($parent)) {
+			return true;
+		}
 		list($node) = array_values($model->find(array($model->escapeField() => $model->id), array($model->primaryKey, $parent, $left, $right), null, -1));
 		list($edge) = array_values($model->find(null, "MAX({$right}) AS {$right}", null, -1));
 		$edge = ife(empty($edge[$right]), 0, $edge[$right]); // Is the tree empty?

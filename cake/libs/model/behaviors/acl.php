@@ -95,7 +95,12 @@ class AclBehavior extends ModelBehavior {
 	function afterSave(&$model, $created) {
 		if ($created) {
 			$type = $this->__typeMaps[low($this->settings[$model->name]['type'])];
-			$parent = $this->node($model, $model->parentNode());
+			$parent = $model->parentNode();
+			if (!empty($parent)) {
+				$parent = $this->node($model, $parent);
+			} else {
+				$parent = null;
+			}
 
 			$model->{$type}->create();
 			$model->{$type}->save(array(
