@@ -635,7 +635,9 @@ class Model extends Overloadable {
 		$colKey = Inflector::underscore($className);
 
 		if(!class_exists($className)) {
-			loadModel($className);
+			if (!loadModel($className)) {
+				trigger_error("Model::__constructedLinkedModel() - Failed loading model class {$className} when attempting to construct {$this->name}.  Make sure that " . Inflector::underscore($className) . ".php exists in your model path, and that the class name is correct.", E_USER_WARNING);
+			}
 		}
 
 		if (ClassRegistry::isKeySet($colKey)) {
@@ -901,8 +903,8 @@ class Model extends Overloadable {
 			}
 		}
 		$this->validationErrors = array();
-
-		$this->set(am(array_filter($defaults), $data));
+		$this->set(array_filter($defaults));
+		$this->set($data);
 		return $this->data;
 	}
 /**
