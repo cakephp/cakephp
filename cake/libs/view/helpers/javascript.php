@@ -269,7 +269,8 @@ class JavascriptHelper extends AppHelper {
 			$this->_cachedEvents = array();
 
 			if (!empty($rules)) {
-				$data .= "\nEventSelectors.start({\n" . implode(",\n\n", $rules) . "\n});\n";
+				$data .= "\nvar Rules = {\n" . implode(",\n\n", $rules) . "\n}";
+				$data .= "\nEventSelectors.start(Rules);\n";
 			}
 
 			if (!empty($events) || !empty($rules)) {
