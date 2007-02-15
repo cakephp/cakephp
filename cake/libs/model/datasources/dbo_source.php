@@ -283,6 +283,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($this->error) {
+			$this->showQuery($sql);
 			return false;
 		} else {
 			return $this->_result;
@@ -463,10 +464,12 @@ class DboSource extends DataSource {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
 
-		if (($this->debug && Configure::read() > 0) || $error) {
-			print ("<p style = \"text-align:left\"><b>Query:</b> {$sql} <small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
+		if (($this->debug || $error) && Configure::read() > 0) {
+			e("<p style = \"text-align:left\"><b>Query:</b> {$sql} ");
 			if ($error) {
-				print ("<br /><span style = \"color:Red;text-align:left\"><b>ERROR:</b> {$this->error}</span>");
+				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
+			} else {
+				e("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
 			}
 			print ('</p>');
 		}
