@@ -146,9 +146,9 @@ class DataSource extends Object{
  * Holds a list of sources (tables) contained in the DataSource
  *
  * @var array
- * @access private
+ * @access protected
  */
-	var $__sources = null;
+	var $_sources = null;
 /**
  * A reference to the physical connection of this DataSource
  *

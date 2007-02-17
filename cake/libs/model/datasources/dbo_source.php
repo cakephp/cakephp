@@ -138,8 +138,8 @@ class DboSource extends DataSource {
  * @return array
  */
 	function listSources($data = null) {
-		if ($this->__sources != null) {
-			return $this->__sources;
+		if ($this->_sources != null) {
+			return $this->_sources;
 		}
 
 		if (Configure::read() > 0) {
@@ -156,7 +156,7 @@ class DboSource extends DataSource {
 
 		if ($new != null) {
 			$new = unserialize($new);
-			$this->__sources = $new;
+			$this->_sources = $new;
 		}
 		return $new;
 	}
