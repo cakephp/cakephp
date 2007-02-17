@@ -61,13 +61,6 @@ class DboOracle extends DboSource {
   */
 	var $sequence = '';
 	
-/**
- * Transaction in progress flag
- *
- * @var boolean
- */
-	var $__transactionStarted = false;
-	
  /**
  * Enter description here...
  *
@@ -245,7 +238,7 @@ class DboOracle extends DboSource {
 		if (!$this->_statementId) {
 			return null;
 		}
-		if ($this->__transactionStarted) {
+		if ($this->_transactionStarted) {
 			$mode = OCI_DEFAULT;
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
@@ -404,7 +397,7 @@ class DboOracle extends DboSource {
 	function begin(&$model) {
 		//if (parent::begin($model)) {
 			//if ($this->execute('BEGIN')) {
-				$this->__transactionStarted = true;
+				$this->_transactionStarted = true;
 				return true;
 			//}
 		//}
@@ -434,7 +427,7 @@ class DboOracle extends DboSource {
  */
 	function commit(&$model) {
 		//if (parent::commit($model)) {
-			$this->__transactionStarted = false;
+			$this->_transactionStarted = false;
 			return ocicommit($this->connection);
 		//}
 		//return false;

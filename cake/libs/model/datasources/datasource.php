@@ -174,9 +174,9 @@ class DataSource extends Object{
  * Whether or not this DataSource is in the middle of a transaction
  *
  * @var boolean
- * @access public
+ * @access protected
  */
-	var $__transactionStarted = false;
+	var $_transactionStarted = false;
 /**
  * Constructor.
  */

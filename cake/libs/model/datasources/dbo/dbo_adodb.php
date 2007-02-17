@@ -152,7 +152,7 @@ class DboAdodb extends DboSource {
 	function begin(&$model) {
 		if (parent::begin($model)) {
 			if ($this->_adodb->BeginTrans()) {
-				$this->__transactionStarted = true;
+				$this->_transactionStarted = true;
 				return true;
 			}
 		}
@@ -168,7 +168,7 @@ class DboAdodb extends DboSource {
  */
 	function commit(&$model) {
 		if (parent::commit($model)) {
-			$this->__transactionStarted = false;
+			$this->_transactionStarted = false;
 			return $this->_adodb->CommitTrans();
 		}
 		return false;

@@ -276,7 +276,7 @@ class DboDb2 extends DboSource {
 	function begin(&$model) {
 		if (parent::begin($model)) {
 			if (db2_autocommit($this->connection, DB2_AUTOCOMMIT_OFF)) {
-				$this->__transactionStarted = true;
+				$this->_transactionStarted = true;
 				return true;
 			}
 		}
@@ -293,7 +293,7 @@ class DboDb2 extends DboSource {
 	function commit(&$model) {
 		if (parent::commit($model)) {
 			if (db2_commit($this->connection)) {
-				$this->__transactionStarted = false;
+				$this->_transactionStarted = false;
 				db2_autocommit($this->connection, DB2_AUTOCOMMIT_ON);
 				return true;
 			}
@@ -310,7 +310,7 @@ class DboDb2 extends DboSource {
  */
 	function rollback(&$model) {
 		if (parent::rollback($model)) {
-			$this->__transactionStarted = false;
+			$this->_transactionStarted = false;
 			db2_autocommit($this->connection, DB2_AUTOCOMMIT_ON);
 			return db2_rollback($this->connection);
 		}

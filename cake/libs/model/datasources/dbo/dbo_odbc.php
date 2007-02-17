@@ -275,7 +275,7 @@ class DboOdbc extends DboSource{
 	function begin(&$model) {
 		if (parent::begin($model)) {
 				if (odbc_autocommit($this->connection, false)) {
-					$this->__transactionStarted = true;
+					$this->_transactionStarted = true;
 					return true;
 				}
 		}
@@ -294,7 +294,7 @@ class DboOdbc extends DboSource{
 	function commit(&$model) {
 		if (parent::commit($model)) {
 				if (odbc_commit($this->connection)) {
-					$this->__transactionStarted = false;
+					$this->_transactionStarted = false;
 					return true;
 				}
 		}
@@ -312,7 +312,7 @@ class DboOdbc extends DboSource{
  */
 	function rollback(&$model) {
 		if (parent::rollback($model)) {
-				$this->__transactionStarted=false;
+				$this->_transactionStarted=false;
 				return odbc_rollback($this->connection);
 		}
 

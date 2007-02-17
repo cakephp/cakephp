@@ -1596,7 +1596,7 @@ class DboSource extends DataSource {
  *
  */
 	function __destruct() {
-		if ($this->__transactionStarted) {
+		if ($this->_transactionStarted) {
 			$this->rollback();
 		}
 		$this->close();
