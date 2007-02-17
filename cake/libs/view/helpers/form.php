@@ -614,6 +614,7 @@ class FormHelper extends AppHelper {
 		}
 		if (in_array('showParents', $attributes)) {
 			$showParents = true;
+			unset($attributes['showParents']);
 		}
 
 		if (!isset($selected)) {
