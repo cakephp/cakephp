@@ -42,89 +42,94 @@
  */
 class Controller extends Object {
 /**
- * Name of the controller.
+ * Tshe name of this controller. Controller names are plural, named after the model they manipulate. 
  *
  * @var string
  * @access public
  */
 	var $name = null;
 /**
- * Stores the current URL (for links etc.)
+ * Stores the current URL, based from the webroot.
  *
  * @var string
  * @access public
  */
 	var $here = null;
 /**
- * The webroot of the application
+ * The webroot of the application. Helpful if your application is placed in a folder below the domain name.
  *
  * @var string
  * @access public
  */
 	var $webroot = null;
 /**
- * Action to be performed.
+ * The name of the controller action that was requested.
  *
  * @var string
  * @access public
  */
 	var $action = null;
 /**
- * An array of names of models the particular controller wants to use.
+ * An array containing the class names of models this controller uses.
+ * 
+ * Example: var $uses = array('Product', 'Post', 'Comment');
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
 	var $uses = false;
 /**
- * An array of names of built-in helpers to include.
+ * An array containing the names of helpers this controller uses. The array elements should
+ * not contain the -Helper part of the classname.
+ * 
+ * Example: var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  */
 	var $helpers = array('Html');
 /**
- * Parameters received in the current request, i.e. GET and POST data
+ * Parameters received in the current request, i.e. GET and POST data.
  *
  * @var array
  * @access public
  */
 	var $params = array();
 /**
- * POST'ed model data
+ * POSTed model data.
  *
  * @var array
  * @access public
  */
 	var $data = array();
 /**
- * Pagination defaults
+ * Pagination defaults.
  *
  * @var array
  * @access public
  */
 	var $paginate = array('limit' => 20, 'page' => 1);
 /**
- * Sub-path for view files
+ * Sub-path for view files.
  *
  * @var string
  */
 	var $viewPath = null;
 /**
- * Sub-path for layout files
+ * Sub-path for layout files.
  *
  * @var string
  */
 	var $layoutPath = null;
 /**
- * Variables for the view
+ * Variables to be handed to the view.
  *
  * @var array
  * @access public
  */
 	var $viewVars = array();
 /**
- * Web page title
+ * Text to be placed in <title></title>
  *
  * @var boolean
  * @access public
@@ -138,49 +143,52 @@ class Controller extends Object {
  */
 	var $modelNames = array();
 /**
- * Base url path
+ * Base url path.
  *
  * @var string
  * @access public
  */
 	var $base = null;
 /**
- * Layout file to use (see /app/views/layouts/default.thtml)
+ * Layout file to use (see /app/views/layouts/default.thtml).
  *
  * @var string
  * @access public
  */
 	var $layout = 'default';
 /**
- * Automatically render the view (the dispatcher checks for this variable before running render())
+ * Set to true to automatically render the view (the dispatcher checks for this variable before running render())
+ * once action logic has finished.
  *
  * @var boolean
  * @access public
  */
 	var $autoRender = true;
 /**
- * Automatically render the layout
+ * Set to true to automatically render the layout.
  *
  * @var boolean
  * @access public
  */
 	var $autoLayout = true;
 /**
- * Array of components a controller will use
+ * Array containing the names of components this controller uses.
+ * 
+ * Example: var $components = array('Session', 'RequestHandler', 'Acl');
  *
  * @var array
  * @access public
  */
 	var $components = array();
 /**
- * The name of the View class a controller sends output to
+ * The name of the View class this controller sends output to.
  *
  * @var string
  * @access public
  */
 	var $view = 'View';
 /**
- * File extension for view templates. Defaults to Cake's conventional ".thtml".
+ * File extension for view templates. Defaults to Cake's conventional ".ctp".
  *
  * @var string
  * @access public
@@ -210,7 +218,7 @@ class Controller extends Object {
  */
 	var $plugin = null;
 /**
- * Used to set methods a controller will allow the View to cache
+ * Used to define methods a controller will allow the View to cache.
  *
  * @var mixed
  * @access public
