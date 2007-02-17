@@ -57,7 +57,7 @@ class Set extends Object {
  *
  * @access public
  */
-	function get() {
+	function &get() {
 		return $this->value;
 	}
 /**
@@ -256,7 +256,7 @@ class Set extends Object {
 		if (empty($data) && is_a($this, 'Set')) {
 			$data = $path;
 			$path = $list;
-			$list = $this->get();
+			$list =& $this->get();
 		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
@@ -289,7 +289,7 @@ class Set extends Object {
 	function remove($list, $path = null) {
 		if (empty($path) && is_a($this, 'Set')) {
 			$path = $list;
-			$list = $this->get();
+			$list =& $this->get();
 		}
 		if (!is_array($path)) {
 			$path = explode('.', $path);
