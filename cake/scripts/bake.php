@@ -1412,7 +1412,7 @@ class Bake {
 		$currentModelName = $this->__modelName($controllerName);
 		loadModel($currentModelName);
 		$modelObj =& new $currentModelName();
-		$controllerPath = $this->__controllerPath($currentModelName);
+		$controllerPath = $this->__controllerPath($controllerName);
 		$pluralName = $this->__pluralName($currentModelName);
 		$singularName = $this->__singularName($currentModelName);
 		$singularHumanName = $this->__singularHumanName($currentModelName);
