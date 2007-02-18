@@ -318,7 +318,26 @@ div.related div.actions ul li a:hover {
 	text-decoration: none;
 }
 
-/* Other */
+/* Debugging */
 pre {
 	padding: 1em;
+}
+
+pre.cake_debug {
+	margin: 2px;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+div.cake-stack-trace {
+	margin: 2px 2px 0 2px;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+div.cake-stack-trace pre {
+	background-color: #F0F0F0;
+	border: 1px dotted #606060;
+	padding: 2px 0 2px 5px;
+	margin: 0px 4px 5px 5px;
 }
