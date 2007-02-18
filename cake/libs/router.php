@@ -511,7 +511,7 @@ class Router extends Overloadable {
 			}
 			$output = $base . '/' . $output;
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (isset($url{0}) && $url{0} == '#')) {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url,0,1) == '#')) {
 				return $url;
 			}
 
