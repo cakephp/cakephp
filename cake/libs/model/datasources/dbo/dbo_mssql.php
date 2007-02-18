@@ -150,7 +150,9 @@ class DboMssql extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		return @mssql_close($this->connection);
+		@mssql_free_result($this->results);
+		$this->connected = !@mssql_close($this->connection);
+		return !$this->connected;
 	}
 /**
  * Executes given SQL statement.
