@@ -30,9 +30,13 @@
 /**
  * Enter description here...
  */
-	ini_set('display_errors', '1');
-	ini_set('error_reporting', '7');
 	define ('DS', DIRECTORY_SEPARATOR);
+	if (function_exists('ini_set')) {
+		ini_set('display_errors', '1');
+		ini_set('error_reporting', '7');
+		ini_set('max_execution_time',0);
+	}
+
 	$app = 'app';
 	$core = null;
 	$root = dirname(dirname(dirname(__FILE__)));
@@ -45,22 +49,22 @@
 			case '-app':
 				$app = $argv[$i + 1];
 				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1]; 
+				$unset[$i + 1] = $argv[$i + 1];
 			break;
 			case '-core':
 				$core = $argv[$i + 1];
 				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1]; 
+				$unset[$i + 1] = $argv[$i + 1];
 			break;
 			case '-root':
 				$root = $argv[$i + 1];
 				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1]; 
+				$unset[$i + 1] = $argv[$i + 1];
 			break;
 			case '-datasource':
 				$dataSource = $argv[$i + 1];
 				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1]; 
+				$unset[$i + 1] = $argv[$i + 1];
 			break;
 		}
 	}
@@ -103,7 +107,7 @@
 	if(!empty($unset)) {
 		$serverArgs = array_values(array_diff($argv, $unset));
 	}
-	
+
 	$wasted = array_shift($serverArgs);
 	$command = array_shift($serverArgs);
 	$args = $serverArgs;
@@ -182,7 +186,7 @@ class AclCLI {
 			fwrite($this->stderr, $out);
 			exit();
 		}
-		
+
 		if(!in_array($command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->stdout('');
@@ -191,7 +195,7 @@ class AclCLI {
 				$this->doDbConfig();
 			}
 			require_once (CONFIGS.'database.php');
-			
+
 			if(!in_array($command, array('initdb'))) {
 				$this->dataSource = DATASOURCE;
 				$this->Acl = new AclComponent();
@@ -247,7 +251,7 @@ class AclCLI {
 		$this->checkArgNumber(4, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		
+
 		$parent = (is_numeric($this->args[2])) ? intval($this->args[2]) : $this->args[2];
 		if(!$this->Acl->{$class}->create(intval($this->args[1]), $parent, $this->args[3])){
 			$this->displayError("Parent Node Not Found", "There was an error creating the ".$class.", probably couldn't find the parent node.\n If you wish to create a new root node, specify the <parent_id> as '0'.");
@@ -339,7 +343,7 @@ class AclCLI {
  *
  */
 	function view() {
-		$this->checkArgNumber(1, 'view'); 
+		$this->checkArgNumber(1, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (!is_null($this->args[1])) {
@@ -434,13 +438,13 @@ class AclCLI {
 				CHANGE ".$db->name('user_id')."
 				".$db->name('foreign_key')."
 				INT( 10 ) UNSIGNED NULL DEFAULT NULL;";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_create') 
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_create')
 				. " " . $db->name('_create') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_update') 
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_update')
 				. " " . $db->name('_update') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_read') 
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_read')
 				. " " . $db->name('_read') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_delete') 
+		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_delete')
 				. " " . $db->name('_delete') . " CHAR(2) NOT NULL DEFAULT '0';";
 		if ($db->query($sql) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
@@ -693,7 +697,7 @@ class AclCLI {
 		} else {
 			$this->stdout('Bake Aborted.');
 		}
-	}	
+	}
 /**
  * Creates a database configuration file for Bake.
  *

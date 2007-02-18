@@ -33,7 +33,7 @@
 	if (function_exists('ini_set')) {
 		ini_set('display_errors', '1');
 		ini_set('error_reporting', '7');
-		ini_set('max_execution_time',60*5);
+		ini_set('max_execution_time',0);
 	}
 
 	$app = null;
