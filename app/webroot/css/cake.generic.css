@@ -306,7 +306,7 @@ div.related div.actions li {
 	margin: 0 0 4px 0px;
 	padding: 0;
 }
-div.related div.actions ul li a{
+div.related div.actions ul li a {
 	background:#fff;
 	color: #2C6877;
 	padding: 0;
@@ -335,9 +335,27 @@ div.cake-stack-trace {
 	line-height: 18px;
 }
 
-div.cake-stack-trace pre {
+div.cake-stack-trace pre, div.cake-code-dump pre {
+	color: #000000;
 	background-color: #F0F0F0;
 	border: 1px dotted #606060;
 	padding: 2px 0 2px 5px;
 	margin: 0px 4px 5px 5px;
+}
+
+div.cake-code-dump pre, div.cake-code-dump pre code {
+	clear: both;
+	font-size: 12px;
+	line-height: 5px;
+	margin: 0;
+	padding: 0 0 10px 0;
+}
+
+div.cake-code-dump pre {
+	padding: 7px 8px;
+	margin: 1px 4px 2px 6px;
+}
+
+div.cake-code-dump span.code-highlight {
+	background-color: #FFFF00;
 }
