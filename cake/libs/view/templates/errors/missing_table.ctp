@@ -27,4 +27,4 @@
 <h1><?php __('Missing Database Table'); ?></h1>
 <p class="error"><?php echo sprintf(__('No Database table for model %1$s (expected %2$s), create it first.', true), $model, $table);?></p>
 <p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_table.thtml");?></span></p>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_table.ctp");?></span></p>

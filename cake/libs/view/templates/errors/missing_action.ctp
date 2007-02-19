@@ -27,7 +27,7 @@
 
 <h1><?php echo sprintf(__('Missing Method in %s', true), $controller);?></h1>
 <p class="error"><?php echo sprintf(__('You are seeing this error because the action <em>%1$s</em> is not defined in controller <em>%2$s</em>', true), $action, $controller);?></p>
-<p><span class="notice"><?php echo sprintf(__('If you want to customize this error message, create %s.', true), APP_DIR.DS."views/errors/missing_action.thtml");?></span></p>
+<p><span class="notice"><?php echo sprintf(__('If you want to customize this error message, create %s.', true), APP_DIR.DS."views/errors/missing_action.ctp");?></span></p>
 <p><span class="notice"><strong><?php __('Fatal'); ?></strong>
 <?php echo sprintf(__(': Confirm you have created the %1$s::%2$s in file : %3$s.', true), $controller, $action, APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php");?></span></p>
 <p>&lt;?php<br />

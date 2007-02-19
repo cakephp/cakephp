@@ -27,7 +27,7 @@
 <h1><?php __('Missing Model'); ?></h1>
 <p class="error"><?php echo sprintf(__("No class found for the <em>%s</em> model.", true), $model);?></p>
 <p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_model.thtml");?></span></p>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_model.ctp");?></span></p>
 <p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
 <?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."models".DS.Inflector::underscore($model).".php");?></span></p>
 <p>&lt;?php<br />

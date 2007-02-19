@@ -29,7 +29,7 @@
 <?php echo sprintf(__('You are seeing this error because the component class <em>%1$s</em> you have set in <em>%2$s</em> can\'t be found or doesn\'t exist.', true), $component."Component", $controller."Controller");?>
 </p>
 <p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_component_class.thtml");?></span></p>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_component_class.ctp");?></span></p>
 <p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
 <?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS."components".DS.$file);?></span></p>
 

@@ -28,7 +28,7 @@
 <p class="error"><?php echo sprintf(__('You are seeing this error because controller <em>%s</em> could not be found.', true), $controller);?></p>
 
 <p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_controller.thtml");?></span></p>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/missing_controller.ctp");?></span></p>
 <p><span class="notice"><strong><?php __('Fatal'); ?>: </strong>
 <?php echo sprintf(__('Create the class below in file: %s', true), APP_DIR.DS."controllers".DS.Inflector::underscore($controller).".php");?></span></p>
 <p>&lt;?php<br />

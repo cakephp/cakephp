@@ -27,4 +27,4 @@
 <h1><?php echo sprintf(__('Private Method in %s', true), $controller);?></h1>
 <p class="error"><?php echo sprintf(__("You are seeing this error because the private class method <em>%s</em> should not be accessed directly.", true), $action);?></p>
 <p><span class="notice"><strong><?php __('Notice'); ?>: </strong>
-<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/private_action.thtml");?></span></p>
+<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR.DS."views/errors/private_action.ctp");?></span></p>
