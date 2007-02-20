@@ -87,7 +87,11 @@ class CakeSocket extends Object {
  */
 	function __construct($config = array()) {
 		parent::__construct();
-		$this->config = am($this->_baseConfig, $config);
+		
+		$classVars = get_class_vars(__CLASS__);
+		$baseConfig = $classVars['_baseConfig'];
+		
+		$this->config = am($baseConfig, $config);
 		
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
@@ -109,7 +113,7 @@ class CakeSocket extends Object {
 			$tmp = null;			
 			$this->connection = @pfsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
-			$this->connection = @fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
+			$this->connection = fsockopen($this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		}
 		
 		if (!empty($errNum) || !empty($errStr)) {
