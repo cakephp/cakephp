@@ -108,6 +108,13 @@ class CakeSession extends Object {
  */
 	var $sessionTime = false;
 /**
+ * Keeps track of keys to watch for writes on
+ *
+ * @var array
+ * @access public
+ */
+	var $watchKeys = array();
+/**
  * Constructor.
  *
  * @param string $base The base path for the Session
@@ -198,11 +205,32 @@ class CakeSession extends Object {
 			if (empty($var)) {
 				return false;
 			}
-			eval ("unset($var);");
-			return true;
+			if (in_array($var, $this->watchKeys)) {
+				trigger_error('Deleting session key {' . $var . '}', E_USER_NOTICE);
+			}
+			$this->__overwrite($_SESSION, Set::remove($_SESSION, $var));
+			return ($this->check($var) == false);
 		}
 		$this->__setError(2, "$name doesn't exist");
 		return false;
+	}
+/**
+ * Used to write new data to _SESSION, since PHP doesn't like us setting the _SESSION var itself
+ *
+ * @param array $old
+ * @param array $new
+ * @return void
+ * @access private
+ */
+	function __overwrite(&$old, $new) {
+		foreach ($old as $key => $var) {
+			if (!isset($new[$key])) {
+				unset($old[$key]);
+			}
+		}
+		foreach ($new as $key => $var) {
+			$old[$key] = $var;
+		}
 	}
 /**
  * Return error description for given error number.
@@ -276,11 +304,43 @@ class CakeSession extends Object {
 		return false;
 	}
 /**
+ * Tells Session to write a notification when a certain session path or subpath is written to
+ *
+ * @param mixed $var The variable path to watch
+ * @return void
+ */
+	function watch($var) {
+		$var = $this->__validateKeys($var);
+		if (empty($var)) {
+			return false;
+		}
+		$this->watchKeys[] = $var;
+	}
+/**
+ * Tells Session to stop watching a given key path
+ *
+ * @param mixed $var The variable path to watch
+ * @return void
+ */
+	function ignore($var) {
+		$var = $this->__validateKeys($var);
+		if (!in_array($var, $this->watchKeys)) {
+			return;
+		}
+		foreach ($this->watchKeys as $i => $key) {
+			if ($key == $var) {
+				unset($this->watchKeys[$i]);
+				$this->watchKeys = array_values($this->watchKeys);
+				return;
+			}
+		}
+	}
+/**
  * Writes value to given session variable name.
  *
  * @param mixed $name
  * @param string $value
- * @return void
+ * @return boolean True if the write was successful, false if the write failed
  */
 	function write($name, $value) {
 		$var = $this->__validateKeys($name);
@@ -288,8 +348,11 @@ class CakeSession extends Object {
 		if (empty($var)) {
 			return false;
 		}
-		$result = Set::insert($_SESSION, $var, $value);
-		return (!empty($result));
+		if (in_array($var, $this->watchKeys)) {
+			trigger_error('Writing session key {' . $var . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
+		}
+		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
+		return (Set::extract($_SESSION, $var) == $value);
 	}
 /**
  * Method called on close of a database
@@ -442,7 +505,7 @@ class CakeSession extends Object {
  *
  */
 	function __checkValid() {
-		if ($this->read("Config")) {
+		if ($this->read('Config')) {
 			if ($this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
 				$this->write("Config.time", $this->sessionTime);
 				$this->valid = true;

@@ -252,7 +252,7 @@ class Set extends Object {
  * @param mixed $path A dot-separated string.
  * @return array
  */
-	function insert(&$list, $path, $data = null) {
+	function insert($list, $path, $data = null) {
 		if (empty($data) && is_a($this, 'Set')) {
 			$data = $path;
 			$path = $list;
