@@ -316,6 +316,7 @@ class CookieComponent extends Object {
 				$this->__delete("[$name]");
 			}
 		}
+		$this->__delete("[$name]");
 	}
 /**
  * Will allow overriding default encryption method.
