@@ -137,58 +137,6 @@ class Object{
 		}
 	}
 /**
- * Outputs a stack trace with the given options
- *
- * @param array $options
- * @return string
- */
-	function trace($options = array()) {
-		$options = am(array(
-				'depth' => null,
-				'format' => ''
-			),
-			$options
-		);
-
-		$backtrace = debug_backtrace();
-		$back = array();
-		$c = 0;
-		foreach ($backtrace as $trace) {
-			if ($options['depth'] != null && $c > $options['depth']) {
-				break;
-			}
-			$t = '';
-			if (!isset($trace['line'])) {
-				$trace['line'] = '??';
-			}
-			if (!isset($trace['file'])) {
-				$trace['file'] = '[internal]';
-			}
-			if (isset($trace['class']) && !empty($trace['class'])) {
-				$t = $trace['class'].'::';
-			}
-			$t .= $trace['function'].'() - (from ';
-
-			if (strpos($trace['file'], CAKE_CORE_INCLUDE_PATH) === 0) {
-				$trace['file'] = r(CAKE_CORE_INCLUDE_PATH, 'CAKE_PATH', $trace['file']);
-			} elseif (strpos($trace['file'], APP) === 0) {
-				$trace['file'] = r(APP, 'APP_PATH/', $trace['file']);
-			}
-			$t .= $trace['file'].', line ' . $trace['line'] . ')';
-			$back[] = $t;
-			$c++;
-		}
-
-		$back = array_reverse($back);
-		array_pop($back);
-		$back = array_reverse($back);
-
-		if (isset($options['format']) && $options['format'] == 'array') {
-			return $back;
-		}
-		return join("\n", $back);
-	}
-/**
  * Allows setting of multiple properties of the object in a single line of code.
  *
  * @access public
