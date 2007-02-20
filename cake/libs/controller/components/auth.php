@@ -519,6 +519,10 @@ class AuthComponent extends Object {
 		if ($this->Session->check('Auth.redirect')) {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
+
+			if ($this->_normalizeURL('/' . $redir) == $this->_normalizeURL($this->loginAction)) {
+				$redir = $this->loginRedirect;
+			}
 		} else {
 			$redir = $this->loginRedirect;
 		}
