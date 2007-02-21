@@ -56,7 +56,7 @@ class Controller extends Object {
  */
 	var $here = null;
 /**
- * The webroot of the application. Helpful if your application is placed in a folder below the domain name.
+ * The webroot of the application. Helpful if your application is placed in a folder under the current domain name.
  *
  * @var string
  * @access public
@@ -89,28 +89,42 @@ class Controller extends Object {
  */
 	var $helpers = array('Html');
 /**
- * Parameters received in the current request, i.e. GET and POST data.
+ * Parameters received in the current request: GET and POST data, information 
+ * about the request, etc.
  *
  * @var array
  * @access public
  */
 	var $params = array();
 /**
- * POSTed model data.
+ * Data POSTed to the controller using the HtmlHelper. Data here is accessible
+ * using the $this->data['ModelName']['fieldName'] pattern.
  *
  * @var array
  * @access public
  */
 	var $data = array();
 /**
- * Pagination defaults.
+ * Holds pagination defaults for controller actions. The keys that can be included
+ * in this array are: 'conditions', 'fields', 'order', 'limit', 'page', and 'recursive',
+ * similar to the parameters of Model->findAll().
+ *
+ * Pagination defaults can also be supplied in a model-by-model basis by using
+ * the name of the model as a key for a pagination array:
+ * 
+ * var $paginate = array(
+ * 		'Post' => array(...),
+ * 		'Comment' => array(...)
+ * 	);
+ * 
+ * See the manual chapter on Pagination for more information.
  *
  * @var array
  * @access public
  */
 	var $paginate = array('limit' => 20, 'page' => 1);
 /**
- * Sub-path for view files.
+ * The name of the views subfolder containing views for this controller.
  *
  * @var string
  */
@@ -122,57 +136,61 @@ class Controller extends Object {
  */
 	var $layoutPath = null;
 /**
- * Variables to be handed to the view.
+ * Contains variables to be handed to the view.
  *
  * @var array
  * @access public
  */
 	var $viewVars = array();
 /**
- * Text to be placed in <title></title>
+ * Text to be used for the $title_for_layout layout variable (usually 
+ * placed inside <title> tags.)
  *
  * @var boolean
  * @access public
  */
 	var $pageTitle = false;
 /**
- * An array of model objects.
+ * An array containing the class names of the models this controller uses.
  *
  * @var array Array of model objects.
  * @access public
  */
 	var $modelNames = array();
 /**
- * Base url path.
+ * Base URL path.
  *
  * @var string
  * @access public
  */
 	var $base = null;
 /**
- * Layout file to use (see /app/views/layouts/default.thtml).
+ * The name of the layout file to render views inside of. The name specified
+ * is the filename of the layout in /app/views/layouts without the .ctp
+ * extension.
  *
  * @var string
  * @access public
  */
 	var $layout = 'default';
 /**
- * Set to true to automatically render the view (the dispatcher checks for this variable before running render())
- * once action logic has finished.
+ * Set to true to automatically render the view
+ * after action logic.
  *
  * @var boolean
  * @access public
  */
 	var $autoRender = true;
 /**
- * Set to true to automatically render the layout.
+ * Set to true to automatically render the layout around views.
  *
  * @var boolean
  * @access public
  */
 	var $autoLayout = true;
 /**
- * Array containing the names of components this controller uses.
+ * Array containing the names of components this controller uses. Component names
+ * should not contain the -Component portion of the classname.
  * 
  * Example: var $components = array('Session', 'RequestHandler', 'Acl');
  *
@@ -204,7 +222,7 @@ class Controller extends Object {
 /**
  * The output of the requested action.  Contains either a variable
  * returned from the action, or the data of the rendered view;
- * You can use this var in Child classes afterFilter() to alter output.
+ * You can use this var in Child controllers' afterFilter() to alter output.
  *
  * @var string
  * @access public
@@ -218,7 +236,17 @@ class Controller extends Object {
  */
 	var $plugin = null;
 /**
- * Used to define methods a controller will allow the View to cache.
+ * Used to define methods a controller that will be cached. To cache a 
+ * single action, the value is set to an array containing keys that match 
+ * action names and values that denote cache expiration times (in seconds).
+ *
+ * Example: var $cacheAction = array(
+		'view/23/' => 21600,
+		'recalled/' => 86400
+	);
+ *
+ * $cacheAction can also be set to a strtotime() compatible string. This
+ * marks all the actions in the controller for view caching.
  *
  * @var mixed
  * @access public
@@ -226,27 +254,29 @@ class Controller extends Object {
 	var $cacheAction = false;
 /**
  * Used to create cached instances of models a controller uses.
- * When set to true all models related to the controller will be cached,
- * this can increase performance in many cases
+ * When set to true, all models related to the controller will be cached.
+ * This can increase performance in many cases.
  *
  * @var boolean
  * @access public
  */
 	var $persistModel = false;
 /**
- * Enter description here...
+ * Used in CakePHP webservices routing.
  *
  * @var unknown_type
  */
 	var $webservices = null;
 /**
- * Enter description here...
+ * Set to true to enable named URL parameters (/controller/action/name:value).
  *
  * @var mixed
  */
 	var $namedArgs = true;
 /**
- * Enter description here...
+ * The character that separates named arguments in URLs.
+ * 
+ *  Example URL: /posts/view/title:first+post/category:general
  *
  * @var string
  */
