@@ -281,7 +281,7 @@ class JavascriptHelper extends AppHelper {
 					}
 					$out = $this->link($filename);
 				} else {
-					$out = $this->codeBlock("\n" . $data . "\n");
+					$out = $this->codeBlock("\n" . $data . "\n", true);
 				}
 				if ($inline) {
 					return $out;
