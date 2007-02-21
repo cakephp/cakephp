@@ -43,6 +43,7 @@ class JavascriptHelper extends AppHelper {
 	var $_cacheToFile = false;
 	var $_cacheAll = false;
 	var $_rules = array();
+	var $enabled = true;
 	var $safe = false;
 /**
  * html tags used by this helper.
@@ -245,6 +246,34 @@ class JavascriptHelper extends AppHelper {
 		$this->_cacheAll = $all;
 	}
 /**
+ * Gets (and clears) the current JavaScript event cache
+ *
+ * @param boolean $clear
+ * @return string
+ */
+	function getCache($clear = true) {
+		$out = '';
+		$rules = array();
+
+		if (!empty($this->_rules)) {
+			foreach ($this->_rules as $sel => $event) {
+				$rules[] = "\t'{$sel}': function(element, event) {\n\t\t{$event}\n\t}";
+			}
+		}
+		$data = implode("\n", $this->_cachedEvents);
+
+		if (!empty($rules)) {
+			$data .= "\nvar Rules = {\n" . implode(",\n\n", $rules) . "\n}";
+			$data .= "\nEventSelectors.start(Rules);\n";
+		}
+		if ($clear) {
+			$this->_rules = array();
+			$this->_cacheEvents = false;
+			$this->_cachedEvents = array();
+		}
+		return $data;
+	}
+/**
  * Write cached JavaScript events
  *
  * @param boolean $inline If true, returns JavaScript event code.  Otherwise it is added to the
@@ -255,25 +284,10 @@ class JavascriptHelper extends AppHelper {
 		$out = '';
 		$rules = array();
 
-		if (!empty($this->_rules)) {
-			foreach ($this->_rules as $sel => $event) {
-				$rules[] = "\t'{$sel}': function(element, event) {\n\t\t{$event}\n\t}";
-			}
-			$this->_cacheEvents = true;
-		}
-
 		if ($this->_cacheEvents) {
-			$this->_cacheEvents = false;
-			$events = $this->_cachedEvents;
-			$data = implode("\n", $events);
-			$this->_cachedEvents = array();
+			$data = $this->getCache();
 
-			if (!empty($rules)) {
-				$data .= "\nvar Rules = {\n" . implode(",\n\n", $rules) . "\n}";
-				$data .= "\nEventSelectors.start(Rules);\n";
-			}
-
-			if (!empty($events) || !empty($rules)) {
+			if (!empty($data)) {
 				if ($this->_cacheToFile) {
 					$filename = md5($data);
 					if (!file_exists(JS . $filename . '.js')) {
@@ -281,7 +295,7 @@ class JavascriptHelper extends AppHelper {
 					}
 					$out = $this->link($filename);
 				} else {
-					$out = $this->codeBlock("\n" . $data . "\n", true);
+					$out = $this->codeBlock("\n" . $data . "\n", false);
 				}
 				if ($inline) {
 					return $out;
@@ -390,6 +404,9 @@ class JavascriptHelper extends AppHelper {
  * @return null
  */
 	function afterRender() {
+		if (!$this->enabled) {
+			return;
+		}
 		echo $this->writeEvents(true);
 	}
 }

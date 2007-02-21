@@ -473,7 +473,9 @@ class AjaxHelper extends AppHelper {
  */
 	function div($id, $options = array()) {
 		if (env('HTTP_X_UPDATE') != null) {
+			$this->Javascript->enabled = false;
 			$divs = explode(' ', env('HTTP_X_UPDATE'));
+
 			if (in_array($id, $divs)) {
 				@ob_end_clean();
 				ob_start();
@@ -838,6 +840,11 @@ class AjaxHelper extends AppHelper {
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(__ajaxUpdater__[n])); }';
 
 				e($this->Javascript->codeBlock($out, false));
+			}
+			$scripts = $this->Javascript->getCache();
+
+			if (!empty($scripts)) {
+				e($this->Javascript->codeBlock($scripts, false));
 			}
 			exit();
 		}
