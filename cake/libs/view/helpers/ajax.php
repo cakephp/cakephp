@@ -837,7 +837,7 @@ class AjaxHelper extends AppHelper {
 				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string" && $(n)) Element.update($(n), unescape(__ajaxUpdater__[n])); }';
 
-				e($this->Javascript->codeBlock($out));
+				e($this->Javascript->codeBlock($out, false));
 			}
 			exit();
 		}
