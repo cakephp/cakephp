@@ -35,60 +35,61 @@
  */
 class RouterTest extends UnitTestCase {
 
+	function setUp() {
+		$this->router =& Router::getInstance();
+	}
+
 	function testReturnedInstanceReference() {
-		$router =& Router::getInstance();
-		$router->testVar = 'test';
-		$this->assertIdentical($router, Router::getInstance());
-		unset($router->testVar);
+		$this->router->testVar = 'test';
+		$this->assertIdentical($this->router, Router::getInstance());
+		unset($this->router->testVar);
 	}
 
 	function testRouteWriting() {
-		$router =& Router::getInstance();
+		$this->router->reload();
+		$this->router->connect('/');
+		$this->assertEqual($this->router->routes[0][0], '/');
+		$this->assertEqual($this->router->routes[0][1], '/^[\/]*$/');
+		$this->assertEqual($this->router->routes[0][2], array());
 
-		$router->routes = array();
-		$router->connect('/');
-		$this->assertEqual($router->routes[0][0], '/');
-		$this->assertEqual($router->routes[0][1], '/^[\/]*$/');
-		$this->assertEqual($router->routes[0][2], array());
+		$this->router->routes = array();
+		$this->router->connect('/', array('controller' => 'testing'));
+		$this->assertTrue(is_array($this->router->routes[0][3]) && !empty($this->router->routes[0][3]));
+		$this->assertEqual($this->router->routes[0][3]['controller'], 'testing');
+		$this->assertEqual($this->router->routes[0][3]['action'], 'index');
+		$this->assertEqual(count($this->router->routes[0][3]), 3);
 
-		$router->routes = array();
-		$router->connect('/', array('controller' => 'testing'));
-		$this->assertTrue(is_array($router->routes[0][3]) && !empty($router->routes[0][3]));
-		$this->assertEqual($router->routes[0][3]['controller'], 'testing');
-		$this->assertEqual($router->routes[0][3]['action'], 'index');
-		$this->assertEqual(count($router->routes[0][3]), 3);
+		$this->router->routes = array();
+		$this->router->connect('/:controller', array('controller' => 'testing2'));
+		$this->assertTrue(is_array($this->router->routes[0][3]) && !empty($this->router->routes[0][3]), '/');
+		$this->assertEqual($this->router->routes[0][3]['controller'], 'testing2');
+		$this->assertEqual($this->router->routes[0][3]['action'], 'index');
+		$this->assertEqual(count($this->router->routes[0][3]), 3);
 
-		$router->routes = array();
-		$router->connect('/:controller', array('controller' => 'testing2'));
-		$this->assertTrue(is_array($router->routes[0][3]) && !empty($router->routes[0][3]), '/');
-		$this->assertEqual($router->routes[0][3]['controller'], 'testing2');
-		$this->assertEqual($router->routes[0][3]['action'], 'index');
-		$this->assertEqual(count($router->routes[0][3]), 3);
+		$this->router->routes = array();
+		$this->router->connect('/:controller/:action', array('controller' => 'testing3'));
+		$this->assertEqual($this->router->routes[0][0], '/:controller/:action');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?[\/]*$#');
+		$this->assertEqual($this->router->routes[0][2], array('controller', 'action'));
+		$this->assertEqual($this->router->routes[0][3], array('controller' => 'testing3', 'action' => 'index', 'plugin' => null));
 
-		$router->routes = array();
-		$router->connect('/:controller/:action', array('controller' => 'testing3'));
-		$this->assertEqual($router->routes[0][0], '/:controller/:action');
-		$this->assertEqual($router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?[\/]*$#');
-		$this->assertEqual($router->routes[0][2], array('controller', 'action'));
-		$this->assertEqual($router->routes[0][3], array('controller' => 'testing3', 'action' => 'index', 'plugin' => null));
+		$this->router->routes = array();
+		$this->router->connect('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $this->router->__named['ID']));
+		$this->assertEqual($this->router->routes[0][0], '/:controller/:action/:id');
+		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))?[\/]*$#');
+		$this->assertEqual($this->router->routes[0][2], array('controller', 'action', 'id'));
 
-		$router->routes = array();
-		$router->connect('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $router->__named['ID']));
-		$this->assertEqual($router->routes[0][0], '/:controller/:action/:id');
-		$this->assertEqual($router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))?[\/]*$#');
-		$this->assertEqual($router->routes[0][2], array('controller', 'action', 'id'));
-
-		$router->routes = array();
-		$router->connect('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $router->__named['ID']));
-		$this->assertEqual($router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))[\/]*$#');
+		$this->router->routes = array();
+		$this->router->connect('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $this->router->__named['ID']));
+		$this->assertEqual($this->router->routes[0][1], '#^(?:\/([^\/]+))?(?:\/([^\/]+))?(?:\/([0-9]+))[\/]*$#');
 	}
 
 	function testRouterIdentity() {
 		$router =& Router::getInstance();
 		$this->vars = get_object_vars($router);
 
-		$router->routes = $router->__paths = $router->__params = $router->__currentRoute = array();
-		$router->__parseExtensions = false;
+		$this->router->routes = $this->router->__paths = $this->router->__params = $this->router->__currentRoute = array();
+		$this->router->__parseExtensions = false;
 		$router2 = new Router();
 		$this->assertEqual(get_object_vars($router), get_object_vars($router2));
 	}
@@ -96,49 +97,48 @@ class RouterTest extends UnitTestCase {
 	function testUrlGeneration() {
 		$router =& Router::getInstance();
 		foreach ($this->vars as $var => $val) {
-			$router->{$var} = $val;
+			$this->router->{$var} = $val;
 		}
-		$router->routes = array();
+		$this->router->routes = array();
 
-		$router->connect('/', array('controller'=>'pages', 'action'=>'display', 'home'));
-		$out = $router->url(array('controller'=>'pages', 'action'=>'display', 'home'));
+		$this->router->connect('/', array('controller'=>'pages', 'action'=>'display', 'home'));
+		$out = $this->router->url(array('controller'=>'pages', 'action'=>'display', 'home'));
 		$this->assertEqual($out, '/');
 
-		$router->connect('/pages/*', array('controller'=>'pages', 'action'=>'display'));
-		$out = $router->url(array('controller'=>'pages', 'action'=>'display', 'about'));
+		$this->router->connect('/pages/*', array('controller'=>'pages', 'action'=>'display'));
+		$out = $this->router->url(array('controller'=>'pages', 'action'=>'display', 'about'));
 		$expected = '/pages/about';
 		$this->assertEqual($out, $expected);
 
 
-		$router->connect('/:plugin/:controller/*', array('plugin'=>'cake_plugin', 'controller'=>'posts', 'action'=>'view', '1'));
-		$out = $router->url(array('plugin'=>'cake_plugin', 'controller'=>'posts', '1'));
+		$this->router->connect('/:plugin/:controller/*', array('plugin'=>'cake_plugin', 'controller'=>'posts', 'action'=>'view', '1'));
+		$out = $this->router->url(array('plugin'=>'cake_plugin', 'controller'=>'posts', '1'));
 		$expected = '/cake_plugin/posts/';
 		$this->assertEqual($out, $expected);
 
-		$router->connect('/:controller/:action/:id', array(), array('id' => '1'));
-		$out = $router->url(array('controller'=>'posts', 'action'=>'view', '1'));
+		$this->router->connect('/:controller/:action/:id', array(), array('id' => '1'));
+		$out = $this->router->url(array('controller'=>'posts', 'action'=>'view', '1'));
 		$expected = '/posts/view/1';
 		$this->assertEqual($out, $expected);
 
-		$router->connect('/:controller/:id', array('action' => 'view'), array('id' => '1'));
-		$out = $router->url(array('controller'=>'posts', '1'));
+		$this->router->connect('/:controller/:id', array('action' => 'view'), array('id' => '1'));
+		$out = $this->router->url(array('controller'=>'posts', '1'));
 		$expected = '/posts/1';
 		$this->assertEqual($out, $expected);
 
-		$out = $router->url(array('controller' => 'posts', 'action'=>'index', '0'));
+		$out = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0'));
 		$expected = '/posts/index/0';
 		$this->assertEqual($out, $expected);
-
 	}
 
 	function testExtensionParsingSetting() {
 		if (PHP5) {
 			$router = Router::getInstance();
-			$router->reload();
-			$this->assertFalse($router->__parseExtensions);
+			$this->router->reload();
+			$this->assertFalse($this->router->__parseExtensions);
 
-			$router->parseExtensions();
-			$this->assertTrue($router->__parseExtensions);
+			$this->router->parseExtensions();
+			$this->assertTrue($this->router->__parseExtensions);
 		}
 	}
 }
