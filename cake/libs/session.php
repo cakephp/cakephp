@@ -201,15 +201,13 @@ class CakeSession extends Object {
  */
 	function del($name) {
 		if ($this->check($name)) {
-			$var = $this->__sessionVarNames($name);
-			if (empty($var)) {
-				return false;
+			if ($var = $this->__validateKeys($name)) {
+				if (in_array($var, $this->watchKeys)) {
+					trigger_error('Deleting session key {' . $var . '}', E_USER_NOTICE);
+				}
+				$this->__overwrite($_SESSION, Set::remove($_SESSION, $var));
+				return ($this->check($var) == false);
 			}
-			if (in_array($var, $this->watchKeys)) {
-				trigger_error('Deleting session key {' . $var . '}', E_USER_NOTICE);
-			}
-			$this->__overwrite($_SESSION, Set::remove($_SESSION, $var));
-			return ($this->check($var) == false);
 		}
 		$this->__setError(2, "$name doesn't exist");
 		return false;
