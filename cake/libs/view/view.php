@@ -587,10 +587,11 @@ class View extends Object {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $action . '.thtml';
 			} else {
 				$this->cakeError('missingView', array(array(
-										'className' => $this->name,
-										'action' => $action,
-										'file' => $viewFileName,
-										'base' => $this->base)));
+					'className' => $this->name,
+					'action' => $action,
+					'file' => $viewFileName,
+					'base' => $this->base
+				)));
 				exit();
 			}
 		}
@@ -627,19 +628,21 @@ class View extends Object {
 			$type = null;
 		}
 
-		if(!is_null($this->layoutPath)){
+		if(!is_null($this->layoutPath)) {
 			$type = $this->layoutPath . DS;
 		}
 
 		if (!is_null($this->plugin)) {
-			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext)) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext;
-			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext)) {
-				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext;
-			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml')) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml';
-			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml')) {
-				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml';
+			$paths = array(
+				APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext,
+				APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . $this->ext,
+				APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml',
+				APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . 'layouts' . DS . $this->subDir . $type . $this->layout . '.thtml'
+			);
+			foreach ($paths as $path) {
+				if (file_exists($path)) {
+					return $path;
+				}
 			}
 		}
 
@@ -654,6 +657,9 @@ class View extends Object {
 		}
 
 		$layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
+		if (empty($layoutFileName) && !empty($type)) {
+			$layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . 'default.ctp');
+		}
 		if(is_null($layoutFileName)) {
 			return 'missingLayout';
 		}
