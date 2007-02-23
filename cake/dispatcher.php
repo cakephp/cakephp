@@ -98,7 +98,7 @@ class Dispatcher extends Object {
 				$pluginName = Inflector::camelize($params['action']);
 				if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
 					if(preg_match('/([\\.]+)/', $ctrlName)) {
-						Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
+						Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 
 						return $this->cakeError('error404',
 														array(array('url' => strtolower($ctrlName),
@@ -162,7 +162,7 @@ class Dispatcher extends Object {
 		}
 
 		if ($missingController) {
-			Router::setParams(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
+			Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 			return $this->cakeError('missingController', array(
 				array(
 					'className' => Inflector::camelize($params['controller']."Controller"),
@@ -297,7 +297,7 @@ class Dispatcher extends Object {
 			array_push($controller->helpers, $controller->webservices);
 			$component =& new Component($controller);
 		}
-		Router::setParams(array($params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
+		Router::setRequestInfo(array($params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		$controller->_initComponents();
 		$controller->constructClasses();
 

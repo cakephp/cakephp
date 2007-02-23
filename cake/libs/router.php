@@ -323,7 +323,7 @@ class Router extends Overloadable {
  * @param array
  * @return void
  */
-	function setParams($params) {
+	function setRequestInfo($params) {
 		$_this =& Router::getInstance();
 		$defaults = array('plugin' => null, 'controller' => null, 'action' => null);
 		$params[0] = am($defaults, $params[0]);
@@ -347,11 +347,12 @@ class Router extends Overloadable {
  * Gets URL parameter by name
  *
  * @param string $name
+ * @param boolean $current
  * @return string
  */
-	function getParam($name = 'controller') {
+	function getParam($name = 'controller', $current = false) {
 		$_this =& Router::getInstance();
-		$params = Router::getParams();
+		$params = Router::getParams($current);
 		if (isset($params[$name])) {
 			return $params[$name];
 		}
