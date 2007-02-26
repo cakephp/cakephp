@@ -320,8 +320,8 @@ class Router extends Object {
 			$_this->routes[] = $_this->__admin;
 			$_this->__admin = null;
 		}
-		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
-		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
+		//$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
+		//$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
 
 		if (defined('WEBSERVICES') && WEBSERVICES == 'on') {
 			trigger_error('Deprecated: webservices routes are deprecated and will not be supported in future versions.  Use Router::parseExtensions() instead.', E_USER_WARNING);
