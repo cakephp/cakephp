@@ -421,18 +421,15 @@ class FormHelper extends AppHelper {
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string An HTML text input element
  */
-	function text($fieldName, $htmlAttributes = null) {
+	function text($fieldName, $htmlAttributes = array()) {
+		$htmlAttributes = am(array('type' => 'text'), $htmlAttributes);
 		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
-
-		if (!isset($htmlAttributes['type'])) {
-			$htmlAttributes['type'] = 'text';
-		}
 
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
-		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, null, ' ')));
 	}
 /**
  * Creates a password input widget.
@@ -447,7 +444,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
-		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, null, ' ')));
 	}
 /**
  * Creates a textarea widget.

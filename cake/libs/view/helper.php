@@ -342,6 +342,50 @@ class Helper extends Overloadable {
 		return $options;
 	}
 /**
+ * Gets the input field name for the current tag
+ *
+ * @param array $options
+ * @param string $key
+ * @return array
+ */
+	function __name($options = array(), $field = null, $key = 'name') {
+		if ($options === null) {
+			$options = array();
+		} elseif (is_string($options)) {
+			$field = $options;
+			$options = 0;
+		}
+
+		if (!empty($field)) {
+			$this->setFormTag($field);
+		}
+
+		if (is_array($options) && isset($options[$key])) {
+			return $options;
+		}
+
+		switch($field) {
+			case 'method':
+			case '_method':
+				$name = $field;
+			break;
+			default:
+				$name = array_filter(array($this->model(), $this->field(), $this->modelID()));
+				if ($this->modelID() === 0) {
+					$name[] = $this->modelID();
+				}
+				$name = 'data[' . join('][', $name) . ']';
+			break;
+		}
+
+		if (is_array($options)) {
+			$options[$key] = $name;
+			return $options;
+		} else {
+			return $name;
+		}
+	}
+/**
  * Gets the data for the current tag
  *
  * @param array $options
@@ -356,7 +400,7 @@ class Helper extends Overloadable {
 			$options = 0;
 		}
 
-		if ($field != null) {
+		if (!empty($field)) {
 			$this->setFormTag($field);
 		}
 
@@ -380,6 +424,20 @@ class Helper extends Overloadable {
 		} else {
 			return $result;
 		}
+	}
+/**
+ * Sets the defaults for an input tag
+ *
+ * @param array $options
+ * @param string $key
+ * @return array
+ */
+	function __initInputField($field, $options = array()) {
+		$this->setFormTag($field);
+		$options = $this->__name($options);
+		$options = $this->__value($options);
+		$options = $this->domId($options);
+		return $options;
 	}
 /**
  * Adds the given class to the element options

@@ -334,21 +334,19 @@ class AjaxHelper extends AppHelper {
  * @return string Ajaxed input button
  */
 	function submit($title = 'Submit', $options = array()) {
-		$htmlOptions         =$this->__getHtmlOptions($options);
-		$htmlOptions['value']=$title;
+		$htmlOptions = $this->__getHtmlOptions($options);
+		$htmlOptions['value'] = $title;
 
 		if (!isset($options['with'])) {
-				$options['with'] = 'Form.serialize(Event.element(event).form)';
+			$options['with'] = 'Form.serialize(Event.element(event).form)';
 		}
-
 		if (!isset($htmlOptions['id'])) {
-				$htmlOptions['id'] = 'submit' . intval(rand());
+			$htmlOptions['id'] = 'submit' . intval(rand());
 		}
 
 		$htmlOptions['onclick'] = "return false;";
 		return $this->Html->submit($title, $htmlOptions)
-			. $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $this->remoteFunction(
-																											$options));
+			. $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $this->remoteFunction($options));
 	}
 
 /**
