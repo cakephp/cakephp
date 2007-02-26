@@ -127,18 +127,9 @@
 
 	require_once (CORE_PATH.'cake'.DS.'basics.php');
 	require_once (CORE_PATH.'cake'.DS.'config'.DS.'paths.php');
-	require_once (CORE_PATH.'cake'.DS.'dispatcher.php');
 	require_once (CORE_PATH.'cake'.DS.'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php');
-	/*uses ('inflector', 'model'.DS.'model');
-	require_once (CORE_PATH.'cake'.DS.'app_model.php');
-	require_once (CORE_PATH.'cake'.DS.'app_controller.php');*/
 
-	/*uses ('inflector', 'model'.DS.'model');*/
-
-	/*uses ('neat_array', 'model'.DS.'connection_manager', 'controller'.DS.'controller', 'session',
-			'configure', 'security', DS.'controller'.DS.'scaffold');*/
-
-	uses('session', 'configure', 'inflector', 'model'.DS.'connection_manager');
+	uses('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager');
 
 	$pattyCake = new Bake();
 	if($help === true)
@@ -447,7 +438,7 @@ class Bake {
 		if (array_search($useTable, $this->__tables) !== false && (low($wannaDoValidation) == 'y' || low($wannaDoValidation) == 'yes')) {
 			foreach($modelFields as $field) {
 				$this->stdout('');
-				$prompt .= 'Name: ' . $field['name'] . "\n";
+				$prompt = 'Name: ' . $field['name'] . "\n";
 				$prompt .= 'Type: ' . $field['type'] . "\n";
 				$prompt .= '---------------------------------------------------------------'."\n";
 				$prompt .= 'Please select one of the following validation options:'."\n";
@@ -1410,17 +1401,16 @@ class Bake {
 
 	function __bakeActions($controllerName, $admin = null, $admin_url = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
-		loadModel($currentModelName);
+		if(!loadModel($currentModelName)) {
+			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
+			exit;
+		}
 		$modelObj =& new $currentModelName();
 		$controllerPath = $this->__controllerPath($controllerName);
 		$pluralName = $this->__pluralName($currentModelName);
 		$singularName = $this->__singularName($currentModelName);
 		$singularHumanName = $this->__singularHumanName($currentModelName);
 		$pluralHumanName = $this->__pluralHumanName($controllerName);
-		if(!class_exists($currentModelName)) {
-			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
-			exit;
-		}
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}index() {\n";
 		$actions .= "\t\t\$this->{$currentModelName}->recursive = 0;\n";
@@ -1456,7 +1446,7 @@ class Bake {
 		}
 		$actions .= "\t\t\t} else {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The {$singularHumanName} could not be saved. Please, try again.');\n";
 		}
 		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
@@ -1507,7 +1497,7 @@ class Bake {
 		}
 		$actions .= "\t\t\t} else {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('Please correct errors below.');\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The {$singularHumanName} could not be saved. Please, try again.');\n";
 		}
 		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
@@ -2002,6 +1992,7 @@ class Bake {
 				$response = $this->getInput('Bake -app in '.$projectPath, array('y','n'), 'y');
 				if(low($response) == 'y') {
 					$this->main();
+					exit();
 				} else {
 					$projectPath = $this->getInput("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
 				}
