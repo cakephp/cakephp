@@ -653,6 +653,7 @@ class HtmlHelper extends AppHelper {
  * @return string Formatted SELECT element
  */
 	function selectTag($fieldName, $optionElements, $selected = array(), $selectAttr = array(), $optionAttr = array(), $showEmpty = true) {
+		trigger_error(__('(HtmlHelper::selectTag) Deprecated: Use FormHelper::select instead'), E_USER_WARNING);
 		$this->setFormTag($fieldName);
 		if ($this->tagIsInvalid()) {
 			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
