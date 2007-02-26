@@ -31,7 +31,7 @@
  *
  */
 if (!class_exists('Object')) {
-	 uses ('object');
+	uses('object');
 }
 
 /**
@@ -40,9 +40,8 @@ if (!class_exists('Object')) {
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-uses('overloadable');
+class Router extends Object {
 
-class Router extends Overloadable {
 /**
  * Array of routes
  *
@@ -85,25 +84,22 @@ class Router extends Overloadable {
  * @var array
  */
 	var $__currentRoute = array();
-
 /**
  * Maintains the parameter stack for the current request
  *
  * @var array
  */
 	var $__params = array();
-
 /**
  * Maintains the path stack for the current request
  *
  * @var array
  */
 	var $__paths = array();
-
 /**
-  * Initialize the Router object
-  *
-  */
+ * Initialize the Router object
+ *
+ */
 	function __construct() {
 		if (defined('CAKE_ADMIN')) {
 			$admin = CAKE_ADMIN;
@@ -139,7 +135,7 @@ class Router extends Overloadable {
 		return $_this->__named;
 	}
 /**
- * TODO: Better description. Returns this object's routes array. Returns false if there are no routes available.
+ * Returns this object's routes array. Returns false if there are no routes available.
  *
  * @param string $route			An empty string, or a route string "/"
  * @param array $default		NULL or an array describing the default route
@@ -148,9 +144,8 @@ class Router extends Overloadable {
  * @return array			Array of routes
  */
 	function connect($route, $default = array(), $params = array()) {
-
 		$_this =& Router::getInstance();
-		$parsed = $names = array();
+		$parsed = array();
 
 		if (defined('CAKE_ADMIN') && $default == null) {
 			if ($route == CAKE_ADMIN) {
@@ -162,27 +157,33 @@ class Router extends Overloadable {
 		if (empty($default['plugin'])) {
 			$default['plugin'] = null;
 		}
-
 		if (empty($default['controller'])) {
 			$default['controller'] = null;
 		}
-
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
 		}
-
-		$r = null;
-		if (($route == '') || ($route == '/')) {
-			$regexp = '/^[\/]*$/';
-			$_this->routes[] = array($route, $regexp, array(), $default, array());
+		if ($route = $_this->writeRoute($route, $default, $params)) {
+			$_this->routes[] = $route;
+		}
+		return $_this->routes;
+	}
+/**
+ * Builds a route regular expression 
+ *
+ * @access public
+ * @param string $route			An empty string, or a route string "/"
+ * @param array $default		NULL or an array describing the default route
+ * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @return string
+ * @see routes
+ */
+	function writeRoute($route, $default, $params) {
+		if (empty($route) || ($route == '/')) {
+			return array($route, '/^[\/]*$/', array(), $default, array());
 		} else {
-			$elements = array();
-
-			foreach(explode('/', $route) as $element) {
-				if (trim($element)) {
-					$elements[] = $element;
-				}
-			}
+			$names = array();
+			$elements = $this->__filter(array_map('trim', explode('/', $route)));
 
 			if (!count($elements)) {
 				return false;
@@ -207,12 +208,8 @@ class Router extends Overloadable {
 					$parsed[] = '/' . $element;
 				}
 			}
-
-			$regexp = '#^' . join('', $parsed) . '[\/]*$#';
-			$_this->routes[] = array($route, $regexp, $names, $default, $params);
+			return array($route, '#^' . join('', $parsed) . '[\/]*$#', $names, $default, $params);
 		}
-
-		return $_this->routes;
 	}
 /**
  * Parses given URL and returns an array of controllers, action and parameters
@@ -223,57 +220,17 @@ class Router extends Overloadable {
  */
 	function parse($url) {
 		$_this =& Router::getInstance();
-
-		if ($url && ('/' != $url[0])) {
-			if (!defined('SERVER_IIS')) {
-				$url = '/' . $url;
-			}
-		}
+		$_this->__connectDefaultRoutes();
 		$out = array();
-		$r = null;
-		$default_route = array(
-			'/:controller/:action/*',
-			'/^(?:\/(?:([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
-			array('controller', 'action'), array()
-		);
+		$r = $ext = null;
 
-		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
-			$_this->routes[] = $_this->__admin;
-			$_this->__admin = null;
+		if ($url && strpos($url, '/') !== 0 && !defined('SERVER_IIS')) {
+			$url = '/' . $url;
 		}
-		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
-		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
-
-		if (defined('WEBSERVICES') && WEBSERVICES == 'on') {
-			$_this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
-			$_this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
-			$_this->connect('/soap/:controller/:action/*', array('webservices' => 'Soap'));
-			$_this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
-			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
-		}
-		$_this->routes[] = $default_route;
-		$ext = array();
-
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
-
-		if ($_this->__parseExtensions) {
-			if(preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
-				$match = substr($match[0], 1);
-				if(empty($_this->__validExtensions)) {
-					$url = substr($url, 0, strpos($url, '.' . $match));
-					$ext = $match;
-				} else {
-					foreach($_this->__validExtensions AS $name) {
-						if(strcasecmp($name, $match) === 0) {
-							$url = substr($url, 0, strpos($url, '.' . $name));
-							$ext = $match;
-						}
-					}
-				}
-			}
-		}
+		extract($_this->__parseExtension($url));
 
 		foreach($_this->routes as $route) {
 			list($route, $regexp, $names, $defaults) = $route;
@@ -298,11 +255,11 @@ class Router extends Overloadable {
 					}
 				}
 
-				foreach($r as $key => $found) {
+				foreach($_this->__filter($r, true) as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
-					if (isset($names[$key]) && !empty($found)) {
+					if (isset($names[$key])) {
 						$out[$names[$key]] = $found;
-					} else if (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])){
+					} else if (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
 						// unnamed elements go in as 'pass'
@@ -316,6 +273,65 @@ class Router extends Overloadable {
 			$out['url']['ext'] = $ext;
 		}
 		return $out;
+	}
+/**
+ * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
+ *
+ * @param string $url
+ * @return array Returns an array containing the altered URL and the parsed extension.
+ */
+	function __parseExtension($url) {
+		$ext = null;
+		$_this =& Router::getInstance();
+
+		if ($_this->__parseExtensions) {
+			if(preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
+				$match = substr($match[0], 1);
+				if(empty($_this->__validExtensions)) {
+					$url = substr($url, 0, strpos($url, '.' . $match));
+					$ext = $match;
+				} else {
+					foreach($_this->__validExtensions as $name) {
+						if(strcasecmp($name, $match) === 0) {
+							$url = substr($url, 0, strpos($url, '.' . $name));
+							$ext = $match;
+						}
+					}
+				}
+			}
+		}
+		return compact('ext', 'url');
+	}
+/**
+ * Connects the default, built-in routes, including admin routes, and (deprecated) web services
+ * routes.
+ *
+ * @return void
+ */
+	function __connectDefaultRoutes() {
+		$_this =& Router::getInstance();
+		$default_route = array(
+			'/:controller/:action/*',
+			'/^(?:\/(?:([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
+			array('controller', 'action'), array()
+		);
+
+		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
+			$_this->routes[] = $_this->__admin;
+			$_this->__admin = null;
+		}
+		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
+		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
+
+		if (defined('WEBSERVICES') && WEBSERVICES == 'on') {
+			trigger_error('Deprecated: webservices routes are deprecated and will not be supported in future versions.  Use Router::parseExtensions() instead.', E_USER_WARNING);
+			$_this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
+			$_this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
+			$_this->connect('/soap/:controller/:action/*', array('webservices' => 'Soap'));
+			$_this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
+			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
+		}
+		$_this->routes[] = $default_route;
 	}
 /**
  * Takes parameter and path information back from the Dispatcher
@@ -382,12 +398,21 @@ class Router extends Overloadable {
 			$_this->{$key} = $val;
 		}
 	}
-
-	function __notEmpty($var){
-		if($var === '0' || !empty($var)){
-			return true;
+/**
+ * Filters empty elements out of a route array, excluding '0'.
+ *
+ * @return mixed
+ */
+	function __filter($var, $isArray = false) {
+		if (is_array($var) && (!empty($var) || $isArray)) {
+			$_this =& Router::getInstance();
+			return array_filter($var, array(&$_this, '__filter'));
 		} else {
-			return false;
+			if($var === '0' || !empty($var)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 /**
@@ -409,12 +434,12 @@ class Router extends Overloadable {
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
 
-		$params = array('plugin'=> null, 'controller'=>null, 'action'=> 'index');
+		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 		if(!empty($_this->__params[0])) {
 			$params = $_this->__params[0];
 		}
 
-		$path = array('base'=> null);
+		$path = array('base' => null);
 		if(!empty($_this->__paths[0])) {
 			$path = $_this->__paths[0];
 		}
@@ -423,27 +448,23 @@ class Router extends Overloadable {
 		$extension = $output = $mapped = $q = null;
 
 		if (is_array($url) && !empty($url)) {
-
 			if (isset($url['full_base']) && $url['full_base'] == true) {
 				$full = true;
 				unset($url['full_base']);
 			}
-
 			if (isset($url['?'])) {
 				$q = $url['?'];
 				unset($url['?']);
 			}
-
 			if (!isset($url['action'])) {
 				if (!isset($url['controller']) || $params['controller'] == $url['controller']) {
 					$url['action'] = $params['action'];
+				} else {
+					$url['action'] = 'index';
 				}
 			}
+			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), $url);
 
-			$url = am(
-				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
-				$url
-			);
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
 			}
@@ -454,11 +475,11 @@ class Router extends Overloadable {
 				unset($url[CAKE_ADMIN]);
 			}
 
+			$match = false;
 			foreach ($_this->routes as $route) {
-				$match = $_this->mapRouteElements($route, $url);
-				if ($match !== false) {
+				if ($match = $_this->mapRouteElements($route, $url)) {
 					list($output, $url) = $match;
-					if ($output{0} == '/') {
+					if (strpos($output, '/') === 0) {
 						$output = substr($output, 1);
 					}
 					break;
@@ -470,15 +491,16 @@ class Router extends Overloadable {
 			if(defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
 			}
+
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
 				if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
-				} else if(is_array($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))){
+				} else if(is_array($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))) {
 					$named[] = array($keys[$i], $url[$keys[$i]]);
 				} else if ($match === false) {
-					$args[] = $keys[$i] . $path['argSeparator'] .$url[$keys[$i]];
+					$args[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
 				}
 			}
 			if ($match === false) {
@@ -498,7 +520,7 @@ class Router extends Overloadable {
 				if(!isset($url['action'])) {
 					$url['action'] = null;
 				}
-				$urlOut = array_filter(array($url['plugin'], $url['controller'], $url['action'], join('/', array_filter($args, array($_this, "__notEmpty"))), $named), array($_this, "__notEmpty"));
+				$urlOut = $_this->__filter(array($url['plugin'], $url['controller'], $url['action'], join('/', $_this->__filter($args, true)), $named));
 
 				if($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
@@ -541,22 +563,42 @@ class Router extends Overloadable {
  * @return mixed
  */
 	function mapRouteElements($route, $url) {
+		$_this =& Router::getInstance();
+
 		$params = $route[2];
-		$defaults = am(array('plugin' => null, 'controller'=> null), $route[3]);
-		foreach ($defaults as $key=>$default) {
-			if(!array_key_exists($key, $url)) {
+		$defaults = am(array('plugin' => null, 'controller' => null, 'action' => null), $route[3]);
+		foreach (array('plugin', 'controller', 'action') as $key) {
+			if (empty($defaults[$key])) {
+				$defaults[$key] = $url[$key];
+			}
+		}
+
+		$pass = array();
+		foreach ($url as $key => $val) {
+			if (is_numeric($key)) {
+				if (!isset($defaults[count($pass)]) || $defaults[count($pass)] != $val) {
+					$pass[] = $val;
+				}
+				unset($url[$key]);
+			}
+		}
+
+		if (!strpos($route[0], '*') && !empty($pass)) {
+			return false;
+		}
+
+		foreach ($defaults as $key => $default) {
+			if(!array_key_exists($key, $url) && (!is_numeric($key) || !isset($pass[$key]))) {
 				$url[$key] = $default;
 			}
 		}
+
 		krsort($defaults);
 		krsort($url);
-		if ($defaults == $url) {
-			return array(Router::__mapRoute($route, $url), array());
-		} elseif (!empty($params) && !empty($route[3])) {
-			if(array_key_exists(0, $url)) {
-				return false;
-			}
 
+		if (Set::diff($defaults, $url) == array()) {
+			return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), array());
+		} elseif (!empty($params) && !empty($route[3])) {
 			$required = array_diff(array_keys($defaults), array_keys($url));
 			if(!empty($required)) {
 			 	return false;
@@ -566,35 +608,34 @@ class Router extends Overloadable {
 			$keysFilled = array_keys($filled);
 			sort($params);
 			sort($keysFilled);
+
 			if ($keysFilled != $params) {
 				return false;
 			}
-			if (!empty($url['plugin']) && $keysFilled === $params) {
+
+			if (Set::diff($keysFilled, $params) != array()) {
 				return false;
 			}
 		} else {
 			$required = array_diff(array_keys($defaults), array_keys($url));
 			if(empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
-				if(isset($url['0']) && isset($defaults['0']) && ($url['0'] != $defaults['0'])){
-					return false;
-				}
-			 	return array(Router::__mapRoute($route, $url), $url);
+			 	return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
 			}
 			return false;
 		}
 
-		if($url['controller'] != $route[3]['controller']) {
+		if(isset($route[3]['controller']) && !empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
 			return false;
 		}
 
-		if(!empty($route[4])){
+		if(!empty($route[4])) {
 			foreach ($route[4] as $key => $reg) {
 				if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
 					return false;
 				}
 			}
 		}
-		return array(Router::__mapRoute($route, $url), $url);
+		return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
 	}
 /**
  * Merges URL parameters into a route string
@@ -604,8 +645,10 @@ class Router extends Overloadable {
  * @return string
  */
 	function __mapRoute($route, $params = array()) {
+		$_this =& Router::getInstance();
+
 		if (isset($params['pass']) && is_array($params['pass'])) {
-			$params['pass'] = implode('/', array_filter($params['pass']));
+			$params['pass'] = implode('/', $_this->__filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}
@@ -613,30 +656,32 @@ class Router extends Overloadable {
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $route[0]);
 		} else {
-			$out = $route[0] . $params['pass'];
+			$out = $route[0];
 		}
 
 		foreach ($route[2] as $key) {
 			$out = str_replace(':' . $key, $params[$key], $out);
 			unset($params[$key]);
 		}
+
 		// Do something else here for leftover params
 		$skip = array('action', 'controller', 'plugin', 'ext', '?', 'pass');
 		if(defined('CAKE_ADMIN')) {
 			$skip[] = CAKE_ADMIN;
 		}
 		$args = array();
-		$keys = array_filter(array_values(array_diff(array_keys($params), $skip)));
+		$keys = $_this->__filter(array_values(array_diff(array_keys($params), $skip)), true);
 
 		$count = count($keys);
 		for ($i = 0; $i < $count; $i++) {
 			$args[] = $keys[$i] . ':'  .$params[$keys[$i]];
 		}
 
-		if(isset($params['0']) && !isset($route['3']['0'])){
-			return $out . $params['0'] . join('/', array_filter($args));
+		$args = join('/', $_this->__filter($args, true));
+		if(isset($params['0']) && !isset($route['3']['0'])) {
+			return $out . $params['0'] . $args;
 		}
-		return $out . join('/', array_filter($args));
+		return $out . $args;
 	}
 /**
  * Generates a well-formed querystring from $q
@@ -646,13 +691,25 @@ class Router extends Overloadable {
  * @return array
  */
 	function queryString($q, $extra = array()) {
-		if (empty($q)) {
+		if (empty($q) && empty($extra)) {
 			return null;
 		}
-		return '?' . $q;
+		$out = '';
+
+		if (is_array($q)) {
+			$q = am($extra, $q);
+		} else {
+			$out = $q;
+			$q = $extra;
+		}
+		$out .= http_build_query($q);
+		if (strpos($out, '?') !== 0) {
+			$out = '?' . $out;
+		}
+		return $out;
 	}
 /**
- * Returns the route matching the current request URL
+ * Returns the route matching the current request URL.
  *
  * @return array
  */
@@ -670,7 +727,7 @@ class Router extends Overloadable {
 		return $_this->__currentRoute[count($_this->__currentRoute) - 1];
 	}
 /**
- * removes the plugin name from the base url
+ * Removes the plugin name from the base URL.
  *
  * @param string $base
  * @param string $plugin
@@ -697,8 +754,9 @@ class Router extends Overloadable {
  * automatically switch to alternate layouts and templates, and load helpers
  * corresponding to the given content, i.e. RssHelper.
  *
- * An array of valid extension can be passed to this method. $extensions = array('rss', 'xml')
- * If null is passed anything after a . in the url will be considered an extension
+ * A list of valid extension can be passed to this method, i.e. Router::parseExtensions('rss', 'xml');
+ * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
+ * parsed, excluding querystring parameters (i.e. ?q=...).
  *
  * @param string $ext
  * @param string $ext
@@ -712,6 +770,45 @@ class Router extends Overloadable {
 		if (func_num_args() > 0) {
 			$_this->__validExtensions = func_get_args();
 		}
+	}
+}
+/**
+ * Implements http_build_query for PHP4.
+ *
+ * @param string $data
+ * @param string $prefix
+ * @param string $argSep
+ * @param string $baseKey
+ * @return string
+ * @see http://php.net/http_build_query
+ */
+if(!function_exists('http_build_query')) {
+	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
+		if(empty($argSep)) {
+			$argSep = ini_get('arg_separator.output');
+		}
+		if (is_object($data)) {
+			$data = get_object_vars($data);
+		}
+		$out = array();
+
+		foreach((array)$data as $key => $val) {
+			if(is_numeric($key) && !empty($prefix)) {
+				$key = $prefix . $key;
+			}
+			$key = urlencode($key);
+
+			if(!empty($baseKey)) {
+				$key = $baseKey . '[' . $key . ']';
+			}
+
+			if(is_array($v) || is_object($v)) {
+				$out[] = http_build_query($v, $prefix, $argSep, $key);
+			} else {
+				$out[] = $k . '=' . urlencode($v);
+			}
+		}
+		return implode($argSep, $out);
 	}
 }
 

@@ -26,7 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'router.php';
+	uses('router', 'debugger');
+
+	if (!defined('CAKE_ADMIN')) {
+		define('CAKE_ADMIN', 'admin');
+	}
 /**
  * Short description for class.
  *
@@ -37,6 +41,7 @@ class RouterTest extends UnitTestCase {
 
 	function setUp() {
 		$this->router =& Router::getInstance();
+		//$this->router->reload();
 	}
 
 	function testReturnedInstanceReference() {
@@ -85,61 +90,127 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testRouterIdentity() {
-		$router =& Router::getInstance();
-		$this->vars = get_object_vars($router);
-
-		$this->router->routes = $this->router->__paths = $this->router->__params = $this->router->__currentRoute = array();
-		$this->router->__parseExtensions = false;
+		$this->router->reload();
+		$this->router->__admin = array(
+			'/:' . CAKE_ADMIN . '/:controller/:action/*',
+			'/^(?:\/(?:(' . CAKE_ADMIN . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
+			array(CAKE_ADMIN, 'controller', 'action'), array()
+		);
 		$router2 = new Router();
-		$this->assertEqual(get_object_vars($router), get_object_vars($router2));
+		$this->assertEqual(get_object_vars($this->router), get_object_vars($router2));
 	}
 
 	function testUrlGeneration() {
-		$router =& Router::getInstance();
-		foreach ($this->vars as $var => $val) {
-			$this->router->{$var} = $val;
-		}
-		$this->router->routes = array();
+		$this->router->reload();
+		extract($this->router->getNamedExpressions());
 
 		$this->router->connect('/', array('controller'=>'pages', 'action'=>'display', 'home'));
 		$out = $this->router->url(array('controller'=>'pages', 'action'=>'display', 'home'));
 		$this->assertEqual($out, '/');
 
-		$this->router->connect('/pages/*', array('controller'=>'pages', 'action'=>'display'));
-		$out = $this->router->url(array('controller'=>'pages', 'action'=>'display', 'about'));
+		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+		$result = $this->router->url(array('controller' => 'pages', 'action' => 'display', 'about'));
 		$expected = '/pages/about';
-		$this->assertEqual($out, $expected);
+		$this->assertEqual($result, $expected);
 
+		$this->router->reload();
+		$this->router->connect('/:plugin/:id/*', array('controller' => 'posts', 'action' => 'view'), array('id' => $ID));
+		$result = $this->router->url(array('plugin' => 'cake_plugin', 'controller' => 'posts', 'action' => 'view', 'id' => '1'));
+		$expected = '/cake_plugin/1/';
+		$this->assertEqual($result, $expected);
 
-		$this->router->connect('/:plugin/:controller/*', array('plugin'=>'cake_plugin', 'controller'=>'posts', 'action'=>'view', '1'));
-		$out = $this->router->url(array('plugin'=>'cake_plugin', 'controller'=>'posts', '1'));
-		$expected = '/cake_plugin/posts/';
-		$this->assertEqual($out, $expected);
+		$result = $this->router->url(array('plugin' => 'cake_plugin', 'controller' => 'posts', 'action' => 'view', 'id' => '1', '0'));
+		$expected = '/cake_plugin/1/0';
+		$this->assertEqual($result, $expected);
 
-		$this->router->connect('/:controller/:action/:id', array(), array('id' => '1'));
-		$out = $this->router->url(array('controller'=>'posts', 'action'=>'view', '1'));
+		$this->router->reload();
+		$this->router->connect('/:controller/:action/:id', array(), array('id' => $ID));
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'view', 'id' => '1'));
 		$expected = '/posts/view/1';
-		$this->assertEqual($out, $expected);
+		$this->assertEqual($result, $expected);
 
-		$this->router->connect('/:controller/:id', array('action' => 'view'), array('id' => '1'));
-		$out = $this->router->url(array('controller'=>'posts', '1'));
+		$this->router->reload();
+		$this->router->connect('/:controller/:id', array('action' => 'view', 'id' => '1'));
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'view', 'id' => '1'));
 		$expected = '/posts/1';
-		$this->assertEqual($out, $expected);
+		$this->assertEqual($result, $expected);
 
-		$out = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0'));
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', '0'));
 		$expected = '/posts/index/0';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2'));
+		$this->assertEqual($result, $expected);
+	}
+
+	function testAdminRouting() {
+		$out = $this->router->url(array(CAKE_ADMIN => true, 'controller' => 'posts', 'action'=>'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/' . CAKE_ADMIN . '/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($out, $expected);
 	}
 
 	function testExtensionParsingSetting() {
-		if (PHP5) {
-			$router = Router::getInstance();
-			$this->router->reload();
-			$this->assertFalse($this->router->__parseExtensions);
+		$router = Router::getInstance();
+		$this->router->reload();
+		$this->assertFalse($this->router->__parseExtensions);
 
-			$this->router->parseExtensions();
-			$this->assertTrue($this->router->__parseExtensions);
-		}
+		$router->parseExtensions();
+		$this->assertTrue($this->router->__parseExtensions);
+	}
+
+	function testExtensionParsing() {
+		$this->router->reload();
+		$this->router->parseExtensions();
+
+		$result = $this->router->parse('/posts.rss');
+		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'rss'));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/posts/view/1.rss');
+		$expected = array('controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'url' => array('ext' => 'rss'));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/posts/view/1.rss?query=test');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/posts/view/1.atom');
+		$expected['url'] = array('ext' => 'atom');
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->parseExtensions('rss', 'xml');
+
+		$result = $this->router->parse('/posts.xml');
+		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'xml'));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/posts.atom?hello=goodbye');
+		$expected = array('controller' => 'posts.atom', 'action' => null);
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->parseExtensions();
+		$result = $this->router->__parseExtension('/posts.atom');
+		$expected = array('ext' => 'atom', 'url' => '/posts');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testQuerystringGeneration() {
+		$result = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2')));
+		$this->assertEqual($result, $expected);
+
+		$expected .= '&more=test+data';
+		$result = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
+		$this->assertEqual($result, $expected);
 	}
 }
+
 ?>
