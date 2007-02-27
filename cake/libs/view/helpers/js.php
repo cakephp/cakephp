@@ -115,7 +115,7 @@ class JsHelper extends Overloadable2 {
  *
  * @return string
  */
-	function tryThese($expr1, $expr2, $expr3) {
+	function tryThese_($expr1, $expr2, $expr3) {
 	}
 /**
  * Loads a remote URL
@@ -161,6 +161,16 @@ class JsHelper extends Overloadable2 {
 				. "')) { $func; } else { return false; }";
 		}
 		return $func;
+	}
+/**
+ * Redirects to a URL
+ *
+ * @param  mixed $url
+ * @param  array  $options
+ * @return string
+ */
+	function redirect_($url = null) {
+		return 'window.location = "' . Router::url($url) . '";';
 	}
 /**
  * Escape a string to be JavaScript friendly.
