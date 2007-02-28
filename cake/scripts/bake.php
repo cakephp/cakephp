@@ -849,6 +849,7 @@ class Bake {
 				$this->stdout('');
 				die();
 			} else {
+				uses('controller'.DS.'controller');
 				loadController($controllerName);
 				//loadModels();
 				if($admin) {
