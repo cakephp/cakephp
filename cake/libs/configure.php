@@ -90,11 +90,11 @@ class Configure extends Object {
  * @return Configure instance
  * @access public
  */
-	function &getInstance() {
+	function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new Configure;
-			$instance[0]->__loadBootstrap();
+			$instance[0]->__loadBootstrap($boot);
 		}
 		return $instance[0];
 	}
@@ -240,7 +240,7 @@ class Configure extends Object {
  */
 	function version() {
 		$_this =& Configure::getInstance();
-		if(!isset($_this->Cake['version'])){
+		if(!isset($_this->Cake['version'])) {
 			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
 			$_this->write($config);
 		}
@@ -425,7 +425,7 @@ class Configure extends Object {
  *
  * @access private
  */
-	function __loadBootstrap() {
+	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
 		$modelPaths = null;
 		$viewPaths = null;
@@ -433,7 +433,9 @@ class Configure extends Object {
 		$helperPaths = null;
 		$componentPaths = null;
 		$behaviorPaths = null;
-		require APP_PATH . 'config' . DS . 'bootstrap.php';
+		if ($boot) {
+			require APP_PATH . 'config' . DS . 'bootstrap.php';
+		}
 		$_this->__buildModelPaths($modelPaths);
 		$_this->__buildViewPaths($viewPaths);
 		$_this->__buildControllerPaths($controllerPaths);
