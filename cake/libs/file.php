@@ -103,7 +103,7 @@ class File extends Object{
 	function write($data, $mode = 'w') {
 		$file = $this->getFullPath();
 		if (!($handle = fopen($file, $mode))) {
-			print ("[File] Could not open $file with mode $mode!");
+			trigger_error("[File] Could not open {$file} with mode {$mode}!", E_USER_WARNING);
 			return false;
 		}
 

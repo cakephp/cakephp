@@ -43,11 +43,19 @@ if (!defined('PHP5')) {
 	require LIBS . 'security.php';
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
+	require LIBS . 'debugger.php';
 	$paths = Configure::getInstance();
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');
+	Configure::write('debug', DEBUG);
 /**
- * Enter description here...
+ * Verify that the application's salt has been changed from the default value
+ */
+	if (CAKE_SESSION_STRING == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
+		trigger_error('Please change the value of CAKE_SESSION_STRING in app/config/core.php to a salt value specific to your application', E_USER_NOTICE);
+	}
+/**
+ * Get the application path and request URL
  */
 	if (empty($uri) && defined('BASE_URL')) {
 		$uri = setUri();
@@ -94,8 +102,6 @@ if (!defined('PHP5')) {
 			exit();
 		}
 	}
-
-	Configure::write('debug', DEBUG);
 
 	require CAKE . 'dispatcher.php';
 
