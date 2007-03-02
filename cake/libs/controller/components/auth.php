@@ -671,7 +671,7 @@ class AuthComponent extends Object {
 		if (isset($controller->data[$this->userModel])) {
 			if (isset($controller->data[$this->userModel][$this->fields['username']]) && isset($controller->data[$this->userModel][$this->fields['password']])) {
 				$model =& $this->getUserModel();
-				$controller->data[$this->userModel][$this->fields['password']] = Security::hash($controller->data[$this->userModel][$this->fields['password']]);
+				$controller->data[$this->userModel][$this->fields['password']] = Security::hash(CAKE_SESSION_STRING . $controller->data[$this->userModel][$this->fields['password']]);
 			}
 		}
 	}

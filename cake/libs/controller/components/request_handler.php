@@ -195,23 +195,22 @@ class RequestHandlerComponent extends Object {
 		$this->setView($controller);
 		$controller->params['isAjax'] = $this->isAjax();
 
-		if (!empty($this->ext)) {
-			if (!in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
+		if (!empty($this->ext) && !in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
+			$controller->ext = '.ctp';
+			$controller->viewPath .= '/' . $this->ext;
+			$controller->layoutPath = $this->ext;
 
-				$controller->ext = '.ctp';
-				$controller->viewPath .= '/' . $this->ext;
-				$controller->layoutPath = $this->ext;
+			if (in_array($this->ext, array_keys($this->__requestContent))) {
+				$this->respondAs($this->ext);
+			}
 
-				if (in_array($this->ext, array_keys($this->__requestContent))) {
-					$this->respondAs($this->ext);
-				}
-
-				if (!in_array(ucfirst($this->ext), $controller->helpers)) {
-					if (file_exists(HELPERS . $this->ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $this->ext . '.php')) {
-						$controller->helpers[] = ucfirst($this->ext);
-					}
+			if (!in_array(ucfirst($this->ext), $controller->helpers)) {
+				if (file_exists(HELPERS . $this->ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $this->ext . '.php')) {
+					$controller->helpers[] = ucfirst($this->ext);
 				}
 			}
+		} else {
+			$this->setAjax($controller);
 		}
 
 		if ($this->requestedWith('xml')) {

@@ -363,17 +363,8 @@ class HttpSocket extends CakeSocket {
  * @todo Implement http_build_query for php5 and an alternative solution for php4, see http://us2.php.net/http_build_query
  */
 	function serialize($items) {
-		// Start a new array
-		$serializedItems = array();
-
-		// Loop through all $items to serialize
-		foreach ($items as $key => $value) {
-			// Urlencode them into the array of $serializedItems
-			$serializedItems[] = urlencode($key).'='.urlencode($value);
-		}
-		
-		// Glue the items together using the '&' separator and return the results
-		return join('&', $serializedItems);	
+		// Use the Router to serialize the data, stripping off the leading '?'
+		return substr(Router::queryString($items), 1);
 	}
 /**
  * Builds a HTTP header string for the given $options
