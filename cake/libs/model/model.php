@@ -830,14 +830,7 @@ class Model extends Overloadable {
  */
 	function getColumnTypes() {
 		$columns = $this->loadInfo();
-		$columns = $columns->value;
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$cols = array();
-
-		foreach($columns as $col) {
-			$cols[$col['name']] = $col['type'];
-		}
-		return $cols;
+		return array_combine($columns->extract('{n}.name'), $columns->extract('{n}.type'));
 	}
 /**
  * Returns the column type of a column in the model
@@ -846,14 +839,9 @@ class Model extends Overloadable {
  * @return string Column type
  */
 	function getColumnType($column) {
-		$columns = $this->loadInfo();
-		$columns = $columns->value;
-		$cols = array();
-
-		foreach($columns as $col) {
-			if ($col['name'] == $column) {
-				return $col['type'];
-			}
+		$cols = $this->getColumnTypes();
+		if (isset($cols[$column])) {
+			return $cols[$column];
 		}
 		return null;
 	}
