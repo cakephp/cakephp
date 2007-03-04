@@ -696,6 +696,16 @@ class View extends Object {
 			}
 		}
 
+		if ($this->helpers != false && $loadHelpers === true) {
+			foreach ($loadedHelpers as $helper) {
+				if (is_object($helper)) {
+					if (is_subclass_of($helper, 'Helper') || is_subclass_of($helper, 'helper')) {
+						$helper->beforeRender();
+					}
+				}
+			}
+		}
+
 		extract($___dataForView, EXTR_SKIP);
 		$BASE = $this->base;
 		$params =& $this->params;

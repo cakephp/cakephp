@@ -371,7 +371,9 @@ class Set extends Object {
 			return (array)$val1;
 		}
 		foreach ($val1 as $key => $val) {
-			if (!isset($val2[$key]) || $val2[$key] != $val) {
+			if (isset($val2[$key]) && $val2[$key] != $val) {
+				$out[$key] = $val;
+			} else if(!array_key_exists($key, $val2)){
 				$out[$key] = $val;
 			}
 		}

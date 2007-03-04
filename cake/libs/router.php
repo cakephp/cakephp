@@ -169,7 +169,7 @@ class Router extends Object {
 		return $_this->routes;
 	}
 /**
- * Builds a route regular expression 
+ * Builds a route regular expression
  *
  * @access public
  * @param string $route			An empty string, or a route string "/"
@@ -435,13 +435,14 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
-		if(!empty($_this->__params[0])) {
-			$params = $_this->__params[0];
+
+		if(!empty($_this->__params)) {
+			$params = end($_this->__params);
 		}
 
 		$path = array('base' => null);
-		if(!empty($_this->__paths[0])) {
-			$path = $_this->__paths[0];
+		if(!empty($_this->__paths)) {
+			$path = end($_this->__paths);
 		}
 
 		$base = $_this->stripPlugin($path['base'], $params['plugin']);
@@ -475,6 +476,7 @@ class Router extends Object {
 				unset($url[CAKE_ADMIN]);
 			}
 
+			$_this->__mapped = array();
 			$match = false;
 			foreach ($_this->routes as $route) {
 				if ($match = $_this->mapRouteElements($route, $url)) {
@@ -487,7 +489,7 @@ class Router extends Object {
 			}
 
 			$named = $args = array();
-			$skip = array('action', 'controller', 'plugin', 'ext', '?');
+			$skip = am(array_keys($_this->__mapped), array('bare', 'action', 'controller', 'plugin', 'ext', '?'));
 			if(defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
 			}
@@ -495,32 +497,21 @@ class Router extends Object {
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
+				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
-				} else if(is_array($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs']))) {
-					$named[] = array($keys[$i], $url[$keys[$i]]);
-				} else if ($match === false) {
-					$args[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
+				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs'])) && !empty($url[$keys[$i]])) {
+					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
+				} else if(!empty($url[$keys[$i]])){
+					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
 				}
 			}
+
 			if ($match === false) {
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
 				}
-			}
 
-			if (!empty($path['namedArgs'])) {
-				$count = count($named);
-				for ($i = 0; $i < $count; $i++) {
-					$named[$i] = join($path['argSeparator'], $named[$i]);
-				}
-				$named = join('/', $named);
-			}
-			if ($match === false) {
-				if(!isset($url['action'])) {
-					$url['action'] = null;
-				}
-				$urlOut = $_this->__filter(array($url['plugin'], $url['controller'], $url['action'], join('/', $_this->__filter($args, true)), $named));
+				$urlOut = $_this->__filter(array($url['plugin'], $url['controller'], $url['action']));
 
 				if($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
@@ -529,10 +520,25 @@ class Router extends Object {
 					array_unshift($urlOut, CAKE_ADMIN);
 				}
 				$output = join('/', $urlOut);
-			} else if (!empty($named)) {
-				$output .=  $named;
 			}
-			$output = $base . '/' . $output;
+
+			if (!empty($args)) {
+				if($output{strlen($output)-1} == '/') {
+					$output .= join('/', $_this->__filter($args, true));
+				} else {
+					$output .= '/'. join('/', $_this->__filter($args, true));
+				}
+			}
+
+			if (!empty($named)) {
+				if($output{strlen($output)-1} == '/') {
+					$output .= join('/', $_this->__filter($named, true));
+				} else {
+					$output .= '/'. join('/', $_this->__filter($named, true));
+				}
+			}
+
+			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url,0,1) == '#')) {
 				return $url;
@@ -566,20 +572,12 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 
 		$params = $route[2];
-		$defaults = am(array('plugin' => null, 'controller' => null, 'action' => null), $route[3]);
-		foreach (array('plugin', 'controller', 'action') as $key) {
-			if (empty($defaults[$key])) {
-				$defaults[$key] = $url[$key];
-			}
-		}
+		$defaults = am(array('plugin'=> null, 'controller'=> null, 'action'=> null), $route[3]);
 
-		$pass = array();
-		foreach ($url as $key => $val) {
-			if (is_numeric($key)) {
-				if (!isset($defaults[count($pass)]) || $defaults[count($pass)] != $val) {
-					$pass[] = $val;
-				}
-				unset($url[$key]);
+		$pass = Set::diff($url, $defaults);
+		foreach($pass as $key => $value) {
+			if(in_array($key, $params)) {
+				unset($pass[$key]);
 			}
 		}
 
@@ -619,7 +617,7 @@ class Router extends Object {
 		} else {
 			$required = array_diff(array_keys($defaults), array_keys($url));
 			if(empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
-			 	return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
+				return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
 			}
 			return false;
 		}
@@ -646,13 +644,11 @@ class Router extends Object {
  */
 	function __mapRoute($route, $params = array()) {
 		$_this =& Router::getInstance();
-
 		if (isset($params['pass']) && is_array($params['pass'])) {
-			$params['pass'] = implode('/', $_this->__filter($params['pass'], true));
+ 			$params['pass'] = implode('/', $_this->__filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}
-
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $route[0]);
 		} else {
@@ -661,27 +657,11 @@ class Router extends Object {
 
 		foreach ($route[2] as $key) {
 			$out = str_replace(':' . $key, $params[$key], $out);
+			$_this->__mapped[$key] = $params[$key];
 			unset($params[$key]);
 		}
 
-		// Do something else here for leftover params
-		$skip = array('action', 'controller', 'plugin', 'ext', '?', 'pass');
-		if(defined('CAKE_ADMIN')) {
-			$skip[] = CAKE_ADMIN;
-		}
-		$args = array();
-		$keys = $_this->__filter(array_values(array_diff(array_keys($params), $skip)), true);
-
-		$count = count($keys);
-		for ($i = 0; $i < $count; $i++) {
-			$args[] = $keys[$i] . ':'  .$params[$keys[$i]];
-		}
-
-		$args = join('/', $_this->__filter($args, true));
-		if(isset($params['0']) && !isset($route['3']['0'])) {
-			return $out . $params['0'] . $args;
-		}
-		return $out . $args;
+		return $out;
 	}
 /**
  * Generates a well-formed querystring from $q
