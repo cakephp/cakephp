@@ -92,8 +92,7 @@ class Inflector extends Object {
 									'/(alias)/i' => '\1es', # alias
 									'/(octop|vir)us$/i' => '\1i', # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
 									'/(ax|cri|test)is$/i' => '\1es', # axis, crisis
-									'/s$/' => 's', # no change (compatibility)
-									'/$/' => 's');
+									'/s$/' => 's',); # no change (compatibility)
 
 		$coreUninflectedPlural = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'Amoyese',
 											'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
@@ -137,16 +136,12 @@ class Inflector extends Object {
 										'trilby' => 'trilbys',
 										'turf' => 'turfs',);
 
-		$pluralRules = $corePluralRules;
-		$uninflected = $coreUninflectedPlural;
-		$irregular = $coreIrregularPlural;
+		include(CONFIGS.'inflections.php');
+		$pluralRules = array_merge($corePluralRules, $pluralRules, array('/$/' => 's'));
+		die(debug($pluralRules));
+		$uninflected = array_merge($coreUninflectedPlural, $uninflectedPlural);
+		$irregular = array_merge($coreIrregularPlural, $irregularPlural);
 
-		if (file_exists(CONFIGS . 'inflections.php')) {
-			include(CONFIGS.'inflections.php');
-			$pluralRules = array_merge($corePluralRules, $pluralRules);
-			$uninflected = array_merge($coreUninflectedPlural, $uninflectedPlural);
-			$irregular = array_merge($coreIrregularPlural, $irregularPlural);
-		}
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
 	}
@@ -275,16 +270,11 @@ class Inflector extends Object {
 										'trilbys' => 'trilby',
 										'turfs' => 'turf',);
 
-		$singularRules = $coreSingularRules;
-		$uninflected = $coreUninflectedSingular;
-		$irregular = $coreIrregularSingular;
+		include(CONFIGS.'inflections.php');
+		$singularRules = array_merge($coreSingularRules, $singularRules);
+		$uninflected = array_merge($coreUninflectedSingular, $uninflectedSingular);
+		$irregular = array_merge($coreIrregularSingular, $irregularSingular);
 
-		if (file_exists(CONFIGS . 'inflections.php')) {
-			include(CONFIGS.'inflections.php');
-			$singularRules = array_merge($coreSingularRules, $singularRules);
-			$uninflected = array_merge($coreUninflectedSingular, $uninflectedSingular);
-			$irregular = array_merge($coreIrregularSingular, $irregularSingular);
-		}
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
 	}
