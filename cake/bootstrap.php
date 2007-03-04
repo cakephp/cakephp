@@ -43,7 +43,6 @@ if (!defined('PHP5')) {
 	require LIBS . 'security.php';
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
-	require LIBS . 'debugger.php';
 	$paths = Configure::getInstance();
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');

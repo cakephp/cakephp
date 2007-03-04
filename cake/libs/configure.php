@@ -142,6 +142,10 @@ class Configure extends Object {
 				if (function_exists('ini_set')) {
 					ini_set('display_errors', 1);
 				}
+
+				if(!class_exists('Debugger')) {
+					require LIBS . 'debugger.php';
+				}
 			} else {
 				error_reporting(0);
 			}
