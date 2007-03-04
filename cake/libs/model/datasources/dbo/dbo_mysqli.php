@@ -225,12 +225,18 @@ class DboMysqli extends DboSource {
 			case 'boolean':
 				$data = $this->boolean((bool)$data);
 			break;
+			case 'integer' :
+			case 'float' :
+			case null :
+				if(is_numeric($data)) {
+					break;
+				}
 			default:
-				$data = mysqli_real_escape_string($this->connection, $data);
+				$data = "'" . mysqli_real_escape_string($this->connection, $data) . "'";
 			break;
 		}
 
-		return "'" . $data . "'";
+		return $data;
 	}
 /**
  * Begin a transaction
