@@ -1649,7 +1649,7 @@ class Model extends Overloadable {
 			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
 		}
 
-		if (empty($data) || !$this->beforeValidate()) {
+		if (!$this->beforeValidate()) {
 			return $this->validationErrors;
 		}
 
