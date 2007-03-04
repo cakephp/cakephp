@@ -391,13 +391,13 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out = $before . $out . $between . $this->dateTimeOptionTag($tagName, null, '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, null, '12', $selected, $options, null, $empty);
 			break;
 			case 'date':
-				$out = $before . $out . $between . $this->dateTimeOptionTag($tagName, 'MDY', null, $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', null, $selected, $options, null, $empty);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', '12', $selected, $options, null, $empty);
 			break;
 			case 'textarea':
 			default:
@@ -646,7 +646,7 @@ class FormHelper extends AppHelper {
  * @param boolean $show_empty Show/hide the empty select option
  * @return string
  */
-	function dayOptionTag($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function day($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('d', strtotime($value));
 		}
@@ -666,7 +666,7 @@ class FormHelper extends AppHelper {
  * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function yearOptionTag($tagName, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function year($tagName, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('Y', strtotime($value));
 		}
@@ -701,7 +701,7 @@ class FormHelper extends AppHelper {
  * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function monthOptionTag($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function month($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('m', strtotime($value));
 		}
@@ -720,7 +720,7 @@ class FormHelper extends AppHelper {
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-	function hourOptionTag($tagName, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function hour($tagName, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			if ($format24Hours) {
 				$selected = date('H', strtotime($value));
@@ -754,7 +754,7 @@ class FormHelper extends AppHelper {
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-	function minuteOptionTag($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function minute($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('i', strtotime($value));
 		}
@@ -775,7 +775,7 @@ class FormHelper extends AppHelper {
  * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-	function meridianOptionTag($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function meridian($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('a', strtotime($value));
 		}
@@ -795,7 +795,7 @@ class FormHelper extends AppHelper {
  * @param array $optionAttr Attribute array for the option elements.
  * @return string The HTML formatted OPTION element
  */
-	function dateTimeOptionTag($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function dateTime($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
 		$day      = null;
 		$month    = null;
 		$year     = null;
@@ -827,8 +827,9 @@ class FormHelper extends AppHelper {
 
 			if ($timeFormat != 'NONE' && !empty($timeFormat)) {
 				$time = explode(':', $days[1]);
+				$check = str_replace(':', '', $days[1]);
 
-				if (($time[0] > 12) && $timeFormat == '12') {
+				if (($check > 115959) && $timeFormat == '12') {
 					$time[0] = $time[0] - 12;
 					$meridian = 'pm';
 				} elseif($time[0] > 12) {
@@ -867,20 +868,20 @@ class FormHelper extends AppHelper {
 
 		switch($dateFormat) {
 			case 'DMY': // so uses the new selex
-				$opt = $this->dayOptionTag($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' .
-				$this->monthOptionTag($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' .
+				$this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'MDY':
-				$opt = $this->monthOptionTag($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->dayOptionTag($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
+				$this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'YMD':
-				$opt = $this->yearOptionTag($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
-				$this->monthOptionTag($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->dayOptionTag($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty);
+				$opt = $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
+				$this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
+				$this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty);
 			break;
 			case 'Y':
-				$opt = $this->yearOptionTag($tagName, null, null, $selected, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->year($tagName, null, null, $selected, $selectYearAttr, $optionAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
@@ -890,13 +891,13 @@ class FormHelper extends AppHelper {
 
 		switch($timeFormat) {
 			case '24':
-				$opt .= $this->hourOptionTag($tagName, true, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minuteOptionTag($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hour($tagName, true, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
+				$this->minute($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty);
 			break;
 			case '12':
-				$opt .= $this->hourOptionTag($tagName, false, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minuteOptionTag($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty) . ' ' .
-				$this->meridianOptionTag($tagName, $meridian, $selectMeridianAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hour($tagName, false, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
+				$this->minute($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty) . ' ' .
+				$this->meridian($tagName, $meridian, $selectMeridianAttr, $optionAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
@@ -1042,7 +1043,7 @@ class FormHelper extends AppHelper {
 	function generateDate($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
-		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
+		$str = $this->dateTime($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
@@ -1064,7 +1065,7 @@ class FormHelper extends AppHelper {
  */
 	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$str = $this->Html->dateTimeOptionTag($tagName, 'NONE', '24', $selected, $htmlOptions);
+		$str = $this->dateTime($tagName, 'NONE', '24', $selected, $htmlOptions);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {
@@ -1087,7 +1088,7 @@ class FormHelper extends AppHelper {
 	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
 		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
 		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
-		$str = $this->Html->dateTimeOptionTag($tagName, 'MDY', '12', $selected, $htmlOptions, null, false);
+		$str = $this->dateTime($tagName, 'MDY', '12', $selected, $htmlOptions, null, false);
 		$strLabel = $this->label($tagName, $prompt);
 		$divClass = "optional";
 		if ($required) {

@@ -340,14 +340,6 @@ class HtmlHelper extends AppHelper {
 		}
 	}
 /**
- * @deprecated
- * @see FormHelper::submit
- */
-	function submit($caption = 'Submit', $htmlAttributes = array()) {
-		$htmlAttributes['value'] = $caption;
-		return $this->output(sprintf($this->tags['submit'], $this->_parseAttributes($htmlAttributes, null, '', ' ')));
-	}
-/**
  * Creates a password input widget.
  *
  * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
@@ -423,22 +415,6 @@ class HtmlHelper extends AppHelper {
 		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
 		$output .= sprintf($this->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		return $this->output($output);
-	}
-/**
- * Creates file input widget.
- *
- * @param string $fieldName Name of a field, like this "Modelname/fieldname"
- * @param array $htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function file($fieldName, $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::file) Deprecated: Use FormHelper::file instead'), E_USER_WARNING);
-		if (strpos($fieldName, '/')) {
-			$this->setFormTag($fieldName);
-			$htmlAttributes = $this->domId($htmlAttributes);
-			return $this->output(sprintf($this->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' ')));
-		}
-		return $this->output(sprintf($this->tags['file_no_model'], $fieldName, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
@@ -637,161 +613,6 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
-/**#@-*/
-/*************************************************************************
- * Renamed methods
- *************************************************************************/
- /**
- * Returns a formatted SELECT element.
- *
- * @param string $fieldName Name attribute of the SELECT
- * @param array $optionElements Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
- * @param mixed $selected Selected option
- * @param array $selectAttr Array of HTML options for the opening SELECT element
- * @param array $optionAttr Array of HTML options for the enclosed OPTION elements
- * @param boolean $show_empty If true, the empty select option is shown
- * @return string Formatted SELECT element
- */
-	function selectTag($fieldName, $optionElements, $selected = array(), $selectAttr = array(), $optionAttr = array(), $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::selectTag) Deprecated: Use FormHelper::select instead'), E_USER_WARNING);
-		$this->setFormTag($fieldName);
-		if ($this->tagIsInvalid()) {
-			if (isset($selectAttr['class']) && trim($selectAttr['class']) != "") {
-				$selectAttr['class'] .= ' form_error';
-			} else {
-				$selectAttr['class'] = 'form_error';
-			}
-		}
-		$selectAttr = $this->domId($selectAttr);
-
-		if (!is_array($optionElements)) {
-			return null;
-		}
-
-		if (!isset($selected)) {
-			$selected = $this->tagValue($fieldName);
-		}
-		if (isset($selectAttr) && array_key_exists("multiple", $selectAttr)) {
-			$select[] = sprintf($this->tags['selectmultiplestart'], $this->model(), $this->field(), $this->parseHtmlOptions($selectAttr));
-		} else {
-			$select[] = sprintf($this->tags['selectstart'], $this->model(), $this->field(), $this->parseHtmlOptions($selectAttr));
-		}
-
-		if ($showEmpty == true) {
-			$select[] = sprintf($this->tags['selectempty'], $this->parseHtmlOptions($optionAttr));
-		}
-
-		foreach($optionElements as $name => $title) {
-			$optionsHere = $optionAttr;
-
-			if (($selected != null) && ($selected == $name)) {
-				$optionsHere['selected'] = 'selected';
-			} else if(is_array($selected) && in_array($name, $selected)) {
-				$optionsHere['selected'] = 'selected';
-			}
-
-			$select[] = sprintf($this->tags['selectoption'], $name, $this->parseHtmlOptions($optionsHere), h($title));
-		}
-
-		$select[] = sprintf($this->tags['selectend']);
-		return $this->output(implode("\n", $select));
-	}
-/*************************************************************************
- * Deprecated methods
- *************************************************************************/
-/**
- * Returns an HTML FORM element.
- *
- * @param string $target URL for the FORM's ACTION attribute.
- * @param string $type		FORM type (POST/GET).
- * @param array  $htmlAttributes
- * @return string An formatted opening FORM tag.
- * @deprecated
- * @see FormHelper::create
- */
-	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead'), E_USER_WARNING);
-		$htmlAttributes['action'] = $this->url($target);
-		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
-		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
-		$token = '';
-
-		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
-		}
-
-		return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $token;
-	}
-
-/**
- * Generates a nested unordered list tree from an array.
- *
- * @param array	$data
- * @param array	$htmlAttributes
- * @param string  $bodyKey
- * @param string  $childrenKey
- * @return string
- * @deprecated This seems useless. Version 0.9.2.
- */
-	function guiListTree($data, $htmlAttributes = array(), $bodyKey = 'body', $childrenKey = 'children') {
-		$out="<ul" . $this->_parseAttributes($htmlAttributes) . ">\n";
-		foreach($data as $item) {
-			$out .= "<li>{$item[$bodyKey]}\n";
-			if (isset($item[$childrenKey]) && is_array($item[$childrenKey]) && count($item[$childrenKey])) {
-				$out .= $this->guiListTree($item[$childrenKey], $htmlAttributes, $bodyKey, $childrenKey);
-			}
-			$out .= "</li>\n";
-		}
-		$out .= "</ul>\n";
-		return $this->output($out);
-	}
-/**
- * Returns a mailto: link.
- *
- * @param string $title Title of the link, or the e-mail address (if the same).
- * @param string $email E-mail address if different from title.
- * @param array  $options
- * @return string Formatted A tag
- * @deprecated
- * @see HtmlHelper::link
- */
-	function linkEmail($title, $email = null, $options = null) {
-		trigger_error(__('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead'), E_USER_WARNING);
-		// if no $email, then title contains the email.
-		if (empty($email)) {
-			$email = $title;
-		}
-
-		// does the address contain extra attributes?
-		$match = array();
-		preg_match('!^(.*)(\?.*)$!', $email, $match);
-
-		// plaintext
-		if (empty($options['encode']) || !empty($match[2])) {
-			return sprintf($this->tags['mailto'], $email, $this->parseHtmlOptions($options), $title);
-		} else {
-			// encoded to avoid spiders
-			$email_encoded = null;
-
-			for($ii = 0; $ii < strlen($email); $ii++) {
-				if (preg_match('!\w!', $email[$ii])) {
-					$email_encoded .= '%' . bin2hex($email[$ii]);
-				} else {
-					$email_encoded .= $email[$ii];
-				}
-			}
-
-			$title_encoded = null;
-
-			for($ii = 0; $ii < strlen($title); $ii++) {
-				$title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii]) ? '&#x' . bin2hex($title[$ii]) . ';' : $title[$ii];
-			}
-			return sprintf($this->tags['mailto'], $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
-		}
-	}
-
-/* NEW METHODS */
-
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
@@ -839,280 +660,180 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->parseHtmlOptions($attributes, null, ' ', ''), $text));
 	}
+/**#@-*/
+/*************************************************************************
+ * Deprecated methods
+ *************************************************************************/
 /**
- * Returns a SELECT element for days.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $show_empty Show/hide the empty select option
- * @return string
+ * @deprecated
+ * @see FormHelper::file
+ */
+	function file($fieldName, $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::file) Deprecated: Use FormHelper::file instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->file($fieldName, $htmlAttributes);
+	}
+/**
+ * @deprecated
+ * @see FormHelper::submit
+ */
+	function submit($caption = 'Submit', $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::submit) Deprecated: Use FormHelper::submit instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->submit($caption, $htmlAttributes);
+	}
+ /**
+ * @deprecated
+ * @see FormHelper::select
+ */
+	function selectTag($fieldName, $optionElements, $selected = array(), $selectAttr = array(), $optionAttr = array(), $showEmpty = true) {
+		trigger_error(__('(HtmlHelper::selectTag) Deprecated: Use FormHelper::select instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->select($fieldName, $optionElements, $selected, $selectAttr, $showEmpty);
+	}
+/**
+ * @deprecated
+ * @see FormHelper::create
+ */
+	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead'), E_USER_WARNING);
+		$htmlAttributes['action'] = $this->url($target);
+		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
+		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
+		$token = '';
+
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+		}
+
+		return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $token;
+	}
+/**
+ * @deprecated
+ * @see HtmlHelper::link
+ */
+	function linkEmail($title, $email = null, $options = null) {
+		trigger_error(__('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead'), E_USER_WARNING);
+		// if no $email, then title contains the email.
+		if (empty($email)) {
+			$email = $title;
+		}
+
+		// does the address contain extra attributes?
+		$match = array();
+		preg_match('!^(.*)(\?.*)$!', $email, $match);
+
+		// plaintext
+		if (empty($options['encode']) || !empty($match[2])) {
+			return sprintf($this->tags['mailto'], $email, $this->parseHtmlOptions($options), $title);
+		} else {
+			// encoded to avoid spiders
+			$email_encoded = null;
+
+			for($ii = 0; $ii < strlen($email); $ii++) {
+				if (preg_match('!\w!', $email[$ii])) {
+					$email_encoded .= '%' . bin2hex($email[$ii]);
+				} else {
+					$email_encoded .= $email[$ii];
+				}
+			}
+
+			$title_encoded = null;
+
+			for($ii = 0; $ii < strlen($title); $ii++) {
+				$title_encoded .= preg_match('/^[A-Za-z0-9]$/', $title[$ii]) ? '&#x' . bin2hex($title[$ii]) . ';' : $title[$ii];
+			}
+			return sprintf($this->tags['mailto'], $email_encoded, $this->parseHtmlOptions($options, array('encode')), $title_encoded);
+		}
+	}
+/**
+ * @deprecated
+ * @see FormHelper::day
  */
 	function dayOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && $this->tagValue($tagName)) {
-			$selected = date('d', strtotime($this->tagValue($tagName)));
-		}
-		$dayValue = empty($selected) ? ($showEmpty == true ? NULL : date('d')) : $selected;
-		$days = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30', '31' => '31');
-		$option = $this->selectTag($tagName . "_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::dayOptionTag) Deprecated: Use FormHelper::day instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->day($tagName, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
 /**
- * Returns a SELECT element for years
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param integer $minYear First year in sequence
- * @param integer $maxYear Last year in sequence
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $showEmpty Show/hide the empty select option
- * @return string
+ * @deprecated
+ * @see FormHelper::year
  */
 	function yearOptionTag($tagName, $value = null, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
-			$selected = date('Y', strtotime($this->tagValue($tagName)));
-		}
-
-		$yearValue = empty($selected) ? ($showEmpty ? NULL : date('Y')) : $selected;
-		$currentYear = date('Y');
-		$maxYear = is_null($maxYear) ? $currentYear + 11 : $maxYear + 1;
-		$minYear = is_null($minYear) ? $currentYear - 60 : $minYear;
-
-		if ($minYear > $maxYear) {
-			$tmpYear = $minYear;
-			$minYear = $maxYear;
-			$maxYear = $tmpYear;
-		}
-
-		$minYear = $currentYear < $minYear ? $currentYear : $minYear;
-		$maxYear = $currentYear > $maxYear ? $currentYear : $maxYear;
-
-		for($yearCounter = $minYear; $yearCounter < $maxYear; $yearCounter++) {
-			$years[$yearCounter] = $yearCounter;
-		}
-
-		$option = $this->selectTag($tagName . "_year", $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::yearOptionTag) Deprecated: Use FormHelper::year instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->year($tagName, $minYear, $maxYear, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
 /**
- * Returns a SELECT element for months.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $showEmpty Show/hide the empty select option
- * @return string
+ * @deprecated
+ * @see FormHelper::month
  */
 	function monthOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
-			$selected = date('m', strtotime($this->tagValue($tagName)));
-		}
-		$monthValue = empty($selected) ? ($showEmpty ? NULL : date('m')) : $selected;
-		$months = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
-
-		$option = $this->selectTag($tagName . "_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::monthOptionTag) Deprecated: Use FormHelper::month instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->month($tagName, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
 /**
- * Returns a SELECT element for hours.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param boolean $format24Hours True for 24 hours format
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @return string
+ * @deprecated
+ * @see FormHelper::hour
  */
 	function hourOptionTag($tagName, $value = null, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
-			if ($format24Hours) {
-				$selected = date('H', strtotime($this->tagValue($tagName)));
-			} else {
-				$selected = date('g', strtotime($this->tagValue($tagName)));
-			}
-		}
-		if ($format24Hours) {
-			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('H')) : $selected;
-		} else {
-			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('g')) : $selected;
-			if (isset($selected) && intval($hourValue) == 0 && !$showEmpty) {
-				$hourValue = 12;
-			}
-		}
-
-		if ($format24Hours) {
-			$hours = array('00' => '00', '01' => '01', '02' => '02', '03' => '03', '04' => '04', '05' => '05', '06' => '06', '07' => '07', '08' => '08', '09' => '09', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23');
-		} else {
-			$hours = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12');
-		}
-
-		$option = $this->selectTag($tagName . "_hour", $hours, $hourValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::hourOptionTag) Deprecated: Use FormHelper::hour instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->hour($tagName, $format24Hours, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
 /**
- * Returns a SELECT element for minutes.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @return string
+ * @deprecated
+ * @see FormHelper::minute
  */
 	function minuteOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
-			$selected = date('i', strtotime($this->tagValue($tagName)));
-		}
-		$minValue = empty($selected) ? ($showEmpty ? NULL : date('i')) : $selected;
-
-		for($minCount = 0; $minCount < 60; $minCount++) {
-			$mins[$minCount] = sprintf('%02d', $minCount);
-		}
-		$option = $this->selectTag($tagName . "_min", $mins, $minValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::minuteOptionTag) Deprecated: Use FormHelper::minute instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->minute($tagName, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
-
 /**
- * Returns a SELECT element for AM or PM.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @deprecated  string $value
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @return string
+ * @deprecated
+ * @see FormHelper::meridian
  */
 	function meridianOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && ($this->tagValue($tagName))) {
-			$selected = date('a', strtotime($this->tagValue($tagName)));
-		}
-		$merValue = empty($selected) ? ($showEmpty ? NULL : date('a')) : $selected;
-		$meridians = array('am' => 'am', 'pm' => 'pm');
-
-		$option = $this->selectTag($tagName . "_meridian", $meridians, $merValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		trigger_error(__('(HtmlHelper::meridianOptionTag) Deprecated: Use FormHelper::meridian instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->meridian($tagName, $selected, $selectAttr, $optionAttr, $showEmpty);
 	}
 /**
- * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
- *
- * @param string $tagName Prefix name for the SELECT element
- * @param string $dateFormat DMY, MDY, YMD or NONE.
- * @param string $timeFormat 12, 24, NONE
- * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @return string The HTML formatted OPTION element
+ * @deprecated
+ * @see FormHelper::dateTime
  */
 	function dateTimeOptionTag($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		$day      = null;
-		$month    = null;
-		$year     = null;
-		$hour     = null;
-		$min      = null;
-		$meridian = null;
-
-		if (empty($selected)) {
-			$selected = $this->tagValue($tagName);
-		}
-
-		if (!empty($selected)) {
-
-			if (is_int($selected)) {
-				$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
-			}
-
-			$meridian = 'am';
-			$pos = strpos($selected, '-');
-			if($pos !== false){
-				$date = explode('-', $selected);
-				$days = explode(' ', $date[2]);
-				$day = $days[0];
-				$month = $date[1];
-				$year = $date[0];
-			} else {
-				$days[1] = $selected;
-			}
-
-			if ($timeFormat != 'NONE' && !empty($timeFormat)) {
-				$time = explode(':', $days[1]);
-
-				if (($time[0] > 12) && $timeFormat == '12') {
-					$time[0] = $time[0] - 12;
-					$meridian = 'pm';
-				} elseif($time[0] > 12) {
-					$meridian = 'pm';
-				}
-
-				$hour = $time[0];
-				$min = $time[1];
-			}
-		}
-
-		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		if (isset($selectAttr['id'])) {
-			if (is_string($selectAttr['id'])) {
-				// build out an array version
-				foreach ($elements as $element) {
-					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $selectAttr;
-					${$selectAttrName}['id'] = $selectAttr['id'] . $element;
-				}
-			} elseif (is_array($selectAttr['id'])) {
-				// check for missing ones and build selectAttr for each element
-				foreach ($elements as $element) {
-					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $selectAttr;
-					${$selectAttrName}['id'] = $selectAttr['id'][strtolower($element)];
-				}
-			}
-		} else {
-			// build the selectAttrName with empty id's to pass
-			foreach ($elements as $element) {
-				$selectAttrName = 'select' . $element . 'Attr';
-				${$selectAttrName} = $selectAttr;
-			}
-		}
-
-		switch($dateFormat) {
-			case 'DMY': // so uses the new selex
-				$opt = $this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' .
-				$this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
-			break;
-			case 'MDY':
-				$opt = $this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' . $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
-			break;
-			case 'YMD':
-				$opt = $this->yearOptionTag($tagName, null, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
-				$this->monthOptionTag($tagName, null, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->dayOptionTag($tagName, null, $day, $selectDayAttr, $optionAttr, $showEmpty);
-			break;
-			case 'Y':
-				$opt = $this->yearOptionTag($tagName, null, null, null, $selected, $selectYearAttr, $optionAttr, $showEmpty);
-			break;
-			case 'NONE':
-			default:
-				$opt = '';
-			break;
-		}
-
-		switch($timeFormat) {
-			case '24':
-				$opt .= $this->hourOptionTag($tagName, null, true, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minuteOptionTag($tagName, null, $min, $selectMinuteAttr, $optionAttr, $showEmpty);
-			break;
-			case '12':
-				$opt .= $this->hourOptionTag($tagName, null, false, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minuteOptionTag($tagName, null, $min, $selectMinuteAttr, $optionAttr, $showEmpty) . ' ' .
-				$this->meridianOptionTag($tagName, null, $meridian, $selectMeridianAttr, $optionAttr, $showEmpty);
-			break;
-			case 'NONE':
-			default:
-				$opt .= '';
-			break;
-		}
-		return $opt;
+		trigger_error(__('(HtmlHelper::dateTimeOptionTag) Deprecated: Use FormHelper::dateTime instead'), E_USER_WARNING);
+		$this->__loadForm();
+		$form = new FormHelper();
+		$form->Html = $this;
+		return $form->dateTime($tagName, $dateFormat, $timeFormat, $selected, $selectAttr, $optionAttr, $showEmpty);
+	}
+/**
+ * @deprecated will not be in final release.
+ */
+	function __loadForm() {
+		uses('view'.DS.'helpers'.DS.'form');
 	}
 }
-
 ?>
