@@ -468,7 +468,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
 		}
-		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->Html->_parseAttributes($htmlAttributes, null, ' '), $value));
+		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' '), $value));
 	}
 /**
  * Creates a hidden input field.
