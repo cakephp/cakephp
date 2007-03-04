@@ -60,16 +60,6 @@ class Sanitize{
 		return $cleaned;
 	}
 /**
- * @deprecated
- * @see Sanitize::escape()
- */
-	function sql($string) {
-		if (!ini_get('magic_quotes_gpc')) {
-			$string = addslashes($string);
-		}
-		return $string;
-	}
-/**
  * Makes a string SQL-safe.
  *
  * @param string $string
@@ -155,56 +145,6 @@ class Sanitize{
 		return $str;
 	}
 /**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanArray(&$toClean) {
-		return $this->cleanArrayR($toClean);
-	}
-/**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanArrayR(&$toClean) {
-		if (is_array($toClean)) {
-			while(list($k, $v) = each($toClean)) {
-				if (is_array($toClean[$k])) {
-					$this->cleanArray($toClean[$k]);
-				} else {
-					$toClean[$k] = $this->cleanValue($v);
-				}
-			}
-		} else {
-			return null;
-		}
-	}
-/**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanValue($val) {
-		if ($val == "") {
-			return "";
-		}
-		//Replace odd spaces with safe ones
-		$val = str_replace(" ", " ", $val);
-		$val = str_replace(chr(0xCA), "", $val);
-		//Encode any HTML to entities.
-		$val = $this->html($val);
-		//Double-check special chars and replace carriage returns with new lines
-		$val = preg_replace("/\\\$/", "$", $val);
-		$val = preg_replace("/\r\n/", "\n", $val);
-		$val = str_replace("!", "!", $val);
-		$val = str_replace("'", "'", $val);
-		//Allow unicode (?)
-		$val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
-		//Add slashes for SQL
-		$val = $this->sql($val);
-		//Swap user-inputted backslashes (?)
-		$val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
-		return $val;
-	}
-/**
  * Sanitizes given array or value for safe input.
  *
  * @param mixed $data
@@ -220,8 +160,8 @@ class Sanitize{
 			foreach ($data as $key => $val) {
 				$data[$key] = Sanitize::clean($val);
 			}
+			return $data;
 		} else {
-
 			//Replace odd spaces with safe ones
 			$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
 			//Encode any HTML to entities.
@@ -313,6 +253,34 @@ class Sanitize{
 				}
 			}
 		}
+	}
+/**
+ * @deprecated
+ * @see Sanitize::escape()
+ */
+	function sql($string) {
+		return Sanitize::escape($string);
+	}
+/**
+ * @deprecated
+ * @see Sanitize::clean
+ */
+	function cleanArray($toClean) {
+		return Sanitize::clean($toClean);
+	}
+/**
+ * @deprecated
+ * @see Sanitize::clean
+ */
+	function cleanArrayR($toClean) {
+		return Sanitize::clean($toClean);
+	}
+/**
+ * @deprecated
+ * @see Sanitize::clean
+ */
+	function cleanValue($val) {
+		return Sanitize::clean($val);
 	}
 }
 ?>
