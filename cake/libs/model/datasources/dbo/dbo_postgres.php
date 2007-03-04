@@ -357,7 +357,13 @@ class DboPostgres extends DboSource {
 			return null;
 		}
 
-		$sql = "SELECT last_value AS max FROM \"{$source}_{$field}_seq\"";
+		if (preg_match('/^nextval\(\'(\w+)\'/', $sourceinfo['default'], $matches)) {
+			$seq = $matches[1];
+		} else {
+			$seq = "{$source}_{$field}_seq";
+		}
+		$sql = "SELECT last_value AS max FROM \"{$seq}\"";
+
 		$res = $this->rawQuery($sql);
 		$data = $this->fetchRow($res);
 		return $data[0]['max'];
