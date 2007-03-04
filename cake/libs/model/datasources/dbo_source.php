@@ -1354,6 +1354,7 @@ class DboSource extends DataSource {
 					for($i = 0; $i < $pregCount; $i++) {
 						if (!empty($match['1'][$i]) && !is_numeric($match['1'][$i])) {
 							$conditions = $conditions . ' ';
+							$match['0'][$i] = preg_replace('/\\./', '\\.', $match['0'][$i]);
 							$conditions = preg_replace('/^' . $match['0'][$i] . '(?=[^\\w])/', ' '.$this->name($match['1'][$i]), $conditions);
 							if (strpos($conditions, '(' . $match['0'][$i]) === false) {
 								$conditions = preg_replace('/[^\w]' . $match['0'][$i] . '(?=[^\\w])/', ' '.$this->name($match['1'][$i]), $conditions);
