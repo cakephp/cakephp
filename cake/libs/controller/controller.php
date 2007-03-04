@@ -42,7 +42,7 @@
  */
 class Controller extends Object {
 /**
- * Tshe name of this controller. Controller names are plural, named after the model they manipulate. 
+ * Tshe name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
  * @access public
@@ -71,7 +71,7 @@ class Controller extends Object {
 	var $action = null;
 /**
  * An array containing the class names of models this controller uses.
- * 
+ *
  * Example: var $uses = array('Product', 'Post', 'Comment');
  *
  * @var mixed A single name as a string or a list of names as an array.
@@ -81,7 +81,7 @@ class Controller extends Object {
 /**
  * An array containing the names of helpers this controller uses. The array elements should
  * not contain the -Helper part of the classname.
- * 
+ *
  * Example: var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');
  *
  * @var mixed A single name as a string or a list of names as an array.
@@ -89,7 +89,7 @@ class Controller extends Object {
  */
 	var $helpers = array('Html');
 /**
- * Parameters received in the current request: GET and POST data, information 
+ * Parameters received in the current request: GET and POST data, information
  * about the request, etc.
  *
  * @var array
@@ -111,12 +111,12 @@ class Controller extends Object {
  *
  * Pagination defaults can also be supplied in a model-by-model basis by using
  * the name of the model as a key for a pagination array:
- * 
+ *
  * var $paginate = array(
  * 		'Post' => array(...),
  * 		'Comment' => array(...)
  * 	);
- * 
+ *
  * See the manual chapter on Pagination for more information.
  *
  * @var array
@@ -143,7 +143,7 @@ class Controller extends Object {
  */
 	var $viewVars = array();
 /**
- * Text to be used for the $title_for_layout layout variable (usually 
+ * Text to be used for the $title_for_layout layout variable (usually
  * placed inside <title> tags.)
  *
  * @var boolean
@@ -191,7 +191,7 @@ class Controller extends Object {
 /**
  * Array containing the names of components this controller uses. Component names
  * should not contain the -Component portion of the classname.
- * 
+ *
  * Example: var $components = array('Session', 'RequestHandler', 'Acl');
  *
  * @var array
@@ -236,8 +236,8 @@ class Controller extends Object {
  */
 	var $plugin = null;
 /**
- * Used to define methods a controller that will be cached. To cache a 
- * single action, the value is set to an array containing keys that match 
+ * Used to define methods a controller that will be cached. To cache a
+ * single action, the value is set to an array containing keys that match
  * action names and values that denote cache expiration times (in seconds).
  *
  * Example: var $cacheAction = array(
@@ -275,7 +275,7 @@ class Controller extends Object {
 	var $namedArgs = true;
 /**
  * The character that separates named arguments in URLs.
- * 
+ *
  *  Example URL: /posts/view/title:first+post/category:general
  *
  * @var string
