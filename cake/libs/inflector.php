@@ -138,7 +138,6 @@ class Inflector extends Object {
 
 		include(CONFIGS.'inflections.php');
 		$pluralRules = array_merge($corePluralRules, $pluralRules, array('/$/' => 's'));
-		die(debug($pluralRules));
 		$uninflected = array_merge($coreUninflectedPlural, $uninflectedPlural);
 		$irregular = array_merge($coreIrregularPlural, $irregularPlural);
 
