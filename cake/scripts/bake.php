@@ -1989,7 +1989,7 @@ class Bake {
  */
 	function project($projectPath = null) {
 		if($projectPath != '') {
-			while ($this->__checkPath($projectPath) === true) {
+			while ($this->__checkPath($projectPath) === true && $this->__checkPath(CONFIGS) === true) {
 				$response = $this->getInput('Bake -app in '.$projectPath, array('y','n'), 'y');
 				if(low($response) == 'y') {
 					$this->main();
@@ -2007,8 +2007,11 @@ class Bake {
 				}
 			}
 		}
-		while ($this->__checkPath($projectPath) === true || $projectPath == '') {
-				$projectPath = $this->getInput('Directory '.$projectPath.'  exists please choose another:');
+		while ($newPath != 'y' && ($this->__checkPath($projectPath) === true || $projectPath == '')) {
+				$newPath = $this->getInput('Directory '.$projectPath.'  exists. Overwrite (y) or insert a new path', null, 'y');
+				if($newPath != 'y') {
+					$projectPath = $newPath;
+				}
 			while ($projectPath == '') {
 				$projectPath = $this->getInput('The directory path you supplied was empty. Please try again.');
 			}
@@ -2108,12 +2111,9 @@ class Bake {
 	function __copydirr($fromDir, $toDir, $chmod = 0755, $verbose = false) {
 		$errors=array();
 		$messages=array();
-
-		if (!is_dir($toDir)) {
-			uses('folder');
-			$folder = new Folder();
-			$folder->mkdirr($toDir, 0755);
-		}
+		
+		uses('folder');
+		$folder = new Folder($toDir, true, 0755);
 
 		if (!is_writable($toDir)) {
 			$errors[]='target '.$toDir.' is not writable';
@@ -2136,8 +2136,8 @@ class Bake {
 
 		while (false!==($item = readdir($handle))) {
 			if (!in_array($item,$exceptions)) {
-				$from = str_replace('//','/',$fromDir.'/'.$item);
-				$to = str_replace('//','/',$toDir.'/'.$item);
+				$from = $folder->addPathElement($fromDir, $item);
+				$to = $folder->addPathElement($toDir, $item);
 				if (is_file($from)) {
 					if (@copy($from, $to)) {
 						chmod($to, $chmod);
