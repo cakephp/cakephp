@@ -212,14 +212,15 @@ class Sanitize{
  * @return mixed
  */
 	function clean($data, $connection = 'default') {
+		if (empty($data)) {
+			return $data;
+		}
+
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {
 				$data[$key] = Sanitize::clean($val);
 			}
 		} else {
-			if (empty($data)) {
-				return $data;
-			}
 
 			//Replace odd spaces with safe ones
 			$val = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
