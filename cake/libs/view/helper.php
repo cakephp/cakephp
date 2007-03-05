@@ -151,12 +151,15 @@ class Helper extends Overloadable {
 /**
  * Parses tag templates into $this->tags.
  *
- * @return void
+ * @param $name file name
+ * @return array merged tags from config/$name.php
  */
-	function loadConfig() {
-		if (file_exists(APP . 'config' . DS . 'tags.php')) {
-			require(APP . 'config' . DS . 'tags.php');
-			$this->tags = am($this->tags, $tags);
+	function loadConfig($name = 'tags') {
+		if (file_exists(APP . 'config' . DS . $name .'.php')) {
+			require(APP . 'config' . DS . $name .'.php');
+			if(isset($tags)) {
+				$this->tags = am($this->tags, $tags);
+			}
 		}
 		return $this->tags;
 	}
