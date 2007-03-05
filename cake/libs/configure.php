@@ -355,7 +355,6 @@ class Configure extends Object {
 	function __buildViewPaths($viewPaths) {
 		$_this =& Configure::getInstance();
 		$_this->viewPaths[] = VIEWS;
-		$_this->viewPaths[] = VIEWS . 'errors' . DS;
 		if (isset($viewPaths)) {
 			foreach($viewPaths as $value) {
 				$_this->viewPaths[] = $value;
