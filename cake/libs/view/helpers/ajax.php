@@ -345,7 +345,7 @@ class AjaxHelper extends AppHelper {
 		}
 
 		$htmlOptions['onclick'] = "return false;";
-		return $this->Html->submit($title, $htmlOptions)
+		return $this->Form->submit($title, $htmlOptions)
 			. $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $this->remoteFunction($options));
 	}
 
