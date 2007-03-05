@@ -74,7 +74,9 @@
 			  define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 		 }
 	}
-	require CORE_PATH . 'cake' . DS . 'bootstrap.php';
+	if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
+		trigger_error("Can't find CakePHP core.  Check the value of CAKE_CORE_INCLUDE_PATH in app/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory." , E_USER_ERROR);
+	}
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 	} else {
 		 $Dispatcher=new Dispatcher();

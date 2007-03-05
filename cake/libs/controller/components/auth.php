@@ -231,7 +231,7 @@ class AuthComponent extends Object {
  * @return void
  */
 	function startup(&$controller) {
-		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && DEBUG > 0)) {
+		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
 		if (!$this->_setDefaults()) {
