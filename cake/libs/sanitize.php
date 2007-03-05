@@ -68,7 +68,8 @@ class Sanitize{
  */
 	function escape($string, $connection = 'default') {
 		$db = ConnectionManager::getDataSource($connection);
-		return $db->value($string);
+		$value = trim($db->value($string), '\'');
+		return $value;
 	}
 /**
  * Returns given string safe for display as HTML. Renders entities.

@@ -124,6 +124,20 @@ class Helper extends Overloadable {
  */
 	var $tags = array();
 /**
+ * Holds the content to be cleaned.
+ *
+ * @access private
+ * @var mixed
+ */
+	var $__tainted = null;
+/**
+ * Holds the cleaned content.
+ *
+ * @access private
+ * @var mixed
+ */
+	var $__cleaned = null;
+/**
  * Default overload methods
  *
  * @access protected
@@ -187,6 +201,25 @@ class Helper extends Overloadable {
 		return $webPath;
 	}
 
+/**
+ * Used to remove harmful tags from content
+ *
+ * @param mixed $output
+ * @return cleaned content for output
+ * @access public
+ */
+	function clean($output){
+		$this->__reset();
+		if (is_array($output)) {
+			foreach ($output as $key => $value) {
+				$return[$key] = $this->clean($value);
+			}
+			return $return;
+		}
+		$this->__tainted = $output;
+		$this->__clean();
+		return $this->__cleaned;
+	}
 /**
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
@@ -532,6 +565,44 @@ class Helper extends Overloadable {
 			}
 		}
 		return $array;
+	}
+/**
+ * Resets the vars used by Helper::clean() to null
+ *
+ * @return void
+ * @access private
+ */
+	function __reset(){
+		$this->__tainted = null;
+		$this->__cleaned = null;
+	}
+/**
+ * Removes harmful content from output
+ *
+ * @return void
+ * @access private
+ */
+	function __clean(){
+		if (get_magic_quotes_gpc()) {
+			$this->__cleaned = stripslashes($this->__tainted);
+		} else {
+			$this->__cleaned = $this->__tainted;
+		}
+
+		$this->__cleaned = str_replace(array("&amp;","&lt;","&gt;"),array("&amp;amp;","&amp;lt;","&amp;gt;"), $this->__cleaned);
+		$this->__cleaned = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u',"$1;", $this->__cleaned);
+		$this->__cleaned = preg_replace('#(&\#x*)([0-9A-F]+);*#iu',"$1$2;", $this->__cleaned);
+		$this->__cleaned = preg_replace('#(<[^>]+[\x00-\x20\"\'])(on|xmlns)[^>]*>#iUu',"$1>", $this->__cleaned);
+		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*)[\\x00-\x20]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu','$1=$2nojavascript...', $this->__cleaned);
+		$this->__cleaned = preg_replace('#([a-z]*)[\x00-\x20]*=([\'\"]*)[\x00-\x20]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu','$1=$2novbscript...', $this->__cleaned);
+		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*expression[\x00-\x20]*\([^>]*>#iU',"$1>",$this->__cleaned);
+		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*behaviour[\x00-\x20]*\([^>]*>#iU',"$1>",$this->__cleaned);
+		$this->__cleaned = preg_replace('#(<[^>]+)style[\x00-\x20]*=[\x00-\x20]*([\`\'\"]*).*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:*[^>]*>#iUu',"$1>",$this->__cleaned);
+		$this->__cleaned = preg_replace('#</*\w+:\w[^>]*>#i',"",$this->__cleaned);
+		do {
+			$oldstring = $this->__cleaned;
+			$this->__cleaned = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i',"",$this->__cleaned);
+		} while ($oldstring != $this->__cleaned);
 	}
 }
 ?>
