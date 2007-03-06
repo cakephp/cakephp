@@ -1013,7 +1013,7 @@ class Bake {
 			$new = true;
 			$otherModelName = $this->__modelName($relation['className']);
 			$otherControllerName = $this->__controllerName($otherModelName);
-			$otherControllerPath = $this->__controllerPath($otherModelName);
+			$otherControllerPath = $this->__controllerPath($otherControllerName);
 			$otherSingularName = $this->__singularName($associationName);
 			$otherPluralHumanName = $this->__pluralHumanName($associationName);
 			$otherSingularHumanName = $this->__singularHumanName($associationName);
