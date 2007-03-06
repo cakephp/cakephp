@@ -33,25 +33,26 @@
 	require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
 	require_once LIBS.DS.'controller'.DS.'controller.php';
 
-class TheTestController extends Controller {
+class TheHtmlTestController extends Controller {
 	var $name = 'TheTest';
 	var $uses = null;
- }
+}
 
 class HtmlHelperTest extends UnitTestCase {
 	var $html = null;
 	
 	function setUp() {
 		$this->html = new HtmlHelper();
-		$view = new View(new TheTestController());
+		$view = new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 	}
 	
+	/* commented out because selectTag is deprecated
 	function testSelectTag() {
 		$result = $this->html->selectTag('Model/field', array());
 		$expected = '<select name="data[Model][field]"  id="ModelField">'."\n".'<option value="" >&nbsp;</option>'."\n".'</select>';
 		$this->assertEqual($result, $expected, "Badness!  Expected '{$expected}', got '{$result}'.");
-	}
+	}*/
 	
 	function tearDown() {
 		unset($this->html);
