@@ -145,7 +145,7 @@ class Helper extends Overloadable {
 	function get__($name) {}
 	function set__($name, $value) {}
 	function call__($method, $params) {
-		trigger_error(sprintf(__('Method %1$s::%2$s does not exist', true), get_class($this), $method), E_USER_ERROR);
+		trigger_error(sprintf(__('Method %1$s::%2$s does not exist', true), get_class($this), $method), E_USER_WARNING);
 	}
 
 /**

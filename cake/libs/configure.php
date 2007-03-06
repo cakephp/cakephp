@@ -437,7 +437,9 @@ class Configure extends Object {
 		$componentPaths = null;
 		$behaviorPaths = null;
 		if ($boot) {
-			require APP_PATH . 'config' . DS . 'bootstrap.php';
+			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
+				trigger_error("Can't find application bootstrap file.  Please create " . CONFIGS . "bootstrap.php, and make sure it is readable by PHP.", E_USER_ERROR);
+			}
 		}
 		$_this->__buildModelPaths($modelPaths);
 		$_this->__buildViewPaths($viewPaths);
