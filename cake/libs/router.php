@@ -576,7 +576,7 @@ class Router extends Object {
 
 		$pass = Set::diff($url, $defaults);
 		foreach($pass as $key => $value) {
-			if(in_array($key, $params)) {
+			if(!is_numeric($key)) {
 				unset($pass[$key]);
 			}
 		}
@@ -584,13 +584,13 @@ class Router extends Object {
 		if (!strpos($route[0], '*') && !empty($pass)) {
 			return false;
 		}
-
+		/* removing this for now
 		foreach ($defaults as $key => $default) {
 			if(!array_key_exists($key, $url) && (!is_numeric($key) || !isset($pass[$key]))) {
 				$url[$key] = $default;
 			}
 		}
-
+		*/
 		krsort($defaults);
 		krsort($url);
 
@@ -645,6 +645,7 @@ class Router extends Object {
 	function __mapRoute($route, $params = array()) {
 		$_this =& Router::getInstance();
 		if (isset($params['pass']) && is_array($params['pass'])) {
+			$_this->__mapped = $params['pass'];
  			$params['pass'] = implode('/', $_this->__filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
