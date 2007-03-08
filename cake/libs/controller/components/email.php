@@ -228,7 +228,7 @@ class EmailComponent extends Object{
 		}
 
 		if (!is_null($this->__boundary)) {
-			$this->__message .= '--' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
+			$this->__message .= $this->_newLine .'--' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
 		}
 
 		if ($this->_debug){
@@ -272,7 +272,7 @@ class EmailComponent extends Object{
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
-			$msg .= '--' . $this->__boundary . $this->_newLine;
+			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content), true);
