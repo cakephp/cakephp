@@ -372,7 +372,10 @@ class Helper extends Overloadable {
  * @return array
  */
 	function domId($options = array(), $id = 'id') {
-		if (is_array($options) && !isset($options[$id])) {
+		if(!is_array($options)) {
+			$options = array();
+		}
+		if (!isset($options[$id])) {
 			$options[$id] = $this->model() . Inflector::camelize($this->field());
 		}
 		return $options;
