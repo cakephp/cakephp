@@ -1,0 +1,25 @@
+#!/bin/bash
+################################################################################
+#
+# Bake is a shell script for running CakePHP bake script
+#
+# Authors:
+#	Garrett J. Woodworth
+#	Nate Abele
+#	<http://www.cakefoundation.org> 
+#
+#
+# This script was made in the hope it would make my life easier, feel free to
+# use and abuse it as you see fit. However WITHOUT ANY WARRANTY. So if this
+# script causes your computer to tell bad jokes, its not our problem.
+#
+################################################################################
+
+LIB=${0/%cake/};
+APP=`pwd`/;
+
+exec php -q ${LIB}dispatch.php "$@" -working "${APP}"
+
+echo " ";
+
+exit;
