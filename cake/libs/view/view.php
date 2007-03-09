@@ -368,10 +368,14 @@ class View extends Object {
  * @return string Rendered output
  */
 	function renderElement($name, $params = array(), $loadHelpers = false) {
-
+		
 		if(isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
+			$this->pluginPaths = array(
+									VIEWS . $this->pluginPath,
+									APP . $this->pluginPath . 'views' . DS,
+								);
 		}
 
 		$paths = Configure::getInstance();
@@ -411,6 +415,26 @@ class View extends Object {
  * @access public
  */
 	function element($name, $params = array()) {
+		if(in_array('cache', array_keys($params))) {
+			$expires = '+1 day';
+			if($params['cache'] !== true) {
+				$expires = $params['cache'];
+			}
+			if($expires) {
+				$plugin = null;
+				if(isset($params['plugin'])) {
+					$plugin = $params['plugin'];
+				}
+				$cacheFile = 'element_' . $plugin .'_' . convertSlash($name);
+				$cache = cache('views' . DS . $cacheFile, null, $expires);
+				if($cache) {
+					return $cache;
+				} else {
+					$element = $this->renderElement($name, $params);
+					return cache('views' . DS . $cacheFile, $element, $expires);
+				}
+			}
+		}
 		return $this->renderElement($name, $params);
 	}
 /**
