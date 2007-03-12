@@ -96,6 +96,13 @@ class Router extends Object {
  * @var array
  */
 	var $__paths = array();
+
+/**
+ * Maintains the mapped elements for array based urls
+ *
+ * @var array
+ */
+	var $__mapped = array();
 /**
  * Initialize the Router object
  *
@@ -433,7 +440,6 @@ class Router extends Object {
  */
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
-
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if(!empty($_this->__params)) {
@@ -464,6 +470,7 @@ class Router extends Object {
 					$url['action'] = 'index';
 				}
 			}
+
 			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), $url);
 
 			if (isset($url['ext'])) {
@@ -476,7 +483,6 @@ class Router extends Object {
 				unset($url[CAKE_ADMIN]);
 			}
 
-			$_this->__mapped = array();
 			$match = false;
 			foreach ($_this->routes as $route) {
 				if ($match = $_this->mapRouteElements($route, $url)) {
@@ -497,7 +503,9 @@ class Router extends Object {
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
+				if ($i == 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
+					$args[0] = $url[$keys[$i]];
+				} else if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
 				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs'])) && !empty($url[$keys[$i]])) {
 					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
@@ -575,22 +583,17 @@ class Router extends Object {
 		$defaults = am(array('plugin'=> null, 'controller'=> null, 'action'=> null), $route[3]);
 
 		$pass = Set::diff($url, $defaults);
+
+		if (!strpos($route[0], '*') && !empty($pass)) {
+			return false;
+		}
+
 		foreach($pass as $key => $value) {
 			if(!is_numeric($key)) {
 				unset($pass[$key]);
 			}
 		}
 
-		if (!strpos($route[0], '*') && !empty($pass)) {
-			return false;
-		}
-		/* removing this for now
-		foreach ($defaults as $key => $default) {
-			if(!array_key_exists($key, $url) && (!is_numeric($key) || !isset($pass[$key]))) {
-				$url[$key] = $default;
-			}
-		}
-		*/
 		krsort($defaults);
 		krsort($url);
 
