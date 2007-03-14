@@ -929,7 +929,7 @@ class Controller extends Object {
 			} else if ('time' == $field['type']) {
 				$newDate = "{$_hour}:{$_min}:{$_sec}";
 			}
-			if($newDate) {
+			if($newDate && isset($this->data[$modelClass][$field['name']])) {
 				$this->data[$modelClass][$field['name']] = $newDate;
 			}
 		}
