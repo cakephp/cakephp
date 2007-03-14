@@ -457,7 +457,7 @@ class AjaxHelper extends AppHelper {
 		$options = $this->_optionsToString($options, array('paramName', 'indicator'));
 		$options = $this->_buildOptions($options, $this->autoCompleteOptions);
 
-		return $this->Html->input($field, $htmlOptions) . "\n" .
+		return $this->Form->text($field, $htmlOptions) . "\n" .
 				$this->Html->div(null, '', $divOptions) . "\n" .
 				$this->Javascript->codeBlock("{$var}new Ajax.Autocompleter('" . $htmlOptions['id']
 					. "', '" . $divOptions['id'] . "', '" . $this->Html->url($url) . "', " .
