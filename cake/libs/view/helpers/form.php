@@ -596,7 +596,7 @@ class FormHelper extends AppHelper {
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
 		$showParents = false;
 		$this->setFormTag($fieldName);
-		$attributes = $this->domId($attributes);
+		$attributes = $this->domId((array)$attributes);
 
 		if ($this->tagIsInvalid()) {
 			$attributes = $this->addClass($attributes, 'form-error');
