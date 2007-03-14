@@ -275,6 +275,12 @@ class View extends Object {
  */
 	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
 /**
+ * List of generated DOM UUIDs
+ *
+ * @var array
+ */
+	var $uuids = array();
+/**
  * Constructor
  *
  * @return View
@@ -290,10 +296,9 @@ class View extends Object {
 		if (!is_null($this->plugin)) {
 			$this->pluginPath = 'plugins'. DS . $this->plugin . DS;
 			$this->pluginPaths = array(
-									VIEWS . $this->pluginPath,
-									APP . $this->pluginPath . 'views' . DS,
-								);
-
+				VIEWS . $this->pluginPath,
+				APP . $this->pluginPath . 'views' . DS,
+			);
 		}
 		parent::__construct();
 		ClassRegistry::addObject('view', $this);
@@ -539,6 +544,24 @@ class View extends Object {
 		}
 	}
 /**
+ * Generates a unique, non-random DOM ID for an object, based on the object type and the target URL.
+ *
+ * @param string $object Type of object, i.e. 'form' or 'link'
+ * @param string $url The object's target URL
+ * @return string
+ * @access public
+ */
+	function uuid($object, $url) {
+		$c = 1;
+		$hash = $object . substr(md5($object . Router::url($url)), 0, 10);
+		while (in_array($hash, $this->uuids)) {
+			$hash = $object . substr(md5($object . Router::url($url) . $c), 0, 10);
+			$c++;
+		}
+		$this->uuids[] = $hash;
+		return $hash;
+	}
+/**
  * @deprecated
  */
 	function setLayout($layout) {
@@ -588,10 +611,15 @@ class View extends Object {
  * @param string $message Error message as a web page
  */
 	function error($code, $name, $message) {
-		header ("HTTP/1.0 {$code} {$name}");
-		print ($this->_render(VIEWS . 'layouts/error.thtml', array('code'    => $code,
-																	'name'    => $name,
-																	'message' => $message)));
+		header ("HTTP/1.1 {$code} {$name}");
+		print ($this->_render(
+			VIEWS . 'layouts/error.thtml',
+			array(
+				'code' => $code,
+				'name' => $name,
+				'message' => $message
+			)
+		));
 	}
 
 /**************************************************************************
@@ -815,9 +843,10 @@ class View extends Object {
 				    }
 					if (!class_exists($helperCn)) {
 						$this->cakeError('missingHelperClass', array(array(
-												'helper' => $helper,
-												'file' => Inflector::underscore($helper) . '.php',
-												'base' => $this->base)));
+							'helper' => $helper,
+							'file' => Inflector::underscore($helper) . '.php',
+							'base' => $this->base
+						)));
 						exit();
 					}
 				}
