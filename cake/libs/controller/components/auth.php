@@ -358,7 +358,7 @@ class AuthComponent extends Object {
 			break;
 			case null:
 			case false:
-				return;
+				return true;
 			break;
 			default:
 				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Allowed settings are: "controller", "actions", "objects", "association" or null.'), E_USER_WARNING);
