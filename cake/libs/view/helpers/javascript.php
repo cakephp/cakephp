@@ -129,7 +129,7 @@ class JavascriptHelper extends AppHelper {
 			return;
 		}
 
-		if (strpos($url, '.') === false && strpos($url, '?') === false) {
+		if (strpos($url, '.js') === false && strpos($url, '?') === false) {
 			$url .= '.js';
 		}
 		if (strpos($url, '://') === false) {

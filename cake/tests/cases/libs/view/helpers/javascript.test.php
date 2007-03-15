@@ -46,6 +46,24 @@ class JavascriptTest extends UnitTestCase {
 		$this->js->Form = new FormHelper();
 	}
 
+	function testLink() {
+		$result = $this->js->link('script.js');
+		$expected = '<script type="text/javascript" src="js/script.js"></script>';
+		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		
+		$result = $this->js->link('script');
+		$expected = '<script type="text/javascript" src="js/script.js"></script>';
+		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		
+		$result = $this->js->link('scriptaculous.js?load=effects');
+		$expected = '<script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>';
+		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		
+		$result = $this->js->link('jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+	}
+	
 	function testObjectGeneration() {
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
 
