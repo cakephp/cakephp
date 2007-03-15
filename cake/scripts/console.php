@@ -31,7 +31,8 @@ class Console extends ConsoleScript {
 					}
 				break;
 				default:
-					print_r(eval('return ' . $command));
+					$command = "<?php " . $command . "?>";
+					$tokens = token_get_all($command);
 				break;
 			}
 		}
