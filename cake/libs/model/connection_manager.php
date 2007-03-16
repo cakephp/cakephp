@@ -182,9 +182,9 @@ class ConnectionManager extends Object {
 			foreach($connections as $name => $config) {
 				$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
 			}
-			return $this->_connectionsEnum;
+			return $_this->_connectionsEnum;
 		} else {
-			$this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
+			$_this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
 		}
 	}
 /**
