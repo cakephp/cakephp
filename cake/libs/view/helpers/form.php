@@ -101,7 +101,7 @@ class FormHelper extends AppHelper {
 
 		$this->setFormTag($model . '/');
 		$append = '';
-		$created = false;
+		$created = $id = false;
 
 		if(isset($object)) {
 			$fields = $object->loadInfo();
@@ -114,6 +114,7 @@ class FormHelper extends AppHelper {
 
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
 			$created = true;
+			$id = $this->data[$model][$data['key']];
 		}
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
@@ -137,10 +138,13 @@ class FormHelper extends AppHelper {
 			$actionDefaults = array(
 				'controller' => $controller,
 				'action' => $options['action'],
-				'id' => ife($created, $this->data[$model][$data['key']], null)
+				'id' => $id
 			);
 			$options['action'] = am($actionDefaults, (array)$options['url']);
+		} elseif (is_string($options['url'])) {
+			$options['action'] = $options['url'];
 		}
+		unset($options['url']);
 
 		switch (low($options['type'])) {
 			case 'get':
@@ -152,7 +156,7 @@ class FormHelper extends AppHelper {
 			case 'post':
 			case 'put':
 			case 'delete':
-				//$append .= $this->hidden('_method', array('value' => up($options['type']), 'id' => $options['id'] . 'Method'));
+				//$append .= $this->hidden('_method', array('name' => '_method', 'value' => up($options['type']), 'id' => $options['id'] . 'Method'));
 			default:
 				$htmlAttributes['method'] = 'post';
 			break;
@@ -500,7 +504,7 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function hidden($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->domId($this->__value($htmlAttributes, $fieldName));
+		$htmlAttributes = $this->domId($this->__value((array)$htmlAttributes, $fieldName));
 		$model = $this->model();
 		if (in_array($fieldName, array('_method'))) {
 			$model = null;

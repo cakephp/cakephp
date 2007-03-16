@@ -367,16 +367,16 @@ class Helper extends Overloadable {
 /**
  * Generates a DOM ID for the selected element, if one is not set.
  *
- * @param array $options
+ * @param mixed $options
  * @param string $id
- * @return array
+ * @return mixed
  */
-	function domId($options = array(), $id = 'id') {
-		if(!is_array($options)) {
-			$options = array();
-		}
-		if (!isset($options[$id])) {
+	function domId($options = null, $id = 'id') {
+		if (is_array($options) && !isset($options[$id])) {
 			$options[$id] = $this->model() . Inflector::camelize($this->field());
+		} elseif (!is_array($options)) {
+			$this->setFormTag($options);
+			return $this->model() . Inflector::camelize($this->field());
 		}
 		return $options;
 	}

@@ -114,6 +114,7 @@ class ClassRegistry {
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
+
 		if(isset($_this->__objects[$key])){
 			return $_this->__objects[$key];
 		} else {
@@ -122,7 +123,9 @@ class ClassRegistry {
 				return $_this->__objects[$key];
 			}
 		}
-		return false;
+		
+		$return = false;
+		return $return;
 	}
 /**
  * Add a key name pair to the registry to map name to class in the regisrty.
@@ -131,7 +134,7 @@ class ClassRegistry {
  * @param string $name
  * @return void
  */
-	function map($key, $name){
+	function map($key, $name) {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$name = Inflector::underscore($name);
@@ -145,7 +148,7 @@ class ClassRegistry {
  * @param string $key
  * @return string
  */
-	function __getMap($key){
+	function __getMap($key) {
 		$_this =& ClassRegistry::getInstance();
 		if (array_key_exists($key, $_this->__map)) {
 			return $_this->__map[$key];

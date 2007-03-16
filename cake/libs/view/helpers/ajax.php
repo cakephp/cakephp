@@ -532,7 +532,7 @@ class AjaxHelper extends AppHelper {
  *
  * @param unknown_type $id
  * @param array $options
- * @return array
+ * @return string
  */
 	function drop($id, $options = array()) {
 		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
@@ -540,15 +540,21 @@ class AjaxHelper extends AppHelper {
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
 /**
- * Enter description here...
+ * Make an element with the given $id droppable, and trigger an Ajax call when a draggable is
+ * dropped on it.
  *
- * @param unknown_type $id
- * @param unknown_type $options
- * @param unknown_type $ajaxOptions
+ * For a reference on the options for this function, check out
+ * http://wiki.script.aculo.us/scriptaculous/show/Droppables.add
+ *
+ * @param string $id
+ * @param array $options
+ * @param array $ajaxOptions
+ * @return string JavaScript block to create a droppable element
  */
 	function dropRemote($id, $options = array(), $ajaxOptions = array()) {
 		$options['onDrop'] = "function(element, droppable){" . $this->remoteFunction($ajaxOptions) . "}";
-		$options = $this->_optionsForDroppable($options);
+		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
+		$options = $this->_buildOptions($options, $this->dropOptions);
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
 	}
 
