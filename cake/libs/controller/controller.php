@@ -922,11 +922,11 @@ class Controller extends Object {
 			}
 
 			$newDate = null;
-			if ('datetime' == $field['type']) {
+			if ('datetime' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_year'])) {
 				$newDate = "{$_year}-{$_month}-{$_day}:{$_hour}:{$_min}:{$_sec}";
-			} else if ('date' == $field['type']) {
+			} else if ('date' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_year'])) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
-			} else if ('time' == $field['type']) {
+			} else if ('time' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_hour'])) {
 				$newDate = "{$_hour}:{$_min}:{$_sec}";
 			}
 			if($newDate && !in_array($field['name'], array('created', 'updated', 'modified'))) {
