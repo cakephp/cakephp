@@ -604,7 +604,7 @@ class View extends Object {
 	}
 
 /**
- * Displays an error page to the user. Uses layouts/error.html to render the page.
+ * Displays an error page to the user. Uses layouts/error.ctp to render the page.
  *
  * @param int $code HTTP Error code (for instance: 404)
  * @param string $name Name of the error (for instance: Not Found)
@@ -613,7 +613,7 @@ class View extends Object {
 	function error($code, $name, $message) {
 		header ("HTTP/1.1 {$code} {$name}");
 		print ($this->_render(
-			VIEWS . 'layouts/error.thtml',
+			LAYOUTS . 'error.ctp',
 			array(
 				'code' => $code,
 				'name' => $name,
@@ -713,12 +713,16 @@ class View extends Object {
 			$layoutFileName = VIEWS . 'layouts' . DS . $name . $this->ext;
 		}
 
-		$layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
-		if (empty($layoutFileName) && !empty($type)) {
-			$layoutFileName = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . 'default.ctp');
+		$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
+		if (empty($default) && !empty($type)) {
+			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . 'default.ctp');
 		}
-		if(is_null($layoutFileName)) {
-			return 'missingLayout';
+		if(empty($default)) {
+			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $this->layout . '.ctp');
+		}
+
+		if(!empty($default)) {
+			return $default;
 		}
 		return $layoutFileName;
 	}

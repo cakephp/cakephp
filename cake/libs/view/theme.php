@@ -99,6 +99,10 @@ class ThemeView extends View {
 		if(isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
+			$this->pluginPaths = array(
+									VIEWS . $this->pluginPath,
+									APP . $this->pluginPath . 'views' . DS,
+								);
 		}
 
 		$paths = Configure::getInstance();
