@@ -170,7 +170,7 @@ class CakeSession extends Object {
 		  return false;
 		}
 		$result = Set::extract($_SESSION, $var);
-		return (!empty($result));
+		return isset($result);
 	}
 
 /**
