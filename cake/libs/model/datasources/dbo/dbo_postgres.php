@@ -47,7 +47,8 @@ class DboPostgres extends DboSource {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => 5432
+		'port' => 5432,
+		'encoding' => ''
 	);
 
 	var $columns = array(
@@ -86,8 +87,7 @@ class DboPostgres extends DboSource {
 		} else {
 			$this->connected = false;
 		}
-
-		if (isset($config['encoding']) && !empty($config['encoding'])) {
+		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
 

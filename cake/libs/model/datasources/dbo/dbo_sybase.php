@@ -36,51 +36,54 @@
  */
 class DboSybase extends DboSource {
 /**
- * Enter description here...
+ * Driver description
  *
- * @var unknown_type
+ * @var string
  */
 	var $description = "Sybase DBO Driver";
 /**
- * Enter description here...
+ * Start quote for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $startQuote = "`";
 /**
- * Enter description here...
+ * End quote for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $endQuote = "`";
 /**
- * Base configuration settings for MySQL driver
+ * Base configuration settings for Sybase driver
  *
  * @var array
  */
-	var $_baseConfig = array('persistent' => true,
-								'host' => 'localhost',
-								'login' => 'root',
-								'password' => '',
-								'database' => 'cake',
-								'port' => '3306',
-								'connect' => 'sybase_pconnect');
+	var $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'sa',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '4100'
+	);
 /**
- * MySQL column definition
+ * Sybase column definition
  *
  * @var array
  */
-	var $columns = array('primary_key' => array('name' => 'int(11) DEFAULT NULL auto_increment'),
-						'string' => array('name' => 'varchar', 'limit' => '255'),
-						'text' => array('name' => 'text'),
-						'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
-						'float' => array('name' => 'float', 'formatter' => 'floatval'),
-						'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
-						'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
-						'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
-						'binary' => array('name' => 'blob'),
-						'boolean' => array('name' => 'tinyint', 'limit' => '1'));
+	var $columns = array(
+		'primary_key' => array('name' => 'numeric(9,0) IDENTITY PRIMARY KEY'),
+		'string' => array('name' => 'varchar', 'limit' => '255'),
+		'text' => array('name' => 'text'),
+		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date' => array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
+		'binary' => array('name' => 'image'),
+		'boolean' => array('name' => 'bit')
+	);
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -88,13 +91,12 @@ class DboSybase extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
 		$this->connected = false;
 
 		if (!$config['persistent']) {
 			$this->connection = sybase_connect($config['host'], $config['login'], $config['password'], true);
 		} else {
-			$this->connection = $connect($config['host'], $config['login'], $config['password']);
+			$this->connection = sybase_pconnect($config['host'], $config['login'], $config['password']);
 		}
 
 		if (sybase_select_db($config['database'], $this->connection)) {
@@ -132,7 +134,7 @@ class DboSybase extends DboSource {
 			return $cache;
 		}
 
-		$result = $this->_execute("SHOW TABLES FROM " . $this->config['database']);
+		$result = $this->_execute("select name from sysobjects where type='U'");
 		if (!$result) {
 			return array();
 		} else {
@@ -234,7 +236,7 @@ class DboSybase extends DboSource {
  */
 	function begin(&$model) {
 		if (parent::begin($model)) {
-			if ($this->execute('START TRANSACTION')) {
+			if ($this->execute('BEGIN TRAN')) {
 				$this->_transactionStarted = true;
 				return true;
 			}
@@ -252,7 +254,7 @@ class DboSybase extends DboSource {
 	function commit(&$model) {
 		if (parent::commit($model)) {
 			$this->_transactionStarted = false;
-			return $this->execute('COMMIT');
+			return $this->execute('COMMIT TRAN');
 		}
 		return false;
 	}
@@ -266,7 +268,7 @@ class DboSybase extends DboSource {
  */
 	function rollback(&$model) {
 		if (parent::rollback($model)) {
-			return $this->execute('ROLLBACK');
+			return $this->execute('ROLLBACK TRAN');
 		}
 		return false;
 	}
@@ -342,29 +344,18 @@ class DboSybase extends DboSource {
 		$limit = null;
 		@list($col, $limit) = explode('(', $col);
 
-		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
-			return $col;
-		}
-		if ($col == 'tinyint' && $limit == '1') {
-			return 'boolean';
-		}
-		if (strpos($col, 'int') !== false) {
+		if (in_array($col, array('datetime', 'smalldatetime'))) {
+			return 'datetime';
+		} elseif (in_array($col, array('int', 'bigint', 'smallint', 'tinyint'))) {
 			return 'integer';
-		}
-		if (strpos($col, 'char') !== false || $col == 'tinytext') {
-			return 'string';
-		}
-		if (strpos($col, 'text') !== false) {
-			return 'text';
-		}
-		if (strpos($col, 'blob') !== false) {
-			return 'binary';
-		}
-		if (in_array($col, array('float', 'double', 'decimal'))) {
+		} elseif (in_array($col, array('float', 'double', 'real', 'decimal', 'money', 'numeric', 'smallmoney'))) {
 			return 'float';
-		}
-		if (strpos($col, 'enum') !== false) {
-			return "enum($limit)";
+		} elseif (strpos($col, 'text') !== false) {
+			return 'text';
+		} elseif (in_array($col, array('char', 'nchar', 'nvarchar', 'string', 'varchar'))) {
+			return 'binary';
+		} elseif (in_array($col, array('binary', 'image', 'varbinary'))) {
+			return 'binary';
 		}
 
 		return 'text';

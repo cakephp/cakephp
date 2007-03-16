@@ -7,8 +7,8 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright (c)	2006, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,20 +16,17 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
  * @subpackage		cake.cake.libs.model.dbo
- * @since			CakePHP(tm) v 1.1.11.4041
+ * @since			CakePHP v 1.1.11.4041
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/**
- * Include DBO.
- */
-uses('model'.DS.'datasources'.DS.'dbo_source');
+
 /**
  * Short description for class.
  *
@@ -39,90 +36,97 @@ uses('model'.DS.'datasources'.DS.'dbo_source');
  * @subpackage	cake.cake.libs.model.dbo
  */
 class DboOracle extends DboSource {
- /**
+
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access public
  */
 	var $config;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access public
  */
 	var $alias = '';
-	
- /**
-  * The name of the model's sequence
-  *
-  * @var unknown_type
-  */
+/**
+ * The name of the model's sequence
+ *
+ * @var unknown_type
+ */
 	var $sequence = '';
-	
+/**
+ * Transaction in progress flag
+ *
+ * @var boolean
+ */
+	var $_transactionStarted = false;
  /**
  * Enter description here...
  *
  * @var unknown_type
  * @access public
  */
-	var $columns = array('primary_key' => array('name' => 'number NOT NULL'),
-								'string' => array('name' => 'varchar2', 'limit' => '255'),
-								'text' => array('name' => 'varchar2'),
-								'integer' => array('name' => 'numeric'),
-								'float' => array('name' => 'float'),
-								'datetime' => array('name' => 'date'),
-								'timestamp' => array('name' => 'date'),
-								'time' => array('name' => 'date'),
-								'date' => array('name' => 'date'),
-								'binary' => array('name' => 'bytea'),
-								'boolean' => array('name' => 'boolean'),
-								'number' => array('name' => 'numeric'),
-								'inet' => array('name' => 'inet'));
- /**
+	var $columns = array(
+		'primary_key' => array('name' => 'number NOT NULL'),
+		'string' => array('name' => 'varchar2', 'limit' => '255'),
+		'text' => array('name' => 'varchar2'),
+		'integer' => array('name' => 'numeric'),
+		'float' => array('name' => 'float'),
+		'datetime' => array('name' => 'date'),
+		'timestamp' => array('name' => 'date'),
+		'time' => array('name' => 'date'),
+		'date' => array('name' => 'date'),
+		'binary' => array('name' => 'bytea'),
+		'boolean' => array('name' => 'boolean'),
+		'number' => array('name' => 'numeric'),
+		'inet' => array('name' => 'inet')
+	);
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $connection;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $_limit = -1;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $_offset = 0;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $_map;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $_currentRow;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
  * @access protected
  */
 	var $_numRows;
- /**
+/**
  * Enter description here...
  *
  * @var unknown_type
@@ -149,6 +153,35 @@ class DboOracle extends DboSource {
 			$this->connected = false;
 		}
 		return $this->connected;
+	}
+	
+	/**
+	 * Sets the encoding language of the session
+	 *
+	 * @param string $lang language constant
+	 * @return boolean
+	 */
+	function setEncoding($lang) {
+	    if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
+	        return false;
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Gets the current encoding language
+	 *
+	 * @return string language constant
+	 */
+	function getEncoding() {
+	    $sql = 'SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER=\'NLS_LANGUAGE\'';
+	    if (!$this->execute($sql)) {
+	        return false;
+	    }
+	    if (!$row = $this->fetchRow()) {
+	        return false;
+	    }
+	    return $row[0]['VALUE'];
 	}
 
 /**
@@ -202,6 +235,8 @@ class DboOracle extends DboSource {
 			}
 			$this->_map[] = array($table, $field);
 		}
+        
+		
 	}
 /**
  * Modify a SQL query to limit (and offset) the result set
@@ -233,7 +268,7 @@ class DboOracle extends DboSource {
  * @return resource Result resource identifier or null
  * @access protected
  */
-	function _execute($sql) {	    
+	function _execute($sql) {
 		$this->_statementId = ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
 			return null;
@@ -246,6 +281,7 @@ class DboOracle extends DboSource {
 		if (!ociexecute($this->_statementId, $mode)) {
 			return false;
 		}
+		
 		// fetch occurs here instead of fetchResult in order to get the number of rows
 		switch (ocistatementtype($this->_statementId)) {
 		    case 'DESCRIBE':
@@ -261,7 +297,7 @@ class DboOracle extends DboSource {
 			ocisetprefetch($this->_statementId, 3000);
 		}
 		$this->_numRows = ocifetchstatement($this->_statementId, $this->_results, $this->_offset, $this->_limit, OCI_NUM | OCI_FETCHSTATEMENT_BY_ROW);
-		$this->_currentRow = 0;
+		$this->_currentRow = 0;		
 		return $this->_statementId;
 	}
 /**
@@ -273,6 +309,10 @@ class DboOracle extends DboSource {
 	function fetchRow() {
 		if ($this->_currentRow >= $this->_numRows) {
 		    ocifreestatement($this->_statementId);
+		    $this->_map = null;
+		    $this->_results = null;
+		    $this->_currentRow = null;
+		    $this->_numRows = null;
 			return false;
 		}
 		$resultRow = array();
@@ -353,7 +393,7 @@ class DboOracle extends DboSource {
 			return $cache;
 		}
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE FROM user_tab_columns WHERE table_name = \'';
-		$sql .= strtoupper($model->table) . '\'';
+		$sql .= strtoupper($this->fullTableName($model)) . '\'';
         if (!$this->execute($sql)) {
             return false;
         }
@@ -362,8 +402,7 @@ class DboOracle extends DboSource {
 			$fields[$i]['name'] = strtolower($row[0]['COLUMN_NAME']);
 			$fields[$i]['type'] = $this->column($row[0]['DATA_TYPE']);
 		}
-		$this->__cacheDescription($model->tablePrefix.$model->table, $fields);
-		//$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 /**
@@ -394,7 +433,7 @@ class DboOracle extends DboSource {
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
-	function begin(&$model) {
+	function begin() {
 		//if (parent::begin($model)) {
 			//if ($this->execute('BEGIN')) {
 				$this->_transactionStarted = true;
@@ -425,7 +464,7 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	function commit(&$model) {
+	function commit() {
 		//if (parent::commit($model)) {
 			$this->_transactionStarted = false;
 			return ocicommit($this->connection);

@@ -419,7 +419,10 @@ class DboMysql extends DboSource {
 	function length($real) {
 		$col = r(array(')', 'unsigned'), '', $real);
 		$limit = null;
-		@list($col, $limit) = explode('(', $col);
+
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
 
 		if ($limit != null) {
 			return intval($limit);
