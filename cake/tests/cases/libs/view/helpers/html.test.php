@@ -42,29 +42,30 @@ class HtmlHelperTest extends UnitTestCase {
 	var $html = null;
 	
 	function setUp() {
-		$this->html = new HtmlHelper();
+		$this->Html = new HtmlHelper();
 		$view = new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 	}
 
 	function testSelectTag() {
-		@$result = $this->html->selectTag('Model/field', array());
+		@$result = $this->Html->selectTag('Model/field', array());
 		$this->assertPattern('/^<select [^<>]+>\n<option [^<>]+>/', $result);
 		$this->assertPattern('/<option value="" ><\/option>/', $result);
 		$this->assertPattern('/<\/select>$/', $result);
 		$this->assertPattern('/<select[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
 		$this->assertPattern('/<select[^<>]+id="ModelField"[^<>]*>/', $result);
 
-		$this->html->data = array('Model' => array('field' => 'value'));
-		@$result = $this->html->selectTag('Model/field', array('value' => 'good', 'other' => 'bad'));
+		$this->Html->data = array('Model' => array('field' => 'value'));
+		@$result = $this->Html->selectTag('Model/field', array('value' => 'good', 'other' => 'bad'));
 		$this->assertPattern('/option value=""/', $result);
 		$this->assertPattern('/option value="value"/', $result);
 		$this->assertPattern('/option value="other"/', $result);
-		debug($result, true);
+		$this->assertPattern('/<\/option>\s+<option/', $result);
+		$this->assertPattern('/<\/option>\s+<\/select>/', $result);
 	}
 
 	function tearDown() {
-		unset($this->html);
+		unset($this->Html);
 	}
 }
 ?>

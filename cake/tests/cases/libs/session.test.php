@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package      test_suite
  * @subpackage   test_suite.cases.app
  * @since        CakePHP Test Suite v 1.0.0.0
- * @version      $Revision: $
- * @modifiedby   $LastChangedBy: $
- * @lastmodified $Date: $
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 	require_once LIBS.'session.php';
@@ -42,47 +42,38 @@ class SessionTest extends UnitTestCase {
 
     function testCheck() {
     	$this->Session->write('SessionTestCase', 'value');
-        $result = $this->Session->check('SessionTestCase');
-        $this->assertEqual($result, true);
-        
-        $result = $this->Session->check('NotExistingSessionTestCase');
-        $this->assertEqual($result, false);
+        $this->assertTrue($this->Session->check('SessionTestCase'));
+
+        $this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
     }
     
     function testCheckingSavedEmpty() {
         $this->Session->write('SessionTestCase', 0);
-        $result = $this->Session->check('SessionTestCase');
-        $this->assertEqual($result, true);
+        $this->assertTrue($this->Session->check('SessionTestCase'));
 
         $this->Session->write('SessionTestCase', '0');
-        $result = $this->Session->check('SessionTestCase');
-        $this->assertEqual($result, true);
+        $this->assertTrue($this->Session->check('SessionTestCase'));
 
         $this->Session->write('SessionTestCase', false);
-        $result = $this->Session->check('SessionTestCase');
-        $this->assertEqual($result, true);
+        $this->assertTrue($this->Session->check('SessionTestCase'));
 
         $this->Session->write('SessionTestCase', null);
-        $result = $this->Session->check('SessionTestCase');
-        $this->assertEqual($result, null);
+        $this->assertFalse($this->Session->check('SessionTestCase'));
     }
 
     function testReadingSavedEmpty() {
         $this->Session->write('SessionTestCase', 0);
-        $result = $this->Session->read('SessionTestCase');
-        $this->assertEqual($result, 0);
+        $this->assertEqual($this->Session->read('SessionTestCase'), 0);
 
         $this->Session->write('SessionTestCase', '0');
-        $result = $this->Session->read('SessionTestCase');
-        $this->assertEqual($result, '0');
+        $this->assertEqual($this->Session->read('SessionTestCase'), '0');
+        $this->assertFalse($this->Session->read('SessionTestCase') === 0);
 
         $this->Session->write('SessionTestCase', false);
-        $result = $this->Session->read('SessionTestCase');
-        $this->assertEqual($result, false);
+        $this->assertFalse($this->Session->read('SessionTestCase'));
 
         $this->Session->write('SessionTestCase', null);
-        $result = $this->Session->read('SessionTestCase');
-        $this->assertEqual($result, null);
+        $this->assertEqual($this->Session->read('SessionTestCase'), null);
     }
 
     function tearDown() {
