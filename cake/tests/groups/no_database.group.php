@@ -34,19 +34,17 @@
  * @subpackage cake.tests.groups
  */
 class AllCoreWithOutDatabaseGroupTest extends GroupTest {
-	var $label = 'All Test without a database connection';
+	var $label = 'All tests without a database connection';
 
 	function AllCoreWithOutDatabaseGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'inflector');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'validation');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'session');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'paginator');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'ajax');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'html');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'javascript');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
+		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view');
 	}
 }
 ?>
