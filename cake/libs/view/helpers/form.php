@@ -74,18 +74,29 @@ class FormHelper extends AppHelper {
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
+		$defaultModel = null;
 		$data = array('fields' => '','key' => '', 'validates' => '');
+
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 			$model = null;
 		}
 
-		if (empty($model) && $model !== false) {
+		if (empty($model) && $model !== false && !empty($this->params['models'])) {
 			$model = $this->params['models'][0];
+			$defaultModel = $this->params['models'][0];
+		} elseif (empty($model) && empty($this->params['models'])) {
+			$model = false;
+		} else if (is_string($model) && (strpos($model, '/') !== false || strpos($model, '.') !== false)) {
+			$path = preg_split('/\/|\./', $model);
+			$model = $path[count($path) - 1];
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
+			if(!empty($object->validationErrors)) {
+				$this->validationErrors[$model] = $object->validationErrors;
+			}
 		}
 
 		$this->setFormTag($model . '/');
@@ -107,18 +118,28 @@ class FormHelper extends AppHelper {
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'id' => $model . ife($created, 'Edit', 'Add') . 'Form',
-			'action' => array(),
+			'action' => null,
+			'url' => null,
 			'default' => true),
 		$options);
 
-		if (empty($options['action']) || is_array($options['action'])) {
+		if (empty($options['url']) || is_array($options['url'])) {
 			$options = (array)$options;
+			if (!empty($model) && $model != $defaultModel) {
+				$controller = Inflector::underscore(Inflector::pluralize($model));
+			} else {
+				$controller = Inflector::underscore($this->params['controller']);
+			}
+			if (empty($options['action'])) {
+				$options['action'] = ife($created, 'edit', 'add');
+			}
+
 			$actionDefaults = array(
-				'controller' => Inflector::underscore($this->params['controller']),
-				'action' => $created ? 'edit' : 'add',
-				'id' => $created ? $this->data[$model][$data['key']] : null
+				'controller' => $controller,
+				'action' => $options['action'],
+				'id' => ife($created, $this->data[$model][$data['key']], null)
 			);
-			$options['action'] = am($actionDefaults, $options['action']);
+			$options['action'] = am($actionDefaults, (array)$options['url']);
 		}
 
 		switch (low($options['type'])) {
