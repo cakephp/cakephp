@@ -991,6 +991,9 @@
 			case 'CGI_MODE':
 				return (substr(php_sapi_name(), 0, 3) == 'cgi');
 			break;
+			case 'HTTP_BASE':
+				return preg_replace ('/^([^.])*/i', null, env('HTTP_HOST'));
+			break;
 		}
 		return null;
 	}
