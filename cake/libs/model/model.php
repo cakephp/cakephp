@@ -882,14 +882,18 @@ class Model extends Overloadable {
 		$defaults = array();
 
 		$cols = $this->loadInfo();
-		if (array_key_exists('default', $cols->value[0])) {
-			$count = count($cols->value);
+		$names = $cols->extract('{n}.name');
+		$values = $cols->extract('{n}.default');
+
+		if (!empty($names) && !empty($values)) {
+			$count = count($names);
 			for ($i = 0; $i < $count; $i++) {
-				if ($cols->value[$i]['name'] != $this->primaryKey) {
-					$defaults[$cols->value[$i]['name']] = $cols->value[$i]['default'];
+				if ($names[$i] != $this->primaryKey) {
+					$defaults[$names[$i]] = $values[$i];
 				}
 			}
 		}
+
 		$this->validationErrors = array();
 		$this->set(array_filter($defaults));
 		$this->set($data);
@@ -971,7 +975,7 @@ class Model extends Overloadable {
  * @return boolean True on success save
  */
 	function saveField($name, $value, $validate = false) {
-		return $this->save(array($this->name => array($name => $value)), $validate);
+		return $this->save(array($this->name => array($name => $value)), $validate, array($name));
 	}
 
 /**

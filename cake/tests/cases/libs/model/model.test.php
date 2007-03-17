@@ -34,6 +34,17 @@
 	class Test extends Model {
 		var $useTable = false;
 		var $name = 'Test';
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+				array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
 	}
 /**
  * Short description for class.
@@ -44,13 +55,19 @@
 class ModelTest extends UnitTestCase {
 
 	function setUp() {
-		$this->test =& new Test();
+		$this->Test =& new Test();
 	}
 
 	function testIdentity() {
-		$result = $this->test->name;
+		$result = $this->Test->name;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}
+
+	function testCreation() {
+		$expected = array('Test' => array('notes' => 'write some notes here'));
+		$this->assertEqual($this->Test->create(), $expected);
+	}
 }
+
 ?>
