@@ -39,25 +39,27 @@
 	require_once LIBS.DS.'controller'.DS.'controller.php';
 	require_once LIBS.DS.'model'.DS.'model.php';
 
-class TheTestController extends Controller {
-	var $name = 'TheTest';
-	var $uses = null;
-}
-
-class Contact extends Model {
-
-	var $primaryKey = 'id';
-	var $useTable = false;
-
-	function loadInfo() {
-		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		));
+	if (!class_exists('TheTestController')) {
+		class TheTestController extends Controller {
+			var $name = 'TheTest';
+			var $uses = null;
+		}
 	}
-}
+
+	class Contact extends Model {
+
+		var $primaryKey = 'id';
+		var $useTable = false;
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+	}
 
 /**
  * Short description for class.
