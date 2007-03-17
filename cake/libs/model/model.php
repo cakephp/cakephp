@@ -1647,14 +1647,14 @@ class Model extends Overloadable {
  * @return array Array of invalid fields or boolean case any error occurs
  */
 	function invalidFields($data = array()) {
+		if (!$this->beforeValidate()) {
+			return $this->validationErrors;
+		}
+
 		if (empty($data)) {
 			$data = $this->data;
 		} else {
 			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
-		}
-
-		if (!$this->beforeValidate()) {
-			return $this->validationErrors;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
