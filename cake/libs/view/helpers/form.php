@@ -99,7 +99,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$this->setFormTag($model . '/');
+		$this->setFormTag($model . '.');
 		$append = '';
 		$created = $id = false;
 
@@ -179,7 +179,7 @@ class FormHelper extends AppHelper {
 			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => $options['id'] . 'Token'));
 		}
 
-		$this->setFormTag($model . '/');
+		$this->setFormTag($model . '.');
 		return $this->output(sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, ''))) . $append;
 	}
 /**
@@ -198,7 +198,7 @@ class FormHelper extends AppHelper {
  * Returns true if there is an error for the given field, otherwise false
  *
  * @access public
- * @param string $field This should be "Modelname/fieldname"
+ * @param string $field This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @return bool If there are errors this method returns true, else false.
  */
 	function isFieldError($field) {
@@ -208,7 +208,7 @@ class FormHelper extends AppHelper {
 /**
  * Returns a formatted error message for given FORM field, NULL if no errors.
  *
- * @param string $field A field name, like "Modelname/fieldname"
+ * @param string $field A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param string $text		Error message
  * @param array $options	Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
@@ -230,7 +230,7 @@ class FormHelper extends AppHelper {
 /**
  * Returns a formatted LABEL element for HTML FORMs.
  *
- * @param string $tagName This should be "Modelname/fieldname"
+ * @param string $tagName This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param string $text Text that will appear in the label field.
  * @return string The formatted LABEL element
  */
@@ -281,7 +281,7 @@ class FormHelper extends AppHelper {
 /**
  * Generates a form input element complete with label and wrapper div
  *
- * @param string $tagName This should be "Modelname/fieldname"
+ * @param string $tagName This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param array $options
  * @return string
  */
@@ -442,7 +442,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a text input widget.
  *
- * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
+ * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string An HTML text input element
  */
@@ -459,7 +459,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a password input widget.
  *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param  string  $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
@@ -474,7 +474,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a textarea widget.
  *
- * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
+ * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string An HTML text input element
  */
@@ -498,7 +498,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a hidden input field.
  *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param  string  $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param  array	$htmlAttributes Array of HTML attributes.
  * @return string
  * @access public
@@ -514,7 +514,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates file input widget.
  *
- * @param string $fieldName Name of a field, like this "Modelname/fieldname"
+ * @param string $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @param array $htmlAttributes Array of HTML attributes.
  * @return string
  * @access public

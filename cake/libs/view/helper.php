@@ -310,11 +310,16 @@ class Helper extends Overloadable {
 /**
  * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
  *
- * @param string $tagValue A field name, like "Modelname/fieldname"
+ * @param string $tagValue A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
  */
 	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
-		$parts = explode("/", $tagValue);
+
+		if(strpos($tagValue, '.') !== false) {
+			$parts = explode(".", $tagValue);
+		} else {
+			$parts = explode("/", $tagValue);
+		}
 
 		if (count($parts) == 1) {
 			$view->field = $parts[0];

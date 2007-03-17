@@ -560,7 +560,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns value of $fieldName. False if the tag does not exist.
  *
- * @param string $fieldName		Fieldname as "Modelname/fieldname" string
+ * @param string $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @return unknown Value of the named tag.
  */
 	function tagValue($fieldName) {
