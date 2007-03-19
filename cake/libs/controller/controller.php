@@ -926,7 +926,7 @@ class Controller extends Object {
 			$newDate = null;
 			if ('datetime' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}:{$_hour}:{$_min}:{$_sec}";
-			} else if ('date' == $field['type'] && $useNewDate)) {
+			} else if ('date' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
 			} else if ('time' == $field['type'] && $useNewDate) {
 				$newDate = "{$_hour}:{$_min}:{$_sec}";
