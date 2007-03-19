@@ -908,11 +908,13 @@ class Controller extends Object {
 			$modelClass = $this->modelClass;
 		}
 		foreach($this->{$modelClass}->_tableInfo->value as $field) {
+			$useNewDate = false;
 			$dateFields = array('Y'=>'_year', 'm'=>'_month', 'd'=>'_day', 'H'=>'_hour', 'i'=>'_min', 's'=>'_sec');
 			foreach ($dateFields as $default => $var) {
 				if(isset($this->data[$modelClass][$field['name'] . $var])) {
 					${$var} = $this->data[$modelClass][$field['name'] . $var];
 					 unset($this->data[$modelClass][$field['name'] . $var]);
+					 $useNewDate = true;
 				} else {
 					${$var} = date($default);
 				}
@@ -922,11 +924,11 @@ class Controller extends Object {
 			}
 
 			$newDate = null;
-			if ('datetime' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_year'])) {
+			if ('datetime' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}:{$_hour}:{$_min}:{$_sec}";
-			} else if ('date' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_year'])) {
+			} else if ('date' == $field['type'] && $useNewDate)) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
-			} else if ('time' == $field['type'] && isset($this->data[$modelClass][$field['name'].'_hour'])) {
+			} else if ('time' == $field['type'] && $useNewDate) {
 				$newDate = "{$_hour}:{$_min}:{$_sec}";
 			}
 			if($newDate && !in_array($field['name'], array('created', 'updated', 'modified'))) {
