@@ -73,14 +73,14 @@
 		define('APP_DIR', $appdir);
 		define('APP_PATH', ROOT.DS.APP_DIR.DS);
 		// TODO: how to handle situation with a non-standard webroot setup?
-		define('WWW_ROOT', APP_PATH.DS.'webroot'.DS);
+		define('WWW_ROOT', APP_PATH.'webroot'.DS);
 	}
 
 	function defineAppConstantsWithDefaultValues() {
 		define('ROOT', CORE_PATH);
 		define('APP_DIR', 'app');
 		define('APP_PATH', ROOT.DS.APP_DIR.DS);
-		define('WWW_ROOT', APP_PATH.DS.'webroot'.DS);
+		define('WWW_ROOT', APP_PATH.'webroot'.DS);
 	}
 
 	function defineConstants() {
