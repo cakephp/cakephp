@@ -261,6 +261,7 @@ class DboSourceTest extends UnitTestCase {
 		require_once r('//', '/', APP) . 'config/database.php';
 		$config = new DATABASE_CONFIG();
 		$this->db =& new DboTest($config->default);
+		$this->db->fullDebug = false;
 		$this->model = new TestModel();
 	}
 	
@@ -273,8 +274,8 @@ class DboSourceTest extends UnitTestCase {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4Parent');
+
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
@@ -282,9 +283,10 @@ class DboSourceTest extends UnitTestCase {
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
 		
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
 		$this->assertTrue($result);
-		
+
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $queryData['selfJoin'][0]);
+		$this->assertPattern('/FROM\s+/', $queryData['selfJoin'][0]);
 		$expected = 'SELECT ';
 		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`, `TestModel4Parent`.`id`, `TestModel4Parent`.`name`, `TestModel4Parent`.`created`, `TestModel4Parent`.`updated`';
 		$expected .= ' FROM ';
@@ -297,327 +299,206 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($queryData['selfJoin'][0], $expected);
 		
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`, `TestModel4Parent`.`id`, `TestModel4Parent`.`name`, `TestModel4Parent`.`created`, `TestModel4Parent`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= ' LEFT JOIN ';
-		$expected .= '`test_model4` AS `TestModel4Parent`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel4`.`parent_id` = `TestModel4Parent`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '1 = 1';
-		$expected .= '   ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
+		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
 	}
-		
+
 	function testGenerateAssociationQuerySelfJoinWithConditions() {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4Parent');
+
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
 		$queryData = array('conditions' => array('TestModel4Parent.name' => '!= mariano'));
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
+
 		$this->assertTrue($result);
 		
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`, `TestModel4Parent`.`id`, `TestModel4Parent`.`name`, `TestModel4Parent`.`created`, `TestModel4Parent`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= ' LEFT JOIN ';
-		$expected .= '`test_model4` AS `TestModel4Parent`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel4`.`parent_id` = `TestModel4Parent`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '(`TestModel4Parent`.`name` !=  \'mariano\')';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
+		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasOne() {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'hasOne', 'model'=>'TestModel5');
-		
+
+		$binding = array('type' => 'hasOne', 'model' => 'TestModel5');
+
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
 		$this->assertTrue($result);
-		
+
+		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN `test_model5` AS `TestModel5` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		
-		$this->assertEqual($queryData['joins'][0], $expected);
-		
+		$this->assertEqual(trim($result), trim($expected));
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ', ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= '  LEFT JOIN ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '(  1 = 1 ) AND (  1 = 1 )';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+/', $result);
+		$this->assertPattern('/`test_model5` AS `TestModel5`\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasOneWithConditions() {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'hasOne', 'model'=>'TestModel5');
-		
+
+		$binding = array('type' => 'hasOne', 'model' => 'TestModel5');
+
 		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
 		
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
 		$this->assertTrue($result);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ', ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= '  LEFT JOIN ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '(  1 = 1 )';
-		$expected .= ' AND ';
-		$expected .= '(`TestModel5`.`name` !=  \'mariano\')';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model5` AS `TestModel5`/', $result);
+		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*`TestModel5`.`name`\s+!=\s+\'mariano\'\s*(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryBelongsTo() {
 		$this->model = new TestModel5();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
+
 		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
 		$this->assertTrue($result);
-		
+
+		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		
-		$this->assertEqual($queryData['joins'][0], $expected);
-		
+		$this->assertEqual(trim($result), trim($expected));
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ', ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= '  LEFT JOIN ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '(  1 = 1 ) AND (  1 = 1 )';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
+		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryBelongsToWithConditions() {
 		$this->model = new TestModel5();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'belongsTo', 'model'=>'TestModel4');
+
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4');
 		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
 		$this->assertTrue($result);
-		
+
+		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		
-		$this->assertEqual($queryData['joins'][0], $expected);
-		
+		$this->assertEqual(trim($result), trim($expected));
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ', ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= '  LEFT JOIN ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel5`.`test_model4_id` = `TestModel4`.`id`';
-		$expected .= '  WHERE  ';
-		$expected .= '(  1 = 1 ) AND (`TestModel5`.`name` !=  \'mariano\')';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
+		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel5`.`name` !=  \'mariano\'\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasMany() {
 		$this->model = new TestModel5();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'hasMany', 'model'=>'TestModel6');
+
+		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel6`.`id`, `TestModel6`.`test_model5_id`, `TestModel6`.`name`, `TestModel6`.`created`, `TestModel6`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model6` AS `TestModel6`';
-		$expected .= ' WHERE  ';
-		$expected .= '1 = 1';
-		$expected .= '  AND ';
-		$expected .= '`TestModel6`.`test_model5_id` = {$__cakeID__$}';
-		
-		$this->assertEqual($result, $expected);
-		
+		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+=\s+{\$__cakeID__\$}/', $result);
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= '   WHERE  ';
-		$expected .= '1 = 1';
-		$expected .= '   ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasManyWithConditions() {
 		$this->model = new TestModel5();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'hasMany', 'model'=>'TestModel6');
+
+		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array('conditions' => array('TestModel5.name' => '!= mariano'));
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel6`.`id`, `TestModel6`.`test_model5_id`, `TestModel6`.`name`, `TestModel6`.`created`, `TestModel6`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model6` AS `TestModel6`';
-		$expected .= ' WHERE  ';
-		$expected .= '1 = 1';
-		$expected .= '  AND ';
-		$expected .= '`TestModel6`.`test_model5_id` = {$__cakeID__$}';
-		
-		$this->assertEqual($result, $expected);
-		
+		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel5`.`id`, `TestModel5`.`test_model4_id`, `TestModel5`.`name`, `TestModel5`.`created`, `TestModel5`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model5` AS `TestModel5`';
-		$expected .= '   WHERE  ';
-		$expected .= '(`TestModel5`.`name` !=  \'mariano\')';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel5`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasAndBelongsToMany() {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
-		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
+
+		$binding = array('type' => 'hasAndBelongsToMany', 'model' => 'TestModel7');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel7`.`id`, `TestModel7`.`name`, `TestModel7`.`created`, `TestModel7`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model7` AS `TestModel7`';
-		$expected .= ' JOIN ';
-		$expected .= '`test_model4_test_model7`';
-		$expected .= ' ON ';
-		$expected .= '`test_model4_test_model7`.`test_model4_id` = {$__cakeID__$}';
-		$expected .= ' AND ';
-		$expected .= '`test_model4_test_model7`.`test_model7_id` = `TestModel7`.`id`';
-		$expected .= ' WHERE  ';
-		$expected .= '1 = 1 ';
-		
-		$this->assertEqual($result, $expected);
-		
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`test_model4_test_model7`/', $result);
+		$this->assertPattern('/\s+ON\s+(?:\()?`test_model4_test_model7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
+		$this->assertPattern('/\s+AND\s+(?:\()?`test_model4_test_model7`\.`test_model7_id`\s+=\s+`TestModel7`\.`id`(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= '   WHERE  ';
-		$expected .= '1 = 1';
-		$expected .= '   ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 	}
 	
 	function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
@@ -633,35 +514,16 @@ class DboSourceTest extends UnitTestCase {
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
 		
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel7`.`id`, `TestModel7`.`name`, `TestModel7`.`created`, `TestModel7`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model7` AS `TestModel7`';
-		$expected .= ' JOIN ';
-		$expected .= '`test_model4_test_model7`';
-		$expected .= ' ON ';
-		$expected .= '`test_model4_test_model7`.`test_model4_id` = {$__cakeID__$}';
-		$expected .= ' AND ';
-		$expected .= '`test_model4_test_model7`.`test_model7_id` = `TestModel7`.`id`';
-		$expected .= ' WHERE  ';
-		$expected .= '1 = 1 ';
-		
-		$this->assertEqual($result, $expected);
-		
+		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`test_model4_test_model7`+/', $result);
+		$this->assertPattern('/\s+ON\s+(?:\()`test_model4_test_model7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
+		$this->assertPattern('/\s+AND\s+(?:\()`test_model4_test_model7`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
-		$expected = 'SELECT  ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= '   WHERE  ';
-		$expected .= '(`TestModel4`.`name` !=  \'mariano\')';
-		$expected .= '  ';
-		
-		$this->assertEqual($result, $expected);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
+		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+WHERE\s+(?:\()?`TestModel4`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
 	}
-	
+
 	function _buildRelatedModels(&$model) {
 		foreach($model->__associations as $type) {
 			foreach($model->{$type} as $assoc => $assocData) {
@@ -675,7 +537,7 @@ class DboSourceTest extends UnitTestCase {
 			}
 		}
 	}
-	
+
 	function &_prepareAssociationQuery(&$model, &$queryData, $binding) {
 		$type = $binding['type'];
 		$assoc = $binding['model'];
@@ -694,7 +556,6 @@ class DboSourceTest extends UnitTestCase {
 			'assocData'=> $assocData,
 			'external'=> $external
 		);
-		
 		return $result;
 	}
 
@@ -711,17 +572,17 @@ class DboSourceTest extends UnitTestCase {
 		$expected = " WHERE  `Post`.`title` = '1.1'";
 		$this->assertEqual($result, $expected);
 
-		/*
+		$result = $this->db->conditions("User.id != 0 AND User.user LIKE '%arr%'");
+		$expected = " WHERE  `User`.`id` != 0 AND `User`.`user` LIKE '%arr%'";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->db->conditions("SUM(Post.comments_count) > 500");
 		$expected = " WHERE SUM( `Post`.`comments_count`) > 500";
 		$this->assertEqual($result, $expected);
-		*/
 
-		/*
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
 		$this->assertEqual($result, $expected);
-		*/
 
 		$result = $this->db->conditions("score BETWEEN 90.1 AND 95.7");
 		$expected = " WHERE score BETWEEN 90.1 AND 95.7";
@@ -731,37 +592,30 @@ class DboSourceTest extends UnitTestCase {
 		$expected = " WHERE  `Aro`.`rght` = `Aro`.`lft` + 1.1";
 		$this->assertEqual($result, $expected);
 
-		/*
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
 		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
 		$this->assertEqual($result, $expected);
-		*/
 
 		$result = $this->db->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
 		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
+		//$this->assertPattern('/\s*WHERE\s+`Sportstaette`\.`sportstaette`\s+LIKE\s+"%ru%"\s+AND\s+`Sports/', $result);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
 		$expected = ' WHERE  `Sportstaette`.`sportstaettenart_id` = 2 AND `Sportstaette`.`sportstaette` LIKE "%ru%"';
 		$this->assertEqual($result, $expected);
 
-		/*
 		$result = $this->db->conditions('SUM(Post.comments_count) > 500 AND NOT Post.title IS NULL AND NOT Post.extended_title IS NULL');
 		$expected = ' WHERE SUM( `Post`.`comments_count`) > 500 AND NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL';
 		$this->assertEqual($result, $expected);
-		*/
 
-		/*
 		$result = $this->db->conditions('NOT Post.title IS NULL AND NOT Post.extended_title IS NULL AND SUM(Post.comments_count) > 500');
 		$expected = ' WHERE NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL AND SUM( `Post`.`comments_count`) > 500';
 		$this->assertEqual($result, $expected);
-		*/
 
-		/*
 		$result = $this->db->conditions('NOT Post.extended_title IS NULL AND NOT Post.title IS NULL AND Post.title != "" AND SPOON(SUM(Post.comments_count) + 1.1) > 500');
 		$expected = ' WHERE NOT `Post`.`extended_title` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title` != "" AND SPOON(SUM( `Post`.`comments_count`) + 1.1) > 500';
 		$this->assertEqual($result, $expected);
-		*/
 
 		$result = $this->db->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
 		$expected = ' WHERE NOT `Post`.`title_extended` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title_extended` != `Post`.`title`';
@@ -774,56 +628,354 @@ class DboSourceTest extends UnitTestCase {
 
 	function testArrayConditionsParsing() {
 		$result = $this->db->conditions(array('Candy.name' => 'LIKE a', 'HardCandy.name' => 'LIKE c'));
-		$expected = " WHERE  (`Candy`.`name` LIKE  'a') AND (`HardCandy`.`name` LIKE  'c')";
-		$this->assertEqual($result, $expected);
+		$this->assertPattern("/^\s+WHERE\s+`Candy`.`name` LIKE\s+'a'\s+AND\s+`HardCandy`.`name`\s+LIKE\s+'c'/", $result);
 
 		$result = $this->db->conditions(array('HardCandy.name' => 'LIKE a', 'Candy.name' => 'LIKE c'));
-		$expected = " WHERE  (`HardCandy`.`name` LIKE  'a') AND (`Candy`.`name` LIKE  'c')";
+		$expected = " WHERE `HardCandy`.`name` LIKE  'a' AND `Candy`.`name` LIKE  'c'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('HardCandy.name' => 'LIKE a%', 'Candy.name' => 'LIKE %c%'));
+		$expected = " WHERE `HardCandy`.`name` LIKE  'a%' AND `Candy`.`name` LIKE  '%c%'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('HardCandy.name' => 'LIKE to be or%', 'Candy.name' => 'LIKE %not to be%'));
+		$expected = " WHERE `HardCandy`.`name` LIKE  'to be or%' AND `Candy`.`name` LIKE  '%not to be%'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('score' => 'BETWEEN 90.1 AND 95.7'));
-		$expected = " WHERE  (`score` BETWEEN  '90.1' AND '95.7')";
+		$expected = " WHERE `score` BETWEEN  '90.1' AND '95.7'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE  (`Post`.`title`  =  1.1)";
+		$expected = " WHERE `Post`.`title`  =  1.1";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('SUM(Post.comments_count)' => '> 500'));
-		$expected = " WHERE  (SUM(`Post`.`comments_count`) >  500)";
+		$expected = " WHERE SUM(`Post`.`comments_count`) >  500";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('MAX(Post.rating)' => '> 50'));
+		$expected = " WHERE MAX(`Post`.`rating`) >  50";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('title' => 'LIKE %hello'));
-		$expected = " WHERE  (`title` LIKE  '%hello')";
+		$expected = " WHERE `title` LIKE  '%hello'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->conditions(array('Post.name' => 'mad(g)ik'));
-		$expected = " WHERE  (`Post`.`name` mad(g) 'ik')";
+		$result = $this->db->conditions(array('Post.name' => '= mad(g)ik'));
+		$expected = " WHERE `Post`.`name` =  'mad(g)ik'";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('score' => array(1, 2, 10)));
+		$expected = " WHERE `score` IN (1, 2, 10) ";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('score' => '!= 20'));
+		$expected = " WHERE `score` !=  20";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('score' => '> 20'));
+		$expected = " WHERE `score` >  20";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20') ));
+		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`rating` >  20)";
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->db->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
+		$expected = " WHERE (`score` >  20) OR (`score` BETWEEN  '4' AND '5')";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('and' => array( 'score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
+		$expected = " WHERE  (`score` >  20) AND (`score` BETWEEN  '4' AND '5')";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array('published' => 1, 'or' => array( 'score' => '< 2', array('score' => '> 20')) ));
+		$expected = " WHERE `published`  =  1 AND (`score` >  20) OR (`score` <  2)";
 		$this->assertEqual($result, $expected);
 	}
 
 	function testFieldParsing() {
-		/*
 		$result = $this->db->fields($this->model, 'Post', "CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name, Node.created");
 		$expected = array("CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", "`Node`.`created`");
 		$this->assertEqual($result, $expected);
-		*/
 
-		/*
 		$result = $this->db->fields($this->model, 'Post', "Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name");
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
 		$this->assertEqual($result, $expected);
-		*/
 
-		/*
 		$result = $this->db->fields($this->model, 'Post', "2.2,COUNT(*), SUM(Something.else) as sum, Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name,Post.title,Post.1,1.1");
 		$expected = array(
 			'2.2', 'COUNT(*)', 'SUM(`Something`.`else`) as sum', '`Node`.`created`',
 			"CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", '`Post`.`title`', '`Post`.`1`', '1.1'
 		);
 		$this->assertEqual($result, $expected);
-		*/
+
+		$result = $this->db->fields($this->model, 'Post');
+		$expected = array(
+			'`Post`.`id`', '`Post`.`client_id`', '`Post`.`name`', '`Post`.`login`',
+			'`Post`.`passwd`', '`Post`.`addr_1`', '`Post`.`addr_2`', '`Post`.`zip_code`',
+			'`Post`.`city`', '`Post`.`country`', '`Post`.`phone`', '`Post`.`fax`',
+			'`Post`.`url`', '`Post`.`email`', '`Post`.`comments`', '`Post`.`last_login`',
+			'`Post`.`created`', '`Post`.`updated`'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, 'Other');
+		$expected = array(
+			'`Other`.`id`', '`Other`.`client_id`', '`Other`.`name`', '`Other`.`login`',
+			'`Other`.`passwd`', '`Other`.`addr_1`', '`Other`.`addr_2`', '`Other`.`zip_code`',
+			'`Other`.`city`', '`Other`.`country`', '`Other`.`phone`', '`Other`.`fax`',
+			'`Other`.`url`', '`Other`.`email`', '`Other`.`comments`', '`Other`.`last_login`',
+			'`Other`.`created`', '`Other`.`updated`'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, array(), false);
+		$expected = array('id', 'client_id', 'name', 'login', 'passwd', 'addr_1', 'addr_2', 'zip_code', 'city', 'country', 'phone', 'fax', 'url', 'email', 'comments', 'last_login', 'created', 'updated');
+		$this->assertEqual($result, $expected);
 	}
+
+ 	function testMergeAssociations() {
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			'Topic' => array ( 
+ 				array(
+ 					'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Topic' => array(
+ 				'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			'User' => array ( 
+ 				array(
+ 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'User' => array(
+ 				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'User', 'belongsTo');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			array ( 
+ 				'Comment' => false
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Comment' => array()
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			array ( 
+ 				'Comment' => array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			),
+ 			array(
+ 				'Comment' => array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Comment' => array(
+ 				array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			array ( 
+ 				'Comment' => array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'User' => array(
+ 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			),
+ 			array(
+ 				'Comment' => array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'User' => array(
+ 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Comment' => array(
+ 				array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+ 					'User' => array(
+ 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 					)
+ 				),
+ 				array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+ 					'User' => array(
+ 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 					)
+ 				)
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			array ( 
+ 				'Comment' => array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'User' => array(
+ 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'Tag' => array(
+ 					array('id' => 1, 'tag' => 'Tag 1'),
+ 					array('id' => 2, 'tag' => 'Tag 2')
+ 				)
+ 			),
+ 			array(
+ 				'Comment' => array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'User' => array(
+ 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				'Tag' => array()
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Comment' => array(
+ 				array(
+ 					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+ 					'User' => array(
+ 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 					),
+ 					'Tag' => array(
+ 						array('id' => 1, 'tag' => 'Tag 1'),
+ 						array('id' => 2, 'tag' => 'Tag 2')
+ 					)
+ 				),
+ 				array(
+ 					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
+ 					'User' => array(
+ 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 					),
+ 					'Tag' => array()
+ 				)
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
+ 		$this->assertEqual($data, $expected);
+ 		
+ 		$data = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			)
+ 		);
+ 		$merge = array(
+ 			array ( 
+ 				'Tag' => array(
+ 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			),
+ 			array(
+ 				'Tag' => array(
+ 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			),
+ 			array(
+ 				'Tag' => array(
+ 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$expected = array(
+ 			'Article' => array(
+ 				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+ 			),
+ 			'Tag' => array(
+ 				array(
+ 					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				array(
+ 					'id' => '2', 'tag' => 'Tag 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				),
+ 				array(
+ 					'id' => '3', 'tag' => 'Tag 3', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
+ 				)
+ 			)
+ 		);
+ 		$this->db->__mergeAssociation($data, $merge, 'Tag', 'hasAndBelongsToMany');
+ 		$this->assertEqual($data, $expected);
+ 	}
 
 	function testMagicMethodQuerying() {
 		$result = $this->db->query('findByFieldName', array('value'), $this->model);
@@ -853,28 +1005,6 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
 		$this->assertEqual($result, $expected);
-	}
-
-	function testSomething() {
-		$this->model->Test2 = new TestModel2();
-		$this->model->hasAndBelongsToMany = array('Test2' => array(
-		//	'with'					=> 'Testship',
-			'className'				=> 'TestModel2',
-			'joinTable'				=> 'tests',
-			'foreignKey'			=> 'contact_id',
-			'associationForeignKey'	=> 'project_id',
-			'conditions'			=> null,
-			'fields'				=> null,
-			'order'					=> null,
-			'limit'					=> null,
-			'offset'				=> null,
-			'unique'				=> null,
-			'finderQuery'			=> null,
-			'deleteQuery'			=> null,
-			'insertQuery'			=> null
-		));
-
-		//generateAssociationQuery($this->model, $this->model->Test2, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet)
 	}
 }
 

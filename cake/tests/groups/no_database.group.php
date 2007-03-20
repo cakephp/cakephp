@@ -43,7 +43,6 @@ class AllCoreWithOutDatabaseGroupTest extends GroupTest {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'validation');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'session');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'socket');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view');
 	}
 }

@@ -645,9 +645,6 @@ class ModelTest extends UnitTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$db->fullDebug = true;
-
 		$this->model->recursive = 2;
 		$result = $this->model->read('id, user', 3);
 		$expected = array(
@@ -707,7 +704,9 @@ class ModelTest extends UnitTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
+
+		$this->db->fullDebug = true;
+
 		$result = $this->model->findAll(array('Article.user_id' => 3), null, null, null, 1, 2);
 		$expected = array ( 
 			array ( 
@@ -747,7 +746,12 @@ class ModelTest extends UnitTestCase {
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+		/*pr($result);
+		pr($expected);
+		pr(var_dump($expected[0]['Comment'][0]['Attachment']));
+		pr(var_dump($result[0]['Comment'][0]['Attachment']));
+		pr(array_diff_recursive($result, $expected));*/
+		$this->assertEqual($expected, $result);
 	}
 	
 	function testSaveField() {

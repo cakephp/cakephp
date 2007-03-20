@@ -180,26 +180,6 @@ class DboPostgres extends DboSource {
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
 	}
-
-/**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @return string Quoted and escaped
- */
-	function name($data) {
-		if ($data == '*') {
-			return '*';
-		}
-
-		$pos = strpos($data, '"');
-
-		if ($pos === false) {
-			$data = '"' . str_replace('.', '"."', $data) . '"';
-		}
-		return $data;
-	}
-
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
@@ -376,24 +356,15 @@ class DboPostgres extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields(&$model, $alias, $fields) {
-		if (is_array($fields)) {
-				$fields = $fields;
-		} else {
-			if ($fields != null) {
-				if (strpos($fields, ',')) {
-					$fields = explode(',', $fields);
-				} else {
-					$fields = array($fields);
-				}
-				$fields = array_map('trim', $fields);
-			} else {
-				foreach($model->_tableInfo->value as $field) {
-					$fields[] = $field['name'];
-				}
-			}
+	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+		if (empty($alias)) {
+			$alias = $model->name;
 		}
+		$fields = parent::fields($model, $alias, $fields, false);
 
+		if (!$quote) {
+			return $fields;
+		}
 		$count = count($fields);
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
