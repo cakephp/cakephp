@@ -700,6 +700,15 @@ class DboSourceTest extends UnitTestCase {
 		$expected = array("CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", "`Node`.`created`");
 		$this->assertEqual($result, $expected);
 
+		$result = $this->db->fields($this->model, null, 'round( (3.55441 * fooField), 3 ) AS test');
+		$this->assertEqual($result, array('round( (3.55441 * fooField), 3 ) AS test'));
+		
+		$result = $this->db->fields($this->model, null, 'ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating');
+		$this->assertEqual($result, array('ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating'));
+
+		$result = $this->db->fields($this->model, null, 'ROUND(Rating.rate_total / Rating.rate_count,2) AS rating');
+		$this->assertEqual($result, array('ROUND(Rating.rate_total / Rating.rate_count,2) AS rating'));
+
 		$result = $this->db->fields($this->model, 'Post', "Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name");
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
 		$this->assertEqual($result, $expected);
