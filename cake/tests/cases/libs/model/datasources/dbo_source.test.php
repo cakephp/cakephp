@@ -624,6 +624,10 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions("Comment.id = 'a'");
 		$expected = " WHERE  `Comment`.`id` = 'a'";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions("lower(Article.title) LIKE 'a%'");
+		$expected = " WHERE lower( `Article`.`title`) LIKE 'a%'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testArrayConditionsParsing() {
