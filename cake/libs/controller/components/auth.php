@@ -117,10 +117,21 @@ class AuthComponent extends Object {
  * redirected back after a successful login.  If this session value is not
  * set, the user will be redirected to the page specified in $loginRedirect.
  *
- * @var string
+ * @var mixed
  * @access public
  */
 	var $loginRedirect = null;
+/**
+ * The the default action to redirect to after the user is logged out.  While AuthComponent does
+ * not handle post-logout redirection, a redirect URL will be returned from AuthComponent::logout().
+ * Defaults to AuthComponent::$loginAction.
+ *
+ * @var mixed
+ * @access public
+ * @see AuthComponent::$loginAction
+ * @see AuthComponent::logout()
+ */
+	var $logoutRedirect = null;
 /**
  * The type of automatic ACL validation to perform, where 'actions' validates
  * the controller action of the current request, 'objects' validates against
@@ -304,6 +315,9 @@ class AuthComponent extends Object {
 		if (empty($this->sessionKey)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
+		if (empty($this->logoutAction)) {
+			$this->logoutRedirect = $this->loginAction;
+		}
 		return true;
 	}
 /**
@@ -481,7 +495,7 @@ class AuthComponent extends Object {
 		$this->Session->del($this->sessionKey);
 		$this->Session->del('Auth.redirect');
 		$this->_loggedIn = false;
-		return $this->_normalizeURL($this->loginAction);
+		return $this->_normalizeURL($this->logoutRedirect);
 	}
 /**
  * Get the current user from the session.
