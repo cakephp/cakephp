@@ -527,9 +527,11 @@ class DboMysql extends DboSource {
 		$real = $this->columns[$type];
 		$out = $this->name($name) . ' ' . $real['name'];
 
-		if (isset($real['limit']) || isset($real['length'])) {
-			if (isset($col['length'])) {
-				$length = $col['length'];
+		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+			if (isset($column['length'])) {
+				$length = $column['length'];
+			} elseif (isset($column['limit'])) {
+				$length = $column['limit'];
 			} elseif (isset($real['length'])) {
 				$length = $real['length'];
 			} else {
@@ -546,6 +548,8 @@ class DboMysql extends DboSource {
 			$out .= ' DEFAULT NULL';
 		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['null']) && $column['null'] == false) {
+			$out .= ' NOT NULL';
 		}
 		return $out;
 	}
