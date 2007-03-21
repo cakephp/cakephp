@@ -248,8 +248,7 @@ class AuthComponent extends Object {
 		if (!$this->_setDefaults()) {
 			return;
 		}
-		$this->hashPasswords($controller);
-		$this->data = $controller->data;
+		$this->data = $controller->data = $this->hashPasswords($controller->data);
 
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return false;
@@ -681,13 +680,14 @@ class AuthComponent extends Object {
  * @param object $controller
  * @return void
  */
-	function hashPasswords(&$controller) {
-		if (isset($controller->data[$this->userModel])) {
-			if (isset($controller->data[$this->userModel][$this->fields['username']]) && isset($controller->data[$this->userModel][$this->fields['password']])) {
+	function hashPasswords($data) {
+		if (isset($data[$this->userModel])) {
+			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
 				$model =& $this->getUserModel();
-				$controller->data[$this->userModel][$this->fields['password']] = Security::hash(CAKE_SESSION_STRING . $controller->data[$this->userModel][$this->fields['password']]);
+				$data[$this->userModel][$this->fields['password']] = Security::hash(CAKE_SESSION_STRING . $data[$this->userModel][$this->fields['password']]);
 			}
 		}
+		return $data;
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
