@@ -2088,6 +2088,11 @@ class Bake {
 			$this->hr();
 			$this->__defaultHome($projectPath, $appName);
 			$this->stdout('Welcome page created');
+			if($this->__generateHash() === true ){
+				$this->stdout('Random hash key created for CAKE_SESSION_STRING');
+			} else {
+				$this->stdout('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
+			}
 			if(chmodr($projectPath.DS.'tmp', 0777) === false) {
 				$this->stdout('Could not set permissions on '. $projectPath.DS.'tmp'.DS.'*');
 				$this->stdout('You must manually check that these directories can be wrote to by the server');
@@ -2111,7 +2116,7 @@ class Bake {
 	function __copydirr($fromDir, $toDir, $chmod = 0755, $verbose = false) {
 		$errors=array();
 		$messages=array();
-		
+
 		uses('folder');
 		$folder = new Folder($toDir, true, 0755);
 
@@ -2176,6 +2181,22 @@ class Bake {
 		$file = file_get_contents(CONFIGS.'core.php');
 		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $file, $match)) {
 			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $file);
+
+			if(file_put_contents(CONFIGS.'core.php', $result)){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+		function __generateHash(){
+		$file = file_get_contents(CONFIGS.'core.php');
+		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
+			uses('Security');
+			$string = Security::generateAuthKey();
+			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $file);
 
 			if(file_put_contents(CONFIGS.'core.php', $result)){
 				return true;
