@@ -535,8 +535,8 @@ class View extends Object {
  * @access public
  */
 	function addScript($name, $content = null) {
-		if ($content == null) {
-			if (!in_array($content, array_values($this->__scripts))) {
+		if (empty($content)) {
+			if (!in_array($name, array_values($this->__scripts))) {
 				$this->__scripts[] = $name;
 			}
 		} else {
@@ -839,9 +839,10 @@ class View extends Object {
 				    if (is_null($plugin) || !loadPluginHelper($plugin, $helper)) {
 						if (!loadHelper($helper)) {
 							$this->cakeError('missingHelperFile', array(array(
-													'helper' => $helper,
-													'file' => Inflector::underscore($helper) . '.php',
-													'base' => $this->base)));
+								'helper' => $helper,
+								'file' => Inflector::underscore($helper) . '.php',
+								'base' => $this->base
+							)));
 							exit();
 						}
 				    }
