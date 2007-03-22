@@ -1442,6 +1442,8 @@ class DboSource extends DataSource {
 					$data = ' ' . $value;
 				} elseif ($value === null || (is_array($value) && empty($value))) {
 					$data = $this->name($key) . ' IS NULL';
+				} elseif ($value === false || $value === true) {
+					$data = $this->name($key) . " = " . $this->boolean($value);
 				} elseif ($value === '') {
 					$data = $this->name($key) . " = ''";
 				} elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<=?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/i', $value, $match)) {
@@ -1563,7 +1565,6 @@ class DboSource extends DataSource {
 					} else {
 						$dir = '';
 					}
-
 					$key = trim($this->name(trim($key)) . ' ' . trim($dir));
 				}
 				$order[] = $this->order($key . $value);

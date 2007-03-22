@@ -702,6 +702,15 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions(array('published' => 1, 'or' => array('score' => '< 2', array('score' => '> 20')) ));
 		$expected = " WHERE `published`  =  1 AND (`score` <  2) OR (`score` >  20)";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions(array(array('Project.removed' => false)));
+		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+=\s+0\s*$/', $result);
+
+		$result = $this->db->conditions(array(array('Project.removed' => true)));
+		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+=\s+1\s*$/', $result);
+
+		$result = $this->db->conditions(array(array('Project.removed' => null)));
+		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+IS\s+NULL\s*$/', $result);
 	}
 
 	function testFieldParsing() {
