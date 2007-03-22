@@ -93,6 +93,14 @@ class FormHelperTest extends UnitTestCase {
 		$result = $this->Form->label();
 		$this->assertEqual($result, '<label for="PersonName">Name</label>');
 
+		$this->Form->text('Person.name');
+		$result = $this->Form->label();
+		$this->assertEqual($result, '<label for="PersonName">Name</label>');
+
+		$this->Form->text('Person.Name');
+		$result = $this->Form->label();
+		$this->assertEqual($result, '<label for="PersonName">Name</label>');
+
 		$result = $this->Form->label('first_name');
 		$this->assertEqual($result, '<label for="first_name">First Name</label>');
 

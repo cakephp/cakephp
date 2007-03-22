@@ -776,7 +776,7 @@ if(!function_exists('http_build_query')) {
 		}
 		$out = array();
 
-		foreach((array)$data as $key => $val) {
+		foreach((array)$data as $key => $v) {
 			if(is_numeric($key) && !empty($prefix)) {
 				$key = $prefix . $key;
 			}

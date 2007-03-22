@@ -236,12 +236,12 @@ class FormHelper extends AppHelper {
  */
 	function label($tagName = null, $text = null, $attributes = array()) {
 		if (empty($tagName)) {
-			$tagName = implode('/', array_filter(array($this->model(), $this->field())));
+			$tagName = implode('.', array_filter(array($this->model(), $this->field())));
 		}
 
 		if ($text == null) {
-			if (strpos($tagName, '/') !== false) {
-				list( , $text) = explode('/', $tagName);
+			if (strpos($tagName, '/') !== false || strpos($tagName, '.') !== false) {
+				list( , $text) = preg_split('/[\/\.]+/', $tagName);
 			} else {
 				$text = $tagName;
 			}
@@ -250,8 +250,8 @@ class FormHelper extends AppHelper {
 			}
 			$text = Inflector::humanize($text);
 		}
-		if (strpos($tagName, '/') !== false) {
-			$tagName = Inflector::camelize(r('/', '_', $tagName));
+		if (strpos($tagName, '/') !== false || strpos($tagName, '.') !== false) {
+			$tagName = Inflector::camelize(preg_replace('/[\/\.]+/', '_', $tagName));
 		}
 		return $this->output(sprintf($this->Html->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
 	}
