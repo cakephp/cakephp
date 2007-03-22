@@ -768,6 +768,7 @@ class Router extends Object {
  */
 if(!function_exists('http_build_query')) {
 	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
+		//die('?');
 		if(empty($argSep)) {
 			$argSep = ini_get('arg_separator.output');
 		}
@@ -789,7 +790,7 @@ if(!function_exists('http_build_query')) {
 			if(is_array($v) || is_object($v)) {
 				$out[] = http_build_query($v, $prefix, $argSep, $key);
 			} else {
-				$out[] = $k . '=' . urlencode($v);
+				$out[] = $key . '=' . urlencode($v);
 			}
 		}
 		return implode($argSep, $out);
