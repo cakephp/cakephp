@@ -186,7 +186,6 @@ class DboSource extends DataSource {
 			return $this->fetchAll($args[0]);
 
 		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
-
 			$params = $args[1];
 
 			if (strpos(strtolower($args[0]), 'findby') === 0) {
@@ -936,7 +935,7 @@ class DboSource extends DataSource {
 			case 'belongsTo':
 				if ($external) {
 					if ($type == 'hasOne') {
-						$conditions = $this->__mergeConditions($queryData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeForeignKey__$}'));
+						$conditions = $this->__mergeConditions($queryData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeID__$}'));
 					} elseif ($type == 'belongsTo') {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'));
 					}
@@ -1432,7 +1431,12 @@ class DboSource extends DataSource {
 							$data[strlen($data) - 2] = ')';
 						}
 					} else {
-						$out[] = '(' . join(') AND (', $this->conditionKeysToString($value, $quoteValues)) . ')';
+						$ret = $this->conditionKeysToString($value, $quoteValues);
+						if (count($ret) > 1) {
+							$out[] = '(' . join(') AND (', $ret) . ')';
+						} elseif (isset($ret[0])) {
+							$out[] = $ret[0];
+						}
 					}
 				} elseif (is_numeric($key)) {
 					$data = ' ' . $value;
@@ -1468,6 +1472,7 @@ class DboSource extends DataSource {
 
 				if ($data != null) {
 					$out[] = $data;
+					$data = null;
 				}
 			}
 			$c++;
@@ -1559,7 +1564,7 @@ class DboSource extends DataSource {
 						$dir = '';
 					}
 
-					$key = trim($this->name($key) . ' ' . $dir);
+					$key = trim($this->name(trim($key)) . ' ' . trim($dir));
 				}
 				$order[] = $this->order($key . $value);
 			}

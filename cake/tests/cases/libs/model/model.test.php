@@ -148,6 +148,9 @@ class ModelTest extends UnitTestCase {
 		if (!isset($this->db) || !$this->db->isConnected()) {
 			restore_error_handler();
 			@$db =& ConnectionManager::getDataSource('test');
+			if (is_object($db) && isset($db->fullDebug)) {
+				$db->fullDebug = false;
+			}
 			set_error_handler('simpleTestErrorHandler');
 	 		
 	 		if (!$db->isConnected()) {
@@ -157,9 +160,7 @@ class ModelTest extends UnitTestCase {
 	 		$config = $db->config;
 	 		$config['prefix'] .= 'test_suite_';
 	 		
-	 		ConnectionManager::create('test_suite', $config);
-	 		
-	 		$this->db =& ConnectionManager::getDataSource('test_suite');
+	 		$this->db =& ConnectionManager::create('test_suite', $config);
 			$this->db->fullDebug = false;
 		} else {
 			$config = $this->db->config;
@@ -705,8 +706,6 @@ class ModelTest extends UnitTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$this->db->fullDebug = true;
-
 		$result = $this->model->findAll(array('Article.user_id' => 3), null, null, null, 1, 2);
 		$expected = array ( 
 			array ( 
@@ -746,11 +745,6 @@ class ModelTest extends UnitTestCase {
 				)
 			)
 		);
-		/*pr($result);
-		pr($expected);
-		pr(var_dump($expected[0]['Comment'][0]['Attachment']));
-		pr(var_dump($result[0]['Comment'][0]['Attachment']));
-		pr(array_diff_recursive($result, $expected));*/
 		$this->assertEqual($expected, $result);
 	}
 	

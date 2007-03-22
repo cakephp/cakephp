@@ -48,6 +48,10 @@ class TestModel extends Model {
 		return $conditions;
 	}
 
+	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
+		return $conditions;
+	}
+
 	function loadInfo() {
 		return new Set(array(
 			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -226,7 +230,6 @@ class TestModel7 extends Model {
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
 		return $this->_tableInfo;
 	}
 }
@@ -263,6 +266,8 @@ class DboSourceTest extends UnitTestCase {
 		$this->db =& new DboTest($config->default);
 		$this->db->fullDebug = false;
 		$this->model = new TestModel();
+		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
+		$db->fullDebug = false;
 	}
 	
 	function tearDown() {
@@ -516,8 +521,8 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`test_model4_test_model7`+/', $result);
-		$this->assertPattern('/\s+ON\s+(?:\()`test_model4_test_model7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
-		$this->assertPattern('/\s+AND\s+(?:\()`test_model4_test_model7`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+(?:\()?`test_model4_test_model7`\.`test_model4_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
+		$this->assertPattern('/\s+AND\s+(?:\()?`test_model4_test_model7`\.`test_model7_id`\s+=\s+`TestModel7`.`id`(?:\))?\s+WHERE\s+/', $result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
@@ -687,15 +692,15 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->db->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE (`score` >  20) OR (`score` BETWEEN  '4' AND '5')";
+		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`score` >  20)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('and' => array( 'score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE  (`score` >  20) AND (`score` BETWEEN  '4' AND '5')";
+		$expected = " WHERE (`score` BETWEEN  '4' AND '5') AND (`score` >  20)";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->conditions(array('published' => 1, 'or' => array( 'score' => '< 2', array('score' => '> 20')) ));
-		$expected = " WHERE `published`  =  1 AND (`score` >  20) OR (`score` <  2)";
+		$result = $this->db->conditions(array('published' => 1, 'or' => array('score' => '< 2', array('score' => '> 20')) ));
+		$expected = " WHERE `published`  =  1 AND (`score` <  2) OR (`score` >  20)";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -995,11 +1000,15 @@ class DboSourceTest extends UnitTestCase {
 		$expected = array('TestModel.field_name' => '= value');
 		$this->assertEqual($result, $expected);
 
-		/*
+		$result = $this->db->query('findAllByFieldName', array('value'), $this->model);
+		$expected = array('TestModel.field_name' => '= value');
+		$this->assertEqual($result, $expected);
+
+		/*$this->db->fullDebug = true;
 		$result = $this->db->query('findAllById', array('a'), $this->model);
 		$expected = array('TestModel.id' => '= value');
 		$this->assertEqual($result, $expected);
-		*/
+		$this->db->fullDebug = false;*/
 
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->model);
 		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
@@ -1018,6 +1027,33 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
 		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->order("title, id");
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order("title desc, id desc");
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+desc,\s+`id`\s+desc\s*$/', $result);
+
+		$result = $this->db->order(array("title desc, id desc"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+desc,\s+`id`\s+desc\s*$/', $result);
+
+		$result = $this->db->order(array("title", "id"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order(array(array('title'), array('id')));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order(array("Post.title" => 'asc', "Post.id" => 'desc'));
+		$this->assertPattern('/^\s*ORDER BY\s+`Post`.`title`\s+asc,\s+`Post`.`id`\s+desc\s*$/', $result);
+
+		$result = $this->db->order(array(array("Post.title" => 'asc', "Post.id" => 'desc')));
+		$this->assertPattern('/^\s*ORDER BY\s+`Post`.`title`\s+asc,\s+`Post`.`id`\s+desc\s*$/', $result);
+
+		$result = $this->db->order(array("title"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order(array(array("title")));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
 	}
 }
 
