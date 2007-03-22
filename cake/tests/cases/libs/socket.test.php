@@ -49,9 +49,9 @@ class SocketTest extends UnitTestCase {
 
 	function testSocketHost() {
 		$this->assertEqual($this->socket->address(), '127.0.0.1');
-		$this->assertEqual($this->socket->addresses(), array('127.0.0.1'));
 		$this->assertEqual($this->socket->host(), 'localhost');
 		$this->assertEqual($this->socket->lastError(), null);
+		$this->assertTrue(in_array('127.0.0.1', $this->socket->addresses()));
 	}
 
 	function testSocketWriting() {
