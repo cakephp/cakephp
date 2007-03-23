@@ -8,12 +8,12 @@
  */
 class Console extends ConsoleScript {
 
-    private $ignore_list = array(T_WHITESPACE, T_OPEN_TAG, T_CLOSE_TAG);
-    private $return_list = array(T_FOREACH, T_DO, T_WHILE, T_FOR, T_IF, T_RETURN,
+    var $ignore_list = array(T_WHITESPACE, T_OPEN_TAG, T_CLOSE_TAG);
+    var $return_list = array(T_FOREACH, T_DO, T_WHILE, T_FOR, T_IF, T_RETURN,
                                  T_CLASS, T_FUNCTION, T_INTERFACE, T_PRINT, T_ECHO,
                                  T_COMMENT, T_UNSET, T_INCLUDE, T_REQUIRE, T_INCLUDE_ONCE,
                                  T_REQUIRE_ONCE,T_TRY);
-    private $continue_list = array(T_VARIABLE, T_STRING, T_NEW, T_EXTENDS, T_IMPLEMENTS,
+    var $continue_list = array(T_VARIABLE, T_STRING, T_NEW, T_EXTENDS, T_IMPLEMENTS,
                                    T_OBJECT_OPERATOR, T_DOUBLE_COLON, T_INSTANCEOF, T_CATCH, T_ELSE,
                                    T_AS, T_LNUMBER, T_DNUMBER, T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE,
                                    T_CHARACTER, T_ARRAY, T_DOUBLE_ARROW, T_CONST, T_PUBLIC,
