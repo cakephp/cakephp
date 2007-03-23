@@ -65,7 +65,7 @@ class DboMysqli extends DboSource {
 								'password' => '',
 								'database' => 'cake',
 								'port' => '3306',
-								'connect' => 'mysqli_pconnect');
+								'connect' => 'mysqli_connect');
 /**
  * Mysqli column definition
  *
@@ -89,14 +89,7 @@ class DboMysqli extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
-		$this->connected = false;
-
-		if (!$config['persistent']) {
-			$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], true);
-		} else {
-			$this->connection = $connect($config['host'], $config['login'], $config['password']);
-		}
+		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], null, $config['port']);
 
 		if (mysqli_select_db($this->connection, $config['database'])) {
 			$this->connected = true;
