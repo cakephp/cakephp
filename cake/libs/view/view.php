@@ -397,7 +397,7 @@ class View extends Object {
 
 		if(!is_null($file)) {
 			$params = array_merge_recursive($params, $this->loaded);
-			return $this->_render($file, array_merge($this->viewVars, $params), false);
+			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		}
 
 		if(!is_null($this->pluginPath)) {
