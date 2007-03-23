@@ -215,6 +215,7 @@ class FormHelper extends AppHelper {
  */
 	function error($field, $text = null, $options = array()) {
 		$this->setFormTag($field);
+		$options = am(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
 			if ($text != null) {
@@ -222,7 +223,14 @@ class FormHelper extends AppHelper {
 			} elseif (is_numeric($error)) {
 				$error = 'Error in field ' . Inflector::humanize($this->field());
 			}
-			return $this->Html->div('error-message', $error);
+			if ($options['escape']) {
+				$error = h($error);
+			}
+			if ($options['wrap'] === true) {
+				return $this->Html->div($options['class'], $error);
+			} else {
+				return $error;
+			}
 		} else {
 			return null;
 		}

@@ -144,6 +144,28 @@ class FormHelperTest extends UnitTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
 	}
 
+	function testFieldError() {
+		$this->Form->validationErrors['Model']['field'] = 1;
+		$result = $this->Form->error('Model.field');
+		$this->assertEqual($result, '<div class="error-message">Error in field Field</div>');
+
+		$result = $this->Form->error('Model.field', null, array('wrap' => false));
+		$this->assertEqual($result, 'Error in field Field');
+
+		$this->Form->validationErrors['Model']['field'] = "This field contains invalid input";
+		$result = $this->Form->error('Model.field', null, array('wrap' => false));
+		$this->assertEqual($result, 'This field contains invalid input');
+
+		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false));
+		$this->assertEqual($result, '&lt;strong&gt;Badness!&lt;/strong&gt;');
+
+		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => true));
+		$this->assertEqual($result, '&lt;strong&gt;Badness!&lt;/strong&gt;');
+
+		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
+		$this->assertEqual($result, '<strong>Badness!</strong>');
+	}
+
 	function testPassword() {
 		$result = $this->Form->password('Model/field');
 		$expected = '<input name="data[Model][field]" type="password" value="" id="ModelField" />';
