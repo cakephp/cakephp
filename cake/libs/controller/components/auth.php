@@ -282,7 +282,7 @@ class AuthComponent extends Object {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect('/' . $this->loginAction);
+					$controller->redirect($this->_normalizeURL($this->loginAction));
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
 					$controller->render($this->ajaxLogin, 'ajax');
@@ -533,13 +533,13 @@ class AuthComponent extends Object {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if ($this->_normalizeURL('/' . $redir) == $this->_normalizeURL($this->loginAction)) {
+			if ($this->_normalizeURL($redir) == $this->_normalizeURL($this->loginAction)) {
 				$redir = $this->loginRedirect;
 			}
 		} else {
 			$redir = $this->loginRedirect;
 		}
-		return $this->_normalizeURL('/' . $redir);
+		return $this->_normalizeURL($redir);
 	}
 /**
  * Validates a user against an abstract object.
