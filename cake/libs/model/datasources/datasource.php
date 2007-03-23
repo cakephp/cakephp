@@ -273,13 +273,13 @@ class DataSource extends Object{
  * @return mixed
  */
 	function describe($model) {
-		if (isset($this->__descriptions[$model->table])) {
-			return $this->__descriptions[$model->table];
+		if (isset($this->__descriptions[$model->tablePrefix.$model->table])) {
+			return $this->__descriptions[$model->tablePrefix.$model->table];
 		}
 		$cache = $this->__cacheDescription($model->tablePrefix.$model->table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$model->table] =& $cache;
+			$this->__descriptions[$model->tablePrefix.$model->table] =& $cache;
 			return $cache;
 		}
 		return null;
