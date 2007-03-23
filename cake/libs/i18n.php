@@ -108,7 +108,7 @@ class I18n extends Object {
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
 
-		if(is_null($domain) && $_this->__l10n->found === false) {
+		if($_this->__l10n->found === false) {
 			$language = Configure::read('Config.language');
 
 			if($language === null && !empty($_SESSION['Config']['language'])) {
