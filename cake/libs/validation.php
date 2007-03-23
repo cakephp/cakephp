@@ -26,11 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Deprecated
  */
-
 /**
  * Not empty.
  */
@@ -47,7 +45,6 @@
  * A valid year (1000-2999).
  */
 	define('VALID_YEAR', '/^[12][0-9]{3}$/');
-
 /**
  * Short description for file.
  *
@@ -57,7 +54,6 @@
  * @subpackage cake.cake.libs
  * @since      CakePHP v 1.2.0.3830
  */
-
 class Validation extends Object {
 /**
  * Set the the value of methods $check param.
@@ -91,7 +87,6 @@ class Validation extends Object {
  * @var string
  */
 	var $type = null;
-
 /**
  * Holds an array of errors messages set in this class.
  * These are used for debugging purposes
@@ -99,11 +94,12 @@ class Validation extends Object {
  * @var array
  */
 	var $errors = array();
-
+/**
+ * Constructor.
+ */
 	function __construct() {
 		parent::__construct();
 	}
-
 /**
  * Checks that a string contains only integer or letters
  *
@@ -135,7 +131,6 @@ class Validation extends Object {
 			return true;
 		}
 	}
-
 /**
  * Checks that a string is within s specified range.
 
@@ -183,7 +178,6 @@ class Validation extends Object {
 			return true;
 		}
 	}
-
 /**
  * Validation of credit card numbers
  *
@@ -264,7 +258,6 @@ class Validation extends Object {
 			}
 		}
 	}
-
 /**
  * Used to compare 2 numeric values
  *
@@ -329,7 +322,6 @@ class Validation extends Object {
 		}
 		return $return;
 	}
-
 /**
  * Used when a custom regular expression is needed.
  *
@@ -352,7 +344,6 @@ class Validation extends Object {
 		}
 		return $this->_check();
 	}
-
 /**
  * Date validation, determines if the string passed is a valid date.
  * keys that expect full month, day and year will validate leap years
@@ -405,7 +396,6 @@ class Validation extends Object {
 		}
 		return false;
 	}
-
 /**
  * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
  * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
@@ -433,7 +423,6 @@ class Validation extends Object {
 		$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]{'.$places.'}$/';
 		return $this->_check();
 	}
-
 /**
  * Enter description here...
  *
@@ -479,14 +468,13 @@ class Validation extends Object {
 	function file($check) {
 
 	}
-
-	/**
-	 * Validation of an IPv4 address.
-	 *
-	 * @param string $check The string to test.
-	 * @return boolean
- 	 * @access public
-	 */
+/**
+ * Validation of an IPv4 address.
+ *
+ * @param string $check The string to test.
+ * @return boolean
+ * @access public
+ */
 	function ip($check) {
 		$bytes = explode('.', $check);
 		if (count($bytes) == 4) {
@@ -500,28 +488,26 @@ class Validation extends Object {
 		}
 		return false;
 	}
-
-	/**
-	 * Checks whether the length of a string is greater or equal to a minimal length.
-	 *
-	 * @param string $check The string to test
-	 * @param int $min The minimal string length
-	 * @return boolean
- 	 * @access public
-	 */
+/**
+ * Checks whether the length of a string is greater or equal to a minimal length.
+ *
+ * @param string $check The string to test
+ * @param int $min The minimal string length
+ * @return boolean
+  * @access public
+ */
 	function minLength($check, $min) {
 		$length = strlen($check);
 		return ($length >= $min);
 	}
-
-	/**
-	 * Checks whether the length of a string is smaller or equal to a maximal length..
-	 *
-	 * @param string $check The string to test
-	 * @param int $max The maximal string length
-	 * @return boolean
- 	 * @access public
-	 */
+/**
+ * Checks whether the length of a string is smaller or equal to a maximal length..
+ *
+ * @param string $check The string to test
+ * @param int $max The maximal string length
+ * @return boolean
+ * @access public
+ */
 	function maxLength($check, $max) {
 		$length = strlen($check);
 		return ($length <= $max);
@@ -667,7 +653,6 @@ class Validation extends Object {
 			$this->type = $type;
 		}
 	}
-
 /**
  * Luhn algorithm
  *
