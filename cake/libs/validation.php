@@ -124,6 +124,10 @@ class Validation extends Object {
 			$this->_extract($check);
 		}
 
+		if(empty($this->check)) {
+			return false;
+		}
+
 		$this->regex = '/[^\\dA-Z]/i';
 		if($this->_check() === true){
 			return false;

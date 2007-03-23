@@ -47,6 +47,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->alphaNumeric("\t"));
 		$this->assertFalse($validation->alphaNumeric("\r"));
 		$this->assertFalse($validation->alphaNumeric(' '));
+		$this->assertFalse($validation->alphaNumeric(''));
 	}
 
 	function testAlphaNumericPassedAsArray(){
@@ -61,6 +62,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->alphaNumeric(array('check' => "\t")));
 		$this->assertFalse($validation->alphaNumeric(array('check' => "\r")));
 		$this->assertFalse($validation->alphaNumeric(array('check' =>  ' ')));
+		$this->assertFalse($validation->alphaNumeric(array('check' =>  '')));
 	}
 
 	function testBetween(){
