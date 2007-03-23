@@ -144,6 +144,16 @@ class FormHelperTest extends UnitTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
 	}
 
+	function testDefaultValue() {
+		$this->Form->data['Model']['field'] = 'test';
+		$result = $this->Form->text('Model/field', array('default' => 'default value'));
+		$this->assertPattern('/^<input[^<>]+value="test"[^<>]+\/>$/', $result);
+
+		unset($this->Form->data['Model']['field']);
+		$result = $this->Form->text('Model/field', array('default' => 'default value'));
+		$this->assertPattern('/^<input[^<>]+value="default value"[^<>]+\/>$/', $result);
+	}
+
 	function testFieldError() {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$result = $this->Form->error('Model.field');

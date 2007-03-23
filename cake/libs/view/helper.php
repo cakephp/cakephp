@@ -466,6 +466,13 @@ class Helper extends Overloadable {
 		}
 
 		if (is_array($options)) {
+			if (empty($result) && isset($options['default'])) {
+				$result = $options['default'];
+			}
+			unset($options['default']);
+		}
+
+		if (is_array($options)) {
 			$options[$key] = $result;
 			return $options;
 		} else {
