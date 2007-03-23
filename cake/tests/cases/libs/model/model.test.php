@@ -61,17 +61,8 @@
 	 *
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
-	 */	
-	class TestSuiteModel extends Model {
-		var $useDbConfig = 'test_suite';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class User extends TestSuiteModel {
+	class User extends CakeTestModel {
 		var $name = 'User';
 		var $validate = array(
 			'user' => VALID_NOT_EMPTY,
@@ -84,7 +75,7 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class Article extends TestSuiteModel {
+	class Article extends CakeTestModel {
 		var $name = 'Article';
 		var $belongsTo = array('User');
 		var $hasMany = array(
@@ -103,7 +94,7 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class Tag extends TestSuiteModel {
+	class Tag extends CakeTestModel {
 		var $name = 'Tag';
 	}
 	/**
@@ -112,7 +103,7 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class Comment extends TestSuiteModel {
+	class Comment extends CakeTestModel {
 		var $name = 'Comment';
 		var $belongsTo = array('Article', 'User');
 		var $hasOne = array(
@@ -125,7 +116,7 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class Attachment extends TestSuiteModel {
+	class Attachment extends CakeTestModel {
 		var $name = 'Attachment';
 	}
 	/**
@@ -134,7 +125,7 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
-	class Category extends TestSuiteModel {
+	class Category extends CakeTestModel {
 		var $name = 'Category';
 	}
 /**
@@ -143,183 +134,16 @@
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
-class ModelTest extends UnitTestCase {
-	function setUp() {
-		if (!isset($this->db) || !$this->db->isConnected()) {
-			restore_error_handler();
-			@$db =& ConnectionManager::getDataSource('test');
-			if (is_object($db) && isset($db->fullDebug)) {
-				$db->fullDebug = false;
-			}
-			set_error_handler('simpleTestErrorHandler');
-	 		
-	 		if (!$db->isConnected()) {
-	 			$db =& ConnectionManager::getDataSource('default');
-	 		}
-
-	 		$config = $db->config;
-	 		$config['prefix'] .= 'test_suite_';
-	 		
-	 		$this->db =& ConnectionManager::create('test_suite', $config);
-			$this->db->fullDebug = false;
-		} else {
-			$config = $this->db->config;
-		}
-
-		$queries = array();
-
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'users` VALUES(1, \'mariano\', MD5(\'password\'), \'2007-03-17 01:16:23\', \'2007-03-17 01:18:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'users` VALUES(2, \'nate\', MD5(\'password\'), \'2007-03-17 01:18:23\', \'2007-03-17 01:20:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'users` VALUES(3, \'larry\', MD5(\'password\'), \'2007-03-17 01:20:23\', \'2007-03-17 01:22:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'users` VALUES(4, \'garrett\', MD5(\'password\'), \'2007-03-17 01:22:23\', \'2007-03-17 01:24:31\')';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles` VALUES(1, 1, \'First Article\', \'First Article Body\', \'Y\', \'2007-03-18 10:39:23\', \'2007-03-18 10:41:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles` VALUES(2, 3, \'Second Article\', \'Second Article Body\', \'Y\', \'2007-03-18 10:41:23\', \'2007-03-18 10:43:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles` VALUES(3, 1, \'Third Article\', \'Third Article Body\', \'Y\', \'2007-03-18 10:43:23\', \'2007-03-18 10:45:31\')';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'tags` VALUES(1, \'tag1\', \'2007-03-18 12:22:23\', \'2007-03-18 12:24:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'tags` VALUES(2, \'tag2\', \'2007-03-18 12:24:23\', \'2007-03-18 12:26:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'tags` VALUES(3, \'tag3\', \'2007-03-18 12:26:23\', \'2007-03-18 12:28:31\')';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles_tags` VALUES(1, 1)';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles_tags` VALUES(1, 2)';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles_tags` VALUES(2, 1)';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'articles_tags` VALUES(2, 3)';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(1, 1, 2, \'First Comment for First Article\',  \'Y\', \'2007-03-18 10:45:23\', \'2007-03-18 10:47:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(2, 1, 4, \'Second Comment for First Article\',  \'Y\', \'2007-03-18 10:47:23\', \'2007-03-18 10:49:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(3, 1, 1, \'Third Comment for First Article\',  \'Y\', \'2007-03-18 10:49:23\', \'2007-03-18 10:51:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(4, 1, 1, \'Fourth Comment for First Article\',  \'N\', \'2007-03-18 10:51:23\', \'2007-03-18 10:53:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(5, 2, 1, \'First Comment for Second Article\',  \'Y\', \'2007-03-18 10:53:23\', \'2007-03-18 10:55:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'comments` VALUES(6, 2, 2, \'Second Comment for Second Article\',  \'Y\', \'2007-03-18 10:55:23\', \'2007-03-18 10:57:31\')';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'attachments` VALUES(1, 5, \'attachment.zip\',  \'2007-03-18 10:51:23\', \'2007-03-18 10:53:31\')';
-		
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(1, 0, \'Category 1\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(2, 1, \'Category 1.1\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(3, 1, \'Category 1.2\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(4, 0, \'Category 2\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(5, 0, \'Category 3\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		$queries[] = 'INSERT INTO `' . $config['prefix'] . 'categories` VALUES(6, 5, \'Category 3.1\', \'2007-03-18 15:30:23\', \'2007-03-18 15:32:31\')';
-		
-		foreach($queries as $query) {
-			$this->db->_execute($query);
-		}
-	}
+class ModelTest extends CakeTestCase {
+	var $fixtures = array( 'core.category', 'core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
 	
-	function tearDown() {
-		$config = $this->db->config;
-		
-		$queries = array();
-		
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'categories`';
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'attachments`';
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'comments`';
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'tags`';
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'articles`';
-		$queries[] = 'TRUNCATE TABLE `' . $config['prefix'] . 'users`';
-		
-		foreach($queries as $query) {
-			$this->db->_execute($query);
-		}
-		
-		if (isset($this->model)) {
-			unset($this->model);
-		}
-	}
-
-  /**
-   * Leave as first test method, create tables.
-   */	
-  function testStartup() {
-  	$config = $this->db->config;
-  	
-		$queries = array();
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'categories`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`parent_id` INT NOT NULL,
-			`name` VARCHAR(255) NOT NULL,
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'users`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`user` VARCHAR(255) NOT NULL,
-			`password` VARCHAR(255) NOT NULL,
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'articles`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`user_id` INT NOT NULL,
-			`title` VARCHAR(255) NOT NULL,
-			`body` TEXT NOT NULL,
-			`published` CHAR(1) DEFAULT \'N\',
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'tags`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`tag` VARCHAR(255) NOT NULL,
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'articles_tags`(
-			`article_id` INT NOT NULL,
-			`tag_id` INT NOT NULL,
-			
-			PRIMARY KEY(`article_id`, `tag_id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'comments`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`article_id` INT NOT NULL,
-			`user_id` INT NOT NULL,
-			`comment` TEXT NOT NULL,
-			`published` CHAR(1) DEFAULT \'N\',
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		$queries[] = 'CREATE TABLE IF NOT EXISTS `' . $config['prefix'] . 'attachments`(
-			`id` INT NOT NULL AUTO_INCREMENT,
-			`comment_id` INT NOT NULL,
-			`attachment` VARCHAR(255) NOT NULL,
-			`created` DATETIME,
-			`updated` DATETIME,
-			
-			PRIMARY KEY(`id`)
-		)';
-		
-		foreach($queries as $query) {
-			$this->db->_execute($query);
-		}
-  	
-		return parent::getTests();
-  }
-
 	function testIdentity() {
 		$this->model =& new Test();
 		$result = $this->model->name;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}
-
+	
 	function testCreation() {
 		$this->model =& new Test();
 		$result = $this->model->create();
@@ -705,7 +529,7 @@ class ModelTest extends UnitTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-
+		
 		$result = $this->model->findAll(array('Article.user_id' => 3), null, null, null, 1, 2);
 		$expected = array ( 
 			array ( 
@@ -745,7 +569,7 @@ class ModelTest extends UnitTestCase {
 				)
 			)
 		);
-		$this->assertEqual($expected, $result);
+		$this->assertEqual($result, $expected);
 	}
 	
 	function testSaveField() {
@@ -1034,46 +858,6 @@ class ModelTest extends UnitTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
-	
-  /**
-   * Leave as last test method, drop tables.
-   */
-  function testFinish() {
-		$config = $this->db->config;
-
-		$queries = array();
-		
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'categories`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'attachments`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'comments`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'articles_tags`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'tags`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'articles`';
-		$queries[] = 'DROP TABLE `' . $config['prefix'] . 'users`';
-		
-		foreach($queries as $query) {
-			$this->db->_execute($query);
-		}
-	}
-}
-
-function array_diff_recursive($array1, $array2) {
-
-	foreach ($array1 as $key => $value) {
-		if (is_array($value)) {
-			if (@!is_array($array2[$key])) {
-				$difference[$key] = $value;
-			} else {
-				$new_diff = array_diff_recursive($value, $array2[$key]);
-				if ($new_diff != false) {
-					$difference[$key] = $new_diff;
-				}
-			}
-		} elseif (!isset($array2[$key]) || $array2[$key] != $value) {
-			$difference[$key] = $value;
-		}
-	}
-	return !isset($difference) ? 0 : $difference;
 }
 
 ?>
