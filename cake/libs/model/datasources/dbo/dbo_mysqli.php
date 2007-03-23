@@ -89,12 +89,7 @@ class DboMysqli extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], null, $config['port']);
-
-		if (mysqli_select_db($this->connection, $config['database'])) {
-			$this->connected = true;
-		}
-
+		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port']);
 		return $this->connected;
 	}
 /**
