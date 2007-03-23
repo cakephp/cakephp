@@ -54,7 +54,7 @@ class ViewTest extends UnitTestCase {
 	}
 
 	function testViewVars() {
-		$this->assertTrue($this->view->viewVars, array('testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'));
+		$this->assertEqual($this->view->viewVars, array('testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'));
 	}
 
 	function testUUIDGeneration() {

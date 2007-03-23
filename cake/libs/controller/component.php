@@ -85,13 +85,13 @@ class Component extends Object {
 		$components[] = 'Session';
 
 		foreach($components as $component) {
-			$pos = strpos($component, '/');
-			if ($pos === false) {
+			$parts = preg_split('/\/|\./', $component);
+
+			if(count($parts) === 1) {
 				$plugin = $this->controller->plugin;
 			} else {
-				$parts = explode('/', $component);
 				$plugin = Inflector::underscore($parts['0']);
-				$component = $parts['1'];
+				$component = $parts[count($parts) - 1];
 			}
 
 			$componentCn = $component . 'Component';

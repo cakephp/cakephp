@@ -373,7 +373,7 @@ class View extends Object {
  * @return string Rendered output
  */
 	function renderElement($name, $params = array(), $loadHelpers = false) {
-		
+
 		if(isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
@@ -824,13 +824,13 @@ class View extends Object {
 		$helpers[] = 'Session';
 
 		foreach($helpers as $helper) {
-			$pos = strpos($helper, '/');
-			if ($pos === false) {
+			$parts = preg_split('/\/|\./', $helper);
+
+			if(count($parts) === 1) {
 				$plugin = $this->plugin;
 			} else {
-				$parts = explode('/', $helper);
 				$plugin = Inflector::underscore($parts['0']);
-				$helper = $parts['1'];
+				$helper = $parts[count($parts) - 1];
 			}
 			$helperCn = $helper . 'Helper';
 

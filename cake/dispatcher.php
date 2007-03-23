@@ -353,6 +353,8 @@ class Dispatcher extends Object {
 		$controller->output =& $output;
 
 		foreach($controller->components as $c) {
+			$path = preg_split('/\/|\./', $c);
+			$c = $path[count($path) - 1];
 			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'shutdown'))) {
 				if (!array_key_exists('enabled', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
 					$controller->{$c}->shutdown($controller);
@@ -385,6 +387,8 @@ class Dispatcher extends Object {
 		$controller->beforeFilter();
 
 		foreach($controller->components as $c) {
+			$path = preg_split('/\/|\./', $c);
+			$c = $path[count($path) - 1];
 			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup'))) {
 				if (!array_key_exists('enabled', get_object_vars($controller->{$c})) || $controller->{$c}->enabled == true) {
 					$controller->{$c}->startup($controller);
