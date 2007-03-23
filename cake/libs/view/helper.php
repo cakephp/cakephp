@@ -255,29 +255,37 @@ class Helper extends Overloadable {
  * @return string
  */
 	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
-		if (!is_array($exclude)) {
-			$exclude = array();
-		}
-
 		if (is_array($options)) {
-			$out = array();
-
-			foreach($options as $key => $value) {
-				if (!in_array($key, $exclude)) {
-					if (in_array($key, $minimizedAttributes) && ($value === 1 || $value === true || $value === 'true' || in_array($value, $minimizedAttributes))) {
-						$value = $key;
-					} elseif(in_array($key, $minimizedAttributes)) {
-						continue;
-					}
-					$out[] = "{$key}=\"{$value}\"";
-				}
+			if (!is_array($exclude)) {
+				$exclude = array();
 			}
-			$out = join(' ', $out);
-			return $out ? $insertBefore . $out . $insertAfter : null;
+			$keys = array_diff(array_keys($options), $exclude);
+			$values = array_intersect_key(array_values($options), $keys);
+			$out = implode(' ', array_map(array(&$this, '__formatAttribute'), $keys, $values));
 		} else {
-			return $options ? $insertBefore . $options . $insertAfter : null;
+			$out = $options;
 		}
+		return $out ? $insertBefore . $out . $insertAfter : '';
+	}
+/**
+ * @param  string $key
+ * @param  string $value
+ * @return string
+ * @access private
+ */
+	function __formatAttribute($key, $value) {
+		$attribute = '';
+		$attributeFormat = '%s="%s"';
+		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+
+		if (in_array($key, $minimizedAttributes)) {
+			if ($value === 1 || $value === true || $value === 'true' || $value == $key) {
+				$attribute = sprintf($attributeFormat, $key, $key);
+			}
+		} else {
+			$attribute = sprintf($attributeFormat, $key, htmlspecialchars($value));
+		}
+		return $attribute;
 	}
 /**
  * @deprecated Name changed to '_parseAttributes'. Version 0.9.2.
