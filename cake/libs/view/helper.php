@@ -322,12 +322,7 @@ class Helper extends Overloadable {
  */
 	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
-
-		if(strpos($tagValue, '.') !== false) {
-			$parts = explode(".", $tagValue);
-		} else {
-			$parts = explode("/", $tagValue);
-		}
+		$parts = preg_split('/\/|\./', $tagValue);
 
 		if (count($parts) == 1) {
 			$view->field = $parts[0];
