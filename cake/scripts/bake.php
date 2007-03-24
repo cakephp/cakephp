@@ -128,8 +128,8 @@
 	require_once (CORE_PATH.'cake'.DS.'basics.php');
 	require_once (CORE_PATH.'cake'.DS.'config'.DS.'paths.php');
 	require_once (CORE_PATH.'cake'.DS.'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php');
-
-	uses('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager');
+	require_once (CORE_PATH.'cake'.DS.'dispatcher.php');
+	uses('object', 'session', 'security', 'configure', 'inflector', 'model'.DS.'connection_manager');
 
 	$pattyCake = new Bake();
 	if($help === true)
@@ -399,10 +399,13 @@ class Bake {
 		} else {
 			$currentModelName = $enteredModel;
 		}
-
+		
+		$db =& ConnectionManager::getDataSource($useDbConfig);	
+			
 		$useTable = Inflector::tableize($currentModelName);
+		$fullTableName = $db->fullTableName($useTable, false);
 		if(array_search($useTable, $this->__tables) === false) {
-			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $useTable . "'.");
+			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $fullTableName . "'.");
 			$tableIsGood = $this->getInput('do you want to use this table?', array('y','n'), 'y');
 		}
 
@@ -411,26 +414,23 @@ class Bake {
 		}
 		$tableIsGood = false;
 		while($tableIsGood == false && low($useTable) != 'null') {
-			$db =& ConnectionManager::getDataSource($useDbConfig);
-			$fullTableName = $db->fullTableName($useTable, false);
-			if (is_array($this->__tables) && !in_array($fullTableName, $this->__tables)) {
+			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
+				$fullTableName = $db->fullTableName($useTable, false);
 				$this->stdout($fullTableName . ' does not exist.');
 				$useTable = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
 				$tableIsGood = false;
 			} else {
-				$useTable = $fullTableName;
 				$tableIsGood = true;
 			}
 		}
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
-
+		
 		if(in_array($useTable, $this->__tables)) {
 			loadModel();
 			$tempModel = new Model(false, $useTable);
-			$db =& ConnectionManager::getDataSource($useDbConfig);
 			$modelFields = $db->describe($tempModel);
-			if(!isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
-				$primaryKey = $this->getInput('What is the primaryKey', null, 'id');
+			if(isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
+				$primaryKey = $this->getInput('What is the primaryKey?', null, $modelFields[0]['name']);
 			}
 		}
 		$validate = array();
@@ -449,8 +449,8 @@ class Bake {
 				$prompt .= "4- VALID_YEAR\n";
 				$prompt .= "5- Do not do any validation on this field.\n\n";
 				$prompt .= "... or enter in a valid regex validation string.\n\n";
-
-				if($field['name'] == 'id' || $field['name'] == 'created' || $field['name'] == 'modified') {
+				
+				if($field['null'] == 1 || $field['name'] == $primaryKey || $field['name'] == 'created' || $field['name'] == 'modified') {
 					$validation = $this->getInput($prompt, null, '5');
 				} else {
 					$validation = $this->getInput($prompt, null, '1');
@@ -487,7 +487,7 @@ class Bake {
 			$i = 0;
 			foreach($modelFields as $field) {
 				$offset = strpos($field['name'], '_id');
-				if($offset !== false) {
+				if($field['name'] != $primaryKey && $offset !== false) {
 					$tmpModelName = $this->__modelNameFromKey($field['name']);
 					$associations['belongsTo'][$i]['alias'] = $tmpModelName;
 					$associations['belongsTo'][$i]['className'] = $tmpModelName;
@@ -505,7 +505,7 @@ class Bake {
 					if($field['type'] == 'integer' || $field['type'] == 'string') {
 						$possibleKeys[$otherTable][] = $field['name'];
 					}
-					if($field['name'] == $this->__modelKey($currentModelName)) {
+					if($field['name'] != $primaryKey && $field['name'] == $this->__modelKey($currentModelName)) {
 						$tmpModelName = $this->__modelName($otherTable);
 						$associations['hasOne'][$j]['alias'] = $tmpModelName;
 						$associations['hasOne'][$j]['className'] = $tmpModelName;
@@ -716,7 +716,10 @@ class Bake {
 		$this->hr();
 		$this->stdout("Model Name:    $currentModelName");
 		$this->stdout("DB Connection: " . ($usingDefault ? 'default' : $useDbConfig));
-		$this->stdout("Model Table:   " . $useTable);
+		$this->stdout("DB Table:   " . $fullTableName);
+		if($primaryKey != 'id') {
+			$this->stdout("Primary Key:   " . $primaryKey);
+		}
 		$this->stdout("Validation:    " . print_r($validate, true));
 
 		if(!empty($associations)) {
