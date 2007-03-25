@@ -265,6 +265,7 @@ class EmailComponent extends Object{
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
 		if($this->sendAs === 'both'){
+			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
@@ -275,7 +276,7 @@ class EmailComponent extends Object{
 			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $content), true);
+			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
 			$msg .= $View->renderLayout($content);
 
