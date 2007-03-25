@@ -283,7 +283,7 @@ class Helper extends Overloadable {
 				$attribute = sprintf($attributeFormat, $key, $key);
 			}
 		} else {
-			$attribute = sprintf($attributeFormat, $key, htmlspecialchars($value));
+			$attribute = sprintf($attributeFormat, $key, h($value));
 		}
 		return $attribute;
 	}
@@ -457,7 +457,7 @@ class Helper extends Overloadable {
 
 		$result = null;
 		if (isset($this->data[$this->model()][$this->field()])) {
-			$result = h($this->data[$this->model()][$this->field()]);
+			$result = $this->data[$this->model()][$this->field()];
 		} elseif (isset($this->data[$this->field()]) && is_array($this->data[$this->field()])) {
 			if (ClassRegistry::isKeySet($this->field())) {
 				$key =& ClassRegistry::getObject($this->field());
