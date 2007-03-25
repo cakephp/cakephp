@@ -221,8 +221,17 @@ class PaginatorHelper extends AppHelper {
 		$model = $options['model'];
 		unset($options['model']);
 
+		if(!empty($this->options)) {
+			$options = am($this->options, $options);
+		}
+
 		$paging = $this->params($model);
-		$url = am(array_filter(Set::diff($paging['options'], $paging['defaults'])), $url);
+		$urlOption = null;
+		if(isset($options['url'])) {
+			$urlOption = $options['url'];
+			unset($options['url']);
+		}
+		$url = am(array_filter(Set::diff($paging['options'], $paging['defaults'])), $urlOption, $url);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
@@ -231,9 +240,6 @@ class PaginatorHelper extends AppHelper {
 			}
 			unset($url['order']);
 			$url = am($url, compact('sort', 'direction'));
-		}
-		if(!empty($this->options)) {
-			$options = am($this->options, $options);
 		}
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';

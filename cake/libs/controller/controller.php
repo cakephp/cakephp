@@ -1036,15 +1036,14 @@ class Controller extends Object {
 		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
-		
 		$recursive = $object->recursive;
 		$count = $object->findCount($conditions, $recursive);
 		$pageCount = ceil($count / $limit);
+
 		if($page == 'last') {
 			$options['page'] = $page = $pageCount;
 		}
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
-
 		$paging = array(
 			'page'		=> $page,
 			'current'	=> count($results),
@@ -1053,8 +1052,8 @@ class Controller extends Object {
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
 			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options
-		);
+			'options'	=> $options);
+
 		$this->params['paging'][$object->name] = $paging;
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
