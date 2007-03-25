@@ -335,7 +335,7 @@ class DboSource extends DataSource {
  */
 	function fetchAll($sql, $cache = true, $modelName = null) {
 		if ($cache && isset($this->_queryCache[$sql])) {
-			if (strpos(trim(strtolower($sql)), 'select') !== false) {
+			if (preg_match('/^\s*select/i', $sql)) {
 				return $this->_queryCache[$sql];
 			}
 		}
