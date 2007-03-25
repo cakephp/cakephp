@@ -768,7 +768,6 @@ class Router extends Object {
  */
 if(!function_exists('http_build_query')) {
 	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
-		//die('?');
 		if(empty($argSep)) {
 			$argSep = ini_get('arg_separator.output');
 		}

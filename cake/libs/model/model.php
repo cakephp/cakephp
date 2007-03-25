@@ -1386,7 +1386,7 @@ class Model extends Overloadable {
 			$offset = ($page - 1) * $limit;
 		}
 
-		if ($order == null) {
+		if ($order == null && $order !== false) {
 			if ($this->order == null) {
 				$order = array();
 			} else {
@@ -1495,7 +1495,7 @@ class Model extends Overloadable {
  * @see Model::findAll
  */
 	function findCount($conditions = null, $recursive = 0) {
-		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', $this->escapeField(), null, 1, $recursive);
+		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', false, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
 			return $data[0]['count'];

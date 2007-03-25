@@ -383,14 +383,25 @@ class ModelTest extends CakeTestCase {
 			))
 		);
 		$this->assertEqual($result, $expected);
-		
-		/*
-		$result = $this->model->hasMany;
-		$expected = array();
-		$this->assertEqual($result, $expected);
-		*/
 	}
-	
+
+	function testFindCount() {
+		$this->model =& new User();
+		$result = $this->model->findCount();
+		$this->assertEqual($result, 4);
+
+		$this->db->fullDebug = true;
+		$this->model->order = 'User.id';
+		$result = $this->model->findCount();
+		$this->assertEqual($result, 4);
+
+		$this->assertTrue(isset($this->db->_queriesLog[0]['query']));
+		$this->assertNoPattern('/ORDER\s+BY/', $this->db->_queriesLog[0]['query']);
+
+		$this->db->_queriesLog = array();
+		$this->db->fullDebug = false;
+	}
+
 	function testFindMagic() {
 		$this->model =& new User();
 		
