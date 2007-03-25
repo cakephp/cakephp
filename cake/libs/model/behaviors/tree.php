@@ -59,9 +59,9 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $parent_id
  * @return boolean True on success, false on failure
  */
-	function setparent(&$model, $parent_id = null) {
+	function setparent(&$model, $parent_id = null, $created = null) {
 		extract($this->settings[$model->name]);
-		if ($parent_id == $model->field($parent)) {
+		if ($created === false && $parent_id == $model->field($parent)) {
 			return true;
 		}
 		list($node) = array_values($model->find(array($model->escapeField() => $model->id), array($model->primaryKey, $parent, $left, $right), null, -1));
@@ -109,7 +109,7 @@ class TreeBehavior extends ModelBehavior {
 			if (!isset($model->data[$model->name][$parent])) {
 				$model->data[$model->name][$parent] = null;
 			}
-			return $this->setparent($model, $model->data[$model->name][$parent]);
+			return $this->setparent($model, $model->data[$model->name][$parent], $created);
 		}
 	}
 
