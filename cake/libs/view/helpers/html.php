@@ -312,12 +312,12 @@ class HtmlHelper extends AppHelper {
 		}
 		$url = $this->webroot((COMPRESS_CSS ? 'c' : '') . CSS_URL . $path . ".css");
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->parseHtmlOptions($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->tags['style'], $this->_parseAttributes($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->tags['css'], $rel, $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' '));
+			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
 		}
 		$out = $this->output($out);
 
@@ -398,9 +398,12 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$model = $this->model();
 			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
-				$htmlAttributes['checked'] = ($htmlAttributes['value'] == $value) ? 'checked' : null;
-
-				if ($htmlAttributes['value'] == '0') {
+				if(isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
+					$htmlAttributes['checked'] = 'checked';
+				} else {
+					$htmlAttributes['checked'] = null;
+				}
+				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == '0') {
 					$notCheckedValue = -1;
 				}
 			} else {
@@ -467,7 +470,7 @@ class HtmlHelper extends AppHelper {
 		if (!isset($htmlAttributes['alt'])) {
 			$htmlAttributes['alt'] = '';
 		}
-		return $this->output(sprintf($this->tags['image'], $url, $this->parseHtmlOptions($htmlAttributes, null, '', ' ')));
+		return $this->output(sprintf($this->tags['image'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
 	}
 /**
  * Creates a text input widget.
@@ -507,7 +510,7 @@ class HtmlHelper extends AppHelper {
 		foreach($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 			$optValue == $value ? $optionsHere['checked'] = 'checked' : null;
-			$parsedOptions = $this->parseHtmlOptions(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
+			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
 			$individualTagName = $this->field() . "_{$optValue}";
 			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
 		}
@@ -526,9 +529,9 @@ class HtmlHelper extends AppHelper {
 	function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach($names as $arg) {
-			$out[] = sprintf($this->tags['tableheader'], $this->parseHtmlOptions($thOptions), $arg);
+			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
-		$data = sprintf($this->tags['tablerow'], $this->parseHtmlOptions($trOptions), join(' ', $out));
+		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 		return $this->output($data);
 	}
 /**
@@ -552,7 +555,7 @@ class HtmlHelper extends AppHelper {
 			foreach($line as $cell) {
 				$cellsOut[] = sprintf($this->tags['tablecell'], null, $cell);
 			}
-			$options = $this->parseHtmlOptions($count % 2 ? $oddTrOptions : $evenTrOptions);
+			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
 			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
 		}
 		return $this->output(join("\n", $out));
@@ -635,7 +638,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'block';
 		}
-		return $this->output(sprintf($this->tags[$tag], $this->parseHtmlOptions($attributes, null, ' ', ''), $text));
+		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
 /**
  * Returns a formatted P tag.
@@ -658,7 +661,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'para';
 		}
-		return $this->output(sprintf($this->tags[$tag], $this->parseHtmlOptions($attributes, null, ' ', ''), $text));
+		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
 /**#@-*/
 /*************************************************************************
