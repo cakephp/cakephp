@@ -39,7 +39,7 @@
 		define ('WEBROOT_DIR', 'webroot');
 	}
 /**
- * Path to the application's directory.
+ * Path to the cake directory.
  */
 	define ('CAKE', CORE_PATH.'cake'.DS);
 /**
@@ -59,7 +59,7 @@
  */
 	define ('CONTROLLERS', APP.'controllers'.DS);
 /**
- * Path to the application's controllers directory.
+ * Path to the application's components directory.
  */
 	define ('COMPONENTS', CONTROLLERS.'components'.DS);
 /**
