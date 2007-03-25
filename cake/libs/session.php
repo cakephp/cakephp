@@ -391,6 +391,8 @@ class CakeSession extends Object {
 		if (isset($_COOKIE[session_name()])) {
 			setcookie(CAKE_SESSION_COOKIE, '', time() - 42000, $this->path);
 		}
+
+		$_SESSION = array();
 		$file = $sessionpath . DS . "sess_" . session_id();
 		@session_destroy();
 		@unlink ($file);
@@ -573,13 +575,15 @@ class CakeSession extends Object {
 		}
 		session_regenerate_id();
 		$newSessid = session_id();
-		$file = $sessionpath . DS . "sess_$oldSessionId";
-		@unlink ($file);
-		@session_destroy ($oldSessionId);
 
 		if (function_exists('session_write_close')) {
 			session_write_close();
 		}
+		session_id($oldSessionId);
+		session_start();
+		session_destroy();
+		$file = $sessionpath . DS . "sess_$oldSessionId";
+		@unlink($file);
 		$this->__initSession();
 		session_id ($newSessid);
 		session_start();
