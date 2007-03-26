@@ -824,17 +824,32 @@ class DboSource extends DataSource {
  */
 	function generateSelfAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
 		$alias = $association;
+		if (empty($alias) && !empty($linkModel)) {
+			$alias = $linkModel->name;
+		}
+
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
-			$sql = 'SELECT ' . join(', ', $this->fields($model, null, $queryData['fields']));
-			if($this->__bypass === false){
-				$sql .= ', ';
-				$sql .= join(', ', $this->fields($linkModel, $alias, ''));
+			$self = array(
+				'fields'	=> $this->fields($model, null, $queryData['fields']),
+				'joins'		=> array(array(
+					'table' => $this->fullTableName($linkModel),
+					'alias' => $alias,
+					'type'	=> 'LEFT',
+					'conditions' => array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}')
+				)),
+				'table'		=> $this->fullTableName($model),
+				'alias'		=> $model->name,
+				'limit'		=> $queryData['limit'],
+				'offset'	=> $queryData['offset'],
+				'conditions'=> $queryData['conditions'],
+				'order'		=> $queryData['order']
+			);
+
+			if($this->__bypass === false) {
+				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, ''));
 			}
-			$sql .= ' FROM ' . $this->fullTableName($model) . ' ' . $this->alias . $this->name($model->name);
-			$sql .= ' LEFT JOIN ' . $this->fullTableName($linkModel) . ' ' . $this->alias . $this->name($alias);
-			$sql .= ' ON ' . $this->name($model->name) . '.' . $this->name($assocData['foreignKey']);
-			$sql .= ' = ' . $this->name($alias) . '.' . $this->name($linkModel->primaryKey);
+			$sql = $this->buildStatement($self, $model);
 
 			if (!in_array($sql, $queryData['selfJoin'])) {
 				$queryData['selfJoin'][] = $sql;
@@ -843,18 +858,10 @@ class DboSource extends DataSource {
 		} elseif (isset($linkModel)) {
 			return $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
 		} else {
+			$result = $queryData['selfJoin'][0];
 			if (isset($this->__assocJoins)) {
-				$replace = ', ';
-				$replace .= join(', ', $this->__assocJoins['fields']);
-				$replace .= ' FROM';
-			} else {
-				$replace = 'FROM';
+				$result = preg_replace('/FROM/', ', ' . join(', ', $this->__assocJoins['fields']) . ' FROM', $result);
 			}
-			$sql = $queryData['selfJoin'][0];
-			$sql .= ' ' . join(' ', $queryData['joins']);
-			$sql .= $this->conditions($queryData['conditions']) . ' ' . $this->order($queryData['order']);
-			$sql .= ' ' . $this->limit($queryData['limit'], $queryData['offset']);
-			$result = preg_replace('/FROM/', $replace, $sql);
 			return $result;
 		}
 	}

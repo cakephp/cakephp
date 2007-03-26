@@ -233,6 +233,216 @@ class TestModel7 extends Model {
 		return $this->_tableInfo;
 	}
 }
+
+class Level extends Model {
+	var $name = 'Level';
+	var $table = 'level';
+	var $useTable = false;
+	
+	var $hasMany = array(
+		'Group'=> array(
+			'className' => 'Group'
+		),
+		'User' => array(
+			'className' => 'User'
+		)
+	);
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class Group extends Model {
+	var $name = 'Group';
+	var $table = 'group';
+	var $useTable = false;
+	
+	var $belongsTo = array(
+		'Level' => array(
+			'className' => 'Level'
+		)
+	);
+	
+	var $hasMany = array(
+		'Category'=> array(
+			'className' => 'Category'
+		),
+		'User'=> array(
+			'className' => 'User'
+		)
+	);
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				array('name' => 'level_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class User extends Model {
+	var $name = 'User';
+	var $table = 'user';
+	var $useTable = false;
+	
+	var $belongsTo = array(
+		'Group' => array(
+			'className' => 'Group'
+		),
+		'Level' => array(
+			'className' => 'Level'
+		)
+	);
+	
+	var $hasMany = array(
+		'Article' => array(
+			'className' => 'Article'
+		),
+	);
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				array('name' => 'group_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'level_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class Category extends Model {
+	var $name = 'Category';
+	var $table = 'category';
+	var $useTable = false;
+	
+  var $belongsTo = array(
+		'Group' => array(
+			'className' => 'Group',
+			'foreignKey' => 'group_id'
+		),
+		'ParentCat' => array(
+			'className' => 'Category',
+			'foreignKey' => 'parent_id'
+		)
+	);
+	
+	var $hasMany = array(
+		'ChildCat' => array(
+			'className' => 'Category',
+			'foreignKey' => 'parent_id'
+		),
+		'Article' => array(
+			'className' => 'Article',
+			'order'=>'Article.published_date DESC',
+			'foreignKey' => 'category_id',
+			'limit'=>'3')
+	);
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'group_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'parent_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				array('name' => 'icon', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				array('name' => 'description', 'text' => 'string', 'null' => false, 'default' => '', 'length' => null)
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class Article extends Model {
+	var $name = 'Article';
+	var $table = 'article';
+	var $useTable = false;
+	
+  var $belongsTo = array(
+  	'Category' => array(
+  		'className' => 'Category'
+  	),
+  	'User' => array(
+  		'className' => 'User'
+  	)
+  );
+  
+  var $hasOne = array(
+  	'Featured' => array(
+  		'className' => 'Featured'
+  	)
+  );
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'category_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'rate_count', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'rate_sum', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'viewed', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'version', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '45'),
+				array('name' => 'title', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
+				array('name' => 'intro', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				array('name' => 'comments', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '4'),
+				array('name' => 'body', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				array('name' => 'isdraft', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				array('name' => 'allow_comments', 'type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				array('name' => 'moderate_comments', 'type' => 'boolean', 'null' => false, 'default' => '1', 'length' => '1'),
+				array('name' => 'published', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				array('name' => 'multipage', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				array('name' => 'published_date', 'type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				array('name' => 'created', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				array('name' => 'modified', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class Featured extends Model {
+
+	var $name = 'Featured';
+	var $table = 'article';
+	var $useTable = false;
+
+	var $belongsTo = array(
+		'Article' => array(
+			'className' => 'Article'
+		),
+		'Category' => array(
+			'Artiucle' => 'Category'
+		)
+	);
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				array('name' => 'article_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'category_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
 /**
  * Short description for class.
  *
@@ -276,6 +486,34 @@ class DboSourceTest extends UnitTestCase {
 	}
 	
 	function testGenerateAssociationQuerySelfJoin() {
+		$this->model = new Article();
+		$this->_buildRelatedModels($this->model);
+		$this->_buildRelatedModels($this->model->Category);
+		$this->model->Category->ChildCat = new Category();
+		$this->model->Category->ParentCat = new Category();
+
+		$queryData = array();
+		
+		foreach($this->model->Category->__associations as $type) {
+			foreach($this->model->Category->{$type} as $assoc => $assocData) {
+				$linkModel =& $this->model->Category->{$assoc};
+				$external = isset($assocData['external']);
+				
+				if ($this->model->Category->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+					$result = $this->db->generateSelfAssociationQuery($this->model->Category, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+					$this->assertTrue($result);
+				} else {
+					if ($this->model->Category->useDbConfig == $linkModel->useDbConfig) {
+						$result = $this->db->generateAssociationQuery($this->model->Category, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+						$this->assertTrue($result);
+					}
+				}
+			}
+		}
+		
+		$query = $this->db->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)LEFT\s+JOIN\s+`category`\s+AS\s+`ParentCat`\s+ON\s+`Category`\.`parent_id`\s+=\s+`ParentCat`\.`id`\s+WHERE/', $query);
+
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
@@ -291,18 +529,9 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $queryData['selfJoin'][0]);
-		$this->assertPattern('/FROM\s+/', $queryData['selfJoin'][0]);
-		$expected = 'SELECT ';
-		$expected .= '`TestModel4`.`id`, `TestModel4`.`name`, `TestModel4`.`created`, `TestModel4`.`updated`, `TestModel4Parent`.`id`, `TestModel4Parent`.`name`, `TestModel4Parent`.`created`, `TestModel4Parent`.`updated`';
-		$expected .= ' FROM ';
-		$expected .= '`test_model4` AS `TestModel4`';
-		$expected .= ' LEFT JOIN ';
-		$expected .= '`test_model4` AS `TestModel4Parent`';
-		$expected .= ' ON ';
-		$expected .= '`TestModel4`.`parent_id` = `TestModel4Parent`.`id`';
-		
-		$this->assertEqual($queryData['selfJoin'][0], $expected);
-		
+		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $queryData['selfJoin'][0]);
+		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE\s+1 = 1\s*$/', $queryData['selfJoin'][0]);
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);

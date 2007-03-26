@@ -264,7 +264,7 @@ class ModelTest extends CakeTestCase {
 		
 		$result = $this->model->bindModel(array('hasMany' => array('Comment')));
 		$this->assertTrue($result);
-		
+
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
 			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano'), 'Comment' => array( 
@@ -282,11 +282,11 @@ class ModelTest extends CakeTestCase {
 			))
 		);
 		$this->assertEqual($result, $expected);
-		
+
+		$this->model->__resetAssociations();
 		$result = $this->model->hasMany;
-		$expected = array();
-		$this->assertEqual($result, $expected);
-		
+		$this->assertEqual($result, array());
+
 		$result = $this->model->bindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 		
@@ -346,7 +346,6 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		
-		/*
 		$result = $this->model->unbindModel(array('hasMany' => array('Comment')), false);
 		$this->assertTrue($result);
 		
@@ -362,8 +361,7 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->hasMany;
 		$expected = array();
 		$this->assertEqual($result, $expected);
-		*/
-		
+
 		$result = $this->model->bindModel(array('hasMany' => array('Comment' => array('className' => 'Comment', 'conditions' => 'Comment.published = \'Y\'') )));
 		$this->assertTrue($result);
 		

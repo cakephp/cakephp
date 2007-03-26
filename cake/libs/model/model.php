@@ -306,6 +306,14 @@ class Model extends Overloadable {
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
+ * Holds association data to be reverted to
+ *
+ * @var array
+ * @access protected
+ */
+	var $__backAssociation = array();
+
+/**
  * The last inserted ID of the data that this model created
  *
  * @var integer
@@ -478,7 +486,7 @@ class Model extends Overloadable {
 		$return = $db->query($method, $params, $this);
 
 		if (!PHP5) {
-			if (isset($this->__backAssociation)) {
+			if (!empty($this->__backAssociation)) {
 				$this->__resetAssociations();
 			}
 		}
@@ -571,7 +579,7 @@ class Model extends Overloadable {
  */
 	function unbindModel($params, $reset = true) {
 		foreach($params as $assoc => $models) {
-			if($reset === true){
+			if($reset === true) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 
@@ -1246,9 +1254,9 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteDependent($id, $cascade) {
-		if (isset($this->__backAssociation)) {
+		if (!empty($this->__backAssociation)) {
 			$savedAssociatons = $this->__backAssociation;
-			unset ($this->__backAssociation);
+			$this->__backAssociation = array();
 		}
 		foreach(am($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
@@ -1439,7 +1447,7 @@ class Model extends Overloadable {
 		}
 		$return = $this->afterFind($results, true);
 
-		if (isset($this->__backAssociation)) {
+		if (!empty($this->__backAssociation)) {
 			$this->__resetAssociations();
 		}
 
@@ -1460,7 +1468,7 @@ class Model extends Overloadable {
 			}
 		}
 
-		unset ($this->__backAssociation);
+		$this->__backAssociation = array();
 		return true;
 	}
 /**
