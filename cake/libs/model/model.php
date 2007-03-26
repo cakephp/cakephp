@@ -957,17 +957,16 @@ class Model extends Overloadable {
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->name][$name])) {
 					return $data[$this->name][$name];
-				} else {
-					return false;
 				}
 			} else {
 				$name = explode('.', $name);
-
 				if (isset($data[$name[0]][$name[1]])) {
 					return $data[$name[0]][$name[1]];
-				} else {
-					return false;
 				}
+			}
+			if (isset($data[0]) && count($data[0]) > 0) {
+				$name = key($data[0]);
+				return $data[0][$name];
 			}
 		} else {
 			return false;

@@ -254,7 +254,25 @@ class ModelTest extends CakeTestCase {
 		$expected = array();
 		$this->assertEqual($result, $expected);
 	}
-	
+
+	function testFindField() {
+		$this->model =& new User();
+
+		$this->model->id = 1;
+		$result = $this->model->field('user');
+		$this->assertEqual($result, 'mariano');
+
+		$result = $this->model->field('User.user');
+		$this->assertEqual($result, 'mariano');
+
+		$this->model->id = false;
+		$result = $this->model->field('user', array('user' => 'mariano'));
+		$this->assertEqual($result, 'mariano');
+
+		$result = $this->model->field('COUNT(*) AS count', true);
+		$this->assertEqual($result, 4);
+	}
+
 	function testBindUnbind() {
 		$this->model =& new User();
 		
