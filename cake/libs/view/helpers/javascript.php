@@ -373,7 +373,7 @@ class JavascriptHelper extends AppHelper {
 				if ((!count($stringKeys) && !is_numeric($val) && !is_bool($val)) || ($quoteKeys && in_array($key, $stringKeys, true)) || (!$quoteKeys && !in_array($key, $stringKeys, true))) {
 					$val = $q . $this->escapeString($val) . $q;
 				}
-				if ($val == null) {
+				if ($val === null) {
 					$val = 'null';
 				}
 			}

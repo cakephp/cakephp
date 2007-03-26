@@ -49,19 +49,19 @@ class JavascriptTest extends UnitTestCase {
 	function testLink() {
 		$result = $this->js->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
-		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
 		
 		$result = $this->js->link('script');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
-		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
 		
 		$result = $this->js->link('scriptaculous.js?load=effects');
 		$expected = '<script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>';
-		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
 		
 		$result = $this->js->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
-		$this->assertEqual($result, $expected, "Error creating link, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
 	}
 	
 	function testObjectGeneration() {
@@ -69,7 +69,11 @@ class JavascriptTest extends UnitTestCase {
 
 		$result = $this->js->object($object);
 		$expected = '{"title":"New thing", "indexes":[5, 6, 7, 8]}';
-		$this->assertEqual($result, $expected, "Error generating JavaScript object, expected '{$expected}', got '{$result}'.");
+		$this->assertEqual($result, $expected);
+
+		$result = $this->js->object(array('default' => 0));
+		$expected = '{"default":0}';
+		$this->assertEqual($result, $expected);
 	}
 
 	function tearDown() {
