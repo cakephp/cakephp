@@ -1021,6 +1021,7 @@ class Controller extends Object {
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 		$options = am($defaults, $options);
+
 		if (isset($this->paginate[$object->name])) {
 			$defaults = $this->paginate[$object->name];
 		} else {
@@ -1036,30 +1037,29 @@ class Controller extends Object {
 		} elseif (is_string($scope)) {
 			$conditions = array($conditions, $scope);
 		}
-		$recursive = $object->recursive;
-		$count = $object->findCount($conditions, $recursive);
-		$pageCount = ceil($count / $limit);
 
+		/* This is being moved to PaginatorHelper
 		if($page == 'last') {
 			$options['page'] = $page = $pageCount;
-		}
+		}*/
+
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
-		$paging = array(
+		$count = $object->findCount($conditions, $object->recursive);
+
+		$this->params['paging'][$object->name] = array(
 			'page'		=> $page,
 			'current'	=> count($results),
 			'count'		=> $count,
 			'prevPage'	=> ($page > 1),
 			'nextPage'	=> ($count > ($page * $limit)),
-			'pageCount'	=> $pageCount,
+			'pageCount'	=> ceil($count / $limit),
 			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options);
-
-		$this->params['paging'][$object->name] = $paging;
+			'options'	=> $options
+		);
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
 		}
-
 		return $results;
 	}
 /**
