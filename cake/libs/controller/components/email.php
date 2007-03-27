@@ -235,6 +235,10 @@ class EmailComponent extends Object{
 			$this->delivery = 'debug';
 		}
 		$__method = '__'.$this->delivery;
+
+		if(low($this->charset) === 'utf-8') {
+			$this->subject = utf8_decode($this->subject);
+		}
 		return $this->$__method();
 	}
 /**

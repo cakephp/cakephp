@@ -1216,6 +1216,7 @@ class ValidationTestCase extends UnitTestCase {
 	function testIp() {
 		$validation = new Validation();
 		$this->assertTrue($validation->ip('0.0.0.0'));
+		$this->assertTrue($validation->ip('192.168.1.156'));
 		$this->assertTrue($validation->ip('255.255.255.255'));
 		$this->assertFalse($validation->ip('127.0.0'));
 		$this->assertFalse($validation->ip('127.0.0.a'));
