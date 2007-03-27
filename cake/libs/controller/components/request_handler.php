@@ -121,6 +121,13 @@ class RequestHandlerComponent extends Object {
  */
 	var $__acceptTypes = array();
 /**
+ * The template to use when rendering the given content type.
+ *
+ * @var string
+ * @access private
+ */
+	var $__renderType = null;
+/**
  * Contains the file extension parsed out by the Router
  *
  * @var string
@@ -196,19 +203,7 @@ class RequestHandlerComponent extends Object {
 		$controller->params['isAjax'] = $this->isAjax();
 
 		if (!empty($this->ext) && !in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
-			$controller->ext = '.ctp';
-			$controller->viewPath .= '/' . $this->ext;
-			$controller->layoutPath = $this->ext;
-
-			if (in_array($this->ext, array_keys($this->__requestContent))) {
-				$this->respondAs($this->ext);
-			}
-
-			if (!in_array(ucfirst($this->ext), $controller->helpers)) {
-				if (file_exists(HELPERS . $this->ext . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $this->ext . '.php')) {
-					$controller->helpers[] = ucfirst($this->ext);
-				}
-			}
+			$this->renderAs($controller, $this->ext);
 		} else {
 			$this->setAjax($controller);
 		}
@@ -532,6 +527,36 @@ class RequestHandlerComponent extends Object {
 		}
 	}
 /**
+ * Sets the layout and template paths for the content type defined by $type.
+ *
+ * @param object $controller A reference to a controller object
+ * @param string $type 
+ * @return void
+ * @access public
+ * @see RequestHandlerComponent::setContent()
+ * @see RequestHandlerComponent::respondAs()
+ */
+	function renderAs(&$controller, $type) {
+		$controller->ext = '.ctp';
+		if (empty($this->__renderType)) {
+			$controller->viewPath .= '/' . $type;
+		} else {
+			$controller->viewPath = preg_replace("/\/{$type}$/", '/' . $type, $controller->viewPath);
+		}
+		$this->__renderType = $type;
+		$controller->layoutPath = $type;
+
+		if (in_array($type, array_keys($this->__requestContent))) {
+			$this->respondAs($type);
+		}
+
+		if (!in_array(ucfirst($type), $controller->helpers)) {
+			if (file_exists(HELPERS . $type . '.php') || fileExistsInPath(LIBS . 'view' . DS . 'helpers' . DS . $type . '.php')) {
+				$controller->helpers[] = ucfirst($type);
+			}
+		}
+	}
+/**
  * Sets the response header based on type map index name.  If DEBUG is greater
  * than 2, the header is not set.
  *
@@ -553,7 +578,7 @@ class RequestHandlerComponent extends Object {
 		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
 			return false;
 		}
-		$options = am(array('index' => 0, 'charset' => null), $options);
+		$options = am(array('index' => 0, 'charset' => null, 'attachment' => false), $options);
 
 		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
 			$cType = null;
@@ -579,12 +604,19 @@ class RequestHandlerComponent extends Object {
 
 		if ($cType != null) {
 			$header = 'Content-type: ' . $cType;
+			$headers = array();
 
-			if ($options['charset'] != null) {
+			if (!empty($options['charset'])) {
 				$header .= '; charset=' . $options['charset'];
 			}
-			if (DEBUG < 2) {
+			if (!empty($options['attachment'])) {
+				header('Content-Disposition: attachment; filename="' . $options['attachment'] . '"');
+			}
+			if (Configure::read() < 2) {
 				header($header);
+				foreach ($headers as $h) {
+					header($h);
+				}
 			}
 			$this->__responseTypeSet = $cType;
 			return true;
