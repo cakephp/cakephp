@@ -2,16 +2,26 @@
 ################################################################################
 #
 # Bake is a shell script for running CakePHP bake script
+# PHP versions 4 and 5
 #
-# Authors:
-#	Garrett J. Woodworth
-#	Nate Abele
-#	<http://www.cakefoundation.org> 
+# CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+# Copyright 2005-2007, Cake Software Foundation, Inc.
+# 								1785 E. Sahara Avenue, Suite 490-204
+# 								Las Vegas, Nevada 89104
 #
+# Licensed under The MIT License
+# Redistributions of files must retain the above copyright notice.
 #
-# This script was made in the hope it would make my life easier, feel free to
-# use and abuse it as you see fit. However WITHOUT ANY WARRANTY. So if this
-# script causes your computer to tell bad jokes, its not our problem.
+# @filesource
+# @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+# @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+# @package			cake
+# @subpackage		cake.cake.scripts
+# @since				CakePHP(tm) v 1.2.0.4604
+# @version			$Revision$
+# @modifiedby		$LastChangedBy$
+# @lastmodified	$Date$
+# @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 #
 ################################################################################
 
