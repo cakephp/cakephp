@@ -579,6 +579,7 @@ class CakeSession extends Object {
 		if (function_exists('session_write_close')) {
 			session_write_close();
 		}
+		$this->__initSession();
 		session_id($oldSessionId);
 		session_start();
 		session_destroy();
