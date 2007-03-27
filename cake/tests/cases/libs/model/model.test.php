@@ -137,6 +137,16 @@
 class ModelTest extends CakeTestCase {
 	var $fixtures = array( 'core.category', 'core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
 	
+	function start() {
+		parent::start();
+		Configure::write('debug', 2);
+	}
+	
+	function end() {
+		parent::end();
+		Configure::write('debug', DEBUG);
+	}
+	
 	function testIdentity() {
 		$this->model =& new Test();
 		$result = $this->model->name;
