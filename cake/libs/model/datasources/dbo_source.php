@@ -830,6 +830,7 @@ class DboSource extends DataSource {
 
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
+			
 			$self = array(
 				'fields'	=> $this->fields($model, null, $queryData['fields']),
 				'joins'		=> array(array(
@@ -845,6 +846,12 @@ class DboSource extends DataSource {
 				'conditions'=> $queryData['conditions'],
 				'order'		=> $queryData['order']
 			);
+			
+			if (!empty($queryData['joins'])) {
+				foreach($queryData['joins'] as $join) {
+					$self['joins'][] = $join;
+				}
+			}
 
 			if($this->__bypass === false) {
 				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, ''));

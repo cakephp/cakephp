@@ -511,8 +511,8 @@ class DboSourceTest extends UnitTestCase {
 			}
 		}
 		
-		$query = $this->db->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
-		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)LEFT\s+JOIN\s+`category`\s+AS\s+`ParentCat`\s+ON\s+`Category2`\.`parent_id`\s+=\s+`ParentCat`\.`id`\s+WHERE/', $query);
+		$query = $this->db->generateAssociationQuery($this->model->Category2, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\s+WHERE/', $query);
 
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
