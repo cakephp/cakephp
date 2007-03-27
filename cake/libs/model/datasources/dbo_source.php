@@ -1278,6 +1278,9 @@ class DboSource extends DataSource {
 						$offset = $length;
 					}
 				}
+				if (empty($results) && !empty($buffer)) {
+					$results[] = $buffer;
+				}
 
 				if (!empty($results)) {
 					$fields = array_map('trim', $results);
@@ -1298,7 +1301,7 @@ class DboSource extends DataSource {
 		}
 		$count = count($fields);
 
-		if ($count >= 1 && $fields[0] != '*') {
+		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';

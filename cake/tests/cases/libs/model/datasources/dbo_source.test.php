@@ -243,8 +243,8 @@ class Level extends Model {
 		'Group'=> array(
 			'className' => 'Group'
 		),
-		'User' => array(
-			'className' => 'User'
+		'User2' => array(
+			'className' => 'User2'
 		)
 	);
 	
@@ -271,11 +271,11 @@ class Group extends Model {
 	);
 	
 	var $hasMany = array(
-		'Category'=> array(
-			'className' => 'Category'
+		'Category2'=> array(
+			'className' => 'Category2'
 		),
-		'User'=> array(
-			'className' => 'User'
+		'User2'=> array(
+			'className' => 'User2'
 		)
 	);
 	
@@ -291,8 +291,8 @@ class Group extends Model {
 	}
 }
 
-class User extends Model {
-	var $name = 'User';
+class User2 extends Model {
+	var $name = 'User2';
 	var $table = 'user';
 	var $useTable = false;
 	
@@ -306,8 +306,8 @@ class User extends Model {
 	);
 	
 	var $hasMany = array(
-		'Article' => array(
-			'className' => 'Article'
+		'Article2' => array(
+			'className' => 'Article2'
 		),
 	);
 	
@@ -324,8 +324,8 @@ class User extends Model {
 	}
 }
 
-class Category extends Model {
-	var $name = 'Category';
+class Category2 extends Model {
+	var $name = 'Category2';
 	var $table = 'category';
 	var $useTable = false;
 	
@@ -335,19 +335,19 @@ class Category extends Model {
 			'foreignKey' => 'group_id'
 		),
 		'ParentCat' => array(
-			'className' => 'Category',
+			'className' => 'Category2',
 			'foreignKey' => 'parent_id'
 		)
 	);
 	
 	var $hasMany = array(
 		'ChildCat' => array(
-			'className' => 'Category',
+			'className' => 'Category2',
 			'foreignKey' => 'parent_id'
 		),
-		'Article' => array(
-			'className' => 'Article',
-			'order'=>'Article.published_date DESC',
+		'Article2' => array(
+			'className' => 'Article2',
+			'order'=>'Article2.published_date DESC',
 			'foreignKey' => 'category_id',
 			'limit'=>'3')
 	);
@@ -367,25 +367,25 @@ class Category extends Model {
 	}
 }
 
-class Article extends Model {
-	var $name = 'Article';
+class Article2 extends Model {
+	var $name = 'Article2';
 	var $table = 'article';
 	var $useTable = false;
-	
-  var $belongsTo = array(
-  	'Category' => array(
-  		'className' => 'Category'
-  	),
-  	'User' => array(
-  		'className' => 'User'
-  	)
-  );
+
+	var $belongsTo = array(
+		'Category2' => array(
+  			'className' => 'Category2'
+		),
+		'User2' => array(
+			'className' => 'User2'
+ 		)
+ 	);
   
-  var $hasOne = array(
-  	'Featured' => array(
-  		'className' => 'Featured'
-  	)
-  );
+	var $hasOne = array(
+		'Featured' => array(
+			'className' => 'Featured'
+ 		)
+ 	);
 	
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
@@ -422,11 +422,11 @@ class Featured extends Model {
 	var $useTable = false;
 
 	var $belongsTo = array(
-		'Article' => array(
-			'className' => 'Article'
+		'Article2' => array(
+			'className' => 'Article2'
 		),
-		'Category' => array(
-			'Artiucle' => 'Category'
+		'Category2' => array(
+			'Artiucle' => 'Category2'
 		)
 	);
 	
@@ -486,25 +486,25 @@ class DboSourceTest extends UnitTestCase {
 	}
 	
 	function testGenerateAssociationQuerySelfJoin() {
-		$this->model = new Article();
+		$this->model = new Article2();
 		$this->_buildRelatedModels($this->model);
-		$this->_buildRelatedModels($this->model->Category);
-		$this->model->Category->ChildCat = new Category();
-		$this->model->Category->ParentCat = new Category();
+		$this->_buildRelatedModels($this->model->Category2);
+		$this->model->Category2->ChildCat = new Category2();
+		$this->model->Category2->ParentCat = new Category2();
 
 		$queryData = array();
 		
-		foreach($this->model->Category->__associations as $type) {
-			foreach($this->model->Category->{$type} as $assoc => $assocData) {
-				$linkModel =& $this->model->Category->{$assoc};
+		foreach($this->model->Category2->__associations as $type) {
+			foreach($this->model->Category2->{$type} as $assoc => $assocData) {
+				$linkModel =& $this->model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 				
-				if ($this->model->Category->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
-					$result = $this->db->generateSelfAssociationQuery($this->model->Category, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+				if ($this->model->Category2->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+					$result = $this->db->generateSelfAssociationQuery($this->model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertTrue($result);
 				} else {
-					if ($this->model->Category->useDbConfig == $linkModel->useDbConfig) {
-						$result = $this->db->generateAssociationQuery($this->model->Category, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+					if ($this->model->Category2->useDbConfig == $linkModel->useDbConfig) {
+						$result = $this->db->generateAssociationQuery($this->model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 						$this->assertTrue($result);
 					}
 				}
@@ -512,7 +512,7 @@ class DboSourceTest extends UnitTestCase {
 		}
 		
 		$query = $this->db->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
-		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)LEFT\s+JOIN\s+`category`\s+AS\s+`ParentCat`\s+ON\s+`Category`\.`parent_id`\s+=\s+`ParentCat`\.`id`\s+WHERE/', $query);
+		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)LEFT\s+JOIN\s+`category`\s+AS\s+`ParentCat`\s+ON\s+`Category2`\.`parent_id`\s+=\s+`ParentCat`\.`id`\s+WHERE/', $query);
 
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
@@ -832,7 +832,7 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
 		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
-		//$this->assertPattern('/\s*WHERE\s+`Sportstaette`\.`sportstaette`\s+LIKE\s+"%ru%"\s+AND\s+`Sports/', $result);
+		$this->assertPattern('/\s*WHERE\s+`Sportstaette`\.`sportstaette`\s+LIKE\s+"%ru%"\s+AND\s+`Sports/', $result);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
@@ -990,11 +990,15 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->fields($this->model, null, array(), false);
 		$expected = array('id', 'client_id', 'name', 'login', 'passwd', 'addr_1', 'addr_2', 'zip_code', 'city', 'country', 'phone', 'fax', 'url', 'email', 'comments', 'last_login', 'created', 'updated');
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'COUNT(*)');
+		$expected = array('COUNT(*)');
+		$this->assertEqual($result, $expected);
 	}
 
  	function testMergeAssociations() {
  		$data = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
@@ -1006,7 +1010,7 @@ class DboSourceTest extends UnitTestCase {
  			)
  		);
  		$expected = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			),
  			'Topic' => array(
@@ -1017,30 +1021,30 @@ class DboSourceTest extends UnitTestCase {
  		$this->assertEqual($data, $expected);
  		
  		$data = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			'User' => array ( 
+ 			'User2' => array ( 
  				array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
  			)
  		);
  		$expected = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			),
- 			'User' => array(
+ 			'User2' => array(
  				'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  			)
  		);
- 		$this->db->__mergeAssociation($data, $merge, 'User', 'belongsTo');
+ 		$this->db->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
  		$this->assertEqual($data, $expected);
  		
  		$data = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
@@ -1050,7 +1054,7 @@ class DboSourceTest extends UnitTestCase {
  			)
  		);
  		$expected = array(
- 			'Article' => array(
+ 			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			),
  			'Comment' => array()
@@ -1101,7 +1105,7 @@ class DboSourceTest extends UnitTestCase {
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
- 				'User' => array(
+ 				'User2' => array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
  			),
@@ -1109,7 +1113,7 @@ class DboSourceTest extends UnitTestCase {
  				'Comment' => array(
  					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
- 				'User' => array(
+ 				'User2' => array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
  			)
@@ -1121,13 +1125,13 @@ class DboSourceTest extends UnitTestCase {
  			'Comment' => array(
  				array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User' => array(
+ 					'User2' => array(
  						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  					)
  				),
  				array(
  					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User' => array(
+ 					'User2' => array(
  						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  					)
  				)
@@ -1146,7 +1150,7 @@ class DboSourceTest extends UnitTestCase {
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
- 				'User' => array(
+ 				'User2' => array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
  				'Tag' => array(
@@ -1158,7 +1162,7 @@ class DboSourceTest extends UnitTestCase {
  				'Comment' => array(
  					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
- 				'User' => array(
+ 				'User2' => array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
  				'Tag' => array()
@@ -1171,7 +1175,7 @@ class DboSourceTest extends UnitTestCase {
  			'Comment' => array(
  				array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User' => array(
+ 					'User2' => array(
  						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  					),
  					'Tag' => array(
@@ -1181,7 +1185,7 @@ class DboSourceTest extends UnitTestCase {
  				),
  				array(
  					'id' => '2', 'comment' => 'Comment 2', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31',
- 					'User' => array(
+ 					'User2' => array(
  						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  					),
  					'Tag' => array()

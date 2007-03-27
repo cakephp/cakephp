@@ -271,6 +271,9 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->field('COUNT(*) AS count', true);
 		$this->assertEqual($result, 4);
+
+		$result = $this->model->field('COUNT(*)', true);
+		$this->assertEqual($result, 4);
 	}
 
 	function testBindUnbind() {
