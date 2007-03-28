@@ -978,7 +978,6 @@ class Controller extends Object {
 			// Error: can't find object
 			return array();
 		}
-
 		$options = am($this->params, $this->params['url'], $this->passedArgs);
 		if (isset($this->paginate[$object->name])) {
 			$defaults = $this->paginate[$object->name];
@@ -1020,17 +1019,11 @@ class Controller extends Object {
 		}
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
-		$options = am($defaults, $options);
-		if (isset($this->paginate[$object->name])) {
-			$defaults = $this->paginate[$object->name];
-		} else {
-			$defaults = $this->paginate;
-		}
 		if (!isset($defaults['conditions'])) {
 			$defaults['conditions'] = array();
 		}
 
-		extract(am(array('page' => 1, 'limit' => 20), $defaults, $options));
+		extract($options = am(array('page' => 1, 'limit' => 20), $defaults, $options));
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = am($conditions, $scope);
 		} elseif (is_string($scope)) {
@@ -1043,6 +1036,7 @@ class Controller extends Object {
 		if($page == 'last') {
 			$options['page'] = $page = $pageCount;
 		}
+
 		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
 		$paging = array(
 			'page'		=> $page,
@@ -1052,7 +1046,8 @@ class Controller extends Object {
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
 			'defaults'	=> am(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options);
+			'options'	=> $options
+		);
 
 		$this->params['paging'][$object->name] = $paging;
 
