@@ -382,10 +382,10 @@ class DboSource extends DataSource {
  * @return string SQL field
  */
 	function name($data) {
-		if (preg_match_all('/(.*)\((.*)\)/', $data, $fields)) {
+		if (preg_match_all('/(.*)\((.*)\)(.*)/', $data, $fields)) {
 			$fields = Set::extract($fields, '{n}.0');
 			if (isset($fields[1]) && isset($fields[2])) {
-				return $fields[1] . '(' . $this->name($fields[2]) . ')';
+				return $fields[1] . '(' . $this->name($fields[2]) . ')' . $fields[3];
 			}
 		}
 		if ($data == '*') {

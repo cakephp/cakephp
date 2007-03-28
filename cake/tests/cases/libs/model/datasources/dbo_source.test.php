@@ -940,6 +940,9 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->conditions(array(array('Project.removed' => null)));
 		$this->assertPattern('/^\s*WHERE\s+`Project`.`removed`\s+IS\s+NULL\s*$/', $result);
+
+		$result = $this->db->conditions(array('(Usergroup.permissions) & 4' => 4));
+		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+4\s*$/', $result);
 	}
 
 	function testFieldParsing() {
