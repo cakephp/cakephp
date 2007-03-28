@@ -231,7 +231,7 @@ class Router extends Object {
 		$out = array();
 		$r = $ext = null;
 
-		if ($url && strpos($url, '/') !== 0 && !defined('SERVER_IIS')) {
+		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
