@@ -208,6 +208,7 @@ class EmailComponent extends Object{
  */
 	function send($content = null){
 		$this->__createHeader();
+		$this->subject = $this->__encode($this->subject);
 
 		if($this->template === null) {
 			if(is_array($content)){
@@ -236,9 +237,6 @@ class EmailComponent extends Object{
 		}
 		$__method = '__'.$this->delivery;
 
-		if(low($this->charset) === 'utf-8') {
-			$this->subject = utf8_decode($this->subject);
-		}
 		return $this->$__method();
 	}
 /**
@@ -305,21 +303,21 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader(){
-		$this->__header .= 'From: ' . $this->from . $this->_newLine;
-		$this->__header .= 'Reply-To: ' . $this->replyTo . $this->_newLine;
-		$this->__header .= 'Return-Path: ' . $this->return . $this->_newLine;
+		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
+		$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
+		$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
 
 		$addresses = null;
 		if(!empty($this->cc)) {
 			foreach ($this->cc as $cc) {
-				$addresses .= $cc . ', ';
+				$addresses .= $this->__formatAddress($cc) . ', ';
 			}
 			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
 			//$this->to .= ', ' . $addresses;
 		}
 		if(!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
-				$addresses .= $bcc . ', ';
+				$addresses .= $this->__formatAddress($bcc) . ', ';
 			}
 			$this->__header .= 'Bcc: ' . $addresses . $this->_newLine;
 			//$this->to .= ', ' . $addresses;
@@ -424,6 +422,43 @@ class EmailComponent extends Object{
 			$formated .= "\n";
 		}
 		return $formated;
+	}
+/**
+ * Enter description here...
+ *
+ * @param string $subject
+ * @return unknown
+ * @access private
+ */
+	function __encode($subject) {
+		if(low($this->charset) !== 'iso-8859-15') {
+			$start = "=?" . $this->charset . "?B?";
+			$end = "?=";
+			$spacer = $end . "\n " . $start;
+
+			$length = 75 - strlen($start) - strlen($end);
+			$length = $length - ($length % 4);
+
+			$subject = base64_encode($subject);
+			$subject = chunk_split($subject, $length, $spacer);
+			$spacer = preg_quote($spacer);
+			$subject = preg_replace("/" . $spacer . "$/", "", $subject);
+			$subject = $start . $subject . $end;
+		}
+		return $subject;
+	}
+/**
+ * Enter description here...
+ *
+ * @param string $string
+ * @return unknown
+ * @access private
+ */
+	function __formatAddress($string){
+		if(strpos($string, '<') !== false){
+			$value = explode('<', $string);
+			$string = $this->__encode($value[0]) . ' <' . $value[1];
+		}
 	}
 /**
  * Enter description here...
