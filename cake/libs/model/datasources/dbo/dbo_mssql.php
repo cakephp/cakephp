@@ -38,29 +38,23 @@
  */
 class DboMssql extends DboSource {
 /**
- * Enter description here...
+ * Driver description
  *
- * @var unknown_type
+ * @var string
  */
 	var $description = "MS SQL DBO Driver";
 /**
- * Enter description here...
+ * Starting quote character for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $startQuote = "[";
 /**
- * Enter description here...
+ * Ending quote character for quoted identifiers
  *
- * @var unknown_type
+ * @var string
  */
 	var $endQuote = "]";
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $goofyLimit = true;
  /**
  * Creates a map between field aliases and numeric indexes.  Workaround for the
  * SQL Server driver's 30-character column name limitation.
@@ -89,18 +83,17 @@ class DboMssql extends DboSource {
  */
 	var $columns = array(
 		'primary_key' => array('name' => 'int IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name'  => 'varchar', 'limit' => '255'),
+		'string'	=> array('name' => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'text'),
-		'integer'	=> array('name'      => 'int', 'limit'     => '11', 'formatter' => 'intval'),
-		'float'		=> array('name'      => 'float', 'formatter' => 'floatval'),
-		'datetime'	=> array('name' => 'datetime', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'timestamp' => array('name'      => 'timestamp', 'format'    => 'Y-m-d H:i:s', 'formatter' => 'date'),
-		'time'		=> array('name' => 'datetime', 'format'    => 'H:i:s', 'formatter' => 'date'),
-		'date'		=> array('name' => 'datetime', 'format'    => 'Y-m-d', 'formatter' => 'date'),
+		'integer'	=> array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'float'		=> array('name' => 'float', 'formatter' => 'floatval'),
+		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
+		'time'		=> array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
+		'date'		=> array('name' => 'datetime', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary'	=> array('name' => 'image'),
 		'boolean'	=> array('name' => 'bit')
 	);
-
 /**
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
  *
@@ -108,6 +101,9 @@ class DboMssql extends DboSource {
  * @return boolean True if connected successfully, false on error
  */
 	function __construct($config) {
+		if (!function_exists('mssql_min_message_severity')) {
+			trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_ERROR);
+		}
 		mssql_min_message_severity(15);
 		mssql_min_error_severity(2);
 		return parent::__construct($config);
@@ -119,7 +115,6 @@ class DboMssql extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
 
 		$os = env('OS');
 		if (!empty($os) && strpos($os, 'Windows') !== false) {
@@ -127,7 +122,10 @@ class DboMssql extends DboSource {
 		} else {
 			$sep = ':';
 		}
-
+		$connect = 'mssql_connect';
+		if ($config['persistent']) {
+			$connect = 'mssql_pconnect';
+		}
 		$this->connected = false;
 
 		if (is_numeric($config['port'])) {
@@ -137,7 +135,6 @@ class DboMssql extends DboSource {
 		} else {
 			$port = '\\' . $config['port'];	// Named pipe
 		}
-
 		$this->connection = $connect($config['host'] . $port, $config['login'], $config['password']);
 
 		if (mssql_select_db($config['database'], $this->connection)) {
@@ -170,7 +167,7 @@ class DboMssql extends DboSource {
  * @return array Array of tablenames in the database
  */
 	function listSources() {
-		$cache=parent::listSources();
+		$cache = parent::listSources();
 
 		if ($cache != null) {
 			return $cache;
@@ -181,7 +178,7 @@ class DboMssql extends DboSource {
 		if (!$result || empty($result)) {
 			return array();
 		} else {
-			$tables=array();
+			$tables = array();
 
 			foreach($result as $table) {
 				$tables[] = $table[0]['TABLE_NAME'];
@@ -211,32 +208,12 @@ class DboMssql extends DboSource {
 			$fields[] = array(
 				'name' => $column[0]['Field'],
 				'type' => $this->column($column[0]['Type']),
-				'null' => up($column[0]['Null']),
+				'null' => (up($column[0]['Null']) == 'YES'),
 				'default' => $column[0]['Default']
 			);
 		}
-
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
-	}
-
-/**
- * Returns a quoted name of $data for use in an SQL statement.
- *
- * @param string $data Name (table.field) to be prepared for use in an SQL statement
- * @return string Quoted for MS SQL
- */
-	function name($data) {
-		if ($data == '*') {
-			return '*';
-		}
-
-		$pos = strpos($data, '[');
-		if ($pos === false) {
-			$data = '[' . r('.', '].[', $data) . ']';
-		}
-
-		return r(']]', ']', r('[[', '[', $data));
 	}
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
@@ -281,25 +258,11 @@ class DboMssql extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields(&$model, $alias, $fields) {
-		if (is_array($fields)) {
-			$fields = $fields;
-		} else {
-			if ($fields != null) {
-				if (strpos($fields, ',')) {
-					$fields = explode(',', $fields);
-				} else {
-					$fields = array($fields);
-				}
-
-				$fields = array_map('trim', $fields);
-			} else {
-				foreach($model->_tableInfo->value as $field) {
-					$fields[] = $field['name'];
-				}
-			}
+	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+		if (empty($alias)) {
+			$alias = $model->name;
 		}
-
+		$fields = parent::fields($model, $alias, $fields, false);
 		$count = count($fields);
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
@@ -444,8 +407,10 @@ class DboMssql extends DboSource {
 			if (!strpos(strtolower($limit), 'top') || strpos(strtolower($limit), 'top') === 0) {
 				$rt = ' TOP';
 			}
-
 			$rt .= ' ' . $limit;
+			if (is_int($offset) && $offset > 0) {
+				$rt .= ' OFFSET ' . $offset;
+			}
 			return $rt;
 		}
 		return null;
@@ -526,6 +491,36 @@ class DboMssql extends DboSource {
 			}
 			$j++;
 		}
+	}
+/**
+ * Builds final SQL statement 
+ *
+ * @param array $data Query data
+ * @return string
+ */
+	function renderStatement($data) {
+		extract($data);
+		if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
+			$limit = preg_replace('/\s*offset.*$/i', '', $limit);
+			$limitVal = preg_match('/top\s+([0-9]+)/i', $limit);
+			$offset = intval($offset[1]) + intval($limitVal[1]);
+			$rOrder = $this->__switchSort($order);
+			return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order}";
+		} else {
+			return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
+		}
+	}
+/**
+ * Reverses the sort direction of ORDER statements to get paging offsets to work correctly 
+ *
+ * @param string $order
+ * @return string
+ * @access private
+ */
+	function __switchSort($order) {
+		$order = preg_replace('/\s+ASC/i', '__tmp_asc__', $order);
+		$order = preg_replace('/\s+DESC/i', ' ASC', $order);
+		return preg_replace('/__tmp_asc__/', ' DESC', $order);
 	}
 /**
  * Returns an array of all result rows for a given SQL query.
