@@ -66,16 +66,20 @@ if (!defined('PHP5')) {
 			if (strpos($uri, 'index.php') !== false) {
 				$uri = r('?', '', $uri);
 				$elements = explode('/index.php', $uri);
+			} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
+				$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
 			} else {
-				$elements = explode('/?', $uri);
+				$elements = array();
 			}
 
 			if (!empty($elements[1])) {
 				$_GET['url'] = $elements[1];
 				$url = $elements[1];
 			} else {
-				$_GET['url'] = '/';
-				$url = '/';
+				$url = $_GET['url'] = '/';
+			}
+			if (strpos($url, '/') === 0 && $url != '/') {
+				$url = $_GET['url'] = substr($url, 1);
 			}
 		}
 	} else {

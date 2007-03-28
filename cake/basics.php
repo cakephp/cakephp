@@ -918,10 +918,18 @@
 		} elseif(env('REQUEST_URI')) {
 			$uri = env('REQUEST_URI');
 		} else {
-			if (env('argv')) {
-				$uri = env('argv');
-
+			if ($uri = env('argv')) {
 				if (defined('SERVER_IIS')) {
+					if (key($_GET) && strpos(key($_GET), '?') !== false) {
+						unset($_GET[key($_GET)]);
+					}
+					$uri = preg_split('/\?/', $uri[0], 2);
+					if (isset($uri[1])) {
+						foreach (preg_split('/&/', $uri[1]) as $var) {
+							@list($key, $val) = explode('=', $var);
+							$_GET[$key] = $val;
+						}
+					}
 					$uri = BASE_URL . $uri[0];
 				} else {
 					$uri = env('PHP_SELF') . '/' . $uri[0];

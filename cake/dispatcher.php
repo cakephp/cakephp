@@ -190,12 +190,11 @@ class Dispatcher extends Object {
 			$missingAction = true;
 		}
 
-		if (in_array(strtolower($params['action']), array('tostring', 'requestaction', 'log',
-															'cakeerror', 'constructclasses', 'redirect',
-															'set', 'setaction', 'validate', 'validateerrors',
-															'render', 'referer', 'flash', 'flashout',
-															'generatefieldnames', 'postconditions', 'cleanupfields',
-															'beforefilter', 'beforerender', 'afterfilter'))) {
+		if (in_array(strtolower($params['action']), array(
+			'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
+			'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
+			'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter'
+		))) {
 			$missingAction = true;
 		}
 
@@ -443,9 +442,7 @@ class Dispatcher extends Object {
 
 		if (isset($_FILES['data'])) {
 			foreach ($_FILES['data'] as $key => $data) {
-
 				foreach ($data as $model => $fields) {
-
 					foreach ($fields as $field => $value) {
 						$params['data'][$model][$field][$key] = $value;
 					}
