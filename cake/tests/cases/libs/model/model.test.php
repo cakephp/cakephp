@@ -128,6 +128,21 @@
 	class Category extends CakeTestModel {
 		var $name = 'Category';
 	}
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
+	class CategoryThread extends CakeTestModel {
+		var $name = 'CategoryThread';
+		var $belongsTo = array(
+			'ParentCategory' => array(
+				'className' => 'CategoryThread',
+				'foreignKey' => 'parent_id'
+			)
+		);
+	}
 /**
  * Short description for class.
  *
@@ -135,7 +150,7 @@
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-	var $fixtures = array( 'core.category', 'core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
+	var $fixtures = array( 'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
 	
 	function start() {
 		parent::start();
@@ -169,6 +184,17 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->create();
 		$expected = array ('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
+	}
+	
+	function testFindAllFakeThread() {
+		$this->model =& new CategoryThread();
+		
+		$this->db->fullDebug = true;
+		$this->model->recursive = 10;
+		$this->model->id = 1;
+		$data = $this->model->read();
+
+		pr($data);
 	}
 	
 	function testFindAll() {

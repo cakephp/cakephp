@@ -125,6 +125,12 @@ class AjaxTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSubmitWithIndicator() {
+		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "/controller/action", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
+		$this->assertPattern('/onLoading:function\(request\){doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
+		$this->assertPattern('/onComplete:function\(request, json\){doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
+	}
+
 	function tearDown() {
 		unset($this->Ajax);
 	}

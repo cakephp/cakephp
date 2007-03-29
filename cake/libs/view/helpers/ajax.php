@@ -658,11 +658,17 @@ class AjaxHelper extends AppHelper {
 
 		if (isset($options['indicator'])) {
 			if (isset($options['loading'])) {
+				if (!empty($options['loading']) && substr(trim($options['loading']), -1, 1) != ';') {
+					$options['loading'] .= '; ';
+				}
 				$options['loading']  .= "Element.show('{$options['indicator']}');";
 			} else {
 				$options['loading']   = "Element.show('{$options['indicator']}');";
 			}
 			if (isset($options['complete'])) {
+				if (!empty($options['complete']) && substr(trim($options['complete']), -1, 1) != ';') {
+					$options['complete'] .= '; ';
+				}
 				$options['complete'] .= "Element.hide('{$options['indicator']}');";
 			} else {
 				$options['complete']  = "Element.hide('{$options['indicator']}');";
