@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs.model.datasources
  */
-class DataSource extends Object{
+class DataSource extends Object {
 /**
  * Are we connected to the DataSource?
  *
@@ -221,7 +221,7 @@ class DataSource extends Object{
  * @return void
  */
 	function __cacheDescription($object, $data = null) {
-		if (DEBUG > 0) {
+		if (Configure::read() > 0) {
 			$expires = "+15 seconds";
 		} else {
 			$expires = "+999 days";
