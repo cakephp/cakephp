@@ -117,8 +117,7 @@ class SessionHelper extends CakeSession {
 			if (parent::check('Message.' . $key)) {
 				e(parent::read('Message.' . $key));
 				parent::del('Message.' . $key);
-			} else {
-				return false;
+				return true;
 			}
 		}
 		return false;
