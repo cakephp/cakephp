@@ -943,6 +943,15 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->conditions(array('(Usergroup.permissions) & 4' => 4));
 		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+4\s*$/', $result);
+
+		//$result = $this->db->conditions(array('((Usergroup.permissions) & 4)' => 4));
+		//$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+
+		$result = $this->db->conditions(array(
+			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
+			'Enrollment.yearcompleted' => '> 0')
+		);
+		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+0\s*$/', $result);
 	}
 
 	function testFieldParsing() {

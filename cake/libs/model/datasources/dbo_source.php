@@ -1424,6 +1424,9 @@ class DboSource extends DataSource {
 				$join = ' ' . strtoupper($key) . ' ';
 				$value = $this->conditionKeysToString($value, $quoteValues);
 				if (strpos($join, 'NOT') !== false) {
+					if (up(trim($key)) == 'NOT') {
+						$key = 'AND ' . $key;
+					}
 					$out[] = 'NOT (' . join(') ' . strtoupper($key) . ' (', $value) . ')';
 				} else {
 					$out[] = '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
