@@ -551,7 +551,8 @@ class I18nExtractor {
 		return $output;
 	}
 	function __findVersion($code, $file) {
-		if(preg_match('/\\$Id$code, $versionInfo)) {
+		$header = '$Id' . ':';
+		if (preg_match('/\\' . $header . '[\\w.]* ([\\d]*)/', $code, $versionInfo)) {
 			$version = str_replace(ROOT, '', 'Revision: ' . $versionInfo[1] . ' ' .$file);
 			$this->__fileVersions[$file] = $version;
 		}
