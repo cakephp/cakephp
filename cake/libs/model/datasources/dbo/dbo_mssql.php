@@ -85,7 +85,7 @@ class DboMssql extends DboSource {
 		'primary_key' => array('name' => 'int IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name' => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'text'),
-		'integer'	=> array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
+		'integer'	=> array('name' => 'int', 'formatter' => 'intval'),
 		'float'		=> array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime'	=> array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
