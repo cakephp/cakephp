@@ -787,7 +787,23 @@ class DboSource extends DataSource {
 					$data[$association] = $merge[0][$association];
 				} else {
 					if(is_array($merge[0][$association])){
-						$data[$association] = array_merge($merge[0][$association], $data[$association]);
+						foreach ($data[$association] as $k => $v) {
+							if(!is_array($v)){
+								$dataAssocTmp[$k] = $v;
+							}
+						}
+
+						foreach ($merge[0][$association] as $k => $v) {
+							if(!is_array($v)){
+								$mergeAssocTmp[$k] = $v;
+							}
+						}
+
+						if ($mergeAssocTmp == $dataAssocTmp) {
+							$data[$association] = array_merge($merge[0][$association], $data[$association]);
+						} else {
+							$data[$association][$association] = $merge[0][$association];
+						}
 					}
 				}
 			}
@@ -830,7 +846,7 @@ class DboSource extends DataSource {
 
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
-			
+
 			$self = array(
 				'fields'	=> $this->fields($model, null, $queryData['fields']),
 				'joins'		=> array(array(
@@ -846,7 +862,7 @@ class DboSource extends DataSource {
 				'conditions'=> $queryData['conditions'],
 				'order'		=> $queryData['order']
 			);
-			
+
 			if (!empty($queryData['joins'])) {
 				foreach($queryData['joins'] as $join) {
 					$self['joins'][] = $join;
