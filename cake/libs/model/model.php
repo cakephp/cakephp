@@ -1765,8 +1765,6 @@ class Model extends Overloadable {
  * @return array An associative array of records, where the id is the key, and the display field is the value
  */
 	function generateList($conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		if ($keyPath == null && $valuePath == null && $groupPath == null && $this->hasField($this->displayField)) {
 			$fields = array($this->primaryKey, $this->displayField);
 		} else {
