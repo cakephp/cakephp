@@ -172,37 +172,14 @@ class SessionComponent extends CakeSession {
  *
  * Additional params below can be passed to customize the output, or the Message.[key]
  *
- * @param string $flashMessage Message to be flashed
+ * @param string $message Message to be flashed
  * @param string $layout Layout to wrap flash message in
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
  */
-	function setFlash($flashMessage, $layout = 'default', $params = array(), $key = 'flash') {
+	function setFlash($message, $layout = 'default', $params = array(), $key = 'flash') {
 		if ($this->__active === true) {
-			if ($layout == 'default') {
-				$out = '<div id="' . $key . 'Message" class="message">' . $flashMessage . '</div>';
-			} elseif ($layout == '' || $layout == null) {
-				$out = $flashMessage;
-			} else {
-				$ctrl = null;
-				$view = new View($ctrl);
-				$view->base			= $this->base;
-				$view->webroot		= $this->webroot;
-				$view->here			= $this->here;
-				$view->params		= $this->params;
-				$view->action		= $this->action;
-				$view->data			= $this->data;
-				$view->themeWeb     = '';
-				$view->plugin		= $this->plugin;
-				$view->namedArgs    = array();
-				$view->argSeparator = array();
-				$view->helpers		= array('Html');
-				$view->layout		= $layout;
-				$view->pageTitle	= '';
-				$view->viewVars	= $params;
-				$out = $view->renderLayout($flashMessage);
-			}
-			$this->write('Message.' . $key, $out);
+			$this->write('Message.' . $key, compact('message', 'layout', 'params'));
 		}
 	}
 /**

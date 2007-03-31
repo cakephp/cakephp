@@ -115,7 +115,20 @@ class SessionHelper extends CakeSession {
 	function flash($key = 'flash') {
 		if ($this->__active === true) {
 			if (parent::check('Message.' . $key)) {
-				e(parent::read('Message.' . $key));
+				$flash = parent::read('Message.' . $key);
+
+				if ($flash['layout'] == 'default') {
+					$out = '<div id="' . $key . 'Message" class="message">' . $flash['message'] . '</div>';
+				} elseif ($flash['layout'] == '' || $flash['layout'] == null) {
+					$out = $flash['message'];
+				} else {
+					$view =& ClassRegistry::getObject('view');
+					list($tmpLayout, $tmpVars, $tmpTitle) = array($view->layout, $view->viewVars, $view->pageTitle);
+					list($view->layout, $view->viewVars, $view->pageTitle) = array($flash['layout'], $flash['params'], '');
+					$out = $view->renderLayout($flash['message']);
+					list($view->layout, $view->viewVars, $view->pageTitle) = array($tmpLayout, $tmpVars, $tmpTitle);
+				}
+				e($out);
 				parent::del('Message.' . $key);
 				return true;
 			}
@@ -129,7 +142,7 @@ class SessionHelper extends CakeSession {
  */
 	function valid() {
 		if ($this->__active === true) {
-		return parent::valid();
+			return parent::valid();
 		}
 	}
 }
