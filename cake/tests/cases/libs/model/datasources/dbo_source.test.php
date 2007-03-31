@@ -862,6 +862,10 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions("lower(Article.title) LIKE 'a%'");
 		$expected = " WHERE lower( `Article`.`title`) LIKE 'a%'";
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->db->conditions('((MATCH(Video.title) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( Video.description) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(Video.tags) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))');
+		$expected = ' WHERE ((MATCH( `Video`.`title`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( `Video`.`description`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH( `Video`.`tags`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testArrayConditionsParsing() {
