@@ -1133,43 +1133,48 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		foreach($joined as $x => $y) {
 			foreach($y as $assoc => $value) {
-				$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-				$mainKey[$assoc] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-				$keys[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-				$keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
-				$fields[$assoc]  = join(',', $keys);
-				unset($keys);
-
-				foreach($value as $update) {
-					if (!empty($update)) {
-						$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
-						$values[]  = $db->value($update);
-						$values    = join(',', $values);
-						$newValues[] = "({$values})";
-						unset ($values);
+				if (isset($this->hasAndBelongsToMany[$assoc])) {
+					$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
+					$mainKey[$assoc] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+					$keys[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
+					$keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+					$fields[$assoc]  = join(',', $keys);
+					unset($keys);
+	
+					foreach($value as $update) {
+						if (!empty($update)) {
+							$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
+							$values[]  = $db->value($update);
+							$values    = join(',', $values);
+							$newValues[] = "({$values})";
+							unset ($values);
+						}
 					}
-				}
-
-				if (!empty($newValues)) {
-					$newValue[$assoc] = $newValues;
-					unset($newValues);
-				} else {
-					$newValue[$assoc] = array();
+	
+					if (!empty($newValues)) {
+						$newValue[$assoc] = $newValues;
+						unset($newValues);
+					} else {
+						$newValue[$assoc] = array();
+					}
 				}
 			}
 		}
-		$total = count($joinTable);
-
-		if(is_array($newValue)) {
-			foreach ($newValue as $loopAssoc => $val) {
-				$db =& ConnectionManager::getDataSource($this->useDbConfig);
-				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
-				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
-
-				if (!empty($newValue[$loopAssoc])) {
-					$secondCount = count($newValue[$loopAssoc]);
-					for($x = 0; $x < $secondCount; $x++) {
-						$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
+		
+		if (isset($joinTable)) {
+			$total = count($joinTable);
+	
+			if(is_array($newValue)) {
+				foreach ($newValue as $loopAssoc => $val) {
+					$db =& ConnectionManager::getDataSource($this->useDbConfig);
+					$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
+					$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
+	
+					if (!empty($newValue[$loopAssoc])) {
+						$secondCount = count($newValue[$loopAssoc]);
+						for($x = 0; $x < $secondCount; $x++) {
+							$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
+						}
 					}
 				}
 			}
