@@ -186,7 +186,13 @@ class ModelTest extends CakeTestCase {
 
 		$this->model =& new User();
 		$result = $this->model->_tableInfo->value;
-		$expected = array ( 0 => array ( 'name' => 'id', 'type' => 'integer', 'null' => false, 'default' => NULL, 'length' => 11, ), 1 => array ( 'name' => 'user', 'type' => 'string', 'null' => false, 'default' => '', 'length' => 255, ), 2 => array ( 'name' => 'password', 'type' => 'string', 'null' => false, 'default' => '', 'length' => 255, ), 3 => array ( 'name' => 'created', 'type' => 'datetime', 'null' => true, 'default' => NULL, 'length' => NULL, ), 4 => array ( 'name' => 'updated', 'type' => 'datetime', 'null' => true, 'default' => NULL, 'length' => NULL));
+		$expected = array (
+			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => 11),
+			array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+			array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
+			array('name' => 'created',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
+			array('name' => 'updated',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null)
+		);
 		$this->assertEqual($result, $expected);
 
 		$this->model =& new Article();

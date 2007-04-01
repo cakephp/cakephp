@@ -86,6 +86,9 @@ class FormHelperTest extends UnitTestCase {
 		$result = $this->Form->input('Model/password');
 		$expected = '<div class="input"><label for="ModelPassword">Password</label><input type="password" name="data[Model][password]" value="" id="ModelPassword" /></div>';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->input('test', array('options' => array('First', 'Second'), 'empty' => true));
+		$this->assertPattern('/<select [^<>]+>\s+<option value=""\s*><\/option>\s+<option value="0"/', $result);
 	}
 
 	function testLabel() {
@@ -216,6 +219,10 @@ class FormHelperTest extends UnitTestCase {
 		$this->assertNoPattern('/<option[^<>]+[^value|selected]=[^<>]*>/', $result);
 	}
 
+	function testDaySelect() {
+		
+	}
+
 	function testTextArea() {
 		$this->Form->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model/field');
@@ -245,7 +252,7 @@ class FormHelperTest extends UnitTestCase {
 		$this->assertPattern('/^<input type="file"[^<>]+value=""[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input type="file"[^<>]+id="ModelUpload"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>$/', $result);
 	}
 
 	function testSubmitButton() {

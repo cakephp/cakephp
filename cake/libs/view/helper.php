@@ -348,6 +348,15 @@ class Helper extends Overloadable {
 		return $view->model;
 	}
 /**
+ * Gets the ID of the currently-used model of the rendering context.
+ *
+ * @return mixed
+ */
+	function modelID() {
+		$view =& ClassRegistry::getObject('view');
+		return $view->modelId;
+	}
+/**
  * Gets the currently-used model field of the rendering context.
  *
  * @return string
@@ -488,9 +497,14 @@ class Helper extends Overloadable {
  */
 	function __initInputField($field, $options = array()) {
 		$this->setFormTag($field);
+		$options = (array)$options;
 		$options = $this->__name($options);
 		$options = $this->__value($options);
 		$options = $this->domId($options);
+		if ($this->tagIsInvalid()) {
+			$options = $this->addClass($options, 'form-error');
+		}
+		unset($options['name']); // Temporary
 		return $options;
 	}
 /**
@@ -531,7 +545,12 @@ class Helper extends Overloadable {
  * @return string Tag with inserted values.
  */
 	function assign($keyName, $values) {
-		return str_replace('%%' . array_keys($values) . '%%', array_values($values), $this->tags[$keyName]);
+		$out = $keyName;
+		if (isset($this->tags) && isset($this->tags[$keyName])) {
+			$out = $this->tags[$keyName];
+		}
+		
+		//$out = 
 	}
 /**
  * Before render callback.  Overridden in subclasses.

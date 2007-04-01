@@ -76,6 +76,7 @@ class FormHelper extends AppHelper {
 	function create($model = null, $options = array()) {
 		$defaultModel = null;
 		$data = array('fields' => '','key' => '', 'validates' => '');
+		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($model) && empty($options)) {
 			$options = $model;
@@ -116,6 +117,7 @@ class FormHelper extends AppHelper {
 			$created = true;
 			$id = $this->data[$model][$data['key']];
 		}
+		$view->modelId = $id;
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'id' => $model . ife($created, 'Edit', 'Add') . 'Form',
@@ -424,17 +426,17 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out = $before . $out . $between . $this->dateTime($tagName, null, '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, null, '12', $selected, array(), $empty);
 			break;
 			case 'date':
-				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', null, $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', null, $selected, array(), $empty);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', '12', $selected, $options, null, $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', '12', $selected, array(), $empty);
 			break;
 			case 'textarea':
 			default:
-				$out = $before . $out . $between . $this->textarea($tagName, am(array('cols' => '30', 'rows' => '10'), $options));
+				$out = $before . $out . $between . $this->textarea($tagName, am(array('cols' => '30', 'rows' => '6'), $options));
 			break;
 		}
 
@@ -451,85 +453,70 @@ class FormHelper extends AppHelper {
  * Creates a text input widget.
  *
  * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param array $htmlAttributes Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
-	function text($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = am(array('type' => 'text'), $htmlAttributes);
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
-		}
-		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, null, ' ')));
+	function text($fieldName, $options = array()) {
+		$options = $this->__initInputField($fieldName, am(array('type' => 'text'), $options));
+		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
 /**
  * Creates a password input widget.
  *
  * @param  string  $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param  array	$htmlAttributes Array of HTML attributes.
+ * @param  array	$options Array of HTML attributes.
  * @return string
  */
-	function password($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
-		}
-		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, null, ' ')));
+	function password($fieldName, $options = array()) {
+		$options = $this->__initInputField($fieldName, $options);
+		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
 /**
  * Creates a textarea widget.
  *
  * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param array $htmlAttributes Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
-	function textarea($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-
-		if (isset($htmlAttributes['type'])) {
-			unset($htmlAttributes['type']);
-		}
+	function textarea($fieldName, $options = array()) {
+		$options = $this->__initInputField($fieldName, $options);
+		unset($options['type']);
 		$value = null;
-		if (array_key_exists('value', $htmlAttributes)) {
-			$value = $htmlAttributes['value'];
-			unset($htmlAttributes['value']);
+
+		if (array_key_exists('value', $options)) {
+			$value = $options['value'];
+			unset($options['value']);
 		}
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form-error');
-		}
-		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' '), $value));
+		return $this->output(sprintf($this->Html->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($options, null, ' '), $value));
 	}
 /**
  * Creates a hidden input field.
  *
  * @param  string  $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param  array	$htmlAttributes Array of HTML attributes.
+ * @param  array	$options Array of HTML attributes.
  * @return string
  * @access public
  */
-	function hidden($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->domId($this->__value((array)$htmlAttributes, $fieldName));
+	function hidden($fieldName, $options = array()) {
+		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
-		if (in_array($fieldName, array('_method'))) {
+		unset($options['class']);
+		if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;
 		}
-		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($options, null, ' ', ' ')));
 	}
 /**
  * Creates file input widget.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @param array $htmlAttributes Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string
  * @access public
  */
-	function file($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->domId($this->__value($htmlAttributes, $fieldName));
-		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' ')));
+	function file($fieldName, $options = array()) {
+		$options = $this->__initInputField($fieldName, $options);
+		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($options, null, '', ' ')));
 	}
 /**
  * Creates a button tag.
@@ -600,16 +587,16 @@ class FormHelper extends AppHelper {
  * Creates an image input widget.
  *
  * @param  string  $path           Path to the image file, relative to the webroot/img/ directory.
- * @param  array   $htmlAttributes Array of HTML attributes.
+ * @param  array   $options Array of HTML attributes.
  * @return string  HTML submit image element
  */
-	function submitImage($path, $htmlAttributes = array()) {
+	function submitImage($path, $options = array()) {
 		if (strpos($path, '://')) {
 			$url = $path;
 		} else {
 			$url = $this->webroot(IMAGES_URL . $path);
 		}
-		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
+		return $this->output(sprintf($this->Html->tags['submitimage'], $url, $this->_parseAttributes($options, null, '', ' ')));
 	}
  /**
  * Returns a formatted SELECT element.
@@ -673,76 +660,55 @@ class FormHelper extends AppHelper {
 /**
  * Returns a SELECT element for days.
  *
- * @param string $tagName Prefix name for the SELECT element
+ * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
- * @param boolean $show_empty Show/hide the empty select option
+ * @param array  $attributes HTML attributes for the select element
+ * @param mixed $showEmpty Show/hide the empty select option
  * @return string
  */
-	function day($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && $value = $this->__value($tagName)) {
+	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+		if (empty($selected) && $value = $this->__value($fieldName)) {
 			$selected = date('d', strtotime($value));
 		}
-		$dayValue = empty($selected) ? ($showEmpty == true ? NULL : date('d')) : $selected;
-		$days = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23', '24' => '24', '25' => '25', '26' => '26', '27' => '27', '28' => '28', '29' => '29', '30' => '30', '31' => '31');
-		$option = $this->select($tagName . "_day", $days, $dayValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		if (empty($selected) && !$showEmpty) {
+			$selected = date('d');
+		}
+		return $this->select($fieldName . "_day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for years
  *
- * @param string $tagName Prefix name for the SELECT element
+ * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
+ * @param array $attributes Attribute array for the select elements.
  * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function year($tagName, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		if (empty($selected) && $value = $this->__value($tagName)) {
+	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
+		if (empty($selected) && $value = $this->__value($fieldName)) {
 			$selected = date('Y', strtotime($value));
 		}
-
-		$yearValue = empty($selected) ? ($showEmpty ? NULL : date('Y')) : $selected;
-		$currentYear = date('Y');
-		$maxYear = is_null($maxYear) ? $currentYear + 11 : $maxYear + 1;
-		$minYear = is_null($minYear) ? $currentYear - 60 : $minYear;
-
-		if ($minYear > $maxYear) {
-			$tmpYear = $minYear;
-			$minYear = $maxYear;
-			$maxYear = $tmpYear;
+		if (empty($selected) && !$showEmpty) {
+			$selected = date('Y');
 		}
-
-		$minYear = $currentYear < $minYear ? $currentYear : $minYear;
-		$maxYear = $currentYear > $maxYear ? $currentYear : $maxYear;
-
-		for($yearCounter = $minYear; $yearCounter < $maxYear; $yearCounter++) {
-			$years[$yearCounter] = $yearCounter;
-		}
-
-		$option = $this->select($tagName . "_year", $years, $yearValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		return $this->select($fieldName . "_year", $this->__generateOptions('year'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for months.
  *
  * @param string $tagName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
  * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function month($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function month($tagName, $selected = null, $attributes = array(), $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('m', strtotime($value));
 		}
-		$monthValue = empty($selected) ? ($showEmpty ? NULL : date('m')) : $selected;
-		$months = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
-
-		$option = $this->select($tagName . "_month", $months, $monthValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		$selected = empty($selected) ? ($showEmpty ? NULL : date('m')) : $selected;
+		return $this->select($tagName . "_month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for hours.
@@ -750,10 +716,11 @@ class FormHelper extends AppHelper {
  * @param string $tagName Prefix name for the SELECT element
  * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
+ * @param array $attributes List of HTML attributes
+ * @param mixed $showEmpty True to show an empty element, or a string to provide default empty element text
  * @return string
  */
-	function hour($tagName, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function hour($tagName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			if ($format24Hours) {
 				$selected = date('H', strtotime($value));
@@ -761,62 +728,46 @@ class FormHelper extends AppHelper {
 				$selected = date('g', strtotime($value));
 			}
 		}
+
 		if ($format24Hours) {
-			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('H')) : $selected;
+			$selected = empty($selected) ? ($showEmpty ? NULL : date('H')) : $selected;
 		} else {
 			$hourValue = empty($selected) ? ($showEmpty ? NULL : date('g')) : $selected;
 			if (isset($selected) && intval($hourValue) == 0 && !$showEmpty) {
-				$hourValue = 12;
+				$selected = 12;
+			} else {
+				$selected = $hourValue;
 			}
 		}
-
-		if ($format24Hours) {
-			$hours = array('00' => '00', '01' => '01', '02' => '02', '03' => '03', '04' => '04', '05' => '05', '06' => '06', '07' => '07', '08' => '08', '09' => '09', '10' => '10', '11' => '11', '12' => '12', '13' => '13', '14' => '14', '15' => '15', '16' => '16', '17' => '17', '18' => '18', '19' => '19', '20' => '20', '21' => '21', '22' => '22', '23' => '23');
-		} else {
-			$hours = array('01' => '1', '02' => '2', '03' => '3', '04' => '4', '05' => '5', '06' => '6', '07' => '7', '08' => '8', '09' => '9', '10' => '10', '11' => '11', '12' => '12');
-		}
-
-		$option = $this->select($tagName . "_hour", $hours, $hourValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		return $this->select($tagName . "_hour", $this->__generateOptions($format24Hours ? 'hour24' : 'hour'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for minutes.
  *
  * @param string $tagName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-	function minute($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function minute($tagName, $selected = null, $attributes = array(), $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('i', strtotime($value));
 		}
-		$minValue = empty($selected) ? ($showEmpty ? NULL : date('i')) : $selected;
-
-		for($minCount = 0; $minCount < 60; $minCount++) {
-			$mins[$minCount] = sprintf('%02d', $minCount);
-		}
-		$option = $this->select($tagName . "_min", $mins, $minValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		$selected = empty($selected) ? ($showEmpty ? NULL : date('i')) : $selected;
+		return $this->select($tagName . "_min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
 	}
-
 /**
  * Returns a SELECT element for AM or PM.
  *
  * @param string $tagName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
  * @return string
  */
-	function meridian($tagName, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function meridian($tagName, $selected = null, $attributes = array(), $showEmpty = true) {
 		if (empty($selected) && $value = $this->__value($tagName)) {
 			$selected = date('a', strtotime($value));
 		}
-		$merValue = empty($selected) ? ($showEmpty ? NULL : date('a')) : $selected;
-		$meridians = array('am' => 'am', 'pm' => 'pm');
-
-		$option = $this->select($tagName . "_meridian", $meridians, $merValue, $selectAttr, $optionAttr, $showEmpty);
-		return $option;
+		$selected = empty($selected) ? ($showEmpty ? null : date('a')) : $selected;
+		return $this->select($tagName . "_meridian", $this->__generateOptions('meridian'), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
@@ -825,10 +776,9 @@ class FormHelper extends AppHelper {
  * @param string $dateFormat DMY, MDY, YMD or NONE.
  * @param string $timeFormat 12, 24, NONE
  * @param string $selected Option which is selected.
- * @param array $optionAttr Attribute array for the option elements.
  * @return string The HTML formatted OPTION element
  */
-	function dateTime($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
+	function dateTime($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
 		$day      = null;
 		$month    = null;
 		$year     = null;
@@ -875,46 +825,46 @@ class FormHelper extends AppHelper {
 		}
 
 		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
-		if (isset($selectAttr['id'])) {
-			if (is_string($selectAttr['id'])) {
+		if (isset($attributes['id'])) {
+			if (is_string($attributes['id'])) {
 				// build out an array version
 				foreach ($elements as $element) {
 					$selectAttrName = 'select' . $element . 'Attr';
 					${$selectAttrName} = $selectAttr;
-					${$selectAttrName}['id'] = $selectAttr['id'] . $element;
+					${$selectAttrName}['id'] = $attributes['id'] . $element;
 				}
-			} elseif (is_array($selectAttr['id'])) {
+			} elseif (is_array($attributes['id'])) {
 				// check for missing ones and build selectAttr for each element
 				foreach ($elements as $element) {
 					$selectAttrName = 'select' . $element . 'Attr';
-					${$selectAttrName} = $selectAttr;
-					${$selectAttrName}['id'] = $selectAttr['id'][strtolower($element)];
+					${$selectAttrName} = $attributes;
+					${$selectAttrName}['id'] = $attributes['id'][strtolower($element)];
 				}
 			}
 		} else {
 			// build the selectAttrName with empty id's to pass
 			foreach ($elements as $element) {
 				$selectAttrName = 'select' . $element . 'Attr';
-				${$selectAttrName} = $selectAttr;
+				${$selectAttrName} = $attributes;
 			}
 		}
 
 		switch($dateFormat) {
 			case 'DMY': // so uses the new selex
-				$opt = $this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' .
-				$this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' .
+				$this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty);
 			break;
 			case 'MDY':
-				$opt = $this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' .
+				$this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty);
 			break;
 			case 'YMD':
-				$opt = $this->year($tagName, null, null, $year, $selectYearAttr, $optionAttr, $showEmpty) . '-' .
-				$this->month($tagName, $month, $selectMonthAttr, $optionAttr, $showEmpty) . '-' .
-				$this->day($tagName, $day, $selectDayAttr, $optionAttr, $showEmpty);
+				$opt = $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty) . '-' .
+				$this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' .
+				$this->day($tagName, $day, $selectDayAttr, $showEmpty);
 			break;
 			case 'Y':
-				$opt = $this->year($tagName, null, null, $selected, $selectYearAttr, $optionAttr, $showEmpty);
+				$opt = $this->year($tagName, null, null, $selected, $selectYearAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
@@ -924,13 +874,13 @@ class FormHelper extends AppHelper {
 
 		switch($timeFormat) {
 			case '24':
-				$opt .= $this->hour($tagName, true, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minute($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hour($tagName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
+				$this->minute($tagName, $min, $selectMinuteAttr, $showEmpty);
 			break;
 			case '12':
-				$opt .= $this->hour($tagName, false, $hour, $selectHourAttr, $optionAttr, $showEmpty) . ':' .
-				$this->minute($tagName, $min, $selectMinuteAttr, $optionAttr, $showEmpty) . ' ' .
-				$this->meridian($tagName, $meridian, $selectMeridianAttr, $optionAttr, $showEmpty);
+				$opt .= $this->hour($tagName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
+				$this->minute($tagName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
+				$this->meridian($tagName, $meridian, $selectMeridianAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
@@ -984,7 +934,7 @@ class FormHelper extends AppHelper {
  *
  * @return void
  */
-	function __generateOptions($name) {
+	function __generateOptions($name, $min = null, $max = null) {
 		if (!empty($this->options[$name])) {
 			return $this->options[$name];
 		}
@@ -997,7 +947,11 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'hour':
-				for($i = 0; $i < 31; $i++) {
+				for($i = 1; $i <= 12; $i++) {
+					$data[sprintf('%02d', $i)] = $i;
+				}
+			case 'hour24':
+				for($i = 0; $i <= 23; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
 			break;
@@ -1005,16 +959,31 @@ class FormHelper extends AppHelper {
 				$data = array('am' => 'am', 'pm' => 'pm');
 			break;
 			case 'day':
-				for($i = 0; $i < 31; $i++) {
+				if (empty($min)) {
+					$min = 1;
+				}
+				if (empty($max)) {
+					$max = 31;
+				}
+				for($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
 			break;
 			case 'month':
-
+ 				$data = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
 			break;
 			case 'year':
 				$current = intval(date('Y'));
-				for ($i = ($current - 20); $i < ($current + 20); $i++) {
+				if (empty($min)) {
+					$min = $current - 20;
+				}
+				if (empty($max)) {
+					$max = $current + 20;
+				}
+				if ($min > $max) {
+					list($min, $max) = array($max, $min);
+				}
+				for ($i = $min; $i <= $max; $i++) {
 					$data[$i] = $i;
 				}
 			break;
