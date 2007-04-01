@@ -575,7 +575,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveFindAll() {
+	function testRecursiveFin7dAll() {
 		$this->model =& new Article();
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
@@ -665,6 +665,10 @@ class ModelTest extends CakeTestCase {
 													'fields' => 'id, title, user_id, published'))));
 		
 		$this->Article->unbindModel(array('hasMany' => array('Attachment', 'Leaf', 'Rating', 'Comment'), 'hasAndBelongsToMany'=>array('Tag')));
+		
+		// UNCOMMENT THE FOLLOWING LINE TO MAKE TEST SUCCEED:
+		//
+		// $this->Article->unbindModel(array('belongsTo'=>array('Category')));
 		
 		$result = $this->Article->Featured->findAll(null, null, $orderBy, 3);
 		
