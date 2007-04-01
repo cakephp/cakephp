@@ -156,7 +156,7 @@ class DboPostgres extends DboSource {
 		}
 
 		$fields = false;
-		$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position FROM information_schema.columns WHERE table_name =" . $this->value($model->tablePrefix . $model->table) . " ORDER BY ordinal_position");
+		$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position AS position, character_maximum_length AS char_length, character_octet_length AS oct_length FROM information_schema.columns WHERE table_name =" . $this->value($model->tablePrefix . $model->table) . " ORDER BY position");
 
 		foreach($cols as $column) {
 			$colKey = array_keys($column);
@@ -166,18 +166,29 @@ class DboPostgres extends DboSource {
 			}
 
 			if (isset($column[0])) {
-				if (strpos($column[0]['default'], 'nextval(') === 0) {
-					$column[0]['default'] = null;
+				$c = $column[0];
+				if (strpos($c['default'], 'nextval(') === 0) {
+					$c['default'] = null;
+				}
+				if (!empty($c['char_length'])) {
+					$length = intval($c['char_length']);
+				} elseif (!empty($c['oct_length'])) {
+					$length = intval($c['oct_length']);
+				} else {
+					$length = $this->length($c['type']);
 				}
 				$fields[] = array(
-					'name' => $column[0]['name'],
-					'type' => $this->column($column[0]['type']),
-					'null' => $column[0]['null'],
-					'default' => $column[0]['default']
+					'name'    => $c['name'],
+					'type'    => $this->column($c['type']),
+					'null'    => ($c['null'] == 'NO' ? false : true),
+					'default' => $c['default'],
+					'length'  => $length
 				);
 			}
 		}
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
+		//pr($cols);
+		//pr($fields);
 		return $fields;
 	}
 /**
@@ -333,18 +344,13 @@ class DboPostgres extends DboSource {
 			}
 		}
 
-		if(strpos($sourceinfo['default'], 'nextval') === false) {
-			return null;
-		}
-
 		if (preg_match('/^nextval\(\'(\w+)\'/', $sourceinfo['default'], $matches)) {
 			$seq = $matches[1];
 		} else {
 			$seq = "{$source}_{$field}_seq";
 		}
-		$sql = "SELECT last_value AS max FROM \"{$seq}\"";
 
-		$res = $this->rawQuery($sql);
+		$res = $this->rawQuery("SELECT last_value AS max FROM \"{$seq}\"");
 		$data = $this->fetchRow($res);
 		return $data[0]['max'];
 	}
@@ -369,7 +375,7 @@ class DboPostgres extends DboSource {
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
 			for($i = 0; $i < $count; $i++) {
-				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
+				if (!preg_match('/^.+\\(.*\\)/', $fields[$i]) && !preg_match('/\s+AS\s+/', $fields[$i])) {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
 						$prepend = 'DISTINCT ';
@@ -446,20 +452,42 @@ class DboPostgres extends DboSource {
 			return 'integer';
 		}
 		if (strpos($col, 'char') !== false) {
-				return 'string';
+			return 'string';
 		}
 		if (strpos($col, 'text') !== false) {
-				return 'text';
+			return 'text';
 		}
 		if (strpos($col, 'bytea') !== false) {
-				return 'binary';
+			return 'binary';
 		}
 		if (in_array($col, array('float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'))) {
 			return 'float';
 		}
 		return 'text';
 	}
+/**
+ * Gets the length of a database-native column description, or null if no length
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return int An integer representing the length of the column
+ */
+	function length($real) {
+		$col = r(array(')', 'unsigned'), '', $real);
+		$limit = null;
 
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
+
+		if ($limit != null) {
+			return intval($limit);
+		} elseif ($col == 'integer') {
+			return 11;
+		} elseif (in_array($col, array('int2', 'int4', 'int8'))) {
+			return intval(r('int', '', $col));
+		}
+		return null;
+	}
 /**
  * Enter description here...
  *
@@ -539,6 +567,59 @@ class DboPostgres extends DboSource {
  */
 	function getEncoding() {
 		return pg_client_encoding($this->connection);
+	}
+/**
+ * Generate a PostgreSQL-native column schema string
+ *
+ * @param array $column An array structured like the following: array('name', 'type'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function generateColumnSchema($column) {
+		$name = $type = $out = null;
+		$column = am(array('null' => true), $column);
+		list($name, $type) = $column;
+
+		if (empty($name) || empty($type)) {
+			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			return null;
+		}
+		if (!isset($this->columns[$type])) {
+			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			return null;
+		}
+		$out = "\t" . $this->name($name) . ' ';
+
+		if (!isset($column['key']) || $column['key'] != 'primary') {
+			$real = $this->columns[$type];
+			$out .= $real['name'];
+
+			if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+				if (isset($column['length'])) {
+					$length = $column['length'];
+				} elseif (isset($column['limit'])) {
+					$length = $column['limit'];
+				} elseif (isset($real['length'])) {
+					$length = $real['length'];
+				} else {
+					$length = $real['limit'];
+				}
+				$out .= '(' . $length . ')';
+			}
+		}
+
+		if (isset($column['key']) && $column['key'] == 'primary') {
+			$out .= $this->columns['primary_key']['name'];
+		} elseif (isset($column['default'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+		} elseif (isset($column['null']) && $column['null'] == true) {
+			$out .= ' DEFAULT NULL';
+		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['null']) && $column['null'] == false) {
+			$out .= ' NOT NULL';
+		}
+		return $out;
 	}
 }
 
