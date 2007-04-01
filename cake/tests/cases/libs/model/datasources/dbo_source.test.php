@@ -381,12 +381,6 @@ class Article2 extends Model {
  		)
  	);
   
-	var $hasOne = array(
-		'Featured' => array(
-			'className' => 'Featured'
- 		)
- 	);
-	
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -415,18 +409,34 @@ class Article2 extends Model {
 	}
 }
 
-class Featured extends Model {
+class CategoryFeatured2 extends Model {
+	var $name = 'CategoryFeatured2';
+	var $table = 'category_featured';
+	var $useTable = false;
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'parent_id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				array('name' => 'icon', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
+				array('name' => 'description', 'text' => 'string', 'null' => false, 'default' => '', 'length' => null)
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
 
-	var $name = 'Featured';
-	var $table = 'article';
+class Featured2 extends Model {
+
+	var $name = 'Featured2';
+	var $table = 'featured2';
 	var $useTable = false;
 
 	var $belongsTo = array(
-		'Article2' => array(
-			'className' => 'Article2'
-		),
-		'Category2' => array(
-			'Artiucle' => 'Category2'
+		'CategoryFeatured2' => array(
+			'className' => 'CategoryFeatured2'
 		)
 	);
 	
@@ -437,6 +447,63 @@ class Featured extends Model {
 				array('name' => 'article_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
 				array('name' => 'category_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
 				array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class Comment2 extends Model {
+	var $name = 'Comment2';
+	var $table = 'comment';
+	var $belongsTo = array('ArticleFeatured2', 'User2');
+	var $useTable = false;
+	
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
+				array('name' => 'article_featured_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'title', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '20')
+			));
+		}
+		return $this->_tableInfo;
+	}
+}
+
+class ArticleFeatured2 extends Model {
+	var $name = 'ArticleFeatured2';
+	var $table = 'article_featured';
+	var $useTable = false;
+
+	var $belongsTo = array(
+		'CategoryFeatured2' => array(
+  			'className' => 'CategoryFeatured2'
+		),
+		'User2' => array(
+			'className' => 'User2'
+ 		)
+ 	);
+ 	var $hasOne = array(
+ 		'Featured2' => array('className' => 'Featured2')
+ 	);
+	var $hasMany = array(
+		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
+	);
+  
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
+				array('name' => 'category_featured_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'user_id', 'type' => 'integer', 'null' => false, 'default' => '0', 'length' => '10'),
+				array('name' => 'title', 'type' => 'string', 'null' => false, 'default' => '', 'length' => '200'),
+				array('name' => 'body', 'text' => 'string', 'null' => true, 'default' => '', 'length' => null),
+				array('name' => 'published', 'type' => 'boolean', 'null' => false, 'default' => '0', 'length' => '1'),
+				array('name' => 'published_date', 'type' => 'datetime', 'null' => true, 'default' => '', 'length' => null),
+				array('name' => 'created', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null),
+				array('name' => 'modified', 'type' => 'datetime', 'null' => false, 'default' => '0000-00-00 00:00:00', 'length' => null)
 			));
 		}
 		return $this->_tableInfo;
@@ -560,6 +627,41 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
+		
+		$this->Featured2 = new Featured2();
+		$this->Featured2->loadInfo();
+		
+		$this->Featured2->bindModel(array(
+			'belongsTo' => array(
+				'ArticleFeatured2' => array(
+					'conditions' => 'ArticleFeatured2.published = \'Y\'',
+					'fields' => 'id, title, user_id, published'
+				)
+			)
+		));
+		
+		$this->_buildRelatedModels($this->Featured2);
+		
+		$binding = array('type' => 'belongsTo', 'model' => 'ArticleFeatured2');
+		$queryData = array('conditions' => array());
+		$resultSet = null;
+		$null = null;
+		
+		$params = &$this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
+
+		$result = $this->db->generateSelfAssociationQuery($this->Featured2, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
+		$this->assertTrue($result);
+		
+		$result = $this->db->generateAssociationQuery($this->Featured2, $null, null, null, null, $queryData, false, $null);
+		
+		$this->assertPattern(
+			'/^SELECT\s+`Featured2`\.`id`, `Featured2`\.`article_id`, `Featured2`\.`category_id`, `Featured2`\.`name`, '.
+			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`category_featured_id`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`body`, `ArticleFeatured2`\.`published`, `ArticleFeatured2`\.`published_date`, `ArticleFeatured2`\.`created`, `ArticleFeatured2`\.`modified`\s+' .
+			'FROM\s+`featured2` AS `Featured2`\s+LEFT JOIN\s+`article_featured` AS `ArticleFeatured2`' .
+			'\s+ON\s+`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`' .
+			'\s+AND\s+`ArticleFeatured2`\.`published` = \'Y\'\s+' .
+			'\s+WHERE\s+1\s+=\s+1\s*$/', $result);
 	}
 
 	function testGenerateAssociationQueryHasOne() {
