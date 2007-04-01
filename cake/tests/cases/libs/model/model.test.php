@@ -88,6 +88,15 @@
 			'body' => VALID_NOT_EMPTY
 		);
 	}
+	
+	class Featured extends CakeTestModel {
+		var $name = 'Featured';
+		var $belongsTo = array(
+			'Article'=> array('className' => 'Article'),
+			'Category'=> array('className' => 'Category')
+		);	
+	}
+	
 	/**
 	 * Short description for class.
 	 *
@@ -150,7 +159,7 @@
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-	var $fixtures = array( 'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
+	var $fixtures = array( 'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
 
 	function start() {
 		parent::start();
@@ -642,6 +651,108 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+		
+		/*
+		$this->Article = new Article();
+		
+		$this->Article->bindModel(array('hasOne' => array('Featured'=> array('className' => 'Featured'))));
+		$this->Article->bindModel(array('belongsTo' => array('Category')));
+		
+		$this->Article->Featured->recursive = 2;
+		$orderBy = 'Article.published DESC';
+		$this->Article->Featured->bindModel(array('belongsTo' =>
+											array('Article' => array('conditions' => 'Article.published = \'Y\'',
+													'fields' => 'id, title, user_id, published'))));
+		
+		$this->Article->unbindModel(array('hasMany' => array('Attachment', 'Leaf', 'Rating', 'Comment'), 'hasAndBelongsToMany'=>array('Tag')));
+		
+		$result = $this->Article->Featured->findAll(null, null, $orderBy, 3);
+		
+		$expected = array ( 
+			0 => array ( 
+				'Featured' => array ( 
+					'id' => '1', 
+					'article_id' => '1', 
+					'category_id' => '1', 
+					'published_date' => '2007-03-31 10:39:23', 
+					'end_date' => '2007-05-15 10:39:23', 
+					'created' => '2007-03-18 10:39:23', 
+					'updated' => '2007-03-18 10:41:31'
+				), 
+				'Article' => array ( 
+					'id' => '1', 
+					'title' => 'First Article', 
+					'user_id' => '1', 
+					'published' => 'Y', 
+					'User' => array ( 
+						'id' => '1', 
+						'user' => 'mariano', 
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 
+						'created' => '2007-03-17 01:16:23', 
+						'updated' => '2007-03-17 01:18:31'
+					), 
+					'Featured' => array ( 
+						'id' => '1', 
+						'article_id' => '1', 
+						'category_id' => '1', 
+						'published_date' => '2007-03-31 10:39:23', 
+						'end_date' => '2007-05-15 10:39:23', 
+						'created' => '2007-03-18 10:39:23', 
+						'updated' => '2007-03-18 10:41:31'
+					)
+				), 
+				'Category' => array ( 
+					'id' => '1', 
+					'parent_id' => '0', 
+					'name' => 'Category 1', 
+					'created' => '2007-03-18 15:30:23', 
+					'updated' => '2007-03-18 15:32:31'
+				)
+			), 
+			1 => array ( 
+				'Featured' => array ( 
+					'id' => '2', 
+					'article_id' => '2', 
+					'category_id' => '1', 
+					'published_date' => '2007-03-31 10:39:23', 
+					'end_date' => '2007-05-15 10:39:23', 
+					'created' => '2007-03-18 10:39:23', 
+					'updated' => '2007-03-18 10:41:31'
+				), 
+				'Article' => array ( 
+					'id' => '2', 
+					'title' => 'Second Article', 
+					'user_id' => '3', 
+					'published' => 'Y', 
+					'User' => array ( 
+						'id' => '3', 
+						'user' => 'larry', 
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 
+						'created' => '2007-03-17 01:20:23', 
+						'updated' => '2007-03-17 01:22:31'
+					), 
+					'Featured' => array ( 
+						'id' => '2', 
+						'article_id' => '2', 
+						'category_id' => '1', 
+						'published_date' => '2007-03-31 10:39:23', 
+						'end_date' => '2007-05-15 10:39:23', 
+						'created' => '2007-03-18 10:39:23', 
+						'updated' => '2007-03-18 10:41:31'
+					)
+				), 
+				'Category' => array ( 
+					'id' => '1', 
+					'parent_id' => '0', 
+					'name' => 'Category 1', 
+					'created' => '2007-03-18 15:30:23', 
+					'updated' => '2007-03-18 15:32:31'
+				)
+			)
+		);
+		
+		$this->assertEqual($result, $expected);
+		*/
 	}
 
 	function testSaveField() {
