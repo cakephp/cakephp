@@ -425,6 +425,8 @@
  * @return boolean Success
  */
 	function loadPluginHelper($plugin, $helper) {
+		loadHelper(null);
+
 		if (!class_exists($helper . 'Helper')) {
 			$helper = Inflector::underscore($helper);
 			$file = APP . 'plugins' . DS . $plugin . DS . 'views' . DS . 'helpers' . DS . $helper . '.php';
