@@ -683,22 +683,29 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		
-		$this->ArticleFeatured = new ArticleFeatured();
+		$this->Featured = new Featured();
 		
-		$this->ArticleFeatured->Featured->recursive = 2;
-		$orderBy = 'ArticleFeatured.id ASC';
-		$this->ArticleFeatured->Featured->bindModel(array('belongsTo' =>
-											array('ArticleFeatured' => array('conditions' => 'ArticleFeatured.published = \'Y\'',
-													'fields' => 'id, title, user_id, published'))));
+		$this->Featured->recursive = 2;
+		$this->Featured->bindModel(array(
+			'belongsTo' => array(
+				'ArticleFeatured' => array(
+					'conditions' => 'ArticleFeatured.published = \'Y\'',
+					'fields' => 'id, title, user_id, published'
+				)
+			)
+		));
 		
-		$this->ArticleFeatured->Featured->ArticleFeatured->bindModel(array('hasOne' => array('Featured'=> array('className' => 'Featured'))));
-		$this->ArticleFeatured->Featured->ArticleFeatured->unbindModel(array('hasMany' => array('Attachment', 'Comment'), 'hasAndBelongsToMany'=>array('Tag')));
+		$this->Featured->ArticleFeatured->unbindModel(array(
+			'hasMany' => array('Attachment', 'Comment'), 
+			'hasAndBelongsToMany'=>array('Tag'))
+		);
 		
 		// UNCOMMENT THE FOLLOWING LINE TO MAKE TEST SUCCEED:
 		//
-		// $this->ArticleFeatured->unbindModel(array('belongsTo'=>array('Category')));
+		// $this->Featured->ArticleFeatured->unbindModel(array('belongsTo'=>array('Category')));
 		
-		$result = $this->ArticleFeatured->Featured->findAll(null, null, $orderBy, 3);
+		$orderBy = 'ArticleFeatured.id ASC';
+		$result = $this->Featured->findAll(null, null, $orderBy, 3);
 		
 		$expected = array ( 
 			array ( 
