@@ -88,11 +88,36 @@
 			'body' => VALID_NOT_EMPTY
 		);
 	}
-	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
+	class ArticleFeatured extends CakeTestModel {
+		var $name = 'ArticleFeatured';
+		var $belongsTo = array('User', 'Category');
+		var $hasOne = array('Featured');
+		var $hasMany = array(
+			'Comment' => array('className'=>'Comment', 'dependent' => true)
+		);
+		var $hasAndBelongsToMany = array('Tag');
+		var $validate = array(
+			'user_id' => VALID_NUMBER,
+			'title' => VALID_NOT_EMPTY,
+			'body' => VALID_NOT_EMPTY
+		);
+	}
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
 	class Featured extends CakeTestModel {
 		var $name = 'Featured';
 		var $belongsTo = array(
-			'Article'=> array('className' => 'Article'),
+			'ArticleFeatured'=> array('className' => 'ArticleFeatured'),
 			'Category'=> array('className' => 'Category')
 		);	
 	}
@@ -159,7 +184,7 @@
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-	var $fixtures = array( 'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
+	var $fixtures = array( 'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment' );
 
 	function start() {
 		parent::start();
@@ -658,38 +683,35 @@ class ModelTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 		
-		/*
-		$this->Article = new Article();
+		$this->ArticleFeatured = new ArticleFeatured();
 		
-		$this->Article->bindModel(array('hasOne' => array('Featured'=> array('className' => 'Featured'))));
-		$this->Article->bindModel(array('belongsTo' => array('Category')));
-		
-		$this->Article->Featured->recursive = 2;
-		$orderBy = 'Article.published DESC';
-		$this->Article->Featured->bindModel(array('belongsTo' =>
-											array('Article' => array('conditions' => 'Article.published = \'Y\'',
+		$this->ArticleFeatured->Featured->recursive = 2;
+		$orderBy = 'ArticleFeatured.id ASC';
+		$this->ArticleFeatured->Featured->bindModel(array('belongsTo' =>
+											array('ArticleFeatured' => array('conditions' => 'ArticleFeatured.published = \'Y\'',
 													'fields' => 'id, title, user_id, published'))));
 		
-		$this->Article->unbindModel(array('hasMany' => array('Attachment', 'Leaf', 'Rating', 'Comment'), 'hasAndBelongsToMany'=>array('Tag')));
+		$this->ArticleFeatured->Featured->ArticleFeatured->bindModel(array('hasOne' => array('Featured'=> array('className' => 'Featured'))));
+		$this->ArticleFeatured->Featured->ArticleFeatured->unbindModel(array('hasMany' => array('Attachment', 'Comment'), 'hasAndBelongsToMany'=>array('Tag')));
 		
 		// UNCOMMENT THE FOLLOWING LINE TO MAKE TEST SUCCEED:
 		//
-		// $this->Article->unbindModel(array('belongsTo'=>array('Category')));
+		// $this->ArticleFeatured->unbindModel(array('belongsTo'=>array('Category')));
 		
-		$result = $this->Article->Featured->findAll(null, null, $orderBy, 3);
+		$result = $this->ArticleFeatured->Featured->findAll(null, null, $orderBy, 3);
 		
 		$expected = array ( 
-			0 => array ( 
+			array ( 
 				'Featured' => array ( 
 					'id' => '1', 
-					'article_id' => '1', 
+					'article_featured_id' => '1', 
 					'category_id' => '1', 
 					'published_date' => '2007-03-31 10:39:23', 
 					'end_date' => '2007-05-15 10:39:23', 
 					'created' => '2007-03-18 10:39:23', 
 					'updated' => '2007-03-18 10:41:31'
 				), 
-				'Article' => array ( 
+				'ArticleFeatured' => array ( 
 					'id' => '1', 
 					'title' => 'First Article', 
 					'user_id' => '1', 
@@ -703,7 +725,7 @@ class ModelTest extends CakeTestCase {
 					), 
 					'Featured' => array ( 
 						'id' => '1', 
-						'article_id' => '1', 
+						'article_featured_id' => '1', 
 						'category_id' => '1', 
 						'published_date' => '2007-03-31 10:39:23', 
 						'end_date' => '2007-05-15 10:39:23', 
@@ -719,17 +741,17 @@ class ModelTest extends CakeTestCase {
 					'updated' => '2007-03-18 15:32:31'
 				)
 			), 
-			1 => array ( 
+			array ( 
 				'Featured' => array ( 
 					'id' => '2', 
-					'article_id' => '2', 
+					'article_featured_id' => '2', 
 					'category_id' => '1', 
 					'published_date' => '2007-03-31 10:39:23', 
 					'end_date' => '2007-05-15 10:39:23', 
 					'created' => '2007-03-18 10:39:23', 
 					'updated' => '2007-03-18 10:41:31'
 				), 
-				'Article' => array ( 
+				'ArticleFeatured' => array ( 
 					'id' => '2', 
 					'title' => 'Second Article', 
 					'user_id' => '3', 
@@ -743,7 +765,7 @@ class ModelTest extends CakeTestCase {
 					), 
 					'Featured' => array ( 
 						'id' => '2', 
-						'article_id' => '2', 
+						'article_featured_id' => '2', 
 						'category_id' => '1', 
 						'published_date' => '2007-03-31 10:39:23', 
 						'end_date' => '2007-05-15 10:39:23', 
@@ -762,7 +784,6 @@ class ModelTest extends CakeTestCase {
 		);
 		
 		$this->assertEqual($result, $expected);
-		*/
 	}
 
 	function testSaveField() {
