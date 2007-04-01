@@ -198,14 +198,12 @@ class RequestHandlerComponent extends Object {
 		if ($this->disableStartup || !$this->enabled) {
 			return;
 		}
-
-		$this->setView($controller);
 		$controller->params['isAjax'] = $this->isAjax();
 
 		if (!empty($this->ext) && !in_array($this->ext, array('html', 'htm')) && in_array($this->ext, array_keys($this->__requestContent))) {
 			$this->renderAs($controller, $this->ext);
-		} else {
-			$this->setAjax($controller);
+		} elseif ($this->isAjax()) {
+			$this->renderAs($controller, 'ajax');
 		}
 
 		if ($this->requestedWith('xml')) {
@@ -221,24 +219,21 @@ class RequestHandlerComponent extends Object {
 		}
 	}
 /**
- * Sets a controller's layout/View class based on request headers
- *
- * @param object The controller object
- * @return null
+ * @deprecated
+ * @see RequestHandlerComponent::renderAs()
  */
 	function setView(&$controller) {
+		trigger_error('Deprecated: Use RequestHandlerComponent::renderAs() instead', E_USER_WARNING);
 		if ($this->setAjax($controller)) {
 			return;
 		}
 	}
 /**
- * Sets a controller's layout based on whether or not the current call is Ajax.
- * Also sets the Content-type to HTML with UTF-8 encoding for IE6/XPsp2 bug.
- *
- * @param object The controller object
- * @return boolean True if call is Ajax, otherwise false
+ * @deprecated
+ * @see RequestHandlerComponent::renderAs()
  */
 	function setAjax(&$controller) {
+		trigger_error('Deprecated: Use RequestHandlerComponent::renderAs() instead', E_USER_WARNING);
 		if ($this->isAjax()) {
 			$controller->layout = $this->ajaxLayout;
 			return $this->respondAs('html', array('charset' => 'UTF-8'));
@@ -537,6 +532,11 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
+		if ($type == 'ajax') {
+			$controller->layout = $this->ajaxLayout;
+			return $this->respondAs('html', array('charset' => 'UTF-8'));
+		}
+
 		$controller->ext = '.ctp';
 		if (empty($this->__renderType)) {
 			$controller->viewPath .= '/' . $type;
