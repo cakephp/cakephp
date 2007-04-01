@@ -223,6 +223,16 @@ class FormHelperTest extends UnitTestCase {
 		
 	}
 
+	function testHour() {
+		$result = $this->Form->hour('tagname', false);
+		$this->assertPattern('/option value="12"/', $result);
+		$this->assertNoPattern('/option value="13"/', $result);
+		
+		$result = $this->Form->hour('tagname', true);
+		$this->assertPattern('/option value="23"/', $result);
+		$this->assertNoPattern('/option value="24"/', $result);
+	}
+	
 	function testYear() {
 		$result = $this->Form->year('Model.field', 2006, 2007);
 		$this->assertPattern('/option value="2006"/', $result);
