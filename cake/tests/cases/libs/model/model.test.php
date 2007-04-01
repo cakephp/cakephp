@@ -575,7 +575,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testRecursiveFin7dAll() {
+	function testRecursiveFindAll() {
 		$this->model =& new Article();
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
