@@ -925,9 +925,7 @@ class Controller extends Object {
 			unset($this->data[$modelClass][$field['name'] . '_meridian']);
 
 			$newDate = null;
-			if ('datetime' == $field['type'] && $useNewDate) {
-				$newDate = "{$_year}-{$_month}-{$_day}:{$_hour}:{$_min}:{$_sec}";
-			} else if ('timestamp' == $field['type'] && $useNewDate) {
+			if (in_array($field['type'], array('datetime', 'timestamp')) && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day} {$_hour}:{$_min}:{$_sec}";
 			} else if ('date' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
