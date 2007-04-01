@@ -922,9 +922,10 @@ class Controller extends Object {
 			if ($_hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
 				$_hour = $_hour + 12;
 			}
+			unset($this->data[$modelClass][$field['name'] . '_meridian']);
 
 			$newDate = null;
-			if ('datetime' == $field['type'] && $useNewDate) {
+			if (('datetime' == $field['type'] || 'timestamp' == $field['type']) && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}:{$_hour}:{$_min}:{$_sec}";
 			} else if ('date' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
