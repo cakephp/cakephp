@@ -143,25 +143,25 @@
 	$extract->main();
 	return;
 	// Only used when -debug option
-	$singluarReturn = __('Singular string  return __()', true);
-	$singluarEcho = __('Singular string  echo __()');
+	$singularReturn = __('Singular string  return __()', true);
+	$singularEcho = __('Singular string  echo __()');
 
 	$pluralReturn = __n('% apple in the bowl (plural string return __n())', '% apples in the blowl (plural string 2 return __n())', 3, true);
 	$pluralEcho = __n('% apple in the bowl (plural string 2 echo __n())', '% apples in the blowl (plural string 2 echo __n()', 3);
 
-	$singluarDomainReturn = __d('controllers', 'Singular string domain lookup return __d()', true);
-	$singluarDomainEcho = __d('controllers', 'Singular string domain lookup echo __d()');
+	$singularDomainReturn = __d('controllers', 'Singular string domain lookup return __d()', true);
+	$singularDomainEcho = __d('controllers', 'Singular string domain lookup echo __d()');
 
 	$pluralDomainReturn = __dn('controllers', '% pears in the bowl (plural string domain lookup return __dn())', '% pears in the blowl (plural string domain lookup return __dn())', 3, true);
 	$pluralDomainEcho = __dn('controllers', '% pears in the bowl (plural string domain lookup echo __dn())', '% pears in the blowl (plural string domain lookup echo __dn())', 3);
 
-	$singluarDomainCategoryReturn = __dc('controllers', 'Singular string domain and category lookup return __dc()', 5, true);
-	$singluarDomainCategoryEcho = __dc('controllers', 'Singular string domain and category lookup echo __dc()', 5);
+	$singularDomainCategoryReturn = __dc('controllers', 'Singular string domain and category lookup return __dc()', 5, true);
+	$singularDomainCategoryEcho = __dc('controllers', 'Singular string domain and category lookup echo __dc()', 5);
 
 	$pluralDomainCategoryReturn = __dcn('controllers', '% apple in the bowl (plural string 1 domain and category lookup return __dcn())', '% apples in the blowl (plural string 2 domain and category lookup return __dcn())', 3, 5, true);
 	$pluralDomainCategoryEcho = __dcn('controllers', '% apple in the bowl (plural string 1 domain and category lookup echo __dcn())', '% apples in the blowl (plural string 2 domain and category lookup echo __dcn())', 3, 5);
 
-	$cateogryReturn = __c('Category string lookup line return __c()', 5, true);
+	$categoryReturn = __c('Category string lookup line return __c()', 5, true);
 	$categoryEcho = __c('Category string  lookup line echo __c()', 5);
 /**
  * Language string extractor
