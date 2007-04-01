@@ -950,6 +950,7 @@ class FormHelper extends AppHelper {
 				for($i = 1; $i <= 12; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
+			break;
 			case 'hour24':
 				for($i = 0; $i <= 23; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
