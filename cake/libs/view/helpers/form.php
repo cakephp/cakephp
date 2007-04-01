@@ -693,7 +693,7 @@ class FormHelper extends AppHelper {
 		if (empty($selected) && !$showEmpty) {
 			$selected = date('Y');
 		}
-		return $this->select($fieldName . "_year", $this->__generateOptions('year'), $selected, $attributes, $showEmpty);
+		return $this->select($fieldName . "_year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
 	}
 /**
  * Returns a SELECT element for months.

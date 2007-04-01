@@ -223,6 +223,14 @@ class FormHelperTest extends UnitTestCase {
 		
 	}
 
+	function testYear() {
+		$result = $this->Form->year('Model.field', 2006, 2007);
+		$this->assertPattern('/option value="2006"/', $result);
+		$this->assertPattern('/option value="2007"/', $result);
+		$this->assertNoPattern('/option value="2005"/', $result);
+		$this->assertNoPattern('/option value="2008"/', $result);
+	}
+	
 	function testTextArea() {
 		$this->Form->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model/field');
