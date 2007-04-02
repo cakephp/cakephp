@@ -674,20 +674,30 @@ class AuthComponent extends Object {
 		}
 	}
 /**
- * Hash any passwords found in Controller::$data.
+ * Hash any passwords found in $data using $userModel and $fields['password']
  *
  * @access public
- * @param object $controller
- * @return void
+ * @param array $data
+ * @return array
  */
 	function hashPasswords($data) {
 		if (isset($data[$this->userModel])) {
 			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
 				$model =& $this->getUserModel();
-				$data[$this->userModel][$this->fields['password']] = Security::hash(CAKE_SESSION_STRING . $data[$this->userModel][$this->fields['password']]);
+				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}
 		}
 		return $data;
+	}
+/**
+ * Hash a password with the application's salt value (as defined in CAKE_SESSION_STRING)
+ *
+ * @access public
+ * @param string $password
+ * @return string
+ */
+	function password($password) {
+		return Security::hash(CAKE_SESSION_STRING . $password);
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
