@@ -212,10 +212,14 @@ class DboSource extends DataSource {
 				$order = $params[2 + $off];
 			}
 
+			if(!isset($params[0])) {
+				return false;
+			}
+
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				if (!is_array($params[$c]) && !empty($params[$c])) {
+				if (!is_array($params[$c])) {
 					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
 				} else {
 					$query[$args[2]->name . '.' . $f] = $params[$c];

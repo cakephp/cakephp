@@ -443,12 +443,20 @@ class Router extends Object {
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if(!empty($_this->__params)) {
-			$params = end($_this->__params);
+			if(!isset($_this->params['requested'])) {
+				$params = $_this->__params[0];
+			} else if(isset($_this->params['requested'])) {
+				$params = end($_this->__params);
+			}
 		}
 
 		$path = array('base' => null);
 		if(!empty($_this->__paths)) {
-			$path = end($_this->__paths);
+			if(!isset($_this->params['requested'])) {
+				$path = $_this->__paths[0];
+			} else if(isset($_this->params['requested'])) {
+				$path = end($_this->__paths);
+			}
 		}
 
 		$base = $_this->stripPlugin($path['base'], $params['plugin']);
