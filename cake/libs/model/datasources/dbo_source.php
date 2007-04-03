@@ -211,15 +211,15 @@ class DboSource extends DataSource {
 			if (isset($params[2 + $off])) {
 				$order = $params[2 + $off];
 			}
-
-			if(!isset($params[0])) {
+			
+			if(!array_key_exists(0, $params)) {
 				return false;
 			}
 
 			$c = 0;
 			$query = array();
 			foreach ($field as $f) {
-				if (!is_array($params[$c])) {
+				if (!is_array($params[$c]) && !empty($params[$c])) {
 					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
 				} else {
 					$query[$args[2]->name . '.' . $f] = $params[$c];

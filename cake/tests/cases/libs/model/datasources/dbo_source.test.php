@@ -1381,6 +1381,11 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->query('findByFieldName', array('= a'), $this->model);
 		$expected = array('TestModel.field_name' => '= = a');
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->db->query('findByFieldName', array(), $this->model);
+		$expected = false;
+		$this->assertEqual($result, $expected);
+		
 	}
 
 	function testOrderParsing() {
