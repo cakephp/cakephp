@@ -48,6 +48,31 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->inflector->singularize('quizzes');
 		$expected = 'quiz';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('Buses');
+		$expected = 'Bus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('buses');
+		$expected = 'bus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('matrix_rows');
+		$expected = 'matrix_row';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('matrices');
+		$expected = 'matrix';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('vertices');
+		$expected = 'vertex';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('indices');
+		$expected = 'index';
+		$this->assertEqual($result, $expected);
+
 	}
 
 	function testInflectingPlurals() {
@@ -65,6 +90,22 @@ class InflectorTest extends UnitTestCase {
 
 		$result = $this->inflector->pluralize('quiz');
 		$expected = 'quizzes';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('matrix_row');
+		$expected = 'matrix_rows';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('matrix');
+		$expected = 'matrices';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('vertex');
+		$expected = 'vertices';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('index');
+		$expected = 'indices';
 		$this->assertEqual($result, $expected);
 	}
 

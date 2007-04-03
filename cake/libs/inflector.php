@@ -77,7 +77,7 @@ class Inflector extends Object {
 									'/(quiz)$/i' => '\1zes',
 									'/^(ox)$/i' => '\1\2en', # ox
 									'/([m|l])ouse$/i' => '\1ice', # mouse, louse
-									'/(matr|vert|ind)ix|ex$/i' => '\1ices', # matrix, vertex, index
+									'/(matr|vert|ind)(ix|ex)$/i'  => '\1ices', # matrix, vertex, index
 									'/(x|ch|ss|sh)$/i' => '\1es', # search, switch, fix, box, process, address
 									'/([^aeiouy]|qu)y$/i' => '\1ies', # query, ability, agency
 									'/(hive)$/i' => '\1s', # archive, hive
