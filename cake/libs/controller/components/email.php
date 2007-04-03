@@ -459,6 +459,7 @@ class EmailComponent extends Object{
 			$value = explode('<', $string);
 			$string = $this->__encode($value[0]) . ' <' . $value[1];
 		}
+		return $string;
 	}
 /**
  * Enter description here...
