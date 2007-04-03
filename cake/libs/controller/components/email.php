@@ -98,6 +98,13 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
+	var $layout = 'default';
+/**
+ * Enter description here...
+ *
+ * @var string
+ * @access public
+ */
 	var $template = 'default';
 /**
  * Enter description here...
@@ -197,7 +204,7 @@ class EmailComponent extends Object{
  * @access public
  */
 	function startup(&$controller){
-		$this->Controller = $controller;
+		$this->Controller = & $controller;
 	}
 /**
  * Enter description here...
@@ -266,6 +273,7 @@ class EmailComponent extends Object{
  */
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
+		$View->layout = $this->layout;
 		if($this->sendAs === 'both'){
 			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
@@ -445,6 +453,7 @@ class EmailComponent extends Object{
 			$subject = preg_replace("/" . $spacer . "$/", "", $subject);
 			$subject = $start . $subject . $end;
 		}
+
 		return $subject;
 	}
 /**
