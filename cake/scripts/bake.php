@@ -399,9 +399,9 @@ class Bake {
 		} else {
 			$currentModelName = $enteredModel;
 		}
-		
-		$db =& ConnectionManager::getDataSource($useDbConfig);	
-			
+
+		$db =& ConnectionManager::getDataSource($useDbConfig);
+
 		$useTable = Inflector::tableize($currentModelName);
 		$fullTableName = $db->fullTableName($useTable, false);
 		if(array_search($useTable, $this->__tables) === false) {
@@ -424,7 +424,7 @@ class Bake {
 			}
 		}
 		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
-		
+
 		if(in_array($useTable, $this->__tables)) {
 			loadModel();
 			$tempModel = new Model(false, $useTable);
@@ -449,7 +449,7 @@ class Bake {
 				$prompt .= "4- VALID_YEAR\n";
 				$prompt .= "5- Do not do any validation on this field.\n\n";
 				$prompt .= "... or enter in a valid regex validation string.\n\n";
-				
+
 				if($field['null'] == 1 || $field['name'] == $primaryKey || $field['name'] == 'created' || $field['name'] == 'modified') {
 					$validation = $this->getInput($prompt, null, '5');
 				} else {
@@ -2343,7 +2343,7 @@ class Bake {
 		$count = count($tables);
 		for ($i = 0; $i < $count; $i++) {
 			if(low($type) == 'controllers') {
-				$this->__controllerNames[] = $this->__controllerName($tables[$i]);
+				$this->__controllerNames[] = $this->__controllerName($this->__modelName($tables[$i]));
 				$this->stdout($i + 1 . ". " . $this->__controllerNames[$i]);
 			} else {
 				$this->__modelNames[] = $this->__modelName($tables[$i]);
