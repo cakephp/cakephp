@@ -61,6 +61,14 @@ class SessionHelper extends CakeSession {
 		}
 	}
 /**
+ * Turn sessions on if AUTO_SESSION is set to false in core.php
+ *
+ * @param string $base
+ */
+	function activate($base = null) {
+		$this->__active = true;
+	}
+/**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
  * In your view: $session->read('Controller.sessKey');
@@ -69,6 +77,7 @@ class SessionHelper extends CakeSession {
  * @param string $name the name of the session key you want to read
  *
  * @return values from the session vars
+ * @access public
  */
 	function read($name = null) {
 		if ($this->__active === true) {
@@ -83,6 +92,7 @@ class SessionHelper extends CakeSession {
  *
  * @param string $name
  * @return boolean
+ * @access public
  */
 	function check($name) {
 		if ($this->__active === true) {
@@ -96,6 +106,7 @@ class SessionHelper extends CakeSession {
  * In your view: $session->error();
  *
  * @return string last error
+ * @access public
  */
 	function error() {
 		if ($this->__active === true) {
@@ -111,6 +122,7 @@ class SessionHelper extends CakeSession {
  *
  * @param string $key The [Message.]key you are rendering in the view.
  * @return string Will echo the value if $key is set, or false if not set.
+ * @access public
  */
 	function flash($key = 'flash') {
 		if ($this->__active === true) {
@@ -139,6 +151,7 @@ class SessionHelper extends CakeSession {
  * Used to check is a session is valid in a view
  *
  * @return boolean
+ * @access public
  */
 	function valid() {
 		if ($this->__active === true) {

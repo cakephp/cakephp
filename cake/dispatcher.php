@@ -140,16 +140,15 @@ class Dispatcher extends Object {
 			}
 		}
 
+		if (empty($params['action'])) {
+			$params['action'] = 'index';
+		}
+
 		if(defined('CAKE_ADMIN')) {
 			if(isset($params[CAKE_ADMIN])) {
 				$this->admin = '/'.CAKE_ADMIN ;
 				$url = preg_replace('/'.CAKE_ADMIN.'\//', '', $url);
-
-				if (empty($params['action'])) {
-					$params['action'] = CAKE_ADMIN.'_'.'index';
-				} else {
-					$params['action'] = CAKE_ADMIN.'_'.$params['action'];
-				}
+				$params['action'] = CAKE_ADMIN.'_'.$params['action'];
 			} elseif (strpos($params['action'], CAKE_ADMIN) === 0) {
 				$privateAction = true;
 			}
@@ -177,10 +176,6 @@ class Dispatcher extends Object {
 
 		$classMethods = get_class_methods($controller);
 		$classVars = get_object_vars($controller);
-
-		if (empty($params['action'])) {
-			$params['action'] = 'index';
-		}
 
 		if((in_array($params['action'], $classMethods) || in_array(strtolower($params['action']), $classMethods)) && strpos($params['action'], '_', 0) === 0) {
 			$privateAction = true;

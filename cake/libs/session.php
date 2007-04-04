@@ -360,6 +360,10 @@ class CakeSession extends Object {
  * @access private
  */
 	function __close() {
+		$probability = mt_rand(1, 150);
+		if($probability <= 3) {
+			$this->__gc();
+		}
 		return true;
 	}
 /**
@@ -407,7 +411,7 @@ class CakeSession extends Object {
  * @return boolean
  * @access private
  */
-	function __gc($expires) {
+	function __gc($expires = null) {
 		$db =& ConnectionManager::getDataSource('default');
 		$table = $db->fullTableName(CAKE_SESSION_TABLE);
 		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));

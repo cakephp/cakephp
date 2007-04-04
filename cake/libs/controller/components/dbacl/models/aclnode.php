@@ -61,8 +61,13 @@ class AclNode extends AppModel {
 	function node($ref = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$type = $this->name;
-		$table = low($type) . 's';
 		$prefix = $this->tablePrefix;
+
+		if (!empty($this->useTable)) {
+			$table = $this->useTable;
+		} else {
+			$table = Inflector::pluralize(Inflector::underscore($type));
+		}
 
 		if (empty($ref)) {
 			return null;

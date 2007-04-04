@@ -41,6 +41,7 @@ class SessionComponent extends CakeSession {
  * Used to determine if methods implementation is used, or bypassed
  *
  * @var boolean
+ * @access private
  */
 	var $__active = true;
 /**
@@ -56,8 +57,22 @@ class SessionComponent extends CakeSession {
 		}
 	}
 /**
+ * Turn sessions on if AUTO_SESSION is set to false in core.php
+ *
+ * @param string $base
+ */
+	function activate($base = null) {
+		if ($this->__active === true) {
+			return;
+		}
+		parent::__construct($base);
+		$this->__active = true;
+	}
+/**
  * Startup method.  Copies controller data locally for rendering flash messages.
  *
+ * @param object $controller
+ * @access public
  */
 	function startup(&$controller) {
 		$this->base = $controller->base;
@@ -76,6 +91,7 @@ class SessionComponent extends CakeSession {
  * @param string $name The name of the key your are setting in the session.
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
+ * @access public
  */
 	function write($name, $value = null) {
 		if ($this->__active === true) {
@@ -103,6 +119,7 @@ class SessionComponent extends CakeSession {
  * @param string $name the name of the session key you want to read
  *
  * @return values from the session vars
+ * @access public
  */
 	function read($name = null) {
 		if ($this->__active === true) {
@@ -131,6 +148,7 @@ class SessionComponent extends CakeSession {
  *
  * @param string $name
  * @return boolean, true is session variable is set and can be deleted, false is variable was not set.
+ * @access public
  */
 	function delete($name) {
 		if ($this->__active === true) {
@@ -145,6 +163,7 @@ class SessionComponent extends CakeSession {
  *
  * @param string $name
  * @return boolean true is session variable is set, false if not
+ * @access public
  */
 	function check($name) {
 		if ($this->__active === true) {
@@ -158,6 +177,7 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->error();
  *
  * @return string Last session error
+ * @access public
  */
 	function error() {
 		if ($this->__active === true) {
@@ -176,6 +196,7 @@ class SessionComponent extends CakeSession {
  * @param string $layout Layout to wrap flash message in
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
+ * @access public
  */
 	function setFlash($message, $layout = 'default', $params = array(), $key = 'flash') {
 		if ($this->__active === true) {
@@ -204,6 +225,7 @@ class SessionComponent extends CakeSession {
  * Used to renew a session id
  *
  * In your controller: $this->Session->renew();
+ * @access public
  */
 	function renew() {
 		if ($this->__active === true) {
@@ -216,6 +238,7 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->valid();
  *
  * @return boolean true is session is valid, false is session is invalid
+ * @access public
  */
 	function valid() {
 		if ($this->__active === true) {
@@ -227,6 +250,7 @@ class SessionComponent extends CakeSession {
  * Used to destroy sessions
  *
  * In your controller:. $this->Session->destroy();
+ * @access public
  */
 	function destroy() {
 		if ($this->__active === true) {

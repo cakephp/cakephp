@@ -33,6 +33,7 @@
 	if (!class_exists('Object')) {
 		 uses('object');
 	}
+	uses('Set');
 /**
  * Pluralize and singularize English words.
  *
@@ -60,7 +61,7 @@ class Inflector extends Object {
 		static $instance = array();
 
 		if (!isset($instance[0]) || !$instance[0]) {
-			$instance[0] = &new Inflector();
+			$instance[0] =& new Inflector();
 		}
 
 		return $instance[0];
@@ -92,7 +93,8 @@ class Inflector extends Object {
 									'/(alias)/i' => '\1es', # alias
 									'/(octop|vir)us$/i' => '\1i', # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
 									'/(ax|cri|test)is$/i' => '\1es', # axis, crisis
-									'/s$/' => 's',); # no change (compatibility)
+									'/s$/' => 's',  # no change (compatibility)
+									'/$/' => 's',);
 
 		$coreUninflectedPlural = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'Amoyese',
 											'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
@@ -137,9 +139,9 @@ class Inflector extends Object {
 										'turf' => 'turfs',);
 
 		include(CONFIGS.'inflections.php');
-		$pluralRules = array_merge($corePluralRules, $pluralRules, array('/$/' => 's'));
-		$uninflected = array_merge($coreUninflectedPlural, $uninflectedPlural);
-		$irregular = array_merge($coreIrregularPlural, $irregularPlural);
+		$pluralRules = Set::pushDiff($corePluralRules, $pluralRules);
+		$uninflected = Set::pushDiff($coreUninflectedPlural, $uninflectedPlural);
+		$irregular = Set::pushDiff($coreIrregularPlural, $irregularPlural);
 
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
@@ -270,9 +272,9 @@ class Inflector extends Object {
 										'turfs' => 'turf',);
 
 		include(CONFIGS.'inflections.php');
-		$singularRules = array_merge($coreSingularRules, $singularRules);
-		$uninflected = array_merge($coreUninflectedSingular, $uninflectedSingular);
-		$irregular = array_merge($coreIrregularSingular, $irregularSingular);
+		$singularRules = Set::pushDiff($coreSingularRules, $singularRules);
+		$uninflected = Set::pushDiff($coreUninflectedSingular, $uninflectedSingular);
+		$irregular = Set::pushDiff($coreIrregularSingular, $irregularSingular);
 
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();

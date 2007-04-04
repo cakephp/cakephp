@@ -776,7 +776,7 @@ class AjaxHelper extends AppHelper {
 
 		$callback = $this->remoteFunction($options);
 		$javascript  = "new $klass('$name', ";
-		$javascript .= (isset($options['frequency']) ? $options['frequency'] . ', ' : '') . "function(element, value) {";
+		$javascript .= (!isset($options['frequency']) || intval($options['frequency']) == 0 ? '' : $options['frequency'] . ', ' ) . "function(element, value) {";
 		$javascript .= "$callback})";
 		return $javascript;
 	}

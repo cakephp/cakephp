@@ -187,8 +187,6 @@ class DboPostgres extends DboSource {
 			}
 		}
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
-		//pr($cols);
-		//pr($fields);
 		return $fields;
 	}
 /**

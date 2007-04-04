@@ -68,19 +68,42 @@ class Set extends Object {
  * @access public
  */
 	function merge($array = null, $array2 = null) {
-		if ($array2 != null && is_array($array2)) {
+		if ($array2 !== null && is_array($array2)) {
 			return array_merge_recursive($array, $array2);
 		}
-		if ($array == null) {
-			$array = $this->value;
-		} elseif (is_object($array) && (is_a($array, 'set') || is_a($array, 'Set'))) {
-			$array = $array->get();
-		} elseif (is_object($array)) {
-			// Throw an error
-		} elseif (!is_array($array)) {
-			$array = array($array);
+
+		if(!isset($this->value)) {
+			$this->value = array();
 		}
-		$this->value = array_merge_recursive($this->value, $array);
+		$this->value = array_merge_recursive($this->value, Set::__array($array));
+		return $this->value;
+	}
+/**
+ * Pushes the differences in $array2 onto the end of $array
+ *
+ * @param mixed $array
+ * @param mixed $arrary2
+ * @return array
+ * @access public
+ */
+	function pushDiff($array = null, $array2 = null) {
+		if ($array2 !== null && is_array($array2)) {
+			foreach($array2 as $key => $value) {
+				if (!array_key_exists($key, $array)) {
+					$array[$key] = $value;
+				} else {
+					if (is_array($value)) {
+						$array[$key] = Set::pushDiff($array[$key], $array2[$key]);
+					}
+				}
+			}
+			return $array;
+		}
+
+		if(!isset($this->value)) {
+			$this->value = array();
+		}
+		$this->value = Set::pushDiff($this->value, Set::__array($array));
 		return $this->value;
 	}
 /**
@@ -103,7 +126,18 @@ class Set extends Object {
 		}
 		return Set::__map($val, $class);
 	}
-
+	function __array($array) {
+		if ($array == null) {
+			$array = $this->value;
+		} elseif (is_object($array) && (is_a($array, 'set') || is_a($array, 'Set'))) {
+			$array = $array->get();
+		} elseif (is_object($array)) {
+			// Throw an error
+		} elseif (!is_array($array)) {
+			$array = array($array);
+		}
+		return $array;
+	}
 	function __map($value, $class, $identity = null) {
 
 		if (is_object($value)) {
@@ -485,5 +519,4 @@ class Set extends Object {
 		return $list;
 	}
 }
-
 ?>
