@@ -323,6 +323,7 @@ class EmailComponent extends Object{
 			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
 			//$this->to .= ', ' . $addresses;
 		}
+		$addresses = null;
 		if(!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
 				$addresses .= $this->__formatAddress($bcc) . ', ';
