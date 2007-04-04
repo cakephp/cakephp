@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: aro_fixture.php 4668 2007-03-23 22:11:06Z phpnut $ */
+/* SVN FILE: $Id: aro_fixture.php 4750 2007-04-04 07:15:27Z mariano.iglesias $ */
 /**
  * Short description for file.
  *
