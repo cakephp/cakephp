@@ -138,11 +138,16 @@ class Inflector extends Object {
 										'trilby' => 'trilbys',
 										'turf' => 'turfs',);
 
-		include(CONFIGS.'inflections.php');
-		$pluralRules = Set::pushDiff($corePluralRules, $pluralRules);
-		$uninflected = Set::pushDiff($coreUninflectedPlural, $uninflectedPlural);
-		$irregular = Set::pushDiff($coreIrregularPlural, $irregularPlural);
+		$pluralRules = $corePluralRules;
+		$uninflected = $coreUninflectedPlural;
+		$irregular = $coreIrregularPlural;
 
+		if (file_exists(CONFIGS . 'inflections.php')) {
+			include(CONFIGS.'inflections.php');
+			$pluralRules = Set::pushDiff($corePluralRules, $pluralRules);
+			$uninflected = Set::pushDiff($coreUninflectedPlural, $uninflectedPlural);
+			$irregular = Set::pushDiff($coreIrregularPlural, $irregularPlural);
+		}
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
 	}
@@ -271,11 +276,16 @@ class Inflector extends Object {
 										'trilbys' => 'trilby',
 										'turfs' => 'turf',);
 
-		include(CONFIGS.'inflections.php');
-		$singularRules = Set::pushDiff($coreSingularRules, $singularRules);
-		$uninflected = Set::pushDiff($coreUninflectedSingular, $uninflectedSingular);
-		$irregular = Set::pushDiff($coreIrregularSingular, $irregularSingular);
+		$singularRules = $coreSingularRules;
+		$uninflected = $coreUninflectedSingular;
+		$irregular = $coreIrregularSingular;
 
+		if (file_exists(CONFIGS . 'inflections.php')) {
+			include(CONFIGS.'inflections.php');
+			$singularRules = Set::pushDiff($coreSingularRules, $singularRules);
+			$uninflected = Set::pushDiff($coreUninflectedSingular, $uninflectedSingular);
+			$irregular = Set::pushDiff($coreIrregularSingular, $irregularSingular);
+		}
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
 	}
