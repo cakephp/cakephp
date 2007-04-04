@@ -579,8 +579,8 @@ class DboSourceTest extends UnitTestCase {
 		}
 
 		$query = $this->db->generateAssociationQuery($this->model->Category2, $null, null, null, null, $queryData, false, $null);
-		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\s+WHERE/', $query);
-
+		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\)\s+WHERE/', $query);
+		
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
@@ -597,12 +597,12 @@ class DboSourceTest extends UnitTestCase {
 
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $queryData['selfJoin'][0]);
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $queryData['selfJoin'][0]);
-		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE\s+1 = 1\s*$/', $queryData['selfJoin'][0]);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE\s+1 = 1\s*$/', $queryData['selfJoin'][0]);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
-		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
 	}
 
@@ -625,7 +625,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
-		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
 
 		$this->Featured2 = new Featured2();
@@ -659,10 +659,8 @@ class DboSourceTest extends UnitTestCase {
 			'/^SELECT\s+`Featured2`\.`id`, `Featured2`\.`article_id`, `Featured2`\.`category_id`, `Featured2`\.`name`, '.
 			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`category_featured_id`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`body`, `ArticleFeatured2`\.`published`, `ArticleFeatured2`\.`published_date`, `ArticleFeatured2`\.`created`, `ArticleFeatured2`\.`modified`\s+' .
 			'FROM\s+`featured2` AS `Featured2`\s+LEFT JOIN\s+`article_featured` AS `ArticleFeatured2`' .
-			'\s+ON\s+`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`' .
-			'\s+AND\s+`ArticleFeatured2`\.`published` = \'Y\'\s+' .
+			'\s+ON\s+\(`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`\ AND `ArticleFeatured2`.`published` = \'Y\'\)' .
 			'\s+WHERE\s+1\s+=\s+1\s*$/', $result);
-			debug($result);
 	}
 
 	function testGenerateAssociationQueryHasOne() {
@@ -682,13 +680,13 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
-		$expected = ' LEFT JOIN `test_model5` AS `TestModel5` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
+		$expected = ' LEFT JOIN `test_model5` AS `TestModel5` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
 		$this->assertEqual(trim($result), trim($expected));
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+/', $result);
-		$this->assertPattern('/`test_model5` AS `TestModel5`\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/`test_model5` AS `TestModel5`\s+ON\s+\(`TestModel5`.`test_model4_id` = `TestModel4`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
 
@@ -711,7 +709,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model5` AS `TestModel5`/', $result);
-		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel5`.`test_model4_id`\s+=\s+`TestModel4`.`id`\s+AND\s+`TestModel5`.`name`\s+!=\s+\'mariano\'\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*`TestModel5`.`name`\s+!=\s+\'mariano\'\s*(?:\))?\s*$/', $result);
 	}
 
@@ -731,13 +729,13 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
-		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
+		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
 		$this->assertEqual(trim($result), trim($expected));
-
+		
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
-		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel5`.`test_model4_id` = `TestModel4`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
 
@@ -757,13 +755,13 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
-		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON `TestModel5`.`test_model4_id` = `TestModel4`.`id`';
+		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
 		$this->assertEqual(trim($result), trim($expected));
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
-		$this->assertPattern('/\s+ON\s+`TestModel5`.`test_model4_id` = `TestModel4`.`id`\s+WHERE\s+/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel5`.`test_model4_id` = `TestModel4`.`id`\)\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+WHERE\s+`TestModel5`.`name` !=  \'mariano\'\s*$/', $result);
 	}
 
