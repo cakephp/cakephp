@@ -73,6 +73,9 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'index';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->inflector->singularize('houses');
+		$expected = 'house';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectingPlurals() {
@@ -106,6 +109,10 @@ class InflectorTest extends UnitTestCase {
 
 		$result = $this->inflector->pluralize('index');
 		$expected = 'indices';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->inflector->pluralize('house');
+		$expected = 'houses';
 		$this->assertEqual($result, $expected);
 	}
 
