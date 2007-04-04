@@ -730,6 +730,7 @@ class ModelTest extends CakeTestCase {
 						'created' => '2007-03-17 01:16:23',
 						'updated' => '2007-03-17 01:18:31'
 					),
+					'Category' => array(),
 					'Featured' => array (
 						'id' => '1',
 						'article_featured_id' => '1',
@@ -770,6 +771,7 @@ class ModelTest extends CakeTestCase {
 						'created' => '2007-03-17 01:20:23',
 						'updated' => '2007-03-17 01:22:31'
 					),
+					'Category' => array(),
 					'Featured' => array (
 						'id' => '2',
 						'article_featured_id' => '2',
@@ -791,8 +793,6 @@ class ModelTest extends CakeTestCase {
 		);
 
 		$this->assertEqual($result, $expected);
-		//debug($result);
-		//debug($expected);
 	}
 
 	function testSaveField() {

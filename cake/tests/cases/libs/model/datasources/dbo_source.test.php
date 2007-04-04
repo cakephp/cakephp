@@ -108,28 +108,28 @@ class TestModel4 extends Model {
 	var $name = 'TestModel4';
 	var $table = 'test_model4';
 	var $useTable = false;
-	
+
 	var $belongsTo = array(
 		'TestModel4Parent' => array(
 			'className' => 'TestModel4',
 			'foreignKey' => 'parent_id'
 		)
 	);
-	
+
 	var $hasOne = array(
 		'TestModel5' => array(
 			'className' => 'TestModel5',
 			'foreignKey' => 'test_model4_id'
 		)
 	);
-	
+
 	var $hasAndBelongsToMany = array('TestModel7' => array(
 		'className' => 'TestModel7',
 		'joinTable' => 'test_model4_test_model7',
 		'foreignKey' => 'test_model4_id',
 		'associationForeignKey' => 'test_model7_id'
 	));
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -139,7 +139,7 @@ class TestModel4 extends Model {
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		return $this->_tableInfo;
 	}
 }
@@ -154,7 +154,7 @@ class TestModel5 extends Model {
 	var $name = 'TestModel5';
 	var $table = 'test_model5';
 	var $useTable = false;
-	
+
 	var $belongsTo = array('TestModel4' => array(
 		'className' => 'TestModel4',
 		'foreignKey' => 'test_model4_id'
@@ -163,7 +163,7 @@ class TestModel5 extends Model {
 		'className' => 'TestModel6',
 		'foreignKey' => 'test_model5_id'
 	));
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -174,7 +174,7 @@ class TestModel5 extends Model {
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		return $this->_tableInfo;
 	}
 }
@@ -189,12 +189,12 @@ class TestModel6 extends Model {
 	var $name = 'TestModel6';
 	var $table = 'test_model6';
 	var $useTable = false;
-	
+
 	var $belongsTo = array('TestModel5' => array(
 		'className' => 'TestModel5',
 		'foreignKey' => 'test_model5_id'
 	));
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -205,7 +205,7 @@ class TestModel6 extends Model {
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		return $this->_tableInfo;
 	}
 }
@@ -220,7 +220,7 @@ class TestModel7 extends Model {
 	var $name = 'TestModel7';
 	var $table = 'test_model7';
 	var $useTable = false;
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -238,7 +238,7 @@ class Level extends Model {
 	var $name = 'Level';
 	var $table = 'level';
 	var $useTable = false;
-	
+
 	var $hasMany = array(
 		'Group'=> array(
 			'className' => 'Group'
@@ -247,7 +247,7 @@ class Level extends Model {
 			'className' => 'User2'
 		)
 	);
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -263,13 +263,13 @@ class Group extends Model {
 	var $name = 'Group';
 	var $table = 'group';
 	var $useTable = false;
-	
+
 	var $belongsTo = array(
 		'Level' => array(
 			'className' => 'Level'
 		)
 	);
-	
+
 	var $hasMany = array(
 		'Category2'=> array(
 			'className' => 'Category2'
@@ -278,7 +278,7 @@ class Group extends Model {
 			'className' => 'User2'
 		)
 	);
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -295,7 +295,7 @@ class User2 extends Model {
 	var $name = 'User2';
 	var $table = 'user';
 	var $useTable = false;
-	
+
 	var $belongsTo = array(
 		'Group' => array(
 			'className' => 'Group'
@@ -304,13 +304,13 @@ class User2 extends Model {
 			'className' => 'Level'
 		)
 	);
-	
+
 	var $hasMany = array(
 		'Article2' => array(
 			'className' => 'Article2'
 		),
 	);
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -328,7 +328,7 @@ class Category2 extends Model {
 	var $name = 'Category2';
 	var $table = 'category';
 	var $useTable = false;
-	
+
   var $belongsTo = array(
 		'Group' => array(
 			'className' => 'Group',
@@ -339,7 +339,7 @@ class Category2 extends Model {
 			'foreignKey' => 'parent_id'
 		)
 	);
-	
+
 	var $hasMany = array(
 		'ChildCat' => array(
 			'className' => 'Category2',
@@ -351,7 +351,7 @@ class Category2 extends Model {
 			'foreignKey' => 'category_id',
 			'limit'=>'3')
 	);
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -380,7 +380,7 @@ class Article2 extends Model {
 			'className' => 'User2'
  		)
  	);
-  
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -413,7 +413,7 @@ class CategoryFeatured2 extends Model {
 	var $name = 'CategoryFeatured2';
 	var $table = 'category_featured';
 	var $useTable = false;
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -439,7 +439,7 @@ class Featured2 extends Model {
 			'className' => 'CategoryFeatured2'
 		)
 	);
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -458,7 +458,7 @@ class Comment2 extends Model {
 	var $table = 'comment';
 	var $belongsTo = array('ArticleFeatured2', 'User2');
 	var $useTable = false;
-	
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -491,7 +491,7 @@ class ArticleFeatured2 extends Model {
 	var $hasMany = array(
 		'Comment2' => array('className'=>'Comment2', 'dependent' => true)
 	);
-  
+
 	function loadInfo() {
 		if (!isset($this->_tableInfo)) {
 			$this->_tableInfo = new Set(array(
@@ -546,12 +546,12 @@ class DboSourceTest extends UnitTestCase {
 		$db =& ConnectionManager::getDataSource($this->model->useDbConfig);
 		$db->fullDebug = false;
 	}
-	
+
 	function tearDown() {
 		unset($this->model);
 		unset($this->db);
 	}
-	
+
 	function testGenerateAssociationQuerySelfJoin() {
 		$this->model = new Article2();
 		$this->_buildRelatedModels($this->model);
@@ -560,12 +560,12 @@ class DboSourceTest extends UnitTestCase {
 		$this->model->Category2->ParentCat = new Category2();
 
 		$queryData = array();
-		
+
 		foreach($this->model->Category2->__associations as $type) {
 			foreach($this->model->Category2->{$type} as $assoc => $assocData) {
 				$linkModel =& $this->model->Category2->{$assoc};
 				$external = isset($assocData['external']);
-				
+
 				if ($this->model->Category2->name == $linkModel->name && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
 					$result = $this->db->generateSelfAssociationQuery($this->model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
 					$this->assertTrue($result);
@@ -577,7 +577,7 @@ class DboSourceTest extends UnitTestCase {
 				}
 			}
 		}
-		
+
 		$query = $this->db->generateAssociationQuery($this->model->Category2, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\s+WHERE/', $query);
 
@@ -589,9 +589,9 @@ class DboSourceTest extends UnitTestCase {
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertTrue($result);
 
@@ -621,16 +621,16 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 
 		$this->assertTrue($result);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
-		
+
 		$this->Featured2 = new Featured2();
 		$this->Featured2->loadInfo();
-		
+
 		$this->Featured2->bindModel(array(
 			'belongsTo' => array(
 				'ArticleFeatured2' => array(
@@ -639,22 +639,22 @@ class DboSourceTest extends UnitTestCase {
 				)
 			)
 		));
-		
+
 		$this->_buildRelatedModels($this->Featured2);
-		
+
 		$binding = array('type' => 'belongsTo', 'model' => 'ArticleFeatured2');
 		$queryData = array('conditions' => array());
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
 
 		$result = $this->db->generateSelfAssociationQuery($this->Featured2, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 
 		$this->assertTrue($result);
-		
+
 		$result = $this->db->generateAssociationQuery($this->Featured2, $null, null, null, null, $queryData, false, $null);
-		
+
 		$this->assertPattern(
 			'/^SELECT\s+`Featured2`\.`id`, `Featured2`\.`article_id`, `Featured2`\.`category_id`, `Featured2`\.`name`, '.
 			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`category_featured_id`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`body`, `ArticleFeatured2`\.`published`, `ArticleFeatured2`\.`published_date`, `ArticleFeatured2`\.`created`, `ArticleFeatured2`\.`modified`\s+' .
@@ -703,7 +703,7 @@ class DboSourceTest extends UnitTestCase {
 		$null = null;
 
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertTrue($result);
 
@@ -836,19 +836,19 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?1 = 1(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasAndBelongsToManyWithConditions() {
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
+
 		$binding = array('type'=>'hasAndBelongsToMany', 'model'=>'TestModel7');
 		$queryData = array('conditions' => array('TestModel4.name' => '!= mariano'));
 		$resultSet = null;
 		$null = null;
-		
+
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel7`\.`id`, `TestModel7`\.`name`, `TestModel7`\.`created`, `TestModel7`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model7` AS `TestModel7`\s+JOIN\s+`test_model4_test_model7`+/', $result);
@@ -879,12 +879,12 @@ class DboSourceTest extends UnitTestCase {
 		$assoc = $binding['model'];
 		$assocData = $model->{$type}[$assoc];
 		$className = $assocData['className'];
-		
+
 		$linkModel =& $model->{$className};
 		$external = isset($assocData['external']);
-		
+
 		$this->db->__scrubQueryData($queryData);
-		
+
 		$result = array(
 			'linkModel'=> &$linkModel,
 			'type'=> $type,
@@ -964,7 +964,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions("lower(Article.title) LIKE 'a%'");
 		$expected = " WHERE lower( `Article`.`title`) LIKE 'a%'";
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->conditions('((MATCH(Video.title) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( Video.description) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(Video.tags) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))');
 		$expected = ' WHERE ((MATCH( `Video`.`title`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( `Video`.`description`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH( `Video`.`tags`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))';
 		$this->assertEqual($result, $expected);
@@ -1025,7 +1025,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20') ));
 		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`rating` >  20)";
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
 		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`score` >  20)";
 		$this->assertEqual($result, $expected);
@@ -1067,7 +1067,7 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->fields($this->model, null, 'round( (3.55441 * fooField), 3 ) AS test');
 		$this->assertEqual($result, array('round( (3.55441 * fooField), 3 ) AS test'));
-		
+
 		$result = $this->db->fields($this->model, null, 'ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating');
 		$this->assertEqual($result, array('ROUND(`Rating`.`rate_total` / `Rating`.`rate_count`,2) AS rating'));
 
@@ -1121,7 +1121,7 @@ class DboSourceTest extends UnitTestCase {
  			)
  		);
  		$merge = array(
- 			'Topic' => array ( 
+ 			'Topic' => array (
  				array(
  					'id' => '1', 'topic' => 'Topic', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
@@ -1137,14 +1137,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'Topic', 'hasOne');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			'User2' => array ( 
+ 			'User2' => array (
  				array(
  					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
@@ -1160,14 +1160,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'User2', 'belongsTo');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article2' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			array ( 
+ 			array (
  				'Comment' => false
  			)
  		);
@@ -1179,14 +1179,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			array ( 
+ 			array (
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
@@ -1212,14 +1212,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			array ( 
+ 			array (
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
@@ -1257,14 +1257,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			array ( 
+ 			array (
  				'Comment' => array(
  					'id' => '1', 'comment' => 'Comment 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				),
@@ -1312,14 +1312,14 @@ class DboSourceTest extends UnitTestCase {
  		);
  		$this->db->__mergeAssociation($data, $merge, 'Comment', 'hasMany');
  		$this->assertEqual($data, $expected);
- 		
+
  		$data = array(
  			'Article' => array(
  				'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
  			)
  		);
  		$merge = array(
- 			array ( 
+ 			array (
  				'Tag' => array(
  					'id' => '1', 'tag' => 'Tag 1', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
  				)
@@ -1381,11 +1381,11 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->query('findByFieldName', array('= a'), $this->model);
 		$expected = array('TestModel.field_name' => '= = a');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->query('findByFieldName', array(), $this->model);
 		$expected = false;
 		$this->assertEqual($result, $expected);
-		
+
 	}
 
 	function testOrderParsing() {

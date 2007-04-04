@@ -788,7 +788,11 @@ class DboSource extends DataSource {
 					}
 				}
 				if(!isset($data[$association])) {
-					$data[$association] = $merge[0][$association];
+					if($merge[0][$association] != null) {
+						$data[$association] = $merge[0][$association];
+					} else {
+						$data[$association] = array();
+					}
 				} else {
 					if(is_array($merge[0][$association])){
 						foreach ($data[$association] as $k => $v) {
