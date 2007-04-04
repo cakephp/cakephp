@@ -29,9 +29,7 @@
 	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 	}
-	require_once LIBS.'model'.DS.'model.php';
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode.php';
-	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'permission.php';
 	
 	/**
 	 * Short description for class.
