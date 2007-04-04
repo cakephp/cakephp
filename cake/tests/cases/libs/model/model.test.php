@@ -791,8 +791,8 @@ class ModelTest extends CakeTestCase {
 		);
 
 		$this->assertEqual($result, $expected);
-		debug($result);
-		debug($expected);
+		//debug($result);
+		//debug($expected);
 	}
 
 	function testSaveField() {
