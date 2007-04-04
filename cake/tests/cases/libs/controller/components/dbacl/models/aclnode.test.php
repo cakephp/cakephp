@@ -31,23 +31,80 @@
 	}
 	require_once LIBS.'model'.DS.'model.php';
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode.php';
-	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco.php';
-	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aro.php';
 	require_once LIBS.'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'permission.php';
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+	 */
+	class AclNodeTestBase extends AclNode {
+		var $useDbConfig = 'test_suite';
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+	 */
+	class AroTest extends AclNodeTestBase {
+		var $name = 'AroTest';
+		var $useTable = 'aros';
+		var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+	 */
+	class AcoTest extends AclNodeTestBase {
+		var $name = 'AcoTest';
+		var $useTable = 'acos';
+		var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+	 */
+	class PermissionTest extends CakeTestModel {
+		var $name = 'PermissionTest';
+		var $useTable = 'aros_acos';
+		var $cacheQueries = false;
+		var $belongsTo = 'AroTest,AcoTest';
+		var $actsAs = null;
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+	 */
+	class AcoActionTest extends CakeTestModel {
+		var $name = 'AcoActionTest';
+		var $useTable = 'aco_actions';
+		var $belongsTo = 'AcoTest';
+	}
+	
 /**
  * Short description for class.
  *
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
  */
-class AclNodeTest extends UnitTestCase {
-
-	function setUp() {
-		//$this->Aro =& new Aro();
-	}
-
+class AclNodeTest extends CakeTestCase {
+	var $fixtures = array( 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action' );
+	
 	function testNodeNesting() {
-		return;
+		$this->Aro =& new AroTest();
+		
 		$this->Aro->create(1, null, 'Food');
 		$this->Aro->create(2, null, 'Fruit');
 		$this->Aro->create(3, null, 'Red');
