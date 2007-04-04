@@ -119,9 +119,9 @@
 		var $belongsTo = array(
 			'ArticleFeatured'=> array('className' => 'ArticleFeatured'),
 			'Category'=> array('className' => 'Category')
-		);	
+		);
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -682,9 +682,9 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-		
+
 		$this->Featured = new Featured();
-		
+
 		$this->Featured->recursive = 2;
 		$this->Featured->bindModel(array(
 			'belongsTo' => array(
@@ -694,103 +694,105 @@ class ModelTest extends CakeTestCase {
 				)
 			)
 		));
-		
+
 		$this->Featured->ArticleFeatured->unbindModel(array(
-			'hasMany' => array('Attachment', 'Comment'), 
+			'hasMany' => array('Attachment', 'Comment'),
 			'hasAndBelongsToMany'=>array('Tag'))
 		);
-		
+
 		// UNCOMMENT THE FOLLOWING LINE TO MAKE TEST SUCCEED:
 		//
 		// $this->Featured->ArticleFeatured->unbindModel(array('belongsTo'=>array('Category')));
-		
+
 		$orderBy = 'ArticleFeatured.id ASC';
 		$result = $this->Featured->findAll(null, null, $orderBy, 3);
-		
-		$expected = array ( 
-			array ( 
-				'Featured' => array ( 
-					'id' => '1', 
-					'article_featured_id' => '1', 
-					'category_id' => '1', 
-					'published_date' => '2007-03-31 10:39:23', 
-					'end_date' => '2007-05-15 10:39:23', 
-					'created' => '2007-03-18 10:39:23', 
+
+		$expected = array (
+			array (
+				'Featured' => array (
+					'id' => '1',
+					'article_featured_id' => '1',
+					'category_id' => '1',
+					'published_date' => '2007-03-31 10:39:23',
+					'end_date' => '2007-05-15 10:39:23',
+					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31'
-				), 
-				'ArticleFeatured' => array ( 
-					'id' => '1', 
-					'title' => 'First Article', 
-					'user_id' => '1', 
-					'published' => 'Y', 
-					'User' => array ( 
-						'id' => '1', 
-						'user' => 'mariano', 
-						'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 
-						'created' => '2007-03-17 01:16:23', 
+				),
+				'ArticleFeatured' => array (
+					'id' => '1',
+					'title' => 'First Article',
+					'user_id' => '1',
+					'published' => 'Y',
+					'User' => array (
+						'id' => '1',
+						'user' => 'mariano',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:16:23',
 						'updated' => '2007-03-17 01:18:31'
-					), 
-					'Featured' => array ( 
-						'id' => '1', 
-						'article_featured_id' => '1', 
-						'category_id' => '1', 
-						'published_date' => '2007-03-31 10:39:23', 
-						'end_date' => '2007-05-15 10:39:23', 
-						'created' => '2007-03-18 10:39:23', 
+					),
+					'Featured' => array (
+						'id' => '1',
+						'article_featured_id' => '1',
+						'category_id' => '1',
+						'published_date' => '2007-03-31 10:39:23',
+						'end_date' => '2007-05-15 10:39:23',
+						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31'
 					)
-				), 
-				'Category' => array ( 
-					'id' => '1', 
-					'parent_id' => '0', 
-					'name' => 'Category 1', 
-					'created' => '2007-03-18 15:30:23', 
+				),
+				'Category' => array (
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
 					'updated' => '2007-03-18 15:32:31'
 				)
-			), 
-			array ( 
-				'Featured' => array ( 
-					'id' => '2', 
-					'article_featured_id' => '2', 
-					'category_id' => '1', 
-					'published_date' => '2007-03-31 10:39:23', 
-					'end_date' => '2007-05-15 10:39:23', 
-					'created' => '2007-03-18 10:39:23', 
+			),
+			array (
+				'Featured' => array (
+					'id' => '2',
+					'article_featured_id' => '2',
+					'category_id' => '1',
+					'published_date' => '2007-03-31 10:39:23',
+					'end_date' => '2007-05-15 10:39:23',
+					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31'
-				), 
-				'ArticleFeatured' => array ( 
-					'id' => '2', 
-					'title' => 'Second Article', 
-					'user_id' => '3', 
-					'published' => 'Y', 
-					'User' => array ( 
-						'id' => '3', 
-						'user' => 'larry', 
-						'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 
-						'created' => '2007-03-17 01:20:23', 
+				),
+				'ArticleFeatured' => array (
+					'id' => '2',
+					'title' => 'Second Article',
+					'user_id' => '3',
+					'published' => 'Y',
+					'User' => array (
+						'id' => '3',
+						'user' => 'larry',
+						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+						'created' => '2007-03-17 01:20:23',
 						'updated' => '2007-03-17 01:22:31'
-					), 
-					'Featured' => array ( 
-						'id' => '2', 
-						'article_featured_id' => '2', 
-						'category_id' => '1', 
-						'published_date' => '2007-03-31 10:39:23', 
-						'end_date' => '2007-05-15 10:39:23', 
-						'created' => '2007-03-18 10:39:23', 
+					),
+					'Featured' => array (
+						'id' => '2',
+						'article_featured_id' => '2',
+						'category_id' => '1',
+						'published_date' => '2007-03-31 10:39:23',
+						'end_date' => '2007-05-15 10:39:23',
+						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31'
 					)
-				), 
-				'Category' => array ( 
-					'id' => '1', 
-					'parent_id' => '0', 
-					'name' => 'Category 1', 
-					'created' => '2007-03-18 15:30:23', 
+				),
+				'Category' => array (
+					'id' => '1',
+					'parent_id' => '0',
+					'name' => 'Category 1',
+					'created' => '2007-03-18 15:30:23',
 					'updated' => '2007-03-18 15:32:31'
 				)
 			)
 		);
-		
+
 		$this->assertEqual($result, $expected);
+		debug($result);
+		debug($expected);
 	}
 
 	function testSaveField() {

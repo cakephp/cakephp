@@ -812,17 +812,17 @@ class Controller extends Object {
 			$otherModelKey = Inflector::underscore($assocData['className']);
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
-				$fieldNames[$otherModelKey]['model'] = $associationName;
-				$fieldNames[$otherModelKey]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($associationName));
-				$fieldNames[$otherModelKey]['prompt'] = $fieldNames[$otherModelKey]['label'];
-				$fieldNames[$otherModelKey]['type'] = "select";
-				$fieldNames[$otherModelKey]['multiple'] = "multiple";
-				$fieldNames[$otherModelKey]['tagName'] = $associationName . '/' . $associationName;
-				$fieldNames[$otherModelKey]['name'] = $associationName;
-				$fieldNames[$otherModelKey]['class'] = 'optional';
-				$fieldNames[$otherModelKey]['options'] = $otherModelObj->generateList();
+				$fieldNames[$associationName]['model'] = $associationName;
+				$fieldNames[$associationName]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($associationName));
+				$fieldNames[$associationName]['prompt'] = $fieldNames[$associationName]['label'];
+				$fieldNames[$associationName]['type'] = "select";
+				$fieldNames[$associationName]['multiple'] = "multiple";
+				$fieldNames[$associationName]['tagName'] = $associationName . '/' . $associationName;
+				$fieldNames[$associationName]['name'] = $associationName;
+				$fieldNames[$associationName]['class'] = 'optional';
+				$fieldNames[$associationName]['options'] = $otherModelObj->generateList();
 				if (isset($data[$associationName])) {
-					$fieldNames[$otherModelKey]['selected'] = $this->_selectedArray($data[$associationName], $otherModelObj->primaryKey);
+					$fieldNames[$associationName]['selected'] = $this->_selectedArray($data[$associationName], $otherModelObj->primaryKey);
 				}
 			}
 		}
