@@ -662,6 +662,7 @@ class DboSourceTest extends UnitTestCase {
 			'\s+ON\s+`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`' .
 			'\s+AND\s+`ArticleFeatured2`\.`published` = \'Y\'\s+' .
 			'\s+WHERE\s+1\s+=\s+1\s*$/', $result);
+			debug($result);
 	}
 
 	function testGenerateAssociationQueryHasOne() {

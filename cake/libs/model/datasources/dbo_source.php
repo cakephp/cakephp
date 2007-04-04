@@ -994,16 +994,16 @@ class DboSource extends DataSource {
 					}
 				} else {
 					if ($type == 'hasOne') {
-						$conditions = array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$model->name}.{$model->primaryKey}" . ']__$}');
+						$conditions = $this->__mergeConditions($queryData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$model->name}.{$model->primaryKey}" . ']__$}'));
 					} elseif ($type == 'belongsTo') {
-						$conditions = array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}');
+						$conditions = $this->__mergeConditions($assocData['conditions'], array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'));
 					}
 
 					$join = array(
 						'table' => $this->fullTableName($linkModel),
 						'alias' => $alias,
 						'type' => 'LEFT',
-						'conditions' => $conditions
+						'conditions' => preg_replace('/^\s*WHERE\s*/', '', trim($this->conditions($conditions)))
 					);
 					$queryData['fields'] = am($queryData['fields'], $fields);
 
@@ -1105,7 +1105,7 @@ class DboSource extends DataSource {
 
 	function renderJoinStatement($data) {
 		extract($data);
-		return trim("{$type} JOIN {$table} {$alias} ON {$conditions}");
+		return trim("{$type} JOIN {$table} {$alias} ON ({$conditions})");
 	}
 
 	function renderStatement($data) {
