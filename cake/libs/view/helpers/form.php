@@ -108,9 +108,12 @@ class FormHelper extends AppHelper {
 			$fields = $object->loadInfo();
 			$data = array(
 				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
+				'sizes' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.length')),
+				'values' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.default')),
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
+			$this->fieldset = $data;
 		}
 
 		if (isset($this->data[$model]) && isset($this->data[$model][$data['key']]) && !empty($this->data[$model][$data['key']])) {
@@ -128,7 +131,9 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			$options = (array)$options;
-			if (!empty($model) && $model != $defaultModel) {
+			if(!empty($this->plugin)) {
+				$controller = $this->plugin;
+			} elseif (!empty($model) && $model != $defaultModel) {
 				$controller = Inflector::underscore(Inflector::pluralize($model));
 			} else {
 				$controller = Inflector::underscore($this->params['controller']);
@@ -270,12 +275,20 @@ class FormHelper extends AppHelper {
  * replaces generateFields
  *
  * @access public
- * @param array $fields works well with Controller::generateFieldNames();
+ * @param array $fields works well with Controller::generateFields() or on its own;
+ * @param array $blacklist a simple array of fields to skip
  * @return output
  */
-	function inputs($fields) {
+	function inputs($fields = null, $blacklist = null) {
+		if(!is_array($fields)) {
+			$fields = array_keys($this->fieldset['fields']);
+		} 
+		
 		$out = null;
 		foreach($fields as $name => $options) {
+			if(is_array($blacklist) && in_array($name, $blacklist)) {
+				break;
+			}
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
 				$options = array();
@@ -310,7 +323,6 @@ class FormHelper extends AppHelper {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
 			$varOptions = $view->getVar($varName);
-
 			if (is_array($varOptions)) {
 				$options['type'] = 'select';
 				$options['options'] = $varOptions;
@@ -324,9 +336,16 @@ class FormHelper extends AppHelper {
 				$options['type'] = 'select';
 			} elseif (in_array($this->field(), array('passwd', 'password'))) {
 				$options['type'] = 'password';
-			} elseif (ClassRegistry::isKeySet($this->model())) {
+			} else if(isset($this->fieldset['fields'][$this->field()])) {
+				$type = $this->fieldset['fields'][$this->field()];
+				$primaryKey = $this->fieldset['key'];
+			} else if (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
+				$pimaryKey = $model->primaryKey;
+			}
+
+			if(isset($type)) {
 				$map = array(
 					'string'	=> 'text',	'datetime'	=> 'datetime',
 					'boolean'	=> 'checkbox',	'timestamp'	=> 'datetime',
@@ -336,28 +355,50 @@ class FormHelper extends AppHelper {
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				}
-				if($this->field() == $model->primaryKey) {
+				if($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
+
+			}
+		}
+
+		if(!array_key_exists('size', $options)) {
+			if(isset($this->fieldset['sizes'][$this->field()])) {
+				$options['size'] = $this->fieldset['sizes'][$this->field()];
+			}
+		}
+		if(!array_key_exists('maxlength', $options)) {
+			if(isset($this->fieldset['sizes'][$this->field()])) {
+				$options['maxlength'] = $this->fieldset['sizes'][$this->field()];
+			}
+		}
+
+		if(!array_key_exists('value', $options)) {
+			if(isset($this->fieldset['values'][$this->field()])) {
+				$options['value'] = $this->fieldset['values'][$this->field()];
 			}
 		}
 
 		$out = '';
 		$div = true;
-		if (isset($options['div'])) {
+		if (array_key_exists('div', $options)) {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-
-		$divOptions = array();
-		if ($div === true) {
-			$divOptions['class'] = 'input';
-		} elseif ($div === false) {
-			unset($divOptions);
-		} elseif (is_string($div)) {
-			$divOptions['class'] = $div;
-		} elseif (is_array($div)) {
-			$divOptions = am(array('class' => 'input'), $div);
+		
+		if(!empty($div)) {
+			$divOptions = array();
+			if ( !in_array($this->field(), $this->fieldset['validates'])) {
+				$divOptions['class'] = 'input';
+			} elseif (in_array($this->field(), $this->fieldset['validates'])) {
+				$divOptions['class'] = 'required';
+			} 
+			
+			if (is_string($div)) {
+				$divOptions['class'] = $div;
+			} elseif (is_array($div)) {
+				$divOptions = am($divOptions, $div);
+			}
 		}
 
 		$label = null;

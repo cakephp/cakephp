@@ -93,6 +93,23 @@ class PaginatorHelper extends AppHelper {
 		if (is_string($options)) {
 			$options = array('update' => $options);
 		}
+		
+		if(!empty($options['paging'])) {
+			if(!isset($this->params['paging'])) {
+				$this->params['paging'] = array();
+			}
+			$this->params['paging'] = am($this->params['paging'], $options['paging']);
+			unset($options['paging']);
+		}
+		
+		$model = $this->defaultModel();
+		if(!empty($options[$model])) {
+			if(!isset($this->params['paging'][$model])) {
+				$this->params['paging'][$model] = array();
+			}
+			$this->params['paging'][$model] = am($this->params['paging'][$model], $options[$model]);
+			unset($options[$model]);
+		}
 		$this->options = array_filter(am($this->options, $options));
 	}
 /**
@@ -390,6 +407,82 @@ class PaginatorHelper extends AppHelper {
 		}
 		return $this->output($out);
 	}
-}
+/**
+ * Returns a set of numbers for the paged result set
+ * uses a modulus to decide how many numbers to show on each side of the current page (defautl: 8)
+ *
+ * @param  mixed $options Options for the counter string. See #options for list of keys.
+ * @return string numbers string.
+ */
+	function numbers($options = array()) { 
+		$options = am(
+			array(
+				'before'=> null,
+				'after'=> null,
+				'model' => $this->defaultModel(),
+				'modulus' => '8',
+				'separator' => ' | '
+			),
+		$options);
+		
+		$params = $this->params($options['model']);
+		unset($options['model']);
+		
+		if($params['pageCount'] <= 1) {
+			return false;
+		}
+		$before = $options['before'];
+		unset($options['before']);
+		$after = $options['after'];
+		unset($options['after']);
+		
+		$modulus = $options['modulus'];
+		unset($options['modulus']);
+		
+		$separator = $options['separator'];
+		unset($options['separator']);
+		
+		$out = $before;
+		
+		if($modulus && $params['pageCount'] > $modulus) {
+			$half = intval($modulus / 2);
+			$end = $params['page'] + $half;
+			if($end > $params['pageCount']) {
+				$end = $params['pageCount'];
+			}
+			$start = $params['page'] - ($modulus - ($end - $params['page']));
+			
+			if($start <= 1) {
+				$start = 1;
+				$end = $params['page'] + ($modulus  - $params['page']) + 1;
+			}
+			
+			for ($i = $start; $i < $params['page']; $i++) {
+				$out .= $this->link($i, am($options, array('page' => $i)));
+				$out .= $separator;
+			}
 
+			$out .= $params['page'];
+			$out .= $separator;
+			
+			$start = $params['page'] + 1;
+			
+			for ($i = $start; $i <= $end; $i++) {
+				$out .= $this->link($i, am($options, array('page' => $i)));
+				$out .= $separator;
+			}
+		} else {
+			for ($i = 1; $i <= $params['pageCount']; $i++) {
+				if($i == $params['page']) {
+					$out .= $i;
+				} else {
+					$out .= $this->link($i, am($options, array('page' => $i)));
+				}
+				$out .= $separator;
+			}
+		}
+		$out .= $after;
+		return $this->output($out);
+	}
+}
 ?>
