@@ -246,6 +246,9 @@ class DboSource extends DataSource {
 				return $args[2]->find($query, $fields, $order, $recursive);
 			}
 		} else {
+			if(isset($args[1]) && $args[1] === true){
+				return $this->fetchAll($args[0], true);
+			}
 			return $this->fetchAll($args[0], false);
 		}
 	}

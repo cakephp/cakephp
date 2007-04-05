@@ -86,7 +86,7 @@ class AclNode extends AppModel {
 				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft && {$type}{$k}.rght < {$type}{$i}.rght ";
 				$query .= "AND {$type}{$k}.alias = " . $db->value($alias) . " ";
 			}
-			$result = $this->query("{$query} WHERE {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ORDER BY {$type}.lft DESC");
+			$result = $this->query("{$query} WHERE {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ORDER BY {$type}.lft DESC", $this->cacheQueries);
 		} elseif (is_object($ref) && is_a($ref, 'Model')) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
@@ -123,7 +123,7 @@ class AclNode extends AppModel {
 			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
 			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
 			$query .= "ON {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ";
-			$result = $this->query("{$query} " . $db->conditions($ref) ." ORDER BY {$type}.lft DESC");
+			$result = $this->query("{$query} " . $db->conditions($ref) ." ORDER BY {$type}.lft DESC", $this->cacheQueries);
 
 			if (!$result) {
 				pr($this->trace());
