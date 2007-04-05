@@ -1388,7 +1388,7 @@
 			$args = func_get_args();
 			foreach ($args[0] as $valueKey => $valueData) {
 				for ($i = 1; $i < func_num_args(); $i++) {
-					if (isset($arg[$i][$valueKey])) {
+					if (isset($args[$i][$valueKey])) {
 						continue 2;
 					}
 				}
