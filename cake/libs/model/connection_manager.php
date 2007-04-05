@@ -198,7 +198,8 @@ class ConnectionManager extends Object {
 		$_this =& ConnectionManager::getInstance();
 
 		if (empty($name) || empty($config) || array_key_exists($name, $_this->_connectionsEnum)) {
-			return null;
+			$null = null;
+			return $null;
 		}
 
 		$_this->config->{$name} = $config;

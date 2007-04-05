@@ -595,35 +595,35 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertTrue($result);
 
-		$expected = array (array ( 
-			'fields' => array ( 
-				'`TestModel4`.`id`', 
-				'`TestModel4`.`name`', 
-				'`TestModel4`.`created`', 
-				'`TestModel4`.`updated`', 
-				'`TestModel4Parent`.`id`', 
-				'`TestModel4Parent`.`name`', 
-				'`TestModel4Parent`.`created`', 
+		$expected = array (array (
+			'fields' => array (
+				'`TestModel4`.`id`',
+				'`TestModel4`.`name`',
+				'`TestModel4`.`created`',
+				'`TestModel4`.`updated`',
+				'`TestModel4Parent`.`id`',
+				'`TestModel4Parent`.`name`',
+				'`TestModel4Parent`.`created`',
 				'`TestModel4Parent`.`updated`'
-			), 
-			'joins' => array ( 
-				array ( 
-					'table' => '`test_model4`', 
-					'alias' => 'TestModel4Parent', 
-					'type' => 'LEFT', 
-					'conditions' => array ( 
+			),
+			'joins' => array (
+				array (
+					'table' => '`test_model4`',
+					'alias' => 'TestModel4Parent',
+					'type' => 'LEFT',
+					'conditions' => array (
 						'`TestModel4`.`parent_id`' => '{$__cakeIdentifier[TestModel4Parent.id]__$}'
 					)
 				)
-			), 
-			'table' => '`test_model4`', 
-			'alias' => 'TestModel4', 
-			'limit' => array ( ), 
-			'offset' => array ( ), 
-			'conditions' => array ( ), 
+			),
+			'table' => '`test_model4`',
+			'alias' => 'TestModel4',
+			'limit' => array ( ),
+			'offset' => array ( ),
+			'conditions' => array ( ),
 			'order' => array ( )
 		));
-		
+
 		$this->assertEqual($queryData['selfJoin'], $expected);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
