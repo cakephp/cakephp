@@ -57,9 +57,9 @@
 class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
-		
+
 	/**
-	 * holds the fields array('field_name'=>'type'), sizes array('field_name'=>'size'), 
+	 * holds the fields array('field_name'=>'type'), sizes array('field_name'=>'size'),
 	 * primaryKey and validates array('field_name')
 	 *
 	 * @access public
@@ -188,7 +188,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = am($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => $options['id'] . 'Token'));
+			$append .= '<p style="display: inline; margin: 0px; padding: 0px;">';
+			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => $options['id'] . 'Token' . mt_rand()));
+			$append .= '</p>';
 		}
 
 		$this->setFormTag($model . '.');
@@ -287,8 +289,8 @@ class FormHelper extends AppHelper {
 	function inputs($fields = null, $blacklist = null) {
 		if(!is_array($fields)) {
 			$fields = array_keys($this->fieldset['fields']);
-		} 
-		
+		}
+
 		$out = null;
 		foreach($fields as $name => $options) {
 			if(is_array($blacklist) && in_array($name, $blacklist)) {
@@ -378,9 +380,9 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-		
+
 		if(!empty($div)) {
-			$divOptions = array('class'=>'input');			
+			$divOptions = array('class'=>'input');
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
 			} elseif (is_array($div)) {
@@ -388,9 +390,9 @@ class FormHelper extends AppHelper {
 			}
 			if (in_array($this->field(), $this->fieldset['validates'])) {
 				$divOptions = $this->addClass($divOptions, 'required');
-			} 
+			}
 		}
-		
+
 		$label = null;
 		if (isset($options['label'])) {
 			$label = $options['label'];

@@ -709,13 +709,15 @@ class HtmlHelper extends AppHelper {
 		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
-		$token = '';
+		$append = '';
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$token = $this->hidden('_Token/key', array('value' => $this->params['_Token']['key']), true);
+				$append .= '<p style="display: inline; margin: 0px; padding: 0px;">';
+				$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => '_TokenKey' . mt_rand()), true);
+				$append .= '</p>';
 		}
 
-		return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $token;
+		return sprintf($this->tags['form'], $this->parseHtmlOptions($htmlAttributes, null, '')) . $append;
 	}
 /**
  * @deprecated
