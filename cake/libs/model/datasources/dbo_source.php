@@ -891,7 +891,7 @@ class DboSource extends DataSource {
 			$result = $queryData['selfJoin'][0];
 			if (!empty($queryData['joins'])) {
 				foreach($queryData['joins'] as $join) {
-					if(in_array($join, $result['joins'])) {
+					if(!in_array($join, $result['joins'])) {
 						$result['joins'][] = $join;
 					}
 				}
