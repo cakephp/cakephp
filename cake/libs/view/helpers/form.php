@@ -109,7 +109,6 @@ class FormHelper extends AppHelper {
 			$data = array(
 				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
 				'sizes' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.length')),
-				'values' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.default')),
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
@@ -331,7 +330,6 @@ class FormHelper extends AppHelper {
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
-
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($this->field(), array('passwd', 'password'))) {
@@ -362,20 +360,9 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		if(!array_key_exists('size', $options)) {
-			if(isset($this->fieldset['sizes'][$this->field()])) {
-				$options['size'] = $this->fieldset['sizes'][$this->field()];
-			}
-		}
-		if(!array_key_exists('maxlength', $options)) {
+		if(!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
 			if(isset($this->fieldset['sizes'][$this->field()])) {
 				$options['maxlength'] = $this->fieldset['sizes'][$this->field()];
-			}
-		}
-
-		if(!array_key_exists('value', $options)) {
-			if(isset($this->fieldset['values'][$this->field()])) {
-				$options['value'] = $this->fieldset['values'][$this->field()];
 			}
 		}
 
@@ -387,20 +374,17 @@ class FormHelper extends AppHelper {
 		}
 		
 		if(!empty($div)) {
-			$divOptions = array();
-			if ( !in_array($this->field(), $this->fieldset['validates'])) {
-				$divOptions['class'] = 'input';
-			} elseif (in_array($this->field(), $this->fieldset['validates'])) {
-				$divOptions['class'] = 'required';
-			} 
-			
+			$divOptions = array('class'=>'input');			
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
 			} elseif (is_array($div)) {
 				$divOptions = am($divOptions, $div);
 			}
+			if (in_array($this->field(), $this->fieldset['validates'])) {
+				$divOptions = $this->addClass($divOptions, 'required');
+			} 
 		}
-
+		
 		$label = null;
 		if (isset($options['label'])) {
 			$label = $options['label'];
