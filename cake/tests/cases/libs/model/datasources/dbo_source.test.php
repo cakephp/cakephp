@@ -580,7 +580,7 @@ class DboSourceTest extends UnitTestCase {
 
 		$query = $this->db->generateAssociationQuery($this->model->Category2, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\)\s+WHERE/', $query);
-		
+
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
@@ -641,16 +641,16 @@ class DboSourceTest extends UnitTestCase {
 		));
 
 		$this->_buildRelatedModels($this->Featured2);
-		
+
 		$binding = array('type' => 'belongsTo', 'model' => 'ArticleFeatured2');
 		$queryData = array('conditions' => array());
 		$resultSet = null;
 		$null = null;
 
 		$params = &$this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
-		
+
 		$result = $this->db->generateSelfAssociationQuery($this->Featured2, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-		
+
 		$this->assertTrue($result);
 
 		$result = $this->db->generateAssociationQuery($this->Featured2, $null, null, null, null, $queryData, false, $null);
@@ -660,7 +660,7 @@ class DboSourceTest extends UnitTestCase {
 			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`published`\s+' .
 			'FROM\s+`featured2` AS `Featured2`\s+LEFT JOIN\s+`article_featured` AS `ArticleFeatured2`' .
 			'\s+ON\s+\(`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`\s+AND\s+`ArticleFeatured2`.`published` = \'Y\'\)' .
-			'\s+WHERE\s+1\s+=\s+1\s*$/', 
+			'\s+WHERE\s+1\s+=\s+1\s*$/',
 			$result);
 	}
 
@@ -732,7 +732,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->buildJoinStatement($queryData['joins'][0]);
 		$expected = ' LEFT JOIN `test_model4` AS `TestModel4` ON (`TestModel5`.`test_model4_id` = `TestModel4`.`id`)';
 		$this->assertEqual(trim($result), trim($expected));
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`, `TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+LEFT JOIN\s+`test_model4` AS `TestModel4`/', $result);
@@ -882,7 +882,7 @@ class DboSourceTest extends UnitTestCase {
 
 		$linkModel =& $model->{$className};
 		$external = isset($assocData['external']);
-		
+
 		$this->db->__scrubQueryData($queryData);
 
 		$result = array(

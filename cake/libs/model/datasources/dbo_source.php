@@ -871,6 +871,11 @@ class DboSource extends DataSource {
 				'order'		=> $queryData['order']
 			);
 
+			if (!empty($assocData['conditions'])) {
+				$self['joins'][0]['conditions'] = preg_replace('/^\s*WHERE\s*/', '', trim($this->conditions(am($self['joins'][0]['conditions'], $assocData['conditions']))));
+
+			}
+
 			if (!empty($queryData['joins'])) {
 				foreach($queryData['joins'] as $join) {
 					$self['joins'][] = $join;
@@ -878,7 +883,7 @@ class DboSource extends DataSource {
 			}
 
 			if($this->__bypass === false) {
-				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, ''));
+				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, (isset($assocData['fields']) ? $assocData['fields'] : '')));
 			}
 			$sql = $this->buildStatement($self, $model);
 
