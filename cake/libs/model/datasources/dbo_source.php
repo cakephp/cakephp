@@ -872,7 +872,7 @@ class DboSource extends DataSource {
 			);
 
 			if (!empty($assocData['conditions'])) {
-				$self['joins'][0]['conditions'] = preg_replace('/^\s*WHERE\s*/', '', trim($this->conditions(am($self['joins'][0]['conditions'], $assocData['conditions']))));
+				$self['joins'][0]['conditions'] = trim($this->conditions(am($self['joins'][0]['conditions'], $assocData['conditions']), true, false));
 
 			}
 
@@ -1008,7 +1008,7 @@ class DboSource extends DataSource {
 						'table' => $this->fullTableName($linkModel),
 						'alias' => $alias,
 						'type' => 'LEFT',
-						'conditions' => preg_replace('/^\s*WHERE\s*/', '', trim($this->conditions($conditions)))
+						'conditions' => trim($this->conditions($conditions, true, false))
 					);
 					$queryData['fields'] = am($queryData['fields'], $fields);
 
@@ -1083,7 +1083,7 @@ class DboSource extends DataSource {
 			$data['alias'] = $this->alias . $this->name($data['alias']);
 		}
 		if (!empty($data['conditions'])) {
-			$data['conditions'] = preg_replace('/^\s*WHERE\s*/', '', trim($this->conditions($data['conditions'])));
+			$data['conditions'] = trim($this->conditions($data['conditions'], true, false));
 		}
 		return $this->renderJoinStatement($data);
 	}
@@ -1379,14 +1379,16 @@ class DboSource extends DataSource {
  * @param mixed $conditions Array or string of conditions
  * @return string SQL fragment
  */
-	function conditions($conditions, $quoteValues = true) {
+	function conditions($conditions, $quoteValues = true, $where = true) {
 		$clause = $out = '';
 		if (is_string($conditions) || empty($conditions) || $conditions === true) {
 			if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
 				return ' WHERE 1 = 1';
 			}
 			if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
-				$clause = ' WHERE ';
+				if($where) {
+					$clause = ' WHERE ';
+				}
 			}
 			if (trim($conditions) == '') {
 				$conditions = ' 1 = 1';
@@ -1422,7 +1424,9 @@ class DboSource extends DataSource {
 			}
 			return $clause . $conditions;
 		} else {
-			$clause = ' WHERE ';
+			if($where) {
+				$clause = ' WHERE ';
+			}
 			if (!empty($conditions)) {
 				$out = $this->conditionKeysToString($conditions, $quoteValues);
 			}
