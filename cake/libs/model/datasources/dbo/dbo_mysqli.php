@@ -89,7 +89,16 @@ class DboMysqli extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
+		$this->connected = false;
 		$this->connection = mysqli_connect($config['host'], $config['login'], $config['password'], $config['database'], $config['port']);
+
+		if ($this->connection !== false) {
+			$this->connected = true;
+		}
+
+		if (!empty($config['encoding'])) {
+			$this->setEncoding($config['encoding']);
+		}
 		return $this->connected;
 	}
 /**
@@ -411,6 +420,15 @@ class DboMysqli extends DboSource {
 		} else {
 			return false;
 		}
+	}
+/**
+ * Sets the database encoding
+ *
+ * @param string $enc Database encoding
+ * @return void
+ */
+	function setEncoding($enc) {
+		return $this->_execute('SET NAMES ' . $enc) != false;
 	}
 /**
  * Enter description here...
