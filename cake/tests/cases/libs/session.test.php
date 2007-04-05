@@ -36,50 +36,54 @@
  */
 class SessionTest extends UnitTestCase {
 
-    function setUp() {
-        $this->Session = new CakeSession();
-    }
-
-    function testCheck() {
-    	$this->Session->write('SessionTestCase', 'value');
-        $this->assertTrue($this->Session->check('SessionTestCase'));
-
-        $this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
-    }
-    
-    function testCheckingSavedEmpty() {
-        $this->Session->write('SessionTestCase', 0);
-        $this->assertTrue($this->Session->check('SessionTestCase'));
-
-        $this->Session->write('SessionTestCase', '0');
-        $this->assertTrue($this->Session->check('SessionTestCase'));
-
-        $this->Session->write('SessionTestCase', false);
-        $this->assertTrue($this->Session->check('SessionTestCase'));
-
-        $this->Session->write('SessionTestCase', null);
-        $this->assertFalse($this->Session->check('SessionTestCase'));
-    }
-
-    function testReadingSavedEmpty() {
-        $this->Session->write('SessionTestCase', 0);
-        $this->assertEqual($this->Session->read('SessionTestCase'), 0);
-
-        $this->Session->write('SessionTestCase', '0');
-        $this->assertEqual($this->Session->read('SessionTestCase'), '0');
-        $this->assertFalse($this->Session->read('SessionTestCase') === 0);
-
-        $this->Session->write('SessionTestCase', false);
-        $this->assertFalse($this->Session->read('SessionTestCase'));
-
-        $this->Session->write('SessionTestCase', null);
-        $this->assertEqual($this->Session->read('SessionTestCase'), null);
-    }
-
-    function tearDown() {
-        $this->Session->del('SessionTestCase');
-        unset($this->Session);
-    }
+	function setUp() {
+		restore_error_handler();
+		
+		@$this->Session =& new CakeSession();
+		
+		set_error_handler('simpleTestErrorHandler');
+	}
+	
+	function testCheck() {
+		$this->Session->write('SessionTestCase', 'value');
+		$this->assertTrue($this->Session->check('SessionTestCase'));
+		
+		$this->assertFalse($this->Session->check('NotExistingSessionTestCase'), false);
+	}
+	
+	function testCheckingSavedEmpty() {
+		$this->Session->write('SessionTestCase', 0);
+		$this->assertTrue($this->Session->check('SessionTestCase'));
+		
+		$this->Session->write('SessionTestCase', '0');
+		$this->assertTrue($this->Session->check('SessionTestCase'));
+		
+		$this->Session->write('SessionTestCase', false);
+		$this->assertTrue($this->Session->check('SessionTestCase'));
+		
+		$this->Session->write('SessionTestCase', null);
+		$this->assertFalse($this->Session->check('SessionTestCase'));
+	}
+	
+	function testReadingSavedEmpty() {
+		$this->Session->write('SessionTestCase', 0);
+		$this->assertEqual($this->Session->read('SessionTestCase'), 0);
+		
+		$this->Session->write('SessionTestCase', '0');
+		$this->assertEqual($this->Session->read('SessionTestCase'), '0');
+		$this->assertFalse($this->Session->read('SessionTestCase') === 0);
+		
+		$this->Session->write('SessionTestCase', false);
+		$this->assertFalse($this->Session->read('SessionTestCase'));
+		
+		$this->Session->write('SessionTestCase', null);
+		$this->assertEqual($this->Session->read('SessionTestCase'), null);
+	}
+	
+	function tearDown() {
+		$this->Session->del('SessionTestCase');
+		unset($this->Session);
+	}
 }
 
 ?>
