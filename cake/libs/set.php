@@ -60,7 +60,6 @@ class Set extends Object {
 	function &get() {
 		return $this->value;
 	}
-
 /**
  * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
@@ -71,6 +70,7 @@ class Set extends Object {
  * @param array $arr1
  * @param array $arr2
  * @return array
+ * @access public
  */
 	function merge($arr1, $arr2 = null) {
 		// Get all arguments that were passed to the function
