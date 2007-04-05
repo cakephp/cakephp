@@ -64,7 +64,7 @@ class Set extends Object {
  * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
  * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
- * 
+ *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
  *
  * @param array $arr1
@@ -73,53 +73,35 @@ class Set extends Object {
  * @access public
  */
 	function merge($arr1, $arr2 = null) {
-		// Get all arguments that were passed to the function
 		$args = func_get_args();
-		
-		// If $this is a Set class
-		if (is_a($this, 'set')) {
-			// Get the call stack
+
+		if(is_a($this, 'set')) {
 			$backtrace = debug_backtrace();
-			// And the previous call
 			$previousCall = low($backtrace[1]['class'].'::'.$backtrace[1]['function']);
-			// If this is not a recursive call
 			if ($previousCall != 'set::merge') {
-				// Reference this Set's value as our resulting $r array
 				$r =& $this->value;
-				// And push an empty args at the beginning of the $args array which will be discarded later on
 				array_unshift($args, null);
 			}
 		}
-	
-		// If $r has not been set yet
-		if (!isset($r)) {
-			// Tpecast the first argument into an array and use it as our resulting $r array
+		if(!isset($r)) {
 			$r = (array)current($args);
 		}
-		
-		// Loop through all $args we were given
+
 		while(($arg = next($args)) !== false) {
-			// If a Set object was passed in
 			if (is_a($arg, 'set')) {
-				// Use it's value for the merging
 				$arg = $arg->get();
 			}
-			// Loop through all $key / $val pairs of our current $arg
-			foreach ((array)$arg as $key => $val)	 {
-				// If the current $key holds an array and the current $arg and all previous ones ($r)
-				if (is_array($val) && isset($r[$key]) && is_array($r[$key])) {
-					// Go for recursive merging
+
+			foreach((array)$arg as $key => $val)	 {
+				if(is_array($val) && isset($r[$key]) && is_array($r[$key])) {
 					$r[$key] = Set::merge($r[$key], $val);
-				} elseif (is_int($key)) {
-					// If it's a numerical index go for auto-incremeting
+				} elseif(is_int($key)) {
 					$r[] = $val;
 				} else {
-					// And in case of an associative one do an overwrite
 					$r[$key] = $val;
 				}
 			}
 		}
-		// Return the merged array
 		return $r;
 	}
 /**
