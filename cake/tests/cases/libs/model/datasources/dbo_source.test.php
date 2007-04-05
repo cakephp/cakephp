@@ -607,6 +607,7 @@ class DboSourceTest extends UnitTestCase {
 	}
 
 	function testGenerateAssociationQuerySelfJoinWithConditions() {
+		/*
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
@@ -627,6 +628,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
+		*/
 
 		$this->Featured2 = new Featured2();
 		$this->Featured2->loadInfo();
@@ -641,26 +643,27 @@ class DboSourceTest extends UnitTestCase {
 		));
 
 		$this->_buildRelatedModels($this->Featured2);
-
+		
 		$binding = array('type' => 'belongsTo', 'model' => 'ArticleFeatured2');
 		$queryData = array('conditions' => array());
 		$resultSet = null;
 		$null = null;
 
 		$params = &$this->_prepareAssociationQuery($this->Featured2, $queryData, $binding);
-
+		
 		$result = $this->db->generateSelfAssociationQuery($this->Featured2, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
-
+		
 		$this->assertTrue($result);
 
 		$result = $this->db->generateAssociationQuery($this->Featured2, $null, null, null, null, $queryData, false, $null);
 
 		$this->assertPattern(
-			'/^SELECT\s+`Featured2`\.`id`, `Featured2`\.`article_id`, `Featured2`\.`category_id`, `Featured2`\.`name`, '.
-			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`category_featured_id`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`body`, `ArticleFeatured2`\.`published`, `ArticleFeatured2`\.`published_date`, `ArticleFeatured2`\.`created`, `ArticleFeatured2`\.`modified`\s+' .
+			'/^SELECT\s+`Featured2`\.`id`, `Featured2`\.`article_id`, `Featured2`\.`category_id`, `Featured2`\.`name`,\s+'.
+			'`ArticleFeatured2`\.`id`, `ArticleFeatured2`\.`title`, `ArticleFeatured2`\.`user_id`, `ArticleFeatured2`\.`published`\s+' .
 			'FROM\s+`featured2` AS `Featured2`\s+LEFT JOIN\s+`article_featured` AS `ArticleFeatured2`' .
-			'\s+ON\s+\(`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`\ AND `ArticleFeatured2`.`published` = \'Y\'\)' .
-			'\s+WHERE\s+1\s+=\s+1\s*$/', $result);
+			'\s+ON\s+\(`Featured2`\.`article_featured2_id` = `ArticleFeatured2`\.`id`\s+AND\s+`ArticleFeatured2`.`published` = \'Y\'\)' .
+			'\s+WHERE\s+1\s+=\s+1\s*$/', 
+			$result);
 	}
 
 	function testGenerateAssociationQueryHasOne() {
@@ -881,7 +884,7 @@ class DboSourceTest extends UnitTestCase {
 
 		$linkModel =& $model->{$className};
 		$external = isset($assocData['external']);
-
+		
 		$this->db->__scrubQueryData($queryData);
 
 		$result = array(
