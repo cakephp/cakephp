@@ -57,8 +57,14 @@
 class FormHelper extends AppHelper {
 
 	var $helpers = array('Html');
-
-	var $Html = null;
+		
+	/**
+	 * holds the fields array('field_name'=>'type'), sizes array('field_name'=>'size'), 
+	 * primaryKey and validates array('field_name')
+	 *
+	 * @access public
+	*/
+	var $fieldset = array('fields'=>array(), 'sizes'=>array(), 'key'=>'id', 'validates'=>array());
 
 	var $__options = array(
 		'day' => array(), 'minute' => array(), 'hour' => array(),
