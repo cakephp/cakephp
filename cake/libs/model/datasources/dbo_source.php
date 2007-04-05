@@ -51,12 +51,6 @@ class DboSource extends DataSource {
 /**
  * Enter description here...
  *
- * @var array
- */
-	var $__assocJoins = null;
-/**
- * Enter description here...
- *
  * @var unknown_type
  */
 	var $startQuote = null;
@@ -571,7 +565,6 @@ class DboSource extends DataSource {
 		$array = array();
 		$linkedModels = array();
 		$this->__bypass = false;
-		$this->__assocJoins = null;
 
 		if (!is_null($recursive)) {
 			$_recursive = $model->recursive;
@@ -855,25 +848,22 @@ class DboSource extends DataSource {
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
 
-			$self = array(
-				'fields'	=> $this->fields($model, null, $queryData['fields']),
-				'joins'		=> array(array(
-					'table' => $this->fullTableName($linkModel),
-					'alias' => $alias,
-					'type'	=> 'LEFT',
-					'conditions' => array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}')
-				)),
-				'table'		=> $this->fullTableName($model),
-				'alias'		=> $model->name,
-				'limit'		=> $queryData['limit'],
-				'offset'	=> $queryData['offset'],
-				'conditions'=> $queryData['conditions'],
-				'order'		=> $queryData['order']
-			);
+			$self = array('fields'	=> $this->fields($model, null, $queryData['fields']),
+							'joins' => array(array(
+								'table' => $this->fullTableName($linkModel),
+								'alias' => $alias,
+								'type' => 'LEFT',
+								'conditions' => array($model->escapeField($assocData['foreignKey']) =>
+										'{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'))),
+							'table' => $this->fullTableName($model),
+							'alias' => $model->name,
+							'limit' => $queryData['limit'],
+							'offset'	=> $queryData['offset'],
+							'conditions'=> $queryData['conditions'],
+							'order' => $queryData['order']);
 
 			if (!empty($assocData['conditions'])) {
 				$self['joins'][0]['conditions'] = trim($this->conditions(am($self['joins'][0]['conditions'], $assocData['conditions']), true, false));
-
 			}
 
 			if (!empty($queryData['joins'])) {
@@ -885,20 +875,30 @@ class DboSource extends DataSource {
 			if($this->__bypass === false) {
 				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, (isset($assocData['fields']) ? $assocData['fields'] : '')));
 			}
-			$sql = $this->buildStatement($self, $model);
 
-			if (!in_array($sql, $queryData['selfJoin'])) {
-				$queryData['selfJoin'][] = $sql;
+			if (!in_array($self, $queryData['selfJoin'])) {
+				$queryData['selfJoin'][] = $self;
 				return true;
 			}
+
 		} elseif (isset($linkModel)) {
 			return $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
+
 		} else {
 			$result = $queryData['selfJoin'][0];
-			if (isset($this->__assocJoins)) {
-				$result = preg_replace('/FROM/', ', ' . join(', ', $this->__assocJoins['fields']) . ' FROM', $result);
+			if (!empty($queryData['joins'])) {
+				foreach($queryData['joins'] as $join) {
+					$result['joins'][] = $join;
+				}
 			}
-			return $result;
+			if (!empty($queryData['conditions'])) {
+				$result['conditions'] = trim($this->conditions(am($result['conditions'], $assocData['conditions']), true, false));
+			}
+			if (!empty($queryData['fields'])) {
+				$result['fields'] = array_unique(am($result['fields'], $queryData['fields']));
+			}
+			$sql = $this->buildStatement($result, $model);
+			return $sql;
 		}
 	}
 /**
@@ -927,22 +927,14 @@ class DboSource extends DataSource {
 			if (array_key_exists('selfJoin', $queryData)) {
 				return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
 			} else {
-				if (isset($this->__assocJoins)) {
-					$joinFields = ', ';
-					$joinFields .= join(', ', $this->__assocJoins['fields']);
-				} else {
-					$joinFields = null;
-				}
-				return $this->buildStatement(array(
-					'fields' => array_unique($queryData['fields']),
-					'table' => $this->fullTableName($model),
-					'alias' => $model->name,
-					'limit' => $queryData['limit'],
-					'offset' => $queryData['offset'],
-					'joins' => $queryData['joins'],
-					'conditions' => $queryData['conditions'],
-					'order' => $queryData['order']
-				), $model);
+				return $this->buildStatement(array('fields' => array_unique($queryData['fields']),
+													'table' => $this->fullTableName($model),
+													'alias' => $model->name,
+													'limit' => $queryData['limit'],
+													'offset' => $queryData['offset'],
+													'joins' => $queryData['joins'],
+													'conditions' => $queryData['conditions'],
+													'order' => $queryData['order']), $model);
 			}
 		}
 		$alias = $association;
@@ -982,20 +974,16 @@ class DboSource extends DataSource {
 					} elseif ($type == 'belongsTo') {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'));
 					}
-					$query = am($assocData, array(
-						'conditions' => $conditions,
-						'table' => $this->fullTableName($linkModel),
-						'fields' => $fields,
-						'alias' => $alias
-					));
+					$query = am($assocData, array('conditions' => $conditions,
+												'table' => $this->fullTableName($linkModel),
+												'fields' => $fields,
+												'alias' => $alias));
 
 					if ($type == 'belongsTo') {
 						// Dunno if we should be doing this for hasOne also...?
 						// Or maybe not doing it at all...?
-						$query = am($query, array(
-							'order' => $assocData['order'],
-							'limit' => $limit
-						));
+						$query = am($query, array('order' => $assocData['order'],
+												'limit' => $limit));
 					}
 				} else {
 					if ($type == 'hasOne') {
@@ -1004,12 +992,11 @@ class DboSource extends DataSource {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'));
 					}
 
-					$join = array(
-						'table' => $this->fullTableName($linkModel),
-						'alias' => $alias,
-						'type' => 'LEFT',
-						'conditions' => trim($this->conditions($conditions, true, false))
-					);
+					$join = array('table' => $this->fullTableName($linkModel),
+									'alias' => $alias,
+									'type' => 'LEFT',
+									'conditions' => trim($this->conditions($conditions, true, false)));
+
 					$queryData['fields'] = am($queryData['fields'], $fields);
 
 					if (!empty($assocData['order'])) {
