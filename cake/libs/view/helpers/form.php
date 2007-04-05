@@ -346,7 +346,7 @@ class FormHelper extends AppHelper {
 			} else if (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
-				$pimaryKey = $model->primaryKey;
+				$primaryKey = $model->primaryKey;
 			}
 
 			if(isset($type)) {
