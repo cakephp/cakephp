@@ -607,7 +607,6 @@ class DboSourceTest extends UnitTestCase {
 	}
 
 	function testGenerateAssociationQuerySelfJoinWithConditions() {
-		/*
 		$this->model = new TestModel4();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
@@ -628,7 +627,6 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
-		*/
 
 		$this->Featured2 = new Featured2();
 		$this->Featured2->loadInfo();
