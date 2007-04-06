@@ -104,6 +104,18 @@ class FormHelper extends AppHelper {
 			if(!empty($object->validationErrors)) {
 				$this->validationErrors[$model] = $object->validationErrors;
 			}
+			
+			foreach($object->__associations as $type) {
+				foreach($object->{$type} as $assoc => $value) {
+					if (is_array($value) && isset($value['className']) && low($value['className']) !== low($object->name) && ClassRegistry::isKeySet($value['className'])) {
+						$innerObject =& ClassRegistry::getObject($value['className']);
+						
+						if(!empty($innerObject->validationErrors)) {
+							$this->validationErrors[$innerObject->name] = $innerObject->validationErrors;
+						}
+					}
+				}
+			}
 		}
 
 		$this->setFormTag($model . '.');
