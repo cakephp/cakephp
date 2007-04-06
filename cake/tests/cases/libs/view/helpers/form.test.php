@@ -55,6 +55,7 @@
 	class Contact extends Model {
 		var $primaryKey = 'id';
 		var $useTable = false;
+		var $name = 'Contact';
 
 		function loadInfo() {
 			return new Set(array(
@@ -139,8 +140,8 @@ class FormHelperTest extends UnitTestCase {
 	}
 	
 	function testFormValidationAssociated() {
-		$this->UserForm = new UserForm();
-		$this->UserForm->OpenidUrl = new OpenidUrl();
+		$this->UserForm =& new UserForm();
+		$this->UserForm->OpenidUrl =& new OpenidUrl();
 		
 		$data = array(
 			'UserForm' => array(
