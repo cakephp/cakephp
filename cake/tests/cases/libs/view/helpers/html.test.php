@@ -42,9 +42,16 @@ class HtmlHelperTest extends UnitTestCase {
 	var $html = null;
 	
 	function setUp() {
-		$this->Html = new HtmlHelper();
-		$view = new View(new TheHtmlTestController());
+		$this->Html =& new HtmlHelper();
+		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
+	}
+	
+	function testImageLink() {
+		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
+		$expected = '/^<a href="#"\s+><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/';
+		
+		$this->assertPattern($expected, $result);
 	}
 
 	function tearDown() {
