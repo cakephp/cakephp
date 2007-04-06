@@ -77,7 +77,10 @@
 		var $primaryKey = 'id';
 		var $name = 'UserForm';
 		
-		var $hasMany = array('OpenidUrl');
+		var $hasMany = array('OpenidUrl' => array(
+			'className' => 'OpenidUrl',
+			'foreignKey' => 'user_form_id'
+		));
 		
 		function loadInfo() {
 			return new Set(array(
@@ -100,12 +103,15 @@
 		var $primaryKey = 'id';
 		var $name = 'OpenidUrl';
 		
-		var $belongsTo = array('UserForm');
+		var $belongsTo = array('UserForm' => array(
+			'className' => 'UserForm',
+			'foreignKey' => 'user_form_id'
+		));
 		
 		function loadInfo() {
 			return new Set(array(
 				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'user_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'user_form_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				array('name' => 'url', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			));
 		}
@@ -134,10 +140,7 @@ class FormHelperTest extends UnitTestCase {
 	
 	function testFormValidationAssociated() {
 		$this->UserForm = new UserForm();
-		ClassRegistry::addObject('UserForm', $this->UserForm);
-		
 		$this->UserForm->OpenidUrl = new OpenidUrl();
-		ClassRegistry::addObject('OpenidUrl', $this->UserForm->OpenidUrl);
 		
 		$data = array(
 			'UserForm' => array(
