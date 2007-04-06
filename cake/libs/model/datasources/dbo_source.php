@@ -1385,27 +1385,10 @@ class DboSource extends DataSource {
 			if (trim($conditions) == '') {
 				$conditions = ' 1 = 1';
 			} else {
-				$start = null;
-				$end  = null;
+				$data = $this->__quoteFields($conditions);
 
-				if (!empty($this->startQuote)) {
-					$start = '\\\\' . $this->startQuote . '\\\\';
-				}
-				$end = $this->endQuote;
-
-				if (!empty($this->endQuote)) {
-					$end = '\\\\' . $this->endQuote . '\\\\';
-				}
-				preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $match, PREG_PATTERN_ORDER);
-
-				if (isset($match['1']['0'])) {
-					$pregCount = count($match['1']);
-
-					for($i = 0; $i < $pregCount; $i++) {
-						if (!empty($match['1'][$i]) && !is_numeric($match['1'][$i])) {
-							$conditions = preg_replace('/\b' . $match['0'][$i] . '\b/', $this->name($match['1'][$i]), $conditions);}
-					}
-					$conditions = rtrim($conditions);
+				if($data) {
+					$conditions = $data;
 				}
 			}
 			return $clause . $conditions;
@@ -1507,33 +1490,13 @@ class DboSource extends DataSource {
 							if (strpos($match['2'], '()') === false) {
 								$match['2'] = $this->value($match['2']);
 							}
-
 							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 						}
-						$start = null;
-						$end  = null;
-
-						if (!empty($this->startQuote)) {
-							$start = '\\\\' . $this->startQuote . '\\\\';
-						}
-						$end = $this->endQuote;
-
-						if (!empty($this->endQuote)) {
-							$end = '\\\\' . $this->endQuote . '\\\\';
-						}
-						$key = str_replace(array($this->startQuote, $this->endQuote), '', $key);
-						preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $key, $replace, PREG_PATTERN_ORDER);
-
-						if (isset($replace['1']['0'])) {
-							$pregCount = count($replace['1']);
-
-							for($i = 0; $i < $pregCount; $i++) {
-								if (!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
-									$key = preg_replace('/\b' . $replace['0'][$i] . '\b/', $this->name($replace['1'][$i]), $key);}
-							}
-							$data = $key . ' ' . $match['1'] . ' ' . $match['2'];
-						} else {
+						$data = $this->__quoteFields($key);
+						if($data === false) {
 							$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
+						} else {
+							$data = $data . ' ' . $match['1'] . ' ' . $match['2'];
 						}
 					}
 				}
@@ -1546,6 +1509,40 @@ class DboSource extends DataSource {
 			$c++;
 		}
 		return $out;
+	}
+/**
+ * Quotes Model.fields
+ *
+ * @param string $conditions
+ * @return string or false if no match
+ * @access private
+ */
+	function __quoteFields($conditions) {
+		$start = null;
+		$end  = null;
+
+		if(!empty($this->startQuote)) {
+			$start = preg_quote($this->startQuote);
+		}
+
+		if(!empty($this->endQuote)) {
+			$end = preg_quote($this->endQuote);
+		}
+		$conditions = str_replace(array($start, $end), '', $conditions);
+		preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $replace, PREG_PATTERN_ORDER);
+
+		if(isset($replace['1']['0'])) {
+			$pregCount = count($replace['1']);
+
+			for($i = 0; $i < $pregCount; $i++) {
+				if(!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
+					$conditions = preg_replace('/\b' . $replace['0'][$i] . '\b/', $this->name($replace['1'][$i]), $conditions);
+				}
+			}
+			$conditions = rtrim($conditions);
+			return $conditions;
+		}
+		return false;
 	}
 /**
  * Returns a limit statement in the correct format for the particular database.
