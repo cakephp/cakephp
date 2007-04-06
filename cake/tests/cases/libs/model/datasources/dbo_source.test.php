@@ -924,27 +924,27 @@ class DboSourceTest extends UnitTestCase {
 
 	function testStringConditionsParsing() {
 		$result = $this->db->conditions("Candy.name LIKE 'a' AND HardCandy.name LIKE 'c'");
-		$expected = " WHERE  `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE 'c'";
+		$expected = " WHERE `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("HardCandy.name LIKE 'a' AND Candy.name LIKE 'c'");
-		$expected = " WHERE  `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
+		$expected = " WHERE `HardCandy`.`name` LIKE 'a' AND `Candy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("Post.title = '1.1'");
-		$expected = " WHERE  `Post`.`title` = '1.1'";
+		$expected = " WHERE `Post`.`title` = '1.1'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("User.id != 0 AND User.user LIKE '%arr%'");
-		$expected = " WHERE  `User`.`id` != 0 AND `User`.`user` LIKE '%arr%'";
+		$expected = " WHERE `User`.`id` != 0 AND `User`.`user` LIKE '%arr%'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("SUM(Post.comments_count) > 500");
-		$expected = " WHERE SUM( `Post`.`comments_count`) > 500";
+		$expected = " WHERE SUM(`Post`.`comments_count`) > 500";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
-		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
+		$expected = " WHERE (`Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(`Post`.`created`), MONTH(`Post`.`created`)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("score BETWEEN 90.1 AND 95.7");
@@ -952,32 +952,32 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("Aro.rght = Aro.lft + 1.1");
-		$expected = " WHERE  `Aro`.`rght` = `Aro`.`lft` + 1.1";
+		$expected = " WHERE `Aro`.`rght` = `Aro`.`lft` + 1.1";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("(Post.created < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(Post.created), MONTH(Post.created)");
-		$expected = " WHERE ( `Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR( `Post`.`created`), MONTH( `Post`.`created`)";
+		$expected = " WHERE (`Post`.`created` < '" . date('Y-m-d H:i:s') . "') GROUP BY YEAR(`Post`.`created`), MONTH(`Post`.`created`)";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaette LIKE "%ru%" AND Sportstaette.sportstaettenart_id = 2');
-		$expected = ' WHERE  `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
+		$expected = ' WHERE `Sportstaette`.`sportstaette` LIKE "%ru%" AND `Sportstaette`.`sportstaettenart_id` = 2';
 		$this->assertPattern('/\s*WHERE\s+`Sportstaette`\.`sportstaette`\s+LIKE\s+"%ru%"\s+AND\s+`Sports/', $result);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('Sportstaette.sportstaettenart_id = 2 AND Sportstaette.sportstaette LIKE "%ru%"');
-		$expected = ' WHERE  `Sportstaette`.`sportstaettenart_id` = 2 AND `Sportstaette`.`sportstaette` LIKE "%ru%"';
+		$expected = ' WHERE `Sportstaette`.`sportstaettenart_id` = 2 AND `Sportstaette`.`sportstaette` LIKE "%ru%"';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('SUM(Post.comments_count) > 500 AND NOT Post.title IS NULL AND NOT Post.extended_title IS NULL');
-		$expected = ' WHERE SUM( `Post`.`comments_count`) > 500 AND NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL';
+		$expected = ' WHERE SUM(`Post`.`comments_count`) > 500 AND NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.title IS NULL AND NOT Post.extended_title IS NULL AND SUM(Post.comments_count) > 500');
-		$expected = ' WHERE NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL AND SUM( `Post`.`comments_count`) > 500';
+		$expected = ' WHERE NOT `Post`.`title` IS NULL AND NOT `Post`.`extended_title` IS NULL AND SUM(`Post`.`comments_count`) > 500';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.extended_title IS NULL AND NOT Post.title IS NULL AND Post.title != "" AND SPOON(SUM(Post.comments_count) + 1.1) > 500');
-		$expected = ' WHERE NOT `Post`.`extended_title` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title` != "" AND SPOON(SUM( `Post`.`comments_count`) + 1.1) > 500';
+		$expected = ' WHERE NOT `Post`.`extended_title` IS NULL AND NOT `Post`.`title` IS NULL AND `Post`.`title` != "" AND SPOON(SUM(`Post`.`comments_count`) + 1.1) > 500';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions('NOT Post.title_extended IS NULL AND NOT Post.title IS NULL AND Post.title_extended != Post.title');
@@ -985,15 +985,19 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("Comment.id = 'a'");
-		$expected = " WHERE  `Comment`.`id` = 'a'";
+		$expected = " WHERE `Comment`.`id` = 'a'";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions("lower(Article.title) LIKE 'a%'");
-		$expected = " WHERE lower( `Article`.`title`) LIKE 'a%'";
+		$expected = " WHERE lower(`Article`.`title`) LIKE 'a%'";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->conditions('((MATCH(Video.title) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( Video.description) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(Video.tags) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))');
-		$expected = ' WHERE ((MATCH( `Video`.`title`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH( `Video`.`description`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH( `Video`.`tags`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))';
+		$result = $this->db->conditions('((MATCH(Video.title) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH(Video.description) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(Video.tags) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))');
+		$expected = ' WHERE ((MATCH(`Video`.`title`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 2) + (MATCH(`Video`.`description`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 0.4) + (MATCH(`Video`.`tags`) AGAINST(\'My Search*\' IN BOOLEAN MODE) * 1.5))';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions('DATEDIFF(NOW(),Article.published) < 1 && Article.live=1');
+		$expected = " WHERE DATEDIFF(NOW(),`Article`.`published`) < 1 && `Article`.`live`=1";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1077,8 +1081,12 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions(array('(Usergroup.permissions) & 4' => 4));
 		$this->assertPattern('/^\s*WHERE\s+\(`Usergroup`\.`permissions`\)\s+& 4\s+=\s+4\s*$/', $result);
 
-		//$result = $this->db->conditions(array('((Usergroup.permissions) & 4)' => 4));
-		//$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+		$result = $this->db->conditions(array('((Usergroup.permissions) & 4)' => 4));
+		$this->assertPattern('/^\s*WHERE\s+\(\(`Usergroup`\.`permissions`\)\s+& 4\)\s+=\s+4\s*$/', $result);
+
+		$result = $this->db->conditions(array('Post.modified' => '>= DATE_SUB(NOW(), INTERVAL 7 DAY)'));
+		$expected = " WHERE `Post`.`modified` >=  DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array(
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),

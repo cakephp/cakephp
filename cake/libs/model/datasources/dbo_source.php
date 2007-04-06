@@ -1403,13 +1403,7 @@ class DboSource extends DataSource {
 
 					for($i = 0; $i < $pregCount; $i++) {
 						if (!empty($match['1'][$i]) && !is_numeric($match['1'][$i])) {
-							$conditions = preg_replace('/^' . $match['0'][$i] . '(?=[^\\w])/', ' ' . $this->name($match['1'][$i]), $conditions . ' ');
-							if (strpos($conditions, '(' . $match['0'][$i]) === false) {
-								$conditions = preg_replace('/[^\w]' . $match['0'][$i] . '(?=[^\\w])/', ' '.$this->name($match['1'][$i]), $conditions);
-							} else {
-								$conditions = preg_replace('/' . $match['0'][$i] . '(?=[^\\w])/', ' '.$this->name($match['1'][$i]), $conditions);
-							}
-						}
+							$conditions = preg_replace('/\b' . $match['0'][$i] . '\b/', $this->name($match['1'][$i]), $conditions);}
 					}
 					$conditions = rtrim($conditions);
 				}
@@ -1510,10 +1504,37 @@ class DboSource extends DataSource {
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
 						if (!empty($match['2']) && $quoteValues) {
-							$match['2'] = $this->value($match['2']);
+							if (strpos($match['2'], '()') === false) {
+								$match['2'] = $this->value($match['2']);
+							}
+
 							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 						}
-						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
+						$start = null;
+						$end  = null;
+
+						if (!empty($this->startQuote)) {
+							$start = '\\\\' . $this->startQuote . '\\\\';
+						}
+						$end = $this->endQuote;
+
+						if (!empty($this->endQuote)) {
+							$end = '\\\\' . $this->endQuote . '\\\\';
+						}
+						$key = str_replace(array($this->startQuote, $this->endQuote), '', $key);
+						preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $key, $replace, PREG_PATTERN_ORDER);
+
+						if (isset($replace['1']['0'])) {
+							$pregCount = count($replace['1']);
+
+							for($i = 0; $i < $pregCount; $i++) {
+								if (!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
+									$key = preg_replace('/\b' . $replace['0'][$i] . '\b/', $this->name($replace['1'][$i]), $key);}
+							}
+							$data = $key . ' ' . $match['1'] . ' ' . $match['2'];
+						} else {
+							$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
+						}
 					}
 				}
 
