@@ -46,8 +46,13 @@
 		}
 	}
 
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
 	class Contact extends Model {
-
 		var $primaryKey = 'id';
 		var $useTable = false;
 
@@ -60,13 +65,62 @@
 			));
 		}
 	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
+	class UserForm extends Model {
+		var $useTable = false;
+		var $primaryKey = 'id';
+		var $name = 'UserForm';
+		
+		var $hasMany = array('OpenidUrl');
+		
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
+	class OpenidUrl extends Model {
+		var $useTable = false;
+		var $primaryKey = 'id';
+		var $name = 'OpenidUrl';
+		
+		var $belongsTo = array('UserForm');
+		
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'user_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'url', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			));
+		}
+		
+		function beforeValidate() {
+			$this->invalidate('openid_not_registered');
+			return true;
+		}
+	}
 
 /**
  * Short description for class.
  *
- * @package    test_suite
- * @subpackage test_suite.cases.libs
- * @since      CakePHP Test Suite v 1.0.0.0
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends UnitTestCase {
 
@@ -77,11 +131,51 @@ class FormHelperTest extends UnitTestCase {
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
 	}
+	
+	function testFormValidationAssociated() {
+		$this->UserForm = new UserForm();
+		ClassRegistry::addObject('UserForm', $this->UserForm);
+		
+		$this->UserForm->OpenidUrl = new OpenidUrl();
+		ClassRegistry::addObject('OpenidUrl', $this->UserForm->OpenidUrl);
+		
+		$data = array(
+			'UserForm' => array(
+				'name' => 'user'
+			),
+			'OpenidUrl' => array(
+				'url' => 'http://www.cricava.com'
+			)
+		);
+		
+		$result = $this->UserForm->OpenidUrl->create($data);
+		$this->assertTrue($result);
+		
+		$result = $this->UserForm->OpenidUrl->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/user_forms\/login\/"[^>]*>$/', $result);
+		
+		$expected = array(
+			'OpenidUrl' => array(
+				'openid_not_registered' => 1
+			)
+		);
+		
+		$this->assertEqual($this->Form->validationErrors, $expected);
+		
+		$result = $this->Form->error('OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false));
+		$this->assertEqual($result, 'Error, not registered');
+		
+		unset($this->UserForm->OpenidUrl);
+		unset($this->UserForm);
+	}
 
 	function testFormInput() {
 		$result = $this->Form->input('Model/field', array('type' => 'text'));
-		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" value="" id="ModelField" type="text" /></div>';
-		//$this->assertEqual($result, $expected);
+		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="" id="ModelField" /></div>';
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Form->input('Model/password');
 		$expected = '<div class="input"><label for="ModelPassword">Password</label><input type="password" name="data[Model][password]" value="" id="ModelPassword" /></div>';
