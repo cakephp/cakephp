@@ -975,7 +975,7 @@ class DboSource extends DataSource {
 			case 'belongsTo':
 				if ($external) {
 					if ($type == 'hasOne') {
-						$conditions = $this->__mergeConditions($queryData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeID__$}'));
+						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeID__$}'));
 					} elseif ($type == 'belongsTo') {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'));
 					}
@@ -992,9 +992,9 @@ class DboSource extends DataSource {
 					}
 				} else {
 					if ($type == 'hasOne') {
-						$conditions = $this->__mergeConditions($queryData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$model->name}.{$model->primaryKey}" . ']__$}'));
+						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$model->name}.{$model->primaryKey}" . ']__$}'));
 					} elseif ($type == 'belongsTo') {
-						$conditions = $this->__mergeConditions($assocData['conditions'], array($model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'));
+						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$model->name}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'));
 					}
 
 					$join = array('table' => $this->fullTableName($linkModel),
