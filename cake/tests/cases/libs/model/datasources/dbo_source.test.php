@@ -233,6 +233,71 @@ class TestModel7 extends Model {
 		return $this->_tableInfo;
 	}
 }
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model.datasources
+ */
+class TestModel8 extends Model {
+
+	var $name = 'TestModel8';
+	var $table = 'test_model8';
+	var $useTable = false;
+
+	var $hasOne = array(
+		'TestModel9' => array(
+			'className' => 'TestModel9',
+			'foreignKey' => 'test_model8_id',
+			'conditions' => 'TestModel9.name != \'mariano\''
+		)
+	);
+
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+
+		return $this->_tableInfo;
+	}
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model.datasources
+ */
+class TestModel9 extends Model {
+
+	var $name = 'TestModel9';
+	var $table = 'test_model9';
+	var $useTable = false;
+
+	var $belongsTo = array('TestModel8' => array(
+		'className' => 'TestModel8',
+		'foreignKey' => 'test_model8_id',
+		'conditions' => 'TestModel8.name != \'larry\''
+	));
+
+	function loadInfo() {
+		if (!isset($this->_tableInfo)) {
+			$this->_tableInfo = new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'test_model8_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+
+		return $this->_tableInfo;
+	}
+}
 
 class Level extends Model {
 	var $name = 'Level';
@@ -632,6 +697,52 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
 	}
+	
+	function testGenerateAssociationQuerySelfJoinWithConditionsInBinding() {
+		$this->model = new TestModel8();
+		$this->model->loadInfo();
+		$this->_buildRelatedModels($this->model);
+		
+		$binding = array('type' => 'hasOne', 'model' => 'TestModel9');
+		$queryData = array();
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
+		
+		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
+		$this->assertTrue($result);
+
+		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
+		
+		$this->assertPattern('/^SELECT\s+`TestModel8`\.`id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`, `TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model8` AS `TestModel8`\s+LEFT JOIN\s+`test_model9` AS `TestModel9`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel8`.`test_model8_id` = `TestModel9`.`id`\s+AND\s+`TestModel9`\.`name` != \'mariano\'\)\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
+		
+		$this->model = new TestModel9();
+		$this->model->loadInfo();
+		$this->_buildRelatedModels($this->model);
+		
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel8');
+		$queryData = array();
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
+
+		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+
+		$this->assertTrue($result);
+
+		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
+		
+		$this->assertPattern('/^SELECT\s+`TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`, `TestModel8`\.`id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model9` AS `TestModel9`\s+LEFT JOIN\s+`test_model8` AS `TestModel8`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel9`.`test_model8_id` = `TestModel8`.`id`\s+AND\s+`TestModel8`\.`name` != \'larry\'\)\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
+	}
 
 	function testGenerateAssociationQuerySelfJoinWithConditions() {
 		$this->model = new TestModel4();
@@ -654,7 +765,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
-
+		
 		$this->Featured2 = new Featured2();
 		$this->Featured2->loadInfo();
 
