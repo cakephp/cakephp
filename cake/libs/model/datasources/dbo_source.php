@@ -1529,7 +1529,7 @@ class DboSource extends DataSource {
 			$end = preg_quote($this->endQuote);
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
-		preg_match_all('/(?:\'[^\'\\\]*(?:\\\.[^\'\\\]*)*\')|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $replace, PREG_PATTERN_ORDER);
+		preg_match_all('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $replace, PREG_PATTERN_ORDER);
 
 		if(isset($replace['1']['0'])) {
 			$pregCount = count($replace['1']);

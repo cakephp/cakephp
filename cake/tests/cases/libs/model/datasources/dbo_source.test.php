@@ -1000,21 +1000,21 @@ class DboSourceTest extends UnitTestCase {
 		$expected = " WHERE DATEDIFF(NOW(),`Article`.`published`) < 1 && `Article`.`live`=1";
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testQuotesInStringConditions() {
 		$result = $this->db->conditions('Member.email = \'mariano@cricava.com\'');
 		$expected = ' WHERE `Member`.`email` = \'mariano@cricava.com\'';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->conditions('Member.email = "mariano@cricava.com"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com"';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->conditions('Member.email = \'mariano@cricava.com\' AND Member.user LIKE \'mariano.iglesias%\'');
 		$expected = ' WHERE `Member`.`email` = \'mariano@cricava.com\' AND `Member`.`user` LIKE \'mariano.iglesias%\'';
 		$this->assertEqual($result, $expected);
 
-		
+
 		$result = $this->db->conditions('Member.email = "mariano@cricava.com" AND Member.user LIKE "mariano.iglesias%"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com" AND `Member`.`user` LIKE "mariano.iglesias%"';
 		$this->assertEqual($result, $expected);
