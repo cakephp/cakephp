@@ -322,15 +322,12 @@ class DboMysqli extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$id = mysqli_insert_id($this->connection);
-		if ($id) {
-			return $id;
+		$id = $this->fetchAll('SELECT LAST_INSERT_ID() AS insertID', false);
+		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0][0]['insertID'])) {
+			return $id[0][0]['insertID'];
 		}
-
-		$data = $this->fetchAll('SELECT LAST_INSERT_ID() as id From '.$source);
-		if ($data && isset($data[0]['id'])) {
-			return $data[0]['id'];
-		}
+		
+		return null;
 	}
 /**
  * Converts database-layer column types to basic types
