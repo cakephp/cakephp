@@ -1418,12 +1418,10 @@ class DboSourceTest extends UnitTestCase {
 		$expected = array('TestModel.field_name' => '= value');
 		$this->assertEqual($result, $expected);
 
-		/*$this->db->fullDebug = true;
 		$result = $this->db->query('findAllById', array('a'), $this->model);
-		$expected = array('TestModel.id' => '= value');
+		$expected = array('TestModel.id' => '= a');
 		$this->assertEqual($result, $expected);
-		$this->db->fullDebug = false;*/
-
+		
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->model);
 		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
 		$this->assertEqual($result, $expected);
