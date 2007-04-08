@@ -87,6 +87,12 @@ class DataSource extends Object {
 /**
  * Enter description here...
  *
+ * @var boolean
+ */
+	var $cacheSources = true;
+/**
+ * Enter description here...
+ *
  * @var array
  * @access private
  */
@@ -221,6 +227,9 @@ class DataSource extends Object {
  * @return void
  */
 	function __cacheDescription($object, $data = null) {
+		if($this->cacheSources === false){
+			return null;
+		}
 		if (Configure::read() > 0) {
 			$expires = "+15 seconds";
 		} else {
@@ -273,6 +282,10 @@ class DataSource extends Object {
  * @return mixed
  */
 	function describe($model) {
+		if($this->cacheSources === false){
+			return null;
+		}
+
 		if (isset($this->__descriptions[$model->tablePrefix.$model->table])) {
 			return $this->__descriptions[$model->tablePrefix.$model->table];
 		}

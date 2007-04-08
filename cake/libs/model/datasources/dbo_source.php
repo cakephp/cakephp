@@ -132,6 +132,9 @@ class DboSource extends DataSource {
  * @return array
  */
 	function listSources($data = null) {
+		if($this->cacheSources === false){
+			return null;
+		}
 		if ($this->_sources != null) {
 			return $this->_sources;
 		}

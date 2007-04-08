@@ -260,6 +260,12 @@ class Model extends Overloadable {
  * @var array
  */
 	var $behaviors = array();
+/**
+ * Enter description here...
+ *
+ * @var boolean
+ */
+	var $cacheSources = true;
 
 /**
  * Mapped behavior methods
@@ -731,6 +737,7 @@ class Model extends Overloadable {
 	function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db->cacheSources = $this->cacheSources;
 
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
@@ -823,6 +830,7 @@ class Model extends Overloadable {
  */
 	function loadInfo() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db->cacheSources = $this->cacheSources;
 
 		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe') && $this->useTable !== false) {
 			$this->_tableInfo = new Set($db->describe($this));
@@ -1140,7 +1148,7 @@ class Model extends Overloadable {
 					$keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$fields[$assoc]  = join(',', $keys);
 					unset($keys);
-	
+
 					foreach($value as $update) {
 						if (!empty($update)) {
 							$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
@@ -1150,7 +1158,7 @@ class Model extends Overloadable {
 							unset ($values);
 						}
 					}
-	
+
 					if (!empty($newValues)) {
 						$newValue[$assoc] = $newValues;
 						unset($newValues);
@@ -1160,16 +1168,16 @@ class Model extends Overloadable {
 				}
 			}
 		}
-		
+
 		if (isset($joinTable)) {
 			$total = count($joinTable);
-	
+
 			if(is_array($newValue)) {
 				foreach ($newValue as $loopAssoc => $val) {
 					$db =& ConnectionManager::getDataSource($this->useDbConfig);
 					$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
 					$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
-	
+
 					if (!empty($newValue[$loopAssoc])) {
 						$secondCount = count($newValue[$loopAssoc]);
 						for($x = 0; $x < $secondCount; $x++) {
