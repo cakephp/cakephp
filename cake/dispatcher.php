@@ -479,7 +479,7 @@ class Dispatcher extends Object {
 		} else {
 			if (defined('BASE_URL')) {
 				$webroot = setUri();
-				$htaccess = preg_replace('/(?:'.APP_DIR.'(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.$webrootDirName.'/';
+				$htaccess = preg_replace('/(?:'.APP_DIR.'\\/(.*)|index\\.php(.*))/i', '', $webroot).APP_DIR.'/'.$webrootDirName.'/';
 			}
 
 			if (preg_match('/^(.*)\\/'.$appDirName.'\\/'.$webrootDirName.'\\/index\\.php$/', $scriptName, $regs)) {
