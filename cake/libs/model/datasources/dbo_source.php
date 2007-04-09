@@ -997,8 +997,8 @@ class DboSource extends DataSource {
 			$assocFields = $this->fields($model, $model->name, array("{$model->name}.{$model->primaryKey}"));
 			$passedFields = $this->fields($model, $model->name, $queryData['fields']);
 			if(count($passedFields) === 1) {
-				$match = strrpos($passedFields[0], $assocFields[0]);
-				$match1 = strrpos($passedFields[0], 'COUNT(');
+				$match = strpos($passedFields[0], $assocFields[0]);
+				$match1 = strpos($passedFields[0], 'COUNT(');
 				if($match === false && $match1 === false){
 					$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
 				} else {
@@ -1425,12 +1425,12 @@ class DboSource extends DataSource {
 						$prepend   = 'DISTINCT ';
 						$fields[$i] = trim(r('DISTINCT', '', $fields[$i]));
 					}
-					$dot = strrpos($fields[$i], '.');
+					$dot = strpos($fields[$i], '.');
 
 					if ($dot === false) {
 						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
 					} else {
-						$comma = strrpos($fields[$i], ',');
+						$comma = strpos($fields[$i], ',');
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
@@ -1449,7 +1449,7 @@ class DboSource extends DataSource {
 					}
 				} elseif (preg_match('/\(([\.\w]+)\)/', $fields[$i], $field)) {
 					if (isset($field[1])) {
-						if (strrpos($field[1], '.') === false) {
+						if (strpos($field[1], '.') === false) {
 							$field[1] = $this->name($alias) . '.' . $this->name($field[1]);
 						} else {
 							$field[0] = explode('.', $field[1]);
