@@ -1084,9 +1084,6 @@ class DboSource extends DataSource {
 	}
 
 	function buildStatement($query, $model) {
-		if(isset($query['in'])) {
-			return $this->renderInStatement($query, $model);
-		}
 		$query = am(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			for ($i = 0; $i < count($query['joins']); $i++) {
@@ -1095,6 +1092,12 @@ class DboSource extends DataSource {
 				}
 			}
 		}
+
+		if(isset($query['in'])) {
+			$query['conditions'] = $query['in'];
+			return $this->renderInStatement($query, $model);
+		}
+
 		return $this->renderStatement(array(
 			'conditions' => $this->conditions($query['conditions']),
 			'fields' => join(', ', $query['fields']),
@@ -1107,17 +1110,6 @@ class DboSource extends DataSource {
 	}
 
 	function renderInStatement($query, $model) {
-		if(isset($query['in'])) {
-			$query['conditions'] = $query['in'];
-		}
-		$query = am(array('offset' => null, 'joins' => array()), $query);
-		if (!empty($query['joins'])) {
-			for ($i = 0; $i < count($query['joins']); $i++) {
-				if (is_array($query['joins'][$i])) {
-					$query['joins'][$i] = $this->buildJoinStatement($query['joins'][$i]);
-				}
-			}
-		}
 		$replace[] = '{$__cakeID__$}';
 		$replace[] = $this->renderStatement(array(
 			'conditions' => $this->conditions($query['conditions']),
