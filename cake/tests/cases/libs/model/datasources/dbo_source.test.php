@@ -698,36 +698,36 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
 	}
-	
+
 	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
 		$this->model = new TestModel8();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
+
 		$binding = array('type' => 'hasOne', 'model' => 'TestModel9');
 		$queryData = array();
 		$resultSet = null;
 		$null = null;
 
 		$params = &$this->_prepareAssociationQuery($this->model, $queryData, $binding);
-		
+
 		$result = $this->db->generateSelfAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 
 		$this->assertTrue($result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
+
 		$this->assertPattern('/^SELECT\s+`TestModel8`\.`id`, `TestModel8`\.`test_model9_id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`, `TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model8` AS `TestModel8`\s+LEFT JOIN\s+`test_model9` AS `TestModel9`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel8`.`test_model9_id` = `TestModel9`.`id`\s+AND\s+`TestModel9`\.`name` != \'mariano\'\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
 		$this->model = new TestModel9();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
+
 		$binding = array('type' => 'belongsTo', 'model' => 'TestModel8');
 		$queryData = array();
 		$resultSet = null;
@@ -740,7 +740,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
+
 		$this->assertPattern('/^SELECT\s+`TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`, `TestModel8`\.`id`, `TestModel8`\.`test_model9_id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`\s+/', $result);
 		$this->assertPattern('/FROM\s+`test_model9` AS `TestModel9`\s+LEFT JOIN\s+`test_model8` AS `TestModel8`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel9`.`test_model8_id` = `TestModel8`.`id`\s+AND\s+`TestModel8`\.`name` != \'larry\'\)\s+WHERE/', $result);
@@ -768,7 +768,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?`TestModel4Parent`.`name`\s+!=\s+\'mariano\'(?:\))?\s*$/', $result);
-		
+
 		$this->Featured2 = new Featured2();
 		$this->Featured2->loadInfo();
 
@@ -849,7 +849,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
-		
+
 		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model5` AS `TestModel5`/', $result);
 		$this->assertPattern('/\s+ON\s+\(`TestModel5`.`test_model4_id`\s+=\s+`TestModel4`.`id`\)\s+WHERE/', $result);
@@ -923,7 +923,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE/', $result);
-		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+=\s+{\$__cakeID__\$}/', $result);
+		$this->assertPattern('/\s+WHERE\s+`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)/', $result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -946,7 +946,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->generateAssociationQuery($this->model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
 		$this->assertPattern('/^SELECT\s+`TestModel6`\.`id`, `TestModel6`\.`test_model5_id`, `TestModel6`\.`name`, `TestModel6`\.`created`, `TestModel6`\.`updated`\s+/', $result);
 		$this->assertPattern('/\s+FROM\s+`test_model6` AS `TestModel6`\s+WHERE\s+/', $result);
-		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+=\s+{\$__cakeID__\$}(?:\))?/', $result);
+		$this->assertPattern('/WHERE\s+(?:\()?`TestModel6`\.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)(?:\))?/', $result);
 
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+/', $result);
@@ -1536,7 +1536,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->query('findAllById', array('a'), $this->model);
 		$expected = array('TestModel.id' => '= a');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->query('findByFieldName', array(array('value1', 'value2', 'value3')), $this->model);
 		$expected = array('TestModel.field_name' => array('value1', 'value2', 'value3'));
 		$this->assertEqual($result, $expected);

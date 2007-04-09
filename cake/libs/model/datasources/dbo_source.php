@@ -1018,7 +1018,7 @@ class DboSource extends DataSource {
 			break;
 			case 'hasMany':
 				$query = array(
-					'conditions' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => '{$__cakeID__$}'), $assocData['conditions']),
+					'in' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => array('{$__cakeID__$}')), $assocData['conditions']),
 					'fields' => $this->fields($linkModel, $alias, $assocData['fields']),
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
@@ -1084,6 +1084,9 @@ class DboSource extends DataSource {
 	}
 
 	function buildStatement($query, $model) {
+		if(isset($query['in'])) {
+			return $this->renderInStatement($query, $model);
+		}
 		$query = am(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			for ($i = 0; $i < count($query['joins']); $i++) {
@@ -1101,6 +1104,31 @@ class DboSource extends DataSource {
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => join(' ', $query['joins'])
 		));
+	}
+
+	function renderInStatement($query, $model) {
+		if(isset($query['in'])) {
+			$query['conditions'] = $query['in'];
+		}
+		$query = am(array('offset' => null, 'joins' => array()), $query);
+		if (!empty($query['joins'])) {
+			for ($i = 0; $i < count($query['joins']); $i++) {
+				if (is_array($query['joins'][$i])) {
+					$query['joins'][$i] = $this->buildJoinStatement($query['joins'][$i]);
+				}
+			}
+		}
+		$replace[] = '{$__cakeID__$}';
+		$replace[] = $this->renderStatement(array(
+			'conditions' => $this->conditions($query['conditions']),
+			'fields' => join(', ', $query['fields']),
+			'table' => $query['table'],
+			'alias' => $this->alias . $this->name($query['alias']),
+			'order' => $this->order($query['order']),
+			'limit' => $this->limit($query['limit'], $query['offset']),
+			'joins' => join(' ', $query['joins'])
+		));
+		return $replace[1];
 	}
 
 	function renderJoinStatement($data) {
