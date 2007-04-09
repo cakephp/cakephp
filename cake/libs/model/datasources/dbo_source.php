@@ -720,12 +720,48 @@ class DboSource extends DataSource {
 				}
 				return null;
 			}
-
 			$count = count($resultSet);
+			if($type === 'hasMany') {
+				$ins = array();
+				for($i = 0; $i < $count; $i++) {
+					$ins[] = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+				}
+
+				if(!empty($ins)){
+					$query = r('{$__cakeID__$}', join(', ',$ins), $query);
+					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
+				} else {
+					$fetch = array();
+				}
+
+				if (!empty($fetch) && is_array($fetch)) {
+					if ($recursive > 0) {
+
+						foreach($linkModel->__associations as $type1) {
+							foreach($linkModel->{$type1} as $assoc1 => $assocData1) {
+
+								$deepModel =& $linkModel->{$assocData1['className']};
+								if ($deepModel->alias != $model->name) {
+									$tmpStack = $stack;
+									$tmpStack[] = $assoc1;
+									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
+										$db =& $this;
+									} else {
+										$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+									}
+									$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+								}
+							}
+						}
+					}
+				}
+				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
+			}
 			for($i = 0; $i < $count; $i++) {
 
 				$row =& $resultSet[$i];
 				$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+
 				if($q != false){
 					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 				} else {
@@ -761,6 +797,29 @@ class DboSource extends DataSource {
 			}
 		}
 	}
+
+	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel){
+		foreach($resultSet as $key => $value) {
+			$merged[$association] = array();
+			$count = 0;
+			foreach ($merge as $assoc => $data) {
+				if($value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
+					if(count($data) > 1) {
+						$temp[] = Set::pushDiff($data[$association], $data);
+						unset($temp[$count][$association]);
+						$merged[$association] = $temp;
+					} else {
+						$merged[$association][] = $data[$association];
+					}
+				}
+				$count++;
+			}
+			$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
+			unset($merged);
+			unset($temp);
+		}
+	}
+
 /**
  * Enter description here...
  *
@@ -1018,7 +1077,7 @@ class DboSource extends DataSource {
 			break;
 			case 'hasMany':
 				$query = array(
-					'in' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => array('{$__cakeID__$}')), $assocData['conditions']),
+					'conditions' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => array('{$__cakeID__$}')), $assocData['conditions']),
 					'fields' => $this->fields($linkModel, $alias, $assocData['fields']),
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
@@ -1092,12 +1151,6 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-
-		if(isset($query['in'])) {
-			$query['conditions'] = $query['in'];
-			return $this->renderInStatement($query, $model);
-		}
-
 		return $this->renderStatement(array(
 			'conditions' => $this->conditions($query['conditions']),
 			'fields' => join(', ', $query['fields']),
@@ -1107,20 +1160,6 @@ class DboSource extends DataSource {
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => join(' ', $query['joins'])
 		));
-	}
-
-	function renderInStatement($query, $model) {
-		$replace[] = '{$__cakeID__$}';
-		$replace[] = $this->renderStatement(array(
-			'conditions' => $this->conditions($query['conditions']),
-			'fields' => join(', ', $query['fields']),
-			'table' => $query['table'],
-			'alias' => $this->alias . $this->name($query['alias']),
-			'order' => $this->order($query['order']),
-			'limit' => $this->limit($query['limit'], $query['offset']),
-			'joins' => join(' ', $query['joins'])
-		));
-		return $replace[1];
 	}
 
 	function renderJoinStatement($data) {
