@@ -724,7 +724,10 @@ class DboSource extends DataSource {
 			if($type === 'hasMany') {
 				$ins = array();
 				for($i = 0; $i < $count; $i++) {
-					$ins[] = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+					$in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+					if ($in !== false) {
+						$ins[] = $in;
+					}
 				}
 
 				if(!empty($ins)){
@@ -990,6 +993,22 @@ class DboSource extends DataSource {
 
 		if (empty($queryData['fields'])) {
 			$queryData['fields'] = $this->fields($model, $model->name);
+		} elseif(!empty($model->hasMany)) {
+			$assocFields = $this->fields($model, $model->name, array("{$model->name}.{$model->primaryKey}"));
+			$passedFields = $this->fields($model, $model->name, $queryData['fields']);
+			if(count($passedFields) === 1) {
+				$match = strrpos($passedFields[0], $assocFields[0]);
+				$match1 = strrpos($passedFields[0], 'COUNT(');
+				if($match === false && $match1 === false){
+					$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
+				} else {
+					$queryData['fields'] = $passedFields;
+				}
+			} else {
+				$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
+			}
+			unset($assocFields);
+			unset($passedFields);
 		}
 
 		if ($linkModel == null) {
@@ -1078,9 +1097,14 @@ class DboSource extends DataSource {
 				}
 			break;
 			case 'hasMany':
+				$assocFields = $this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"));
+				$passedFields = $this->fields($linkModel, $alias, $assocData['fields']);
+				$assocData['fields'] = array_unique(array_merge($passedFields, $assocFields));
+				unset($assocFields);
+				unset($passedFields);
 				$query = array(
 					'conditions' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => array('{$__cakeID__$}')), $assocData['conditions']),
-					'fields' => $this->fields($linkModel, $alias, $assocData['fields']),
+					'fields' => $assocData['fields'],
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
 					'order' => $assocData['order'],
@@ -1381,7 +1405,6 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-
 		if (empty($fields)) {
 			$fieldData = $model->loadInfo();
 			$fields = $fieldData->extract('{n}.name');
@@ -1407,9 +1430,21 @@ class DboSource extends DataSource {
 					if ($dot === false) {
 						$fields[$i] = $prepend . $this->name($alias) . '.' . $this->name($fields[$i]);
 					} else {
-						$build = explode('.', $fields[$i]);
-						if (!Set::numeric($build)) {
-							$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
+						$comma = strrpos($fields[$i], ',');
+						if ($comma === false) {
+							$build = explode('.', $fields[$i]);
+							if (!Set::numeric($build)) {
+								$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]);
+							}
+						} else {
+							$comma = explode(',', $fields[$i]);
+							foreach ($comma as $string) {
+								$build = explode('.', $string);
+								if (!Set::numeric($build)) {
+									$value[] = $prepend . $this->name(trim($build[0])) . '.' . $this->name(trim($build[1]));
+								}
+							}
+							$fields[$i] = implode(', ', $value);
 						}
 					}
 				} elseif (preg_match('/\(([\.\w]+)\)/', $fields[$i], $field)) {
