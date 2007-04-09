@@ -803,7 +803,7 @@ class DboSource extends DataSource {
 			$merged[$association] = array();
 			$count = 0;
 			foreach ($merge as $assoc => $data) {
-				if($value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
+				if(isset($value[$model->name]) && $value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
 					if(count($data) > 1) {
 						$temp[] = Set::pushDiff($data[$association], $data);
 						unset($temp[$count][$association]);
@@ -814,9 +814,11 @@ class DboSource extends DataSource {
 				}
 				$count++;
 			}
-			$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
-			unset($merged);
-			unset($temp);
+			if(isset($value[$model->name])){
+				$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
+				unset($merged);
+				unset($temp);
+			}
 		}
 	}
 
