@@ -178,22 +178,6 @@ class DboSybase extends DboSource {
 		return $fields;
 	}
 /**
- * Returns a quoted name of $data for use in an SQL statement.
- *
- * @param string $data Name (table.field) to be prepared for use in an SQL statement
- * @return string Quoted for MySQL
- */
-	function name($data) {
-		if ($data == '*') {
-			return '*';
-		}
-		$pos = strpos($data, '`');
-		if ($pos === false) {
-			$data = '`'. str_replace('.', '`.`', $data) .'`';
-		}
-		return $data;
-	}
-/**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
  * @param string $data String to be prepared for use in an SQL statement
