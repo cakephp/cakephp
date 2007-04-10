@@ -330,7 +330,9 @@ class AuthComponent extends Object {
  * @return boolean True if $user is authorized, otherwise false
  */
 	function isAuthorized(&$controller, $type = null, $user = null) {
-		if (empty($user)) {
+		if (empty($user) && !$this->user()) {
+			return false;
+		} elseif (empty($user)) {
 			$user = $this->user();
 		}
 		extract($this->__authType($type));
@@ -353,7 +355,7 @@ class AuthComponent extends Object {
 		$valid = false;
 		switch ($type) {
 			case 'actions':
-				$valid = $this->Acl->check($this->user(), $this->action());
+				$valid = $this->Acl->check($user, $this->action());
 			break;
 			case 'objects':
 
@@ -366,7 +368,7 @@ class AuthComponent extends Object {
 				if (!isset($this->actionMap[$this->params['action']])) {
 					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '" in controller "' . $this->params['controller'] . '"', E_USER_WARNING);
 				} else {
-					$valid = $this->Acl->check($this->user(), $this->action(':controller'), $this->actionMap[$this->params['action']]);
+					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
 			break;
 			case null:

@@ -733,10 +733,6 @@ class ModelTest extends CakeTestCase {
 			'hasAndBelongsToMany'=>array('Tag'))
 		);
 
-		// UNCOMMENT THE FOLLOWING LINE TO MAKE TEST SUCCEED:
-		//
-		// $this->Featured->ArticleFeatured->unbindModel(array('belongsTo'=>array('Category')));
-
 		$orderBy = 'ArticleFeatured.id ASC';
 		$result = $this->Featured->findAll(null, null, $orderBy, 3);
 
