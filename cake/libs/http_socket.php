@@ -24,7 +24,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses('socket');
+uses('socket', 'set');
 
 /**
  * Cake network socket connection class.
@@ -41,28 +41,52 @@ class HttpSocket extends CakeSocket {
  * @var string
  */
 	var $description = 'HTTP-based DataSource Interface';
-
 /**
- * URI path (not including host name) to current HTTP resource
- *
- * @var string
- */
-	var $path = '/';
-
-/**
- * URL query parameters
+ * The default values to use for a request
  *
  * @var array
  */
-	var $query = array();
-
+	var $request = array(
+	    'method' => 'GET',
+	    'uri' => array(
+	    	'scheme' => 'http',
+			'user' => null,
+			'password' => null,
+			'host' => null,
+			'port' => 80,
+			'path' => '/',
+			'query' => null
+	    ),
+	    'auth' => array(
+	    	'method' => 'basic'
+    		, 'user' => null
+    		, 'password' => null    		
+	    ),
+	    'version' => '1.1',
+	    'body' => '',
+	    'requestLine' => null,
+	    'header' => array(
+	        'Connection' => 'close', 'User-Agent' => 'CakePHP'
+	    ),
+		'raw' => null
+	);	
 /**
- * Data to send in a POST or PUT request.  Accepts a URL-encoded string, an array, an object,
- * or an XML object
+ * The default strucutre for storing the response
  *
- * @var mixed
+ * @var unknown_type
  */
-	var $data = array();
+	var $response = array(
+	    'raw' => '',
+	    'rawHeader' => '',
+	    'rawBody' => '',
+	    'statusLine' => '',
+	    'code' => '',
+	    'header' => array(),
+	    'body' => ''
+	);
+	
+    var $config = array();
+
 /**
  * Base configuration settings for the socket connection
  *
@@ -72,9 +96,11 @@ class HttpSocket extends CakeSocket {
 		'persistent'	=> false,
 		'host'			=> 'localhost',
 		'port'			=> 80,
-		'login'			=> null,
+		'scheme'		=> 'http',
+		'timeout'		=> 30,
+		'authMethod'	=> 'basic',
+		'user'			=> null,
 		'password'		=> null,
-		'timeout'		=> 30
 	);
 /**
  * The line break type to use for building the header. According to "RFC 2616 - Hypertext Transfer
@@ -82,112 +108,66 @@ class HttpSocket extends CakeSocket {
  *
  * @var string
  */
-	var $headerSeparator = "\r\n";
+	var $headerSeparator = "\r\n";	
 /**
  * Called when creating a new instance of this object
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
  */
 	function __construct($config = array()) {
-		// Execute CakeSocket::__construct
 		parent::__construct();
-		$config = (array)$config;
 
-		// This is used to check if a string was passed to $config (and turned into an array above)
-		if (isset($config[0]) && !isset($config['host'])) {
-			// If so use it's value as the 'host' property
-			$config['host'] = $config[0];
-			unset($config[0]);
+		if (is_string($config)) {
+			$uri = $this->parseURI($config);
+			
+			$config = array_intersect_key($uri, $this->_baseConfig);
 		}
-
-		// Merge custom user $config over the HttpSocket::_baseConfig
 		$this->config = am($this->_baseConfig, $config);
-		// Set the unique resource identifier
-		$this->setURI();
 	}
-/**
- * Parses the current URI string
- *
- * @param $uri A string or array constructed by parse_url() containing the URI or URI information
- * @return boolean False if $uri (or $this->config['host']) is not a valid, fully qualified URL
- */
-	function setURI($uri = null) {
-		// If no $uri was proivded
+			
+	function parseURI($uri = null, $overwrite = array()) {
+		if (is_array($uri)) {
+			return $uri;
+		}
+	
 		if (empty($uri)) {
-			// Use our current config['host'] value
 			$uri = $this->config['host'];
+		} elseif (strpos($uri, '/') === 0) {
+			$uri = $this->config['scheme'].'://'.$this->config['host'].$uri;
 		}
 		
-		/**
-		 * @todo Generic function that can validate fully qualified URL's or just hosts
-		 */
 		/*
-		if (!Validation::url($uri)) {
+		$Validation =& new Validation();
+		if (!$Validation->url($uri)) {
 			return false;
 		}
 		*/
-		
-		// If we were not given an array as $uri
+			
 		if (!is_array($uri)) {
-			// Parse the $uri string into an array using php's parse_url function
 			$uri = parse_url($uri);
 		}
 		
-		// If no, or no valid $uri scheme (http/https) was provided
+		$uri = am($uri, $overwrite);
+				
 		if (!isset($uri['scheme']) || !in_array($uri['scheme'], array('http', 'https'))) {
-			// Return 'false' to indicate this function has failed
 			return false;
 		}
 		
-		// Loop through all $uri parts
-		foreach ($uri as $key => $val) {
-			// Use a special treatment for each one of them
-			switch ($key) {
-				case 'host':
-					// Directly map the 'host' $key to config['host']
-					$this->config['host'] = $val;
-				break;
-				case 'scheme':
-					// Directly map the 'scheme' $key to config['scheme']
-					$this->config['scheme'] = $uri['scheme'];
-					break;
-				case 'port':
-					// Directly map the 'port' $key to config['port']
-					$this->config['port'] = $val;
-				break;
-				case 'user':
-				case 'username':
-					// Map the 'user' / 'username' $key to config['username']
-					$this->config['username'] = $val;
-				break;
-				case 'pass':
-				case 'password':
-					// Map the 'pass' / 'password' $key to config['password']
-					$this->config['password'] = $val;
-				break;
-				case 'query':
-					// Reset our query property
-					$this->query = array();
-					
-					// Extract all query items using the '&' separator
-					$items = explode('&', $val);
-					
-					// Loop through all $items
-					foreach ($items as $item) {
-						// Extract the query key / value of each $item using the '=' separator
-						list($qKey, $qValue) = explode('=', $item);
-						
-						// Map url-decoded query items to our query property
-						$this->query[urldecode($qKey)] = urldecode($qValue);
-					}
-				break;
-				case 'path':
-					// Map the 'path' $key to our 'path' property
-					$this->path = $val;
-				break;
+		if (isset($uri['query']) && is_string($uri['query'])) {
+			$items = explode('&', $uri['query']);
+			$query = array();
+			
+			foreach ($items as $item) {
+				if (isset($item[1]) && !empty($item[0])) {
+					list($key, $value) = explode('=', $item);
+					$query[urldecode($key)] = urldecode($value);
+				}
 			}
+			
+			$uri['query'] = $query;
 		}
-		return true;
+		
+		return $uri;
 	}
 /**
  * Takes a $uri array and turns it into a fully qualified URL string
@@ -197,46 +177,24 @@ class HttpSocket extends CakeSocket {
  * @return string A fully qualified URL formated according to $uriTemplate
  */
 	function getURI($uri = array(), $uriTemplate = '%scheme://%username:%password@%host:%port/%path?%query')	{
-		// If no $uri was provided
-		if (empty($uri)) {
-			// Use our config property and merge our local query/path over it as well
-			$uri = am($this->config, array('query' => $this->query, 'path' => $this->path));
-		} else {
-			// Otherwise merge the provided $uri array over our local query/path property
-			$uri = am(array('query' => $this->query, 'path' => $this->path), $uri);
-		}
-
-		// Make sure the path does not start with a '/'
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
-
-		// Serialize our $uri['query']
 		$uri['query'] = $this->serialize($uri['query']);
 
-		// If no query was provided
 		if (empty($uri['query'])) {
-			// Strip the query part from our $uriTemplate
 			$uriTemplate = str_replace('?%query', null, $uriTemplate);
 		}
 
-		// If no username was provided
 		if (!isset($uri['username']) || empty($uri['username'])) {
-			// Strip that from our $uriTemplate as well
 			$uriTemplate = str_replace('%username:%password@', null, $uriTemplate);
 		}
-		// A map for the default ports of http and https
 		$defaultPorts = array('http' => 80, 'https' => 443);
 
-		// If our $uri uses the default port for it's scheme
 		if ($defaultPorts[$uri['scheme']] == $uri['port']) {
-			// Strip the port part from the $uriTemplate
 			$uriTemplate = str_replace(':%port', null, $uriTemplate);
 		}
-		// Loop through all $property's in our $uri
 		foreach ($uri as $property => $value) {
-			// And fill in the $uriTemplate with their $value's
 			$uriTemplate = str_replace('%'.$property, $value, $uriTemplate);
 		}
-		// Return the populated $uriTemplate which is not a fully qualified URL
 		return $uriTemplate;
 	}
 /**
@@ -246,7 +204,6 @@ class HttpSocket extends CakeSocket {
  * @return boolean Success
  */
 	function isConnected() {
-		// Return true until implemented
 		return true;
 	}
 /**
@@ -255,106 +212,195 @@ class HttpSocket extends CakeSocket {
  *
  * @return array An array structure containing HTTP headers and response body
  */
- 	function request($path = null, $options = array()) {
-		// If we were given an array as the first parameter
-		if (is_array($path)) {
-			// Assume it's a convenience usage of the $options parameter
-			$options = $path;
-		} elseif (!empty($path)) {
-			/**
-			 * @todo check if somebody might have passed a fully qualified URL as a $path and don't prepent the scheme/host in those cases
-			 */			
-			// Set's the URI for this request
-			$this->setURI($this->config['scheme'].'://'.$this->config['host'].$path);
+	function request($request = array()) {
+		$this->reset(false);
+	
+		$baseRequest = $this->request;
+		$this->request = am($baseRequest, $request);
+		
+		$this->request['uri'] = am($baseRequest['uri'], $this->parseURI($this->request['uri']));
+		
+		$configMap = array(
+			'uri' => array(
+				'host' => 'host',
+				'scheme' => 'scheme',
+				'port' => 'port'
+			),
+			'auth' => array(
+				'authMethod' => 'method',
+				'user' => 'user',
+				'password' => 'password'
+			)
+		);
+
+		foreach ($configMap as $type => $mappings) {
+			foreach ($mappings as $configKey => $requestKey) {
+				if (empty($this->request[$type][$requestKey])) {
+					$this->request[$type][$requestKey] = $this->config[$configKey];
+				}
+				$this->config[$configKey] = $this->request[$type][$requestKey];
+			}
 		}
 
- 		// If our $options contain a data property
- 		if (!empty($options['data'])) {
- 			// Set this to be our local data property
- 			$this->data = $options['data'];
- 		}
-		
-		// Merge the user provided $options over some assumed defaults for them (conventions over configuration)
- 		$options = am(array(
- 			'method'	=> ife(isset($options['data']) || !empty($this->data), 'POST', 'GET'),
- 			'data' => $this->data,
- 			'type' => 'xml',
- 			'host' => $this->config['host'],
- 			'connection' => 'close'
- 		), $options);
+		$this->request = $this->generateRequest($this->request);
+		$this->connect();
+		$this->write($this->request['raw']);
 
-		// Build the header for this request using our given $options
- 		$header = $this->buildHeader($options);
+		$rawResponse = null;
 
- 		// Connect to the current host
- 		$this->connect();
-
- 		// Send him the built header
-		$this->write($header);
-
-		// Start with an empty $response variable
-		$response = null;
-
-		// Fetch one $package after the other until CakeSocket::read returns false and we are done
 		while ($package = $this->read()) {
-			// Append the $package to our $response string
-			$response = $response.$package;
+			$rawResponse = $rawResponse.$package;
 		};
 
-		/**
-		 * @todo Parse the returned headers and return an array structure were those are seperate from the response contents
-		 */
-		// Return the $response data we got from the server
-		return array($response);
- 	}
+		$this->response = $this->parseResponse($rawResponse);
+		return $this->response['body'];
+	}
+
+	function parseResponse($rawResponse) {
+		$response = $this->response;
+		$response['raw'] = $rawResponse;
+
+		$headerEnd = strpos($rawResponse, str_repeat($this->headerSeparator, 2));
+		$response['rawHeader'] = substr($rawResponse, 0, $headerEnd);
+		
+		$headerParts = explode($this->headerSeparator, $response['rawHeader']);
+		
+		$response['statusLine'] = array_shift($headerParts);
+		
+		if (preg_match('/HTTP\/[1]\.[01] ([0-9]{3}) .+/', $response['statusLine'], $match)) {
+			$response['code'] = $match[1];
+		}
+		
+		foreach ($headerParts as $headerPart) {
+			list($key, $value) = preg_split('/\: ?/', $headerPart, 2);
+			$response['header'][$key] = $value;
+		}
+		
+		$response['rawBody'] = substr($rawResponse, $headerEnd + strlen($this->headerSeparator)*2);
+		
+		$encoding = $this->getHeader('Transfer-Encoding');
+		$response['body'] = $this->decodeBody($response['rawBody'], $encoding);
+		
+		return $response;
+	}
+
+	function decodeBody($rawBody, $encoding = 'chunked') {
+		return $rawBody;
+	}
+/**
+ * Returns the header with a given $name respecting the $matchCase flag. 
+ *
+ * @param unknown_type $name
+ * @param unknown_type $matchCase
+ * @return unknown
+ */
+	function getHeader($name = null, $matchCase = false) {
+		if ($name === null) {
+			return $this->responseHeader;
+		}
+		if (isset($this->responseHeader[$name])) {
+			return $this->responseHeader[$name];
+		}
+		if ($matchCase == true) {
+			return false;
+		}
+		foreach ($this->response['header'] as $key => $val) {
+			if (low($key) == low($name)) {
+				return $val;
+			}
+		}
+		return false;		
+	}
+	
 /**
  * Request a URL using the GET method
  *
  * @param array $options
  * @return An array structure containing HTTP headers and response body
  */
- 	function get($path = null, $options = array()) {
- 		// Make sure 'GET' is used for this request
- 		$options['method'] = 'GET';
- 		// Issue the request and return it's results
-		return $this->request($path, $options);
- 	}
+	function get($uri = null, $query = array()) {
+		$request = array('method' => 'GET');
+
+		if (is_array($uri)) {
+			$request = am($request, $uri);
+		} else {
+			$overwrite = array();
+			if (!empty($query)) {
+				$overwrite['query'] = $query;
+			}
+		
+			$uri = $this->parseURI($uri, $overwrite);
+			if (!empty($uri)) {
+				$request['uri'] = $uri;
+			}
+		}
+		return $this->request($request);
+	}
 /**
  * Request a URL using the POST method
  *
  * @param array $options
  * @return An array structure containing HTTP headers and response body
  */
- 	function post() {
- 		// Make sure 'POST' is used for this request
- 		$options['method'] = 'POST';
- 		// Issue the request and return it's results
-		return $this->request($path, $options);
- 	}
+	function post($uri = null, $body = array()) {	
+		$request = array('method' => 'POST');
+		
+		if (is_array($uri)) {
+			$request = am($request, $uri);
+		} else {
+			$uri = $this->parseURI($uri);
+
+			if (!empty($uri)) {
+				$request['uri'] = am($this->request['uri'], $uri);
+			}
+			$request['body'] = $body;
+		}
+		return $this->request($request);
+	}
 /**
  * Request a URL using the PUT method
  *
  * @param array $options
  * @return An array structure containing HTTP headers and response body
  */
- 	function put() {
- 		// Make sure 'PUT' is used for this request
- 		$options['method'] = 'PUT';
- 		// Issue the request and return it's results
-		return $this->request($path, $options);
- 	}
+	function put() {
+		$options['method'] = 'PUT';
+		return $this->request($uri, $options);
+	}
 /**
  * Request a URL using the DELETE method
  *
  * @param array $options
  * @return An array structure containing HTTP headers and response body
  */
- 	function delete() {
- 		// Make sure 'DELETE' is used for this request
- 		$options['method'] = 'DELETE';
- 		// Issue the request and return it's results
-		return $this->request($path, $options);
- 	}
+	function delete() {
+		$options['method'] = 'DELETE';
+		return $this->request($uri, $options);
+	}
+
+	function generateRequest($request) {
+		if (empty($request['requestLine'])) {
+			$request['requestLine'] = $request['method'].' '.$this->getURI($request['uri'], '/%path?%query').' HTTP/1.1';
+		}
+	
+  		
+		if (!empty($request['body'])) {
+			if (is_array($request['body'])) {
+				$request['body'] = $this->serialize($request['body']);
+			}
+			 			
+			if (!isset($request['header']['Content-Type'])) {
+				$request['header']['Content-Type']	= 'application/x-www-form-urlencoded';
+			}
+		}
+		$request['header'] = $this->buildHeader($request);
+
+		$request['raw'] = $request['requestLine'].$this->headerSeparator;
+		$request['raw'] .= $this->serializeHeader($request['header']);
+		$request['raw'] .= $request['body'];
+
+		return $request;
+	}
 /**
  * Takes an array of items and serializes them for a GET/POST request
  *
@@ -363,54 +409,51 @@ class HttpSocket extends CakeSocket {
  * @todo Implement http_build_query for php5 and an alternative solution for php4, see http://us2.php.net/http_build_query
  */
 	function serialize($items) {
-		// Use the Router to serialize the data, stripping off the leading '?'
 		return substr(Router::queryString($items), 1);
 	}
-/**
- * Builds a HTTP header string for the given $options
- *
- * @param array $options An array of options to use for building the header
- * @return string An HTTP header string
- * @todo Determine how to handle Content-Length:
- */
-	function buildHeader($options) {
-		// Use the __buildHeader function to get an array of the parts of this header
-		$headerParts = $this->__buildHeader($options);
-		// The first part is the command that also contains the method for the request
-		$header = array($headerParts[0]);
-		// Which we can then remove from the $headerParts
-		unset($headerParts[0]);
 
-		// In order to be able to move through the rest of them by their key/value
+	function serializeHeader($headerParts) {
 		foreach ($headerParts as $key => $value) {
-			// And to add them to the $header array one by one
 			$header[] = $key.': '.$value;
 		}
-		// Glues the $header parts together using the headerSeparator property and appends the header ending
 		return join($this->headerSeparator, $header).str_repeat($this->headerSeparator, 2);
+	}	
+
+	function buildHeader($request) {
+		$header = array();
+		$headerMap = array(
+			'uri.host' => 'Host'
+		);
+		
+		foreach ($headerMap as $fromPath => $to) {
+			$header[$to] = Set::extract($request, $fromPath);
+		}
+		if (!empty($request['body']) && !isset($request['header']['Content-Length'])) {
+			$header['Content-Length'] = strlen($request['body']);
+		}
+		return am($header, $request['header']);
 	}
 /**
- * Builds a HTTP header array using some given $options
+ * Resets the state of this socket (automatically called before any request)
  *
- * @param array $options An array of options to use for building the header
- * @return array An associative array containing the built header
- * @todo Determine how to handle Content-Length:
  */
-	function __buildHeader($options) {
-		// Generate the first request comment of the header
-		$header[0] = $options['method']." ".$this->getURI(null, '/%path?%query')." HTTP/1.1";
+	function reset($full = true) {
+		static $classVars = array()	;
 		
-		// The following $options values don't need any further parsing and can be mapped directly
-		$mapDirectly = array('host', 'connection');
-		foreach ($mapDirectly as $key) {
-			// Determine the HTTP equilivent of our $options $ley
-			$httpKey = str_replace(' ', '-', Inflector::camelize($key));
-			
-			// Map the our options keys to the http header ones
-			$header[$httpKey] = $options[$key];
+		if (empty($classVars)) {
+			$classVars = get_class_vars(__CLASS__);
 		}
-		// Return the generated header
-		return $header;
+		
+		if ($full == false) {
+			$this->request = $classVars['request'];
+			$this->response = $classVars['response'];
+			return true;
+		}
+
+		foreach ($classVars as $var => $defaultVal) {
+			$this->{$var} = $defaultVal;
+		}
+		return true;
 	}
 }
 
