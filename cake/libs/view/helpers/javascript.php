@@ -349,21 +349,15 @@ class JavascriptHelper extends AppHelper {
 		}
 
 		$out = array();
-		$key = array();
+		$keys = array();
 
 		if (is_array($data)) {
 			$keys = array_keys($data);
 		}
 
 		$numeric = true;
-
 		if (!empty($keys)) {
-			foreach($keys as $key) {
-				if (!is_numeric($key)) {
-					$numeric = false;
-					break;
-				}
-			}
+			$numeric = (array_values($keys) === array_keys(array_values($keys)));
 		}
 
 		foreach($data as $key => $val) {
