@@ -122,6 +122,13 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
+		if (env('HTTP_USER_AGENT') != null) {
+			$this->_userAgent = md5(env('HTTP_USER_AGENT') . CAKE_SESSION_STRING);
+		} else {
+				$this->_userAgent = "";
+		}
+		$this->time = time();
+
 		if($start === true) {
 			$this->host = env('HTTP_HOST');
 
@@ -135,13 +142,6 @@ class CakeSession extends Object {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
 
-			if (env('HTTP_USER_AGENT') != null) {
-				$this->_userAgent = md5(env('HTTP_USER_AGENT') . CAKE_SESSION_STRING);
-			} else {
-				$this->_userAgent = "";
-			}
-
-			$this->time = time();
 			$this->sessionTime = $this->time + (Security::inactiveMins() * CAKE_SESSION_TIMEOUT);
 			$this->security = CAKE_SECURITY;
 
@@ -264,6 +264,14 @@ class CakeSession extends Object {
  * @access public
  */
 	function valid() {
+		if ($this->read('Config')) {
+			if ($this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+				$this->valid = true;
+			} else {
+				$this->valid = false;
+				$this->__setError(1, "Session Highjacking Attempted !!!");
+			}
+		}
 		return $this->valid;
 	}
 /**
@@ -362,7 +370,7 @@ class CakeSession extends Object {
 	function __close() {
 		$probability = mt_rand(1, 150);
 		if($probability <= 3) {
-			$this->__gc();
+			CakeSession::__gc();
 		}
 		return true;
 	}
