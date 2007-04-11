@@ -650,7 +650,7 @@ class Model extends Overloadable {
 
 		if(!class_exists($className)) {
 			if (!loadModel($className)) {
-				trigger_error("Model::__constructedLinkedModel() - Failed loading model class {$className} when attempting to construct {$this->name}.  Make sure that " . Inflector::underscore($className) . ".php exists in your model path, and that the class name is correct.", E_USER_WARNING);
+				return $this->cakeError('missingModel', array(array('className' => $className)));
 			}
 		}
 
