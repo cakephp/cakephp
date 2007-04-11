@@ -471,13 +471,13 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->select($tagName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out = $before . $out . $between . $this->dateTime($tagName, null, '12', $selected, array(), $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, null, '12', $selected, $options, $empty);
 			break;
 			case 'date':
-				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', null, $selected, array(), $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', null, $selected, $options, $empty);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', '12', $selected, array(), $empty);
+				$out = $before . $out . $between . $this->dateTime($tagName, 'MDY', '12', $selected, $options, $empty);
 			break;
 			case 'textarea':
 			default:
@@ -893,23 +893,25 @@ class FormHelper extends AppHelper {
 				${$selectAttrName} = $attributes;
 			}
 		}
-
+		
+		$attributes = am(array('minYear' => null, 'maxYear' => null), $attributes);
+		
 		switch($dateFormat) {
 			case 'DMY': // so uses the new selex
 				$opt = $this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' .
-				$this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty);
+				$this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' . $this->year($tagName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
 			break;
 			case 'MDY':
 				$opt = $this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' .
-				$this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' . $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty);
+				$this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' . $this->year($tagName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty);
 			break;
 			case 'YMD':
-				$opt = $this->year($tagName, null, null, $year, $selectYearAttr, $showEmpty) . '-' .
+				$opt = $this->year($tagName, $attributes['minYear'], $attributes['maxYear'], $year, $selectYearAttr, $showEmpty) . '-' .
 				$this->month($tagName, $month, $selectMonthAttr, $showEmpty) . '-' .
 				$this->day($tagName, $day, $selectDayAttr, $showEmpty);
 			break;
 			case 'Y':
-				$opt = $this->year($tagName, null, null, $selected, $selectYearAttr, $showEmpty);
+				$opt = $this->year($tagName, $attributes['minYear'], $attributes['maxYear'], $selected, $selectYearAttr, $showEmpty);
 			break;
 			case 'NONE':
 			default:
