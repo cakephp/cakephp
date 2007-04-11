@@ -1232,10 +1232,10 @@ class Model extends Overloadable {
 					}
 				}
 			}
+			$this->_deleteDependent($this->id, $cascade);
+			$this->_deleteLinks($this->id);
 
 			if ($db->delete($this)) {
-				$this->_deleteLinks($this->id);
-				$this->_deleteDependent($this->id, $cascade);
 				if (!empty($this->behaviors)) {
 					for ($i = 0; $i < $ct; $i++) {
 						$this->behaviors[$behaviors[$i]]->afterDelete($this);
