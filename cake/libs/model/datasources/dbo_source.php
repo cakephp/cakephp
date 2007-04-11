@@ -721,7 +721,7 @@ class DboSource extends DataSource {
 				return null;
 			}
 			$count = count($resultSet);
-			if($type === 'hasMany') {
+			if($type === 'hasMany' && !isset($assocData['limit'])) {
 				$ins = array();
 				for($i = 0; $i < $count; $i++) {
 					$in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
