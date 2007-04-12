@@ -36,7 +36,7 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Object{
+class Object {
 /**
  * Log object
  *
@@ -123,18 +123,14 @@ class Object{
 		if (!is_string($msg)) {
 			ob_start();
 			print_r ($msg);
-			$msg=ob_get_contents();
+			$msg = ob_get_contents();
 			ob_end_clean();
 		}
 
-		switch($type) {
-			case LOG_DEBUG:
-				return $this->_log->write('debug', $msg);
-			break;
-			default:
-				return $this->_log->write('error', $msg);
-			break;
+		if (!isset($this->_log->levels[$type])) {
+			$type = LOG_ERROR;
 		}
+		return $this->_log->write($type, $msg);
 	}
 /**
  * Allows setting of multiple properties of the object in a single line of code.

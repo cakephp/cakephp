@@ -48,12 +48,6 @@ if (!defined('PHP5')) {
 	Configure::load('class.paths');
 	Configure::write('debug', DEBUG);
 /**
- * Verify that the application's salt has been changed from the default value
- */
-	if (CAKE_SESSION_STRING == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-		trigger_error('Please change the value of CAKE_SESSION_STRING in app/config/core.php to a salt value specific to your application', E_USER_NOTICE);
-	}
-/**
  * Get the application path and request URL
  */
 	if (empty($uri) && defined('BASE_URL')) {

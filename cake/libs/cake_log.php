@@ -34,12 +34,32 @@
 		 uses('file');
 	}
 /**
+ * Set up error level constants to be used within the framework if they are not defined within the
+ * system.
+ *
+ */
+	if (!defined('LOG_WARNING')) {
+		define('LOG_WARNING', 3);
+	}
+	if (!defined('LOG_ERR')) {
+		define('LOG_ERR', LOG_ERROR);
+	}
+	if (!defined('LOG_NOTICE')) {
+		define('LOG_NOTICE', 4);
+	}
+	if (!defined('LOG_DEBUG')) {
+		define('LOG_DEBUG', 5);
+	}
+	if (!defined('LOG_INFO')) {
+		define('LOG_INFO', 6);
+	}
+/**
  * Logs messages to text files
  *
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class CakeLog{
+class CakeLog {
 /**
  * Writes given message to a log file in the logs directory.
  *
@@ -48,7 +68,26 @@ class CakeLog{
  * @return boolean Success
  */
 	function write($type, $msg) {
-		$filename = LOGS . $type . '.log';
+		$levels = array(
+			LOG_WARNING => 'warning',
+			LOG_NOTICE => 'notice',
+			LOG_INFO => 'info',
+			LOG_DEBUG => 'debug',
+			LOG_ERR => 'error',
+			LOG_ERROR => 'error'
+		);
+
+		if (is_int($type) && isset($levels[$type])) {
+			$type = $levels[$type];
+		}
+
+		if ($type == 'error' || $type == 'warning') {
+			$filename = LOGS . 'error.log';
+		} elseif (in_array($type, $levels)) {
+			$filename = LOGS . 'debug.log';
+		} else {
+			$filename = LOGS . $type . '.log';
+		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
 		$log = new File($filename);
 		return $log->append($output);

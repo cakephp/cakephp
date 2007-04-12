@@ -24,6 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
+<?php Debugger::checkSessionKey(); ?>
 <p>
 	<span class="notice">
 		<?php 

@@ -33,6 +33,7 @@
 	if (!class_exists('Object')) {
 		 uses('object');
 	}
+	uses('cake_log');
 /**
  * Provide custom logging and error handling.
  *
@@ -118,21 +119,25 @@ class Debugger extends Object {
 			return;
 		}
 
+		$level = LOG_DEBUG;
 		switch ($code) {
 			case E_PARSE:
 			case E_ERROR:
 			case E_CORE_ERROR:
 			case E_COMPILE_ERROR:
 				$error = 'Fatal Error';
+				$level = LOG_ERROR;
 			break;
 			case E_WARNING:
 			case E_USER_WARNING:
 			case E_COMPILE_WARNING:
 			case E_RECOVERABLE_ERROR:
 				$error = 'Warning';
+				$level = LOG_WARNING;
 			break;
 			case E_NOTICE:
 				$error = 'Notice';
+				$level = LOG_NOTICE;
 			break;
 			default:
 				return false;
@@ -178,6 +183,10 @@ class Debugger extends Object {
 
 		pr($this->trace(array('start' => 1)));
 		e('</div>');
+
+		if (Configure::read('log')) {
+			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");
+		}
 		
 		if ($error == 'Fatal Error') {
 			die();
@@ -344,11 +353,29 @@ class Debugger extends Object {
 			break;
 		}
 	}
+/**
+ * Verify that the application's salt has been changed from the default value
+ *
+ */
+	function checkSessionKey() {
+		if (CAKE_SESSION_STRING == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
+			trigger_error('Please change the value of CAKE_SESSION_STRING in app/config/core.php to a salt value specific to your application', E_USER_NOTICE);
+		}
+	}
+/**
+ * Invokes the given debugger object as the current error handler, taking over control from the previous handler
+ * in a stack-like hierarchy.
+ *
+ * @param object $debugger A reference to the Debugger object
+ * @return void
+ */
+	function invoke(&$debugger) {
+		set_error_handler(array(&$debugger, 'handleError'));
+	}
 }
 
 if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
-	$debugger =& Debugger::getInstance();
-	set_error_handler(array(&$debugger, 'handleError'));
+	Debugger::invoke(Debugger::getInstance());
 }
 
 ?>

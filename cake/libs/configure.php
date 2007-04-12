@@ -146,8 +146,13 @@ class Configure extends Object {
 				if(!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
+				if (!class_exists('CakeLog')) {
+					uses('cake_log');
+				}
+				Configure::write('log', LOG_NOTICE);
 			} else {
 				error_reporting(0);
+				Configure::write('log', LOG_NOTICE);
 			}
 		}
 	}
