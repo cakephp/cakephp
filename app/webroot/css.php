@@ -28,6 +28,7 @@
  */
 if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	header('HTTP/1.1 404 Not Found');
+	exit('File Not Found');
 }
 /**
  * Enter description here...
