@@ -66,6 +66,7 @@ class ErrorHandler extends Object{
 
 			$this->controller =& new AppController();
 			$this->controller->_initComponents();
+			$this->controller->constructClasses();
 			$this->controller->cacheAction = false;
 			$this->__dispatch->start($this->controller);
 
