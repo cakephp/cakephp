@@ -74,8 +74,8 @@ class Router extends Object {
 	var $__named = array(
 		'Action'	=> 'index|show|list|add|create|edit|update|remove|del|delete|new|view|item',
 		'Year'		=> '[12][0-9]{3}',
-		'Month'		=> '(0[1-9]|1[012])',
-		'Day'		=> '(0[1-9]|[12][0-9]|3[01])',
+		'Month'		=> '0[1-9]|1[012]',
+		'Day'		=> '0[1-9]|[12][0-9]|3[01]',
 		'ID'		=> '[0-9]+'
 	);
 /**

@@ -145,6 +145,37 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2'));
 		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:value/:somevalue/:othervalue/*', array('controller' => 'posts', 'action' => 'view'), array('value','somevalue', 'othervalue'));
+		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
+		$expected = array('value' => '2007', 'somevalue' => '08', 'othervalue' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:year/:month/:day/*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
+		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
+		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:day/:year/:month/*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
+		$result = $this->router->parse('/posts/01/2007/08/title-of-post-here');
+		$expected = array('day' => '01', 'year' => '2007', 'month' => '08', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:month/:day/:year//*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
+		$result = $this->router->parse('/posts/08/01/2007/title-of-post-here');
+		$expected = array('month' => '08', 'day' => '01', 'year' => '2007', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$this->router->connect('/posts/:year/:month/:day/*', array('controller' => 'posts', 'action' => 'view'));
+		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
+		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
+		$this->assertEqual($result, $expected);
+
 	}
 
 	function testAdminRouting() {
