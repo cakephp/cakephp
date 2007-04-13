@@ -65,10 +65,8 @@ class TextHelper extends AppHelper {
 			$with = array();
 
 			foreach($phrase as $key => $value) {
-				if (empty($key)) {
-					$key = $value;
-					$value = $highlighter;
-				}
+				$key = $value;
+				$value = $highlighter;
 
 				$replace[] = '|(' . $key . ')|';
 				$with[] = empty($value) ? $highlighter : $value;
