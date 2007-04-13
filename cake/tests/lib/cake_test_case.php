@@ -75,7 +75,7 @@ class CakeTestCase extends UnitTestCase {
 
 			$this->_loadFixtures();
 		}
-
+		
 		// Create records
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
 			foreach($this->_fixtures as $fixture) {

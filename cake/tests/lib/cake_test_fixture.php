@@ -43,7 +43,66 @@ class CakeTestFixture extends Object {
  */
 	function __construct(&$db) {
 		$this->db =& $db;
-
+		
+		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
+			$debug = Configure::read();
+			
+			$import = array();
+			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
+				$import = am(array('records' => false), ife(is_array($this->import), $this->import, array()));
+				
+				$import['model'] = ife(is_array($this->import), $this->import['model'], $this->import);
+			} else if (isset($this->import['table'])) {
+				$import = am(array('connection' => 'default', 'records' => false), $this->import);
+			}
+			
+			if (isset($import['model']) && (class_exists($import['model']) || loadModel($import['model']))) {
+				$model =& new $import['model'];
+				$modelDb =& ConnectionManager::getDataSource($model->useDbConfig);
+				
+				$info = $model->loadInfo();
+				
+				$this->fields = array_combine(Set::extract($info->value, '{n}.name'), $info->value);
+				$this->fields[$model->primaryKey]['key'] = 'primary';
+				
+				$this->primaryKey = array( $model->primaryKey );
+			} else if (isset($import['table'])) {
+				$model =& new stdClass();
+				$modelDb =& ConnectionManager::getDataSource($import['connection']);
+				
+				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
+				$model->table = $import['table'];
+				$model->tablePrefix = $modelDb->config['prefix'];
+				
+				$info = $modelDb->describe($model);
+				
+				$this->fields = array_combine(Set::extract($info, '{n}.name'), $info);
+			}
+			
+			if ($import['records'] !== false && isset($model) && isset($modelDb)) {
+				$this->records = array();
+				
+				$query = array(
+					'fields' => Set::extract($this->fields, '{n}.name'),
+					'table' => $modelDb->name($model->table),
+					'alias' => $model->name,
+					'conditions' => array(),
+					'order' => null,
+					'limit' => null
+				);
+				
+				foreach($query['fields'] as $index => $field) {
+					$query['fields'][$index] = $modelDb->name($query['alias']) . '.' . $modelDb->name($field);
+				}
+				
+				$records = $modelDb->fetchAll($modelDb->buildStatement($query, $model), false, $model->name);
+				
+				if ($records !== false && !empty($records)) {
+					$this->records = Set::extract($records, '{n}.' . $model->name);
+				}
+			}
+		}
+		
 		if (!isset($this->table)) {
 			$this->table = Inflector::underscore(Inflector::pluralize($this->name));
 		}
@@ -54,6 +113,16 @@ class CakeTestFixture extends Object {
 
 		if (isset($this->primaryKey) && !is_array($this->primaryKey)) {
 			$this->primaryKey = array( $this->primaryKey );
+		}
+		
+		if (isset($this->primaryKey) && isset($this->fields[$this->primaryKey[0]])) {
+			$this->fields[$this->primaryKey[0]]['key'] = 'primary';
+		}
+		
+		foreach($this->fields as $index => $field) {
+			if (empty($field['default'])) {
+				unset($this->fields[$index]['default']);
+			}
 		}
 	}
 /**
@@ -104,7 +173,7 @@ class CakeTestFixture extends Object {
 
 			$this->_create = $create;
 		}
-
+		
 		return $this->_create;
 	}
 /**
@@ -173,7 +242,7 @@ class CakeTestFixture extends Object {
 
 			$this->_insert = $inserts;
 		}
-
+		
 		return $this->_insert;
 	}
 }
