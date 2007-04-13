@@ -45,9 +45,8 @@ class CakeTestFixture extends Object {
 		$this->db =& $db;
 		
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
-			$debug = Configure::read();
-			
 			$import = array();
+			
 			if (is_string($this->import) || is_array($this->import) && isset($this->import['model'])) {
 				$import = am(array('records' => false), ife(is_array($this->import), $this->import, array()));
 				
