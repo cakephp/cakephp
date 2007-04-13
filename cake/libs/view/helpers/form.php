@@ -462,7 +462,7 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->{$type}($tagName, $options);
 			break;
 			case 'file':
-				$out = $before . $out . $between . $this->file($tagName);
+				$out = $before . $out . $between . $this->file($tagName, $options);
 			break;
 			case 'select':
 				$options = am(array('options' => array()), $options);

@@ -187,6 +187,9 @@ class FormHelperTest extends UnitTestCase {
 
 		$result = $this->Form->input('test', array('options' => array('First', 'Second'), 'empty' => true));
 		$this->assertPattern('/<select [^<>]+>\s+<option value=""\s*><\/option>\s+<option value="0"/', $result);
+		
+		$result = $this->Form->input('Model/field', array('type' => 'file', 'class' => 'textbox'));
+		$this->assertPattern('/class="textbox"/', $result);
 	}
 
 	function testLabel() {
