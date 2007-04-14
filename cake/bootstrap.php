@@ -48,6 +48,12 @@ if (!defined('PHP5')) {
 	Configure::load('class.paths');
 	Configure::write('debug', DEBUG);
 /**
+ * Check for IIS Server
+ */
+	if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
+		define('SERVER_IIS', true);
+	}
+/**
  * Get the application path and request URL
  */
 	if (empty($uri) && defined('BASE_URL')) {

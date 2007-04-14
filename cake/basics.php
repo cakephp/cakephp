@@ -921,7 +921,7 @@
 			$uri = env('REQUEST_URI');
 		} else {
 			if ($uri = env('argv')) {
-				if (defined('SERVER_IIS')) {
+				if (defined('SERVER_IIS') && SERVER_IIS) {
 					if (key($_GET) && strpos(key($_GET), '?') !== false) {
 						unset($_GET[key($_GET)]);
 					}
@@ -940,7 +940,7 @@
 				$uri = env('PHP_SELF') . '/' . env('QUERY_STRING');
 			}
 		}
-		return $uri;
+		return preg_replace('/\?url=\//', '', $uri);
 	}
 /**
  * Gets an environment variable from available sources, and provides emulation
