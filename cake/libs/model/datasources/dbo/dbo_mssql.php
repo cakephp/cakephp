@@ -271,11 +271,11 @@ class DboMssql extends DboSource {
 				$fieldAlias = count($this->__fieldMappings);
 
 				if ($dot === false) {
-					$this->__fieldMappings[] = $fields[$i];
+					$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
 					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fieldAlias);
-				} else {
+				} elseif (!preg_match('/\]\.\[[^\s]+ AS \[/', $fields[$i])) {
 					$build = explode('.', $fields[$i]);
-					$this->__fieldMappings[] = $build[0];
+					$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $build[0] . '.' . $build[1];
 					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
 				}
 			}
@@ -428,7 +428,6 @@ class DboMssql extends DboSource {
 			if (isset($real['limit'])) {
 				$col .= '(' . $real['limit'] . ')';
 			}
-
 			return $col;
 		}
 		$col                = r(')', '', $real);
@@ -480,11 +479,13 @@ class DboMssql extends DboSource {
 			$column = mssql_field_name($results, $j);
 
 			if (strpos($column, '__')) {
-				$map = explode('__', $column);
-				if (is_numeric($map[1])) {
-					$map[1] = $this->__fieldMappings[intval($map[1])];
+				if (isset($this->__fieldMappings[$column]) && strpos($this->__fieldMappings[$column], '.')) {
+					$map = explode('.', $this->__fieldMappings[$column]);
+				} elseif(isset($this->__fieldMappings[$column])) {
+					$map = array(0, $this->__fieldMappings[$column]);
+				} else {
+					$map = array(0, $column);	
 				}
-
 				$this->map[$index++] = $map;
 			} else {
 				$this->map[$index++] = array(0, $column);
@@ -502,10 +503,11 @@ class DboMssql extends DboSource {
 		extract($data);
 		if (preg_match('/offset\s+([0-9]+)/i', $limit, $offset)) {
 			$limit = preg_replace('/\s*offset.*$/i', '', $limit);
-			$limitVal = preg_match('/top\s+([0-9]+)/i', $limit);
+			preg_match('/top\s+([0-9]+)/i', $limit, $limitVal);
 			$offset = intval($offset[1]) + intval($limitVal[1]);
 			$rOrder = $this->__switchSort($order);
-			return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order}";
+			list($order2, $rOrder) = array($this->__mapFields($order), $this->__mapFields($rOrder));
+			return "SELECT * FROM (SELECT {$limit} * FROM (SELECT TOP {$offset} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}) AS Set1 {$rOrder}) AS Set2 {$order2}";
 		} else {
 			return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$order}";
 		}
@@ -523,6 +525,23 @@ class DboMssql extends DboSource {
 		return preg_replace('/__tmp_asc__/', ' DESC', $order);
 	}
 /**
+ * Translates field names used for filtering and sorting to shortened names using the field map
+ *
+ * @param string $sql A snippet of SQL representing an ORDER or WHERE statement
+ * @return string The value of $sql with field names replaced
+ * @access private
+ */
+	function __mapFields($sql) {
+		if (empty($sql) || empty($this->__fieldMappings)) {
+			return $sql;
+		}
+		foreach ($this->__fieldMappings as $key => $val) {
+			$sql = preg_replace('/' . preg_quote($val) . '/', $this->name($key), $sql);
+			$sql = preg_replace('/' . preg_quote($this->name($val)) . '/', $this->name($key), $sql);
+		}
+		return $sql;
+	}
+/**
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
@@ -533,6 +552,7 @@ class DboMssql extends DboSource {
 	function read(&$model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
 		$this->__fieldMappings = array();
+		$this->__fieldMapBase = null;
 		return $results;
 	}
 /**
@@ -550,7 +570,6 @@ class DboMssql extends DboSource {
 				$resultRow[$table][$column] = $row[$index];
 				$i++;
 			}
-
 			return $resultRow;
 		} else {
 			return false;
