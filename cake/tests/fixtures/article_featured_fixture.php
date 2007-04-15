@@ -1,5 +1,5 @@
 <?php
-/* SVN FILE: $Id: article_featured_fixture.php 4668 2007-03-23 22:11:06Z phpnut $ */
+/* SVN FILE: $Id$ */
 /**
  * Short description for file.
  *
@@ -21,9 +21,9 @@
  * @package			cake.tests
  * @subpackage		cake.tests.fixtures
  * @since			CakePHP(tm) v 1.2.0.4667
- * @version			$Revision: 4668 $
- * @modifiedby		$LastChangedBy: phpnut $
- * @lastmodified	$Date: 2007-03-23 19:11:06 -0300 (Vie, 23 Mar 2007) $
+ * @version			$Revision$
+ * @modifiedby		$LastChangedBy$
+ * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 /**
