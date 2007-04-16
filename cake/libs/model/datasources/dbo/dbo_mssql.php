@@ -270,10 +270,10 @@ class DboMssql extends DboSource {
 				$dot = strrpos($fields[$i], '.');
 				$fieldAlias = count($this->__fieldMappings);
 
-				if ($dot === false) {
+				if ($dot === false && !preg_match('/\s+AS\s+/i', $fields[$i])) {
 					$this->__fieldMappings[$alias . '__' . $fieldAlias] = $alias . '.' . $fields[$i];
 					$fields[$i] = $this->name($alias) . '.' . $this->name($fields[$i]) . ' AS ' . $this->name($alias . '__' . $fieldAlias);
-				} elseif (!preg_match('/\]\.\[[^\s]+ AS \[/', $fields[$i])) {
+				} elseif (!preg_match('/\s+AS\s+/i', $fields[$i])) {
 					$build = explode('.', $fields[$i]);
 					$this->__fieldMappings[$build[0] . '__' . $fieldAlias] = $build[0] . '.' . $build[1];
 					$fields[$i] = $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $fieldAlias);
