@@ -93,12 +93,6 @@ class CakeTestCase extends UnitTestCase {
  * @access protected
  */
 	function requestAction($url, $requested = true, $data = null, $method = 'post') {
-		$params = array();
-		
-		if (!$requested) {
-			$params['return'] = true;
-		}
-		
 		if (is_array($data) && !empty($data)) {
 			$data = array('data' => $data);
 			
@@ -110,11 +104,13 @@ class CakeTestCase extends UnitTestCase {
 		}
 		
 		$dispatcher =& new Dispatcher();
-		if (in_array('return', $params)) {
+		$params = array();
+		
+		if (!$requested) {
 			$params['return'] = 0;
+			
 			ob_start();
 			@$dispatcher->dispatch($url, $params);
-			
 			$result = ob_get_clean();
 		} else {
 			$params['return'] = 1;
