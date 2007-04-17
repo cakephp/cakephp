@@ -1377,6 +1377,13 @@ class DboSourceTest extends UnitTestCase {
 			'Enrollment.yearcompleted' => '> 0')
 		);
 		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+0\s*$/', $result);
+
+		$result = $this->db->conditions(array('id' => '<> 8'));
+		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+8\s*$/', $result);
+
+		//$result = $this->db->conditions(array('TestModel.field' => '= gribe$@()lu'));
+		//$expected = " WHERE `TestModel.field` =  'gribe$@()lu'";
+		//$this->assertEqual($result, $expected);
 	}
 
 	function testFieldParsing() {
