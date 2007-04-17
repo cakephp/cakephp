@@ -190,7 +190,7 @@ class Router extends Object {
 			return array($route, '/^[\/]*$/', array(), $default, array());
 		} else {
 			$names = array();
-			$elements = $this->__filter(array_map('trim', explode('/', $route)));
+			$elements = Set::filter(array_map('trim', explode('/', $route)));
 
 			if (!count($elements)) {
 				return false;
@@ -262,7 +262,7 @@ class Router extends Object {
 					}
 				}
 
-				foreach($_this->__filter($r, true) as $key => $found) {
+				foreach(Set::filter($r, true) as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $found;
@@ -406,23 +406,6 @@ class Router extends Object {
 		}
 	}
 /**
- * Filters empty elements out of a route array, excluding '0'.
- *
- * @return mixed
- */
-	function __filter($var, $isArray = false) {
-		if (is_array($var) && (!empty($var) || $isArray)) {
-			$_this =& Router::getInstance();
-			return array_filter($var, array(&$_this, '__filter'));
-		} else {
-			if($var === '0' || !empty($var)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-/**
  * Finds URL for specified action.
  *
  * Returns an URL pointing to a combination of controller and action. Param
@@ -527,7 +510,7 @@ class Router extends Object {
 					$url['action'] = null;
 				}
 
-				$urlOut = $_this->__filter(array($url['plugin'], $url['controller'], $url['action']));
+				$urlOut = Set::filter(array($url['plugin'], $url['controller'], $url['action']));
 
 				if($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
@@ -540,17 +523,17 @@ class Router extends Object {
 
 			if (!empty($args)) {
 				if($output{strlen($output)-1} == '/') {
-					$output .= join('/', $_this->__filter($args, true));
+					$output .= join('/', Set::filter($args, true));
 				} else {
-					$output .= '/'. join('/', $_this->__filter($args, true));
+					$output .= '/'. join('/', Set::filter($args, true));
 				}
 			}
 
 			if (!empty($named)) {
 				if($output{strlen($output)-1} == '/') {
-					$output .= join('/', $_this->__filter($named, true));
+					$output .= join('/', Set::filter($named, true));
 				} else {
-					$output .= '/'. join('/', $_this->__filter($named, true));
+					$output .= '/'. join('/', Set::filter($named, true));
 				}
 			}
 
@@ -657,7 +640,7 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 		if (isset($params['pass']) && is_array($params['pass'])) {
 			$_this->__mapped = $params['pass'];
- 			$params['pass'] = implode('/', $_this->__filter($params['pass'], true));
+ 			$params['pass'] = implode('/', Set::filter($params['pass'], true));
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}

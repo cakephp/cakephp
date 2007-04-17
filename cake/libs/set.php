@@ -105,6 +105,23 @@ class Set extends Object {
 		return $r;
 	}
 /**
+ * Filters empty elements out of a route array, excluding '0'.
+ *
+ * @return mixed
+ */
+	function filter($var, $isArray = false) {
+		if (is_array($var) && (!empty($var) || $isArray)) {
+			$set = new Set();
+			return array_filter($var, array(&$set, 'filter'));
+		} else {
+			if ($var === 0 || $var === '0' || !empty($var)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+/**
  * Pushes the differences in $array2 onto the end of $array
  *
  * @param mixed $array
