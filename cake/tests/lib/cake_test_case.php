@@ -37,11 +37,26 @@ vendor('simpletest'.DS.'unit_tester');
  */
 class CakeTestDispatcher extends Dispatcher {
 	var $controller;
+	var $testCase;
+	
+	function testCase(&$testCase) {
+		$this->testCase =& $testCase;
+	}
 	
 	function _invoke (&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
 		
-		return parent::_invoke($this->controller, $params, $missingAction);
+		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
+			$this->testCase->startController($this->controller, $params);
+		}
+		
+		$result = parent::_invoke($this->controller, $params, $missingAction);
+		
+		if (isset($this->testCase) && method_exists($this->testCase, 'endController')) {
+			$this->testCase->endController($this->controller, $params);
+		}
+		
+		return $result;
 	}
 }
 /**
@@ -94,32 +109,141 @@ class CakeTestCase extends UnitTestCase {
  */
 	function endTest($method) {
 	}
+
+/**
+ * Callback issued when a controller's action is about to be invoked through requestAction().
+ *
+ * @param Controller $controller	Controller that's about to be invoked.
+ * @param array $params	Additional parameters as sent by requestAction().
+ */
+	function startController(&$controller, $params = array()) {
+		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
+			if (!isset($this->db)) {
+				$this->_initDb();
+			}
+			
+			$classRegistry =& ClassRegistry::getInstance();
+			$models = array();
+			
+			foreach($classRegistry->__map as $key => $name) {
+				$object =& $classRegistry->getObject(Inflector::camelize($key));
+				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->name, $params['fixturize'])) || $params['fixturize'] === true)) {
+					$models[$object->name] = array (
+						'table' => $object->table,
+						'model' => $object->name,
+						'key' => Inflector::camelize($key)
+					);
+				}
+			}
+			
+			if (!empty($models) && isset($this->db)) {
+				$this->_queries = array(
+					'create' => array(),
+					'insert' => array(),
+					'drop' => array()
+				);
+				
+				foreach($models as $model) {
+					$fixture =& new CakeTestFixture($this->db);
+					
+					$fixture->name = $model['model'] . 'Test';
+					$fixture->table = $model['table'];
+					$fixture->import = array('model' => $model['model'], 'records' => true);
+					
+					$fixture->init();
+					
+					$createFixture = $fixture->create();
+					$insertsFixture = $fixture->insert();
+					$dropFixture = $fixture->drop();
+					
+					if (!empty($createFixture)) {
+						$this->_queries['create'] = am($this->_queries['create'], array($createFixture));
+					}
+					if (!empty($insertsFixture)) {
+						$this->_queries['insert'] = am($this->_queries['insert'], $insertsFixture);
+					}
+					if (!empty($dropFixture)) {
+						$this->_queries['drop'] = am($this->_queries['drop'], array($dropFixture));
+					}
+				}
+				
+				foreach($this->_queries['create'] as $query) {
+					if (isset($query) && $query !== false) {
+						$this->db->_execute($query);
+					}
+				}
+				
+				foreach($this->_queries['insert'] as $query) {
+					if (isset($query) && $query !== false) {
+						$this->db->_execute($query);
+					}
+				}
+				
+				foreach($models as $model) {
+					$object =& $classRegistry->getObject($model['key']);
+					
+					if ($object !== false) {
+						$object->useDbConfig = 'test_suite';
+						$object->setSource($object->table);
+					}
+				}
+			}
+		}
+	}
+/**
+ * Callback issued when a controller's action has been invoked through requestAction().
+ *
+ * @param Controller $controller	Controller that has been invoked.
+ * * @param array $params	Additional parameters as sent by requestAction().
+ */
+	function endController(&$controller, $params = array()) {
+		if (isset($this->db) && isset($this->_queries) && !empty($this->_queries) && !empty($this->_queries['drop'])) {
+			foreach($this->_queries['drop'] as $query) {
+				if (isset($query) && $query !== false) {
+					$this->db->_execute($query);
+				}
+			}
+		}
+	}
 /**
  * Executes a Cake URL, optionally getting the view rendering or what is returned
  * when params['requested'] is set.
  *
  * @param string $url	Cake URL to execute (e.g: /articles/view/455)
- * @param string $return	Set to what you want returned (result / render / vars)
- * @param array $data	Data that will be sent to controller. E.g: array('Article' => array('id'=>4))
- * @param string $method	Method to simulate posting of data to controller ('get' or 'post')
+ * @param array $params	Parameters
  * 
  * @return mixed	What is returned from action (if $requested is true), or view rendered html
  * 
  * @access protected
  */
-	function requestAction($url, $return = 'result', $data = null, $method = 'post') {
-		if (is_array($data) && !empty($data)) {
-			$data = array('data' => $data);
+	function requestAction($url, $params = array()) {
+		$default = array(
+			'return' => 'result',
+			'fixturize' => false,
+			'data' => array(),
+			'method' => 'post'
+		);
+		
+		$params = am($default, $params);
+		
+		if (!empty($params['data'])) {
+			$data = array('data' => $params['data']);
 			
-			if (low($method) == 'get') {
+			if (low($params['method']) == 'get') {
 				$_GET = $data;
 			} else {
 				$_POST = $data;
 			}
 		}
 		
+		$return = $params['return'];
+		
+		unset($params['data']);
+		unset($params['method']);
+		unset($params['return']);
+		
 		$dispatcher =& new CakeTestDispatcher();
-		$params = array();
+		$dispatcher->testCase($this);
 		
 		if (low($return) != 'result') {
 			$params['return'] = 0;
@@ -129,10 +253,17 @@ class CakeTestCase extends UnitTestCase {
 			$result = ob_get_clean();
 			
 			if (low($return) == 'vars') {
-				$result = $dispatcher->controller->viewVars;
+				$view =& ClassRegistry::getObject('view');
+				$viewVars = $view->getVars();
 				
-				if (isset($dispatcher->controller->__viewClass) && !empty($dispatcher->controller->__viewClass->pageTitle)) {
-					$result = am($result, array('title' => $dispatcher->controller->__viewClass->pageTitle));
+				$result = array();
+				
+				foreach($viewVars as $var) {
+					$result[$var] = $view->getVar($var);
+				}
+				
+				if (!empty($view->pageTitle)) {
+					$result = am($result, array('title' => $view->pageTitle));
 				}
 			}
 		} else {
@@ -141,6 +272,18 @@ class CakeTestCase extends UnitTestCase {
 			$params['requested'] = 1;
 			
 			$result = @$dispatcher->dispatch($url, $params);
+		}
+		
+		$classRegistry =& ClassRegistry::getInstance();
+		$keys = array_keys($classRegistry->__objects);
+		foreach($keys as $key) {
+			$key = Inflector::camelize($key);
+			$classRegistry->removeObject($key);
+		}
+		$classRegistry->__map = array();
+		
+		if (isset($this->_queries)) {
+			unset($this->_queries);
 		}
 		
 		return $result;
@@ -161,27 +304,7 @@ class CakeTestCase extends UnitTestCase {
 
 		// Set up DB connection
 		if (isset($this->fixtures) && low($method) == 'start') {
-			// Try for test DB
-			restore_error_handler();
-			@$db =& ConnectionManager::getDataSource('test');
-			set_error_handler('simpleTestErrorHandler');
-
-			// Try for default DB
-			if (!$db->isConnected()) {
-				$db =& ConnectionManager::getDataSource('default');
-			}
-
-			// Add test prefix
-			$config = $db->config;
-			$config['prefix'] .= 'test_suite_';
-
-	 		// Set up db connection
-			ConnectionManager::create('test_suite', $config);
-
-			// Get db connection
-			$this->db =& ConnectionManager::getDataSource('test_suite');
-			$this->db->fullDebug = false;
-
+			$this->_initDb();
 			$this->_loadFixtures();
 		}
 		
@@ -268,10 +391,36 @@ class CakeTestCase extends UnitTestCase {
  *
  * @access public
  */
-function getTests() {
+	function getTests() {
 		$methods = am(am(array('start', 'startCase'), parent::getTests()), array('endCase', 'end'));
 
 		return $methods;
+	}
+/**
+ * Initialize DB connection.
+ *
+ */
+	function _initDb() {
+		// Try for test DB
+		restore_error_handler();
+		@$db =& ConnectionManager::getDataSource('test');
+		set_error_handler('simpleTestErrorHandler');
+
+		// Try for default DB
+		if (!$db->isConnected()) {
+			$db =& ConnectionManager::getDataSource('default');
+		}
+
+		// Add test prefix
+		$config = $db->config;
+		$config['prefix'] .= 'test_suite_';
+
+ 		// Set up db connection
+		ConnectionManager::create('test_suite', $config);
+
+		// Get db connection
+		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->db->fullDebug = false;
 	}
 /**
  * Load fixtures specified in var $fixtures.

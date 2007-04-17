@@ -43,7 +43,13 @@ class CakeTestFixture extends Object {
  */
 	function __construct(&$db) {
 		$this->db =& $db;
-		
+		$this->init();
+	}
+/**
+ * Initialize the fixture.
+ *
+ */
+	function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
 			
@@ -118,9 +124,11 @@ class CakeTestFixture extends Object {
 			$this->fields[$this->primaryKey[0]]['key'] = 'primary';
 		}
 		
-		foreach($this->fields as $index => $field) {
-			if (empty($field['default'])) {
-				unset($this->fields[$index]['default']);
+		if (isset($this->fields)) {
+			foreach($this->fields as $index => $field) {
+				if (empty($field['default'])) {
+					unset($this->fields[$index]['default']);
+				}
 			}
 		}
 	}
