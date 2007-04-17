@@ -35,6 +35,21 @@ vendor('simpletest'.DS.'unit_tester');
  * @package    cake
  * @subpackage cake.cake.tests.lib
  */
+class CakeTestDispatcher extends Dispatcher {
+	var $controller;
+	
+	function _invoke (&$controller, $params, $missingAction = false) {
+		$this->controller =& $controller;
+		
+		return parent::_invoke($controller, $params, $missingAction);
+	}
+}
+/**
+ * Short description for class.
+ *
+ * @package    cake
+ * @subpackage cake.cake.tests.lib
+ */
 class CakeTestCase extends UnitTestCase {
 /**
  * Methods used internally.
@@ -84,7 +99,7 @@ class CakeTestCase extends UnitTestCase {
  * when params['requested'] is set.
  *
  * @param string $url	Cake URL to execute (e.g: /articles/view/455)
- * @param boolean $requested	Set to true if params['requested'] should be set, false otherwise
+ * @param string $return	Set to what you want returned (result / render / vars)
  * @param array $data	Data that will be sent to controller. E.g: array('Article' => array('id'=>4))
  * @param string $method	Method to simulate posting of data to controller ('get' or 'post')
  * 
@@ -92,7 +107,7 @@ class CakeTestCase extends UnitTestCase {
  * 
  * @access protected
  */
-	function requestAction($url, $requested = true, $data = null, $method = 'post') {
+	function requestAction($url, $return = 'result', $data = null, $method = 'post') {
 		if (is_array($data) && !empty($data)) {
 			$data = array('data' => $data);
 			
@@ -103,15 +118,23 @@ class CakeTestCase extends UnitTestCase {
 			}
 		}
 		
-		$dispatcher =& new Dispatcher();
+		$dispatcher =& new CakeTestDispatcher();
 		$params = array();
 		
-		if (!$requested) {
+		if (low($return) != 'result') {
 			$params['return'] = 0;
 			
 			ob_start();
 			@$dispatcher->dispatch($url, $params);
 			$result = ob_get_clean();
+			
+			if (low($return) == 'vars') {
+				$result = $dispatcher->controller->viewVars;
+				
+				if (isset($dispatcher->controller->__viewClass) && !empty($dispatcher->controller->__viewClass->pageTitle)) {
+					$result = am($result, array('title' => $dispatcher->controller->__viewClass->pageTitle));
+				}
+			}
 		} else {
 			$params['return'] = 1;
 			$params['bare'] = 1;
