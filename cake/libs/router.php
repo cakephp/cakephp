@@ -443,7 +443,7 @@ class Router extends Object {
 		}
 
 		$base = $_this->stripPlugin($path['base'], $params['plugin']);
-		$extension = $output = $mapped = $q = null;
+		$extension = $output = $mapped = $q = $frag = null;
 
 		if (is_array($url) && !empty($url)) {
 			if (isset($url['full_base']) && $url['full_base'] == true) {
@@ -453,6 +453,10 @@ class Router extends Object {
 			if (isset($url['?'])) {
 				$q = $url['?'];
 				unset($url['?']);
+			}
+			if (isset($url['#'])) {
+				$frag = '#' . urlencode($url['#']);
+				unset($url['#']);
 			}
 			if (!isset($url['action'])) {
 				if (!isset($url['controller']) || $params['controller'] == $url['controller']) {
@@ -486,7 +490,7 @@ class Router extends Object {
 			}
 
 			$named = $args = array();
-			$skip = am(array_keys($_this->__mapped), array('bare', 'action', 'controller', 'plugin', 'ext', '?'));
+			$skip = am(array_keys($_this->__mapped), array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#'));
 			if(defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
 			}
@@ -558,7 +562,7 @@ class Router extends Object {
 		if ($full) {
 			$output = FULL_BASE_URL . $output;
 		}
-		return $output . $extension . $_this->queryString($q);
+		return $output . $extension . $_this->queryString($q) . $frag;
 	}
 /**
  * Maps a URL array onto a route and returns the string result, or false if no match

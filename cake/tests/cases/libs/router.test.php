@@ -101,7 +101,6 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUrlGeneration() {
-		$this->router->reload();
 		extract($this->router->getNamedExpressions());
 
 		$this->router->connect('/', array('controller'=>'pages', 'action'=>'display', 'home'));
@@ -146,6 +145,17 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2'));
 		$this->assertEqual($result, $expected);
 
+		$result = $this->router->url(array('controller' => 'posts', '0', '?' => array('var' => 'test', 'var2' => 'test2')));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2', '#' => 'unencoded string %'));
+		$expected = '/posts/index/0?var=test&var2=test2#unencoded+string+%25';
+		$this->assertEqual($result, $expected);
+	}
+
+	function testUrlParsing() {
+		extract($this->router->getNamedExpressions());
+
 		$this->router->routes = array();
 		$this->router->connect('/posts/:value/:somevalue/:othervalue/*', array('controller' => 'posts', 'action' => 'view'), array('value','somevalue', 'othervalue'));
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
@@ -175,7 +185,6 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
 		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
 		$this->assertEqual($result, $expected);
-
 	}
 
 	function testAdminRouting() {
