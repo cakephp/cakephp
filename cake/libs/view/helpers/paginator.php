@@ -156,6 +156,8 @@ class PaginatorHelper extends AppHelper {
  *                null if the results are not currently sorted.
  */
 	function sortDir($model = null, $options = array()) {
+		$dir = null;
+
 		if (empty($options)) {
 			$params = $this->params($model);
 			$options = am($params['defaults'], $params['options']);
