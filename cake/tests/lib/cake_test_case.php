@@ -36,62 +36,62 @@ vendor('simpletest'.DS.'unit_tester');
  * @subpackage cake.cake.tests.lib
  */
 class CakeTestCase extends UnitTestCase {
-	/**
-	 * Methods used internally.
-	 *
-	 * @var array
-	 * @access private
-	 */
+/**
+ * Methods used internally.
+ *
+ * @var array
+ * @access private
+ */
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
-	/**
-	 * Called when a test case (group of methods) is about to start (to be overriden when needed.)
-	 * 
-	 * @param string $method	Test method about to get executed.
-	 * 
-	 * @access protected
-	 */
+/**
+ * Called when a test case (group of methods) is about to start (to be overriden when needed.)
+ * 
+ * @param string $method	Test method about to get executed.
+ * 
+ * @access protected
+ */
 	function startCase() {
 	}
-	/**
-	 * Called when a test case (group of methods) has been executed (to be overriden when needed.)
-	 * 
-	 * @param string $method	Test method about that was executed.
-	 * 
-	 * @access protected
-	 */
+/**
+ * Called when a test case (group of methods) has been executed (to be overriden when needed.)
+ * 
+ * @param string $method	Test method about that was executed.
+ * 
+ * @access protected
+ */
 	function endCase() {
 	}
-	/**
-	 * Called when a test case method is about to start (to be overriden when needed.)
-	 * 
-	 * @param string $method	Test method about to get executed.
-	 * 
-	 * @access protected
-	 */
+/**
+ * Called when a test case method is about to start (to be overriden when needed.)
+ * 
+ * @param string $method	Test method about to get executed.
+ * 
+ * @access protected
+ */
 	function startTest($method) {
 	}
-	/**
-	 * Called when a test case method has been executed (to be overriden when needed.)
-	 * 
-	 * @param string $method	Test method about that was executed.
-	 * 
-	 * @access protected
-	 */
+/**
+ * Called when a test case method has been executed (to be overriden when needed.)
+ * 
+ * @param string $method	Test method about that was executed.
+ * 
+ * @access protected
+ */
 	function endTest($method) {
 	}
-	/**
-	 * Executes a Cake URL, optionally getting the view rendering or what is returned
-	 * when params['requested'] is set.
-	 *
-	 * @param string $url	Cake URL to execute (e.g: /articles/view/455)
-	 * @param string $requested	Set to true if params['requested'] should be set, false otherwise
-	 * @param array $data	Data that will be sent to controller. E.g: array('Article' => array('id'=>4))
-	 * @param string $method	Method to simulate posting of data to controller ('get' or 'post')
-	 * 
-	 * @return mixed	What is returned from action (if $requested is true), or view rendered html
-	 * 
-	 * @access protected
-	 */
+/**
+ * Executes a Cake URL, optionally getting the view rendering or what is returned
+ * when params['requested'] is set.
+ *
+ * @param string $url	Cake URL to execute (e.g: /articles/view/455)
+ * @param string $requested	Set to true if params['requested'] should be set, false otherwise
+ * @param array $data	Data that will be sent to controller. E.g: array('Article' => array('id'=>4))
+ * @param string $method	Method to simulate posting of data to controller ('get' or 'post')
+ * 
+ * @return mixed	What is returned from action (if $requested is true), or view rendered html
+ * 
+ * @access protected
+ */
 	function requestAction($url, $requested = true, $data = null, $method = 'post') {
 		$params = array();
 		
@@ -111,13 +111,13 @@ class CakeTestCase extends UnitTestCase {
 		
 		return @Object::requestAction($url, $params);
 	}
-	/**
-	 * Announces the start of a test.
-	 *
-	 * @param string $method Test method just started.
-	 *
-	 * @access public
-	 */
+/**
+ * Announces the start of a test.
+ *
+ * @param string $method Test method just started.
+ *
+ * @access public
+ */
 	function before($method) {
 		parent::before($method);
 
@@ -170,11 +170,11 @@ class CakeTestCase extends UnitTestCase {
 			$this->startTest($method);
 		}
 	}
-	/**
-	 * Runs as first test to create tables.
-	 *
-	 * @access public
-	 */
+/**
+ * Runs as first test to create tables.
+ *
+ * @access public
+ */
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach($this->_fixtures as $fixture) {
@@ -186,11 +186,11 @@ class CakeTestCase extends UnitTestCase {
 			}
 		}
 	}
-	/**
-	 * Runs as last test to drop tables.
-	 *
-	 * @access public
-	 */
+/**
+ * Runs as last test to drop tables.
+ *
+ * @access public
+ */
 	function end() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach(array_reverse($this->_fixtures) as $fixture) {
@@ -202,13 +202,13 @@ class CakeTestCase extends UnitTestCase {
 			}
 		}
 	}
-	/**
-	 * Announces the end of a test.
-	 *
-	 * @param string $method Test method just finished.
-	 *
-	 * @access public
-	 */
+/**
+ * Announces the end of a test.
+ *
+ * @param string $method Test method just finished.
+ *
+ * @access public
+ */
 	function after($method) {
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
 			foreach($this->_fixtures as $fixture) {
@@ -226,24 +226,24 @@ class CakeTestCase extends UnitTestCase {
 
 		parent::after($method);
 	}
-	/**
-	 * Gets a list of test names. Normally that will be all internal methods that start with the
-	 * name "test". This method should be overridden if you want a different rule.
-	 *
-	 * @return array	List of test names.
-	 *
-	 * @access public
-	 */
-	function getTests() {
+/**
+ * Gets a list of test names. Normally that will be all internal methods that start with the
+ * name "test". This method should be overridden if you want a different rule.
+ *
+ * @return array	List of test names.
+ *
+ * @access public
+ */
+function getTests() {
 		$methods = am(am(array('start', 'startCase'), parent::getTests()), array('endCase', 'end'));
 
 		return $methods;
 	}
-	/**
-	 * Load fixtures specified in var $fixtures.
-	 *
-	 * @access private
-	 */
+/**
+ * Load fixtures specified in var $fixtures.
+ *
+ * @access private
+ */
 	function _loadFixtures() {
 		if (!isset($this->fixtures) || empty($this->fixtures)) {
 			return;
