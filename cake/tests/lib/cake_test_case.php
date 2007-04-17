@@ -41,7 +41,7 @@ class CakeTestDispatcher extends Dispatcher {
 	function _invoke (&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
 		
-		return parent::_invoke($controller, $params, $missingAction);
+		return parent::_invoke($this->controller, $params, $missingAction);
 	}
 }
 /**
