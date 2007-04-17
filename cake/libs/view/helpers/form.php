@@ -104,12 +104,12 @@ class FormHelper extends AppHelper {
 			if(!empty($object->validationErrors)) {
 				$this->validationErrors[$model] = $object->validationErrors;
 			}
-			
+
 			foreach($object->__associations as $type) {
 				foreach($object->{$type} as $assoc => $value) {
 					if (is_array($value) && isset($value['className']) && low($value['className']) !== low($object->name) && ClassRegistry::isKeySet($value['className'])) {
 						$innerObject =& ClassRegistry::getObject($value['className']);
-						
+
 						if(!empty($innerObject->validationErrors)) {
 							$this->validationErrors[$innerObject->name] = $innerObject->validationErrors;
 						}
@@ -164,6 +164,9 @@ class FormHelper extends AppHelper {
 				'action' => $options['action'],
 				'id' => $id
 			);
+			if(!empty($options['action'])) {
+				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
+			}
 			$options['action'] = am($actionDefaults, (array)$options['url']);
 		} elseif (is_string($options['url'])) {
 			$options['action'] = $options['url'];
@@ -214,11 +217,40 @@ class FormHelper extends AppHelper {
  * @access public
  * @return string A closing FORM tag.
  */
-	function end($model = null) {
-		if (empty($model) && !empty($this->params['models'])) {
+	function end($options = null) {
+		$out = null;
+		if (!empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
-		return $this->output($this->Html->tags['formend']);
+
+		$submitOptions = true;
+		if(!is_array($options)) {
+			$submitOptions = $options;
+		} else if(isset($options['submit'])) {
+			$submitOptions = $options['submit'];
+			unset($options['submit']);
+
+			if(isset($submitOptions['label'])) {
+				$submit = $submitOptions['label'];
+				unset($submitOptions['label']);
+			}
+		}
+
+		if($submitOptions === true) {
+			$submit = 'Submit';
+		} else if(is_string($submitOptions)) {
+			$submit = $submitOptions;
+		}
+
+		if(!is_array($submitOptions)) {
+			$submitOptions = array();
+		}
+
+		if(isset($submit)) {
+			$out .= $this->submit($submit, $submitOptions);
+		}
+		$out .= $this->Html->tags['formend'];
+		return $this->output($out);
 	}
 /**
  * Returns true if there is an error for the given field, otherwise false
@@ -300,6 +332,19 @@ class FormHelper extends AppHelper {
  */
 	function inputs($fields = null, $blacklist = null) {
 		if(!is_array($fields)) {
+			$fieldset = $fields;
+		} else if(isset($fields['fieldset'])) {
+			$fieldset = $fields['fieldset'];
+			unset($fields['fieldset']);
+		}
+
+		if($fieldset === true) {
+			$legend = Inflector::humanize($this->action .' to '. $this->model());
+		} else if(is_string($fieldset)){
+			$legend = $fields;
+		}
+
+		if(!is_array($fields)) {
 			$fields = array_keys($this->fieldset['fields']);
 		}
 
@@ -318,7 +363,11 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->input($name, $options);
 		}
-		return $out;
+		if(isset($legend)) {
+			return sprintf($this->Html->tags['fieldset'], $legend, $out);
+		} else {
+			return $out;
+		}
 	}
 /**
  * Generates a form input element complete with label and wrapper div
@@ -893,9 +942,9 @@ class FormHelper extends AppHelper {
 				${$selectAttrName} = $attributes;
 			}
 		}
-		
+
 		$attributes = am(array('minYear' => null, 'maxYear' => null), $attributes);
-		
+
 		switch($dateFormat) {
 			case 'DMY': // so uses the new selex
 				$opt = $this->day($tagName, $day, $selectDayAttr, $showEmpty) . '-' .
