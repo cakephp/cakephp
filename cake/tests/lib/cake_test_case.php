@@ -84,7 +84,7 @@ class CakeTestCase extends UnitTestCase {
  * when params['requested'] is set.
  *
  * @param string $url	Cake URL to execute (e.g: /articles/view/455)
- * @param string $requested	Set to true if params['requested'] should be set, false otherwise
+ * @param boolean $requested	Set to true if params['requested'] should be set, false otherwise
  * @param array $data	Data that will be sent to controller. E.g: array('Article' => array('id'=>4))
  * @param string $method	Method to simulate posting of data to controller ('get' or 'post')
  * 
@@ -109,7 +109,22 @@ class CakeTestCase extends UnitTestCase {
 			}
 		}
 		
-		return @Object::requestAction($url, $params);
+		$dispatcher =& new Dispatcher();
+		if (in_array('return', $params)) {
+			$params['return'] = 0;
+			ob_start();
+			@$dispatcher->dispatch($url, $params);
+			
+			$result = ob_get_clean();
+		} else {
+			$params['return'] = 1;
+			$params['bare'] = 1;
+			$params['requested'] = 1;
+			
+			$result = @$dispatcher->dispatch($url, $params);
+		}
+		
+		return $result;
 	}
 /**
  * Announces the start of a test.
