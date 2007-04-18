@@ -83,6 +83,12 @@ class View extends Object {
  */
 	var $field = null;
 /**
+ * Suffix of current field this view context is attached to
+ *
+ * @var string
+ */
+	var $fieldSuffix = null;
+/**
  * Name of current model ID this view context is attached to
  *
  * @var string

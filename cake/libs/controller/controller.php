@@ -653,7 +653,7 @@ class Controller extends Object {
  * @see Controller::set
  */
 	function _setTitle($pageTitle) {
-		trigger_error(__('Deprecated: Use Controller::set("title", "...") instead'), E_USER_WARNING);
+		trigger_error(__('Deprecated: Use Controller::set("title", "...") instead', true), E_USER_WARNING);
 		$this->pageTitle = $pageTitle;
 	}
 /**

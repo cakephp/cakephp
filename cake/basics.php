@@ -638,7 +638,7 @@
  * @return array
  */
 	function normalizeList($list, $assoc = true, $sep = ',', $trim = true) {
-		trigger_error('normalizeList Deprecated: use Set::normalize');
+		trigger_error(__('normalizeList Deprecated: use Set::normalize', true), E_USER_WARNING);
 		if (is_string($list)) {
 			$list = explode($sep, $list);
 			if ($trim) {
@@ -1420,7 +1420,7 @@
  * @see Set::countDim
  */
 	function countdim($array) {
-		trigger_error(__('Deprecated: Use Set::countDim instead'), E_USER_WARNING);
+		trigger_error(__('Deprecated: Use Set::countDim instead', true), E_USER_WARNING);
 		if (is_array(reset($array))) {
 			$return = countdim(reset($array)) + 1;
 		} else {

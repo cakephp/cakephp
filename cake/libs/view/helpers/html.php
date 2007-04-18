@@ -671,7 +671,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::file
  */
 	function file($fieldName, $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::file) Deprecated: Use FormHelper::file instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::file) Deprecated: Use FormHelper::file instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -682,7 +682,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::submit
  */
 	function submit($caption = 'Submit', $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::submit) Deprecated: Use FormHelper::submit instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::submit) Deprecated: Use FormHelper::submit instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -693,7 +693,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::select
  */
 	function selectTag($fieldName, $optionElements, $selected = array(), $selectAttr = array(), $optionAttr = array(), $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::selectTag) Deprecated: Use FormHelper::select instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::selectTag) Deprecated: Use FormHelper::select instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -704,7 +704,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::create
  */
 	function formTag($target = null, $type = 'post', $htmlAttributes = array()) {
-		trigger_error(__('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::formTag) Deprecated: Use FormHelper::create instead', true), E_USER_WARNING);
 		$htmlAttributes['action'] = $this->url($target);
 		$htmlAttributes['method'] = low($type) == 'get' ? 'get' : 'post';
 		$type == 'file' ? $htmlAttributes['enctype'] = 'multipart/form-data' : null;
@@ -723,7 +723,7 @@ class HtmlHelper extends AppHelper {
  * @see HtmlHelper::link
  */
 	function linkEmail($title, $email = null, $options = null) {
-		trigger_error(__('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::linkEmail) Deprecated: Use HtmlHelper::link instead', true), E_USER_WARNING);
 		// if no $email, then title contains the email.
 		if (empty($email)) {
 			$email = $title;
@@ -761,7 +761,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::day
  */
 	function dayOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::dayOptionTag) Deprecated: Use FormHelper::day instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::dayOptionTag) Deprecated: Use FormHelper::day instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -772,7 +772,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::year
  */
 	function yearOptionTag($tagName, $value = null, $minYear = null, $maxYear = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::yearOptionTag) Deprecated: Use FormHelper::year instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::yearOptionTag) Deprecated: Use FormHelper::year instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -783,7 +783,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::month
  */
 	function monthOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::monthOptionTag) Deprecated: Use FormHelper::month instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::monthOptionTag) Deprecated: Use FormHelper::month instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -794,7 +794,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::hour
  */
 	function hourOptionTag($tagName, $value = null, $format24Hours = false, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::hourOptionTag) Deprecated: Use FormHelper::hour instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::hourOptionTag) Deprecated: Use FormHelper::hour instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -805,7 +805,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::minute
  */
 	function minuteOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::minuteOptionTag) Deprecated: Use FormHelper::minute instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::minuteOptionTag) Deprecated: Use FormHelper::minute instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -816,7 +816,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::meridian
  */
 	function meridianOptionTag($tagName, $value = null, $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::meridianOptionTag) Deprecated: Use FormHelper::meridian instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::meridianOptionTag) Deprecated: Use FormHelper::meridian instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;
@@ -827,7 +827,7 @@ class HtmlHelper extends AppHelper {
  * @see FormHelper::dateTime
  */
 	function dateTimeOptionTag($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $selectAttr = null, $optionAttr = null, $showEmpty = true) {
-		trigger_error(__('(HtmlHelper::dateTimeOptionTag) Deprecated: Use FormHelper::dateTime instead'), E_USER_WARNING);
+		trigger_error(__('(HtmlHelper::dateTimeOptionTag) Deprecated: Use FormHelper::dateTime instead', true), E_USER_WARNING);
 		$this->__loadForm();
 		$form = new FormHelper();
 		$form->Html = $this;

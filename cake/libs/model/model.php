@@ -828,14 +828,16 @@ class Model extends Overloadable {
  *
  * @return array Array of table metadata
  */
-	function loadInfo() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$db->cacheSources = $this->cacheSources;
+	function loadInfo($clear = false) {
+		if (!is_object($this->_tableInfo) || $clear) {
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db->cacheSources = $this->cacheSources;
 
-		if (!is_object($this->_tableInfo) && $db->isInterfaceSupported('describe') && $this->useTable !== false) {
-			$this->_tableInfo = new Set($db->describe($this));
-		} elseif ($this->useTable === false) {
-			return new Set();
+			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
+				$this->_tableInfo = new Set($db->describe($this, $clear));
+			} elseif ($this->useTable === false) {
+				$this->_tableInfo = new Set();
+			}
 		}
 		return $this->_tableInfo;
 	}
@@ -1652,7 +1654,7 @@ class Model extends Overloadable {
  */
 	function validates($data = array()) {
 		if (!empty($data)) {
-			trigger_error(__('(Model::validates) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
+			trigger_error(__('(Model::validates) Parameter usage is deprecated, set the $data property instead', true), E_USER_WARNING);
 		}
 		$errors = $this->invalidFields($data);
 		if (is_array($errors)) {
@@ -1674,7 +1676,7 @@ class Model extends Overloadable {
 		if (empty($data)) {
 			$data = $this->data;
 		} else {
-			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead'), E_USER_WARNING);
+			trigger_error(__('(Model::invalidFields) Parameter usage is deprecated, set the $data property instead', true), E_USER_WARNING);
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {

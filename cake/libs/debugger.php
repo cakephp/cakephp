@@ -155,34 +155,38 @@ class Debugger extends Object {
 		$link = "document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeStackTrace" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
 		$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
 
-		debug($out);
-		e('<div id="CakeStackTrace' . count($this->errors) . '" class="cake-stack-trace" style="display: none;">');
-		if (!empty($context)) {
-			$link = "document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-			e("<a href='javascript:void(0);' onclick='{$link}'>Context</a> | ");
-			$link = "document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
-			e("<a href='javascript:void(0);' onclick='{$link}'>Code</a>");
+		if (Configure::read() > 0) {
+			debug($out);
+			e('<div id="CakeStackTrace' . count($this->errors) . '" class="cake-stack-trace" style="display: none;">');
+			if (!empty($context)) {
+				$link = "document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+				e("<a href='javascript:void(0);' onclick='{$link}'>Context</a> | ");
+				$link = "document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display = (document.getElementById(\"CakeErrorCode" . count($this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
+				e("<a href='javascript:void(0);' onclick='{$link}'>Code</a>");
 
-			if (!empty($helpCode)) {
-				e(" | <a href='{$this->helpPath}{$helpCode}' target='blank'>Help</a>");
-			}
+				if (!empty($helpCode)) {
+					e(" | <a href='{$this->helpPath}{$helpCode}' target='blank'>Help</a>");
+				}
 
-			e("<pre id=\"CakeErrorContext" . count($this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
-			foreach ($context as $var => $value) {
-				e("\${$var}\t=\t" . $this->exportVar($value, 1) . "\n");
+				e("<pre id=\"CakeErrorContext" . count($this->errors) . "\" class=\"cake-context\" style=\"display: none;\">");
+				foreach ($context as $var => $value) {
+					e("\${$var}\t=\t" . $this->exportVar($value, 1) . "\n");
+				}
+				e("</pre>");
 			}
-			e("</pre>");
 		}
 
 		$files = $this->trace(array('start' => 1, 'format' => 'points'));
 		$listing = Debugger::excerpt($files[0]['file'], $files[0]['line'] - 1, 2);
 
-		e("<div id=\"CakeErrorCode" . count($this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-		pr(implode("\n", $listing));
-		e('</div>');
+		if (Configure::read() > 0) {
+			e("<div id=\"CakeErrorCode" . count($this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
+			pr(implode("\n", $listing));
+			e('</div>');
 
-		pr($this->trace(array('start' => 1)));
-		e('</div>');
+			pr($this->trace(array('start' => 1)));
+			e('</div>');
+		}
 
 		if (Configure::read('log')) {
 			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");

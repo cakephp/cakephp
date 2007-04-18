@@ -144,7 +144,7 @@ class DB_ACL extends AclBase {
 		$save = array();
 
 		if ($perms == false) {
-			trigger_error(__('DB_ACL::allow() - Invalid node'), E_USER_WARNING);
+			trigger_error(__('DB_ACL::allow() - Invalid node', true), E_USER_WARNING);
 			return false;
 		}
 
@@ -162,7 +162,7 @@ class DB_ACL extends AclBase {
 			if (in_array('_' . $action, $permKeys)) {
 				$save['_' . $action] = $value;
 			} else {
-				trigger_error(__('DB_ACL::allow() - Invalid ACO action'), E_USER_WARNING);
+				trigger_error(__('DB_ACL::allow() - Invalid ACO action', true), E_USER_WARNING);
 				return false;
 			}
 		}
@@ -214,7 +214,7 @@ class DB_ACL extends AclBase {
  * @return Aro
  */
 	function getAro($id = null) {
-		trigger_error(__('DB_ACL::getAro() - Usage deprecated.  Use AclComponent::$Aro::node().'), E_USER_WARNING);
+		trigger_error(__('DB_ACL::getAro() - Usage deprecated.  Use AclComponent::$Aro::node().', true), E_USER_WARNING);
 		return $this->__getObject($id, 'Aro');
 	}
 /**
@@ -224,7 +224,7 @@ class DB_ACL extends AclBase {
  * @return Aco
  */
 	function getAco($id = null) {
-		trigger_error(__('DB_ACL::getAco() - Usage deprecated.  Use AclComponent::$Aco::node().'), E_USER_WARNING);
+		trigger_error(__('DB_ACL::getAco() - Usage deprecated.  Use AclComponent::$Aco::node().', true), E_USER_WARNING);
 		return $this->__getObject($id, 'Aco');
 	}
 /**
@@ -233,7 +233,7 @@ class DB_ACL extends AclBase {
  */
 	function __getObject($id = null, $object) {
 		if ($id == null) {
-			trigger_error(__('Null id provided in DB_ACL::get') . $object, E_USER_WARNING);
+			trigger_error(__('Null id provided in DB_ACL::get', true) . $object, E_USER_WARNING);
 			return null;
 		}
 

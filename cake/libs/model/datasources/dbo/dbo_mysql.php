@@ -473,7 +473,7 @@ class DboMysql extends DboSource {
  */
 	function generateSchema($schema, $table = null) {
 		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object'), E_USER_WARNING);
+			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
 			return null;
 		}
 		$out = '';

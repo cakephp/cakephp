@@ -306,7 +306,7 @@ class AuthComponent extends Object {
  */
 	function _setDefaults() {
 		if (empty($this->userModel)) {
-			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().'), E_USER_WARNING);
+			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().', true), E_USER_WARNING);
 			return false;
 		}
 		if (empty($this->loginAction)) {
@@ -347,7 +347,7 @@ class AuthComponent extends Object {
 				} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
 					$this->objectModel = $controller->uses[0];
 				} else {
-					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().'), E_USER_WARNING);
+					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().', true), E_USER_WARNING);
 					return;
 				}
 			}
@@ -377,7 +377,7 @@ class AuthComponent extends Object {
 				return true;
 			break;
 			default:
-				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Allowed settings are: "controller", "actions", "objects", "association" or null.'), E_USER_WARNING);
+				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Allowed settings are: "controller", "actions", "objects", "association" or null.', true), E_USER_WARNING);
 			break;
 		}
 		return $valid;
@@ -594,7 +594,7 @@ class AuthComponent extends Object {
 
 		if (!ClassRegistry::isKeySet($this->userModel)) {
 			if (!loadModel(Inflector::underscore($this->userModel))) {
-				trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found') . $this->userModel, E_USER_WARNING);
+				trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found', true) . $this->userModel, E_USER_WARNING);
 				return null;
 			} else {
 				$model = $this->userModel;
@@ -611,7 +611,7 @@ class AuthComponent extends Object {
 		}
 
 		if (empty($user)) {
-			trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found ') . $this->userModel, E_USER_WARNING);
+			trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found', true) . $this->userModel, E_USER_WARNING);
 			return null;
 		}
 		return $user;

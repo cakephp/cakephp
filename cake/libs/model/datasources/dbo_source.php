@@ -158,7 +158,7 @@ class DboSource extends DataSource {
 		return $new;
 	}
 /**
- * Convenience method for DboSource::listSources().
+ * Convenience method for DboSource::listSources().  Returns source names in lowercase.
  *
  * @return array
  */
@@ -318,7 +318,7 @@ class DboSource extends DataSource {
  * @see DboSource::fetchRow
  */
 	function fetchArray() {
-		trigger_error(__('Deprecated: Use DboSource::fetchRow() instead'), E_USER_WARNING);
+		trigger_error(__('Deprecated: Use DboSource::fetchRow() instead', true), E_USER_WARNING);
 		return $this->fetchRow();
 	}
 /**
@@ -326,7 +326,7 @@ class DboSource extends DataSource {
  * @see DboSource::fetchRow
  */
 	function one($sql) {
-		trigger_error(__('Deprecated: Use DboSource::fetchRow($sql) instead'), E_USER_WARNING);
+		trigger_error(__('Deprecated: Use DboSource::fetchRow($sql) instead', true), E_USER_WARNING);
 		return $this->fetchRow($sql);
 	}
 /**
