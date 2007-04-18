@@ -111,10 +111,10 @@ class CakeTestCase extends UnitTestCase {
 	}
 
 /**
- * Callback issued when a controller's action is about to be invoked through requestAction().
+ * Callback issued when a controller's action is about to be invoked through testAction().
  *
  * @param Controller $controller	Controller that's about to be invoked.
- * @param array $params	Additional parameters as sent by requestAction().
+ * @param array $params	Additional parameters as sent by testAction().
  */
 	function startController(&$controller, $params = array()) {
 		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
@@ -191,10 +191,10 @@ class CakeTestCase extends UnitTestCase {
 		}
 	}
 /**
- * Callback issued when a controller's action has been invoked through requestAction().
+ * Callback issued when a controller's action has been invoked through testAction().
  *
  * @param Controller $controller	Controller that has been invoked.
- * * @param array $params	Additional parameters as sent by requestAction().
+ * * @param array $params	Additional parameters as sent by testAction().
  */
 	function endController(&$controller, $params = array()) {
 		if (isset($this->db) && isset($this->_queries) && !empty($this->_queries) && !empty($this->_queries['drop'])) {
@@ -216,7 +216,7 @@ class CakeTestCase extends UnitTestCase {
  * 
  * @access protected
  */
-	function requestAction($url, $params = array()) {
+	function testAction($url, $params = array()) {
 		$default = array(
 			'return' => 'result',
 			'fixturize' => false,
@@ -392,7 +392,13 @@ class CakeTestCase extends UnitTestCase {
  * @access public
  */
 	function getTests() {
-		$methods = am(am(array('start', 'startCase'), parent::getTests()), array('endCase', 'end'));
+		$methods = parent::getTests();
+		$index = array_search('testAction', $methods);
+		if ($index !== false) {
+			unset($methods[$index]);
+		}
+		
+		$methods = am(am(array('start', 'startCase'), $methods), array('endCase', 'end'));
 
 		return $methods;
 	}
