@@ -184,7 +184,7 @@ class CakeTestCase extends UnitTestCase {
 					
 					if ($object !== false) {
 						$object->useDbConfig = 'test_suite';
-						$object->setSource($object->table);
+						$object->setDataSource();
 					}
 				}
 			}
@@ -449,7 +449,7 @@ class CakeTestCase extends UnitTestCase {
 			} else if (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
 				$fixturePaths = array(
-					TESTS . 'fixtures'
+					APP . 'tests' . DS . 'fixtures'
 				);
 			} else {
 				$fixturePaths = array(
