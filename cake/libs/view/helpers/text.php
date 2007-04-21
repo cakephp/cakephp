@@ -68,7 +68,7 @@ class TextHelper extends AppHelper {
 				$key = $value;
 				$value = $highlighter;
 
-				$replace[] = '|(' . $key . ')|';
+				$replace[] = '|(' . $key . ')|i';
 				$with[] = empty($value) ? $highlighter : $value;
 			}
 

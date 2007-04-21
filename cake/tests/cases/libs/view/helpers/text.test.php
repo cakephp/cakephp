@@ -50,6 +50,17 @@ class TextTest extends UnitTestCase {
 		$expected = '<b>This</b> is a test <b>text</b>';
 		$this->assertEqual($expected, $result);
 	}
+	
+	function testHighlightCaseInsensitivity() {
+		$text = 'This is a Test text';
+		$expected = 'This is a <b>Test</b> text';
+		
+		$result = $this->helper->highlight($text, 'test', '<b>\1</b>');
+		$this->assertEqual($expected, $result);
+		
+		$result = $this->helper->highlight($text, array('test'), '<b>\1</b>');
+		$this->assertEqual($expected, $result);
+	}
 
 	function tearDown() {
 		unset($this->helper);
