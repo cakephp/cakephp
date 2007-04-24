@@ -191,10 +191,10 @@ class Debugger extends Object {
 		if (Configure::read('log')) {
 			CakeLog::write($level, "{$error} ({$code}): {$description} in [{$file}, line {$line}]");
 		}
-		
+
 		if ($error == 'Fatal Error') {
 			die();
-		}	
+		}
 		return true;
 	}
 /**

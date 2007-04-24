@@ -232,7 +232,10 @@ class AuthComponent extends Object {
 				CAKE_ADMIN . '_delete'	=> 'delete'
 			));
 		}
-		Debugger::checkSessionKey();
+		if(Configure::read() > 0) {
+			uses('debugger');
+			Debugger::checkSessionKey();
+		}
 	}
 /**
  * Main execution method.  Handles redirecting of invalid users, and processing
