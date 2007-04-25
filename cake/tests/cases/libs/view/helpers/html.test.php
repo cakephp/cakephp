@@ -53,6 +53,11 @@ class HtmlHelperTest extends UnitTestCase {
 		
 		$this->assertPattern($expected, $result);
 	}
+	
+	function testRadio() {
+		$result = $this->Html->radio('Tests/process', Array('0'=> 'zero', '1'=>'one'));
+		$this->assertNoPattern('/checked="checked"/', $result);
+	}
 
 	function tearDown() {
 		unset($this->Html);

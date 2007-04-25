@@ -507,8 +507,10 @@ class HtmlHelper extends AppHelper {
 		$out = array();
 
 		foreach($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);
-			$optValue == $value ? $optionsHere['checked'] = 'checked' : null;
+			$optionsHere = array('value' => $optValue);          
+ 	        if ($value !== false && $optValue == $value) { 
+ 	        	$optionsHere['checked'] = 'checked'; 
+ 	        } 
 			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
 			$individualTagName = $this->field() . "_{$optValue}";
 			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
