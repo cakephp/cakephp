@@ -66,7 +66,7 @@
 			));
 		}
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -77,12 +77,12 @@
 		var $useTable = false;
 		var $primaryKey = 'id';
 		var $name = 'UserForm';
-		
+
 		var $hasMany = array('OpenidUrl' => array(
 			'className' => 'OpenidUrl',
 			'foreignKey' => 'user_form_id'
 		));
-		
+
 		function loadInfo() {
 			return new Set(array(
 				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -92,7 +92,7 @@
 			));
 		}
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -103,12 +103,12 @@
 		var $useTable = false;
 		var $primaryKey = 'id';
 		var $name = 'OpenidUrl';
-		
+
 		var $belongsTo = array('UserForm' => array(
 			'className' => 'UserForm',
 			'foreignKey' => 'user_form_id'
 		));
-		
+
 		function loadInfo() {
 			return new Set(array(
 				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -116,7 +116,7 @@
 				array('name' => 'url', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			));
 		}
-		
+
 		function beforeValidate() {
 			$this->invalidate('openid_not_registered');
 			return true;
@@ -138,11 +138,11 @@ class FormHelperTest extends UnitTestCase {
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
 	}
-	
+
 	function testFormValidationAssociated() {
 		$this->UserForm =& new UserForm();
 		$this->UserForm->OpenidUrl =& new OpenidUrl();
-		
+
 		$data = array(
 			'UserForm' => array(
 				'name' => 'user'
@@ -151,27 +151,27 @@ class FormHelperTest extends UnitTestCase {
 				'url' => 'http://www.cricava.com'
 			)
 		);
-		
+
 		$result = $this->UserForm->OpenidUrl->create($data);
 		$this->assertTrue($result);
-		
+
 		$result = $this->UserForm->OpenidUrl->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/user_forms\/login\/"[^>]*>$/', $result);
-		
+
 		$expected = array(
 			'OpenidUrl' => array(
 				'openid_not_registered' => 1
 			)
 		);
-		
+
 		$this->assertEqual($this->Form->validationErrors, $expected);
-		
+
 		$result = $this->Form->error('OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false));
 		$this->assertEqual($result, 'Error, not registered');
-		
+
 		unset($this->UserForm->OpenidUrl);
 		unset($this->UserForm);
 	}
@@ -187,7 +187,7 @@ class FormHelperTest extends UnitTestCase {
 
 		$result = $this->Form->input('test', array('options' => array('First', 'Second'), 'empty' => true));
 		$this->assertPattern('/<select [^<>]+>\s+<option value=""\s*><\/option>\s+<option value="0"/', $result);
-		
+
 		$result = $this->Form->input('Model/field', array('type' => 'file', 'class' => 'textbox'));
 		$this->assertPattern('/class="textbox"/', $result);
 	}
@@ -321,19 +321,19 @@ class FormHelperTest extends UnitTestCase {
 	}
 
 	function testDaySelect() {
-		
+
 	}
 
 	function testHour() {
 		$result = $this->Form->hour('tagname', false);
 		$this->assertPattern('/option value="12"/', $result);
 		$this->assertNoPattern('/option value="13"/', $result);
-		
+
 		$result = $this->Form->hour('tagname', true);
 		$this->assertPattern('/option value="23"/', $result);
 		$this->assertNoPattern('/option value="24"/', $result);
 	}
-	
+
 	function testYear() {
 		$result = $this->Form->year('Model.field', 2006, 2007);
 		$this->assertPattern('/option value="2006"/', $result);
@@ -341,7 +341,7 @@ class FormHelperTest extends UnitTestCase {
 		$this->assertNoPattern('/option value="2005"/', $result);
 		$this->assertNoPattern('/option value="2008"/', $result);
 	}
-	
+
 	function testTextArea() {
 		$this->Form->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model/field');
@@ -377,7 +377,7 @@ class FormHelperTest extends UnitTestCase {
 	function testSubmitButton() {
 		$result = $this->Form->submit('Test Submit');
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
-		
+
 		$result = $this->Form->submit('Test Submit', array('class' => 'save', 'div' => false));
 		$this->assertPattern('/^<input type="submit"[^<>]+value="Test Submit"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<[^<>]+class="save"[^<>]+\/>$/', $result);

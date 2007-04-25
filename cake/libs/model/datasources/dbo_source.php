@@ -685,7 +685,9 @@ class DboSource extends DataSource {
 						if (isset($model->{$className}) && is_object($model->{$className})) {
 							$data = $model->{$className}->afterFind(array(array($key => $results[$i][$key])), false);
 						}
-						$results[$i][$key] = $data[0][$key];
+						if (isset($data[0][$key])) {
+							$results[$i][$key] = $data[0][$key];
+						}
 					}
 				}
 			}
