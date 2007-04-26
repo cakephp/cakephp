@@ -122,6 +122,106 @@
 			return true;
 		}
 	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
+	class User extends Model {
+		var $primaryKey = 'id';
+		var $useTable = false;
+		var $name = 'User';
+		var $hasOne = array('Profile' => array(
+			'className' => 'Profile',
+			'foreignKey' => 'user_id'
+		));
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'email', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+		
+		function beforeValidate() {
+			$this->invalidate('email');
+			return false;
+		}
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
+	class Profile extends Model {
+		var $primaryKey = 'id';
+		var $useTable = false;
+		var $name = 'Profile';
+		var $hasOne = array('Item' => array(
+			'className' => 'Item',
+			'foreignKey' => 'profile_id'
+		));
+		var $belongsTo = array('User' => array(
+			'className' => 'User',
+			'foreignKey' => 'user_id'
+		));
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'user_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'full_name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'city', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+		
+		function beforeValidate() {
+			$this->invalidate('full_name');
+			$this->invalidate('city');
+			return false;
+		}
+	}
+	
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.view.helpers
+	 */
+	class Item extends Model {
+		var $primaryKey = 'id';
+		var $useTable = false;
+		var $name = 'Item';
+		var $belongsTo = array('Profile' => array(
+			'className' => 'Profile',
+			'foreignKey' => 'profile_id'
+		));
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'profile_id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'description', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+		
+		function beforeValidate() {
+			$this->invalidate('description');
+			return false;
+		}
+	}
 
 /**
  * Short description for class.
@@ -129,9 +229,15 @@
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class FormHelperTest extends UnitTestCase {
+class FormHelperTest extends CakeTestCase {
 
-	function setUp() {
+	function startTest($method) {
+		/*
+		if (low($method) == low('testFormValidationAssociatedDeep')) {
+			return parent::startTest($method);
+		}
+		*/
+		
 		$this->Form = new FormHelper();
 		$this->Form->Html = new HtmlHelper();
 		$view = new View(new TheTestController());
@@ -174,6 +280,101 @@ class FormHelperTest extends UnitTestCase {
 
 		unset($this->UserForm->OpenidUrl);
 		unset($this->UserForm);
+	}
+	
+	function testFormValidationAssociatedFirstLevel() {
+		$this->User =& new User();
+		$this->User->Profile =& new Profile();
+		
+		$data = array(
+			'User' => array(
+				'name' => 'mariano'
+			),
+			'Profile' => array(
+				'full_name' => 'Mariano Iglesias'
+			)
+		);
+
+		$result = $this->User->create($data);
+		$this->assertTrue($result);
+
+		$result = $this->User->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->User->Profile->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->Form->create('User', array('type' => 'post', 'action' => 'add'));
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/users\/add\/"[^>]*>$/', $result);
+		
+		$expected = array(
+			'User' => array(
+				'email' => 1
+			),
+			'Profile' => array(
+				'full_name' => 1,
+				'city' => 1
+			)
+		);
+
+		$this->assertEqual($this->Form->validationErrors, $expected);
+
+		unset($this->User->Profile);
+		unset($this->User);
+	}
+	
+	function testFormValidationAssociatedSecondLevel() {
+		$this->User =& new User();
+		$this->User->Profile =& new Profile();
+		$this->User->Profile->Item =& new Item();
+		
+		$data = array(
+			'User' => array(
+				'name' => 'mariano'
+			),
+			'Profile' => array(
+				'full_name' => 'Mariano Iglesias'
+			),
+			'Item' => array(
+				'name' => 'Item'
+			)
+		);
+
+		$result = $this->User->create($data);
+		$this->assertTrue($result);
+
+		$result = $this->User->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->User->Profile->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->User->Profile->Item->validates();
+		$this->assertFalse($result);
+		
+		$result = $this->Form->create('User', array('type' => 'post', 'action' => 'add'));
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/users\/add\/"[^>]*>$/', $result);
+		
+		/*
+		$expected = array(
+			'User' => array(
+				'email' => 1
+			),
+			'Profile' => array(
+				'full_name' => 1,
+				'city' => 1
+			),
+			'Item' => array(
+				'description' => 1
+			)
+		);
+
+		$this->assertEqual($this->Form->validationErrors, $expected);
+		*/
+
+		unset($this->User->Profile->Item);
+		unset($this->User->Profile);
+		unset($this->User);
 	}
 
 	function testFormInput() {
