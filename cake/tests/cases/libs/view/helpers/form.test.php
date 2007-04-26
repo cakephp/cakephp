@@ -232,12 +232,6 @@
 class FormHelperTest extends CakeTestCase {
 
 	function startTest($method) {
-		/*
-		if (low($method) == low('testFormValidationAssociatedDeep')) {
-			return parent::startTest($method);
-		}
-		*/
-		
 		$this->Form = new FormHelper();
 		$this->Form->Html = new HtmlHelper();
 		$view = new View(new TheTestController());
