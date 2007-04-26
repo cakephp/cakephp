@@ -129,12 +129,12 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.view.helpers
 	 */
-	class User extends Model {
+	class ValidateUser extends Model {
 		var $primaryKey = 'id';
 		var $useTable = false;
-		var $name = 'User';
-		var $hasOne = array('Profile' => array(
-			'className' => 'Profile',
+		var $name = 'ValidateUser';
+		var $hasOne = array('ValidateProfile' => array(
+			'className' => 'ValidateProfile',
 			'foreignKey' => 'user_id'
 		));
 
@@ -160,16 +160,16 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.view.helpers
 	 */
-	class Profile extends Model {
+	class ValidateProfile extends Model {
 		var $primaryKey = 'id';
 		var $useTable = false;
-		var $name = 'Profile';
-		var $hasOne = array('Item' => array(
-			'className' => 'Item',
+		var $name = 'ValidateProfile';
+		var $hasOne = array('ValidateItem' => array(
+			'className' => 'ValidateItem',
 			'foreignKey' => 'profile_id'
 		));
-		var $belongsTo = array('User' => array(
-			'className' => 'User',
+		var $belongsTo = array('ValidateUser' => array(
+			'className' => 'ValidateUser',
 			'foreignKey' => 'user_id'
 		));
 
@@ -197,12 +197,12 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.view.helpers
 	 */
-	class Item extends Model {
+	class ValidateItem extends Model {
 		var $primaryKey = 'id';
 		var $useTable = false;
-		var $name = 'Item';
-		var $belongsTo = array('Profile' => array(
-			'className' => 'Profile',
+		var $name = 'ValidateItem';
+		var $belongsTo = array('ValidateProfile' => array(
+			'className' => 'ValidateProfile',
 			'foreignKey' => 'profile_id'
 		));
 
@@ -277,35 +277,35 @@ class FormHelperTest extends CakeTestCase {
 	}
 	
 	function testFormValidationAssociatedFirstLevel() {
-		$this->User =& new User();
-		$this->User->Profile =& new Profile();
+		$this->ValidateUser =& new ValidateUser();
+		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
 		
 		$data = array(
-			'User' => array(
+			'ValidateUser' => array(
 				'name' => 'mariano'
 			),
-			'Profile' => array(
+			'ValidateProfile' => array(
 				'full_name' => 'Mariano Iglesias'
 			)
 		);
 
-		$result = $this->User->create($data);
+		$result = $this->ValidateUser->create($data);
 		$this->assertTrue($result);
 
-		$result = $this->User->validates();
+		$result = $this->ValidateUser->validates();
 		$this->assertFalse($result);
 		
-		$result = $this->User->Profile->validates();
+		$result = $this->ValidateUser->ValidateProfile->validates();
 		$this->assertFalse($result);
 		
-		$result = $this->Form->create('User', array('type' => 'post', 'action' => 'add'));
-		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/users\/add\/"[^>]*>$/', $result);
+		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 		
 		$expected = array(
-			'User' => array(
+			'ValidateUser' => array(
 				'email' => 1
 			),
-			'Profile' => array(
+			'ValidateProfile' => array(
 				'full_name' => 1,
 				'city' => 1
 			)
@@ -313,52 +313,52 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
-		unset($this->User->Profile);
-		unset($this->User);
+		unset($this->ValidateUser->ValidateProfile);
+		unset($this->ValidateUser);
 	}
 	
 	function testFormValidationAssociatedSecondLevel() {
-		$this->User =& new User();
-		$this->User->Profile =& new Profile();
-		$this->User->Profile->Item =& new Item();
+		$this->ValidateUser =& new ValidateUser();
+		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
+		$this->ValidateUser->ValidateProfile->ValidateItem =& new ValidateItem();
 		
 		$data = array(
-			'User' => array(
+			'ValidateUser' => array(
 				'name' => 'mariano'
 			),
-			'Profile' => array(
+			'ValidateProfile' => array(
 				'full_name' => 'Mariano Iglesias'
 			),
-			'Item' => array(
+			'ValidateItem' => array(
 				'name' => 'Item'
 			)
 		);
 
-		$result = $this->User->create($data);
+		$result = $this->ValidateUser->create($data);
 		$this->assertTrue($result);
 
-		$result = $this->User->validates();
+		$result = $this->ValidateUser->validates();
 		$this->assertFalse($result);
 		
-		$result = $this->User->Profile->validates();
+		$result = $this->ValidateUser->ValidateProfile->validates();
 		$this->assertFalse($result);
 		
-		$result = $this->User->Profile->Item->validates();
+		$result = $this->ValidateUser->ValidateProfile->ValidateItem->validates();
 		$this->assertFalse($result);
 		
-		$result = $this->Form->create('User', array('type' => 'post', 'action' => 'add'));
-		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/users\/add\/"[^>]*>$/', $result);
+		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 		
 		/*
 		$expected = array(
-			'User' => array(
+			'ValidateUser' => array(
 				'email' => 1
 			),
-			'Profile' => array(
+			'ValidateProfile' => array(
 				'full_name' => 1,
 				'city' => 1
 			),
-			'Item' => array(
+			'ValidateItem' => array(
 				'description' => 1
 			)
 		);
@@ -366,9 +366,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($this->Form->validationErrors, $expected);
 		*/
 
-		unset($this->User->Profile->Item);
-		unset($this->User->Profile);
-		unset($this->User);
+		unset($this->ValidateUser->ValidateProfile->ValidateItem);
+		unset($this->ValidateUser->ValidateProfile);
+		unset($this->ValidateUser);
 	}
 
 	function testFormInput() {
