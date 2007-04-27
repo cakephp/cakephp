@@ -326,7 +326,6 @@ class FormHelper extends AppHelper {
  * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
-		$fieldset = null;
 		if(!is_array($fields)) {
 			$fieldset = $fields;
 		} else if(isset($fields['fieldset'])) {
