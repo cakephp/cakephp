@@ -302,6 +302,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 		
 		$expected = array(
+			'OpenidUrl' => array(
+				'openid_not_registered' => 1
+			),
 			'ValidateUser' => array(
 				'email' => 1
 			),
@@ -349,8 +352,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 		
-		/*
 		$expected = array(
+			'OpenidUrl' => array(
+				'openid_not_registered' => 1
+			),
 			'ValidateUser' => array(
 				'email' => 1
 			),
@@ -364,8 +369,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 
 		$this->assertEqual($this->Form->validationErrors, $expected);
-		*/
-
+		
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
