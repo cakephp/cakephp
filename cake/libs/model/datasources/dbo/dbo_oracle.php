@@ -1,14 +1,14 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Oracle layer for DBO
+ * AdoDB layer for DBO.
  *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
- * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
- * Copyright (c)	2006, Cake Software Foundation, Inc.
+ * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2005-2007, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
@@ -16,27 +16,25 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
- * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs.model.dbo
- * @since			CakePHP v 1.1.11.4041
+ * @subpackage		cake.cake.libs.model.datasources.dbo
+ * @since			CakePHP v 1.2.0.4041
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Short description for class.
  *
  * Long description for class
  *
  * @package		cake
- * @subpackage	cake.cake.libs.model.dbo
+ * @subpackage	cake.cake.libs.model.datasources.dbo
  */
 class DboOracle extends DboSource {
-
 /**
  * Enter description here...
  *
@@ -52,18 +50,18 @@ class DboOracle extends DboSource {
  */
 	var $alias = '';
 /**
- * The name of the model's sequence
- *
- * @var unknown_type
- */
+  * The name of the model's sequence
+  *
+  * @var unknown_type
+  */
 	var $sequence = '';
 /**
  * Transaction in progress flag
  *
  * @var boolean
  */
-	var $_transactionStarted = false;
- /**
+	var $__transactionStarted = false;
+/**
  * Enter description here...
  *
  * @var unknown_type
@@ -82,8 +80,7 @@ class DboOracle extends DboSource {
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
 		'number' => array('name' => 'numeric'),
-		'inet' => array('name' => 'inet')
-	);
+		'inet' => array('name' => 'inet'));
 /**
  * Enter description here...
  *
@@ -140,50 +137,55 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function connect() {
-        $config = $this->config;
-        $connect = $config['connect'];
-        $this->connected = false;
-        $this->connection = $connect($config['login'], $config['password'], $config['database']);              
+		$config = $this->config;
+		$connect = $config['connect'];
+		$this->connected = false;
+		$config['charset'] = !empty($config['charset']) ? $config['charset'] : null;
+		$this->connection = $connect($config['login'], $config['password'], $config['database'], $config['charset']);
 
 		if ($this->connection) {
 			$this->connected = true;
-			$this->execute('ALTER SESSION SET NLS_SORT=BINARY_CI');
-			$this->execute('ALTER SESSION SET NLS_COMP=ANSI');
+			if(!empty($config['nls_sort'])) {
+				$this->execute('ALTER SESSION SET NLS_SORT='.$config['nls_sort']);
+			}
+
+			if(!empty($config['nls_comp'])) {
+				$this->execute('ALTER SESSION SET NLS_COMP='.$config['nls_comp']);
+			}
+			$this->execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 		} else {
 			$this->connected = false;
 		}
 		return $this->connected;
 	}
-	
-	/**
-	 * Sets the encoding language of the session
-	 *
-	 * @param string $lang language constant
-	 * @return boolean
-	 */
+/**
+ * Sets the encoding language of the session
+ *
+ * @param string $lang language constant
+ * @return boolean
+ */
 	function setEncoding($lang) {
-	    if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
-	        return false;
-	    }
-	    return true;
+		if(!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
+			return false;
+		}
+		return true;
 	}
-	
-	/**
-	 * Gets the current encoding language
-	 *
-	 * @return string language constant
-	 */
+/**
+ * Gets the current encoding language
+ *
+ * @return string language constant
+ */
 	function getEncoding() {
-	    $sql = 'SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER=\'NLS_LANGUAGE\'';
-	    if (!$this->execute($sql)) {
-	        return false;
-	    }
-	    if (!$row = $this->fetchRow()) {
-	        return false;
-	    }
-	    return $row[0]['VALUE'];
-	}
+		$sql = 'SELECT VALUE FROM NLS_SESSION_PARAMETERS WHERE PARAMETER=\'NLS_LANGUAGE\'';
+		if(!$this->execute($sql)) {
+			return false;
+		}
 
+		if(!$row = $this->fetchRow()) {
+			return false;
+		}
+		return $row[0]['VALUE'];
+	}
 /**
  * Disconnects from database.
  *
@@ -191,8 +193,9 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function disconnect() {
-		if ($this->connection) {
-			return ocilogoff($this->connection);
+		if($this->connection) {
+			$this->connected = !ocilogoff($this->connection);
+			return !$this->connected;
 		}
 	}
 /**
@@ -204,29 +207,37 @@ class DboOracle extends DboSource {
  * @access protected
  */
 	function _scrapeSQL($sql) {
-
-		$sql       = str_replace("\"", '', $sql);
-		$preFrom   = explode('FROM', $sql);
-		$preFrom   = $preFrom[0];
-		$find	   = array('SELECT');
-		$replace   = array('');
+		$sql = str_replace("\"", '', $sql);
+		$preFrom = preg_split('/\bFROM\b/', $sql);
+		$preFrom = $preFrom[0];
+		$find = array('SELECT');
+		$replace = array('');
 		$fieldList = trim(str_replace($find, $replace, $preFrom));
-		$fields    = explode(', ', $fieldList);
-						
-		// clean fields of functions
-		foreach ($fields as &$value) {
-		  if ($value != 'COUNT(*) AS count') {
-		      preg_match_all('/[[:alnum:]_]+\.[[:alnum:]_]+/', $value, $matches);
-		      if ($matches[0]) {
-		          $value = $matches[0][0];
-		      }
-		  }
+		$fields = preg_split('/,\s+/', $fieldList);//explode(', ', $fieldList);
+		$lastTableName	= '';
+
+		foreach($fields as $key => $value) {
+			if($value != 'COUNT(*) AS count') {
+				if(preg_match('/\s+(\w+(\.\w+)*)$/', $value, $matches)) {
+					$fields[$key]	= $matches[1];
+
+					if(preg_match('/^(\w+\.)/', $value, $matches)) {
+						$fields[$key]	= $matches[1] . $fields[$key];
+						$lastTableName	= $matches[1];
+					}
+				}
+				/*
+				if(preg_match('/(([[:alnum:]_]+)\.[[:alnum:]_]+)(\s+AS\s+(\w+))?$/i', $value, $matches)) {
+					$fields[$key]	= isset($matches[4]) ? $matches[2] . '.' . $matches[4] : $matches[1];
+				}
+				*/
+			}
 		}
-		
 		$this->_map = array();
-		foreach ($fields as $f) {
+
+		foreach($fields as $f) {
 			$e = explode('.', $f);
-			if (count($e) > 1) {
+			if(count($e) > 1) {
 				$table = $e[0];
 				$field = strtolower($e[1]);
 			} else {
@@ -235,8 +246,6 @@ class DboOracle extends DboSource {
 			}
 			$this->_map[] = array($table, $field);
 		}
-        
-		
 	}
 /**
  * Modify a SQL query to limit (and offset) the result set
@@ -246,9 +255,9 @@ class DboOracle extends DboSource {
  * @return modified SQL Query
  * @access public
  */
-	function limit($limit, $offset = 0) {
-		$this->_limit = (float) $limit;
-		$this->_offset = (float) $offset;
+	function limit($limit = -1, $offset = 0) {
+		$this->_limit = (int) $limit;
+		$this->_offset = (int) $offset;
 	}
 /**
  * Returns number of rows in previous resultset. If no previous resultset exists,
@@ -260,7 +269,6 @@ class DboOracle extends DboSource {
 	function lastNumRows() {
 		return $this->_numRows;
 	}
-
 /**
  * Executes given SQL statement. This is an overloaded method.
  *
@@ -270,34 +278,38 @@ class DboOracle extends DboSource {
  */
 	function _execute($sql) {
 		$this->_statementId = ociparse($this->connection, $sql);
-		if (!$this->_statementId) {
+		if(!$this->_statementId) {
 			return null;
 		}
-		if ($this->_transactionStarted) {
+
+		if($this->__transactionStarted) {
 			$mode = OCI_DEFAULT;
 		} else {
 			$mode = OCI_COMMIT_ON_SUCCESS;
 		}
-		if (!ociexecute($this->_statementId, $mode)) {
+
+		if(!ociexecute($this->_statementId, $mode)) {
 			return false;
 		}
-		
-		// fetch occurs here instead of fetchResult in order to get the number of rows
-		switch (ocistatementtype($this->_statementId)) {
-		    case 'DESCRIBE':
-		    case 'SELECT':
-		        $this->_scrapeSQL($sql);
-		        break;
-		    default:
-		        return $this->_statementId;   
+
+		switch(ocistatementtype($this->_statementId)) {
+			case 'DESCRIBE':
+			case 'SELECT':
+				$this->_scrapeSQL($sql);
+			break;
+			default:
+				return $this->_statementId;
+			break;
 		}
-		if ($this->_limit >= 1) {
+
+		if($this->_limit >= 1) {
 			ocisetprefetch($this->_statementId, $this->_limit);
 		} else {
 			ocisetprefetch($this->_statementId, 3000);
 		}
 		$this->_numRows = ocifetchstatement($this->_statementId, $this->_results, $this->_offset, $this->_limit, OCI_NUM | OCI_FETCHSTATEMENT_BY_ROW);
-		$this->_currentRow = 0;		
+		$this->_currentRow = 0;
+		$this->limit();
 		return $this->_statementId;
 	}
 /**
@@ -307,18 +319,20 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function fetchRow() {
-		if ($this->_currentRow >= $this->_numRows) {
-		    ocifreestatement($this->_statementId);
-		    $this->_map = null;
-		    $this->_results = null;
-		    $this->_currentRow = null;
-		    $this->_numRows = null;
+		if($this->_currentRow >= $this->_numRows) {
+			ocifreestatement($this->_statementId);
+			$this->_map = null;
+			$this->_results = null;
+			$this->_currentRow = null;
+			$this->_numRows = null;
 			return false;
 		}
 		$resultRow = array();
-		foreach ($this->_results[$this->_currentRow] as $index => $field) {
+
+		foreach($this->_results[$this->_currentRow] as $index => $field) {
 			list($table, $column) = $this->_map[$index];
-			if (strpos($column, ' count')) {
+
+			if(strpos($column, ' count')) {
 				$resultRow[0]['count'] = $field;
 			} else {
 				$resultRow[$table][$column] = $this->_results[$this->_currentRow][$index];
@@ -335,11 +349,12 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function sequenceExists($sequence) {
-	    $sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
-	    if (!$this->execute($sql)) return false;
-	    return $this->fetchRow();
+		$sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
+		if(!$this->execute($sql)) {
+			return false;
+		}
+		return $this->fetchRow();
 	}
-	
 /**
  * Creates a database sequence
  *
@@ -347,16 +362,21 @@ class DboOracle extends DboSource {
  * @return boolean
  * @access public
  */
-    function createSequence($sequence) {
-        $sql = "CREATE SEQUENCE $sequence";
-        return $this->execute($sql);
-    }
-    
-    function createTrigger($table) {
-        $sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
-        return $this->execute($sql);
-    }
-
+	function createSequence($sequence) {
+		$sql = "CREATE SEQUENCE $sequence";
+		return $this->execute($sql);
+	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $table
+ * @return unknown
+ * @access public
+ */
+	function createTrigger($table) {
+		$sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
+		return $this->execute($sql);
+	}
 /**
  * Returns an array of tables in the database. If there are no tables, an error is
  * raised and the application exits.
@@ -365,17 +385,19 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function listSources() {
-	    $cache = parent::listSources();
-		if ($cache != null) {
+		$cache = parent::listSources();
+		if($cache != null) {
 			return $cache;
 		}
 		$sql = 'SELECT view_name AS name FROM user_views UNION SELECT table_name AS name FROM user_tables';
-		if (!$this->execute($sql)) {
-		    return false;
+
+		if(!$this->execute($sql)) {
+			return false;
 		}
 		$sources = array();
-		while ($r = $this->fetchRow()) {
-		    $sources[] = $r[0]['view_name AS name'];
+
+		while($r = $this->fetchRow()) {
+			$sources[] = $r[0]['name'];
 		}
 		parent::listSources($sources);
 		return $sources;
@@ -389,16 +411,19 @@ class DboOracle extends DboSource {
  */
 	function describe(&$model) {
 		$cache = parent::describe($model);
-		if ($cache != null) {
+
+		if($cache != null) {
 			return $cache;
 		}
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE FROM user_tab_columns WHERE table_name = \'';
 		$sql .= strtoupper($this->fullTableName($model)) . '\'';
-        if (!$this->execute($sql)) {
-            return false;
-        }
+
+		if(!$this->execute($sql)) {
+			return false;
+		}
 		$fields = array();
-		for ($i=0; $row = $this->fetchRow(); $i++) {
+
+		for($i=0; $row = $this->fetchRow(); $i++) {
 			$fields[$i]['name'] = strtolower($row[0]['COLUMN_NAME']);
 			$fields[$i]['type'] = $this->column($row[0]['DATA_TYPE']);
 		}
@@ -406,7 +431,7 @@ class DboOracle extends DboSource {
 		return $fields;
 	}
 /**
- * This method should quote Oracle identifiers. Well it doesn't.  
+ * This method should quote Oracle identifiers. Well it doesn't.
  * It would break all scaffolding and all of Cake's default assumptions.
  *
  * @param unknown_type $var
@@ -414,17 +439,17 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function name($var) {
-	    switch ($var) {
-	        /* the acl creation script uses illegal identifiers w/o quoting. the following
-	           quotes only the illegal identifiers */
-	        case '_create':
-	        case '_read':
-	        case '_update':
-	        case '_delete':
-	           return "\"$var\"";
-	        default:
-	           return $var;
-	    }
+		switch($var) {
+			case '_create':
+			case '_read':
+			case '_update':
+			case '_delete':
+				return "\"$var\"";
+			break;
+			default:
+				return $var;
+			break;
+		}
 	}
 /**
  * Begin a transaction
@@ -434,13 +459,8 @@ class DboOracle extends DboSource {
  * (i.e. if the database/model does not support transactions).
  */
 	function begin() {
-		//if (parent::begin($model)) {
-			//if ($this->execute('BEGIN')) {
-				$this->_transactionStarted = true;
-				return true;
-			//}
-		//}
-		return false;
+		$this->__transactionStarted = true;
+		return true;
 	}
 /**
  * Rollback a transaction
@@ -451,10 +471,7 @@ class DboOracle extends DboSource {
  * or a transaction has not started).
  */
 	function rollback() {
-		//if (parent::rollback($model)) {
-			return ocirollback($this->connection);
-		//}
-		//return false;
+		return ocirollback($this->connection);
 	}
 /**
  * Commit a transaction
@@ -465,11 +482,8 @@ class DboOracle extends DboSource {
  * or a transaction has not started).
  */
 	function commit() {
-		//if (parent::commit($model)) {
-			$this->_transactionStarted = false;
-			return ocicommit($this->connection);
-		//}
-		//return false;
+		$this->__transactionStarted = false;
+		return ocicommit($this->connection);
 	}
 /**
  * Converts database-layer column types to basic types
@@ -479,44 +493,42 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function column($real) {
-		if (is_array($real)) {
+		if(is_array($real)) {
 			$col = $real['name'];
 
-			if (isset($real['limit'])) {
+			if(isset($real['limit'])) {
 				$col .= '('.$real['limit'].')';
 			}
 			return $col;
 		} else {
 			$real = strtolower($real);
 		}
-		
 		$col = r(')', '', $real);
 		$limit = null;
 
 		@list($col, $limit) = explode('(', $col);
-
-		if (in_array($col, array('date', 'timestamp'))) {
+		if(in_array($col, array('date', 'timestamp'))) {
 			return $col;
 		}
-		if (strpos($col, 'number') !== false) {
+		if(strpos($col, 'number') !== false) {
 			return 'integer';
 		}
-		if (strpos($col, 'integer') !== false) {
+		if(strpos($col, 'integer') !== false) {
 			return 'integer';
 		}
-		if (strpos($col, 'char') !== false) {
+		if(strpos($col, 'char') !== false) {
 			return 'string';
 		}
-		if (strpos($col, 'text') !== false) {
+		if(strpos($col, 'text') !== false) {
 			return 'text';
 		}
-		if (strpos($col, 'blob') !== false) {
+		if(strpos($col, 'blob') !== false) {
 			return 'binary';
 		}
-		if (in_array($col, array('float', 'double', 'decimal'))) {
+		if(in_array($col, array('float', 'double', 'decimal'))) {
 			return 'float';
 		}
-		if ($col == 'boolean') {
+		if($col == 'boolean') {
 			return $col;
 		}
 		return 'text';
@@ -529,17 +541,17 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function value($data, $column_type = null) {
-	    // this can also be accomplished through an Oracle NLS parameter
-		switch ($column_type) {
+		switch($column_type) {
 			case 'date':
 				$date = date('Y-m-d H:i:s', strtotime($data));
 				return "TO_DATE('$date', 'YYYY-MM-DD HH24:MI:SS')";
+			break;
 			default:
-				$data2 = str_replace("'", "''", $data);		
+				$data2 = str_replace("'", "''", $data);
 				return "'".$data2."'";
+			break;
 		}
 	}
-	
 /**
  * Returns the ID generated from the previous INSERT operation.
  *
@@ -548,17 +560,18 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function lastInsertId($source) {
-		$sequence = (!empty($this->sequence)) ? $this->sequence : 'pk_'.$source;
+		$sequence = (!empty($this->sequence)) ? $this->sequence : $source . '_seq';
 		$sql = "SELECT $sequence.currval FROM dual";
-		if (!$this->execute($sql)) {
-		    return false;
+
+		if(!$this->execute($sql)) {
+			return false;
 		}
-		while ($row = $this->fetchRow()) {
-		    return $row[$sequence]['currval'];
+
+		while($row = $this->fetchRow()) {
+			return $row[$sequence]['currval'];
 		}
 		return false;
 	}
-
 /**
  * Returns a formatted error message from previous database operation.
  *
@@ -567,7 +580,8 @@ class DboOracle extends DboSource {
  */
 	function lastError() {
 		$errors = ocierror();
-		if( ($errors != null) && (isset($errors["message"])) ) {
+
+		if(($errors != null) && (isset($errors["message"]))) {
 			return($errors["message"]);
 		}
 		return null;
