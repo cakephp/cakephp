@@ -101,19 +101,14 @@ class FormHelper extends AppHelper {
 
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
-			if(!empty($object->validationErrors)) {
-				$this->validationErrors[$model] = $object->validationErrors;
-			}
+		}
 
-			foreach($object->__associations as $type) {
-				foreach($object->{$type} as $assoc => $value) {
-					if (is_array($value) && isset($value['className']) && low($value['className']) !== low($object->name) && ClassRegistry::isKeySet($value['className'])) {
-						$innerObject =& ClassRegistry::getObject($value['className']);
-
-						if(!empty($innerObject->validationErrors)) {
-							$this->validationErrors[$innerObject->name] = $innerObject->validationErrors;
-						}
-					}
+		$models =& ClassRegistry::keys();
+		foreach($models as $currentModel) {
+			if (ClassRegistry::isKeySet($currentModel)) {
+				$currentObject =& ClassRegistry::getObject($currentModel);
+				if(is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
+					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
 				}
 			}
 		}
@@ -331,11 +326,14 @@ class FormHelper extends AppHelper {
  * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
+		$fieldset = null;
 		if(!is_array($fields)) {
 			$fieldset = $fields;
 		} else if(isset($fields['fieldset'])) {
 			$fieldset = $fields['fieldset'];
 			unset($fields['fieldset']);
+		} else {
+			$fieldset = true;
 		}
 
 		if($fieldset === true) {

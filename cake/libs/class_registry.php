@@ -106,6 +106,15 @@ class ClassRegistry {
 		return false;
 	}
 /**
+ * Get all keys from the regisrty.
+ *
+ * @return array
+ */
+	function keys() {
+		$_this =& ClassRegistry::getInstance();
+		return array_keys($_this->__objects);
+	}
+/**
  * Return object which corresponds to given key.
  *
  * @param string $key
@@ -141,6 +150,15 @@ class ClassRegistry {
 		if (array_key_exists($key, $_this->__map) === false) {
 			$_this->__map[$key] = $name;
 		}
+	}
+/**
+ * Get all keys from the map in the regisrty.
+ *
+ * @return array
+ */
+	function mapKeys() {
+		$_this =& ClassRegistry::getInstance();
+		return array_keys($_this->__map);
 	}
 /**
  * Return the name of a class in the registry.

@@ -598,11 +598,13 @@ class Controller extends Object {
 
 		$this->__viewClass =& new $viewClass($this);
 		if (!empty($this->modelNames)) {
-			$count = count($this->modelNames);
-			for ($i = 0; $i < $count; $i++) {
-				$model = $this->modelNames[$i];
-				if (!empty($this->{$model}->validationErrors)) {
-					$this->__viewClass->validationErrors[$model] = &$this->{$model}->validationErrors;
+			$models =& ClassRegistry::keys();
+			foreach($models as $currentModel) {
+				if (ClassRegistry::isKeySet($currentModel)) {
+					$currentObject =& ClassRegistry::getObject($currentModel);
+					if(is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
+						$this->__viewClass->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
+					}
 				}
 			}
 		}
