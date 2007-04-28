@@ -585,6 +585,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->submit('Test Submit', array('div' => array('id' => 'SaveButton')));
 		$this->assertPattern('/^<div[^<>]+id="SaveButton"[^<>]*><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
 		$this->assertNoPattern('/<input[^<>]+[^type|value]=[^<>]*>/', $result);
+		
+		$result = $this->Form->submit('Next >');
+		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next &gt;"[^<>]+\/><\/div>$/', $result);
+		
+		$result = $this->Form->submit('Next >', array('escape'=>false));
+		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next >"[^<>]+\/><\/div>$/', $result);
 	}
 
 	function testFormCreate() {
