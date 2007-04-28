@@ -300,7 +300,7 @@ class FormHelper extends AppHelper {
 			$tagName = implode('.', array_filter(array($this->model(), $this->field())));
 		}
 
-		if ($text == null) {
+		if ($text === null) {
 			if (strpos($tagName, '/') !== false || strpos($tagName, '.') !== false) {
 				list( , $text) = preg_split('/[\/\.]+/', $tagName);
 			} else {

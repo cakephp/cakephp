@@ -430,6 +430,9 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->label('first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
 		$this->assertEqual($result, '<label for="first_name" class="my-class" id="LabelID">Your first name</label>');
+		
+		$result = $this->Form->label('first_name', '');
+		$this->assertEqual($result, '<label for="first_name"></label>');
 	}
 
 	function testTextbox() {
