@@ -159,7 +159,7 @@ class FormHelper extends AppHelper {
 				'action' => $options['action'],
 				'id' => $id
 			);
-			if(!empty($options['action'])) {
+			if(!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
 			}
 			$options['action'] = am($actionDefaults, (array)$options['url']);

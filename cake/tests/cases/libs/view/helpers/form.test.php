@@ -632,6 +632,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form[^<>]+id="ContactEditForm"[^<>]+>/', $result);
 		$this->assertPattern('/^<form[^<>]+action="\/contacts\/edit\/1"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
+		
+		$result = $this->Form->create('Contact', array('id' => 'TestId'));
+		$this->assertPattern('/id="TestId"/', $result);
 	}
 
 	function testFormEnd() {
