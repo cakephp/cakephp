@@ -232,11 +232,19 @@
 class FormHelperTest extends CakeTestCase {
 
 	function startTest($method) {
-		$this->Form = new FormHelper();
-		$this->Form->Html = new HtmlHelper();
-		$view = new View(new TheTestController());
+		$this->Form =& new FormHelper();
+		$this->Form->Html =& new HtmlHelper();
+		$this->Controller =& new TheTestController();
+		$this->View =& new View($this->Controller);
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
+	}
+	
+	function endTest($method) {
+		unset($this->Form->Html);
+		unset($this->Form);
+		unset($this->Controller);
+		unset($this->View);
 	}
 
 	function testFormValidationAssociated() {
@@ -389,6 +397,13 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model/field', array('type' => 'file', 'class' => 'textbox'));
 		$this->assertPattern('/class="textbox"/', $result);
+		
+		$this->Form->data = array('Model' => array( 'field' => 'Hello & World > weird chars' ));
+		$result = $this->Form->input('Model/field');
+		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="Hello &amp; World &gt; weird chars" id="ModelField" /></div>';
+		$this->assertEqual($result, $expected);
+
+		unset($this->Form->data);
 	}
 
 	function testLabel() {
