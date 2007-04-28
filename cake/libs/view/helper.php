@@ -256,12 +256,22 @@ class Helper extends Overloadable {
  */
 	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
+			$default = array (
+				'escape' => true
+			);
+			$options = am($default, $options);
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
+			$exclude = am($exclude, array('escape'));
 			$keys = array_diff(array_keys($options), $exclude);
 			$values = array_intersect_key(array_values($options), $keys);
-			$out = implode(' ', array_map(array(&$this, '__formatAttribute'), $keys, $values));
+			$escape = $options['escape'];
+			$attributes = array();
+			foreach($keys as $index => $key) {
+				$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
+			}
+			$out = implode(' ', $attributes);
 		} else {
 			$out = $options;
 		}
@@ -273,7 +283,7 @@ class Helper extends Overloadable {
  * @return string
  * @access private
  */
-	function __formatAttribute($key, $value) {
+	function __formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
 		$attributeFormat = '%s="%s"';
 		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
@@ -283,7 +293,7 @@ class Helper extends Overloadable {
 				$attribute = sprintf($attributeFormat, $key, $key);
 			}
 		} else {
-			$attribute = sprintf($attributeFormat, $key, h($value));
+			$attribute = sprintf($attributeFormat, $key, ife($escape, h($value), $value));
 		}
 		return $attribute;
 	}
