@@ -503,7 +503,7 @@ class Router extends Object {
 					$args[] = $url[$keys[$i]];
 				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs'])) && !empty($url[$keys[$i]])) {
 					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
-				} else if(!empty($url[$keys[$i]])){
+				} elseif(!empty($url[$keys[$i]]) || is_numeric($url[$keys[$i]])) {
 					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
 				}
 			}

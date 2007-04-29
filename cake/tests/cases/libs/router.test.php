@@ -251,6 +251,18 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'posts', 'action'=>'index', '0', '?' => array('var' => 'test', 'var2' => 'test2', 'more' => 'test data')));
 		$this->assertEqual($result, $expected);
 	}
+
+	function testNamedArgsUrlGeneration() {
+		Router::setRequestInfo(array(null, array('base' => '/', 'argSeparator' => ':')));
+
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', 'published' => 1, 'deleted' => 1));
+		$expected = '/posts/index/published:1/deleted:1';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', 'published' => 0, 'deleted' => 0));
+		$expected = '/posts/index/published:0/deleted:0';
+		$this->assertEqual($result, $expected);
+	}
 }
 
 ?>
