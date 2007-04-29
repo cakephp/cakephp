@@ -396,8 +396,10 @@ class View extends Object {
 		foreach($viewPaths as $path) {
 			if(file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
+				break;
 			} else if(file_exists($path . 'elements' . DS . $name . '.thtml')) {
 				$file = $path . 'elements' . DS . $name . '.thtml';
+				break;
 			}
 		}
 
