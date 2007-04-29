@@ -112,12 +112,16 @@ class ThemeView extends View {
 		foreach($viewPaths as $path) {
 			if(file_exists($path . $this->themeElement . $name . $this->ext)) {
 				$file = $path . $this->themeElement . $name . $this->ext;
+				break;
 			} else if(file_exists($path . $this->themeElement . $name . '.thtml')) {
 				$file = $path . $this->themeElement . $name . '.thtml';
+				break;
 			} else if(file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
+				break;
 			} else if(file_exists($path . 'elements' . DS . $name . '.thtml')) {
 				$file = $path . 'elements' . DS . $name . '.thtml';
+				break;
 			}
 		}
 
@@ -225,10 +229,23 @@ class ThemeView extends View {
 		}
 
 		if(!is_null($this->pluginPath)) {
-			return APP . $this->pluginPath . $this->themeLayout . $name . $this->ext;
+			$layoutFileName = APP . $this->pluginPath . 'views' . DS . $this->themeLayout . $name . $this->ext;
 		} else {
-			return VIEWS . $this->themeLayout . $name . $this->ext;
+			$layoutFileName = VIEWS . $this->themeLayout . $name . $this->ext;
 		}
+
+		$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . $this->layout . '.ctp');
+		if (empty($default) && !empty($type)) {
+			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $type . 'default.ctp');
+		}
+		if(empty($default)) {
+			$default = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'layouts' . DS . $this->layout . '.ctp');
+		}
+
+		if(!empty($default)) {
+			return $default;
+		}
+		return $layoutFileName;
 	}
 }
 
