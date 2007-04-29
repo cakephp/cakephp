@@ -314,7 +314,7 @@ class FormHelper extends AppHelper {
 		if (strpos($tagName, '/') !== false || strpos($tagName, '.') !== false) {
 			$tagName = Inflector::camelize(preg_replace('/[\/\.]+/', '_', $tagName));
 		}
-		return $this->output(sprintf($this->Html->tags['label'], $tagName, $this->_parseAttributes($attributes), $text));
+		return $this->output(sprintf($this->Html->tags['label'], $this->domId($tagName), $this->_parseAttributes($attributes), $text));
 	}
 /**
  * Will display all the fields passed in an array expects tagName as an array key
