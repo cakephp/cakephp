@@ -311,9 +311,6 @@ class FormHelper extends AppHelper {
 			}
 			$text = Inflector::humanize($text);
 		}
-		if (strpos($tagName, '/') !== false || strpos($tagName, '.') !== false) {
-			$tagName = Inflector::camelize(preg_replace('/[\/\.]+/', '_', $tagName));
-		}
 		return $this->output(sprintf($this->Html->tags['label'], $this->domId($tagName), $this->_parseAttributes($attributes), $text));
 	}
 /**
