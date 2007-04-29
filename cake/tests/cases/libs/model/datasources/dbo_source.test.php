@@ -1469,9 +1469,9 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions(array('id' => '<> 8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+8\s*$/', $result);
 
-		//$result = $this->db->conditions(array('TestModel.field' => '= gribe$@()lu'));
-		//$expected = " WHERE `TestModel.field` =  'gribe$@()lu'";
-		//$this->assertEqual($result, $expected);
+		$result = $this->db->conditions(array('TestModel.field' => '= gribe$@()lu'));
+		$expected = " WHERE `TestModel`.`field` =  'gribe$@()lu'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testFieldParsing() {

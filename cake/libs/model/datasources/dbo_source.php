@@ -1569,7 +1569,7 @@ class DboSource extends DataSource {
 					$data = $this->name($key) . " = " . $this->boolean($value);
 				} elseif ($value === '') {
 					$data = $this->name($key) . " = ''";
-				} elseif (preg_match('/^([a-z]*\\([a-z0-9]*\\)\\x20?|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/i', $value, $match)) {
+				} elseif (preg_match('/^([a-z]+\\([a-z0-9]*\\)\\x20+|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/i', $value, $match)) {
 					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
 						$clause = $regs['1'];
 						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
@@ -1581,6 +1581,9 @@ class DboSource extends DataSource {
 					} elseif (empty($mValue)) {
 						$match['1'] = ' = ';
 						$match['2'] = $match['0'];
+					} elseif(!isset($match['2'])) {
+						$match['1'] = ' = ';
+						$match['2'] = $match['0'];
 					}
 
 					if (strpos($match['2'], '-!') === 0) {
@@ -1588,7 +1591,7 @@ class DboSource extends DataSource {
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
 						if (!empty($match['2']) && $quoteValues) {
-							if (strpos($match['2'], '()') === false) {
+							if(!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
 								$match['2'] = $this->value($match['2']);
 							}
 							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
