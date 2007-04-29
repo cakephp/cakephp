@@ -164,10 +164,14 @@ class SetTest extends UnitTestCase {
 	
 	function testExtract() {
 		$a = array(
-			array( 'lday' => '20 sales' ),
-			array( 'lday' => '2 sales' )
+			0 => array(
+			  '1day' => '20 sales'
+			),
+			1 => array(
+			  '1day' => '2 sales'
+			)
 		);
-		$result = Set::extract($a, '{n}.lday');
+		$result = Set::extract($a, '{n}.1day');
 		
 		$expected = array(
 			0 => '20 sales',
