@@ -62,7 +62,7 @@ class DB_ACL extends AclBase {
  * @return unknown
  */
 	function check($aro, $aco, $action = "*") {
-		$Perms = new Permission();
+		$Permission = new Permission();
 		$Aro = new Aro();
 		$Aco = new Aco();
 
@@ -70,7 +70,7 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
-		$permKeys = $this->_getAcoKeys($Perms->loadInfo());
+		$permKeys = $this->_getAcoKeys($Permission->loadInfo());
 		$aroPath = $Aro->node($aro);
 		$acoPath = new Set($Aco->node($aco));
 
@@ -93,7 +93,7 @@ class DB_ACL extends AclBase {
 		}
 
 		for($i = count($aroPath) - 1; $i >= 0; $i--) {
-			$perms = $Perms->findAll(
+			$perms = $Permission->findAll(
 				array(
 					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
 					'Permission.aco_id' => $acoPath->extract('{n}.Aco.id')
@@ -138,9 +138,9 @@ class DB_ACL extends AclBase {
  * @return boolean
  */
 	function allow($aro, $aco, $action = "*", $value = 1) {
-		$Perms = new Permission();
+		$Permission = new Permission();
 		$perms = $this->getAclLink($aro, $aco);
-		$permKeys = $this->_getAcoKeys($Perms->loadInfo());
+		$permKeys = $this->_getAcoKeys($Permission->loadInfo());
 		$save = array();
 
 		if ($perms == false) {
@@ -153,7 +153,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if ($action == "*") {
-			$permKeys = $this->_getAcoKeys($Perms->loadInfo());
+			$permKeys = $this->_getAcoKeys($Permission->loadInfo());
 
 			foreach($permKeys as $key) {
 				$save[$key] = $value;
@@ -173,7 +173,7 @@ class DB_ACL extends AclBase {
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0]['Permission']['id'];
 		}
-		return $Perms->save(array('Permission' => $save));
+		return $Permission->save(array('Permission' => $save));
 	}
 /**
  * Deny
