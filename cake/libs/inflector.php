@@ -144,9 +144,9 @@ class Inflector extends Object {
 
 		if (file_exists(CONFIGS . 'inflections.php')) {
 			include(CONFIGS.'inflections.php');
-			$pluralRules = Set::pushDiff($corePluralRules, $pluralRules);
-			$uninflected = Set::pushDiff($coreUninflectedPlural, $uninflectedPlural);
-			$irregular = Set::pushDiff($coreIrregularPlural, $irregularPlural);
+			$pluralRules = Set::pushDiff($pluralRules, $corePluralRules);
+			$uninflected = Set::pushDiff($uninflectedPlural, $coreUninflectedPlural);
+			$irregular = Set::pushDiff($irregularPlural, $coreIrregularPlural);
 		}
 		$_this->pluralRules = array('pluralRules' => $pluralRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->pluralized = array();
@@ -283,9 +283,9 @@ class Inflector extends Object {
 
 		if (file_exists(CONFIGS . 'inflections.php')) {
 			include(CONFIGS.'inflections.php');
-			$singularRules = Set::pushDiff($coreSingularRules, $singularRules);
-			$uninflected = Set::pushDiff($coreUninflectedSingular, $uninflectedSingular);
-			$irregular = Set::pushDiff($coreIrregularSingular, $irregularSingular);
+			$singularRules = Set::pushDiff($singularRules, $coreSingularRules);
+			$uninflected = Set::pushDiff($uninflectedSingular, $coreUninflectedSingular);
+			$irregular = Set::pushDiff($irregularSingular, $coreIrregularSingular);
 		}
 		$_this->singularRules = array('singularRules' => $singularRules, 'uninflected' => $uninflected, 'irregular' => $irregular);
 		$_this->singularized = array();
