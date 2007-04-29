@@ -995,7 +995,7 @@ class DboSource extends DataSource {
 
 		if (empty($queryData['fields'])) {
 			$queryData['fields'] = $this->fields($model, $model->name);
-		} elseif(!empty($model->hasMany)) {
+		} elseif(!empty($model->hasMany) && $model->recursive > -1) {
 			$assocFields = $this->fields($model, $model->name, array("{$model->name}.{$model->primaryKey}"));
 			$passedFields = $this->fields($model, $model->name, $queryData['fields']);
 			if(count($passedFields) === 1) {
