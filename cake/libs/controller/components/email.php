@@ -175,7 +175,7 @@ class EmailComponent extends Object{
  * @var integer
  * @access protected
  */
-	var $_lineLength = 75;
+	var $_lineLength = 70;
 /**
  * Enter description here...
  *
@@ -427,7 +427,7 @@ class EmailComponent extends Object{
 		$words = explode('\n', $message);
 		$formated = null;
 		foreach ($words as $word) {
-			$formated .= wordwrap($word, $this->_lineLength, ' ', 1);
+			$formated .= wordwrap($word, $this->_lineLength, "\n", true);
 			$formated .= "\n";
 		}
 		return $formated;
