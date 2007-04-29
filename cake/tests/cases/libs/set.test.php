@@ -161,6 +161,21 @@ class SetTest extends UnitTestCase {
 		// And also updates it's own value property
 		$this->assertIdentical($Set->value, $expected);
 	}
+	
+	function testExtract() {
+		$a = array(
+			array( 'lday' => '20 sales' ),
+			array( 'lday' => '2 sales' )
+		);
+		$result = Set::extract($a, '{n}.lday');
+		
+		$expected = array(
+			0 => '20 sales',
+			1 => '2 sales'
+		);
+		
+		$this->assertIdentical($result, $expected);
+	}
 }
 
 ?>
