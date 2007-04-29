@@ -539,4 +539,5 @@ class DboDb2 extends DboSource {
 			return false;
 		}
 	}
+}
 ?>
