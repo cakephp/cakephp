@@ -489,15 +489,15 @@ class Scaffold extends Object {
 		if (!is_null($this->plugin)) {
 
 			if (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $action . $this->ext;
+				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $action . $this->ext;
+				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext)) {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext;
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+				return APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml')) {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml';
 			}
@@ -507,14 +507,13 @@ class Scaffold extends Object {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
+				return $path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			}	elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return $path . $this->viewPath . DS . $this->subDir . $type . $action . '.thtml';
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
+				return $path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			}
 		}
-
 		 return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.thtml';
 	}
 }
