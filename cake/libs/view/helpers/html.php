@@ -265,8 +265,8 @@ class HtmlHelper extends AppHelper {
 		}
 		if($escapeTitle === true) {
 			$title = htmlspecialchars($title, ENT_QUOTES);
-		} else if (is_string($escapeTitle)) {
-			$title = htmlentities($title, $escapeTitle);
+		} elseif(is_string($escapeTitle)) {
+			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}
 
 		if(!empty($htmlAttributes['confirm'])) {
@@ -507,10 +507,10 @@ class HtmlHelper extends AppHelper {
 		$out = array();
 
 		foreach($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);          
- 	        if ($value !== false && $optValue == $value) { 
- 	        	$optionsHere['checked'] = 'checked'; 
- 	        } 
+			$optionsHere = array('value' => $optValue);
+ 	        if ($value !== false && $optValue == $value) {
+ 	        	$optionsHere['checked'] = 'checked';
+ 	        }
 			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
 			$individualTagName = $this->field() . "_{$optValue}";
 			$out[] = sprintf($this->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
