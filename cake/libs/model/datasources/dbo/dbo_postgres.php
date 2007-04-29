@@ -228,7 +228,7 @@ class DboPostgres extends DboSource {
 
 			break;
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				$data = $this->boolean((bool)$data, false);
 				if ($data === true) {
 					$data = '1';
 				} elseif ($data === false) {
@@ -534,20 +534,29 @@ class DboPostgres extends DboSource {
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
+ * @param boolean $quote	True to quote value, false otherwise
  * @return mixed Converted boolean value
  */
-	function boolean($data) {
+	function boolean($data, $quote = true) {
+		$result = null;
+		
 		if ($data === true || $data === false) {
-			return $data;
+			$result = $data;
 		} elseif (is_string($data) && !is_numeric($data)) {
 			if (strpos($data, 't') !== false) {
-				return true;
+				$result = true;
+			} else {
+				$result = false;
 			}
-
-			return false;
 		} else {
-			return (bool)$data;
+			$result = (bool)$data;
 		}
+		
+		if ($quote) {
+			$result = "'" . $result . "'";
+		}
+		
+		return $result;
 	}
 /**
  * Sets the database encoding
