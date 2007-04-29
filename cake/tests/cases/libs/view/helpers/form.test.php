@@ -122,7 +122,7 @@
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -147,13 +147,13 @@
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		function beforeValidate() {
 			$this->invalidate('email');
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -183,14 +183,14 @@
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		function beforeValidate() {
 			$this->invalidate('full_name');
 			$this->invalidate('city');
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Short description for class.
 	 *
@@ -216,7 +216,7 @@
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
 		}
-		
+
 		function beforeValidate() {
 			$this->invalidate('description');
 			return false;
@@ -239,7 +239,7 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
 	}
-	
+
 	function endTest($method) {
 		unset($this->Form->Html);
 		unset($this->Form);
@@ -283,11 +283,11 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->UserForm->OpenidUrl);
 		unset($this->UserForm);
 	}
-	
+
 	function testFormValidationAssociatedFirstLevel() {
 		$this->ValidateUser =& new ValidateUser();
 		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
-		
+
 		$data = array(
 			'ValidateUser' => array(
 				'name' => 'mariano'
@@ -302,13 +302,13 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->ValidateUser->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->ValidateUser->ValidateProfile->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
-		
+
 		$expected = array(
 			'OpenidUrl' => array(
 				'openid_not_registered' => 1
@@ -327,12 +327,12 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
 	}
-	
+
 	function testFormValidationAssociatedSecondLevel() {
 		$this->ValidateUser =& new ValidateUser();
 		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
 		$this->ValidateUser->ValidateProfile->ValidateItem =& new ValidateItem();
-		
+
 		$data = array(
 			'ValidateUser' => array(
 				'name' => 'mariano'
@@ -350,16 +350,16 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->ValidateUser->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->ValidateUser->ValidateProfile->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->ValidateUser->ValidateProfile->ValidateItem->validates();
 		$this->assertFalse($result);
-		
+
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
-		
+
 		$expected = array(
 			'OpenidUrl' => array(
 				'openid_not_registered' => 1
@@ -377,7 +377,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 
 		$this->assertEqual($this->Form->validationErrors, $expected);
-		
+
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
 		unset($this->ValidateUser->ValidateProfile);
 		unset($this->ValidateUser);
@@ -397,7 +397,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model/field', array('type' => 'file', 'class' => 'textbox'));
 		$this->assertPattern('/class="textbox"/', $result);
-		
+
 		$this->Form->data = array('Model' => array( 'field' => 'Hello & World > weird chars' ));
 		$result = $this->Form->input('Model/field');
 		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="Hello &amp; World &gt; weird chars" id="ModelField" /></div>';
@@ -420,19 +420,19 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, '<label for="PersonName">Name</label>');
 
 		$result = $this->Form->label('first_name');
-		$this->assertEqual($result, '<label for="first_name">First Name</label>');
+		$this->assertEqual($result, '<label for="PersonFirstName">First Name</label>');
 
 		$result = $this->Form->label('first_name', 'Your first name');
-		$this->assertEqual($result, '<label for="first_name">Your first name</label>');
+		$this->assertEqual($result, '<label for="PersonFirstName">Your first name</label>');
 
 		$result = $this->Form->label('first_name', 'Your first name', array('class' => 'my-class'));
-		$this->assertEqual($result, '<label for="first_name" class="my-class">Your first name</label>');
+		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class">Your first name</label>');
 
 		$result = $this->Form->label('first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
-		$this->assertEqual($result, '<label for="first_name" class="my-class" id="LabelID">Your first name</label>');
-		
+		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class" id="LabelID">Your first name</label>');
+
 		$result = $this->Form->label('first_name', '');
-		$this->assertEqual($result, '<label for="first_name"></label>');
+		$this->assertEqual($result, '<label for="PersonFirstName"></label>');
 	}
 
 	function testTextbox() {
@@ -603,10 +603,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->submit('Test Submit', array('div' => array('id' => 'SaveButton')));
 		$this->assertPattern('/^<div[^<>]+id="SaveButton"[^<>]*><input type="submit"[^<>]+value="Test Submit"[^<>]+\/><\/div>$/', $result);
 		$this->assertNoPattern('/<input[^<>]+[^type|value]=[^<>]*>/', $result);
-		
+
 		$result = $this->Form->submit('Next >');
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next &gt;"[^<>]+\/><\/div>$/', $result);
-		
+
 		$result = $this->Form->submit('Next >', array('escape'=>false));
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next >"[^<>]+\/><\/div>$/', $result);
 	}
@@ -632,7 +632,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form[^<>]+id="ContactEditForm"[^<>]+>/', $result);
 		$this->assertPattern('/^<form[^<>]+action="\/contacts\/edit\/1"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
-		
+
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
 	}
