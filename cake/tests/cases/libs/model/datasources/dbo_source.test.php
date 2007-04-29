@@ -930,14 +930,14 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertPattern('/\s+FROM\s+`test_model5` AS `TestModel5`\s+WHERE\s+/', $result);
 		$this->assertPattern('/\s+WHERE\s+(?:\()?\s*1 = 1\s*(?:\))?\s*$/', $result);
 	}
-	
+
 	function testGenerateAssociationQueryHasManyWithLimit() {
 		$this->model = new TestModel5();
 		$this->model->loadInfo();
 		$this->_buildRelatedModels($this->model);
-		
+
 		$this->model->hasMany['TestModel6']['limit'] = 2;
-		
+
 		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
 		$queryData = array();
 		$resultSet = null;
@@ -952,7 +952,7 @@ class DboSourceTest extends UnitTestCase {
 												 '`TestModel6`.`test_model5_id`\s+IN\s+\({\$__cakeID__\$}\)\s*'.
 												 'LIMIT \d*'.
 												 '\s*$/', $result);
-		
+
 		$result = $this->db->generateAssociationQuery($this->model, $null, null, null, null, $queryData, false, $null);
 		$this->assertPattern('/^SELECT\s+'.
 												 '`TestModel5`\.`id`, `TestModel5`\.`test_model4_id`, `TestModel5`\.`name`, `TestModel5`\.`created`, `TestModel5`\.`updated`\s+'.
@@ -1283,6 +1283,58 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions('Member.email = "mariano@cricava.com" AND Member.user LIKE "mariano.iglesias%"');
 		$expected = ' WHERE `Member`.`email` = "mariano@cricava.com" AND `Member`.`user` LIKE "mariano.iglesias%"';
 		$this->assertEqual($result, $expected);
+	}
+
+	function testParenthesisInStringConditions() {
+		$result = $this->db->conditions('Member.name = \'Mariano Iglesias (mariano.iglesias)\'');
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'Mariano Iglesias \(mariano.iglesias\)\'$/', $result);
+
+		$result = $this->db->conditions('Member.name = "Mariano Iglesias (mariano.iglesias)"');
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\"Mariano Iglesias \(mariano.iglesias\)\"$/', $result);
+	}
+
+	function testParenthesisInArrayConditions() {
+		$result = $this->db->conditions(array('Member.name' => '(lu'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(lu\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => ')lu'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\)lu\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'va(lu'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'va\(lu\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'va)lu'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'va\)lu\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'va(lu)'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'va\(lu\)\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'va(lu)e'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'va\(lu\)e\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano)'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano\)\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano)iglesias'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano\)iglesias\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano) iglesias'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano\) iglesias\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano word) iglesias'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano word\) iglesias\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano.iglesias)'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano.iglesias\)\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'Mariano Iglesias (mariano.iglesias)'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'Mariano Iglesias \(mariano.iglesias\)\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => 'Mariano Iglesias (mariano.iglesias) CakePHP'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'Mariano Iglesias \(mariano.iglesias\) CakePHP\'$/', $result);
+
+		$result = $this->db->conditions(array('Member.name' => '(mariano.iglesias) CakePHP'));
+		$this->assertPattern('/^\s+WHERE\s+`Member`.`name`\s+=\s+\'\(mariano.iglesias\) CakePHP\'$/', $result);
 	}
 
 	function testArrayConditionsParsing() {
