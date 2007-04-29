@@ -432,8 +432,8 @@ class Router extends Object {
 				$params = end($_this->__params);
 			}
 		}
-
 		$path = array('base' => null);
+
 		if(!empty($_this->__paths)) {
 			if(!isset($_this->params['requested'])) {
 				$path = $_this->__paths[0];
@@ -441,7 +441,6 @@ class Router extends Object {
 				$path = end($_this->__paths);
 			}
 		}
-
 		$base = $_this->stripPlugin($path['base'], $params['plugin']);
 		$extension = $output = $mapped = $q = $frag = null;
 
@@ -465,7 +464,6 @@ class Router extends Object {
 					$url['action'] = 'index';
 				}
 			}
-
 			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), $url);
 
 			if (isset($url['ext'])) {
@@ -477,8 +475,8 @@ class Router extends Object {
 			} elseif (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN] == false) {
 				unset($url[CAKE_ADMIN]);
 			}
-
 			$match = false;
+
 			foreach ($_this->routes as $route) {
 				if ($match = $_this->mapRouteElements($route, $url)) {
 					list($output, $url) = $match;
@@ -488,15 +486,16 @@ class Router extends Object {
 					break;
 				}
 			}
-
 			$named = $args = array();
 			$skip = am(array_keys($_this->__mapped), array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#'));
+
 			if(defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
 			}
-
+			$_this->__mapped = array();
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
+
 			for ($i = 0; $i < $count; $i++) {
 				if ($i == 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
 					$args[0] = $url[$keys[$i]];
