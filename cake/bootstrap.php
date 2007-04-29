@@ -59,7 +59,7 @@ if (!defined('PHP5')) {
 	if (empty($uri) && defined('BASE_URL')) {
 		$uri = setUri();
 
-		if ($uri === '/' || $uri === '/index.php' || $uri === '/app/') {
+		if ($uri === '/' || $uri === '/index.php' || $uri === '/'.APP_DIR.'/') {
 			$_GET['url'] = '/';
 			$url = '/';
 		} else {
