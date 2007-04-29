@@ -300,7 +300,7 @@ class Set extends Object {
 		}
 
 		foreach($path as $i => $key) {
-			if (intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				if (isset($data[intval($key)])) {
 					$data = $data[intval($key)];
 				} else {
@@ -341,7 +341,7 @@ class Set extends Object {
 		$_list =& $list;
 
 		foreach($path as $i => $key) {
-			if (intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
 			if ($i == count($path) - 1) {
@@ -374,7 +374,7 @@ class Set extends Object {
 		$_list =& $list;
 
 		foreach($path as $i => $key) {
-			if (intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
 			if ($i == count($path) - 1) {
@@ -411,7 +411,7 @@ class Set extends Object {
 		}
 
 		foreach($path as $i => $key) {
-			if (intval($key) > 0 || $key == '0') {
+			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
 			if ($i == count($path) - 1) {
