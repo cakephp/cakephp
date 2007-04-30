@@ -154,36 +154,6 @@
 	define('ACL_FILENAME', 'dbacl' . DS . 'db_acl');
 	define('ACL_DATABASE', 'default');
 /**
- * Use the file storage engine with default parameters.
- * Cached data is kept in app/tmp/cache/
- *
- * File storage
- * 	Cache::engine('File', array(
- * 		'dir' => '/tmp/', // use system tmp directory - remember to use absolute path
- * 		'prefix' => 'cakecache_', // prefix every cache file with this string
- * 		'lock' => true, // use file locking
- * 		));
- *
- * APC (Alternative PHP Cache)
- * 	Cache::engine('APC');
- *
- * Memcache
- * 	Cache::engine('Memcache', array(
- * 		'servers' => array(
- * 				'127.0.0.1', // localhost, default port
- * 				'10.0.0.1:12345', // port 12345
- * 				),
- * 				'compress' => true, // compress data in Memcache (slower, but uses less memory)
- * 				));
- *
- * Cake Model
- * 	Cache::engine('Model', array(
- * 		'modelName' => 'DbModel',
- * 		'dataField' => 'value',
- * 		'expiryField' => 'expires'));
- */
-	Cache::engine('File');
-/**
  * How long to cache data if not defined
  * 3600 = 1 hour
  */
@@ -193,4 +163,35 @@
  * about once in every hundred page loads
  */
 	define('CACHE_GC_PROBABILITY', 100);
+/**
+ * Use the file storage engine with default parameters.
+ * Cached data is kept in app/tmp/cache/
+ *
+ * File storage
+ * 	$cakeCache = array('File', [optional]array(
+ * 		'dir' => '/tmp/', // use system tmp directory - remember to use absolute path
+ * 		'prefix' => 'cakecache_', // prefix every cache file with this string
+ * 		'lock' => true, // use file locking
+ * 		));
+ * 	$cakeCache = array('File');
+ *
+ * APC (Alternative PHP Cache)
+ * 	$cakeCache = array('APC');
+ *
+ * Memcache
+ * 	$cakeCache = array('Memcache', [optional]array(
+ * 		'servers' => array(
+ * 				'127.0.0.1', // localhost, default port
+ * 				'10.0.0.1:12345', // port 12345
+ * 				),
+ * 				'compress' => true, // compress data in Memcache (slower, but uses less memory)
+ * 				));
+ *
+ * Cake Model
+ * 	$cakeCache = array('Model', [optional]array(
+ * 		'modelName' => 'DbModel',
+ * 		'dataField' => 'value',
+ * 		'expiryField' => 'expires'));
+ */
+	$cakeCache = array('File');
 ?>
