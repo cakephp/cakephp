@@ -38,24 +38,24 @@ vendor('simpletest'.DS.'unit_tester');
 class CakeTestDispatcher extends Dispatcher {
 	var $controller;
 	var $testCase;
-	
+
 	function testCase(&$testCase) {
 		$this->testCase =& $testCase;
 	}
-	
+
 	function _invoke (&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
-		
+
 		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
 			$this->testCase->startController($this->controller, $params);
 		}
-		
+
 		$result = parent::_invoke($this->controller, $params, $missingAction);
-		
+
 		if (isset($this->testCase) && method_exists($this->testCase, 'endController')) {
 			$this->testCase->endController($this->controller, $params);
 		}
-		
+
 		return $result;
 	}
 }
@@ -75,36 +75,36 @@ class CakeTestCase extends UnitTestCase {
 	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
 /**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
- * 
+ *
  * @param string $method	Test method about to get executed.
- * 
+ *
  * @access protected
  */
 	function startCase() {
 	}
 /**
  * Called when a test case (group of methods) has been executed (to be overriden when needed.)
- * 
+ *
  * @param string $method	Test method about that was executed.
- * 
+ *
  * @access protected
  */
 	function endCase() {
 	}
 /**
  * Called when a test case method is about to start (to be overriden when needed.)
- * 
+ *
  * @param string $method	Test method about to get executed.
- * 
+ *
  * @access protected
  */
 	function startTest($method) {
 	}
 /**
  * Called when a test case method has been executed (to be overriden when needed.)
- * 
+ *
  * @param string $method	Test method about that was executed.
- * 
+ *
  * @access protected
  */
 	function endTest($method) {
@@ -121,10 +121,10 @@ class CakeTestCase extends UnitTestCase {
 			if (!isset($this->db)) {
 				$this->_initDb();
 			}
-			
+
 			$classRegistry =& ClassRegistry::getInstance();
 			$models = array();
-			
+
 			foreach($classRegistry->__map as $key => $name) {
 				$object =& $classRegistry->getObject(Inflector::camelize($key));
 				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->name, $params['fixturize'])) || $params['fixturize'] === true)) {
@@ -135,27 +135,27 @@ class CakeTestCase extends UnitTestCase {
 					);
 				}
 			}
-			
+
 			if (!empty($models) && isset($this->db)) {
 				$this->_queries = array(
 					'create' => array(),
 					'insert' => array(),
 					'drop' => array()
 				);
-				
+
 				foreach($models as $model) {
 					$fixture =& new CakeTestFixture($this->db);
-					
+
 					$fixture->name = $model['model'] . 'Test';
 					$fixture->table = $model['table'];
 					$fixture->import = array('model' => $model['model'], 'records' => true);
-					
+
 					$fixture->init();
-					
+
 					$createFixture = $fixture->create();
 					$insertsFixture = $fixture->insert();
 					$dropFixture = $fixture->drop();
-					
+
 					if (!empty($createFixture)) {
 						$this->_queries['create'] = am($this->_queries['create'], array($createFixture));
 					}
@@ -166,22 +166,22 @@ class CakeTestCase extends UnitTestCase {
 						$this->_queries['drop'] = am($this->_queries['drop'], array($dropFixture));
 					}
 				}
-				
+
 				foreach($this->_queries['create'] as $query) {
 					if (isset($query) && $query !== false) {
 						$this->db->_execute($query);
 					}
 				}
-				
+
 				foreach($this->_queries['insert'] as $query) {
 					if (isset($query) && $query !== false) {
 						$this->db->_execute($query);
 					}
 				}
-				
+
 				foreach($models as $model) {
 					$object =& $classRegistry->getObject($model['key']);
-					
+
 					if ($object !== false) {
 						$object->useDbConfig = 'test_suite';
 						$object->setDataSource();
@@ -211,9 +211,9 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $url	Cake URL to execute (e.g: /articles/view/455)
  * @param array $params	Parameters
- * 
+ *
  * @return mixed	What is returned from action (if $requested is true), or view rendered html
- * 
+ *
  * @access protected
  */
 	function testAction($url, $params = array()) {
@@ -223,45 +223,45 @@ class CakeTestCase extends UnitTestCase {
 			'data' => array(),
 			'method' => 'post'
 		);
-		
+
 		$params = am($default, $params);
-		
+
 		if (!empty($params['data'])) {
 			$data = array('data' => $params['data']);
-			
+
 			if (low($params['method']) == 'get') {
 				$_GET = $data;
 			} else {
 				$_POST = $data;
 			}
 		}
-		
+
 		$return = $params['return'];
-		
+
 		unset($params['data']);
 		unset($params['method']);
 		unset($params['return']);
-		
+
 		$dispatcher =& new CakeTestDispatcher();
 		$dispatcher->testCase($this);
-		
+
 		if (low($return) != 'result') {
 			$params['return'] = 0;
-			
+
 			ob_start();
 			@$dispatcher->dispatch($url, $params);
 			$result = ob_get_clean();
-			
+
 			if (low($return) == 'vars') {
 				$view =& ClassRegistry::getObject('view');
 				$viewVars = $view->getVars();
-				
+
 				$result = array();
-				
+
 				foreach($viewVars as $var) {
 					$result[$var] = $view->getVar($var);
 				}
-				
+
 				if (!empty($view->pageTitle)) {
 					$result = am($result, array('title' => $view->pageTitle));
 				}
@@ -270,10 +270,10 @@ class CakeTestCase extends UnitTestCase {
 			$params['return'] = 1;
 			$params['bare'] = 1;
 			$params['requested'] = 1;
-			
+
 			$result = @$dispatcher->dispatch($url, $params);
 		}
-		
+
 		$classRegistry =& ClassRegistry::getInstance();
 		$keys = array_keys($classRegistry->__objects);
 		foreach($keys as $key) {
@@ -281,11 +281,11 @@ class CakeTestCase extends UnitTestCase {
 			$classRegistry->removeObject($key);
 		}
 		$classRegistry->__map = array();
-		
+
 		if (isset($this->_queries)) {
 			unset($this->_queries);
 		}
-		
+
 		return $result;
 	}
 /**
@@ -307,7 +307,7 @@ class CakeTestCase extends UnitTestCase {
 			$this->_initDb();
 			$this->_loadFixtures();
 		}
-		
+
 		// Create records
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
 			foreach($this->_fixtures as $fixture) {
@@ -322,7 +322,7 @@ class CakeTestCase extends UnitTestCase {
 				}
 			}
 		}
-		
+
 		if (!in_array(low($method), $this->methods)) {
 			$this->startTest($method);
 		}
@@ -376,7 +376,7 @@ class CakeTestCase extends UnitTestCase {
 				}
 			}
 		}
-		
+
 		if (!in_array(low($method), $this->methods)) {
 			$this->endTest($method);
 		}
@@ -392,12 +392,8 @@ class CakeTestCase extends UnitTestCase {
  * @access public
  */
 	function getTests() {
-		$methods = parent::getTests();
-		$index = array_search('testAction', $methods);
-		if ($index !== false) {
-			unset($methods[$index]);
-		}
-		
+		$methods = array_diff(parent::getTests(), array('testAction', 'testaction'));
+
 		$methods = am(am(array('start', 'startCase'), $methods), array('endCase', 'end'));
 
 		return $methods;

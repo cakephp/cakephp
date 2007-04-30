@@ -241,8 +241,10 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function endTest($method) {
-		unset($this->Form->Html);
-		unset($this->Form);
+		if (isset($this->Form)) {
+			unset($this->Form->Html);
+			unset($this->Form);
+		}
 		unset($this->Controller);
 		unset($this->View);
 	}
