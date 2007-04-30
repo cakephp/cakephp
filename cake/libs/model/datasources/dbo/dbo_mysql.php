@@ -96,7 +96,7 @@ class DboMysql extends DboSource {
 		$connect = $config['connect'];
 		$this->connected = false;
 
-		if (!$config['persistent']) {
+		if (!$config['persistent'] || $config['connect'] === 'mysql_connect') {
 			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
 		} else {
 			$this->connection = $connect($config['host'], $config['login'], $config['password']);
