@@ -178,6 +178,12 @@
  * APC (Alternative PHP Cache)
  * 	$cakeCache = array('APC');
  *
+ * Xcache (PHP opcode cacher)
+ *  $cakeCache  = array('Xcache', array(
+ *      'user' => 'admin', // user from xcache.admin.user settings
+ *      'password' => 'your_password', // plaintext password (xcache.admin.pass)
+ *  ));
+ *
  * Memcache
  * 	$cakeCache = array('Memcache', [optional]array(
  * 		'servers' => array(
