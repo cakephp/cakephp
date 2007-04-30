@@ -103,7 +103,7 @@ class FormHelper extends AppHelper {
 			$object =& ClassRegistry::getObject($model);
 		}
 
-		$models =& ClassRegistry::keys();
+		$models = ClassRegistry::keys();
 		foreach($models as $currentModel) {
 			if (ClassRegistry::isKeySet($currentModel)) {
 				$currentObject =& ClassRegistry::getObject($currentModel);
