@@ -403,13 +403,24 @@ class CakeTestCase extends UnitTestCase {
  *
  */
 	function _initDb() {
-		// Try for test DB
-		restore_error_handler();
-		@$db =& ConnectionManager::getDataSource('test');
-		set_error_handler('simpleTestErrorHandler');
+		$testDbAvailable = false;
+
+		if (class_exists('DATABASE_CONFIG')) {
+			$dbConfig =& new DATABASE_CONFIG();
+			$testDbAvailable = isset($dbConfig->test);
+		}
+
+		if ($testDbAvailable) {
+			// Try for test DB
+			restore_error_handler();
+			@$db =& ConnectionManager::getDataSource('test');
+			set_error_handler('simpleTestErrorHandler');
+
+			$testDbAvailable = $db->isConnected();
+		}
 
 		// Try for default DB
-		if (!$db->isConnected()) {
+		if (!$testDbAvailable) {
 			$db =& ConnectionManager::getDataSource('default');
 		}
 
