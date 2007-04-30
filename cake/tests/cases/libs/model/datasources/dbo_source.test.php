@@ -1475,6 +1475,10 @@ class DboSourceTest extends UnitTestCase {
 	}
 
 	function testFieldParsing() {
+		$result = $this->db->fields($this->model, 'Vendor', "`Vendor`.`id`, COUNT(`Model`.`vendor_id`) as `Vendor`.`count`");
+		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) as `Vendor`.`count`');
+		$this->assertEqual($result, $expected);
+
 		$result = $this->db->fields($this->model, 'Post', "CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name, Node.created");
 		$expected = array("CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", "`Node`.`created`");
 		$this->assertEqual($result, $expected);
