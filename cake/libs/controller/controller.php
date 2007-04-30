@@ -379,6 +379,7 @@ class Controller extends Object {
 
 		if ($this->uses) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+			$this->modelClass = $uses[0];
 
 			foreach($uses as $modelClass) {
 				$id = false;
