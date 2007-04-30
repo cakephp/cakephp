@@ -45,9 +45,6 @@ if (!defined('PHP5')) {
 	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();
-	Configure::store(null, 'class.paths');
-	Configure::load('class.paths');
-	Configure::write('debug', DEBUG);
 
 	if(isset($cakeCache)) {
 		$cache = 'File';
@@ -63,6 +60,9 @@ if (!defined('PHP5')) {
 	} else {
 		Cache::engine();
 	}
+	Configure::store(null, 'class.paths');
+	Configure::load('class.paths');
+	Configure::write('debug', DEBUG);
 /**
  * Check for IIS Server
  */

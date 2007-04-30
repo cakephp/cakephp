@@ -159,10 +159,9 @@ class Cache extends Object {
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
-	function &read($key) {
+	function read($key) {
 		if(defined('DISABLE_CACHE')) {
-			$val = false;
-			return $val;
+			return false;
 		}
 		$key = strval($key);
 
@@ -175,7 +174,7 @@ class Cache extends Object {
 		if(!isset($_this->_Engine)) {
 			return false;
 		}
-		return $val;
+		return $_this->_Engine->read($key);
 	}
 /**
  * Delete a value from the cache
