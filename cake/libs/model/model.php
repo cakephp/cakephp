@@ -1690,41 +1690,49 @@ class Model extends Overloadable {
 
 		$Validation = new Validation();
 
-		foreach($this->validate as $fieldName => $validator) {
-			if (!is_array($validator) && isset($data[$fieldName])) {
-				$validator = array('rule' => $validator);
+		foreach($this->validate as $fieldName => $ruleSet) {
+			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
+				$ruleSet = array($ruleSet);
 			}
 
-			$validator = am(array(
-				'allowEmpty' => true,
-				'message' => 'This field cannot be left blank',
-				'rule' => 'blank',
-				'on' => null
-			), $validator);
+			foreach ($ruleSet as $validator) {
+				if (!is_array($validator)) {
+					$validator = array('rule' => $validator);
+				}
 
-			if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
-				if (empty($data[$fieldName]) && $validator['allowEmpty'] == false) {
-					$this->invalidate($fieldName, $validator['message']);
-				} elseif (isset($data[$fieldName])) {
-					if (is_array($validator['rule'])) {
-						$rule = $validator['rule'][0];
-						unset($validator['rule'][0]);
-						$ruleParams = am(array($data[$fieldName]), array_values($validator['rule']));
-					} else {
-						$rule = $validator['rule'];
-						$ruleParams = array($data[$fieldName]);
-					}
+				$validator = am(array(
+					'allowEmpty' => true,
+					'required' => false,
+					'message' => 'This field cannot be left blank',
+					'rule' => 'blank',
+					'last' => false,
+					'on' => null
+				), $validator);
 
-					$valid = true;
-					if (method_exists($this, $rule)) {
-						$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
-					} elseif (method_exists($Validation, $rule)) {
-						$valid = call_user_func_array(array(&$Validation, $rule), $ruleParams);
-					} elseif (!is_array($validator['rule'])) {
-						$valid = preg_match($rule, $data[$fieldName]);
-					}
-					if (!$valid) {
+				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
+					if ((!isset($data[$fieldName]) && $validator['required'] == true) || (isset($data[$fieldName]) && empty($data[$fieldName]) && $validator['allowEmpty'] == false)) {
 						$this->invalidate($fieldName, $validator['message']);
+					} elseif (isset($data[$fieldName])) {
+						if (is_array($validator['rule'])) {
+							$rule = $validator['rule'][0];
+							unset($validator['rule'][0]);
+							$ruleParams = am(array($data[$fieldName]), array_values($validator['rule']));
+						} else {
+							$rule = $validator['rule'];
+							$ruleParams = array($data[$fieldName]);
+						}
+
+						$valid = true;
+						if (method_exists($this, $rule)) {
+							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
+						} elseif (method_exists($Validation, $rule)) {
+							$valid = call_user_func_array(array(&$Validation, $rule), $ruleParams);
+						} elseif (!is_array($validator['rule'])) {
+							$valid = preg_match($rule, $data[$fieldName]);
+						}
+						if (!$valid) {
+							$this->invalidate($fieldName, $validator['message']);
+						}
 					}
 				}
 			}
@@ -1738,9 +1746,12 @@ class Model extends Overloadable {
  * @param mixed $value
  * @return void
  */
-	function invalidate($field, $value = 1) {
+	function invalidate($field, $value = null) {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
+		}
+		if (empty($value)) {
+			$value = true;
 		}
 		$this->validationErrors[$field] = $value;
 	}
