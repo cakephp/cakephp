@@ -557,6 +557,7 @@ class Router extends Object {
 				}
 				$output .= strtolower($params['controller']) . '/' . $url;
 			}
+			$output = str_replace('//', '/', $output);
 		}
 		if ($full) {
 			$output = FULL_BASE_URL . $output;
