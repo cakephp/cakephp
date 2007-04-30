@@ -84,7 +84,7 @@
 		var $hasAndBelongsToMany = array('Tag');
 		var $validate = array(
 			'user_id' => VALID_NUMBER,
-			'title' => VALID_NOT_EMPTY,
+			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
 			'body' => VALID_NOT_EMPTY
 		);
 	}
@@ -1091,6 +1091,33 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '', true);
 		$this->assertFalse($result);
+	}
+
+	function testValidates() {
+		$this->model =& new Article();
+
+		$data = array('Article' => array('user_id' => '1', 'title' => '', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+		$this->assertTrue(!empty($this->model->validationErrors));
+
+		$data = array('Article' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
+		$result = $this->model->create($data) && $this->model->validates();
+		$this->assertTrue($result);
+
+		$data = array('Article' => array('user_id' => '1', 'title' => '0', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
+		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
 	}
 
 	function testSave() {
