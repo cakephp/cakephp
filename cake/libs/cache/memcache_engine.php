@@ -107,5 +107,14 @@ class MemcacheEngine extends CacheEngine {
 	function clear() {
 		return $this->__Memcache->flush();
 	}
+/**
+ * Return the settings for this cache engine
+ *
+ * @return array list of settings for this engine
+ */
+	function settings() {
+		return array('class' => get_class($this),
+						'compress' => $this->_compress);
+	}
 }
 ?>

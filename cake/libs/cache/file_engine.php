@@ -237,6 +237,21 @@ class FileEngine extends CacheEngine {
 		return true;
 	}
 /**
+ * Return the settings for this cache engine
+ *
+ * @return array list of settings for this engine
+ */
+	function settings() {
+		$lock = 'false';
+		if($this->_lock) {
+			$lock = 'true';
+		}
+		return array('class' => get_class($this),
+						'directory' => $this->_dir,
+						'prefix' => $this->_prefix,
+						'lock' => $lock);
+	}
+/**
  * Get a filename-safe version of a string
  *
  * @param string $str String to encode

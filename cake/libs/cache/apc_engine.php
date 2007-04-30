@@ -80,5 +80,13 @@ class APCEngine extends CacheEngine {
 	function clear() {
 		return apc_clear_cache('user');
 	}
+/**
+ * Return the settings for this cache engine
+ *
+ * @return array list of settings for this engine
+ */
+	function settings() {
+		return array('class' => get_class($this));
+	}
 }
 ?>

@@ -117,5 +117,20 @@ class ModelEngine extends CacheEngine {
 	function clear() {
 		return $this->_Model->deleteAll(null);
 	}
+/**
+ * Return the settings for this cache engine
+ *
+ * @return array list of settings for this engine
+ */
+	function settings() {
+		$class = null;
+		if(is_a($this->_Model, 'Model')) {
+			$class = get_class($this->_Model);
+		}
+		return array('class' => get_class($this),
+						'modelName' => $class,
+						'dataField' => $this->_dataField,
+						'expiryField' => $this->_expiryField);
+	}
 }
 ?>

@@ -79,7 +79,7 @@ class Cache extends Object {
 		if (class_exists($name.'Engine')) {
 			return true;
 		}
-		$fileName = strtolower($name).'_engine';
+		$fileName = strtolower($name);
 
 		if(vendor('cache_engines/'.$fileName)) {
 			return true;
@@ -99,12 +99,12 @@ class Cache extends Object {
  * @param array $parmas Optional associative array of parameters passed to the engine
  * @return boolean True on success, false on failure
  */
-	function engine($name, &$params = array()) {
+	function engine($name = 'File', &$params = array()) {
 		if(defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
-		$cacheClass= $name.'Engine';
+		$cacheClass = $name.'Engine';
 
 		if (!Cache::_includeEngine($name) || !class_exists($cacheClass)) {
 			return false;
@@ -117,7 +117,7 @@ class Cache extends Object {
 			}
 			return true;
 		}
-		$this->_Engine = null;
+		$_this->_Engine = null;
 		return false;
 	}
 /**
@@ -227,6 +227,13 @@ class Cache extends Object {
 		$_this =& Cache::getInstance();
 		return isset($_this->_Engine);
 	}
+
+	function settings() {
+		$_this =& Cache::getInstance();
+		if(!is_null($_this->_Engine)) {
+			return $_this->_Engine->settings();
+		}
+	}
 }
 /**
  * Storage engine for CakePHP caching
@@ -261,7 +268,7 @@ class CacheEngine extends Object {
  * @return boolean True if the data was succesfully cached, false on failure
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
-		trigger_error(sprintf(__('Method set() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method write() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
  * Read a value from the cache
@@ -270,7 +277,7 @@ class CacheEngine extends Object {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	function read($key) {
-		trigger_error(sprintf(__('Method get() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
  * Delete a value from the cache
@@ -286,6 +293,14 @@ class CacheEngine extends Object {
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
 	function clear() {
+	}
+/**
+ * Delete all values from the cache
+ *
+ * @return boolean True if the cache was succesfully cleared, false otherwise
+ */
+	function settings() {
+		trigger_error(sprintf(__('Method settings() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 }
 ?>

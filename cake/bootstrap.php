@@ -39,6 +39,7 @@ if (!defined('PHP5')) {
 	}
 	$TIME_START = getMicrotime();
 	require LIBS . 'object.php';
+	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'inflector.php';
@@ -47,6 +48,21 @@ if (!defined('PHP5')) {
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');
 	Configure::write('debug', DEBUG);
+
+	if(isset($cakeCache)) {
+		$cache = 'File';
+		$settings = array();
+
+		if(isset($cakeCache[0])) {
+			$cache = $cakeCache[0];
+		}
+		if(isset($cakeCache[1])) {
+			$settings = $cakeCache[1];
+		}
+		Cache::engine($cache, $settings);
+	} else {
+		Cache::engine();
+	}
 /**
  * Check for IIS Server
  */

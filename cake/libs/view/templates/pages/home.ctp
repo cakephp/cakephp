@@ -27,9 +27,9 @@
 <?php Debugger::checkSessionKey(); ?>
 <p>
 	<span class="notice">
-		<?php 
-			__('Your /app/tmp directory is ');
-			if(is_writable(TMP)): 
+		<?php
+			__('Your tmp directory is ');
+			if(is_writable(TMP)):
 				__('writable.');
 			else:
 				__('NOT writable.');
@@ -39,37 +39,59 @@
 </p>
 <p>
 	<span class="notice">
-		<?php 
+		<?php
+			__('Your cache is ');
+			if (Cache::isInitialized()) {
+				__('set up and initialized properly.');
+				$settings = Cache::settings();
+				echo '<br />' . $settings['class'];
+				__(' is being used to cache, to change this edit config/core.php ');
+				echo '<br /> Settings: <ul>';
+				foreach ($settings as $name => $value): ?>
+				<li><?php echo $name . ': ' . $value;?> </li>
+		<?php
+		endforeach;
+			} else {
+				__('NOT working.');
+				echo '<br />';
+				__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
+			}
+		?>
+	</span>
+</p>
+<p>
+	<span class="notice">
+		<?php
 			__('Your database configuration file is ');
 			$filePresent = null;
-			if(file_exists(CONFIGS.'database.php')): 
+			if(file_exists(CONFIGS.'database.php')):
 				__('present.');
 				$filePresent = true;
 			else:
 				__('NOT present.');
 				echo '<br/>';
-				__('Rename /app/config/database.php.default to /app/config/database.php');
+				__('Rename config/database.php.default to config/database.php');
 			endif;
 		?>
 	</span>
 </p>
-<?php 
+<?php
 if (!empty($filePresent)):
- 	uses('model' . DS . 'connection_manager'); 
+ 	uses('model' . DS . 'connection_manager');
 	$db = ConnectionManager::getInstance();
  	$connected = $db->getDataSource('default');
 ?>
 <p>
 	<span class="notice">
-		<?php 
+		<?php
 			__('Cake');
 			if($connected->isConnected()):
 		 		__(' is able to ');
-			else: 
+			else:
 				__(' is NOT able to ');
 			endif;
 			__('connect to the database.');
-		?> 
+		?>
 	</span>
 </p>
 <?php endif; ?>
