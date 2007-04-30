@@ -43,6 +43,9 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the engine has been succesfully initialized, false if not
  */
 	function init(&$params) {
+		if(!class_exists('Memcache')) {
+			return false;
+		}
 		$servers = array('127.0.0.1');
 		$compress = false;
 		extract($params);
