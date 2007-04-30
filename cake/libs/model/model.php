@@ -1710,7 +1710,7 @@ class Model extends Overloadable {
 				), $validator);
 
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
-					if ((!isset($data[$fieldName]) && $validator['required'] == true) || (isset($data[$fieldName]) && empty($data[$fieldName]) && $validator['allowEmpty'] == false)) {
+					if ((!isset($data[$fieldName]) && $validator['required'] == true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] == false)) {
 						$this->invalidate($fieldName, $validator['message']);
 					} elseif (isset($data[$fieldName])) {
 						if (is_array($validator['rule'])) {
