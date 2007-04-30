@@ -99,7 +99,7 @@ class Cache extends Object {
  * @param array $parmas Optional associative array of parameters passed to the engine
  * @return boolean True on success, false on failure
  */
-	function engine($name = 'File', &$params = array()) {
+	function engine($name = 'File', $params = array()) {
 		if(defined('DISABLE_CACHE')) {
 			return false;
 		}

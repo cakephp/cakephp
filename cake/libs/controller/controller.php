@@ -608,7 +608,7 @@ class Controller extends Object {
 					$this->__viewClass->validationErrors[Inflector::camelize($currentModel)] =& $this->$currentModel->validationErrors;
 				}
 			}
-			$models =& array_diff(ClassRegistry::keys(), $models);
+			$models = array_diff(ClassRegistry::keys(), $models);
 			foreach($models as $currentModel) {
 				if (ClassRegistry::isKeySet($currentModel)) {
 					$currentObject =& ClassRegistry::getObject($currentModel);
