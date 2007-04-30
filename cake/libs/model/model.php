@@ -1221,6 +1221,7 @@ class Model extends Overloadable {
 		if (!empty($id)) {
 			$this->id = $id;
 		}
+		$id = $this->id;
 
 		if ($this->exists() && $this->beforeDelete()) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1234,8 +1235,8 @@ class Model extends Overloadable {
 					}
 				}
 			}
-			$this->_deleteDependent($this->id, $cascade);
-			$this->_deleteLinks($this->id);
+			$this->_deleteDependent($id, $cascade);
+			$this->_deleteLinks($id);
 
 			if ($db->delete($this)) {
 				if (!empty($this->behaviors)) {
