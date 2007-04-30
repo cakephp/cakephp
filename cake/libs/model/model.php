@@ -1695,7 +1695,7 @@ class Model extends Overloadable {
 				$ruleSet = array($ruleSet);
 			}
 
-			foreach ($ruleSet as $validator) {
+			foreach ($ruleSet as $index => $validator) {
 				if (!is_array($validator)) {
 					$validator = array('rule' => $validator);
 				}
@@ -1703,15 +1703,20 @@ class Model extends Overloadable {
 				$validator = am(array(
 					'allowEmpty' => true,
 					'required' => false,
-					'message' => 'This field cannot be left blank',
 					'rule' => 'blank',
 					'last' => false,
 					'on' => null
 				), $validator);
 
+				if (isset($validator['message'])) {
+					$message = $validator['message'];
+				} else {
+					$message = 'This field cannot be left blank';
+				}
+
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
 					if ((!isset($data[$fieldName]) && $validator['required'] == true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] == false)) {
-						$this->invalidate($fieldName, $validator['message']);
+						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
 						if (is_array($validator['rule'])) {
 							$rule = $validator['rule'][0];
@@ -1731,6 +1736,10 @@ class Model extends Overloadable {
 							$valid = preg_match($rule, $data[$fieldName]);
 						}
 						if (!$valid) {
+							if (!isset($validator['message'])) {
+								$validator['message'] = ife(is_string($index) || (is_numeric($index) && $index > 0), $index, $message);
+							}
+
 							$this->invalidate($fieldName, $validator['message']);
 						}
 					}

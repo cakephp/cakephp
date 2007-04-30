@@ -271,6 +271,12 @@ class FormHelper extends AppHelper {
 		$options = am(array('wrap' => true, 'class' => 'error-message', 'escape' => true), $options);
 
 		if ($error = $this->tagIsInvalid()) {
+			if (is_array($text) && isset($text[$error])) {
+				$text = $text[$error];
+			} else if (is_array($text)) {
+				$text = null;
+			}
+
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
