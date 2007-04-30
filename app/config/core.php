@@ -30,11 +30,11 @@
  * To configure CakePHP *not* to use mod_rewrite and to
  * use CakePHP pretty URLs, remove these .htaccess
  * files:
- * 
+ *
  * /.htaccess
  * /app/.htaccess
  * /app/webroot/.htaccess
- * 
+ *
  * And uncomment the define below:
  */
 
@@ -42,10 +42,10 @@
 
 /**
  * CakePHP Debug Level:
- * 
+ *
  * Production Mode:
  * 	0: No error messages, errors, or warnings shown. Flash messages redirect.
- * 
+ *
  * Development Mode:
  * 	1: Errors and warnings shown, model caches refreshed, flash messages halted.
  * 	2: As in 1, but also with full debug messages and SQL output.
@@ -57,37 +57,37 @@
 	define('DEBUG', 2);
 /**
  * Turn off or enable cache checking application-wide.
- * 
- * If set to true, you must still use the controller var $cacheAction inside 
- * your controllers to define caching settings. You can either set it 
- * controller-wide by setting var $cacheAction = true, or in each action 
+ *
+ * If set to true, you must still use the controller var $cacheAction inside
+ * your controllers to define caching settings. You can either set it
+ * controller-wide by setting var $cacheAction = true, or in each action
  * using $this->cacheAction = true.
  */
 	define('CACHE_CHECK', false);
 /**
- * Defines the default error type when using the log() function. Used for 
+ * Defines the default error type when using the log() function. Used for
  * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
  */
 	define('LOG_ERROR', 2);
 /**
  * The preferred session handling method. Valid values:
- * 
+ *
  * 'php'	 		Uses settings defined in your php.ini.
  * 'cake'		Saves session files in CakePHP's /tmp directory.
  * 'database'	Uses CakePHP's database sessions.
- * 
+ *
  * To define a custom session handler, save it at /app/config/<name>.php.
  * Set the value of CAKE_SESSION_SAVE to <name> to utilize it in CakePHP.
- * 
+ *
  * To use database sessions, execute the SQL file found at /app/config/sql/sessions.sql.
  *
  */
 	define('CAKE_SESSION_SAVE', 'php');
 /**
  * The name of the table used to store CakePHP database sessions.
- * 
+ *
  * CAKE_SESSION_SAVE must be set to 'database' in order to utilize this constant.
- * 
+ *
  * The table name set here should *not* include any table prefix defined elsewhere.
  */
 	define('CAKE_SESSION_TABLE', 'cake_sessions');
@@ -103,12 +103,12 @@
  * The level of CakePHP session security. The session timeout time defined
  * in CAKE_SESSION_TIMEOUT is multiplied according to the settings here.
  * Valid values:
- * 
+ *
  * 'high'	Session timeout in CAKE_SESSION_TIMEOUT x 10
  * 'medium'	Session timeout in CAKE_SESSION_TIMEOUT x 100
  * 'low'		Session timeout in CAKE_SESSION_TIMEOUT x 300
- * 
- * CakePHP session IDs are also regenerated between requests if 
+ *
+ * CakePHP session IDs are also regenerated between requests if
  * CAKE_SECURITY is set to 'high'.
  */
 	define('CAKE_SECURITY', 'high');
@@ -119,10 +119,10 @@
 	define('CAKE_SESSION_TIMEOUT', '120');
 /**
  * Uncomment the define below to use CakePHP admin routes.
- * 
+ *
  * The value of the define determines the name of the route
  * and its associated controller actions:
- * 
+ *
  * 'admin' 		-> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
  */
@@ -134,7 +134,7 @@
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
- * 
+ *
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
  */
 	define('COMPRESS_CSS', false);
@@ -147,10 +147,50 @@
  */
 	define('MAX_MD5SIZE', (5 * 1024) * 1024);
 /**
- * The classname, filename, (and database) used in CakePHP's 
+ * The classname, filename, (and database) used in CakePHP's
  * access control lists.
  */
 	define('ACL_CLASSNAME', 'DB_ACL');
 	define('ACL_FILENAME', 'dbacl' . DS . 'db_acl');
 	define('ACL_DATABASE', 'default');
+/**
+ * Use the file storage engine with default parameters.
+ * Cached data is kept in app/tmp/cache/
+ *
+ * File storage
+ * 	Cache::engine('File', array(
+ * 		'dir' => '/tmp/', // use system tmp directory - remember to use absolute path
+ * 		'prefix' => 'cakecache_', // prefix every cache file with this string
+ * 		'lock' => true, // use file locking
+ * 		));
+ *
+ * APC (Alternative PHP Cache)
+ * 	Cache::engine('APC');
+ *
+ * Memcache
+ * 	Cache::engine('Memcache', array(
+ * 		'servers' => array(
+ * 				'127.0.0.1', // localhost, default port
+ * 				'10.0.0.1:12345', // port 12345
+ * 				),
+ * 				'compress' => true, // compress data in Memcache (slower, but uses less memory)
+ * 				));
+ *
+ * Cake Model
+ * 	Cache::engine('Model', array(
+ * 		'modelName' => 'DbModel',
+ * 		'dataField' => 'value',
+ * 		'expiryField' => 'expires'));
+ */
+	Cache::engine('File');
+/**
+ * How long to cache data if not defined
+ * 3600 = 1 hour
+ */
+	define('CACHE_DEFAULT_DURATION', 3600);
+/**
+ * How often to do garbage collection
+ * about once in every hundred page loads
+ */
+	define('CACHE_GC_PROBABILITY', 100);
 ?>
