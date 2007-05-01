@@ -19,7 +19,7 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs.controller.componenets.iniacl
+ * @subpackage		cake.cake.libs.model.iniacl
  * @since			CakePHP(tm) v 0.2.9
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -30,7 +30,7 @@
  * In this file you can extend the AclBase.
  *
  * @package		cake
- * @subpackage	cake.cake.libs.controller.componenets.iniacl
+ * @subpackage	cake.cake.libs.model.iniacl
  */
 class INI_ACL extends AclBase{
 /**
