@@ -312,8 +312,12 @@ class EmailComponent extends Object{
  */
 	function __createHeader(){
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
-		$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
-		$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
+		if (!empty($this->replyTo)) {
+			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
+		}
+		if (!empty($this->return)) {
+			$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
+		}
 
 		$addresses = null;
 		if(!empty($this->cc)) {
@@ -321,7 +325,6 @@ class EmailComponent extends Object{
 				$addresses .= $this->__formatAddress($cc) . ', ';
 			}
 			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
-			//$this->to .= ', ' . $addresses;
 		}
 		$addresses = null;
 		if(!empty($this->bcc)) {
@@ -329,7 +332,6 @@ class EmailComponent extends Object{
 				$addresses .= $this->__formatAddress($bcc) . ', ';
 			}
 			$this->__header .= 'Bcc: ' . $addresses . $this->_newLine;
-			//$this->to .= ', ' . $addresses;
 		}
 
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
