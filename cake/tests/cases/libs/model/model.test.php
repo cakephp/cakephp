@@ -259,7 +259,7 @@ class ModelTest extends CakeTestCase {
 		Configure::write('debug', DEBUG);
 	}
 
-	function _testFindAllRecursiveSelfJoin() {
+	function testFindAllRecursiveSelfJoin() {
 		$this->model =& new Home();
 
 		$this->model->recursive = 2;
@@ -318,14 +318,14 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testIdentity() {
+	function testIdentity() {
 		$this->model =& new Test();
 		$result = $this->model->name;
 		$expected = 'Test';
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testCreation() {
+	function testCreation() {
 		$this->model =& new Test();
 		$result = $this->model->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
@@ -348,7 +348,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testReadFakeThread() {
+	function testReadFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -365,7 +365,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindFakeThread() {
+	function testFindFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -382,7 +382,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindAllFakeThread() {
+	function testFindAllFakeThread() {
 		$this->model =& new CategoryThread();
 
 		$this->db->fullDebug = true;
@@ -437,7 +437,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindAll() {
+	function testFindAll() {
 		$this->model =& new User();
 
 		$result = $this->model->findAll();
@@ -531,7 +531,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindField() {
+	function testFindField() {
 		$this->model =& new User();
 
 		$this->model->id = 1;
@@ -552,7 +552,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 4);
 	}
 
-	function _testBindUnbind() {
+	function testBindUnbind() {
 		$this->model =& new User();
 
 		$result = $this->model->hasMany;
@@ -680,7 +680,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindCount() {
+	function testFindCount() {
 		$this->model =& new User();
 		$result = $this->model->findCount();
 		$this->assertEqual($result, 4);
@@ -697,7 +697,7 @@ class ModelTest extends CakeTestCase {
 		$this->db->fullDebug = false;
 	}
 
-	function _testFindMagic() {
+	function testFindMagic() {
 		$this->model =& new User();
 
 		$result = $this->model->findByUser('mariano');
@@ -713,7 +713,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testRead() {
+	function testRead() {
 		$this->model =& new User();
 
 		$result = $this->model->read();
@@ -752,7 +752,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testRecursiveRead() {
+	function testRecursiveRead() {
 		$this->model =& new User();
 
 		$result = $this->model->bindModel(array('hasMany' => array('Article')), false);
@@ -800,7 +800,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testRecursiveFindAll() {
+	function testRecursiveFindAll() {
 		$this->model =& new Article();
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
@@ -985,7 +985,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-function _testRecursiveFindAllWithLimit() {
+function testRecursiveFindAllWithLimit() {
 		$this->model =& new Article();
 
 		$this->model->hasMany['Comment']['limit'] = 2;
@@ -1055,7 +1055,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testSaveField() {
+	function testSaveField() {
 		$this->model =& new Article();
 
 		$this->model->id = 1;
@@ -1142,7 +1142,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertFalse($result);
 	}
 
-	function _testSave() {
+	function testSave() {
 		$this->model =& new User();
 
 		$data = array('User' => array('user' => 'user', 'password' => ''));
@@ -1254,7 +1254,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testRecursiveDel() {
+	function testRecursiveDel() {
 		$this->model =& new Article();
 
 		$result = $this->model->del(2);
@@ -1283,7 +1283,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, 0);
 	}
 
-	function _testFindAllThreaded() {
+	function testFindAllThreaded() {
 		$this->model =& new Category();
 
 		$result = $this->model->findAllThreaded();
@@ -1367,7 +1367,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindNeighbours() {
+	function testFindNeighbours() {
 		$this->model =& new Article();
 
 		$result = $this->model->findNeighbours(null, 'Article.id', '2');
@@ -1391,7 +1391,7 @@ function _testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function _testFindCombinedRelations() {
+	function testFindCombinedRelations() {
 		$this->model =& new Apple();
 
 		$result = $this->model->findAll();
