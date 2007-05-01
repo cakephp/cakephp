@@ -93,12 +93,12 @@
 		}
 	}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.view.helpers
-	 */
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.view.helpers
+ */
 	class OpenidUrl extends Model {
 		var $useTable = false;
 		var $primaryKey = 'id';
@@ -635,12 +635,23 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form[^<>]+action="\/contacts\/edit\/1"[^<>]*>/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
 
+		$this->Form->params['_Token']['key'] = 'blah';
+		$result = $this->Form->create('Contact');
+		$this->assertPattern('/<input[^<>]+type="hidden"[^<>]+>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[_Token\]\[key\]"[^<>]*>/', $result);
+
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
 	}
 
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
+		$result = $this->Form->end(true);
+		$this->assertPattern('/^<div\s+class="submit"><input\s+type="submit"\s+value="Submit"\s+\/><\/div><\/form>$/', $result);
+		$result = $this->Form->end('Send');
+		$this->assertPattern('/^<div\s+class="submit"><input\s+type="submit"\s+value="Send"\s+\/><\/div><\/form>$/', $result);
+		$result = $this->Form->end(array('submit' => 'Super'));
+		$this->assertPattern('/^<div\s+class="submit"><input\s+type="submit"\s+value="Super"\s+\/><\/div><\/form>$/', $result);
 	}
 
 	function tearDown() {
