@@ -204,7 +204,7 @@ class SecurityComponent extends Object {
 		// Check requireAuth
 		if(is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
 			if(in_array($controller->action, $this->requireAuth) || $this->requireAuth == array('*')) {
-				if(!isset($controller->data['_Token'])) {
+				if(!isset($controller->data['__Token'])) {
 					if(!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
