@@ -1702,8 +1702,8 @@ class Model extends Overloadable {
 				}
 
 				$validator = am(array(
-					'allowEmpty' => true,
-					'required' => false,
+					'allowEmpty' => null,
+					'required' => null,
 					'rule' => 'blank',
 					'last' => false,
 					'on' => null
@@ -1716,9 +1716,12 @@ class Model extends Overloadable {
 				}
 
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
-					if ((!isset($data[$fieldName]) && $validator['required'] == true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] == false)) {
+					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
+						if(empty($data[$fieldName]) && $validator['allowEmpty'] === true) {
+							break;
+						}
 						if (is_array($validator['rule'])) {
 							$rule = $validator['rule'][0];
 							unset($validator['rule'][0]);
