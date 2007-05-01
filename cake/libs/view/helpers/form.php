@@ -213,10 +213,6 @@ class FormHelper extends AppHelper {
  * @return string A closing FORM tag.
  */
 	function end($options = null) {
-		$out = null;
-		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$out = $this->secure($this->fields);
-		}
 		if (!empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
@@ -243,6 +239,7 @@ class FormHelper extends AppHelper {
 		if(!is_array($submitOptions)) {
 			$submitOptions = array();
 		}
+		$out = null;
 
 		if(isset($submit)) {
 			$out .= $this->submit($submit, $submitOptions);
@@ -669,7 +666,10 @@ class FormHelper extends AppHelper {
  */
 	function submit($caption = 'Submit', $options = array()) {
 		$options['value'] = $caption;
-
+		$secured = null;
+		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$secured = $this->secure($this->fields);
+		}
 		$div = true;
 		if (isset($options['div'])) {
 			$div = $options['div'];
@@ -687,9 +687,9 @@ class FormHelper extends AppHelper {
 			$divOptions = am(array('class' => 'submit'), $div);
 		}
 
-		$out =  $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+		$out =  $secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 		if (isset($divOptions)) {
-			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
+			$out = $secured . $this->Html->div($divOptions['class'], $out, $divOptions);
 		}
 
 		return $out;
