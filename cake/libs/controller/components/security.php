@@ -136,85 +136,103 @@ class SecurityComponent extends Object {
  */
 	function startup(&$controller) {
 		// Check requirePost
-		if (is_array($this->requirePost) && !empty($this->requirePost)) {
-
-			if (in_array($controller->action, $this->requirePost) || $this->requirePost == array('*')) {
-
-				if (!$this->RequestHandler->isPost()) {
-
-					if (!$this->blackHole($controller, 'post')) {
+		if(is_array($this->requirePost) && !empty($this->requirePost)) {
+			if(in_array($controller->action, $this->requirePost) || $this->requirePost == array('*')) {
+				if(!$this->RequestHandler->isPost()) {
+					if(!$this->blackHole($controller, 'post')) {
 						return null;
 					}
 				}
 			}
 		}
 		// Check requireSecure
-		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
-
-			if (in_array($controller->action, $this->requireSecure) || $this->requireSecure == array('*')) {
-
-				if (!$this->RequestHandler->isSSL()) {
-
-					if (!$this->blackHole($controller, 'secure')) {
+		if(is_array($this->requireSecure) && !empty($this->requireSecure)) {
+			if(in_array($controller->action, $this->requireSecure) || $this->requireSecure == array('*')) {
+				if(!$this->RequestHandler->isSSL()) {
+					if(!$this->blackHole($controller, 'secure')) {
 						return null;
 					}
 				}
 			}
 		}
-		// Check requireAuth
-		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->params['form'])) {
 
-			if (in_array($controller->action, $this->requireAuth) || $this->requireAuth == array('*')) {
+		if(!empty($controller->data) && isset($controller->data['_Token'])) {
+			$token = $controller->data['_Token']['key'];
+			if($this->Session->check('_Token')) {
+				$tData = unserialize($this->Session->read('_Token'));
 
-				if (!isset($controller->params['data']['_Token'])) {
-
-					if (!$this->blackHole($controller, 'auth')) {
+				if($tData['expires'] < time() || $tData['key'] !== $token) {
+					if(!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
 				}
-				$token = $controller->params['data']['_Token']['key'];
 
-				if ($this->Session->check('_Token')) {
-					$tData = unserialize($this->Session->read('_Token'));
+				if(isset($controller->data['_Token']['fields']) && !empty($controller->data['_Token']['fields'])) {
+					$fields = $controller->data['_Token']['fields'];
+					$check = $controller->data;
+					unset($check['_Token']['fields']);
 
-					if ($tData['expires'] < time() || $tData['key'] !== $token) {
+					foreach($check as $key => $value) {
+						$field[$key]= array_keys($value);
+					}
+					$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
 
-						if (!$this->blackHole($controller, 'auth')) {
+					if($fields !== $check) {
+						if(!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
 					}
-					if (!empty($tData['allowedControllers']) && !in_array($controller->params['controller'], $tData['allowedControllers']) ||!empty($tData['allowedActions']) && !in_array($controller->params['action'], $tData['allowedActions'])) {
+				}
+			} else {
+				if(!$this->blackHole($controller, 'auth')) {
+					return null;
+				}
+			}
+		}
+		// Check requireAuth
+		if(is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
+			if(in_array($controller->action, $this->requireAuth) || $this->requireAuth == array('*')) {
+				if(!isset($controller->data['_Token'])) {
+					if(!$this->blackHole($controller, 'auth')) {
+						return null;
+					}
+				}
+				$token = $controller->data['_Token']['key'];
 
-						if (!$this->blackHole($controller, 'auth')) {
+				if($this->Session->check('_Token')) {
+					$tData = unserialize($this->Session->read('_Token'));
+
+					if(!empty($tData['allowedControllers']) && !in_array($controller->params['controller'], $tData['allowedControllers']) ||!empty($tData['allowedActions']) && !in_array($controller->params['action'], $tData['allowedActions'])) {
+						if(!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
 					}
 				} else {
-					if (!$this->blackHole($controller, 'auth')) {
+					if(!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
 				}
 			}
 		}
 		// Check requireLogin
-		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-
-			if (in_array($controller->action, $this->requireLogin) || $this->requireLogin == array('*')) {
+		if(is_array($this->requireLogin) && !empty($this->requireLogin)) {
+			if(in_array($controller->action, $this->requireLogin) || $this->requireLogin == array('*')) {
 				$login = $this->loginCredentials($this->loginOptions['type']);
 
-				if ($login == null) {
+				if($login == null) {
 					// User hasn't been authenticated yet
 					header($this->loginRequest());
-					if (isset($this->loginOptions['prompt'])) {
+
+					if(isset($this->loginOptions['prompt'])) {
 						$this->__callback($controller, $this->loginOptions['prompt']);
 					} else {
 						$this->blackHole($controller, 'login');
 					}
 				} else {
-					if (isset($this->loginOptions['login'])) {
+					if(isset($this->loginOptions['login'])) {
 						$this->__callback($controller, $this->loginOptions['login'], array($login));
 					} else {
-						if (low($this->loginOptions['type']) == 'digest') {
+						if(low($this->loginOptions['type']) == 'digest') {
 							// Do digest authentication
 						} else {
 							if (!(in_array($login['username'], array_keys($this->loginUsers)) && $this->loginUsers[$login['username']] == $login['password'])) {
@@ -226,19 +244,17 @@ class SecurityComponent extends Object {
 			}
 		}
 
-		if (!isset($controller->params['requested']) || $controller->params['requested'] != 1) {
+		if(!isset($controller->params['requested']) || $controller->params['requested'] != 1) {
 			// Add auth key for new form posts
 			$authKey = Security::generateAuthKey();
 			$expires = strtotime('+'.Security::inactiveMins().' minutes');
-			$token = array(
-				'key' => $authKey,
-				'expires' => $expires,
-				'allowedControllers' => $this->allowedControllers,
-				'allowedActions' => $this->allowedActions
-			);
+			$token = array('key' => $authKey,
+								'expires' => $expires,
+								'allowedControllers' => $this->allowedControllers,
+								'allowedActions' => $this->allowedActions);
 
-			if (!isset($controller->params['data'])) {
-				$controller->params['data'] = array();
+			if(!isset($controller->data)) {
+				$controller->data = array();
 			}
 			$controller->params['_Token'] = $token;
 			$this->Session->write('_Token', serialize($token));
@@ -253,13 +269,12 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function blackHole(&$controller, $error = '') {
-		if ($this->blackHoleCallback == null) {
+		if($this->blackHoleCallback == null) {
 			$code = 404;
-			if ($error == 'login') {
+			if($error == 'login') {
 				$code = 401;
 			}
-			$controller->redirect(null, $code);
-			exit();
+			$controller->redirect(null, $code, true);
 		} else {
 			return $this->__callback($controller, $this->blackHoleCallback, array($error));
 		}
@@ -272,7 +287,7 @@ class SecurityComponent extends Object {
  */
 	function requirePost() {
 		$this->requirePost = func_get_args();
-		if (empty($this->requirePost)) {
+		if(empty($this->requirePost)) {
 			$this->requirePost = array('*');
 		}
 	}
@@ -284,7 +299,7 @@ class SecurityComponent extends Object {
  */
 	function requireSecure() {
 		$this->requireSecure = func_get_args();
-		if (empty($this->requireSecure)) {
+		if(empty($this->requireSecure)) {
 			$this->requireSecure = array('*');
 		}
 	}
@@ -296,7 +311,7 @@ class SecurityComponent extends Object {
  */
 	function requireAuth() {
 		$this->requireAuth = func_get_args();
-		if (empty($this->requireAuth)) {
+		if(empty($this->requireAuth)) {
 			$this->requireAuth = array('*');
 		}
 	}
@@ -309,16 +324,18 @@ class SecurityComponent extends Object {
 	function requireLogin() {
 		$args = func_get_args();
 		foreach ($args as $arg) {
-			if (is_array($arg)) {
+			if(is_array($arg)) {
 				$this->loginOptions = $arg;
 			} else {
 				$this->requireLogin[] = $arg;
 			}
 		}
-		if (empty($this->requireLogin)) {
+
+		if(empty($this->requireLogin)) {
 			$this->requireLogin = array('*');
 		}
-		if (isset($this->loginOptions['users'])) {
+
+		if(isset($this->loginOptions['users'])) {
 			$this->loginUsers =& $this->loginOptions['users'];
 		}
 	}
@@ -330,21 +347,20 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function loginCredentials($type = null) {
-
-		if (empty($type) || low($type) == 'basic') {
+		if(empty($type) || low($type) == 'basic') {
 			$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
-			if ($login['username'] != null) {
+
+			if($login['username'] != null) {
 				return $login;
 			}
 		}
 
-		if ($type == '' || low($type) == 'digest') {
-
+		if($type == '' || low($type) == 'digest') {
 			$digest = null;
-			if (version_compare(phpversion(), '5.1') != -1) {
-				$digest = env('PHP_AUTH_DIGEST');
 
-			} elseif (function_exists('apache_request_headers')) {
+			if(version_compare(phpversion(), '5.1') != -1) {
+				$digest = env('PHP_AUTH_DIGEST');
+			} elseif(function_exists('apache_request_headers')) {
 				$headers = apache_request_headers();
 				if (isset($headers['Authorization']) && !empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
 					$digest = substr($headers['Authorization'], 7);
@@ -355,12 +371,11 @@ class SecurityComponent extends Object {
 				return null;
 			}
 
-			if ($digest == null) {
+			if($digest == null) {
 				return null;
 			}
 			$data = $this->parseDigestAuthData($digest);
 		}
-
 		return null;
 	}
 /**
@@ -370,15 +385,11 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __setLoginDefaults(&$options) {
-		$options = am(
-			array(
-				'type' => 'basic',
-				'realm' => env('SERVER_NAME'),
-				'qop' => 'auth',
-				'nonce' => uniqid()
-			),
-			array_filter($options)
-		);
+		$options = am(array('type' => 'basic',
+							'realm' => env('SERVER_NAME'),
+							'qop' => 'auth',
+							'nonce' => uniqid()),
+							array_filter($options));
 		$options = am(array('opaque' => md5($options['realm'])), $options);
 	}
 /**
@@ -392,7 +403,6 @@ class SecurityComponent extends Object {
 		$options = am($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
 		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']) . ' realm="' . $options['realm'] . '"';
-
 		return $data;
 	}
 /**
@@ -403,20 +413,20 @@ class SecurityComponent extends Object {
  * @access public
  */
 	function parseDigestAuthData($digest) {
-		if (substr($digest, 0, 7) == 'Digest ') {
+		if(substr($digest, 0, 7) == 'Digest ') {
 			$digest = substr($digest, 7);
 		}
-
 		$keys = array();
 		$match = array();
 		$req = array('nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1);
 		preg_match_all('@(\w+)=([\'"]?)([a-zA-Z0-9=./\_-]+)\2@', $digest, $match, PREG_SET_ORDER);
 
-		foreach ($match as $i) {
+		foreach($match as $i) {
 			$keys[$i[1]] = $i[3];
 			unset($req[$i[1]]);
 		}
-		if (empty($req)) {
+
+		if(empty($req)) {
 			return $keys;
 		} else {
 			return null;
@@ -432,7 +442,7 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __callback(&$controller, $method, $params = array()) {
-		if (is_callable(array($controller, $method))) {
+		if(is_callable(array($controller, $method))) {
 			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 		} else {
 			// Debug::warning('Callback method ' . $method . ' in controller ' . get_class($controller)

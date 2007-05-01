@@ -66,10 +66,10 @@ class FormHelper extends AppHelper {
 	*/
 	var $fieldset = array('fields'=>array(), 'sizes'=>array(), 'key'=>'id', 'validates'=>array());
 
-	var $__options = array(
-		'day' => array(), 'minute' => array(), 'hour' => array(),
-		'month' => array(), 'year' => array(), 'meridian' => array()
-	);
+	var $__options = array('day' => array(), 'minute' => array(), 'hour' => array(),
+									'month' => array(), 'year' => array(), 'meridian' => array());
+
+	var $fields = array();
 
 /**
  * Returns an HTML FORM element.
@@ -214,6 +214,9 @@ class FormHelper extends AppHelper {
  */
 	function end($options = null) {
 		$out = null;
+		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$out = $this->secure($this->fields);
+		}
 		if (!empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
@@ -246,6 +249,12 @@ class FormHelper extends AppHelper {
 		}
 		$out .= $this->Html->tags['formend'];
 		return $this->output($out);
+	}
+	function secure($fields) {
+		$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
+		$append .= $this->hidden('_Token/fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
+		$append .= '</p>';
+		return $append;
 	}
 /**
  * Returns true if there is an error for the given field, otherwise false
@@ -377,7 +386,6 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function input($tagName, $options = array()) {
-
 		$this->setFormTag($tagName);
 		$options = am(
 			array(
@@ -551,6 +559,7 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
+		$this->fields[$this->model()][] = $this->field();
 		$options = $this->__initInputField($fieldName, am(array('type' => 'text'), $options));
 		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
@@ -562,6 +571,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function password($fieldName, $options = array()) {
+		$this->fields[$this->model()][] = $this->field();
 		$options = $this->__initInputField($fieldName, $options);
 		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
@@ -573,6 +583,7 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function textarea($fieldName, $options = array()) {
+		$this->fields[$this->model()][] = $this->field();
 		$options = $this->__initInputField($fieldName, $options);
 		unset($options['type']);
 		$value = null;
@@ -595,9 +606,11 @@ class FormHelper extends AppHelper {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 		unset($options['class']);
+
 		if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;
 		}
+		$this->fields[$model][] = $this->field();
 		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($options, null, ' ', ' ')));
 	}
 /**
@@ -609,6 +622,7 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function file($fieldName, $options = array()) {
+		$this->fields[$this->model()][] = $this->field();
 		$options = $this->__initInputField($fieldName, $options);
 		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($options, null, '', ' ')));
 	}
@@ -710,6 +724,7 @@ class FormHelper extends AppHelper {
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
 		$showParents = false;
 		$this->setFormTag($fieldName);
+		$this->fields[$this->model()][] = $this->field();
 		$attributes = $this->domId((array)$attributes);
 
 		if ($this->tagIsInvalid()) {

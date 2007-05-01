@@ -28,8 +28,7 @@
 <?php
 echo $form->create($modelClass);
 echo $form->inputs($fieldNames);
-echo $form->submit(__('Save', true)); ?>
-</form>
+echo $form->end(array('submit' => __('Save', true))); ?>
 <div class='actions'>
 <ul>
 <?php
