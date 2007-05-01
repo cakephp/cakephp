@@ -525,7 +525,7 @@ class RequestHandlerComponent extends Object {
  * Sets the layout and template paths for the content type defined by $type.
  *
  * @param object $controller A reference to a controller object
- * @param string $type 
+ * @param string $type
  * @return void
  * @access public
  * @see RequestHandlerComponent::setContent()
