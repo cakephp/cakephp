@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * Access Control List factory class.
  *
@@ -27,7 +26,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Access Control List factory class.
  *
@@ -37,10 +35,8 @@
  * @subpackage	cake.cake.libs.controller.components
  */
 class AclComponent extends Object {
-
 	var $_instance = null;
 	var $controller = true;
-
 /**
  * Constructor. Will return an instance of the correct ACL class.
  *
@@ -54,8 +50,8 @@ class AclComponent extends Object {
  * @return MyACL
  */
 	function &getACL() {
-		if ($this->_instance == null) {
-			uses('controller' . DS . 'components' . DS . ACL_FILENAME);
+		if($this->_instance == null) {
+			uses('model' . DS . ACL_FILENAME);
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
 		}
@@ -173,5 +169,33 @@ class AclComponent extends Object {
 		return $this->_instance->getAco($id);
 	}
 }
-
+/**
+ * Access Control List abstract class. Not to be instantiated.
+ * Subclasses of this class are used by AclComponent to perform ACL checks in Cake.
+ *
+ * @package 	cake
+ * @subpackage	cake.cake.libs.controller.components
+ */
+class AclBase{
+/**
+ * This class should never be instantiated, just subclassed.
+ *
+ * @return AclBase
+ */
+	function AclBase() {
+		if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase")) {
+			trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration.", true), E_USER_ERROR);
+			return NULL;
+		}
+	}
+/**
+ * Empty method to be overridden in subclasses
+ *
+ * @param unknown_type $aro
+ * @param unknown_type $aco
+ * @param string $action
+ */
+	function check($aro, $aco, $action = "*") {
+	}
+}
 ?>
