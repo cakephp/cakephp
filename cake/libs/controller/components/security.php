@@ -156,8 +156,8 @@ class SecurityComponent extends Object {
 			}
 		}
 
-		if(!empty($controller->data) && isset($controller->data['_Token'])) {
-			$token = $controller->data['_Token']['key'];
+		if(!empty($controller->data) && isset($controller->data['__Token'])) {
+			$token = $controller->data['__Token']['key'];
 			if($this->Session->check('_Token')) {
 				$tData = unserialize($this->Session->read('_Token'));
 
@@ -167,13 +167,25 @@ class SecurityComponent extends Object {
 					}
 				}
 
-				if(isset($controller->data['_Token']['fields']) && !empty($controller->data['_Token']['fields'])) {
-					$fields = $controller->data['_Token']['fields'];
+				if(isset($controller->data['__Token']['fields']) && !empty($controller->data['__Token']['fields'])) {
+					$fields = $controller->data['__Token']['fields'];
 					$check = $controller->data;
-					unset($check['_Token']['fields']);
+					unset($check['__Token']['fields']);
 
 					foreach($check as $key => $value) {
-						$field[$key]= array_keys($value);
+						if($key === '__Token') {
+							$field[$key] = $value;
+							continue;
+						}
+						$string = substr($key, 0, 1);
+						if($string === '_') {
+							$newKey = substr($key, 1);
+							$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
+							unset($controller->data[$key]);
+							$field[$key] = $value;
+							continue;
+						}
+						$field[$key] = array_keys($value);
 					}
 					$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
 
@@ -197,7 +209,7 @@ class SecurityComponent extends Object {
 						return null;
 					}
 				}
-				$token = $controller->data['_Token']['key'];
+				$token = $controller->data['__Token']['key'];
 
 				if($this->Session->check('_Token')) {
 					$tData = unserialize($this->Session->read('_Token'));

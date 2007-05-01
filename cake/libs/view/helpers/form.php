@@ -606,11 +606,14 @@ class FormHelper extends AppHelper {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 		unset($options['class']);
+		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			$model = '_' . $model;
+		}
+		$this->fields[$model][$this->field()] = $options['value'];
 
 		if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;
 		}
-		$this->fields[$model][] = $this->field();
 		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($options, null, ' ', ' ')));
 	}
 /**
@@ -1364,7 +1367,7 @@ class FormHelper extends AppHelper {
 						if(!isset($field['value'])){
 							$field['value'] = null;
 						}
-						$strFormFields = $strFormFields . $this->Html->hidden($field['tagName'], $field['value']);
+						$strFormFields = $strFormFields . $this->hidden($field['tagName'], $field['value']);
 					break;
 					case "date":
 						if (!isset($field['selected'])) {
