@@ -51,7 +51,9 @@ class AclComponent extends Object {
  */
 	function &getACL() {
 		if($this->_instance == null) {
-			uses('model' . DS . ACL_FILENAME);
+			$file = explode(DS, ACL_FILENAME);
+			$file = array_pop($file);
+			uses('model' . DS . $file);
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
 		}

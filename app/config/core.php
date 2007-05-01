@@ -151,7 +151,7 @@
  * access control lists.
  */
 	define('ACL_CLASSNAME', 'DB_ACL');
-	define('ACL_FILENAME', 'dbacl' . DS . 'db_acl');
+	define('ACL_FILENAME', 'db_acl');
 	define('ACL_DATABASE', 'default');
 /**
  * How long to cache data if not defined

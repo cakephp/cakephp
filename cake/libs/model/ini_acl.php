@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * This is core configuration file.
  *
@@ -27,18 +26,13 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-uses('controller/components/acl_base');
-
 /**
  * In this file you can extend the AclBase.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller.componenets.iniacl
  */
-
 class INI_ACL extends AclBase{
-
 /**
  * Array with configuration, parsed from ini file
  */
@@ -49,7 +43,6 @@ class INI_ACL extends AclBase{
  */
 	function __construct() {
 	}
-
 /**
  * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
  * Looks at the acl.ini.php file for permissions (see instructions in/config/acl.ini.php).
@@ -118,7 +111,6 @@ class INI_ACL extends AclBase{
 		//echo("DEFAULT: DENY.");
 		return false;
 	}
-
 /**
  * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
  *
@@ -161,7 +153,6 @@ class INI_ACL extends AclBase{
 
 		return $iniSetting;
 	}
-
 /**
  * Removes trailing spaces on all array elements (to prepare for searching)
  *
