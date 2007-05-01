@@ -19,7 +19,7 @@
  * @copyright		Copyright (c) 2006, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package			cake
- * @subpackage		cake.cake.libs.model
+ * @subpackage		cake.cake.libs.model.behaviors
  * @since			CakePHP v 1.2.0.4487
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
