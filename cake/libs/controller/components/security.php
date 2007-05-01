@@ -74,15 +74,6 @@ class SecurityComponent extends Object {
  */
 	var $requireAuth = array();
 /**
- * Sets the window of time after which authentication keys expire.  If true, authentication keys
- * expire on every request.  If a string, specifies a relative time frame, i.e. "+1 hour"
- *
- * @var mixed
- * @access public
- * @see SecurityComponent::requireAuth()
- */
-	var $expires = true;
-/**
  * List of actions that require an HTTP-authenticated login (basic or digest)
  *
  * @var array
@@ -430,12 +421,12 @@ class SecurityComponent extends Object {
  */
 	function __validatePost(&$controller) {
 		if(!empty($controller->data)) {
-			if (!isset($controller->data['_Token'])) {
+			if (!isset($controller->data['__Token'])) {
 				if(!$this->blackHole($controller, 'auth')) {
 					return null;
 				}
 			}
-			$token = $controller->data['_Token']['key'];
+			$token = $controller->data['__Token']['key'];
 
 			if($this->Session->check('_Token')) {
 				$tData = unserialize($this->Session->read('_Token'));
@@ -447,17 +438,17 @@ class SecurityComponent extends Object {
 				}
 			}
 
-			if(!isset($controller->data['_Token']['fields'])) {
+			if(!isset($controller->data['__Token']['fields'])) {
 				if(!$this->blackHole($controller, 'auth')) {
 					return null;
 				}
 			}
-			$fields = $controller->data['_Token']['fields'];
+			$fields = $controller->data['__Token']['fields'];
 			$check = $controller->data;
-			unset($check['_Token']['fields']);
+			unset($check['__Token']['fields']);
 
 			foreach($check as $key => $value) {
-				if($key === '_Token') {
+				if($key === '__Token') {
 					$field[$key] = $value;
 					continue;
 				}

@@ -328,11 +328,11 @@ class Helper extends Overloadable {
 /**
  * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
  *
- * @param string $field A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
+ * @param string $tagValue A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
  */
-	function setFormTag($field) {
+	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
-		$parts = preg_split('/\/|\./', $field);
+		$parts = preg_split('/\/|\./', $tagValue);
 
 		if (count($parts) == 1) {
 			$view->field = $parts[0];
@@ -347,15 +347,6 @@ class Helper extends Overloadable {
 			$view->modelId = $parts[1];
 			$view->field   = $parts[2];
 		}
-		
-	}
-/**
- * Returns the fully-qualified field name of the current field in the rendering context.
- *
- * @return string
- */
-	function getFormTag() {
-		return 'blah';
 	}
 /**
  * Gets the currently-used model of the rendering context.
@@ -383,15 +374,6 @@ class Helper extends Overloadable {
 	function field() {
 		$view =& ClassRegistry::getObject('view');
 		return $view->field;
-	}
-/**
- * Gets the currently-used model field of the rendering context.
- *
- * @return string
- */
-	function fieldSuffix() {
-		$view =& ClassRegistry::getObject('view');
-		return $view->fieldSuffix;
 	}
 /**
  * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
@@ -430,7 +412,7 @@ class Helper extends Overloadable {
  *
  * @param array $options
  * @param string $key
- * @return mixed
+ * @return array
  */
 	function __name($options = array(), $field = null, $key = 'name') {
 		if ($options === null) {
@@ -449,13 +431,14 @@ class Helper extends Overloadable {
 		}
 
 		switch($field) {
+			case 'method':
 			case '_method':
 				$name = $field;
 			break;
 			default:
-				$name = Set::filter(array($this->model(), $this->field())); //, $this->modelID()));
+				$name = array_filter(array($this->model(), $this->field(), $this->modelID()));
 				if ($this->modelID() === 0) {
-					//$name[] = $this->modelID();
+					$name[] = $this->modelID();
 				}
 				$name = 'data[' . join('][', $name) . ']';
 			break;
@@ -514,6 +497,25 @@ class Helper extends Overloadable {
 		} else {
 			return $result;
 		}
+	}
+/**
+ * Sets the defaults for an input tag
+ *
+ * @param array $options
+ * @param string $key
+ * @return array
+ */
+	function __initInputField($field, $options = array()) {
+		$this->setFormTag($field);
+		$options = (array)$options;
+		$options = $this->__name($options);
+		$options = $this->__value($options);
+		$options = $this->domId($options);
+		if ($this->tagIsInvalid()) {
+			$options = $this->addClass($options, 'form-error');
+		}
+		unset($options['name']); // Temporary
+		return $options;
 	}
 /**
  * Adds the given class to the element options
