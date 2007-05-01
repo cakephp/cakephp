@@ -394,9 +394,9 @@ class EmailComponent extends Object{
 			$filetype = mime_content_type($file);
 
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
-			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . $file . '"' . $this->_newLine;
+			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . basename($file) . '"' . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: base64' . $this->_newLine;
-			$this->__message .= 'Content-Disposition: attachment; filename="' .$file. '"' . $this->_newLine . $this->_newLine;
+			$this->__message .= 'Content-Disposition: attachment; filename="' . basename($file) . '"' . $this->_newLine . $this->_newLine;
 			$this->__message .= $data . $this->_newLine . $this->_newLine;
 		}
 	}
