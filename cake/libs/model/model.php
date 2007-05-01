@@ -1719,7 +1719,7 @@ class Model extends Overloadable {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
-						if(empty($data[$fieldName]) && $validator['allowEmpty'] === true) {
+						if(empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
 							break;
 						}
 						if (is_array($validator['rule'])) {
