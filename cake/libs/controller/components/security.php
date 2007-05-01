@@ -458,7 +458,18 @@ class SecurityComponent extends Object {
 					$newKey = substr($key, 1);
 					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 					unset($controller->data[$key]);
-					$field[$key] = $value;
+
+					if(is_array($value)) {
+						$values = array_values($value);
+						if(isset($values['0']) && empty($values['0'])) {
+							$k = array_keys($value);
+							if(isset($values['0'])) {
+								$field[$key][$k['0']] = null;
+							}
+						} else {
+							$field[$key] = $value;
+						}
+					}
 					continue;
 				}
 				$field[$key] = array_keys($value);
