@@ -693,6 +693,7 @@ class FormHelper extends AppHelper {
 		$secured = null;
 		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$secured = $this->secure($this->fields);
+			$this->fields = array();
 		}
 		$div = true;
 		if (isset($options['div'])) {
