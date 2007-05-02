@@ -661,14 +661,6 @@ class Controller extends Object {
 		header("Pragma: no-cache");
 	}
 /**
- * @deprecated
- * @see Controller::set
- */
-	function _setTitle($pageTitle) {
-		trigger_error(__('Deprecated: Use Controller::set("title", "...") instead', true), E_USER_WARNING);
-		$this->pageTitle = $pageTitle;
-	}
-/**
  * Shows a message to the user $time seconds, then redirects to $url
  * Uses flash.thtml as a layout for the messages
  *

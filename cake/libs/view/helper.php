@@ -298,34 +298,6 @@ class Helper extends Overloadable {
 		return $attribute;
 	}
 /**
- * @deprecated Name changed to '_parseAttributes'. Version 0.9.2.
- * @see HtmlHelper::_parseAttributes()
- * @param  array  $options Array of options.
- * @param  array  $exclude Array of options to be excluded.
- * @param  string $insertBefore String to be inserted before options.
- * @param  string $insertAfter  String to be inserted ater options.
- * @return string
- */
-	function parseHtmlOptions($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (!is_array($exclude)) {
-			$exclude = array();
-		}
-
-		if (is_array($options)) {
-			$out = array();
-
-			foreach($options as $k => $v) {
-				if (!in_array($k, $exclude)) {
-					$out[] = "{$k}=\"{$v}\"";
-				}
-			}
-			$out = join(' ', $out);
-			return $out ? $insertBefore . $out . $insertAfter : null;
-		} else {
-			return $options ? $insertBefore . $options . $insertAfter : null;
-		}
-	}
-/**
  * Sets this helper's model and field properties to the slash-separated value-pair in $tagValue.
  *
  * @param string $tagValue A field name, like "Modelname.fieldname", "Modelname/fieldname" is deprecated
@@ -559,8 +531,8 @@ class Helper extends Overloadable {
 		if (isset($this->tags) && isset($this->tags[$keyName])) {
 			$out = $this->tags[$keyName];
 		}
-		
-		//$out = 
+
+		//$out =
 	}
 /**
  * Before render callback.  Overridden in subclasses.

@@ -145,21 +145,6 @@ class JavascriptHelper extends AppHelper {
 		}
 	}
 /**
- * Returns a JavaScript include tag for an externally-hosted script
- *
- * @param  string $url URL to JavaScript file.
- * @return string
- * @deprecated As of 1.2, use JavascriptHelper::link()
- * @see JavascriptHelper::link
- */
-	function linkOut($url) {
-		trigger_error(__('(JavascriptHelper::linkOut) Deprecated: Use JavascriptHelper::link instead'), E_USER_WARNING);
-		if (strpos($url, ".") === false) {
-			$url .= ".js";
-		}
-		return sprintf($this->tags['javascriptlink'], $url);
-	}
-/**
  * Escape carriage returns and single and double quotes for JavaScript segments.
  *
  * @param string $script string that might have javascript elements

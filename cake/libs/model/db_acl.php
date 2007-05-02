@@ -204,26 +204,6 @@ class DB_ACL extends AclBase {
 		return $this->deny($aro, $aco, $action);
 	}
 /**
- * Get an ARO object from the given id or alias
- *
- * @param mixed $id
- * @return Aro
- */
-	function getAro($id = null) {
-		trigger_error(__('DB_ACL::getAro() - Usage deprecated.  Use AclComponent::$Aro::node().', true), E_USER_WARNING);
-		return $this->__getObject($id, 'Aro');
-	}
-/**
- * Get an ACO object from the given id or alias
- *
- * @param mixed $id
- * @return Aco
- */
-	function getAco($id = null) {
-		trigger_error(__('DB_ACL::getAco() - Usage deprecated.  Use AclComponent::$Aco::node().', true), E_USER_WARNING);
-		return $this->__getObject($id, 'Aco');
-	}
-/**
  * Private method
  *
  */

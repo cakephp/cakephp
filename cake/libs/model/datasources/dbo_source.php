@@ -314,22 +314,6 @@ class DboSource extends DataSource {
 		}
 	}
 /**
- * @deprecated
- * @see DboSource::fetchRow
- */
-	function fetchArray() {
-		trigger_error(__('Deprecated: Use DboSource::fetchRow() instead', true), E_USER_WARNING);
-		return $this->fetchRow();
-	}
-/**
- * @deprecated
- * @see DboSource::fetchRow
- */
-	function one($sql) {
-		trigger_error(__('Deprecated: Use DboSource::fetchRow($sql) instead', true), E_USER_WARNING);
-		return $this->fetchRow($sql);
-	}
-/**
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *

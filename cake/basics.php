@@ -629,52 +629,6 @@
 		return true;
 	}
 /**
- * Normalizes a string or array list
- *
- * @param mixed $list
- * @param boolean $assoc If true, $list will be converted to an associative array
- * @param string $sep If $list is a string, it will be split into an array with $sep
- * @param boolean $trim If true, separated strings will be trimmed
- * @return array
- */
-	function normalizeList($list, $assoc = true, $sep = ',', $trim = true) {
-		trigger_error(__('normalizeList Deprecated: use Set::normalize', true), E_USER_WARNING);
-		if (is_string($list)) {
-			$list = explode($sep, $list);
-			if ($trim) {
-				$list = array_map('trim', $list);
-			}
-			if ($assoc) {
-				return normalizeList($list);
-			}
-		} elseif (is_array($list)) {
-			$keys = array_keys($list);
-			$count = count($keys);
-			$numeric = true;
-
-			if (!$assoc) {
-				for ($i = 0; $i < $count; $i++) {
-					if (!is_int($keys[$i])) {
-						$numeric = false;
-						break;
-					}
-				}
-			}
-			if (!$numeric || $assoc) {
-				$newList = array();
-				for ($i = 0; $i < $count; $i++) {
-					if (is_int($keys[$i])) {
-						$newList[$list[$keys[$i]]] = null;
-					} else {
-						$newList[$keys[$i]] = $list[$keys[$i]];
-					}
-				}
-				$list = $newList;
-			}
-		}
-		return $list;
-	}
-/**
  * Prints out debug information about given variable.
  *
  * Only runs if DEBUG level is non-zero.
@@ -1414,19 +1368,6 @@
 			}
 			return $res;
 		}
-	}
-/**
- * @deprecated
- * @see Set::countDim
- */
-	function countdim($array) {
-		trigger_error(__('Deprecated: Use Set::countDim instead', true), E_USER_WARNING);
-		if (is_array(reset($array))) {
-			$return = countdim(reset($array)) + 1;
-		} else {
-			$return = 1;
-		}
-		return $return;
 	}
 /**
  * Shortcut to Log::write.

@@ -204,24 +204,6 @@ class SessionComponent extends CakeSession {
 		}
 	}
 /**
- * This method is deprecated.
- * You should use $session->flash('key'); in your views
- *
- * @param string $key Optional message key
- * @return boolean or renders output directly.
- * @deprecated
- */
-	function flash($key = 'flash') {
-		if ($this->__active === true) {
-			if ($this->check('Message.' . $key)) {
-				e($this->read('Message.' . $key));
-				$this->del('Message.' . $key);
-				return;
-			}
-		}
-		return false;
-	}
-/**
  * Used to renew a session id
  *
  * In your controller: $this->Session->renew();

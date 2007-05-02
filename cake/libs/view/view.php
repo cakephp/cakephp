@@ -570,13 +570,6 @@ class View extends Object {
 		return $hash;
 	}
 /**
- * @deprecated
- */
-	function setLayout($layout) {
-		trigger_error(__('(View::setLayout) Deprecated: Use $this->layout = "..." instead'), E_USER_WARNING);
-		$this->layout = $layout;
-	}
-/**
  * Allows a template or element to set a variable that will be available in
  * a layout or other element.  Analagous to Controller::set.
  *

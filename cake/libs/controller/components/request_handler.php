@@ -53,15 +53,6 @@ class RequestHandlerComponent extends Object {
  *
  * @var boolean
  * @access public
- * @deprecated
- * @see RequestHandler::$enabled
- */
-	var $disableStartup = false;
-/**
- * Determines whether or not callbacks will be fired on this component
- *
- * @var boolean
- * @access public
  */
 	var $enabled = true;
 /**
@@ -217,28 +208,6 @@ class RequestHandlerComponent extends Object {
 				$controller->data = $xml;
 			}
 		}
-	}
-/**
- * @deprecated
- * @see RequestHandlerComponent::renderAs()
- */
-	function setView(&$controller) {
-		trigger_error('Deprecated: Use RequestHandlerComponent::renderAs() instead', E_USER_WARNING);
-		if ($this->setAjax($controller)) {
-			return;
-		}
-	}
-/**
- * @deprecated
- * @see RequestHandlerComponent::renderAs()
- */
-	function setAjax(&$controller) {
-		trigger_error('Deprecated: Use RequestHandlerComponent::renderAs() instead', E_USER_WARNING);
-		if ($this->isAjax()) {
-			$controller->layout = $this->ajaxLayout;
-			return $this->respondAs('html', array('charset' => 'UTF-8'));
-		}
-		return false;
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise

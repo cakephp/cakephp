@@ -26,26 +26,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/*	Deprecated	*/
-
-/**
- * Tag template for a div with a class attribute.
- * @deprecated
- */
-	define('TAG_DIV', '<div class="%s">%s</div>');
-/**
- * Tag template for a paragraph with a class attribute.
- */
-	define('TAG_P_CLASS', '<p class="%s">%s</p>');
-/**
- * Tag template for a label with a for attribute.
- */
-	define('TAG_LABEL', '<label for="%s">%s</label>');
-/**
- * Tag template for a fieldset with a legend tag inside.
- */
-	define('TAG_FIELDSET', '<fieldset><legend>%s</legend>%s</label>');
 /**
  * Form helper library.
  *
@@ -55,22 +35,32 @@
  * @subpackage	cake.cake.libs.view.helpers
  */
 class FormHelper extends AppHelper {
-
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $helpers = array('Html');
-
-	/**
-	 * holds the fields array('field_name'=>'type'), sizes array('field_name'=>'size'),
-	 * primaryKey and validates array('field_name')
-	 *
-	 * @access public
-	*/
+/**
+ * holds the fields array('field_name'=>'type'), sizes array('field_name'=>'size'),
+ * primaryKey and validates array('field_name')
+ *
+ * @access public
+ */
 	var $fieldset = array('fields'=>array(), 'sizes'=>array(), 'key'=>'id', 'validates'=>array());
-
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $__options = array('day' => array(), 'minute' => array(), 'hour' => array(),
 									'month' => array(), 'year' => array(), 'meridian' => array());
-
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
 	var $fields = array();
-
 /**
  * Returns an HTML FORM element.
  *
@@ -204,7 +194,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setFormTag($model . '.');
-		return $this->output(sprintf($this->Html->tags['form'], $this->Html->parseHtmlOptions($htmlAttributes, null, ''))) . $append;
+		return $this->output(sprintf($this->Html->tags['form'], $this->Html->_parseAttributes($htmlAttributes, null, ''))) . $append;
 	}
 /**
  * Closes an HTML form.
@@ -789,7 +779,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}
-		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->parseHtmlOptions($attributes));
+		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->_parseAttributes($attributes));
 
 		if ($showEmpty !== null && $showEmpty !== false) {
 			if($showEmpty === true) {
@@ -1070,7 +1060,7 @@ class FormHelper extends AppHelper {
 				}
 
 				if($showParents || (!in_array($title, $parents))) {
-					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->parseHtmlOptions($htmlOptions), h($title));
+					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), h($title));
 				}
 			}
 		}
@@ -1140,319 +1130,5 @@ class FormHelper extends AppHelper {
 		$this->__options[$name] = $data;
 		return $this->__options[$name];
 	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateInputDiv($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::text() instead'), E_USER_WARNING);
-		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
-		$htmlAttributes = $htmlOptions;
-		$htmlAttributes['size'] = $size;
-		$str = $this->Html->input($tagName, $htmlAttributes);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		return $this->divTag($divClass, $divTagInside);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateCheckboxDiv($tagName, $prompt, $required = false, $errorMsg = null, $htmlOptions = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::checkbox() instead'), E_USER_WARNING);
-		$htmlOptions['class'] = "inputCheckbox";
-		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
-		$str = $this->Html->checkbox($tagName, null, $htmlOptions);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		return $this->divTag($divClass, $divTagInside);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateDate($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
-		$str = $this->dateTime($tagName, 'MDY', 'NONE', $selected, $htmlOptions);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		$requiredDiv = $this->divTag($divClass, $divTagInside);
-		return $this->divTag("date", $requiredDiv);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$str = $this->dateTime($tagName, 'NONE', '24', $selected, $htmlOptions);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		$requiredDiv = $this->divTag($divClass, $divTagInside);
-		return $this->divTag("time", $requiredDiv);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateDateTime($tagName, $prompt, $required = false, $errorMsg = null, $size = 20, $htmlOptions = null, $selected = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$htmlOptions['id']=strtolower(str_replace('/', '_', $tagName));
-		$str = $this->dateTime($tagName, 'MDY', '12', $selected, $htmlOptions, null, false);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		$requiredDiv = $this->divTag($divClass, $divTagInside);
-		return $this->divTag("date", $requiredDiv);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateAreaDiv($tagName, $prompt, $required = false, $errorMsg = null, $cols = 60, $rows = 10, $htmlOptions = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$htmlOptions['id'] = strtolower(str_replace('/', '_', $tagName));
-		$htmlAttributes = $htmlOptions;
-		$htmlAttributes['cols'] = $cols;
-		$htmlAttributes['rows'] = $rows;
-		$str = $this->Html->textarea($tagName, $htmlAttributes);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-
-		if ($required) {
-			$divClass="required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		return $this->divTag($divClass, $divTagInside);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateSelectDiv($tagName, $prompt, $options, $selected = null, $selectAttr = null, $optionAttr = null, $required = false, $errorMsg = null) {
-		trigger_error(__('Deprecated: Use FormHelper::input() or FormHelper::select() instead'), E_USER_WARNING);
-		$selectAttr['id'] = strtolower(str_replace('/', '_', $tagName));
-		$str = $this->Html->selectTag($tagName, $options, $selected, $selectAttr, $optionAttr);
-		$strLabel = $this->label($tagName, $prompt);
-		$divClass = "optional";
-
-		if ($required) {
-			$divClass = "required";
-		}
-		$strError = "";
-
-		if ($this->isFieldError($tagName)) {
-			$strError = $this->Html->para('error', $errorMsg);
-			$divClass = sprintf("%s error", $divClass);
-		}
-		$divTagInside = sprintf("%s %s %s", $strError, $strLabel, $str);
-		return $this->divTag($divClass, $divTagInside);
-	}
-/**
- * @deprecated
- * @see FormHelper::input()
- */
-	function generateSubmitDiv($displayText, $htmlOptions = null) {
-		trigger_error(__('Deprecated: Use FormHelper::submit() instead'), E_USER_WARNING);
-		return $this->divTag('submit', $this->Html->submit($displayText, $htmlOptions));
-	}
-/**
- * @deprecated
- * @see FormHelper::inputs()
- */
-	function generateFields($fields, $readOnly = false) {
-		trigger_error(__('Deprecated: Use FormHelper::input() instead'), E_USER_WARNING);
-		$strFormFields = '';
-
-		foreach($fields as $field) {
-			if (isset($field['type'])) {
-
-				if (!isset($field['required'])) {
-					$field['required'] = false;
-				}
-
-				if (!isset($field['errorMsg'])) {
-					$field['errorMsg'] = null;
-				}
-
-				if (!isset($field['htmlOptions'])) {
-					$field['htmlOptions'] = array();
-				}
-
-				if ($readOnly) {
-					$field['htmlOptions']['READONLY'] = "readonly";
-				}
-
-				switch($field['type']) {
-					case "input":
-						if (!isset($field['size'])) {
-							$field['size'] = 40;
-						}
-						$strFormFields = $strFormFields . $this->generateInputDiv($field['tagName'], $field['prompt'],
-																		$field['required'], $field['errorMsg'], $field['size'], $field['htmlOptions']);
-					break;
-					case "checkbox":
-						$strFormFields = $strFormFields . $this->generateCheckboxDiv($field['tagName'], $field['prompt'],
-																		$field['required'], $field['errorMsg'], $field['htmlOptions']);
-					break;
-					case "select":
-					case "selectMultiple":
-						if ("selectMultiple" == $field['type']) {
-							$field['selectAttr']['multiple'] = 'multiple';
-							$field['selectAttr']['class'] = 'selectMultiple';
-						}
-
-						if (!isset($field['selected'])) {
-							$field['selected'] = null;
-						}
-
-						if (!isset($field['selectAttr'])) {
-							$field['selectAttr'] = null;
-						}
-
-						if (!isset($field['optionsAttr'])) {
-							$field['optionsAttr'] = null;
-						}
-
-						if ($readOnly) {
-							$field['selectAttr']['DISABLED'] = true;
-						}
-
-						if (!isset($field['options'])) {
-							$field['options'] = null;
-						}
-						$strFormFields = $strFormFields . $this->generateSelectDiv($field['tagName'], $field['prompt'], $field['options'],
-																		$field['selected'], $field['selectAttr'], $field['optionsAttr'], $field['required'], $field['errorMsg']);
-					break;
-					case "area":
-						if (!isset($field['rows'])) {
-							$field['rows'] = 10;
-						}
-
-						if (!isset($field['cols'])) {
-							$field['cols'] = 60;
-						}
-						$strFormFields = $strFormFields . $this->generateAreaDiv($field['tagName'], $field['prompt'],
-																		$field['required'], $field['errorMsg'], $field['cols'], $field['rows'], $field['htmlOptions']);
-					break;
-					case "fieldset":
-						$strFieldsetFields = $this->generateFields($field['fields']);
-						$strFieldSet = sprintf(' <fieldset><legend>%s</legend><div class="notes"><h4>%s</h4><p class="last">%s</p></div>%s</fieldset>',
-														$field['legend'], $field['noteHeading'], $field['note'], $strFieldsetFields);
-						$strFormFields = $strFormFields . $strFieldSet;
-					break;
-					case "hidden":
-						if(!isset($field['value'])){
-							$field['value'] = null;
-						}
-						$strFormFields = $strFormFields . $this->hidden($field['tagName'], $field['value']);
-					break;
-					case "date":
-						if (!isset($field['selected'])) {
-							$field['selected'] = null;
-						}
-						$strFormFields = $strFormFields . $this->generateDate($field['tagName'], $field['prompt'], null,
-																		null, null, null, $field['selected']);
-					break;
-					case "datetime":
-						if (!isset($field['selected'])) {
-							$field['selected'] = null;
-						}
-						$strFormFields = $strFormFields . $this->generateDateTime($field['tagName'], $field['prompt'], '', '', '', '', $field['selected']);
-					break;
-					case "time":
-						if (!isset($field['selected'])) {
-							$field['selected'] = null;
-						}
-						$strFormFields = $strFormFields . $this->generateTime($field['tagName'], $field['prompt'], '', '', '', '', $field['selected']);
-					break;
-					default:
-					break;
-				}
-			}
-		}
-		return $strFormFields;
-	}
-/**
- * @deprecated will not be available after 1.1.x.x
- * @see FormHelper::label()
- */
-	function labelTag($tagName, $text) {
-		trigger_error(__('Deprecated: Use FormHelper::label() instead'), E_USER_WARNING);
-		return sprintf($this->Html->tags['label'], Inflector::camelize(r('/', '_', $tagName)), $text);
-	}
-/**
- * @deprecated
- * @see HtmlHelper::div
- */
-	function divTag($class, $text) {
-		//trigger_error(__('(FormHelper::divTag) Deprecated: Use HtmlHelper::div instead'), E_USER_WARNING);
-		return sprintf(TAG_DIV, $class, $text);
-	}
-/**
- * @deprecated
- * @see HtmlHelper::para
- */
-	function pTag($class, $text) {
-		//trigger_error(__('(FormHelper::pTag) Deprecated: Use HtmlHelper::para instead'), E_USER_WARNING);
-		return sprintf(TAG_P_CLASS, $class, $text);
-	}
 }
-
 ?>

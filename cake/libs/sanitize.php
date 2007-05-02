@@ -255,33 +255,5 @@ class Sanitize{
 			}
 		}
 	}
-/**
- * @deprecated
- * @see Sanitize::escape()
- */
-	function sql($string) {
-		return Sanitize::escape($string);
-	}
-/**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanArray($toClean) {
-		return Sanitize::clean($toClean);
-	}
-/**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanArrayR($toClean) {
-		return Sanitize::clean($toClean);
-	}
-/**
- * @deprecated
- * @see Sanitize::clean
- */
-	function cleanValue($val) {
-		return Sanitize::clean($val);
-	}
 }
 ?>
