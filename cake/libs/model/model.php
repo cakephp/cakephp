@@ -1701,13 +1701,15 @@ class Model extends Overloadable {
 					$validator = array('rule' => $validator);
 				}
 
-				$validator = am(array(
+				$default = array(
 					'allowEmpty' => null,
 					'required' => null,
 					'rule' => 'blank',
 					'last' => false,
 					'on' => null
-				), $validator);
+				);
+
+				$validator = am($default, $validator);
 
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
@@ -1733,6 +1735,7 @@ class Model extends Overloadable {
 
 						$valid = true;
 						if (method_exists($this, $rule)) {
+							$ruleParams[] = array_diff_key($validator, $default);
 							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
 							$valid = call_user_func_array(array(&$Validation, $rule), $ruleParams);

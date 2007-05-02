@@ -62,6 +62,47 @@
 	 * @package		cake.tests
 	 * @subpackage	cake.tests.cases.libs.model
 	 */
+	class TestValidate extends Model {
+		var $useTable = false;
+		var $name = 'TestValidate';
+
+		function validateNumber($value, $options) {
+			$options = am(array(
+				'min' => 0,
+				'max' => 100
+			), $options);
+
+			$valid = ($value >= $options['min'] && $value <= $options['max']);
+
+			return $valid;
+		}
+
+		function validateTitle($title) {
+			if (!empty($title) && strpos(low($title), 'title-') === 0) {
+				return true;
+			}
+
+			return false;
+		}
+
+		function loadInfo() {
+			return new Set(array(
+				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'title', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'body', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'number', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+				array('name' => 'modified', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+			));
+		}
+	}
+
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
 	class User extends CakeTestModel {
 		var $name = 'User';
 		var $validate = array(
@@ -1093,65 +1134,194 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertFalse($result);
 	}
 
-	function testValidates() {
-		$this->model =& new Article();
+	function testValidatesBackwards() {
+		$this->model =& new TestValidate();
 
-		$data = array('Article' => array('user_id' => '1', 'title' => '', 'body' => 'body'));
+		$this->model->validate = array(
+			'user_id' => VALID_NUMBER,
+			'title' => VALID_NOT_EMPTY,
+			'body' => VALID_NOT_EMPTY
+		);
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => '', 'body' => ''));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertFalse($result);
-		$this->assertTrue(!empty($this->model->validationErrors));
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('user_id' => '', 'title' => 'title', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('user_id' => 'not a number', 'title' => 'title', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+	}
+
+	function testValidates() {
+		$this->model =& new TestValidate();
+
+		$this->model->validate = array(
+			'user_id' => VALID_NUMBER,
+			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
+			'body' => VALID_NOT_EMPTY
+		);
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => '', 'body' => 'body'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 'title', 'body' => 'body'));
 		$result = $this->model->create($data) && $this->model->validates();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => '1', 'title' => '0', 'body' => 'body'));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => '0', 'body' => 'body'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body'));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertTrue($result);
-
-		// Add another field validation
 
 		$this->model->validate['modified'] = array('allowEmpty' => true, 'rule' => 'date');
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => ''));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => ''));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '2007-05-01'));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '2007-05-01'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertTrue($result);
 
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 'invalid-date-here'));
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 'invalid-date-here'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertFalse($result);
-		
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 0));
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => 0));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertFalse($result);
-		
-		$data = array('Article' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '0'));
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'modified' => '0'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertFalse($result);
+
+		$this->model->validate = array(
+			'number' => array(
+				'rule' => 'validateNumber',
+				'min' => 3,
+				'max' => 5
+			),
+			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY)
+		);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => '0'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => 0));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => '3'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => 3));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
+		$this->model->validate = array(
+			'number' => array(
+				'rule' => 'validateNumber',
+				'min' => 5,
+				'max' => 10
+			),
+			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY)
+		);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => '3'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'title', 'number' => 3));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$this->model->validate = array(
+			'title' => array('allowEmpty' => false, 'rule' => 'validateTitle')
+		);
+
+		$data = array('TestValidate' => array('title' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'new title'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'title-new'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
+		$this->model->validate = array(
+			'title' => array('allowEmpty' => true, 'rule' => 'validateTitle')
+		);
+
+		$data = array('TestValidate' => array('title' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
 	}
 
 	function testSave() {
