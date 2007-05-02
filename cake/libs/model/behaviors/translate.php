@@ -81,11 +81,27 @@ class TranslateBehavior extends ModelBehavior {
  * Callback
  */
 	function beforeFind(&$model, $query) {
+		$locale = $this->_getLocale($model);
+
 		if(is_string($query['fields']) && 'COUNT(*) AS count' == $query['fields']) {
 			$this->runtime[$model->name]['count'] = true;
+
+			$db =& ConnectionManager::getDataSource($model->useDbConfig);
+			$tablePrefix = $this->runtime[$model->name]['tablePrefix'];
+
+			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->name).'.'.$db->name($model->primaryKey).')) ' . $db->alias . 'count';
+			$query['joins'][] = array(
+				'type' => 'INNER',
+				'alias' => 'I18nModel',
+				'table' => $tablePrefix . 'i18n',
+				'conditions' => array(
+					$model->name.'.id'	=> '{$__cakeIdentifier[I18nModel.row_id]__$}',
+					'I18nModel.model'	=> $model->name,
+					'I18nModel.locale'	=> $locale
+				)
+			);
 			return $query;
 		}
-		$locale = $this->_getLocale($model);
 
 		if(empty($locale) || is_array($locale)) {
 			return $query;
