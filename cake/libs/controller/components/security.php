@@ -115,6 +115,12 @@ class SecurityComponent extends Object {
  */
 	var $allowedActions = array();
 /**
+ * Form fields to disable
+ *
+ * @var array
+ */
+	var $disabledFields = array();
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -443,9 +449,40 @@ class SecurityComponent extends Object {
 					return null;
 				}
 			}
-			$fields = $controller->data['__Token']['fields'];
+			$form = $controller->data['__Token']['fields'];
 			$check = $controller->data;
 			unset($check['__Token']['fields']);
+
+			if(!empty($this->disabledFields)) {
+				foreach($check as $model => $fields) {
+					foreach($fields as $field => $value) {
+						$key[] = $model . '.' . $field;
+					}
+					unset($field);
+				}
+
+				foreach($this->disabledFields as $value) {
+					$parts = preg_split('/\/|\./', $value);
+
+					if (count($parts) == 1) {
+						$key1[] =  $controller->modelClass . '.' . $parts['0'];
+					} elseif (count($parts) == 2) {
+						$key1[] = $parts['0']  . '.' . $parts['1'];
+					}
+				}
+
+				foreach ($key1 as $value) {
+
+					if(in_array($value, $key)) {
+						$remove = explode('.', $value);
+						unset($check[$remove['0']][$remove['1']]);
+					} elseif (in_array('_' . $value, $key)) {
+						$remove = explode('.', $value);
+						$controller->data[$remove['0']][$remove['1']] = $controller->data['_' . $remove['0']][$remove['1']];
+						unset($check['_' . $remove['0']][$remove['1']]);
+					}
+				}
+			}
 
 			foreach($check as $key => $value) {
 				if($key === '__Token') {
@@ -464,7 +501,7 @@ class SecurityComponent extends Object {
 						if(isset($values['0']) && empty($values['0'])) {
 							$k = array_keys($value);
 							if(isset($values['0'])) {
-								$field[$key][$k['0']] = null;
+								$field[$key][$k['0']] = '';
 							}
 						} else {
 							$field[$key] = $value;
@@ -476,7 +513,7 @@ class SecurityComponent extends Object {
 			}
 			$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
 
-			if($fields !== $check) {
+			if($form !== $check) {
 				if(!$this->blackHole($controller, 'auth')) {
 					return null;
 				}
@@ -498,7 +535,8 @@ class SecurityComponent extends Object {
 			$token = array('key' => $authKey,
 								'expires' => $expires,
 								'allowedControllers' => $this->allowedControllers,
-								'allowedActions' => $this->allowedActions);
+								'allowedActions' => $this->allowedActions,
+								'disabledFields' => $this->disabledFields);
 
 			if(!isset($controller->data)) {
 				$controller->data = array();

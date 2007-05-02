@@ -253,6 +253,40 @@ class FormHelper extends AppHelper {
 		$append .= '</p>';
 		return $append;
 	}
+	function __secure($model = null, $options = null) {
+		if(!$model) {
+			$model = $this->model();
+		}
+
+		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			if(!empty($this->params['_Token']['disabledFields'])) {
+				foreach ($this->params['_Token']['disabledFields'] as $value) {
+					$parts = preg_split('/\/|\./', $value);
+					if (count($parts) == 1) {
+						if($parts[0] === $this->field()) {
+							return;
+						}
+					} elseif (count($parts) == 2) {
+						if($parts[0] === $this->model() && $parts[1] === $this->field()) {
+							return;
+						}
+					}
+				}
+				if(!is_null($options)) {
+					$this->fields[$model][$this->field()] = $options;
+					return;
+				}
+				$this->fields[$model][] = $this->field();
+				return;
+			}
+			if(!is_null($options)) {
+				$this->fields[$model][$this->field()] = $options;
+				return;
+			}
+			$this->fields[$model][] = $this->field();
+			return;
+		}
+	}
 /**
  * Returns true if there is an error for the given field, otherwise false
  *
@@ -556,7 +590,7 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
-		$this->fields[$this->model()][] = $this->field();
+		$this->__secure();
 		$options = $this->__initInputField($fieldName, am(array('type' => 'text'), $options));
 		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
@@ -568,7 +602,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function password($fieldName, $options = array()) {
-		$this->fields[$this->model()][] = $this->field();
+		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
 		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
@@ -580,7 +614,7 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function textarea($fieldName, $options = array()) {
-		$this->fields[$this->model()][] = $this->field();
+		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
 		unset($options['type']);
 		$value = null;
@@ -606,12 +640,12 @@ class FormHelper extends AppHelper {
 		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$model = '_' . $model;
 		}
-		$this->fields[$model][$this->field()] = $options['value'];
+		$this->__secure($model, ife($options['value'], $options['value'], ''));
 
 		if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;
 		}
-		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($options, null, ' ', ' ')));
+		return $this->output(sprintf($this->Html->tags['hidden'], $model, $this->field(), $this->_parseAttributes($options, null, '', ' ')));
 	}
 /**
  * Creates file input widget.
@@ -622,7 +656,7 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function file($fieldName, $options = array()) {
-		$this->fields[$this->model()][] = $this->field();
+		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
 		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($options, null, '', ' ')));
 	}
@@ -727,7 +761,7 @@ class FormHelper extends AppHelper {
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
 		$showParents = false;
 		$this->setFormTag($fieldName);
-		$this->fields[$this->model()][] = $this->field();
+		$this->__secure();
 		$attributes = $this->domId((array)$attributes);
 
 		if ($this->tagIsInvalid()) {
