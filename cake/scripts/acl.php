@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 /* SVN FILE: $Id$ */
 /**
@@ -27,114 +26,18 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-/**
- * Enter description here...
- */
-	define ('DS', DIRECTORY_SEPARATOR);
-	if (function_exists('ini_set')) {
-		ini_set('display_errors', '1');
-		ini_set('error_reporting', '7');
-		ini_set('max_execution_time',0);
-	}
-
-	$app = 'app';
-	$core = null;
-	$root = dirname(dirname(dirname(__FILE__)));
-	$here = $argv[0];
-	$dataSource = 'default';
-	$unset = array();
-	for ($i = 1; $i < count($argv); $i++) {
-		// Process command-line modifiers here
-		switch (strtolower($argv[$i])) {
-			case '-app':
-				$app = $argv[$i + 1];
-				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1];
-			break;
-			case '-core':
-				$core = $argv[$i + 1];
-				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1];
-			break;
-			case '-root':
-				$root = $argv[$i + 1];
-				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1];
-			break;
-			case '-datasource':
-				$dataSource = $argv[$i + 1];
-				$unset[$i] = $argv[$i];
-				$unset[$i + 1] = $argv[$i + 1];
-			break;
-		}
-	}
-
-	if (strlen($app) && $app[0] == DS) {
-		$cnt = substr_count($root, DS);
-		$app = str_repeat('..' . DS, $cnt) . $app;
-	}
-	define ('ROOT', $root.DS);
-	define ('APP_DIR', $app);
-	define ('DEBUG', 1);;
-	define('CAKE_CORE_INCLUDE_PATH', ROOT);
-	define('DATASOURCE', $dataSource);
-
-	if(function_exists('ini_set')) {
-		ini_set('include_path',ini_get('include_path').
-			PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.DS.
-			PATH_SEPARATOR.CORE_PATH.DS.
-			PATH_SEPARATOR.ROOT.DS.APP_DIR.DS.
-			PATH_SEPARATOR.APP_DIR.DS.
-			PATH_SEPARATOR.APP_PATH);
-		define('APP_PATH', null);
-		define('CORE_PATH', null);
-	} else {
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-	}
-
-	require ('cake'.DS.'basics.php');
-	require ('cake'.DS.'config'.DS.'paths.php');
-	require (CONFIGS.'core.php');
-	uses ('object', 'configure', 'neat_array', 'session', 'security', 'inflector', 'model'.DS.'connection_manager',
-			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model');
-	require(CAKE.'app_model.php');
-	uses ('controller'.DS.'components'.DS.'acl', 'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aclnode',
-			'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aco', 'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'acoaction',
-			'controller'.DS.'components'.DS.'dbacl'.DS.'models'.DS.'aro');
-	//Get and format args: first arg is the name of the script.
-	$serverArgs = $argv;
-	if(!empty($unset)) {
-		$serverArgs = array_values(array_diff($argv, $unset));
-	}
-
-	$wasted = array_shift($serverArgs);
-	$command = array_shift($serverArgs);
-	$args = $serverArgs;
-	$aclCLI = new AclCLI ($command, $args);
+uses (
+	'object', 'configure', 'set', 'session', 'security',
+	'inflector', 'model'.DS.'connection_manager',
+	'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
+);
+require_once(CAKE.'app_model.php');
+uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 /**
  * @package		cake
- * @subpackage	cake.cake.scritps
+ * @subpackage	cake.cake.scripts
  */
-class AclCLI {
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $stdin;
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $stdout;
-/**
- * Enter description here...
- *
- * @var unknown_type
- */
-	var $stderr;
+class Acl extends ConsoleScript {
 /**
  * Enter description here...
  *
@@ -158,23 +61,21 @@ class AclCLI {
  *
  * @param unknown_type $command
  * @param unknown_type $args
- * @return AclCLI
  */
-	function AclCLI($command, $args) {
-		$this->__construct($command, $args);
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $command
- * @param unknown_type $args
- */
-	function __construct ($command, $args) {
-		$this->stdin = fopen('php://stdin', 'r');
-		$this->stdout = fopen('php://stdout', 'w');
-		$this->stderr = fopen('php://stderr', 'w');
+	function main () {
+		/*if (function_exists('ini_set')) {
+			ini_set('display_errors', '1');
+			ini_set('error_reporting', '7');
+			ini_set('max_execution_time',0);
+		}*/
+		$this->dataSource = 'default';
 
-		if (ACL_CLASSNAME != 'DB_ACL'){
+		if (isset($this->params['datasource'])) {
+			$this->dataSource = $this->params['datasource'];
+		}
+		define('DATASOURCE', $this->dataSource);
+
+		if (ACL_CLASSNAME != 'DB_ACL') {
 			$out = "--------------------------------------------------\n";
 			$out .= "Error: Your current Cake configuration is set to \n";
 			$out .= "an ACL implementation other than DB. Please change \n";
@@ -183,15 +84,18 @@ class AclCLI {
 			$out .= "--------------------------------------------------\n";
 			$out .= "Current ACL Classname: " . ACL_CLASSNAME . "\n";
 			$out .= "--------------------------------------------------\n";
-			fwrite($this->stderr, $out);
+			$this->err($out);
 			exit();
 		}
 
+		pr($this);
+		die();
+
 		if(!in_array($command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
-				$this->stdout('');
-				$this->stdout('Your database configuration was not found.');
-				$this->stdout('Take a moment to create one:');
+				$this->out('');
+				$this->out('Your database configuration was not found.');
+				$this->out('Take a moment to create one:');
 				$this->doDbConfig();
 			}
 			require_once (CONFIGS.'database.php');
@@ -199,7 +103,6 @@ class AclCLI {
 			if(!in_array($command, array('initdb'))) {
 				$this->dataSource = DATASOURCE;
 				$this->Acl = new AclComponent();
-				$this->args = $args;
 				$this->db =& ConnectionManager::getDataSource($this->dataSource);
 			}
 		}
@@ -239,7 +142,7 @@ class AclCLI {
 				$this->help();
 			break;
 			default:
-				fwrite($this->stderr, "Unknown ACL command '$command'.\nFor usage, try 'php acl.php help'.\n\n");
+				$this->err("Unknown ACL command '$command'.\nFor usage, try 'php acl.php help'.\n\n");
 			break;
 		}
 	}
@@ -252,11 +155,16 @@ class AclCLI {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
-		$parent = (is_numeric($this->args[2])) ? intval($this->args[2]) : $this->args[2];
+		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[2], $matches)) {
+			pr($matches);
+			die();
+		} else {
+			$parent = $this->args[2];
+		}
 		if(!$this->Acl->{$class}->create(intval($this->args[1]), $parent, $this->args[3])){
 			$this->displayError("Parent Node Not Found", "There was an error creating the ".$class.", probably couldn't find the parent node.\n If you wish to create a new root node, specify the <parent_id> as '0'.");
 		}
-		$this->stdout("New $class '".$this->args[3]."' created.\n\n");
+		$this->out("New $class '".$this->args[3]."' created.\n\n");
 	}
 /**
  * Enter description here...
@@ -269,7 +177,7 @@ class AclCLI {
 		if(!$this->Acl->{$class}->delete($this->args[1])) {
 			$this->displayError("Node Not Deleted", "There was an error deleting the ".$class.". Check that the node exists.\n");
 		}
-		$this->stdout("{$class} deleted.\n\n");
+		$this->out("{$class} deleted.\n\n");
 	}
 
 /**
@@ -281,9 +189,9 @@ class AclCLI {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (!$this->Acl->{$class}->setParent($this->args[2], $this->args[1])){
-			$this->stdout("Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.\n");
+			$this->out("Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.\n");
 		} else {
-			$this->stdout("Node parent set to ".$this->args[2]."\n\n");
+			$this->out("Node parent set to ".$this->args[2]."\n\n");
 		}
 	}
 /**
@@ -300,7 +208,7 @@ class AclCLI {
 			$this->displayError("Supplied Node '".$this->args[1]."' not found", "No tree returned.");
 		}
 		for ($i = 0; $i < count($nodes); $i++) {
-			$this->stdout(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
+			$this->out(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
 		}
 	}
 /**
@@ -313,7 +221,7 @@ class AclCLI {
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
 		$this->Acl->allow($aro, $aco, $this->args[2]);
-		$this->stdout("Permission granted.\n");
+		$this->out("Permission granted.\n");
 	}
 /**
  * Enter description here...
@@ -325,7 +233,7 @@ class AclCLI {
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
 		$this->Acl->deny($aro, $aco, $this->args[2]);
-		$this->stdout("Requested permission successfully denied.\n");
+		$this->out("Requested permission successfully denied.\n");
 	}
 /**
  * Enter description here...
@@ -336,7 +244,7 @@ class AclCLI {
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
 		$this->Acl->inherit($aro, $aco, $this->args[2]);
-		$this->stdout("Requested permission successfully inherited.\n");
+		$this->out("Requested permission successfully inherited.\n");
 	}
 /**
  * Enter description here...
@@ -357,8 +265,8 @@ class AclCLI {
 		}
 		$right = array();
 
-		$this->stdout($class . " tree:\n");
-		$this->stdout("------------------------------------------------\n");
+		$this->out($class . " tree:");
+		$this->hr(true);
 
 		for($i = 0; $i < count($nodes); $i++){
 			if (count($right) > 0){
@@ -370,10 +278,10 @@ class AclCLI {
 					}
 				}
 			}
-			$this->stdout(str_repeat('  ',count($right)) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
+			$this->out(str_repeat('  ',count($right)) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
 			$right[] = $nodes[$i][$class]['rght'];
 		}
-		$this->stdout("------------------------------------------------\n");
+		$this->hr(true);
 	}
 /**
  * Enter description here...
@@ -381,8 +289,8 @@ class AclCLI {
  */
 	function initdb() {
 		$db =& ConnectionManager::getDataSource($this->dataSource);
-		$this->stdout("Initializing Database...\n");
-		$this->stdout("Creating access control objects table (acos)...\n");
+		$this->out("Initializing Database...\n");
+		$this->out("Creating access control objects table (acos)...\n");
 		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('object_id')." ".$db->column($db->columns['integer'])." default NULL,
@@ -395,7 +303,7 @@ class AclCLI {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
 
-		$this->stdout("Creating access request objects table (aros)...\n");
+		$this->out("Creating access request objects table (aros)...\n");
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
@@ -408,7 +316,7 @@ class AclCLI {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
 
-		$this->stdout("Creating relationships table (aros_acos)...\n");
+		$this->out("Creating relationships table (aros_acos)...\n");
 		$sql3 = "CREATE TABLE ".$db->fullTableName('aros_acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('aro_id')." ".$db->column($db->columns['integer'])." default NULL,
@@ -423,7 +331,7 @@ class AclCLI {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
 
-		$this->stdout("\nDone.\n");
+		$this->out("\nDone.\n");
 	}
 
 /**
@@ -432,8 +340,8 @@ class AclCLI {
  */
 	function upgradedb() {
 		$db =& ConnectionManager::getDataSource($this->dataSource);
-		$this->stdout("Initializing Database...\n");
-		$this->stdout("Upgrading table (aros)...\n");
+		$this->out("Initializing Database...\n");
+		$this->out("Upgrading table (aros)...\n");
 		$sql = "ALTER TABLE ".$db->fullTableName('aros')."
 				CHANGE ".$db->name('user_id')."
 				".$db->name('foreign_key')."
@@ -449,7 +357,7 @@ class AclCLI {
 		if ($db->query($sql) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
-		$this->stdout("\nDatabase upgrade is complete.\n");
+		$this->out("\nDatabase upgrade is complete.\n");
 	}
 
 /**
@@ -516,7 +424,7 @@ class AclCLI {
 		$out .= "\t\tDisplays this help message.\n";
 		$out .= "\n";
 		$out .= "\n";
-		$this->stdout($out);
+		$this->out($out);
 	}
 /**
  * Enter description here...
@@ -529,10 +437,9 @@ class AclCLI {
 		$out .= "Error: $title\n";
 		$out .= "$msg\n";
 		$out .= "\n";
-		$this->stdout($out);
+		$this->out($out);
 		exit();
 	}
-
 /**
  * Enter description here...
  *
@@ -561,7 +468,7 @@ class AclCLI {
  * @return unknown
  */
 	function nodeExists($type, $id) {
-		//$this->stdout("Check to see if $type with ID = $id exists...\n");
+		//$this->out("Check to see if $type with ID = $id exists...\n");
 		extract($this->__dataVars($type));
 		$conditions = $this->Acl->{$class}->_resolveID($id);
 		$possibility = $this->Acl->{$class}->findAll($conditions);
@@ -592,16 +499,16 @@ class AclCLI {
  *
  */
 	function doDbConfig() {
-		$this->hr();
-		$this->stdout('Database Configuration:');
-		$this->hr();
+		$this->hr(true);
+		$this->out('Database Configuration:');
+		$this->hr(true);
 
 		$driver = '';
 
 		while ($driver == '') {
 			$driver = $this->getInput('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
 			if ($driver == '') {
-				$this->stdout('The database driver supplied was empty. Please supply a database driver.');
+				$this->out('The database driver supplied was empty. Please supply a database driver.');
 			}
 		}
 
@@ -625,7 +532,7 @@ class AclCLI {
 			$connect = 'odbc_connect';
 			break;
 			default:
-			$this->stdout('The connection parameter could not be set.');
+			$this->out('The connection parameter could not be set.');
 			break;
 		}
 
@@ -634,7 +541,7 @@ class AclCLI {
 		while ($host == '') {
 			$host = $this->getInput('What is the hostname for the database server?', null, 'localhost');
 			if ($host == '') {
-				$this->stdout('The host name you supplied was empty. Please supply a hostname.');
+				$this->out('The host name you supplied was empty. Please supply a hostname.');
 			}
 		}
 		$login = '';
@@ -643,7 +550,7 @@ class AclCLI {
 			$login = $this->getInput('What is the database username?', null, 'root');
 
 			if ($login == '') {
-				$this->stdout('The database username you supplied was empty. Please try again.');
+				$this->out('The database username you supplied was empty. Please try again.');
 			}
 		}
 		$password = '';
@@ -665,7 +572,7 @@ class AclCLI {
 			$database = $this->getInput('What is the name of the database you will be using?', null, 'cake');
 
 			if ($database == '')  {
-				$this->stdout('The database name you supplied was empty. Please try again.');
+				$this->out('The database name you supplied was empty. Please try again.');
 			}
 		}
 
@@ -678,24 +585,23 @@ class AclCLI {
 			$prefix = '';
 		}
 
-		$this->stdout('');
-		$this->hr();
-		$this->stdout('The following database configuration will be created:');
-		$this->hr();
-		$this->stdout("Driver:        $driver");
-		$this->stdout("Connection:    $connect");
-		$this->stdout("Host:          $host");
-		$this->stdout("User:          $login");
-		$this->stdout("Pass:          " . str_repeat('*', strlen($password)));
-		$this->stdout("Database:      $database");
-		$this->stdout("Table prefix:  $prefix");
-		$this->hr();
+		$this->hr(true);
+		$this->out('The following database configuration will be created:');
+		$this->hr(true);
+		$this->out("Driver:        $driver");
+		$this->out("Connection:    $connect");
+		$this->out("Host:          $host");
+		$this->out("User:          $login");
+		$this->out("Pass:          " . str_repeat('*', strlen($password)));
+		$this->out("Database:      $database");
+		$this->out("Table prefix:  $prefix");
+		$this->hr(true);
 		$looksGood = $this->getInput('Look okay?', array('y', 'n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			$this->bakeDbConfig($driver, $connect, $host, $login, $password, $database, $prefix);
 		} else {
-			$this->stdout('Bake Aborted.');
+			$this->out('Bake Aborted.');
 		}
 	}
 /**
@@ -739,11 +645,11 @@ class AclCLI {
 		}
 
 		if($default == null) {
-			$this->stdout('');
-			$this->stdout($prompt . " $print_options \n" . '> ', false);
+			$this->out('');
+			$this->out($prompt . " $print_options \n" . '> ', false);
 		} else {
-			$this->stdout('');
-			$this->stdout($prompt . " $print_options \n" . "[$default] > ", false);
+			$this->out('');
+			$this->out($prompt . " $print_options \n" . "[$default] > ", false);
 		}
 		$result = trim(fgets($this->stdin));
 
@@ -753,69 +659,6 @@ class AclCLI {
 			return $result;
 		}
 	}
-/**
- * Outputs to the stdout filehandle.
- *
- * @param string $string String to output.
- * @param boolean $newline If true, the outputs gets an added newline.
- */
-	function stdout($string, $newline = true) {
-		if ($newline) {
-			fwrite($this->stdout, $string . "\n");
-		} else {
-			fwrite($this->stdout, $string);
-		}
-	}
-/**
- * Outputs to the stderr filehandle.
- *
- * @param string $string Error text to output.
- */
-	function stderr($string) {
-		fwrite($this->stderr, $string);
-	}
-/**
- * Outputs a series of minus characters to the standard output, acts as a visual separator.
- *
- */
-	function hr() {
-		$this->stdout('---------------------------------------------------------------');
-	}
-/**
- * Creates a file at given path.
- *
- * @param string $path		Where to put the file.
- * @param string $contents Content to put in the file.
- * @return Success
- */
-	function __createFile ($path, $contents) {
-		$path = str_replace('//', '/', $path);
-		echo "\nCreating file $path\n";
-		if (is_file($path) && $this->interactive === true) {
-			fwrite($this->stdout, "File exists, overwrite?" . " {$path} (y/n/q):");
-			$key = trim(fgets($this->stdin));
-
-			if ($key=='q') {
-				fwrite($this->stdout, "Quitting.\n");
-				exit;
-			} elseif ($key == 'a') {
-				$this->dont_ask = true;
-			} elseif ($key == 'y') {
-			} else {
-				fwrite($this->stdout, "Skip" . " {$path}\n");
-				return false;
-			}
-		}
-
-		if ($f = fopen($path, 'w')) {
-			fwrite($f, $contents);
-			fclose($f);
-			fwrite($this->stdout, "Wrote" . "{$path}\n");
-			return true;
-		} else {
-			fwrite($this->stderr, "Error! Could not write to" . " {$path}.\n");
-			return false;
-		}
-	}
 }
+
 ?>
