@@ -157,8 +157,14 @@ class ConsoleScript extends Object {
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
  */
-	function hr() {
+	function hr($newline = false) {
+		if ($newline) {
+			$this->out("\n");
+		}
 		$this->out('---------------------------------------------------------------');
+		if ($newline) {
+			$this->out("\n");
+		}
 	}
 /**
  * Creates a file at given path.
