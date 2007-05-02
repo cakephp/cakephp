@@ -151,6 +151,11 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'posts', '0', '?' => 'var=test&var2=test2', '#' => 'unencoded string %'));
 		$expected = '/posts/index/0?var=test&var2=test2#unencoded+string+%25';
 		$this->assertEqual($result, $expected);
+
+		$this->router->connect('/view/*',  array('controller' => 'posts', 'action' => 'view'));
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'view', '1'));
+		$expected = '/view/1';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlParsing() {
