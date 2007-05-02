@@ -373,16 +373,21 @@ class Scaffold extends Object {
  * @return error
  */
 	function __scaffoldError() {
-		if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS. 'scaffold.error.thtml')) {
-			return $this->controller->render($this->action, $this->layout,
-														APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.error.thtml');
+		$pathToViewFile = '';
+		
+		if (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS. 'scaffold.error.ctp')) {
+			$pathToViewFile = APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.error.ctp';
+		} elseif (file_exists(APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS. 'scaffold.error.thtml')) {
+			$pathToViewFile = APP . 'views' . DS . $this->viewPath . DS . 'scaffolds' . DS . 'scaffold.error.thtml';
+		} elseif (file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.error.ctp')) {
+			$pathToViewFile = APP . 'views' . DS . 'scaffold' . DS . 'scaffold.error.ctp';
 		} elseif (file_exists(APP . 'views' . DS . 'scaffold' . DS . 'scaffold.error.thtml')) {
-				return $this->controller->render($this->action, $this->layout,
-															APP . 'views' . DS . 'scaffold' . DS . 'scaffold.error.thtml');
+			$pathToViewFile = APP . 'views' . DS . 'scaffold' . DS . 'scaffold.error.thtml';
 		} else {
-			return $this->controller->render($this->action, $this->layout,
-														LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . 'scaffold_error.thtml');
+			$pathToViewFile = LIBS . 'view' . DS . 'templates' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		}
+		
+		return $this->controller->render($this->action, $this->layout, $pathToViewFile);
 	}
 /**
  * When forms are submited the arrays need to be rebuilt if
@@ -494,10 +499,16 @@ class Scaffold extends Object {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext)) {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . $this->ext;
+			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return APP . 'views' . DS . 'plugins' . DS . $this->plugin . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.ctp';
 			} elseif (file_exists(APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return APP . 'views' . DS . 'plugins' . DS . 'scaffold'. DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.ctp')) {
+				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.ctp';
 			} elseif (file_exists(APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml')) {
 				return APP . 'plugins' . DS . $this->plugin . DS . 'views' . DS . $this->viewPath . DS . $scaffoldAction . '.thtml';
 			}
@@ -508,13 +519,17 @@ class Scaffold extends Object {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return $path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			}	elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
+			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
+			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return $path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
 			} elseif (file_exists($path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return $path . $this->viewPath . DS . 'scaffold' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			}
 		}
-		 return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.thtml';
+		return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.ctp';
 	}
 }
 ?>
