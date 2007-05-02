@@ -641,6 +641,9 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
+		
+		$result = $this->Form->end(array('submit' => 'save'));
+		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
 	}
 
 	function tearDown() {
