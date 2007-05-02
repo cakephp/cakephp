@@ -186,7 +186,7 @@ class RequestHandlerComponent extends Object {
  */
 	function startup(&$controller) {
 
-		if ($this->disableStartup || !$this->enabled) {
+		if (!$this->enabled) {
 			return;
 		}
 		$controller->params['isAjax'] = $this->isAjax();
