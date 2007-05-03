@@ -41,21 +41,24 @@
 	<span class="notice">
 		<?php
 			__('Your cache is ');
-			if (Cache::isInitialized()) {
+			if (Cache::isInitialized()):
 				__('set up and initialized properly.');
 				$settings = Cache::settings();
-				echo '<br />' . $settings['class'];
+				echo '<p>' . $settings['class'];
 				__(' is being used to cache, to change this edit config/core.php ');
-				echo '<br /> Settings: <ul>';
-				foreach ($settings as $name => $value): ?>
-				<li><?php echo $name . ': ' . $value;?> </li>
-		<?php
-		endforeach;
-			} else {
+				echo '</p>';
+				
+				echo 'Settings: <ul>';
+				foreach ($settings as $name => $value): 
+					echo '<li>' . $name . ': ' . $value . '</li>';
+				endforeach;
+				echo '</ul>';
+				
+			else:
 				__('NOT working.');
 				echo '<br />';
 				__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
-			}
+			endif;
 		?>
 	</span>
 </p>
@@ -107,8 +110,8 @@ if (!empty($filePresent)):
 <h2><?php __('Getting Started'); ?></h2>
 <p>
 <a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
-<a href="http://hades.phparch.com/ceres/public/article/index.php/art::cakephp::overview"><?php __('Overview of CakePHP'); ?></a><br />
-<a href="http://www.sitepoint.com/article/application-development-cakephp"><?php __('Your First Bite'); ?></a>
+<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?php __('Cook up Web sites fast with CakePHP'); ?></a><br />
+<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?php __('Create an interactive production wiki using PHP'); ?></a>
 </p>
 <h2><?php __('More about Cake'); ?></h2>
 <p>
