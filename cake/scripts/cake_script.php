@@ -32,7 +32,7 @@
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class ConsoleScript extends Object {
+class CakeScript extends Object {
 
 /**
  * ConsoleDispatcher object

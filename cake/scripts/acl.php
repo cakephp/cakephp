@@ -26,18 +26,12 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses (
-	'object', 'configure', 'set', 'session', 'security',
-	'inflector', 'model'.DS.'connection_manager',
-	'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
-);
-require_once(CAKE.'app_model.php');
 uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 /**
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class Acl extends ConsoleScript {
+class AclScript extends CakeScript {
 /**
  * Enter description here...
  *
@@ -63,11 +57,6 @@ class Acl extends ConsoleScript {
  * @param unknown_type $args
  */
 	function main () {
-		/*if (function_exists('ini_set')) {
-			ini_set('display_errors', '1');
-			ini_set('error_reporting', '7');
-			ini_set('max_execution_time',0);
-		}*/
 		$this->dataSource = 'default';
 
 		if (isset($this->params['datasource'])) {
@@ -88,9 +77,10 @@ class Acl extends ConsoleScript {
 			exit();
 		}
 
-		pr($this);
-		die();
-
+		//pr($this);
+		//die();
+		
+		$command = null;
 		if(!in_array($command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->out('');
@@ -506,7 +496,7 @@ class Acl extends ConsoleScript {
 		$driver = '';
 
 		while ($driver == '') {
-			$driver = $this->getInput('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
+			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
 			if ($driver == '') {
 				$this->out('The database driver supplied was empty. Please supply a database driver.');
 			}
@@ -539,7 +529,7 @@ class Acl extends ConsoleScript {
 		$host = '';
 
 		while ($host == '') {
-			$host = $this->getInput('What is the hostname for the database server?', null, 'localhost');
+			$host = $this->in('What is the hostname for the database server?', null, 'localhost');
 			if ($host == '') {
 				$this->out('The host name you supplied was empty. Please supply a hostname.');
 			}
@@ -547,7 +537,7 @@ class Acl extends ConsoleScript {
 		$login = '';
 
 		while ($login == '') {
-			$login = $this->getInput('What is the database username?', null, 'root');
+			$login = $this->in('What is the database username?', null, 'root');
 
 			if ($login == '') {
 				$this->out('The database username you supplied was empty. Please try again.');
@@ -557,9 +547,9 @@ class Acl extends ConsoleScript {
 		$blankPassword = false;
 
 		while ($password == '' && $blankPassword == false) {
-			$password = $this->getInput('What is the database password?');
+			$password = $this->in('What is the database password?');
 			if ($password == '') {
-				$blank = $this->getInput('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
+				$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
 				if($blank == 'y')
 				{
 					$blankPassword = true;
@@ -569,7 +559,7 @@ class Acl extends ConsoleScript {
 		$database = '';
 
 		while ($database == '') {
-			$database = $this->getInput('What is the name of the database you will be using?', null, 'cake');
+			$database = $this->in('What is the name of the database you will be using?', null, 'cake');
 
 			if ($database == '')  {
 				$this->out('The database name you supplied was empty. Please try again.');
@@ -579,7 +569,7 @@ class Acl extends ConsoleScript {
 		$prefix = '';
 
 		while ($prefix == '') {
-			$prefix = $this->getInput('Enter a table prefix?', null, 'n');
+			$prefix = $this->in('Enter a table prefix?', null, 'n');
 		}
 		if(low($prefix) == 'n') {
 			$prefix = '';
@@ -596,7 +586,7 @@ class Acl extends ConsoleScript {
 		$this->out("Database:      $database");
 		$this->out("Table prefix:  $prefix");
 		$this->hr(true);
-		$looksGood = $this->getInput('Look okay?', array('y', 'n'), 'y');
+		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			$this->bakeDbConfig($driver, $connect, $host, $login, $password, $database, $prefix);
@@ -628,36 +618,6 @@ class Acl extends ConsoleScript {
 		$out .= "?>";
 		$filename = CONFIGS.'database.php';
 		$this->__createFile($filename, $out);
-	}
-/**
- * Prompts the user for input, and returns it.
- *
- * @param string $prompt Prompt text.
- * @param mixed $options Array or string of options.
- * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
- */
-	function getInput($prompt, $options = null, $default = null) {
-		if (!is_array($options)) {
-			$print_options = '';
-		} else {
-			$print_options = '(' . implode('/', $options) . ')';
-		}
-
-		if($default == null) {
-			$this->out('');
-			$this->out($prompt . " $print_options \n" . '> ', false);
-		} else {
-			$this->out('');
-			$this->out($prompt . " $print_options \n" . "[$default] > ", false);
-		}
-		$result = trim(fgets($this->stdin));
-
-		if($default != null && empty($result)) {
-			return $default;
-		} else {
-			return $result;
-		}
 	}
 }
 
