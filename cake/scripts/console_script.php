@@ -66,17 +66,41 @@ class ConsoleScript extends Object {
  */
 	var $args = array();
 /**
- * Initializes this CakeConsoleScript instance.
+ * Initializes this ConsoleScript instance.
  *
  */
 	function __construct(&$dispatch) {
 		$this->dispatch =& $dispatch;
 		$this->params = $this->dispatch->params;
 		$this->args = $this->dispatch->args;
-		if(file_exists(CONFIGS.'database.php')) {
-			require_once (CONFIGS . 'database.php');
-			$this->dbConfig = new DATABASE_CONFIG();
+		if($this->_loadDbConfig()) {
+			$this->_loadModel();
 		}
+	}
+
+	function _loadDbConfig() {
+		if(config('database')) {
+			if (class_exists('DATABASE_CONFIG')) {
+				$this->dbConfig = new DATABASE_CONFIG();
+				return true;
+			}
+		}
+		//$this->err('Database config could not be loaded');
+		return false;
+	}
+
+	function _loadModel() {
+		uses ('model'.DS.'connection_manager',
+			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
+		);
+
+		if(loadModel()) {
+			$this->AppModel = & new AppModel();
+			return true;
+		}
+
+		//$this->err('AppModel could not be loaded');
+		return false;
 	}
 
 /**
@@ -90,7 +114,7 @@ class ConsoleScript extends Object {
 		$this->out('Baking...');
 		$this->hr();
 		$this->out('Name: '. APP_DIR);
-		$this->out('Path: '. ROOT.DS.APP_DIR);
+		$this->out('Path: '. ROOT . DS . APP_DIR);
 		$this->hr();
 
 		if(empty($this->dbConfig)) {
@@ -177,17 +201,17 @@ class ConsoleScript extends Object {
 		$path = str_replace(DS . DS, DS, $path);
 		echo "\nCreating file $path\n";
 		if (is_file($path) && $this->interactive === true) {
-			fwrite($this->stdout, __("File exists, overwrite?", true). " {$path} (y/n/q):");
+			$this->out(__("File exists, overwrite?", true). " {$path} (y/n/q):");
 			$key = trim(fgets($this->stdin));
 
 			if ($key == 'q') {
-				fwrite($this->stdout, __("Quitting.", true) ."\n");
+				$this->out(__("Quitting.", true) ."\n");
 				exit;
 			} elseif ($key == 'a') {
 				$this->dont_ask = true;
 			} elseif ($key == 'y') {
 			} else {
-				fwrite($this->stdout, __("Skip", true) ." {$path}\n");
+				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
 			}
 		}
@@ -195,10 +219,10 @@ class ConsoleScript extends Object {
 		if ($f = fopen($path, 'w')) {
 			fwrite($f, $contents);
 			fclose($f);
-			fwrite($this->stdout, __("Wrote", true) ."{$path}\n");
+			$this->out(__("Wrote", true) ."{$path}\n");
 			return true;
 		} else {
-			fwrite($this->stderr, __("Error! Could not write to", true)." {$path}.\n");
+			$this->err(__("Error! Could not write to", true)." {$path}.\n");
 			return false;
 		}
 	}
