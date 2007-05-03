@@ -43,11 +43,11 @@
  */
 class File extends Object{
 /**
- * Folder of the File
+ * Folder object of the File
  *
  * @var Folder
  */
-	var $folder = null;
+	var $Folder = null;
 /**
  * Filename
  *
@@ -63,7 +63,7 @@ class File extends Object{
  */
 	function __construct($path, $create = false) {
 		parent::__construct();
-		$this->folder = new Folder(dirname($path), $create);
+		$this->Folder = new Folder(dirname($path), $create, 0755);
 		$this->name = basename($path);
 		if (!$this->exists()) {
 			if ($create === true) {
@@ -187,7 +187,7 @@ class File extends Object{
  * @return boolean Success
  */
 	function create() {
-		$dir = $this->folder->pwd();
+		$dir = $this->Folder->pwd();
 
 		if (file_exists($dir) && is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			if (!touch($this->getFullPath())) {
@@ -270,7 +270,7 @@ class File extends Object{
  * @return Folder
  */
 	function getFolder() {
-		return $this->folder;
+		return $this->Folder;
 	}
 /**
  * Returns the "chmod" (permissions) of the File.
@@ -287,7 +287,7 @@ class File extends Object{
  * @return string
  */
 	function getFullPath() {
-		return $this->folder->slashTerm($this->folder->pwd()) . $this->getName();
+		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->getName();
 	}
 }
 ?>

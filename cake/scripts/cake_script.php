@@ -215,10 +215,10 @@ class CakeScript extends Object {
 				return false;
 			}
 		}
-
-		if ($f = fopen($path, 'w')) {
-			fwrite($f, $contents);
-			fclose($f);
+		
+		uses('file');
+		if ($File = new File($path, true)) {
+			$File->write($contents);
 			$this->out(__("Wrote", true) ."{$path}\n");
 			return true;
 		} else {
