@@ -1039,8 +1039,6 @@ class Model extends Overloadable {
 			$weHaveMulti = false;
 		}
 
-		$newID = null;
-
 		foreach($this->data as $n => $v) {
 			if (isset($weHaveMulti) && isset($v[$n]) && $count > 0 && count($this->hasAndBelongsToMany) > 0) {
 				$joined[] = $v;
@@ -1056,10 +1054,6 @@ class Model extends Overloadable {
 						if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist)) {
 							$fields[] = $x;
 							$values[] = $y;
-
-							if ($x == $this->primaryKey && !empty($y)) {
-								$newID = $y;
-							}
 						}
 					}
 				}
@@ -1103,7 +1097,6 @@ class Model extends Overloadable {
 						foreach ($this->belongsTo as $parent => $assoc) {
 							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
 								$parentObj =& $this->{$assoc['className']};
-
 							}
 						}
 					}
