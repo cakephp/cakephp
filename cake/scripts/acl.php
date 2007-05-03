@@ -617,7 +617,7 @@ class AclScript extends CakeScript {
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONFIGS.'database.php';
-		$this->__createFile($filename, $out);
+		$this->createFile($filename, $out);
 	}
 }
 
