@@ -1236,6 +1236,26 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertTrue($result);
 		$result = $this->model->validates();
 		$this->assertFalse($result);
+		
+		$this->model->validate['slug'] = array('allowEmpty' => false, 'rule' => array('maxLength', 45));
+		
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => 'slug-right-here'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+		
+		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
 
 		$this->model->validate = array(
 			'number' => array(

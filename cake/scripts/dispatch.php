@@ -28,10 +28,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	$dispatcher = new ConsoleDispatcher($argv);
-}
-
 class ConsoleDispatcher {
 /**
  * Standard input stream.
@@ -170,7 +166,7 @@ class ConsoleDispatcher {
 			$this->shiftArgs();
 			$this->scriptName = Inflector::camelize($this->script);
 			$this->scriptClass = $this->scriptName . 'Script';
-			
+
 			if (method_exists($this, $this->script) && !in_array($this->script, $protectedCommands)) {
 				$this->{$this->script}();
 			} else {
@@ -198,7 +194,7 @@ class ConsoleDispatcher {
 							$command = $this->args[0];
 						}
 						$classMethods = get_class_methods($script);
-						
+
 						$privateMethod = $missingCommand = false;
 						if((in_array($command, $classMethods) || in_array(strtolower($command), $classMethods)) && strpos($command, '_', 0) === 0) {
 							$privateMethod = true;
@@ -370,5 +366,8 @@ class ConsoleDispatcher {
 		echo 'Params ';
 		print_r($this->params);
 	}
+}
+if (!defined('DISABLE_AUTO_DISPATCH')) {
+	$dispatcher = new ConsoleDispatcher($argv);
 }
 ?>

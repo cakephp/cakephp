@@ -1711,7 +1711,7 @@ class Model extends Overloadable {
 				}
 
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
-					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && $data[$fieldName] != 0) && $validator['allowEmpty'] === false)) {
+					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
 						if(empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
