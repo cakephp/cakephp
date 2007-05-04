@@ -75,7 +75,7 @@ class ConsoleDispatcher {
  * @var string
  */
 	var $scriptClass = null;
-	
+
 /**
  * The path location of scripts.
  *
@@ -84,7 +84,7 @@ class ConsoleDispatcher {
 	var $scriptPaths = array();
 
 	function ConsoleDispatcher($args = array()) {
-		$this->__construct($args);		
+		$this->__construct($args);
 	}
 
 	function __initConstants() {
@@ -94,7 +94,7 @@ class ConsoleDispatcher {
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 60 * 5);
-		}		
+		}
 		define('PHP5', (phpversion() >= 5));
 		define('DS', DIRECTORY_SEPARATOR);
 		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
@@ -133,9 +133,9 @@ class ConsoleDispatcher {
 			$this->stdout("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
 			exit();
 		}
-		
+
 		$this->scriptPaths = array(
-								VENDORS . 'scritps' . DS, 
+								VENDORS . 'scritps' . DS,
 								APP . 'vendors' . DS . 'scripts' . DS,
 								SCRIPTS
 							);
@@ -158,42 +158,84 @@ class ConsoleDispatcher {
 		if (!isset($this->args[0]) || $this->args[0] != 'help') {
 			$this->stdout("Type 'cake help' for help\n");
 		}
-		
+		$protectedCommands = array('initialize', 'main','in','out','err','hr',
+									'createFile', 'isDir','copyDir','Object','toString',
+									'requestAction','log','cakeError', 'ConsoleDispatcher',
+									'__initConstants','__initEnvironment','__construct',
+									'dispatch','bootstrap','getInput','stdout','stderr','parseParams','shiftArgs'
+								);
 		if (isset($this->args[0])) {
 			// Load requested script
-			$script = $this->args[0];
+			$this->script = $this->args[0];
 			$this->shiftArgs();
-
-			if (method_exists($this, $script)) {
-				$this->{$script}();
+			$this->scriptName = Inflector::camelize($this->script);
+			$this->scriptClass = $this->scriptName . 'Script';
+			
+			if (method_exists($this, $this->script) && !in_array($this->script, $protectedCommands)) {
+				$this->{$this->script}();
 			} else {
 				$loaded = false;
 				foreach($this->scriptPaths as $path) {
-					$this->script = $path . $script . ".php";
-					$this->scriptClass = Inflector::camelize($script).'Script';
-					if (file_exists($this->script)) {
+					$this->scriptPath = $path . $this->script . ".php";
+					if (file_exists($this->scriptPath)) {
 						$loaded = true;
 						break;
 					}
 				}
-				
+
 				if (!$loaded) {
 					$this->stdout('Unable to dispatch requested script: ', false);
 					$this->stdout("'{$script}.php' does not exist in: \n" . implode("\nor ", $this->scriptPaths));
 					exit();
 				} else {
 					require SCRIPTS . 'cake_script.php';
-					require $this->script;
+					require $this->scriptPath;
 					if(class_exists($this->scriptClass)) {
-						$cli = new $this->scriptClass($this);
-						$cli->main();
+						$script = new $this->scriptClass($this);
+
+						$command = null;
+						if(isset($this->args[0])) {
+							$command = $this->args[0];
+						}
+						$classMethods = get_class_methods($script);
+						
+						$privateMethod = $missingCommand = false;
+						if((in_array($command, $classMethods) || in_array(strtolower($command), $classMethods)) && strpos($command, '_', 0) === 0) {
+							$privateMethod = true;
+						}
+
+						if(!in_array($command, $classMethods) && !in_array(strtolower($command), $classMethods)) {
+							$missingCommand = true;
+						}
+
+						if (in_array(strtolower($command), $protectedCommands)) {
+							$missingCommand = true;
+						}
+						if($command == 'help') {
+							if(method_exists($script, 'help')) {
+								$script->initialize();
+								$script->help();
+							} else {
+								$this->help();
+							}
+						} else if($missingCommand && method_exists($script, 'main')) {
+							$script->initialize();
+							$script->main();
+						} else if(!$privateMethod && method_exists($script, $command)) {
+							$script->command = $command;
+							$this->shiftArgs();
+							$script->initialize();
+							$script->{$command}();
+						} else {
+							$this->stderr("Unknown {$this->scriptName} command '$command'.\nFor usage, try 'cake {$this->script} help'.\n\n");
+						}
 					} else {
 						$this->stderr('Class '.$this->scriptClass.' could not be loaded');
 					}
 				}
 			}
 		} else {
-			$this->stdout('Available commands:');
+			$this->stdout('Available Scripts:');
 			foreach (listClasses(CAKE . 'scripts') as $script) {
 				if ($script != 'dispatch.php' && $script != 'cake_script.php') {
 					$this->stdout("\t - " . r('.php', '', $script));
@@ -222,7 +264,7 @@ class ConsoleDispatcher {
 			}
 		}
 
-		$libraries = array('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager', 
+		$libraries = array('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager',
 							'debugger', 'security', 'controller' . DS . 'controller');
 		foreach ($libraries as $inc) {
 			if (!file_exists(LIBS . $inc . '.php')) {
@@ -322,8 +364,10 @@ class ConsoleDispatcher {
 	function help() {
 		$this->stdout("\nConsole Help:");
 		$this->stdout('-------------');
+		echo 'Args ';
 		print_r($this->args);
-		echo implode('\n', $this->params);
+		echo 'Params ';
+		print_r($this->params);
 	}
 }
 ?>

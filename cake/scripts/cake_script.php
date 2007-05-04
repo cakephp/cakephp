@@ -70,17 +70,18 @@ class CakeScript extends Object {
  *
  */
 	function __construct(&$dispatch) {
-		$this->dispatch =& $dispatch;
-		$this->params = $this->dispatch->params;
-		$this->args = $this->dispatch->args;
-		$this->initialize();
+		$this->Dispatch = & $dispatch;
+		$this->params = & $this->Dispatch->params;
+		$this->args = & $this->Dispatch->args;
+		$this->name = & $this->Dispatch->scriptName;
+		$this->command = & $this->Dispatch->scriptCommand;
 	}
 /**
  * Initializes the CakeScript
  * can be overriden in subclasses
  *
  * @return null
- */	
+ */
 	function initialize() {
 		if($this->_loadDbConfig()) {
 			$this->_loadModel();
@@ -127,7 +128,7 @@ class CakeScript extends Object {
  *
  */
 	function main() {
-		
+
 		$this->out('');
 		$this->out('');
 		$this->out('Baking...');
@@ -177,7 +178,7 @@ class CakeScript extends Object {
  * @return Either the default value, or the user-provided input.
  */
 	function in($prompt, $options = null, $default = null) {
-		return $this->dispatch->getInput($prompt, $options, $default);
+		return $this->Dispatch->getInput($prompt, $options, $default);
 	}
 /**
  * Outputs to the stdout filehandle.
@@ -186,7 +187,7 @@ class CakeScript extends Object {
  * @param boolean $newline If true, the outputs gets an added newline.
  */
 	function out($string, $newline = true) {
-		return $this->dispatch->stdout($string, $newline);
+		return $this->Dispatch->stdout($string, $newline);
 	}
 /**
  * Outputs to the stderr filehandle.
@@ -194,7 +195,7 @@ class CakeScript extends Object {
  * @param string $string Error text to output.
  */
 	function err($string) {
-		return $this->dispatch->stderr($string);
+		return $this->Dispatch->stderr($string);
 	}
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
@@ -207,6 +208,34 @@ class CakeScript extends Object {
 		$this->out('---------------------------------------------------------------');
 		if ($newline) {
 			$this->out("\n");
+		}
+	}
+/**
+ * Displays a formatted error message
+ *
+ * @param unknown_type $title
+ * @param unknown_type $msg
+ */
+	function displayError($title, $msg) {
+		$out = "\n";
+		$out .= "Error: $title\n";
+		$out .= "$msg\n";
+		$out .= "\n";
+		$this->out($out);
+		exit();
+	}
+/**
+ * Will check the number args matches otherwise throw an error
+ *
+ * @param unknown_type $expectedNum
+ * @param unknown_type $command
+ */
+	function checkArgNumber($expectedNum, $command = null) {
+		if(!$command) {
+			$command = $this->command;
+		}
+		if (count($this->args) < $expectedNum) {
+			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->Dispatch->script.' help\' for help on usage of the '.$command.' command.');
 		}
 	}
 /**
@@ -234,7 +263,7 @@ class CakeScript extends Object {
 				return false;
 			}
 		}
-		
+
 		uses('file');
 		if ($File = new File($path, true)) {
 			$File->write($contents);

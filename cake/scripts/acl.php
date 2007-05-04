@@ -54,13 +54,7 @@ class AclScript extends CakeScript {
  * override intialize of the CakeScript
  *
  */
-	function initialize () {		
-	}
-/**
- * Main method called from dispatch
- *
- */
-	function main () {
+	function initialize () {
 		$this->dataSource = 'default';
 
 		if (isset($this->params['datasource'])) {
@@ -79,12 +73,11 @@ class AclScript extends CakeScript {
 			$this->err($out);
 			exit();
 		}
+
+		//$this->Dispatch->shiftArgs();
+
 		
-		$command = null;
-		if(isset($this->args[0])) {
-			$command = $this->args[0];	
-		}
-		if($command && !in_array($command, array('help'))) {
+		if($this->command && !in_array($this->command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->out('');
 				$this->out('Your database configuration was not found.');
@@ -93,50 +86,12 @@ class AclScript extends CakeScript {
 			}
 			require_once (CONFIGS.'database.php');
 
-			if(!in_array($command, array('initdb'))) {
+			if(!in_array($this->command, array('initdb'))) {
 				$this->Acl = new AclComponent();
 				$this->db =& ConnectionManager::getDataSource($this->dataSource);
 			}
 		}
-		
-		switch ($command) {
-			case 'create':
-				$this->create();
-			break;
-			case 'delete':
-				$this->delete();
-			break;
-			case 'setParent':
-				$this->setParent();
-			break;
-			case 'getPath':
-				$this->getPath();
-			break;
-			case 'grant':
-				$this->grant();
-			break;
-			case 'deny':
-				$this->deny();
-			break;
-			case 'inherit':
-				$this->inherit();
-			break;
-			case 'view':
-				$this->view();
-			break;
-			case 'initdb':
-				$this->initdb();
-			break;
-			case 'upgrade':
-				$this->upgradedb();
-			break;
-			case 'help':
-				$this->help();
-			break;
-			default:
-				$this->err("Unknown ACL command '$command'.\nFor usage, try 'cake acl help'.\n\n");
-			break;
-		}
+
 	}
 /**
  * Enter description here...
@@ -153,7 +108,18 @@ class AclScript extends CakeScript {
 		} else {
 			$parent = $this->args[2];
 		}
-		if(!$this->Acl->{$class}->create(intval($this->args[1]), $parent, $this->args[3])){
+
+		if (!empty($parent)) {
+			$parent = $this->{$class}->node($model, $parent);
+		} else {
+			$parent = null;
+		}
+		$this->Acl->{$class}->create();
+		if($this->Acl->{$class}->save(array(
+			'parent_id'		=> Set::extract($parent, "0.{$class}.id"),
+			'model'			=> null,
+			'foreign_key'	=> null
+		))) {
 			$this->displayError("Parent Node Not Found", "There was an error creating the ".$class.", probably couldn't find the parent node.\n If you wish to create a new root node, specify the <parent_id> as '0'.");
 		}
 		$this->out("New $class '".$this->args[3]."' created.\n\n");
@@ -417,31 +383,6 @@ class AclScript extends CakeScript {
 		$out .= "\n";
 		$out .= "\n";
 		$this->out($out);
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $title
- * @param unknown_type $msg
- */
-	function displayError($title, $msg) {
-		$out = "\n";
-		$out .= "Error: $title\n";
-		$out .= "$msg\n";
-		$out .= "\n";
-		$this->out($out);
-		exit();
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $expectedNum
- * @param unknown_type $command
- */
-	function checkArgNumber($expectedNum, $command) {
-		if (count($this->args) < $expectedNum) {
-			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'php acl.php help\' for help on usage of the '.$command.' command.');
-		}
 	}
 /**
  * Enter description here...
