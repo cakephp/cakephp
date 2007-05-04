@@ -98,7 +98,7 @@ class AclScript extends CakeScript {
  *
  */
 	function create() {
-		$this->checkArgNumber(4, 'create');
+		$this->_checkArgs(4, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
@@ -130,7 +130,7 @@ class AclScript extends CakeScript {
  *
  */
 	function delete() {
-		$this->checkArgNumber(2, 'delete');
+		$this->_checkArgs(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if(!$this->Acl->{$class}->delete($this->args[1])) {
@@ -144,7 +144,7 @@ class AclScript extends CakeScript {
  *
  */
 	function setParent() {
-		$this->checkArgNumber(3, 'setParent');
+		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (!$this->Acl->{$class}->setParent($this->args[2], $this->args[1])){
@@ -158,7 +158,7 @@ class AclScript extends CakeScript {
  *
  */
 	function getPath() {
-		$this->checkArgNumber(2, 'getPath');
+		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		$id = (is_numeric($this->args[2])) ? intval($this->args[1]) : $this->args[1];
@@ -175,7 +175,7 @@ class AclScript extends CakeScript {
  *
  */
 	function grant() {
-		$this->checkArgNumber(3, 'grant');
+		$this->_checkArgs(3, 'grant');
 		//add existence checks for nodes involved
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
@@ -187,7 +187,7 @@ class AclScript extends CakeScript {
  *
  */
 	function deny() {
-		$this->checkArgNumber(3, 'deny');
+		$this->_checkArgs(3, 'deny');
 		//add existence checks for nodes involved
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
@@ -199,7 +199,7 @@ class AclScript extends CakeScript {
  *
  */
 	function inherit() {
-		$this->checkArgNumber(3, 'inherit');
+		$this->_checkArgs(3, 'inherit');
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
 		$this->Acl->inherit($aro, $aco, $this->args[2]);
@@ -210,7 +210,7 @@ class AclScript extends CakeScript {
  *
  */
 	function view() {
-		$this->checkArgNumber(1, 'view');
+		$this->_checkArgs(1, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (!is_null($this->args[1])) {
