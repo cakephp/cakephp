@@ -73,16 +73,57 @@ class ConsoleDispatcher {
 	var $scriptClass = null;
 
 /**
+ * The command called if public methods are available.
+ *
+ * @var string
+ */
+	var $scriptCommand = null;
+
+
+/**
  * The path location of scripts.
  *
  * @var array
  */
 	var $scriptPaths = array();
 
+/**
+ * The path to the current script location.
+ *
+ * @var string
+ */
+	var $scriptPath = null;
+	
+/**
+ * The name of the script in lowercase underscore.
+ *
+ * @var string
+ */
+	var $scriptName = null;	
+	
+	
+/**
+ *  Constructs this ConsoleDispatcher instance.
+ *
+ * @param array $args the argv.
+ * @return void
+ */
 	function ConsoleDispatcher($args = array()) {
 		$this->__construct($args);
 	}
-
+	
+	function __construct($args = array()) {
+		$this->__initConstants();
+		$this->parseParams($args);
+		$this->__initEnvironment();
+		$this->dispatch();
+		die("\n");
+	}
+/**
+ *  Defines core configuration.
+ *
+ * @return void
+ */
 	function __initConstants() {
 		if (function_exists('ini_set')) {
 			ini_set('display_errors', '1');
@@ -94,13 +135,16 @@ class ConsoleDispatcher {
 		define('PHP5', (phpversion() >= 5));
 		define('DS', DIRECTORY_SEPARATOR);
 		define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
-		define('ROOT', dirname($this->params['working']));
-		define('APP_DIR', basename($this->params['working']));
 		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 		define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 	}
-
+/**
+ *  Defines current working environment.
+ *
+ * @return void
+ */
 	function __initEnvironment() {
+				
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
@@ -121,14 +165,15 @@ class ConsoleDispatcher {
 				exit();
 			}
 		}
-		$this->shiftArgs();
-
-		if (!$this->bootstrap()) {
+		
+		if (!$this->__bootstrap()) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout("\nUnable to load Cake core:");
 			$this->stdout("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
 			exit();
 		}
+		
+		$this->shiftArgs();
 
 		$this->scriptPaths = array(
 								VENDORS . 'scritps' . DS,
@@ -136,14 +181,50 @@ class ConsoleDispatcher {
 								SCRIPTS
 							);
 	}
+/**
+ * Initializes the environment and loads the Cake core.
+ *
+ * @return boolean Returns false if loading failed.
+ */
+	function __bootstrap() {
 
-	function __construct($args = array()) {
-		$this->parseParams($args);
-		$this->__initConstants();
-		$this->__initEnvironment();
-		$this->dispatch();
-		die("\n");
+		define('ROOT', dirname($this->params['working']));
+		define('APP_DIR', basename($this->params['working']));
+		define('APP_PATH', ROOT . DS . APP_DIR . DS);
+
+		$includes = array(
+			CORE_PATH . 'cake' . DS . 'basics.php',
+			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
+		);
+
+		if(!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
+			$includes[] = CORE_PATH . 'cake' . DS . 'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php';
+		} else {
+			$includes[] = APP_PATH . 'config' . DS . 'core.php';
+		}
+
+		foreach ($includes as $inc) {
+			if (!@include_once($inc)) {
+				$this->stdout("Failed to load Cake core file {$inc}");
+				return false;
+			}
+		}
+
+		$libraries = array('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager',
+							'debugger', 'security', 'controller' . DS . 'controller');
+		foreach ($libraries as $inc) {
+			if (!file_exists(LIBS . $inc . '.php')) {
+				$this->stdout("Failed to load Cake core class " . ucwords($inc));
+				$this->stdout("(" . LIBS.$inc.".php)");
+				return false;
+			}
+			uses($inc);
+		}
+		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
+		Configure::write('debug', 1);
+		return true;
 	}
+
 /**
  * Dispatches a CLI request
  *
@@ -158,7 +239,7 @@ class ConsoleDispatcher {
 									'createFile', 'isDir','copyDir','Object','toString',
 									'requestAction','log','cakeError', 'ConsoleDispatcher',
 									'__initConstants','__initEnvironment','__construct',
-									'dispatch','bootstrap','getInput','stdout','stderr','parseParams','shiftArgs'
+									'dispatch','__bootstrap','getInput','stdout','stderr','parseParams','shiftArgs'
 								);
 		if (isset($this->args[0])) {
 			// Load requested script
@@ -242,39 +323,6 @@ class ConsoleDispatcher {
 		}
 	}
 /**
- * Initializes the environment and loads the Cake core.
- *
- * @return boolean Returns false if loading failed.
- */
-	function bootstrap() {
-		$includes = array(
-			CORE_PATH . 'cake' . DS . 'basics.php',
-			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
-			CORE_PATH . 'cake' . DS . 'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php'
-		);
-
-		foreach ($includes as $inc) {
-			if (!@include_once($inc)) {
-				$this->stdout("Failed to load Cake core file {$inc}");
-				return false;
-			}
-		}
-
-		$libraries = array('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager',
-							'debugger', 'security', 'controller' . DS . 'controller');
-		foreach ($libraries as $inc) {
-			if (!file_exists(LIBS . $inc . '.php')) {
-				$this->stdout("Failed to load Cake core class " . ucwords($inc));
-				$this->stdout("(" . LIBS.$inc.".php)");
-				return false;
-			}
-			uses($inc);
-		}
-		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
-		Configure::write('debug', 1);
-		return true;
-	}
-/**
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
@@ -339,6 +387,19 @@ class ConsoleDispatcher {
 			}
 		}
 		$this->params = array_merge(array('working'=> dirname(dirname(dirname(__FILE__)))), $this->params);
+		
+		$app = 'app';
+		if(isset($this->params['app'])) {
+			if($this->params['app']{0} == '/') {
+				$this->params['working'] = $this->params['app'];
+			} else {
+				$app = $this->params['app'];
+			}
+		}
+		
+		if(strpos($this->params['working'], 'scripts')) {
+			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
+		}
 	}
 /**
  * Removes first argument and shifts other arguments up

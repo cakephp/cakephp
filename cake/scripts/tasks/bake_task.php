@@ -26,7 +26,18 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class BakeTask {
+class BakeTask extends CakeScript {
+	
+	/**
+	 *  Constructs this BakeTask instance.
+	 *
+	 */
+	function __construct(&$script) {
+		$this->Dispatch = & $script->Dispatch;
+		$this->task = & $script->task;
+		$this->params = & $script->Dispatch->params;
+		$this->args = & $script->Dispatch->args;
+	}
 
 	/**
 	 * Override this function in subclasses to implement the task logic.

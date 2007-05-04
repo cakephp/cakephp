@@ -39,7 +39,7 @@ class CakeScript extends Object {
  *
  * @var object An instance of the ConsoleDispatcher object that loaded this script
  */
-	var $dispatch = null;
+	var $Dispatch = null;
 /**
  * If true, the script will ask for permission to perform actions.
  *
@@ -231,7 +231,7 @@ class CakeScript extends Object {
  * @param unknown_type $expectedNum
  * @param unknown_type $command
  */
-	function checkArgNumber($expectedNum, $command = null) {
+	function _checkArgs($expectedNum, $command = null) {
 		if(!$command) {
 			$command = $this->command;
 		}

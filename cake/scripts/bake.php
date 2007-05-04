@@ -67,15 +67,18 @@ class BakeScript extends CakeScript {
 		$this->out('Baking...');
 		$this->hr();
 		$this->out('Name: '. APP_DIR);
-		$this->out('Path: '. ROOT.DS.APP_DIR);
+		$this->out('Path: '. ROOT . DS . APP_DIR);
 		$this->hr();
-
-		if(!file_exists(CONFIGS.'database.php')) {
+		
+		if(!is_dir(CONFIGS)) {
+			$this->project($this->params['working']);
+		}
+		
+		if(!config('database')) {
 			$this->out('');
 			$this->out('Your database configuration was not found. Take a moment to create one:');
 			$this->doDbConfig();
 		}
-		require_once (CONFIGS.'database.php');
 
 		$this->out('[M]odel');
 		$this->out('[C]ontroller');
@@ -1769,6 +1772,7 @@ class BakeScript extends CakeScript {
 				}
 			}
 		}
+		$newPath = 'n';
 		while ($newPath != 'y' && ($this->__checkPath($projectPath) === true || $projectPath == '')) {
 				$newPath = $this->in('Directory '.$projectPath.'  exists. Overwrite (y) or insert a new path', null, 'y');
 				if($newPath != 'y') {
