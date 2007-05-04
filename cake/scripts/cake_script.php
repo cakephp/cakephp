@@ -127,7 +127,7 @@ class CakeScript extends Object {
  * Main-loop method.
  *
  */
-	function main() {
+	function bake() {
 
 		$this->out('');
 		$this->out('');
@@ -139,7 +139,8 @@ class CakeScript extends Object {
 
 		if(empty($this->dbConfig)) {
 			$this->out('');
-			$this->out('Your database configuration was not found. Take a moment to create one:');
+			$this->err('Your database configuration was not found. Take a moment to create one:');
+			exit();
 		}
 		require_once (CONFIGS . 'database.php');
 
@@ -195,7 +196,7 @@ class CakeScript extends Object {
  * @param string $string Error text to output.
  */
 	function err($string) {
-		return $this->Dispatch->stderr($string);
+		return $this->Dispatch->stderr($string."\n");
 	}
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.

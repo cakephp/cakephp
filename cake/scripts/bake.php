@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 /* SVN FILE: $Id$ */
 /**
@@ -29,146 +28,13 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-	define ('DS', DIRECTORY_SEPARATOR);
-	if (function_exists('ini_set')) {
-		ini_set('display_errors', '1');
-		ini_set('error_reporting', '7');
-		ini_set('max_execution_time',0);
-	}
-
-	$app = null;
-	$root = dirname(dirname(dirname(__FILE__)));
-	$core = null;
-	$here = $argv[0];
-	$help = null;
-	$project = null;
-
-	for ($i = 1; $i < count($argv); $i += 2) {
-		switch ($argv[$i]) {
-			case '-a':
-			case '-app':
-				$app = $argv[$i + 1];
-			break;
-			case '-c':
-			case '-core':
-				$core = $argv[$i + 1];
-			break;
-			case '-r':
-			case '-root':
-				$root = $argv[$i + 1];
-			break;
-			case '-h':
-			case '-help':
-				$help = true;
-			break;
-			case '-p':
-			case '-project':
-				$project = true;
-				$projectPath = $argv[$i + 1];
-				$app = $argv[$i + 1];
-			break;
-		}
-	}
-
-	if(!$app && isset($argv[1])) {
-		$app = $argv[1];
-	} elseif(!$app) {
-		$app = 'app';
-	}
-	if(!is_dir($app)) {
-		$project = true;
-		$projectPath = $app;
-
-	}
-
-	if($project) {
-		$app = $projectPath;
-	}
-
-	$shortPath = str_replace($root, '', $app);
-	$shortPath = str_replace('..'.DS, '', $shortPath);
-	$shortPath = str_replace(DS.DS, DS, $shortPath);
-
-	$pathArray = explode(DS, $shortPath);
-	if(end($pathArray) != '') {
-		$appDir = array_pop($pathArray);
-	} else {
-		array_pop($pathArray);
-		$appDir = array_pop($pathArray);
-	}
-	$rootDir = implode(DS, $pathArray);
-	$rootDir = str_replace(DS.DS, DS, $rootDir);
-
-	if(!$rootDir) {
-		$rootDir = $root;
-		$projectPath = $root.DS.$appDir;
-	}
-
-	define ('ROOT', $rootDir);
-	define ('APP_DIR', $appDir);
-	define ('DEBUG', 1);
-
-	if(!empty($core)){
-		define('CAKE_CORE_INCLUDE_PATH', dirname($core));
-	}else{
-		define('CAKE_CORE_INCLUDE_PATH', $root);
-	}
-
-	if(function_exists('ini_set')) {
-		ini_set('include_path',ini_get('include_path').
-													PATH_SEPARATOR.CAKE_CORE_INCLUDE_PATH.DS.
-													PATH_SEPARATOR.ROOT.DS.APP_DIR.DS);
-		define('APP_PATH', null);
-		define('CORE_PATH', null);
-	} else {
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-	}
-
-	require_once (CORE_PATH.'cake'.DS.'basics.php');
-	require_once (CORE_PATH.'cake'.DS.'config'.DS.'paths.php');
-	require_once (CORE_PATH.'cake'.DS.'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php');
-	require_once (CORE_PATH.'cake'.DS.'dispatcher.php');
-	uses('object', 'session', 'security', 'configure', 'inflector', 'model'.DS.'connection_manager');
-
-	$pattyCake = new Bake();
-	if($help === true)
-	{
-		$pattyCake->help();
-		exit();
-	}
-	if($project === true)
-	{
-		$pattyCake->project($projectPath);
-		exit();
-	}
-	$pattyCake->main();
 /**
  * Bake is a command-line code generation utility for automating programmer chores.
  *
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class Bake {
-
-/**
- * Standard input stream.
- *
- * @var filehandle
- */
-	var $stdin;
-/**
- * Standard output stream.
- *
- * @var filehandle
- */
-	var $stdout;
-/**
- * Standard error stream.
- *
- * @var filehandle
- */
-	var $stderr;
+class BakeScript extends CakeScript {
 /**
  * Associated controller name.
  *
@@ -187,19 +53,8 @@ class Bake {
  * Private helper function for constructor
  * @access private
  */
-	function __construct() {
-		$this->stdin = fopen('php://stdin', 'r');
-		$this->stdout = fopen('php://stdout', 'w');
-		$this->stderr = fopen('php://stderr', 'w');
+	function initialize() {
 		$this->welcome();
-	}
-/**
- * Constructor.
- *
- * @return Bake
- */
-	function Bake() {
-		return $this->__construct();
 	}
 /**
  * Main-loop method.
@@ -207,28 +62,28 @@ class Bake {
  */
 	function main() {
 
-		$this->stdout('');
-		$this->stdout('');
-		$this->stdout('Baking...');
+		$this->out('');
+		$this->out('');
+		$this->out('Baking...');
 		$this->hr();
-		$this->stdout('Name: '. APP_DIR);
-		$this->stdout('Path: '. ROOT.DS.APP_DIR);
+		$this->out('Name: '. APP_DIR);
+		$this->out('Path: '. ROOT.DS.APP_DIR);
 		$this->hr();
 
 		if(!file_exists(CONFIGS.'database.php')) {
-			$this->stdout('');
-			$this->stdout('Your database configuration was not found. Take a moment to create one:');
+			$this->out('');
+			$this->out('Your database configuration was not found. Take a moment to create one:');
 			$this->doDbConfig();
 		}
 		require_once (CONFIGS.'database.php');
 
-		$this->stdout('[M]odel');
-		$this->stdout('[C]ontroller');
-		$this->stdout('[V]iew');
+		$this->out('[M]odel');
+		$this->out('[C]ontroller');
+		$this->out('[V]iew');
 		$invalidSelection = true;
 
 		while ($invalidSelection) {
-			$classToBake = strtoupper($this->getInput('What would you like to Bake?', array('M', 'V', 'C')));
+			$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C')));
 			switch($classToBake) {
 				case 'M':
 					$invalidSelection = false;
@@ -243,7 +98,7 @@ class Bake {
 					$this->doController();
 					break;
 				default:
-					$this->stdout('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
+					$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
 			}
 		}
 	}
@@ -253,15 +108,15 @@ class Bake {
  */
 	function doDbConfig() {
 		$this->hr();
-		$this->stdout('Database Configuration:');
+		$this->out('Database Configuration:');
 		$this->hr();
 
 		$driver = '';
 
 		while ($driver == '') {
-			$driver = $this->getInput('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
+			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
 			if ($driver == '') {
-				$this->stdout('The database driver supplied was empty. Please supply a database driver.');
+				$this->out('The database driver supplied was empty. Please supply a database driver.');
 			}
 		}
 
@@ -285,34 +140,34 @@ class Bake {
 			$connect = 'odbc_connect';
 			break;
 			default:
-			$this->stdout('The connection parameter could not be set.');
+			$this->out('The connection parameter could not be set.');
 			break;
 		}
 
 		$host = '';
 
 		while ($host == '') {
-			$host = $this->getInput('What is the hostname for the database server?', null, 'localhost');
+			$host = $this->in('What is the hostname for the database server?', null, 'localhost');
 			if ($host == '') {
-				$this->stdout('The host name you supplied was empty. Please supply a hostname.');
+				$this->out('The host name you supplied was empty. Please supply a hostname.');
 			}
 		}
 		$login = '';
 
 		while ($login == '') {
-			$login = $this->getInput('What is the database username?', null, 'root');
+			$login = $this->in('What is the database username?', null, 'root');
 
 			if ($login == '') {
-				$this->stdout('The database username you supplied was empty. Please try again.');
+				$this->out('The database username you supplied was empty. Please try again.');
 			}
 		}
 		$password = '';
 		$blankPassword = false;
 
 		while ($password == '' && $blankPassword == false) {
-			$password = $this->getInput('What is the database password?');
+			$password = $this->in('What is the database password?');
 			if ($password == '') {
-				$blank = $this->getInput('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
+				$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
 				if($blank == 'y')
 				{
 					$blankPassword = true;
@@ -322,40 +177,40 @@ class Bake {
 		$database = '';
 
 		while ($database == '') {
-			$database = $this->getInput('What is the name of the database you will be using?', null, 'cake');
+			$database = $this->in('What is the name of the database you will be using?', null, 'cake');
 
 			if ($database == '')  {
-				$this->stdout('The database name you supplied was empty. Please try again.');
+				$this->out('The database name you supplied was empty. Please try again.');
 			}
 		}
 
 		$prefix = '';
 
 		while ($prefix == '') {
-			$prefix = $this->getInput('Enter a table prefix?', null, 'n');
+			$prefix = $this->in('Enter a table prefix?', null, 'n');
 		}
 		if(low($prefix) == 'n') {
 			$prefix = '';
 		}
 
-		$this->stdout('');
+		$this->out('');
 		$this->hr();
-		$this->stdout('The following database configuration will be created:');
+		$this->out('The following database configuration will be created:');
 		$this->hr();
-		$this->stdout("Driver:        $driver");
-		$this->stdout("Connection:    $connect");
-		$this->stdout("Host:          $host");
-		$this->stdout("User:          $login");
-		$this->stdout("Pass:          " . str_repeat('*', strlen($password)));
-		$this->stdout("Database:      $database");
-		$this->stdout("Table prefix:  $prefix");
+		$this->out("Driver:        $driver");
+		$this->out("Connection:    $connect");
+		$this->out("Host:          $host");
+		$this->out("User:          $login");
+		$this->out("Pass:          " . str_repeat('*', strlen($password)));
+		$this->out("Database:      $database");
+		$this->out("Table prefix:  $prefix");
 		$this->hr();
-		$looksGood = $this->getInput('Look okay?', array('y', 'n'), 'y');
+		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			$this->bakeDbConfig($driver, $connect, $host, $login, $password, $database, $prefix);
 		} else {
-			$this->stdout('Bake Aborted.');
+			$this->out('Bake Aborted.');
 		}
 	}
 /**
@@ -365,7 +220,7 @@ class Bake {
 	function doModel()
 	{
 		$this->hr();
-		$this->stdout('Model Bake:');
+		$this->out('Model Bake:');
 		$this->hr();
 		$this->interactive = true;
 
@@ -373,10 +228,10 @@ class Bake {
 		$primaryKey = 'id';
 		$validate = array();
 		$associations = array();
-		/*$usingDefault = $this->getInput('Will your model be using a database connection setting other than the default?');
+		/*$usingDefault = $this->in('Will your model be using a database connection setting other than the default?');
 		if (low($usingDefault) == 'y' || low($usingDefault) == 'yes')
 		{
-			$useDbConfig = $this->getInput('Please provide the name of the connection you wish to use.');
+			$useDbConfig = $this->in('Please provide the name of the connection you wish to use.');
 		}*/
 		$useDbConfig = 'default';
 		$this->__doList($useDbConfig);
@@ -385,11 +240,11 @@ class Bake {
 		$enteredModel = '';
 
 		while ($enteredModel == '') {
-			$enteredModel = $this->getInput('Enter a number from the list above, or type in the name of another model.');
+			$enteredModel = $this->in('Enter a number from the list above, or type in the name of another model.');
 
 			if ($enteredModel == '' || intval($enteredModel) > count($this->__modelNames)) {
-				$this->stdout('Error:');
-				$this->stdout("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$this->out('Error:');
+				$this->out("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredModel = '';
 			}
 		}
@@ -405,39 +260,39 @@ class Bake {
 		$useTable = Inflector::tableize($currentModelName);
 		$fullTableName = $db->fullTableName($useTable, false);
 		if(array_search($useTable, $this->__tables) === false) {
-			$this->stdout("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $fullTableName . "'.");
-			$tableIsGood = $this->getInput('do you want to use this table?', array('y','n'), 'y');
+			$this->out("\nGiven your model named '$currentModelName', Cake would expect a database table named '" . $fullTableName . "'.");
+			$tableIsGood = $this->in('do you want to use this table?', array('y','n'), 'y');
 		}
 
 		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
-			$useTable = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
+			$useTable = $this->in('What is the name of the table (enter "null" to use NO table)?');
 		}
 		$tableIsGood = false;
 		while($tableIsGood == false && low($useTable) != 'null') {
 			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
 				$fullTableName = $db->fullTableName($useTable, false);
-				$this->stdout($fullTableName . ' does not exist.');
-				$useTable = $this->getInput('What is the name of the table (enter "null" to use NO table)?');
+				$this->out($fullTableName . ' does not exist.');
+				$useTable = $this->in('What is the name of the table (enter "null" to use NO table)?');
 				$tableIsGood = false;
 			} else {
 				$tableIsGood = true;
 			}
 		}
-		$wannaDoValidation = $this->getInput('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
+		$wannaDoValidation = $this->in('Would you like to supply validation criteria for the fields in your model?', array('y','n'), 'y');
 
 		if(in_array($useTable, $this->__tables)) {
 			loadModel();
 			$tempModel = new Model(false, $useTable);
 			$modelFields = $db->describe($tempModel);
 			if(isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
-				$primaryKey = $this->getInput('What is the primaryKey?', null, $modelFields[0]['name']);
+				$primaryKey = $this->in('What is the primaryKey?', null, $modelFields[0]['name']);
 			}
 		}
 		$validate = array();
 
 		if (array_search($useTable, $this->__tables) !== false && (low($wannaDoValidation) == 'y' || low($wannaDoValidation) == 'yes')) {
 			foreach($modelFields as $field) {
-				$this->stdout('');
+				$this->out('');
 				$prompt = 'Name: ' . $field['name'] . "\n";
 				$prompt .= 'Type: ' . $field['type'] . "\n";
 				$prompt .= '---------------------------------------------------------------'."\n";
@@ -451,9 +306,9 @@ class Bake {
 				$prompt .= "... or enter in a valid regex validation string.\n\n";
 
 				if($field['null'] == 1 || $field['name'] == $primaryKey || $field['name'] == 'created' || $field['name'] == 'modified') {
-					$validation = $this->getInput($prompt, null, '5');
+					$validation = $this->in($prompt, null, '5');
 				} else {
-					$validation = $this->getInput($prompt, null, '1');
+					$validation = $this->in($prompt, null, '1');
 				}
 
 				switch ($validation) {
@@ -478,10 +333,10 @@ class Bake {
 			}
 		}
 
-		$wannaDoAssoc = $this->getInput('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', array('y','n'), 'y');
+		$wannaDoAssoc = $this->in('Would you like to define model associations (hasMany, hasOne, belongsTo, etc.)?', array('y','n'), 'y');
 
 		if((low($wannaDoAssoc) == 'y' || low($wannaDoAssoc) == 'yes')) {
-			$this->stdout('One moment while I try to detect any associations...');
+			$this->out('One moment while I try to detect any associations...');
 			$possibleKeys = array();
 			//Look for belongsTo
 			$i = 0;
@@ -539,29 +394,29 @@ class Bake {
 					$i++;
 				}
 			}
-			$this->stdout('Done.');
+			$this->out('Done.');
 			$this->hr();
 			//if none found...
 			if(empty($associations)) {
-				$this->stdout('None found.');
+				$this->out('None found.');
 			} else {
-				$this->stdout('Please confirm the following associations:');
+				$this->out('Please confirm the following associations:');
 				$this->hr();
 				if(!empty($associations['belongsTo'])) {
 					$count = count($associations['belongsTo']);
 					for($i = 0; $i < $count; $i++) {
 						if($currentModelName == $associations['belongsTo'][$i]['alias']) {
-							$response = $this->getInput("{$currentModelName} belongsTo {$associations['belongsTo'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							$response = $this->in("{$currentModelName} belongsTo {$associations['belongsTo'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
 							if('y' == low($response) || 'yes' == low($response)) {
-								$associations['belongsTo'][$i]['alias'] = $this->getInput("So what is the alias?", null, $associations['belongsTo'][$i]['alias']);
+								$associations['belongsTo'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['belongsTo'][$i]['alias']);
 							}
 							if($currentModelName != $associations['belongsTo'][$i]['alias']) {
-								$response = $this->getInput("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
+								$response = $this->in("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
 							} else {
 								$response = 'n';
 							}
 						} else {
-							$response = $this->getInput("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
+							$response = $this->in("$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}?", array('y','n'), 'y');
 						}
 						if('n' == low($response) || 'no' == low($response)) {
 							unset($associations['belongsTo'][$i]);
@@ -574,17 +429,17 @@ class Bake {
 					$count = count($associations['hasOne']);
 					for($i = 0; $i < $count; $i++) {
 						if($currentModelName == $associations['hasOne'][$i]['alias']) {
-							$response = $this->getInput("{$currentModelName} hasOne {$associations['hasOne'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							$response = $this->in("{$currentModelName} hasOne {$associations['hasOne'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
 							if('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasOne'][$i]['alias'] = $this->getInput("So what is the alias?", null, $associations['hasOne'][$i]['alias']);
+								$associations['hasOne'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasOne'][$i]['alias']);
 							}
 							if($currentModelName != $associations['hasOne'][$i]['alias']) {
-								$response = $this->getInput("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
+								$response = $this->in("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
 							} else {
 								$response = 'n';
 							}
 						} else {
-							$response = $this->getInput("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
+							$response = $this->in("$currentModelName hasOne {$associations['hasOne'][$i]['alias']}?", array('y','n'), 'y');
 						}
 						if('n' == low($response) || 'no' == low($response)) {
 							unset($associations['hasOne'][$i]);
@@ -597,17 +452,17 @@ class Bake {
 					$count = count($associations['hasMany']);
 					for($i = 0; $i < $count; $i++) {
 						if($currentModelName == $associations['hasMany'][$i]['alias']) {
-							$response = $this->getInput("{$currentModelName} hasMany {$associations['hasMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							$response = $this->in("{$currentModelName} hasMany {$associations['hasMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
 							if('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasMany'][$i]['alias'] = $this->getInput("So what is the alias?", null, $associations['hasMany'][$i]['alias']);
+								$associations['hasMany'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasMany'][$i]['alias']);
 							}
 							if($currentModelName != $associations['hasMany'][$i]['alias']) {
-								$response = $this->getInput("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
+								$response = $this->in("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
 							} else {
 								$response = 'n';
 							}
 						} else {
-							$response = $this->getInput("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
+							$response = $this->in("$currentModelName hasMany {$associations['hasMany'][$i]['alias']}?", array('y','n'), 'y');
 						}
 						if('n' == low($response) || 'no' == low($response)) {
 							unset($associations['hasMany'][$i]);
@@ -620,17 +475,17 @@ class Bake {
 					$count = count($associations['hasAndBelongsToMany']);
 					for($i = 0; $i < $count; $i++) {
 						if($currentModelName == $associations['hasAndBelongsToMany'][$i]['alias']) {
-							$response = $this->getInput("{$currentModelName} hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
+							$response = $this->in("{$currentModelName} hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}\nThis looks like a self join. Do you want to specify an alternate association alias?", array('y','n'), 'y');
 							if('y' == low($response) || 'yes' == low($response)) {
-								$associations['hasAndBelongsToMany'][$i]['alias'] = $this->getInput("So what is the alias?", null, $associations['hasAndBelongsToMany'][$i]['alias']);
+								$associations['hasAndBelongsToMany'][$i]['alias'] = $this->in("So what is the alias?", null, $associations['hasAndBelongsToMany'][$i]['alias']);
 							}
 							if($currentModelName != $associations['hasAndBelongsToMany'][$i]['alias']) {
-								$response = $this->getInput("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
+								$response = $this->in("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
 							} else {
 								$response = 'n';
 							}
 						} else {
-							$response = $this->getInput("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
+							$response = $this->in("$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}?", array('y','n'), 'y');
 						}
 						if('n' == low($response) || 'no' == low($response)) {
 							unset($associations['hasAndBelongsToMany'][$i]);
@@ -639,29 +494,29 @@ class Bake {
 					$associations['hasAndBelongsToMany'] = array_merge($associations['hasAndBelongsToMany']);
 				}
 			}
-			$wannaDoMoreAssoc = $this->getInput('Would you like to define some additional model associations?', array('y','n'), 'n');
+			$wannaDoMoreAssoc = $this->in('Would you like to define some additional model associations?', array('y','n'), 'n');
 
 			while((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
 				$assocs = array(1=>'belongsTo', 2=>'hasOne', 3=>'hasMany', 4=>'hasAndBelongsToMany');
 				$bad = true;
 				while($bad) {
-					$this->stdout('What is the association type?');
+					$this->out('What is the association type?');
 					$prompt = "1- belongsTo\n";
 					$prompt .= "2- hasOne\n";
 					$prompt .= "3- hasMany\n";
 					$prompt .= "4- hasAndBelongsToMany\n";
-					$assocType = intval($this->getInput($prompt, null, null));
+					$assocType = intval($this->in($prompt, null, null));
 
 					if(intval($assocType) < 1 || intval($assocType) > 4) {
-						$this->stdout('The selection you entered was invalid. Please enter a number between 1 and 4.');
+						$this->out('The selection you entered was invalid. Please enter a number between 1 and 4.');
 					} else {
 						$bad = false;
 					}
 				}
-				$this->stdout('For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors.');
+				$this->out('For the following options be very careful to match your setup exactly. Any spelling mistakes will cause errors.');
 				$this->hr();
-				$associationName = $this->getInput('What is the name of this association?');
-				$className = $this->getInput('What className will '.$associationName.' use?', null, $associationName );
+				$associationName = $this->in('What is the name of this association?');
+				$className = $this->in('What className will '.$associationName.' use?', null, $associationName );
 				$suggestedForeignKey = null;
 				if($assocType == '1') {
 					$showKeys = $possibleKeys[$useTable];
@@ -675,27 +530,27 @@ class Bake {
 							$showKeys = null;
 						}
 					} else {
-						$otherTable = $this->getInput('What is the table for this class?');
+						$otherTable = $this->in('What is the table for this class?');
 						$showKeys = $possibleKeys[$otherTable];
 					}
 					$suggestedForeignKey = $this->__modelKey($currentModelName);
 				}
 				if(!empty($showKeys)) {
-					$this->stdout('A helpful List of possible keys');
+					$this->out('A helpful List of possible keys');
 					for ($i = 0; $i < count($showKeys); $i++) {
-						$this->stdout($i + 1 . ". " . $showKeys[$i]);
+						$this->out($i + 1 . ". " . $showKeys[$i]);
 					}
-					$foreignKey = $this->getInput('What is the foreignKey? Choose a number.');
+					$foreignKey = $this->in('What is the foreignKey? Choose a number.');
 					if (intval($foreignKey) > 0 && intval($foreignKey) <= $i ) {
 						$foreignKey = $showKeys[intval($foreignKey) - 1];
 					}
 				}
 				if(!isset($foreignKey)) {
-					$foreignKey = $this->getInput('What is the foreignKey? Specify your own.', null, $suggestedForeignKey);
+					$foreignKey = $this->in('What is the foreignKey? Specify your own.', null, $suggestedForeignKey);
 				}
 				if($assocType == '4') {
-					$associationForeignKey = $this->getInput('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
-					$joinTable = $this->getInput('What is the joinTable?');
+					$associationForeignKey = $this->in('What is the associationForeignKey?', null, $this->__modelKey($currentModelName));
+					$joinTable = $this->in('What is the joinTable?');
 				}
 				$associations[$assocs[$assocType]] = array_values($associations[$assocs[$assocType]]);
 				$count = count($associations[$assocs[$assocType]]);
@@ -707,50 +562,50 @@ class Bake {
 					$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
 					$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
 				}
-				$wannaDoMoreAssoc = $this->getInput('Define another association?', array('y','n'), 'y');
+				$wannaDoMoreAssoc = $this->in('Define another association?', array('y','n'), 'y');
 			}
 		}
-		$this->stdout('');
+		$this->out('');
 		$this->hr();
-		$this->stdout('The following model will be created:');
+		$this->out('The following model will be created:');
 		$this->hr();
-		$this->stdout("Model Name:    $currentModelName");
-		$this->stdout("DB Connection: " . ($usingDefault ? 'default' : $useDbConfig));
-		$this->stdout("DB Table:   " . $fullTableName);
+		$this->out("Model Name:    $currentModelName");
+		$this->out("DB Connection: " . ($usingDefault ? 'default' : $useDbConfig));
+		$this->out("DB Table:   " . $fullTableName);
 		if($primaryKey != 'id') {
-			$this->stdout("Primary Key:   " . $primaryKey);
+			$this->out("Primary Key:   " . $primaryKey);
 		}
-		$this->stdout("Validation:    " . print_r($validate, true));
+		$this->out("Validation:    " . print_r($validate, true));
 
 		if(!empty($associations)) {
-			$this->stdout("Associations:");
+			$this->out("Associations:");
 
 			if(count($associations['belongsTo'])) {
 				for($i = 0; $i < count($associations['belongsTo']); $i++) {
-					$this->stdout("            $currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}");
+					$this->out("            $currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}");
 				}
 			}
 
 			if(count($associations['hasOne'])) {
 				for($i = 0; $i < count($associations['hasOne']); $i++) {
-					$this->stdout("            $currentModelName hasOne	{$associations['hasOne'][$i]['alias']}");
+					$this->out("            $currentModelName hasOne	{$associations['hasOne'][$i]['alias']}");
 				}
 			}
 
 			if(count($associations['hasMany'])) {
 				for($i = 0; $i < count($associations['hasMany']); $i++) {
-					$this->stdout("            $currentModelName hasMany   {$associations['hasMany'][$i]['alias']}");
+					$this->out("            $currentModelName hasMany   {$associations['hasMany'][$i]['alias']}");
 				}
 			}
 
 			if(count($associations['hasAndBelongsToMany'])) {
 				for($i = 0; $i < count($associations['hasAndBelongsToMany']); $i++) {
-					$this->stdout("            $currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}");
+					$this->out("            $currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}");
 				}
 			}
 		}
 		$this->hr();
-		$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
+		$looksGood = $this->in('Look okay?', array('y','n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 			if ($useTable == Inflector::tableize($currentModelName)) {
@@ -765,7 +620,7 @@ class Bake {
 				$this->bakeUnitTest('model', $currentModelName);
 			}
 		} else {
-			$this->stdout('Bake Aborted.');
+			$this->out('Bake Aborted.');
 		}
 	}
 /**
@@ -774,7 +629,7 @@ class Bake {
  */
 	function doView() {
 		$this->hr();
-		$this->stdout('View Bake:');
+		$this->out('View Bake:');
 		$this->hr();
 		$uses = array();
 		$wannaUseSession = 'y';
@@ -787,11 +642,11 @@ class Bake {
 		$enteredController = '';
 
 		while ($enteredController == '') {
-			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
+			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
 
 			if ($enteredController == '' || intval($enteredController) > count($this->__controllerNames)) {
-				$this->stdout('Error:');
-				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$this->out('Error:');
+				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredController = '';
 			}
 		}
@@ -804,17 +659,17 @@ class Bake {
 
 		$controllerPath = low(Inflector::underscore($controllerName));
 
-		$doItInteractive = $this->getInput("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerClassName} views if it exist.", array('y','n'), 'y');
+		$doItInteractive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerClassName} views if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
-			$wannaDoScaffold = $this->getInput("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
+			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
 		}
 
 		$admin = null;
 		$admin_url = null;
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$wannaDoAdmin = $this->getInput("Would you like to create the views for admin routing?", array('y','n'), 'y');
+			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
 		}
 
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
@@ -824,15 +679,15 @@ class Bake {
 				$admin_url = '/'.CAKE_ADMIN;
 			} else {
 				$adminRoute = '';
-				$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-				$this->stdout('What would you like the admin route to be?');
-				$this->stdout('Example: www.example.com/admin/controller');
+				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				$this->out('What would you like the admin route to be?');
+				$this->out('Example: www.example.com/admin/controller');
 				while ($adminRoute == '') {
-					$adminRoute = $this->getInput("What would you like the admin route to be?", null, 'admin');
+					$adminRoute = $this->in("What would you like the admin route to be?", null, 'admin');
 				}
 				if($this->__addAdminRoute($adminRoute) !== true){
-					$this->stdout('Unable to write to /app/config/core.php.');
-					$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+					$this->out('Unable to write to /app/config/core.php.');
+					$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 					exit();
 				} else {
 					$admin = $adminRoute . '_';
@@ -847,9 +702,9 @@ class Bake {
 				$shortPath = str_replace(ROOT, null, $file);
 				$shortPath = str_replace('../', '', $shortPath);
 				$shortPath = str_replace('//', '/', $shortPath);
-				$this->stdout('');
-				$this->stdout("The file '$shortPath' could not be found.\nIn order to scaffold, you'll need to first create the controller. ");
-				$this->stdout('');
+				$this->out('');
+				$this->out("The file '$shortPath' could not be found.\nIn order to scaffold, you'll need to first create the controller. ");
+				$this->out('');
 				die();
 			} else {
 				uses('controller'.DS.'controller');
@@ -861,33 +716,33 @@ class Bake {
 				$this->__bakeViews($controllerName, $controllerPath, null, null);
 
 				$this->hr();
-				$this->stdout('');
-				$this->stdout('View Scaffolding Complete.'."\n");
+				$this->out('');
+				$this->out('View Scaffolding Complete.'."\n");
 			}
 		} else {
 			$actionName = '';
 
 			while ($actionName == '') {
-				$actionName = $this->getInput('Action Name? (use camelCased function name)');
+				$actionName = $this->in('Action Name? (use camelCased function name)');
 
 				if ($actionName == '') {
-					$this->stdout('The action name you supplied was empty. Please try again.');
+					$this->out('The action name you supplied was empty. Please try again.');
 				}
 			}
-			$this->stdout('');
+			$this->out('');
 			$this->hr();
-			$this->stdout('The following view will be created:');
+			$this->out('The following view will be created:');
 			$this->hr();
-			$this->stdout("Controller Name: $controllerName");
-			$this->stdout("Action Name:     $actionName");
-			$this->stdout("Path:            app/views/" . $controllerPath . DS . Inflector::underscore($actionName) . '.ctp');
+			$this->out("Controller Name: $controllerName");
+			$this->out("Action Name:     $actionName");
+			$this->out("Path:            app/views/" . $controllerPath . DS . Inflector::underscore($actionName) . '.ctp');
 			$this->hr();
-			$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
+			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
 
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 				$this->bakeView($controllerName, $actionName);
 			} else {
-				$this->stdout('Bake Aborted.');
+				$this->out('Bake Aborted.');
 			}
 		}
 	}
@@ -1143,13 +998,13 @@ class Bake {
 			mkdir(VIEWS.$controllerPath);
 		}
 		$filename = VIEWS . $controllerPath . DS .  $admin . 'index.ctp';
-		$this->__createFile($filename, $indexView);
+		$this->createFile($filename, $indexView);
 		$filename = VIEWS . $controllerPath . DS . $admin . 'view.ctp';
-		$this->__createFile($filename, $viewView);
+		$this->createFile($filename, $viewView);
 		$filename = VIEWS . $controllerPath . DS . $admin . 'add.ctp';
-		$this->__createFile($filename, $addView);
+		$this->createFile($filename, $addView);
 		$filename = VIEWS . $controllerPath . DS . $admin . 'edit.ctp';
-		$this->__createFile($filename, $editView);
+		$this->createFile($filename, $editView);
 	}
 
 /**
@@ -1224,7 +1079,7 @@ class Bake {
  */
 	function doController() {
 		$this->hr();
-		$this->stdout('Controller Bake:');
+		$this->out('Controller Bake:');
 		$this->hr();
 		$uses = array();
 		$helpers = array();
@@ -1238,11 +1093,11 @@ class Bake {
 		$enteredController = '';
 
 		while ($enteredController == '') {
-			$enteredController = $this->getInput('Enter a number from the list above, or type in the name of another controller.');
+			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
 
 			if ($enteredController == '' || intval($enteredController) > count($this->__controllerNames)) {
-				$this->stdout('Error:');
-				$this->stdout("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$this->out('Error:');
+				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredController = '';
 			}
 		}
@@ -1255,52 +1110,52 @@ class Bake {
 
 		$controllerPath = low(Inflector::underscore($controllerName));
 
-		$doItInteractive = $this->getInput("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
+		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
 
-			$wannaUseScaffold = $this->getInput("Would you like to use scaffolding?", array('y','n'), 'y');
+			$wannaUseScaffold = $this->in("Would you like to use scaffolding?", array('y','n'), 'y');
 
 			if (low($wannaUseScaffold) == 'n' || low($wannaUseScaffold) == 'no') {
 
-				$wannaDoScaffolding = $this->getInput("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
+				$wannaDoScaffolding = $this->in("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'n');
 
 				if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-					$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'n');
+					$wannaDoAdmin = $this->in("Would you like to create the methods for admin routing?", array('y','n'), 'n');
 				}
 
-				$wannaDoUses = $this->getInput("Would you like this controller to use other models besides '" . $this->__modelName($controllerName) .  "'?", array('y','n'), 'n');
+				$wannaDoUses = $this->in("Would you like this controller to use other models besides '" . $this->__modelName($controllerName) .  "'?", array('y','n'), 'n');
 
 				if (low($wannaDoUses) == 'y' || low($wannaDoUses) == 'yes') {
-					$usesList = $this->getInput("Please provide a comma separated list of the classnames of other models you'd like to use.\nExample: 'Author, Article, Book'");
+					$usesList = $this->in("Please provide a comma separated list of the classnames of other models you'd like to use.\nExample: 'Author, Article, Book'");
 					$usesListTrimmed = str_replace(' ', '', $usesList);
 					$uses = explode(',', $usesListTrimmed);
 				}
-				$wannaDoHelpers = $this->getInput("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", array('y','n'), 'n');
+				$wannaDoHelpers = $this->in("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", array('y','n'), 'n');
 
 				if (low($wannaDoHelpers) == 'y' || low($wannaDoHelpers) == 'yes') {
-					$helpersList = $this->getInput("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'");
+					$helpersList = $this->in("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'");
 					$helpersListTrimmed = str_replace(' ', '', $helpersList);
 					$helpers = explode(',', $helpersListTrimmed);
 				}
-				$wannaDoComponents = $this->getInput("Would you like this controller to use any components?", array('y','n'), 'n');
+				$wannaDoComponents = $this->in("Would you like this controller to use any components?", array('y','n'), 'n');
 
 				if (low($wannaDoComponents) == 'y' || low($wannaDoComponents) == 'yes') {
-					$componentsList = $this->getInput("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, MyNiftyHelper'");
+					$componentsList = $this->in("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, MyNiftyHelper'");
 					$componentsListTrimmed = str_replace(' ', '', $componentsList);
 					$components = explode(',', $componentsListTrimmed);
 				}
 
-				$wannaUseSession = $this->getInput("Would you like to use Sessions?", array('y','n'), 'y');
+				$wannaUseSession = $this->in("Would you like to use Sessions?", array('y','n'), 'y');
 			} else {
 				$wannaDoScaffolding = 'n';
 			}
 		} else {
-			$wannaDoScaffolding = $this->getInput("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'y');
+			$wannaDoScaffolding = $this->in("Would you like to include some basic class methods (index(), add(), view(), edit())?", array('y','n'), 'y');
 
 			if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-				$wannaDoAdmin = $this->getInput("Would you like to create the methods for admin routing?", array('y','n'), 'y');
+				$wannaDoAdmin = $this->in("Would you like to create the methods for admin routing?", array('y','n'), 'y');
 			}
 		}
 
@@ -1313,15 +1168,15 @@ class Bake {
 				$admin_url = '/'.CAKE_ADMIN;
 			} else {
 				$adminRoute = '';
-				$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-				$this->stdout('What would you like the admin route to be?');
-				$this->stdout('Example: www.example.com/admin/controller');
+				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				$this->out('What would you like the admin route to be?');
+				$this->out('Example: www.example.com/admin/controller');
 				while ($adminRoute == '') {
-					$adminRoute = $this->getInput("What would you like the admin route to be?", null, 'admin');
+					$adminRoute = $this->in("What would you like the admin route to be?", null, 'admin');
 				}
 				if($this->__addAdminRoute($adminRoute) !== true){
-					$this->stdout('Unable to write to /app/config/core.php.');
-					$this->stdout('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+					$this->out('Unable to write to /app/config/core.php.');
+					$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 					exit();
 				} else {
 					$admin = $adminRoute . '_';
@@ -1339,51 +1194,51 @@ class Bake {
 		}
 
 		if($this->interactive === true) {
-			$this->stdout('');
+			$this->out('');
 			$this->hr();
-			$this->stdout('The following controller will be created:');
+			$this->out('The following controller will be created:');
 			$this->hr();
-			$this->stdout("Controller Name:	$controllerName");
+			$this->out("Controller Name:	$controllerName");
 			if (low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
-				$this->stdout("			var \$scaffold;");
+				$this->out("			var \$scaffold;");
 			}
 			if(count($uses)) {
-				$this->stdout("Uses:            ", false);
+				$this->out("Uses:            ", false);
 
 				foreach($uses as $use) {
 					if ($use != $uses[count($uses) - 1]) {
-						$this->stdout(ucfirst($use) . ", ", false);
+						$this->out(ucfirst($use) . ", ", false);
 					} else {
-						$this->stdout(ucfirst($use));
+						$this->out(ucfirst($use));
 					}
 				}
 			}
 
 			if(count($helpers)) {
-				$this->stdout("Helpers:			", false);
+				$this->out("Helpers:			", false);
 
 				foreach($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
-						$this->stdout(ucfirst($help) . ", ", false);
+						$this->out(ucfirst($help) . ", ", false);
 					} else {
-						$this->stdout(ucfirst($help));
+						$this->out(ucfirst($help));
 					}
 				}
 			}
 
 			if(count($components)) {
-				$this->stdout("Components:            ", false);
+				$this->out("Components:            ", false);
 
 				foreach($components as $comp) {
 					if ($comp != $components[count($components) - 1]) {
-						$this->stdout(ucfirst($comp) . ", ", false);
+						$this->out(ucfirst($comp) . ", ", false);
 					} else {
-						$this->stdout(ucfirst($comp));
+						$this->out(ucfirst($comp));
 					}
 				}
 			}
 			$this->hr();
-			$looksGood = $this->getInput('Look okay?', array('y','n'), 'y');
+			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
 
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
 				$this->bakeController($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
@@ -1392,7 +1247,7 @@ class Bake {
 					$this->bakeUnitTest('controller', $controllerName);
 				}
 			} else {
-				$this->stdout('Bake Aborted.');
+				$this->out('Bake Aborted.');
 			}
 		} else {
 			$this->bakeController($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
@@ -1406,7 +1261,7 @@ class Bake {
 	function __bakeActions($controllerName, $admin = null, $admin_url = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->__modelName($controllerName);
 		if(!loadModel($currentModelName)) {
-			$this->stdout('You must have a model for this class to build scaffold methods. Please try again.');
+			$this->out('You must have a model for this class to build scaffold methods. Please try again.');
 			exit;
 		}
 		$modelObj =& new $currentModelName();
@@ -1561,11 +1416,11 @@ class Bake {
 		if (is_dir(VENDORS.'simpletest') || is_dir(ROOT.DS.APP_DIR.DS.'vendors'.DS.'simpletest')) {
 			return true;
 		}
-		$unitTest = $this->getInput('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
+		$unitTest = $this->in('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
 		$result = low($unitTest) == 'y' || low($unitTest) == 'yes';
 
 		if ($result) {
-			$this->stdout("\nYou can download the Cake test suite from http://cakeforge.org/projects/testsuite/", true);
+			$this->out("\nYou can download the Cake test suite from http://cakeforge.org/projects/testsuite/", true);
 		}
 		return $result;
 	}
@@ -1592,7 +1447,7 @@ class Bake {
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONFIGS.'database.php';
-		$this->__createFile($filename, $out);
+		$this->createFile($filename, $out);
 	}
 /**
  * Assembles and writes a Model file.
@@ -1713,7 +1568,7 @@ class Bake {
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = MODELS.Inflector::underscore($name) . '.php';
-		$this->__createFile($filename, $out);
+		$this->createFile($filename, $out);
 	}
 /**
  * Assembles and writes a View file.
@@ -1729,7 +1584,7 @@ class Bake {
 			mkdir(VIEWS.$this->__controllerPath($controllerName));
 		}
 		$filename = VIEWS . $this->__controllerPath($controllerName) . DS . Inflector::underscore($actionName) . '.ctp';
-		$this->__createFile($filename, $out);
+		$this->createFile($filename, $out);
 	}
 /**
  * Assembles and writes a Controller file.
@@ -1790,7 +1645,7 @@ class Bake {
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONTROLLERS . $this->__controllerPath($controllerName) . '_controller.php';
-		$this->__createFile($filename, $out);
+		$this->createFile($filename, $out);
 	}
 /**
  * Assembles and writes a unit test file.
@@ -1835,7 +1690,7 @@ class Bake {
 		$out .= "\n?>";
 
 		if (!$error) {
-			$this->stdout("Baking unit test for $className...");
+			$this->out("Baking unit test for $className...");
 			$path = explode(DS, $path);
 			foreach($path as $i => $val) {
 				if ($val == '' || $val == '../') {
@@ -1848,7 +1703,7 @@ class Bake {
 				$unixPath = null;
 			}
 			if (!is_dir($unixPath.$path)) {
-				$create = $this->getInput("Unit test directory does not exist.  Create it?", array('y','n'), 'y');
+				$create = $this->in("Unit test directory does not exist.  Create it?", array('y','n'), 'y');
 				if (low($create) == 'y' || low($create) == 'yes') {
 					$build = array();
 
@@ -1862,127 +1717,31 @@ class Bake {
 					return false;
 				}
 			}
-			$this->__createFile($unixPath.$path.DS.$filename, $out);
+			$this->createFile($unixPath.$path.DS.$filename, $out);
 		}
 	}
-/**
- * Prompts the user for input, and returns it.
- *
- * @param string $prompt Prompt text.
- * @param mixed $options Array or string of options.
- * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
- */
-	function getInput($prompt, $options = null, $default = null) {
-		if (!is_array($options)) {
-			$print_options = '';
-		} else {
-			$print_options = '(' . implode('/', $options) . ')';
-		}
-
-		if($default == null) {
-			$this->stdout('');
-			$this->stdout($prompt . " $print_options \n" . '> ', false);
-		} else {
-			$this->stdout('');
-			$this->stdout($prompt . " $print_options \n" . "[$default] > ", false);
-		}
-		$result = trim(fgets($this->stdin));
-
-		if($default != null && empty($result)) {
-			return $default;
-		} else {
-			return $result;
-		}
-	}
-/**
- * Outputs to the stdout filehandle.
- *
- * @param string $string String to output.
- * @param boolean $newline If true, the outputs gets an added newline.
- */
-	function stdout($string, $newline = true) {
-		if ($newline) {
-			fwrite($this->stdout, $string . "\n");
-		} else {
-			fwrite($this->stdout, $string);
-		}
-	}
-/**
- * Outputs to the stderr filehandle.
- *
- * @param string $string Error text to output.
- */
-	function stderr($string) {
-		fwrite($this->stderr, $string, true);
-	}
-/**
- * Outputs a series of minus characters to the standard output, acts as a visual separator.
- *
- */
-	function hr() {
-		$this->stdout('---------------------------------------------------------------');
-	}
-/**
- * Creates a file at given path.
- *
- * @param string $path		Where to put the file.
- * @param string $contents Content to put in the file.
- * @return Success
- */
-	function __createFile ($path, $contents) {
-		$path = str_replace('//', '/', $path);
-		echo "\nCreating file $path\n";
-		if (is_file($path) && $this->interactive === true) {
-			fwrite($this->stdout, __("File exists, overwrite?", true). " {$path} (y/n/q):");
-			$key = trim(fgets($this->stdin));
-
-			if ($key=='q') {
-				fwrite($this->stdout, __("Quitting.", true) ."\n");
-				exit;
-			} elseif ($key == 'a') {
-				$this->dont_ask = true;
-			} elseif ($key == 'y') {
-			} else {
-				fwrite($this->stdout, __("Skip", true) ." {$path}\n");
-				return false;
-			}
-		}
-
-		if ($f = fopen($path, 'w')) {
-			fwrite($f, $contents);
-			fclose($f);
-			fwrite($this->stdout, __("Wrote", true) ."{$path}\n");
-			return true;
-		} else {
-			fwrite($this->stderr, __("Error! Could not write to", true)." {$path}.\n");
-			return false;
-		}
-	}
-
-
 /**
  * Outputs usage text on the standard output.
  *
  */
 	function help() {
-		$this->stdout('CakePHP Bake:');
+		$this->out('CakePHP Bake:');
 		$this->hr();
-		$this->stdout('The Bake script generates controllers, views and models for your application.');
-		$this->stdout('If run with no command line arguments, Bake guides the user through the class');
-		$this->stdout('creation process. You can customize the generation process by telling Bake');
-		$this->stdout('where different parts of your application are using command line arguments.');
-		$this->stdout('');
+		$this->out('The Bake script generates controllers, views and models for your application.');
+		$this->out('If run with no command line arguments, Bake guides the user through the class');
+		$this->out('creation process. You can customize the generation process by telling Bake');
+		$this->out('where different parts of your application are using command line arguments.');
+		$this->out('');
 		$this->hr('');
-		$this->stdout('usage: php bake.php [command] [path...]');
-		$this->stdout('');
-		$this->stdout('commands:');
-		$this->stdout('   -app [path...] Absolute path to Cake\'s app Folder.');
-		$this->stdout('   -core [path...] Absolute path to Cake\'s cake Folder.');
-		$this->stdout('   -help Shows this help message.');
-		$this->stdout('   -project [path...]  Generates a new app folder in the path supplied.');
-		$this->stdout('   -root [path...] Absolute path to Cake\'s \app\webroot Folder.');
-		$this->stdout('');
+		$this->out('usage: php bake.php [command] [path...]');
+		$this->out('');
+		$this->out('commands:');
+		$this->out('   -app [path...] Absolute path to Cake\'s app Folder.');
+		$this->out('   -core [path...] Absolute path to Cake\'s cake Folder.');
+		$this->out('   -help Shows this help message.');
+		$this->out('   -project [path...]  Generates a new app folder in the path supplied.');
+		$this->out('   -root [path...] Absolute path to Cake\'s \app\webroot Folder.');
+		$this->out('');
 	}
 /**
  * Checks that given project path does not already exist, and
@@ -1993,30 +1752,30 @@ class Bake {
 	function project($projectPath = null) {
 		if($projectPath != '') {
 			while ($this->__checkPath($projectPath) === true && $this->__checkPath(CONFIGS) === true) {
-				$response = $this->getInput('Bake -app in '.$projectPath, array('y','n'), 'y');
+				$response = $this->in('Bake -app in '.$projectPath, array('y','n'), 'y');
 				if(low($response) == 'y') {
 					$this->main();
 					exit();
 				} else {
-					$projectPath = $this->getInput("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
+					$projectPath = $this->in("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
 				}
 			}
 		} else {
 			while ($projectPath == '') {
-				$projectPath = $this->getInput("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
+				$projectPath = $this->in("What is the full path for this app including the app directory name?\nExample: ".ROOT.DS."myapp", null, ROOT.DS.'myapp');
 
 				if ($projectPath == '') {
-					$this->stdout('The directory path you supplied was empty. Please try again.');
+					$this->out('The directory path you supplied was empty. Please try again.');
 				}
 			}
 		}
 		while ($newPath != 'y' && ($this->__checkPath($projectPath) === true || $projectPath == '')) {
-				$newPath = $this->getInput('Directory '.$projectPath.'  exists. Overwrite (y) or insert a new path', null, 'y');
+				$newPath = $this->in('Directory '.$projectPath.'  exists. Overwrite (y) or insert a new path', null, 'y');
 				if($newPath != 'y') {
 					$projectPath = $newPath;
 				}
 			while ($projectPath == '') {
-				$projectPath = $this->getInput('The directory path you supplied was empty. Please try again.');
+				$projectPath = $this->in('The directory path you supplied was empty. Please try again.');
 			}
 		}
 		$parentPath = explode(DS, $projectPath);
@@ -2057,27 +1816,27 @@ class Bake {
 		} else {
 
 			while ($skel == '') {
-				$skel = $this->getInput("What is the full path for the cake install app directory?\nExample: ", null, ROOT.'myapp'.DS);
+				$skel = $this->in("What is the full path for the cake install app directory?\nExample: ", null, ROOT.'myapp'.DS);
 
 				if ($skel == '') {
-					$this->stdout('The directory path you supplied was empty. Please try again.');
+					$this->out('The directory path you supplied was empty. Please try again.');
 				} else {
 					while ($this->__checkPath($skel) === false) {
-						$skel = $this->getInput('Directory path does not exist please choose another:');
+						$skel = $this->in('Directory path does not exist please choose another:');
 					}
 				}
 			}
 		}
-		$this->stdout('');
+		$this->out('');
 		$this->hr();
-		$this->stdout("Skel Directory: $skel");
-		$this->stdout("Will be copied to:");
-		$this->stdout("New App Directory: $projectPath");
+		$this->out("Skel Directory: $skel");
+		$this->out("Will be copied to:");
+		$this->out("New App Directory: $projectPath");
 		$this->hr();
-		$looksGood = $this->getInput('Look okay?', array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			$verboseOuptut = $this->getInput('Do you want verbose output?', array('y', 'n'), 'n');
+			$verboseOuptut = $this->in('Do you want verbose output?', array('y', 'n'), 'n');
 			$verbose = false;
 
 			if (low($verboseOuptut) == 'y' || low($verboseOuptut) == 'yes') {
@@ -2085,24 +1844,24 @@ class Bake {
 			}
 			$this->__copydirr($skel, $projectPath, 0755, $verbose);
 			$this->hr();
-			$this->stdout('Created: '.$projectPath);
+			$this->out('Created: '.$projectPath);
 			$this->hr();
-			$this->stdout('Creating welcome page');
+			$this->out('Creating welcome page');
 			$this->hr();
 			$this->__defaultHome($projectPath, $appName);
-			$this->stdout('Welcome page created');
+			$this->out('Welcome page created');
 			if($this->__generateHash() === true ){
-				$this->stdout('Random hash key created for CAKE_SESSION_STRING');
+				$this->out('Random hash key created for CAKE_SESSION_STRING');
 			} else {
-				$this->stdout('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
+				$this->out('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 			}
 			if(chmodr($projectPath.DS.'tmp', 0777) === false) {
-				$this->stdout('Could not set permissions on '. $projectPath.DS.'tmp'.DS.'*');
-				$this->stdout('You must manually check that these directories can be wrote to by the server');
+				$this->out('Could not set permissions on '. $projectPath.DS.'tmp'.DS.'*');
+				$this->out('You must manually check that these directories can be wrote to by the server');
 			}
 			return;
 		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
-			$this->stdout('Bake Aborted.');
+			$this->out('Bake Aborted.');
 		} else {
 			$this->project();
 		}
@@ -2134,7 +1893,7 @@ class Bake {
 		if (!empty($errors)) {
 			if ($verbose) {
 				foreach($errors as $err) {
-					$this->stdout('Error: '.$err);
+					$this->out('Error: '.$err);
 				}
 			}
 			return false;
@@ -2171,10 +1930,10 @@ class Bake {
 
 		if ($verbose) {
 			foreach($errors as $err) {
-				$this->stdout('Error: '.$err);
+				$this->out('Error: '.$err);
 			}
 			foreach($messages as $msg) {
-				$this->stdout($msg);
+				$this->out($msg);
 			}
 		}
 		return true;
@@ -2216,12 +1975,12 @@ class Bake {
  */
 	function welcome()
 	{
-		$this->stdout('');
-		$this->stdout(' ___  __  _  _  ___  __  _  _  __      __   __  _  _  ___ ');
-		$this->stdout('|    |__| |_/  |__  |__] |__| |__]    |__] |__| |_/  |__ ');
-		$this->stdout('|___ |  | | \_ |___ |    |  | |       |__] |  | | \_ |___ ');
+		$this->out('');
+		$this->out(' ___  __  _  _  ___  __  _  _  __      __   __  _  _  ___ ');
+		$this->out('|    |__| |_/  |__  |__] |__| |__]    |__] |__| |_/  |__ ');
+		$this->out('|___ |  | | \_ |___ |    |  | |       |__] |  | | \_ |___ ');
 		$this->hr();
-		$this->stdout('');
+		$this->out('');
 	}
 /**
  * Writes a file with a default home page to the project.
@@ -2232,7 +1991,7 @@ class Bake {
 	function __defaultHome($dir, $app) {
 		$path = $dir.DS.'views'.DS.'pages'.DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'views'.DS.'home.ctp');
-		$this->__createFile($path.'home.ctp', $output);
+		$this->createFile($path.'home.ctp', $output);
 	}
 /**
  * creates the proper pluralize controller for the url
@@ -2337,17 +2096,17 @@ class Bake {
 			$tables = $db->listSources();
 		}
 		$this->__tables = $tables;
-		$this->stdout('Possible '.$type.' based on your current database:');
+		$this->out('Possible '.$type.' based on your current database:');
 		$this->__controllerNames = array();
 		$this->__modelNames = array();
 		$count = count($tables);
 		for ($i = 0; $i < $count; $i++) {
 			if(low($type) == 'controllers') {
 				$this->__controllerNames[] = $this->__controllerName($this->__modelName($tables[$i]));
-				$this->stdout($i + 1 . ". " . $this->__controllerNames[$i]);
+				$this->out($i + 1 . ". " . $this->__controllerNames[$i]);
 			} else {
 				$this->__modelNames[] = $this->__modelName($tables[$i]);
-				$this->stdout($i + 1 . ". " . $this->__modelNames[$i]);
+				$this->out($i + 1 . ". " . $this->__modelNames[$i]);
 			}
 		}
 	}

@@ -76,13 +76,13 @@ class AclScript extends CakeScript {
 
 		//$this->Dispatch->shiftArgs();
 
-		
+
 		if($this->command && !in_array($this->command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->out('');
 				$this->out('Your database configuration was not found.');
 				$this->out('Take a moment to create one:');
-				$this->doDbConfig();
+				$this->__doDbConfig();
 			}
 			require_once (CONFIGS.'database.php');
 
@@ -109,11 +109,12 @@ class AclScript extends CakeScript {
 			$parent = $this->args[2];
 		}
 
-		if (!empty($parent)) {
+		/*if (!empty($parent)) {
 			$parent = $this->{$class}->node($model, $parent);
 		} else {
 			$parent = null;
-		}
+		}*/
+
 		$this->Acl->{$class}->create();
 		if($this->Acl->{$class}->save(array(
 			'parent_id'		=> Set::extract($parent, "0.{$class}.id"),
@@ -251,7 +252,9 @@ class AclScript extends CakeScript {
 		$this->out("Creating access control objects table (acos)...\n");
 		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
-				".$db->name('object_id')." ".$db->column($db->columns['integer'])." default NULL,
+				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
+				".$db->name('model')." ".$db->column($db->columns['string'])." NOT NULL default '',
+				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
@@ -264,6 +267,8 @@ class AclScript extends CakeScript {
 		$this->out("Creating access request objects table (aros)...\n");
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
+				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
+				".$db->name('model')." ".$db->column($db->columns['string'])." NOT NULL default '',
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
@@ -296,32 +301,6 @@ class AclScript extends CakeScript {
  * Enter description here...
  *
  */
-	function upgradedb() {
-		$db =& ConnectionManager::getDataSource($this->dataSource);
-		$this->out("Initializing Database...\n");
-		$this->out("Upgrading table (aros)...\n");
-		$sql = "ALTER TABLE ".$db->fullTableName('aros')."
-				CHANGE ".$db->name('user_id')."
-				".$db->name('foreign_key')."
-				INT( 10 ) UNSIGNED NULL DEFAULT NULL;";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_create')
-				. " " . $db->name('_create') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_update')
-				. " " . $db->name('_update') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_read')
-				. " " . $db->name('_read') . " CHAR(2) NOT NULL DEFAULT '0';";
-		$sql .= "ALTER TABLE " . $db->name('aros_acos') . " CHANGE " . $db->name('_delete')
-				. " " . $db->name('_delete') . " CHAR(2) NOT NULL DEFAULT '0';";
-		if ($db->query($sql) === false) {
-			die("Error: " . $db->lastError() . "\n\n");
-		}
-		$this->out("\nDatabase upgrade is complete.\n");
-	}
-
-/**
- * Enter description here...
- *
- */
 	function help() {
 		$out = "Usage: cake acl <command> <arg1> <arg2>...\n";
 		$out .= "-----------------------------------------------\n";
@@ -331,7 +310,7 @@ class AclScript extends CakeScript {
 		$out .= "\t\tCreates a new ACL object under the parent specified by <parent_id>, an id/alias (see\n";
 		$out .= "\t\t'view'). The link_id allows you to link a user object to Cake's\n";
 		$out .= "\t\tACL structures. The alias parameter allows you to address your object\n";
-		$out .= "\t\tusing a non-integer ID. Example: \"\$php acl.php create aro 57 0 John\"\n";
+		$out .= "\t\tusing a non-integer ID. Example: \"\$cake acl create aro 57 0 John\"\n";
 		$out .= "\t\twould create a new ARO object at the root of the tree, linked to 57\n";
 		$out .= "\t\tin your users table, with an internal alias 'John'.";
 		$out .= "\n";
@@ -431,7 +410,7 @@ class AclScript extends CakeScript {
  * Database configuration setup.
  *
  */
-	function doDbConfig() {
+	function __doDbConfig() {
 		$this->hr(true);
 		$this->out('Database Configuration:');
 		$this->hr(true);

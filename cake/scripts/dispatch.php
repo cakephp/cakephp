@@ -342,6 +342,7 @@ class ConsoleDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
+		$this->params = array_merge(array('working'=> dirname(dirname(dirname(__FILE__)))), $this->params);
 	}
 /**
  * Removes first argument and shifts other arguments up
