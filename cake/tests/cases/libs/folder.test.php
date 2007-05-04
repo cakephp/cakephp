@@ -66,7 +66,7 @@ class FolderTest extends UnitTestCase {
 	
 	function testInPath() {
 		$path = dirname(dirname(__FILE__));
-		$inside = basename(dirname(__FILE__)) . DS;
+		$inside = dirname($path) . DS;
 		
 		$this->Folder =& new Folder($path);
 		
@@ -78,6 +78,9 @@ class FolderTest extends UnitTestCase {
 		
 		$result = $this->Folder->inPath($inside);
 		$this->assertTrue($result);
+		
+		$result = $this->Folder->inPath(DS . 'non-existing' . DS . $inside);
+		$this->assertFalse($result);
 	}
 }
 ?>
