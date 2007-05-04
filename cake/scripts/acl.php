@@ -51,10 +51,14 @@ class AclScript extends CakeScript {
  */
 	var $dataSource = 'default';
 /**
- * Enter description here...
+ * override intialize of the CakeScript
  *
- * @param unknown_type $command
- * @param unknown_type $args
+ */
+	function initialize () {		
+	}
+/**
+ * Main method called from dispatch
+ *
  */
 	function main () {
 		$this->dataSource = 'default';
@@ -62,7 +66,6 @@ class AclScript extends CakeScript {
 		if (isset($this->params['datasource'])) {
 			$this->dataSource = $this->params['datasource'];
 		}
-		define('DATASOURCE', $this->dataSource);
 
 		if (ACL_CLASSNAME != 'DB_ACL') {
 			$out = "--------------------------------------------------\n";
@@ -76,12 +79,12 @@ class AclScript extends CakeScript {
 			$this->err($out);
 			exit();
 		}
-
-		//pr($this);
-		//die();
 		
 		$command = null;
-		if(!in_array($command, array('help'))) {
+		if(isset($this->args[0])) {
+			$command = $this->args[0];	
+		}
+		if($command && !in_array($command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->out('');
 				$this->out('Your database configuration was not found.');
@@ -91,12 +94,11 @@ class AclScript extends CakeScript {
 			require_once (CONFIGS.'database.php');
 
 			if(!in_array($command, array('initdb'))) {
-				$this->dataSource = DATASOURCE;
 				$this->Acl = new AclComponent();
 				$this->db =& ConnectionManager::getDataSource($this->dataSource);
 			}
 		}
-
+		
 		switch ($command) {
 			case 'create':
 				$this->create();
@@ -132,7 +134,7 @@ class AclScript extends CakeScript {
 				$this->help();
 			break;
 			default:
-				$this->err("Unknown ACL command '$command'.\nFor usage, try 'php acl.php help'.\n\n");
+				$this->err("Unknown ACL command '$command'.\nFor usage, try 'cake acl help'.\n\n");
 			break;
 		}
 	}
@@ -355,7 +357,7 @@ class AclScript extends CakeScript {
  *
  */
 	function help() {
-		$out = "Usage: php acl.php <command> <arg1> <arg2>...\n";
+		$out = "Usage: cake acl <command> <arg1> <arg2>...\n";
 		$out .= "-----------------------------------------------\n";
 		$out .= "Commands:\n";
 		$out .= "\n";

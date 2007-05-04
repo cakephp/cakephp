@@ -55,6 +55,9 @@ class ErrorHandler extends Object{
         }
 		$clean = new Sanitize();
 		$messages = $clean->paranoid($messages, $allow);
+		if(!class_exists('dispatcher')) {
+			require CAKE . 'dispatcher.php';
+		}
 		$this->__dispatch =& new Dispatcher();
 
 		if ($__previousError != array($method, $messages)) {

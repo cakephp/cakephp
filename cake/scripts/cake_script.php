@@ -66,18 +66,32 @@ class CakeScript extends Object {
  */
 	var $args = array();
 /**
- * Initializes this ConsoleScript instance.
+ *  Constructs this CakeScript instance.
  *
  */
 	function __construct(&$dispatch) {
 		$this->dispatch =& $dispatch;
 		$this->params = $this->dispatch->params;
 		$this->args = $this->dispatch->args;
+		$this->initialize();
+	}
+/**
+ * Initializes the CakeScript
+ * can be overriden in subclasses
+ *
+ * @return null
+ */	
+	function initialize() {
 		if($this->_loadDbConfig()) {
 			$this->_loadModel();
 		}
 	}
-
+/**
+ * Loads database file and constructs DATABASE_CONFIG class
+ * makes $this->dbConfig available to subclasses
+ *
+ * @return bool
+ */
 	function _loadDbConfig() {
 		if(config('database')) {
 			if (class_exists('DATABASE_CONFIG')) {
@@ -85,10 +99,15 @@ class CakeScript extends Object {
 				return true;
 			}
 		}
-		//$this->err('Database config could not be loaded');
+		$this->err('Database config could not be loaded');
 		return false;
 	}
-
+/**
+ * Loads AppModel file and constructs AppModel class
+ * makes $this->AppModel available to subclasses
+ *
+ * @return bool
+ */
 	function _loadModel() {
 		uses ('model'.DS.'connection_manager',
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
@@ -99,7 +118,7 @@ class CakeScript extends Object {
 			return true;
 		}
 
-		//$this->err('AppModel could not be loaded');
+		$this->err('AppModel could not be loaded');
 		return false;
 	}
 
@@ -108,7 +127,7 @@ class CakeScript extends Object {
  *
  */
 	function main() {
-
+		
 		$this->out('');
 		$this->out('');
 		$this->out('Baking...');
