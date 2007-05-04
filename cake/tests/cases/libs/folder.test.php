@@ -35,6 +35,49 @@
  * @since      CakePHP Test Suite v 1.0.0.0
  */
 class FolderTest extends UnitTestCase {
+	function testBasic() {
+		$path = dirname(__FILE__);
+		$this->Folder =& new Folder($path);
+		
+		$result = $this->Folder->pwd();
+		$this->assertEqual($result, $path);
+		
+		$result = $this->Folder->isWindowsPath($path);
+		$expected = (DS == '\\' ? true : false);
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Folder->isAbsolute($path);
+		$this->assertTrue($result);
+		
+		$result = $this->Folder->isSlashTerm($path);
+		$this->assertFalse($result);
+		
+		$result = $this->Folder->isSlashTerm($path . DS);
+		$this->assertTrue($result);
+		
+		$result = $this->Folder->addPathElement($path, 'test');
+		$expected = $path . DS . 'test';
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->Folder->cd(ROOT);
+		$expected = ROOT;
+		$this->assertEqual($result, $expected);
+	}
 	
+	function testInPath() {
+		$path = dirname(dirname(__FILE__));
+		$inside = basename(dirname(__FILE__)) . DS;
+		
+		$this->Folder =& new Folder($path);
+		
+		$result = $this->Folder->pwd();
+		$this->assertEqual($result, $path);
+		
+		$result = $this->Folder->isSlashTerm($inside);
+		$this->assertTrue($result);
+		
+		$result = $this->Folder->inPath($inside);
+		$this->assertTrue($result);
+	}
 }
 ?>
