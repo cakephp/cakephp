@@ -848,7 +848,12 @@ class Model extends Overloadable {
  */
 	function getColumnTypes() {
 		$columns = $this->loadInfo();
-		return array_combine($columns->extract('{n}.name'), $columns->extract('{n}.type'));
+		$names = $columns->extract('{n}.name');
+		$types = $columns->extract('{n}.type');
+		if (!count($names) || !count($types)) {
+		    trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+		}
+		return array_combine($names, $types);
 	}
 /**
  * Returns the column type of a column in the model
@@ -1727,6 +1732,8 @@ class Model extends Overloadable {
 						}
 
 						$valid = true;
+						$msg   = null;
+
 						if (method_exists($this, $rule)) {
 							$ruleParams[] = array_diff_key($validator, $default);
 							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);

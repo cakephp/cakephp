@@ -109,9 +109,18 @@ class FormHelper extends AppHelper {
 
 		if(isset($object)) {
 			$fields = $object->loadInfo();
+			$fieldNames = $fields->extract('{n}.name');
+			$fieldTypes = $fields->extract('{n}.type');
+			$fieldLengths = $fields->extract('{n}.length');
+			if (!count($fieldNames) || !count($fieldTypes)) {
+			     trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+			}
+			if (!count($fieldNames) || !count($fieldLengths) || (count($fieldNames) != count($fieldTypes))) {
+			     trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+			}
 			$data = array(
-				'fields' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.type')),
-				'sizes' => array_combine($fields->extract('{n}.name'), $fields->extract('{n}.length')),
+				'fields' => array_combine($fieldNames, $fieldTypes),
+				'sizes' => array_combine($fieldNames, $fieldLengths),
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
