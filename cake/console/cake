@@ -24,12 +24,14 @@
 # @license			http://www.opensource.org/licenses/mit-license.php The MIT License
 #
 ################################################################################
+clear
 
-LIB=${0/%cake/};
-APP=`pwd`/;
+LIB=${0/%cake/}
+APP=`pwd`/
 
-exec php -q ${LIB}dispatch.php "$@" -working "${APP}"
+echo "Hello $USER,"
+
+exec php -q ${LIB}cake.php "$@" -working "${APP}"
 
 echo " ";
-
 exit;

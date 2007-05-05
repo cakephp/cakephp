@@ -27,9 +27,9 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class Bake2Script extends CakeScript {
-	
+
 	var $task = null;
-	
+
 	function initialize() {
 		pr($this->args);
 		if(isset($this->args[0])) {
@@ -42,7 +42,7 @@ class Bake2Script extends CakeScript {
 			$this->err('No Task specified');
 			exit();
 		}
-		
+
 		$task = $this->_loadTask($this->task);
 		if ($task !== null) {
 			$task->execute($this->args);
@@ -60,11 +60,11 @@ class Bake2Script extends CakeScript {
 				break;
 			}
 		}
-		
+
 		if ($loaded) {
-			require SCRIPTS . 'tasks' . DS . 'bake_task.php';
+			require CONSOLE_LIBS . 'tasks' . DS . 'bake_task.php';
 			require $this->taskPath;
-		
+
 			$this->taskClass = $taskName.'Task';
 			if(class_exists($this->taskClass)) {
 				return new $this->taskClass($this);

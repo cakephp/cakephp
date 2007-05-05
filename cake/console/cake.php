@@ -93,15 +93,15 @@ class ConsoleDispatcher {
  * @var string
  */
 	var $scriptPath = null;
-	
+
 /**
  * The name of the script in lowercase underscore.
  *
  * @var string
  */
-	var $scriptName = null;	
-	
-	
+	var $scriptName = null;
+
+
 /**
  *  Constructs this ConsoleDispatcher instance.
  *
@@ -111,7 +111,7 @@ class ConsoleDispatcher {
 	function ConsoleDispatcher($args = array()) {
 		$this->__construct($args);
 	}
-	
+
 	function __construct($args = array()) {
 		$this->__initConstants();
 		$this->parseParams($args);
@@ -144,7 +144,7 @@ class ConsoleDispatcher {
  * @return void
  */
 	function __initEnvironment() {
-				
+
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
@@ -152,7 +152,7 @@ class ConsoleDispatcher {
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout('This file has been loaded incorrectly and cannot continue.');
-			$this->stdout('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'scripts is in your system path,');
+			$this->stdout('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console is in your system path,');
 			$this->stdout('and check the manual for the correct usage of this command.');
 			$this->stdout('(http://manual.cakephp.org/)');
 			exit();
@@ -165,20 +165,20 @@ class ConsoleDispatcher {
 				exit();
 			}
 		}
-		
+
 		if (!$this->__bootstrap()) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout("\nUnable to load Cake core:");
 			$this->stdout("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
 			exit();
 		}
-		
+
 		$this->shiftArgs();
 
 		$this->scriptPaths = array(
-								VENDORS . 'scritps' . DS,
+								VENDORS . 'scripts' . DS,
 								APP . 'vendors' . DS . 'scripts' . DS,
-								SCRIPTS
+								CONSOLE_LIBS
 							);
 	}
 /**
@@ -198,7 +198,7 @@ class ConsoleDispatcher {
 		);
 
 		if(!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			$includes[] = CORE_PATH . 'cake' . DS . 'scripts'.DS.'templates'.DS.'skel'.DS.'config'.DS.'core.php';
+			$includes[] = CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 		} else {
 			$includes[] = APP_PATH . 'config' . DS . 'core.php';
 		}
@@ -265,7 +265,7 @@ class ConsoleDispatcher {
 					$this->stdout("'{$script}.php' does not exist in: \n" . implode("\nor ", $this->scriptPaths));
 					exit();
 				} else {
-					require SCRIPTS . 'cake_script.php';
+					require CONSOLE_LIBS . 'cake_script.php';
 					require $this->scriptPath;
 					if(class_exists($this->scriptClass)) {
 						$script = new $this->scriptClass($this);
@@ -313,8 +313,8 @@ class ConsoleDispatcher {
 			}
 		} else {
 			$this->stdout('Available Scripts:');
-			foreach (listClasses(CAKE . 'scripts') as $script) {
-				if ($script != 'dispatch.php' && $script != 'cake_script.php') {
+			foreach (listClasses(CONSOLE_LIBS) as $script) {
+				if ($script != 'cake_script.php') {
 					$this->stdout("\t - " . r('.php', '', $script));
 				}
 			}
@@ -387,7 +387,7 @@ class ConsoleDispatcher {
 			}
 		}
 		$this->params = array_merge(array('working'=> dirname(dirname(dirname(__FILE__)))), $this->params);
-		
+
 		$app = 'app';
 		if(isset($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
@@ -396,7 +396,7 @@ class ConsoleDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		
+
 		if(strpos($this->params['working'], 'scripts')) {
 			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
 		}

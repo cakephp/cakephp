@@ -27,10 +27,10 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class AppTask extends BakeTask {
-	
+
 	function execute($params) {
 		if (count($params) == 2) {
-			$skel = SCRIPTS.'templates'.DS.'skel';
+			$skel = CONSOLE_LIBS .'templates'.DS.'skel';
 			$this->copydirr($skel, $params[1], 0755);
 			$this->makeTmpWritable($params[1].DS.'tmp');
 			$this->addAppAlias($params[0], $params[1]);
@@ -38,15 +38,15 @@ class AppTask extends BakeTask {
 			$this->help();
 		}
 	}
-	
+
 	function help() {
 		echo "The app task creates an application skeleton for you.\n";
 		echo "Usage: bake2 app alias app-path \n";
 	}
-	
+
 	function addAppAlias($alias, $path) {
 		$filename = CORE_PATH . 'apps.ini';
-		
+
 		if (!$handle = fopen($filename, 'a')) {
       		echo "Cannot open file ($filename) \n";
       		exit;
@@ -58,7 +58,7 @@ class AppTask extends BakeTask {
 		}
 		fclose($handle);
 	}
-	
+
 	function copydirr($fromDir, $toDir, $chmod = 0755) {
 		$errors = array();
 
@@ -80,10 +80,10 @@ class AppTask extends BakeTask {
 			foreach($errors as $err) {
 				echo 'Error: '.$err."\n";
 			}
-			
+
 			return false;
 		}
-		
+
 		$exceptions = array('.', '..', '.svn');
 		$handle = opendir($fromDir);
 
@@ -120,7 +120,7 @@ class AppTask extends BakeTask {
 		}
 		return true;
 	}
-	
+
 	function makeTmpWritable($path) {
 		if(chmodr($path, 0777) === false) {
 			echo 'Could not set permissions on '. $path.DS."*\n";

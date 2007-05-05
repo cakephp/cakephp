@@ -69,11 +69,11 @@ class BakeScript extends CakeScript {
 		$this->out('Name: '. APP_DIR);
 		$this->out('Path: '. ROOT . DS . APP_DIR);
 		$this->hr();
-		
+
 		if(!is_dir(CONFIGS)) {
 			$this->project($this->params['working']);
 		}
-		
+
 		if(!config('database')) {
 			$this->out('');
 			$this->out('Your database configuration was not found. Take a moment to create one:');
@@ -1815,12 +1815,12 @@ class BakeScript extends CakeScript {
  */
 	function __buildDirLayout($projectPath, $appName) {
 		$skel = '';
-		if($this->__checkPath(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'skel') === true) {
-			$skel = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'skel';
+		if($this->__checkPath(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
+			$skel = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 		} else {
 
 			while ($skel == '') {
-				$skel = $this->in("What is the full path for the cake install app directory?\nExample: ", null, ROOT.'myapp'.DS);
+				$skel = $this->in("What is the full path for the cake install app directory?\nExample: ", null, ROOT.DS.'myapp'.DS);
 
 				if ($skel == '') {
 					$this->out('The directory path you supplied was empty. Please try again.');

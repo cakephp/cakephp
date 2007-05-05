@@ -105,9 +105,9 @@
  */
 	define ('IMAGES', WWW_ROOT.'img'.DS);
 /**
- * Path to the scripts direcotry.
+ * Path to the console libs direcotry.
  */
-	define('SCRIPTS', CAKE.'scripts'.DS);
+	define('CONSOLE_LIBS', CAKE.'console'.DS.'libs'.DS);
 /**
  * Path to the tests directory.
  */
