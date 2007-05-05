@@ -537,6 +537,32 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/option value="other"\s+selected="selected"/', $result);
 		$this->assertNoPattern('/<select[^<>]+[^name|id]=[^<>]*>/', $result);
 		$this->assertNoPattern('/<option[^<>]+[^value|selected]=[^<>]*>/', $result);
+		
+		$this->Form->data = array();
+		$result = $this->Form->select('Model/field', array('value' => 'good', 'other' => 'bad'));
+		$this->assertPattern('/option value=""/', $result);
+		$this->assertPattern('/option value="value"/', $result);
+		$this->assertPattern('/option value="other"/', $result);
+		$this->assertPattern('/<\/option>\s+<option/', $result);
+		$this->assertPattern('/<\/option>\s+<\/select>/', $result);
+		$this->assertNoPattern('/option value="field"\s+selected="selected"/', $result);
+		$this->assertNoPattern('/option value="other"\s+selected="selected"/', $result);
+		
+		$result = $this->Form->select('Model/field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array(), false);
+		$this->assertPattern('/' .
+			'<select[^>]*>\s+' .
+			'<option\s+value="first"[^>]*>first &quot;html&quot; &lt;chars&gt;<\/option>\s+'.
+			'<option\s+value="second"[^>]*>value<\/option>\s+'.
+			'<\/select>'.
+			'/i', $result);
+			
+		$result = $this->Form->select('Model/field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array('escape' => false), false);
+		$this->assertPattern('/' .
+			'<select[^>]*>\s+' .
+			'<option\s+value="first"[^>]*>first "html" <chars><\/option>\s+'.
+			'<option\s+value="second"[^>]*>value<\/option>\s+'.
+			'<\/select>'.
+			'/i', $result);
 	}
 
 	function testDaySelect() {

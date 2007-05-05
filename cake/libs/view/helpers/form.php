@@ -751,6 +751,13 @@ class FormHelper extends AppHelper {
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
 		$showParents = false;
+		$escapeOptions = true;
+		
+		if (isset($attributes['escape'])) {
+			$escapeOptions = $attributes['escape'];
+			unset($attributes['escape']);
+		}
+		
 		$this->setFormTag($fieldName);
 		$this->__secure();
 		$attributes = $this->domId((array)$attributes);
@@ -790,7 +797,7 @@ class FormHelper extends AppHelper {
 			$options[''] = $showEmpty;
 			$options = array_reverse($options, true);
 		}
-		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents));
+		$select = am($select, $this->__selectOptions(array_reverse($options, true), $selected, array(), $showParents, array('escape' => $escapeOptions)));
 		$select[] = sprintf($this->Html->tags['selectend']);
 		return $this->output(implode("\n", $select));
 	}
@@ -1033,7 +1040,9 @@ class FormHelper extends AppHelper {
  *
  * @return array
  */
-	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null) {
+	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
+		$attributes = am(array('escape' => true), $attributes);
+		
 		$select = array();
 		foreach($elements as $name => $title) {
 			$htmlOptions = array();
@@ -1042,7 +1051,7 @@ class FormHelper extends AppHelper {
 					$select[] = $this->Html->tags['optiongroupend'];
 					$parents[] = $name;
 				}
-				$select = am($select, $this->__selectOptions($title, $selected, $parents, $showParents));
+				$select = am($select, $this->__selectOptions($title, $selected, $parents, $showParents, $attributes));
 				if (!empty($name)) {
 					$select[] = sprintf($this->Html->tags['optiongroup'], $name, '');
 				}
@@ -1061,7 +1070,8 @@ class FormHelper extends AppHelper {
 				}
 
 				if($showParents || (!in_array($title, $parents))) {
-					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), h($title));
+					$title = ife($attributes['escape'], h($title), $title);
+					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
 				}
 			}
 		}
