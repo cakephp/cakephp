@@ -253,13 +253,13 @@ class AclScript extends CakeScript {
 		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." NOT NULL default '',
+				".$db->name('model')." ".$db->column($db->columns['string'])." default '' NOT NULL,
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
+				".$db->name('alias')." ".$db->column($db->columns['string'])." default '' NOT NULL,
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
-				);";
+				)";
 		if ($db->query($sql) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
@@ -268,13 +268,13 @@ class AclScript extends CakeScript {
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." NOT NULL default '',
+				".$db->name('model')." ".$db->column($db->columns['string'])." default '' NOT NULL,
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." NOT NULL default '',
+				".$db->name('alias')." ".$db->column($db->columns['string'])." default '' NOT NULL,
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
-				);";
+				)";
 		if ($db->query($sql2) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
@@ -284,12 +284,12 @@ class AclScript extends CakeScript {
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('aro_id')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('aco_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('_create')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
-				".$db->name('_read')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
-				".$db->name('_update')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
-				".$db->name('_delete')." ".$db->column($db->columns['integer'])." NOT NULL default '0',
+				".$db->name('_create')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
+				".$db->name('_read')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
+				".$db->name('_update')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
+				".$db->name('_delete')." ".$db->column($db->columns['integer'])." default '0' NOT NULL,
 				PRIMARY KEY  (".$db->name('id').")
-				);";
+				)";
 		if ($db->query($sql3) === false) {
 			die("Error: " . $db->lastError() . "\n\n");
 		}
@@ -418,7 +418,7 @@ class AclScript extends CakeScript {
 		$driver = '';
 
 		while ($driver == '') {
-			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc'), 'mysql');
+			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc', 'oracle'), 'mysql');
 			if ($driver == '') {
 				$this->out('The database driver supplied was empty. Please supply a database driver.');
 			}
@@ -442,6 +442,9 @@ class AclScript extends CakeScript {
 			break;
 			case 'odbc':
 			$connect = 'odbc_connect';
+			break;
+			case 'oracle':
+			$connect = 'ocilogon';
 			break;
 			default:
 			$this->out('The connection parameter could not be set.');
