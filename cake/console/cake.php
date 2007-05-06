@@ -396,10 +396,7 @@ class ConsoleDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-
-		if(strpos($this->params['working'], 'scripts')) {
-			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
-		}
+		$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
 	}
 /**
  * Removes first argument and shifts other arguments up

@@ -662,7 +662,7 @@ class BakeScript extends CakeScript {
 
 		$controllerPath = low(Inflector::underscore($controllerName));
 
-		$doItInteractive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerClassName} views if it exist.", array('y','n'), 'y');
+		$doItInteractive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerName} views if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
@@ -676,7 +676,6 @@ class BakeScript extends CakeScript {
 		}
 
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
-			require(CONFIGS.'core.php');
 			if(defined('CAKE_ADMIN')) {
 				$admin = CAKE_ADMIN . '_';
 				$admin_url = '/'.CAKE_ADMIN;
@@ -1017,6 +1016,7 @@ class BakeScript extends CakeScript {
  * @param array $fields
  */
 	function inputs($fields = array()) {
+		$displayFields = null;
 
 		foreach($fields as $name => $options) {
 			if(isset($options['tagName'])){
@@ -1113,7 +1113,7 @@ class BakeScript extends CakeScript {
 
 		$controllerPath = low(Inflector::underscore($controllerName));
 
-		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerClassName} controller if it exist.", array('y','n'), 'y');
+		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerName} controller if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
 			$this->interactive = true;
@@ -1165,7 +1165,6 @@ class BakeScript extends CakeScript {
 		$admin = null;
 		$admin_url = null;
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
-			require(CONFIGS.'core.php');
 			if(defined('CAKE_ADMIN')) {
 				$admin = CAKE_ADMIN.'_';
 				$admin_url = '/'.CAKE_ADMIN;
@@ -1994,7 +1993,7 @@ class BakeScript extends CakeScript {
  */
 	function __defaultHome($dir, $app) {
 		$path = $dir.DS.'views'.DS.'pages'.DS;
-		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'scripts'.DS.'templates'.DS.'views'.DS.'home.ctp');
+		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
 		$this->createFile($path.'home.ctp', $output);
 	}
 /**
