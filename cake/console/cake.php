@@ -262,7 +262,7 @@ class ConsoleDispatcher {
 
 				if (!$loaded) {
 					$this->stdout('Unable to dispatch requested script: ', false);
-					$this->stdout("'{$script}.php' does not exist in: \n" . implode("\nor ", $this->scriptPaths));
+					$this->stdout("'".$this->script.".php' does not exist in: \n" . implode("\nor ", $this->scriptPaths));
 					exit();
 				} else {
 					require CONSOLE_LIBS . 'cake_script.php';
