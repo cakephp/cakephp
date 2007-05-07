@@ -124,53 +124,6 @@ class CakeScript extends Object {
 	}
 
 /**
- * Main-loop method.
- *
- */
-	function bake() {
-
-		$this->out('');
-		$this->out('');
-		$this->out('Baking...');
-		$this->hr();
-		$this->out('Name: '. APP_DIR);
-		$this->out('Path: '. ROOT . DS . APP_DIR);
-		$this->hr();
-
-		if(empty($this->dbConfig)) {
-			$this->out('');
-			$this->err('Your database configuration was not found. Take a moment to create one:');
-			exit();
-		}
-		require_once (CONFIGS . 'database.php');
-
-
-		$this->stdout('[M]odel');
-		$this->stdout('[C]ontroller');
-		$this->stdout('[V]iew');
-		$invalidSelection = true;
-
-		while ($invalidSelection) {
-			$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C')));
-			switch($classToBake) {
-				case 'M':
-					$invalidSelection = false;
-					$this->doModel();
-					break;
-				case 'V':
-					$invalidSelection = false;
-					$this->doView();
-					break;
-				case 'C':
-					$invalidSelection = false;
-					$this->doController();
-					break;
-				default:
-					$this->stdout('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
-			}
-		}
-	}
-/**
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
@@ -278,27 +231,11 @@ class CakeScript extends Object {
 
 
 /**
- * Outputs usage text on the standard output.
+ * Outputs usage text on the standard output. Implement it in subclasses.
  *
  */
 	function help() {
-		$this->stdout('CakePHP Console:');
-		$this->hr();
-		$this->stdout('The Bake script generates controllers, views and models for your application.');
-		$this->stdout('If run with no command line arguments, Bake guides the user through the class');
-		$this->stdout('creation process. You can customize the generation process by telling Bake');
-		$this->stdout('where different parts of your application are using command line arguments.');
-		$this->stdout('');
-		$this->hr('');
-		$this->stdout('usage: php bake.php [command] [path...]');
-		$this->stdout('');
-		$this->stdout('commands:');
-		$this->stdout('   -app [path...] Absolute path to Cake\'s app Folder.');
-		$this->stdout('   -core [path...] Absolute path to Cake\'s cake Folder.');
-		$this->stdout('   -help Shows this help message.');
-		$this->stdout('   -project [path...]  Generates a new app folder in the path supplied.');
-		$this->stdout('   -root [path...] Absolute path to Cake\'s \app\webroot Folder.');
-		$this->stdout('');
+		// empty
 	}
 /**
  * Returns true if given path is a directory.
