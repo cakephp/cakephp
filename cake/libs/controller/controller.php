@@ -365,7 +365,7 @@ class Controller extends Object {
 				if ($this->persistModel === true) {
 					$this->_persist($this->modelClass, true, $model);
 					$registry = ClassRegistry::getInstance();
-					$this->_persist($this->modelClass . 'registry', true, $registry->_objects, 'registry');
+					$this->_persist($this->modelClass . 'registry', true, $registry->__objects, 'registry');
 				}
 			} else {
 				$this->_persist($this->modelClass . 'registry', true, $object, 'registry');
@@ -404,7 +404,7 @@ class Controller extends Object {
 						if ($this->persistModel === true) {
 							$this->_persist($modelClass, true, $model);
 							$registry = ClassRegistry::getInstance();
-							$this->_persist($modelClass . 'registry', true, $registry->_objects, 'registry');
+							$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
 						}
 					} else {
 						$this->_persist($modelClass . 'registry', true, $object, 'registry');
