@@ -673,8 +673,8 @@ class FormHelper extends AppHelper {
 
 		trigger_error(__("Don't use me yet"), E_USER_ERROR);
 		if (isset($options['name'])) {
-			if (strpos($options['name'], "/") !== false) {
-				if ($this->fieldValue($options['name'])) {
+			if (strpos($options['name'], "/") !== false || strpos($options['name'], ".") !== false) {
+				if ($this->__value($options['name'])) {
 					$options['checked'] = 'checked';
 				}
 				$this->setFieldName($options['name']);
