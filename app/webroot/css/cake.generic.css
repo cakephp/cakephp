@@ -7,16 +7,16 @@ padding:0;
 body {
 	background-color: #2C6877;
 	color: #fff;
-	font-family: "frutiger linotype", "lucida grande", "helvetica", "arial", sans-serif;
-	font-size: 76%;
+	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
 }
 a {
-	background-color: #fff;
+	background-color: inherit;
 	color: #003d4c;
 	text-decoration: underline;
+	font-weight: bold;
 }
 a:hover {
-	background-color: #fff;
+	background-color: inherit;
 	color: #003d4c;
 	text-decoration:none;
 }
@@ -27,23 +27,23 @@ em {
 	font-size: 12px;
 }
 h1, h2, h3, h4 {
-	background-color: #fff;
+	background-color: inherit;
 	font-weight:normal;
 }
 h1 {
 	color: #003d4c;
-	font-size: 180%;
-	margin: 0.3em 0;
+	font-size: 160%;
+	margin: 0.1em 0;
 }
 h2 {
 	color: #2C6877;
-	font-size: 180%;
+	font-size: 160%;
 	margin: 0.3em 0;
 	padding-top: 1em;
 }
 h3 {
 	color: #c6c65b;
-	font-size: 140%;
+	font-size: 120%;
 	padding-top: 2em;
 }
 h4 {
@@ -63,13 +63,13 @@ ul, li {
 #header{
 	background-color: #2C6877;
 	padding: 10px 20px 0 20px;
-	height: 83px;
+	height: 5em;
 }
 #header h1 { 
 	color: #ffffff;
 	background: url('../img/cake.icon.png') no-repeat;
 	padding: 5px 50px;
-	height: 60px;
+	height: 5em;
 }
 #header h1 a { 
 	color: #ffffff;
@@ -111,12 +111,25 @@ th {
 	border-left: 1px solid #fff;
 	border-right: 1px solid #bbb;
 	border-bottom: 1px solid #bbb;
-	padding: 1px 4px;
 	text-align: center;
 }
+
+th a {
+	display: block;
+	padding: 2px 4px;
+	text-decoration: none;
+}
+
+th a:hover {
+	background-color: #ccc;
+	color: #333;
+	text-decoration: none;
+}
+
 table tr td {
-	border-right: 1px solid #ddd;
-	padding: 4px 4px;
+	background: #fff;
+	border-right: 1px solid #ccc;
+	padding: 4px;
 	text-align: center;
 	vertical-align: top;
 }
@@ -124,14 +137,17 @@ table tr.altrow td {
 	background: #f4f4f4;
 }
 td.actions {
+	text-align: center;
 	white-space: nowrap;
 }
 td.actions a {
-	padding: 0 6px;
+	display: inline;
+	margin: 0px 6px;
 }
-#cakeSqlLog td {
-	background: #fff;
-	border-bottom: 2px solid #ccc;
+.cakeSqlLog table {
+	background: #f4f4f4;
+}
+.cakeSqlLog td {
 	padding: 4px 8px;
 	text-align: left;
 }
@@ -139,6 +155,7 @@ td.actions a {
 /* Paging */
 div.paging {
 	color: #ccc;
+	margin-bottom: 2em;
 }
 div.paging div.disabled {
 	color: #ddd;
@@ -167,25 +184,32 @@ dd {
 
 /* Forms */
 form {
-	margin-top: 0;
+	clear: both;
 	margin-right: 20px;
 	padding: 0;
-	width: 50%;
+	width: 60%;
+}
+fieldset {
+	border: 1px solid #ccc;
+	margin-top: 30px;
+	padding: 16px 20px;
+}
+fieldset legend {
+	color: #2C6877;
+	font-size: 160%;
+	font-weight: bold;
 }
 form div {
-	border: 1px solid #ddd;
 	clear: both;
 	margin-bottom: 1em;
-	padding: .8em 2em 1em 1.4em;
+	padding: .5em;
 	vertical-align: text-top;
 }
 form div.required {
 	color: #333;
-	background: #f2f2f2;
 	font-weight: bold;
 }
 form div.optional, form div.input {
-	background: #f6f6f6;
 	color: #444;
 }
 form div.submit {
@@ -196,44 +220,47 @@ form div.submit {
 }
 label {
 	display: block;
-	font-size: 14px;
+	font-size: 110%;
 	padding-right: 20px;
 }
 input, textarea {
 	clear: both;
 	display: block;
-	font-size: 14px;
+	font-size: 140%;
+	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
+	padding: 2px;
 	width: 100%;
 }
 select {
 	clear: both;
-	font-size: 14px;
+	font-size: 120%;
 	vertical-align: text-bottom;
 }
 select[multiple=multiple] {
 	width: 100%;
 }
 option {
-	font-size: 14px;
-	padding: 0 0.3em;
+	font-size: 120%;
+	padding: 0 3px;
 }
 input[type=checkbox] {
 	clear: left;
 	float: left;
-	margin: 2px 6px 7px 2px;
+	margin: 0px 6px 7px 2px;
 	width: auto;
 }
 input[type=submit] {
 	display: inline;
-	padding: 0 .4em;
+	padding: 2px 5px;
 	width: auto;
+	font-size: 110%;
 	vertical-align: bottom;
 }
 
 /* Notices and Errors */
 div.message, p.error, div.error-message {
 	color: #900;
-	font-size: 16px;
+	font-size: 140%;
 	font-weight: bold;
 	margin: 8px 0px;
 }
@@ -241,48 +268,78 @@ div.error-message {
 	clear: both;
 }
 div.error em {
-	font-size: 18px;
+	font-size: 140%;
 	color: #003d4c;
 }
 span.notice {
 	background-color: #c6c65b;
 	color: #fff;
 	display: block;
-	font-size: 16px;
+	font-size: 140%;
 	padding: 0.5em;
 	margin: 1em 0;
 }
 
-/* Actions */
-div.actions {
+/*  Nav & Actions */
+div.nav {
+	text-align: left;
 	position: absolute;
-	top: 75px;
-	left: 25px;
+	top: 9em;
+	left: 60%;
+}
+div.nav ul li a {
+	display: block;
+	background: #fff;
+	color: #003d4c;
+	padding: 3px 8px;
+	text-decoration: none;
+}
+div.nav ul {
+	background: #003d4c;
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+div.nav li {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+div.nav ul li a {
+	background: #fff;
+	color: #003d4c;
+	padding: 3px 8px;
+	text-decoration: none;
+}
+div.nav ul li a:hover {
+	background: #003d4c;
+	color: #fff;
+}
+
+/*  Actions  */
+div.actions {
+	clear: both;
+	margin-top: .2em;
 	text-align: left;
 }
 div.actions ul {
 	margin: 0;
-	padding: 2px 6px;
-	list-style-type: none;
-	display: inline;
+	padding: 0;
 }
 div.actions li {
 	display: inline;
 	list-style-type: none;
-	margin: 0px 0px 3px 0px;
-	padding: 0px 2px;
+	margin: 0 2em 0 0;
+	padding: 0;
 }
-div.actions ul li a{
-	background: #003d4c;
-	border: 0px solid #656565;
-	border-width: 1px 1px 0px 1px;
-	color: #ddd;
-	padding: 3px 8px;
+div.actions ul li a {
+	background: #fff;
+	color: #003d4c;
 	text-decoration: none;
 }
 div.actions ul li a:hover {
-	background:#fff;
-	color: #003d4c;
+	background: #003d4c;
+	color: #fff;
 }
 
 /* Related */
@@ -290,72 +347,51 @@ div.related {
 	clear: both;
 	display: block;
 }
-div.related div.actions {
-	position: relative;
-	top: 4px;
-	left: 0;
-	text-align: left;
-}
-div.related div.actions ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-div.related div.actions li {
-	list-style-type: none;
-	margin: 0 0 4px 0px;
-	padding: 0;
-}
-div.related div.actions ul li a {
-	background:#fff;
-	color: #2C6877;
-	padding: 0;
-	text-decoration: underline;
-}
-div.related div.actions ul li a:hover {
-	background:#fff;
-	color: #2C6877;
-	text-decoration: none;
-}
 
 /* Debugging */
 pre {
+	background: #f0f0f0;
 	padding: 1em;
 }
 
 pre.cake_debug {
-	margin: 2px;
-	font-size: 12px;
+	background: #ffcc00;
+	font-size: 120%;
 	line-height: 18px;
+	margin: 4px 2px;
+	overflow: auto;
+	position: relative;
 }
-
 div.cake-stack-trace {
-	margin: 2px 2px 0 2px;
-	font-size: 12px;
+	background: #fff;
+	color: #333;
+	margin: 4px 2px;
+	padding: 4px;
+	font-size: 120%;
 	line-height: 18px;
+	overflow: auto;
+	position: relative;
 }
-
+div.cake-code-dump pre {
+	position: relative;
+	overflow: auto;
+}
 div.cake-stack-trace pre, div.cake-code-dump pre {
 	color: #000000;
 	background-color: #F0F0F0;
 	border: 1px dotted #606060;
-	padding: 2px 0 2px 5px;
-	margin: 0px 4px 5px 5px;
+	margin: 4px 2px;
+	padding: 4px;
+	overflow: auto;
 }
-
 div.cake-code-dump pre, div.cake-code-dump pre code {
 	clear: both;
 	font-size: 12px;
 	line-height: 5px;
-	margin: 0;
-	padding: 0 0 10px 0;
+	margin: 4px 2px;
+	padding: 4px;
+	overflow: auto;
 }
-
-div.cake-code-dump pre {
-	padding: 7px 8px;
-	margin: 1px 4px 2px 6px;
-}
-
 div.cake-code-dump span.code-highlight {
 	background-color: #FFFF00;
 }

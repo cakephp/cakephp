@@ -697,13 +697,13 @@ class Controller extends Object {
 		$modelObj =& ClassRegistry::getObject($modelKey);
 
 		foreach($modelObj->_tableInfo->value as $column) {
+			$humanName = $column['name'];
  			if ($modelObj->isForeignKey($column['name'])) {
 				foreach($modelObj->belongsTo as $associationName => $assoc) {
 					if($column['name'] == $assoc['foreignKey']) {
+						$humanName = Inflector::underscore($associationName);
 						$fkNames = $modelObj->keyToTable[$column['name']];
 						$fieldNames[$column['name']]['table'] = $fkNames[0];
-						$fieldNames[$column['name']]['label'] = Inflector::humanize($associationName);
-						$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 						$fieldNames[$column['name']]['model'] = Inflector::classify($associationName);
 						$fieldNames[$column['name']]['modelKey'] = Inflector::underscore($modelObj->tableToModel[$fieldNames[$column['name']]['table']]);
 						$fieldNames[$column['name']]['controller'] = Inflector::pluralize($fieldNames[$column['name']]['modelKey']);
@@ -711,12 +711,11 @@ class Controller extends Object {
 						break;
 					}
 				}
+			} 
+			
+			$fieldNames[$column['name']]['label'] = Inflector::humanize($humanName);
+			$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 
-
-			} else {
-				$fieldNames[$column['name']]['label'] = Inflector::humanize($column['name']);
-				$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
-			}
 			$fieldNames[$column['name']]['tagName'] = $model . '/' . $column['name'];
 			$fieldNames[$column['name']]['name'] = $column['name'];
 			$fieldNames[$column['name']]['class'] = 'optional';
@@ -816,8 +815,10 @@ class Controller extends Object {
 			$otherModelKey = Inflector::underscore($assocData['className']);
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
+				$fkName = $modelObj->alias[$associationName];
+				$fieldNames[$associationName]['table'] = $assocData['joinTable'];
 				$fieldNames[$associationName]['model'] = $associationName;
-				$fieldNames[$associationName]['label'] = "Related " . Inflector::humanize(Inflector::pluralize($associationName));
+				$fieldNames[$associationName]['label'] = "Related " . Inflector::humanize($fkName);
 				$fieldNames[$associationName]['prompt'] = $fieldNames[$associationName]['label'];
 				$fieldNames[$associationName]['type'] = "select";
 				$fieldNames[$associationName]['multiple'] = "multiple";

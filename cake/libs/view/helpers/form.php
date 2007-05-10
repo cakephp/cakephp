@@ -370,7 +370,9 @@ class FormHelper extends AppHelper {
 	function inputs($fields = null, $blacklist = null) {
 		if(!is_array($fields)) {
 			$fieldset = $fields;
-		} else if(isset($fields['fieldset'])) {
+			$fields = array_keys($this->fieldset['fields']);
+		} 
+		if(isset($fields['fieldset'])) {
 			$fieldset = $fields['fieldset'];
 			unset($fields['fieldset']);
 		} else {
@@ -378,13 +380,16 @@ class FormHelper extends AppHelper {
 		}
 
 		if($fieldset === true) {
-			$legend = Inflector::humanize($this->action .' to '. $this->model());
+			$legend = 'New ';
+			if(in_array($this->action, array('update', 'edit'))) {
+				$legend = 'Edit ';
+			}
+			$legend .= Inflector::humanize(Inflector::underscore($this->model()));
 		} else if(is_string($fieldset)){
-			$legend = $fields;
-		}
-
-		if(!is_array($fields)) {
-			$fields = array_keys($this->fieldset['fields']);
+			$legend = $fieldset;
+		} else if(isset($fieldset['legend'])) {
+			$legend = $fields['legend'];
+			unset($fields['legend']);
 		}
 
 		$out = null;

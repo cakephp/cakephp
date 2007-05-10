@@ -24,7 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<h2>List <?php echo $humanPluralName;?></h2>
+<h2><?php echo $humanPluralName;?></h2>
 <?php
 $modelObj =& ClassRegistry::getObject($modelKey);
 ?>
@@ -39,8 +39,7 @@ echo $paginator->counter(array(
 	<?php foreach ($fieldNames as $fieldName) { ?>
 		<th>
 			<?php
-				$tag = explode('/', $fieldName['tagName']);
-				echo $paginator->sort($fieldName['label'], $tag[1]);
+				echo $paginator->sort($fieldName['label'], $fieldName['name']);
 			?>
 		</th>
 	<?php }?>
@@ -91,13 +90,21 @@ if(is_array($data)) {
 </table>
 <div class="paging">
 	<?php echo $paginator->prev('<< previous', array(), null, array('class'=>'disabled'));?>
- |
+ | <?php echo $paginator->numbers();?>
 	<?php echo $paginator->next('next >>', array(), null, array('class'=>'disabled'));?>
 </div>
 <div class="actions">
 	<ul>
-		<li>
-			<?php echo $html->link(__('New ', true).$humanSingularName, array('action' => 'add')); ?>
-		</li>
+		<?php 
+			echo '<li>'.$html->link(__('New ', true).$humanSingularName, array('action' => 'add')).'</li>'; 
+			
+			foreach($alias as $nav) {
+				if(!strpos($nav, $modelClass)) {
+					$navKey = Inflector::pluralize(Inflector::underscore($nav));
+					echo '<li>'.$html->link(Inflector::humanize($navKey), array('controller'=> $navKey)).'</li>';
+				}
+			}
+			
+		?>
 	</ul>
 </div>
