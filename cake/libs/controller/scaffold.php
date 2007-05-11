@@ -184,7 +184,7 @@ class Scaffold extends Object {
 		$this->controller->set('viewPath', $this->viewPath);
 		$this->controller->set('humanSingularName', Inflector::humanize($this->modelKey));
 		$this->controller->set('humanPluralName', Inflector::humanize($this->viewPath));
-		$alias = null;
+		$alias = array();
 		if(!empty($this->ScaffoldModel->alias)) {
 			$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
 		}
