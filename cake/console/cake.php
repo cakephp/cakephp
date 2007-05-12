@@ -232,7 +232,8 @@ class ConsoleDispatcher {
  */
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		if (!isset($this->args[0]) || $this->args[0] != 'help') {
+		
+		if (!isset($this->args[0]) ||  (isset($this->args[0]) && $this->args[0] != 'help')) {
 			$this->stdout("Type 'cake help' for help\n");
 		}
 		$protectedCommands = array('initialize', 'main','in','out','err','hr',
@@ -312,14 +313,7 @@ class ConsoleDispatcher {
 				}
 			}
 		} else {
-			$this->stdout('Available Scripts:');
-			foreach (listClasses(CONSOLE_LIBS) as $script) {
-				if ($script != 'cake_script.php') {
-					$this->stdout("\t - " . r('.php', '', $script));
-				}
-			}
-			$this->stdout("\nTo run a command, type 'cake script_name [args]'");
-			$this->stdout("To get help on a specific command, type 'cake script_name help'");
+			$this->help();
 		}
 	}
 /**
@@ -386,7 +380,6 @@ class ConsoleDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
-		$this->params = array_merge(array('working'=> dirname(dirname(dirname(__FILE__)))), $this->params);
 
 		$app = 'app';
 		if(isset($this->params['app'])) {
@@ -396,7 +389,9 @@ class ConsoleDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
+		if(empty($this->params['working'])) {
+			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
+		}
 	}
 /**
  * Removes first argument and shifts other arguments up
@@ -417,12 +412,23 @@ class ConsoleDispatcher {
  * @return void
  */
 	function help() {
-		$this->stdout("\nConsole Help:");
-		$this->stdout('-------------');
-		echo 'Args ';
 		print_r($this->args);
-		echo 'Params ';
-		print_r($this->params);
+		$this->stdout("\nPaths:");
+		$this->stdout(" -working: " . $this->params['working']);
+		$this->stdout(" -app: ". APP_DIR);
+		$this->stdout(" -cake: " . CORE_PATH);
+		
+		$this->stdout("\nAvailable Scripts:");
+		foreach($this->scriptPaths as $path) {
+			$this->stdout("\n " . $path . ":");
+			foreach (listClasses($path) as $script) {
+				if ($script != 'cake_script.php') {
+					$this->stdout("\t - " . r('.php', '', $script));
+				}
+			}			
+		}
+		$this->stdout("\nTo run a command, type 'cake script_name [args]'");
+		$this->stdout("To get help on a specific command, type 'cake script_name help'");
 	}
 }
 if (!defined('DISABLE_AUTO_DISPATCH')) {

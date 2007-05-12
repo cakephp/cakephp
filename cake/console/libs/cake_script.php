@@ -84,8 +84,12 @@ class CakeScript extends Object {
  */
 	function initialize() {
 		if($this->_loadDbConfig()) {
-			$this->_loadModel();
+			//$this->_loadModel();
 		}
+		$this->hr();
+		$this->out('Name: '. APP_DIR);
+		$this->out('Path: '. ROOT . DS . APP_DIR);
+		$this->hr();
 	}
 /**
  * Loads database file and constructs DATABASE_CONFIG class
