@@ -383,10 +383,10 @@ class ShellDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
-		
 		if(!empty($this->params['working'])) {
 			$app = basename($this->params['working']);
-		} else {
+			$this->params['working'] = dirname($this->params['working']) . DS . basename($this->params['working']);
+ 		} else {
 			$app = 'app';
 		}
 		if(isset($this->params['app'])) {
@@ -398,7 +398,7 @@ class ShellDispatcher {
 		}
 		if(in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
-			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
+			$this->params['working'] = dirname(dirname(__FILE__));
 		}
 		$this->params = array_merge(array('app'=> $app, 'root'=> dirname($this->params['working'])), $this->params);
 	}
@@ -423,8 +423,8 @@ class ShellDispatcher {
 	function help() {
 		$this->stdout("\nPaths:");
 		$this->stdout(" -working: " . $this->params['working']);
-		$this->stdout(" -app: ". APP_DIR);
 		$this->stdout(" -root: " . ROOT);
+		$this->stdout(" -app: ". APP);
 		$this->stdout(" -core: " . CORE_PATH);
 		
 		$this->stdout("\nAvailable Scripts:");
