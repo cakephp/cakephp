@@ -80,6 +80,14 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->inflector->singularize('indices');
 		$expected = 'index';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('Aliases');
+		$expected = 'Alias';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('Alias');
+		$expected = 'Alias';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectingPlurals() {
@@ -121,6 +129,14 @@ class InflectorTest extends UnitTestCase {
 
 		$result = $this->inflector->pluralize('index');
 		$expected = 'indices';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('Alias');
+		$expected = 'Aliases';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('Aliases');
+		$expected = 'Aliases';
 		$this->assertEqual($result, $expected);
 	}
 

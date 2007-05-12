@@ -90,7 +90,7 @@ class Inflector extends Object {
 									'/(c)hild$/i' => '\1hildren', # child
 									'/(buffal|tomat)o$/i' => '\1\2oes', # buffalo, tomato
 									'/us$/' => 'uses', # us
-									'/(alias)/i' => '\1es', # alias
+									'/(alias)$/i' => '\1es', # alias
 									'/(octop|vir)us$/i' => '\1i', # octopus, virus - virus has no defined plural (according to Latin/dictionary.com), but viri is better than viruses/viruss
 									'/(ax|cri|test)is$/i' => '\1es', # axis, crisis
 									'/s$/' => 's',  # no change (compatibility)
@@ -209,7 +209,7 @@ class Inflector extends Object {
 									'/(matr)ices$/i' => '\1ix',
 									'/(vert|ind)ices$/i' => '\1ex',
 									'/^(ox)en/i' => '\1',
-									'/(alias)es$/i' => '\1',
+									'/(alias)(es)*$/i' => '\1',
 									'/([octop|vir])i$/i' => '\1us',
 									'/(cris|ax|test)es$/i' => '\1is',
 									'/(shoe)s$/i' => '\1',
