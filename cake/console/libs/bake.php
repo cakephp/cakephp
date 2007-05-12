@@ -71,7 +71,7 @@ class BakeShell extends Shell {
 		$this->hr();
 
 		if(!is_dir(CONFIGS)) {
-			$this->project($this->params['working']);
+			$this->project($this->params['app']);
 		}
 
 		if(!config('database')) {
@@ -1858,6 +1858,11 @@ class BakeShell extends Shell {
 			} else {
 				$this->out('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 			}
+			if($this->__setCake() === true ){
+				$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
+			} else {
+				$this->out('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . WWW_ROOT . 'index.php');
+			}
 			if(chmodr($projectPath.DS.'tmp', 0777) === false) {
 				$this->out('Could not set permissions on '. $projectPath.DS.'tmp'.DS.'*');
 				$this->out('You must manually check that these directories can be wrote to by the server');
@@ -1956,7 +1961,8 @@ class BakeShell extends Shell {
 			return false;
 		}
 	}
-		function __generateHash(){
+	
+	function __generateHash(){
 		$file = file_get_contents(CONFIGS.'core.php');
 		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
 			uses('Security');
@@ -1964,6 +1970,20 @@ class BakeShell extends Shell {
 			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $file);
 
 			if(file_put_contents(CONFIGS.'core.php', $result)){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	function __setCake(){
+		$file = file_get_contents(APP.'webroot'.DS.'index.php');
+		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
+			$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $file);
+			if(file_put_contents(APP.'webroot'.DS.'index.php', $result)){
 				return true;
 			} else {
 				return false;

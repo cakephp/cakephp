@@ -148,7 +148,7 @@ class ShellDispatcher {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
-		
+
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout('This file has been loaded incorrectly and cannot continue.');
@@ -157,7 +157,7 @@ class ShellDispatcher {
 			$this->stdout('(http://manual.cakephp.org/)');
 			exit();
 		}
-		
+
 		if (basename(__FILE__) !=  basename($this->args[0])) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout('Warning: the dispatcher may have been loaded incorrectly, which could lead to unexpected results...');
@@ -232,7 +232,7 @@ class ShellDispatcher {
  */
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		
+
 		if (!isset($this->args[0]) ||  (isset($this->args[0]) && $this->args[0] != 'help')) {
 			$this->stdout("Type 'cake help' for help\n");
 		}
@@ -396,10 +396,16 @@ class ShellDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		if(in_array($app, array('cake', 'console', 'app'))){
+		
+		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
 			$this->params['working'] = dirname(dirname(__FILE__));
 		}
+		
+		if($this->params['working'] !== dirname(dirname(__FILE__))) {
+			$this->params['root'] = $this->params['working'];
+		}
+		
 		$this->params = array_merge(array('app'=> $app, 'root'=> dirname($this->params['working'])), $this->params);
 	}
 /**
@@ -426,7 +432,7 @@ class ShellDispatcher {
 		$this->stdout(" -root: " . ROOT);
 		$this->stdout(" -app: ". APP);
 		$this->stdout(" -core: " . CORE_PATH);
-		
+
 		$this->stdout("\nAvailable Scripts:");
 		foreach($this->shellPaths as $path) {
 			if(is_dir($path)) {
@@ -440,9 +446,9 @@ class ShellDispatcher {
 						if ($shell != 'shell.php') {
 							$this->stdout("\t - " . r('.php', '', $shell));
 						}
-					}	
+					}
 				}
-			}		
+			}
 		}
 		$this->stdout("\nTo run a command, type 'cake script_name [args]'");
 		$this->stdout("To get help on a specific command, type 'cake script_name help'");

@@ -71,10 +71,10 @@ class Shell extends Object {
  */
 	function __construct(&$dispatch) {
 		$this->Dispatch = & $dispatch;
-		$this->params = & $this->Dispatch->params;
-		$this->args = & $this->Dispatch->args;
-		$this->name = & $this->Dispatch->shellName;
-		$this->command = & $this->Dispatch->shellCommand;
+		$vars = array('params', 'args', 'shellName', 'shellCommand');
+		foreach($vars as $var) {
+			$this->{$var} = & $this->Dispatch->{$var};
+		}
 	}
 /**
  * Initializes the Shell
