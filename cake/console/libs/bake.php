@@ -1980,16 +1980,18 @@ class BakeShell extends Shell {
 	}
 	
 	function __setCake(){
-		$file = file_get_contents(APP.'webroot'.DS.'index.php');
-		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
-			$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $file);
-			if(file_put_contents(APP.'webroot'.DS.'index.php', $result)){
-				return true;
+		if(ROOT !== CAKE_CORE_INCLUDE_PATH) {
+			$file = file_get_contents(APP.'webroot'.DS.'index.php');
+			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $file);
+				if(file_put_contents(APP.'webroot'.DS.'index.php', $result)){
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
-		} else {
-			return false;
 		}
 	}
 /**
