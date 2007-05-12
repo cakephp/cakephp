@@ -32,12 +32,12 @@
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class CakeScript extends Object {
+class Shell extends Object {
 
 /**
- * ConsoleDispatcher object
+ * ShellDispatcher object
  *
- * @var object An instance of the ConsoleDispatcher object that loaded this script
+ * @var object An instance of the ShellDispatcher object that loaded this script
  */
 	var $Dispatch = null;
 /**
@@ -66,18 +66,18 @@ class CakeScript extends Object {
  */
 	var $args = array();
 /**
- *  Constructs this CakeScript instance.
+ *  Constructs this Shell instance.
  *
  */
 	function __construct(&$dispatch) {
 		$this->Dispatch = & $dispatch;
 		$this->params = & $this->Dispatch->params;
 		$this->args = & $this->Dispatch->args;
-		$this->name = & $this->Dispatch->scriptName;
-		$this->command = & $this->Dispatch->scriptCommand;
+		$this->name = & $this->Dispatch->shellName;
+		$this->command = & $this->Dispatch->shellCommand;
 	}
 /**
- * Initializes the CakeScript
+ * Initializes the Shell
  * can be overriden in subclasses
  *
  * @return null
@@ -193,7 +193,7 @@ class CakeScript extends Object {
 			$command = $this->command;
 		}
 		if (count($this->args) < $expectedNum) {
-			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->Dispatch->script.' help\' for help on usage of the '.$command.' command.');
+			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->Dispatch->shell.' help\' for help on usage of the '.$command.' command.');
 		}
 	}
 /**

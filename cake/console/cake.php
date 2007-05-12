@@ -28,7 +28,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-class ConsoleDispatcher {
+class ShellDispatcher {
 /**
  * Standard input stream.
  *
@@ -64,20 +64,20 @@ class ConsoleDispatcher {
  *
  * @var string
  */
-	var $script = null;
+	var $shell = null;
 /**
  * The class name of the script that was invoked.
  *
  * @var string
  */
-	var $scriptClass = null;
+	var $shellClass = null;
 
 /**
  * The command called if public methods are available.
  *
  * @var string
  */
-	var $scriptCommand = null;
+	var $shellCommand = null;
 
 
 /**
@@ -85,30 +85,30 @@ class ConsoleDispatcher {
  *
  * @var array
  */
-	var $scriptPaths = array();
+	var $shellPaths = array();
 
 /**
  * The path to the current script location.
  *
  * @var string
  */
-	var $scriptPath = null;
+	var $shellPath = null;
 
 /**
  * The name of the script in lowercase underscore.
  *
  * @var string
  */
-	var $scriptName = null;
+	var $shellName = null;
 
 
 /**
- *  Constructs this ConsoleDispatcher instance.
+ *  Constructs this ShellDispatcher instance.
  *
  * @param array $args the argv.
  * @return void
  */
-	function ConsoleDispatcher($args = array()) {
+	function ShellDispatcher($args = array()) {
 		$this->__construct($args);
 	}
 
@@ -148,7 +148,7 @@ class ConsoleDispatcher {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
-
+		
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout('This file has been loaded incorrectly and cannot continue.');
@@ -157,7 +157,7 @@ class ConsoleDispatcher {
 			$this->stdout('(http://manual.cakephp.org/)');
 			exit();
 		}
-
+		
 		if (basename(__FILE__) !=  basename($this->args[0])) {
 			$this->stdout("\nCakePHP Console: ");
 			$this->stdout('Warning: the dispatcher may have been loaded incorrectly, which could lead to unexpected results...');
@@ -175,9 +175,9 @@ class ConsoleDispatcher {
 
 		$this->shiftArgs();
 
-		$this->scriptPaths = array(
-								VENDORS . 'scripts' . DS,
-								APP . 'vendors' . DS . 'scripts' . DS,
+		$this->shellPaths = array(
+								APP . 'vendors' . DS . 'shells' . DS,
+								VENDORS . 'shells' . DS,
 								CONSOLE_LIBS
 							);
 	}
@@ -238,24 +238,24 @@ class ConsoleDispatcher {
 		}
 		$protectedCommands = array('initialize', 'main','in','out','err','hr',
 									'createFile', 'isDir','copyDir','Object','toString',
-									'requestAction','log','cakeError', 'ConsoleDispatcher',
+									'requestAction','log','cakeError', 'ShellDispatcher',
 									'__initConstants','__initEnvironment','__construct',
 									'dispatch','__bootstrap','getInput','stdout','stderr','parseParams','shiftArgs'
 								);
 		if (isset($this->args[0])) {
-			// Load requested script
-			$this->script = $this->args[0];
+			// Load requested shell
+			$this->shell = $this->args[0];
 			$this->shiftArgs();
-			$this->scriptName = Inflector::camelize($this->script);
-			$this->scriptClass = $this->scriptName . 'Script';
+			$this->shellName = Inflector::camelize($this->shell);
+			$this->shellClass = $this->shellName . 'Script';
 
-			if (method_exists($this, $this->script) && !in_array($this->script, $protectedCommands)) {
-				$this->{$this->script}();
+			if (method_exists($this, $this->shell) && !in_array($this->shell, $protectedCommands)) {
+				$this->{$this->shell}();
 			} else {
 				$loaded = false;
-				foreach($this->scriptPaths as $path) {
-					$this->scriptPath = $path . $this->script . ".php";
-					if (file_exists($this->scriptPath)) {
+				foreach($this->shellPaths as $path) {
+					$this->shellPath = $path . $this->shell . ".php";
+					if (file_exists($this->shellPath)) {
 						$loaded = true;
 						break;
 					}
@@ -263,19 +263,19 @@ class ConsoleDispatcher {
 
 				if (!$loaded) {
 					$this->stdout('Unable to dispatch requested script: ', false);
-					$this->stdout("'".$this->script.".php' does not exist in: \n" . implode("\nor ", $this->scriptPaths));
+					$this->stdout("'".$this->shell.".php' does not exist in: \n" . implode("\nor ", $this->shellPaths));
 					exit();
 				} else {
-					require CONSOLE_LIBS . 'cake_script.php';
-					require $this->scriptPath;
-					if(class_exists($this->scriptClass)) {
-						$script = new $this->scriptClass($this);
+					require CONSOLE_LIBS . 'shell.php';
+					require $this->shellPath;
+					if(class_exists($this->shellClass)) {
+						$shell = new $this->shellClass($this);
 
 						$command = null;
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
-						$classMethods = get_class_methods($script);
+						$classMethods = get_class_methods($shell);
 
 						$privateMethod = $missingCommand = false;
 						if((in_array($command, $classMethods) || in_array(strtolower($command), $classMethods)) && strpos($command, '_', 0) === 0) {
@@ -290,25 +290,25 @@ class ConsoleDispatcher {
 							$missingCommand = true;
 						}
 						if($command == 'help') {
-							if(method_exists($script, 'help')) {
-								$script->initialize();
-								$script->help();
+							if(method_exists($shell, 'help')) {
+								$shell->initialize();
+								$shell->help();
 							} else {
 								$this->help();
 							}
-						} else if($missingCommand && method_exists($script, 'main')) {
-							$script->initialize();
-							$script->main();
-						} else if(!$privateMethod && method_exists($script, $command)) {
-							$script->command = $command;
+						} else if($missingCommand && method_exists($shell, 'main')) {
+							$shell->initialize();
+							$shell->main();
+						} else if(!$privateMethod && method_exists($shell, $command)) {
+							$shell->command = $command;
 							$this->shiftArgs();
-							$script->initialize();
-							$script->{$command}();
+							$shell->initialize();
+							$shell->{$command}();
 						} else {
-							$this->stderr("Unknown {$this->scriptName} command '$command'.\nFor usage, try 'cake {$this->script} help'.\n\n");
+							$this->stderr("Unknown {$this->shellName} command '$command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
 						}
 					} else {
-						$this->stderr('Class '.$this->scriptClass.' could not be loaded');
+						$this->stderr('Class '.$this->shellClass.' could not be loaded');
 					}
 				}
 			}
@@ -381,7 +381,7 @@ class ConsoleDispatcher {
 			}
 		}
 
-		$app = 'app';
+		$app = basename($this->params['working']);
 		if(isset($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$this->params['working'] = $this->params['app'];
@@ -389,7 +389,8 @@ class ConsoleDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		if(empty($this->params['working'])) {
+		if(in_array($app, array('cake', 'console'))){
+			$app = 'app';
 			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
 		}
 	}
@@ -412,26 +413,34 @@ class ConsoleDispatcher {
  * @return void
  */
 	function help() {
-		print_r($this->args);
 		$this->stdout("\nPaths:");
 		$this->stdout(" -working: " . $this->params['working']);
 		$this->stdout(" -app: ". APP_DIR);
+		$this->stdout(" -root: " . ROOT);
 		$this->stdout(" -cake: " . CORE_PATH);
 		
 		$this->stdout("\nAvailable Scripts:");
-		foreach($this->scriptPaths as $path) {
-			$this->stdout("\n " . $path . ":");
-			foreach (listClasses($path) as $script) {
-				if ($script != 'cake_script.php') {
-					$this->stdout("\t - " . r('.php', '', $script));
+		foreach($this->shellPaths as $path) {
+			if(is_dir($path)) {
+				$shells = listClasses($path);
+				$path = r(CORE_PATH, '', $path);
+				$this->stdout("\n " . $path . ":");
+				if(empty($shells)) {
+					$this->stdout("\t - none");
+				} else {
+					foreach ($shells as $shell) {
+						if ($shell != 'shell.php') {
+							$this->stdout("\t - " . r('.php', '', $shell));
+						}
+					}	
 				}
-			}			
+			}		
 		}
 		$this->stdout("\nTo run a command, type 'cake script_name [args]'");
 		$this->stdout("To get help on a specific command, type 'cake script_name help'");
 	}
 }
 if (!defined('DISABLE_AUTO_DISPATCH')) {
-	$dispatcher = new ConsoleDispatcher($argv);
+	$dispatcher = new ShellDispatcher($argv);
 }
 ?>

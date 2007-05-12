@@ -31,7 +31,7 @@ uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class AclScript extends CakeScript {
+class AclShell extends Shell {
 /**
  * Enter description here...
  *
@@ -51,7 +51,7 @@ class AclScript extends CakeScript {
  */
 	var $dataSource = 'default';
 /**
- * override intialize of the CakeScript
+ * override intialize of the Shell
  *
  */
 	function initialize () {

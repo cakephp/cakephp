@@ -26,17 +26,17 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class BakeTask extends CakeScript {
+class BakeTask extends Shell {
 	
 	/**
 	 *  Constructs this BakeTask instance.
 	 *
 	 */
-	function __construct(&$script) {
-		$this->Dispatch = & $script->Dispatch;
-		$this->task = & $script->task;
-		$this->params = & $script->Dispatch->params;
-		$this->args = & $script->Dispatch->args;
+	function __construct(&$shell) {
+		$this->Dispatch = & $shell->Dispatch;
+		$this->task = & $shell->task;
+		$this->params = & $shell->Dispatch->params;
+		$this->args = & $shell->Dispatch->args;
 	}
 
 	/**

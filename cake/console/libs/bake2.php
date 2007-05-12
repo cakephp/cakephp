@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class Bake2Script extends CakeScript {
+class Bake2Shell extends Shell {
 
 	var $task = null;
 
@@ -52,9 +52,18 @@ class Bake2Script extends CakeScript {
 	}
 
 	function _loadTask($taskName = null) {
+		
+		if(!$taskName) {
+			$taskName = $this->task;
+		}
+		
+		if(!$taskName) {
+			return null;
+		}
+			
 		$loaded = false;
-		foreach($this->Dispatch->scriptPaths as $path) {
-			$this->taskPath = $path . 'tasks' . DS . $taskName.'_task.php';
+		foreach($this->Dispatch->shellPaths as $path) {
+			$this->taskPath = $path . 'tasks' . DS . $taskName.'.php';
 			if (file_exists($this->taskPath)) {
 				$loaded = true;
 				break;
@@ -62,7 +71,7 @@ class Bake2Script extends CakeScript {
 		}
 
 		if ($loaded) {
-			require CONSOLE_LIBS . 'tasks' . DS . 'bake_task.php';
+			require CONSOLE_LIBS . 'tasks' . DS . 'bake.php';
 			require $this->taskPath;
 
 			$this->taskClass = $taskName.'Task';
@@ -75,12 +84,9 @@ class Bake2Script extends CakeScript {
 
 	function _readConfigFile($fileName) {
 		$fileLineArray = file($fileName);
-
 		foreach($fileLineArray as $fileLine) {
 			$dataLine = trim($fileLine);
-
 			$delimiter = strpos($dataLine, '=');
-
 			if ($delimiter > 0) {
 				$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
 				$value = trim(substr($dataLine, $delimiter + 1));

@@ -30,7 +30,7 @@
  * @package		cake
  * @subpackage	cake.cake.scritps
  */
-class ConsoleScript extends CakeScript {
+class ConsoleShell extends Shell {
 	var $ignoreList = array(T_WHITESPACE, T_OPEN_TAG, T_CLOSE_TAG);
 	var $returnList = array(T_FOREACH, T_DO, T_WHILE, T_FOR, T_IF, T_RETURN,
 									T_CLASS, T_FUNCTION, T_INTERFACE, T_PRINT, T_ECHO,

@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.scripts
  */
-class BakeScript extends CakeScript {
+class BakeShell extends Shell {
 /**
  * Associated controller name.
  *
