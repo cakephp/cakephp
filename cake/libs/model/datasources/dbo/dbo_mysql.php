@@ -142,31 +142,19 @@ class DboMysql extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
-		$tables = array();
-		$result = mysql_list_tables($this->config['database'], $this->connection);
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database'] . ';');
 
-		if ($result) {
+		if (!$result) {
+			return array();
+		} else {
+			$tables = array();
+
 			while ($line = mysql_fetch_array($result)) {
 				$tables[] = $line[0];
 			}
+			parent::listSources($tables);
+			return $tables;
 		}
-
-		if (empty($tables)) {
-			$result = $this->query('SHOW TABLES');
-			$key1 = $key2 = null;
-			if ($result) {
-				foreach ($result as $item) {
-					if (empty($key1)) {
-						$key1 = key($item);
-						$key2 = key($item[$key1]);
-					}
-					$tables[] = $item[$key1][$key2];
-				}
-			}
-		}
-
-		parent::listSources($tables);
-		return $tables;
 	}
 /**
  * Returns an array of the fields in given table name.
@@ -182,7 +170,7 @@ class DboMysql extends DboSource {
 		}
 
 		$fields = false;
-		$cols = $this->query('DESC ' . $this->fullTableName($model));
+		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
 
 		foreach ($cols as $column) {
 			$colKey = array_keys($column);
@@ -354,7 +342,7 @@ class DboMysql extends DboSource {
 
 		$col = r(')', '', $real);
 		$limit = $this->length($real);
-		@list($col) = explode('(', $col);
+		@list($col,$vals) = explode('(', $col);
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
@@ -378,7 +366,7 @@ class DboMysql extends DboSource {
 			return 'float';
 		}
 		if (strpos($col, 'enum') !== false) {
-			return "enum($limit)";
+			return "enum($vals)";
 		}
 		if ($col == 'boolean') {
 			return $col;

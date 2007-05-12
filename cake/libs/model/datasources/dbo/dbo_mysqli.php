@@ -132,15 +132,15 @@ class DboMysqli extends DboSource {
 			return $cache;
 		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database'] . ';');
+
 		if (!$result) {
 			return array();
 		} else {
-
 			$tables = array();
+
 			while ($line = mysqli_fetch_array($result)) {
 				$tables[] = $line[0];
 			}
-
 			parent::listSources($tables);
 			return $tables;
 		}
@@ -168,15 +168,16 @@ class DboMysqli extends DboSource {
 			}
 			if (isset($column[0])) {
 				$fields[] = array(
-					'name' => $column[0]['Field'],
-					'type' => $this->column($column[0]['Type']),
-					'null' => $column[0]['Null'],
-					'default' => $column[0]['Default']
+					'name'		=> $column[0]['Field'],
+					'type'		=> $this->column($column[0]['Type']),
+					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
+					'default'	=> $column[0]['Default'],
+					'length'	=> $this->length($column[0]['Type'])
 				);
 			}
 		}
 
-		$this->__cacheDescription($model->tablePrefix.$model->table, $fields);
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 /**
@@ -310,7 +311,7 @@ class DboMysqli extends DboSource {
 		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0][0]['insertID'])) {
 			return $id[0][0]['insertID'];
 		}
-		
+
 		return null;
 	}
 /**
@@ -322,21 +323,20 @@ class DboMysqli extends DboSource {
 	function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
-			if (isset($real['limit']))
-			{
+			if (isset($real['limit'])) {
 				$col .= '('.$real['limit'].')';
 			}
 			return $col;
 		}
 
 		$col = r(')', '', $real);
-		$limit = null;
-		@list($col, $limit) = explode('(', $col);
+		$limit = $this->length($real);
+		@list($col,$vals) = explode('(', $col);
 
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if ($col == 'tinyint' && $limit == '1') {
+		if ($col == 'tinyint' && $limit == 1) {
 			return 'boolean';
 		}
 		if (strpos($col, 'int') !== false) {
@@ -355,12 +355,31 @@ class DboMysqli extends DboSource {
 			return 'float';
 		}
 		if (strpos($col, 'enum') !== false) {
-			return "enum($limit)";
+			return "enum($vals)";
 		}
 		if ($col == 'boolean') {
 			return $col;
 		}
 		return 'text';
+	}
+/**
+ * Gets the length of a database-native column description, or null if no length
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return int An integer representing the length of the column
+ */
+	function length($real) {
+		$col = r(array(')', 'unsigned'), '', $real);
+		$limit = null;
+
+		if (strpos($col, '(') !== false) {
+			list($col, $limit) = explode('(', $col);
+		}
+
+		if ($limit != null) {
+			return intval($limit);
+		}
+		return null;
 	}
 /**
  * Enter description here...
@@ -412,10 +431,104 @@ class DboMysqli extends DboSource {
 		return $this->_execute('SET NAMES ' . $enc) != false;
 	}
 /**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	function getEncoding() {
+		return mysql_client_encoding($this->connection);
+	}
+/**
+ * Generate a MySQL schema for the given Schema object
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *                      Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	function generateSchema($schema, $table = null) {
+		if (!is_a($schema, 'CakeSchema')) {
+			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			return null;
+		}
+		$out = '';
+
+		foreach ($schema->tables as $curTable => $columns) {
+			if (empty($table) || $table == $curTable) {
+				$out .= 'CREATE TABLE ' . $this->fullTableName($curTable) . " (\n";
+				$colList = array();
+				$primary = null;
+
+				foreach ($columns as $col) {
+					if (isset($col['key']) && $col['key'] == 'primary') {
+						$primary = $col;
+					}
+					$colList[] = $this->generateColumnSchema($col);
+				}
+				if (empty($primary)) {
+					$primary = array('id', 'integer', 'key' => 'primary');
+					array_unshift($colList, $this->generateColumnSchema($primary));
+				}
+				$colList[] = 'PRIMARY KEY (' . $this->name($primary[0]) . ')';
+				$out .= "\t" . join(",\n\t", $colList) . "\n);\n\n";
+			}
+		}
+		return $out;
+	}
+/**
+ * Generate a MySQL-native column schema string
+ *
+ * @param array $column An array structured like the following: array('name', 'type'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function generateColumnSchema($column) {
+		$name = $type = null;
+		$column = am(array('null' => true), $column);
+		list($name, $type) = $column;
+
+		if (empty($name) || empty($type)) {
+			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			return null;
+		}
+		if (!isset($this->columns[$type])) {
+			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			return null;
+		}
+		$real = $this->columns[$type];
+		$out = $this->name($name) . ' ' . $real['name'];
+
+		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
+			if (isset($column['length'])) {
+				$length = $column['length'];
+			} elseif (isset($column['limit'])) {
+				$length = $column['limit'];
+			} elseif (isset($real['length'])) {
+				$length = $real['length'];
+			} else {
+				$length = $real['limit'];
+			}
+			$out .= '(' . $length . ')';
+		}
+
+		if (isset($column['key']) && $column['key'] == 'primary') {
+			$out .= ' NOT NULL AUTO_INCREMENT';
+		} elseif (isset($column['default'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+		} elseif (isset($column['null']) && $column['null'] == true) {
+			$out .= ' DEFAULT NULL';
+		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['null']) && $column['null'] == false) {
+			$out .= ' NOT NULL';
+		}
+		return $out;
+	}
+/**
  * Enter description here...
  *
  * @param unknown_type $schema
- *  @return unknown
+ * @return unknown
  */
 	function buildSchemaQuery($schema) {
 		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
