@@ -1241,5 +1241,26 @@ class ValidationTestCase extends UnitTestCase {
 		$validation = new Validation();
 		$this->assertTrue($validation->url('https://my.gizmoproject.com/gizmo/app?class=MySip;proc=start'));
 	}
+		function testValidNumber() {
+		$validation = new Validation();
+		$this->assertTrue($validation->custom('12345', VALID_NUMBER));
+		$this->assertTrue($validation->custom('-12345', VALID_NUMBER));
+		$this->assertTrue($validation->custom('+12345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('--12345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('++12345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('a12345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('12345z', VALID_NUMBER));
+		$this->assertFalse($validation->custom('-a12345z', VALID_NUMBER));
+		$this->assertFalse($validation->custom('-', VALID_NUMBER));
+		$this->assertFalse($validation->custom('123-12345', VALID_NUMBER));
+		$this->assertTrue($validation->custom('1.2345', VALID_NUMBER));
+		$this->assertTrue($validation->custom('-1.2345', VALID_NUMBER));
+		$this->assertTrue($validation->custom('+1.2345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('1..2345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('-1..2345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('+1..2345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('.2345', VALID_NUMBER));
+		$this->assertFalse($validation->custom('12345.', VALID_NUMBER));
+	}
 }
 ?>

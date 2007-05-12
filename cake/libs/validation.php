@@ -36,7 +36,7 @@
 /**
  * Numbers [0-9] only.
  */
-	define('VALID_NUMBER', '/^[0-9]+$/');
+	define('VALID_NUMBER', '/^[-+]?\\b[0-9]*\\.?[0-9]+\\b$/');
 /**
  * A valid email address.
  */
