@@ -188,8 +188,8 @@ class ShellDispatcher {
  */
 	function __bootstrap() {
 
-		define('ROOT', dirname($this->params['working']));
-		define('APP_DIR', basename($this->params['working']));
+		define('ROOT', $this->params['root']);
+		define('APP_DIR', $this->params['app']);
 		define('APP_PATH', ROOT . DS . APP_DIR . DS);
 
 		$includes = array(
@@ -380,8 +380,12 @@ class ShellDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
-
-		$app = basename($this->params['working']);
+		
+		if(!empty($this->params['working'])) {
+			$app = basename($this->params['working']);
+		} else {
+			$app = 'app';
+		}
 		if(isset($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$this->params['working'] = $this->params['app'];
@@ -389,10 +393,11 @@ class ShellDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		if(in_array($app, array('cake', 'console'))){
+		if(in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
 			$this->params['working'] = dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . $app;
 		}
+		$this->params = array_merge(array('app'=> $app, 'root'=> dirname($this->params['working'])), $this->params);
 	}
 /**
  * Removes first argument and shifts other arguments up
@@ -417,7 +422,7 @@ class ShellDispatcher {
 		$this->stdout(" -working: " . $this->params['working']);
 		$this->stdout(" -app: ". APP_DIR);
 		$this->stdout(" -root: " . ROOT);
-		$this->stdout(" -cake: " . CORE_PATH);
+		$this->stdout(" -core: " . CORE_PATH);
 		
 		$this->stdout("\nAvailable Scripts:");
 		foreach($this->shellPaths as $path) {
