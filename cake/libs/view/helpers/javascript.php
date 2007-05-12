@@ -355,6 +355,9 @@ class JavascriptHelper extends AppHelper {
 				if ($val === null) {
 					$val = 'null';
 				}
+				if (is_bool($val)){
+					$val = ife($val, 'true', 'false');
+				}
 			}
 
 			if (!$numeric) {
