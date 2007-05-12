@@ -247,7 +247,7 @@ class ShellDispatcher {
 			$this->shell = $this->args[0];
 			$this->shiftArgs();
 			$this->shellName = Inflector::camelize($this->shell);
-			$this->shellClass = $this->shellName . 'Script';
+			$this->shellClass = $this->shellName . 'Shell';
 
 			if (method_exists($this, $this->shell) && !in_array($this->shell, $protectedCommands)) {
 				$this->{$this->shell}();
@@ -299,6 +299,9 @@ class ShellDispatcher {
 						} else if($missingCommand && method_exists($shell, 'main')) {
 							$shell->initialize();
 							$shell->main();
+						} else if($missingCommand && method_exists($shell, 'help')) {
+							$shell->initialize();
+							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
 							$shell->command = $command;
 							$this->shiftArgs();
