@@ -812,7 +812,7 @@ class Model extends Overloadable {
 							unset ($this->validationErrors[$x]);
 						}
 
-						if ($x == $this->primaryKey) {
+						if ($x === $this->primaryKey) {
 							$this->id = $y;
 						}
 					}
