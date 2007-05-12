@@ -100,6 +100,7 @@ class DboPostgres extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
+		@pg_free_result($this->results);
 		$this->connected = !@pg_close($this->connection);
 		return !$this->connected;
 	}
@@ -539,7 +540,7 @@ class DboPostgres extends DboSource {
  */
 	function boolean($data, $quote = true) {
 		$result = null;
-		
+
 		if ($data === true || $data === false) {
 			$result = $data;
 		} elseif (is_string($data) && !is_numeric($data)) {
@@ -551,11 +552,11 @@ class DboPostgres extends DboSource {
 		} else {
 			$result = (bool)$data;
 		}
-		
+
 		if ($quote) {
 			$result = "'" . $result . "'";
 		}
-		
+
 		return $result;
 	}
 /**

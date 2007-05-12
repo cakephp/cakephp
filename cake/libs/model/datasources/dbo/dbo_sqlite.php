@@ -101,8 +101,9 @@ class DboSqlite extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		$this->connected = !@sqlite_close($this->connection);
-		return !$this->connected;
+		@sqlite_close($this->connection);
+		$this->connected = false;
+		return $this->connected;
 	}
 /**
  * Executes given SQL statement.

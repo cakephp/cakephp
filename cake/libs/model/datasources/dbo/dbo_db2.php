@@ -130,7 +130,9 @@ class DboDb2 extends DboSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		return db2_close($this->connection);
+		@db2_free_result($this->results);
+		$this->connected = !@db2_close($this->connection);
+		return !$this->connected;
 	}
 /**
  * Executes given SQL statement.  We should use prepare / execute to allow the
