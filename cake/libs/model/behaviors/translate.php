@@ -138,7 +138,7 @@ class TranslateBehavior extends ModelBehavior {
 			} else {
 				foreach($fields as $key => $value) {
 					$field = ife(is_numeric($key), $value, $key);
-					if($autoFields || in_array($model->name.'.'.$field, $query['fields'])) {
+					if($autoFields || in_array($model->name.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
 						$addFields[] = $field;
 					}
 				}
