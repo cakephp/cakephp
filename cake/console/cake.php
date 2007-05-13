@@ -4,7 +4,7 @@
 /**
  * Command-line code generation utility to automate programmer chores.
  *
- * CLI dispatcher class
+ * Shell dispatcher class
  *
  * PHP versions 4 and 5
  *
@@ -60,13 +60,13 @@ class ShellDispatcher {
  */
 	var $args = array();
 /**
- * The file name of the script that was invoked.
+ * The file name of the shell that was invoked.
  *
  * @var string
  */
 	var $shell = null;
 /**
- * The class name of the script that was invoked.
+ * The class name of the shell that was invoked.
  *
  * @var string
  */
@@ -81,21 +81,21 @@ class ShellDispatcher {
 
 
 /**
- * The path location of scripts.
+ * The path location of shells.
  *
  * @var array
  */
 	var $shellPaths = array();
 
 /**
- * The path to the current script location.
+ * The path to the current shell location.
  *
  * @var string
  */
 	var $shellPath = null;
 
 /**
- * The name of the script in lowercase underscore.
+ * The name of the shell in camelized.
  *
  * @var string
  */
@@ -272,6 +272,16 @@ class ShellDispatcher {
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
+						
+						$task = Inflector::camelize($command);
+						if(in_array($task, $shell->taskNames)) {
+							$shell->initialize();
+							$task = Inflector::camelize($command);
+							$shell->{$task}->initialize();
+							$shell->{$task}->execute();
+							return;
+						}
+						
 						$classMethods = get_class_methods($shell);
 
 						$privateMethod = $missingCommand = false;
@@ -286,8 +296,11 @@ class ShellDispatcher {
 						if (in_array(strtolower($command), $protectedCommands)) {
 							$missingCommand = true;
 						}
+						
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
+								$shell->command = $command;
+								$this->shiftArgs();
 								$shell->initialize();
 								$shell->help();
 							} else {
@@ -297,6 +310,8 @@ class ShellDispatcher {
 							$shell->initialize();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
+							$shell->command = $command;
+							$this->shiftArgs();
 							$shell->initialize();
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {

@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
+ * Base class for Shells
  *
  * Long description for file
  *
@@ -30,8 +30,10 @@
  * Base class for command-line utilities for automating programmer chores.
  *
  * @package		cake
- * @subpackage	cake.cake.scripts
+ * @subpackage	cake.cake.console.libs
  */
+require_once CAKE . 'console' . DS . 'error.php';
+
 class Shell extends Object {
 
 /**
@@ -66,15 +68,56 @@ class Shell extends Object {
  */
 	var $args = array();
 /**
+ * The file name of the shell that was invoked.
+ *
+ * @var string
+ */
+	var $shell = null;
+/**
+ * The class name of the shell that was invoked.
+ *
+ * @var string
+ */
+	var $className = null;
+/**
+ * The command called if public methods are available.
+ *
+ * @var string
+ */
+	var $command = null;
+/**
+ * The name of the shell in camelized.
+ *
+ * @var string
+ */
+	var $name = null;
+/**
+ * Contains tasks to load and instantiate
+ *
+ * @var array
+ */
+	var $tasks = array();
+/**
+ * Contains models to load and instantiate
+ *
+ * @var array
+ */
+	var $uses = array();
+/**
  *  Constructs this Shell instance.
  *
  */
 	function __construct(&$dispatch) {
 		$this->Dispatch = & $dispatch;
-		$vars = array('params', 'args', 'shellName', 'shellCommand');
-		foreach($vars as $var) {
-			$this->{$var} = & $this->Dispatch->{$var};
+		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
+		foreach($vars as $key => $var) {
+			if(is_string($key)){
+				$this->{$var} = & $this->Dispatch->{$key};
+			} else {
+				$this->{$var} = & $this->Dispatch->{$var};
+			}
 		}
+		$this->_loadTasks();
 	}
 /**
  * Initializes the Shell
@@ -83,11 +126,11 @@ class Shell extends Object {
  * @return null
  */
 	function initialize() {
-		if($this->_loadDbConfig()) {
-			$this->_loadModel();
-		}
+		
+		$this->_loadModels();
+		
 		$this->hr();
-		$this->out('Name: '. APP_DIR);
+		$this->out('App : '. APP_DIR);
 		$this->out('Path: '. ROOT . DS . APP_DIR);
 		$this->hr();
 	}
@@ -109,25 +152,103 @@ class Shell extends Object {
 		return false;
 	}
 /**
+ * if var $uses = true
  * Loads AppModel file and constructs AppModel class
  * makes $this->AppModel available to subclasses
+ * if var $uses is an array of models
  *
  * @return bool
  */
-	function _loadModel() {
+	function _loadModels() {
+
+		if($this->uses === null || $this->uses === false) {
+			return;
+		}
+
 		uses ('model'.DS.'connection_manager',
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
 		);
 
-		if(loadModel()) {
+		if($this->uses === true && loadModel()) {
 			$this->AppModel = & new AppModel(false, false, false);
 			return true;
 		}
 
-		$this->err('AppModel could not be loaded');
+		if ($this->uses !== true && !empty($this->uses)) {
+			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
+			$this->modelClass = $uses[0];
+
+			foreach($uses as $modelClass) {
+				$modelKey = Inflector::underscore($modelClass);
+
+				if(!class_exists($modelClass)){
+					loadModel($modelClass);
+				}
+				if(class_exists($modelClass)) {
+					$model =& new $modelClass();
+					$this->modelNames[] = $modelClass;
+					$this->{$modelClass} =& $model;
+					ClassRegistry::addObject($modelKey, $model);
+				} else {
+					return $this->cakeError('missingModel', array(array('className' => $modelClass)));
+				}
+			}
+			return true;
+		}
 		return false;
 	}
+/**
+ * Loads tasks defined in var $tasks
+ *
+ * @return bool
+ */
+	function _loadTasks() {
+		if($this->tasks === null || $this->tasks === false) {
+			return;
+		}
 
+		if ($this->tasks !== true && !empty($this->tasks)) {
+
+			$tasks = $this->tasks;
+			if(!is_array($tasks)) {
+				$tasks = array($tasks);
+			}
+
+			$this->taskClass = $tasks[0];
+
+			foreach($tasks as $taskName) {
+				$taskKey = Inflector::underscore($taskName);
+
+				$loaded = false;
+				foreach($this->Dispatch->shellPaths as $path) {
+					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
+					if (file_exists($taskPath)) {
+						$loaded = true;
+						break;
+					}
+				}
+
+				if ($loaded) {
+					require $taskPath;
+					$taskClass = Inflector::camelize($taskName.'Task');
+					if(class_exists($taskClass)) {
+						$task =& new $taskClass($this->Dispatch);
+						$this->taskNames[] = $taskName;
+						$this->{$taskName} =& $task;
+						ClassRegistry::addObject($taskKey, $task);
+					} else{
+						$this->err("Task '".$taskName."' could not be loaded");
+						exit();
+					}
+				} else {
+					$this->err("Task '".$taskName."' could not be found");
+					exit();
+				}
+			}
+		}
+
+		return false;
+	}
 /**
  * Prompts the user for input, and returns it.
  *
@@ -240,7 +361,11 @@ class Shell extends Object {
  *
  */
 	function help() {
-		// empty
+		if($this->command != null) {
+			$this->err("Unknown {$this->name} command '$this->command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
+		} else{
+			$this->Dispatch->help();
+		}
 	}
 /**
  * Returns true if given path is a directory.
