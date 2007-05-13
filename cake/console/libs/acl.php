@@ -29,7 +29,7 @@
 uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 /**
  * @package		cake
- * @subpackage	cake.cake.scripts
+ * @subpackage	cake.cake.console.libs
  */
 class AclShell extends Shell {
 /**

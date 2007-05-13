@@ -32,7 +32,7 @@
  * Bake is a command-line code generation utility for automating programmer chores.
  *
  * @package		cake
- * @subpackage	cake.cake.scripts
+ * @subpackage	cake.cake.console.libs
  */
 class BakeShell extends Shell {
 /**
