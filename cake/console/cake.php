@@ -272,16 +272,15 @@ class ShellDispatcher {
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
-						
+
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
-							$shell->initialize();
 							$task = Inflector::camelize($command);
 							$shell->{$task}->initialize();
 							$shell->{$task}->execute();
 							return;
 						}
-						
+
 						$classMethods = get_class_methods($shell);
 
 						$privateMethod = $missingCommand = false;
@@ -296,7 +295,7 @@ class ShellDispatcher {
 						if (in_array(strtolower($command), $protectedCommands)) {
 							$missingCommand = true;
 						}
-						
+
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
 								$shell->command = $command;
@@ -408,12 +407,12 @@ class ShellDispatcher {
 				$app = $this->params['app'];
 			}
 		}
-		
+
 		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
 			$this->params['working'] = dirname(dirname(__FILE__));
 		}
-		
+
 		if($app !== basename($this->params['working']) && $this->params['working'] !== dirname(dirname(__FILE__))) {
 			$this->params['root'] = $this->params['working'];
 		}

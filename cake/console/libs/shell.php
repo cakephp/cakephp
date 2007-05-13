@@ -123,12 +123,18 @@ class Shell extends Object {
  * Initializes the Shell
  * can be overriden in subclasses
  *
- * @return null
+ * @return void
  */
 	function initialize() {
-		
 		$this->_loadModels();
-		
+		$this->_welcome();
+	}
+/**
+ * Displays a header for the shell
+ *
+ * @return void
+ */
+	function _welcome() {
 		$this->hr();
 		$this->out('App : '. APP_DIR);
 		$this->out('Path: '. ROOT . DS . APP_DIR);
