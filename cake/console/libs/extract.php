@@ -29,6 +29,7 @@
 /**
  * Only used when -debug option
  */
+return null;
 	$singularReturn = __('Singular string  return __()', true);
 	$singularEcho = __('Singular string  echo __()');
 
