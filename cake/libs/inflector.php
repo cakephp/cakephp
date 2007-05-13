@@ -177,7 +177,7 @@ class Inflector extends Object {
 		}
 
 		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			$_this->pluralized[$word] = $regs[1] . $irregular[strtolower($regs[2])];
+			$_this->pluralized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->pluralized[$word];
 		}
 
@@ -316,7 +316,7 @@ class Inflector extends Object {
 		}
 
 		if (preg_match('/(.*)\\b(' . $regexIrregular . ')$/i', $word, $regs)) {
-			$_this->singularized[$word] = $regs[1] . $irregular[strtolower($regs[2])];
+			$_this->singularized[$word] = $regs[1] . substr($word, 0, 1) . substr($irregular[strtolower($regs[2])], 1);
 			return $_this->singularized[$word];
 		}
 
