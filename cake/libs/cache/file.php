@@ -26,6 +26,13 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
+ * Included libraries.
+ *
+ */
+if (!class_exists('Folder')) {
+	uses ('folder');
+}
+/**
  * File Storage engine for cache
  *
  * @todo use the File and Folder classes (if it's not a too big performance hit)
@@ -34,21 +41,21 @@
  */
 class FileEngine extends CacheEngine {
 /**
- * Enter description here...
+ * Cache directory
  *
- * @var unknown_type
+ * @var string
  */
 	var $_dir = '';
 /**
- * Enter description here...
+ * Cache filename prefix
  *
- * @var unknown_type
+ * @var string
  */
 	var $_prefix = '';
 /**
- * Enter description here...
+ * Use locking
  *
- * @var unknown_type
+ * @var boolean
  */
 	var $_lock = false;
 /**
@@ -65,22 +72,16 @@ class FileEngine extends CacheEngine {
 		$lock = false;
 		extract($params);
 		$dir = trim($dir);
+		$folder =& new Folder();
 
-		if(strlen($dir) < 1) {
+		if (!empty($dir)) {
+			$dir = $folder->slashTerm($dir);
+		}
+
+		if(empty($dir) || !$folder->isAbsolute($dir) || !is_writable($dir)) {
 			return false;
 		}
 
-		if($dir{0} != DS) {
-			return false;
-		}
-
-		if(!is_writable($dir)) {
-			return false;
-		}
-
-		if($dir{strlen($dir)-1} != DS) {
-			$dir .= DS;
-		}
 		$this->_dir = $dir;
 		$this->_prefix = strval($prefix);
 		$this->_lock = $lock;
@@ -90,7 +91,7 @@ class FileEngine extends CacheEngine {
  * Garbage collection
  * Permanently remove all expired and deleted data
  *
- * @return boolean
+ * @return boolean True if garbage collection was succesful, false on failure
  */
 	function gc() {
 		return $this->clear(true);
@@ -124,10 +125,10 @@ class FileEngine extends CacheEngine {
 /**
  * write serialized data to a file
  *
- * @param unknown_type $filename
- * @param unknown_type $value
- * @param unknown_type $expires
- * @return unknown
+ * @param string $filename
+ * @param string $value
+ * @param integer $expires
+ * @return boolean True on success, false on failure
  */
 	function _writeCache(&$filename, &$value, &$expires) {
 		$contents = $expires."\n".$value."\n";
@@ -172,8 +173,8 @@ class FileEngine extends CacheEngine {
 /**
  * Get the expiry time for a cache file
  *
- * @param unknown_type $filename
- * @return unknown
+ * @param string $filename
+ * @return mixed Expiration timestamp, or false on failure
  */
 	function _getExpiry($filename) {
 		$fp = fopen($filename, 'r');
