@@ -1,4 +1,3 @@
-#!/usr/bin/php -q
 <?php
 /* SVN FILE: $Id$ */
 /**
@@ -27,122 +26,9 @@
  * @lastmodified    $Date$
  * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-	define ('DS', DIRECTORY_SEPARATOR);
-	if (function_exists('ini_set')) {
-		ini_set('display_errors', '1');
-		ini_set('error_reporting', '7');
-		ini_set('memory_limit', '16M');
-		ini_set('max_execution_time', 0);
-	}
-
-	$app = null;
-	$root = dirname(dirname(dirname(__FILE__)));
-	$core = null;
-	$help = null;
-	$files = array();
-	$path = null;
-
-	for ($i = 1; $i < count($argv); $i += 2) {
-		switch ($argv[$i]) {
-			case '-a':
-			case '-app':
-				$app = $argv[$i + 1];
-			break;
-			case '-c':
-			case '-core':
-				$core = $argv[$i + 1];
-			break;
-			case '-r':
-			case '-root':
-				$root = $argv[$i + 1];
-			break;
-			case '-h':
-			case '-help':
-				$help = true;
-			break;
-			case '-f' :
-			case '-files' :
-				$files = $argv[$i + 1];
-			break;
-			case '-p':
-			case '-path':
-				$path = $argv[$i + 1];
-			break;
-			case '-debug' :
-				$files = array(__FILE__);
-			break;
-		}
-	}
-
-	if(!$app) {
-		$app = 'app';
-	}
-
-	if(!is_dir($app)) {
-		$project = true;
-		$projectPath = $app;
-	}
-
-	if($project) {
-		$app = $projectPath;
-	}
-
-	$shortPath = str_replace($root, '', $app);
-	$shortPath = str_replace('..'.DS, '', $shortPath);
-	$shortPath = str_replace(DS.DS, DS, $shortPath);
-
-	$pathArray = explode(DS, $shortPath);
-
-	if(end($pathArray) != '') {
-		$appDir = array_pop($pathArray);
-	} else {
-		array_pop($pathArray);
-		$appDir = array_pop($pathArray);
-	}
-	$rootDir = implode(DS, $pathArray);
-	$rootDir = str_replace(DS.DS, DS, $rootDir);
-
-	if(!$rootDir) {
-		$rootDir = $root;
-		$projectPath = $root.DS.$appDir;
-	}
-
-	define ('ROOT', $rootDir);
-	define ('APP_DIR', $appDir);
-	define ('DEBUG', 1);;
-	define('CAKE_CORE_INCLUDE_PATH', $root);
-
-	if(function_exists('ini_set')) {
-		ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ROOT . DS . APP_DIR . DS . PATH_SEPARATOR . ini_get('include_path'));
-		define('APP_PATH', null);
-		define('CORE_PATH', null);
-	} else {
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-	}
-	require_once (CORE_PATH.'cake'.DS.'basics.php');
-	require_once (CORE_PATH.'cake'.DS.'config'.DS.'paths.php');
-	uses('object', 'configure');
-
-	$extract = new I18nExtractor();
-
-	if(!empty($files) && !is_array($files)){
-		$extract->files = explode(',', $files);
-	} else {
-		$extract->files = $files;
-	}
-
-	if($path) {
-		$extract->path = $path;
-	}
-
-	if($help === true){
-		$extract->help();
-		exit();
-	}
-	$extract->main();
-	return;
-	// Only used when -debug option
+/**
+ * Only used when -debug option
+ */
 	$singularReturn = __('Singular string  return __()', true);
 	$singularEcho = __('Singular string  echo __()');
 
@@ -169,10 +55,7 @@
  * @package     cake
  * @subpackage  cake.cake.scripts
  */
-class I18nExtractor {
-	var $stdin;
-	var $stdout;
-	var $stderr;
+class ExtractShell extends Shell{
 	var $path = null;
 	var $files = array();
 
@@ -184,80 +67,84 @@ class I18nExtractor {
 	var $__fileVersions = array();
 	var $__output = null;
 
-	function __construct() {
-		$this->stdin = fopen('php://stdin', 'r');
-		$this->stdout = fopen('php://stdout', 'w');
-		$this->stderr = fopen('php://stderr', 'w');
-		$this->path = APP;
-		$this->__output = APP . 'locale' . DS;
-		$this->__welcome();
-	}
-	function I18nExtractor() {
-		return $this->__construct();
-	}
-	function main() {
-		$this->__stdout('');
-		$this->__stdout('');
-		$this->__stdout('Extracting...');
-		$this->__hr();
-		$this->__stdout('Path: '. $this->path);
-		$this->__stdout('Output Directory: '. $this->__output);
-		$this->__hr();
+	function initialize() {
+		if(isset($this->params['files']) && !is_array($this->params['files'])){
+			$this->files = explode(',', $this->params['files']);
+		}
 
-		$response = '';
-		$filename = '';
-		while($response == '') {
-			$response = $this->__getInput('Would you like to merge all translations into one file?', array('y','n'), 'y');
-			if(strtolower($response) == 'n') {
-				$this->__oneFile = false;
-			} else {
-				while($filename == '') {
-					$filename = $this->__getInput('What should we name this file?', null, $this->__filename);
-					if ($filename == '') {
-						$this->__stdout('The filesname you supplied was empty. Please try again.');
-					}
-				}
-				$this->__filename = $filename;
-			}
+		if(isset($this->params['path'])) {
+			$this->path = $this->params['path'];
+		} else {
+			$this->path = ROOT . DS . APP_DIR;
+		}
+
+		if(isset($this->params['debug'])) {
+			$this->path = ROOT;
+			$this->files = array(__FILE__);
+		}
+
+		if(isset($this->params['output'])) {
+			$this->__output = $this->params['output'];
+		} else {
+			$this->__output = APP . 'locale' . DS;
 		}
 
 		if(empty($this->files)){
 			$this->files = $this->__searchDirectory();
 		}
+	}
+	function main() {
+		$this->out('');
+		$this->out('');
+		$this->out('Extracting...');
+		$this->hr();
+		$this->out('Path: '. $this->path);
+		$this->out('Output Directory: '. $this->__output);
+		$this->hr();
+
+		$response = '';
+		$filename = '';
+		while($response == '') {
+			$response = $this->in('Would you like to merge all translations into one file?', array('y','n'), 'y');
+			if(strtolower($response) == 'n') {
+				$this->__oneFile = false;
+			} else {
+				while($filename == '') {
+					$filename = $this->in('What should we name this file?', null, $this->__filename);
+					if ($filename == '') {
+						$this->out('The filesname you supplied was empty. Please try again.');
+					}
+				}
+				$this->__filename = $filename;
+			}
+		}
 		$this->__extractTokens();
 	}
 	function help() {
-		$this->__stdout('CakePHP Language String Extraction:');
-		$this->__hr();
-		$this->__stdout('The Extract script generates .pot file(s) with translations');
-		$this->__stdout('The .pot file(s) will be place in the locale directory of -app');
-		$this->__stdout('By default -app is ROOT/app');
-		$this->__stdout('');
-		$this->__hr('');
-		$this->__stdout('usage: php extract.php [command] [path...]');
-		$this->__stdout('');
-		$this->__stdout('commands:');
-		$this->__stdout('   -app or -a: directory where your application is located');
-		$this->__stdout('   -root or -r: path to install');
-		$this->__stdout('   -core or -c: path to cake directory');
-		$this->__stdout('   -path or -p: [path...] Full path to directory to extract strings');
-		$this->__stdout('   -files or -f: [comma separated list of files]');
-		$this->__stdout('   -help or -h: Shows this help message.');
-		$this->__stdout('   -debug or -d: Perform self test.');
-		$this->__stdout('');
-	}
-	function __welcome() {
-		$this->__stdout('');
-		$this->__stdout(' ___  __  _  _  ___  __  _  _  __');
-		$this->__stdout('|    |__| |_/  |__  |__] |__| |__]');
-		$this->__stdout('|___ |  | | \_ |___ |    |  | |');
-		$this->__hr();
-		$this->__stdout('');
+		$this->out('CakePHP Language String Extraction:');
+		$this->hr();
+		$this->out('The Extract script generates .pot file(s) with translations');
+		$this->out('By default the .pot file(s) will be place in the locale directory of -app');
+		$this->out('By default -app is ROOT/app');
+		$this->out('');
+		$this->hr('');
+		$this->out('usage: php extract.php [command] [path...]');
+		$this->out('');
+		$this->out('commands:');
+		$this->out('   -app [path...]: directory where your application is located');
+		$this->out('   -root [path...]: path to install');
+		$this->out('   -core [path...]: path to cake directory');
+		$this->out('   -path [path...]: Full path to directory to extract strings');
+		$this->out('   -output [path...]: Full path to output directory');
+		$this->out('   -files: [comma separated list of files, full path to file is needed]');
+		$this->out('   cake extract help: Shows this help message.');
+		$this->out('   -debug: Perform self test.');
+		$this->out('');
 	}
 	function __extractTokens(){
 		foreach ($this->files as $file) {
 			$this->__file = $file;
-			$this->__stdout("Processing $file...");
+			$this->out("Processing $file...");
 
 			$code = file_get_contents($file);
 
@@ -291,7 +178,7 @@ class I18nExtractor {
 		}
 		$this->__buildFiles();
 		$this->__writeFiles();
-		$this->__stdout('Done.');
+		$this->out('Done.');
 	}
 /**
  * Will parse  __(), __c() functions
@@ -552,13 +439,13 @@ class I18nExtractor {
 	}
 	function __findVersion($code, $file) {
 		$header = '$Id' . ':';
-		if (preg_match('/\\' . $header . '[\\w.]* ([\\d]*)/', $code, $versionInfo)) {
+		if (preg_match('/\\' . $header . ' [\\w.]* ([\\d]*)/', $code, $versionInfo)) {
 			$version = str_replace(ROOT, '', 'Revision: ' . $versionInfo[1] . ' ' .$file);
 			$this->__fileVersions[$file] = $version;
 		}
 	}
 	function __formatString($string) {
-		$quote = substr($str, 0, 1);
+		$quote = substr($string, 0, 1);
 		$string = substr($string, 1, -1);
 		if($quote == '"') {
 			$string = stripcslashes($string);
@@ -568,16 +455,16 @@ class I18nExtractor {
 		return addcslashes($string, "\0..\37\\\"");
 	}
 	function __markerError($file, $line, $marker, $count) {
-		$this->__stdout("Invalid marker content in $file:$line\n* $marker(", true);
+		$this->out("Invalid marker content in $file:$line\n* $marker(", true);
 		$count += 2;
 		$tokenCount = count($this->__tokens);
 		$parenthesis = 1;
 
 		while((($tokenCount - $count) > 0) && $parenthesis) {
 			if(is_array($this->__tokens[$count])) {
-				$this->__stdout($this->__tokens[$count][1], false);
+				$this->out($this->__tokens[$count][1], false);
 			} else {
-				$this->__stdout($this->__tokens[$count], false);
+				$this->out($this->__tokens[$count], false);
 				if($this->__tokens[$count] == "(") {
 					$parenthesis++;
 				}
@@ -588,59 +475,24 @@ class I18nExtractor {
 			}
 			$count++;
 		}
-		$this->__stdout("\n", true);
+		$this->out("\n", true);
 	}
 	function __searchDirectory($path = null) {
 		if($path === null){
-			$path = $this->path;
+			$path = $this->path .DS;
 		}
 		$files = glob("$path*.{php,ctp,thtml,inc,tpl}", GLOB_BRACE);
 		$dirs = glob("$path*", GLOB_ONLYDIR);
 
 		foreach($dirs as $dir) {
 			if(!preg_match("!(^|.+/)(CVS|.svn)$!", $dir)) {
-				$files = array_merge($files, $this->__searchDirectory("$dir/"));
-				if(($id = array_search($dir .DS . 'extract.php', $files)) !== FALSE) {
+				$files = array_merge($files, $this->__searchDirectory("$dir" . DS));
+				if(($id = array_search($dir . DS . 'extract.php', $files)) !== FALSE) {
 					unset($files[$id]);
 				}
 			}
 		}
 		return $files;
-	}
-	function __getInput($prompt, $options = null, $default = null) {
-		if(!is_array($options)) {
-			$printOptions = '';
-		} else {
-			$printOptions = '(' . implode('/', $options) . ')';
-		}
-
-		if($default == null) {
-			$this->__stdout('');
-			$this->__stdout($prompt . " $printOptions \n" . '> ', false);
-		} else {
-			$this->__stdout('');
-			$this->__stdout($prompt . " $printOptions \n" . "[$default] > ", false);
-		}
-		$result = trim(fgets($this->stdin));
-
-		if($default != null && empty($result)) {
-			return $default;
-		} else {
-			return $result;
-		}
-	}
-	function __stdout($string, $newline = true) {
-		if($newline) {
-			fwrite($this->stdout, $string . "\n");
-		} else {
-			fwrite($this->stdout, $string);
-		}
-	}
-	function __stderr($string) {
-		fwrite($this->stderr, $string, true);
-	}
-	function __hr() {
-		$this->__stdout('---------------------------------------------------------------');
 	}
 }
 ?>

@@ -1946,7 +1946,7 @@ class BakeShell extends Shell {
 			return false;
 		}
 	}
-	
+
 	function __generateHash(){
 		$file = file_get_contents(CONFIGS.'core.php');
 		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $file, $match)) {
@@ -1963,7 +1963,7 @@ class BakeShell extends Shell {
 			return false;
 		}
 	}
-	
+
 	function __setCake(){
 		if(ROOT !== CAKE_CORE_INCLUDE_PATH) {
 			$file = file_get_contents(APP.'webroot'.DS.'index.php');
