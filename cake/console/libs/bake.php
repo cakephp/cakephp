@@ -49,27 +49,13 @@ class BakeShell extends Shell {
 	var $interactive = false;
 
 	var $__modelAlias = false;
-/**
- * Private helper function for constructor
- * @access private
- */
-	function initialize() {
-		$this->welcome();
-	}
+
 /**
  * Main-loop method.
  *
  */
 	function main() {
-
-		$this->out('');
-		$this->out('');
-		$this->out('Baking...');
-		$this->hr();
-		$this->out('Name: '. APP_DIR);
-		$this->out('Path: '. ROOT . DS . APP_DIR);
-		$this->hr();
-
+		
 		if(!is_dir(CONFIGS)) {
 			$this->project($this->params['app']);
 		}
@@ -81,10 +67,10 @@ class BakeShell extends Shell {
 		}
 
 		$this->out('[M]odel');
-		$this->out('[C]ontroller');
 		$this->out('[V]iew');
+		$this->out('[C]ontroller');
+		
 		$invalidSelection = true;
-
 		while ($invalidSelection) {
 			$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C')));
 			switch($classToBake) {
@@ -259,7 +245,7 @@ class BakeShell extends Shell {
 		}
 
 		$db =& ConnectionManager::getDataSource($useDbConfig);
-
+		$tableIsGood = false;
 		$useTable = Inflector::tableize($currentModelName);
 		$fullTableName = $db->fullTableName($useTable, false);
 		if(array_search($useTable, $this->__tables) === false) {
@@ -270,7 +256,6 @@ class BakeShell extends Shell {
 		if (low($tableIsGood) == 'n' || low($tableIsGood) == 'no') {
 			$useTable = $this->in('What is the name of the table (enter "null" to use NO table)?');
 		}
-		$tableIsGood = false;
 		while($tableIsGood == false && low($useTable) != 'null') {
 			if (is_array($this->__tables) && !in_array($useTable, $this->__tables)) {
 				$fullTableName = $db->fullTableName($useTable, false);
@@ -573,7 +558,7 @@ class BakeShell extends Shell {
 		$this->out('The following model will be created:');
 		$this->hr();
 		$this->out("Model Name:    $currentModelName");
-		$this->out("DB Connection: " . ($usingDefault ? 'default' : $useDbConfig));
+		$this->out("DB Connection: " . $useDbConfig);
 		$this->out("DB Table:   " . $fullTableName);
 		if($primaryKey != 'id') {
 			$this->out("Primary Key:   " . $primaryKey);
@@ -1993,19 +1978,6 @@ class BakeShell extends Shell {
 				return false;
 			}
 		}
-	}
-/**
- * Outputs an ASCII art banner to standard output.
- *
- */
-	function welcome()
-	{
-		$this->out('');
-		$this->out(' ___  __  _  _  ___  __  _  _  __      __   __  _  _  ___ ');
-		$this->out('|    |__| |_/  |__  |__] |__| |__]    |__] |__| |_/  |__ ');
-		$this->out('|___ |  | | \_ |___ |    |  | |       |__] |  | | \_ |___ ');
-		$this->hr();
-		$this->out('');
 	}
 /**
  * Writes a file with a default home page to the project.
