@@ -29,7 +29,7 @@
 define('DB_CONFIG_FILE', CONFIGS.'database.php');
 define('DB_CONFIG_FILE_DEFAULT', CONFIGS.'database.php.default'); 
  
-class DbconfigTask extends BakeTask {
+class DbconfigTask extends Shell {
 	
 	var $database;
 	var $user;

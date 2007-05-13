@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class AppTask extends BakeTask {
+class AppTask extends Shell {
 
 	function execute($params) {
 		if (count($params) == 2) {

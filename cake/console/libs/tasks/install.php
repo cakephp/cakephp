@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-class InstallTask extends BakeTask {
+class InstallTask extends Shell {
 
 	function execute($params) {
 	}
