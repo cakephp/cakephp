@@ -233,9 +233,6 @@ class ShellDispatcher {
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 
-		if (!isset($this->args[0]) ||  (isset($this->args[0]) && $this->args[0] != 'help')) {
-			$this->stdout("Type 'cake help' for help\n");
-		}
 		$protectedCommands = array('initialize', 'main','in','out','err','hr',
 									'createFile', 'isDir','copyDir','Object','toString',
 									'requestAction','log','cakeError', 'ShellDispatcher',
@@ -402,10 +399,9 @@ class ShellDispatcher {
 			$this->params['working'] = dirname(dirname(__FILE__));
 		}
 		
-		if($this->params['working'] !== dirname(dirname(__FILE__))) {
+		if($app !== basename($this->params['working']) && $this->params['working'] !== dirname(dirname(__FILE__))) {
 			$this->params['root'] = $this->params['working'];
 		}
-		
 		$this->params = array_merge(array('app'=> $app, 'root'=> dirname($this->params['working'])), $this->params);
 	}
 /**

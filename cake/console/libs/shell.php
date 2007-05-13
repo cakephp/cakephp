@@ -84,7 +84,7 @@ class Shell extends Object {
  */
 	function initialize() {
 		if($this->_loadDbConfig()) {
-			//$this->_loadModel();
+			$this->_loadModel();
 		}
 		$this->hr();
 		$this->out('Name: '. APP_DIR);
@@ -105,6 +105,7 @@ class Shell extends Object {
 			}
 		}
 		$this->err('Database config could not be loaded');
+		$this->out('Run \'bake\' to create the database configuration');
 		return false;
 	}
 /**
@@ -119,7 +120,7 @@ class Shell extends Object {
 		);
 
 		if(loadModel()) {
-			$this->AppModel = & new AppModel();
+			$this->AppModel = & new AppModel(false, false, false);
 			return true;
 		}
 
