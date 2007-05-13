@@ -365,26 +365,27 @@ class Model extends Overloadable {
 
 		ClassRegistry::addObject($this->currentModel, $this);
 		ClassRegistry::map($this->currentModel, $this->currentModel);
+		
 		$this->id = $id;
-
+		
+		if($table === false) {
+			$this->useTable = false;
+		} else if($table) {
+			$this->useTable = $table;
+		}
+				
 		if ($this->useTable !== false) {
 			$this->setDataSource($ds);
-
-			if ($table) {
-				$tableName = $table;
-			} else {
-				if ($this->useTable) {
-					$tableName = $this->useTable;
-				} else {
-					$tableName = Inflector::tableize($this->name);
-				}
+			
+			if ($this->useTable === null) {
+				$this->useTable = Inflector::tableize($this->name);
 			}
 
 			if (in_array('settableprefix', get_class_methods($this))) {
 				$this->setTablePrefix();
 			}
 
-			$this->setSource($tableName);
+			$this->setSource($this->useTable);
 			$this->__createLinks();
 
 			if ($this->displayField == null) {
