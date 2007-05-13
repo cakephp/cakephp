@@ -61,6 +61,7 @@
 			return new Set(array(
 				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+				array('name' => 'published', 'type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 			));
@@ -663,6 +664,61 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
+	}
+	
+	function testFormMagicInput() {
+		$result = $this->Form->create('Contact');
+		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
+		
+		$result = $this->Form->input('Contact.name');
+		$this->assertPattern('/^<div class="input">' .
+												 '<label for="ContactName">Name<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>'.
+												 '<\/div>$/', $result);
+												 
+		$result = $this->Form->input('Contact.name', array('div' => false));
+		$this->assertPattern('/^<label for="ContactName">Name<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		
+		$result = $this->Form->input('Contact.non_existing');
+		$this->assertPattern('/^<div class="input">' .
+												 '<label for="ContactNonExisting">Non Existing<\/label>' .
+												 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
+												 '<\/div>$/', $result);
+												 
+		$result = $this->Form->input('Contact.published', array('div' => false));
+		
+		$this->assertPattern('/^<label for="ContactPublishedMonth">Published<\/label>' .
+												 '<select name="data\[Contact\]\[published_month\]"\s+id="ContactPublishedMonth">/', $result);
+												 
+		$result = $this->Form->input('Contact.updated', array('div' => false));
+		
+		$this->assertPattern('/^<label for="ContactUpdatedMonth">Updated<\/label>' .
+												 '<select name="data\[Contact\]\[updated_month\]"\s+id="ContactUpdatedMonth">/', $result);
+	}
+	
+	function testFormMagicInputLabel() {
+		$result = $this->Form->create('Contact');
+		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
+											 
+		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
+		$this->assertPattern('/^<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		
+		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => 'My label'));
+		$this->assertPattern('/^<label for="ContactName">My label<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		
+		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory')));
+		$this->assertPattern('/^<label for="ContactName" class="mandatory">Name<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+												 
+		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')));
+		$this->assertPattern('/^<label for="ContactName" class="mandatory">My label<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+												 
+		$result = $this->Form->input('Contact.name', array('div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')));
+		$this->assertPattern('/^<label for="my_id">Name<\/label>' .
+												 '<input name="data\[Contact\]\[name\]" type="text" id="my_id" maxlength="255" value="" \/>$/', $result);
 	}
 
 	function testFormEnd() {

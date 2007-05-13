@@ -356,7 +356,15 @@ class FormHelper extends AppHelper {
 			}
 			$text = Inflector::humanize($text);
 		}
-		return $this->output(sprintf($this->Html->tags['label'], $this->domId($tagName), $this->_parseAttributes($attributes), $text));
+		
+		if (isset($attributes['for'])) {
+			$labelFor = $attributes['for'];
+			unset($attributes['for']);
+		} else {
+			$labelFor = $this->domId($tagName);
+		}
+		
+		return $this->output(sprintf($this->Html->tags['label'], $labelFor, $this->_parseAttributes($attributes), $text));
 	}
 /**
  * Will display all the fields passed in an array expects tagName as an array key
@@ -502,16 +510,28 @@ class FormHelper extends AppHelper {
 			$label = $options['label'];
 			unset($options['label']);
 		}
-		if (is_array($label)) {
-			$labelText = null;
-			if (isset($label['text'])) {
-				$labelText = $label['text'];
-				unset($label['text']);
+		
+		if ($label !== false) {
+			$labelAttributes = array();
+			
+			if (in_array($options['type'], array('date', 'datetime'))) {
+				$labelFor = $this->domId(implode('.', array_filter(array($this->model(), $this->field()))));
+				$labelAttributes = array( 'for' => $labelFor . 'Month' );
 			}
-			$out = $this->label(null, $labelText, $label);
-			$label = $labelText;
-		} elseif ($label !== false) {
-			$out = $this->label(null, $label);
+			
+			if (is_array($label)) {
+				$labelText = null;
+				if (isset($label['text'])) {
+					$labelText = $label['text'];
+					unset($label['text']);
+				}
+				
+				$labelAttributes = am($labelAttributes, $label);
+			} else {
+				$labelText = $label;
+			}
+			
+			$out = $this->label(null, $labelText, $labelAttributes);
 		}
 
 		$error = null;
