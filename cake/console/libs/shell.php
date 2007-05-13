@@ -98,6 +98,12 @@ class Shell extends Object {
  */
 	var $tasks = array();
 /**
+ * Contains the loaded tasks 
+ *
+ * @var array
+ */
+	var $taskNames = array();	
+/**
  * Contains models to load and instantiate
  *
  * @var array
