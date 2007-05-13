@@ -583,6 +583,10 @@ class Router extends Object {
 			return false;
 		}
 
+		if (defined('CAKE_ADMIN') && isset($pass[CAKE_ADMIN])) {
+			return false;
+		}
+
 		foreach($pass as $key => $value) {
 			if(!is_numeric($key)) {
 				unset($pass[$key]);
