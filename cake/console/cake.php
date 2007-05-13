@@ -400,14 +400,18 @@ class ShellDispatcher {
  		} else {
 			$app = 'app';
 		}
+		
 		if(isset($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$this->params['working'] = $this->params['app'];
+				unset($this->params['app']);
+				$app = basename($this->params['working']);
 			} else {
 				$app = $this->params['app'];
-			}
+				$this->params['working'] = dirname(dirname(dirname(__FILE__)));
+ 			}
 		}
-
+		
 		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
 			$this->params['working'] = dirname(dirname(__FILE__));
