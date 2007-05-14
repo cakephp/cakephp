@@ -121,22 +121,22 @@ class AclShell extends Shell {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
-		$class = ucfirst($this->args[1]);
+		$class = ucfirst($this->args[0]);
 		$object = new $class();
 
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[2], $matches) && count($matches) == 3) {
+		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[1], $matches) && count($matches) == 3) {
 			$parent = array(
 				'model' => $matches[1],
 				'foreign_key' => $matches[2],
 			);
 		} else {
-			$parent = $this->args[2];
+			$parent = $this->args[1];
 		}
 
 		if (!empty($parent) && $parent != '/' && $parent != 'root') {
 			@$parent = $object->node($parent);
 			if (empty($parent)) {
-				$this->err('Could not find parent node using reference "' . $this->args[2] . '"');
+				$this->err('Could not find parent node using reference "' . $this->args[1] . '"');
 				return;
 			} else {
 				$parent = Set::extract($parent, "0.{$class}.id");
@@ -145,22 +145,22 @@ class AclShell extends Shell {
 			$parent = null;
 		}
 
-		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[3], $matches) && count($matches) == 3) {
+		if (preg_match('/^([\w]+)\.(.*)$/', $this->args[2], $matches) && count($matches) == 3) {
 			$data = array(
 				'model' => $matches[1],
 				'foreign_key' => $matches[2],
 			);
 		} else {
-			$data = array('alias' => $this->args[3]);
+			$data = array('alias' => $this->args[2]);
 		}
 
 		$data['parent_id'] = $parent;
 		$object->create();
 
 		if($object->save($data)) {
-			$this->out("New $class '".$this->args[3]."' created.\n\n");
+			$this->out("New $class '".$this->args[2]."' created.\n\n");
 		} else {
-			$this->err("There was a problem creating a new $class '".$this->args[3]."'.");
+			$this->err("There was a problem creating a new $class '".$this->args[2]."'.");
 		}
 	}
 /**
@@ -172,7 +172,7 @@ class AclShell extends Shell {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if(!$this->Acl->{$class}->delete($this->args[1])) {
-			$this->displayError("Node Not Deleted", "There was an error deleting the ".$class.". Check that the node exists.\n");
+			$this->error("Node Not Deleted", "There was an error deleting the ".$class.". Check that the node exists.\n");
 		}
 		$this->out("{$class} deleted.\n\n");
 	}
@@ -202,7 +202,7 @@ class AclShell extends Shell {
 		$id = (is_numeric($this->args[2])) ? intval($this->args[1]) : $this->args[1];
 		$nodes = $this->Acl->{$class}->getPath($id);
 		if (empty($nodes)) {
-			$this->displayError("Supplied Node '".$this->args[1]."' not found", "No tree returned.");
+			$this->error("Supplied Node '".$this->args[1]."' not found", "No tree returned.");
 		}
 		for ($i = 0; $i < count($nodes); $i++) {
 			$this->out(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
@@ -251,34 +251,36 @@ class AclShell extends Shell {
 		$this->_checkArgs(1, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (!is_null($this->args[1])) {
+		if (isset($this->args[1]) && !is_null($this->args[1])) {
 			$conditions = $this->Acl->{$class}->_resolveID($this->args[1]);
 		} else {
 			$conditions = null;
 		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
 		if (empty($nodes)) {
-			$this->displayError($this->args[1]." not found", "No tree returned.");
+			$this->error($this->args[1]." not found", "No tree returned.");
 		}
-		$right = array();
-
 		$this->out($class . " tree:");
-		$this->hr(true);
-
-		for($i = 0; $i < count($nodes); $i++){
-			if (count($right) > 0){
-				while ($right[count($right)-1] < $nodes[$i][$class]['rght']){
-					if ($right[count($right)-1]){
-						array_pop($right);
-					} else {
-						break;
-					}
-				}
+		$this->hr();
+		$nodeCount = count($nodes);
+		$right = $left = array();
+		for($i = 0; $i < $nodeCount; $i++) {
+			$count = 0;
+			$right[$i] = $nodes[$i][$class]['rght'];
+			$left[$i] = $nodes[$i][$class]['lft'];
+			if(isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {				
+				array_pop($left);
+				$count = count($left);				
 			}
-			$this->out(str_repeat('  ',count($right)) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
+			if(isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
+				array_pop($right);
+				$count = count($right);
+			}
+			
+			$this->out(str_repeat('  ', $count) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
 			$right[] = $nodes[$i][$class]['rght'];
 		}
-		$this->hr(true);
+		$this->hr();
 	}
 /**
  * Enter description here...
@@ -407,8 +409,11 @@ class AclShell extends Shell {
  *
  */
 	function checkNodeType() {
-		if ($this->args[1] != 'aco' && $this->args[1] != 'aro') {
-			$this->displayError("Missing/Unknown node type: '".$this->args[1]."'", 'Please specify which ACL object type you wish to create.');
+		if(!isset($this->args[0])) {
+			return false;
+		}
+		if ($this->args[0] != 'aco' && $this->args[0] != 'aro') {
+			$this->error("Missing/Unknown node type: '".$this->args[1]."'", 'Please specify which ACL object type you wish to create.');
 		}
 	}
 /**
