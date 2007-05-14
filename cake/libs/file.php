@@ -61,9 +61,9 @@ class File extends Object{
  * @param boolean $create Create file if it does not exist
  * @return File
  */
-	function __construct($path, $create = false) {
+	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
-		$this->Folder = new Folder(dirname($path), $create, 0755);
+		$this->Folder = new Folder(dirname($path), $create, $mode);
 		$this->name = basename($path);
 		if (!$this->exists()) {
 			if ($create === true) {

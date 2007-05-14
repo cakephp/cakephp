@@ -288,7 +288,7 @@ class ShellDispatcher {
 
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
-							$task = Inflector::camelize($command);
+							$this->shiftArgs();
 							$shell->{$task}->initialize();
 							$shell->{$task}->execute();
 							return;
@@ -320,6 +320,7 @@ class ShellDispatcher {
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
 							$shell->command = $command;
+							$this->shiftArgs();
 							$shell->initialize();
 							$shell->{$command}();
 						} else {

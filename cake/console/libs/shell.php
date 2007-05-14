@@ -26,14 +26,13 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+require_once CAKE . 'console' . DS . 'error.php';
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
  * @package		cake
  * @subpackage	cake.cake.console.libs
  */
-require_once CAKE . 'console' . DS . 'error.php';
-
 class Shell extends Object {
 
 /**
@@ -123,7 +122,10 @@ class Shell extends Object {
 				$this->{$var} = & $this->Dispatch->{$var};
 			}
 		}
-		$this->_loadTasks();
+		$name = get_class($this);
+		if(strpos($name, 'Task') === false && strpos($name, 'task') == false) {
+			$this->_loadTasks();
+		}
 	}
 /**
  * Initializes the Shell
@@ -227,10 +229,9 @@ class Shell extends Object {
 			}
 
 			$this->taskClass = $tasks[0];
-
+			
 			foreach($tasks as $taskName) {
 				$taskKey = Inflector::underscore($taskName);
-
 				$loaded = false;
 				foreach($this->Dispatch->shellPaths as $path) {
 					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
@@ -239,16 +240,21 @@ class Shell extends Object {
 						break;
 					}
 				}
-
+				
 				if ($loaded) {
-					require $taskPath;
 					$taskClass = Inflector::camelize($taskName.'Task');
-					if(class_exists($taskClass)) {
+					if(!class_exists($taskClass)) {
+						require_once $taskPath;
+					}
+				
+					if(class_exists($taskClass) &&  !isset($this->{$taskName})) {
 						$task =& new $taskClass($this->Dispatch);
 						$this->taskNames[] = $taskName;
 						$this->{$taskName} =& $task;
 						ClassRegistry::addObject($taskKey, $task);
-					} else{
+					} 
+				
+					if(!isset($this->{$taskName})) {
 						$this->err("Task '".$taskName."' could not be loaded");
 						exit();
 					}
@@ -270,7 +276,24 @@ class Shell extends Object {
  * @return Either the default value, or the user-provided input.
  */
 	function in($prompt, $options = null, $default = null) {
-		return $this->Dispatch->getInput($prompt, $options, $default);
+		$in = $this->Dispatch->getInput($prompt, $options, $default);
+		if($options && is_string($options)) {
+			if(strpos($options, ',')) {
+				$options = explode(',', $options);
+			} else if(strpos($options, '/')) {
+				$options = explode('/', $options);
+			} else {
+				$options = array($options);
+			}
+		}
+		if(is_array($options)) {
+			while($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
+				 $in = $this->Dispatch->getInput($prompt, $options, $default);
+			}
+		}
+		if($in) {
+			return $in;
+		}
 	}
 /**
  * Outputs to the stdout filehandle.
@@ -308,12 +331,11 @@ class Shell extends Object {
  * @param unknown_type $title
  * @param unknown_type $msg
  */
-	function displayError($title, $msg) {
-		$out = "\n";
-		$out .= "Error: $title\n";
+	function error($title, $msg) {
+		$out .= "$title\n";
 		$out .= "$msg\n";
 		$out .= "\n";
-		$this->out($out);
+		$this->err($out);
 		exit();
 	}
 /**
@@ -327,7 +349,7 @@ class Shell extends Object {
 			$command = $this->command;
 		}
 		if (count($this->args) < $expectedNum) {
-			$this->displayError('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->Dispatch->shell.' help\' for help on usage of the '.$command.' command.');
+			$this->error('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->shell.' help\' for help on usage of the '.$this->name.' '.$command);
 		}
 	}
 /**
@@ -339,35 +361,31 @@ class Shell extends Object {
  */
 	function createFile ($path, $contents) {
 		$path = str_replace(DS . DS, DS, $path);
-		echo "\nCreating file $path\n";
+		$this->out("\n".__(sprintf("Creating file %s", $path), true));
 		if (is_file($path) && $this->interactive === true) {
-			$this->out(__("File exists, overwrite?", true). " {$path} (y/n/q):");
-			$key = trim(fgets($this->stdin));
-
-			if ($key == 'q') {
+			$key = $this->in(__("File exists, overwrite?", true). " {$path}",  array('y', 'n', 'q'), 'n');
+			if (low($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} elseif ($key == 'a') {
+			} else if (low($key) == 'a') {
 				$this->dont_ask = true;
-			} elseif ($key == 'y') {
-			} else {
+			} else if (low($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
 			}
 		}
-
-		uses('file');
+		if(!class_exists('File')) {
+			uses('file');
+		}
 		if ($File = new File($path, true)) {
 			$File->write($contents);
-			$this->out(__("Wrote", true) ."{$path}\n");
+			$this->out(__("Wrote", true) ." {$path}");
 			return true;
 		} else {
 			$this->err(__("Error! Could not write to", true)." {$path}.\n");
 			return false;
 		}
 	}
-
-
 /**
  * Outputs usage text on the standard output. Implement it in subclasses.
  *
@@ -380,93 +398,104 @@ class Shell extends Object {
 		}
 	}
 /**
- * Returns true if given path is a directory.
+ * Action to create a Unit Test.
  *
- * @param string $path
- * @return True if given path is a directory.
+ * @return Success
  */
-	function isDir($path) {
-		if(is_dir($path)) {
+	function _checkUnitTest() {
+		if (is_dir(VENDORS.'simpletest') || is_dir(ROOT.DS.APP_DIR.DS.'vendors'.DS.'simpletest')) {
 			return true;
-		} else {
-			return false;
 		}
+		$unitTest = $this->in('Cake test suite not installed.  Do you want to bake unit test files anyway?', array('y','n'), 'y');
+		$result = low($unitTest) == 'y' || low($unitTest) == 'yes';
+
+		if ($result) {
+			$this->out("\nYou can download the Cake test suite from http://cakeforge.org/projects/testsuite/", true);
+		}
+		return $result;
+	}
+
+/**
+ * creates the proper pluralize controller for the url
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _controllerPath($name) {
+		return low(Inflector::underscore($name));
 	}
 /**
- * Recursive directory copy.
+ * creates the proper pluralize controller class name.
  *
- * @param string $fromDir
- * @param string $toDir
- * @param octal $chmod
- * @param boolean	 $verbose
- * @return Success.
+ * @param string $name
+ * @return string $name
  */
-	function copyDir($fromDir, $toDir, $chmod = 0755, $verbose = false) {
-		$errors = array();
-		$messages = array();
-
-		if (!is_dir($toDir)) {
-			uses('folder');
-			$folder = new Folder();
-			$folder->mkdirr($toDir, 0755);
-		}
-
-		if (!is_writable($toDir)) {
-			$errors[] = 'target '.$toDir.' is not writable';
-		}
-
-		if (!is_dir($fromDir)) {
-			$errors[] = 'source '.$fromDir.' is not a directory';
-		}
-
-		if (!empty($errors)) {
-			if ($verbose) {
-				foreach($errors as $err) {
-					$this->stdout('Error: '.$err);
-				}
-			}
-			return false;
-		}
-		$exceptions = array('.','..','.svn');
-		$handle = opendir($fromDir);
-
-		while (false !== ($item = readdir($handle))) {
-			if (!in_array($item,$exceptions)) {
-				$from = str_replace('//','/',$fromDir.'/'.$item);
-				$to = str_replace('//','/',$toDir.'/'.$item);
-				if (is_file($from)) {
-					if (@copy($from, $to)) {
-						chmod($to, $chmod);
-						touch($to, filemtime($from));
-						$messages[] = 'File copied from '.$from.' to '.$to;
-					} else {
-						$errors[] = 'cannot copy file from '.$from.' to '.$to;
-					}
-				}
-
-				if (is_dir($from)) {
-					if (@mkdir($to)) {
-						chmod($to, $chmod);
-						$messages[] = 'Directory created: '.$to;
-					} else {
-						$errors[] = 'cannot create directory '.$to;
-					}
-					$this->copyDir($from,$to,$chmod,$verbose);
-				}
-			}
-		}
-		closedir($handle);
-
-		if ($verbose) {
-			foreach($errors as $err) {
-				$this->stdout('Error: '.$err);
-			}
-			foreach($messages as $msg) {
-				$this->stdout($msg);
-			}
-		}
-		return true;
+	function _controllerName($name) {
+		return Inflector::pluralize(Inflector::camelize($name));
 	}
+/**
+ * creates the proper singular model name.
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _modelName($name) {
+		return Inflector::camelize(Inflector::singularize($name));
+	}
+/**
+ * creates the proper singular model key for associations.
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _modelKey($name) {
+		return Inflector::underscore(Inflector::singularize($name)).'_id';
+	}
+/**
+ * creates the proper model name from a foreign key.
+ *
+ * @param string $key
+ * @return string $name
+ */
+	function _modelNameFromKey($key) {
+		$name = str_replace('_id', '',$key);
+		return $this->_modelName($name);
+	}
+/**
+ * creates the singular name for use in views.
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _singularName($name) {
+		return Inflector::variable(Inflector::singularize($name));
+	}
+/**
+ * creates the plural name for views.
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _pluralName($name) {
+		return Inflector::variable(Inflector::pluralize($name));
+	}
+/**
+ * creates the singular human name used in views
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _singularHumanName($name) {
+		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
+	}
+/**
+ * creates the plural humna name used in views
+ *
+ * @param string $name
+ * @return string $name
+ */
+	function _pluralHumanName($name) {
+		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
+	}	
 }
-
 ?>
