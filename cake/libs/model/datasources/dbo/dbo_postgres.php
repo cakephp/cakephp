@@ -47,6 +47,7 @@ class DboPostgres extends DboSource {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
+		'schema' => 'public',
 		'port' => 5432,
 		'encoding' => ''
 	);
@@ -126,7 +127,8 @@ class DboPostgres extends DboSource {
 			return $cache;
 		}
 
-		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = 'public';";
+		$schema = $this->config['schema'];
+		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = '{$schema}';";
 		$result = $this->fetchAll($sql);
 
 		if (!$result) {
