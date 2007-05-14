@@ -258,11 +258,7 @@ class ShellDispatcher {
 					}
 				}
 
-				if (!$loaded) {
-					$this->stdout('Unable to dispatch requested script: ', false);
-					$this->stdout("'".$this->shell.".php' does not exist in: \n" . implode("\nor ", $this->shellPaths));
-					exit();
-				} else {
+				if ($loaded) {
 					require CONSOLE_LIBS . 'shell.php';
 					require $this->shellPath;
 					if(class_exists($this->shellClass)) {
@@ -272,7 +268,19 @@ class ShellDispatcher {
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
-
+						
+						if($command == 'help') {
+							if(method_exists($shell, 'help')) {
+								$shell->command = $command;
+								$this->shiftArgs();
+								$shell->initialize();
+								$shell->help();
+								exit();
+							} else {
+								$this->help();
+							}
+						}
+						
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
 							$task = Inflector::camelize($command);
@@ -296,16 +304,8 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
-						if($command == 'help') {
-							if(method_exists($shell, 'help')) {
-								$shell->command = $command;
-								$this->shiftArgs();
-								$shell->initialize();
-								$shell->help();
-							} else {
-								$this->help();
-							}
-						} else if($missingCommand && method_exists($shell, 'main')) {
+						
+						if($missingCommand && method_exists($shell, 'main')) {
 							$shell->initialize();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
@@ -324,6 +324,8 @@ class ShellDispatcher {
 					} else {
 						$this->stderr('Class '.$this->shellClass.' could not be loaded');
 					}
+				} else {
+					$this->help();
 				}
 			}
 		} else {
@@ -394,33 +396,43 @@ class ShellDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
+		
+		$app = 'app';
+		$root = dirname(dirname(dirname(__FILE__)));	
+		$working = dirname(dirname(dirname(__FILE__)));
+		
 		if(!empty($this->params['working'])) {
 			$app = basename($this->params['working']);
-			$this->params['working'] = dirname($this->params['working']) . DS . basename($this->params['working']);
- 		} else {
-			$app = 'app';
-		}
+			$working = dirname($this->params['working']) . DS . basename($this->params['working']);
+			$root = dirname($working);
+			unset($this->params['working']);
+ 		}
 		
-		if(isset($this->params['app'])) {
+		if(!empty($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
-				$this->params['working'] = $this->params['app'];
-				unset($this->params['app']);
-				$app = basename($this->params['working']);
+				$app = basename($this->params['app']);
+				$working = $this->params['app'];
 			} else {
 				$app = $this->params['app'];
-				$this->params['working'] = dirname(dirname(dirname(__FILE__)));
  			}
+			unset($this->params['app']);
 		}
 		
 		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
-			$this->params['working'] = dirname(dirname(__FILE__));
+			$working = dirname(dirname(__FILE__));
 		}
-
-		if($app !== basename($this->params['working']) && $this->params['working'] !== dirname(dirname(__FILE__))) {
-			$this->params['root'] = $this->params['working'];
+		
+		if($app !== basename($working) && realpath($working) !== dirname(dirname(__FILE__))) {
+			$root = $working;
 		}
-		$this->params = array_merge(array('app'=> $app, 'root'=> dirname($this->params['working'])), $this->params);
+		
+		if($app === basename($working) && realpath($working) === dirname(dirname(dirname(__FILE__)))) {
+			$app = 'app';
+			$root = $working;
+		}
+		
+		$this->params = array_merge(array('app'=> $app, 'root'=> $root, 'working'=> $working), $this->params);
 	}
 /**
  * Removes first argument and shifts other arguments up
@@ -466,6 +478,7 @@ class ShellDispatcher {
 		}
 		$this->stdout("\nTo run a command, type 'cake script_name [args]'");
 		$this->stdout("To get help on a specific command, type 'cake script_name help'");
+		exit();
 	}
 }
 if (!defined('DISABLE_AUTO_DISPATCH')) {
