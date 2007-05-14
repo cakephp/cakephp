@@ -320,7 +320,6 @@ class ShellDispatcher {
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
 							$shell->command = $command;
-							$this->shiftArgs();
 							$shell->initialize();
 							$shell->{$command}();
 						} else {
