@@ -1745,7 +1745,11 @@ class Model extends Overloadable {
 						}
 						if (!$valid) {
 							if (!isset($validator['message'])) {
-								$validator['message'] = ife(is_string($index) || (is_numeric($index) && count($ruleSet) > 1), $index, $message);
+								if (is_string($index)) {
+									$validator['message'] = $index;
+								} else {
+									$validator['message'] = ife(is_numeric($index) && count($ruleSet) > 1, ($index + 1), $message);
+								}
 							}
 
 							$this->invalidate($fieldName, $validator['message']);
