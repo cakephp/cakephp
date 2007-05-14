@@ -1474,6 +1474,13 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testMixedConditionsParsing(){
+		$conditions[] = 'User.first_name = \'Firstname\'';
+		$conditions[] = array('User.last_name' => 'Lastname');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name`  =  'Lastname'";
+		$this->assertEqual($result, $expected);
+	}
 	function testFieldParsing() {
 		$result = $this->db->fields($this->model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');

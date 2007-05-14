@@ -1545,8 +1545,8 @@ class DboSource extends DataSource {
 							$out[] = $ret[0];
 						}
 					}
-				} elseif (is_numeric($key)) {
-					$data = ' ' . $value;
+				} elseif (is_numeric($key) && !empty($value)) {
+					$data = $this->__quoteFields($value);
 				} elseif ($value === null || (is_array($value) && empty($value))) {
 					$data = $this->name($key) . ' IS NULL';
 				} elseif ($value === false || $value === true) {
