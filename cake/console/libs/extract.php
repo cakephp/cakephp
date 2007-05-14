@@ -19,8 +19,8 @@
  * @copyright       Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link                http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package         cake
- * @subpackage      cake.cake.scripts
- * @since           CakePHP(tm) v 1.2.0.4708
+ * @subpackage      cake.cake.console.libs
+ * @since           CakePHP(tm) v 1.2.0.5012
  * @version         $Revision$
  * @modifiedby      $LastChangedBy$
  * @lastmodified    $Date$
@@ -54,7 +54,7 @@ return null;
  * Language string extractor
  *
  * @package     cake
- * @subpackage  cake.cake.scripts
+ * @subpackage  cake.cake.console.libs
  */
 class ExtractShell extends Shell{
 	var $path = null;

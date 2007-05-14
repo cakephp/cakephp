@@ -19,18 +19,22 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.scripts.bake
- * @since			CakePHP(tm) v 1.2
+ * @subpackage		cake.cake.console.libs.tasks
+ * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+/**
+ * @package		cake
+ * @subpackage	cake.cake.console.libs.tasks
+ */
 class InstallTask extends Shell {
 
 	function execute($params) {
 	}
-	
+
 	function help() {
 	}
 }

@@ -19,8 +19,8 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.scripts
- * @since			CakePHP(tm) v 1.2.0.4604
+ * @subpackage		cake.cake.console.libs
+ * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -98,11 +98,11 @@ class Shell extends Object {
  */
 	var $tasks = array();
 /**
- * Contains the loaded tasks 
+ * Contains the loaded tasks
  *
  * @var array
  */
-	var $taskNames = array();	
+	var $taskNames = array();
 /**
  * Contains models to load and instantiate
  *

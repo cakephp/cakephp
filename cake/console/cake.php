@@ -20,14 +20,19 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.scripts.bake
- * @since			CakePHP(tm) v 1.2
+ * @subpackage		cake.cake.console
+ * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
+/**
+ * Shell dispatcher
+ *
+ * @package     cake
+ * @subpackage  cake.cake.console
+ */
 class ShellDispatcher {
 /**
  * Standard input stream.
@@ -268,7 +273,7 @@ class ShellDispatcher {
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
-						
+
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
 								$shell->command = $command;
@@ -280,7 +285,7 @@ class ShellDispatcher {
 								$this->help();
 							}
 						}
-						
+
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
 							$task = Inflector::camelize($command);
@@ -304,7 +309,7 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
-						
+
 						if($missingCommand && method_exists($shell, 'main')) {
 							$shell->initialize();
 							$shell->main();
@@ -396,18 +401,18 @@ class ShellDispatcher {
 				$this->args[] = $params[$i];
 			}
 		}
-		
+
 		$app = 'app';
-		$root = dirname(dirname(dirname(__FILE__)));	
+		$root = dirname(dirname(dirname(__FILE__)));
 		$working = dirname(dirname(dirname(__FILE__)));
-		
+
 		if(!empty($this->params['working'])) {
 			$app = basename($this->params['working']);
 			$working = dirname($this->params['working']) . DS . basename($this->params['working']);
 			$root = dirname($working);
 			unset($this->params['working']);
  		}
-		
+
 		if(!empty($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$app = basename($this->params['app']);
@@ -417,21 +422,21 @@ class ShellDispatcher {
  			}
 			unset($this->params['app']);
 		}
-		
+
 		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
 			$app = 'app';
 			$working = dirname(dirname(__FILE__));
 		}
-		
+
 		if($app !== basename($working) && realpath($working) !== dirname(dirname(__FILE__))) {
 			$root = $working;
 		}
-		
+
 		if($app === basename($working) && realpath($working) === dirname(dirname(dirname(__FILE__)))) {
 			$app = 'app';
 			$root = $working;
 		}
-		
+
 		$this->params = array_merge(array('app'=> $app, 'root'=> $root, 'working'=> $working), $this->params);
 	}
 /**

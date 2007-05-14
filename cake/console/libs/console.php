@@ -19,8 +19,8 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.scripts
- * @since			CakePHP(tm) v 1.2.0.4604
+ * @subpackage		cake.cake.console.libs
+ * @since			CakePHP(tm) v 1.2.0.5012
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -28,7 +28,7 @@
  */
 /**
  * @package		cake
- * @subpackage	cake.cake.scritps
+ * @subpackage	cake.cake.console.libs
  */
 class ConsoleShell extends Shell {
 	var $ignoreList = array(T_WHITESPACE, T_OPEN_TAG, T_CLOSE_TAG);
