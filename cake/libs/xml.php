@@ -30,290 +30,6 @@
 uses('set');
 
 /**
- * XML handling.
- *
- * Operations on XML data.
- *
- * @package    cake
- * @subpackage cake.cake.libs
- * @since      CakePHP v .0.10.3.1400
- */
-class XML extends XMLNode {
-
-/**
- * Resource handle to XML parser.
- *
- * @var resource
- */
-	var $__parser;
-/**
- * File handle to XML indata file.
- *
- * @var resource
- */
-	var $__file;
-/**
- * Raw XML string data (for loading purposes)
- *
- * @var string
- */
-	var $__rawData = null;
-
-/**
- * XML document header
- *
- * @var string
- */
-	var $__header = null;
-
-/**
- * XML document version
- *
- * @var string
- */
-	var $version = '1.0';
-
-/**
- * XML document encoding
- *
- * @var string
- */
-	var $encoding = 'UTF-8';
-
-/**
- * Constructor.  Sets up the XML parser with options, gives it this object as
- * its XML object, and sets some variables.
- *
- * @param string $input
- */
-	function __construct($input = null, $options = array()) {
-		parent::__construct('root');
-		$this->__parser = xml_parser_create_ns();
-
-		xml_set_object($this->__parser, $this);
-		xml_parser_set_option($this->__parser, XML_OPTION_CASE_FOLDING, 0);
-		xml_parser_set_option($this->__parser, XML_OPTION_SKIP_WHITE, 1);
-
-		$this->children = array();
-
-		if($input != null) {
-			$vars = null;
-			if (is_string($input)) {
-				$this->load($input);
-			} elseif (is_array($input)) {
-				$vars = $this->__objectToNode(Set::map($input));
-			} elseif (is_object($input)) {
-				$vars = $this->__objectToNode($input);
-			}
-
-			if ($vars != null) {
-				$this->children = $vars;
-			}
-
-			if (!is_array($this->children)) {
-				$this->children = array($this->children);
-			}
-		}
-
-		foreach ($options as $key => $val) {
-			switch ($key) {
-				case 'version':
-					$this->version = $val;
-				break;
-				case 'encoding':
-					$this->encoding = $val;
-				break;
-			}
-		}
-	}
-
-/**
- * Initialize XML object from a given XML string. Returns false on error.
- *
- * @param string $in
- * @return boolean Success
- */
-	function load($in) {
-		$this->__rawData = null;
-		$this->header = null;
-
-		if (is_string($in)) {
-
-			if(strstr($in, "<")) {
-				// Input is raw xml data
-				$this->__rawData = $in;
-			} else {
-				// Input is an xml file
-				if(strpos($in, '://') || file_exists($in)) {
-					$this->__rawData = @file_get_contents($in);
-					if ($this->__rawData == null) {
-						$this->error("XML file $in is empty or could not be read (possible permissions error).");
-						return false;
-					}
-				} else {
-					$this->error("XML file $in does not exist");
-					return false;
-				}
-			}
-			return $this->parse();
-
-		} elseif (is_object($in)) {
-		
-		}
-	}
-/**
- * Parses and creates XML nodes from the __rawData property.
- *
- * @see load()
- *
- */
-	function parse() {
-		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
-
-		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
-		$xml = new XMLNode();
-
-		$count = count($vals);
-		for ($i = 0; $i < $count; $i++) {
-			$data = $vals[$i];
-			switch($data['type']) {
-				case "open" :
-					$tmpXML = new XMLNode();
-					$tmpXML->name = $data['tag'];
-
-					if(isset($data['value'])) {
-						$tmpXML->value = $data['value'];
-					}
-					if(isset($data['attributes'])) {
-						$tmpXML->attributes = $data['attributes'];
-					}
-
-					$tmpXML->setParent($xml);
-					$ct = count($xml->children);
-					$xml->children[$ct] = $tmpXML;
-					$xml =& $xml->children[$ct];
-				break;
-
-				case "close" :
-					$xml =& $xml->parent();
-				break;
-
-				case "complete" :
-					$tmpXML = new XMLNode();
-					$tmpXML->name = $data['tag'];
-
-					if(isset($data['value'])) {
-						$tmpXML->value = $data['value'];
-					}
-					if(isset($data['attributes'])) {
-						$tmpXML->attributes = $data['attributes'];
-					}
-
-					$tmpXML->__parent =& $xml;
-					$xml->children[] = $tmpXML;
-				break;
-				case 'cdata':
-					if (is_string($xml->value)) {
-						$xml->value = a($xml->value, $data['value']);
-					} else {
-						$xml->value[] = $data['value'];
-					}
-				break;
-			}
-		}
-		$this->children =& $xml->children;
-		return true;
-	}
-/**
- * Returns a string representation of the XML object
- *
- * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
- * @return string XML data
- */
-	function compose($useHeader = true) {
-		if (!empty($this->__header)) {
-			$header =  '<'.'?'.$this->__header.' ?'.'>'."\n";
-		} else {
-			$header =  '<'.'?xml version="'.$this->version.'" encoding="'.$this->encoding.'" ?'.'>'."\n";
-		}
-		if (!$this->hasChildren() && !$useHeader) {
-			return null;
-		} elseif (!$this->hasChildren()) {
-			return $header;
-		}
-
-		$data = '';
-		foreach ($this->children as $i => $node) {
-			$data .= $this->children[$i]->__toString();
-		}
-
-		if ($useHeader) {
-			return $header.$data;
-		}
-		return $data;
-	}
-/**
- * If DEBUG is on, this method echoes an error message.
- *
- * @param string $msg Error message
- * @param integer $code Error code
- * @param integer $line Line in file
- */
-	function error($msg, $code = 0, $line = 0) {
-		if(DEBUG) {
-			echo $msg . " " . $code . " " . $line;
-		}
-	}
-/**
- * Returns a string with a textual description of the error code, or FALSE if no description was found. 
- *
- * @param integer $code
- * @return string Error message
- */
-	function getError($code) {
-		$r = @xml_error_string($code);
-		return $r;
-	}
-
-// Overridden functions from superclass
-
-/**
- * Enter description here...
- *
- * @return unknown
- */
-	function &next() {
-		return null;
-	}
-/**
- * Enter description here...
- *
- * @return null
- */
-	function &previous() {
-		return null;
-	}
-/**
- * Enter description here...
- *
- * @return null
- */
-	function &parent() {
-		return null;
-	}
-
-	function toString() {
-		return $this->compose();
-	}
-
-	function __destruct() {
-		if (is_resource($this->__parser)) {
-			xml_parser_free($this->__parser);
-		}
-	}
-}
-
-/**
  * XML node.
  *
  * Single XML node in an XML tree.
@@ -672,6 +388,290 @@ class XMLNode extends Object {
 			for($i = 0; $i < count($this->children); $i++) {
 				$this->children[$i]->__killParent(true);
 			}
+		}
+	}
+}
+
+/**
+ * XML handling.
+ *
+ * Operations on XML data.
+ *
+ * @package    cake
+ * @subpackage cake.cake.libs
+ * @since      CakePHP v .0.10.3.1400
+ */
+class XML extends XMLNode {
+
+/**
+ * Resource handle to XML parser.
+ *
+ * @var resource
+ */
+	var $__parser;
+/**
+ * File handle to XML indata file.
+ *
+ * @var resource
+ */
+	var $__file;
+/**
+ * Raw XML string data (for loading purposes)
+ *
+ * @var string
+ */
+	var $__rawData = null;
+
+/**
+ * XML document header
+ *
+ * @var string
+ */
+	var $__header = null;
+
+/**
+ * XML document version
+ *
+ * @var string
+ */
+	var $version = '1.0';
+
+/**
+ * XML document encoding
+ *
+ * @var string
+ */
+	var $encoding = 'UTF-8';
+
+/**
+ * Constructor.  Sets up the XML parser with options, gives it this object as
+ * its XML object, and sets some variables.
+ *
+ * @param string $input
+ */
+	function __construct($input = null, $options = array()) {
+		parent::__construct('root');
+		$this->__parser = xml_parser_create_ns();
+
+		xml_set_object($this->__parser, $this);
+		xml_parser_set_option($this->__parser, XML_OPTION_CASE_FOLDING, 0);
+		xml_parser_set_option($this->__parser, XML_OPTION_SKIP_WHITE, 1);
+
+		$this->children = array();
+
+		if($input != null) {
+			$vars = null;
+			if (is_string($input)) {
+				$this->load($input);
+			} elseif (is_array($input)) {
+				$vars = $this->__objectToNode(Set::map($input));
+			} elseif (is_object($input)) {
+				$vars = $this->__objectToNode($input);
+			}
+
+			if ($vars != null) {
+				$this->children = $vars;
+			}
+
+			if (!is_array($this->children)) {
+				$this->children = array($this->children);
+			}
+		}
+
+		foreach ($options as $key => $val) {
+			switch ($key) {
+				case 'version':
+					$this->version = $val;
+				break;
+				case 'encoding':
+					$this->encoding = $val;
+				break;
+			}
+		}
+	}
+
+/**
+ * Initialize XML object from a given XML string. Returns false on error.
+ *
+ * @param string $in
+ * @return boolean Success
+ */
+	function load($in) {
+		$this->__rawData = null;
+		$this->header = null;
+
+		if (is_string($in)) {
+
+			if(strstr($in, "<")) {
+				// Input is raw xml data
+				$this->__rawData = $in;
+			} else {
+				// Input is an xml file
+				if(strpos($in, '://') || file_exists($in)) {
+					$this->__rawData = @file_get_contents($in);
+					if ($this->__rawData == null) {
+						$this->error("XML file $in is empty or could not be read (possible permissions error).");
+						return false;
+					}
+				} else {
+					$this->error("XML file $in does not exist");
+					return false;
+				}
+			}
+			return $this->parse();
+
+		} elseif (is_object($in)) {
+		
+		}
+	}
+/**
+ * Parses and creates XML nodes from the __rawData property.
+ *
+ * @see load()
+ *
+ */
+	function parse() {
+		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
+
+		xml_parse_into_struct($this->__parser, $this->__rawData, $vals);
+		$xml = new XMLNode();
+
+		$count = count($vals);
+		for ($i = 0; $i < $count; $i++) {
+			$data = $vals[$i];
+			switch($data['type']) {
+				case "open" :
+					$tmpXML = new XMLNode();
+					$tmpXML->name = $data['tag'];
+
+					if(isset($data['value'])) {
+						$tmpXML->value = $data['value'];
+					}
+					if(isset($data['attributes'])) {
+						$tmpXML->attributes = $data['attributes'];
+					}
+
+					$tmpXML->setParent($xml);
+					$ct = count($xml->children);
+					$xml->children[$ct] = $tmpXML;
+					$xml =& $xml->children[$ct];
+				break;
+
+				case "close" :
+					$xml =& $xml->parent();
+				break;
+
+				case "complete" :
+					$tmpXML = new XMLNode();
+					$tmpXML->name = $data['tag'];
+
+					if(isset($data['value'])) {
+						$tmpXML->value = $data['value'];
+					}
+					if(isset($data['attributes'])) {
+						$tmpXML->attributes = $data['attributes'];
+					}
+
+					$tmpXML->__parent =& $xml;
+					$xml->children[] = $tmpXML;
+				break;
+				case 'cdata':
+					if (is_string($xml->value)) {
+						$xml->value = a($xml->value, $data['value']);
+					} else {
+						$xml->value[] = $data['value'];
+					}
+				break;
+			}
+		}
+		$this->children =& $xml->children;
+		return true;
+	}
+/**
+ * Returns a string representation of the XML object
+ *
+ * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
+ * @return string XML data
+ */
+	function compose($useHeader = true) {
+		if (!empty($this->__header)) {
+			$header =  '<'.'?'.$this->__header.' ?'.'>'."\n";
+		} else {
+			$header =  '<'.'?xml version="'.$this->version.'" encoding="'.$this->encoding.'" ?'.'>'."\n";
+		}
+		if (!$this->hasChildren() && !$useHeader) {
+			return null;
+		} elseif (!$this->hasChildren()) {
+			return $header;
+		}
+
+		$data = '';
+		foreach ($this->children as $i => $node) {
+			$data .= $this->children[$i]->__toString();
+		}
+
+		if ($useHeader) {
+			return $header.$data;
+		}
+		return $data;
+	}
+/**
+ * If DEBUG is on, this method echoes an error message.
+ *
+ * @param string $msg Error message
+ * @param integer $code Error code
+ * @param integer $line Line in file
+ */
+	function error($msg, $code = 0, $line = 0) {
+		if(DEBUG) {
+			echo $msg . " " . $code . " " . $line;
+		}
+	}
+/**
+ * Returns a string with a textual description of the error code, or FALSE if no description was found. 
+ *
+ * @param integer $code
+ * @return string Error message
+ */
+	function getError($code) {
+		$r = @xml_error_string($code);
+		return $r;
+	}
+
+// Overridden functions from superclass
+
+/**
+ * Enter description here...
+ *
+ * @return unknown
+ */
+	function &next() {
+		return null;
+	}
+/**
+ * Enter description here...
+ *
+ * @return null
+ */
+	function &previous() {
+		return null;
+	}
+/**
+ * Enter description here...
+ *
+ * @return null
+ */
+	function &parent() {
+		return null;
+	}
+
+	function toString() {
+		return $this->compose();
+	}
+
+	function __destruct() {
+		if (is_resource($this->__parser)) {
+			xml_parser_free($this->__parser);
 		}
 	}
 }
