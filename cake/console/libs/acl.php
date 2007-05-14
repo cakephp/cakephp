@@ -351,7 +351,8 @@ class AclShell extends Shell {
 						"\t\t\t- <model>.<id> - The node will be bound to a specific record of the given model\n" .
 						"\t\t\t- <alias> - The node will be given a string alias (or path, in the case of <parent>),\n" .
 						"\t\t\t  i.e. 'John'.  When used with <parent>, this takes the form of an alias path,\n" .
-						"\t\t\t  i.e. <group>/<subgroup>/<parent>.\n",
+						"\t\t\t  i.e. <group>/<subgroup>/<parent>.\n" .
+						"\t\tTo add a node at the root level, enter 'root' or '/' as the <parent> parameter.",
 
 			'delete' =>	"\tdelete aro|aco <node>\n" .
 						"\t\tDeletes the ACL object with the given <node> reference (see 'create' for info on node references).\n",
@@ -396,7 +397,7 @@ class AclShell extends Shell {
 				$this->out("{$cmd}\n\n");
 			}
 		} elseif (isset($commands[low($this->args[1])])) {
-			$this->out($commands[low($this->args[1])]);
+			$this->out($commands[low($this->args[1])] . "\n\n");
 		} else {
 			$this->out("Command '" . $this->args[1] . "' not found");
 		}
@@ -407,7 +408,7 @@ class AclShell extends Shell {
  */
 	function checkNodeType() {
 		if ($this->args[1] != 'aco' && $this->args[1] != 'aro') {
-			$this->displayError("Missing/Unknown node type: '".$this->args[0]."'", 'Please specify which ACL object type you wish to create.');
+			$this->displayError("Missing/Unknown node type: '".$this->args[1]."'", 'Please specify which ACL object type you wish to create.');
 		}
 	}
 /**
