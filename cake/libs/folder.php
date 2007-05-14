@@ -604,35 +604,35 @@ class Folder extends Object{
  * @see read
  */
 	function ls($sort = true, $exceptions = false) {
-		$this->read($sort, $exceptions);
+		return $this->read($sort, $exceptions);
 	}
 /**
  * nix flavored alias
  * @see create
  */
 	function mkdir($pathname, $mode = 0755) {
-		$this->create($pathname, $mode);
+		return $this->create($pathname, $mode);
 	}
 /**
  * nix flavored alias
  * @see copy
  */
 	function cp($options) {
-		$this->copy($options);
+		return $this->copy($options);
 	}		
 /**
  * nix flavored alias
  * @see move
  */
 	function mv($options) {
-		$this->move($options);
+		return $this->move($options);
 	}
 /**
  * nix flavored alias
  * @see delete
  */
 	function rm($path) {
-		$this->delete($path);
+		return $this->delete($path);
 	}			
 /**
  *
@@ -640,7 +640,7 @@ class Folder extends Object{
  * @see chmod
  */
 	function chmodr($pathname, $mode = 0755) {
-		$this->chmod($pathname, $mode);
+		return $this->chmod($pathname, $mode);
 	}
 /**
  *
@@ -648,7 +648,7 @@ class Folder extends Object{
  * @see mkdir or create
  */
 	function mkdirr($pathname, $mode = 0755) {
-		$this->create($pathname, $mode);
+		return $this->create($pathname, $mode);
 	}
 }
 ?>
