@@ -78,7 +78,7 @@ class ProjectTask extends Shell {
 			exit();
 		}
 
-		if (!is_dir($working)) {
+		if (!is_dir($root)) {
 			$this->err('The directory path you supplied can not be created. Please try again.');
 		}
 
