@@ -30,6 +30,9 @@ if(!class_exists('File')) {
 	uses('file');
 }
 class ProjectTask extends Shell {
+	
+	
+	function initialize() {}
 
 /**
  * Checks that given project path does not already exist, and
@@ -40,31 +43,35 @@ class ProjectTask extends Shell {
 	function execute($project = null) {
 		if($project === null) {
 			$project = $this->params['app'];
-			if(isset($this->args[1])) {
-				$project = $this->args[1];
+			if(isset($this->args[0])) {
+				$project = $this->args[0];				
 				$this->Dispatch->shiftArgs();
 			}
 		}
 
 		$working = $this->params['working'];
+		$app = basename($working);
+		$root = dirname($working);
+		
 		if($project) {
 			if($project{0} == '/') {
 				$app = basename($project);
-				$working = dirname($project);
+				$root = dirname($project);
 			} else {
 				$app = $project;
 			}
-			$path = $working . DS . basename($app);
-
-			while (is_dir($path) === true && config('database') === true) {
+			$path = $root . DS . $app;
+			
+			$response = false;
+			while ($response == false && is_dir($path) === true && config('database') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
-				if(low($response) == 'n') {
-					$this->execute(false);
+				if(low($response) === 'n') {
+					$this->out('Bake Aborted');
 					exit();
 				}
 			}
 		}
-
+		
 		while (!$project) {
 			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$working . DS . "myapp", null, $working . DS . 'myapp');
 			$this->execute($project);
@@ -128,19 +135,22 @@ class ProjectTask extends Shell {
 				$this->out(__(sprintf("Created: %s in %s", $app, $path), true));
 				$this->hr();
 
-				$this->__defaultHome($path, $app);
-
-				$this->out('Welcome page created');
+				if($this->__defaultHome($path, $app)) {
+					$this->out('Welcome page created');
+				} else {
+					$this->out('The Welcome page was NOT created');
+				}
 
 				if($this->__generateHash($path) === true ){
 					$this->out('Random hash key created for CAKE_SESSION_STRING');
 				} else {
 					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 				}
-
-				if($this->__setCake($path) === true ){
+				
+				$corePath = $this->__setCake($path);
+				if($corePath === true ){
 					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
-				} else {
+				} else if($corePath === false){
 					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
 				}
 
@@ -204,7 +214,7 @@ class ProjectTask extends Shell {
  * @return bool
  */
 	function __setCake($path){
-		if(ROOT !== CAKE_CORE_INCLUDE_PATH) {
+		if(dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
