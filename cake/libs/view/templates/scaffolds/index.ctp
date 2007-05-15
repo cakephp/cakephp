@@ -25,9 +25,6 @@
  */
 ?>
 <h2><?php echo $humanPluralName;?></h2>
-<?php
-$modelObj =& ClassRegistry::getObject($modelKey);
-?>
 <p><?php
 echo $paginator->counter(array(
 'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
@@ -69,7 +66,7 @@ if(is_array($data)) {
 						} else {
 							$displayText = $row[$alias[$value['model']]][$field];
 						}
-						echo $html->link($displayText, $path . $otherControllerPath . "/view/".$row[$modelClass][$field]);
+						echo $html->link($displayText, array('controller'=> $otherControllerPath, 'action'=>'view', $row[$modelClass][$field]));
 					} else {
 						echo $row[$modelClass][$field];
 					}
@@ -77,7 +74,7 @@ if(is_array($data)) {
 			</td>
 <?php } ?>
 		<td class="actions">
-			<?php $id = $row[$modelClass][$modelObj->primaryKey]; ?>
+			<?php $id = $row[$modelClass][$primaryKey]; ?>
 			<?php echo $html->link(__('View', true), array('action' => 'view', $id)) ?>
 			<?php echo $html->link(__('Edit', true), array('action' => 'edit', $id)) ?>
 			<?php echo $html->link(__('Delete', true), array('action' => 'delete', $id), null, sprintf(__("Are you sure you want to delete id %s?", true), $id)) ?>
@@ -95,16 +92,12 @@ if(is_array($data)) {
 </div>
 <div class="actions">
 	<ul>
-		<?php 
-			echo '<li>'.$html->link(__('New ', true).$humanSingularName, array('action' => 'add')).'</li>'; 
-			
-			foreach($alias as $nav) {
-				if(!strpos($nav, $modelClass)) {
-					$navKey = Inflector::pluralize(Inflector::underscore($nav));
-					echo '<li>'.$html->link(Inflector::humanize($navKey), array('controller'=> $navKey)).'</li>';
-				}
+		<?php
+			echo '<li>'.$html->link(__('New ', true).$humanSingularName, array('action' => 'add')).'</li>';
+
+			foreach($linked as $name => $controller) {
+				echo '<li>'.$html->link(Inflector::humanize($controller), array('controller'=> $controller)).'</li>';
 			}
-			
 		?>
 	</ul>
 </div>

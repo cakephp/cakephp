@@ -34,7 +34,7 @@ echo $form->end(__('Save', true)); ?>
 		<?php
 			if($formName == 'Edit') {
 				echo "<li>".$html->link(__('Delete  ', true).$humanSingularName, array('action' => 'delete', $data[$modelClass][$primaryKey]), null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
-				
+
 				foreach($fieldNames as $field => $value) {
 					if(isset($value['foreignKey'])) {
 						echo '<li>' . $html->link(__('View ', true) . Inflector::humanize($value['controller']), array('action' => 'index')) . '</li>';
@@ -42,14 +42,11 @@ echo $form->end(__('Save', true)); ?>
 					}
 				}
 			}
-			
+
 			echo "<li>".$html->link($humanPluralName, array('action' => 'index'))."</li>";
-			
-			foreach($alias as $nav) {
-				if(!strpos($nav, $modelClass)) {
-					$navKey = Inflector::pluralize(Inflector::underscore($nav));
-					echo '<li>'.$html->link(Inflector::humanize($navKey), array('controller'=> $navKey)).'</li>';
-				}
+
+			foreach($linked as $name => $controller) {
+				echo '<li>'.$html->link(Inflector::humanize($controller), array('controller'=> $controller)).'</li>';
 			}
 		?>
 	</ul>

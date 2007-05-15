@@ -24,9 +24,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<?php
-$modelObj =& ClassRegistry::getObject($modelKey);
-?>
 <h2><?php echo sprintf(__("View %s", true), $humanSingularName)?></h2>
 <dl>
 <?php
@@ -45,8 +42,12 @@ foreach($fieldNames as $field => $value) {
 		$othereDisplayField = $otherModelObj->getDisplayField();
 		$displayText = $data[$alias[$value['model']]][$othereDisplayField];
 		if(!empty($data[$modelClass][$field]) && (!empty($displayText))) {
-			echo "<dd {$class}>".$html->link($displayText, $path . $otherControllerPath.'/view/'
-							.$data[$modelClass][$field] )."</dd>";
+			echo "<dd {$class}>"
+					.$html->link($displayText,
+							array('controller'=> $otherControllerPath, 'action'=>'view',
+							$data[$modelClass][$field])
+							)
+					."</dd>";
 		} else {
 			echo "<dd {$class}>&nbsp;</dd>";
 		}
@@ -62,8 +63,8 @@ foreach($fieldNames as $field => $value) {
 <div class="nav">
 	<ul>
 		<?php
-		echo '<li>' . $html->link(sprintf(__("Edit %s", true), $humanSingularName), array('action' => 'edit', $data[$modelClass][$modelObj->primaryKey])) . '</li>';
-		echo '<li>' . $html->link(sprintf(__("Delete %s", true), $humanSingularName), array('action' => 'delete', $data[$modelClass][$modelObj->primaryKey]), null, sprintf(__("Are you sure you want to delete id %s?", true), $data[$modelClass][$modelObj->primaryKey])) . '</li>';
+		echo '<li>' . $html->link(sprintf(__("Edit %s", true), $humanSingularName), array('action' => 'edit', $data[$modelClass][$primaryKey])) . '</li>';
+		echo '<li>' . $html->link(sprintf(__("Delete %s", true), $humanSingularName), array('action' => 'delete', $data[$modelClass][$primaryKey]), null, sprintf(__("Are you sure you want to delete id %s?", true), $data[$modelClass][$primaryKey])) . '</li>';
 		echo '<li>' . $html->link(sprintf(__("List %s", true), $humanPluralName), array('action' => 'index')) . '</li>';
 		echo '<li>' . $html->link(sprintf(__("New %s", true), $humanSingularName), array('action' => 'add')) . '</li>';
 
@@ -78,7 +79,7 @@ foreach($fieldNames as $field => $value) {
 <!--hasOne relationships -->
 <?php
 $j = 0;
-foreach ($modelObj->hasOne as $associationName => $relation) {
+foreach ($hasOne as $associationName => $relation) {
 	$otherModelKey = Inflector::underscore($relation['className']);
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
@@ -120,7 +121,6 @@ echo "</div>";
 
 <!--hasMany and  hasAndBelongsToMany relationships -->
 <?php
-$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
 foreach($relations as $associationName => $relation) {
 
 	$otherModelKey = Inflector::underscore($relation['className']);
@@ -151,7 +151,7 @@ foreach($relations as $associationName => $relation) {
 				echo "<td>".$value."</td>";
 			}
 
-?>				
+?>
 				<td class="actions">
 					<?php echo $html->link(__('View', true), array('controller'=> $otherControllerPath, 'action'=>'view', $row[$otherModelObj->primaryKey]))?>
 					<?php echo $html->link(__('Edit', true), array('controller'=> $otherControllerPath, 'action'=>'edit', $row[$otherModelObj->primaryKey]))?>

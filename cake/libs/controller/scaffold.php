@@ -175,20 +175,27 @@ class Scaffold extends Object {
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
 		$this->controller->pageTitle= __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
-		$path = '/';
-		$this->controller->set('path', $path);
 		$this->controller->set('controllerName', $this->name);
 		$this->controller->set('controllerAction', $this->action);
 		$this->controller->set('modelClass', $this->modelClass);
 		$this->controller->set('modelKey', $this->modelKey);
-		$this->controller->set('viewPath', $this->viewPath);
 		$this->controller->set('humanSingularName', Inflector::humanize($this->modelKey));
 		$this->controller->set('humanPluralName', Inflector::humanize($this->viewPath));
+
 		$alias = array();
 		if(!empty($this->ScaffoldModel->alias)) {
 			$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
 		}
 		$this->controller->set('alias', $alias);
+
+		$linked = array();
+		foreach($this->ScaffoldModel->tableToModel as $model){
+			if($model !== $this->modelClass) {
+				$linked[$model] = Inflector::tableize($model);
+			}
+		}
+		$this->controller->set('linked', $linked);
+
 		$this->controller->set('primaryKey', $this->ScaffoldModel->primaryKey);
 		$this->controller->set('displayField', $this->ScaffoldModel->getDisplayfield());
 		$this->__scaffold($params);
@@ -213,6 +220,8 @@ class Scaffold extends Object {
 				return $this->controller->flash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
 																		'/' . Inflector::underscore($this->controller->viewPath));
 			}
+			$this->controller->set('hasOne', $this->ScaffoldModel->hasOne);
+			$this->controller->set('relations', $relations = array_merge($this->ScaffoldModel->hasMany, $this->ScaffoldModel->hasAndBelongsToMany));
 			$this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set('data', $this->controller->data);
 			$this->controller->set('fieldNames', $this->controller->generateFieldNames($this->controller->data, false));
