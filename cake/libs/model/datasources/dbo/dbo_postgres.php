@@ -71,7 +71,13 @@ class DboPostgres extends DboSource {
 	var $startQuote = '"';
 
 	var $endQuote = '"';
-
+/**
+ * Contains mappings of custom auto-increment sequences, if a table uses a sequence name
+ * other than what is dictated by convention.
+ *
+ * @var array
+ */
+	var $_sequenceMap = array();
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -152,6 +158,9 @@ class DboPostgres extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	function &describe(&$model) {
+		if (isset($model->sequence)) {
+			$this->_sequenceMap[$this->fullTableName($model, false)] = $model->sequence;
+		}
 
 		$cache = parent::describe($model);
 		if ($cache != null) {
@@ -345,7 +354,9 @@ class DboPostgres extends DboSource {
 			}
 		}
 
-		if (preg_match('/^nextval\(\'(\w+)\'/', $sourceinfo['default'], $matches)) {
+		if (isset($this->_sequenceMap[$source])) {
+			$seq = $this->_sequenceMap[$source];
+		} elseif (preg_match('/^nextval\(\'(\w+)\'/', $sourceinfo['default'], $matches)) {
 			$seq = $matches[1];
 		} else {
 			$seq = "{$source}_{$field}_seq";
