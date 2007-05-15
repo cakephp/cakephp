@@ -408,6 +408,7 @@ class ShellDispatcher {
 		if(!empty($this->params['working'])) {
 			$root = dirname($this->params['working']);
 			$app = basename($this->params['working']);
+			unset($this->params['working']);
  		}
 
 		if(!empty($this->params['app'])) {
@@ -418,6 +419,7 @@ class ShellDispatcher {
 				$root = $root . DS . $app;
 				$app = $this->params['app'];
  			}
+			unset($this->params['app']);
 		}
 
 
