@@ -184,7 +184,7 @@ class ProjectTask extends Shell {
 	function __defaultHome($dir, $app) {
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
-		$this->createFile($path.'home.ctp', $output);
+		return $this->createFile($path.'home.ctp', $output);
 	}
 /**
  * generates and writes CAKE_SESSION_STRING
