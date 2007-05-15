@@ -143,7 +143,6 @@ class Shell extends Object {
  * @return void
  */
 	function _welcome() {
-		$this->hr();
 		$this->out('App : '. APP_DIR);
 		$this->out('Path: '. ROOT . DS . APP_DIR);
 		$this->hr();
@@ -229,7 +228,7 @@ class Shell extends Object {
 			}
 
 			$this->taskClass = $tasks[0];
-			
+
 			foreach($tasks as $taskName) {
 				$taskKey = Inflector::underscore($taskName);
 				$loaded = false;
@@ -240,20 +239,20 @@ class Shell extends Object {
 						break;
 					}
 				}
-				
+
 				if ($loaded) {
 					$taskClass = Inflector::camelize($taskName.'Task');
 					if(!class_exists($taskClass)) {
 						require_once $taskPath;
 					}
-				
+
 					if(class_exists($taskClass) &&  !isset($this->{$taskName})) {
 						$task =& new $taskClass($this->Dispatch);
 						$this->taskNames[] = $taskName;
 						$this->{$taskName} =& $task;
 						ClassRegistry::addObject($taskKey, $task);
-					} 
-				
+					}
+
 					if(!isset($this->{$taskName})) {
 						$this->err("Task '".$taskName."' could not be loaded");
 						exit();
@@ -496,6 +495,6 @@ class Shell extends Object {
  */
 	function _pluralHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
-	}	
+	}
 }
 ?>

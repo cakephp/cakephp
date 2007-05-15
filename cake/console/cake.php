@@ -237,7 +237,7 @@ class ShellDispatcher {
  */
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
-
+		$this->stdout("---------------------------------------------------------------");
 		$protectedCommands = array('initialize', 'main','in','out','err','hr',
 									'createFile', 'isDir','copyDir','Object','toString',
 									'requestAction','log','cakeError', 'ShellDispatcher',
@@ -404,38 +404,29 @@ class ShellDispatcher {
 
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
-		$working = dirname(dirname(dirname(__FILE__)));
 
 		if(!empty($this->params['working'])) {
+			$root = dirname($this->params['working']);
 			$app = basename($this->params['working']);
-			$working = dirname($this->params['working']) . DS . basename($this->params['working']);
-			$root = dirname($working);
-			unset($this->params['working']);
  		}
 
 		if(!empty($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
+				$root = dirname($this->params['app']);
 				$app = basename($this->params['app']);
-				$working = $this->params['app'];
 			} else {
+				$root = $root . DS . $app;
 				$app = $this->params['app'];
  			}
-			unset($this->params['app']);
 		}
 
-		if(empty($this->params['app']) && in_array($app, array('cake', 'console', 'app'))){
+
+		if(in_array($app, array('cake', 'console')) || realpath($root.DS.$app) === dirname(dirname(dirname(__FILE__)))) {
+			$root = dirname(dirname(dirname(__FILE__)));
 			$app = 'app';
-			$working = dirname(dirname(__FILE__));
 		}
 
-		if($app !== basename($working) && realpath($working) !== dirname(dirname(__FILE__))) {
-			$root = $working;
-		}
-
-		if($app === basename($working) && realpath($working) === dirname(dirname(dirname(__FILE__)))) {
-			$app = 'app';
-			$root = $working;
-		}
+		$working = $root . DS . $app;
 
 		$this->params = array_merge(array('app'=> $app, 'root'=> $root, 'working'=> $working), $this->params);
 	}
@@ -458,13 +449,18 @@ class ShellDispatcher {
  * @return void
  */
 	function help() {
-		$this->stdout("\nPaths:");
+		$this->stdout("Current Paths:");
 		$this->stdout(" -working: " . $this->params['working']);
 		$this->stdout(" -root: " . ROOT);
 		$this->stdout(" -app: ". APP);
 		$this->stdout(" -core: " . CORE_PATH);
+		$this->stdout("");
+		$this->stdout("Changing Paths:");
+		$this->stdout("your working path should be the same as your application path");
+		$this->stdout("to change your path use the '-app' param.");
+		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
 
-		$this->stdout("\nAvailable Scripts:");
+		$this->stdout("\nAvailable Shells:");
 		foreach($this->shellPaths as $path) {
 			if(is_dir($path)) {
 				$shells = listClasses($path);
@@ -475,14 +471,14 @@ class ShellDispatcher {
 				} else {
 					foreach ($shells as $shell) {
 						if ($shell != 'shell.php') {
-							$this->stdout("\t - " . r('.php', '', $shell));
+							$this->stdout("\t " . r('.php', '', $shell));
 						}
 					}
 				}
 			}
 		}
-		$this->stdout("\nTo run a command, type 'cake script_name [args]'");
-		$this->stdout("To get help on a specific command, type 'cake script_name help'");
+		$this->stdout("\nTo run a command, type 'cake shell_name [args]'");
+		$this->stdout("To get help on a specific command, type 'cake shell_name help'");
 		exit();
 	}
 }
