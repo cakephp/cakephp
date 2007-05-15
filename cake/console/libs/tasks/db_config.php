@@ -44,18 +44,16 @@ class DbConfigTask extends Shell {
 	}
 
 	function __interactive() {
-		$this->hr();
+		
 		$this->out('Database Configuration:');
-		$this->hr();
-
 		$driver = '';
 		while ($driver == '') {
-			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc', 'oracle', 'db2'), 'mysql');
+			$driver = $this->in('Driver:', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc', 'oracle', 'db2'), 'mysql');
 		}
 
 		$persistent = '';
 		while ($persistent == '') {
-			$persistent = $this->in('Use persistent connection', array('y', 'n'), 'n');
+			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
 		}
 		if(low($persistent) == 'n') {
 			$persistent = 'false';
@@ -65,18 +63,18 @@ class DbConfigTask extends Shell {
 
 		$host = '';
 		while ($host == '') {
-			$host = $this->in('What is the hostname for the database server?', null, 'localhost');
+			$host = $this->in('Database Host:', null, 'localhost');
 		}
 
 		$login = '';
 		while ($login == '') {
-			$login = $this->in('What is the database username?', null, 'root');
+			$login = $this->in('User:', null, 'root');
 		}
 
 		$password = '';
 		$blankPassword = false;
 		while ($password == '' && $blankPassword == false) {
-			$password = $this->in('What is the database password?');
+			$password = $this->in('Password:');
 			if ($password == '') {
 				$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
 				if($blank == 'y')
@@ -88,20 +86,24 @@ class DbConfigTask extends Shell {
 
 		$database = '';
 		while ($database == '') {
-			$database = $this->in('What is the name of the database you will be using?', null, 'cake');
+			$database = $this->in('Database Name:', null, 'cake');
 		}
 
 		$prefix = '';
 		while ($prefix == '') {
-			$prefix = $this->in('Enter a table prefix?', null, 'n');
+			$prefix = $this->in('Table Prefix?', null, 'n');
 		}
 		if(low($prefix) == 'n') {
 			$prefix = null;
 		}
+		
 		$config = compact('driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix');
 		while($this->__verify($config) == false) {
 			$this->__interactive();
 		}
+		
+		config('database');
+		return true;
 	}
 
 	function __verify($config) {

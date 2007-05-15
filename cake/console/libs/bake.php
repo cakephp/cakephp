@@ -45,7 +45,7 @@ class BakeShell extends Shell {
 		}
 
 		if(!config('database')) {
-			$this->out('Your database configuration was not found. Take a moment to create one:');
+			$this->out("Your database configuration was not found. Take a moment to create one.\n");
 			$this->DbConfig->execute();
 		}
 		
