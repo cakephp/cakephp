@@ -96,8 +96,6 @@ class CakeSocket extends Object {
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);
 		}
-		
-		return $this->connect();
 	}
 /**
  * Connect the socket to the given host and port.
@@ -232,8 +230,12 @@ class CakeSocket extends Object {
  * @return boolean Success
  */
 	function disconnect() {
-		$this->connected = !@fclose($this->connection);
-		
+		if (!is_resource($this->connection)) {
+			$this->connected = false;
+			return true;
+		}
+		$this->connected = !fclose($this->connection);
+
 		if (!$this->connected) {
 			$this->connection = null;
 		}

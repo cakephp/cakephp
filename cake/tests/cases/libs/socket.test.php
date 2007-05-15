@@ -40,7 +40,7 @@ class SocketTest extends UnitTestCase {
 	}
 
 	function testSocketConnection() {
-		$this->assertTrue($this->socket->connected);
+		$this->assertFalse($this->socket->connected);
 		$this->socket->disconnect();
 		$this->assertFalse($this->socket->connected);
 		$this->socket->connect();

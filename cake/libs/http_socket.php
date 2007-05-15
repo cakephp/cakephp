@@ -41,417 +41,691 @@ class HttpSocket extends CakeSocket {
  * @var string
  */
 	var $description = 'HTTP-based DataSource Interface';
+	
+/**
+ * When one activates the $quirksMode by setting it to true, all checks meant to enforce RFC 2616 (HTTP/1.1 specs)
+ * will be disabled and additional measures to deal with non-standard responses will be enabled.
+ *
+ * @var boolean
+ */
+	var $quirksMode = false;
+
 /**
  * The default values to use for a request
  *
  * @var array
  */
 	var $request = array(
-	    'method' => 'GET',
-	    'uri' => array(
-	    	'scheme' => 'http',
-			'user' => null,
-			'password' => null,
+		'method' => 'GET',
+		'uri' => array(
+			'scheme' => 'http',
 			'host' => null,
 			'port' => 80,
-			'path' => '/',
-			'query' => null
-	    ),
-	    'auth' => array(
-	    	'method' => 'basic'
-    		, 'user' => null
-    		, 'password' => null    		
-	    ),
-	    'version' => '1.1',
-	    'body' => '',
-	    'requestLine' => null,
-	    'header' => array(
-	        'Connection' => 'close', 'User-Agent' => 'CakePHP'
-	    ),
+			'user' => null,
+			'pass' => null,
+			'path' => null,
+			'query' => null,
+			'fragment' => null
+		),
+		'auth' => array(
+			'method' => 'basic',
+			'user' => null,
+			'pass' => null
+		),
+		'version' => '1.1',
+		'body' => '',
+		'line' => null,
+		'header' => array(
+			'Connection' => 'close',
+			'User-Agent' => 'CakePHP'
+		),
 		'raw' => null
-	);	
-/**
- * The default strucutre for storing the response
- *
- * @var unknown_type
- */
-	var $response = array(
-	    'raw' => '',
-	    'rawHeader' => '',
-	    'rawBody' => '',
-	    'statusLine' => '',
-	    'code' => '',
-	    'header' => array(),
-	    'body' => ''
 	);
-	
-    var $config = array();
+/**
+* The default structure for storing the response
+*
+* @var array
+*/
+	var $response = array(
+		'raw' => array(
+			'status-line' => null,
+			'header' => null,
+			 'body' => null,
+			 'response' => null
+		),
+		'status' => array(
+			'http-version' => null,
+			'code' => null,
+			'reason-phrase' => null
+		),
+		'header' => array(),
+		'body' => ''
+	);
 
 /**
- * Base configuration settings for the socket connection
+ * Default configuration settings for the HttpSocket
  *
  * @var array
  */
-	var $_baseConfig = array(
-		'persistent'	=> false,
-		'host'			=> 'localhost',
-		'port'			=> 80,
-		'scheme'		=> 'http',
-		'timeout'		=> 30,
-		'authMethod'	=> 'basic',
-		'user'			=> null,
-		'password'		=> null,
+	var $config = array(
+		'persistent' => false,
+		'host' 		 => 'localhost',
+		'protocol'   => 'tcp',
+		'port' 		 => 80,
+		'timeout' 	 =>	30,
+		'request' => array(
+			'uri' => array(
+				'scheme' => 'http',
+				'host' => 'localhost',
+				'port' => 80
+			),
+			'auth' => array(
+				'method' => 'basic',
+				'user' => null,
+				'pass' => null
+			)
+		)
 	);
-/**
- * The line break type to use for building the header. According to "RFC 2616 - Hypertext Transfer
- * Protocol -- HTTP/1.1", clients MUST accept CRLF, LF and CR if used consistently.
- *
- * @var string
- */
-	var $headerSeparator = "\r\n";	
-/**
- * Called when creating a new instance of this object
- *
- * @param array $config Socket configuration, which will be merged with the base configuration
- */
-	function __construct($config = array()) {
-		parent::__construct();
 
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+	var $lineBreak = "\r\n";
+	
+	function __construct($config = array()) {
 		if (is_string($config)) {
-			$uri = $this->parseURI($config);
-			
-			$config = array_intersect_key($uri, $this->_baseConfig);
+			$this->configUri($config);
+		} elseif (is_array($config)) {
+			$this->config = Set::merge($this->config, $config);
 		}
-		$this->config = am($this->_baseConfig, $config);
+		parent::__construct($this->config);
 	}
-			
-	function parseURI($uri = null, $overwrite = array()) {
-		if (is_array($uri)) {
-			return $uri;
+
+	function request($request = array()) {
+		$this->reset(false);
+
+		if (is_string($request)) {
+			$request = array('uri' => $request);
+		} elseif (!is_array($request)) {
+			return false;
+		}
+
+		if (isset($request['host'])) {
+			$host = $request['host'];
+			unset($request['host']);
+		}
+
+		if (is_string($request['uri']) && !preg_match('/^.+:\/\/|\*|^\//', $request['uri'])) {
+			$request['uri'] = 'http://'.$request['uri'];
+		}
+
+		$request['uri'] = $this->parseUri($request['uri']);
+		$this->request = Set::merge($this->request, $this->config['request'], $request);
+		$this->configUri($this->request['uri']);
+
+		if (isset($host)) {
+			$this->config['host'] = $host;
+		}
+
+		if (is_array($this->request['header'])) {
+			$this->request['header'] = $this->parseHeader($this->request['header']);
+			$this->request['header'] = am(array('Host' => $this->request['uri']['host']), $this->request['header']);
+		}		
+
+		if (is_array($this->request['body'])) {
+			$this->request['body'] = $this->httpSerialize($this->request['body']);
+		}
+
+		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Type'])) {
+			$this->request['header']['Content-Type'] = 'application/x-www-form-urlencoded';
+		}
+
+		if (!empty($this->request['body']) && !isset($this->request['header']['Content-Length'])) {
+			$this->request['header']['Content-Length'] = strlen($this->request['body']);
+		}
+
+		$this->request['header'] = $this->buildHeader($this->request['header']);
+
+		if (empty($this->request['line'])) {
+			$this->request['line'] = $this->buildRequestLine($this->request);
+		}
+
+		if ($this->quirksMode === false && $this->request['line'] === false) {
+			return $this->response = false;
+		}
+
+		if ($this->request['line'] !== false) {
+			$this->request['raw'] = $this->request['line'];
+		}
+
+		if ($this->request['header'] !== false) {
+			$this->request['raw'] .= $this->request['header'];
+		}
+
+		$this->request['raw'] .= "\r\n";
+		$this->request['raw'] .= $this->request['body'];
+		$this->write($this->request['raw']);
+
+		$response = null;
+		while ($data = $this->read()) {
+			$response .= $data;
+		}
+
+		$this->response = $this->parseResponse($response);
+		return $this->response['body'];
+	}
+
+	function get($uri = null, $query = array(), $request = array()) {		
+		if (!empty($query)) {
+			$uri =$this->parseUri($uri);
+			if (isset($uri['query'])) {
+				$uri['query'] = am($uri['query'], $query);
+			} else {
+				$uri['query'] = $query;
+			}
+			$uri = $this->buildUri($uri);
 		}
 	
-		if (empty($uri)) {
-			$uri = $this->config['host'];
-		} elseif (strpos($uri, '/') === 0) {
-			$uri = $this->config['scheme'].'://'.$this->config['host'].$uri;
-		}
-		
-		/*
-		$Validation =& new Validation();
-		if (!$Validation->url($uri)) {
+		$request = Set::merge(array('method' => 'GET', 'uri' => $uri), $request);
+		return $this->request($request);
+	}
+
+	function post($uri = null, $data = array(), $request = array()) {
+		$request = Set::merge(array('method' => 'POST', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+	function put($uri = null, $data = array(), $request = array()) {
+		$request = Set::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+	function delete($uri = null, $data = array(), $request = array()) {
+		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+	function parseResponse($message) {
+		if (is_array($message)) {
+			return $message;
+		} elseif (!is_string($message)) {
 			return false;
 		}
-		*/
-			
-		if (!is_array($uri)) {
-			$uri = parse_url($uri);
+
+		static $responseTemplate;		
+		if (empty($responseTemplate)) {
+			$classVars = get_class_vars(__CLASS__);
+			$responseTemplate = $classVars['response'];
 		}
-		
-		$uri = am($uri, $overwrite);
-				
-		if (!isset($uri['scheme']) || !in_array($uri['scheme'], array('http', 'https'))) {
-			return false;
-		}
-		
-		if (isset($uri['query']) && is_string($uri['query'])) {
-			$items = explode('&', $uri['query']);
-			$query = array();
-			
-			foreach ($items as $item) {
-				if (isset($item[1]) && !empty($item[0])) {
-					list($key, $value) = explode('=', $item);
-					$query[urldecode($key)] = urldecode($value);
-				}
+
+		$response = $responseTemplate;
+
+		if (preg_match("/(.+\r\n)(.*)(?<=\r\n)\r\n(.+)\$/DUs", $message, $match)) {
+			list($response['raw']['response'], $response['raw']['status-line'], $response['raw']['header'], $response['raw']['body']) = $match;
+
+			if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $response['raw']['status-line'], $match)) {
+				$response['status']['http-version'] = $match[1];
+				$response['status']['code'] = (int)$match[2];
+				$response['status']['reason-phrase'] = $match[3];
 			}
-			
-			$uri['query'] = $query;
+
+			$response['header'] = $this->parseHeader($response['raw']['header']);
+			$decoded = $this->decodeBody($response['raw']['body'], @$response['header']['Transfer-Encoding']);
+			$response['body'] = $decoded['body'];
+			if (!empty($decoded['header'])) {
+				$response['header'] = $this->parseHeader($this->buildHeader($response['header']).$this->buildHeader($decoded['header']));
+			}
+
+		} else {
+			return false;
 		}
-		
-		return $uri;
+
+		foreach ($response['raw'] as $field => $val) {
+			if ($val === '') {
+				$response['raw'][$field] = null;
+			}
+		}
+
+		return $response;
+	}
+/**
+ * Generic function to decode a $body with a given $encoding. Returns either an array with the keys
+ * 'body' and 'header' or false on failure.
+ *
+ * @param string $body A string continaing the body to decode
+ * @param mixed $encoding Can be false in case no encoding is being used
+ * @return mixed Array or false
+ */
+	function decodeBody($body, $encoding = 'chunked') {
+		if (!is_string($body)) {
+			return false;
+		}
+		if (empty($encoding)) {
+			return array('body' => $body, 'header' => false);
+		}
+		$decodeMethod = 'decode'.Inflector::camelize(r('-', '_', $encoding)).'Body';
+
+		if (!is_callable(array(&$this, $decodeMethod))) {
+			if (!$this->quirksMode) {
+				trigger_error('HttpSocket::decodeBody - Unkown encoding: "'.h($encoding).'". Activate quirks mode to surpress error.', E_USER_WARNING);
+			}
+			return array('body' => $body, 'header' => false);
+		}
+		return $this->{$decodeMethod}($body);
+	}
+/**
+ * Decodes a chunked message $body and returns either an array with the keys 'body' and 'header' or false as
+ * a result.
+ *
+ * @param string $body A string continaing the chunked body to decode
+ * @return mixed Array or false
+ */
+	function decodeChunkedBody($body) {
+		if (!is_string($body)) {
+			return false;
+		}
+
+		$decodedBody = null;	
+		$chunkLength = null;
+
+		while ($chunkLength !== 0) {
+			if (!preg_match("/^([0-9a-f]+)(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
+				if (!$this->quirksMode) {
+					trigger_error('HttpSocket::decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.', E_USER_WARNING);
+					return false;
+				}
+				break;
+			}
+
+			@list($chunkSize, $hexLength, $chunkExtensionName, $chunkExtensionValue) = $match;
+			$body = substr($body, strlen($chunkSize));
+			$chunkLength = hexdec($hexLength);
+			$chunk = substr($body, 0, $chunkLength);
+			if (!empty($chunkExtensionName)) {
+				/**
+				 * @todo See if there are popular chunk extensions we should implement
+				 */
+			}
+			$decodedBody .= $chunk;
+			if ($chunkLength !== 0) {
+				$body = substr($body, $chunkLength+strlen("\r\n"));
+			}
+		}
+
+		$entityHeader = false;
+		if (!empty($body)) {
+			$entityHeader = $this->parseHeader($body);
+		}
+		return array('body' => $decodedBody, 'header' => $entityHeader);
+	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $uri
+ * @return unknown
+ */
+	function configUri($uri = null) {
+		if (empty($uri)) {
+			return false;
+		}
+
+		if (is_array($uri)) {
+			$uri = $this->parseUri($uri);
+		} else {
+			$uri = $this->parseUri($uri, true);
+		}
+
+		if (!isset($uri['host'])) {
+			return false;
+		}
+
+		$config = array(
+			'request' => array(
+				'uri' => array_intersect_key($uri, $this->config['request']['uri']),
+				'auth' => array_intersect_key($uri, $this->config['request']['auth'])
+			)
+		);
+		$this->config = Set::merge($this->config, $config);
+		$this->config = Set::merge($this->config, array_intersect_key($this->config['request']['uri'], $this->config));
+		return $this->config;
 	}
 /**
  * Takes a $uri array and turns it into a fully qualified URL string
  *
  * @param array $uri A $uri array, or uses $this->config if left empty
- * @param string $uriTemplate The URI template/format to use
+ * @param string $uriTemplate The Uri template/format to use
  * @return string A fully qualified URL formated according to $uriTemplate
  */
-	function getURI($uri = array(), $uriTemplate = '%scheme://%username:%password@%host:%port/%path?%query')	{
+	function buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
+		if (is_string($uri)) {
+			$uri = array('host' => $uri);
+		}
+		$uri = $this->parseUri($uri, true);
+
+		if (!is_array($uri) || empty($uri)) {
+			return false;
+		}
+
 		$uri['path'] = preg_replace('/^\//', null, $uri['path']);
-		$uri['query'] = $this->serialize($uri['query']);
+		$uri['query'] = $this->httpSerialize($uri['query']);
+		$stripIfEmpty = array(
+			'query' => '?%query',
+			'fragment' => '#%fragment',
+			'user' => '%user:%pass@'
+		);
 
-		if (empty($uri['query'])) {
-			$uriTemplate = str_replace('?%query', null, $uriTemplate);
+		foreach ($stripIfEmpty as $key => $strip) {
+			if (empty($uri[$key])) {
+				$uriTemplate = str_replace($strip, null, $uriTemplate);
+			}
 		}
 
-		if (!isset($uri['username']) || empty($uri['username'])) {
-			$uriTemplate = str_replace('%username:%password@', null, $uriTemplate);
-		}
 		$defaultPorts = array('http' => 80, 'https' => 443);
-
-		if ($defaultPorts[$uri['scheme']] == $uri['port']) {
+		if (array_key_exists($uri['scheme'], $defaultPorts) && $defaultPorts[$uri['scheme']] == $uri['port']) {
 			$uriTemplate = str_replace(':%port', null, $uriTemplate);
 		}
+
 		foreach ($uri as $property => $value) {
 			$uriTemplate = str_replace('%'.$property, $value, $uriTemplate);
+		}
+
+		if ($uriTemplate === '/*') {
+			$uriTemplate = '*';
 		}
 		return $uriTemplate;
 	}
 /**
- * Determine the status of, and ability to connect to the current host
+ * Enter description here...
  *
- * @todo Ping the current host If $this->path is non-empty and != '/', query the path for a non-404 response
- * @return boolean Success
- */
-	function isConnected() {
-		return true;
-	}
-/**
- * Returns the results of a Http request for the contents of a $path (possibly including a query) relative 
- * to the current config['host'] using some optional $options.
- *
- * @return array An array structure containing HTTP headers and response body
- */
-	function request($request = array()) {
-		$this->reset(false);
-	
-		$baseRequest = $this->request;
-		$this->request = am($baseRequest, $request);
-		
-		$this->request['uri'] = am($baseRequest['uri'], $this->parseURI($this->request['uri']));
-		
-		$configMap = array(
-			'uri' => array(
-				'host' => 'host',
-				'scheme' => 'scheme',
-				'port' => 'port'
-			),
-			'auth' => array(
-				'authMethod' => 'method',
-				'user' => 'user',
-				'password' => 'password'
-			)
-		);
-
-		foreach ($configMap as $type => $mappings) {
-			foreach ($mappings as $configKey => $requestKey) {
-				if (empty($this->request[$type][$requestKey])) {
-					$this->request[$type][$requestKey] = $this->config[$configKey];
-				}
-				$this->config[$configKey] = $this->request[$type][$requestKey];
-			}
-		}
-
-		$this->request = $this->generateRequest($this->request);
-		$this->connect();
-		$this->write($this->request['raw']);
-
-		$rawResponse = null;
-
-		while ($package = $this->read()) {
-			$rawResponse = $rawResponse.$package;
-		};
-
-		$this->response = $this->parseResponse($rawResponse);
-		return $this->response['body'];
-	}
-
-	function parseResponse($rawResponse) {
-		$response = $this->response;
-		$response['raw'] = $rawResponse;
-
-		$headerEnd = strpos($rawResponse, str_repeat($this->headerSeparator, 2));
-		$response['rawHeader'] = substr($rawResponse, 0, $headerEnd);
-		
-		$headerParts = explode($this->headerSeparator, $response['rawHeader']);
-		
-		$response['statusLine'] = array_shift($headerParts);
-		
-		if (preg_match('/HTTP\/[1]\.[01] ([0-9]{3}) .+/', $response['statusLine'], $match)) {
-			$response['code'] = $match[1];
-		}
-		
-		foreach ($headerParts as $headerPart) {
-			list($key, $value) = preg_split('/\: ?/', $headerPart, 2);
-			$response['header'][$key] = $value;
-		}
-		
-		$response['rawBody'] = substr($rawResponse, $headerEnd + strlen($this->headerSeparator)*2);
-		
-		$encoding = $this->getHeader('Transfer-Encoding');
-		$response['body'] = $this->decodeBody($response['rawBody'], $encoding);
-		
-		return $response;
-	}
-
-	function decodeBody($rawBody, $encoding = 'chunked') {
-		return $rawBody;
-	}
-/**
- * Returns the header with a given $name respecting the $matchCase flag. 
- *
- * @param unknown_type $name
- * @param unknown_type $matchCase
+ * @param unknown_type $uri
+ * @param unknown_type $base
  * @return unknown
  */
-	function getHeader($name = null, $matchCase = false) {
-		if ($name === null) {
-			return $this->responseHeader;
+	function parseUri($uri = null, $base = array()) {
+		$uriBase = array(
+			'scheme' => array('http', 'https'),
+			'host' => null,
+			'port' => array(80, 443),
+			'user' => null,
+			'pass' => null,
+			'path' => null,
+			'query' => null,
+			'fragment' => null
+		);
+
+		if (is_string($uri)) {
+			$uri = parse_url($uri);
 		}
-		if (isset($this->responseHeader[$name])) {
-			return $this->responseHeader[$name];
-		}
-		if ($matchCase == true) {
+		if (!is_array($uri) || empty($uri)) {
 			return false;
 		}
-		foreach ($this->response['header'] as $key => $val) {
-			if (low($key) == low($name)) {
-				return $val;
-			}
+		if ($base === true) {
+			$base = $uriBase;
 		}
-		return false;		
-	}
-	
-/**
- * Request a URL using the GET method
- *
- * @param array $options
- * @return An array structure containing HTTP headers and response body
- */
-	function get($uri = null, $query = array()) {
-		$request = array('method' => 'GET');
 
-		if (is_array($uri)) {
-			$request = am($request, $uri);
-		} else {
-			$overwrite = array();
-			if (!empty($query)) {
-				$overwrite['query'] = $query;
-			}
-		
-			$uri = $this->parseURI($uri, $overwrite);
-			if (!empty($uri)) {
-				$request['uri'] = $uri;
+		if (isset($base['port'], $base['scheme']) && is_array($base['port']) && is_array($base['scheme'])) {
+			if (isset($uri['scheme']) && !isset($uri['port'])) {
+				$base['port'] = $base['port'][array_search($uri['scheme'], $base['scheme'])];
+			} elseif (isset($uri['port']) && !isset($uri['scheme'])) {
+				$base['scheme'] = $base['scheme'][array_search($uri['port'], $base['port'])];
 			}
 		}
-		return $this->request($request);
-	}
-/**
- * Request a URL using the POST method
- *
- * @param array $options
- * @return An array structure containing HTTP headers and response body
- */
-	function post($uri = null, $body = array()) {	
-		$request = array('method' => 'POST');
-		
-		if (is_array($uri)) {
-			$request = am($request, $uri);
-		} else {
-			$uri = $this->parseURI($uri);
 
-			if (!empty($uri)) {
-				$request['uri'] = am($this->request['uri'], $uri);
-			}
-			$request['body'] = $body;
+		if (is_array($base) && !empty($base)) {
+			$uri = am($base, $uri);
 		}
-		return $this->request($request);
+
+		if (isset($uri['scheme']) && is_array($uri['scheme'])) {
+			$uri['scheme'] = array_shift($uri['scheme']);
+		}
+		if (isset($uri['port']) && is_array($uri['port'])) {
+			$uri['port'] = array_shift($uri['port']);
+		}
+
+		if (array_key_exists('query', $uri)) {
+			$uri['query'] = $this->parseQuery($uri['query']);
+		}
+
+		if (!array_intersect_key($uriBase, $uri)) {
+			return false;
+		}
+		return $uri;
 	}
 /**
- * Request a URL using the PUT method
- *
- * @param array $options
- * @return An array structure containing HTTP headers and response body
+ * This function can be thought of as a reverse to PHP5's http_build_query(). It takes a given query string and turns it into an array and
+ * supports nesting by using the php bracket syntax. So this menas you can parse queries like:
+ * 
+ * - ?key[subKey]=value
+ * - ?key[]=value1&key[]=value2
+ * 
+ * A leading '?' mark in $query is optional and does not effect the outcome of this function. For the complete capabilities of this implementation
+ * take a look at HttpSocketTest::testParseQuery()
+ * 
+ * @param mixed $query A query string to parse into an array or an array to return directly "as is"
+ * @return array The $query parsed into a possibly multi-level array. If an empty $query is given, an empty array is returned.
  */
-	function put() {
-		$options['method'] = 'PUT';
-		return $this->request($uri, $options);
+	function parseQuery($query) {
+		if (is_array($query)) {
+			return $query;
+		}
+		$parsedQuery = array();
+
+		if (is_string($query) && !empty($query)) {
+			$query = preg_replace('/^\?/', '', $query);
+			$items = explode('&', $query);
+			foreach ($items as $item) {
+				if (strpos($item, '=') !== false) {
+					list($key, $value) = explode('=', $item);
+				} else {
+					$key = $item;
+					$value = null;
+				}
+
+				$key = urldecode($key);
+				$value = urldecode($value);
+
+				if ($value === '') {
+					$value = null;
+				} elseif (ctype_digit($value) == true) {
+					$value = (int)$value;
+				}
+
+				if(preg_match_all('/\[([^\[\]]*)\]/iUs', $key, $matches)) {
+					$subKeys = $matches[1];
+					$rootKey = substr($key, 0, strpos($key, '['));
+					if (!empty($rootKey)) {
+						array_unshift($subKeys, $rootKey);
+					}
+					$queryNode =& $parsedQuery;
+
+					foreach ($subKeys as $subKey) {
+						if (!is_array($queryNode)) {							
+							$queryNode = array();
+						}
+
+						if ($subKey === '') {
+							$queryNode[] = array();
+							end($queryNode);
+							$subKey = key($queryNode);
+						}
+						$queryNode =& $queryNode[$subKey];
+					}
+					$queryNode = $value;
+				} else {
+					$parsedQuery[$key] = $value;
+				}
+			}
+		}
+		return $parsedQuery;
 	}
 /**
- * Request a URL using the DELETE method
+ * Builds a request line according to HTTP/1.1 specs. Activate quirks mode to work outside specs.
  *
- * @param array $options
- * @return An array structure containing HTTP headers and response body
+ * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
+ * @param string $versionToken The version token to use, defaults to HTTP/1.1
+ * @return unknown
  */
-	function delete() {
-		$options['method'] = 'DELETE';
-		return $this->request($uri, $options);
+	function buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
+		$asteriskMethods = array('OPTIONS');
+
+		if (is_string($request)) {
+			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
+			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
+				trigger_error('HttpSocket::buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.', E_USER_WARNING);
+				return false;
+			}
+			return $request;
+		} elseif (!is_array($request)) {
+			return false;
+		} elseif (!array_key_exists('uri', $request)) {
+			return false;
+		}
+
+		$request['uri']	= $this->parseUri($request['uri']);
+		$request = am(array('method' => 'GET'), $request);
+		$request['uri'] = $this->buildUri($request['uri'], '/%path?%query');
+
+		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
+			trigger_error('HttpSocket::buildRequestLine - The "*" asterisk character is only allowed for the following methods: '.join(',', $asteriskMethods).'. Activate quirks mode to work outside of HTTP/1.1 specs.', E_USER_WARNING);
+			return false;
+		}
+		return $request['method'].' '.$request['uri'].' '.$versionToken.$this->lineBreak;
 	}
 
-	function generateRequest($request) {
-		if (empty($request['requestLine'])) {
-			$request['requestLine'] = $request['method'].' '.$this->getURI($request['uri'], '/%path?%query').' HTTP/1.1';
+	function httpSerialize($data = array()) {
+		if (is_string($data)) {
+			return $data;
 		}
-	
-  		
-		if (!empty($request['body'])) {
-			if (is_array($request['body'])) {
-				$request['body'] = $this->serialize($request['body']);
-			}
-			 			
-			if (!isset($request['header']['Content-Type'])) {
-				$request['header']['Content-Type']	= 'application/x-www-form-urlencoded';
-			}
+		if (empty($data) || !is_array($data)) {
+			return false;
 		}
-		$request['header'] = $this->buildHeader($request);
-
-		$request['raw'] = $request['requestLine'].$this->headerSeparator;
-		$request['raw'] .= $this->serializeHeader($request['header']);
-		$request['raw'] .= $request['body'];
-
-		return $request;
+		return substr(Router::queryString($data), 1);
 	}
 /**
- * Takes an array of items and serializes them for a GET/POST request
+ * Enter description here...
  *
- * @param array $items An associative array of items to serialize
- * @return string A string ready to be sent via HTTP
- * @todo Implement http_build_query for php5 and an alternative solution for php4, see http://us2.php.net/http_build_query
+ * @param unknown_type $header
+ * @return unknown
  */
-	function serialize($items) {
-		return substr(Router::queryString($items), 1);
+	function buildHeader($header) {
+		if (is_string($header)) {
+			return $header;
+		} elseif (!is_array($header)) {
+			return false;
+		}
+
+		$returnHeader = '';
+		foreach ($header as $field => $contents) {
+			if (is_array($contents)) {
+				$contents = join(',', $contents);
+			}
+			$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $contents);
+			$field = $this->escapeToken($field);
+
+			$returnHeader .= $field.': '.$contents.$this->lineBreak;
+		}
+		return $returnHeader;
 	}
 
-	function serializeHeader($headerParts) {
-		foreach ($headerParts as $key => $value) {
-			$header[] = $key.': '.$value;
-		}
-		return join($this->headerSeparator, $header).str_repeat($this->headerSeparator, 2);
-	}	
+	function parseHeader($header) {
+		if (is_array($header)) {
+			foreach ($header as $field => $value) {
+				unset($header[$field]);
+				$field = low($field);
+				preg_match_all('/(?:^|(?<=-))[a-z]/U', $field, $offsets, PREG_OFFSET_CAPTURE);
 
-	function buildHeader($request) {
+				foreach ($offsets[0] as $offset) {
+					$field = substr_replace($field, up($offset[0]), $offset[1], 1);
+				}
+				$header[$field] = $value;
+			}
+			return $header;
+		} elseif (!is_string($header)) {
+			return false;
+		}
+
+		preg_match_all("/(.+):(.+)(?:(?<![\t ])".$this->lineBreak."|\$)/Uis", $header, $matches, PREG_SET_ORDER);
+
 		$header = array();
-		$headerMap = array(
-			'uri.host' => 'Host'
-		);
-		
-		foreach ($headerMap as $fromPath => $to) {
-			$header[$to] = Set::extract($request, $fromPath);
+		foreach ($matches as $match) {
+			list(, $field, $value) = $match;
+
+			$value = trim($value);
+			$value = preg_replace("/[\t ]\r\n/", "\r\n", $value);
+			
+			$field = $this->unescapeToken($field);
+			
+			$field = low($field);
+			preg_match_all('/(?:^|(?<=-))[a-z]/U', $field, $offsets, PREG_OFFSET_CAPTURE);
+			foreach ($offsets[0] as $offset) {
+				$field = substr_replace($field, up($offset[0]), $offset[1], 1);
+			}
+
+			if (!isset($header[$field])) {
+				$header[$field] = $value;
+			} else {
+				$header[$field] .= ','.$value;
+			}
 		}
-		if (!empty($request['body']) && !isset($request['header']['Content-Length'])) {
-			$header['Content-Length'] = strlen($request['body']);
-		}
-		return am($header, $request['header']);
+		return $header;
+	}
+
+	function unescapeToken($token) {		
+		$regex = '/"(['.join('', $this->__tokenEscapeChars()).'])"/';
+		$token = preg_replace($regex, '\\1', $token);
+		return $token;
 	}
 /**
- * Resets the state of this socket (automatically called before any request)
+ * Escapes a given $token according to RFC 2616 (HTTP 1.1 specs)
  *
+ * @param string $token
+ * @return string
+ */
+	function escapeToken($token) {
+		$regex = '/(['.join('', $this->__tokenEscapeChars()).'])/';
+		$token = preg_replace($regex, '"\\1"', $token);
+		return $token;
+	}
+
+	function __tokenEscapeChars($hex = true) {
+		$escape = array('"', "(", ")", "<", ">", "@", ",", ";", ":", "\\", "/", "[", "]", "?", "=", "{", "}", " ");
+		for ($i = 0; $i <= 31; $i++) {
+			$escape[] = chr($i);
+		}
+		$escape[] = chr(127);
+
+		if ($hex == false) {
+			return $escape;
+		}
+		$regexChars = '';
+		foreach ($escape as $key => $char) {
+			$escape[$key] = '\\x'.str_pad(dechex(ord($char)), 2, '0', STR_PAD_LEFT);
+		}
+		return $escape;
+	}
+/**
+ * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does the same thing partially for the
+ * request and the response property only.
+ *
+ * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reseted
+ * @return boolean True on success
  */
 	function reset($full = true) {
-		static $classVars = array()	;
-		
-		if (empty($classVars)) {
-			$classVars = get_class_vars(__CLASS__);
+		static $initalState = array()	;
+		if (empty($initalState)) {
+			$initalState = get_class_vars(__CLASS__);
 		}
-		
+
 		if ($full == false) {
-			$this->request = $classVars['request'];
-			$this->response = $classVars['response'];
+			$this->request = $initalState['request'];
+			$this->response = $initalState['response'];
 			return true;
 		}
 
-		foreach ($classVars as $var => $defaultVal) {
-			$this->{$var} = $defaultVal;
+		foreach ($initalState as $property => $value) {
+			$this->{$property} = $value;
 		}
 		return true;
 	}

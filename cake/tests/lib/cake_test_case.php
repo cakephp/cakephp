@@ -428,7 +428,7 @@ class CakeTestCase extends UnitTestCase {
 		$config = $db->config;
 		$config['prefix'] .= 'test_suite_';
 
- 		// Set up db connection
+		// Set up db connection
 		ConnectionManager::create('test_suite', $config);
 
 		// Get db connection
