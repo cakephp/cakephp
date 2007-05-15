@@ -48,6 +48,21 @@ class DB_ACL extends AclBase {
  *
  */
 	function __construct() {
+		parent::__construct();
+		$this->Aro =& new Aro();
+		$this->Aco =& new Aco();
+	}
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $aro
+ * @param unknown_type $aco
+ * @param unknown_type $action
+ * @return unknown
+ */
+	function initialize(&$component) {
+		$component->Aro =& $this->Aro;
+		$component->Aco =& $this->Aco;
 	}
 /**
  * Enter description here...
@@ -58,17 +73,14 @@ class DB_ACL extends AclBase {
  * @return unknown
  */
 	function check($aro, $aco, $action = "*") {
-		$Permission = new Permission();
-		$Aro = new Aro();
-		$Aco = new Aco();
 
 		if ($aro == null || $aco == null) {
 			return false;
 		}
 
-		$permKeys = $this->_getAcoKeys($Permission->loadInfo());
-		$aroPath = $Aro->node($aro);
-		$acoPath = new Set($Aco->node($aco));
+		$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
+		$aroPath = $this->Aro->node($aro);
+		$acoPath = new Set($this->Aco->node($aco));
 
 		if (empty($aroPath) ||  empty($acoPath)) {
 			trigger_error("DB_ACL::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: " . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
@@ -89,7 +101,7 @@ class DB_ACL extends AclBase {
 		}
 
 		for($i = count($aroPath) - 1; $i >= 0; $i--) {
-			$perms = $Permission->findAll(
+			$perms = $this->Aro->Permission->findAll(
 				array(
 					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
 					'Permission.aco_id' => $acoPath->extract('{n}.Aco.id')
@@ -134,9 +146,8 @@ class DB_ACL extends AclBase {
  * @return boolean
  */
 	function allow($aro, $aco, $action = "*", $value = 1) {
-		$Permission = new Permission();
 		$perms = $this->getAclLink($aro, $aco);
-		$permKeys = $this->_getAcoKeys($Permission->loadInfo());
+		$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
 		$save = array();
 
 		if ($perms == false) {
@@ -149,7 +160,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if ($action == "*") {
-			$permKeys = $this->_getAcoKeys($Permission->loadInfo());
+			$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
 
 			foreach($permKeys as $key) {
 				$save[$key] = $value;
@@ -169,7 +180,7 @@ class DB_ACL extends AclBase {
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0]['Permission']['id'];
 		}
-		return $Permission->save(array('Permission' => $save));
+		return $this->Aro->Permission->save(array('Permission' => $save));
 	}
 /**
  * Deny
@@ -207,13 +218,11 @@ class DB_ACL extends AclBase {
  * Private method
  *
  */
-	function __getObject($id = null, $object) {
+	function &__getObject($id = null, $object) {
 		if ($id == null) {
 			trigger_error(__('Null id provided in DB_ACL::get', true) . $object, E_USER_WARNING);
 			return null;
 		}
-
-		$obj = new $object;
 
 		if (is_numeric($id)) {
 			$conditions = array("{$object}.foreign_key" => $id);
@@ -221,9 +230,9 @@ class DB_ACL extends AclBase {
 			$conditions = array("{$object}.alias" => $id);
 		}
 
-		$tmp = $obj->find($conditions);
-		$obj->id = $tmp[$object]['id'];
-		return $obj;
+		$tmp = $this->{$object}->find($conditions);
+		$this->{$object}->id = $tmp[$object]['id'];
+		return $this->{$object};
 	}
 /**
  * Get an array of access-control links between the given Aro and Aco
@@ -233,13 +242,11 @@ class DB_ACL extends AclBase {
  * @return array
  */
 	function getAclLink($aro, $aco) {
-		$Aro = new Aro();
-		$Aco = new Aco();
 		$Link = new Permission();
 
 		$obj = array();
-		$obj['Aro'] = $Aro->node($aro);
-		$obj['Aco'] = $Aco->node($aco);
+		$obj['Aro'] = $this->Aro->node($aro);
+		$obj['Aco'] = $this->Aco->node($aco);
 
 		if (empty($obj['Aro']) || empty($obj['Aco'])) {
 			return false;
@@ -248,7 +255,7 @@ class DB_ACL extends AclBase {
 		return array(
 			'aro' => Set::extract($obj, 'Aro.0.Aro.id'),
 			'aco'  => Set::extract($obj, 'Aco.0.Aco.id'),
-			'link' => $Link->findAll(array(
+			'link' => $this->Aro->Permission->findAll(array(
 				'Permission.aro_id' => Set::extract($obj, 'Aro.0.Aro.id'),
 				'Permission.aco_id' => Set::extract($obj, 'Aco.0.Aco.id')
 			))
@@ -323,6 +330,7 @@ class AclNode extends AppModel {
 			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
 			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
 			$query .= "ON {$type}0.alias = " . $db->value($start) . " ";
+
 			foreach ($path as $i => $alias) {
 				$j = $i - 1;
 				$k = $i + 1;

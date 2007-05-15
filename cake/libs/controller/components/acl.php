@@ -56,10 +56,7 @@ class AclComponent extends Object {
 			uses('model' . DS . $file);
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
-		}
-		if($classname == 'DB_ACL') {
-			$this->Aro = new Aro();
-			$this->Aco = new Aco();
+			$this->_instance->initialize($this);
 		}
 		return $this->_instance;
 	}
@@ -178,7 +175,7 @@ class AclComponent extends Object {
  * @package 	cake
  * @subpackage	cake.cake.libs.controller.components
  */
-class AclBase{
+class AclBase {
 /**
  * This class should never be instantiated, just subclassed.
  *
@@ -199,5 +196,13 @@ class AclBase{
  */
 	function check($aro, $aco, $action = "*") {
 	}
+/**
+ * Empty method to be overridden in subclasses
+ *
+ * @param unknown_type $component
+ */
+	function initialize(&$component) {
+	}
 }
+
 ?>
