@@ -44,6 +44,7 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out('Controller Bake:');
 		$this->hr();
+		$actions = '';
 		$uses = array();
 		$helpers = array();
 		$components = array();
