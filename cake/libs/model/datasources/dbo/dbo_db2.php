@@ -69,6 +69,7 @@ class DboDb2 extends DboSource {
 			'login' 		=> 'db2inst1',
 			'password' 		=> '',
 			'database' 		=> 'cake',
+			'schema'		=> '',
 			'connect'  		=> 'db2_pconnect',
 			'hostname'		=> '127.0.0.1',
 			'port'			=> '50001',
@@ -96,6 +97,12 @@ class DboDb2 extends DboSource {
 		'binary' 		=> array('name' => 'blob'),
 		'boolean' 		=> array('name' => 'smallint', 'limit' => '1'));
 /**
+ * A map for every result mapping tables to columns
+ *
+ * @var array result -> ( table -> column )
+ */
+	var $_resultMap = array();
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -122,6 +129,11 @@ class DboDb2 extends DboSource {
 		if ($this->connection) {
 			$this->connected = true;
 		}
+		
+		if ($config['schema'] !== '') {
+			$this->_execute('SET CURRENT SCHEMA = ' . $config['schema']);					
+		}		
+		
 		return $this->connected;
 	}
 /**
@@ -144,7 +156,26 @@ class DboDb2 extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		return db2_exec($this->connection, $sql);
+		// get result from db
+		$result = db2_exec($this->connection, $sql);
+		
+		// build table/column map for this result
+		$map = array();
+		$num_fields = db2_num_fields($result);
+		$index = 0;
+		$j = 0;
+		
+		while ($j < $num_fields) {
+			$columnName = strtolower(db2_field_name($result, $j));
+			$tableName = substr($sql, 0, strpos($sql, '.' . $columnName));
+			$tableName = substr($tableName, strrpos($tableName, ' ') + 1);
+			$map[$index++] = array($tableName, $columnName);
+			$j++;
+		}
+		
+		$this->_resultMap[$result] = $map;
+		
+		return $result;
 	}
 /**
  * Returns an array of all the tables in the database.
@@ -382,7 +413,7 @@ class DboDb2 extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$data = $this->fetchAll('SELECT SYSIBM.IDENTITY_VAL_LOCAL() AS ID FROM ' . $source);
+		$data = $this->fetchAll(sprintf('SELECT SYSIBM.IDENTITY_VAL_LOCAL() AS ID FROM %s FETCH FIRST ROW ONLY', $source));
 
 		if ($data && isset($data[0]['id'])) {
 			return $data[0]['id'];
@@ -499,22 +530,7 @@ class DboDb2 extends DboSource {
  */
 	function resultSet(&$results, $sql = null) {
 		$this->results =& $results;
-		$this->map = array();
-		$num_fields = db2_num_fields($results);
-		$index = 0;
-		$j = 0;
-
-		while ($j < $num_fields) {
-			$columnName = db2_field_name($results, $j);
-
-			if (strpos($columnName, '__')) {
-				$parts = explode('__', $columnName);
-				$this->map[$index++] = array(ucfirst($parts[0]), strtolower($parts[1]));
-			} else {
-				$this->map[$index++] = array(0, strtolower($columnName));
-			}
-			$j++;
-		}
+		$this->map = $this->_resultMap[$this->results];
 	}
 /**
  * Fetches the next row from the current result set
@@ -531,9 +547,9 @@ class DboDb2 extends DboSource {
 			$i = 0;
 
 			foreach ($row as $index => $field) {
-				$table = ucfirst($this->map[$index][0]);
+        		$table = $this->map[$index][0];
 				$column = strtolower($this->map[$index][1]);
-				$resultRow[ucfirst(strtolower($table))][$column] = $row[$index];
+				$resultRow[$table][$column] = $row[$index];
 				$i++;
 			}
 			return $resultRow;
