@@ -24,17 +24,19 @@ $output .="
 				echo '<p>' . \$settings['class'];
 				__(' is being used to cache, to change this edit config/core.php ');
 				echo '</p>';
-				
+
 				echo 'Settings: <ul>';
-				foreach (\$settings as \$name => \$value): 
+				foreach (\$settings as \$name => \$value):
 					echo '<li>' . \$name . ': ' . \$value . '</li>';
 				endforeach;
 				echo '</ul>';
-				
+
 			else:
 				__('NOT working.');
 				echo '<br />';
-				__('Edit: config/core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+				if(is_writable(TMP)):
+					__('Edit: config/core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+				endif;
 			endif;
 		?>
 	</span>
