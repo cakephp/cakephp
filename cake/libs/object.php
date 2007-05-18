@@ -83,6 +83,9 @@ class Object {
  */
 	function requestAction($url, $extra = array()) {
 		if (!empty($url)) {
+			if(!class_exists('dispatcher')) {
+				require CAKE . 'dispatcher.php';
+			}
 			$dispatcher =& new Dispatcher();
 			if(isset($this->plugin)){
 				$extra['plugin'] = $this->plugin;
@@ -136,7 +139,7 @@ class Object {
  * Allows setting of multiple properties of the object in a single line of code.
  *
  * @access public
- * @param array $properties An associative array containing AuthComponent
+ * @param array $properties An associative array containing
  *                          properties and corresponding values.
  * @return void
  */
