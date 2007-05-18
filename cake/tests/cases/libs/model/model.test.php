@@ -1344,7 +1344,7 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertTrue($result);
 	}
 
-	function testSave() {
+	function testSaveWithCreate() {
 		$this->model =& new User();
 
 		$data = array('User' => array('user' => 'user', 'password' => ''));
@@ -1452,6 +1452,108 @@ function testRecursiveFindAllWithLimit() {
 				array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
 				array ( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+	
+	function testSaveWithSet() {
+		$this->model =& new Article();
+		
+		// Create record we will be updating later
+		
+		$data = array('Article' => array('user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'));
+		$result = $this->model->create() && $this->model->save($data);
+		$this->assertTrue($result);
+
+		// Check record we created
+		
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
+		$expected = array('Article' => array (
+			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// Create new record just to overlap Model->id on previously created record
+		
+		$data = array('Article' => array('user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'));
+		$result = $this->model->create() && $this->model->save($data);
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
+		$expected = array('Article' => array (
+			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// Go back and edit the first article we created, starting by checking it's still there
+		
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
+		$expected = array('Article' => array (
+			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// And now do the update with set()
+		
+		$data = array('Article' => array('id' => '4', 'title' => 'Fourth Article - New Title', 'published' => 'N'));
+		
+		$result = $this->model->set($data) && $this->model->save();
+		
+		// THIS WORKS, but it just looks awful and should not be needed
+		// $result = $this->model->set($data) && $this->model->save($data);
+		
+		// THIS WORKS, but should not be used for editing since create() uses default DB values for fields I am not editing:
+		// $result = $this->model->create() && $this->model->save($data);
+		
+		$this->assertTrue($result);
+
+		// And see if it got edited
+		
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
+		$expected = array('Article' => array (
+			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article - New Title', 'body' => 'Fourth Article Body', 'published' => 'N'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// Make sure article we created to overlap is still intact
+		
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
+		$expected = array('Article' => array (
+			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// Edit new this overlapped article
+		
+		$data = array('Article' => array('id' => '5', 'title' => 'Fifth Article - New Title 5'));
+		
+		$result = $this->model->set($data) && $this->model->save();
+		$this->assertTrue($result);
+		
+		// Check it's now updated
+		
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
+		$expected = array('Article' => array (
+			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article - New Title 5', 'body' => 'Fifth Article Body', 'published' => 'Y'
+		));
+		$this->assertEqual($result, $expected);
+		
+		// And now do a final check on all article titles
+		
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'title'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'title' => 'First Article' )),
+			array('Article' => array( 'id' => 2, 'title' => 'Second Article' )),
+			array('Article' => array( 'id' => 3, 'title' => 'Third Article' )),
+			array('Article' => array( 'id' => 4, 'title' => 'Fourth Article - New Title' )),
+			array('Article' => array( 'id' => 5, 'title' => 'Fifth Article - New Title 5' )),
 		);
 		$this->assertEqual($result, $expected);
 	}
