@@ -55,6 +55,7 @@ class ClassRegistry {
  * Return a singleton instance of the ClassRegistry.
  *
  * @return ClassRegistry instance
+ * @access public
  */
 	function &getInstance() {
 		static $instance = array();
@@ -66,8 +67,9 @@ class ClassRegistry {
 /**
  * Add $object to the registry, associating it with the name $key.
  *
- * @param string $key
- * @param mixed $object
+ * @param string $key	Key for the object in registry
+ * @param mixed $object	Object to store
+ * @access public
  */
 	function addObject($key, &$object) {
 		$_this =& ClassRegistry::getInstance();
@@ -79,8 +81,8 @@ class ClassRegistry {
 /**
  * Remove object which corresponds to given key.
  *
- * @param string $key
- * @return void
+ * @param string $key	Key of object to remove from registry
+ * @access public
  */
 	function removeObject($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -93,7 +95,8 @@ class ClassRegistry {
  * Returns true if given key is present in the ClassRegistry.
  *
  * @param string $key Key to look for
- * @return boolean Success
+ * @return boolean true if key exists in registry, false otherwise
+ * @access public
  */
 	function isKeySet($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -108,7 +111,8 @@ class ClassRegistry {
 /**
  * Get all keys from the regisrty.
  *
- * @return array
+ * @return array Set of keys stored in registry
+ * @access public
  */
 	function keys() {
 		$_this =& ClassRegistry::getInstance();
@@ -117,8 +121,9 @@ class ClassRegistry {
 /**
  * Return object which corresponds to given key.
  *
- * @param string $key
- * @return mixed
+ * @param string $key Key of object to look for
+ * @return mixed Object stored in registry
+ * @access public
  */
 	function &getObject($key) {
 		$_this =& ClassRegistry::getInstance();
@@ -132,16 +137,16 @@ class ClassRegistry {
 				return $_this->__objects[$key];
 			}
 		}
-		
+
 		$return = false;
 		return $return;
 	}
 /**
  * Add a key name pair to the registry to map name to class in the regisrty.
  *
- * @param string $key
- * @param string $name
- * @return void
+ * @param string $key Key to include in map
+ * @param string $name Key that is being mapped
+ * @access public
  */
 	function map($key, $name) {
 		$_this =& ClassRegistry::getInstance();
@@ -154,7 +159,8 @@ class ClassRegistry {
 /**
  * Get all keys from the map in the regisrty.
  *
- * @return array
+ * @return array Keys of registry's map
+ * @access public
  */
 	function mapKeys() {
 		$_this =& ClassRegistry::getInstance();
@@ -163,8 +169,9 @@ class ClassRegistry {
 /**
  * Return the name of a class in the registry.
  *
- * @param string $key
- * @return string
+ * @param string $key Key to find in map
+ * @return string Mapped value
+ * @access private
  */
 	function __getMap($key) {
 		$_this =& ClassRegistry::getInstance();

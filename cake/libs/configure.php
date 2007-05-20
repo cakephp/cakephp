@@ -50,35 +50,35 @@ class Configure extends Object {
  */
 	var $controllerPaths = array();
 /**
- * Enter description here...
+ * Hold array with paths to model files
  *
  * @var array
  * @access public
  */
 	var $modelPaths = array();
 /**
- * Enter description here...
+ * Hold array with paths to helper files
  *
  * @var array
  * @access public
  */
 	var $helperPaths = array();
 /**
- * Enter description here...
+ * Hold array with paths to component files
  *
  * @var array
  * @access public
  */
 	var $componentPaths = array();
 /**
- * Enter description here...
+ * Hold array with paths to behavior files
  *
  * @var array
  * @access public
  */
 	var $behaviorPaths = array();
 /**
- * Enter description here...
+ * Current debug level
  *
  * @var integer
  * @access public
@@ -107,9 +107,8 @@ class Configure extends Object {
  * Configure::write('One', array('key1'=>'value of the Configure::One[key1]', 'key2'=>'value of the Configure::One[key2]');
  * Configure::write(array('One.key1' => 'value of the Configure::One[key1]', 'One.key2' => 'value of the Configure::One[key2]'));
  *
- * @param array $config
- * @param mixed $value
- * @return void
+ * @param array $config Name of var to write
+ * @param mixed $value Value to set for var
  * @access public
  */
 	function write($config, $value = null){
@@ -163,7 +162,7 @@ class Configure extends Object {
  * Configure::read('Name'); will return all values for Name
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  *
- * @param string $var
+ * @param string $var Variable to obtain
  * @return string value of Configure::$var
  * @access public
  */
@@ -197,7 +196,6 @@ class Configure extends Object {
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  *
  * @param string $var the var to be deleted
- * @return void
  * @access public
  */
 	function delete($var = null){
@@ -219,7 +217,6 @@ class Configure extends Object {
  * Usage Configure::load('configure_file');
  *
  * @param string $fileName name of file to load, extension must be .php and only the name should be used, not the extenstion
- * @return Configure::write
  * @access public
  */
 	function load($fileName) {
@@ -292,9 +289,9 @@ class Configure extends Object {
  * Creates a cached version of a configuration file.
  * Appends values passed from Configure::store() to the cached file
  *
- * @param string $content
- * @param string $name
- * @param boolean $write
+ * @param string $content Content to write on file
+ * @param string $name Name to use for cache file
+ * @param boolean $write true if content should be written, false otherwise
  * @access private
  */
 	function __writeConfig($content, $name, $write = true){
@@ -324,8 +321,8 @@ class Configure extends Object {
 /**
  * Checks $name for dot notation to create dynamic Configure::$var as an array when needed.
  *
- * @param mixed $name
- * @return array
+ * @param mixed $name Name to split
+ * @return array Name separated in items through dot notation
  * @access private
  */
 	function __configVarNames($name) {
@@ -341,7 +338,7 @@ class Configure extends Object {
 /**
  * Sets the var modelPaths
  *
- * @param array $modelPaths
+ * @param array $modelPaths Path to model files
  * @access private
  */
 	function __buildModelPaths($modelPaths) {
@@ -356,7 +353,7 @@ class Configure extends Object {
 /**
  * Sets the var viewPaths
  *
- * @param array $viewPaths
+ * @param array $viewPaths Path to view files
  * @access private
  */
 	function __buildViewPaths($viewPaths) {
@@ -371,7 +368,7 @@ class Configure extends Object {
 /**
  * Sets the var controllerPaths
  *
- * @param array $controllerPaths
+ * @param array $controllerPaths Path to controller files
  * @access private
  */
 	function __buildControllerPaths($controllerPaths) {
@@ -386,7 +383,7 @@ class Configure extends Object {
 /**
  * Sets the var helperPaths
  *
- * @param array $helperPaths
+ * @param array $helperPaths Path to helper files
  * @access private
  */
 	function __buildHelperPaths($helperPaths) {
@@ -401,7 +398,7 @@ class Configure extends Object {
 /**
  * Sets the var componentPaths
  *
- * @param array $componentPaths
+ * @param array $componentPaths Path to component files
  * @access private
  */
 	function __buildComponentPaths($componentPaths) {
@@ -416,7 +413,7 @@ class Configure extends Object {
 /**
  * Sets the var behaviorPaths
  *
- * @param array $behaviorPaths
+ * @param array $behaviorPaths Path to behavior files
  * @access private
  */
 	function __buildBehaviorPaths($behaviorPaths) {
@@ -433,6 +430,7 @@ class Configure extends Object {
  * If the alternative paths are set in this file
  * they will be added to the paths vars
  *
+ * @param boolean $boot Load application bootstrap (if true)
  * @access private
  */
 	function __loadBootstrap($boot) {
@@ -445,7 +443,7 @@ class Configure extends Object {
 		$behaviorPaths = null;
 		if ($boot) {
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
-				trigger_error("Can't find application bootstrap file.  Please create " . CONFIGS . "bootstrap.php, and make sure it is readable by PHP.", E_USER_ERROR);
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 		}
 		$_this->__buildModelPaths($modelPaths);

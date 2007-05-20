@@ -46,20 +46,22 @@ class File extends Object{
  * Folder object of the File
  *
  * @var Folder
+ * @access private
  */
 	var $Folder = null;
 /**
  * Filename
  *
  * @var string
+ * @access private
  */
 	var $name = null;
 /**
  * Constructor
  *
- * @param string $path
- * @param boolean $create Create file if it does not exist
- * @return File
+ * @param string $path Path to file
+ * @param boolean $create Create file if it does not exist (if true)
+ * @param int $mode Mode to apply to the folder holding the file
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
@@ -79,6 +81,7 @@ class File extends Object{
  * Return the contents of this File as a string.
  *
  * @return string Contents
+ * @access public
  */
 	function read() {
 		$contents = file_get_contents($this->getFullPath());
@@ -89,6 +92,7 @@ class File extends Object{
  *
  * @param string $data Data to write
  * @return boolean Success
+ * @access public
  */
 	function append($data) {
 		return $this->write($data, 'a');
@@ -99,11 +103,12 @@ class File extends Object{
  * @param string $data	Data to write to this File.
  * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @return boolean Success
+ * @access public
  */
 	function write($data, $mode = 'w') {
 		$file = $this->getFullPath();
 		if (!($handle = fopen($file, $mode))) {
-			trigger_error("[File] Could not open {$file} with mode {$mode}!", E_USER_WARNING);
+			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
 			return false;
 		}
 
@@ -121,6 +126,7 @@ class File extends Object{
  *
  * @param string $force	Data to write to this File.
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
+ * @access public
  */
 	function getMd5($force = false) {
 		$md5 = '';
@@ -134,6 +140,7 @@ class File extends Object{
  *
  * @param boolean $humanReadeble	Data to write to this File.
  * @return string|int filesize as int or as a human-readable string
+ * @access public
  */
 	function getSize() {
 		$size = filesize($this->getFullPath());
@@ -142,7 +149,8 @@ class File extends Object{
 /**
  * Returns the File extension.
  *
- * @return string The Fileextension
+ * @return string The File extension
+ * @access public
  */
 	function getExt() {
 		$ext = '';
@@ -159,6 +167,7 @@ class File extends Object{
  * Returns the filename.
  *
  * @return string The Filename
+ * @access public
  */
 	function getName() {
 		return $this->name;
@@ -176,6 +185,7 @@ class File extends Object{
  * Returns the File group.
  *
  * @return int the Filegroup
+ * @access public
  */
 	function getGroup() {
 		$filegroup = filegroup($this->getFullPath());
@@ -185,26 +195,28 @@ class File extends Object{
  * Creates the File.
  *
  * @return boolean Success
+ * @access public
  */
 	function create() {
 		$dir = $this->Folder->pwd();
 
 		if (file_exists($dir) && is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			if (!touch($this->getFullPath())) {
-				print ('[File] Could not create '.$this->getName().'!');
+				print (sprintf(__('[File] Could not create %s', true), $this->getName()));
 				return false;
 			} else {
 				return true;
 			}
 		} else {
-			print ('[File] Could not create '.$this->getName().'!');
+			print (sprintf(__('[File] Could not create %s', true), $this->getName()));
 			return false;
 		}
 	}
 /**
  * Returns true if the File exists.
  *
- * @return boolean
+ * @return boolean true if it exists, false otherwise
+ * @access public
  */
 	function exists() {
 		$exists = file_exists($this->getFullPath());
@@ -213,7 +225,8 @@ class File extends Object{
 /**
  * Deletes the File.
  *
- * @return boolean
+ * @return boolean Success
+ * @access public
  */
 	function delete() {
 		$unlink = unlink($this->getFullPath());
@@ -222,7 +235,8 @@ class File extends Object{
 /**
  * Returns true if the File is writable.
  *
- * @return boolean
+ * @return boolean true if its writable, false otherwise
+ * @access public
  */
 	function writable() {
 		$writable = is_writable($this->getFullPath());
@@ -231,7 +245,8 @@ class File extends Object{
 /**
  * Returns true if the File is executable.
  *
- * @return boolean
+ * @return boolean true if its executable, false otherwise
+ * @access public
  */
 	function executable() {
 		$executable = is_executable($this->getFullPath());
@@ -240,7 +255,8 @@ class File extends Object{
 /**
  * Returns true if the File is readable.
  *
- * @return boolean
+ * @return boolean true if file is readable, false otherwise
+ * @access public
  */
 	function readable() {
 		$readable = is_readable($this->getFullPath());
@@ -249,7 +265,8 @@ class File extends Object{
 /**
  * Returns last access time.
  *
- * @return int timestamp
+ * @return int timestamp Timestamp of last access time
+ * @access public
  */
 	function lastAccess() {
 		$fileatime = fileatime($this->getFullPath());
@@ -258,7 +275,8 @@ class File extends Object{
 /**
  * Returns last modified time.
  *
- * @return int timestamp
+ * @return int timestamp Timestamp of last modification
+ * @access public
  */
 	function lastChange() {
 		$filemtime = filemtime($this->getFullPath());
@@ -267,7 +285,8 @@ class File extends Object{
 /**
  * Returns the current folder.
  *
- * @return Folder
+ * @return Folder Current folder
+ * @access public
  */
 	function getFolder() {
 		return $this->Folder;
@@ -275,7 +294,8 @@ class File extends Object{
 /**
  * Returns the "chmod" (permissions) of the File.
  *
- * @return string
+ * @return string Permissions for the file
+ * @access public
  */
 	function getChmod() {
 		$substr = substr(sprintf('%o', fileperms($this->getFullPath())), -4);
@@ -284,7 +304,8 @@ class File extends Object{
 /**
  * Returns the full path of the File.
  *
- * @return string
+ * @return string Full path to file
+ * @access public
  */
 	function getFullPath() {
 		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->getName();

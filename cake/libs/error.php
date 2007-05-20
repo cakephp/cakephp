@@ -36,14 +36,19 @@ uses('sanitize');
  * @subpackage	cake.cake.libs
  */
 class ErrorHandler extends Object{
+/**
+ * Controller instance.
+ *
+ * @var object
+ * @access private
+ */
 	var $controller = null;
 
 /**
  * Class constructor.
  *
- * @param string $method
- * @param array $messages
- * @return unknown
+ * @param string $method Method producing the error
+ * @param array $messages Error messages
  */
 	function __construct($method, $messages) {
 		parent::__construct();
@@ -91,7 +96,8 @@ class ErrorHandler extends Object{
 /**
  * Displays an error page (e.g. 404 Not found).
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function error($params) {
 		extract($params);
@@ -108,7 +114,8 @@ class ErrorHandler extends Object{
 /**
  * Convenience method to display a 404 page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function error404($params) {
 		extract($params);
@@ -133,7 +140,8 @@ class ErrorHandler extends Object{
 /**
  * Renders the Missing Controller web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingController($params) {
 		extract(Router::getPaths());
@@ -145,14 +153,15 @@ class ErrorHandler extends Object{
 		$controllerName = str_replace('Controller', '', $className);
 		$this->controller->set(array('controller' => $className,
 										'controllerName' => $controllerName,
-										'title' => 'Missing Controller'));
+										'title' => __('Missing Controller', true)));
 		$this->controller->render('missingController');
 		exit();
 	}
 /**
  * Renders the Missing Action web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingAction($params) {
 		extract(Router::getPaths());
@@ -163,14 +172,15 @@ class ErrorHandler extends Object{
 		$this->controller->viewPath = 'errors';
 		$this->controller->set(array('controller' => $className,
 										'action' => $action,
-										'title' => 'Missing Method in Controller'));
+										'title' => __('Missing Method in Controller', true)));
 		$this->controller->render('missingAction');
 		exit();
 	}
 /**
  * Renders the Private Action web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function privateAction($params) {
 		extract(Router::getPaths());
@@ -181,14 +191,15 @@ class ErrorHandler extends Object{
 		$this->controller->viewPath = 'errors';
 		$this->controller->set(array('controller' => $className,
 										'action' => $action,
-										'title' => 'Trying to access private method in class'));
+										'title' => __('Trying to access private method in class', true)));
 		$this->controller->render('privateAction');
 		exit();
 	}
 /**
  * Renders the Missing Table web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingTable($params) {
 		extract(Router::getPaths());
@@ -198,14 +209,15 @@ class ErrorHandler extends Object{
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('model' => $className,
 										'table' => $table,
-										'title' => 'Missing Database Table'));
+										'title' => __('Missing Database Table', true)));
 		$this->controller->render('missingTable');
 		exit();
 	}
 /**
  * Renders the Missing Database web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingDatabase($params = array()) {
 		extract(Router::getPaths());
@@ -213,14 +225,15 @@ class ErrorHandler extends Object{
 
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
-		$this->controller->set(array('title' => 'Scaffold Missing Database Connection'));
+		$this->controller->set(array('title' => __('Scaffold Missing Database Connection', true)));
 		$this->controller->render('missingScaffolddb');
 		exit();
 	}
 /**
  * Renders the Missing View web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingView($params) {
 		extract(Router::getPaths());
@@ -232,14 +245,15 @@ class ErrorHandler extends Object{
 		$this->controller->set(array('controller' => $className,
 										'action' => $action,
 										'file' => $file,
-										'title' => 'Missing View'));
+										'title' => __('Missing View', true)));
 		$this->controller->render('missingView');
 		exit();
 	}
 /**
  * Renders the Missing Layout web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingLayout($params) {
 		extract(Router::getPaths());
@@ -250,14 +264,15 @@ class ErrorHandler extends Object{
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->layout = 'default';
 		$this->controller->set(array('file'  => $file,
-										'title' => 'Missing Layout'));
+										'title' => __('Missing Layout', true)));
 		$this->controller->render('missingLayout');
 		exit();
 	}
 /**
  * Renders the Database Connection web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingConnection($params) {
 		extract(Router::getPaths());
@@ -266,14 +281,15 @@ class ErrorHandler extends Object{
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('model' => $className,
-										'title' => 'Missing Database Connection'));
+										'title' => __('Missing Database Connection', true)));
 		$this->controller->render('missingConnection');
 		exit();
 	}
 /**
  * Renders the Missing Helper file web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingHelperFile($params) {
 		extract(Router::getPaths());
@@ -284,14 +300,15 @@ class ErrorHandler extends Object{
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
 										'file' => $file,
-										'title' => 'Missing Helper File'));
+										'title' => __('Missing Helper File', true)));
 		$this->controller->render('missingHelperFile');
 		exit();
 	}
 /**
  * Renders the Missing Helper class web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingHelperClass($params) {
 		extract(Router::getPaths());
@@ -302,14 +319,15 @@ class ErrorHandler extends Object{
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('helperClass' => Inflector::camelize($helper) . "Helper",
 										'file' => $file,
-										'title' => 'Missing Helper Class'));
+										'title' => __('Missing Helper Class', true)));
 		$this->controller->render('missingHelperClass');
 		exit();
 	}
 /**
  * Renders the Missing Component file web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingComponentFile($params) {
 		extract(Router::getPaths());
@@ -321,14 +339,15 @@ class ErrorHandler extends Object{
 		$this->controller->set(array('controller' => $className,
 										'component' => $component,
 										'file' => $file,
-										'title' => 'Missing Component File'));
+										'title' => __('Missing Component File', true)));
 		$this->controller->render('missingComponentFile');
 		exit();
 	}
 /**
  * Renders the Missing Component class web page.
  *
- * @param array $params
+ * @param array $params Parameters for controller
+ * @access public
  */
 	function missingComponentClass($params) {
 		extract(Router::getPaths());
@@ -340,14 +359,15 @@ class ErrorHandler extends Object{
 		$this->controller->set(array('controller' => $className,
 										'component' => $component,
 										'file' => $file,
-										'title' => 'Missing Component Class'));
+										'title' => __('Missing Component Class', true)));
 		$this->controller->render('missingComponentClass');
 		exit();
 	}
 /**
  * Renders the Missing Model class web page.
  *
- * @param unknown_type $params
+ * @param unknown_type $params Parameters for controller
+ * @access public
  */
 	function missingModel($params) {
 		extract(Router::getPaths());
@@ -357,7 +377,7 @@ class ErrorHandler extends Object{
 		$this->controller->viewPath = 'errors';
 		$this->controller->webroot = $this->_webroot();
 		$this->controller->set(array('model' => $className,
-										'title' => 'Missing Model'));
+										'title' => __('Missing Model', true)));
 		$this->controller->render('missingModel');
 		exit();
 	}
@@ -365,6 +385,7 @@ class ErrorHandler extends Object{
  * Path to the web root.
  *
  * @return string full web root path
+ * @access private
  */
 	function _webroot() {
 		$this->__dispatch->baseUrl();

@@ -79,6 +79,7 @@ class Debugger extends Object {
  * Gets a reference to the Debugger object instance
  *
  * @return object
+ * @access public
  */
 	function &getInstance() {
 		static $instance = array();
@@ -91,12 +92,13 @@ class Debugger extends Object {
 /**
  * Overrides PHP's default error handling
  *
- * @param int $code
- * @param string $description
- * @param string $file
- * @param int $line
- * @param array $context
- * @return void
+ * @param int $code Code of error
+ * @param string $description Error description
+ * @param string $file File on which error occurred
+ * @param int $line Line that triggered the error
+ * @param array $context Context
+ * @return boolean true if error was handled
+ * @access public
  */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() == 0) {
@@ -200,8 +202,9 @@ class Debugger extends Object {
 /**
  * Outputs a stack trace with the given options
  *
- * @param array $options
- * @return string
+ * @param array $options Format for outputting stack trace
+ * @return string Formatted stack trace
+ * @access protected
  */
 	function trace($options = array()) {
 		$options = am(array(
@@ -272,8 +275,9 @@ class Debugger extends Object {
  * Shortens file paths by replacing the application base path with 'APP', and the CakePHP core
  * path with 'CORE'
  *
- * @param string $path
- * @return string
+ * @param string $path Path to shorten
+ * @return string Normalized path
+ * @access protected
  */
 	function trimPath($path) {
 		if (!defined('CAKE_CORE_INCLUDE_PATH') || !defined('APP')) {
@@ -295,7 +299,8 @@ class Debugger extends Object {
  * @param string $file Absolute path to a PHP file
  * @param int $line Line number to highlight
  * @param int $context Number of lines of context to extract above and below $line
- * @return array
+ * @return array Set of lines highlighted
+ * @access protected
  */
 	function excerpt($file, $line, $context = 2) {
 		$data = $lines = array();
@@ -319,8 +324,9 @@ class Debugger extends Object {
 /**
  * Converts a variable to a string for debug output
  *
- * @param string $var
- * @return string
+ * @param string $var Variable to convert
+ * @return string Variable as a formatted string
+ * @access protected
  */
 	function exportVar($var, $recursion = 0) {
 		switch(low(gettype($var))) {
@@ -360,10 +366,11 @@ class Debugger extends Object {
 /**
  * Verify that the application's salt has been changed from the default value
  *
+ * @access public
  */
 	function checkSessionKey() {
 		if (CAKE_SESSION_STRING == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-			trigger_error('Please change the value of CAKE_SESSION_STRING in app/config/core.php to a salt value specific to your application', E_USER_NOTICE);
+			trigger_error(__('Please change the value of CAKE_SESSION_STRING in app/config/core.php to a salt value specific to your application', true), E_USER_NOTICE);
 		}
 	}
 /**
@@ -371,7 +378,7 @@ class Debugger extends Object {
  * in a stack-like hierarchy.
  *
  * @param object $debugger A reference to the Debugger object
- * @return void
+ * @access public
  */
 	function invoke(&$debugger) {
 		set_error_handler(array(&$debugger, 'handleError'));
