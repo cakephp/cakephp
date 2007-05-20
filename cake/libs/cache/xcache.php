@@ -28,6 +28,7 @@
 /**
  * Xcache storage engine for cache
  *
+ * @link http://trac.lighttpd.net/xcache/ Xcache
  * @package		cake
  * @subpackage	cake.cake.libs.cache
  */
