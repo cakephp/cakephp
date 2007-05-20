@@ -174,8 +174,9 @@ class AclComponent extends Object {
  *
  * @package 	cake
  * @subpackage	cake.cake.libs.controller.components
+ * @abstract
  */
-class AclBase {
+class AclBase extends Object {
 /**
  * This class should never be instantiated, just subclassed.
  *

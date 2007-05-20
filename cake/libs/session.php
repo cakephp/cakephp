@@ -361,34 +361,6 @@ class CakeSession extends Object {
 		return (Set::extract($_SESSION, $var) == $value);
 	}
 /**
- * Method called on close of a database
- * session
- *
- * @return boolean
- * @access private
- */
-	function __close() {
-		$probability = mt_rand(1, 150);
-		if($probability <= 3) {
-			CakeSession::__gc();
-		}
-		return true;
-	}
-/**
- * Method called on the destruction of a
- * database session
- *
- * @param integer $key
- * @return boolean
- * @access private
- */
-	function __destroy($key) {
-		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE);
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key, 'integer'));
-		return true;
-	}
-/**
  * Helper method to destroy invalid sessions.
  *
  * @return void
@@ -411,20 +383,6 @@ class CakeSession extends Object {
 		$this->__construct($this->path);
 		$this->renew();
 	}
-/**
- * Helper function called on gc for
- * database sessions
- *
- * @param unknown_type $expires
- * @return boolean
- * @access private
- */
-	function __gc($expires = null) {
-		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE);
-		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
-		return true;
-	 }
 /**
  * Helper method to initialize a session, based on Cake core settings.
  *
@@ -459,7 +417,6 @@ class CakeSession extends Object {
 						ini_set('session.name', CAKE_SESSION_COOKIE);
 						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
 						ini_set('session.cookie_path', $this->path);
-						ini_set('session.gc_probability', 1);
 						ini_set('session.auto_start', 0);
 						ini_set('session.save_path', TMP . 'sessions');
 					}
@@ -476,7 +433,6 @@ class CakeSession extends Object {
 						ini_set('session.name', CAKE_SESSION_COOKIE);
 						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
 						ini_set('session.cookie_path', $this->path);
-						ini_set('session.gc_probability', 1);
 						ini_set('session.auto_start', 0);
 					}
 				}
@@ -494,7 +450,6 @@ class CakeSession extends Object {
 						ini_set('session.name', CAKE_SESSION_COOKIE);
 						ini_set('session.cookie_lifetime', $this->cookieLifeTime);
 						ini_set('session.cookie_path', $this->path);
-						ini_set('session.gc_probability', 1);
 					}
 				}
 			break;
@@ -533,40 +488,6 @@ class CakeSession extends Object {
 			$this->write('Config.rand', rand());
 			$this->valid = true;
 			$this->__setError(1, "Session is valid");
-		}
-	}
-/**
- * Method called on open of a database
- * sesson
- *
- * @return boolean
- * @access private
- *
- */
-	function __open() {
-		return true;
-	}
-/**
- * Method used to read from a database
- * session
- *
- * @param mixed $key The key of the value to read
- * @return mixed The value of the key or false if it does not exist
- * @access private
- */
-	function __read($key) {
-		$db =& ConnectionManager::getDataSource('default');
-		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
-		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
-
-		if ($row && !isset($row[0][$table]) && isset($row[0][0])) {
-			$table = 0;
-		}
-
-		if ($row && $row[0][$table]['data']) {
-			return $row[0][$table]['data'];
-		} else {
-			return false;
 		}
 	}
 /**
@@ -641,6 +562,54 @@ class CakeSession extends Object {
 		$this->lastError = $errorNumber;
 	}
 /**
+ * Method called on open of a database
+ * sesson
+ *
+ * @return boolean
+ * @access private
+ *
+ */
+	function __open() {
+		return true;
+	}
+/**
+ * Method called on close of a database
+ * session
+ *
+ * @return boolean
+ * @access private
+ */
+	function __close() {
+		$probability = mt_rand(1, 150);
+		if($probability <= 3) {
+			CakeSession::__gc();
+		}
+		return true;
+	}
+/**
+ * Method used to read from a database
+ * session
+ *
+ * @param mixed $key The key of the value to read
+ * @return mixed The value of the key or false if it does not exist
+ * @access private
+ */
+	function __read($key) {
+		$db =& ConnectionManager::getDataSource('default');
+		$table = $db->fullTableName(CAKE_SESSION_TABLE, false);
+		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
+
+		if ($row && !isset($row[0][$table]) && isset($row[0][0])) {
+			$table = 0;
+		}
+
+		if ($row && $row[0][$table]['data']) {
+			return $row[0][$table]['data'];
+		} else {
+			return false;
+		}
+	}
+/**
  * Helper function called on write for database
  * sessions
  *
@@ -685,5 +654,33 @@ class CakeSession extends Object {
 		}
 		return true;
 	}
+/**
+ * Method called on the destruction of a
+ * database session
+ *
+ * @param integer $key
+ * @return boolean
+ * @access private
+ */
+	function __destroy($key) {
+		$db =& ConnectionManager::getDataSource('default');
+		$table = $db->fullTableName(CAKE_SESSION_TABLE);
+		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key, 'integer'));
+		return true;
+	}
+/**
+ * Helper function called on gc for
+ * database sessions
+ *
+ * @param unknown_type $expires
+ * @return boolean
+ * @access private
+ */
+	function __gc($expires = null) {
+		$db =& ConnectionManager::getDataSource('default');
+		$table = $db->fullTableName(CAKE_SESSION_TABLE);
+		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
+		return true;
+	 }
 }
 ?>
