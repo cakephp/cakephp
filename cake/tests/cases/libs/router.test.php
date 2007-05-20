@@ -158,6 +158,22 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testPluginUrlGeneration() {
+		$this->router->setRequestInfo(array(
+			array(
+				'controller' => 'controller', 'action' => 'index', 'form' => array(),
+				'url' => array (), 'bare' => 0, 'webservices' => null, 'plugin' => 'test'
+			),
+			array (
+				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/',
+				'passedArgs' => array (), 'argSeparator' => ':', 'namedArgs' => array (), 'webservices' => null
+			)
+		));
+
+		$this->assertEqual($this->router->url('read/1'), '/base/test/controller/read/1');
+		$this->router->reload();
+	}
+
 	function testUrlParsing() {
 		extract($this->router->getNamedExpressions());
 

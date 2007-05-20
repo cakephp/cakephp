@@ -555,7 +555,10 @@ class Router extends Object {
 				if (defined('CAKE_ADMIN') && isset($params[CAKE_ADMIN])) {
 					$output .= CAKE_ADMIN . '/';
 				}
-				$output .= strtolower($params['controller']) . '/' . $url;
+				if (!empty($params['plugin'])) {
+					$output .= Inflector::underscore($params['plugin']) . '/';
+				}
+				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 			$output = str_replace('//', '/', $output);
 		}
