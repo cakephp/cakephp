@@ -332,12 +332,13 @@ class Folder extends Object{
  * @return bool Returns TRUE on success, FALSE on failure
  */
 	function chmod($path, $mode = false, $exceptions = false) {
-		if (!is_dir($path)) {
-			return chmod($path, intval($mode, 8));
-		}
 
 		if(!$mode) {
 			$mode = $this->mode;
+		}
+		
+		if (is_dir($path)) {
+			return chmod($path, intval($mode, 8));
 		}
 
 		$dir = opendir($path);
