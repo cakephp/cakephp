@@ -1031,7 +1031,7 @@ class DboSource extends DataSource {
 		$limit = '';
 
 		if (isset($assocData['limit'])) {
-			if (!isset($assocData['offset']) && isset($assocData['page'])) {
+			if ((!isset($assocData['offset']) || (empty($assocData['offset']))) && isset($assocData['page'])) {
 				$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 			} elseif (!isset($assocData['offset'])) {
 				$assocData['offset'] = null;
@@ -1115,7 +1115,6 @@ class DboSource extends DataSource {
 				$query = array(
 					'conditions' => $assocData['conditions'],
 					'limit' => $limit,
-					'offset' => $assocData['offset'],
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $alias,
 					'fields' => am($this->fields($linkModel, $alias, $assocData['fields']), $joinFields),
