@@ -49,12 +49,13 @@ if(!defined('CACHE_GC_PROBABILITY')) {
 class Cache extends Object {
 /**
  * Cache engine to use
+ *
  * @var object
+ * @access private
  */
 	var $_Engine = null;
 /**
- * Enter description here...
- *
+ * Create cache.
  */
 	function __construct() {
 	}
@@ -62,6 +63,7 @@ class Cache extends Object {
  * Returns a singleton instance
  *
  * @return object
+ * @access public
  */
 	function &getInstance() {
 		static $instance = array();
@@ -72,8 +74,10 @@ class Cache extends Object {
 	}
 /**
  * Tries to find and include a file for a cache engine
- * @param $name
+ *
+ * @param $name	Name of the engine (without 'Engine')
  * @return boolean
+ * @access private
  */
 	function _includeEngine($name) {
 		if (class_exists($name.'Engine')) {
@@ -98,6 +102,7 @@ class Cache extends Object {
  * @param string $name Name of the engine (without 'Engine')
  * @param array $parmas Optional associative array of parameters passed to the engine
  * @return boolean True on success, false on failure
+ * @access public
  */
 	function engine($name = 'File', $params = array()) {
 		if(defined('DISABLE_CACHE')) {
@@ -127,6 +132,7 @@ class Cache extends Object {
  * @param mixed $value Data to be cached - anything except a resource
  * @param mixed $duration Optional - how long to cache the data, either in seconds or a string that can be parsed by the strtotime() function
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, $value, $duration = CACHE_DEFAULT_DURATION) {
 		if (defined('DISABLE_CACHE')) {
@@ -158,6 +164,7 @@ class Cache extends Object {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		if(defined('DISABLE_CACHE')) {
@@ -181,6 +188,7 @@ class Cache extends Object {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 		if(defined('DISABLE_CACHE')) {
@@ -202,6 +210,7 @@ class Cache extends Object {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear() {
 		if(defined('DISABLE_CACHE')) {
@@ -218,6 +227,7 @@ class Cache extends Object {
  * Check if Cache has initialized a working storage engine
  *
  * @return boolean
+ * @access public
  */
 	function isInitialized() {
 		if(defined('DISABLE_CACHE')) {
@@ -227,6 +237,12 @@ class Cache extends Object {
 		return isset($_this->_Engine);
 	}
 
+/**
+ * Return the settings for current cache engine
+ *
+ * @return array list of settings for this engine
+ * @access public
+ */
 	function settings() {
 		$_this =& Cache::getInstance();
 		if(!is_null($_this->_Engine)) {
@@ -248,6 +264,7 @@ class CacheEngine extends Object {
  *
  * @param array $params Associative array of parameters for the engine
  * @return boolean True if the engine has been succesfully initialized, false if not
+ * @access public
  */
 	function init($params) {
 	}
@@ -255,6 +272,8 @@ class CacheEngine extends Object {
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
+ *
+ * @access public
  */
 	function gc() {
 	}
@@ -265,6 +284,7 @@ class CacheEngine extends Object {
  * @param mixed $value Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		trigger_error(sprintf(__('Method write() not implemented in %s', true), get_class($this)), E_USER_ERROR);
@@ -274,6 +294,7 @@ class CacheEngine extends Object {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
@@ -283,6 +304,7 @@ class CacheEngine extends Object {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 	}
@@ -290,6 +312,7 @@ class CacheEngine extends Object {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear() {
 	}
@@ -297,6 +320,7 @@ class CacheEngine extends Object {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function settings() {
 		trigger_error(sprintf(__('Method settings() not implemented in %s', true), get_class($this)), E_USER_ERROR);

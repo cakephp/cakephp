@@ -32,7 +32,19 @@
  * @subpackage	cake.cake.libs.cache
  */
 class MemcacheEngine extends CacheEngine {
+/**
+ * Memcache wrapper.
+ *
+ * @var object
+ * @access private
+ */
 	var $__Memcache = null;
+/**
+ * Memcache compress status.
+ *
+ * @var int
+ * @access private
+ */
 	var $_compress = 0;
 /**
  * Set up the cache engine
@@ -41,6 +53,7 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param array $params Associative array of parameters for the engine
  * @return boolean True if the engine has been succesfully initialized, false if not
+ * @access public
  */
 	function init(&$params) {
 		if(!class_exists('Memcache')) {
@@ -80,6 +93,7 @@ class MemcacheEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param int $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		return $this->__Memcache->set($key, $value, $this->_compress, $duration);
@@ -89,6 +103,7 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		return $this->__Memcache->get($key);
@@ -98,6 +113,7 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 		return $this->__Memcache->delete($key);
@@ -106,6 +122,7 @@ class MemcacheEngine extends CacheEngine {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear() {
 		return $this->__Memcache->flush();
@@ -114,6 +131,7 @@ class MemcacheEngine extends CacheEngine {
  * Return the settings for this cache engine
  *
  * @return array list of settings for this engine
+ * @access public
  */
 	function settings() {
 		return array('class' => get_class($this),

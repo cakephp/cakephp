@@ -33,8 +33,27 @@
  * @subpackage	cake.cake.libs.cache
  */
 class ModelEngine extends CacheEngine {
+/**
+ * Model instance.
+ *
+ * @var object
+ * @access private
+ */
 	var $_Model = null;
+/**
+ * Fields that holds data.
+ *
+ * @var string
+ * @access private
+ */
 	var $_dataField = '';
+/**
+ * Field that holds expiration information.
+ *
+ * @var string
+ * @access private
+ */
+
 	var $_expiryField = '';
 /**
  * Set up the cache engine
@@ -62,6 +81,8 @@ class ModelEngine extends CacheEngine {
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
+ *
+ * @access public
  */
 	function gc() {
 		return $this->_Model->deleteAll(array($this->_expiryField => '<= '.time()));
@@ -73,6 +94,7 @@ class ModelEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		$serialized = serialize($value);
@@ -95,6 +117,7 @@ class ModelEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		$val = $this->_Model->field($this->_expiryField, array($this->_Model->primaryKey => $key, $this->_expiryField => '> '.time()));
@@ -105,6 +128,7 @@ class ModelEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 		return $this->_Model->del($key);
@@ -113,6 +137,7 @@ class ModelEngine extends CacheEngine {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear() {
 		return $this->_Model->deleteAll(null);
@@ -121,6 +146,7 @@ class ModelEngine extends CacheEngine {
  * Return the settings for this cache engine
  *
  * @return array list of settings for this engine
+ * @access public
  */
 	function settings() {
 		$class = null;

@@ -39,6 +39,7 @@ class APCEngine extends CacheEngine {
  *
  * @param array $params	Associative array of parameters for the engine
  * @return boolean	True if the engine has been succesfully initialized, false if not
+ * @access public
  */
 	function init(&$params) {
 		return function_exists('apc_cache_info');
@@ -50,6 +51,7 @@ class APCEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param int $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		return apc_store($key, $value, $duration);
@@ -59,6 +61,7 @@ class APCEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		return apc_fetch($key);
@@ -68,6 +71,7 @@ class APCEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 		return apc_delete($key);
@@ -76,6 +80,7 @@ class APCEngine extends CacheEngine {
  * Delete all values from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear() {
 		return apc_clear_cache('user');
@@ -84,6 +89,7 @@ class APCEngine extends CacheEngine {
  * Return the settings for this cache engine
  *
  * @return array list of settings for this engine
+ * @access public
  */
 	function settings() {
 		return array('class' => get_class($this));

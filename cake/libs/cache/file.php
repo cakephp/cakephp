@@ -44,18 +44,21 @@ class FileEngine extends CacheEngine {
  * Cache directory
  *
  * @var string
+ * @access private
  */
 	var $_dir = '';
 /**
  * Cache filename prefix
  *
  * @var string
+ * @access private
  */
 	var $_prefix = '';
 /**
  * Use locking
  *
  * @var boolean
+ * @access private
  */
 	var $_lock = false;
 /**
@@ -65,6 +68,7 @@ class FileEngine extends CacheEngine {
  *
  * @param array $params Associative array of parameters for the engine
  * @return boolean True if the engine has been succesfully initialized, false if not
+ * @access public
  */
 	function init($params) {
 		$dir = CACHE;
@@ -92,6 +96,7 @@ class FileEngine extends CacheEngine {
  * Permanently remove all expired and deleted data
  *
  * @return boolean True if garbage collection was succesful, false on failure
+ * @access public
  */
 	function gc() {
 		return $this->clear(true);
@@ -103,6 +108,7 @@ class FileEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @access public
  */
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		$serialized = serialize($value);
@@ -118,6 +124,7 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key The key
  * @return string Absolute cache filename for the given key
+ * @access private
  */
 	function _getFilename($key) {
 		return $this->_dir . $this->_prefix . $this->base64url_encode($key);
@@ -129,6 +136,7 @@ class FileEngine extends CacheEngine {
  * @param string $value
  * @param integer $expires
  * @return boolean True on success, false on failure
+ * @access private
  */
 	function _writeCache(&$filename, &$value, &$expires) {
 		$contents = $expires."\n".$value."\n";
@@ -139,6 +147,7 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ * @access public
  */
 	function read($key) {
 		$filename = $this->_getFilename($key);
@@ -175,6 +184,7 @@ class FileEngine extends CacheEngine {
  *
  * @param string $filename
  * @return mixed Expiration timestamp, or false on failure
+ * @access private
  */
 	function _getExpiry($filename) {
 		$fp = fopen($filename, 'r');
@@ -195,6 +205,7 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @access public
  */
 	function delete($key) {
 		$filename = $this->_getFilename($key);
@@ -205,6 +216,7 @@ class FileEngine extends CacheEngine {
  *
  * @param boolean $checkExpiry Optional - only delete expired cache items
  * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @access public
  */
 	function clear($checkExpiry = false) {
 		$dir = dir($this->_dir);
@@ -241,6 +253,7 @@ class FileEngine extends CacheEngine {
  * Return the settings for this cache engine
  *
  * @return array list of settings for this engine
+ * @access public
  */
 	function settings() {
 		$lock = 'false';
@@ -257,6 +270,7 @@ class FileEngine extends CacheEngine {
  *
  * @param string $str String to encode
  * @return string Encoded version of the string
+ * @access public
  */
 	function base64url_encode($str) {
 		return strtr(base64_encode($str), '+/', '-_');
