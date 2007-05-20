@@ -312,10 +312,10 @@ class Model extends Overloadable {
 	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
- * Holds association data to be reverted to
+ * Holds model associations temporarily to allow for dynamic (un)binding
  *
  * @var array
- * @access protected
+ * @access private
  */
 	var $__backAssociation = array();
 
@@ -365,18 +365,18 @@ class Model extends Overloadable {
 
 		ClassRegistry::addObject($this->currentModel, $this);
 		ClassRegistry::map($this->currentModel, $this->currentModel);
-		
+
 		$this->id = $id;
-		
+
 		if($table === false) {
 			$this->useTable = false;
 		} else if($table) {
 			$this->useTable = $table;
 		}
-				
+
 		if ($this->useTable !== false) {
 			$this->setDataSource($ds);
-			
+
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
