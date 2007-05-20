@@ -1,8 +1,32 @@
 <?php
-
+/* SVN FILE: $Id$ */
+/**
+ * Short description for file.
+ *
+ * Long description for file
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP Test Suite <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * Copyright (c) 2006, Larry E. Masters Shorewood, IL. 60431
+ * Author(s): Larry E. Masters aka PhpNut <phpnut@gmail.com>
+ *
+ *  Licensed under The Open Group Test Suite License
+ *  Redistributions of files must retain the above copyright notice.
+ *
+ * @filesource
+ * @author       Larry E. Masters aka PhpNut <phpnut@gmail.com>
+ * @copyright    Copyright (c) 2006, Larry E. Masters Shorewood, IL. 60431
+ * @link         http://www.phpnut.com/projects/
+ * @package      test_suite
+ * @subpackage   test_suite.cases.app
+ * @since        CakePHP Test Suite v 1.0.0.0
+ * @version      $Revision$
+ * @modifiedby   $LastChangedBy$
+ * @lastmodified $Date$
+ * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ */
 uses('http_socket');
-
-// Generate a partial mock of HttpSocket where we are in control of certain functions
 
 /**
  * Enter description here...
@@ -22,40 +46,27 @@ class HttpSocketTest extends UnitTestCase {
 		$this->Socket =& new TestHttpSocket();
 		$this->RequestSocket =& new TestHttpSocketRequests();
 	}
-	
 /**
  * We use this function to clean up after the test case was executed
  *
  */
 	function tearDown() {
-		// Unset the HttpSocket instance we used to free memory
 		unset($this->Socket, $this->RequestSocket);
 	}
-	
 /**
  * Test that HttpSocket::__construct does what one would expect it to do
  *
  */
 	function testConstruct() {
-		// Reset our Socket instance
 		$this->Socket->reset();
-		
 		$baseConfig = $this->Socket->config;
-		
-		// Expect our HttpSocket to *not* connect automatically
 		$this->Socket->expectNever('connect');
-		
-		// Test that passing an array causes it to be merged over our config property
 		$this->Socket->__construct(array('host' => 'foo-bar'));
 		$baseConfig['host']	 = 'foo-bar';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertIdentical($this->Socket->config, $baseConfig);
-		
-		// Reset our Socket instance
 		$this->Socket->reset();
 		$baseConfig = $this->Socket->config;
-		
-		// Test constructing from a simple url
 		$this->Socket->__construct('http://www.cakephp.org:23/');
 		$baseConfig['host']	 = 'www.cakephp.org';
 		$baseConfig['request']['uri']['host'] = 'www.cakephp.org';
@@ -64,16 +75,13 @@ class HttpSocketTest extends UnitTestCase {
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertIdentical($this->Socket->config, $baseConfig);
 	}
-	
+
 /**
  * Test that HttpSocket::configUri works properly with different types of arguments
  *
  */
 	function testConfigUri() {
-		// Reset our Socket instance
 		$this->Socket->reset();
-		
-		// Test that the configuration is picked up from a Uri correctly
 		$r = $this->Socket->configUri('https://bob:secret@www.cakephp.org:23/?query=foo');
 		$expected = array(
 			'persistent' => false,
@@ -82,7 +90,7 @@ class HttpSocketTest extends UnitTestCase {
 			'port' 		 => 23,
 			'timeout' 	 =>	30,
 			'request' => array(
-				'uri' => array(				
+				'uri' => array(
 					'scheme' => 'https'
 					, 'host' => 'www.cakephp.org'
 					, 'port' => 23
@@ -96,15 +104,12 @@ class HttpSocketTest extends UnitTestCase {
 		);
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, $expected);
-		
-		// Test that passing in an array causes to only overwrite the values set in it
 		$r = $this->Socket->configUri(array('host' => 'www.foo-bar.org'));
 		$expected['host'] = 'www.foo-bar.org';
 		$expected['request']['uri']['host'] = 'www.foo-bar.org';
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, $expected);
-		
-		// Test that a new uri overwrites things completely
+
 		$r = $this->Socket->configUri('http://www.foo.com');
 		$expected = array(
 			'persistent' => false,
@@ -113,7 +118,7 @@ class HttpSocketTest extends UnitTestCase {
 			'port' 		 => 80,
 			'timeout' 	 =>	30,
 			'request' => array(
-				'uri' => array(				
+				'uri' => array(
 					'scheme' => 'http'
 					, 'host' => 'www.foo.com'
 					, 'port' => 80
@@ -127,13 +132,9 @@ class HttpSocketTest extends UnitTestCase {
 		);
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, $expected);
-		
-		// Check that a path-only is not accepted by this function and returns false
 		$r = $this->Socket->configUri('/this-is-fuck');
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, false);
-		
-		// Test that passing in a non-string, non-array does not work
 		$r = $this->Socket->configUri(false);
 		$this->assertIdentical($this->Socket->config, $expected);
 		$this->assertIdentical($r, false);
@@ -144,14 +145,9 @@ class HttpSocketTest extends UnitTestCase {
  *
  */
 	function testRequest() {
-		// Reset our Socket instance
 		$this->Socket->reset();
-		
-		// Test that passing in an invalid $request argument causes the function to return false
 		$response = $this->Socket->request(true);
 		$this->assertIdentical($response, false);
-		
-		// Test that a couple of different $request parameters for the same request are all interpreted correctly
 		$requests = array(
 			'http://www.cakephp.org/?foo=bar',
 			array('uri' => 'http://www.cakephp.org/?foo=bar'),
@@ -171,23 +167,19 @@ class HttpSocketTest extends UnitTestCase {
 			$this->assertIdentical($this->Socket->request['uri']['host'], 'www.cakephp.org');
 			$this->assertIdentical($this->Socket->request['uri']['query'], array('foo' => 'bar'));
 		}
-		
-		// Test that we can specify a different host to connect to regardless of the URI host
 		$this->Socket->reset();
 		$request = array('host' => '192.168.0.1', 'uri' => 'http://www.cakephp.org/?foo=bar');
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['uri']['host'], 'www.cakephp.org');
 		$this->assertIdentical($this->Socket->config['request']['uri']['host'], 'www.cakephp.org');
 		$this->assertIdentical($this->Socket->config['host'], '192.168.0.1');
-				
-		// Test that headers are built for us and escaping is happening
+
 		$this->Socket->reset();
 		$baseHeader = $this->Socket->buildHeader($this->Socket->request['header']);
 		$request = array('header' => array('Foo@woo' => 'bar-value'), 'uri' => 'http://www.cakephp.org/?foo=bar');
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['header'], "Host: www.cakephp.org\r\n".$baseHeader."Foo\"@\"woo: bar-value\r\n");
-		
-		// Test that headers are treated case insensitively
+
 		$this->Socket->reset();
 		$baseHeader = $this->Socket->buildHeader($this->Socket->request['header']);
 		$request = array('header' => array('Foo@woo' => 'bar-value', 'host' => 'foo.com'), 'uri' => 'http://www.cakephp.org/?foo=bar');
@@ -204,12 +196,12 @@ class HttpSocketTest extends UnitTestCase {
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['line'], "GET /search?q=http_socket HTTP/1.1\r\n");
 		$this->assertIdentical($this->Socket->request['header'], "Foo: bar\r\n");
-		
+
 		$this->Socket->reset();
 		$request = array('method' => 'POST', 'uri' => 'http://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'));
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($this->Socket->request['body'], "name=HttpSocket-is-released&date=today");
-		
+
 		$request = array('uri' => '*', 'method' => 'GET');
 		$this->expectError(new PatternExpectation('/activate quirks mode/i'));
 		$response = $this->Socket->request($request);
@@ -228,10 +220,10 @@ class HttpSocketTest extends UnitTestCase {
 		$response = $this->Socket->request($request);
 		$this->assertIdentical($response, "<h1>Hello, your lucky number is ".$number."</h1>");
 	}
-	
+
 	function testGet() {
 		$this->RequestSocket->reset();
-		
+
 		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/')));
 		$this->RequestSocket->get('http://www.google.com/');
 
@@ -247,7 +239,7 @@ class HttpSocketTest extends UnitTestCase {
 		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/', 'auth' => array('user' => 'foo', 'pass' => 'bar'))));
 		$this->RequestSocket->get('http://www.google.com/', null, array('auth' => array('user' => 'foo', 'pass' => 'bar')));
 	}
-	
+
 	function testPostPutDelete() {
 		$this->RequestSocket->reset();
 
@@ -307,7 +299,7 @@ class HttpSocketTest extends UnitTestCase {
 			'chunked' => array(
 				'response' => array(
 					'header' => "Transfer-Encoding: chunked\r\n",
-					'body' => "19\r\nThis is a chunked message\r\n0\r\n"					
+					'body' => "19\r\nThis is a chunked message\r\n0\r\n"
 				),
 				'expectations' => array(
 					'body' => "This is a chunked message",
@@ -331,7 +323,7 @@ class HttpSocketTest extends UnitTestCase {
 				)
 			)
 		);
-		
+
 		$testResponse = array();
 		$expectations = array();
 
@@ -339,7 +331,7 @@ class HttpSocketTest extends UnitTestCase {
 
 			$testResponse = am($testResponse, $test['response']);
 			$testResponse['response'] = $testResponse['status-line'].$testResponse['header']."\r\n".$testResponse['body'];
-			$r = $this->Socket->parseResponse($testResponse['response']);			
+			$r = $this->Socket->parseResponse($testResponse['response']);
 			$expectations = am($expectations, $test['expectations']);
 
 			foreach ($expectations as $property => $expectedVal) {
@@ -352,14 +344,14 @@ class HttpSocketTest extends UnitTestCase {
 			}
 		}
 	}
-	
+
 /**
  * Enter description here...
  *
  */
 	function testDecodeBody() {
 		$this->Socket->reset();
-		
+
 		$r = $this->Socket->decodeBody(true);
 		$this->assertIdentical($r, false);
 
@@ -394,14 +386,14 @@ class HttpSocketTest extends UnitTestCase {
 			}
 		}
 	}
-	
+
 /**
  * Enter description here...
  *
  */
 	function testDecodeChunkedBody() {
 		$this->Socket->reset();
-		
+
 		$r = $this->Socket->decodeChunkedBody(true);
 		$this->assertIdentical($r, false);
 
@@ -442,16 +434,16 @@ class HttpSocketTest extends UnitTestCase {
 		$this->assertIdentical($r['body'], $decoded);
 		$this->assertIdentical($r['header'], array('Foo-Header' => 'bar', 'Cake' => 'PHP'));
 	}
-	
+
 	function testBuildRequestLine() {
 		$this->Socket->reset();
 
 		$this->expectError(new PatternExpectation('/activate quirks mode/i'));
-		$r = $this->Socket->buildRequestLine('Foo');		
+		$r = $this->Socket->buildRequestLine('Foo');
 		$this->assertIdentical($r, false);
 
 		$this->Socket->quirksMode = true;
-		$r = $this->Socket->buildRequestLine('Foo');		
+		$r = $this->Socket->buildRequestLine('Foo');
 		$this->assertIdentical($r, 'Foo');
 		$this->Socket->quirksMode = false;
 
@@ -546,10 +538,10 @@ class HttpSocketTest extends UnitTestCase {
 			'host' => 'www.cakephp.org',
 			'port' => 80,
 			'user' => null,
-			'pass' => null,	
+			'pass' => null,
 			'path' => null,
 			'query' => array(),
-			'fragment' => null			
+			'fragment' => null
 		));
 
 		$uri = $this->Socket->parseUri('https://www.cakephp.org', true);
@@ -558,10 +550,10 @@ class HttpSocketTest extends UnitTestCase {
 			'host' => 'www.cakephp.org',
 			'port' => 443,
 			'user' => null,
-			'pass' => null,	
+			'pass' => null,
 			'path' => null,
 			'query' => array(),
-			'fragment' => null			
+			'fragment' => null
 		));
 
 		$uri = $this->Socket->parseUri('www.cakephp.org:443/query?foo', true);
@@ -577,9 +569,9 @@ class HttpSocketTest extends UnitTestCase {
 		));
 
 		$uri = $this->Socket->parseUri('http://www.cakephp.org', array('host' => 'piephp.org', 'user' => 'bob', 'fragment' => 'results'));
-		$this->assertIdentical($uri, array(			
+		$this->assertIdentical($uri, array(
 			'host' => 'www.cakephp.org',
-			'user' => 'bob',			
+			'user' => 'bob',
 			'fragment' => 'results',
 			'scheme' => 'http'
 		));
@@ -594,11 +586,11 @@ class HttpSocketTest extends UnitTestCase {
 		$uri = $this->Socket->parseUri('www.cakephp.org:59', array('scheme' => array('http', 'https'), 'port' => 80));
 		$this->assertIdentical($uri, array(
 			'scheme' => 'http',
-			'port' => 59,			
+			'port' => 59,
 			'host' => 'www.cakephp.org'
 		));
 	}
-	
+
 /**
  * Tests that HttpSocket::buildUri can turn all kinds of uri arrays (and strings) into fully or partially qualified URI's
  *
@@ -764,7 +756,7 @@ class HttpSocketTest extends UnitTestCase {
 		);
 		$this->assertIdentical($query, $expectedQuery);
 	}
-	
+
 /**
  * Tests that HttpSocket::buildHeader can turn a given $header array into a proper header string according to
  * HTTP 1.1 specs.
@@ -799,9 +791,9 @@ class HttpSocketTest extends UnitTestCase {
 
 		$r = $this->Socket->buildHeader(array('Test@Field' => "My value"));
 		$this->assertIdentical($r, "Test\"@\"Field: My value\r\n");
-		
+
 	}
-	
+
 /**
  * Test that HttpSocket::parseHeader can take apart a given (and valid) $header string and turn it into an array.
  *
@@ -883,7 +875,7 @@ class HttpSocketTest extends UnitTestCase {
 		$r = $this->Socket->__tokenEscapeChars(false);
 		$this->assertEqual($r, $expected);
 	}
-	
+
 /**
  * Test that HttpSocket::escapeToken is escaping all characters as descriped in RFC 2616 (HTTP 1.1 specs)
  *
@@ -914,7 +906,7 @@ class HttpSocketTest extends UnitTestCase {
  */
 	function testUnescapeToken() {
 		$this->Socket->reset();
-		
+
 		$this->assertIdentical($this->Socket->unescapeToken('Foo'), 'Foo');
 
 		$escape = $this->Socket->__tokenEscapeChars(false);
@@ -931,7 +923,7 @@ class HttpSocketTest extends UnitTestCase {
 		$expectedToken = 'Extreme-:Token-	-"@-test';
 		$this->assertIdentical($expectedToken, $escapedToken);
 	}
-	
+
 /**
  * This tests asserts HttpSocket::reset() resets a HttpSocket instance to it's initial state (before Object::__construct
  * got executed)
@@ -953,7 +945,7 @@ class HttpSocketTest extends UnitTestCase {
 
 		$this->assertIdentical($return, true);
 	}
-	
+
 /**
  * This tests asserts HttpSocket::reset(false) resets certain HttpSocket properties to their initial state (before
  * Object::__construct got executed).
@@ -961,9 +953,9 @@ class HttpSocketTest extends UnitTestCase {
  */
 	function testPartialReset() {
 		$this->Socket->reset();
-		
+
 		$partialResetProperties = array('request', 'response');
-		$initialState = get_class_vars('HttpSocket');		
+		$initialState = get_class_vars('HttpSocket');
 
 		foreach ($initialState as $property => $value) {
 			$this->Socket->{$property} = 'Overwritten';
