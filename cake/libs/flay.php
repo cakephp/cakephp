@@ -46,18 +46,20 @@ class Flay extends Object{
  * Text to be parsed.
  *
  * @var string
+ * @access private
  */
 	var $text = null;
 /**
  * Set this to allow HTML in the markup.
  *
  * @var boolean
+ * @access private
  */
 	var $allow_html = false;
 /**
  * Constructor.
  *
- * @param string $text
+ * @param string $text Text to transform
  */
 	function __construct($text = null) {
 		$this->text = $text;
@@ -70,6 +72,7 @@ class Flay extends Object{
  * @param boolean $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
  * @param boolean $allowHtml Set this to trim whitespace and disable all HTML
  * @return string Formatted text
+ * @access public
  */
 	function toHtml($text = null, $bare = false, $allowHtml = false) {
 		if (empty($text) && empty($this->text)) {
@@ -184,6 +187,7 @@ class Flay extends Object{
  *
  * @param string $string
  * @return array Array of words
+ * @access public
  */
 	function extractWords($string) {
 		$split = preg_split('/[\s,\.:\/="!\(\)<>~\[\]]+/', $string);
@@ -195,8 +199,9 @@ class Flay extends Object{
  * @param array $words			Words to look for and markup
  * @param string $string		String to look in
  * @param integer $max_snippets	Max number of snippets to extract
- * @return string
+ * @return string String with words marked
  * @see colorMark
+ * @access public
  */
 	function markedSnippets($words, $string, $max_snippets = 5) {
 		$string = strip_tags($string);
@@ -223,7 +228,8 @@ class Flay extends Object{
  *
  * @param array $words Array of words to be colorized
  * @param string $string Text in which the words might be found
- * @return string
+ * @return string String with words colorized
+ * @access public
  */
 	function colorMark($words, $string) {
 		$colors=array('yl', 'gr', 'rd', 'bl', 'fu', 'cy');
@@ -237,8 +243,9 @@ class Flay extends Object{
 /**
  * Returns given text with tags stripped out.
  *
- * @param string $text
- * @return string
+ * @param string $text Text to clean
+ * @return string Cleaned text
+ * @access public
  */
 	function toClean($text) {
 		$strip = strip_tags(html_entity_decode($text, ENT_QUOTES));
@@ -247,8 +254,9 @@ class Flay extends Object{
 /**
  * Return parsed text with tags stripped out.
  *
- * @param string $text
- * @return string
+ * @param string $text Text to parse and clean
+ * @return string Cleaned text
+ * @access public
  */
 	function toParsedAndClean($text) {
 		return $this->toClean(Flay::toHtml($text));
@@ -259,7 +267,8 @@ class Flay extends Object{
  * @param string $text		Text to be truncated.
  * @param integer $length	Max length of text.
  * @param string $ellipsis	Sign to print after truncated text.
- * @return string
+ * @return string Fragment
+ * @access public
  */
 	function fragment($text, $length, $ellipsis = '...') {
 		$soft = $length - 5;

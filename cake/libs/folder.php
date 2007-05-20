@@ -44,18 +44,21 @@ class Folder extends Object{
  * Path to Folder.
  *
  * @var string
+ * @access protected
  */
 	var $path = null;
 /**
  * Sortedness.
  *
  * @var boolean
+ * @access protected
  */
 	var $sort = false;
 /**
  * mode to be used on create.
  *
  * @var boolean
+ * @access protected
  */
 	var $mode = '755';
 /**
@@ -75,8 +78,9 @@ class Folder extends Object{
 /**
  * Constructor.
  *
- * @param string $path
- * @param boolean $path
+ * @param string $path Path to folder
+ * @param boolean $create Create folder if not found
+ * @param mixed $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
 	function __construct($path = false, $create = false, $mode = false) {
 		parent::__construct();
@@ -97,6 +101,7 @@ class Folder extends Object{
  * Return current path.
  *
  * @return string Current path
+ * @access public
  */
 	function pwd() {
 		return $this->path;
@@ -106,6 +111,7 @@ class Folder extends Object{
  *
  * @param string $desired_path Path to the directory to change to
  * @return string The new path. Returns false on failure
+ * @access public
  */
 	function cd($path) {
 		$path = realpath($path);
@@ -123,7 +129,8 @@ class Folder extends Object{
  *
  * @param boolean $sort
  * @param mixed $exceptions either an array or boolean true will no grab dot files
- * @return array
+ * @return mixed Contents of current directory as an array, false on failure
+ * @access public
  */
 	function read($sort = true, $exceptions = false) {
 		$dirs = $files = array();
@@ -160,7 +167,8 @@ class Folder extends Object{
  * Returns an array of all matching files in current directory.
  *
  * @param string $pattern Preg_match pattern (Defaults to: .*)
- * @return array
+ * @return array Files that match given pattern
+ * @access public
  */
 	function find($regexp_pattern = '.*') {
 		$data = $this->ls();
@@ -184,6 +192,7 @@ class Folder extends Object{
  *
  * @param string $pattern Preg_match pattern (Defaults to: .*)
  * @return array Files matching $pattern
+ * @access public
  */
 	function findRecursive($pattern = '.*') {
 		$startsOn = $this->path;
@@ -194,7 +203,7 @@ class Folder extends Object{
 /**
  * Private helper function for findRecursive.
  *
- * @param string $pattern
+ * @param string $pattern Pattern to match against
  * @return array Files matching pattern
  * @access private
  */
@@ -218,7 +227,8 @@ class Folder extends Object{
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return boolean
+ * @return boolean true if windows path, false otherwise
+ * @access public
  * @static
  */
 	function isWindowsPath($path) {
@@ -232,6 +242,7 @@ class Folder extends Object{
  *
  * @param string $path Path to check
  * @return boolean
+ * @access public
  * @static
  */
 	function isAbsolute($path) {
@@ -242,7 +253,8 @@ class Folder extends Object{
  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
  *
  * @param string $path Path to check
- * @return boolean
+ * @return boolean true if path ends with slash, false otherwise
+ * @access public
  * @static
  */
 	function isSlashTerm($path) {
@@ -256,6 +268,7 @@ class Folder extends Object{
  *
  * @param string $path Path to check
  * @return string Set of slashes ("\\" or "/")
+ * @access public
  * @static
  */
 	function normalizePath($path) {
@@ -269,6 +282,7 @@ class Folder extends Object{
  *
  * @param string $path Path to check
  * @return string Set of slashes ("\\" or "/")
+ * @access public
  * @static
  */
 	function correctSlashFor($path) {
@@ -281,7 +295,8 @@ class Folder extends Object{
  * Returns $path with added terminating slash (corrected for Windows or other OS).
  *
  * @param string $path Path to check
- * @return string
+ * @return string Path with ending slash
+ * @access public
  * @static
  */
 	function slashTerm($path) {
@@ -293,9 +308,10 @@ class Folder extends Object{
 /**
  * Returns $path with $element added, with correct slash in-between.
  *
- * @param string $path
- * @param string $element
- * @return string
+ * @param string $path Path
+ * @param string $element Element to and at end of path
+ * @return string Combined path
+ * @access public
  * @static
  */
 	function addPathElement($path, $element) {
@@ -305,6 +321,7 @@ class Folder extends Object{
  * Returns true if the File is in a given CakePath.
  *
  * @return boolean
+ * @access public
  */
 	function inCakePath($path = '') {
 		$dir = substr($this->slashTerm(ROOT), 0, -1);
@@ -315,6 +332,7 @@ class Folder extends Object{
  * Returns true if the File is in given path.
  *
  * @return boolean
+ * @access public
  */
 	function inPath($path = '') {
 		$dir = substr($this->slashTerm($path), 0, -1);
@@ -330,6 +348,7 @@ class Folder extends Object{
  *
  * @param string $pathname The directory structure to create
  * @return bool Returns TRUE on success, FALSE on failure
+ * @access public
  */
 	function chmod($path, $mode = false, $exceptions = false) {
 
@@ -357,18 +376,18 @@ class Folder extends Object{
 					$fullpath = $this->addPathElement($path, $item);
 					if (!is_dir($fullpath)) {
 						if (chmod($fullpath, intval($mode, 8))) {
-							$this->__messages[] = __(sprintf('%s changed to %s', $fullpath, $mode), true);
+							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
 							return true;
 						} else {
-							$this->__errors[] = __(sprintf('%s NOT changed to %s', $fullpath, $mode), true);
+							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
 							return false;
 						}
 					} else {
 						if ($this->chmod($fullpath, $mode)) {
-							$this->__messages[] = __(sprintf('%s changed to %s', $fullpath, $mode), true);
+							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
 							return true;
 						} else {
-							$this->__errors[] = __(sprintf('%s NOT changed to %s', $fullpath, $mode), true);
+							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
 							return false;
 						}
 					}
@@ -378,7 +397,7 @@ class Folder extends Object{
 		}
 
 		if (chmod($path, intval($mode, 8))) {
-			$this->__messages[] = __(sprintf('%s changed to %s', $path, $mode), true);
+			$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
 			return true;
 		} else {
 			return false;
@@ -389,6 +408,7 @@ class Folder extends Object{
  *
  * @param string $pathname The directory structure to create
  * @return bool Returns TRUE on success, FALSE on failure
+ * @access public
  */
 	function create($pathname, $mode = false) {
 		if (is_dir($pathname) || empty($pathname)) {
@@ -400,7 +420,7 @@ class Folder extends Object{
 		}
 
 		if (is_file($pathname)) {
-			$this->__errors[] = __(sprintf('%s is a file', $pathname), true);
+			$this->__errors[] = sprintf(__('%s is a file', true), $pathname);
 			return true;
 		}
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
@@ -408,10 +428,10 @@ class Folder extends Object{
 		if ($this->create($nextPathname, $mode)) {
 			if (!file_exists($pathname)) {
 				if (mkdir($pathname, intval($mode, 8))) {
-					$this->__messages[] = __(sprintf('%s created', $pathname), true);
+					$this->__messages[] = sprintf(__('%s created', true), $pathname);
 					return true;
 				} else {
-					$this->__errors[] = __(sprintf('%s NOT created', $pathname), true);
+					$this->__errors[] = sprintf(__('%s NOT created', true), $pathname);
 					return false;
 				}
 			}
@@ -422,6 +442,7 @@ class Folder extends Object{
  * Returns the size in bytes of this Folder.
  *
  * @param string $directory Path to directory
+ * @access public
  */
 	function dirsize() {
 		$size = 0;
@@ -455,8 +476,9 @@ class Folder extends Object{
 /**
  * Recursively Remove directories if system allow.
  *
- * @param string $path
- * @return boolean
+ * @param string $path Path of directory to delete
+ * @return boolean Success
+ * @access public
  */
 	function delete($path) {
 		$path = $this->slashTerm($path);
@@ -472,9 +494,9 @@ class Folder extends Object{
 					}
 					if (is_file($file) === true) {
 						if(unlink($file)) {
-							$this->__messages[] = __(sprintf('%s removed', $path), true);
+							$this->__messages[] = sprintf(__('%s removed', true), $path);
 						} else {
-							$this->__errors[] = __(sprintf('%s NOT removed', $path), true);
+							$this->__errors[] = sprintf(__('%s NOT removed', true), $path);
 						}
 					} elseif (is_dir($file) === true) {
 						if($this->delete($file) === false) {
@@ -485,10 +507,10 @@ class Folder extends Object{
 			}
 			$path = substr($path, 0, strlen($path) - 1);
 			if(rmdir($path) === false) {
-				$this->__errors[] = __(sprintf('%s NOT removed', $path), true);
+				$this->__errors[] = sprintf(__('%s NOT removed', true), $path);
 				return false;
 			} else {
-				$this->__messages[] = __(sprintf('%s removed', $path), true);
+				$this->__messages[] = sprintf(__('%s removed', true), $path);
 			}
 		}
 		return true;
@@ -498,6 +520,7 @@ class Folder extends Object{
  *
  * @param array $options (to, from, chmod, skip)
  * @return boolean
+ * @access public
  */
 	function copy($options = array()) {
 		$to = null;
@@ -512,7 +535,7 @@ class Folder extends Object{
 		$mode = $options['mode'];
 
 		if (!$this->cd($fromDir)) {
-			$this->__errors[] = __(sprintf('%s not found', $fromDir), true);
+			$this->__errors[] = sprintf(__('%s not found', true), $fromDir);
 			return false;
 		}
 
@@ -521,7 +544,7 @@ class Folder extends Object{
 		}
 
 		if (!is_writable($toDir)) {
-			$this->__errors[] = __(sprintf('%s not writable', $toDir), true);
+			$this->__errors[] = sprintf(__('%s not writable', true), $toDir);
 			return false;
 		}
 
@@ -536,20 +559,20 @@ class Folder extends Object{
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
-							$this->__messages[] = __(sprintf('%s copied to %s', $from, $to), true);
+							$this->__messages[] = sprintf(__('%s copied to %s', true), $from, $to);
 						} else {
-							$this->__errors[] = __(sprintf('%s NOT copied to %s', $from, $to), true);
+							$this->__errors[] = sprintf(__('%s NOT copied to %s', true), $from, $to);
 						}
 					}
 
 					if (is_dir($from) && !file_exists($to)) {
 						if (mkdir($to, intval($mode, 8))) {
 							chmod($to, intval($mode, 8));
-							$this->__messages[] = __(sprintf('%s created', $to), true);
+							$this->__messages[] = sprintf(__('%s created', true), $to);
 							$options = am($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
-							$this->__errors[] = __(sprintf('%s not created', $to), true);
+							$this->__errors[] = sprintf(__('%s not created', true), $to);
 						}
 					}
 				}
@@ -568,7 +591,8 @@ class Folder extends Object{
  * Recursive directory move.
  *
  * @param array $options (to, from, chmod, skip)
- * @return boolean.
+ * @return boolean Success
+ * @access public
  */
 	function move($options) {
 		$to = null;
@@ -588,6 +612,7 @@ class Folder extends Object{
  * get messages from latest method
  *
  * @return array
+ * @access public
  */
 	function messages() {
 		return $this->__messages;
@@ -596,49 +621,61 @@ class Folder extends Object{
  * get error from latest method
  *
  * @return array
+ * @access public
  */
 	function errors() {
 		return $this->__errors;
 	}
 /**
  * nix flavored alias
+ *
  * @see read
+ * @access public
  */
 	function ls($sort = true, $exceptions = false) {
 		return $this->read($sort, $exceptions);
 	}
 /**
  * nix flavored alias
+ *
  * @see create
+ * @access public
  */
 	function mkdir($pathname, $mode = 0755) {
 		return $this->create($pathname, $mode);
 	}
 /**
  * nix flavored alias
+ *
  * @see copy
+ * @access public
  */
 	function cp($options) {
 		return $this->copy($options);
-	}		
+	}
 /**
  * nix flavored alias
+ *
  * @see move
+ * @access public
  */
 	function mv($options) {
 		return $this->move($options);
 	}
 /**
  * nix flavored alias
+ *
  * @see delete
+ * @access public
  */
 	function rm($path) {
 		return $this->delete($path);
-	}			
+	}
 /**
  *
  * @deprecated
  * @see chmod
+ * @access public
  */
 	function chmodr($pathname, $mode = 0755) {
 		return $this->chmod($pathname, $mode);
@@ -647,6 +684,7 @@ class Folder extends Object{
  *
  * @deprecated
  * @see mkdir or create
+ * @access public
  */
 	function mkdirr($pathname, $mode = 0755) {
 		return $this->create($pathname, $mode);
