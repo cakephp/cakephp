@@ -142,9 +142,7 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			$options = (array)$options;
-			if(!empty($this->plugin)) {
-				$controller = $this->plugin;
-			} elseif (!empty($model) && $model != $defaultModel) {
+			if (!empty($model) && $model != $defaultModel) {
 				$controller = Inflector::underscore(Inflector::pluralize($model));
 			} else {
 				$controller = Inflector::underscore($this->params['controller']);
@@ -154,6 +152,7 @@ class FormHelper extends AppHelper {
 			}
 
 			$actionDefaults = array(
+				'plugin' => $this->plugin,
 				'controller' => $controller,
 				'action' => $options['action'],
 				'id' => $id
