@@ -255,9 +255,9 @@ class Router extends Object {
 				if (is_array($defaults)) {
 					foreach($defaults as $name => $value) {
 						if (preg_match('#[a-zA-Z_\-]#i', $name)) {
-							$out[$name] = $value;
+							$out[$name] = $_this->stripEscape($value);
 						} else {
-							$out['pass'][] = $value;
+							$out['pass'][] = $_this->stripEscape($value);
 						}
 					}
 				}
@@ -270,7 +270,10 @@ class Router extends Object {
 						break; //leave the default values;
 					} else {
 						// unnamed elements go in as 'pass'
-						$out['pass'] = explode('/', $found);
+						$search = explode('/', $found);
+						foreach($search as $k => $value) {
+							$out['pass'][] = $_this->stripEscape($value);
+						}
 					}
 				}
 				break;
@@ -731,6 +734,22 @@ class Router extends Object {
 			}
 		}
 		return $base;
+	}
+	function stripEscape($param) {
+		if(is_string($param) || empty($param)) {
+			$return = preg_replace('/^ ?-!/', '', $param);
+			return $return;
+		}
+		foreach($param as $key => $value) {
+			if(is_string($value)) {
+				$return[$key] = preg_replace('/^ ?-!/', '', $value);
+			} else {
+				foreach ($value as $array => $string) {
+					$return[$key][$array] = preg_replace('/^ ?-!/', '', $string);
+				}
+			}
+		}
+		return $return;
 	}
 /**
  * Instructs the router to parse out file extensions from the URL. For example,
