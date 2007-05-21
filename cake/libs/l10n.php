@@ -329,9 +329,8 @@ class L10n extends Object {
  * If $language is null it attempt to get settings from I10n::__autoLanguage(); if this fails
  * the method will get the settings from I10n::__setLanguage();
  *
- * @param string $language
- * @return void
- * @access private
+ * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @access public
  */
 	function get($language = null) {
 		if (!is_null($language)) {
@@ -344,7 +343,7 @@ class L10n extends Object {
  * Sets the class vars to correct values for $language.
  * If $language is null it will use the DEFAULT_LANGUAGE if defined
  *
- * @param string $language
+ * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
  * @access private
  */
 	function __setLanguage($language = null) {
@@ -382,6 +381,8 @@ class L10n extends Object {
 	}
 /**
  * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
+ *
+ * @return boolean Success
  * @access private
  */
 	function __autoLanguage() {

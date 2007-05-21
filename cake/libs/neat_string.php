@@ -38,8 +38,10 @@ class NeatString{
 /**
  * Returns an array with each of the non-empty characters in $string as an element.
  *
- * @param string $string
- * @return array
+ * @param string $string String to split
+ * @return array An array where each element is a non empty character
+ * @access public
+ * @static
  */
 	function toArray($string) {
 		$split = preg_split('//', $string, -1, PREG_SPLIT_NO_EMPTY);
@@ -48,8 +50,10 @@ class NeatString{
 /**
  * Returns string with Cyrillic characters translated to Roman ones.
  *
- * @param string $string
- * @return string
+ * @param string $string String to translate
+ * @return string String with cyrillic chracters translated
+ * @access public
+ * @static
  */
 	function toRoman($string) {
 		$pl = array('ą','ć','ę','ł','ń','ó','ś','ź','ż','Ą','Ć','Ę','�?','Ń','Ó','Ś','Ź','Ż');
@@ -60,8 +64,10 @@ class NeatString{
 /**
  * Returns string as lowercase with whitespace removed.
  *
- * @param string $string
- * @return string
+ * @param string $string String to convert
+ * @return string Converted string
+ * @access public
+ * @static
  */
 	function toCompressed($string) {
 		$whitespace = array("\n", "	", "\r", "\0", "\x0B", " ");
@@ -74,6 +80,8 @@ class NeatString{
  * @param integer $length Length of generated password
  * @param string $available_chars List of characters to use in password
  * @return string Generated password
+ * @access public
+ * @static
  */
 	function randomPassword($length, $available_chars = 'ABDEFHKMNPRTWXYABDEFHKMNPRTWXY23456789') {
 		$chars = preg_split('//', $available_chars, -1, PREG_SPLIT_NO_EMPTY);

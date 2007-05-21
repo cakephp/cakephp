@@ -91,17 +91,16 @@ class I18n extends Object {
 		return $instance[0];
 	}
 /**
- *
  * Used by the translation functions in basics.php
  * Can also be used like I18n::translate(); but only if the uses('i18n'); has been used to load the class.
  *
- * @param string $singular
- * @param string $plural
- * @param string $domain
- * @param string $category
- * @param integer $count
- * @param string $directory
- * @return translated strings.
+ * @param string $singular String to translate
+ * @param string $plural Plural string (if any)
+ * @param string $domain Domain
+ * @param string $category Category
+ * @param integer $count Count
+ * @param string $directory Directory that contains the file that is requesting translation
+ * @return string translated strings.
  * @access public
  */
 	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
@@ -173,9 +172,9 @@ class I18n extends Object {
 /**
  * Attempts to find the plural form of a string.
  *
- * @param string $type
- * @param integrer $n
- * @return plural match
+ * @param string $type Type
+ * @param integrer $n Number
+ * @return integer plural match
  * @access private
  */
 	function __pluralGuess(&$type, $n) {
@@ -301,8 +300,9 @@ class I18n extends Object {
  * Binds the given domain to a file in the specified directory.
  * If directory is null, will attempt to search default locations.
  *
- * @param string $domain
- * @return string
+ * @param string $domain Domain to bind
+ * @param string $directory Directory
+ * @return string Domain binded
  * @access private
  */
 	function __bindTextDomain($domain, $directory = null) {
@@ -368,11 +368,10 @@ class I18n extends Object {
 		return($domain);
 	}
 /**
- *
  * Loads the binary .mo file for translation and sets the values for this translation in the var I18n::__domains
  *
- * @param resource $file
- * @param string $domain
+ * @param resource $file Binary .mo file to load
+ * @param string $domain Domain where to load file in
  * @access private
  */
 	function __loadMo($file, $domain) {
@@ -412,9 +411,9 @@ class I18n extends Object {
 /**
  * Loads the text .po file for translation and sets the values for this translation in the var I18n::__domains
  *
- * @param resource $file
- * @param string $domain
- * @return unknown
+ * @param resource $file Text .po file to load
+ * @param string $domain Domain to load file in
+ * @return array Binded domain elements
  * @access private
  */
 	function __loadPo($file, $domain) {
@@ -484,9 +483,9 @@ class I18n extends Object {
 /**
  * Not implemented
  *
- * @param string $domain
- * @param string $codeset
- * @return unknown
+ * @param string $domain Domain
+ * @param string $codeset Code set
+ * @return string
  * @access private
  * @todo Not implemented
  */

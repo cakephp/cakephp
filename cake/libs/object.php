@@ -69,6 +69,7 @@ class Object {
  * Each class can override this method as necessary.
  *
  * @return string The name of this class
+ * @access public
  */
 	function toString() {
 		$class = get_class($this);
@@ -79,7 +80,8 @@ class Object {
  *
  * @param string $url  URL in the form of Cake URL ("/controller/method/parameter")
  * @param array $extra If array includes the key "return" it sets the AutoRender to true.
- * @return boolean  Success
+ * @return mixed  Success (true/false) or contents if 'return' is set in $extra
+ * @access public
  */
 	function requestAction($url, $extra = array()) {
 		if (!empty($url)) {
@@ -113,6 +115,7 @@ class Object {
  *
  * @param string $msg Log message
  * @param int $type Error type constant. Defined in app/config/core.php.
+ * @access public
  */
 	function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
@@ -138,10 +141,8 @@ class Object {
 /**
  * Allows setting of multiple properties of the object in a single line of code.
  *
- * @access public
- * @param array $properties An associative array containing
- *                          properties and corresponding values.
- * @return void
+ * @param array $properties An associative array containing properties and corresponding values.
+ * @access protected
  */
 	function _set($properties = array()) {
 		if (is_array($properties) && !empty($properties)) {
@@ -161,6 +162,7 @@ class Object {
  * @param string $method Method to be called in the error class (AppError or ErrorHandler classes)
  * @param array $messages Message that is to be displayed by the error class
  * @return error message
+ * @access public
  */
 	function cakeError($method, $messages) {
 		if (!class_exists('ErrorHandler')) {
@@ -184,9 +186,9 @@ class Object {
  * There are many uses for this method, see manual for examples
  *
  * @param string $name name of the class to persist
- * @return boolean
  * @param string $object the object to persist
- * @access public
+ * @return boolean Success
+ * @access protected
  * @todo add examples to manual
  */
 	function _persist($name, $return = null, &$object, $type = null) {
@@ -228,8 +230,8 @@ class Object {
  * Open the persistent class file for reading
  * Used by Object::_persist()
  *
- * @param string $name
- * @param string $type
+ * @param string $name Name of persisted class
+ * @param string $type Type of persistance (e.g: registry)
  * @access private
  */
 	function __openPersistent($name, $type = null) {
