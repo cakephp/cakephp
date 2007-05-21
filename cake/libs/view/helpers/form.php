@@ -358,14 +358,14 @@ class FormHelper extends AppHelper {
 			}
 			$text = Inflector::humanize($text);
 		}
-		
+
 		if (isset($attributes['for'])) {
 			$labelFor = $attributes['for'];
 			unset($attributes['for']);
 		} else {
 			$labelFor = $this->domId($tagName);
 		}
-		
+
 		return $this->output(sprintf($this->Html->tags['label'], $labelFor, $this->_parseAttributes($attributes), $text));
 	}
 /**
@@ -381,7 +381,7 @@ class FormHelper extends AppHelper {
 		if(!is_array($fields)) {
 			$fieldset = $fields;
 			$fields = array_keys($this->fieldset['fields']);
-		} 
+		}
 		if(isset($fields['fieldset'])) {
 			$fieldset = $fields['fieldset'];
 			unset($fields['fieldset']);
@@ -512,27 +512,27 @@ class FormHelper extends AppHelper {
 			$label = $options['label'];
 			unset($options['label']);
 		}
-		
+
 		if ($label !== false) {
 			$labelAttributes = array();
-			
+
 			if (in_array($options['type'], array('date', 'datetime'))) {
 				$labelFor = $this->domId(implode('.', array_filter(array($this->model(), $this->field()))));
 				$labelAttributes = array( 'for' => $labelFor . 'Month' );
 			}
-			
+
 			if (is_array($label)) {
 				$labelText = null;
 				if (isset($label['text'])) {
 					$labelText = $label['text'];
 					unset($label['text']);
 				}
-				
+
 				$labelAttributes = am($labelAttributes, $label);
 			} else {
 				$labelText = $label;
 			}
-			
+
 			$out = $this->label(null, $labelText, $labelAttributes);
 		}
 
@@ -662,7 +662,7 @@ class FormHelper extends AppHelper {
 	function hidden($fieldName, $options = array()) {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
-		unset($options['class']);
+
 		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$model = '_' . $model;
 		}
@@ -788,12 +788,12 @@ class FormHelper extends AppHelper {
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
 		$showParents = false;
 		$escapeOptions = true;
-		
+
 		if (isset($attributes['escape'])) {
 			$escapeOptions = $attributes['escape'];
 			unset($attributes['escape']);
 		}
-		
+
 		$this->setFormTag($fieldName);
 		$this->__secure();
 		$attributes = $this->domId((array)$attributes);
@@ -1078,7 +1078,7 @@ class FormHelper extends AppHelper {
  */
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
 		$attributes = am(array('escape' => true), $attributes);
-		
+
 		$select = array();
 		foreach($elements as $name => $title) {
 			$htmlOptions = array();

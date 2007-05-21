@@ -538,7 +538,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/option value="other"\s+selected="selected"/', $result);
 		$this->assertNoPattern('/<select[^<>]+[^name|id]=[^<>]*>/', $result);
 		$this->assertNoPattern('/<option[^<>]+[^value|selected]=[^<>]*>/', $result);
-		
+
 		$this->Form->data = array();
 		$result = $this->Form->select('Model/field', array('value' => 'good', 'other' => 'bad'));
 		$this->assertPattern('/option value=""/', $result);
@@ -548,7 +548,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<\/option>\s+<\/select>/', $result);
 		$this->assertNoPattern('/option value="field"\s+selected="selected"/', $result);
 		$this->assertNoPattern('/option value="other"\s+selected="selected"/', $result);
-		
+
 		$result = $this->Form->select('Model/field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array(), false);
 		$this->assertPattern('/' .
 			'<select[^>]*>\s+' .
@@ -556,7 +556,7 @@ class FormHelperTest extends CakeTestCase {
 			'<option\s+value="second"[^>]*>value<\/option>\s+'.
 			'<\/select>'.
 			'/i', $result);
-			
+
 		$result = $this->Form->select('Model/field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array('escape' => false), false);
 		$this->assertPattern('/' .
 			'<select[^>]*>\s+' .
@@ -608,7 +608,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/>$/', $result);
 		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+id="theID"[^<>]+value="test"[^<>]+\/>$/', $result);
 		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value]=[^<>]*>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
 	}
 
 	function testFileUploadField() {
@@ -665,57 +665,57 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
 	}
-	
+
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
-		
+
 		$result = $this->Form->input('Contact.name');
 		$this->assertPattern('/^<div class="input">' .
 												 '<label for="ContactName">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>'.
 												 '<\/div>$/', $result);
-												 
+
 		$result = $this->Form->input('Contact.name', array('div' => false));
 		$this->assertPattern('/^<label for="ContactName">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
-		
+
 		$result = $this->Form->input('Contact.non_existing');
 		$this->assertPattern('/^<div class="input">' .
 												 '<label for="ContactNonExisting">Non Existing<\/label>' .
 												 '<input name="data\[Contact\]\[non_existing\]" type="text" value="" id="ContactNonExisting" \/>'.
 												 '<\/div>$/', $result);
-												 
+
 		$result = $this->Form->input('Contact.published', array('div' => false));
-		
+
 		$this->assertPattern('/^<label for="ContactPublishedMonth">Published<\/label>' .
 												 '<select name="data\[Contact\]\[published_month\]"\s+id="ContactPublishedMonth">/', $result);
-												 
+
 		$result = $this->Form->input('Contact.updated', array('div' => false));
-		
+
 		$this->assertPattern('/^<label for="ContactUpdatedMonth">Updated<\/label>' .
 												 '<select name="data\[Contact\]\[updated_month\]"\s+id="ContactUpdatedMonth">/', $result);
 	}
-	
+
 	function testFormMagicInputLabel() {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
-											 
+
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
 		$this->assertPattern('/^<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
-		
+
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => 'My label'));
 		$this->assertPattern('/^<label for="ContactName">My label<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
-		
+
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory')));
 		$this->assertPattern('/^<label for="ContactName" class="mandatory">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
-												 
+
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')));
 		$this->assertPattern('/^<label for="ContactName" class="mandatory">My label<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
-												 
+
 		$result = $this->Form->input('Contact.name', array('div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')));
 		$this->assertPattern('/^<label for="my_id">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" id="my_id" maxlength="255" value="" \/>$/', $result);
@@ -723,7 +723,7 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
-		
+
 		$result = $this->Form->end(array('submit' => 'save'));
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
 	}
