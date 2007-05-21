@@ -795,7 +795,6 @@ class FormHelper extends AppHelper {
 		}
 
 		$this->setFormTag($fieldName);
-		$this->__secure();
 		$attributes = $this->domId((array)$attributes);
 
 		if ($this->tagIsInvalid()) {
@@ -822,6 +821,7 @@ class FormHelper extends AppHelper {
 			$tag = $this->Html->tags['selectmultiplestart'];
 		} else {
 			$tag = $this->Html->tags['selectstart'];
+			$this->__secure();
 		}
 		$select[] = sprintf($tag, $this->model(), $this->field(), $this->Html->_parseAttributes($attributes));
 
