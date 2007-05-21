@@ -41,6 +41,7 @@ class Object {
  * Log object
  *
  * @var object
+ * @access private
  */
 	var $_log = null;
 /**
