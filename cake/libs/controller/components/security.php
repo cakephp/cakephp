@@ -510,7 +510,9 @@ class SecurityComponent extends Object {
 					}
 					continue;
 				}
-				$field[$key] = array_keys($value);
+				if(!array_key_exists($key, $value)) {
+					$field[$key] = array_keys($value);
+				}
 			}
 			$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
 
