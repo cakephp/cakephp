@@ -737,15 +737,15 @@ class Router extends Object {
 	}
 	function stripEscape($param) {
 		if(is_string($param) || empty($param)) {
-			$return = preg_replace('/^ ?-!/', '', $param);
+			$return = preg_replace('/^ *-!/', '', $param);
 			return $return;
 		}
 		foreach($param as $key => $value) {
 			if(is_string($value)) {
-				$return[$key] = preg_replace('/^ ?-!/', '', $value);
+				$return[$key] = preg_replace('/^ *-!/', '', $value);
 			} else {
 				foreach ($value as $array => $string) {
-					$return[$key][$array] = preg_replace('/^ ?-!/', '', $string);
+					$return[$key][$array] = preg_replace('/^ *-!/', '', $string);
 				}
 			}
 		}

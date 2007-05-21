@@ -778,6 +778,7 @@ class DboSource extends DataSource {
 						}
 					}
 					$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
 
 				} else {
 					$tempArray[0][$association] = false;
