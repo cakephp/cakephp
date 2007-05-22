@@ -39,7 +39,7 @@ class HttpSocket extends CakeSocket {
  * Object description
  *
  * @var string
- * @access protected
+ * @access public
  */
 	var $description = 'HTTP-based DataSource Interface';
 
@@ -48,7 +48,7 @@ class HttpSocket extends CakeSocket {
  * will be disabled and additional measures to deal with non-standard responses will be enabled.
  *
  * @var boolean
- * @access protected
+ * @access public
  */
 	var $quirksMode = false;
 
@@ -56,7 +56,7 @@ class HttpSocket extends CakeSocket {
  * The default values to use for a request
  *
  * @var array
- * @access protected
+ * @access public
  */
 	var $request = array(
 		'method' => 'GET',
@@ -88,7 +88,7 @@ class HttpSocket extends CakeSocket {
 * The default structure for storing the response
 *
 * @var array
-* @access protected
+* @access public
 */
 	var $response = array(
 		'raw' => array(
@@ -110,7 +110,7 @@ class HttpSocket extends CakeSocket {
  * Default configuration settings for the HttpSocket
  *
  * @var array
- * @access protected
+ * @access public
  */
 	var $config = array(
 		'persistent' => false,
@@ -136,7 +136,7 @@ class HttpSocket extends CakeSocket {
  * String that represents a line break.
  *
  * @var string
- * @access protected
+ * @access public
  */
 	var $lineBreak = "\r\n";
 

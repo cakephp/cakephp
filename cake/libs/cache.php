@@ -51,7 +51,7 @@ class Cache extends Object {
  * Cache engine to use
  *
  * @var object
- * @access private
+ * @access protected
  */
 	var $_Engine = null;
 /**
@@ -77,7 +77,7 @@ class Cache extends Object {
  *
  * @param $name	Name of the engine (without 'Engine')
  * @return boolean
- * @access private
+ * @access protected
  */
 	function _includeEngine($name) {
 		if (class_exists($name.'Engine')) {

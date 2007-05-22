@@ -46,14 +46,14 @@ class Flay extends Object{
  * Text to be parsed.
  *
  * @var string
- * @access private
+ * @access public
  */
 	var $text = null;
 /**
  * Set this to allow HTML in the markup.
  *
  * @var boolean
- * @access private
+ * @access public
  */
 	var $allow_html = false;
 /**

@@ -40,7 +40,7 @@ class ErrorHandler extends Object{
  * Controller instance.
  *
  * @var object
- * @access private
+ * @access public
  */
 	var $controller = null;
 

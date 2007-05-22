@@ -45,15 +45,15 @@ class File extends Object{
 /**
  * Folder object of the File
  *
- * @var Folder
- * @access private
+ * @var object
+ * @access public
  */
 	var $Folder = null;
 /**
  * Filename
  *
  * @var string
- * @access private
+ * @access public
  */
 	var $name = null;
 /**

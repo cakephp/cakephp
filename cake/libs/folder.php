@@ -44,21 +44,21 @@ class Folder extends Object{
  * Path to Folder.
  *
  * @var string
- * @access protected
+ * @access public
  */
 	var $path = null;
 /**
  * Sortedness.
  *
  * @var boolean
- * @access protected
+ * @access public
  */
 	var $sort = false;
 /**
  * mode to be used on create.
  *
  * @var boolean
- * @access protected
+ * @access public
  */
 	var $mode = '755';
 /**
