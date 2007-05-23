@@ -331,7 +331,7 @@ class Shell extends Object {
  * @param unknown_type $msg
  */
 	function error($title, $msg) {
-		$out .= "$title\n";
+		$out  = "$title\n";
 		$out .= "$msg\n";
 		$out .= "\n";
 		$this->err($out);
