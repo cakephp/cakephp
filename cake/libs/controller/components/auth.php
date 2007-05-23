@@ -249,7 +249,7 @@ class AuthComponent extends Object {
 		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
-		if (!$this->_setDefaults()) {
+		if (!$this->__setDefaults()) {
 			return;
 		}
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
@@ -307,7 +307,7 @@ class AuthComponent extends Object {
  * @param object $controller A reference to the instantiating controller object
  * @return void
  */
-	function _setDefaults() {
+	function __setDefaults() {
 		if (empty($this->userModel)) {
 			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().', true), E_USER_WARNING);
 			return false;
@@ -385,7 +385,12 @@ class AuthComponent extends Object {
 		}
 		return $valid;
 	}
-
+/**
+ *
+ * @access private
+ * @param string $auth
+ * @return type, object, asssoc
+ */
 	function __authType($auth = null) {
 		if (empty($auth)) {
 			$auth = $this->validate;
@@ -474,7 +479,7 @@ class AuthComponent extends Object {
  * @return boolean True on login success, false on failure
  */
 	function login($data = null) {
-		$this->_setDefaults();
+		$this->__setDefaults();
 		$this->_loggedIn = false;
 
 		if (empty($data)) {
@@ -496,7 +501,7 @@ class AuthComponent extends Object {
  * @see AuthComponent::$loginAction
  */
 	function logout() {
-		$this->_setDefaults();
+		$this->__setDefaults();
 		$this->Session->del($this->sessionKey);
 		$this->Session->del('Auth.redirect');
 		$this->_loggedIn = false;
@@ -509,7 +514,7 @@ class AuthComponent extends Object {
  * @return array User record, or null if no user is logged in.
  */
 	function user($key = null) {
-		$this->_setDefaults();
+		$this->__setDefaults();
 		if (!$this->Session->check($this->sessionKey)) {
 			return null;
 		}
@@ -642,9 +647,10 @@ class AuthComponent extends Object {
 		} else if (is_array($user) && isset($user[$this->userModel])) {
 			$user = $user[$this->userModel];
 		}
-
+		
 		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
-			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])) {
+			$find = array();
+			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])  && !empty($user[$this->fields['password']])) {
 				if (trim($user[$this->fields['username']]) == '=') {
 					return false;
 				}
@@ -694,7 +700,7 @@ class AuthComponent extends Object {
  */
 	function hashPasswords($data) {
 		if (isset($data[$this->userModel])) {
-			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
+			if (!empty($data[$this->userModel][$this->fields['username']]) && !empty($data[$this->userModel][$this->fields['password']])) {
 				$model =& $this->getUserModel();
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}
@@ -724,7 +730,7 @@ class AuthComponent extends Object {
 		}
 	}
 /**
- * @access private
+ * @access protected
  */
 	function _normalizeURL($url = '/') {
 		if (is_array($url)) {

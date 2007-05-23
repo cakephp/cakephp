@@ -210,6 +210,9 @@ class PaginatorHelper extends AppHelper {
  *                key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
+		if(!empty($this->options)) {
+			$options = am($this->options, $options);
+		}
 		$options = am(array('url' => array(), 'model' => null), $options);
 		$url = $options['url'];
 		unset($options['url']);

@@ -148,7 +148,7 @@ class DboSource extends DataSource {
 		if ($data != null) {
 			$data = serialize($data);
 		}
-		$filename = ConnectionManager::getSourceName($this) . '_' . $this->config['database'] . '_list';
+		$filename = ConnectionManager::getSourceName($this) . '_' . preg_replace("/[^A-Za-z0-9_-]/", "_", $this->config['database']) . '_list';
 		$new = cache('models' . DS . $filename, $data, $expires);
 
 		if ($new != null) {
