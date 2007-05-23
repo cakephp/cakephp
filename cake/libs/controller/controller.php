@@ -595,6 +595,16 @@ class Controller extends Object {
 			loadView($this->view);
 		}
 		$this->beforeRender();
+
+		foreach($this->components as $c) {
+			$path = preg_split('/\/|\./', $c);
+			$c = $path[count($path) - 1];
+			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRender'))) {
+				if (!array_key_exists('enabled', get_object_vars($this->{$c})) || $this->{$c}->enabled == true) {
+					$this->{$c}->beforeRender($this);
+				}
+			}
+		}
 		$this->params['models'] = $this->modelNames;
 
 		$this->__viewClass =& new $viewClass($this);
