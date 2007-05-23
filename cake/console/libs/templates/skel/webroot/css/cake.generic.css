@@ -347,6 +347,7 @@ div.related {
 
 /* Debugging */
 pre {
+	color: #000;
 	background: #f0f0f0;
 	padding: 1em;
 }
