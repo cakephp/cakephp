@@ -44,7 +44,7 @@ class NumberTest extends UnitTestCase {
 	}
 
 	function testFormatAndCurrency() {
-		$value = '1001001001';
+		$value = '100100100';
 
 		$result = $this->Helper->format($value, '#');
 		$expected = '#100,100,100';
