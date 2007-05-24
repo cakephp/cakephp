@@ -33,13 +33,22 @@
 class ConsoleShell extends Shell {
 	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
 	
-	function main() {
-		$models = @loadModels();
-		foreach ($models as $model) {
+	function initialize() {
+		$this->models = @loadModels();
+		foreach ($this->models as $model) {
 			$class = Inflector::camelize(r('.php', '', $model));
-			$models[$model] = $class;
-			@${$class} =& new $class();
+			$this->models[$model] = $class;
+			$this->{$class} =& new $class();
 		}
+		$this->out('Model classes:');
+		$this->out('--------------');
+
+		foreach ($this->models as $model) {
+			$this->out(" - {$model}");
+		}
+	}
+	
+	function main() {
 
 		while (true) {
 			$command = trim($this->in(''));
@@ -60,8 +69,7 @@ class ConsoleShell extends Shell {
 				case 'models':
 					$this->out('Model classes:');
 					$this->out('--------------');
-
-					foreach ($models as $model) {
+					foreach ($this->models as $model) {
 						$this->out(" - {$model}");
 					}
 				break;
@@ -70,9 +78,9 @@ class ConsoleShell extends Shell {
 					$dynamicAssociation = false;
 					
 					foreach ($this->associations as $association) {
-						if (preg_match("/^(\w+) $association (\w+)/", $command, $models) == TRUE) {
-							$modelA = $models[1];
-							$modelB = $models[2];
+						if (preg_match("/^(\w+) $association (\w+)/", $command, $this->models) == TRUE) {
+							$modelA = $this->models[1];
+							$modelB = $this->models[2];
 							loadModel($modelA);
 							$M = new $modelA();
 							$dynamicAssociation = true;
@@ -88,10 +96,10 @@ class ConsoleShell extends Shell {
 					if ($dynamicAssociation == false) {
 						// let's look for a find statment
 						if (strpos($command, "->find") > 0) {
-							$command = '$modelResults = $' . $command . ";";
+							$command = '$data = $this->' . $command . ";";
 							eval($command);
 							
-							foreach ($modelResults as $results) {
+							foreach ($data as $results) {
 								foreach ($results as $modelName => $result) {
 									$this->out("$modelName");
 									foreach ($result as $field => $value) {
