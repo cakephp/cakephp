@@ -569,7 +569,7 @@ class FormHelper extends AppHelper {
 				unset($divOptions);
 			break;
 			case 'checkbox':
-				$out = $before . $this->Html->checkbox($tagName, null, $options) . $between . $out;
+				$out = $before . $this->checkbox($tagName, $options) . $between . $out;
 			break;
 			case 'text':
 			case 'password':
@@ -608,6 +608,46 @@ class FormHelper extends AppHelper {
 		}
 		return $out;
 	}
+/**
+ * Creates a checkbox input widget.
+ *
+ * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
+ * @param array $options Array of HTML attributes.
+ * @return string An HTML text input element
+ */
+	function checkbox($fieldName, $options = array()) {
+		$this->__secure();
+		
+		$value = 1;
+		if(isset($options['value'])) {
+			$value = $options['value'];
+			unset($options['value']);
+		}
+		
+		$options = $this->__initInputField($fieldName, am(array('type' => 'checkbox'), $options));
+				
+		$model = $this->model();
+		if (ClassRegistry::isKeySet($model)) {
+			$object =& ClassRegistry::getObject($model);
+		}
+		
+		$output = null;
+		if(isset($object) && is_int($options['value'])) {
+			$db =& ConnectionManager::getDataSource($object->useDbConfig);
+			$value = $db->boolean($options['value']);
+			$options['value'] = 1;
+			$output = $this->hidden($fieldName, array('value' => '-1', 'id' => $options['id'] . '_'), true);
+		}
+		
+		if(isset($options['value']) && $value == $options['value']) {
+			$options['checked'] = 'checked';
+		} else if(!empty($value)) {
+			$options['value'] = $value;
+		}
+		
+		$output .= sprintf($this->Html->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' '));
+		return $this->output($output);
+	}	
 /**
  * Creates a text input widget.
  *
