@@ -1196,13 +1196,9 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-			$data = array('01'=>strftime("%B", strtotime("1/1/2006")), '02'=>strftime("%B", strtotime("2/1/2006")),
-						'03'=>strftime("%B", strtotime("3/1/2006")), '04'=>strftime("%B", strtotime("4/1/2006")),
-						'05'=>strftime("%B", strtotime("5/1/2006")), '06'=>strftime("%B", strtotime("6/1/2006")),
-						'07'=>strftime("%B", strtotime("7/1/2006")), '08'=>strftime("%B", strtotime("8/1/2006")),
-						'09'=>strftime("%B", strtotime("9/1/2006")), '10'=>strftime("%B", strtotime("10/1/2006")),
-						'11'=>strftime("%B", strtotime("11/1/2006")),'12'=>strftime("%B", strtotime("12/1/2006"))
-					);
+				for($i = 1; $i <= 12; $i++) {
+					$data[sprintf("%02s", $i)] = strftime("%B", mktime(1,1,1,$i,1,1999));
+				}
 			break;
 			case 'year':
 				$current = intval(date('Y'));
