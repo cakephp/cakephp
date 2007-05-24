@@ -68,7 +68,7 @@ class ConsoleShell extends Shell {
 				break;
 				case 'models':
 					$this->out('Model classes:');
-					$this->out('--------------');
+					$this->hr();
 					foreach ($this->models as $model) {
 						$this->out(" - {$model}");
 					}
@@ -105,7 +105,7 @@ class ConsoleShell extends Shell {
 									}
 								}
 								
-								$this->out('----------');
+								$this->hr();
 							} 
 						}
 					}
