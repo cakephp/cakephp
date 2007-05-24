@@ -212,15 +212,14 @@ class TextHelper extends AppHelper {
  * @param array $list The list to be joined
  * @return string
  */
-	function toList($list) {
+	function toList($list, $and = 'and') {
 		$r = '';
 		$c = count($list) - 1;
-
 		foreach ($list as $i => $item) {
 			$r .= $item;
 			if ($c > 0 && $i < $c)
 			{
-				$r .= ($i < $c - 1 ? ', ' : ' and ');
+				$r .= ($i < $c - 1 ? ', ' : " {$and} ");
 			}
 		}
 		return $r;
