@@ -87,7 +87,7 @@ class ConsoleShell extends Shell {
 							$M->bindModel(
 								array("$association" => array(
 									"$modelB" => array(
-										'className' => $modelB))));
+										'className' => $modelB))), false);
 							print "Added association $command\n";
 							break;
 						}
