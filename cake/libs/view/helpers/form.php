@@ -66,7 +66,7 @@ class FormHelper extends AppHelper {
  *
  * @access public
  * @param string $model The model object which the form is being defined for
- * @param array  $options
+ * @param array	 $options
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
@@ -113,10 +113,10 @@ class FormHelper extends AppHelper {
 			$fieldTypes = $fields->extract('{n}.type');
 			$fieldLengths = $fields->extract('{n}.length');
 			if (!count($fieldNames) || !count($fieldTypes)) {
-			     trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
 			}
 			if (!count($fieldNames) || !count($fieldLengths) || (count($fieldNames) != count($fieldTypes))) {
-			     trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
+				 trigger_error(__('(FormHelper::create) Unable to use model field data. If you are using a model without a database table, try implementing loadInfo()', true), E_USER_WARNING);
 			}
 			$data = array(
 				'fields' => array_combine($fieldNames, $fieldTypes),
@@ -468,7 +468,7 @@ class FormHelper extends AppHelper {
 			if(isset($type)) {
 				$map = array(
 					'string'	=> 'text',	'datetime'	=> 'datetime',
-					'boolean'	=> 'checkbox',	'timestamp'	=> 'datetime',
+					'boolean'	=> 'checkbox',	'timestamp' => 'datetime',
 					'text'		=> 'textarea',	'time'		=> 'time',
 					'date'		=> 'date'
 				);
@@ -557,10 +557,10 @@ class FormHelper extends AppHelper {
 			unset($options['empty']);
 		}
 
-		$type    = $options['type'];
-		$before  = $options['before'];
+		$type	 = $options['type'];
+		$before	 = $options['before'];
 		$between = $options['between'];
-		$after   = $options['after'];
+		$after	 = $options['after'];
 		unset($options['type'], $options['before'], $options['between'], $options['after']);
 
 		switch ($type) {
@@ -617,20 +617,20 @@ class FormHelper extends AppHelper {
  */
 	function checkbox($fieldName, $options = array()) {
 		$this->__secure();
-		
+
 		$value = 1;
 		if(isset($options['value'])) {
 			$value = $options['value'];
 			unset($options['value']);
 		}
-		
+
 		$options = $this->__initInputField($fieldName, am(array('type' => 'checkbox'), $options));
-				
+
 		$model = $this->model();
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		}
-		
+
 		$output = null;
 		if(isset($object) && is_int($options['value'])) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
@@ -638,16 +638,16 @@ class FormHelper extends AppHelper {
 			$options['value'] = 1;
 			$output = $this->hidden($fieldName, array('value' => '-1', 'id' => $options['id'] . '_'), true);
 		}
-		
+
 		if(isset($options['value']) && $value == $options['value']) {
 			$options['checked'] = 'checked';
 		} else if(!empty($value)) {
 			$options['value'] = $value;
 		}
-		
+
 		$output .= sprintf($this->Html->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' '));
 		return $this->output($output);
-	}	
+	}
 /**
  * Creates a text input widget.
  *
@@ -730,8 +730,8 @@ class FormHelper extends AppHelper {
  * Creates a button tag.
  *
  * @param  mixed  $params  Array of params [content, type, options] or the
- *                         content of the button.
- * @param  string $type    Type of the button (button, submit or reset).
+ *						   content of the button.
+ * @param  string $type	   Type of the button (button, submit or reset).
  * @param  array  $options Array of options.
  * @return string A HTML button tag.
  * @access public
@@ -760,7 +760,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates a submit button element.
  *
- * @param  string  $caption  The label appearing on the button
+ * @param  string  $caption	 The label appearing on the button
  * @param  array   $options
  * @return string A HTML submit button
  */
@@ -788,7 +788,7 @@ class FormHelper extends AppHelper {
 			$divOptions = am(array('class' => 'submit'), $div);
 		}
 
-		$out =  $secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
+		$out =	$secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 		if (isset($divOptions)) {
 			$out = $secured . $this->Html->div($divOptions['class'], $out, $divOptions);
 		}
@@ -798,7 +798,7 @@ class FormHelper extends AppHelper {
 /**
  * Creates an image input widget.
  *
- * @param  string  $path           Path to the image file, relative to the webroot/img/ directory.
+ * @param  string  $path		   Path to the image file, relative to the webroot/img/ directory.
  * @param  array   $options Array of HTML attributes.
  * @return string  HTML submit image element
  */
@@ -816,13 +816,13 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the SELECT element
  * @param mixed $selected The option selected by default.  If null, the default value
- *                        from POST data will be used when available.
- * @param array $attributes  The HTML attributes of the select element.  If
- *                           'showParents' is included in the array and set to true,
- *                           an additional option element will be added for the parent
- *                           of each option group.
+ *						  from POST data will be used when available.
+ * @param array $attributes	 The HTML attributes of the select element.	 If
+ *							 'showParents' is included in the array and set to true,
+ *							 an additional option element will be added for the parent
+ *							 of each option group.
  * @param mixed $showEmpty If true, the empty select option is shown.  If a string,
- *                         that string is displayed as the empty element.
+ *						   that string is displayed as the empty element.
  * @return string Formatted SELECT element
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
@@ -882,7 +882,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array  $attributes HTML attributes for the select element
+ * @param array	 $attributes HTML attributes for the select element
  * @param mixed $showEmpty Show/hide the empty select option
  * @return string
  */
@@ -999,11 +999,11 @@ class FormHelper extends AppHelper {
  * @return string The HTML formatted OPTION element
  */
 	function dateTime($tagName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
-		$day      = null;
-		$month    = null;
-		$year     = null;
-		$hour     = null;
-		$min      = null;
+		$day	  = null;
+		$month	  = null;
+		$year	  = null;
+		$hour	  = null;
+		$min	  = null;
 		$meridian = null;
 
 		if (empty($selected)) {
@@ -1196,7 +1196,13 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
- 				$data = array('01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April', '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August', '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December');
+			$data = array('01'=>strftime("%B", strtotime("1/1/2006")), '02'=>strftime("%B", strtotime("2/1/2006")),
+						'03'=>strftime("%B", strtotime("3/1/2006")), '04'=>strftime("%B", strtotime("4/1/2006")),
+						'05'=>strftime("%B", strtotime("5/1/2006")), '06'=>strftime("%B", strtotime("6/1/2006")),
+						'07'=>strftime("%B", strtotime("7/1/2006")), '08'=>strftime("%B", strtotime("8/1/2006")),
+						'09'=>strftime("%B", strtotime("9/1/2006")), '10'=>strftime("%B", strtotime("10/1/2006")),
+						'11'=>strftime("%B", strtotime("11/1/2006")),'12'=>strftime("%B", strtotime("12/1/2006"))
+					);
 			break;
 			case 'year':
 				$current = intval(date('Y'));

@@ -565,7 +565,15 @@ class FormHelperTest extends CakeTestCase {
 			'<\/select>'.
 			'/i', $result);
 	}
-
+	
+	function testMonth() {
+		$result = $this->Form->month('Model.field');
+		$this->assertPattern('/' .
+			'<option\s+value="01"[^>]*>January<\/option>\s+'.
+			'<option\s+value="02"[^>]*>February<\/option>\s+'.
+			'/i', $result);	
+	}
+	
 	function testDaySelect() {
 
 	}

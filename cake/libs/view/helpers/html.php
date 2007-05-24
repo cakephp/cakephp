@@ -403,12 +403,12 @@ class HtmlHelper extends AppHelper {
 	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
 
 		$this->setFormTag($fieldName);
-		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->tagValue($fieldName);
+		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->__value($fieldName);
 		$out = array();
 
 		foreach($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
- 	        if ($value !== false && $optValue == $value) {
+ 	        if (!empty($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
  	        }
 			$parsedOptions = $this->_parseAttributes(array_merge($htmlAttributes, $optionsHere), null, '', ' ');
