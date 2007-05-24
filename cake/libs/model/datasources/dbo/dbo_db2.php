@@ -129,11 +129,11 @@ class DboDb2 extends DboSource {
 		if ($this->connection) {
 			$this->connected = true;
 		}
-		
+
 		if ($config['schema'] !== '') {
-			$this->_execute('SET CURRENT SCHEMA = ' . $config['schema']);					
-		}		
-		
+			$this->_execute('SET CURRENT SCHEMA = ' . $config['schema']);
+		}
+
 		return $this->connected;
 	}
 /**
@@ -158,13 +158,13 @@ class DboDb2 extends DboSource {
 	function _execute($sql) {
 		// get result from db
 		$result = db2_exec($this->connection, $sql);
-		
+
 		// build table/column map for this result
 		$map = array();
 		$num_fields = db2_num_fields($result);
 		$index = 0;
 		$j = 0;
-		
+
 		while ($j < $num_fields) {
 			$columnName = strtolower(db2_field_name($result, $j));
 			$tableName = substr($sql, 0, strpos($sql, '.' . $columnName));
@@ -172,9 +172,9 @@ class DboDb2 extends DboSource {
 			$map[$index++] = array($tableName, $columnName);
 			$j++;
 		}
-		
+
 		$this->_resultMap[$result] = $map;
-		
+
 		return $result;
 	}
 /**
@@ -413,7 +413,7 @@ class DboDb2 extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$data = $this->fetchAll(sprintf('SELECT SYSIBM.IDENTITY_VAL_LOCAL() AS ID FROM %s FETCH FIRST ROW ONLY', $source));
+		$data = $this->fetchRow(sprintf('SELECT SYSIBM.IDENTITY_VAL_LOCAL() AS ID FROM %s FETCH FIRST ROW ONLY', $source));
 
 		if ($data && isset($data[0]['id'])) {
 			return $data[0]['id'];

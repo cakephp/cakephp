@@ -318,9 +318,9 @@ class DboMysql extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$id = $this->fetchAll('SELECT LAST_INSERT_ID() AS insertID', false);
-		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0][0]['insertID'])) {
-			return $id[0][0]['insertID'];
+		$id = $this->fetchRow('SELECT LAST_INSERT_ID() AS insertID', false);
+		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
+			return $id[0]['insertID'];
 		}
 
 		return null;

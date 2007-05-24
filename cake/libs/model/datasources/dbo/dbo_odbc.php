@@ -367,7 +367,7 @@ class DboOdbc extends DboSource{
  * @return int
  */
 	function lastInsertId($source = null) {
-		$result=$this->fetchAll('SELECT @@IDENTITY');
+		$result=$this->fetchRow('SELECT @@IDENTITY');
 		return $result[0];
 	}
 

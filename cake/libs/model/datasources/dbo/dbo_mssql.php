@@ -391,8 +391,8 @@ class DboMssql extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$id = $this->fetchAll('SELECT SCOPE_IDENTITY() AS insertID', false);
-		return $id[0][0]['insertID'];
+		$id = $this->fetchRow('SELECT SCOPE_IDENTITY() AS insertID', false);
+		return $id[0]['insertID'];
 	}
 /**
  * Returns a limit statement in the correct format for the particular database.
@@ -484,7 +484,7 @@ class DboMssql extends DboSource {
 				} elseif(isset($this->__fieldMappings[$column])) {
 					$map = array(0, $this->__fieldMappings[$column]);
 				} else {
-					$map = array(0, $column);	
+					$map = array(0, $column);
 				}
 				$this->map[$index++] = $map;
 			} else {
@@ -494,7 +494,7 @@ class DboMssql extends DboSource {
 		}
 	}
 /**
- * Builds final SQL statement 
+ * Builds final SQL statement
  *
  * @param array $data Query data
  * @return string
@@ -513,7 +513,7 @@ class DboMssql extends DboSource {
 		}
 	}
 /**
- * Reverses the sort direction of ORDER statements to get paging offsets to work correctly 
+ * Reverses the sort direction of ORDER statements to get paging offsets to work correctly
  *
  * @param string $order
  * @return string
