@@ -366,7 +366,7 @@ class HttpSocketTest extends UnitTestCase {
 			'foo-coded' => array(
 				'encoded' => '!Foobar!',
 				'decoded' => array('body' => '!Foobar!', 'header' => false),
-				'error' => new PatternExpectation('/unkown encoding: "foo-coded"/i')
+				'error' => new PatternExpectation('/unknown encoding: foo-coded/i')
 			)
 		);
 

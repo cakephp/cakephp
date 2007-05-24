@@ -371,7 +371,7 @@ class HttpSocket extends CakeSocket {
 
 		if (!is_callable(array(&$this, $decodeMethod))) {
 			if (!$this->quirksMode) {
-				trigger_error(sprintf(__('HttpSocket::decodeBody - Unkown encoding: %s. Activate quirks mode to surpress error.', true), h($encoding)), E_USER_WARNING);
+				trigger_error(sprintf(__('HttpSocket::decodeBody - Unknown encoding: %s. Activate quirks mode to surpress error.', true), h($encoding)), E_USER_WARNING);
 			}
 			return array('body' => $body, 'header' => false);
 		}
