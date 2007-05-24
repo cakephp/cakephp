@@ -67,8 +67,19 @@ class HtmlHelperTest extends UnitTestCase {
 	}
 	
 	function testRadio() {
-		$result = $this->Html->radio('Tests/process', Array('0'=> 'zero', '1'=>'one'));
+		$result = $this->Html->radio('Tests/process', array('0'=> 'zero', '1'=>'one'));
 		$this->assertNoPattern('/checked="checked"/', $result);
+	}
+	
+	function testStyle() {
+		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
+		$expected = 'style="display:none; margin:10px;"';
+		$this->assertEqual($expected, $result);
+		
+		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
+		$expected = "display:none;\nmargin:10px;";
+		$this->assertEqual($expected, $result);
+		
 	}
 
 	function tearDown() {

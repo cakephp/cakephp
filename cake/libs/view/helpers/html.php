@@ -333,90 +333,18 @@ class HtmlHelper extends AppHelper {
  * @param array $data
  * @return string CSS styling data
  */
-	function style($data) {
+	function style($data, $inline = true) {
 		if (!is_array($data)) {
 			return $data;
 		}
-	}
-/**
- * Creates a password input widget.
- *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function password($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+		$out = array();
+		foreach($data as $key=> $value) {
+			$out[] = $key.':'.$value.';';
 		}
-		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
-	}
-/**
- * Creates a textarea widget.
- *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function textarea($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-
-		$value = null;
-		if (isset($htmlAttributes['value']) && !empty($htmlAttributes['value'])) {
-			$value = $htmlAttributes['value'];
-			unset($htmlAttributes['value']);
+		if($inline) {
+			return 'style="'.join(' ', $out).'"';
 		}
-		$htmlAttributes = $this->domId($htmlAttributes);
-
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
-		}
-		return $this->output(sprintf($this->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' '), $value));
-	}
-/**
- * Creates a checkbox widget.
- *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @deprecated  string  $title
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function checkbox($fieldName, $title = null, $htmlAttributes = array()) {
-		$value = $this->tagValue($fieldName);
-		$notCheckedValue = 0;
-
-		if (isset($htmlAttributes['checked'])) {
-			if ($htmlAttributes['checked'] == 'checked' || intval($htmlAttributes['checked']) === 1 || $htmlAttributes['checked'] === true) {
-				$htmlAttributes['checked'] = 'checked';
-			} else {
-				$htmlAttributes['checked'] = null;
-				$notCheckedValue = -1;
-			}
-		} else {
-			$model = $this->model();
-			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
-				if(isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
-					$htmlAttributes['checked'] = 'checked';
-				} else {
-					$htmlAttributes['checked'] = null;
-				}
-				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == '0') {
-					$notCheckedValue = -1;
-				}
-			} else {
-				$model = new $model;
-				$db =& ConnectionManager::getDataSource($model->useDbConfig);
-				$value = $db->boolean($value);
-				$htmlAttributes['checked'] = $value ? 'checked' : null;
-				$htmlAttributes['value'] = 1;
-			}
-		}
-		$htmlAttributes = $this->domId($htmlAttributes);
-		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
-		$output .= sprintf($this->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' '));
-		return $this->output($output);
+		return join("\n", $out);
 	}
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
@@ -433,24 +361,16 @@ class HtmlHelper extends AppHelper {
 			}
 
 			foreach($this->_crumbs as $crumb) {
-				$out[] = $this->link($crumb[0], $crumb[1]);
+				if(!empty($crumb[1])){
+					$out[] = $this->link($crumb[0], $crumb[1]);
+				} else {
+					$out[] = $crumb[0];
+				}
 			}
 			return $this->output(join($separator, $out));
 		} else {
 			return null;
 		}
-	}
-/**
- * Creates a hidden input field.
- *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function hidden($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-		return $this->output(sprintf($this->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a formatted IMG element.
@@ -470,26 +390,6 @@ class HtmlHelper extends AppHelper {
 			$htmlAttributes['alt'] = '';
 		}
 		return $this->output(sprintf($this->tags['image'], $url, $this->_parseAttributes($htmlAttributes, null, '', ' ')));
-	}
-/**
- * Creates a text input widget.
- *
- * @param string $fieldNamem Name of a field, like this "Modelname/fieldname"
- * @param array $htmlAttributes Array of HTML attributes.
- * @return string
- */
-	function input($fieldName, $htmlAttributes = array()) {
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
-		$htmlAttributes = $this->domId($htmlAttributes);
-
-		if (!isset($htmlAttributes['type'])) {
-			$htmlAttributes['type'] = 'text';
-		}
-
-		if ($this->tagIsInvalid()) {
-			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
-		}
-		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
 /**
  * Creates a set of radio widgets.
@@ -567,55 +467,8 @@ class HtmlHelper extends AppHelper {
  * @param string $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
  * @return unknown Value of the named tag.
  */
-	function tagValue($fieldName) {
-		$this->setFormTag($fieldName);
-		if (isset($this->data[$this->model()][$this->field()])) {
-			return h($this->data[$this->model()][$this->field()]);
-		}
-		return false;
-	}
-/**
- * Returns number of errors in a submitted FORM.
- *
- * @return int Number of errors
- */
-	function validate() {
-		$args = func_get_args();
-		$errors = call_user_func_array(array(&$this, 'validateErrors'),  $args);
-		return count($errors);
-	}
-/**
- * Validates a FORM according to the rules set up in the Model.
- *
- * @return int Number of errors
- */
-	function validateErrors() {
-		$objects = func_get_args();
-		if (!count($objects)) {
-			return false;
-		}
-
-		$errors = array();
-		foreach($objects as $object) {
-			$errors = array_merge($errors, $object->invalidFields($object->data));
-		}
-		return $this->validationErrors = (count($errors) ? $errors : false);
-	}
-/**
- * Returns a formatted error message for given FORM field, NULL if no errors.
- *
- * @param string $field A field name, like "Modelname/fieldname"
- * @param string $text		Error message
- * @return string If there are errors this method returns an error message, else NULL.
- */
-	function tagErrorMsg($field, $text) {
-		$error = 1;
-		$this->setFormTag($field);
-		if ($error == $this->tagIsInvalid()) {
-			return sprintf('<div class="error-message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
-		} else {
-			return null;
-		}
+	function value($fieldName) {
+		return $this->__value($fieldName);
 	}
 /**
  * Returns a formatted DIV tag for HTML FORMs.
@@ -663,6 +516,180 @@ class HtmlHelper extends AppHelper {
 			$tag = 'para';
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
+	}
+		
+/**
+ * Creates a password input widget.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::input or FormHelper::password
+ */
+	function password($fieldName, $htmlAttributes = array()) {
+		trigger_error(sprintf(__('Method password() is deprecated in %s: see FormHelper::input or FormHelper::password', true), get_class($this)), E_USER_NOTICE);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+		}
+		return $this->output(sprintf($this->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates a textarea widget.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::input or FormHelper::textarea
+ */
+	function textarea($fieldName, $htmlAttributes = array()) {
+		trigger_error(sprintf(__('Method textarea() is deprecated in %s: see FormHelper::input or FormHelper::textarea', true), get_class($this)), E_USER_NOTICE);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+
+		$value = null;
+		if (isset($htmlAttributes['value']) && !empty($htmlAttributes['value'])) {
+			$value = $htmlAttributes['value'];
+			unset($htmlAttributes['value']);
+		}
+		$htmlAttributes = $this->domId($htmlAttributes);
+
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+		}
+		return $this->output(sprintf($this->tags['textarea'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' '), $value));
+	}
+/**
+ * Creates a checkbox widget.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::input or FormHelper::checkbox
+ */
+	function checkbox($fieldName, $title = null, $htmlAttributes = array()) {
+		trigger_error(sprintf(__('Method checkbox() is deprecated in %s: see FormHelper::input or FormHelper::checkbox', true), get_class($this)), E_USER_NOTICE);
+		$value = $this->tagValue($fieldName);
+		$notCheckedValue = 0;
+
+		if (isset($htmlAttributes['checked'])) {
+			if ($htmlAttributes['checked'] == 'checked' || intval($htmlAttributes['checked']) === 1 || $htmlAttributes['checked'] === true) {
+				$htmlAttributes['checked'] = 'checked';
+			} else {
+				$htmlAttributes['checked'] = null;
+				$notCheckedValue = -1;
+			}
+		} else {
+			$model = $this->model();
+			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
+				if(isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
+					$htmlAttributes['checked'] = 'checked';
+				} else {
+					$htmlAttributes['checked'] = null;
+				}
+				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == '0') {
+					$notCheckedValue = -1;
+				}
+			} else {
+				$model = new $model;
+				$db =& ConnectionManager::getDataSource($model->useDbConfig);
+				$value = $db->boolean($value);
+				$htmlAttributes['checked'] = $value ? 'checked' : null;
+				$htmlAttributes['value'] = 1;
+			}
+		}
+		$htmlAttributes = $this->domId($htmlAttributes);
+		$output = $this->hidden($fieldName, array('value' => $notCheckedValue, 'id' => $htmlAttributes['id'] . '_'), true);
+		$output .= sprintf($this->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, '', ' '));
+		return $this->output($output);
+	}
+/**
+ * Creates a hidden input field.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::input or FormHelper::hidden
+ */
+	function hidden($fieldName, $htmlAttributes = array()) {
+		trigger_error(sprintf(__('Method hidden() is deprecated in %s: see FormHelper::input or FormHelper::hidden', true), get_class($this)), E_USER_NOTICE);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+		return $this->output(sprintf($this->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+/**
+ * Creates a text input widget.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::input or FormHelper::text
+ */
+	function input($fieldName, $htmlAttributes = array()) {
+		trigger_error(sprintf(__('Method input() is deprecated in %s: see FormHelper::input or FormHelper::text', true), get_class($this)), E_USER_NOTICE);
+		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->domId($htmlAttributes);
+
+		if (!isset($htmlAttributes['type'])) {
+			$htmlAttributes['type'] = 'text';
+		}
+
+		if ($this->tagIsInvalid()) {
+			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
+		}
+		return $this->output(sprintf($this->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
+	}
+
+/**
+ * Returns value of $fieldName. False if the tag does not exist.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::errors
+ */
+	function tagValue($fieldName) {
+		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see HtmlHelper::value', true), get_class($this)), E_USER_NOTICE);
+		$this->setFormTag($fieldName);
+		if (isset($this->data[$this->model()][$this->field()])) {
+			return h($this->data[$this->model()][$this->field()]);
+		}
+		return false;
+	}
+/**
+ * Returns number of errors in a submitted FORM.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::errors
+ */
+	function validate() {
+		trigger_error(sprintf(__('Method validate() is deprecated in %s: see FormHelper::errors', true), get_class($this)), E_USER_NOTICE);
+		$args = func_get_args();
+		$errors = call_user_func_array(array(&$this, 'validateErrors'),  $args);
+		return count($errors);
+	}
+/**
+ * Validates a FORM according to the rules set up in the Model.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::errors
+ */
+	function validateErrors() {
+		trigger_error(sprintf(__('Method validateErrors() is deprecated in %s: see FormHelper::errors', true), get_class($this)), E_USER_NOTICE);
+		$objects = func_get_args();
+		if (!count($objects)) {
+			return false;
+		}
+
+		$errors = array();
+		foreach($objects as $object) {
+			$errors = array_merge($errors, $object->invalidFields($object->data));
+		}
+		return $this->validationErrors = (count($errors) ? $errors : false);
+	}
+/**
+ * Returns a formatted error message for given FORM field, NULL if no errors.
+ *
+ * @deprecated 1.2.0.5147
+ * @see FormHelper::error
+ */
+	function tagErrorMsg($field, $text) {
+		trigger_error(sprintf(__('Method tagErrorMsg() is deprecated in %s: see FormHelper::error', true), get_class($this)), E_USER_NOTICE);
+		$error = 1;
+		$this->setFormTag($field);
+		if ($error == $this->tagIsInvalid()) {
+			return sprintf('<div class="error-message">%s</div>', is_array($text) ? (empty($text[$error - 1]) ? 'Error in field' : $text[$error - 1]) : $text);
+		} else {
+			return null;
+		}
 	}
 }
 ?>
