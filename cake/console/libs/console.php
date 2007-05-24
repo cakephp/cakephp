@@ -81,10 +81,8 @@ class ConsoleShell extends Shell {
 						if (preg_match("/^(\w+) $association (\w+)/", $command, $this->models) == TRUE) {
 							$modelA = $this->models[1];
 							$modelB = $this->models[2];
-							loadModel($modelA);
-							$M = new $modelA();
 							$dynamicAssociation = true;
-							$M->bindModel(
+							$this->{$modelA}->bindModel(
 								array("$association" => array(
 									"$modelB" => array(
 										'className' => $modelB))), false);
