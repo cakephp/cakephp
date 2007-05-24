@@ -46,13 +46,13 @@ class DboSybase extends DboSource {
  *
  * @var string
  */
-	var $startQuote = "`";
+	var $startQuote = "";
 /**
  * End quote for quoted identifiers
  *
  * @var string
  */
-	var $endQuote = "`";
+	var $endQuote = "";
 /**
  * Base configuration settings for Sybase driver
  *
