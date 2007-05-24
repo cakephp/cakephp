@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * MySQL layer for DBO
+ * Sybase layer for DBO
  *
  * Long description for file
  *
@@ -259,12 +259,10 @@ class DboSybase extends DboSource {
 /**
  * Returns a formatted error message from previous database operation.
  *
+ * @todo not implemented
  * @return string Error message with error number
  */
 	function lastError() {
-		if (mysql_errno($this->connection)) {
-			return mysql_errno($this->connection).': '.mysql_error($this->connection);
-		}
 		return null;
 	}
 /**
@@ -275,7 +273,7 @@ class DboSybase extends DboSource {
  */
 	function lastAffected() {
 		if ($this->_result) {
-			return mysql_affected_rows($this->connection);
+			return sybase_affected_rows($this->connection);
 		}
 		return null;
 	}
@@ -287,7 +285,7 @@ class DboSybase extends DboSource {
  */
 	function lastNumRows() {
 		if ($this->_result and is_resource($this->_result)) {
-			return @mysql_num_rows($this->_result);
+			return @sybase_num_rows($this->_result);
 		}
 		return null;
 	}
@@ -298,15 +296,8 @@ class DboSybase extends DboSource {
  * @return in
  */
 	function lastInsertId($source = null) {
-		$id = mysql_insert_id($this->connection);
-		if ($id) {
-			return $id;
-		}
-
-		$data = $this->fetchAll('SELECT LAST_INSERT_ID() as id From '.$source);
-		if ($data && isset($data[0]['id'])) {
-			return $data[0]['id'];
-		}
+		$result=$this->fetchRow('SELECT @@IDENTITY');
+		return $result[0];
 	}
 /**
  * Converts database-layer column types to basic types
@@ -352,13 +343,13 @@ class DboSybase extends DboSource {
 	function resultSet(&$results) {
 		$this->results =& $results;
 		$this->map = array();
-		$num_fields = mysql_num_fields($results);
+		$num_fields = sybase_num_fields($results);
 		$index = 0;
 		$j = 0;
 
 		while ($j < $num_fields) {
 
-			$column = mysql_fetch_field($results,$j);
+			$column = sybase_fetch_field($results,$j);
 			if (!empty($column->table)) {
 				$this->map[$index++] = array($column->table, $column->name);
 			} else {
@@ -373,7 +364,7 @@ class DboSybase extends DboSource {
  * @return unknown
  */
 	function fetchResult() {
-		if ($row = mysql_fetch_row($this->results)) {
+		if ($row = sybase_fetch_row($this->results)) {
 			$resultRow = array();
 			$i = 0;
 			foreach ($row as $index => $field) {
@@ -394,7 +385,7 @@ class DboSybase extends DboSource {
  */
 	function buildSchemaQuery($schema) {
 		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-						'{FULLTEXT_MYSQL}', '{BOOLEAN}', '{UTF_8}');
+						'{FULLTEXT_SYBASE}', '{BOOLEAN}', '{UTF_8}');
 		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
 						'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
 						'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
