@@ -736,7 +736,7 @@ class Router extends Object {
 		return $base;
 	}
 	function stripEscape($param) {
-		if(is_string($param) || empty($param)) {
+		if(!is_array($param) || empty($param)) {
 			$return = preg_replace('/^[\\t ]*(?:-!)+/', '', $param);
 			return $return;
 		}
