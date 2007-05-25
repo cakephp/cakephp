@@ -61,6 +61,10 @@ class ConsoleShell extends Shell {
 					$this->out('');
 					$this->out('To test for results, use the name of your model without a leading $');
 					$this->out('e.g. Foo->findAll()');
+					$this->out('');
+					$this->out('To dynamically set associations, you can do the following:');
+					$this->out("\tModelA <association> ModelB");
+					$this->out("where the supported assocations are hasOne, hasMany, belongsTo, hasAndBelongsToMany");
 				break;
 				case 'quit':
 				case 'exit':
@@ -94,24 +98,41 @@ class ConsoleShell extends Shell {
 					if ($dynamicAssociation == false) {
 						// let's look for a find statment
 						if (strpos($command, "->find") > 0) {
-							$command = '$data = $this->' . $command . ";";
-							eval($command);
+							$consoleCommand = '$data = $this->' . $command . ";";
+							eval($consoleCommand);
 
-							foreach ($data as $results) {
-								foreach ($results as $modelName => $result) {
-									$this->out("$modelName");
-									foreach ($result as $field => $value) {
-                                        if (is_array($value)) {
-                                            foreach($value as $field2 => $value2) {
-                                                $this->out("\t\t$field2: $value2");
-                                            }
-                                        } else {
-                                            $this->out("\t$field: $value");
-                                        }
+							foreach ($data as $idx => $results) {
+								if (is_numeric($idx)) { // findAll() output
+									foreach ($results as $modelName => $result) {
+										$this->out("$modelName");
+
+										foreach ($result as $field => $value) {
+											if (is_array($value)) {
+												foreach($value as $field2 => $value2) {
+													$this->out("\t$field2: $value2");
+												}
+
+												$this->out("");
+											} else {
+												$this->out("\t$field: $value");
+											}
+										}
+									}
+								} else { // find() output
+									$this->out($idx);
+
+									foreach($results as $field => $value) {
+										if (is_array($value)) {
+											foreach ($value as $field2 => $value2) {
+												$this->out("\t$field2: $value2");
+											}
+
+											$this->out("");
+										} else {
+											$this->out("\t$field: $value");
+										}
 									}
 								}
-
-								$this->hr();
 							}
 						}
 					}
