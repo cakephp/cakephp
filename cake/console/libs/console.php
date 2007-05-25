@@ -32,7 +32,7 @@
  */
 class ConsoleShell extends Shell {
 	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
-	
+
 	function initialize() {
 		$this->models = @loadModels();
 		foreach ($this->models as $model) {
@@ -47,7 +47,7 @@ class ConsoleShell extends Shell {
 			$this->out(" - {$model}");
 		}
 	}
-	
+
 	function main() {
 
 		while (true) {
@@ -76,7 +76,7 @@ class ConsoleShell extends Shell {
 				default:
 					// Look to see if we're dynamically binding something
 					$dynamicAssociation = false;
-					
+
 					foreach ($this->associations as $association) {
 						if (preg_match("/^(\w+) $association (\w+)/", $command, $this->models) == TRUE) {
 							$modelA = $this->models[1];
@@ -96,17 +96,23 @@ class ConsoleShell extends Shell {
 						if (strpos($command, "->find") > 0) {
 							$command = '$data = $this->' . $command . ";";
 							eval($command);
-							
+
 							foreach ($data as $results) {
 								foreach ($results as $modelName => $result) {
 									$this->out("$modelName");
 									foreach ($result as $field => $value) {
-										$this->out("\t$field: $value");
+                                        if (is_array($value)) {
+                                            foreach($value as $field2 => $value2) {
+                                                $this->out("\t\t$field2: $value2");
+                                            }
+                                        } else {
+                                            $this->out("\t$field: $value");
+                                        }
 									}
 								}
-								
+
 								$this->hr();
-							} 
+							}
 						}
 					}
 				break;
