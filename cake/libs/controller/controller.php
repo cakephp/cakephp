@@ -589,12 +589,14 @@ class Controller extends Object {
  * @return unknown
  */
 	function render($action = null, $layout = null, $file = null) {
+		
+		$this->beforeRender();
+		
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
 			$viewClass = $this->view . 'View';
 			loadView($this->view);
 		}
-		$this->beforeRender();
 
 		foreach($this->components as $c) {
 			$path = preg_split('/\/|\./', $c);
