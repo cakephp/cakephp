@@ -100,15 +100,31 @@ class ConsoleShell extends Shell {
 						if (strpos($command, "->find") > 0) {
 							$consoleCommand = '$data = $this->' . $command . ";";
 							eval($consoleCommand);
+							
+							if (is_array($data)) {
+								foreach ($data as $idx => $results) {
+									if (is_numeric($idx)) { // findAll() output
+										foreach ($results as $modelName => $result) {
+											$this->out("$modelName");
 
-							foreach ($data as $idx => $results) {
-								if (is_numeric($idx)) { // findAll() output
-									foreach ($results as $modelName => $result) {
-										$this->out("$modelName");
+											foreach ($result as $field => $value) {
+												if (is_array($value)) {
+													foreach($value as $field2 => $value2) {
+														$this->out("\t$field2: $value2");
+													}
 
-										foreach ($result as $field => $value) {
+													$this->out("");
+												} else {
+													$this->out("\t$field: $value");
+												}
+											}
+										}
+									} else { // find() output
+										$this->out($idx);
+
+										foreach($results as $field => $value) {
 											if (is_array($value)) {
-												foreach($value as $field2 => $value2) {
+												foreach ($value as $field2 => $value2) {
 													$this->out("\t$field2: $value2");
 												}
 
@@ -118,21 +134,9 @@ class ConsoleShell extends Shell {
 											}
 										}
 									}
-								} else { // find() output
-									$this->out($idx);
-
-									foreach($results as $field => $value) {
-										if (is_array($value)) {
-											foreach ($value as $field2 => $value2) {
-												$this->out("\t$field2: $value2");
-											}
-
-											$this->out("");
-										} else {
-											$this->out("\t$field: $value");
-										}
-									}
 								}
+							} else {
+								$this->out("\nNo result set found");
 							}
 						}
 					}
