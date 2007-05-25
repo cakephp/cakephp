@@ -522,7 +522,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelect() {
 		$result = $this->Form->select('Model.field', array());
 		$this->assertPattern('/^<select [^<>]+>\n<option [^<>]+>/', $result);
-		$this->assertPattern('/<option value="" ><\/option>/', $result);
+		$this->assertPattern('/<option value=""><\/option>/', $result);
 		$this->assertPattern('/<\/select>$/', $result);
 		$this->assertPattern('/<select[^<>]+name="data\[Model\]\[field\]"[^<>]*>/', $result);
 		$this->assertPattern('/<select[^<>]+id="ModelField"[^<>]*>/', $result);
@@ -565,26 +565,57 @@ class FormHelperTest extends CakeTestCase {
 			'<\/select>'.
 			'/i', $result);
 	}
-	
+
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
 		$this->assertPattern('/' .
 			'<option\s+value="01"[^>]*>January<\/option>\s+'.
 			'<option\s+value="02"[^>]*>February<\/option>\s+'.
-			'/i', $result);	
+			'/i', $result);
 	}
-	
-	function testDaySelect() {
+
+	function testDay() {
+		$result = $this->Form->day('Model.field', false);
+		$this->assertPattern('/option value="12"/', $result);
+		$this->assertPattern('/option value="13"/', $result);
+
+		$this->Form->data['Model']['field'] = '10-10-2006 23:12:32';
+		$result = $this->Form->day('Model.field');
+		$this->assertPattern('/option value="10" selected="selected"/', $result);
+		$this->assertNoPattern('/option value="32"/', $result);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->day('Model.field', '10');
+		$this->assertPattern('/option value="10" selected="selected"/', $result);
+		$this->assertPattern('/option value="23"/', $result);
+		$this->assertPattern('/option value="24"/', $result);
+
+		$this->Form->data['Model']['field'] = '10-10-2006 23:12:32';
+		$result = $this->Form->day('Model.field', true);
+		$this->assertPattern('/option value="10" selected="selected"/', $result);
+		$this->assertPattern('/option value="23"/', $result);
 
 	}
 
 	function testHour() {
-		$result = $this->Form->hour('tagname', false);
+		$result = $this->Form->hour('Model.field', false);
 		$this->assertPattern('/option value="12"/', $result);
 		$this->assertNoPattern('/option value="13"/', $result);
 
-		$result = $this->Form->hour('tagname', true);
+		$this->Form->data['Model']['field'] = '10-10-2006 00:12:32';
+		$result = $this->Form->hour('Model.field', false);
+		$this->assertPattern('/option value="12" selected="selected"/', $result);
+		$this->assertNoPattern('/option value="13"/', $result);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->hour('Model.field', true);
 		$this->assertPattern('/option value="23"/', $result);
+		$this->assertNoPattern('/option value="24"/', $result);
+
+		$this->Form->data['Model']['field'] = '10-10-2006 00:12:32';
+		$result = $this->Form->hour('Model.field', true);
+		$this->assertPattern('/option value="23"/', $result);
+		$this->assertPattern('/option value="00" selected="selected"/', $result);
 		$this->assertNoPattern('/option value="24"/', $result);
 	}
 
@@ -594,6 +625,47 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="2007"/', $result);
 		$this->assertNoPattern('/option value="2005"/', $result);
 		$this->assertNoPattern('/option value="2008"/', $result);
+
+		$this->data['Model']['field'] = '';
+		$result = $this->Form->year('Model.field', 2006, 2007, null, array('class'=>'year'));
+		$expecting = "<select name=\"data[Model][field_year]\" class=\"year\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '10-10-2006';
+		$result = $this->Form->year('Model.field', 2006, 2007, null, array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->year('Model.field', 2006, 2007, false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '10-10-2006';
+		$result = $this->Form->year('Model.field', 2006, 2007, false, array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->year('Model.field', 2006, 2007, '2007');
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '10-10-2006';
+		$result = $this->Form->year('Model.field', 2006, 2007, '2007', array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->year('Model.field', 2006, 2008, null, array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\" selected=\"selected\">2008</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
+		$this->Form->data['Model']['field'] = '10-10-2006';
+		$result = $this->Form->year('Model.field', 2006, 2008, null, array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\">2008</option>\n</select>";
+		$this->assertEqual($result, $expecting);
+
 	}
 
 	function testTextArea() {
@@ -731,35 +803,35 @@ class FormHelperTest extends CakeTestCase {
 
 	function testFormEnd() {
 		$this->assertEqual($this->Form->end(), '</form>');
-		
+
 		$result = $this->Form->end('save');
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
-		
+
 		$result = $this->Form->end(array('submit' => 'save'));
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
 	}
-	
+
 	function testCheckboxField() {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Model']['field'] = 'myvalue';
-		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));		
+		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
 		$this->assertEqual($result, '<input type="checkbox" name="data[Model][field]" type="checkbox" id="theID" value="myvalue" class="form-error" checked="checked" />');
-	
+
 		$this->Form->data['Model']['field'] = '';
-		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));		
+		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
 		$this->assertEqual($result, '<input type="checkbox" name="data[Model][field]" type="checkbox" id="theID" value="myvalue" class="form-error" />');
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
-		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));	
+		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
 		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="-1" id="theID_" /><input type="checkbox" name="data[Contact][published]" type="checkbox" id="theID" value="1" checked="checked" />');
-		
+
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 0;
-		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));		
+		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
 		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="-1" id="theID_" /><input type="checkbox" name="data[Contact][published]" type="checkbox" id="theID" value="1" />');
 	}
-	
+
 
 	function tearDown() {
 		unset($this->Form);
