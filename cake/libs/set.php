@@ -55,6 +55,7 @@ class Set extends Object {
 /**
  * Returns the contents of the Set object
  *
+ * @return array
  * @access public
  */
 	function &get() {
@@ -67,9 +68,9 @@ class Set extends Object {
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
  *
- * @param array $arr1
- * @param array $arr2
- * @return array
+ * @param array $arr1 Array to be merged
+ * @param array $arr2 Array to merge with
+ * @return array Merged array
  * @access public
  */
 	function merge($arr1, $arr2 = null) {
@@ -107,7 +108,10 @@ class Set extends Object {
 /**
  * Filters empty elements out of a route array, excluding '0'.
  *
- * @return mixed
+ * @param mixed $var Either an array to filter, or value when in callback
+ * @param boolean $isArray Force to tell $var is an array when $var is empty
+ * @return mixed Either filtered array, or true/false when in callback
+ * @access public
  */
 	function filter($var, $isArray = false) {
 		if (is_array($var) && (!empty($var) || $isArray)) {
@@ -124,9 +128,9 @@ class Set extends Object {
 /**
  * Pushes the differences in $array2 onto the end of $array
  *
- * @param mixed $array
- * @param mixed $arrary2
- * @return array
+ * @param mixed $array Original array
+ * @param mixed $array2 Diferences to push
+ * @return array Combined array
  * @access public
  */
 	function pushDiff($array = null, $array2 = null) {
@@ -153,7 +157,8 @@ class Set extends Object {
  * Maps the contents of the Set object to an object hierarchy
  *
  * @param string $class A class name of the type of object to map to
- * @return object
+ * @param string $tmp A temporary class name used as $class if $class is an array
+ * @return object Hierarchical object
  * @access public
  */
 	function map($class = 'stdClass', $tmp = 'stdClass') {
@@ -169,6 +174,18 @@ class Set extends Object {
 		}
 		return Set::__map($val, $class);
 	}
+
+/**
+ * Get the array value of $array. If $array is null, it will return
+ * the current array Set holds. If it is an object of type Set, it
+ * will return its value. If it is another object, its object variables.
+ * If it is anything else but an array, it will return an array whose first
+ * element is $array.
+ *
+ * @param mixed $array Data from where to get the array.
+ * @return array Array from $array.
+ * @access private
+ */
 	function __array($array) {
 		if ($array == null) {
 			$array = $this->value;
@@ -181,8 +198,21 @@ class Set extends Object {
 		}
 		return $array;
 	}
-	function __map($value, $class, $identity = null) {
 
+/**
+ * Maps the given value as an object. If $value is an object,
+ * it returns $value. Otherwise it maps $value as an object of
+ * type $class, and identity $identity. If $value is not empty,
+ * it will be used to set properties of returned object
+ * (recursively).
+ *
+ * @param mixed $value Value to map
+ * @param string $class Class name
+ * @param string $identity Identity to assign to class
+ * @return mixed Mapped object
+ * @access private
+ */
+	function __map($value, $class, $identity = null) {
 		if (is_object($value)) {
 			return $value;
 		}
@@ -217,13 +247,14 @@ class Set extends Object {
 				}
 			}
 		}
+
 		return $ret;
 	}
 /**
  * Checks to see if all the values in the array are numeric
  *
  * @param array $array The array to check.  If null, the value of the current Set object
- * @return boolean
+ * @return boolean true if values are numeric, false otherwise
  * @access public
  */
 	function numeric($array = null) {
@@ -252,9 +283,10 @@ class Set extends Object {
  *
  * $list defaults to 0 = no 1 = yes if param is not passed
  *
- * @param mixed $selected
+ * @param mixed $select Key in $list to return
  * @param mixed $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
+ * @access public
  */
 	function enum($select, $list = null) {
 		if (empty($list) && is_a($this, 'Set')) {
@@ -272,12 +304,13 @@ class Set extends Object {
 		return $return;
 	}
 /**
- * Gets a value from an array or object.
+ * Gets a value from an array or object that maps a given path.
  * The special {n}, as seen in the Model::generateList method, is taken care of here.
  *
- * @param array $data
- * @param mixed $path	As an array, or as a dot-separated string.
- * @return array
+ * @param array $data Array from where to extract
+ * @param mixed $path As an array, or as a dot-separated string.
+ * @return array Extracted data
+ * @access public
  */
 	function extract($data, $path = null) {
 		if ($path === null && is_a($this, 'set')) {
@@ -324,10 +357,11 @@ class Set extends Object {
 /**
  * Inserts $data into an array as defined by $path.
  *
- * @param mixed $list
- * @param array $data
+ * @param mixed $list Where to insert into
  * @param mixed $path A dot-separated string.
+ * @param array $data Data to insert
  * @return array
+ * @access public
  */
 	function insert($list, $path, $data = null) {
 		if (empty($data) && is_a($this, 'Set')) {
@@ -356,12 +390,12 @@ class Set extends Object {
 		return $list;
 	}
 /**
- * Removes an element from a Set or array
+ * Removes an element from a Set or array as defined by $path.
  *
- * @param mixed $list
- * @param array $data
+ * @param mixed $list From where to remove
  * @param mixed $path A dot-separated string.
- * @return array
+ * @return array Array with $path removed from its value
+ * @access public
  */
 	function remove($list, $path = null) {
 		if (empty($path) && is_a($this, 'Set')) {
@@ -397,9 +431,10 @@ class Set extends Object {
 /**
  * Checks if a particular path is set in an array
  *
- * @param mixed $data
+ * @param mixed $data Data to check on
  * @param mixed $path A dot-separated string.
- * @return array
+ * @return boolean true if path is found, false otherwise
+ * @access public
  */
 	function check($data, $path = null) {
 		if (empty($path) && is_a($this, 'Set')) {
@@ -428,9 +463,10 @@ class Set extends Object {
 /**
  * Computes the difference between a Set and an array, two Sets, or two arrays
  *
- * @param mixed $val1
- * @param mixed $val2
- * @return array
+ * @param mixed $val1 First value
+ * @param mixed $val2 Second value
+ * @return array Computed difference
+ * @access public
  */
 	function diff($val1, $val2 = null) {
 		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
@@ -459,22 +495,26 @@ class Set extends Object {
 /**
  * Determines if two Sets or arrays are equal
  *
- * @param array $val1
- * @param array $val2
- * @return boolean
+ * @param array $val1 First value
+ * @param array $val2 Second value
+ * @return boolean true if they are equal, false otherwise
+ * @access public
  */
 	function isEqual($val1, $val2 = null) {
 		if ($val2 == null && (is_a($this, 'set') || is_a($this, 'Set'))) {
 			$val2 = $val1;
 			$val1 = $this->get();
 		}
+
+		return ($val1 == $val2);
 	}
 /**
  * Determines if one Set or array contains the exact keys and values of another.
  *
- * @param array $val1
- * @param array $val2
- * @return boolean
+ * @param array $val1 First value
+ * @param array $val2 Second value
+ * @return boolean true if $val1 contains $val2, false otherwise
+ * @access public
  */
 	function contains($val1, $val2 = null) {
 		if ($val2 == null && is_a($this, 'set')) {
@@ -498,10 +538,11 @@ class Set extends Object {
 		return true;
 	}
 /**
- * Counts the dimensions of an array
+ * Counts the dimensions of an array.
  *
- * @param array $array
+ * @param array $array Array to count dimensions on
  * @return int The number of dimensions in $array
+ * @access public
  */
 	function countDim($array = null) {
 		if ($array === null) {
@@ -517,13 +558,14 @@ class Set extends Object {
 		return $return;
 	}
 /**
- * Normalizes a string or array list
+ * Normalizes a string or array list.
  *
- * @param mixed $list
+ * @param mixed $list List to normalize
  * @param boolean $assoc If true, $list will be converted to an associative array
  * @param string $sep If $list is a string, it will be split into an array with $sep
  * @param boolean $trim If true, separated strings will be trimmed
  * @return array
+ * @access public
  */
 	function normalize($list, $assoc = true, $sep = ',', $trim = true) {
 		if (is_string($list)) {
