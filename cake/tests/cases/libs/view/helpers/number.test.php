@@ -69,10 +69,14 @@ class NumberTest extends UnitTestCase {
 		$result = $this->Helper->currency($value, false);
 		$expected = '100,100,100.00';
 		$this->assertEqual($expected, $result);
-
-
 	}
 
+	function testToReadableSize() {
+		$result = $this->Helper->toReadableSize(0);
+		$expected = '0 Bytes';
+		$this->assertEqual($expected, $result);
+	}
+	
 	function tearDown() {
 		unset($this->Helper);
 	}

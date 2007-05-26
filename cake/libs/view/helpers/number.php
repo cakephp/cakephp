@@ -58,6 +58,8 @@ class NumberHelper extends AppHelper {
  */
 	function toReadableSize($size) {
 		switch($size) {
+			case 0:
+				return '0 Bytes';
 			case 1:
 				return '1 Byte';
 			case $size < 1024:
