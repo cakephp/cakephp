@@ -37,11 +37,21 @@
  */
 class Overloadable extends Object {
 
+/**
+ * Constructor.
+ *
+ * @access private
+ */
 	function __construct() {
 		$this->overload();
 		parent::__construct();
 	}
 
+/**
+ * Overload implementation.
+ *
+ * @access public
+ */
 	function overload() {
 		if (function_exists('overload')) {
 			if (func_num_args() > 0) {
@@ -58,6 +68,15 @@ class Overloadable extends Object {
 		}
 	}
 
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @param mixed $return Where to store return value from method
+ * @return boolean Success
+ * @access private
+ */
 	function __call($method, $params, &$return) {
 		if(!method_exists($this, 'call__')) {
 			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
@@ -70,11 +89,21 @@ Overloadable::overload('Overloadable');
 
 class Overloadable2 extends Object {
 
+/**
+ * Constructor
+ *
+ * @access private
+ */
 	function __construct() {
 		$this->overload();
 		parent::__construct();
 	}
 
+/**
+ * Overload implementation.
+ *
+ * @access public
+ */
 	function overload() {
 		if (function_exists('overload')) {
 			if (func_num_args() > 0) {
@@ -91,6 +120,15 @@ class Overloadable2 extends Object {
 		}
 	}
 
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @param mixed $return Where to store return value from method
+ * @return boolean Success
+ * @access private
+ */
 	function __call($method, $params, &$return) {
 		if(!method_exists($this, 'call__')) {
 			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
@@ -99,11 +137,25 @@ class Overloadable2 extends Object {
 		return true;
 	}
 
+/**
+ * Getter.
+ *
+ * @param mixed $name What to get
+ * @param mixed $value Where to store returned value
+ * @return boolean Success
+ */
 	function __get($name, &$value) {
 		$value = $this->get__($name);
 		return true;
 	}
 
+/**
+ * Setter.
+ *
+ * @param mixed $name What to set
+ * @param mixed $value Value to set
+ * @return boolean Success
+ */
 	function __set($name, $value) {
 		$this->set__($name, $value);
 		return true;

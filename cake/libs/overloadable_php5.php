@@ -37,8 +37,21 @@
  */
 class Overloadable extends Object {
 
+/**
+ * Overload implementation. No need for implementation in PHP5.
+ *
+ * @access public
+ */
 	function overload() { }
 
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @return mixed Return value from method
+ * @access private
+ */
 	function __call($method, $params) {
 		if(!method_exists($this, 'call__')) {
 			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
@@ -49,8 +62,21 @@ class Overloadable extends Object {
 
 class Overloadable2 extends Object {
 
+/**
+ * Overload implementation. No need for implementation in PHP5.
+ *
+ * @access public
+ */
 	function overload() { }
 
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @return mixed Return value from method
+ * @access private
+ */
 	function __call($method, $params) {
 		if(!method_exists($this, 'call__')) {
 			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
@@ -58,10 +84,24 @@ class Overloadable2 extends Object {
 		return $this->call__($method, $params);
 	}
 
+/**
+ * Getter.
+ *
+ * @param mixed $name What to get
+ * @param mixed $value Where to store returned value
+ * @return boolean Success
+ */
 	function __get($name) {
 		return $this->get__($name);
 	}
 
+/**
+ * Setter.
+ *
+ * @param mixed $name What to set
+ * @param mixed $value Value to set
+ * @return boolean Success
+ */
 	function __set($name, $value) {
 		return $this->set__($name, $value);
 	}
