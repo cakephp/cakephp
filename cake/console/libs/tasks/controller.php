@@ -53,27 +53,7 @@ class ControllerTask extends Shell {
 		$wannaUseScaffold = 'n';
 		$wannaDoScaffolding = 'y';
 
-		$useDbConfig = 'default';
-		$this->__doList($useDbConfig, 'Controllers');
-
-		$enteredController = '';
-
-		while ($enteredController == '') {
-			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
-
-			if ($enteredController == '' || intval($enteredController) > count($this->_controllerNames)) {
-				$this->out('Error:');
-				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
-				$enteredController = '';
-			}
-		}
-
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->_controllerNames) ) {
-			$controllerName = $this->_controllerNames[intval($enteredController) - 1];
-		} else {
-			$controllerName = Inflector::camelize($enteredController);
-		}
-
+		$controllerName = $this->__getControllerName();
 		$controllerPath = low(Inflector::underscore($controllerName));
 
 		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerName} controller if it exist.", array('y','n'), 'y');
@@ -493,5 +473,35 @@ class ControllerTask extends Shell {
 			$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
 			$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
 		}
-	}		
+	}
+
+/**
+ * Forces the user to specify the controller he wants to bake, and returns the selected controller name.
+ *
+ * @return the controller name
+ */
+	function __getControllerName() {
+		$useDbConfig = 'default';
+		$this->__doList($useDbConfig, 'Controllers');
+		
+		$enteredController = '';
+
+		while ($enteredController == '') {
+			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
+
+			if ($enteredController == '' || intval($enteredController) > count($this->_controllerNames)) {
+				$this->out('Error:');
+				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$enteredController = '';
+			}
+		}
+
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->_controllerNames) ) {
+			$controllerName = $this->_controllerNames[intval($enteredController) - 1];
+		} else {
+			$controllerName = Inflector::camelize($enteredController);
+		}
+		
+		return $controllerName;
+	}
 }

@@ -57,27 +57,8 @@ class ModelTask extends Shell {
 			$useDbConfig = $this->in('Please provide the name of the connection you wish to use.');
 		}*/
 		$useDbConfig = 'default';
-		$this->__doList($useDbConfig);
-
-
-		$enteredModel = '';
-
-		while ($enteredModel == '') {
-			$enteredModel = $this->in('Enter a number from the list above, or type in the name of another model.');
-
-			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
-				$this->out('Error:');
-				$this->out("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
-				$enteredModel = '';
-			}
-		}
-
-		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->_modelNames)) {
-			$currentModelName = $this->_modelNames[intval($enteredModel) - 1];
-		} else {
-			$currentModelName = $enteredModel;
-		}
-
+		$currentModelName = $this->__getModelName($useDbConfig);
+		
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$tableIsGood = false;
 		$useTable = Inflector::tableize($currentModelName);
@@ -627,6 +608,35 @@ class ModelTask extends Shell {
 			$this->_modelNames[] = $this->_modelName($tables[$i]);
 			$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 		}
+	}
+
+/**
+ * Forces the user to specify the model he wants to bake, and returns the selected model name.
+ *
+ * @return the model name
+ */
+	function __getModelName($useDbConfig) {
+		$this->__doList($useDbConfig);
+
+		$enteredModel = '';
+
+		while ($enteredModel == '') {
+			$enteredModel = $this->in('Enter a number from the list above, or type in the name of another model.');
+
+			if ($enteredModel == '' || intval($enteredModel) > count($this->_modelNames)) {
+				$this->out('Error:');
+				$this->out("The model name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
+				$enteredModel = '';
+			}
+		}
+
+		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->_modelNames)) {
+			$currentModelName = $this->_modelNames[intval($enteredModel) - 1];
+		} else {
+			$currentModelName = $enteredModel;
+		}
+		
+		return $currentModelName;
 	}
 }
 ?>
