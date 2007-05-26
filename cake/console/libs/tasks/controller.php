@@ -225,10 +225,10 @@ class ControllerTask extends Shell {
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
-		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
@@ -243,11 +243,11 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
-		$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
+			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', array('action'=>'index'));\n";
-		$actions .= "\t\t\t\texit();\n";
+			$actions .= "\t\t\t\t\$this->flash('{$currentModelName} saved.', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\texit();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
@@ -335,10 +335,10 @@ class ControllerTask extends Shell {
 		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
 		$actions .= "\t\tif(!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-		$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
-		$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
+			$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
+			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-		$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
@@ -368,8 +368,9 @@ class ControllerTask extends Shell {
 		$out = "<?php\n";
 		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
+
 		if(low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
-		$out .= "\tvar \$scaffold;\n";
+			$out .= "\tvar \$scaffold;\n";
 		} else {
 
 			if (count($uses)) {
@@ -385,17 +386,17 @@ class ControllerTask extends Shell {
 				$out .= ");\n";
 			}
 
-				$out .= "\tvar \$helpers = array('Html', 'Form' ";
-				if (count($helpers)) {
-					foreach($helpers as $help) {
-						if ($help != $helpers[count($helpers) - 1]) {
-							$out .= ", '" . Inflector::camelize($help) . "'";
-						} else {
-							$out .= ", '" . Inflector::camelize($help) . "'";
-						}
+			$out .= "\tvar \$helpers = array('Html', 'Form' ";
+			if (count($helpers)) {
+				foreach($helpers as $help) {
+					if ($help != $helpers[count($helpers) - 1]) {
+						$out .= ", '" . Inflector::camelize($help) . "'";
+					} else {
+						$out .= ", '" . Inflector::camelize($help) . "'";
 					}
 				}
-				$out .= ");\n";
+			}
+			$out .= ");\n";
 
 			if (count($components)) {
 				$out .= "\tvar \$components = array(";
