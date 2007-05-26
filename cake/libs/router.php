@@ -46,30 +46,35 @@ class Router extends Object {
  * Array of routes
  *
  * @var array
+ * @access public
  */
 	var $routes = array();
 /**
  * CAKE_ADMIN route
  *
  * @var array
+ * @access private
  */
 	var $__admin = null;
 /**
  * Directive for Router to parse out file extensions for mapping to Content-types.
  *
  * @var boolean
+ * @access private
  */
 	var $__parseExtensions = false;
 /**
  * List of valid extensions to parse from a URL.  If null, any extension is allowed.
  *
  * @var array
+ * @access private
  */
 	var $__validExtensions = null;
 /**
  * 'Constant' regular expression definitions for named route elements
  *
  * @var array
+ * @access private
  */
 	var $__named = array(
 		'Action'	=> 'index|show|list|add|create|edit|update|remove|del|delete|new|view|item',
@@ -82,18 +87,21 @@ class Router extends Object {
  * The route matching the URL of the current request
  *
  * @var array
+ * @access private
  */
 	var $__currentRoute = array();
 /**
  * Maintains the parameter stack for the current request
  *
  * @var array
+ * @access private
  */
 	var $__params = array();
 /**
  * Maintains the path stack for the current request
  *
  * @var array
+ * @access private
  */
 	var $__paths = array();
 
@@ -101,6 +109,7 @@ class Router extends Object {
  * Maintains the mapped elements for array based urls
  *
  * @var array
+ * @access private
  */
 	var $__mapped = array();
 /**
@@ -122,7 +131,9 @@ class Router extends Object {
 /**
  * Gets a reference to the Router object instance
  *
- * @return object
+ * @return object Object instance
+ * @access public
+ * @static
  */
 	function &getInstance() {
 		static $instance = array();
@@ -135,7 +146,9 @@ class Router extends Object {
 /**
  * Gets the named route elements for use in app/config/routes.php
  *
- * @return array
+ * @return array Named route elements
+ * @access public
+ * @static
  */
 	function getNamedExpressions() {
 		$_this =& Router::getInstance();
@@ -149,6 +162,8 @@ class Router extends Object {
  * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
  * @see routes
  * @return array			Array of routes
+ * @access public
+ * @static
  */
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
@@ -178,12 +193,13 @@ class Router extends Object {
 /**
  * Builds a route regular expression
  *
- * @access public
  * @param string $route			An empty string, or a route string "/"
  * @param array $default		NULL or an array describing the default route
  * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
  * @return string
  * @see routes
+ * @access public
+ * @static
  */
 	function writeRoute($route, $default, $params) {
 		if (empty($route) || ($route == '/')) {
@@ -223,7 +239,9 @@ class Router extends Object {
  * taken from that URL.
  *
  * @param string $url URL to be parsed
- * @return array
+ * @return array Parsed elements from URL
+ * @access public
+ * @static
  */
 	function parse($url) {
 		$_this =& Router::getInstance();
@@ -289,6 +307,7 @@ class Router extends Object {
  *
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
+ * @access private
  */
 	function __parseExtension($url) {
 		$ext = null;
@@ -316,7 +335,7 @@ class Router extends Object {
  * Connects the default, built-in routes, including admin routes, and (deprecated) web services
  * routes.
  *
- * @return void
+ * @access private
  */
 	function __connectDefaultRoutes() {
 		$_this =& Router::getInstance();
@@ -346,8 +365,9 @@ class Router extends Object {
 /**
  * Takes parameter and path information back from the Dispatcher
  *
- * @param array
- * @return void
+ * @param array $params Parameters and path information
+ * @access public
+ * @static
  */
 	function setRequestInfo($params) {
 		$_this =& Router::getInstance();
@@ -359,8 +379,10 @@ class Router extends Object {
 /**
  * Gets parameter information
  *
- * @param boolean $current
- * @return array
+ * @param boolean $current Get current parameter (true)
+ * @return array Parameter information
+ * @access public
+ * @static
  */
 	function getParams($current = false) {
 		$_this =& Router::getInstance();
@@ -372,9 +394,11 @@ class Router extends Object {
 /**
  * Gets URL parameter by name
  *
- * @param string $name
- * @param boolean $current
- * @return string
+ * @param string $name Parameter name
+ * @param boolean $current Current parameter
+ * @return string Parameter value
+ * @access public
+ * @static
  */
 	function getParam($name = 'controller', $current = false) {
 		$_this =& Router::getInstance();
@@ -387,8 +411,10 @@ class Router extends Object {
 /**
  * Gets path information
  *
- * @param boolean $current
+ * @param boolean $current Current parameter
  * @return array
+ * @access public
+ * @static
  */
 	function getPaths($current = false) {
 		$_this =& Router::getInstance();
@@ -400,7 +426,8 @@ class Router extends Object {
 /**
  * Reloads default Router settings
  *
- * @return void
+ * @access public
+ * @static
  */
 	function reload() {
 		$_this =& Router::getInstance();
@@ -423,6 +450,8 @@ class Router extends Object {
  *                        and standard URL arguments (indexed array elements)
  * @param boolean $full      If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
+ * @access public
+ * @static
  */
 	function url($url = null, $full = false) {
 		$_this =& Router::getInstance();
@@ -573,9 +602,11 @@ class Router extends Object {
 /**
  * Maps a URL array onto a route and returns the string result, or false if no match
  *
- * @param array Route
- * @param array URL
- * @return mixed
+ * @param array $route Route Route
+ * @param array $url URL URL to map
+ * @return mixed Result (as string) or false if no match
+ * @access public
+ * @static
  */
 	function mapRouteElements($route, $url) {
 		$_this =& Router::getInstance();
@@ -646,9 +677,10 @@ class Router extends Object {
 /**
  * Merges URL parameters into a route string
  *
- * @param array Route
- * @param array $params
- * @return string
+ * @param array $route Route
+ * @param array $params Parameters
+ * @return string Merged URL with parameters
+ * @access private
  */
 	function __mapRoute($route, $params = array()) {
 		$_this =& Router::getInstance();
@@ -675,9 +707,11 @@ class Router extends Object {
 /**
  * Generates a well-formed querystring from $q
  *
- * @param mixed Querystring
- * @param array Extra querystring parameters
+ * @param mixed $q Query string
+ * @param array $extra Extra querystring parameters
  * @return array
+ * @access public
+ * @static
  */
 	function queryString($q, $extra = array()) {
 		if (empty($q) && empty($extra)) {
@@ -700,7 +734,9 @@ class Router extends Object {
 /**
  * Returns the route matching the current request URL.
  *
- * @return array
+ * @return array Matching route
+ * @access public
+ * @static
  */
 	function requestRoute() {
 		$_this =& Router::getInstance();
@@ -709,7 +745,9 @@ class Router extends Object {
 /**
  * Returns the route matching the current request (useful for requestAction traces)
  *
- * @return array
+ * @return array Matching route
+ * @access public
+ * @static
  */
 	function currentRoute() {
 		$_this =& Router::getInstance();
@@ -718,9 +756,11 @@ class Router extends Object {
 /**
  * Removes the plugin name from the base URL.
  *
- * @param string $base
- * @param string $plugin
+ * @param string $base Base URL
+ * @param string $plugin Plugin name
  * @return base url with plugin name removed if present
+ * @access public
+ * @static
  */
 	function stripPlugin($base, $plugin) {
 		if ($plugin != null) {
@@ -735,6 +775,15 @@ class Router extends Object {
 		}
 		return $base;
 	}
+
+/**
+ * Strip escape characters from parameter values.
+ *
+ * @param mixed $param Either an array, or a string
+ * @return mixed Array or string escaped
+ * @access public
+ * @static
+ */
 	function stripEscape($param) {
 		if(!is_array($param) || empty($param)) {
 			if(is_bool($param)) {
@@ -767,11 +816,8 @@ class Router extends Object {
  * If no parameters are given, anything after the first . (dot) after the last / in the URL will be
  * parsed, excluding querystring parameters (i.e. ?q=...).
  *
- * @param string $ext
- * @param string $ext
- * @param string $ext
- * @param string ...
- * @return void
+ * @access public
+ * @static
  */
 	function parseExtensions() {
 		$_this =& Router::getInstance();
@@ -781,17 +827,18 @@ class Router extends Object {
 		}
 	}
 }
+
+if(!function_exists('http_build_query')) {
 /**
  * Implements http_build_query for PHP4.
  *
- * @param string $data
- * @param string $prefix
- * @param string $argSep
- * @param string $baseKey
- * @return string
+ * @param string $data Data to set in query string
+ * @param string $prefix If numeric indices, prepend this to index for elements in base array.
+ * @param string $argSep String used to separate arguments
+ * @param string $baseKey Base key
+ * @return string URL encoded query string
  * @see http://php.net/http_build_query
  */
-if(!function_exists('http_build_query')) {
 	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
 		if(empty($argSep)) {
 			$argSep = ini_get('arg_separator.output');
