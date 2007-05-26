@@ -84,6 +84,7 @@
  *
  * @param  string  $plugin Name of plugin
  * @return
+ * @deprecated
  */
 	function loadPluginModels($plugin) {
 		if(!class_exists('AppModel')){
@@ -117,6 +118,10 @@
  *
  */
 	function loadView($viewClass) {
+		if(strpos($viewClass, '.') !== false){
+			list($plugin, $viewClass) = explode('.', $viewClass);
+		}
+
 		if (!class_exists($viewClass . 'View')) {
 			$paths = Configure::getInstance();
 			$file = Inflector::underscore($viewClass) . '.php';
@@ -136,6 +141,7 @@
 				}
 			}
 		}
+		return true;
 	}
 /**
  * Loads a model by CamelCase name.
@@ -183,9 +189,8 @@
 				}
 			}
 			return false;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	function paths(){
@@ -308,9 +313,8 @@
 					return false;
 				}
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 /**
  * Loads a plugin's controller.
@@ -318,6 +322,7 @@
  * @param  string  $plugin Name of plugin
  * @param  string  $controller Name of controller to load
  * @return boolean Success
+ * @deprecated
  */
 	function loadPluginController($plugin, $controller) {
 		$pluginAppController = Inflector::camelize($plugin . '_app_controller');
@@ -413,9 +418,8 @@
 					return false;
 				}
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Loads a plugin's helper
@@ -423,6 +427,7 @@
  * @param  string  $plugin Name of plugin
  * @param  string  $helper Name of helper to load
  * @return boolean Success
+ * @deprecated
  */
 	function loadPluginHelper($plugin, $helper) {
 		loadHelper(null);
@@ -436,9 +441,8 @@
 			} else {
 				return false;
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Loads a component
@@ -447,10 +451,10 @@
  * @return boolean Success
  */
 	function loadComponent($name) {
-
 		if ($name === null) {
 			return true;
 		}
+
 		if(strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 		}
@@ -469,8 +473,8 @@
 					return true;
 				}
 			}
-
 			$paths = Configure::getInstance();
+
 			foreach($paths->componentPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					Configure::store('Components', 'class.paths', array($className => array('path' => $path . $name . '.php')));
@@ -488,9 +492,8 @@
 					return false;
 				}
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Loads a plugin's component
@@ -498,6 +501,7 @@
  * @param  string  $plugin Name of plugin
  * @param  string  $helper Name of component to load
  * @return boolean Success
+ * @deprecated
  */
 	function loadPluginComponent($plugin, $component) {
 		if (!class_exists($component . 'Component')) {
@@ -509,9 +513,8 @@
 			} else {
 				return false;
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Loads a behavior
@@ -520,11 +523,14 @@
  * @return boolean Success
  */
 	function loadBehavior($name) {
-		$paths = Configure::getInstance();
-
 		if ($name === null) {
 			return true;
 		}
+		if(strpos($name, '.') !== false){
+			list($plugin, $name) = explode('.', $name);
+		}
+
+		$paths = Configure::getInstance();
 
 		if (!class_exists($name . 'Behavior')) {
 			$name = Inflector::underscore($name);
@@ -544,9 +550,8 @@
 					return false;
 				}
 			}
-		} else {
-			return true;
 		}
+		return true;
 	}
 /**
  * Returns an array of filenames of PHP files in given directory.
@@ -616,8 +621,14 @@
 	function vendor($name) {
 		$args = func_get_args();
 		$c = func_num_args();
+
 		for ($i = 0; $i < $c; $i++) {
 			$arg = $args[$i];
+
+			if(strpos($arg, '.') !== false){
+				list($plugin, $arg) = explode('.', $arg);
+			}
+
 			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
 				require_once(APP . 'vendors' . DS . $arg . '.php');
 			} elseif (file_exists(VENDORS . $arg . '.php')) {
