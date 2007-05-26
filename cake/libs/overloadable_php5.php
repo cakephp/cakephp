@@ -90,6 +90,7 @@ class Overloadable2 extends Object {
  * @param mixed $name What to get
  * @param mixed $value Where to store returned value
  * @return boolean Success
+ * @access private
  */
 	function __get($name) {
 		return $this->get__($name);
@@ -101,6 +102,7 @@ class Overloadable2 extends Object {
  * @param mixed $name What to set
  * @param mixed $value Value to set
  * @return boolean Success
+ * @access private
  */
 	function __set($name, $value) {
 		return $this->set__($name, $value);
