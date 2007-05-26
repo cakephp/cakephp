@@ -65,17 +65,23 @@ class ApiShell extends Shell {
 		if (empty($this->args)) {
 			return $this->help();
 		}
-
+		
+		if (count($this->args) == 1 && in_array($this->args[0], array_keys($this->paths))) {
+			$this->args[1] = $this->args[0];
+		}	
+		
 		if (count($this->args) > 1) {
 			$path = $this->args[0];
 			$class = $this->args[1];
 
 			$this->__loadDependencies($path);
 
-			if (in_array(low($path), array('behavior', 'component', 'helper'))) {
+			if (in_array(low($path), array('behavior', 'component', 'helper')) && low($path) !== low($class)) {
 				if (!preg_match('/' . Inflector::camelize($path) . '$/', $class)) {
 					$class .= Inflector::camelize($path);
 				}
+			} else if(low($path) === low($class)){
+				$class = Inflector::camelize($path);
 			}
 
 			if (isset($this->paths[low($path)])) {
@@ -97,15 +103,14 @@ class ApiShell extends Shell {
 			Inflector::underscore($class),
 			substr(Inflector::underscore($class), 0, strpos(Inflector::underscore($class), '_'))
 		);
-
+		
 		foreach($candidates as $candidate) {
-			$File = new File($path . $candidate . '.php');
+			$File =& new File($path . $candidate . '.php');
 
 			if ($File->exists()) {
 				if (!class_exists($class)) {
 					include($File->getFullPath());
 				}
-
 				if (class_exists($class)) {
 					break;
 				}
@@ -122,7 +127,7 @@ class ApiShell extends Shell {
 		$parsed = $this->__parseClass($File, $class);
 
 		if (!empty($parsed)) {
-			$this->out($class);
+			$this->out(ucwords($class));
 			$this->hr();
 
 			foreach($parsed as $method) {
@@ -196,7 +201,7 @@ class ApiShell extends Shell {
 				}
 			}
 		}
-
+		sort($parsed);
 		return $parsed;
 	}
 
