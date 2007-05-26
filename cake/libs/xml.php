@@ -9,10 +9,10 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2005-2007, Cake Software Foundation, Inc. 
+ * Copyright 2005-2007, Cake Software Foundation, Inc.
  *                     1785 E. Sahara Avenue, Suite 490-204
  *                     Las Vegas, Nevada 89104
- * 
+ *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
@@ -43,38 +43,44 @@ class XMLNode extends Object {
  * Name of node
  *
  * @var string
+ * @access public
  */
 	var $name = null;
 /**
  * Value of node
  *
  * @var string
+ * @access public
  */
 	var $value;
 /**
  * Attributes on this node
  *
  * @var array
+ * @access public
  */
 	var $attributes = array();
 /**
  * This node's children
  *
  * @var array
+ * @access public
  */
 	var $children = array();
 /**
  * Reference to parent node.
  *
  * @var XMLNode
+ * @access private
  */
 	var $__parent = null;
 /**
  * Constructor.
  *
  * @param string $name Node name
- * @param array  $attributes Node attributes
- * @param mixed  $value Node contents (text)
+ * @param array $attributes Node attributes
+ * @param mixed $value Node contents (text)
+ * @param array $children Node children
  */
 	function __construct($name = null, $attributes = array(), $value = null, $children = array()) {
 		$this->name = $name;
@@ -100,10 +106,11 @@ class XMLNode extends Object {
 		}
 	}
 /**
- * Gets the XML element properties from an object
+ * Gets the XML element properties from an object.
  *
- * @param object $object
- * @return array
+ * @param object $object Object to get properties from
+ * @return array Properties from object
+ * @access private
  */
 	function __objectToNode($object) {
 
@@ -155,9 +162,9 @@ class XMLNode extends Object {
 		return $node;
 	}
 /**
- * Sets the parent node of this XMLNode
+ * Sets the parent node of this XMLNode.
  *
- * @return XMLNode
+ * @access public
  */
 	function setParent(&$parent) {
 		$this->__parent =& $parent;
@@ -165,15 +172,17 @@ class XMLNode extends Object {
 /**
  * Returns a copy of self.
  *
- * @return XMLNode
+ * @return object Cloned instance
+ * @access public
  */
 	function cloneNode() {
-		return $this;
+		return clone($this);
 	}
 /**
  * Append given node as a child.
  *
- * @param XMLNode $child
+ * @param object $child XMLNode with appended child
+ * @access public
  */
 	function &append(&$child) {
 		if (is_object($child)) {
@@ -183,7 +192,7 @@ class XMLNode extends Object {
 			if (func_num_args() >= 2 && is_array(func_get_arg(1))) {
 				$attr = func_get_arg(1);
 			}
-			$tmp = new XMLNode();
+			$tmp =& new XMLNode();
 			$tmp->name = $child;
 			$tmp->attributes = $attr;
 		}
@@ -192,7 +201,8 @@ class XMLNode extends Object {
 /**
  * Returns first child node, or null if empty.
  *
- * @return XMLNode
+ * @return object First XMLNode
+ * @access public
  */
 	function &first() {
 		if(isset($this->children[0])) {
@@ -204,7 +214,8 @@ class XMLNode extends Object {
 /**
  * Returns last child node, or null if empty.
  *
- * @return XMLNode
+ * @return object Last XMLNode
+ * @access public
  */
 	function &last() {
 		if(count($this->children) > 0) {
@@ -216,9 +227,9 @@ class XMLNode extends Object {
 /**
  * Returns child node with given ID.
  *
- * @param string $id Name of childnode
- * @return XMLNode
- *
+ * @param string $id Name of child node
+ * @return object Child XMLNode
+ * @access public
  */
 	function &child($id) {
 		$null = null;
@@ -245,6 +256,7 @@ class XMLNode extends Object {
  *
  * @param string $name Tag name of child nodes
  * @return array An array of XMLNodes with the given tag name
+ * @access public
  */
 	function children($name) {
 		$nodes = array();
@@ -257,9 +269,10 @@ class XMLNode extends Object {
 		return $nodes;
 	}
 /**
- * Gets a reference to the next child node in the list of this node's parent
+ * Gets a reference to the next child node in the list of this node's parent.
  *
- * @return XMLNode A reference to the XMLNode object
+ * @return object A reference to the XMLNode object
+ * @access public
  */
 	function &nextSibling() {
 		$count = count($this->__parent->children);
@@ -273,9 +286,10 @@ class XMLNode extends Object {
 		}
 	}
 /**
- * Gets a reference to the previous child node in the list of this node's parent
+ * Gets a reference to the previous child node in the list of this node's parent.
  *
- * @return XMLNode A reference to the XMLNode object
+ * @return object A reference to the XMLNode object
+ * @access public
  */
 	function &previousSibling() {
 		$count = count($this->__parent->children);
@@ -291,7 +305,8 @@ class XMLNode extends Object {
 /**
  * Returns parent node.
  *
- * @return XMLNode
+ * @return object Parent XMLNode
+ * @access public
  */
 	function &parent() {
 		return $this->__parent;
@@ -300,6 +315,7 @@ class XMLNode extends Object {
  * Returns true if this structure has child nodes.
  *
  * @return boolean
+ * @access public
  */
 	function hasChildren() {
 		if(is_array($this->children) && count($this->children) > 0) {
@@ -311,6 +327,7 @@ class XMLNode extends Object {
  * Returns this XML structure as a string.
  *
  * @return string String representation of the XML structure.
+ * @access public
  */
 	function toString() {
 		$d = '';
@@ -372,6 +389,7 @@ class XMLNode extends Object {
  * Returns data from toString when this object is converted to a string.
  *
  * @return string String representation of this structure.
+ * @access private
  */
 	function __toString() {
 		return $this->toString();
@@ -380,7 +398,8 @@ class XMLNode extends Object {
  * Debug method. Deletes the parent. Also deletes this node's children,
  * if given the $recursive parameter.
  *
- * @param boolean $recursive
+ * @param boolean $recursive Recursively delete elements.
+ * @access private
  */
 	function __killParent($recursive = true) {
 		unset($this->__parent);
@@ -407,18 +426,21 @@ class XML extends XMLNode {
  * Resource handle to XML parser.
  *
  * @var resource
+ * @access private
  */
 	var $__parser;
 /**
  * File handle to XML indata file.
  *
  * @var resource
+ * @access private
  */
 	var $__file;
 /**
  * Raw XML string data (for loading purposes)
  *
  * @var string
+ * @access private
  */
 	var $__rawData = null;
 
@@ -426,6 +448,7 @@ class XML extends XMLNode {
  * XML document header
  *
  * @var string
+ * @access private
  */
 	var $__header = null;
 
@@ -433,6 +456,7 @@ class XML extends XMLNode {
  * XML document version
  *
  * @var string
+ * @access private
  */
 	var $version = '1.0';
 
@@ -440,6 +464,7 @@ class XML extends XMLNode {
  * XML document encoding
  *
  * @var string
+ * @access private
  */
 	var $encoding = 'UTF-8';
 
@@ -447,7 +472,8 @@ class XML extends XMLNode {
  * Constructor.  Sets up the XML parser with options, gives it this object as
  * its XML object, and sets some variables.
  *
- * @param string $input
+ * @param string $input What should be used to set up
+ * @param array $options Options to set up with
  */
 	function __construct($input = null, $options = array()) {
 		parent::__construct('root');
@@ -493,8 +519,9 @@ class XML extends XMLNode {
 /**
  * Initialize XML object from a given XML string. Returns false on error.
  *
- * @param string $in
+ * @param string $in XML string to initialize with
  * @return boolean Success
+ * @access public
  */
 	function load($in) {
 		$this->__rawData = null;
@@ -521,14 +548,15 @@ class XML extends XMLNode {
 			return $this->parse();
 
 		} elseif (is_object($in)) {
-		
+
 		}
 	}
 /**
  * Parses and creates XML nodes from the __rawData property.
  *
+ * @return boolean Success
+ * @access public
  * @see load()
- *
  */
 	function parse() {
 		$this->header = trim(r(a('<'.'?', '?'.'>'), a('', ''), substr(trim($this->__rawData), 0, strpos($this->__rawData, "\n"))));
@@ -592,6 +620,7 @@ class XML extends XMLNode {
  *
  * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
  * @return string XML data
+ * @access public
  */
 	function compose($useHeader = true) {
 		if (!empty($this->__header)) {
@@ -619,8 +648,9 @@ class XML extends XMLNode {
  * If DEBUG is on, this method echoes an error message.
  *
  * @param string $msg Error message
- * @param integer $code Error code
- * @param integer $line Line in file
+ * @param int $code Error code
+ * @param int $line Line in file
+ * @access public
  */
 	function error($msg, $code = 0, $line = 0) {
 		if(DEBUG) {
@@ -628,10 +658,11 @@ class XML extends XMLNode {
 		}
 	}
 /**
- * Returns a string with a textual description of the error code, or FALSE if no description was found. 
+ * Returns a string with a textual description of the error code, or FALSE if no description was found.
  *
- * @param integer $code
+ * @param int $code Error code
  * @return string Error message
+ * @access public
  */
 	function getError($code) {
 		$r = @xml_error_string($code);
@@ -641,34 +672,48 @@ class XML extends XMLNode {
 // Overridden functions from superclass
 
 /**
- * Enter description here...
+ * Get next element. NOT implemented.
  *
- * @return unknown
+ * @return object
+ * @access public
  */
 	function &next() {
 		return null;
 	}
 /**
- * Enter description here...
+ * Get previous element. NOT implemented.
  *
- * @return null
+ * @return object
+ * @access public
  */
 	function &previous() {
 		return null;
 	}
 /**
- * Enter description here...
+ * Get parent element. NOT implemented.
  *
- * @return null
+ * @return object
+ * @access public
  */
 	function &parent() {
 		return null;
 	}
 
+/**
+ * Return string representation of current object.
+ *
+ * @return string String representation
+ * @access public
+ */
 	function toString() {
 		return $this->compose();
 	}
 
+/**
+ * Destructor, used to free resources.
+ *
+ * @access private
+ */
 	function __destruct() {
 		if (is_resource($this->__parser)) {
 			xml_parser_free($this->__parser);
