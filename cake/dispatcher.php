@@ -96,7 +96,7 @@ class Dispatcher extends Object {
 
 			if (!loadController($ctrlName)) {
 				$pluginName = Inflector::camelize($params['action']);
-				if (!loadPluginController(Inflector::underscore($ctrlName), $pluginName)) {
+				if (!loadController($ctrlName . '.' . $pluginName)) {
 					if(preg_match('/([\\.]+)/', $ctrlName)) {
 						Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 

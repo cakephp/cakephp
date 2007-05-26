@@ -279,6 +279,8 @@
 		}
 		if(strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
+			loadPluginController($plugin, $name);
+			return;
 		}
 
 		$className = $name . 'Controller';
@@ -326,6 +328,7 @@
  */
 	function loadPluginController($plugin, $controller) {
 		$pluginAppController = Inflector::camelize($plugin . '_app_controller');
+		$plugin = Inflector::underscore($plugin);
 		$pluginAppControllerFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_controller.php';
 		if (!class_exists($pluginAppController)) {
 			if (file_exists($pluginAppControllerFile)) {
@@ -336,7 +339,7 @@
 		}
 
 		if (empty($controller)) {
-			if (!class_exists($plugin . 'Controller')) {
+			if (!class_exists(Inflector::camelize($plugin . 'controller'))) {
 				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 					return true;
