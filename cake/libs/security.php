@@ -36,9 +36,11 @@
  */
 class Security extends Object{
 /**
-  * Enter description here...
+  * Singleton implementation to get object instance.
   *
-  * @return unknown
+  * @return object
+  * @access public
+  * @static
   */
 	function &getInstance() {
 		static $instance = array();
@@ -48,9 +50,11 @@ class Security extends Object{
 	 	return $instance[0];
 	}
 /**
-  * Enter description here...
+  * Get allowed minutes of inactivity based on security level.
   *
-  * @return unknown
+  * @return int Allowed inactivity in minutes
+  * @access public
+  * @static
   */
 	function inactiveMins() {
 		$_this =& Security::getInstance();
@@ -68,30 +72,36 @@ class Security extends Object{
 		}
 	}
 /**
-  * Enter description here...
+  * Generate authorization hash.
   *
-  * @return unknown
+  * @return string Hash
+  * @access public
+  * @static
   */
 	function generateAuthKey() {
 		$_this =& Security::getInstance();
 		return $_this->hash(uniqid(rand(), true));
 	}
 /**
- * Enter description here...
+ * Validate authorization hash.
  *
- * @param unknown_type $authKey
- * @return unknown
+ * @param string $authKey Authorization hash
+ * @return boolean Success
+ * @access public
+ * @static
  */
 	function validateAuthKey($authKey) {
 		$_this =& Security::getInstance();
 		return true;
 	}
 /**
- * Enter description here...
+ * Create a hash from string using given method.
  *
- * @param unknown_type $string
- * @param unknown_type $type
- * @return unknown
+ * @param string $string String to hash
+ * @param string $type Method to use (sha1/sha256/md5)
+ * @return string Hash
+ * @access public
+ * @static
  */
 	function hash($string, $type = 'sha1') {
 		$_this =& Security::getInstance();
@@ -120,11 +130,13 @@ class Security extends Object{
 		}
 	}
 /**
- * Enter description here...
+ * Encripts/Decrypts a text using the given key.
  *
- * @param unknown_type $text
- * @param unknown_type $key
- * @return unknown
+ * @param string $text Encrypted string to decrypt, normal string to encrypt
+ * @param string $key Key to use
+ * @return string Encrypted/Decrypted string
+ * @access public
+ * @static
  */
 	function cipher($text, $key) {
 		$_this =& Security::getInstance();

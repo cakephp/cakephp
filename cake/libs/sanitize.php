@@ -39,8 +39,10 @@ class Sanitize{
 /**
  * Removes any non-alphanumeric characters.
  *
- * @param string $string
- * @return string
+ * @param string $string String to sanitize
+ * @return string Sanitized string
+ * @access public
+ * @static
  */
 	function paranoid($string, $allowed = array()) {
 		$allow = null;
@@ -62,9 +64,11 @@ class Sanitize{
 /**
  * Makes a string SQL-safe.
  *
- * @param string $string
- * @param string $connection
- * @return string
+ * @param string $string String to sanitize
+ * @param string $connection Database connection being used
+ * @return string SQL safe string
+ * @access public
+ * @static
  */
 	function escape($string, $connection = 'default') {
 		$db = ConnectionManager::getDataSource($connection);
@@ -74,9 +78,11 @@ class Sanitize{
 /**
  * Returns given string safe for display as HTML. Renders entities.
  *
- * @param string $string
+ * @param string $string String from where to strip tags
  * @param boolean $remove If true, the string is stripped of all HTML tags
- * @return string
+ * @return string Sanitized string
+ * @access public
+ * @static
  */
 	function html($string, $remove = false) {
 		if ($remove) {
@@ -91,7 +97,9 @@ class Sanitize{
 /**
  * Strips extra whitespace from output
  *
- * @param string $str
+ * @param string $str String to sanitize
+ * @access public
+ * @static
  */
 	function stripWhitespace($str) {
 		$r = preg_replace('/[\n\r\t]+/', '', $str);
@@ -100,7 +108,9 @@ class Sanitize{
 /**
  * Strips image tags from output
  *
- * @param string $str
+ * @param string $str String to sanitize
+ * @access public
+ * @static
  */
 	function stripImages($str) {
 		$str = preg_replace('/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i', '$1$3$5<br />', $str);
@@ -111,7 +121,9 @@ class Sanitize{
 /**
  * Strips scripts and stylesheets from output
  *
- * @param string $str
+ * @param string $str String to sanitize
+ * @access public
+ * @static
  */
 	function stripScripts($str) {
 		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/i', '', $str);
@@ -119,7 +131,8 @@ class Sanitize{
 /**
  * Strips extra whitespace, images, scripts and stylesheets from output
  *
- * @param string $str
+ * @param string $str String to sanitize
+ * @access public
  */
 	function stripAll($str) {
 		$str = $this->stripWhitespace($str);
@@ -128,12 +141,13 @@ class Sanitize{
 		return $str;
 	}
 /**
- * Strips the specified tags from output
+ * Strips the specified tags from output. First parameter is string from
+ * where to remove tags. All subsequent parameters are tags.
  *
- * @param string $str
- * @param string $tag
- * @param string $tag
- * @param string ...
+ * @param string $str String to sanitize
+ * @param string $tag Tag to remove (add more parameters as needed)
+ * @access public
+ * @static
  */
 	function stripTags() {
 		$params = params(func_get_args());
@@ -148,9 +162,11 @@ class Sanitize{
 /**
  * Sanitizes given array or value for safe input.
  *
- * @param mixed $data
- * @param string $connection
- * @return mixed
+ * @param mixed $data Data to sanitize
+ * @param string $connection DB connection being used
+ * @return mixed Sanitized data
+ * @access public
+ * @static
  */
 	function clean($data, $connection = 'default') {
 		if (empty($data)) {
@@ -189,8 +205,8 @@ class Sanitize{
  * Formats column data from definition in DBO's $columns array
  *
  * @param Model $model The model containing the data to be formatted
- * @return void
  * @access public
+ * @static
  */
 	function formatColumns(&$model) {
 		foreach($model->data as $name => $values) {
