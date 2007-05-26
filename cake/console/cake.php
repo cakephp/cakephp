@@ -412,7 +412,7 @@ class ShellDispatcher {
  		} else {
 			$this->params['working'] = $root;
 		}
-		
+
 		if(!empty($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$root = dirname($this->params['app']);
@@ -423,7 +423,6 @@ class ShellDispatcher {
  			}
 			unset($this->params['app']);
 		}
-
 
 		if(in_array($app, array('cake', 'console')) || realpath($root.DS.$app) === dirname(dirname(dirname(__FILE__)))) {
 			$root = dirname(dirname(dirname(__FILE__)));
