@@ -404,19 +404,21 @@ class ShellDispatcher {
 
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
+		$working = $root;
 
 		if(!empty($this->params['working'])) {
 			$root = dirname($this->params['working']);
 			$app = basename($this->params['working']);
-			unset($this->params['working']);
- 		}
-
+ 		} else {
+			$this->params['working'] = $root;
+		}
+		
 		if(!empty($this->params['app'])) {
 			if($this->params['app']{0} == '/') {
 				$root = dirname($this->params['app']);
 				$app = basename($this->params['app']);
 			} else {
-				$root = $root . DS . $app;
+				$root = realpath($this->params['working']);
 				$app = $this->params['app'];
  			}
 			unset($this->params['app']);
