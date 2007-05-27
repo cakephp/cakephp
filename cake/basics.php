@@ -687,7 +687,14 @@
 			$arg = $args[$i];
 
 			if(strpos($arg, '.') !== false){
-				list($plugin, $arg) = explode('.', $arg);
+				$file = explode('.', $arg);
+				$plugin = Inflector::underscore($file[0]);
+				unset($file[0]);
+				$file = implode('.', $file);
+				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php')) {
+					require_once(APP . 'plugins' . DS . $plugin . DS . 'vendors' . DS . $file . '.php');
+					continue;
+				}
 			}
 
 			if (file_exists(APP . 'vendors' . DS . $arg . '.php')) {
