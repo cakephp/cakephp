@@ -65,10 +65,11 @@ class File extends Object{
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
-		$this->Folder = new Folder(dirname($path), $create, $mode);
+		$this->Folder =& new Folder(dirname($path), $create, $mode);
 		$this->name = basename($path);
 		if (!$this->exists()) {
 			if ($create === true) {
+				$this->safe();
 				if (!$this->create()) {
 					return false;
 				}
@@ -84,7 +85,7 @@ class File extends Object{
  * @access public
  */
 	function read() {
-		$contents = file_get_contents($this->getFullPath());
+		$contents = file_get_contents($this->pwd());
 		return $contents;
 	}
 /**
@@ -106,13 +107,13 @@ class File extends Object{
  * @access public
  */
 	function write($data, $mode = 'w') {
-		$file = $this->getFullPath();
+		$file = $this->pwd();
 		if (!($handle = fopen($file, $mode))) {
 			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
 			return false;
 		}
 
-		if (!fwrite($handle, $data)) {
+		if (false === fwrite($handle, $data)) {
 			return false;
 		}
 
@@ -122,16 +123,32 @@ class File extends Object{
 		return true;
 	}
 /**
+ * makes filename safe for saving
+ *
+ * @param string $name the name of the file to make safe if different from $this->name
+ * @return string $ext the extension of the file
+ * @access public
+ */
+	function safe($name = null, $ext = null) {
+		if(!$name) {
+			$name = $this->name;
+		}
+		if(!$ext) {
+			$ext = $this->ext();
+		}
+		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
+	}
+/**
  * Get md5 Checksum of file with previous check of Filesize
  *
  * @param string $force	Data to write to this File.
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
  * @access public
  */
-	function getMd5($force = false) {
+	function md5($force = false) {
 		$md5 = '';
-		if ($force == true || $this->getSize(false) < MAX_MD5SIZE) {
-			$md5 = md5_file($this->getFullPath());
+		if ($force == true || $this->size(false) < MAX_MD5SIZE) {
+			$md5 = md5_file($this->pwd());
 		}
 		return $md5;
 	}
@@ -142,8 +159,8 @@ class File extends Object{
  * @return string|int filesize as int or as a human-readable string
  * @access public
  */
-	function getSize() {
-		$size = filesize($this->getFullPath());
+	function size() {
+		$size = filesize($this->pwd());
 		return $size;
 	}
 /**
@@ -152,9 +169,9 @@ class File extends Object{
  * @return string The File extension
  * @access public
  */
-	function getExt() {
+	function ext() {
 		$ext = '';
-		$parts = explode('.', $this->getName());
+		$parts = explode('.', $this->name);
 
 		if (count($parts) > 1) {
 			$ext = array_pop($parts);
@@ -164,21 +181,12 @@ class File extends Object{
 		return $ext;
 	}
 /**
- * Returns the filename.
- *
- * @return string The Filename
- * @access public
- */
-	function getName() {
-		return $this->name;
-	}
-/**
  * Returns the File's owner.
  *
  * @return int the Fileowner
  */
-	function getOwner() {
-		$fileowner = fileowner($this->getFullPath());
+	function owner() {
+		$fileowner = fileowner($this->pwd());
 		return $fileowner;
 	 }
 /**
@@ -187,8 +195,8 @@ class File extends Object{
  * @return int the Filegroup
  * @access public
  */
-	function getGroup() {
-		$filegroup = filegroup($this->getFullPath());
+	function group() {
+		$filegroup = filegroup($this->pwd());
 		return $filegroup;
 	 }
 /**
@@ -201,14 +209,14 @@ class File extends Object{
 		$dir = $this->Folder->pwd();
 
 		if (file_exists($dir) && is_dir($dir) && is_writable($dir) && !$this->exists()) {
-			if (!touch($this->getFullPath())) {
-				print (sprintf(__('[File] Could not create %s', true), $this->getName()));
+			if (!touch($this->pwd())) {
+				print (sprintf(__('[File] Could not create %s', true), $this->name));
 				return false;
 			} else {
 				return true;
 			}
 		} else {
-			print (sprintf(__('[File] Could not create %s', true), $this->getName()));
+			print (sprintf(__('[File] Could not create %s', true), $this->name));
 			return false;
 		}
 	}
@@ -219,7 +227,7 @@ class File extends Object{
  * @access public
  */
 	function exists() {
-		$exists = file_exists($this->getFullPath());
+		$exists = (file_exists($this->pwd()) && is_file($this->pwd()));
 		return $exists;
 	}
 /**
@@ -229,7 +237,7 @@ class File extends Object{
  * @access public
  */
 	function delete() {
-		$unlink = unlink($this->getFullPath());
+		$unlink = unlink($this->pwd());
 		return $unlink;
 	 }
 /**
@@ -239,7 +247,7 @@ class File extends Object{
  * @access public
  */
 	function writable() {
-		$writable = is_writable($this->getFullPath());
+		$writable = is_writable($this->pwd());
 		return $writable;
 	}
 /**
@@ -249,7 +257,7 @@ class File extends Object{
  * @access public
  */
 	function executable() {
-		$executable = is_executable($this->getFullPath());
+		$executable = is_executable($this->pwd());
 		return $executable;
 	}
 /**
@@ -259,7 +267,7 @@ class File extends Object{
  * @access public
  */
 	function readable() {
-		$readable = is_readable($this->getFullPath());
+		$readable = is_readable($this->pwd());
 		return $readable;
 	}
 /**
@@ -269,7 +277,7 @@ class File extends Object{
  * @access public
  */
 	function lastAccess() {
-		$fileatime = fileatime($this->getFullPath());
+		$fileatime = fileatime($this->pwd());
 		return $fileatime;
 	 }
 /**
@@ -279,7 +287,7 @@ class File extends Object{
  * @access public
  */
 	function lastChange() {
-		$filemtime = filemtime($this->getFullPath());
+		$filemtime = filemtime($this->pwd());
 		return $filemtime;
 	}
 /**
@@ -288,7 +296,7 @@ class File extends Object{
  * @return Folder Current folder
  * @access public
  */
-	function getFolder() {
+	function &Folder() {
 		return $this->Folder;
 	}
 /**
@@ -297,18 +305,83 @@ class File extends Object{
  * @return string Permissions for the file
  * @access public
  */
-	function getChmod() {
-		$substr = substr(sprintf('%o', fileperms($this->getFullPath())), -4);
+	function perms() {
+		$substr = substr(sprintf('%o', fileperms($this->pwd())), -4);
 		return $substr;
 	}
 /**
- * Returns the full path of the File.
- *
- * @return string Full path to file
- * @access public
+* Returns the full path of the File.
+*
+* @return string Full path to file
+* @access public
+*/
+	function pwd() {
+		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
+	}
+
+/* Deprecated methods */
+/**
+ * @deprecated
+ * @see File::pwd
  */
 	function getFullPath() {
-		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->getName();
+		return $this->pwd();
+	}
+/**
+ * @deprecated
+ * @see File::name
+ */
+	function getName() {
+		return $this->name;
+	}
+/**
+ * @deprecated
+ * @see File::ext()
+ */
+	function getExt() {
+		return $this->ext();
+	}
+/**
+ * @deprecated
+ * @see File::group()
+ */
+	function getMd5() {
+		return $this->md5();
+	}
+/**
+ * @deprecated
+ * @see File::size()
+ */
+	function getSize() {
+		return $this->size();
+	}
+/**
+ * @deprecated
+ * @see File::owner()
+ */
+	function getOwner() {
+		return $this->owner();
+	}
+/**
+ * @deprecated
+ * @see File::group()
+ */
+	function getGroup() {
+		return $this->group();
+	}
+/**
+ * @deprecated
+ * @see File::perms()
+ */
+	function getChmod() {
+		return $this->perms();
+	}
+/**
+ * @deprecated
+ * @see File::Folder()
+ */
+	function getFolder() {
+		return $this->Folder();
 	}
 }
 ?>

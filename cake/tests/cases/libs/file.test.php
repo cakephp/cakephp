@@ -35,6 +35,73 @@
  * @since      CakePHP Test Suite v 1.0.0.0
  */
 class FileTest extends UnitTestCase {
-	
+
+	var $File;
+
+	function testBasic() {
+
+		$file = dirname(__FILE__) . DS . basename(__FILE__);
+		$this->File =& new File($file);
+
+		$result = $this->File->pwd();
+		$expecting = $file;
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->name;
+		$expecting = basename(__FILE__);
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->ext();
+		$expecting = 'php';
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->md5();
+		$expecting = md5_file($file);
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->size();
+		$expecting = filesize($file);
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->owner();
+		$expecting = fileowner($file);
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->group();
+		$expecting = filegroup($file);
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->perms();
+		$expecting = '0644';
+		$this->assertEqual($result, $expecting);
+		
+		$result = $this->File->Folder();
+		$this->assertIsA($result, 'Folder');
+
+	}
+
+	function testOperations() {
+
+		$new = TMP . 'test_file_new.php';
+		$this->File =& new File($new, true);
+
+		$data = 'hello';
+		$result = $this->File->write($data);
+		$this->assertTrue($result);
+
+		$result = $this->File->append($data);
+		$this->assertTrue($result);
+
+		$result = $this->File->read();
+		$expecting = 'hellohello';
+		$this->assertEqual($result, $expecting);
+
+		$result = $this->File->write('');
+		$this->assertTrue($result);
+
+		$result = $this->File->delete($new);
+		$this->assertTrue($result);
+	}
+
 }
 ?>

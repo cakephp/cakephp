@@ -85,7 +85,7 @@ class Folder extends Object{
 	function __construct($path = false, $create = false, $mode = false) {
 		parent::__construct();
 		if (empty($path)) {
-			$path = getcwd();
+			$path = TMP;
 		}
 
 		if($mode) {
@@ -355,7 +355,7 @@ class Folder extends Object{
 		if(!$mode) {
 			$mode = $this->mode;
 		}
-		
+
 		if (is_dir($path)) {
 			return chmod($path, intval($mode, 8));
 		}
