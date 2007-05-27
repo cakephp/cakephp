@@ -589,9 +589,9 @@ class Controller extends Object {
  * @return unknown
  */
 	function render($action = null, $layout = null, $file = null) {
-		
+
 		$this->beforeRender();
-		
+
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
 			$viewClass = $this->view . 'View';
@@ -723,8 +723,8 @@ class Controller extends Object {
 						break;
 					}
 				}
-			} 
-			
+			}
+
 			$fieldNames[$column['name']]['label'] = Inflector::humanize($humanName);
 			$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 
@@ -938,6 +938,9 @@ class Controller extends Object {
 			}
 			if ($_hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
 				$_hour = $_hour + 12;
+			}
+			if ($hour == 12 && 'am' == $this->data[$modelName][$field['name'] . '_meridian']) {
+			     $hour = '00';
 			}
 			unset($this->data[$modelClass][$field['name'] . '_meridian']);
 
