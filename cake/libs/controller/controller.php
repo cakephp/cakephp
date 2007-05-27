@@ -345,10 +345,15 @@ class Controller extends Object {
 		}
 		$cached = false;
 		$object = null;
+		$plugin = null;
+
+		if($this->plugin) {
+			$plugin = $this->plugin . '.';
+		}
 
 		if($this->uses === false) {
 			if(!class_exists($this->modelClass)){
-				loadModel($this->modelClass);
+				loadModel($plugin . $this->modelClass);
 			}
 		}
 
@@ -388,7 +393,7 @@ class Controller extends Object {
 				$modelKey = Inflector::underscore($modelClass);
 
 				if(!class_exists($modelClass)){
-					loadModel($modelClass);
+					loadModel($plugin . $modelClass);
 				}
 
 				if (class_exists($modelClass)) {

@@ -161,6 +161,27 @@
 
 		if(strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
+
+			$pluginAppModel = Inflector::camelize($plugin . '_app_model');
+			$pluginAppModelFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_model.php';
+			if (!class_exists($pluginAppModel)) {
+				if (file_exists($pluginAppModelFile)) {
+					require($pluginAppModelFile);
+					Overloadable::overload($pluginAppModel);
+				}
+			}
+			if (!class_exists($name)) {
+				$className = $name;
+				$name = Inflector::underscore($name);
+				$path = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
+				if (file_exists($path . $name . '.php')) {
+					require($path . $name . '.php');
+					Overloadable::overload($className);
+					return true;
+				}
+				return false;
+			}
+			return true;
 		}
 
 		if (!is_null($name) && !class_exists($name)) {
@@ -279,8 +300,45 @@
 		}
 		if(strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
-			loadPluginController($plugin, $name);
-			return;
+
+			$pluginAppController = Inflector::camelize($plugin . '_app_controller');
+			$plugin = Inflector::underscore($plugin);
+			$pluginAppControllerFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_controller.php';
+
+			if (!class_exists($pluginAppController)) {
+				if (file_exists($pluginAppControllerFile)) {
+					require($pluginAppControllerFile);
+				} else {
+					return false;
+				}
+			}
+
+			if (empty($name)) {
+				if (!class_exists(Inflector::camelize($plugin . 'controller'))) {
+					if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
+						return true;
+					}
+				}
+			}
+
+			if (!class_exists($name . 'Controller')) {
+				$name = Inflector::underscore($name);
+				$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $name . '_controller.php';
+
+				if (file_exists($file)) {
+					require($file);
+					return true;
+				} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
+					if(file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
+						return true;
+					} else {
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 
 		$className = $name . 'Controller';
