@@ -599,7 +599,10 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			$viewClass = $this->view . 'View';
+			if(strpos($viewClass, '.') !== false){
+				list($plugin, $viewClass) = explode('.', $viewClass);
+			}
+			$viewClass = $viewClass . 'View';
 			loadView($this->view);
 		}
 

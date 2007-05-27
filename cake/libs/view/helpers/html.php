@@ -403,7 +403,7 @@ class HtmlHelper extends AppHelper {
 	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
 
 		$this->setFormTag($fieldName);
-		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->__value($fieldName);
+		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
 		$out = array();
 
 		foreach($options as $optValue => $optTitle) {
@@ -462,15 +462,6 @@ class HtmlHelper extends AppHelper {
 		return $this->output(join("\n", $out));
 	}
 /**
- * Returns value of $fieldName. False if the tag does not exist.
- *
- * @param string $fieldName Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @return unknown Value of the named tag.
- */
-	function value($fieldName) {
-		return $this->__value($fieldName);
-	}
-/**
  * Returns a formatted DIV tag for HTML FORMs.
  *
  * @param string $class CSS class name of the div element.
@@ -517,7 +508,7 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
-		
+
 /**
  * Creates a password input widget.
  *
@@ -526,7 +517,7 @@ class HtmlHelper extends AppHelper {
  */
 	function password($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method password() is deprecated in %s: see FormHelper::input or FormHelper::password', true), get_class($this)), E_USER_NOTICE);
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		if ($this->tagIsInvalid()) {
 			$htmlAttributes = $this->addClass($htmlAttributes, 'form_error');
@@ -541,7 +532,7 @@ class HtmlHelper extends AppHelper {
  */
 	function textarea($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method textarea() is deprecated in %s: see FormHelper::input or FormHelper::textarea', true), get_class($this)), E_USER_NOTICE);
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->value($htmlAttributes, $fieldName);
 
 		$value = null;
 		if (isset($htmlAttributes['value']) && !empty($htmlAttributes['value'])) {
@@ -605,7 +596,7 @@ class HtmlHelper extends AppHelper {
  */
 	function hidden($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method hidden() is deprecated in %s: see FormHelper::input or FormHelper::hidden', true), get_class($this)), E_USER_NOTICE);
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 		return $this->output(sprintf($this->tags['hidden'], $this->model(), $this->field(), $this->_parseAttributes($htmlAttributes, null, ' ', ' ')));
 	}
@@ -617,7 +608,7 @@ class HtmlHelper extends AppHelper {
  */
 	function input($fieldName, $htmlAttributes = array()) {
 		trigger_error(sprintf(__('Method input() is deprecated in %s: see FormHelper::input or FormHelper::text', true), get_class($this)), E_USER_NOTICE);
-		$htmlAttributes = $this->__value($htmlAttributes, $fieldName);
+		$htmlAttributes = $this->value($htmlAttributes, $fieldName);
 		$htmlAttributes = $this->domId($htmlAttributes);
 
 		if (!isset($htmlAttributes['type'])) {

@@ -741,7 +741,7 @@ class FormHelper extends AppHelper {
 		trigger_error(__("Don't use me yet"), E_USER_ERROR);
 		if (isset($options['name'])) {
 			if (strpos($options['name'], "/") !== false || strpos($options['name'], ".") !== false) {
-				if ($this->__value($options['name'])) {
+				if ($this->value($options['name'])) {
 					$options['checked'] = 'checked';
 				}
 				$this->setFieldName($options['name']);
@@ -854,7 +854,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!isset($selected)) {
-			$selected = $this->__value($fieldName);
+			$selected = $this->value($fieldName);
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
@@ -887,7 +887,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->__value($fieldName);
+		$value = $this->value($fieldName);
 		if (empty($value)) {
 			if(!$showEmpty) {
 				$value = 'now';
@@ -914,7 +914,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->__value($fieldName);
+		$value = $this->value($fieldName);
 		if (empty($value)) {
 			if(!$showEmpty && !$maxYear) {
 				$value = 'now';
@@ -940,7 +940,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->__value($fieldName);
+		$value = $this->value($fieldName);
 		if (empty($value)) {
 			if(!$showEmpty) {
 				$value = 'now';
@@ -966,7 +966,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->__value($fieldName);
+		$value = $this->value($fieldName);
 		if (empty($value)) {
 			if(!$showEmpty) {
 				$value = 'now';
@@ -992,7 +992,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		$value = $this->__value($fieldName);
+		$value = $this->value($fieldName);
 		if (empty($value)) {
 			if(!$showEmpty) {
 				$value = 'now';
@@ -1015,7 +1015,7 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if (empty($selected) && $value = $this->__value($fieldName)) {
+		if (empty($selected) && $value = $this->value($fieldName)) {
 			$selected = date('a', strtotime($value));
 		}
 		$selected = empty($selected) ? ($showEmpty ? null : date('a')) : $selected;
@@ -1039,7 +1039,7 @@ class FormHelper extends AppHelper {
 		$meridian = null;
 
 		if (empty($selected)) {
-			$selected = $this->__value($fieldName);
+			$selected = $this->value($fieldName);
 		}
 
 		if (!empty($selected)) {

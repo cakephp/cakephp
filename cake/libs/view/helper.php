@@ -429,8 +429,9 @@ class Helper extends Overloadable {
  * @param array $options
  * @param string $key
  * @return array
+ * @access public
  */
-	function __value($options = array(), $field = null, $key = 'value') {
+	function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
 			$options = array();
 		} elseif (is_string($options)) {
@@ -481,7 +482,7 @@ class Helper extends Overloadable {
 		$this->setFormTag($field);
 		$options = (array)$options;
 		$options = $this->__name($options);
-		$options = $this->__value($options);
+		$options = $this->value($options);
 		$options = $this->domId($options);
 		if ($this->tagIsInvalid()) {
 			$options = $this->addClass($options, 'form-error');
