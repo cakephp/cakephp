@@ -169,17 +169,35 @@ class File extends Object{
  * @return string The File extension
  * @access public
  */
+	function info() {
+		return pathinfo($this->pwd());
+	}	
+/**
+ * Returns the File extension.
+ *
+ * @return string The File extension
+ * @access public
+ */
 	function ext() {
-		$ext = '';
-		$parts = explode('.', $this->name);
-
-		if (count($parts) > 1) {
-			$ext = array_pop($parts);
-		} else {
-			$ext = '';
+		$info = $this->info();
+		if(isset($info['extension'])) {
+			return $info['extension'];
 		}
-		return $ext;
+		return false;
 	}
+/**
+ * Returns the File name without extension.
+ *
+ * @return string The File name without extension.
+ * @access public
+ */
+	function filename() {
+		$info = $this->info();
+		if(isset($info['filename'])) {
+			return $info['filename'];
+		}
+		return false;
+	}	
 /**
  * Returns the File's owner.
  *
