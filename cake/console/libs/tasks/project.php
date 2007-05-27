@@ -30,8 +30,8 @@ if(!class_exists('File')) {
 	uses('file');
 }
 class ProjectTask extends Shell {
-	
-	
+
+
 	function initialize() {}
 
 /**
@@ -44,24 +44,26 @@ class ProjectTask extends Shell {
 		if($project === null) {
 			$project = $this->params['app'];
 			if(isset($this->args[0])) {
-				$project = $this->args[0];				
+				$project = $this->args[0];
 				$this->Dispatch->shiftArgs();
 			}
 		}
 
 		$working = $this->params['working'];
 		$app = basename($working);
-		$root = dirname($working);
-		
+		$root = dirname($working) . DS;
+
 		if($project) {
-			if($project{0} == '/') {
-				$app = basename($project);
-				$root = dirname($project);
-			} else {
+			if($project{0} != '/') {
+				$root = $working;
 				$app = $project;
 			}
-			$path = $root . DS . $app;
-			
+			if($root{strlen($root) -1} != '/') {
+				$root = $root . DS;
+			}
+
+			$path = $root . $app;
+
 			$response = false;
 			while ($response == false && is_dir($path) === true && config('database') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
@@ -71,15 +73,15 @@ class ProjectTask extends Shell {
 				}
 			}
 		}
-		
+
 		while (!$project) {
-			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$working . DS . "myapp", null, $working . DS . 'myapp');
+			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$working . "myapp", null, $working . 'myapp');
 			$this->execute($project);
 			exit();
 		}
 
 		if (!is_dir($root)) {
-			$this->err('The directory path you supplied can not be created. Please try again.');
+			$this->err('The directory path you supplied was not found. Please try again.');
 		}
 
 		$this->__buildDirLayout($path);
@@ -113,10 +115,7 @@ class ProjectTask extends Shell {
 		$app = basename($path);
 		$this->out('');
 		$this->out("Skel Directory: $skel");
-		$this->out("Will be copied to:");
-		$this->hr();
-		$this->out("App: $app");
-		$this->out("Path: $path");
+		$this->out("Will be copied to: {$path}");
 		$this->hr();
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
@@ -146,7 +145,7 @@ class ProjectTask extends Shell {
 				} else {
 					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 				}
-				
+
 				$corePath = $this->__setCake($path);
 				if($corePath === true ){
 					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
