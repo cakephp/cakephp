@@ -181,13 +181,13 @@ class CakeSession extends Object {
  * @access private
  */
 	function __sessionVarNames($name) {
-		if (is_string($name) && preg_match("/^[0-9a-zA-Z._-]+$/", $name)) {
+		if (is_string($name) && preg_match("/^[ 0-9a-zA-Z._-]*$/", $name)) {
 			if (strpos($name, ".")) {
 				$names = explode(".", $name);
 			} else {
 				$names = array($name);
 			}
-			$expression="\$_SESSION";
+			$expression = "\$_SESSION";
 			foreach($names as $item) {
 				$expression .= is_numeric($item) ? "[$item]" : "['$item']";
 			}
@@ -538,7 +538,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __validateKeys($name) {
-		if (is_string($name) && preg_match("/^[0-9a-zA-Z._-]+$/", $name)) {
+		if (is_string($name) && preg_match("/^[ 0-9a-zA-Z._-]*$/", $name)) {
 			return $name;
 		}
 		$this->__setError(3, "$name is not a string");

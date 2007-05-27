@@ -134,19 +134,13 @@ class SetTest extends UnitTestCase {
 		);
 		$this->assertIdentical(Set::merge($a, $b, $c), $expected);
 
-		// Test that passing in an empty array does not mess things up
 		$this->assertIdentical(Set::merge($a, $b, array(), $c), $expected);
 
-		// Create a new Set instance from the $a array
 		$Set =& new Set($a);
-		// Merge $b, an empty array and $c over it
 		$r = $Set->merge($b, array(), $c);
-		// And test that it produces the same result as a static call would
 		$this->assertIdentical($r, $expected);
-		// And also updates it's own value property
 		$this->assertIdentical($Set->value, $expected);
 
-		// Let the garbage collector eat the Set instance
 		unset($Set);
 
 		$Set =& new Set();
@@ -156,9 +150,7 @@ class SetTest extends UnitTestCase {
 		$SetC =& new Set($c);
 
 		$r = $Set->merge($SetA, $SetB, $SetC);
-		// And test that it produces the same result as a static call would
 		$this->assertIdentical($r, $expected);
-		// And also updates it's own value property
 		$this->assertIdentical($Set->value, $expected);
 	}
 
@@ -256,6 +248,32 @@ class SetTest extends UnitTestCase {
 			'2 sales'
 		);
 		$this->assertIdentical($result, $expected);
+	}
+
+	function testCheck() {
+		$set = new Set(array(
+			'My Index 1' => array('First' => 'The first item')
+		));
+		$this->assertTrue($set->check('My Index 1.First'));
+
+		$set = new Set(array(
+			'My Index 1' => array('First' => array('Second' => array('Third' => array('Fourth' => 'Heavy. Nesting.'))))
+		));
+		$this->assertTrue($set->check('My Index 1.First.Second'));
+		$this->assertTrue($set->check('My Index 1.First.Second.Third'));
+		$this->assertTrue($set->check('My Index 1.First.Second.Third.Fourth'));
+	}
+
+	function testWritingWithFunkyKeys() {
+		$set = new Set();
+		$set->insert('Session Test', "test");
+		$this->assertEqual($set->extract('Session Test'), 'test');
+
+		$set->remove('Session Test');
+		$this->assertFalse($set->check('Session Test'));
+
+		$this->assertTrue($set->insert('Session Test.Test Case', "test"));
+		$this->assertTrue($set->check('Session Test.Test Case'));
 	}
 }
 
