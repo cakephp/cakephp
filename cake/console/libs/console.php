@@ -32,6 +32,7 @@
  */
 class ConsoleShell extends Shell {
 	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
+	var $badCommandChars = array('$', ';');
 
 	function initialize() {
 		$this->models = @loadModels();
@@ -63,8 +64,12 @@ class ConsoleShell extends Shell {
 					$this->out('e.g. Foo->findAll()');
 					$this->out('');
 					$this->out('To dynamically set associations, you can do the following:');
-					$this->out("\tModelA <association> ModelB");
+					$this->out("\tModelA bind <association> ModelB");
 					$this->out("where the supported assocations are hasOne, hasMany, belongsTo, hasAndBelongsToMany");
+					$this->out('');
+					$this->out('To dynamically remove associations, you can do the following:');
+					$this->out("\t ModelA unbind <association> ModelB");
+					$this->out("where the supported associations are the same as above");
 				break;
 				case 'quit':
 				case 'exit':
@@ -77,54 +82,72 @@ class ConsoleShell extends Shell {
 						$this->out(" - {$model}");
 					}
 				break;
-				default:
-					// Look to see if we're dynamically binding something
-					$dynamicAssociation = false;
+				case (preg_match("/^(\w+) bind (\w+) (\w+)/", $command, $tmp) == true):
+					foreach ($tmp as $data) {
+						$data = strip_tags($data);
+						$data = str_replace($this->badCommandChars, "", $data);
+					}
+					
+					$modelA = $tmp[1];
+					$association = $tmp[2];
+					$modelB = $tmp[3];
 
-					foreach ($this->associations as $association) {
-						if (preg_match("/^(\w+) $association (\w+)/", $command, $this->models) == TRUE) {
-							$modelA = $this->models[1];
-							$modelB = $this->models[2];
-							$dynamicAssociation = true;
-							$this->{$modelA}->bindModel(
-								array("$association" => array(
-									"$modelB" => array(
-										'className' => $modelB))), false);
-							print "Added association $command\n";
-							break;
+					if ($this->isValidModel($modelA) && $this->isValidModel($modelB) && in_array($association, $this->associations)) {
+						$this->{$modelA}->bindModel(array($association => array($modelB => array('className' => $modelB))), false);
+						$this->out("Created $association association between $modelA and $modelB");
+					} else {
+						$this->out("Please verify you are using valid models and association types");
+					}
+				break;
+				case (preg_match("/^(\w+) unbind (\w+) (\w+)/", $command, $tmp) == true):
+					foreach ($tmp as $data) {
+						$data = strip_tags($data);
+						$data = str_replace($this->badCommandChars, "", $data);
+					}
+					
+					$modelA = $tmp[1];
+					$association = $tmp[2];
+					$modelB = $tmp[3];
+				
+					// Verify that there is actually an association to unbind
+					$currentAssociations = $this->{$modelA}->getAssociated();
+					$validCurrentAssociation = false;
+
+					foreach ($currentAssociations as $model => $currentAssociation) {
+						if ($model == $modelB && $association == $currentAssociation) {
+							$validCurrentAssociation = true;
 						}
 					}
 
-					if ($dynamicAssociation == false) {
-						// let's look for a find statment
-						if (strpos($command, "->find") > 0) {
-							$consoleCommand = '$data = $this->' . $command . ";";
-							eval($consoleCommand);
-							
-							if (is_array($data)) {
-								foreach ($data as $idx => $results) {
-									if (is_numeric($idx)) { // findAll() output
-										foreach ($results as $modelName => $result) {
-											$this->out("$modelName");
+					if ($this->isValidModel($modelA) && $this->isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
+						$this->{$modelA}->unbindModel(array($association => array($modelB)));
+						$this->out("Removed $association association between $modelA and $modelB");
+					} else {
+						$this->out("Please verify you are using valid models, valid current association, and valid association types");
+					}
+				break;
+				case (strpos($command, "->find") > 0):
+					// Remove any bad info
+					$command = strip_tags($command);
+					$command = str_replace($this->badCommandChars, "", $command);
+					$command = str_replace(";", "", $command);
 
-											foreach ($result as $field => $value) {
-												if (is_array($value)) {
-													foreach($value as $field2 => $value2) {
-														$this->out("\t$field2: $value2");
-													}
+					// Do we have a valid model?
+					list($modelToCheck, $tmp) = explode('->', $command);
+				   
+					if ($this->isValidModel($modelToCheck)) {	
+						$findCommand = "\$data = \$this->$command;";
+						@eval($findCommand);
 
-													$this->out("");
-												} else {
-													$this->out("\t$field: $value");
-												}
-											}
-										}
-									} else { // find() output
-										$this->out($idx);
+						if (is_array($data)) {
+							foreach ($data as $idx => $results) {
+								if (is_numeric($idx)) { // findAll() output
+									foreach ($results as $modelName => $result) {
+										$this->out("$modelName");
 
-										foreach($results as $field => $value) {
+										foreach ($result as $field => $value) {
 											if (is_array($value)) {
-												foreach ($value as $field2 => $value2) {
+												foreach($value as $field2 => $value2) {
 													$this->out("\t$field2: $value2");
 												}
 
@@ -134,32 +157,47 @@ class ConsoleShell extends Shell {
 											}
 										}
 									}
+								} else { // find() output
+									$this->out($idx);
+
+									foreach($results as $field => $value) {
+										if (is_array($value)) {
+											foreach ($value as $field2 => $value2) {
+												$this->out("\t$field2: $value2");
+											}
+
+											$this->out("");
+										} else {
+											$this->out("\t$field: $value");
+										}
+									}
 								}
-							} else {
-								$this->out("\nNo result set found");
 							}
+						} else {
+							$this->out("\nNo result set found");
 						}
+					} else {
+						$this->out("$modelToCheck is not a valid model");
 					}
+
+					break;
+					
+				default:
+					$this->out("Invalid command\n");
 				break;
 			}
 		}
 	}
-}
-	function fatal_error_handler($buffer) {
-		if(ereg("(error</b>:)(.+)(<br)", $buffer, $regs) ) {
-			$err = preg_replace("/<.*?>/", "", $regs[2]);
-			error_log($err);
-			return "ERROR CAUGHT check log file";
-		}
-		return $buffer;
-	}
 
-	function handle_error ($errno, $errstr, $errfile, $errline) {
-		error_log("$errstr in $errfile on line $errline");
-		if($errno == FATAL || $errno == ERROR){
-			ob_end_flush();
-			echo "ERROR CAUGHT check log file";
-			exit(0);
+	protected function isValidModel($modelToCheck)
+	{
+		if (in_array($modelToCheck, $this->models)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
+}
+
+
 ?>
