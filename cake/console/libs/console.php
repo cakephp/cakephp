@@ -189,7 +189,7 @@ class ConsoleShell extends Shell {
 		}
 	}
 
-	protected function isValidModel($modelToCheck)
+	function isValidModel($modelToCheck)
 	{
 		if (in_array($modelToCheck, $this->models)) {
 			return true;
