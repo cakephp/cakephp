@@ -197,8 +197,8 @@ class ConsoleShell extends Shell {
 						$badChars = array("(", ")");
 						$data = str_replace($badChars, "", $data);
 						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
-						$this->out($saveCommand);
 						@eval($saveCommand);
+						$this->out('Saved record for ' . $modelToSave);
 					}
 
 				break;				
