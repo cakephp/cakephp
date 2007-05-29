@@ -70,6 +70,11 @@ class ConsoleShell extends Shell {
 					$this->out('To dynamically remove associations, you can do the following:');
 					$this->out("\t ModelA unbind <association> ModelB");
 					$this->out("where the supported associations are the same as above");
+					$this->out('');
+					$this->out("To save a new field in a model, you can do the following:");
+					$this->out("\tModelA->save(array('foo' => 'bar', 'baz' => 0))");
+					$this->out("where you are passing a hash of data to be saved in the format");
+					$this->out("of field => value pairs");
 				break;
 				case 'quit':
 				case 'exit':
@@ -130,7 +135,6 @@ class ConsoleShell extends Shell {
 					// Remove any bad info
 					$command = strip_tags($command);
 					$command = str_replace($this->badCommandChars, "", $command);
-					$command = str_replace(";", "", $command);
 
 					// Do we have a valid model?
 					list($modelToCheck, $tmp) = explode('->', $command);
@@ -180,8 +184,24 @@ class ConsoleShell extends Shell {
 						$this->out("$modelToCheck is not a valid model");
 					}
 
-					break;
+				break;
+				case (strpos($command, '->save') > 0):
+					// Validate the model we're trying to save here
+					$command = strip_tags($command);
+					$command = str_replace($this->badCommandChars, "", $command);
+					list($modelToSave, $tmp) = explode("->", $command);
 					
+					if ($this->isValidModel($modelToSave)) {
+						// Extract the array of data we are trying to build
+						list($foo, $data) = explode("->save", $command);
+						$badChars = array("(", ")");
+						$data = str_replace($badChars, "", $data);
+						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
+						$this->out($saveCommand);
+						@eval($saveCommand);
+					}
+
+				break;				
 				default:
 					$this->out("Invalid command\n");
 				break;
