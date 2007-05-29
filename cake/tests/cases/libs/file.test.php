@@ -50,16 +50,15 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->name;
 		$expecting = basename(__FILE__);
 		$this->assertEqual($result, $expecting);
-		
+
 		$result = $this->File->info();
-		$expecting = array('dirname'=> dirname(__FILE__), 'basename'=> basename(__FILE__), 
-							'extension'=> 'php', 'filename'=> 'file.test');
+		$expecting = array('dirname'=> dirname(__FILE__), 'basename'=> basename(__FILE__), 'extension'=> 'php', 'filename'=>'file.test');
 		$this->assertEqual($result, $expecting);
-		
+
 		$result = $this->File->ext();
 		$expecting = 'php';
 		$this->assertEqual($result, $expecting);
-		
+
 		$result = $this->File->filename();
 		$expecting = 'file.test';
 		$this->assertEqual($result, $expecting);
@@ -83,7 +82,7 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->perms();
 		$expecting = '0644';
 		$this->assertEqual($result, $expecting);
-		
+
 		$result = $this->File->Folder();
 		$this->assertIsA($result, 'Folder');
 

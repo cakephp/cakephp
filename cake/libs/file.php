@@ -170,8 +170,12 @@ class File extends Object{
  * @access public
  */
 	function info() {
-		return pathinfo($this->pwd());
-	}	
+		$info = pathinfo($this->pwd());
+		if(!isset($info['filename'])) {
+			$info['filename'] = $this->filename();
+		}
+		return $info;
+	}
 /**
  * Returns the File extension.
  *
@@ -192,12 +196,11 @@ class File extends Object{
  * @access public
  */
 	function filename() {
-		$info = $this->info();
-		if(isset($info['filename'])) {
-			return $info['filename'];
+		if($ext = $this->ext()) {
+			return basename($this->name, '.'.$ext);
 		}
 		return false;
-	}	
+	}
 /**
  * Returns the File's owner.
  *
