@@ -120,7 +120,7 @@
 	function loadView($viewClass) {
 		if(strpos($viewClass, '.') !== false){
 			list($plugin, $viewClass) = explode('.', $viewClass);
-			$file = APP . 'plugins' . DS . $plugin . DS . 'views' . DS . Inflector::underscore($viewClass) . '.php';
+			$file = APP . 'plugins' . DS . Inflector::underscore($plugin) . DS . 'views' . DS . Inflector::underscore($viewClass) . '.php';
 			if (file_exists($file)) {
 				require($file);
 				return true;
