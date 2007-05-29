@@ -50,7 +50,7 @@ class ModelTask extends Shell {
 		$useTable = null;
 		$primaryKey = 'id';
 		$validate = array();
-		$associations = array();
+		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany', 'hasAndBelongsToMany'=> array());
 		/*$usingDefault = $this->in('Will your model be using a database connection setting other than the default?');
 		if (low($usingDefault) == 'y' || low($usingDefault) == 'yes')
 		{
@@ -58,7 +58,7 @@ class ModelTask extends Shell {
 		}*/
 		$useDbConfig = 'default';
 		$currentModelName = $this->__getModelName($useDbConfig);
-		
+
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$tableIsGood = false;
 		$useTable = Inflector::tableize($currentModelName);
@@ -300,7 +300,7 @@ class ModelTask extends Shell {
 			$wannaDoMoreAssoc = $this->in('Would you like to define some additional model associations?', array('y','n'), 'n');
 
 			while((low($wannaDoMoreAssoc) == 'y' || low($wannaDoMoreAssoc) == 'yes')) {
-				$assocs = array(1=>'belongsTo', 2=>'hasOne', 3=>'hasMany', 4=>'hasAndBelongsToMany');
+				$assocs = array(1 => 'belongsTo', 2 => 'hasOne', 3 => 'hasMany', 4 => 'hasAndBelongsToMany');
 				$bad = true;
 				while($bad) {
 					$this->out('What is the association type?');
@@ -383,25 +383,25 @@ class ModelTask extends Shell {
 		if(!empty($associations)) {
 			$this->out("Associations:");
 
-			if(count($associations['belongsTo'])) {
+			if(!empty($associations['belongsTo'])) {
 				for($i = 0; $i < count($associations['belongsTo']); $i++) {
 					$this->out("			$currentModelName belongsTo {$associations['belongsTo'][$i]['alias']}");
 				}
 			}
 
-			if(count($associations['hasOne'])) {
+			if(!empty($associations['hasOne'])) {
 				for($i = 0; $i < count($associations['hasOne']); $i++) {
 					$this->out("			$currentModelName hasOne	{$associations['hasOne'][$i]['alias']}");
 				}
 			}
 
-			if(count($associations['hasMany'])) {
+			if(!empty($associations['hasMany'])) {
 				for($i = 0; $i < count($associations['hasMany']); $i++) {
 					$this->out("			$currentModelName hasMany	{$associations['hasMany'][$i]['alias']}");
 				}
 			}
 
-			if(count($associations['hasAndBelongsToMany'])) {
+			if(!empty($associations['hasAndBelongsToMany'])) {
 				for($i = 0; $i < count($associations['hasAndBelongsToMany']); $i++) {
 					$this->out("			$currentModelName hasAndBelongsToMany {$associations['hasAndBelongsToMany'][$i]['alias']}");
 				}
@@ -437,7 +437,7 @@ class ModelTask extends Shell {
  * @param array $validate
  * @param array $associations
  */
-	function __bake($name, $useDbConfig = 'default', $useTable = null, $primaryKey = 'id', $validate=array(), $associations=array()) {
+	function __bake($name, $useDbConfig = 'default', $useTable = null, $primaryKey = 'id', $validate = array(), $associations = array()) {
 		$out = "<?php\n";
 		$out .= "class {$name} extends AppModel {\n\n";
 		$out .= "\tvar \$name = '{$name}';\n";
@@ -635,7 +635,7 @@ class ModelTask extends Shell {
 		} else {
 			$currentModelName = $enteredModel;
 		}
-		
+
 		return $currentModelName;
 	}
 }

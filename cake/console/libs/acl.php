@@ -51,6 +51,12 @@ class AclShell extends Shell {
  */
 	var $dataSource = 'default';
 /**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */	
+	var $tasks = array('DbConfig');
+/**
  * override intialize of the Shell
  *
  */
@@ -79,10 +85,7 @@ class AclShell extends Shell {
 
 		if($this->command && !in_array($this->command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
-				$this->out('');
-				$this->out('Your database configuration was not found.');
-				$this->out('Take a moment to create one:');
-				$this->__doDbConfig();
+				$this->DbConfig->execute();
 			}
 			require_once (CONFIGS.'database.php');
 
@@ -199,7 +202,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$id = (is_numeric($this->args[2])) ? intval($this->args[1]) : $this->args[1];
+		$id = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
 		$nodes = $this->Acl->{$class}->getPath($id);
 		if (empty($nodes)) {
 			$this->error("Supplied Node '".$this->args[1]."' not found", "No tree returned.");
@@ -449,144 +452,6 @@ class AclShell extends Shell {
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;
 		return $vars;
-	}
-/**
- * Database configuration setup.
- *
- */
-	function __doDbConfig() {
-		$this->hr(true);
-		$this->out('Database Configuration:');
-		$this->hr(true);
-
-		$driver = '';
-
-		while ($driver == '') {
-			$driver = $this->in('What database driver would you like to use?', array('mysql','mysqli','mssql','sqlite','postgres', 'odbc', 'oracle'), 'mysql');
-			if ($driver == '') {
-				$this->out('The database driver supplied was empty. Please supply a database driver.');
-			}
-		}
-
-		switch($driver) {
-			case 'mysql':
-			$connect = 'mysql_connect';
-			break;
-			case 'mysqli':
-			$connect = 'mysqli_connect';
-			break;
-			case 'mssql':
-			$connect = 'mssql_connect';
-			break;
-			case 'sqlite':
-			$connect = 'sqlite_open';
-			break;
-			case 'postgres':
-			$connect = 'pg_connect';
-			break;
-			case 'odbc':
-			$connect = 'odbc_connect';
-			break;
-			case 'oracle':
-			$connect = 'ocilogon';
-			break;
-			default:
-			$this->out('The connection parameter could not be set.');
-			break;
-		}
-
-		$host = '';
-
-		while ($host == '') {
-			$host = $this->in('What is the hostname for the database server?', null, 'localhost');
-			if ($host == '') {
-				$this->out('The host name you supplied was empty. Please supply a hostname.');
-			}
-		}
-		$login = '';
-
-		while ($login == '') {
-			$login = $this->in('What is the database username?', null, 'root');
-
-			if ($login == '') {
-				$this->out('The database username you supplied was empty. Please try again.');
-			}
-		}
-		$password = '';
-		$blankPassword = false;
-
-		while ($password == '' && $blankPassword == false) {
-			$password = $this->in('What is the database password?');
-			if ($password == '') {
-				$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
-				if($blank == 'y')
-				{
-					$blankPassword = true;
-				}
-			}
-		}
-		$database = '';
-
-		while ($database == '') {
-			$database = $this->in('What is the name of the database you will be using?', null, 'cake');
-
-			if ($database == '')  {
-				$this->out('The database name you supplied was empty. Please try again.');
-			}
-		}
-
-		$prefix = '';
-
-		while ($prefix == '') {
-			$prefix = $this->in('Enter a table prefix?', null, 'n');
-		}
-		if(low($prefix) == 'n') {
-			$prefix = '';
-		}
-
-		$this->hr(true);
-		$this->out('The following database configuration will be created:');
-		$this->hr(true);
-		$this->out("Driver:        $driver");
-		$this->out("Connection:    $connect");
-		$this->out("Host:          $host");
-		$this->out("User:          $login");
-		$this->out("Pass:          " . str_repeat('*', strlen($password)));
-		$this->out("Database:      $database");
-		$this->out("Table prefix:  $prefix");
-		$this->hr(true);
-		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
-
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			$this->bakeDbConfig($driver, $connect, $host, $login, $password, $database, $prefix);
-		} else {
-			$this->out('Bake Aborted.');
-		}
-	}
-/**
- * Creates a database configuration file for Bake.
- *
- * @param string $host
- * @param string $login
- * @param string $password
- * @param string $database
- */
-	function bakeDbConfig( $driver, $connect, $host, $login, $password, $database, $prefix) {
-		$out = "<?php\n";
-		$out .= "class DATABASE_CONFIG {\n\n";
-		$out .= "\tvar \$default = array(\n";
-		$out .= "\t\t'driver' => '{$driver}',\n";
-		$out .= "\t\t'connect' => '{$connect}',\n";
-		$out .= "\t\t'host' => '{$host}',\n";
-		$out .= "\t\t'login' => '{$login}',\n";
-		$out .= "\t\t'password' => '{$password}',\n";
-		$out .= "\t\t'database' => '{$database}', \n";
-		$out .= "\t\t'prefix' => '{$prefix}' \n";
-		$out .= "\t);\n";
-		$out .= "}\n";
-		$out .= "?>";
-		$filename = CONFIGS.'database.php';
-		$this->createFile($filename, $out);
 	}
 }
 
