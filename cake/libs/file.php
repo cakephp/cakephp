@@ -57,6 +57,13 @@ class File extends Object{
  */
 	var $name = null;
 /**
+ * file info
+ *
+ * @var string
+ * @access public
+ */
+	var $info = null;	
+/**
  * Constructor
  *
  * @param string $path Path to file
@@ -170,11 +177,13 @@ class File extends Object{
  * @access public
  */
 	function info() {
-		$info = pathinfo($this->pwd());
-		if(!isset($info['filename'])) {
-			$info['filename'] = $this->filename();
+		if($this->info == null) {
+			$this->info = pathinfo($this->pwd());
 		}
-		return $info;
+		if(!isset($this->info['filename'])) {
+			$this->info['filename'] = $this->filename();
+		}
+		return $this->info;
 	}
 /**
  * Returns the File extension.
@@ -183,9 +192,11 @@ class File extends Object{
  * @access public
  */
 	function ext() {
-		$info = $this->info();
-		if(isset($info['extension'])) {
-			return $info['extension'];
+		if($this->info == null) {
+			$this->info();
+		}
+		if(isset($this->info['extension'])) {
+			return $this->info['extension'];
 		}
 		return false;
 	}
@@ -196,8 +207,11 @@ class File extends Object{
  * @access public
  */
 	function filename() {
-		if($ext = $this->ext()) {
-			return basename($this->name, '.'.$ext);
+		if($this->info == null) {
+			$this->info();
+		}
+		if(isset($this->info['extension'])) {
+			return basename($this->name, '.'.$this->info['extension']);
 		}
 		return false;
 	}
