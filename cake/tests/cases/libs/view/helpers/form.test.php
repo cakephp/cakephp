@@ -579,7 +579,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="12"/', $result);
 		$this->assertPattern('/option value="13"/', $result);
 
-		$this->Form->data['Model']['field'] = '10-10-2006 23:12:32';
+		$this->Form->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field');
 		$this->assertPattern('/option value="10" selected="selected"/', $result);
 		$this->assertNoPattern('/option value="32"/', $result);
@@ -590,7 +590,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="23"/', $result);
 		$this->assertPattern('/option value="24"/', $result);
 
-		$this->Form->data['Model']['field'] = '10-10-2006 23:12:32';
+		$this->Form->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field', true);
 		$this->assertPattern('/option value="10" selected="selected"/', $result);
 		$this->assertPattern('/option value="23"/', $result);
@@ -602,7 +602,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="12"/', $result);
 		$this->assertNoPattern('/option value="13"/', $result);
 
-		$this->Form->data['Model']['field'] = '10-10-2006 00:12:32';
+		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', false);
 		$this->assertPattern('/option value="12" selected="selected"/', $result);
 		$this->assertNoPattern('/option value="13"/', $result);
@@ -612,7 +612,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/option value="23"/', $result);
 		$this->assertNoPattern('/option value="24"/', $result);
 
-		$this->Form->data['Model']['field'] = '10-10-2006 00:12:32';
+		$this->Form->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->hour('Model.field', true);
 		$this->assertPattern('/option value="23"/', $result);
 		$this->assertPattern('/option value="00" selected="selected"/', $result);
@@ -631,7 +631,7 @@ class FormHelperTest extends CakeTestCase {
 		$expecting = "<select name=\"data[Model][field_year]\" class=\"year\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
-		$this->Form->data['Model']['field'] = '10-10-2006';
+		$this->Form->data['Model']['field'] = '2006-10-10';
 		$result = $this->Form->year('Model.field', 2006, 2007, null, array(), false);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
@@ -641,7 +641,7 @@ class FormHelperTest extends CakeTestCase {
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
-		$this->Form->data['Model']['field'] = '10-10-2006';
+		$this->Form->data['Model']['field'] = '2006-10-10';
 		$result = $this->Form->year('Model.field', 2006, 2007, false, array(), false);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
@@ -651,7 +651,7 @@ class FormHelperTest extends CakeTestCase {
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
-		$this->Form->data['Model']['field'] = '10-10-2006';
+		$this->Form->data['Model']['field'] = '2006-10-10';
 		$result = $this->Form->year('Model.field', 2006, 2007, '2007', array(), false);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
@@ -661,7 +661,7 @@ class FormHelperTest extends CakeTestCase {
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\" selected=\"selected\">2008</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
-		$this->Form->data['Model']['field'] = '10-10-2006';
+		$this->Form->data['Model']['field'] = '2006-10-10';
 		$result = $this->Form->year('Model.field', 2006, 2008, null, array(), false);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\">2008</option>\n</select>";
 		$this->assertEqual($result, $expecting);
