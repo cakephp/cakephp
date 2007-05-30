@@ -75,6 +75,10 @@ class ConsoleShell extends Shell {
 					$this->out("\tModelA->save(array('foo' => 'bar', 'baz' => 0))");
 					$this->out("where you are passing a hash of data to be saved in the format");
 					$this->out("of field => value pairs");
+					$this->out('');
+					$this->out("To get column information for a model, use the following:");
+					$this->out("\tModelA columns");
+					$this->out("which returns a list of columns and their type");
 				break;
 				case 'quit':
 				case 'exit':
@@ -201,7 +205,24 @@ class ConsoleShell extends Shell {
 						$this->out('Saved record for ' . $modelToSave);
 					}
 
-				break;				
+				break;
+				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
+					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
+					
+					if ($this->isValidModel($modelToCheck)) {
+						// Get the column info for this model
+						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
+						@eval($fieldsCommand);
+
+						if (is_array($data)) {
+							foreach ($data as $field => $type) {
+								$this->out("\t{$field}: {$type}");
+							}
+						}
+					} else {
+						$this->out("Please verify that you selected a valid model");
+					}
+				break;
 				default:
 					$this->out("Invalid command\n");
 				break;
