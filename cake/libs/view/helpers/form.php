@@ -616,8 +616,6 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function checkbox($fieldName, $options = array()) {
-		$this->__secure();
-
 		$value = 1;
 		if(isset($options['value'])) {
 			$value = $options['value'];
@@ -625,6 +623,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$options = $this->__initInputField($fieldName, am(array('type' => 'checkbox'), $options));
+		$this->__secure();
 
 		$model = $this->model();
 		if (ClassRegistry::isKeySet($model)) {
@@ -656,8 +655,8 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
-		$this->__secure();
 		$options = $this->__initInputField($fieldName, am(array('type' => 'text'), $options));
+		$this->__secure();
 		return $this->output(sprintf($this->Html->tags['input'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
 /**
@@ -668,8 +667,8 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function password($fieldName, $options = array()) {
-		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
+		$this->__secure();
 		return $this->output(sprintf($this->Html->tags['password'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' ')));
 	}
 /**
@@ -680,8 +679,8 @@ class FormHelper extends AppHelper {
  * @return string An HTML text input element
  */
 	function textarea($fieldName, $options = array()) {
-		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
+		$this->__secure();
 		unset($options['type']);
 		$value = null;
 
@@ -722,8 +721,8 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	function file($fieldName, $options = array()) {
-		$this->__secure();
 		$options = $this->__initInputField($fieldName, $options);
+		$this->__secure();
 		return $this->output(sprintf($this->Html->tags['file'], $this->model(), $this->field(), $this->_parseAttributes($options, null, '', ' ')));
 	}
 /**
