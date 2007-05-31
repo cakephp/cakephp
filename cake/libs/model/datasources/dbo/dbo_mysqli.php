@@ -436,7 +436,7 @@ class DboMysqli extends DboSource {
  * @return string The database encoding
  */
 	function getEncoding() {
-		return mysql_client_encoding($this->connection);
+		return mysqli_client_encoding($this->connection);
 	}
 /**
  * Generate a MySQL schema for the given Schema object
