@@ -736,7 +736,7 @@ class Controller extends Object {
 			$fieldNames[$column['name']]['label'] = Inflector::humanize($humanName);
 			$fieldNames[$column['name']]['prompt'] = $fieldNames[$column['name']]['label'];
 
-			$fieldNames[$column['name']]['tagName'] = $model . '/' . $column['name'];
+			$fieldNames[$column['name']]['fieldName'] = $model . '.' . $column['name'];
 			$fieldNames[$column['name']]['name'] = $column['name'];
 			$fieldNames[$column['name']]['class'] = 'optional';
 			$validationFields = $modelObj->validate;
@@ -842,7 +842,7 @@ class Controller extends Object {
 				$fieldNames[$associationName]['prompt'] = $fieldNames[$associationName]['label'];
 				$fieldNames[$associationName]['type'] = "select";
 				$fieldNames[$associationName]['multiple'] = "multiple";
-				$fieldNames[$associationName]['tagName'] = $associationName . '/' . $associationName;
+				$fieldNames[$associationName]['fieldName'] = $associationName . '.' . $associationName;
 				$fieldNames[$associationName]['name'] = $associationName;
 				$fieldNames[$associationName]['class'] = 'optional';
 				$fieldNames[$associationName]['options'] = $otherModelObj->generateList();
