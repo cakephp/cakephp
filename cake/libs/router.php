@@ -246,7 +246,7 @@ class Router extends Object {
 	function parse($url) {
 		$_this =& Router::getInstance();
 		$_this->__connectDefaultRoutes();
-		$out = array();
+		$out = array('pass'=>array());
 		$r = $ext = null;
 
 		if ($url && strpos($url, '/') !== 0) {

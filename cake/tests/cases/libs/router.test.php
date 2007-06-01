@@ -228,7 +228,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions();
 
 		$result = $this->router->parse('/posts.rss');
-		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'rss'));
+		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'rss'), 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss');
@@ -246,11 +246,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions('rss', 'xml');
 
 		$result = $this->router->parse('/posts.xml');
-		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'xml'));
+		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'xml'), 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts.atom?hello=goodbye');
-		$expected = array('controller' => 'posts.atom', 'action' => null);
+		$expected = array('controller' => 'posts.atom', 'action' => null, 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
