@@ -33,6 +33,8 @@
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ControllerTask extends Shell {
+	
+	var $task = array('Project');
 
 	function execute() {
 		if(empty($this->args)) {
@@ -119,7 +121,7 @@ class ControllerTask extends Shell {
 				while ($adminRoute == '') {
 					$adminRoute = $this->in("What would you like the admin route to be?", null, 'admin');
 				}
-				if($this->__addAdminRoute($adminRoute) !== true){
+				if($this->Project->cakeAdmin($adminRoute) !== true){
 					$this->out('Unable to write to /app/config/core.php.');
 					$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 					exit();
@@ -453,7 +455,7 @@ class ControllerTask extends Shell {
  * @param string $type = Models or Controllers
  * @return output
  */
-	function __doList($useDbConfig = 'default') {
+	function listAll($useDbConfig = 'default') {
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {
