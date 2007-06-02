@@ -485,7 +485,7 @@ class ControllerTask extends Shell {
  */
 	function __getControllerName() {
 		$useDbConfig = 'default';
-		$this->__doList($useDbConfig, 'Controllers');
+		$this->listAll($useDbConfig, 'Controllers');
 		
 		$enteredController = '';
 
