@@ -275,7 +275,32 @@
 	 */
 	class Home extends CakeTestModel {
 		var $name = 'Home';
-		var $belongsTo = array( 'AnotherArticle', 'Advertisement' );
+		var $belongsTo = array('AnotherArticle', 'Advertisement');
+	}
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
+	class Post extends CakeTestModel {
+		var $name = 'Post';
+		var $belongsTo = array('Author');
+	}
+	/**
+	 * Short description for class.
+	 *
+	 * @package		cake.tests
+	 * @subpackage	cake.tests.cases.libs.model
+	 */
+	class Author extends CakeTestModel {
+		var $name = 'Author';
+		var $hasMany = array('Post');
+		
+		function afterFind($results) {
+			$results[0]['Author']['test'] = 'working';
+			return $results;
+		}
 	}
 /**
  * Short description for class.
@@ -284,10 +309,11 @@
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
+
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured',
 		'core.article_featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
-		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home'
+		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author'
 	);
 
 	function start() {
@@ -374,8 +400,18 @@ class ModelTest extends CakeTestCase {
 
 		$this->model =& new User();
 		$result = $this->model->_tableInfo->value;
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		if (isset($db->columns['primary_key']['length'])) {
+			$intLength = $db->columns['primary_key']['length'];
+		} elseif (isset($db->columns['integer']['length'])) {
+			$intLength = $db->columns['integer']['length'];
+		} else {
+			$intLength = 11;
+		}
+
 		$expected = array (
-			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => 11),
+			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength),
 			array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
 			array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
 			array('name' => 'created',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),
@@ -428,7 +464,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->db->fullDebug = true;
 		$this->model->recursive = 6;
-		$result = $this->model->findAll();
+		$result = $this->model->findAll(null, null, 'CategoryThread.id ASC');
 
 		$expected = array(
 			array(
@@ -1132,6 +1168,24 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->id = 1;
 		$result = $this->model->saveField('title', '', true);
 		$this->assertFalse($result);
+	}
+
+	function testAssociationAfterFind() {
+		$this->model =& new Post();
+		$result = $this->model->findAll();
+		$expected = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
+				'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
+			), array(
+				'Post' => array ('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Author' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31', 'test' => 'working'),
+			), array(
+				'Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
+				'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working')
+			)
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 	function testValidatesBackwards() {
@@ -1954,6 +2008,53 @@ function testRecursiveFindAllWithLimit() {
 		);
 
 		$this->assertEqual($result, $expected);
+	}
+
+	/*function testBasicValidation() {
+		$this->model =& new ValidationTest();
+		$this->model->set(array('title' => '', 'published' => 1));
+		$this->assertEqual($this->model->invalidFields(), array('title' => 'This field cannot be left blank'));
+
+		$this->model->create();
+		$this->model->set(array('title' => 'Hello', 'published' => 0));
+		$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
+
+		$this->model->create();
+		$this->model->testing = true;
+		$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
+		$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
+	}*/
+
+	function testMultipleValidation() {
+		$this->model =& new ValidationTest();
+	}
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ValidationTest extends CakeTestModel {
+	var $name = 'ValidationTest';
+	var $useTable = false;
+	
+	var $validate = array(
+		'title' => VALID_NOT_EMPTY,
+		'published' => 'customValidationMethod',
+		'body' => array(
+			VALID_NOT_EMPTY,
+			'/^.{5,}$/s' => 'no matchy',
+			'/^[0-9A-Za-z \\.]{1,}$/s'
+		)
+	);
+
+	function customValidationMethod($data) {
+		return $data === 1;
+	}
+
+	function loadInfo() {
+		return new Set();
 	}
 }
 
