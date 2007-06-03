@@ -32,92 +32,172 @@
  * @package		cake
  * @subpackage	cake.cake.console.libs.tasks
  */
-class ViewTask extends BakeShell {
-
-
+class ViewTask extends Shell {
+/**
+ * Tasks to be loaded by this Task
+ *
+ * @var array
+ */	
+	var $tasks = array('Project', 'Controller');
+/**
+ * name of the controller being used
+ *
+ * @var string
+ */
+	var $controllerName = null;
+/**
+ * path to controller to put views
+ *
+ * @var string
+ */
+	var $controllerPath = null;
+/**
+ * the template file to use
+ *
+ * @var string
+ */
+	var $template = null;
+/**
+ * Actions to use for scaffolding
+ *
+ * @var array
+ */
+	var $scaffoldActions = array('index', 'view', 'add', 'edit');
+/**
+ * Override initialize
+ *
+ * @return void
+ */
+	function initialize() {}
+/**
+ * Execution method always used for tasks
+ *
+ * @return void
+ */
 	function execute() {
 		if(empty($this->args)) {
 			$this->__interactive();
 		}
-	}
 
+		if(isset($this->args[0]) == 1 && $this->args[0] == 'help') {
+			$this->help();
+		}
+
+		$controller = $action = $alias = null;
+		if(isset($this->args[0])) {
+			$this->controllerName = Inflector::camelize($this->args[0]);
+			$this->controllerPath = Inflector::underscore($this->controllerName);
+		}
+
+		if(isset($this->args[1])) {
+			$this->template = $this->args[1];
+		}
+
+		if(isset($this->args[2])) {
+			$action = $this->args[2];
+		}
+
+		if(!$action) {
+			$action = $this->template;
+		}
+
+		if(in_array($action, $this->scaffoldActions)) {
+			$this->bake($action, true);
+		} else if($action) {
+			$this->bake($action, true);
+		} else {
+			$vars = $this->__loadController();
+			if($vars) {
+				$protected = array( 'object', low($this->controllerName. 'Controller'), 'controller', 'appcontroller',
+					'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
+					'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
+					'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
+
+				$vars = get_class_vars($this->controllerName . 'Controller');
+				if(array_key_exists('scaffold', $vars)) {
+					$methods = $this->scaffoldActions;
+				} else {
+					$methods = get_class_methods($this->controllerName . 'Controller');
+				}
+				foreach($methods as $method) {
+					if($method{0} != '_' && !in_array(low($method), $protected)) {
+						$content = $this->getContent($method, $vars);
+						$this->bake($method, $content);
+					}
+				}
+			}
+		}
+	}
+/**
+ * Handles interactive baking
+ *
+ * @access private
+ * @return void
+ */
 	function __interactive() {
 		$this->hr();
 		$this->out('View Bake:');
 		$this->hr();
-		$uses = array();
-		$wannaUseSession = 'y';
+		$wannaDoAdmin = 'n';
 		$wannaDoScaffold = 'y';
 
-		$controllerName = $this->__getControllerName();
-		$controllerPath = low(Inflector::underscore($controllerName));
+		$this->controllerName = $this->Controller->getName();
 
-		$doItInteractive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$controllerName} views if it exist.", array('y','n'), 'y');
+		$this->controllerPath = low(Inflector::underscore($this->controllerName));
 
-		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
-			$this->interactive = true;
+		$interactive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$this->controllerName} views if it exist.", array('y','n'), 'y');
+
+		if (low($interactive) == 'y' || low($interactive) == 'yes') {
 			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
 		}
 
-		$admin = null;
-		$admin_url = null;
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
 			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
 		}
 
+		$admin = '';
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
 			if(defined('CAKE_ADMIN')) {
 				$admin = CAKE_ADMIN . '_';
-				$admin_url = '/'.CAKE_ADMIN;
 			} else {
-				$adminRoute = '';
 				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 				$this->out('What would you like the admin route to be?');
 				$this->out('Example: www.example.com/admin/controller');
-				while ($adminRoute == '') {
-					$adminRoute = $this->in("What would you like the admin route to be?", null, 'admin');
+				while ($admin == '') {
+					$admin = $this->in("What would you like the admin route to be?", null, 'admin');
 				}
-				if($this->__addAdminRoute($adminRoute) !== true){
-					$this->out('Unable to write to /app/config/core.php.');
-					$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				if($this->Project->cakeAdmin($admin) !== true){
+					$this->err('Unable to write to /app/config/core.php.');
+					$this->err('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 					exit();
 				} else {
-					$admin = $adminRoute . '_';
-					$admin_url = '/'.$adminRoute;
+					$admin = $admin . '_';
 				}
 			}
 		}
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$file = CONTROLLERS . $controllerPath . '_controller.php';
+			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 
-			if(!file_exists($file)) {
-				$shortPath = str_replace(ROOT, null, $file);
-				$shortPath = str_replace('../', '', $shortPath);
-				$shortPath = str_replace('//', '/', $shortPath);
-				$this->out('');
-				$this->out("The file '$shortPath' could not be found.\nIn order to scaffold, you'll need to first create the controller. ");
-				$this->out('');
-				die();
-			} else {
-				uses('controller'.DS.'controller');
-				loadController($controllerName);
-				//loadModels();
-				if($admin) {
-					$this->__bake($controllerName, $controllerPath, $admin, $admin_url);
+			if($admin) {
+				foreach($this->scaffoldActions as $action) {
+					$this->scaffoldActions[] = $admin . $action;
 				}
-				$this->__bake($controllerName, $controllerPath, null, null);
-
-				$this->hr();
-				$this->out('');
-				$this->out('View Scaffolding Complete.'."\n");
 			}
+			$vars = $this->__loadController();
+			if($vars) {
+				foreach($this->scaffoldActions as $action) {
+					$content = $this->getContent($action, $vars);
+					$this->bake($action, $content);
+				}
+			}
+			$this->hr();
+			$this->out('');
+			$this->out('View Scaffolding Complete.'."\n");
 		} else {
-			$actionName = '';
-
-			while ($actionName == '') {
-				$actionName = $this->in('Action Name? (use camelCased function name)');
-
-				if ($actionName == '') {
+			$action = '';
+			while ($action == '') {
+				$action = $this->in('Action Name? (use camelCased function name)');
+				if ($action == '') {
 					$this->out('The action name you supplied was empty. Please try again.');
 				}
 			}
@@ -125,430 +205,137 @@ class ViewTask extends BakeShell {
 			$this->hr();
 			$this->out('The following view will be created:');
 			$this->hr();
-			$this->out("Controller Name: $controllerName");
-			$this->out("Action Name:	 $actionName");
-			$this->out("Path:			 app/views/" . $controllerPath . DS . Inflector::underscore($actionName) . '.ctp');
+			$this->out("Controller Name: {$this->controllerName}");
+			$this->out("Action Name:	 {$action}");
+			$this->out("Path:			 ".$this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp");
 			$this->hr();
 			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
-
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-				$this->__bakeView($controllerName, $actionName);
+				$this->bake($action);
+				exit();
 			} else {
 				$this->out('Bake Aborted.');
+				exit();
 			}
 		}
 	}
-
-	function __bake($controllerName, $controllerPath, $admin= null, $admin_url = null) {
-		$controllerClassName = $controllerName.'Controller';
-		$controllerObj = & new $controllerClassName();
-
-		if(!in_array('Html', $controllerObj->helpers)) {
-			$controllerObj->helpers[] = 'Html';
-		}
-		if(!in_array('Form', $controllerObj->helpers)) {
-			$controllerObj->helpers[] = 'Form';
-		}
-
-		$controllerObj->constructClasses();
-		$currentModelName = $controllerObj->modelClass;
-		$this->__modelClass = $currentModelName;
-		$modelKey = $controllerObj->modelKey;
-		$modelObj =& ClassRegistry::getObject($modelKey);
-		$singularName = $this->_singularName($currentModelName);
-		$pluralName = $this->_pluralName($currentModelName);
-		$singularHumanName = $this->_singularHumanName($currentModelName);
-		$pluralHumanName = $this->_pluralHumanName($controllerName);
-
-		$fieldNames = $controllerObj->generateFieldNames(null, false);
-
-		//-------------------------[INDEX]-------------------------//
-		$indexView = null;
-		$indexView .= "<div class=\"{$pluralName}\">\n";
-		$indexView .= "<h2>List " . $pluralHumanName . "</h2>\n\n";
-		$indexView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
-		$indexView .= "\t<tr>\n";
-		foreach ($fieldNames as $fieldName) {
-			$indexView .= "\t\t<th><?php echo \$paginator->sort('{$fieldName['name']}');?></th>\n";
-		}
-		$indexView .= "\t\t<th>Actions</th>\n";
-		$indexView .= "\t</tr>\n";
-		$indexView .= "<?php foreach (\${$pluralName} as \${$singularName}): ?>\n";
-		$indexView .= "\t<tr>\n";
-		$count = 0;
-		foreach($fieldNames as $field => $value) {
-			if(isset($value['foreignKey'])) {
-				$otherModelName = $this->_modelName($value['model']);
-				$otherModelKey = Inflector::underscore($value['modelKey']);
-				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-				$otherControllerName = $this->_controllerName($value['modelKey']);
-				$otherControllerPath = $this->_controllerPath($otherControllerName);
-				if(is_object($otherModelObj)) {
-					$displayField = $otherModelObj->getDisplayField();
-					$indexView .= "\t\t<td><?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></td>\n";
-				} else {
-					$indexView .= "\t\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
-				}
-				$count++;
-			} else {
-				$indexView .= "\t\t<td><?php echo \$".$singularName."['{$modelObj->name}']['{$field}']; ?></td>\n";
-			}
-		}
-		$indexView .= "\t\t<td class=\"actions\">\n";
-		$indexView .= "\t\t\t<?php echo \$html->link('View', array('action'=>'view', \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])); ?>\n";
-		$indexView .= "\t\t\t<?php echo \$html->link('Edit', array('action'=>'edit', \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])); ?>\n";
-		$indexView .= "\t\t\t<?php echo \$html->link('Delete', array('action'=>'delete', \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}']), null, 'Are you sure you want to delete #' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}']); ?>\n";
-		$indexView .= "\t\t</td>\n";
-		$indexView .= "\t</tr>\n";
-		$indexView .= "<?php endforeach; ?>\n";
-		$indexView .= "</table>\n\n";
-		$indexView .= "</div>\n";
-		$indexView .= "<div class=\"paging\">\n";
-		$indexView .= "<?php echo \$paginator->prev('<< previous', array(), null, array('class'=>'disabled'));?>\n";
-		$indexView .= "|\n";
-		$indexView .= "<?php echo \$paginator->next('next >>', array(), null, array('class'=>'disabled'));?>\n";
-		$indexView .= "</div>\n";
-		$indexView .= "<div class=\"actions\">\n";
-		$indexView .= "\t<ul>\n";
-		$indexView .= "\t\t<li><?php echo \$html->link('New {$singularHumanName}', array('action'=>'add')); ?></li>\n";
-		$indexView .= "\t</ul>\n";
-		$indexView .= "</div>";
-
-		//-------------------------[VIEW]-------------------------//
-		$viewView = null;
-		$viewView .= "<div class=\"{$singularName}\">\n";
-		$viewView .= "<h2>View " . $singularHumanName . "</h2>\n\n";
-		$viewView .= "\t<dl>\n";
-		$count = 0;
-		foreach($fieldNames as $field => $value) {
-			$viewView .= "\t\t<dt>" . $value['label'] . "</dt>\n";
-			if(isset($value['foreignKey'])) {
-				$otherModelName = $this->_modelName($value['model']);
-				$otherModelKey = Inflector::underscore($value['modelKey']);
-				$otherModelObj =& ClassRegistry::getObject($value['modelKey']);
-				$otherControllerName = $this->_controllerName($value['modelKey']);
-				$otherControllerPath = $this->_controllerPath($otherControllerName);
-				$displayField = $otherModelObj->getDisplayField();
-				$viewView .= "\t\t<dd>&nbsp;<?php echo \$html->link(\$".$singularName."['{$otherModelName}']['{$displayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$singularName."['{$otherModelName}']['{$otherModelObj->primaryKey}'])); ?></dd>\n";
-				$count++;
-			} else {
-				$viewView .= "\t\t<dd>&nbsp;<?php echo \$".$singularName."['{$modelObj->name}']['{$field}']?></dd>\n";
-			}
-		}
-		$viewView .= "\t</dl>\n";
-		$viewView .= "</div>\n";
-		$viewView .= "<div class=\"actions\">\n";
-		$viewView .= "\t<ul>\n";
-		$viewView .= "\t\t<li><?php echo \$html->link('Edit " . $singularHumanName . "',   array('action'=>'edit', \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'])); ?> </li>\n";
-		$viewView .= "\t\t<li><?php echo \$html->link('Delete " . $singularHumanName . "', array('action'=>'delete', \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}']), null, 'Are you sure you want to delete #' . \$".$singularName."['{$modelObj->name}']['{$modelObj->primaryKey}'] . '?'); ?> </li>\n";
-		$viewView .= "\t\t<li><?php echo \$html->link('List " . $pluralHumanName ."', array('action'=>'index')); ?> </li>\n";
-		$viewView .= "\t\t<li><?php echo \$html->link('New " . $singularHumanName . "', array('action'=>'add')); ?> </li>\n";
-		foreach( $fieldNames as $field => $value ) {
-			if( isset( $value['foreignKey'] ) ) {
-				$otherModelName = $this->_modelName($value['modelKey']);
-				if($otherModelName != $currentModelName) {
-					$otherControllerName = $this->_controllerName($otherModelName);
-					$otherControllerPath = $this->_controllerPath($otherControllerName);
-					$otherSingularHumanName = $this->_singularHumanName($value['controller']);
-					$otherPluralHumanName = $this->_pluralHumanName($value['controller']);
-					$viewView .= "\t\t<li><?php echo \$html->link('List " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-					$viewView .= "\t\t<li><?php echo \$html->link('New " . $otherPluralHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
-				}
-			}
-		}
-		$viewView .= "\t</ul>\n\n";
-		$viewView .= "</div>\n";
-
-		foreach ($modelObj->hasOne as $associationName => $relation) {
-			$new = true;
-			$otherModelName = $this->_modelName($relation['className']);
-			$otherControllerName = $this->_controllerName($otherModelName);
-			$otherControllerPath = $this->_controllerPath($otherControllerName);
-			$otherSingularName = $this->_singularName($associationName);
-			$otherPluralHumanName = $this->_pluralHumanName($associationName);
-			$otherSingularHumanName = $this->_singularHumanName($associationName);
-			$otherModelKey = Inflector::underscore($relation['className']);
-			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-
-			$viewView .= "<div class=\"related\">\n";
-			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])): ?>\n";
-			$viewView .= "\t<dl>\n";
-			foreach($otherModelObj->_tableInfo->value as $column) {
-				$viewView .= "\t\t<dt>".Inflector::humanize($column['name'])."</dt>\n";
-				$viewView .= "\t\t<dd>&nbsp;<?php echo \${$singularName}['{$associationName}']['{$column['name']}'] ?></dd>\n";
-			}
-			$viewView .= "\t</dl>\n";
-			$viewView .= "<?php endif; ?>\n";
-			$viewView .= "\t<div class=\"actions\">\n";
-			$viewView .= "\t\t<ul>\n";
-			$viewView .= "\t\t\t<li><?php echo \$html->link('Edit " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \$".$singularName."['{$associationName}']['" . $modelObj->{$otherModelName}->primaryKey . "']));?></li>\n";
-			$viewView .= "\t\t</ul>\n";
-			$viewView .= "\t</div>\n";
-			$viewView .= "</div>\n";
-		}
-
-		$relations = array_merge($modelObj->hasMany, $modelObj->hasAndBelongsToMany);
-		foreach($relations as $associationName => $relation) {
-			$otherModelName = $associationName;
-			$otherControllerName = $this->_controllerName($relation['className']);
-			$otherControllerPath = $this->_controllerPath($otherControllerName);
-			$otherSingularName = $this->_singularName($associationName);
-			$otherPluralHumanName = $this->_pluralHumanName($associationName);
-			$otherSingularHumanName = $this->_singularHumanName($associationName);
-			$otherModelKey = Inflector::underscore($relation['className']);
-			$otherModelObj =& ClassRegistry::getObject($otherModelKey);
-
-			$viewView .= "<div class=\"related\">\n";
-			$viewView .= "<h3>Related " . $otherPluralHumanName . "</h3>\n";
-			$viewView .= "<?php if(!empty(\${$singularName}['{$associationName}'])):?>\n";
-			$viewView .= "<table cellpadding=\"0\" cellspacing=\"0\">\n";
-			$viewView .= "\t<tr>\n";
-			foreach($otherModelObj->_tableInfo->value as $column) {
-				$viewView .= "\t\t<th>".Inflector::humanize($column['name'])."</th>\n";
-			}
-			$viewView .= "\t\t<th>Actions</th>\n";
-			$viewView .= "\t</tr>\n";
-			$viewView .= "<?php foreach(\${$singularName}['{$associationName}'] as \$".$otherSingularName."):?>\n";
-			$viewView .= "\t<tr>\n";
-			foreach($otherModelObj->_tableInfo->value as $column) {
-			$viewView .= "\t\t<td><?php echo \${$otherSingularName}['{$column['name']}'];?></td>\n";
-			}
-			$viewView .= "\t\t<td class=\"actions\">\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('View', array('controller'=> '{$otherControllerPath}', 'action'=>'view', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('Edit', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \$".$otherSingularName."['{$otherModelObj->primaryKey}'])); ?>\n";
-			$viewView .= "\t\t\t<?php echo \$html->link('Delete', array('controller'=> '{$otherControllerPath}', 'action'=>'delete', \$".$otherSingularName."['{$otherModelObj->primaryKey}']), null, 'Are you sure you want to delete #' . \$".$otherSingularName."['{$otherModelObj->primaryKey}'] . '?'); ?>\n";
-			$viewView .= "\t\t</td>\n";
-			$viewView .= "\t</tr>\n";
-			$viewView .= "<?php endforeach; ?>\n";
-			$viewView .= "</table>\n";
-			$viewView .= "<?php endif; ?>\n\n";
-			$viewView .= "\t<div class=\"actions\">\n";
-			$viewView .= "\t\t<ul>\n";
-			$viewView .= "\t\t\t<li><?php echo \$html->link('New " . $otherSingularHumanName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add'));?> </li>\n";
-			$viewView .= "\t\t</ul>\n";
-			$viewView .= "\t</div>\n";
-			$viewView .= "</div>\n";
-		}
-		$fields = $controllerObj->generateFieldNames(null, true);
-		//-------------------------[EDIT]-------------------------//
-		$editView = null;
-		$editView .= "<div class=\"".$singularName."\">\n";
-		$editView .= "<h2>Edit " . $singularHumanName . "</h2>\n";
-		$editView .= "\t<?php echo \$form->create('{$currentModelName}');?>\n";
-		$editView .= $this->inputs($fields);
-		$editView .= "\t\t<?php echo \$form->submit('Update');?>\n";
-		$editView .= "\t</form>\n";
-		$editView .= "</div>\n";
-		$editView .= "<div class=\"actions\">\n";
-		$editView .= "\t<ul>\n";
-		$editView .= "\t\t<li><?php echo \$html->link('Delete', array('action'=>'delete', \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')), null, 'Are you sure you want to delete #' . \$html->tagValue('{$modelObj->name}/{$modelObj->primaryKey}')); ?>\n";
-		$editView .= "\t\t<li><?php echo \$html->link('List {$pluralHumanName}', array('action'=>'index')); ?></li>\n";
-		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->_modelName($relation['className']);
-			if($otherModelName != $currentModelName) {
-				$otherControllerName = $this->_controllerName($otherModelName);
-				$otherControllerPath = $this->_controllerPath($otherControllerName);
-				$otherSingularName = $this->_singularName($associationName);
-				$otherPluralName = $this->_pluralHumanName($associationName);
-				$editView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view')); ?></li>\n";
-				$editView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?></li>\n";
-			}
-		}
-		$editView .= "\t</ul>\n";
-		$editView .= "</div>\n";
-		//-------------------------[ADD]-------------------------//
-		unset($fields[$modelObj->primaryKey]);
-		$addView = null;
-		$addView .= "<div class=\"".low($singularName)."\">\n";
-		$addView .= "<h2>New " . $singularHumanName . "</h2>\n";
-		$addView .= "\t<?php echo \$form->create('{$currentModelName}');?>\n";
-		$addView .= $this->inputs($fields);
-		$addView .= "\t\t<?php echo \$form->submit('Add');?>\n";
-		$addView .= "\t</form>\n";
-		$addView .= "</div>\n";
-		$addView .= "<div class=\"actions\">\n";
-		$addView .= "\t<ul>\n";
-		$addView .= "\t\t<li><?php echo \$html->link('List {$pluralHumanName}', array('action'=>'index')); ?></li>\n";
-		foreach ($modelObj->belongsTo as $associationName => $relation) {
-			$otherModelName = $this->_modelName($relation['className']);
-			if($otherModelName != $currentModelName) {
-				$otherControllerName = $this->_controllerName($otherModelName);
-				$otherControllerPath = $this->_controllerPath($otherControllerName);
-				$otherSingularName = $this->_singularName($associationName);
-				$otherPluralName = $this->_pluralHumanName($associationName);
-				$addView .= "\t\t<li><?php echo \$html->link('View " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'view'));?></li>\n";
-				$addView .= "\t\t<li><?php echo \$html->link('Add " . $otherPluralName . "', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?></li>\n";
-			}
-		}
-		$addView .= "\t</ul>\n";
-		$addView .= "</div>\n";
-
-		//------------------------------------------------------------------------------------//
-
-		$Folder =& new Folder(VIEWS . $controllerPath, true);
-		if($path = $Folder->cd(VIEWS . $controllerPath)) {
-			$path = $Folder->slashTerm(VIEWS . $controllerPath);
-			$filename = $path . $admin . 'index.ctp';
-			$this->createFile($filename, $indexView);
-			$filename = $path . $admin . 'view.ctp';
-			$this->createFile($filename, $viewView);
-			$filename = $path . $admin . 'add.ctp';
-			$this->createFile($filename, $addView);
-			$filename = $path . $admin . 'edit.ctp';
-			$this->createFile($filename, $editView);
-		} else {
-			return false;
-		}
-	}
-
 /**
- * Assembles and writes a View file.
- *
- * @param string $controllerName
- * @param string $actionName
- * @param string $content
- */
-	function __bakeView($controllerName, $actionName, $content = '') {
-		$out = "<h2>{$actionName}</h2>\n";
-		$out .= $content;
-		if(!file_exists(VIEWS.$this->_controllerPath($controllerName))) {
-			mkdir(VIEWS.$this->_controllerPath($controllerName));
-		}
-		$filename = VIEWS . $this->_controllerPath($controllerName) . DS . Inflector::underscore($actionName) . '.ctp';
-		$Folder =& new Folder(VIEWS . $controllerPath, true);
-		if($path = $Folder->cd(VIEWS . $controllerPath)) {
-			$path = $Folder->slashTerm(VIEWS . $controllerPath);
-			return $this->createFile($filename, $out);
-		} else {
-			return false;
-		}
-	}
-
-/**
- * returns the fields to be display in the baked forms.
+ * Loads Controller and sets variables for the template
+ * Available template variables
+ *	'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+ *	'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
+ *	'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  *
  * @access private
- * @param array $fields
+ * @return array Returns an variables to be made available to a view template
  */
-	function inputs($fields = array()) {
-		$displayFields = null;
-
-		foreach($fields as $name => $options) {
-			if(isset($options['tagName'])){
-				$tag = explode('/', $options['tagName']);
-				$tagName = $tag[1];
-				unset($options['tagName']);
-			}
-			$formOptions = array();
-
-			if(isset($options['type'])){
-				$type = $options['type'];
-				unset($options['type']);
-				//$formOptions['type'] = "'type' => '{$type}'";
-			}
-
-			if(isset($options['class']) && $options['class'] == 'required'){
-				$class = $options['class'];
-				unset($options['class']);
-				$formOptions['class'] = "'class' => '{$class}'";
-			}
-
-			if(isset($options['options'])){
-				unset($formOptions['type']);
-				$fieldOptions = $this->_pluralName($options['model']);
-				unset($options['options']);
-				$formOptions['options'] = "'options' => \${$fieldOptions}";
-				if(isset($options['multiple'])){
-					$formOptions['multiple'] = "'multiple' => 'multiple'";
-					$tagName = $tagName.'/'.$tagName;
-				}
-			}
-			if(isset($options['size'])){
-				$size = $options['size'];
-				unset($options['size']);
-				//$formOptions['size'] = "'size' => '{$size}'";
-			}
-			if(isset($options['cols'])){
-				$cols = $options['cols'];
-				unset($options['cols']);
-				//$formOptions['cols'] = "'cols' => '{$cols}'";
-			}
-			if(isset($options['rows'])){
-				$rows = $options['rows'];
-				unset($options['rows']);
-				//$formOptions['rows'] = "'rows' => '{$rows}'";
-			}
-
-
-			if(!empty($formOptions)) {
-				$formOptions = ", array(".join(', ', $formOptions).")";
-			} else {
-				$formOptions = null;
-			}
-
-			$displayFields .= "\t\t<?php echo \$form->input('{$tagName}'{$formOptions});?>\n";
+	function __loadController() {
+		if(!$this->controllerName) {
+			$this->err('could not find the controller');
 		}
-		return $displayFields;
+
+		if(!loadController($this->controllerName)) {
+			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
+			$shortPath = $this->shortPath($file);
+			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
+			return false;
+		}
+
+		$controllerClassName = $this->controllerName . 'Controller';
+		$controllerObj = & new $controllerClassName();
+		$controllerObj->constructClasses();
+		$modelClass = $controllerObj->modelClass;
+		$modelKey = $controllerObj->modelKey;
+		$modelObj =& ClassRegistry::getObject($modelKey);
+		$primaryKey = $modelObj->primaryKey;
+		$displayField = $modelObj->displayField;
+		$singularVar = Inflector::variable($modelClass);
+		$pluralVar = Inflector::variable($this->controllerName);
+		$singularHumanName = Inflector::humanize($modelClass);
+		$pluralHumanName = Inflector::humanize($this->controllerName);
+		$fields = $modelObj->_tableInfo->value;
+		$foreignKeys = $modelObj->keyToTable;
+		$belongsTo = $modelObj->belongsTo;
+		$hasOne = $modelObj->hasOne;
+		$hasMany = $modelObj->hasMany;
+		$hasAndBelongsToMany = $modelObj->hasAndBelongsToMany;
+
+		return compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+						'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
+						'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 	}
-
 /**
- * outputs the a list of possible models or controllers from database
+ * Assembles and writes bakes the view file.
  *
- * @param string $useDbConfig
- * @param string $type = Models or Controllers
- * @return output
+ * @param string $action
+ * @param string $content
+ * @return bool
  */
-	function __doList($useDbConfig = 'default') {
-		$db =& ConnectionManager::getDataSource($useDbConfig);
-		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		if ($usePrefix) {
-			$tables = array();
-			foreach ($db->listSources() as $table) {
-				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
-					$tables[] = substr($table, strlen($usePrefix));
-				}
-			}
+	function bake($action, $content = '') {
+		if($content === true) {
+			$content = $this->getContent();
+		}
+		$filename = VIEWS . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
+		$Folder =& new Folder(VIEWS . $this->controllerPath, true);
+		$errors = $Folder->errors();
+		if(empty($errors)) {
+			$path = $Folder->slashTerm($Folder->pwd());
+			return $this->createFile($filename, $content);
 		} else {
-			$tables = $db->listSources();
+			foreach($errors as $error) {
+				$this->err($error);
+			}
 		}
-		$this->__tables = $tables;
-		$this->out('Possible Models based on your current database:');
-		$this->_controllerNames = array();
-		$count = count($tables);
-		for ($i = 0; $i < $count; $i++) {
-			$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
-			$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
-		}
+		return false;
 	}
-	
 /**
- * Forces the user to specify the controller for which he wants to bake views, and returns the selected controller name.
+ * Builds content from template and variables
  *
- * @return the controller name
+ * @param string $template file to use
+ * @param array $vars passed for use in templates
+ * @return string content from template
  */
-	function __getControllerName() {
-		$useDbConfig = 'default';
-		$this->__doList($useDbConfig, 'Controllers');
-		
-		$enteredController = '';
-
-		while ($enteredController == '') {
-			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
-
-			if ($enteredController == '' || intval($enteredController) > count($this->_controllerNames)) {
-				$this->out('Error:');
-				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
-				$enteredController = '';
+	function getContent($template = null, $vars = null) {
+		if(!$template) {
+			$template = $this->template;
+		}
+		$action = $template;
+		if(in_array($template, array('add', 'edit'))) {
+			$action = $template;
+			$template = 'form';
+		}
+		$loaded = false;
+		foreach($this->Dispatch->shellPaths as $path) {
+			$templatePath = $path . 'templates' . DS . 'views' . DS .Inflector::underscore($template).'.ctp';
+			if (file_exists($templatePath) && is_file($templatePath)) {
+				$loaded = true;
+				break;
 			}
 		}
-
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->_controllerNames) ) {
-			$controllerName = $this->_controllerNames[intval($enteredController) - 1];
-		} else {
-			$controllerName = Inflector::camelize($enteredController);
+		if(!$vars) {
+			$vars = $this->__loadController();
 		}
-		
-		return $controllerName;
+		if($loaded) {
+			extract($vars);
+			ob_start();
+			ob_implicit_flush(0);
+			include($templatePath);
+			$content = ob_get_clean();
+			return $content;
+		}
+
+		$this->err('Template for '. $template .' could not be found');
+		return false;
+	}
+/**
+ * Builds content from template and variables
+ *
+ * @param string $template file to use
+ * @param array $params passed from controller
+ * @return void
+ */
+	function help() {
+		$this->out('Help');
+		exit();
 	}
 }
