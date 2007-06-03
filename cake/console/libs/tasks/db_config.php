@@ -37,14 +37,24 @@ if(!class_exists('File')) {
  */
 class DbConfigTask extends Shell {
 
+/**
+ * Execution method always used for tasks
+ *
+ * @return void
+ */
 	function execute() {
 		if(empty($this->args)) {
 			$this->__interactive();
 		}
 	}
-
+/**
+ * Interactive interface
+ *
+ * @access private
+ * @return void
+ */
 	function __interactive() {
-		
+
 		$this->out('Database Configuration:');
 		$driver = '';
 		while ($driver == '') {
@@ -96,16 +106,22 @@ class DbConfigTask extends Shell {
 		if(low($prefix) == 'n') {
 			$prefix = null;
 		}
-		
+
 		$config = compact('driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix');
 		while($this->__verify($config) == false) {
 			$this->__interactive();
 		}
-		
+
 		config('database');
 		return true;
 	}
-
+/**
+ * Output verification message
+ * and bake if it looks good
+ *
+ * @access private
+ * @return bool
+ */
 	function __verify($config) {
 		$defaults = array('driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 						'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
@@ -128,13 +144,18 @@ class DbConfigTask extends Shell {
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			return $this->__bake($config);
+			return $this->bake($config);
 		} else {
 			return false;
 		}
 	}
-
-	function __bake($config) {
+/**
+ * Assembles and writes database.php
+ *
+ * @access public
+ * @return bool
+ */
+	function bake($config) {
 		$defaults = array('driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 						'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 						'schema'=> null,'prefix'=> null);

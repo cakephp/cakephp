@@ -33,15 +33,52 @@
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ControllerTask extends Shell {
-	
+/**
+ * Tasks to be loaded by this Task
+ *
+ * @var array
+ */
 	var $task = array('Project');
-
+/**
+ * Override initialize
+ *
+ * @return void
+ */
+	function initialize() {}
+/**
+ * Execution method always used for tasks
+ *
+ * @return void
+ */
 	function execute() {
 		if(empty($this->args)) {
 			$this->__interactive();
 		}
+
+		if(isset($this->args[0])) {
+			$controller = Inflector::camelize($this->args[0]);
+			$actions = null;
+			if(isset($this->args[1]) && $this->args[1] == 'scaffold') {
+				$this->out('Baking scaffold for ' . $controller);
+				$actions = $this->__bakeActions($controller);
+			} else {
+				$actions = 'scaffold';
+			}
+			if(isset($this->args[2]) && $this->args[2] == 'admin') {
+				if($admin = $this->getAdmin()) {
+					$this->out('Adding ' . CAKE_ADMIN .' methods');
+					$actions .= $this->__bakeActions($controller, $admin);
+				}
+			}
+			$baked = $this->__bake($controller, $actions);
+			$this->__bakeTest($controller);
+		}
 	}
-	
+/**
+ * Interactive
+ *
+ * @return void
+ */
 	function __interactive() {
 		$this->hr();
 		$this->out('Controller Bake:');
@@ -55,7 +92,8 @@ class ControllerTask extends Shell {
 		$wannaUseScaffold = 'n';
 		$wannaDoScaffolding = 'y';
 
-		$controllerName = $this->__getControllerName();
+		$controllerName = $this->getName();
+
 		$controllerPath = low(Inflector::underscore($controllerName));
 
 		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerName} controller if it exist.", array('y','n'), 'y');
@@ -107,36 +145,14 @@ class ControllerTask extends Shell {
 			}
 		}
 
-		$admin = null;
-		$admin_url = null;
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
-			if(defined('CAKE_ADMIN')) {
-				$admin = CAKE_ADMIN.'_';
-				$admin_url = '/'.CAKE_ADMIN;
-			} else {
-				$adminRoute = '';
-				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-				$this->out('What would you like the admin route to be?');
-				$this->out('Example: www.example.com/admin/controller');
-				while ($adminRoute == '') {
-					$adminRoute = $this->in("What would you like the admin route to be?", null, 'admin');
-				}
-				if($this->Project->cakeAdmin($adminRoute) !== true){
-					$this->out('Unable to write to /app/config/core.php.');
-					$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-					exit();
-				} else {
-					$admin = $adminRoute . '_';
-					$admin_url = '/'.$adminRoute;
-				}
-			}
+			$admin = $this->getAdmin();
 		}
 
 		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-			//loadModels();
-			$actions = $this->__bakeActions($controllerName, null, null, $wannaUseSession);
+			$actions = $this->__bakeActions($controllerName, null, $wannaUseSession);
 			if($admin) {
-				$actions .= $this->__bakeActions($controllerName, $admin, $admin_url, $wannaUseSession);
+				$actions .= $this->__bakeActions($controllerName, $admin, $wannaUseSession);
 			}
 		}
 
@@ -146,9 +162,10 @@ class ControllerTask extends Shell {
 			$this->out('The following controller will be created:');
 			$this->hr();
 			$this->out("Controller Name:	$controllerName");
-			
+
 			if (low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
 				$this->out("		var \$scaffold;");
+				$actions = 'scaffold';
 			}
 			if(count($uses)) {
 				$this->out("Uses:            ", false);
@@ -189,7 +206,7 @@ class ControllerTask extends Shell {
 			$looksGood = $this->in('Look okay?', array('y','n'), 'y');
 
 			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-				$baked = $this->__bake($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
+				$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
 				if ($baked && $this->_checkUnitTest()) {
 					$this->__bakeTest($controllerName);
 				}
@@ -197,7 +214,7 @@ class ControllerTask extends Shell {
 				$this->out('Bake Aborted.');
 			}
 		} else {
-			$baked = $this->__bake($controllerName, $uses, $helpers, $components, $actions, $wannaUseScaffold);
+			$baked = $this->__bake($controllerName, $actions, $helpers, $components, $uses);
 			if ($baked && $this->_checkUnitTest()) {
 				$this->__bakeTest($controllerName);
 			}
@@ -205,7 +222,7 @@ class ControllerTask extends Shell {
 		}
 	}
 
-	function __bakeActions($controllerName, $admin = null, $admin_url = null, $wannaUseSession = 'y') {
+	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->_modelName($controllerName);
 		if(!loadModel($currentModelName)) {
 			$this->out('You must have a model for this class to build scaffold methods. Please try again.');
@@ -354,9 +371,9 @@ class ControllerTask extends Shell {
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		return $actions;
-	}	
-	
-	
+	}
+
+
 /**
  * Assembles and writes a Controller file.
  *
@@ -366,12 +383,12 @@ class ControllerTask extends Shell {
  * @param array $components
  * @param string $actions
  */
-	function __bake($controllerName, $uses, $helpers, $components, $actions = '', $wannaUseScaffold = 'y') {
+	function __bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
 		$out = "<?php\n";
 		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
 
-		if(low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
+		if(low($actions) == 'scaffold') {
 			$out .= "\tvar \$scaffold;\n";
 		} else {
 
@@ -412,8 +429,8 @@ class ControllerTask extends Shell {
 				}
 				$out .= ");\n";
 			}
+			$out .= $actions;
 		}
-		$out .= $actions;
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONTROLLERS . $this->_controllerPath($controllerName) . '_controller.php';
@@ -427,7 +444,7 @@ class ControllerTask extends Shell {
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
 		$out .= "loadController('$className');\n\n";
-		$out .= "class {$className}ControllerTestCase extends UnitTestCase {\n";
+		$out .= "class {$className}ControllerTestCase extends CakeTestCase {\n";
 		$out .= "\tvar \$TestObject = null;\n\n";
 		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}Controller();\n";
 		$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->TestObject);\n\t}\n";
@@ -476,6 +493,7 @@ class ControllerTask extends Shell {
 			$this->_controllerNames[] = $this->_controllerName($this->_modelName($tables[$i]));
 			$this->out($i + 1 . ". " . $this->_controllerNames[$i]);
 		}
+		return $this->_controllerNames;
 	}
 
 /**
@@ -483,28 +501,54 @@ class ControllerTask extends Shell {
  *
  * @return the controller name
  */
-	function __getControllerName() {
+	function getName() {
 		$useDbConfig = 'default';
-		$this->listAll($useDbConfig, 'Controllers');
-		
+		$controllers = $this->listAll($useDbConfig, 'Controllers');
+
 		$enteredController = '';
 
 		while ($enteredController == '') {
 			$enteredController = $this->in('Enter a number from the list above, or type in the name of another controller.');
 
-			if ($enteredController == '' || intval($enteredController) > count($this->_controllerNames)) {
+			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
 				$this->out('Error:');
 				$this->out("The Controller name you supplied was empty, or the number \nyou selected was not an option. Please try again.");
 				$enteredController = '';
 			}
 		}
 
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($this->_controllerNames) ) {
-			$controllerName = $this->_controllerNames[intval($enteredController) - 1];
+		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers) ) {
+			$controllerName = $controllers[intval($enteredController) - 1];
 		} else {
 			$controllerName = Inflector::camelize($enteredController);
 		}
-		
+
 		return $controllerName;
+	}
+/**
+ * Checks for CAKE_ADMIN and Forces user to input it if not enabled
+ *
+ * @return the controller name
+ */
+	function getAdmin() {
+		$admin = null;
+		if(defined('CAKE_ADMIN')) {
+			$admin = CAKE_ADMIN.'_';
+		} else {
+			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+			$this->out('What would you like the admin route to be?');
+			$this->out('Example: www.example.com/admin/controller');
+			while ($admin == '') {
+				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
+			}
+			if($this->Project->cakeAdmin($admin) !== true){
+				$this->out('Unable to write to /app/config/core.php.');
+				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				exit();
+			} else {
+				$admin = $admin . '_';
+			}
+		}
+		return $admin;
 	}
 }

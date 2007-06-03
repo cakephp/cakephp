@@ -34,13 +34,22 @@
  */
 class ModelTask extends Shell {
 
-
+/**
+ * Execution method always used for tasks
+ *
+ * @return void
+ */
 	function execute() {
 		if(empty($this->args)) {
 			$this->__interactive();
 		}
 	}
-
+/**
+ * Handles interactive baking
+ *
+ * @access private
+ * @return void
+ */
 	function __interactive() {
 		$this->hr();
 		$this->out('Model Bake:');
@@ -57,7 +66,7 @@ class ModelTask extends Shell {
 			$useDbConfig = $this->in('Please provide the name of the connection you wish to use.');
 		}*/
 		$useDbConfig = 'default';
-		$currentModelName = $this->__getModelName($useDbConfig);
+		$currentModelName = $this->getName($useDbConfig);
 
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$tableIsGood = false;
@@ -587,7 +596,7 @@ class ModelTask extends Shell {
  * @param string $type = Models or Controllers
  * @return output
  */
-	function __doList($useDbConfig = 'default') {
+	function listAll($useDbConfig = 'default') {
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {
@@ -615,8 +624,8 @@ class ModelTask extends Shell {
  *
  * @return the model name
  */
-	function __getModelName($useDbConfig) {
-		$this->__doList($useDbConfig);
+	function getName($useDbConfig) {
+		$this->listAll($useDbConfig);
 
 		$enteredModel = '';
 

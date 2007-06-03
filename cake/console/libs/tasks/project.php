@@ -31,7 +31,11 @@ if(!class_exists('File')) {
 }
 class ProjectTask extends Shell {
 
-
+/**
+ * Override
+ *
+ * @return void
+ */
 	function initialize() {}
 
 /**
@@ -134,19 +138,19 @@ class ProjectTask extends Shell {
 				$this->out(__(sprintf("Created: %s in %s", $app, $path), true));
 				$this->hr();
 
-				if($this->__defaultHome($path, $app)) {
+				if($this->createHome($path, $app)) {
 					$this->out('Welcome page created');
 				} else {
 					$this->out('The Welcome page was NOT created');
 				}
 
-				if($this->__generateHash($path) === true ){
+				if($this->cakeSessionString($path) === true ){
 					$this->out('Random hash key created for CAKE_SESSION_STRING');
 				} else {
 					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 				}
 
-				$corePath = $this->__setCake($path);
+				$corePath = $this->corePath($path);
 				if($corePath === true ){
 					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
 				} else if($corePath === false){
@@ -180,7 +184,7 @@ class ProjectTask extends Shell {
  * @param string $dir
  * @param string $app
  */
-	function __defaultHome($dir, $app) {
+	function createHome($dir, $app) {
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
 		return $this->createFile($path.'home.ctp', $output);
@@ -190,7 +194,7 @@ class ProjectTask extends Shell {
  *
  * @return bool
  */
-	function __generateHash($path){
+	function cakeSessionString($path){
 		$File =& new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
@@ -212,7 +216,7 @@ class ProjectTask extends Shell {
  *
  * @return bool
  */
-	function __setCake($path){
+	function corePath($path){
 		if(dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
@@ -226,6 +230,25 @@ class ProjectTask extends Shell {
 			} else {
 				return false;
 			}
+		}
+	}
+/**
+ * Enables CAKE_ADMIN in /app/config/core.php
+ *
+ * @return bool
+ */	
+	function cakeAdmin($name){
+		$file = file_get_contents(CONFIGS.'core.php');
+		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $file, $match)) {
+			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $file);
+
+			if(file_put_contents(CONFIGS.'core.php', $result)){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 	}
 }
