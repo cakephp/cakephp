@@ -210,7 +210,7 @@ class ShellDispatcher {
 
 		foreach ($includes as $inc) {
 			if (!@include_once($inc)) {
-				$this->stdout("Failed to load Cake core file {$inc}");
+				$this->stderr("Failed to load Cake core file {$inc}");
 				return false;
 			}
 		}
@@ -219,8 +219,8 @@ class ShellDispatcher {
 							'debugger', 'security', 'controller' . DS . 'controller');
 		foreach ($libraries as $inc) {
 			if (!file_exists(LIBS . $inc . '.php')) {
-				$this->stdout("Failed to load Cake core class " . ucwords($inc));
-				$this->stdout("(" . LIBS.$inc.".php)");
+				$this->stderr("Failed to load Cake core class " . ucwords($inc));
+				$this->stderr("(" . LIBS.$inc.".php)");
 				return false;
 			}
 			uses($inc);
@@ -238,21 +238,14 @@ class ShellDispatcher {
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");
-		$protectedCommands = array('initialize', 'main','in','out','err','hr',
-									'createFile', 'isDir','copyDir','Object','toString',
-									'requestAction','log','cakeError', 'ShellDispatcher',
-									'__initConstants','__initEnvironment','__construct',
-									'dispatch','__bootstrap','getInput','stdout','stderr','parseParams','shiftArgs'
-								);
 		if (isset($this->args[0])) {
-			// Load requested shell
 			$this->shell = $this->args[0];
 			$this->shiftArgs();
 			$this->shellName = Inflector::camelize($this->shell);
 			$this->shellClass = $this->shellName . 'Shell';
 
-			if (method_exists($this, $this->shell) && !in_array($this->shell, $protectedCommands)) {
-				$this->{$this->shell}();
+			if ($this->shell == 'help') {
+				$this->help();
 			} else {
 				$loaded = false;
 				foreach($this->shellPaths as $path) {
@@ -267,18 +260,19 @@ class ShellDispatcher {
 					require CONSOLE_LIBS . 'shell.php';
 					require $this->shellPath;
 					if(class_exists($this->shellClass)) {
-						$shell = new $this->shellClass($this);
 
 						$command = null;
 						if(isset($this->args[0])) {
 							$command = $this->args[0];
 						}
+						$this->shellCommand = Inflector::variable($command);
+						$shell = new $this->shellClass($this);
+						$this->shiftArgs();
+						$shell->initialize();
+						$shell->loadTasks();
 
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
-								$shell->command = $command;
-								$this->shiftArgs();
-								$shell->initialize();
 								$shell->help();
 								exit();
 							} else {
@@ -290,6 +284,7 @@ class ShellDispatcher {
 						if(in_array($task, $shell->taskNames)) {
 							$this->shiftArgs();
 							$shell->{$task}->initialize();
+							$shell->{$task}->loadTasks();
 							$shell->{$task}->execute();
 							return;
 						}
@@ -305,23 +300,21 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
+						$protectedCommands = array('initialize', 'main','in','out','err','hr',
+													'createfile', 'isdir','copydir','object','tostring',
+													'requestaction','log','cakeerror', 'shelldispatcher',
+													'__initconstants','__initenvironment','__construct',
+													'dispatch','__bootstrap','getinput','stdout','stderr','parseparams','shiftargs'
+													);
 						if (in_array(strtolower($command), $protectedCommands)) {
 							$missingCommand = true;
 						}
 
-
 						if($missingCommand && method_exists($shell, 'main')) {
-							$shell->initialize();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
-							$shell->command = $command;
-							$this->shiftArgs();
-							$shell->initialize();
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
-							$shell->command = $command;
-							$this->shiftArgs();
-							$shell->initialize();
 							$shell->{$command}();
 						} else {
 							$this->stderr("Unknown {$this->shellName} command '$command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");

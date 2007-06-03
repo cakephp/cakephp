@@ -113,19 +113,25 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch) {
-		$this->Dispatch = & $dispatch;
 		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
 		foreach($vars as $key => $var) {
 			if(is_string($key)){
-				$this->{$var} = & $this->Dispatch->{$key};
+				$this->{$var} =& $dispatch->{$key};
 			} else {
-				$this->{$var} = & $this->Dispatch->{$var};
+				$this->{$var} =& $dispatch->{$var};
 			}
 		}
-		$name = get_class($this);
-		if(strpos($name, 'Task') === false && strpos($name, 'task') == false) {
-			$this->_loadTasks();
+
+		$shellKey = Inflector::underscore($this->name);
+		ClassRegistry::addObject($shellKey, $this);
+		ClassRegistry::map($shellKey, $shellKey);
+		if(!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
+			$dispatch->shiftArgs();
 		}
+		if(!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0]))) {
+			$dispatch->shiftArgs();
+		}
+		$this->Dispatch =& $dispatch;
 	}
 /**
  * Initializes the Shell
@@ -168,7 +174,7 @@ class Shell extends Object {
  * if var $uses = true
  * Loads AppModel file and constructs AppModel class
  * makes $this->AppModel available to subclasses
- * if var $uses is an array of models
+ * if var $uses is an array of models will load those models
  *
  * @return bool
  */
@@ -215,7 +221,7 @@ class Shell extends Object {
  *
  * @return bool
  */
-	function _loadTasks() {
+	function loadTasks() {
 		if($this->tasks === null || $this->tasks === false) {
 			return;
 		}
@@ -227,10 +233,7 @@ class Shell extends Object {
 				$tasks = array($tasks);
 			}
 
-			$this->taskClass = $tasks[0];
-
 			foreach($tasks as $taskName) {
-				$taskKey = Inflector::underscore($taskName);
 				$loaded = false;
 				foreach($this->Dispatch->shellPaths as $path) {
 					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
@@ -241,16 +244,27 @@ class Shell extends Object {
 				}
 
 				if ($loaded) {
+					$taskKey = Inflector::underscore($taskName);
 					$taskClass = Inflector::camelize($taskName.'Task');
 					if(!class_exists($taskClass)) {
 						require_once $taskPath;
 					}
-
-					if(class_exists($taskClass) &&  !isset($this->{$taskName})) {
-						$task =& new $taskClass($this->Dispatch);
+					if (ClassRegistry::isKeySet($taskKey)) {
 						$this->taskNames[] = $taskName;
-						$this->{$taskName} =& $task;
-						ClassRegistry::addObject($taskKey, $task);
+						if (!PHP5) {
+							$this->{$taskName} =& ClassRegistry::getObject($taskKey);
+							ClassRegistry::map($taskName, $taskKey);
+						} else {
+							$this->{$taskName} = ClassRegistry::getObject($taskKey);
+							ClassRegistry::map($taskName, $taskKey);
+						}
+					} else {
+						$this->taskNames[] = $taskName;
+						if (!PHP5) {
+							$this->{$taskName} =& new $taskClass($this->Dispatch);
+						} else {
+							$this->{$taskName} = new $taskClass($this->Dispatch);
+						}
 					}
 
 					if(!isset($this->{$taskName})) {
@@ -348,7 +362,7 @@ class Shell extends Object {
 			$command = $this->command;
 		}
 		if (count($this->args) < $expectedNum) {
-			$this->error('Wrong number of parameters: '.count($this->args), 'Please type \'cake '.$this->shell.' help\' for help on usage of the '.$this->name.' '.$command);
+			$this->error("Wrong number of parameters: ".count($this->args), "Expected: {$expectedNum}\nPlease type 'cake {$this->shell} help' for help on usage of the {$this->name} {$command}");
 		}
 	}
 /**
@@ -412,6 +426,16 @@ class Shell extends Object {
 			$this->out("\nYou can download the Cake test suite from http://cakeforge.org/projects/testsuite/", true);
 		}
 		return $result;
+	}
+/**
+ * makes absolute file path easier to read
+ *
+ * @return sting short path
+ */
+	function shortPath($file) {
+		$shortPath = str_replace(ROOT, null, $file);
+		$shortPath = str_replace('..'.DS, '', $shortPath);
+		return str_replace(DS.DS, DS, $shortPath);
 	}
 
 /**

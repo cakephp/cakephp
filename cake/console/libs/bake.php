@@ -38,8 +38,10 @@ class BakeShell extends Shell {
 
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
 
+	function initialize() {}
+
 	function main() {
-		
+
 		if(!is_dir(CONFIGS)) {
 			$this->Project->execute();
 		}
@@ -48,7 +50,8 @@ class BakeShell extends Shell {
 			$this->out("Your database configuration was not found. Take a moment to create one.\n");
 			$this->DbConfig->execute();
 		}
-		
+		$this->out('Interactive Bake Shell');
+		$this->hr();
 		$this->out('[M]odel');
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
@@ -70,8 +73,10 @@ class BakeShell extends Shell {
 			default:
 				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
 		}
+		$this->hr();
+		$this->main();
 	}
-	
+
 	function help() {
 		$this->out('CakePHP Bake:');
 		$this->hr();

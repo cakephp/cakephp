@@ -54,7 +54,7 @@ class AclShell extends Shell {
  * Enter description here...
  *
  * @var unknown_type
- */	
+ */
 	var $tasks = array('DbConfig');
 /**
  * override intialize of the Shell
@@ -80,9 +80,6 @@ class AclShell extends Shell {
 			exit();
 		}
 
-		//$this->Dispatch->shiftArgs();
-
-
 		if($this->command && !in_array($this->command, array('help'))) {
 			if(!file_exists(CONFIGS.'database.php')) {
 				$this->DbConfig->execute();
@@ -94,7 +91,6 @@ class AclShell extends Shell {
 				$this->db =& ConnectionManager::getDataSource($this->dataSource);
 			}
 		}
-
 	}
 /**
  * Override main() for help message hook
@@ -120,6 +116,7 @@ class AclShell extends Shell {
  *
  */
 	function create() {
+
 		$this->_checkArgs(3, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -271,15 +268,15 @@ class AclShell extends Shell {
 			$count = 0;
 			$right[$i] = $nodes[$i][$class]['rght'];
 			$left[$i] = $nodes[$i][$class]['lft'];
-			if(isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {				
+			if(isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {
 				array_pop($left);
-				$count = count($left);				
+				$count = count($left);
 			}
 			if(isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
 				array_pop($right);
 				$count = count($right);
 			}
-			
+
 			$this->out(str_repeat('  ', $count) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
 			$right[] = $nodes[$i][$class]['rght'];
 		}
