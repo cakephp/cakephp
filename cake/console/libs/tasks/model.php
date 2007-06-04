@@ -567,7 +567,7 @@ class ModelTask extends Shell {
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
 		$out .= "loadModel('$className');\n\n";
-		$out .= "class {$className}TestCase extends UnitTestCase {\n";
+		$out .= "class {$className}TestCase extends CakeTestCase {\n";
 		$out .= "\tvar \$TestObject = null;\n\n";
 		$out .= "\tfunction setUp() {\n\t\t\$this->TestObject = new {$className}();\n";
 		$out .= "\t}\n\n\tfunction tearDown() {\n\t\tunset(\$this->TestObject);\n\t}\n";
