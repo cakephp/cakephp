@@ -24,7 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
-<div class="<?php echo $singularVar;?>">;
+<div class="<?php echo $singularVar;?>">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
  		<legend><?php echo  Inflector::humanize($action).' '. $singularHumanName;?></legend>
