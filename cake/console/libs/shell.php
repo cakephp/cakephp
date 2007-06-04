@@ -127,10 +127,10 @@ class Shell extends Object {
 		ClassRegistry::map($shellKey, $shellKey);
 		if(!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
 			$dispatch->shiftArgs();
-		}
-		if(!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0]))) {
+		} 
+		if(!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
 			$dispatch->shiftArgs();
-		}				
+		}
 		$this->Dispatch =& $dispatch;
 	}
 /**

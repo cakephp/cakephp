@@ -280,10 +280,9 @@ class ShellDispatcher {
 								$this->help();
 							}
 						}
-
+						
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
-							$this->shiftArgs();
 							$shell->{$task}->initialize();
 							$shell->{$task}->loadTasks();
 							$shell->{$task}->startup();
@@ -313,7 +312,6 @@ class ShellDispatcher {
 						}
 
 						if($missingCommand && method_exists($shell, 'main')) {
-							$this->args = am(array($command), $this->args);
 							$shell->startup();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
