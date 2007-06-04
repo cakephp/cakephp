@@ -65,11 +65,10 @@ class ApiShell extends Shell {
 		if (empty($this->args)) {
 			return $this->help();
 		}
-		
 		if (count($this->args) == 1 && in_array($this->args[0], array_keys($this->paths))) {
 			$this->args[1] = $this->args[0];
-		}	
-		
+		}
+
 		if (count($this->args) > 1) {
 			$path = $this->args[0];
 			$class = $this->args[1];
@@ -103,7 +102,7 @@ class ApiShell extends Shell {
 			Inflector::underscore($class),
 			substr(Inflector::underscore($class), 0, strpos(Inflector::underscore($class), '_'))
 		);
-		
+
 		foreach($candidates as $candidate) {
 			$File =& new File($path . $candidate . '.php');
 

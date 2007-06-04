@@ -273,6 +273,7 @@ class ShellDispatcher {
 
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
+								$shell->startup();
 								$shell->help();
 								exit();
 							} else {
@@ -285,6 +286,7 @@ class ShellDispatcher {
 							$this->shiftArgs();
 							$shell->{$task}->initialize();
 							$shell->{$task}->loadTasks();
+							$shell->{$task}->startup();
 							$shell->{$task}->execute();
 							return;
 						}
@@ -311,10 +313,14 @@ class ShellDispatcher {
 						}
 
 						if($missingCommand && method_exists($shell, 'main')) {
+							$this->args = am(array($command), $this->args);
+							$shell->startup();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
+							$shell->startup();
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
+							$shell->startup();
 							$shell->{$command}();
 						} else {
 							$this->stderr("Unknown {$this->shellName} command '$command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");

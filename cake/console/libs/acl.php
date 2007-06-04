@@ -57,10 +57,10 @@ class AclShell extends Shell {
  */
 	var $tasks = array('DbConfig');
 /**
- * override intialize of the Shell
+ * override startup of the Shell
  *
  */
-	function initialize () {
+	function startup() {
 		$this->dataSource = 'default';
 
 		if (isset($this->params['datasource'])) {
@@ -81,8 +81,10 @@ class AclShell extends Shell {
 		}
 
 		if($this->command && !in_array($this->command, array('help'))) {
-			if(!file_exists(CONFIGS.'database.php')) {
-				$this->DbConfig->execute();
+			if(!config('database')) {
+				$this->out("Your database configuration was not found. Take a moment to create one.\n");
+				$this->args = null;
+				return $this->DbConfig->execute();
 			}
 			require_once (CONFIGS.'database.php');
 

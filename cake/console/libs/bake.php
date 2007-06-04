@@ -38,8 +38,6 @@ class BakeShell extends Shell {
 
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
 
-	function initialize() {}
-
 	function main() {
 
 		if(!is_dir(CONFIGS)) {
@@ -48,7 +46,8 @@ class BakeShell extends Shell {
 
 		if(!config('database')) {
 			$this->out("Your database configuration was not found. Take a moment to create one.\n");
-			$this->DbConfig->execute();
+			$this->args = null;
+			return $this->DbConfig->execute();
 		}
 		$this->out('Interactive Bake Shell');
 		$this->hr();

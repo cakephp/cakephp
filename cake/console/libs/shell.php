@@ -130,17 +130,27 @@ class Shell extends Object {
 		}
 		if(!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0]))) {
 			$dispatch->shiftArgs();
-		}
+		}				
 		$this->Dispatch =& $dispatch;
 	}
 /**
  * Initializes the Shell
- * can be overriden in subclasses
+ * acts as constructor for subclasses
+ * allows configuration of tasks prior to shell execution
  *
  * @return void
  */
 	function initialize() {
 		$this->_loadModels();
+	}
+/**
+ * Starts up the the Shell
+ * allows for checking and configuring prior to command or main execution
+ * can be overriden in subclasses
+ *
+ * @return void
+ */
+	function startup() {
 		$this->_welcome();
 	}
 /**

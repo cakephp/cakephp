@@ -29,6 +29,12 @@
 if(!class_exists('File')) {
 	uses('file');
 }
+/**
+ * Task class for creating new project apps and plugins
+ *
+ * @package		cake
+ * @subpackage	cake.cake.console.libs.tasks
+ */
 class ProjectTask extends Shell {
 
 /**
