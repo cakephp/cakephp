@@ -247,7 +247,7 @@ class FormHelper extends AppHelper {
 	}
 	function secure($fields) {
 		$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
-		$append .= $this->hidden('_Token/fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
+		$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize(sort($fields)) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
 		$append .= '</p>';
 		return $append;
 	}
@@ -631,11 +631,11 @@ class FormHelper extends AppHelper {
 		}
 
 		$output = null;
-		if(isset($object) && is_int($options['value'])) {
+		if(isset($object) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
 			$value = $db->boolean($options['value']);
 			$options['value'] = 1;
-			$output = $this->hidden($fieldName, array('value' => '-1', 'id' => $options['id'] . '_'), true);
+			$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
 		}
 
 		if(isset($options['value']) && $value == $options['value']) {
@@ -705,7 +705,11 @@ class FormHelper extends AppHelper {
 		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$model = '_' . $model;
 		}
-		$this->__secure($model, ife($options['value'], $options['value'], ''));
+		$value = '';
+		if (!empty($options['value']) || $options['value'] === '0') {
+			$value = $options['value'];
+		}
+		$this->__secure($model, $value);
 
 		if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;

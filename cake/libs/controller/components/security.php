@@ -473,7 +473,6 @@ class SecurityComponent extends Object {
 				}
 
 				foreach ($key1 as $value) {
-
 					if(in_array($value, $key)) {
 						$remove = explode('.', $value);
 						unset($check[$remove['0']][$remove['1']]);
@@ -484,7 +483,7 @@ class SecurityComponent extends Object {
 					}
 				}
 			}
-
+			$merge = array();
 			foreach($check as $key => $value) {
 				if($key === '__Token') {
 					$field[$key] = $value;
@@ -494,27 +493,33 @@ class SecurityComponent extends Object {
 
 				if($string === '_') {
 					$newKey = substr($key, 1);
-					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
-					unset($controller->data[$key]);
 
 					if(is_array($value)) {
 						$values = array_values($value);
-						if(isset($values['0']) && empty($values['0'])) {
-							$k = array_keys($value);
-							if(isset($values['0'])) {
-								$field[$key][$k['0']] = '';
-							}
-						} else {
-							$field[$key] = $value;
+						$k = array_keys($value);
+						$count = count($k);
+						for($i = 0; $count > $i; $i++) {
+							$field[$key][$k[$i]] = $values[$i];
 						}
 					}
+
+					foreach($k as  $lookup) {
+						if(isset($controller->data[$newKey][$lookup])){
+							unset($controller->data[$key][$lookup]);
+						} elseif ($controller->data[$key][$lookup] === '0') {
+							$merge[] = $lookup;
+						}
+					}
+					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
+					unset($controller->data[$key]);
 					continue;
 				}
 				if(!array_key_exists($key, $value)) {
 					$field[$key] = array_keys($value);
+					$field[$key] = array_merge($merge, $field[$key]);
 				}
 			}
-			$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
+			$check = urlencode(Security::hash(serialize(sort($field)) . CAKE_SESSION_STRING));
 
 			if($form !== $check) {
 				if(!$this->blackHole($controller, 'auth')) {
