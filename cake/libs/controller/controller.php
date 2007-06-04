@@ -268,7 +268,14 @@ class Controller extends Object {
  */
 	var $webservices = null;
 /**
+ * Holds all params passed and named.
+ *
+ * @var mixed
+ */
+	var $passedArgs = array();
+/**
  * Set to true to enable named URL parameters (/controller/action/name:value).
+ * Or set an array of actions and default named args: array('action'=> array('name'=>'defaultValue'));
  *
  * @var mixed
  */
@@ -945,7 +952,11 @@ class Controller extends Object {
 					 unset($this->data[$modelClass][$field['name'] . $var]);
 					 $useNewDate = true;
 				} else {
-					${$var} = date($default);
+					if($var == 'year') {
+						${$var} = '0000';
+					} else {
+						${$var} = '00';
+					}
 				}
 			}
 			if ($_hour != 12 && (isset($this->data[$modelClass][$field['name'] . '_meridian']) && 'pm' == $this->data[$modelClass][$field['name'] . '_meridian'])) {
