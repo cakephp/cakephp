@@ -175,7 +175,7 @@ class Sanitize{
 
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {
-				$data[$key] = Sanitize::clean($val);
+				$data[$key] = Sanitize::clean($val, $connection);
 			}
 			return $data;
 		} else {
