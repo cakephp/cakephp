@@ -67,7 +67,11 @@ class ControllerTask extends Shell {
 			if(isset($this->args[2]) && $this->args[2] == 'admin') {
 				if($admin = $this->getAdmin()) {
 					$this->out('Adding ' . CAKE_ADMIN .' methods');
-					$actions .= $this->__bakeActions($controller, $admin);
+					if ($actions == 'scaffold') {
+						$actions = $this->__bakeActions($controller, $admin);
+					} else {
+						$actions .= $this->__bakeActions($controller, $admin);
+					}
 				}
 			}
 			$baked = $this->__bake($controller, $actions);
