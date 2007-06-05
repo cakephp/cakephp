@@ -38,7 +38,7 @@ class ControllerTask extends Shell {
  *
  * @var array
  */
-	var $task = array('Project');
+	var $tasks = array('Project');
 /**
  * Override initialize
  *
