@@ -99,19 +99,19 @@ foreach ($hasOne as $assocName => $assocData):
 ?>
 <div class="related">
 	<h3>Related <?php echo $otherPluralHumanName;?></h3>
-	<?php echo "<?php if(!empty(\${$singularVar}['{$associationName}'])):?>\n";?>
+	<?php echo "<?php if(!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<dl>
 <?php
 		foreach($otherFields as $field) {
 			echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
-			echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$associationName}']['{$field['name']}'] ?>\n&nbsp;</dd>\n";
+			echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$assocName}']['{$field['name']}'] ?>\n&nbsp;</dd>\n";
 		}
 ?>
 	</dl>
 	<?php echo "<?php endif; ?>\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link('Edit $otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$associationName}']['{$otherPrimaryKey}']));?></li>\n";?>
+			<li><?php echo "<?php echo \$html->link('Edit $otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
 		</ul>
 	</div>
 </div>

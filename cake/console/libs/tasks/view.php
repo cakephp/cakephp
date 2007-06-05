@@ -238,7 +238,7 @@ class ViewTask extends Shell {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 			$shortPath = $this->shortPath($file);
 			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
-			return false;
+			exit();
 		}
 
 		$controllerClassName = $this->controllerName . 'Controller';
