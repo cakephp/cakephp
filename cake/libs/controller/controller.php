@@ -1074,14 +1074,23 @@ class Controller extends Object {
 			$conditions = array($conditions, $scope);
 		}
 		$recursive = $object->recursive;
-		$count = $object->findCount($conditions, $recursive);
+
+		if (method_exists($object, 'paginateCount')) {
+			$count = $object->paginateCount($conditions, $recursive);
+		} else {
+			$count = $object->findCount($conditions, $recursive);
+		}
 		$pageCount = ceil($count / $limit);
 
 		if($page == 'last') {
 			$options['page'] = $page = $pageCount;
 		}
 
-		$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
+		if (method_exists($object, 'paginate')) {
+			$results = $object->paginate($conditions, $fields, $order, $limit, $page, $recursive);
+		} else {
+			$results = $object->findAll($conditions, $fields, $order, $limit, $page, $recursive);
+		}
 		$paging = array(
 			'page'		=> $page,
 			'current'	=> count($results),
