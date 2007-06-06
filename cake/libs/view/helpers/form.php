@@ -241,6 +241,9 @@ class FormHelper extends AppHelper {
 
 		if(isset($submit)) {
 			$out .= $this->submit($submit, $submitOptions);
+		} elseif(isset($this->params['_Token']) && !empty($this->params['_Token']) && !empty($this->fields)) {
+			$out .= $this->secure($this->fields);
+			$this->fields = array();
 		}
 		$out .= $this->Html->tags['formend'];
 		return $this->output($out);
