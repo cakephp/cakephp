@@ -329,6 +329,10 @@ class DboAdodb extends DboSource {
  * @return array
  */
 	function fields(&$model, $alias, $fields) {
+		if (empty($alias)) {
+			$alias = $model->name;
+		}
+
 		if (is_array($fields)) {
 				$fields = $fields;
 		} else {
