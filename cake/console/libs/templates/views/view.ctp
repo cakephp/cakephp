@@ -141,7 +141,7 @@ foreach($relations as $assocName => $assocData):
 			echo "\t\t<th>".Inflector::humanize($field['name'])."</th>\n";
 		}
 ?>
-		<th>Actions</th>
+		<th class="actions">Actions</th>
 	</tr>
 <?php
 echo "\t<?php

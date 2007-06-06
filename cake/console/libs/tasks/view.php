@@ -37,7 +37,7 @@ class ViewTask extends Shell {
  * Tasks to be loaded by this Task
  *
  * @var array
- */	
+ */
 	var $tasks = array('Project', 'Controller');
 /**
  * name of the controller being used
@@ -113,14 +113,14 @@ class ViewTask extends Shell {
 					'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
 					'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
 
-				$vars = get_class_vars($this->controllerName . 'Controller');
-				if(array_key_exists('scaffold', $vars)) {
+				$classVars = get_class_vars($this->controllerName . 'Controller');
+				if(array_key_exists('scaffold', $classVars)) {
 					$methods = $this->scaffoldActions;
 				} else {
 					$methods = get_class_methods($this->controllerName . 'Controller');
 				}
 				foreach($methods as $method) {
-					if($method{0} != '_' && !in_array(low($method), $protected)) {
+					if($method{0} != '_' && !in_array(low($method), am($protected, array('delete', CAKE_ADMIN.'_delete')))) {
 						$content = $this->getContent($method, $vars);
 						$this->bake($method, $content);
 					}
@@ -300,6 +300,11 @@ class ViewTask extends Shell {
 			$template = $this->template;
 		}
 		$action = $template;
+
+		if(strpos($template, CAKE_ADMIN) !== false) {
+			$template = str_replace(CAKE_ADMIN.'_', '', $template);
+		}
+
 		if(in_array($template, array('add', 'edit'))) {
 			$action = $template;
 			$template = 'form';
@@ -315,6 +320,7 @@ class ViewTask extends Shell {
 		if(!$vars) {
 			$vars = $this->__loadController();
 		}
+
 		if($loaded) {
 			extract($vars);
 			ob_start();
