@@ -785,6 +785,7 @@ class Router extends Object {
  * @static
  */
 	function stripEscape($param) {
+		$_this =& Router::getInstance();
 		if(!is_array($param) || empty($param)) {
 			if(is_bool($param)) {
 				return $param;
@@ -798,7 +799,7 @@ class Router extends Object {
 				$return[$key] = preg_replace('/^[\\t ]*(?:-!)+/', '', $value);
 			} else {
 				foreach ($value as $array => $string) {
-					$return[$key][$array] = preg_replace('/^[\\t ]*(?:-!)+/', '', $string);
+					$return[$key][$array] = $_this->stripEscape($string);
 				}
 			}
 		}
