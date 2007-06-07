@@ -30,15 +30,17 @@
  */
 class Component extends Object {
 /**
- * Enter description here...
+ * Components used by this component.
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
 	var $components = array();
 /**
- * Enter description here...
+ * Controller to which this component is linked.
  *
- * @var unknown_type
+ * @var object
+ * @access public
  */
 	var $controller = null;
 
@@ -52,7 +54,8 @@ class Component extends Object {
 /**
  * Used to initialize the components for current controller
  *
- * @param object $controller
+ * @param object $controller Controller using this component.
+ * @access public
  */
 	function init(&$controller) {
 		$this->controller =& $controller;
@@ -75,11 +78,12 @@ class Component extends Object {
 		}
 	}
 /**
- * Enter description here...
+ * Load components used by this component.
  *
- * @param unknown_type $loaded
- * @param unknown_type $components
- * @return unknown
+ * @param array $loaded Components already loaded (indexed by component name)
+ * @param array $components Components to load
+ * @return array Components loaded
+ * @access protected
  */
 	function &_loadComponents(&$loaded, $components) {
 		$components[] = 'Session';
