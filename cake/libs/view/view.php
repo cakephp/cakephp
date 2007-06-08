@@ -62,7 +62,6 @@ class View extends Object {
  * @access public
  */
 	var $parent = null;
-
 /**
  * Action to be performed.
  *
@@ -76,6 +75,12 @@ class View extends Object {
  * @var string
  */
 	var $model = null;
+/**
+ * Name of association model this view context is attached to
+ *
+ * @var string
+ */
+	var $association = null;
 /**
  * Name of current model field this view context is attached to
  *
@@ -101,7 +106,6 @@ class View extends Object {
  * @access protected
  */
 	var $uses = false;
-
 /**
  * An array of names of built-in helpers to include.
  *
@@ -109,21 +113,18 @@ class View extends Object {
  * @access protected
  */
 	var $helpers = array('Html');
-
 /**
  * Path to View.
  *
  * @var string Path to View
  */
 	var $viewPath;
-
 /**
  * Path to Layout.
  *
  * @var string Path to Layout
  */
 	var $layoutPath = null;
-
 /**
  * Variables for the view
  *
@@ -131,7 +132,6 @@ class View extends Object {
  * @access private
  */
 	var $viewVars = array();
-
 /**
  * Scripts (and/or other <head /> tags) for the layout
  *
@@ -139,7 +139,6 @@ class View extends Object {
  * @access private
  */
 	var $__scripts = array();
-
 /**
  * Title HTML element of this View.
  *
@@ -147,7 +146,6 @@ class View extends Object {
  * @access private
  */
 	var $pageTitle = false;
-
 /**
  * An array of model objects.
  *
@@ -155,7 +153,6 @@ class View extends Object {
  * @access public
  */
 	var $models = array();
-
 /**
  * Path parts for creating links in views.
  *
@@ -163,7 +160,6 @@ class View extends Object {
  * @access public
  */
 	var $base = null;
-
 /**
  * Name of layout to use with this View.
  *
@@ -171,7 +167,6 @@ class View extends Object {
  * @access public
  */
 	var $layout = 'default';
-
 /**
  * Turns on or off Cake's conventional mode of rendering views. On by default.
  *
@@ -179,7 +174,6 @@ class View extends Object {
  * @access public
  */
 	var $autoRender = true;
-
 /**
  * Turns on or off Cake's conventional mode of finding layout files. On by default.
  *
@@ -200,42 +194,36 @@ class View extends Object {
  * @var boolean
  */
 	var $hasRendered = null;
-
 /**
  * Reference to the Controller for this view.
  *
  * @var Controller
  */
 	var $controller = null;
-
 /**
  * Array of loaded view helpers.
  *
  * @var array
  */
 	var $loaded = array();
-
 /**
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var array
  */
 	var $ext = '.ctp';
-
 /**
  * Sub-directory for this view file.
  *
  * @var string
  */
 	var $subDir = null;
-
 /**
  * Enter description here... Themes. New in Cake RC4.
  *
  * @var array
  */
 	var $themeWeb = null;
-
 /**
  * Plugin name. A Plugin is a sub-application. New in Cake RC4.
  *
@@ -249,7 +237,6 @@ class View extends Object {
  * @var string
  */
 	var $pluginPath = null;
-
 /**
  * Holds an array of plugin paths.
  * VIEWS . $this->pluginPath
@@ -258,28 +245,31 @@ class View extends Object {
  * @var array
  */
 	var $pluginPaths = array();
-
+/**
+ * Current passed params
+ *
+ * @var mixed
+ */
+	var $passedArgs = array();
 /**
  * Controller URL-generation data
  *
  * @var mixed
  */
-	var $namedArgs = null;
-
+	var $namedArgs = array();
 /**
  * Controller URL-generation data
  *
  * @var string
  */
 	var $argSeparator = null;
-
 /**
  * List of variables to collect from the associated controller
  *
  * @var array
  * @access protected
  */
-	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'namedArgs', 'argSeparator', 'cacheAction');
 /**
  * List of generated DOM UUIDs
  *
