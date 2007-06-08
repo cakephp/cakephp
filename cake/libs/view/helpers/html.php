@@ -181,7 +181,8 @@ class HtmlHelper extends AppHelper {
  *
  * @param  string  $title The title of the external resource
  * @param  mixed   $url   The address of the external resource
- * @param  array   $attributes
+ * @param  array   $attributes Other attributes for the generated tag. If the type attribute is html, rss, atom, or icon, the mime-type is returned.
+ * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
  */
 	function meta($title = null, $url = null, $attributes = array(), $inline = true) {
@@ -221,8 +222,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a charset META-tag.
  *
- * @param  string  $charset
- * @return string
+ * @param  string  $charset The character set to be used in the meta tag. Example: "utf-8".
+ * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
 		if(is_null($charset)){
@@ -243,11 +244,11 @@ class HtmlHelper extends AppHelper {
  *
  * If the $url is empty, $title is used instead.
  *
- * @param  string  $title The content of the A tag.
+ * @param  string  $title The content to be wrapped by <a> tags.
  * @param  mixed   $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param  array   $htmlAttributes Array of HTML attributes.
- * @param  string  $confirmMessage Confirmation message.
- * @param  boolean $escapeTitle	Whether or not the text in the $title variable should be HTML escaped.
+ * @param  string  $confirmMessage JavaScript confirmation message.
+ * @param  boolean $escapeTitle	Whether or not $title should be HTML escaped.
  * @return string	An <a /> element.
  */
 	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
@@ -292,10 +293,10 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link element for CSS stylesheets.
  *
- * @param string $path Path to CSS file
+ * @param mixed $path The name of a CSS style sheet in /app/webroot/css, or an array containing names of CSS stylesheets in that directory.
  * @param string $rel Rel attribute. Defaults to "stylesheet".
  * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $inline
+ * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  */
 	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
@@ -375,7 +376,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a formatted IMG element.
  *
- * @param string $path Path to the image file, relative to the webroot/img/ directory.
+ * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array	$htmlAttributes Array of HTML attributes.
  * @return string
  */
