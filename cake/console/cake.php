@@ -268,12 +268,9 @@ class ShellDispatcher {
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 						$this->shiftArgs();
-						$shell->initialize();
-						$shell->loadTasks();
-
+						
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
-								$shell->startup();
 								$shell->help();
 								exit();
 							} else {
@@ -281,10 +278,16 @@ class ShellDispatcher {
 							}
 						}
 						
-						$task = Inflector::camelize($command);
-						if(in_array($task, $shell->taskNames)) {
+						$shell->initialize();
+						$shell->loadTasks();
+						
+						foreach($shell->taskNames as $task) {
 							$shell->{$task}->initialize();
 							$shell->{$task}->loadTasks();
+						}
+						
+						$task = Inflector::camelize($command);
+						if(in_array($task, $shell->taskNames)) {
 							$shell->{$task}->startup();
 							$shell->{$task}->execute();
 							return;
@@ -315,7 +318,6 @@ class ShellDispatcher {
 							$shell->startup();
 							$shell->main();
 						} else if($missingCommand && method_exists($shell, 'help')) {
-							$shell->startup();
 							$shell->help();
 						} else if(!$privateMethod && method_exists($shell, $command)) {
 							$shell->startup();

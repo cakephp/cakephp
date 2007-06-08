@@ -59,28 +59,21 @@ class BakeShell extends Shell {
 		switch($classToBake) {
 			case 'M':
 				$invalidSelection = false;
-				$this->__executeTask($this->Model);
+				$this->Model->execute();
 				break;
 			case 'V':
 				$invalidSelection = false;
-				$this->__executeTask($this->View);
+				$this->View->execute();
 				break;
 			case 'C':
 				$invalidSelection = false;
-				$this->__executeTask($this->Controller);
+				$this->Controller->execute();
 				break;
 			default:
 				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
 		}
 		$this->hr();
 		$this->main();
-	}
-
-	function __executeTask($task) {
-		$task->initialize();
-		$task->loadTasks();
-		$task->startup();
-		$task->execute();
 	}
 	
 	function help() {
