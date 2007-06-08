@@ -47,7 +47,7 @@ class FormHelper extends AppHelper {
  *
  * @access public
  */
-	var $fieldset = array('fields'=>array(), 'sizes'=>array(), 'key'=>'id', 'validates'=>array());
+	var $fieldset = array('fields'=> array(), 'sizes'=> array(), 'key'=> 'id', 'validates'=> array());
 /**
  * Enter description here...
  *
@@ -71,7 +71,7 @@ class FormHelper extends AppHelper {
  */
 	function create($model = null, $options = array()) {
 		$defaultModel = null;
-		$data = array('fields' => '','key' => '', 'validates' => '');
+		$data = $this->fieldset;
 		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($model) && empty($options)) {
@@ -124,6 +124,12 @@ class FormHelper extends AppHelper {
 				'key' => $object->primaryKey,
 				'validates' => (ife(empty($object->validate), array(), array_keys($object->validate)))
 			);
+
+			$habtm = array();
+			if(!empty($object->hasAndBelongsToMany)) {
+				$habtm = array_combine(array_keys($object->hasAndBelongsToMany), array_keys($object->hasAndBelongsToMany));
+			}
+			$data['fields'] = am($habtm, $data['fields']);
 			$this->fieldset = $data;
 		}
 
@@ -201,7 +207,6 @@ class FormHelper extends AppHelper {
 			$append .= '</p>';
 		}
 
-		$this->setFormTag($model . '.');
 		return $this->output(sprintf($this->Html->tags['form'], $this->Html->_parseAttributes($htmlAttributes, null, ''))) . $append;
 	}
 /**
@@ -245,6 +250,7 @@ class FormHelper extends AppHelper {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
+		$this->setFormTag(null);
 		$out .= $this->Html->tags['formend'];
 		return $this->output($out);
 	}
@@ -481,7 +487,20 @@ class FormHelper extends AppHelper {
 				if($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
+			}
+		}
 
+		if($options['type'] == 'select') {
+			$multiple = false;
+			if(in_array($this->field(), array_values($this->fieldset['fields']))) {
+				$multiple = true;
+			} else if (isset($model) && $model->name == $this->model()){
+				if(isset($model) && in_array($this->field(), array_keys($model->hasAndBelongsToMany))) {
+					$multiple = true;
+				}
+			}
+			if(!isset($options['multiple']) && $multiple) {
+				$options['multiple'] = 'multiple';
 			}
 		}
 
@@ -921,7 +940,10 @@ class FormHelper extends AppHelper {
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
-		if (empty($value)) {
+		if(!empty($value)) {
+			$selected = date('Y', strtotime($value));
+		}
+		if (empty($selected)) {
 			if(!$showEmpty && !$maxYear) {
 				$value = 'now';
 			} else if(!$showEmpty && $maxYear) {
@@ -932,9 +954,7 @@ class FormHelper extends AppHelper {
 				$selected = null;
 			}
 		}
-		if(!empty($value)) {
-			$selected = date('Y', strtotime($value));
-		}
+
 		return $this->select($fieldName . "_year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
 	}
 /**

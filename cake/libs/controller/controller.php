@@ -27,7 +27,7 @@
 /**
  * Include files
  */
-	uses('controller' . DS . 'component', 'view' . DS . 'view');
+uses('controller' . DS . 'component', 'view' . DS . 'view');
 /**
  * Controller
  *
@@ -241,9 +241,9 @@ class Controller extends Object {
  * action names and values that denote cache expiration times (in seconds).
  *
  * Example: var $cacheAction = array(
-		'view/23/' => 21600,
-		'recalled/' => 86400
-	);
+ *		'view/23/' => 21600,
+ *		'recalled/' => 86400
+ *	);
  *
  * $cacheAction can also be set to a strtotime() compatible string. This
  * marks all the actions in the controller for view caching.

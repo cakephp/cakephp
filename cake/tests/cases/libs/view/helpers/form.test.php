@@ -422,19 +422,19 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->label();
 		$this->assertEqual($result, '<label for="PersonName">Name</label>');
 
-		$result = $this->Form->label('first_name');
+		$result = $this->Form->label('Person.first_name');
 		$this->assertEqual($result, '<label for="PersonFirstName">First Name</label>');
 
-		$result = $this->Form->label('first_name', 'Your first name');
+		$result = $this->Form->label('Person.first_name', 'Your first name');
 		$this->assertEqual($result, '<label for="PersonFirstName">Your first name</label>');
 
-		$result = $this->Form->label('first_name', 'Your first name', array('class' => 'my-class'));
+		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class'));
 		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class">Your first name</label>');
 
-		$result = $this->Form->label('first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
+		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
 		$this->assertEqual($result, '<label for="PersonFirstName" class="my-class" id="LabelID">Your first name</label>');
 
-		$result = $this->Form->label('first_name', '');
+		$result = $this->Form->label('Person.first_name', '');
 		$this->assertEqual($result, '<label for="PersonFirstName"></label>');
 	}
 
@@ -620,6 +620,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testYear() {
+
 		$result = $this->Form->year('Model.field', 2006, 2007);
 		$this->assertPattern('/option value="2006"/', $result);
 		$this->assertPattern('/option value="2007"/', $result);
@@ -647,18 +648,18 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Model']['field'] = '';
-		$result = $this->Form->year('Model.field', 2006, 2007, '2007');
+		$result = $this->Form->year('Model.field', 2006, 2007, 2007);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"\"></option>\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Model']['field'] = '2006-10-10';
-		$result = $this->Form->year('Model.field', 2006, 2007, '2007', array(), false);
+		$result = $this->Form->year('Model.field', 2006, 2007, 2007, array(), false);
 		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\" selected=\"selected\">2006</option>\n<option value=\"2007\">2007</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Model']['field'] = '';
-		$result = $this->Form->year('Model.field', 2006, 2008, null, array(), false);
-		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\">2006</option>\n<option value=\"2007\">2007</option>\n<option value=\"2008\" selected=\"selected\">2008</option>\n</select>";
+		$result = $this->Form->year('Model.field', 2006, 2008, 2007, array(), false);
+		$expecting = "<select name=\"data[Model][field_year]\" id=\"ModelFieldYear\">\n<option value=\"2006\">2006</option>\n<option value=\"2007\" selected=\"selected\">2007</option>\n<option value=\"2008\">2008</option>\n</select>";
 		$this->assertEqual($result, $expecting);
 
 		$this->Form->data['Model']['field'] = '2006-10-10';
@@ -750,13 +751,18 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
 
-		$result = $this->Form->input('Contact.name');
+		$result = $this->Form->input('name');
 		$this->assertPattern('/^<div class="input">' .
 												 '<label for="ContactName">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>'.
 												 '<\/div>$/', $result);
+		$result = $this->Form->input('Address.street');
+		$this->assertPattern('/^<div class="input">' .
+												 '<label for="AddressStreet">Street<\/label>' .
+												 '<input name="data\[Address\]\[street\]" type="text" value="" id="AddressStreet" \/>'.
+												 '<\/div>$/', $result);
 
-		$result = $this->Form->input('Contact.name', array('div' => false));
+		$result = $this->Form->input('name', array('div' => false));
 		$this->assertPattern('/^<label for="ContactName">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
 

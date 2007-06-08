@@ -304,20 +304,35 @@ class Helper extends Overloadable {
  */
 	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
+		
+		if($tagValue === null) {
+			$view->model = null;
+			$view->association = null;
+			$view->modelId = null;
+			return;
+		}
+		
 		$parts = preg_split('/\/|\./', $tagValue);
-
+		$view->association = null;
 		if (count($parts) == 1) {
 			$view->field = $parts[0];
 		} elseif (count($parts) == 2 && is_numeric($parts[0])) {
 			$view->modelId = $parts[0];
 			$view->field = $parts[1];
-		} elseif (count($parts) == 2) {
+		} elseif (count($parts) == 2 && empty($parts[1])) {
 			$view->model = $parts[0];
 			$view->field = $parts[1];
+		} elseif (count($parts) == 2) {
+			$view->association = $parts[0];
+			$view->field = $parts[1];
 		} elseif (count($parts) == 3) {
-			$view->model   = $parts[0];
+			$view->association   = $parts[0];
 			$view->modelId = $parts[1];
 			$view->field   = $parts[2];
+		}
+		if(!isset($view->model)) {
+			$view->model = $view->association;
+			$view->association = null;
 		}
 	}
 /**
@@ -327,8 +342,12 @@ class Helper extends Overloadable {
  */
 	function model() {
 		$view =& ClassRegistry::getObject('view');
-		return $view->model;
-	}
+		if($view->association == null) {
+			return $view->model;
+		} else {
+			return $view->association;
+		}
+	}	
 /**
  * Gets the ID of the currently-used model of the rendering context.
  *
