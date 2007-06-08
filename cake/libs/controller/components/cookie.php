@@ -45,28 +45,30 @@ class CookieComponent extends Object {
 /**
  * The name of the cookie.
  *
- * Overridden with the controller var $cookieName;
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->name = 'CookieName';
  *
  * @var string
- * @access protected
+ * @access public
  */
-	var $_name = 'CakeCookie';
+	var $name = 'CakeCookie';
 /**
- * Expire time of the cookie
+ * The time a cookie will remain valid.
  *
- * Overridden with the controller var $cookieTime;
+ * Can be either integer Unix timestamp or a date string.
  *
- * Number of seconds before you want it to expire.
- * If not set, the cookie will expire at the end of the session (when the browser closes).
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->time = '5 Days';
  *
- * @var string
- * @access protected
+ * @var mixed
+ * @access public
  */
-	var $_expire = 0;
+	var $time = null;
 /**
  * Cookie path.
  *
- * Overridden with the controller var $cookiePath;
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->path = '/';
  *
  * The path on the server in which the cookie will be available on.
  * If  var $cookiePath is set to '/foo/', the cookie will only be available
@@ -74,44 +76,47 @@ class CookieComponent extends Object {
  * The default value is the entire domain.
  *
  * @var string
- * @access protected
+ * @access public
  */
-	var $_path = '/';
+	var $path = '/';
 /**
  * Domain path.
  *
  * The domain that the cookie is available.
  *
- * Overridden with the controller var $cookieDomain
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->domain = '.example.com';
  *
  * To make the cookie available on all subdomains of example.com.
- * Set var $cookieDomain = '.example.com'; in your controller
+ * Set $this->Cookie->domain = '.example.com'; in your controller beforeFilter
  *
  * @var string
- * @access protected
+ * @access public
  */
-	var $_domain = '';
+	var $domain = '';
 /**
  * Secure HTTPS only cookie.
  *
- * Overridden with the controller var $cookieSecure
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->secure = true;
  *
  * Indicates that the cookie should only be transmitted over a secure HTTPS connection.
  * When set to true, the cookie will only be set if a secure connection exists.
  *
  * @var boolean
- * @access protected
+ * @access public
  */
-	var $_secure = false;
+	var $secure = false;
 /**
  * Encryption key.
  *
- * Overridden with the controller var $cookieKey
+ * Overridden with the controller beforeFilter();
+ * $this->Cookie->key = 'SomeRandomString';
  *
  * @var string
  * @access protected
  */
-	var $_key = 'khu@j1!A*$tNx$mD*^8zD5';
+	var $key = CAKE_SESSION_COOKIE;
 /**
  * Values stored in the cookie.
  *
@@ -141,42 +146,53 @@ class CookieComponent extends Object {
  */
 	var $__reset = null;
 /**
- * Sets the default values for the cookie
+ * Expire time of the cookie
  *
- * @param object $name
- * @param integer $expire
+ * This is controlled by CookieComponent::time;
+ *
+ * @var string
  * @access private
  */
-	function startup($controller = null) {
+	var $__expires = 0;
+/**
+ * Main execution method.
+ *
+ * @param object $controller A reference to the instantiating controller object
+ * @access public
+ * @deprecated use Controller::beforeFilter() to set the properties of the CookieComponent
+ */
+	function initialize(&$controller) {
 		if(is_object($controller)){
-			if(!isset($controller->cookieName)) {
-				trigger_error(__('For added security you should add the var cookieName to your Controller or AppController', true), E_USER_NOTICE);
-			} else {
-				$this->_name = $controller->cookieName;
+			if(isset($controller->cookieName)) {
+				$this->name = $controller->cookieName;
 			}
 			if(isset($controller->cookieTime)){
-				$this->__expire($controller->cookieTime);
+				$this->time = $controller->cookieTime;
 			}
-			if(!isset($controller->cookieKey)){
-				trigger_error(__('For added security you should add the var cookieKey to your Controller or AppController', true), E_USER_NOTICE);
-			} else {
-				$this->_key = $controller->cookieKey;
+			if(isset($controller->cookieKey)){
+				$this->key = $controller->cookieKey;
 			}
 			if(isset($controller->cookiePath)) {
-				$this->_path = $controller->cookiePath;
+				$this->path = $controller->cookiePath;
 			}
-			if(!isset($controller->cookieDomain)) {
-				trigger_error(__('Add var cookieDomain = .yourdomain.com; to your Controller or AppController to allow access on all subdomains', true), E_USER_NOTICE);
-			} else {
-				$this->_domain = $controller->cookieDomain;
+			if(isset($controller->cookieDomain)) {
+				$this->domain = $controller->cookieDomain;
 			}
 			if(isset($controller->cookieSecure)) {
-				$this->_secure = $controller->cookieSecure;
+				$this->secure = $controller->cookieSecure;
 			}
 		}
+	}
+/**
+ * Start CookieComponent for use in the controller
+ *
+ * @access public
+ */
+	function startup() {
+		$this->__expire($this->time);
 
-		if(isset($_COOKIE[$this->_name])) {
-			$this->__values = $this->__decrypt($_COOKIE[$this->_name]);
+		if(isset($_COOKIE[$this->name])) {
+			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
 	}
 /**
@@ -285,9 +301,8 @@ class CookieComponent extends Object {
 					foreach ($this->__values[$name[0]] as $key => $value) {
 						$this->__delete("[".$name[0]."][".$key."]");
 					}
-				} else {
-					$this->__delete("[".$name[0]."]");
 				}
+				$this->__delete("[".$name[0]."]");
 				unset($this->__values[$name[0]]);
 			}
 		}
@@ -301,8 +316,8 @@ class CookieComponent extends Object {
  * @access public
  */
 	function destroy() {
-		if(isset($_COOKIE[$this->_name])) {
-			$this->__values = $this->__decrypt($_COOKIE[$this->_name]);
+		if(isset($_COOKIE[$this->name])) {
+			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
 
 		foreach ($this->__values as $name => $value) {
@@ -344,13 +359,13 @@ class CookieComponent extends Object {
 	function __expire($expires = null){
 		$now = time();
 		if(is_null($expires)){
-			return $this->_expire;
+			return $this->__expires;
 		}
-		$this->__reset = $this->_expire;
+		$this->__reset = $this->__expires;
 		if (is_integer($expires) || is_numeric($expires)) {
-			return $this->_expire = $now + intval($expires);
+			return $this->__expires = $now + intval($expires);
 		} else {
-			return $this->_expire = strtotime($expires, $now);
+			return $this->__expires = strtotime($expires, $now);
 		}
 	}
 /**
@@ -361,10 +376,10 @@ class CookieComponent extends Object {
  * @access private
  */
 	function __write($name, $value) {
-		setcookie($this->_name."$name", $this->__encrypt($value), $this->_expire, $this->_path, $this->_domain, $this->_secure);
+		setcookie($this->name . "$name", $this->__encrypt($value), $this->__expires, $this->path, $this->domain, $this->secure);
 
 		if(!is_null($this->__reset)){
-			$this->_expire = $this->__reset;
+			$this->__expires = $this->__reset;
 			$this->__reset = null;
 		}
 		$this->__encrypted = true;
@@ -376,7 +391,7 @@ class CookieComponent extends Object {
  * @access private
  */
 	function __delete($name) {
-		setcookie($this->_name.$name, '', time() - 42000, $this->_path, $this->_domain, $this->_secure);
+		setcookie($this->name . $name, '', time() - 42000, $this->path, $this->domain, $this->secure);
 	}
 /**
   * Encrypts $value using var $type method in Security class
@@ -392,7 +407,7 @@ class CookieComponent extends Object {
 
 	 	if($this->__encrypted === true) {
 	 		$type = $this->__type;
-	 		$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->_key));
+	 		$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
 	 	}
 	 	return($value);
 	}
@@ -415,7 +430,7 @@ class CookieComponent extends Object {
 
 					if ($pos !== false) {
 						$val = substr($val, 8);
-						$decrypted[$name][$key] = $this->__explode(Security::$type(base64_decode($val), $this->_key));
+						$decrypted[$name][$key] = $this->__explode(Security::$type(base64_decode($val), $this->key));
 					}
 				}
 			} else {
@@ -424,7 +439,7 @@ class CookieComponent extends Object {
 
 					if ($pos !== false) {
 						$value = substr($value, 8);
-						$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->_key));
+						$decrypted[$name] = $this->__explode(Security::$type(base64_decode($value), $this->key));
 					}
 			}
 		}
