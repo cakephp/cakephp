@@ -491,16 +491,14 @@ class FormHelper extends AppHelper {
 		}
 
 		if($options['type'] == 'select') {
-			$multiple = false;
 			if(in_array($this->field(), array_values($this->fieldset['fields']))) {
-				$multiple = true;
-			} else if (isset($model) && $model->name == $this->model()){
-				if(isset($model) && in_array($this->field(), array_keys($model->hasAndBelongsToMany))) {
-					$multiple = true;
+				if($this->model() != $this->field()) {
+					$this->setFormTag($this->field().'.'.$this->field());
+					$fieldName = $this->field().'.'.$this->field();
 				}
-			}
-			if(!isset($options['multiple']) && $multiple) {
-				$options['multiple'] = 'multiple';
+				if(!isset($options['multiple'])) {
+					$options['multiple'] = 'multiple';
+				}
 			}
 		}
 
