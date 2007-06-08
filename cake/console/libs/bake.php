@@ -58,15 +58,12 @@ class BakeShell extends Shell {
 		$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C')));
 		switch($classToBake) {
 			case 'M':
-				$invalidSelection = false;
 				$this->Model->execute();
 				break;
 			case 'V':
-				$invalidSelection = false;
 				$this->View->execute();
 				break;
 			case 'C':
-				$invalidSelection = false;
 				$this->Controller->execute();
 				break;
 			default:
@@ -75,7 +72,11 @@ class BakeShell extends Shell {
 		$this->hr();
 		$this->main();
 	}
-	
+/**
+ * Displays help contents
+ *
+ * @return void
+ */	
 	function help() {
 		$this->out('CakePHP Bake:');
 		$this->hr();
@@ -83,17 +84,20 @@ class BakeShell extends Shell {
 		$this->out('If run with no command line arguments, Bake guides the user through the class');
 		$this->out('creation process. You can customize the generation process by telling Bake');
 		$this->out('where different parts of your application are using command line arguments.');
-		$this->out('');
-		$this->hr('');
-		$this->out('usage: cake bake [command] [params...]');
-		$this->out('');
-		$this->out('params:');
-		$this->out('   -app [path...] Absolute/Relative path to your app folder.');
-		$this->out('commands:');
-		$this->out('   help Shows this help message.');
-		$this->out('   project [path...]  Generates a new app folder in the path supplied.');
-		$this->out('   db_config Generates the database configuration file.');
-		$this->out('');
+		$this->hr();
+		$this->out("Usage: cake bake <command> <arg1> <arg2>...");
+		$this->hr();
+		$this->out('Params:');
+		$this->out("\t-app <path> Absolute/Relative path to your app folder.\n");
+		$this->out('Commands:');
+		$this->out("\n\tbake help\n\t\tshows this help message.");
+		$this->out("\n\tbake project <path>\n\t\tbakes a new app folder in the path supplied\n\t\tor in current directory if no path is specified");
+		$this->out("\n\tbake db_config\n\t\tbakes a database.php file in config directory.");
+		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
+		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
+		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
+		$this->out("");
+		
 	}
 }
 ?>

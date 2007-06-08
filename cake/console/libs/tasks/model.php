@@ -647,5 +647,18 @@ class ModelTask extends Shell {
 
 		return $currentModelName;
 	}
+/**
+ * Displays help contents
+ *
+ * @return void
+ */
+	function help() {
+		$this->hr();
+		$this->out("Usage: cake bake model");
+		$this->hr();
+		$this->out("this task is currently only run in interactive mode");
+		$this->out("");
+		exit();
+	}
 }
 ?>

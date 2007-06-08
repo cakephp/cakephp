@@ -79,10 +79,6 @@ class ViewTask extends Shell {
 			$this->__interactive();
 		}
 
-		if(isset($this->args[0]) == 1 && $this->args[0] == 'help') {
-			$this->help();
-		}
-
 		$controller = $action = $alias = null;
 		if(isset($this->args[0])) {
 			$this->controllerName = Inflector::camelize($this->args[0]);
@@ -334,14 +330,19 @@ class ViewTask extends Shell {
 		return false;
 	}
 /**
- * Builds content from template and variables
+ * Displays help contents
  *
- * @param string $template file to use
- * @param array $params passed from controller
  * @return void
  */
 	function help() {
-		$this->out('Help');
+		$this->hr();
+		$this->out("Usage: cake bake view <arg1> <arg2>...");
+		$this->hr();
+		$this->out('Commands:');
+		$this->out("\n\tview <controller>\n\t\twill read the given controller for methods\n\t\tand bake corresponding views.\n\t\tIf var scaffold is found it will bake the scaffolded actions\n\t\t(index,view,add,edit)");
+		$this->out("\n\tview <controller> <action>\n\t\twill bake a template. core templates: (index, add, edit, view)");
+		$this->out("\n\tview <controller> <template> <alias>\n\t\twill use the template specified but name the file based on the alias");
+		$this->out("");
 		exit();
 	}
 }

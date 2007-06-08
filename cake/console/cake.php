@@ -268,7 +268,7 @@ class ShellDispatcher {
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 						$this->shiftArgs();
-						
+
 						if($command == 'help') {
 							if(method_exists($shell, 'help')) {
 								$shell->help();
@@ -277,18 +277,26 @@ class ShellDispatcher {
 								$this->help();
 							}
 						}
-						
+
 						$shell->initialize();
 						$shell->loadTasks();
-						
+
 						foreach($shell->taskNames as $task) {
 							$shell->{$task}->initialize();
 							$shell->{$task}->loadTasks();
 						}
-						
+
 						$task = Inflector::camelize($command);
 						if(in_array($task, $shell->taskNames)) {
 							$shell->{$task}->startup();
+							if(isset($this->args[0]) && $this->args[0] == 'help') {
+								if(method_exists($shell->{$task}, 'help')) {
+									$shell->{$task}->help();
+									exit();
+								} else {
+									$this->help();
+								}
+							}
 							$shell->{$task}->execute();
 							return;
 						}
