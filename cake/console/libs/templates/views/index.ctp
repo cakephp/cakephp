@@ -51,6 +51,9 @@ foreach(\${$pluralVar} as \${$singularVar}):
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);
+				if(isset($foreignKeys[$field['name']][2])) {
+					$otherModelClass = $foreignKeys[$field['name']][2];
+				}
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$otherPrimaryKey = $otherModelObj->primaryKey;

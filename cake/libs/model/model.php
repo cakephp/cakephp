@@ -722,6 +722,9 @@ class Model extends Overloadable {
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
+					if($this->{$class}->name != $class) {
+						$this->keyToTable[$this->{$type}[$assocKey][$key]][2] = $class;
+					}
 				}
 			}
 			if (isset($this->{$type}[$assocKey]['with'])) {
