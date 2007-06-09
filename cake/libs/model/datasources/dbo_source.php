@@ -1514,10 +1514,11 @@ class DboSource extends DataSource {
 					if (up(trim($key)) == 'NOT') {
 						$key = 'AND ' . $key;
 					}
-					$out[] = 'NOT (' . join(') ' . strtoupper($key) . ' (', $value) . ')';
+					$not = 'NOT ';
 				} else {
-					$out[] = '(' . join(') ' . strtoupper($key) . ' (', $value) . ')';
+					$not = null;
 				}
+				$out[] = $not . '((' . join(') ' . strtoupper($key) . ' (', $value) . '))';
 			} else {
 				if (is_string($value) && preg_match('/^\{\$__cakeIdentifier\[(.*)\]__\$}$/', $value, $identifier) && isset($identifier[1])) {
 					$data .= $this->name($key) . ' = ' . $this->name($identifier[1]);

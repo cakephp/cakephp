@@ -1552,19 +1552,19 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('or' => array( 'score' => 'BETWEEN 4 AND 5', 'rating' => '> 20') ));
-		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`rating` >  20)";
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`rating` >  20))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('or' => array('score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE (`score` BETWEEN  '4' AND '5') OR (`score` >  20)";
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') OR (`score` >  20))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('and' => array( 'score' => 'BETWEEN 4 AND 5', array('score' => '> 20')) ));
-		$expected = " WHERE (`score` BETWEEN  '4' AND '5') AND (`score` >  20)";
+		$expected = " WHERE ((`score` BETWEEN  '4' AND '5') AND (`score` >  20))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array('published' => 1, 'or' => array('score' => '< 2', array('score' => '> 20')) ));
-		$expected = " WHERE `published`  =  1 AND (`score` <  2) OR (`score` >  20)";
+		$expected = " WHERE `published`  =  1 AND ((`score` <  2) OR (`score` >  20))";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->db->conditions(array(array('Project.removed' => false)));
@@ -1590,13 +1590,27 @@ class DboSourceTest extends UnitTestCase {
 			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
 			'Enrollment.yearcompleted' => '> 0')
 		);
-		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+0\s*$/', $result);
+		$this->assertPattern('/^\s*WHERE\s+NOT\s+\(\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\s*\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+0\s*$/', $result);
 
 		$result = $this->db->conditions(array('id' => '<> 8'));
 		$this->assertPattern('/^\s*WHERE\s+`id`\s+<>\s+8\s*$/', $result);
 
 		$result = $this->db->conditions(array('TestModel.field' => '= gribe$@()lu'));
 		$expected = " WHERE `TestModel`.`field` =  'gribe$@()lu'";
+		$this->assertEqual($result, $expected);
+
+		
+		$conditions['NOT'] = array('Listing.expiration' => "BETWEEN 1 AND 100");
+		$conditions[0]['OR'] = array(
+			"Listing.title" => "LIKE %term%",
+			"Listing.description" => "LIKE %term%"
+		);
+		$conditions[1]['OR'] = array(
+			"Listing.title" => "LIKE %term_2%",
+			"Listing.description" => "LIKE %term_2%"
+		);
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE NOT ((`Listing`.`expiration` BETWEEN  '1' AND '100')) AND ((`Listing`.`title` LIKE  '%term%') OR (`Listing`.`description` LIKE  '%term%')) AND ((`Listing`.`title` LIKE  '%term_2%') OR (`Listing`.`description` LIKE  '%term_2%'))";
 		$this->assertEqual($result, $expected);
 	}
 
