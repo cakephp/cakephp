@@ -219,8 +219,9 @@ class AclShell extends Shell {
 		//add existence checks for nodes involved
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
-		$this->Acl->allow($aro, $aco, $this->args[2]);
-		$this->out("Permission granted.\n");
+		if($this->Acl->allow($aro, $aco, $this->args[2])) {
+			$this->out("Permission granted.\n");
+		}
 	}
 /**
  * Enter description here...
@@ -369,7 +370,7 @@ class AclShell extends Shell {
 						"\t\tis useful in determining the inhertiance of permissions for a certain\n" .
 						"\t\tobject in the tree.\n",
 
-			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>]\n" .
+			'grant' =>	"\tgrant <aro_id> <aco_id> [<aco_action>] or '*' (quotes required)\n" .
 						"\t\tUse this command to grant ACL permissions. Once executed, the ARO\n" .
 						"\t\tspecified (and its children, if any) will have ALLOW access to the\n" .
 						"\t\tspecified ACO action (and the ACO's children, if any).\n",
@@ -443,7 +444,6 @@ class AclShell extends Shell {
 		if ($type == null) {
 			$type = $this->args[0];
 		}
-
 		$vars = array();
 		$class = ucwords($type);
 		$vars['secondary_id'] = ($class == 'aro' ? 'foreign_key' : 'object_id');
