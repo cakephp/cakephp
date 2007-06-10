@@ -207,7 +207,6 @@ class ProjectTask extends Shell {
 			uses('Security');
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $contents);
-
 			if($File->write($result)){
 				return true;
 			} else {
@@ -244,11 +243,11 @@ class ProjectTask extends Shell {
  * @return bool
  */	
 	function cakeAdmin($name){
-		$file = file_get_contents(CONFIGS.'core.php');
-		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $file, $match)) {
-			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $file);
-
-			if(file_put_contents(CONFIGS.'core.php', $result)){
+		$File =& new File($path . 'webroot' . DS . 'index.php');
+		$contents = $File->read();
+		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
+			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $contents);
+			if($File->write($result)){
 				return true;
 			} else {
 				return false;

@@ -34,6 +34,9 @@
  * @package		cake
  * @subpackage	cake.cake.console.libs
  */
+if(!defined('CAKE_ADMIN')) {
+	define('CAKE_ADMIN', null);
+}
 class BakeShell extends Shell {
 
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
