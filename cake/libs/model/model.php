@@ -809,7 +809,6 @@ class Model extends Overloadable {
 
 		foreach($data as $n => $v) {
 			if (is_array($v)) {
-
 				foreach($v as $x => $y) {
 					if ($n == $this->name) {
 						if (isset($this->validationErrors[$x])) {
@@ -922,7 +921,7 @@ class Model extends Overloadable {
 		}
 
 		$this->validationErrors = array();
-		$this->set(array_filter($defaults));
+		$this->set(Set::filter($defaults));
 		$this->set($data);
 		return $this->data;
 	}
