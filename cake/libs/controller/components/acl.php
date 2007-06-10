@@ -313,7 +313,7 @@ class DB_ACL extends AclBase {
  *
  * @return boolean
  */
-	function allow($aro, $aco, $action = "*", $value = 1) {
+	function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
 		$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
 		$save = array();
@@ -327,28 +327,37 @@ class DB_ACL extends AclBase {
 			$save = $perms[0]['Permission'];
 		}
 
-		if ($action == "*") {
+		if ($actions == "*") {
 			$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
 
 			foreach($permKeys as $key) {
 				$save[$key] = $value;
 			}
 		} else {
-			if (in_array('_' . $action, $permKeys)) {
-				$save['_' . $action] = $value;
-			} else {
-				trigger_error(__('DB_ACL::allow() - Invalid ACO action', true), E_USER_WARNING);
-				return false;
+			if(!is_array($actions)) {
+				$actions = array('_' . $action);
+				$actions = am($permKeys, $actions);
+			}
+			if(is_array($actions)) {
+				foreach($actions as $action) {
+					if ($action{0} != '_') {
+						$action = '_' . $action;
+					}
+					if (in_array($action, $permKeys)) {
+						$save[$action] = $value;
+					} 
+				}
 			}
 		}
-
+		
 		$save['aro_id'] = $perms['aro'];
 		$save['aco_id'] = $perms['aco'];
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
 			$save['id'] = $perms['link'][0]['Permission']['id'];
 		}
-		return $this->Aro->Permission->save(array('Permission' => $save));
+		$this->Aro->Permission->create($save);
+		return $this->Aro->Permission->save();
 	}
 /**
  * Deny
