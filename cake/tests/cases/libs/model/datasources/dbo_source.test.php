@@ -1314,6 +1314,10 @@ class DboSourceTest extends UnitTestCase {
 	}
 
 	function testStringConditionsParsing() {
+		$result = $this->db->conditions("ProjectBid.project_id = Project.id");
+		$expected = " WHERE `ProjectBid`.`project_id` = `Project`.`id`";
+		$this->assertEqual($result, $expected);
+
 		$result = $this->db->conditions("Candy.name LIKE 'a' AND HardCandy.name LIKE 'c'");
 		$expected = " WHERE `Candy`.`name` LIKE 'a' AND `HardCandy`.`name` LIKE 'c'";
 		$this->assertEqual($result, $expected);

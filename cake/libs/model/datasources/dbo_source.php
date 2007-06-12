@@ -1625,10 +1625,9 @@ class DboSource extends DataSource {
 
 			for($i = 0; $i < $pregCount; $i++) {
 				if(!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
-					$conditions = preg_replace('/\b' . $replace['0'][$i] . '\b/', $this->name($replace['1'][$i]), $conditions);
+					$conditions = preg_replace('/\b' . preg_quote($replace['1'][$i]) . '\b/', $this->name($replace['1'][$i]), $conditions);
 				}
 			}
-			$conditions = rtrim($conditions);
 			return $conditions;
 		}
 		return false;
