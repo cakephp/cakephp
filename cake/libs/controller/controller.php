@@ -716,12 +716,11 @@ class Controller extends Object {
 		$this->render(null, false, $flash);
 	}
 /**
- * This function creates a $fieldNames array for the view to use.
- * @todo Map more database field types to html form fields.
- * @todo View the database field types from all the supported databases.
- *
+ * @deprecated on 1.2.0.5258
+ * @see FormHelper::create();
  */
 	function generateFieldNames($data = null, $doCreateOptions = true) {
+		trigger_error(sprintf(__('Method generateFieldNames() is deprecated in %s: see FormHelper::create()', true), get_class($this)), E_USER_NOTICE);
 		$fieldNames = array();
 		$model = $this->modelClass;
 		$modelKey = $this->modelKey;

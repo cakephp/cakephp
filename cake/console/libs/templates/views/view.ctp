@@ -129,8 +129,9 @@ foreach($relations as $assocName => $assocData):
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
 	$otherControllerName = Inflector::camelize($otherControllerPath);
 	$otherSingularVar = Inflector::variable($assocName);
-	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocName));
-	$otherSingularHumanName = Inflector::humanize($assocName);
+	$assocKey = Inflector::underscore($assocName);
+	$otherPluralHumanName = Inflector::humanize(Inflector::pluralize($assocKey));
+	$otherSingularHumanName = Inflector::humanize($assocKey);
 	$otherFields = $otherModelObj->_tableInfo->value;
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>

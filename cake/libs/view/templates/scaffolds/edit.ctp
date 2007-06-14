@@ -24,30 +24,47 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 ?>
+<div class="<?php echo $singularVar;?>">
+<?php echo $form->create($modelClass);?>
+	<fieldset>
+ 		<legend><?php echo  Inflector::humanize($this->action).' '. $singularHumanName;?></legend>
 <?php
-echo $form->create($modelClass);
-echo $form->inputs($fieldNames);
-echo $form->end(__('Save', true)); ?>
-
-<div class="nav">
+		foreach($fields as $field) {
+			if($this->action == 'add' && $field['name'] == $primaryKey) {
+				continue;
+			} else if(!in_array($field['name'], array('created', 'modified', 'updated'))){
+				echo "\t\t".$form->input($field['name'])."\n";
+			}
+		}
+		foreach($hasAndBelongsToMany as $assocName => $assocData) {
+			echo "\t\t".$form->input($assocName)."\n";
+		}
+?>
+	</fieldset>
+<?php
+	echo $form->end(__('Submit', true));
+?>
+</div>
+<div class="actions">
 	<ul>
-		<?php
-			if($formName == 'Edit') {
-				echo "<li>".$html->link(__('Delete  ', true).$humanSingularName, array('action' => 'delete', $data[$modelClass][$primaryKey]), null, 'Are you sure you want to delete '.$data[$modelClass][$displayField])."</li>";
-
-				foreach($fieldNames as $field => $value) {
-					if(isset($value['foreignKey'])) {
-						echo '<li>' . $html->link(__('View ', true) . Inflector::humanize($value['controller']), array('action' => 'index')) . '</li>';
-						echo '<li>' . $html->link(__('Add ', true) . Inflector::humanize($value['modelKey']), array('action' => 'add')) . '</li>';
-					}
-				}
+<?php if($this->action != 'add'):?>
+		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, 'Are you sure you want to delete #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
+<?php endif;?>
+		<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
+<?php
+		foreach($foreignKeys as $field => $value) {
+			$otherModelClass = $value['1'];
+			if($otherModelClass != $modelClass) {
+				$otherModelKey = Inflector::underscore($otherModelClass);
+				$otherControllerName = Inflector::pluralize($otherModelClass);
+				$otherControllerPath = Inflector::underscore($otherControllerName);
+				$otherSingularName = Inflector::variable($otherModelClass);
+				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
+				$otherSingularHumanName = Inflector::humanize($otherModelKey);
+				echo "\t\t<li>".$html->link(__('List', true).' '.$otherPluralHumanName, array('controller'=> $otherControllerPath, 'action'=>'index'))."</li>\n";
+				echo "\t\t<li>".$html->link(__('New', true).' '.$otherSingularHumanName, array('controller'=> $otherControllerPath, 'action'=>'add'))."</li>\n";
 			}
-
-			echo "<li>".$html->link($humanPluralName, array('action' => 'index'))."</li>";
-
-			foreach($linked as $name => $controller) {
-				echo '<li>'.$html->link(Inflector::humanize($controller), array('controller'=> $controller)).'</li>';
-			}
-		?>
+		}
+?>
 	</ul>
 </div>

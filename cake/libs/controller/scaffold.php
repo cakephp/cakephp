@@ -148,7 +148,7 @@ class Scaffold extends Object {
 			$var = $this->__passedVars[$j];
 			$this->{$var} = $controller->{$var};
 		}
-		$this->redirect = '/' . $this->viewPath;
+		$this->redirect = array('action'=> 'index');
 		if(!is_null($this->plugin)) {
 			$this->redirect = '/' . $this->plugin . '/' . $this->viewPath;
 		}
@@ -174,30 +174,27 @@ class Scaffold extends Object {
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
-		$this->controller->pageTitle= __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
-		$this->controller->set('controllerName', $this->name);
-		$this->controller->set('controllerAction', $this->action);
-		$this->controller->set('modelClass', $this->modelClass);
-		$this->controller->set('modelKey', $this->modelKey);
-		$this->controller->set('humanSingularName', Inflector::humanize($this->modelKey));
-		$this->controller->set('humanPluralName', Inflector::humanize($this->viewPath));
+		$this->controller->pageTitle = __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 
-		$alias = array();
-		if(!empty($this->ScaffoldModel->alias)) {
-			$alias = array_combine(array_keys($this->ScaffoldModel->alias), array_keys($this->ScaffoldModel->alias));
-		}
-		$this->controller->set('alias', $alias);
+		//template variables
+		$modelClass = $this->controller->modelClass;
+		$modelKey = $this->controller->modelKey;
+		$primaryKey = $this->ScaffoldModel->primaryKey;
+		$displayField = $this->ScaffoldModel->displayField;
+		$singularVar = Inflector::variable($modelClass);
+		$pluralVar = Inflector::variable($this->controller->name);
+		$singularHumanName = Inflector::humanize($modelClass);
+		$pluralHumanName = Inflector::humanize($this->controller->name);
+		$fields = $this->ScaffoldModel->_tableInfo->value;
+		$foreignKeys = $this->ScaffoldModel->keyToTable;
+		$belongsTo = $this->ScaffoldModel->belongsTo;
+		$hasOne = $this->ScaffoldModel->hasOne;
+		$hasMany = $this->ScaffoldModel->hasMany;
+		$hasAndBelongsToMany = $this->ScaffoldModel->hasAndBelongsToMany;
 
-		$linked = array();
-		foreach($this->ScaffoldModel->tableToModel as $model){
-			if($model !== $this->modelClass) {
-				$linked[$model] = Inflector::tableize($model);
-			}
-		}
-		$this->controller->set('linked', $linked);
-
-		$this->controller->set('primaryKey', $this->ScaffoldModel->primaryKey);
-		$this->controller->set('displayField', $this->ScaffoldModel->getDisplayfield());
+		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+								'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
+									'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'));
 		$this->__scaffold($params);
 	 }
 /**
@@ -213,20 +210,16 @@ class Scaffold extends Object {
 			if(isset($params['pass'][0])){
 				$this->ScaffoldModel->id = $params['pass'][0];
 			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)));
 				$this->controller->redirect($this->redirect);
 			} else {
 				return $this->controller->flash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
 																		'/' . Inflector::underscore($this->controller->viewPath));
 			}
-			$this->controller->set('hasOne', $this->ScaffoldModel->hasOne);
-			$this->controller->set('relations', $relations = array_merge($this->ScaffoldModel->hasMany, $this->ScaffoldModel->hasAndBelongsToMany));
-			$this->controller->data = $this->ScaffoldModel->read();
-			$this->controller->set('data', $this->controller->data);
-			$this->controller->set('fieldNames', $this->controller->generateFieldNames($this->controller->data, false));
 
-			$this->controller->render($this->action, $this->layout, $this->__getViewFileName($this->action));
+			$this->controller->data = $this->ScaffoldModel->read();
+			$this->controller->set(Inflector::variable($this->controller->modelClass), $this->controller->data);
+			$this->controller->render($this->action, $this->layout, $this->__getViewFileName($params['action']));
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->__scaffoldError();
 		}
@@ -240,10 +233,9 @@ class Scaffold extends Object {
  */
 	function __scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
-			$this->controller->set('fieldNames', $this->controller->generateFieldNames(null, false));
 	 		$this->ScaffoldModel->recursive = 0;
-	 		$this->controller->set('data', $this->controller->paginate());
-	 		$this->controller->render($this->action, $this->layout, $this->__getViewFileName($this->action));
+	 		$this->controller->set(Inflector::variable($this->controller->name), $this->controller->paginate());
+	 		$this->controller->render($this->action, $this->layout, $this->__getViewFileName($params['action']));
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
 		}
@@ -268,70 +260,66 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffoldSave($params = array(), $action = 'edit') {
-		$formName = 'Edit';
 		$formAction = 'edit';
-		$viewFileName = 'edit';
 		$success = __('updated', true);
-
 		if ($action === 'add') {
-			$formName = 'New';
 			$formAction = 'add';
-			$viewFileName = 'add';
 			$success = __('saved', true);
 		}
 
-		$this->controller->set('formName', $formName);
-
 		if ($this->controller->_beforeScaffold($action)) {
-
-			if (empty($this->controller->data)) {
-				if ($action == 'edit') {
-					if(isset($params['pass'][0])){
-						$this->ScaffoldModel->id = $params['pass'][0];
-					} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-						$this->controller->Session->setFlash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)));
-						$this->controller->redirect($this->redirect);
-					} else {
-						return $this->controller->flash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)),
-																	'/' . Inflector::underscore($this->controller->viewPath));
-					}
-					$this->controller->data = $this->ScaffoldModel->read();
-					$this->controller->set('fieldNames', $this->controller->generateFieldNames($this->controller->data));
-					$this->controller->set('data', $this->controller->data);
+			if ($action == 'edit' && !isset($params['pass'][0])) {
+				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+					$this->controller->Session->setFlash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)));
+					$this->controller->redirect($this->redirect);
 				} else {
-					$this->controller->set('fieldNames', $this->controller->generateFieldNames());
-				}
-				return $this->__scaffoldForm($formAction);
-			}
-
-			$this->controller->set('fieldNames', $this->controller->generateFieldNames());
-			$this->controller->cleanUpFields();
-
-			if ($action == 'create') {
-				$this->ScaffoldModel->create();
-			}
-
-			if ($this->ScaffoldModel->save($this->controller->data)) {
-				if ($this->controller->_afterScaffoldSave($action)) {
-					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-						$this->controller->Session->setFlash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success));
-						$this->controller->redirect($this->redirect);
-					} else {
-						return $this->controller->flash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success), '/' . $this->viewPath);
-					}
-				} else {
-					return $this->controller->_afterScaffoldSaveError($action);
+					return $this->controller->flash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
 				}
 			} else {
-				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-					$this->controller->Session->setFlash(__('Please correct errors below.', true));
+				$this->ScaffoldModel->id = $params['pass'][0];
+			}
+
+			if(!empty($this->controller->data)) {
+
+				$this->controller->cleanUpFields();
+
+				if ($action == 'create') {
+					$this->ScaffoldModel->create();
 				}
 
-				$this->controller->set('data', $this->controller->data);
-				$this->controller->set('fieldNames', $this->controller->generateFieldNames($this->__rebuild($this->controller->data)));
-				$this->controller->validateErrors($this->ScaffoldModel);
-				$this->controller->render($formAction, $this->layout, $this->__getViewFileName('edit'));
+				if ($this->ScaffoldModel->save($this->controller->data)) {
+					if ($this->controller->_afterScaffoldSave($action)) {
+						if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+							$this->controller->Session->setFlash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success));
+							$this->controller->redirect($this->redirect);
+						} else {
+							return $this->controller->flash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success), $this->redirect);
+						}
+					} else {
+						return $this->controller->_afterScaffoldSaveError($action);
+					}
+				} else {
+					if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
+						$this->controller->Session->setFlash(__('Please correct errors below.', true));
+					}
+				}
+
 			}
+
+			if (empty($this->controller->data)) {
+				if($this->ScaffoldModel->id) {
+					$this->controller->data = $this->ScaffoldModel->read();
+				} else {
+					$this->controller->data = $this->ScaffoldModel->create();
+				}
+			}
+			$associations = am($this->ScaffoldModel->belongsTo, $this->ScaffoldModel->hasAndBelongsToMany);
+			foreach($associations as $assocName => $assocData) {
+				$this->controller->set(Inflector::pluralize(Inflector::variable($assocName)), $this->ScaffoldModel->{$assocName}->generateList());
+			}
+
+			return $this->__scaffoldForm($formAction);
+
 		} else if($this->controller->_scaffoldError($action) === false) {
 			return $this->__scaffoldError();
 		}
@@ -399,31 +387,6 @@ class Scaffold extends Object {
 		return $this->controller->render($this->action, $this->layout, $pathToViewFile);
 	}
 /**
- * When forms are submited the arrays need to be rebuilt if
- * an error occured, here the arrays are rebuilt to structure needed
- *
- * @param array $params data passed to forms
- * @return array rebuilds the association arrays to pass back to Controller::generateFieldNames()
- */
-	function __rebuild($params) {
-		foreach($params as $model => $field) {
-			if (!empty($field) && is_array($field)) {
-				$match=array_keys($field);
-
-				if ($model == $match[0]) {
-					$count = 0;
-
-					foreach($field[$model] as $value) {
-						$params[$model][$count][$this->ScaffoldModel->primaryKey] = $value;
-						$count++;
-					}
-					unset ($params[$model][$model]);
-				}
-			}
-		}
-		return $params;
-	}
-/**
  * When methods are now present in a controller
  * scaffoldView is used to call default Scaffold methods if:
  * <code>
@@ -443,9 +406,12 @@ class Scaffold extends Object {
 		if (isset($db)) {
 			if(empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
+			} else if(defined('CAKE_ADMIN') && $this->scaffoldActions == CAKE_ADMIN) {
+				$this->scaffoldActions = array(CAKE_ADMIN .'_index', CAKE_ADMIN .'_list', CAKE_ADMIN .'_view', CAKE_ADMIN .'_add', CAKE_ADMIN .'_create', CAKE_ADMIN .'_edit', CAKE_ADMIN .'_update', CAKE_ADMIN .'_delete');
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
+				$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
 				switch($params['action']) {
 					case 'index':
 						$this->__scaffoldIndex($params);
