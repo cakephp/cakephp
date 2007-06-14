@@ -827,6 +827,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
 		$this->assertEqual($result, '<input type="checkbox" name="data[Model][field]" type="checkbox" id="theID" value="myvalue" class="form-error" />');
 
+		$this->Form->validationErrors['Model']['field'] = 0;
+		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
+		$this->assertEqual($result, '<input type="checkbox" name="data[Model][field]" type="checkbox" value="myvalue" id="ModelField" />');
+		
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
