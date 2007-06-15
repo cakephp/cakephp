@@ -411,7 +411,9 @@ class Scaffold extends Object {
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
+				if(defined('CAKE_ADMIN')) {
+					$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
+				}
 				switch($params['action']) {
 					case 'index':
 						$this->__scaffoldIndex($params);
