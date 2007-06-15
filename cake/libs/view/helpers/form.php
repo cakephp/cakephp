@@ -651,7 +651,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$output = null;
-		if(isset($object) && ($options['value'] == 0 || $options['value'] == 1)) {
+		if(isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
 			$value = $db->boolean($options['value']);
 			$options['value'] = 1;
