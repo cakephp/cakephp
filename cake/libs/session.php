@@ -362,7 +362,7 @@ class CakeSession extends Object {
 			trigger_error('Writing session key {' . $var . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
 		}
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
-		return (Set::extract($_SESSION, $var) == $value);
+		return (Set::extract($_SESSION, $var) === $value);
 	}
 /**
  * Helper method to destroy invalid sessions.
