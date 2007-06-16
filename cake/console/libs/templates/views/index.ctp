@@ -31,7 +31,7 @@
 <?php  foreach($fields as $field):?>
 	<th><?php echo "<?php echo \$paginator->sort('{$field['name']}');?>";?></th>
 <?php endforeach;?>
-	<th class="actions"><?php echo "<?php __('Actions');?>"</th>
+	<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
 </tr>
 <?php
 echo "<?php
