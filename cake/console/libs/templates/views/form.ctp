@@ -17,7 +17,7 @@
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
- * @since			CakePHP(tm) v 0.10.0.1076
+ * @since			CakePHP(tm) v 1.2.0.5234
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -27,7 +27,7 @@
 <div class="<?php echo $singularVar;?>">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo  Inflector::humanize($action).' '. $singularHumanName;?></legend>
+ 		<legend><?php echo "<?php __('".Inflector::humanize($action).", true);?> <?php __('{$singularHumanName}');?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach($fields as $field) {
@@ -50,9 +50,9 @@
 <div class="actions">
 	<ul>
 <?php if($action != 'add'):?>
-		<li><?php echo "<?php echo \$html->link('Delete', array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, 'Are you sure you want to delete #' . \$form->value('{$modelClass}.{$primaryKey}')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, __('Are you sure you want to delete', true).' #' . \$form->value('{$modelClass}.{$primaryKey}')); ?>";?></li>
 <?php endif;?>
-		<li><?php echo "<?php echo \$html->link('List {$pluralHumanName}', array('action'=>'index'));?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
 <?php
 		foreach($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -63,8 +63,8 @@
 				$otherSingularName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link('List {$otherPluralHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link('New {$otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>

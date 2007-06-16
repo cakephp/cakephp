@@ -30,11 +30,11 @@
 <?php
 $i = 0;
 foreach($fields as $field) {
+	$class = null;
 	if($i++ % 2 == 0) {
 		$class = ' class="altrow"';
-	} else {
-		$class = null;
 	}
+
 	if(in_array($field['name'], array_keys($foreignKeys))) {
 		$otherModelClass = $foreignKeys[$field['name']][1];
 		$otherModelKey = Inflector::underscore($otherModelClass);
@@ -61,7 +61,7 @@ foreach($fields as $field) {
 	<ul>
 <?php
 	echo "\t\t<li>" .$html->link(__('Edit', true)." ".$singularHumanName,   array('action'=>'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$html->link(__('Delete', true)." ".$singularHumanName, array('action'=>'delete', ${$singularVar}[$modelClass][$primaryKey]), null, 'Are you sure you want to delete #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
+	echo "\t\t<li>" .$html->link(__('Delete', true)." ".$singularHumanName, array('action'=>'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
 	echo "\t\t<li>" .$html->link(__('List', true)." ".$pluralHumanName, array('action'=>'index')). " </li>\n";
 	echo "\t\t<li>" .$html->link(__('New', true)." ".$singularHumanName, array('action'=>'add')). " </li>\n";
 
@@ -82,7 +82,6 @@ foreach($fields as $field) {
 	</ul>
 </div>
 <?php
-$i = 0;
 foreach ($hasOne as $assocName => $assocData):
 	$otherModelKey = Inflector::underscore($assocData['className']);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
@@ -93,19 +92,18 @@ foreach ($hasOne as $assocName => $assocData):
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherFields = $otherModelObj->_tableInfo->value;
 	$otherPrimaryKey = $otherModelObj->primaryKey;
-
-	if($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	} else {
-		$class = null;
-	}
 ?>
 <div class="related">
 	<h3><?php echo sprintf(__("Related %s", true), $otherPluralHumanName);?></h3>
 <?php if(!empty(${$singularVar}[$assocName])):?>
 	<dl>
 <?php
+		$i = 0;
 		foreach($otherFields as $field) {
+			$class = null;
+			if($i++ % 2 == 0) {
+				$class = ' class="altrow"';
+			}
 			echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
 			echo "\t\t<dd{$class}>\n\t" .${$singularVar}[$assocName][$field['name']] ."\n&nbsp;</dd>\n";
 		}
@@ -153,10 +151,9 @@ foreach($relations as $assocName => $assocData):
 <?php
 		$i = 0;
 		foreach(${$singularVar}[$assocName] as ${$otherSingularVar}):
+			$class = null;
 			if($i++ % 2 == 0) {
 				$class = ' class=\"altrow\"';
-			} else {
-				$class = null;
 			}
 		echo "\t\t<tr{$class}>\n";
 
@@ -167,7 +164,7 @@ foreach($relations as $assocName => $assocData):
 			echo "\t\t\t<td class=\"actions\">\n";
 			echo "\t\t\t\t" . $html->link(__('View', true), array('controller'=> $otherControllerPath, 'action'=>'view', ${$otherSingularVar}[$otherPrimaryKey])). "\n";
 			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller'=> $otherControllerPath, 'action'=>'edit', ${$otherSingularVar}[$otherPrimaryKey])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $otherControllerPath, 'action'=>'delete', ${$otherSingularVar}[$otherPrimaryKey]), null, 'Are you sure you want to delete #' . ${$otherSingularVar}[$otherPrimaryKey] . '?'). "\n";
+			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller'=> $otherControllerPath, 'action'=>'delete', ${$otherSingularVar}[$otherPrimaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$otherPrimaryKey] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;

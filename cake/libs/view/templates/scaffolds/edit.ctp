@@ -48,7 +48,7 @@
 <div class="actions">
 	<ul>
 <?php if($this->action != 'add'):?>
-		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, 'Are you sure you want to delete #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
+		<li><?php echo $html->link(__('Delete', true), array('action'=>'delete', $form->value($modelClass.'.'.$primaryKey)), null, __('Are you sure you want to delete', true).' #' . $form->value($modelClass.'.'.$primaryKey)); ?></li>
 <?php endif;?>
 		<li><?php echo $html->link(__('List', true).' '.$pluralHumanName, array('action'=>'index'));?></li>
 <?php

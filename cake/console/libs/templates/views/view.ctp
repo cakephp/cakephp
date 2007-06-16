@@ -17,7 +17,7 @@
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
- * @since			CakePHP(tm) v 0.10.0.1076
+ * @since			CakePHP(tm) v 1.2.0.5234
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -25,16 +25,16 @@
  */
 ?>
 <div class="<?php echo $singularVar;?>">
-<h2>View <?php echo $singularHumanName;?></h2>
+<h2><?php echo "<?php  __('{$singularHumanName}');?>";?></h2>
 	<dl>
 <?php
 $i = 0;
 foreach($fields as $field) {
+	$class = null;
 	if($i++ % 2 == 0) {
 		$class = ' class="altrow"';
-	} else {
-		$class = null;
 	}
+
 	if(in_array($field['name'], array_keys($foreignKeys))) {
 		$otherModelClass = $foreignKeys[$field['name']][1];
 		$otherModelKey = Inflector::underscore($otherModelClass);
@@ -60,10 +60,10 @@ foreach($fields as $field) {
 <div class="actions">
 	<ul>
 <?php
-	echo "\t\t<li><?php echo \$html->link('Edit {$singularHumanName}',   array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link('Delete {$singularHumanName}', array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, 'Are you sure you want to delete #' . \${$singularVar}['{$modelClass}']['{$primaryKey}'] . '?'); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link('List {$pluralHumanName}', array('action'=>'index')); ?> </li>\n";
-	echo "\t\t<li><?php echo \$html->link('New {$singularHumanName}', array('action'=>'add')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Edit', true).' '.__('{$singularHumanName}', true),   array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('Delete', true).' '.__('{$singularHumanName}', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete', true).' #' . \${$singularVar}['{$modelClass}']['{$primaryKey}'] . '?'); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index')); ?> </li>\n";
+	echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$singularHumanName}', true), array('action'=>'add')); ?> </li>\n";
 
 	foreach($foreignKeys as $field => $value) {
 		$otherModelClass = $value['1'];
@@ -74,8 +74,8 @@ foreach($fields as $field) {
 			$otherSingularVar = Inflector::variable($otherModelClass);
 			$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 			$otherSingularHumanName = Inflector::humanize($otherModelKey);
-			echo "\t\t<li><?php echo \$html->link('List {$otherPluralHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-			echo "\t\t<li><?php echo \$html->link('New {$otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+			echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+			echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 		}
 	}
 	?>
@@ -93,19 +93,19 @@ foreach ($hasOne as $assocName => $assocData):
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherFields = $otherModelObj->_tableInfo->value;
 	$otherPrimaryKey = $otherModelObj->primaryKey;
-
-	if($i++ % 2 == 0) {
-		$class = ' class="altrow"';
-	} else {
-		$class = null;
-	}
 ?>
 <div class="related">
-	<h3>Related <?php echo $otherPluralHumanName;?></h3>
+	<h3><?php echo "<?php  __('Related');?> <?php __('{$otherSingularHumanName}');?>";?></h3>
 	<?php echo "<?php if(!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<dl>
 <?php
+		$i = 0;
 		foreach($otherFields as $field) {
+			$class = null;
+			if($i++ % 2 == 0) {
+				$class = ' class="altrow"';
+			}
+
 			echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
 			echo "\t\t<dd{$class}>\n\t<?php echo \${$singularVar}['{$assocName}']['{$field['name']}'] ?>\n&nbsp;</dd>\n";
 		}
@@ -114,11 +114,12 @@ foreach ($hasOne as $assocName => $assocData):
 	<?php echo "<?php endif; ?>\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link('Edit $otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
+			<li><?php echo "<?php echo \$html->link(__('Edit', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
 		</ul>
 	</div>
 </div>
 <?php
+$i++;
 endforeach;
 
 $relations = array_merge($hasMany, $hasAndBelongsToMany);
@@ -136,7 +137,7 @@ foreach($relations as $assocName => $assocData):
 	$otherPrimaryKey = $otherModelObj->primaryKey;
 ?>
 <div class="related">
-	<h3>Related <?php echo $otherPluralHumanName;?></h3>
+	<h3><?php echo "<?php  __('Related');?> <?php __('{$otherPluralHumanName}');?>";?></h3>
 	<?php echo "<?php if(!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
@@ -145,16 +146,15 @@ foreach($relations as $assocName => $assocData):
 			echo "\t\t<th>".Inflector::humanize($field['name'])."</th>\n";
 		}
 ?>
-		<th class="actions">Actions</th>
+		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
 	</tr>
 <?php
 echo "\t<?php
 		\$i = 0;
 		foreach(\${$singularVar}['{$assocName}'] as \${$otherSingularVar}):
+			\$class = null;
 			if(\$i++ % 2 == 0) {
 				\$class = ' class=\"altrow\"';
-			} else {
-				\$class = null;
 			}
 		?>\n";
 		echo "\t\t<tr<?php echo \$class;?>>\n";
@@ -164,9 +164,9 @@ echo "\t<?php
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t<?php echo \$html->link('View', array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$otherSingularVar}['{$otherPrimaryKey}'])); ?>\n";
-			echo "\t\t\t\t<?php echo \$html->link('Edit', array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$otherSingularVar}['{$otherPrimaryKey}'])); ?>\n";
-			echo "\t\t\t\t<?php echo \$html->link('Delete', array('controller'=> '{$otherControllerPath}', 'action'=>'delete', \${$otherSingularVar}['{$otherPrimaryKey}']), null, 'Are you sure you want to delete #' . \${$otherSingularVar}['{$otherPrimaryKey}'] . '?'); ?>\n";
+			echo "\t\t\t\t<?php echo \$html->link(__('View', true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$otherSingularVar}['{$otherPrimaryKey}'])); ?>\n";
+			echo "\t\t\t\t<?php echo \$html->link(__('Edit', true), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$otherSingularVar}['{$otherPrimaryKey}'])); ?>\n";
+			echo "\t\t\t\t<?php echo \$html->link(__('Delete', true), array('controller'=> '{$otherControllerPath}', 'action'=>'delete', \${$otherSingularVar}['{$otherPrimaryKey}']), null, __('Are you sure you want to delete', true).' #' . \${$otherSingularVar}['{$otherPrimaryKey}'] . '?'); ?>\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 
@@ -176,7 +176,7 @@ echo "\t<?php
 	<?php echo "<?php endif; ?>\n\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link('New {$otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'add'));?> </li>\n";?>
+			<li><?php echo "<?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add'));?> </li>\n";?>
 		</ul>
 	</div>
 </div>

@@ -41,10 +41,9 @@ echo $paginator->counter(array(
 <?php
 $i = 0;
 foreach(${$pluralVar} as ${$singularVar}):
+	$class = null;
 	if($i++ % 2 == 0) {
 		$class = ' class=\"altrow\"';
-	} else {
-		$class = null;
 	}
 echo "\n";
 	echo "\t<tr" . $class . ">\n";
@@ -71,7 +70,7 @@ echo "\n";
 		echo "\t\t<td class=\"actions\">\n";
 		echo "\t\t\t" . $html->link(__('View', true), array('action'=>'view', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
 	 	echo "\t\t\t" . $html->link(__('Edit', true), array('action'=>'edit', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
-	 	echo "\t\t\t" . $html->link(__('Delete', true), array('action'=>'delete', ${$singularVar}[$modelClass][$primaryKey]), null, 'Are you sure you want to delete #' . ${$singularVar}[$modelClass][$primaryKey]) . "\n";
+	 	echo "\t\t\t" . $html->link(__('Delete', true), array('action'=>'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey]) . "\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 

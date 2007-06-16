@@ -17,7 +17,7 @@
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
  * @subpackage		cake.cake.console.libs.templates.views
- * @since			CakePHP(tm) v 0.10.0.1076
+ * @since			CakePHP(tm) v 1.2.0.5234
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
@@ -25,22 +25,21 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?>">
-<h2>List <?php echo $pluralHumanName;?></h2>
+<h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php  foreach($fields as $field):?>
 	<th><?php echo "<?php echo \$paginator->sort('{$field['name']}');?>";?></th>
 <?php endforeach;?>
-	<th>Actions</th>
+	<th class="actions"><?php echo "<?php __('Actions');?>"</th>
 </tr>
 <?php
 echo "<?php
 \$i = 0;
 foreach(\${$pluralVar} as \${$singularVar}):
+	\$class = null;
 	if(\$i++ % 2 == 0) {
 		\$class = ' class=\"altrow\"';
-	} else {
-		\$class = null;
 	}
 ?>\n";
 	echo "\t<tr<?php echo \$class;?>>\n";
@@ -65,9 +64,9 @@ foreach(\${$pluralVar} as \${$singularVar}):
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?php echo \$html->link('View', array('action'=>'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$html->link('Edit', array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$html->link('Delete', array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, 'Are you sure you want to delete #' . \${$singularVar}['{$modelClass}']['{$primaryKey}']); ?>\n";
+		echo "\t\t\t<?php echo \$html->link(__('View', true), array('action'=>'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$html->link(__('Edit', true), array('action'=>'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete', true).' #' . \${$singularVar}['{$modelClass}']['{$primaryKey}']); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -76,13 +75,13 @@ echo "<?php endforeach; ?>\n";
 </table>
 </div>
 <div class="paging">
-<?php echo "\t<?php echo \$paginator->prev('<< previous', array(), null, array('class'=>'disabled'));?>\n";?>
+<?php echo "\t<?php echo \$paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
  | <?php echo "\t<?php echo \$paginator->numbers();?>\n"?>
-<?php echo "\t<?php echo \$paginator->next('next >>', array(), null, array('class'=>'disabled'));?>\n";?>
+<?php echo "\t<?php echo \$paginator->next(_('next', true).' >>', array(), null, array('class'=>'disabled'));?>\n";?>
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo "<?php echo \$html->link('New {$singularHumanName}', array('action'=>'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('New', true).' '.__('{$singularHumanName}', true), array('action'=>'add')); ?>";?></li>
 <?php
 		foreach($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -93,8 +92,8 @@ echo "<?php endforeach; ?>\n";
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link('List {$otherPluralHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link('New {$otherSingularHumanName}', array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>
