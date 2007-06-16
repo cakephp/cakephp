@@ -387,7 +387,7 @@ class DboSqlite extends DboSource {
 			}
 			$rt .= ' ' . $limit;
 			if ($offset) {
-				$rt .= ', ' . $offset;
+				$rt .= ' OFFSET ' . $offset;
 			}
 			return $rt;
 		}
