@@ -93,8 +93,11 @@ class DboAdodb extends DboSource {
 		}
 
 		$this->_adodb = NewADOConnection($adodb_driver);
-		$adodb = &$this->_adodb;
-		$this->connected = $adodb->$connect($config['host'], $config['login'], $config['password'], $config['database']);
+
+		$this->startQuote = $this->_adodb->nameQuote;
+		$this->endQuote = $this->_adodb->nameQuote;
+
+		$this->connected = $this->_adodb->$connect($config['host'], $config['login'], $config['password'], $config['database']);
 		return $this->connected;
 	}
 /**
