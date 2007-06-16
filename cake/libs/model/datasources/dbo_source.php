@@ -1470,11 +1470,7 @@ class DboSource extends DataSource {
 			if (trim($conditions) == '') {
 				$conditions = ' 1 = 1';
 			} else {
-				$data = $this->__quoteFields($conditions);
-
-				if($data) {
-					$conditions = $data;
-				}
+				$conditions = $this->__quoteFields($conditions);
 			}
 			return $clause . $conditions;
 		} else {
@@ -1496,109 +1492,110 @@ class DboSource extends DataSource {
  * @param array $conditions Array or string of conditions
  * @return string SQL fragment
  */
-	function conditionKeysToString($conditions, $quoteValues = true) {
-		$c = 0;
-		$data = null;
-		$out = array();
-		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
-		$join = ' AND ';
+function conditionKeysToString($conditions, $quoteValues = true) {
+	$c = 0;
+	$data = $not = null;
+	$out = array();
+	$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
+	$join = ' AND ';
 
-		foreach($conditions as $key => $value) {
-			if (is_numeric($key) && empty($value)) {
-				continue;
-			}
-			if (in_array(strtolower(trim($key)), $bool)) {
-				$join = ' ' . strtoupper($key) . ' ';
-				$value = $this->conditionKeysToString($value, $quoteValues);
-				if (strpos($join, 'NOT') !== false) {
-					if (up(trim($key)) == 'NOT') {
-						$key = 'AND ' . $key;
-					}
-					$not = 'NOT ';
-				} else {
-					$not = null;
+	foreach($conditions as $key => $value) {
+		if (is_numeric($key) && empty($value)) {
+			continue;
+		} elseif (is_numeric($key) && is_string($value)) {
+			$out[] = $not . $this->__quoteFields($value);
+		} elseif (in_array(strtolower(trim($key)), $bool)) {
+			$join = ' ' . strtoupper($key) . ' ';
+			$value = $this->conditionKeysToString($value, $quoteValues);
+			if (strpos($join, 'NOT') !== false) {
+				if (up(trim($key)) == 'NOT') {
+					$key = 'AND ' . $key;
 				}
-				$out[] = $not . '((' . join(') ' . strtoupper($key) . ' (', $value) . '))';
+				$not = 'NOT ';
 			} else {
-				if (is_string($value) && preg_match('/^\{\$__cakeIdentifier\[(.*)\]__\$}$/', $value, $identifier) && isset($identifier[1])) {
-					$data .= $this->name($key) . ' = ' . $this->name($identifier[1]);
-				} elseif (is_array($value) && !empty($value)) {
-					$keys = array_keys($value);
-					if ($keys[0] === 0) {
-						$data = $this->name($key) . ' IN (';
-						if	(strpos($value[0], '-!') === 0){
-							$value[0] = str_replace('-!', '', $value[0]);
-							$data .= $value[0];
-							$data .= ')';
-						} else {
-							if ($quoteValues) {
-								foreach($value as $valElement) {
-									$data .= $this->value($valElement) . ', ';
-								}
-							}
-							$data[strlen($data) - 2] = ')';
-						}
+				$not = null;
+			}
+			$out[] = $not . '((' . join(') ' . strtoupper($key) . ' (', $value) . '))';
+		} else {
+			if (is_string($value) && preg_match('/^\{\$__cakeIdentifier\[(.*)\]__\$}$/', $value, $identifier) && isset($identifier[1])) {
+				$data .= $this->name($key) . ' = ' . $this->name($identifier[1]);
+			} elseif (is_array($value) && !empty($value)) {
+				$keys = array_keys($value);
+				if ($keys[0] === 0) {
+					$data = $this->name($key) . ' IN (';
+					if	(strpos($value[0], '-!') === 0){
+						$value[0] = str_replace('-!', '', $value[0]);
+						$data .= $value[0];
+						$data .= ')';
 					} else {
-						$ret = $this->conditionKeysToString($value, $quoteValues);
-						if (count($ret) > 1) {
-							$out[] = '(' . join(') AND (', $ret) . ')';
-						} elseif (isset($ret[0])) {
-							$out[] = $ret[0];
+						if ($quoteValues) {
+							foreach($value as $valElement) {
+								$data .= $this->value($valElement) . ', ';
+							}
 						}
+						$data[strlen($data) - 2] = ')';
 					}
-				} elseif (is_numeric($key) && !empty($value)) {
-					$data = $this->__quoteFields($value);
-				} elseif ($value === null || (is_array($value) && empty($value))) {
-					$data = $this->name($key) . ' IS NULL';
-				} elseif ($value === false || $value === true) {
-					$data = $this->name($key) . " = " . $this->boolean($value);
-				} elseif ($value === '') {
-					$data = $this->name($key) . " = ''";
-				} elseif (preg_match('/^([a-z]+\\([a-z0-9]*\\)\\x20+|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/i', $value, $match)) {
-					if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
-						$clause = $regs['1'];
-						$key = preg_replace('/' . $regs['1'] . '/', '', $key);
+				} else {
+					$ret = $this->conditionKeysToString($value, $quoteValues);
+					if (count($ret) > 1) {
+						$out[] = '(' . join(') AND (', $ret) . ')';
+					} elseif (isset($ret[0])) {
+						$out[] = $ret[0];
 					}
+				}
+			} elseif (is_numeric($key) && !empty($value)) {
+				$data = $this->__quoteFields($value);
+			} elseif ($value === null || (is_array($value) && empty($value))) {
+				$data = $this->name($key) . ' IS NULL';
+			} elseif ($value === false || $value === true) {
+				$data = $this->name($key) . " = " . $this->boolean($value);
+			} elseif ($value === '') {
+				$data = $this->name($key) . " = ''";
+			} elseif (preg_match('/^([a-z]+\\([a-z0-9]*\\)\\x20+|(?:' . join('\\x20)|(?:', $this->__sqlOps) . '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)?(.*)/i', $value, $match)) {
+				if (preg_match('/(\\x20[\\w]*\\x20)/', $key, $regs)) {
+					$clause = $regs['1'];
+					$key = preg_replace('/' . $regs['1'] . '/', '', $key);
+				}
 
-					$mValue = trim($match['1']);
-					if (empty($match['1'])) {
-						$match['1'] = ' = ';
-					} elseif (empty($mValue)) {
-						$match['1'] = ' = ';
-						$match['2'] = $match['0'];
-					} elseif(!isset($match['2'])) {
-						$match['1'] = ' = ';
-						$match['2'] = $match['0'];
-					}
+				$mValue = trim($match['1']);
+				if (empty($match['1'])) {
+					$match['1'] = ' = ';
+				} elseif (empty($mValue)) {
+					$match['1'] = ' = ';
+					$match['2'] = $match['0'];
+				} elseif(!isset($match['2'])) {
+					$match['1'] = ' = ';
+					$match['2'] = $match['0'];
+				}
 
-					if (strpos($match['2'], '-!') === 0) {
-						$match['2'] = str_replace('-!', '', $match['2']);
+				if (strpos($match['2'], '-!') === 0) {
+					$match['2'] = str_replace('-!', '', $match['2']);
+					$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
+				} else {
+					if (!empty($match['2']) && $quoteValues) {
+						if(!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
+							$match['2'] = $this->value($match['2']);
+						}
+						$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
+					}
+					$data = $this->__quoteFields($key);
+					if($data === $key) {
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
-						if (!empty($match['2']) && $quoteValues) {
-							if(!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
-								$match['2'] = $this->value($match['2']);
-							}
-							$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
-						}
-						$data = $this->__quoteFields($key);
-						if($data === false) {
-							$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
-						} else {
-							$data = $data . ' ' . $match['1'] . ' ' . $match['2'];
-						}
+						$data = $data . ' ' . $match['1'] . ' ' . $match['2'];
 					}
 				}
-
-				if ($data != null) {
-					$out[] = $data;
-					$data = null;
-				}
 			}
-			$c++;
+
+			if ($data != null) {
+				$out[] = $data;
+				$data = null;
+			}
 		}
-		return $out;
+		$c++;
 	}
+	return $out;
+}
 /**
  * Quotes Model.fields
  *
@@ -1609,6 +1606,7 @@ class DboSource extends DataSource {
 	function __quoteFields($conditions) {
 		$start = null;
 		$end  = null;
+		$original = $conditions;
 
 		if(!empty($this->startQuote)) {
 			$start = preg_quote($this->startQuote);
@@ -1630,7 +1628,7 @@ class DboSource extends DataSource {
 			}
 			return $conditions;
 		}
-		return false;
+		return $original;
 	}
 /**
  * Returns a limit statement in the correct format for the particular database.
