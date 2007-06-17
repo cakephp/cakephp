@@ -146,7 +146,7 @@ class Dispatcher extends Object {
 		if(defined('CAKE_ADMIN')) {
 			if(isset($params[CAKE_ADMIN])) {
 				$this->admin = '/'.CAKE_ADMIN ;
-				$url = preg_replace('/'.CAKE_ADMIN.'\//', '', $url);
+				$url = preg_replace('/'.CAKE_ADMIN.'\/?/', '', $url);
 				$params['action'] = CAKE_ADMIN.'_'.$params['action'];
 			} elseif (strpos($params['action'], CAKE_ADMIN) === 0) {
 				$privateAction = true;
