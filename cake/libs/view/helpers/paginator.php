@@ -140,10 +140,14 @@ class PaginatorHelper extends AppHelper {
 			$options = am($params['defaults'], $params['options']);
 		}
 
-		if (isset($options['sort'])) {
+		if (isset($options['sort']) && !empty($options['sort'])) {
 			return $options['sort'];
 		} elseif (isset($options['order']) && is_array($options['order'])) {
 			return preg_replace('/.*\./', '', key($options['order']));
+		} elseif (isset($options['order']) && is_string($options['order'])) {
+			if (preg_match('/(?:\w+\.)?(\w+)/', $options['order'], $result) && isset($result[1])) {
+				return $result[1];
+			}
 		}
 		return null;
 	}
@@ -210,9 +214,6 @@ class PaginatorHelper extends AppHelper {
  *                key the returned link will sort by 'desc'.
  */
 	function sort($title, $key = null, $options = array()) {
-		if(!empty($this->options)) {
-			$options = am($this->options, $options);
-		}
 		$options = am(array('url' => array(), 'model' => null), $options);
 		$url = $options['url'];
 		unset($options['url']);

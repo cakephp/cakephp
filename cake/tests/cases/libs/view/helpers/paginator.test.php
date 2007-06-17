@@ -49,18 +49,20 @@ class PaginatorTest extends UnitTestCase {
 				'nextPage' => true,
 				'pageCount' => 7,
 				'defaults' => array(
-					'order' => 'Article.date DESC',
+					'order' => 'Article.date ASC',
 					'limit' => 9,
 					'conditions' => array()
-                )
-			),
-
-			'options' => array(
-				'order' => 'Article.date DESC',
-				'limit' => 9,
-				'page' => 1
+                ),
+				'options' => array(
+					'order' => 'Article.date ASC',
+					'limit' => 9,
+					'page' => 1,
+					'conditions' => array()
+				)
 			)
 		);
+		$this->paginator->Html =& new HtmlHelper();
+		$this->paginator->Ajax =& new AjaxHelper();
 	}
 
 	function testHasPrevious() {
@@ -75,6 +77,20 @@ class PaginatorTest extends UnitTestCase {
 		$this->paginator->params['paging']['Article']['nextPage'] = false;
 		$this->assertIdentical($this->paginator->hasNext(), false);
 		$this->paginator->params['paging']['Article']['nextPage'] = true;
+	}
+
+	function testSortLinks() {
+		Router::reload();
+		Router::setRequestInfo(array(
+			array ('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0, 'webservices' => null),
+			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+		));
+		$this->paginator->options(array('url' => array('param')));
+		$result = $this->paginator->sort('title');
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
+
+		$result = $this->paginator->sort('date');
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc"\s*>Date<\/a>$/', $result);
 	}
 
 	function tearDown() {
