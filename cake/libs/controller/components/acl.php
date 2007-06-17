@@ -335,7 +335,7 @@ class DB_ACL extends AclBase {
 			}
 		} else {
 			if(!is_array($actions)) {
-				$actions = array('_' . $action);
+				$actions = array('_' . $actions);
 				$actions = am($permKeys, $actions);
 			}
 			if(is_array($actions)) {
