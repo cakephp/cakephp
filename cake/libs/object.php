@@ -93,7 +93,7 @@ class Object {
 			if(isset($this->plugin)){
 				$extra['plugin'] = $this->plugin;
 			}
-			if (in_array('return', $extra)) {
+			if (in_array('return', $extra, true)) {
 				$extra['return'] = 0;
 				$extra['bare'] = 1;
 				$extra['requested'] = 1;
