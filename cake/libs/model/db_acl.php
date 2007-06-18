@@ -92,7 +92,7 @@ class AclNode extends AppModel {
 				$j = $i - 1;
 				$k = $i + 1;
 				$query .= "LEFT JOIN {$prefix}{$table} AS {$type}{$k} ";
-				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft && {$type}{$k}.rght < {$type}{$i}.rght ";
+				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft AND {$type}{$k}.rght < {$type}{$i}.rght ";
 				$query .= "AND {$type}{$k}.alias = " . $db->value($alias) . " ";
 			}
 			$result = $this->query("{$query} WHERE {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ORDER BY {$type}.lft DESC", $this->cacheQueries);
