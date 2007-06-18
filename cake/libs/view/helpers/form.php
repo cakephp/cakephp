@@ -1195,7 +1195,7 @@ class FormHelper extends AppHelper {
 				unset($htmlOptions['name'], $htmlOptions['value']);
 			}
 			if ($name !== null) {
-				if (($selected !== null) && ($selected == $name)) {
+				if ($selected !== '' && ($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';
 				} else if(is_array($selected) && in_array($name, $selected)) {
 					$htmlOptions['selected'] = 'selected';
