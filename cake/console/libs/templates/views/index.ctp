@@ -77,7 +77,7 @@ echo "<?php endforeach; ?>\n";
 <div class="paging">
 <?php echo "\t<?php echo \$paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
  | <?php echo "\t<?php echo \$paginator->numbers();?>\n"?>
-<?php echo "\t<?php echo \$paginator->next(_('next', true).' >>', array(), null, array('class'=>'disabled'));?>\n";?>
+<?php echo "\t<?php echo \$paginator->next(__('next', true).' >>', array(), null, array('class'=>'disabled'));?>\n";?>
 </div>
 <div class="actions">
 	<ul>
