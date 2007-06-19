@@ -42,24 +42,37 @@
 class Dispatcher extends Object {
 /**
  * Base URL
+ *
  * @var string
+ * @access public
  */
 	var $base = false;
 /**
  * Current URL
+ *
  * @var string
+ * @access public
  */
 	var $here = false;
 /**
+ * Admin route (if on it)
+ *
  * @var string
+ * @access public
  */
 	var $admin = false;
 /**
+ * Webservice route
+ *
  * @var string
+ * @access public
  */
 	var $webservices = null;
 /**
+ * Plugin being served (if any)
+ *
  * @var string
+ * @access public
  */
 	var $plugin = null;
 /**
@@ -79,6 +92,7 @@ class Dispatcher extends Object {
  * @param array $additionalParams	Settings array ("bare", "return"),
  * which is melded with the GET and POST params.
  * @return boolean		Success
+ * @access public
  */
 	function dispatch($url, $additionalParams = array()) {
 		$params = array_merge($this->parseParams($url), $additionalParams);
@@ -323,12 +337,14 @@ class Dispatcher extends Object {
 		return $this->_invoke($controller, $params, $missingAction);
 	}
 /**
- * Invokes given controller's render action if autoRender option is set. Otherwise the contents of the operation are returned as a string.
+ * Invokes given controller's render action if autoRender option is set. Otherwise the
+ * contents of the operation are returned as a string.
  *
- * @param object $controller
- * @param array $params
- * @param boolean $missingAction
- * @return string
+ * @param object $controller Controller to invoke
+ * @param array $params Parameters with at least the 'action' to invoke
+ * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
+ * @return string Output as sent by controller
+ * @access protected
  */
 	function _invoke (&$controller, $params, $missingAction = false) {
 		$this->start($controller);
@@ -358,9 +374,11 @@ class Dispatcher extends Object {
 		return $controller->output;
 	}
 /**
- * Starts up a controller
+ * Starts up a controller (by calling its beforeFilter methods and
+ * starting its components)
  *
- * @param object $controller
+ * @param object $controller Controller to start
+ * @access public
  */
 	function start(&$controller) {
 		if (!empty($controller->beforeFilter)) {
@@ -393,14 +411,15 @@ class Dispatcher extends Object {
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
- * @param string $from_url	URL to mine for parameter information.
+ * @param string $fromUrl	URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
+ * @access public
  */
-	function parseParams($from_url) {
+	function parseParams($fromUrl) {
 		$Route = Router::getInstance();
 		extract(Router::getNamedExpressions());
 		include CONFIGS.'routes.php';
-		$params = Router::parse($from_url);
+		$params = Router::parse($fromUrl);
 
 		if (ini_get('magic_quotes_gpc') == 1) {
 			if(!empty($_POST)) {
@@ -451,6 +470,7 @@ class Dispatcher extends Object {
  * Returns a base URL.
  *
  * @return string	Base URL
+ * @access public
  */
 	function baseUrl() {
 		$htaccess = null;
@@ -504,10 +524,11 @@ class Dispatcher extends Object {
 		return $base;
 	}
 /**
- * Enter description here...
+ * Restructure params in case we're serving a plugin.
  *
- * @param unknown_type $params
- * @return unknown
+ * @param array $params Array on where to re-set 'controller', 'action', and 'pass' indexes
+ * @return array Restructured array
+ * @access protected
  */
 	function _restructureParams($params) {
 		$params['controller'] = $params['action'];
