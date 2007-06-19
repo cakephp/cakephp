@@ -38,85 +38,94 @@ class ShellDispatcher {
  * Standard input stream.
  *
  * @var filehandle
+ * @access public
  */
 	var $stdin;
 /**
  * Standard output stream.
  *
  * @var filehandle
+ * @access public
  */
 	var $stdout;
 /**
  * Standard error stream.
  *
  * @var filehandle
+ * @access public
  */
 	var $stderr;
 /**
  * Contains command switches parsed from the command line.
  *
  * @var array
+ * @access public
  */
 	var $params = array();
 /**
  * Contains arguments parsed from the command line.
  *
  * @var array
+ * @access public
  */
 	var $args = array();
 /**
  * The file name of the shell that was invoked.
  *
  * @var string
+ * @access public
  */
 	var $shell = null;
 /**
  * The class name of the shell that was invoked.
  *
  * @var string
+ * @access public
  */
 	var $shellClass = null;
-
 /**
  * The command called if public methods are available.
  *
  * @var string
+ * @access public
  */
 	var $shellCommand = null;
-
-
 /**
- * The path location of shells.
+ * The path locations of shells.
  *
  * @var array
+ * @access public
  */
 	var $shellPaths = array();
-
 /**
  * The path to the current shell location.
  *
  * @var string
+ * @access public
  */
 	var $shellPath = null;
-
 /**
  * The name of the shell in camelized.
  *
  * @var string
+ * @access public
  */
 	var $shellName = null;
 
-
 /**
- *  Constructs this ShellDispatcher instance.
+ * Constructs this ShellDispatcher instance.
  *
  * @param array $args the argv.
- * @return void
  */
 	function ShellDispatcher($args = array()) {
 		$this->__construct($args);
 	}
 
+/**
+ * Constructor
+ *
+ * @param array $args the argv.
+ */
 	function __construct($args = array()) {
 		$this->__initConstants();
 		$this->parseParams($args);
@@ -125,9 +134,9 @@ class ShellDispatcher {
 		die("\n");
 	}
 /**
- *  Defines core configuration.
+ * Defines core configuration.
  *
- * @return void
+ * @access private
  */
 	function __initConstants() {
 		if (function_exists('ini_set')) {
@@ -144,12 +153,11 @@ class ShellDispatcher {
 		define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 	}
 /**
- *  Defines current working environment.
+ * Defines current working environment.
  *
- * @return void
+ * @access private
  */
 	function __initEnvironment() {
-
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
@@ -189,7 +197,8 @@ class ShellDispatcher {
 /**
  * Initializes the environment and loads the Cake core.
  *
- * @return boolean Returns false if loading failed.
+ * @return boolean Success.
+ * @access private
  */
 	function __bootstrap() {
 
@@ -233,7 +242,7 @@ class ShellDispatcher {
 /**
  * Dispatches a CLI request
  *
- * @return void
+ * @access public
  */
 	function dispatch() {
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
@@ -351,6 +360,7 @@ class ShellDispatcher {
  * @param mixed $options Array or string of options.
  * @param string $default Default input value.
  * @return Either the default value, or the user-provided input.
+ * @access public
  */
 	function getInput($prompt, $options = null, $default = null) {
 		if (!is_array($options)) {
@@ -377,6 +387,7 @@ class ShellDispatcher {
  *
  * @param string $string String to output.
  * @param boolean $newline If true, the outputs gets an added newline.
+ * @access public
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
@@ -389,6 +400,7 @@ class ShellDispatcher {
  * Outputs to the stderr filehandle.
  *
  * @param string $string Error text to output.
+ * @access public
  */
 	function stderr($string) {
 		fwrite($this->stderr, 'Error: '. $string);
@@ -396,8 +408,8 @@ class ShellDispatcher {
 /**
  * Parses command line options
  *
- * @param array $params
- * @return void
+ * @param array $params Parameters to parse
+ * @access public
  */
 	function parseParams($params) {
 		$out = array();
@@ -444,6 +456,7 @@ class ShellDispatcher {
  * Removes first argument and shifts other arguments up
  *
  * @return boolean False if there are no arguments
+ * @access public
  */
 	function shiftArgs() {
 		if (empty($this->args)) {
@@ -456,7 +469,7 @@ class ShellDispatcher {
 /**
  * Shows console help
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->stdout("Current Paths:");
