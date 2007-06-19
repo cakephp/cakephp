@@ -27,9 +27,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file.
- *
- * Long description for file
+ * Error Handler for Cake console.
  *
  * @package		cake
  * @subpackage	cake.cake.console
@@ -39,20 +37,21 @@ class ErrorHandler extends Object {
  * Standard output stream.
  *
  * @var filehandle
+ * @access public
  */
 	var $stdout;
 /**
  * Standard error stream.
  *
  * @var filehandle
+ * @access public
  */
 	var $stderr;
 /**
  * Class constructor.
  *
- * @param string $method
- * @param array $messages
- * @return unknown
+ * @param string $method Method dispatching an error
+ * @param array $messages Error messages
  */
 	function __construct($method, $messages) {
 		$this->stdout = fopen('php://stdout', 'w');
@@ -66,7 +65,8 @@ class ErrorHandler extends Object {
 /**
  * Displays an error page (e.g. 404 Not found).
  *
- * @param array $params
+ * @param array $params Parameters (code, name, and message)
+ * @access public
  */
 	function error($params) {
 		extract($params, EXTR_OVERWRITE);
@@ -76,7 +76,8 @@ class ErrorHandler extends Object {
 /**
  * Convenience method to display a 404 page.
  *
- * @param array $params
+ * @param array $params Parameters (url, message)
+ * @access public
  */
 	function error404($params) {
 		extract($params, EXTR_OVERWRITE);
@@ -88,132 +89,145 @@ class ErrorHandler extends Object {
 /**
  * Renders the Missing Controller web page.
  *
- * @param array $params
+ * @param array $params Parameters (className)
+ * @access public
  */
 	function missingController($params) {
 		extract($params, EXTR_OVERWRITE);
 		$controllerName = str_replace('Controller', '', $className);
-		$this->stderr("Missing Controller '".$controllerName."'\n");
-
+		$this->stderr(sprintf(__("Missing Controller '%s'", true), $controllerName));
 		exit();
 	}
 /**
  * Renders the Missing Action web page.
  *
- * @param array $params
+ * @param array $params Parameters (action, className)
+ * @access public
  */
 	function missingAction($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Method '".$action."' in '".$className."'\n");
+		$this->stderr(sprintf(__("Missing Method '%s' in '%s'", true), $action, $className));
 		exit();
 	}
 /**
  * Renders the Private Action web page.
  *
- * @param array $params
+ * @param array $params Parameters (action, className)
+ * @access public
  */
 	function privateAction($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Trying to access private method '".$action."' in '".$className."'\n");
+		$this->stderr(sprintf(__("Trying to access private method '%s' in '%s'", true), $action, $className));
 		exit();
 	}
 /**
  * Renders the Missing Table web page.
  *
- * @param array $params
+ * @param array $params Parameters (table, className)
+ * @access public
  */
 	function missingTable($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing database table '". $table ."' for model '" . $className."'\n");
+		$this->stderr(sprintf(__("Missing database table '%s' for model '%s'", true), $table, $className));
 		exit();
 	}
 /**
  * Renders the Missing Database web page.
  *
- * @param array $params
+ * @param array $params Parameters
+ * @access public
  */
 	function missingDatabase($params = array()) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing database\n");
+		$this->stderr(__("Missing Database", true));
 		exit();
 	}
 /**
  * Renders the Missing View web page.
  *
- * @param array $params
+ * @param array $params Parameters (file, action, className)
+ * @access public
  */
 	function missingView($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing View '".$file."' for '".$action."' in '".$className."'\n");
+		$this->stderr(sprintf(__("Missing View '%s' for '%s' in '%s'", true), $file, $action, $className));
 		exit();
 	}
 /**
  * Renders the Missing Layout web page.
  *
- * @param array $params
+ * @param array $params Parameters (file)
+ * @access public
  */
 	function missingLayout($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Layout '".$file."'\n");
+		$this->stderr(sprintf(__("Missing Layout '%s'", true), $file));
 		exit();
 	}
 /**
  * Renders the Database Connection web page.
  *
- * @param array $params
+ * @param array $params Parameters
+ * @access public
  */
 	function missingConnection($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Database Connection. Try 'cake bake'");
+		$this->stderr(__("Missing Database Connection. Try 'cake bake'", true));
 		exit();
 	}
 /**
  * Renders the Missing Helper file web page.
  *
- * @param array $params
+ * @param array $params Parameters (file, helper)
+ * @access public
  */
 	function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Helper file '".$file."' for '".Inflector::camelize($helper)."'\n");
+		$this->stderr(sprintf(__("Missing Helper file '%s' for '%s'", true), $file, Inflector::camelize($helper)));
 		exit();
 	}
 /**
  * Renders the Missing Helper class web page.
  *
- * @param array $params
+ * @param array $params Parameters (file, helper)
+ * @access public
  */
 	function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Helper class ".Inflector::camelize($helper)."' in '".$file."'\n");
+		$this->stderr(sprintf(__("Missing Helper class '%s' in '%s'", true), Inflector::camelize($helper), $file));
 		exit();
 	}
 /**
  * Renders the Missing Component file web page.
  *
- * @param array $params
+ * @param array $params Parameters (file, component)
+ * @access public
  */
 	function missingComponentFile($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Component file '".$file."' for '".Inflector::camelize($component)."' in '".$className."'\n");
+		$this->stderr(sprintf(__("Missing Component file '%s' for '%s'", true), $file, Inflector::camelize($component)));
 		exit();
 	}
 /**
  * Renders the Missing Component class web page.
  *
- * @param array $params
+ * @param array $params Parameters (file, component)
+ * @access public
  */
 	function missingComponentClass($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr("Missing Component class ".Inflector::camelize($component)."' in '".$file."'\n");
+		$this->stderr(sprintf(__("Missing Component class '%s' in '%s'", true), Inflector::camelize($component), $file));
 		exit();
 	}
 /**
  * Renders the Missing Model class web page.
  *
- * @param unknown_type $params
+ * @param array $params Parameters (className)
+ * @access public
  */
 	function missingModel($params) {
-		$this->stderr("Missing model '" . $params['className']."'\n");
+		extract($params, EXTR_OVERWRITE);
+		$this->stderr(sprintf(__("Missing model '%s'", true), $className));
 		exit();
 	}
 /**
@@ -221,6 +235,7 @@ class ErrorHandler extends Object {
  *
  * @param string $string String to output.
  * @param boolean $newline If true, the outputs gets an added newline.
+ * @access public
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
@@ -233,6 +248,7 @@ class ErrorHandler extends Object {
  * Outputs to the stderr filehandle.
  *
  * @param string $string Error text to output.
+ * @access public
  */
 	function stderr($string) {
 		fwrite($this->stderr, "Error: ". $string . "\n");
