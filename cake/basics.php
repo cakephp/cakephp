@@ -83,7 +83,6 @@
  * Loads all plugin models.
  *
  * @param  string  $plugin Name of plugin
- * @return
  * @deprecated
  */
 	function loadPluginModels($plugin) {
@@ -114,8 +113,11 @@
 		}
 	}
 /**
- * Loads custom view class.
+ * Loads custom view class. Use dot notation to load a view class
+ * from a plugin, e.g: plugin.MyView
  *
+ * @param string $viewClass Name of the view class to load (camelized)
+ * @return boolean Success
  */
 	function loadView($viewClass) {
 		if(strpos($viewClass, '.') !== false){
@@ -149,7 +151,12 @@
 		return true;
 	}
 /**
- * Loads a model by CamelCase name.
+ * Loads a model by CamelCase name if specified, otherwise load model
+ * basic requirements (model and AppModel classes). Use dot notation
+ * to load a model located inside a plugin folder.
+ *
+ * @param $name Name of model to load
+ * @return boolean Success
  */
 	function loadModel($name = null) {
 		if(!class_exists('Model')){
@@ -219,6 +226,14 @@
 		return true;
 	}
 
+/**
+ * Get CakePHP basic paths as an indexed array.
+ * Resulting array will contain array of paths
+ * indexed by: Models, Behaviors, Controllers,
+ * Components, and Helpers.
+ *
+ * @return array Array of paths indexed by type
+ */
 	function paths(){
 		$directories = Configure::getInstance();
 		$paths = array();
@@ -263,6 +278,8 @@
 	}
 /**
  * Loads all controllers.
+ *
+ * @return array Set of loaded controllers
  */
 	function loadControllers() {
 		$paths = Configure::getInstance();
@@ -585,7 +602,7 @@
 /**
  * Loads a behavior
  *
- * @param  string  $name Name of component
+ * @param  string  $name Name of behavior
  * @return boolean Success
  */
 	function loadBehavior($name) {
@@ -637,7 +654,12 @@
 		return $classes;
 	}
 /**
- * Loads configuration files
+ * Loads configuration files. Receives a set of configuration files
+ * to load.
+ * Example:
+ * <code>
+ * config('config1', 'config2');
+ * </code>
  *
  * @return boolean Success
  */
@@ -682,7 +704,6 @@
  * Require given files in the VENDORS directory. Takes optional number of parameters.
  *
  * @param string $name Filename without the .php part.
- *
  */
 	function vendor($name) {
 		$args = func_get_args();
@@ -736,7 +757,7 @@
 /**
  * Returns microtime for execution time checking
  *
- * @return integer
+ * @return float Microtime
  */
 	if (!function_exists('getMicrotime')) {
 		function getMicrotime() {
@@ -747,11 +768,11 @@
 /**
  * Sorts given $array by key $sortby.
  *
- * @param  array	$array
- * @param  string  $sortby
- * @param  string  $order  Sort order asc/desc (ascending or descending).
- * @param  integer $type
- * @return mixed
+ * @param array $array Array to sort
+ * @param string $sortby Sort by this key
+ * @param string $order  Sort order asc/desc (ascending or descending).
+ * @param integer $type Type of sorting to perform
+ * @return mixed Sorted array
  */
 	if (!function_exists('sortByKey')) {
 		function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
@@ -779,8 +800,8 @@
  * Combines given identical arrays by using the first array's values as keys,
  * and the second one's values as values. (Implemented for back-compatibility with PHP4)
  *
- * @param  array $a1
- * @param  array $a2
+ * @param  array $a1 Array to use for keys
+ * @param  array $a2 Array to use for values
  * @return mixed Outputs either combined array or false.
  */
 	if (!function_exists('array_combine')) {
@@ -807,8 +828,8 @@
 /**
  * Convenience method for htmlspecialchars.
  *
- * @param string $text
- * @return string
+ * @param string $text Text to wrap through htmlspecialchars
+ * @return string Wrapped text
  */
 	function h($text) {
 		if (is_array($text)) {
@@ -829,7 +850,7 @@
  * array('a', 'b')
  * </code>
  *
- * @return array
+ * @return array Array of given parameters
  */
 	function a() {
 		$args = func_get_args();
@@ -848,7 +869,7 @@
  * array('a'=>'b')
  * </code>
  *
- * @return array
+ * @return array Associative array
  */
 	function aa() {
 		$args = func_get_args();
@@ -874,6 +895,7 @@
  * Convenience method for strtolower().
  *
  * @param string $str String to lowercase
+ * @return string Lowercased string
  */
 	function low($str) {
 		return strtolower($str);
@@ -882,6 +904,7 @@
  * Convenience method for strtoupper().
  *
  * @param string $str String to uppercase
+ * @return string Uppercased string
  */
 	function up($str) {
 		return strtoupper($str);
@@ -892,6 +915,7 @@
  * @param string $search String to be replaced
  * @param string $replace String to insert
  * @param string $subject String to search
+ * @return string Replaced string
  */
 	function r($search, $replace, $subject) {
 		return str_replace($search, $replace, $subject);
@@ -901,7 +925,7 @@
  * the output of given array. Similar to debug().
  *
  * @see	debug()
- * @param array	$var
+ * @param array	$var Variable to print out
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
@@ -1052,6 +1076,7 @@
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
+ * @return boolean Success
  */
 	if (!function_exists('file_put_contents')) {
 		function file_put_contents($fileName, $data) {
@@ -1197,8 +1222,8 @@
 /**
  * Recursively strips slashes from all values in an array
  *
- * @param unknown_type $value
- * @return unknown
+ * @param array $value Array of values to strip slashes
+ * @return mixed What is returned from calling stripslashes
  */
 	function stripslashes_deep($value) {
 		if (is_array($value)) {
@@ -1213,9 +1238,9 @@
  *
  * Returns a translated string if one is found, or the submitted message if not found.
  *
- * @param string $singular
- * @param boolean $return
- * @return translated string if $return is false string will be echoed
+ * @param string $singular Text to translate
+ * @param boolean $return Set to true to return translated string, or false to echo
+ * @return mixed translated string if $return is false string will be echoed
  */
 	function __($singular, $return = false) {
 		if(!class_exists('I18n')) {
@@ -1235,11 +1260,11 @@
  * Returns correct plural form of message identified by $singular and $plural for count $count.
  * Some languages have more than one form for plural messages dependent on the count.
  *
- * @param string $singular
- * @param string $plural
- * @param integer $count
- * @param boolean $return
- * @return plural form of translated string if $return is false string will be echoed
+ * @param string $singular Singular text to translate
+ * @param string $plural Plural text
+ * @param integer $count Count
+ * @param boolean $return true to return, false to echo
+ * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
 		if(!class_exists('I18n')) {
@@ -1258,9 +1283,9 @@
  *
  * Allows you to override the current domain for a single message lookup.
  *
- * @param string $domain
- * @param string $msg
- * @param string $return
+ * @param string $domain Domain
+ * @param string $msg String to translate
+ * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
 	function __d($domain, $msg, $return = false) {
@@ -1280,11 +1305,11 @@
  * Returns correct plural form of message identified by $singular and $plural for count $count
  * from domain $domain
  *
- * @param string $domain
- * @param string $singular
- * @param string $plural
- * @param integer $count
- * @param boolean $return
+ * @param string $domain Domain
+ * @param string $singular Singular string to translate
+ * @param string $plural Plural
+ * @param integer $count Count
+ * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dn($domain, $singular, $plural, $count, $return = false) {
@@ -1315,10 +1340,10 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param string $domain
- * @param string $msg
- * @param integer $category
- * @param boolean $return
+ * @param string $domain Domain
+ * @param string $msg Message to translate
+ * @param integer $category Category
+ * @param boolean $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
 	function __dc($domain, $msg, $category, $return = false) {
@@ -1351,12 +1376,12 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param string $domain
- * @param string $singular
- * @param string $plural
- * @param integer $count
- * @param integer $category
- * @param boolean $return
+ * @param string $domain Domain
+ * @param string $singular Singular string to translate
+ * @param string $plural Plural
+ * @param integer $count Count
+ * @param integer $category Category
+ * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {
@@ -1384,9 +1409,9 @@
  * LC_MESSAGES  5
  * LC_ALL       6
  *
- * @param string $msg
- * @param integer $category
- * @param string $return
+ * @param string $msg String to translate
+ * @param integer $category Category
+ * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
 	function __c($msg, $category, $return = false) {
@@ -1405,9 +1430,9 @@
 /**
  * Computes the difference of arrays using keys for comparison
  *
- * @param array
- * @param array
- * @return array
+ * @param array First array
+ * @param array Second array
+ * @return array Array with different keys
  */
 	if (!function_exists('array_diff_key')) {
 		function array_diff_key() {
@@ -1438,9 +1463,9 @@
 /**
  * Computes the intersection of arrays using keys for comparison
  *
- * @param array
- * @param array
- * @return array
+ * @param array First array
+ * @param array Second array
+ * @return array Array with interesected keys
  */
 	if (!function_exists('array_intersect_key')) {
 		function array_intersect_key($arr1, $arr2) {
@@ -1455,6 +1480,8 @@
 	}
 /**
  * Shortcut to Log::write.
+ *
+ * @param string $message Message to write to log
  */
 	function LogError($message) {
 		if (!class_exists('CakeLog')) {
@@ -1467,7 +1494,7 @@
 /**
  * Searches include path for files
  *
- * @param string $file
+ * @param string $file File to look for
  * @return Full path to file if exists, otherwise false
  */
 	function fileExistsInPath($file) {
@@ -1486,7 +1513,7 @@
 /**
  * Convert forward slashes to underscores and removes first and last underscores in a string
  *
- * @param string
+ * @param string String to convert
  * @return string with underscore remove from start and end of string
  */
 	function convertSlash($string) {
@@ -1498,9 +1525,9 @@
 /**
  * chmod recursively on a directory
  *
- * @param string $path
- * @param int $mode
- * @return boolean
+ * @param string $path Path to chmod
+ * @param int $mode Mode to apply
+ * @return boolean Success
  */
 	function chmodr($path, $mode = 0755) {
 		if (!is_dir($path)) {
@@ -1533,10 +1560,15 @@
 	}
 /**
  * Wraps ternary operations.  If $condition is a non-empty value, $val1 is returned, otherwise $val2.
+ * Don't use for isset() conditions, or wrap your variable with @ operator:
+ * Example:
+ * <code>
+ * ife(isset($variable), @$variable, 'default');
+ * </code>
  *
  * @param mixed $condition Conditional expression
- * @param mixed $val1
- * @param mixed $val2
+ * @param mixed $val1 Value to return in case condition matches
+ * @param mixed $val2 Value to return if condition doesn't match
  * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
  */
 	function ife($condition, $val1 = null, $val2 = null) {
