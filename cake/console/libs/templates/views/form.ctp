@@ -27,7 +27,7 @@
 <div class="<?php echo $singularVar;?>">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php __('".Inflector::humanize($action).", true);?> <?php __('{$singularHumanName}');?>";?></legend>
+ 		<legend><?php echo "<?php __('".Inflector::humanize($action)."', true);?> <?php __('{$singularHumanName}');?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach($fields as $field) {
