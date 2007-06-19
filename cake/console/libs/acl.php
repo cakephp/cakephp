@@ -28,6 +28,8 @@
  */
 uses ('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 /**
+ * Shell for ACL management.
+ *
  * @package		cake
  * @subpackage	cake.cake.console.libs
  */
