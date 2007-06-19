@@ -26,8 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-define ('CORE_TEST_CASES', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS .  'tests' . DS . 'cases');
-define ('CORE_TEST_GROUPS', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS .  'tests' . DS . 'groups');
+define ('CORE_TEST_CASES', dirname(dirname(__FILE__)) . DS . 'cases');
+define ('CORE_TEST_GROUPS', dirname(dirname(__FILE__)) . DS . 'groups');
 define ('APP_TEST_CASES', APP . 'tests' .DS. 'cases');
 define ('APP_TEST_GROUPS', APP . 'tests' .DS. 'groups');
 /**
