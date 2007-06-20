@@ -79,7 +79,7 @@ class ApiShell extends Shell {
 				if (!preg_match('/' . Inflector::camelize($path) . '$/', $class)) {
 					$class .= Inflector::camelize($path);
 				}
-			} else if(low($path) === low($class)){
+			} elseif (low($path) === low($class)){
 				$class = Inflector::camelize($path);
 			}
 
@@ -103,7 +103,7 @@ class ApiShell extends Shell {
 			substr(Inflector::underscore($class), 0, strpos(Inflector::underscore($class), '_'))
 		);
 
-		foreach($candidates as $candidate) {
+		foreach ($candidates as $candidate) {
 			$File =& new File($path . $candidate . '.php');
 
 			if ($File->exists()) {
@@ -129,7 +129,7 @@ class ApiShell extends Shell {
 			$this->out(ucwords($class));
 			$this->hr();
 
-			foreach($parsed as $method) {
+			foreach ($parsed as $method) {
 				$this->out("\t" . $method['method'] . "(" . $method['parameters'] . ")", true);
 			}
 		}
@@ -188,7 +188,7 @@ class ApiShell extends Shell {
 
 		$contents = $File->read();
 
-		foreach($methods as $method) {
+		foreach ($methods as $method) {
 			if (strpos($method, '__') !== 0 && strpos($method, '_') !== 0) {
 				$regex = '/\s+function\s+(' . preg_quote($method, '/') . ')\s*\(([^{]*)\)\s*{/is';
 

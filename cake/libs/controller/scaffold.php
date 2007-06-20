@@ -149,7 +149,7 @@ class Scaffold extends Object {
 			$this->{$var} = $controller->{$var};
 		}
 		$this->redirect = array('action'=> 'index');
-		if(!is_null($this->plugin)) {
+		if (!is_null($this->plugin)) {
 			$this->redirect = '/' . $this->plugin . '/' . $this->viewPath;
 		}
 
@@ -157,18 +157,18 @@ class Scaffold extends Object {
 			$this->controller->helpers[] = 'Form';
 		}
 
-		if($this->controller->constructClasses() === false) {
+		if ($this->controller->constructClasses() === false) {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelKey, 'webroot' => '', 'base' => $this->controller->base)));
 		}
 
-		if(!empty($controller->uses) && class_exists($controller->uses[0])) {
+		if (!empty($controller->uses) && class_exists($controller->uses[0])) {
 			$controller->modelClass = $controller->uses[0];
 			$controller->modelKey = Inflector::underscore($controller->modelClass);
 		}
 		$this->modelClass = $controller->modelClass;
 		$this->modelKey = $controller->modelKey;
 
-		if(!is_object($this->controller->{$this->modelClass})) {
+		if (!is_object($this->controller->{$this->modelClass})) {
 			return $this->cakeError('missingModel', array(array('className' => $this->modelClass, 'webroot' => '', 'base' => $controller->base)));
 		}
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
@@ -207,7 +207,7 @@ class Scaffold extends Object {
 	function __scaffoldView($params) {
 		if ($this->controller->_beforeScaffold('view')) {
 
-			if(isset($params['pass'][0])){
+			if (isset($params['pass'][0])){
 				$this->ScaffoldModel->id = $params['pass'][0];
 			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)));
@@ -279,7 +279,7 @@ class Scaffold extends Object {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			}
 
-			if(!empty($this->controller->data)) {
+			if (!empty($this->controller->data)) {
 
 				$this->controller->cleanUpFields();
 
@@ -307,20 +307,20 @@ class Scaffold extends Object {
 			}
 
 			if (empty($this->controller->data)) {
-				if($this->ScaffoldModel->id) {
+				if ($this->ScaffoldModel->id) {
 					$this->controller->data = $this->ScaffoldModel->read();
 				} else {
 					$this->controller->data = $this->ScaffoldModel->create();
 				}
 			}
 			$associations = am($this->ScaffoldModel->belongsTo, $this->ScaffoldModel->hasAndBelongsToMany);
-			foreach($associations as $assocName => $assocData) {
+			foreach ($associations as $assocName => $assocData) {
 				$this->controller->set(Inflector::pluralize(Inflector::variable($assocName)), $this->ScaffoldModel->{$assocName}->generateList());
 			}
 
 			return $this->__scaffoldForm($formAction);
 
-		} else if($this->controller->_scaffoldError($action) === false) {
+		} elseif ($this->controller->_scaffoldError($action) === false) {
 			return $this->__scaffoldError();
 		}
 	}
@@ -334,7 +334,7 @@ class Scaffold extends Object {
 	function __scaffoldDelete($params = array()) {
 		if ($this->controller->_beforeScaffold('delete')) {
 
-			if(isset($params['pass'][0])){
+			if (isset($params['pass'][0])){
 				$id = $params['pass'][0];
 			} elseif (isset($this->controller->Session) && $this->controller->Session->valid != false) {
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)));
@@ -404,14 +404,14 @@ class Scaffold extends Object {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 
 		if (isset($db)) {
-			if(empty($this->scaffoldActions)) {
+			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
-			} else if(defined('CAKE_ADMIN') && $this->scaffoldActions == CAKE_ADMIN) {
+			} elseif (defined('CAKE_ADMIN') && $this->scaffoldActions == CAKE_ADMIN) {
 				$this->scaffoldActions = array(CAKE_ADMIN .'_index', CAKE_ADMIN .'_list', CAKE_ADMIN .'_view', CAKE_ADMIN .'_add', CAKE_ADMIN .'_create', CAKE_ADMIN .'_edit', CAKE_ADMIN .'_update', CAKE_ADMIN .'_delete');
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				if(defined('CAKE_ADMIN')) {
+				if (defined('CAKE_ADMIN')) {
 					$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
 				}
 				switch($params['action']) {
@@ -491,7 +491,7 @@ class Scaffold extends Object {
 			}
 		}
 
-		foreach($paths->viewPaths as $path) {
+		foreach ($paths->viewPaths as $path) {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {

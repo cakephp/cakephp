@@ -600,7 +600,7 @@ class HttpSocket extends CakeSocket {
 					$value = (int)$value;
 				}
 
-				if(preg_match_all('/\[([^\[\]]*)\]/iUs', $key, $matches)) {
+				if (preg_match_all('/\[([^\[\]]*)\]/iUs', $key, $matches)) {
 					$subKeys = $matches[1];
 					$rootKey = substr($key, 0, strpos($key, '['));
 					if (!empty($rootKey)) {

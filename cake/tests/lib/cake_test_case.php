@@ -125,7 +125,7 @@ class CakeTestCase extends UnitTestCase {
 			$classRegistry =& ClassRegistry::getInstance();
 			$models = array();
 
-			foreach($classRegistry->__map as $key => $name) {
+			foreach ($classRegistry->__map as $key => $name) {
 				$object =& $classRegistry->getObject(Inflector::camelize($key));
 				if (is_subclass_of($object, 'Model') && ((is_array($params['fixturize']) && in_array($object->name, $params['fixturize'])) || $params['fixturize'] === true)) {
 					$models[$object->name] = array (
@@ -143,7 +143,7 @@ class CakeTestCase extends UnitTestCase {
 					'drop' => array()
 				);
 
-				foreach($models as $model) {
+				foreach ($models as $model) {
 					$fixture =& new CakeTestFixture($this->db);
 
 					$fixture->name = $model['model'] . 'Test';
@@ -167,19 +167,19 @@ class CakeTestCase extends UnitTestCase {
 					}
 				}
 
-				foreach($this->_queries['create'] as $query) {
+				foreach ($this->_queries['create'] as $query) {
 					if (isset($query) && $query !== false) {
 						$this->db->_execute($query);
 					}
 				}
 
-				foreach($this->_queries['insert'] as $query) {
+				foreach ($this->_queries['insert'] as $query) {
 					if (isset($query) && $query !== false) {
 						$this->db->_execute($query);
 					}
 				}
 
-				foreach($models as $model) {
+				foreach ($models as $model) {
 					$object =& $classRegistry->getObject($model['key']);
 
 					if ($object !== false) {
@@ -198,7 +198,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function endController(&$controller, $params = array()) {
 		if (isset($this->db) && isset($this->_queries) && !empty($this->_queries) && !empty($this->_queries['drop'])) {
-			foreach($this->_queries['drop'] as $query) {
+			foreach ($this->_queries['drop'] as $query) {
 				if (isset($query) && $query !== false) {
 					$this->db->_execute($query);
 				}
@@ -258,7 +258,7 @@ class CakeTestCase extends UnitTestCase {
 
 				$result = array();
 
-				foreach($viewVars as $var) {
+				foreach ($viewVars as $var) {
 					$result[$var] = $view->getVar($var);
 				}
 
@@ -276,7 +276,7 @@ class CakeTestCase extends UnitTestCase {
 
 		$classRegistry =& ClassRegistry::getInstance();
 		$keys = array_keys($classRegistry->__objects);
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			$key = Inflector::camelize($key);
 			$classRegistry->removeObject($key);
 		}
@@ -310,11 +310,11 @@ class CakeTestCase extends UnitTestCase {
 
 		// Create records
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
-			foreach($this->_fixtures as $fixture) {
+			foreach ($this->_fixtures as $fixture) {
 				$inserts = $fixture->insert();
 
 				if (isset($inserts) && !empty($inserts)) {
-					foreach($inserts as $query) {
+					foreach ($inserts as $query) {
 						if (isset($query) && $query !== false) {
 							$this->db->_execute($query);
 						}
@@ -334,7 +334,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
-			foreach($this->_fixtures as $fixture) {
+			foreach ($this->_fixtures as $fixture) {
 				$query = $fixture->create();
 
 				if (isset($query) && $query !== false) {
@@ -350,7 +350,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function end() {
 		if (isset($this->_fixtures) && isset($this->db)) {
-			foreach(array_reverse($this->_fixtures) as $fixture) {
+			foreach (array_reverse($this->_fixtures) as $fixture) {
 				$query = $fixture->drop();
 
 				if (isset($query) && $query !== false) {
@@ -368,7 +368,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function after($method) {
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
-			foreach($this->_fixtures as $fixture) {
+			foreach ($this->_fixtures as $fixture) {
 				$query = $fixture->truncate();
 
 				if (isset($query) && $query !== false) {
@@ -451,7 +451,7 @@ class CakeTestCase extends UnitTestCase {
 
 		$this->_fixtures = array();
 
-		foreach($this->fixtures as $index => $fixture) {
+		foreach ($this->fixtures as $index => $fixture) {
 			$fixtureFile = null;
 
 			if (strpos($fixture, 'core.') === 0) {
@@ -459,7 +459,7 @@ class CakeTestCase extends UnitTestCase {
 				$fixturePaths = array(
 					CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
 				);
-			} else if (strpos($fixture, 'app.') === 0) {
+			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
 				$fixturePaths = array(
 					APP . 'tests' . DS . 'fixtures'
@@ -471,7 +471,7 @@ class CakeTestCase extends UnitTestCase {
 				);
 			}
 
-			foreach($fixturePaths as $path) {
+			foreach ($fixturePaths as $path) {
 				if (is_readable($path . DS . $fixture . '_fixture.php')) {
 					$fixtureFile = $path . DS . $fixture . '_fixture.php';
 					break;

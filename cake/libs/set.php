@@ -76,7 +76,7 @@ class Set extends Object {
 	function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
 
-		if(is_a($this, 'set')) {
+		if (is_a($this, 'set')) {
 			$backtrace = debug_backtrace();
 			$previousCall = low($backtrace[1]['class'].'::'.$backtrace[1]['function']);
 			if ($previousCall != 'set::merge') {
@@ -84,19 +84,19 @@ class Set extends Object {
 				array_unshift($args, null);
 			}
 		}
-		if(!isset($r)) {
+		if (!isset($r)) {
 			$r = (array)current($args);
 		}
 
-		while(($arg = next($args)) !== false) {
+		while (($arg = next($args)) !== false) {
 			if (is_a($arg, 'set')) {
 				$arg = $arg->get();
 			}
 
-			foreach((array)$arg as $key => $val)	 {
-				if(is_array($val) && isset($r[$key]) && is_array($r[$key])) {
+			foreach ((array)$arg as $key => $val)	 {
+				if (is_array($val) && isset($r[$key]) && is_array($r[$key])) {
 					$r[$key] = Set::merge($r[$key], $val);
-				} elseif(is_int($key)) {
+				} elseif (is_int($key)) {
 					$r[] = $val;
 				} else {
 					$r[$key] = $val;
@@ -135,7 +135,7 @@ class Set extends Object {
  */
 	function pushDiff($array = null, $array2 = null) {
 		if ($array2 !== null && is_array($array2)) {
-			foreach($array2 as $key => $value) {
+			foreach ($array2 as $key => $value) {
 				if (!array_key_exists($key, $array)) {
 					$array[$key] = $value;
 				} else {
@@ -147,7 +147,7 @@ class Set extends Object {
 			return $array;
 		}
 
-		if(!isset($this->value)) {
+		if (!isset($this->value)) {
 			$this->value = array();
 		}
 		$this->value = Set::pushDiff($this->value, Set::__array($array));
@@ -332,7 +332,7 @@ class Set extends Object {
 			return null;
 		}
 
-		foreach($path as $i => $key) {
+		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				if (isset($data[intval($key)])) {
 					$data = $data[intval($key)];
@@ -340,7 +340,7 @@ class Set extends Object {
 					return null;
 				}
 			} elseif ($key == '{n}') {
-				foreach($data as $j => $val) {
+				foreach ($data as $j => $val) {
 					$tmp[] = Set::extract($val, array_slice($path, $i + 1));
 				}
 				return $tmp;
@@ -374,7 +374,7 @@ class Set extends Object {
 		}
 		$_list =& $list;
 
-		foreach($path as $i => $key) {
+		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
@@ -407,7 +407,7 @@ class Set extends Object {
 		}
 		$_list =& $list;
 
-		foreach($path as $i => $key) {
+		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
@@ -445,7 +445,7 @@ class Set extends Object {
 			$path = explode('.', $path);
 		}
 
-		foreach($path as $i => $key) {
+		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key == '0') {
 				$key = intval($key);
 			}
@@ -486,7 +486,7 @@ class Set extends Object {
 		foreach ($val1 as $key => $val) {
 			if (isset($val2[$key]) && $val2[$key] != $val) {
 				$out[$key] = $val;
-			} else if(!array_key_exists($key, $val2)){
+			} elseif (!array_key_exists($key, $val2)){
 				$out[$key] = $val;
 			}
 		}

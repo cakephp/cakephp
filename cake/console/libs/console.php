@@ -155,7 +155,7 @@ class ConsoleShell extends Shell {
 
 										foreach ($result as $field => $value) {
 											if (is_array($value)) {
-												foreach($value as $field2 => $value2) {
+												foreach ($value as $field2 => $value2) {
 													$this->out("\t$field2: $value2");
 												}
 
@@ -168,7 +168,7 @@ class ConsoleShell extends Shell {
 								} else { // find() output
 									$this->out($idx);
 
-									foreach($results as $field => $value) {
+									foreach ($results as $field => $value) {
 										if (is_array($value)) {
 											foreach ($value as $field2 => $value2) {
 												$this->out("\t$field2: $value2");

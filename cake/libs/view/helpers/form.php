@@ -1231,17 +1231,17 @@ class FormHelper extends AppHelper {
 
 		switch ($name) {
 			case 'minute':
-				for($i = 0; $i < 60; $i++) {
+				for ($i = 0; $i < 60; $i++) {
 					$data[$i] = sprintf('%02d', $i);
 				}
 			break;
 			case 'hour':
-				for($i = 1; $i <= 12; $i++) {
+				for ($i = 1; $i <= 12; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
 			break;
 			case 'hour24':
-				for($i = 0; $i <= 23; $i++) {
+				for ($i = 0; $i <= 23; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
 			break;
@@ -1255,12 +1255,12 @@ class FormHelper extends AppHelper {
 				if (empty($max)) {
 					$max = 31;
 				}
-				for($i = $min; $i <= $max; $i++) {
+				for ($i = $min; $i <= $max; $i++) {
 					$data[sprintf('%02d', $i)] = $i;
 				}
 			break;
 			case 'month':
-				for($i = 1; $i <= 12; $i++) {
+				for ($i = 1; $i <= 12; $i++) {
 					$data[sprintf("%02s", $i)] = strftime("%B", mktime(1,1,1,$i,1,1999));
 				}
 			break;

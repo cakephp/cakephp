@@ -33,7 +33,7 @@
 $file = $_GET['file'];
 $pos = strpos($file, '..');
 if ($pos === false) {
-	if(is_file('../../vendors/javascript/'.$file) && (preg_match('/(\/.+)\\.js/', $file)))
+	if (is_file('../../vendors/javascript/'.$file) && (preg_match('/(\/.+)\\.js/', $file)))
 	{
 		readfile('../../vendors/javascript/'.$file);
 	}

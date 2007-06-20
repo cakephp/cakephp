@@ -55,12 +55,12 @@ class ErrorHandler extends Object{
 		static $__previousError = null;
 
 		$allow = array('.', '/', '_', ' ', '-', '~');
-	    if(substr(PHP_OS,0,3) == "WIN") {
+	    if (substr(PHP_OS,0,3) == "WIN") {
             $allow = array_merge($allow, array('\\', ':') );
         }
 		$clean = new Sanitize();
 		$messages = $clean->paranoid($messages, $allow);
-		if(!class_exists('dispatcher')) {
+		if (!class_exists('dispatcher')) {
 			require CAKE . 'dispatcher.php';
 		}
 		$this->__dispatch =& new Dispatcher();
@@ -73,7 +73,7 @@ class ErrorHandler extends Object{
 			}
 
 			$this->controller =& new AppController();
-			if(!empty($this->controller->uses)) {
+			if (!empty($this->controller->uses)) {
 				$this->controller->constructClasses();
 			}
 			$this->controller->_initComponents();

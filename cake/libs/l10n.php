@@ -372,7 +372,7 @@ class L10n extends Object {
 			$this->charset = $this->__l10nCatalog[$this->__l10nMap[DEFAULT_LANGUAGE]]['charset'];
 		}
 
-		if($this->default) {
+		if ($this->default) {
 			$this->languagePath[2] = $this->__l10nCatalog[$this->default]['localeFallback'];
 		}
 		$this->found = true;
@@ -398,7 +398,7 @@ class L10n extends Object {
 				$this->locale = $this->__l10nCatalog[$langKey]['locale'];
 				$this->charset = $this->__l10nCatalog[$langKey]['charset'];
 
-				if($this->default) {
+				if ($this->default) {
 					$this->languagePath[2] = $this->__l10nCatalog[$this->default]['localeFallback'];
 				}
 				$this->found = true;

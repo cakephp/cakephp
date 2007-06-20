@@ -320,7 +320,7 @@ class Controller extends Object {
 				$merge[] = 'uses';
 			}
 
-			foreach($merge as $var) {
+			foreach ($merge as $var) {
 				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
 					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 				}
@@ -342,7 +342,7 @@ class Controller extends Object {
  * @access public
  */
 	function constructClasses() {
-		if($this->uses === null || ($this->uses === array())){
+		if ($this->uses === null || ($this->uses === array())){
 			return false;
 		}
 		if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
@@ -354,12 +354,12 @@ class Controller extends Object {
 		$object = null;
 		$plugin = null;
 
-		if($this->plugin) {
+		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
 		}
 
-		if($this->uses === false) {
-			if(!class_exists($this->modelClass)){
+		if ($this->uses === false) {
+			if (!class_exists($this->modelClass)){
 				loadModel($plugin . $this->modelClass);
 			}
 		}
@@ -393,13 +393,13 @@ class Controller extends Object {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 			$this->modelClass = $uses[0];
 
-			foreach($uses as $modelClass) {
+			foreach ($uses as $modelClass) {
 				$id = false;
 				$cached = false;
 				$object = null;
 				$modelKey = Inflector::underscore($modelClass);
 
-				if(!class_exists($modelClass)){
+				if (!class_exists($modelClass)){
 					loadModel($plugin . $modelClass);
 				}
 
@@ -538,11 +538,11 @@ class Controller extends Object {
 			$data = array($one => $two);
 		}
 
-		foreach($data as $name => $value) {
+		foreach ($data as $name => $value) {
 			if ($name == 'title') {
 				$this->pageTitle = $value;
 			} else {
-				if($two === null) {
+				if ($two === null) {
 					$this->viewVars[Inflector::variable($name)] = $value;
 				} else {
 					$this->viewVars[$name] = $value;
@@ -589,7 +589,7 @@ class Controller extends Object {
 		}
 
 		$errors = array();
-		foreach($objects as $object) {
+		foreach ($objects as $object) {
 			$this->{$object->name}->set($object->data);
 			$errors = array_merge($errors, $this->{$object->name}->invalidFields());
 		}
@@ -610,14 +610,14 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			if(strpos($viewClass, '.') !== false){
+			if (strpos($viewClass, '.') !== false){
 				list($plugin, $viewClass) = explode('.', $viewClass);
 			}
 			$viewClass = $viewClass . 'View';
 			loadView($this->view);
 		}
 
-		foreach($this->components as $c) {
+		foreach ($this->components as $c) {
 			$path = preg_split('/\/|\./', $c);
 			$c = $path[count($path) - 1];
 			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRender'))) {
@@ -631,7 +631,7 @@ class Controller extends Object {
 		$this->__viewClass =& new $viewClass($this);
 		if (!empty($this->modelNames)) {
 			$models = array();
-			foreach($this->modelNames as $currentModel) {
+			foreach ($this->modelNames as $currentModel) {
 				if (isset($this->$currentModel) && is_a($this->$currentModel, 'Model')) {
 					$models[] = Inflector::underscore($currentModel);
 				}
@@ -640,10 +640,10 @@ class Controller extends Object {
 				}
 			}
 			$models = array_diff(ClassRegistry::keys(), $models);
-			foreach($models as $currentModel) {
+			foreach ($models as $currentModel) {
 				if (ClassRegistry::isKeySet($currentModel)) {
 					$currentObject =& ClassRegistry::getObject($currentModel);
-					if(is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
+					if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
 						$this->__viewClass->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
 					}
 				}
@@ -667,7 +667,7 @@ class Controller extends Object {
 		if ($ref != null && defined('FULL_BASE_URL')) {
 			if (strpos($ref, $base) === 0) {
 				return substr($ref, strlen($base) - 1);
-			} elseif(!$local) {
+			} elseif (!$local) {
 				return $ref;
 			}
 		}
@@ -726,11 +726,11 @@ class Controller extends Object {
 		$modelKey = $this->modelKey;
 		$modelObj =& ClassRegistry::getObject($modelKey);
 
-		foreach($modelObj->_tableInfo->value as $column) {
+		foreach ($modelObj->_tableInfo->value as $column) {
 			$humanName = $column['name'];
  			if ($modelObj->isForeignKey($column['name'])) {
-				foreach($modelObj->belongsTo as $associationName => $assoc) {
-					if($column['name'] == $assoc['foreignKey']) {
+				foreach ($modelObj->belongsTo as $associationName => $assoc) {
+					if ($column['name'] == $assoc['foreignKey']) {
 						$humanName = Inflector::underscore($associationName);
 						$fkNames = $modelObj->keyToTable[$column['name']];
 						$fieldNames[$column['name']]['table'] = $fkNames[0];
@@ -794,7 +794,7 @@ class Controller extends Object {
 				case "float":
 					if (strcmp($column['name'], $this->$model->primaryKey) == 0) {
 						$fieldNames[$column['name']]['type'] = 'hidden';
-					} else if(isset($fieldNames[$column['name']]['foreignKey'])) {
+					} elseif (isset($fieldNames[$column['name']]['foreignKey'])) {
 						$fieldNames[$column['name']]['type'] = 'select';
 						$fieldNames[$column['name']]['options'] = array();
 
@@ -815,7 +815,7 @@ class Controller extends Object {
 					$fieldNames[$column['name']]['options'] = array();
 					$enumValues = split(',', $fieldLength);
 
-					foreach($enumValues as $enum) {
+					foreach ($enumValues as $enum) {
 						$enum = trim($enum, "'");
 						$fieldNames[$column['name']]['options'][$enum] = $enum;
 					}
@@ -841,7 +841,7 @@ class Controller extends Object {
 			}
 		}
 
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
+		foreach ($modelObj->hasAndBelongsToMany as $associationName => $assocData) {
 			$otherModelKey = Inflector::underscore($assocData['className']);
 			$otherModelObj = &ClassRegistry::getObject($otherModelKey);
 			if ($doCreateOptions) {
@@ -886,8 +886,8 @@ class Controller extends Object {
 			$op = '';
 		}
 
-		foreach($data as $model => $fields) {
-			foreach($fields as $field => $value) {
+		foreach ($data as $model => $fields) {
+			foreach ($fields as $field => $value) {
 				$key = $model . '.' . $field;
 				if (is_string($op)) {
 					$cond[$key] = $this->__postConditionMatch($op, $value);
@@ -942,16 +942,16 @@ class Controller extends Object {
 		if ($modelClass == null) {
 			$modelClass = $this->modelClass;
 		}
-		foreach($this->{$modelClass}->_tableInfo->value as $field) {
+		foreach ($this->{$modelClass}->_tableInfo->value as $field) {
 			$useNewDate = false;
 			$dateFields = array('Y'=>'_year', 'm'=>'_month', 'd'=>'_day', 'H'=>'_hour', 'i'=>'_min', 's'=>'_sec');
 			foreach ($dateFields as $default => $var) {
-				if(isset($this->data[$modelClass][$field['name'] . $var])) {
+				if (isset($this->data[$modelClass][$field['name'] . $var])) {
 					${$var} = $this->data[$modelClass][$field['name'] . $var];
 					 unset($this->data[$modelClass][$field['name'] . $var]);
 					 $useNewDate = true;
 				} else {
-					if($var == 'year') {
+					if ($var == 'year') {
 						${$var} = '0000';
 					} else {
 						${$var} = '00';
@@ -969,12 +969,12 @@ class Controller extends Object {
 			$newDate = null;
 			if (in_array($field['type'], array('datetime', 'timestamp')) && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day} {$_hour}:{$_min}:{$_sec}";
-			} else if ('date' == $field['type'] && $useNewDate) {
+			} elseif ('date' == $field['type'] && $useNewDate) {
 				$newDate = "{$_year}-{$_month}-{$_day}";
-			} else if ('time' == $field['type'] && $useNewDate) {
+			} elseif ('time' == $field['type'] && $useNewDate) {
 				$newDate = "{$_hour}:{$_min}:{$_sec}";
 			}
-			if($newDate && !in_array($field['name'], array('created', 'updated', 'modified'))) {
+			if ($newDate && !in_array($field['name'], array('created', 'updated', 'modified'))) {
 				$this->data[$modelClass][$field['name']] = $newDate;
 			}
 		}
@@ -1050,7 +1050,7 @@ class Controller extends Object {
 		$keys = array_keys($options);
 		$count = count($keys);
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if (!in_array($keys[$i], $vars)) {
 				unset($options[$keys[$i]]);
 			}
@@ -1081,7 +1081,7 @@ class Controller extends Object {
 		}
 		$pageCount = ceil($count / $limit);
 
-		if($page == 'last') {
+		if ($page == 'last') {
 			$options['page'] = $page = $pageCount;
 		}
 
@@ -1173,18 +1173,18 @@ class Controller extends Object {
  * @return unknown
  */
 	function _selectedArray($data, $key = 'id') {
-		if(!is_array($data)) {
+		if (!is_array($data)) {
 			$model = $data;
-			if(!empty($this->data[$model][$model])) {
+			if (!empty($this->data[$model][$model])) {
 				return $this->data[$model][$model];
 			}
-			if(!empty($this->data[$model])) {
+			if (!empty($this->data[$model])) {
 				$data = $this->data[$model];
 			}
 		}
 		$array = array();
-		if(!empty($data)) {
-			foreach($data as $var) {
+		if (!empty($data)) {
+			foreach ($data as $var) {
 				$array[$var[$key]] = $var[$key];
 			}
 		}

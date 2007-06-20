@@ -280,7 +280,7 @@ class DboFirebird extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = array()) {
-		foreach($fields as $i => $field) {
+		foreach ($fields as $i => $field) {
 			if ($field == $model->primaryKey) {
 				unset ($fields[$i]);
 				unset ($values[$i]);
@@ -445,7 +445,7 @@ class DboFirebird extends DboSource {
 		$index = 0;
 		$j = 0;
 
-		while($j < $num_fields) {
+		while ($j < $num_fields) {
 			$column = ibase_field_info($results, $j);
 			$this->map[$index++] = array(ucfirst(strtolower($this->modeltmp)), strtolower($column[1]));
 			$j++;
@@ -481,7 +481,7 @@ class DboFirebird extends DboSource {
 			$resultRow = array();
 			$i = 0;
 
-			foreach($row as $index => $field) {
+			foreach ($row as $index => $field) {
 				list($table, $column) = $this->map[$index];
 
 				if (trim($table) == "") {

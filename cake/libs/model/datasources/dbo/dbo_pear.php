@@ -122,14 +122,14 @@ class DboPear extends DboSource{
 
 				$result=$this->all($sql);
 
-				foreach($result as $item) {
+				foreach ($result as $item) {
 					 $tables[] = $item['name'];
 				}
-		  } elseif('mysql' == $driver) {
+		  } elseif ('mysql' == $driver) {
 				$result=array();
 				$result=mysql_list_tables($this->config['database']);
 
-				while($item = mysql_fetch_array($result)) {
+				while ($item = mysql_fetch_array($result)) {
 					 $tables[] = $item[0];
 				}
 		  } else {
@@ -154,7 +154,7 @@ class DboPear extends DboSource{
 		  $data  =$this->_pear->tableInfo($tableName);
 		  $fields=false;
 
-		  foreach($data as $item) {
+		  foreach ($data as $item) {
 				$fields[] = array('name' => $item['name'],
 							'type' => $item['type']);
 		  }

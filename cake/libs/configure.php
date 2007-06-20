@@ -114,19 +114,19 @@ class Configure extends Object {
 	function write($config, $value = null){
 		$_this =& Configure::getInstance();
 
-		if(!is_array($config) && $value !== null) {
+		if (!is_array($config) && $value !== null) {
 			$name = $_this->__configVarNames($config);
 
-			if(count($name) > 1){
+			if (count($name) > 1){
 				$_this->{$name[0]}[$name[1]] = $value;
 			} else {
 				$_this->{$name[0]} = $value;
 			}
 		} else {
 
-			foreach($config as $names => $value){
+			foreach ($config as $names => $value){
 				$name = $_this->__configVarNames($names);
-				if(count($name) > 1){
+				if (count($name) > 1){
 					$_this->{$name[0]}[$name[1]] = $value;
 				} else {
 					$_this->{$name[0]} = $value;
@@ -142,7 +142,7 @@ class Configure extends Object {
 					ini_set('display_errors', 1);
 				}
 
-				if(!class_exists('Debugger')) {
+				if (!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
 				if (!class_exists('CakeLog')) {
@@ -168,21 +168,21 @@ class Configure extends Object {
  */
 	function read($var = 'debug'){
 		$_this =& Configure::getInstance();
-		if($var === 'debug') {
-			if(!isset($_this->debug)){
+		if ($var === 'debug') {
+			if (!isset($_this->debug)){
 				$_this->debug = DEBUG;
 			}
 			return $_this->debug;
 		}
 
 		$name = $_this->__configVarNames($var);
-		if(count($name) > 1){
-			if(isset($_this->{$name[0]}[$name[1]])) {
+		if (count($name) > 1){
+			if (isset($_this->{$name[0]}[$name[1]])) {
 				return $_this->{$name[0]}[$name[1]];
 			}
 			return null;
 		} else {
-			if(isset($_this->{$name[0]})) {
+			if (isset($_this->{$name[0]})) {
 				return $_this->{$name[0]};
 			}
 			return null;
@@ -202,7 +202,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 
 		$name = $_this->__configVarNames($var);
-		if(count($name) > 1){
+		if (count($name) > 1){
 			unset($_this->{$name[0]}[$name[1]]);
 		} else {
 			unset($_this->{$name[0]});
@@ -230,7 +230,7 @@ class Configure extends Object {
 			return false;
 		}
 
-		if(!isset($config)){
+		if (!isset($config)){
 			trigger_error(sprintf(__("Configure::load() - no variable \$config found in %s.php", true), $fileName), E_USER_WARNING);
 			return false;
 		}
@@ -246,7 +246,7 @@ class Configure extends Object {
  */
 	function version() {
 		$_this =& Configure::getInstance();
-		if(!isset($_this->Cake['version'])) {
+		if (!isset($_this->Cake['version'])) {
 			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
 			$_this->write($config);
 		}
@@ -268,9 +268,9 @@ class Configure extends Object {
 		$content = '';
 		foreach ($data as $key => $value) {
 			$content .= "\$config['$type']['$key']";
-			if(is_array($value)){
+			if (is_array($value)){
 				$content .= " = array(";
-				foreach($value as $key1 => $value2){
+				foreach ($value as $key1 => $value2){
 					$value2 = addslashes($value2);
 					$content .= "'$key1' => '$value2', ";
 				}
@@ -280,7 +280,7 @@ class Configure extends Object {
 				$content .= " = '$value';\n";
 			}
 		}
-		if(is_null($type)) {
+		if (is_null($type)) {
 			$write = false;
 		}
 		$_this->__writeConfig($content, $name, $write);
@@ -304,16 +304,16 @@ class Configure extends Object {
 		}
 
 		$cache = cache('persistent' . DS . $name . '.php', null, $expires);
-		if($cache === null){
+		if ($cache === null){
 			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n", $expires);
 		}
 
-		if($write === true){
-			if(!class_exists('File')){
+		if ($write === true){
+			if (!class_exists('File')){
 				uses('File');
 			}
 			$fileClass = new File($file);
-			if($fileClass->writable()) {
+			if ($fileClass->writable()) {
 				$fileClass->append($content);
 			}
 		}
@@ -345,7 +345,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->modelPaths[] = MODELS;
 		if (isset($modelPaths)) {
-			foreach($modelPaths as $value) {
+			foreach ($modelPaths as $value) {
 				$_this->modelPaths[] = $value;
 			}
 		}
@@ -360,7 +360,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->viewPaths[] = VIEWS;
 		if (isset($viewPaths)) {
-			foreach($viewPaths as $value) {
+			foreach ($viewPaths as $value) {
 				$_this->viewPaths[] = $value;
 			}
 		}
@@ -375,7 +375,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->controllerPaths[] = CONTROLLERS;
 		if (isset($controllerPaths)) {
-			foreach($controllerPaths as $value) {
+			foreach ($controllerPaths as $value) {
 				$_this->controllerPaths[] = $value;
 			}
 		}
@@ -390,7 +390,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->helperPaths[] = HELPERS;
 		if (isset($helperPaths)) {
-			foreach($helperPaths as $value) {
+			foreach ($helperPaths as $value) {
 				$_this->helperPaths[] = $value;
 			}
 		}
@@ -405,7 +405,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->componentPaths[] = COMPONENTS;
 		if (isset($componentPaths)) {
-			foreach($componentPaths as $value) {
+			foreach ($componentPaths as $value) {
 				$_this->componentPaths[] = $value;
 			}
 		}
@@ -420,7 +420,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$_this->behaviorPaths[] = BEHAVIORS;
 		if (isset($behaviorPaths)) {
-			foreach($behaviorPaths as $value) {
+			foreach ($behaviorPaths as $value) {
 				$_this->behaviorPaths[] = $value;
 			}
 		}

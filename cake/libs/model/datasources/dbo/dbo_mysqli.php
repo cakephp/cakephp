@@ -199,7 +199,7 @@ class DboMysqli extends DboSource {
 			return 'NULL';
 		}
 
-		if($data === '') {
+		if ($data === '') {
 			return  "''";
 		}
 
@@ -210,7 +210,7 @@ class DboMysqli extends DboSource {
 			case 'integer' :
 			case 'float' :
 			case null :
-				if(is_numeric($data)) {
+				if (is_numeric($data)) {
 					break;
 				}
 			default:

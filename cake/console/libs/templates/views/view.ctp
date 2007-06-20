@@ -29,18 +29,18 @@
 	<dl>
 <?php
 $i = 0;
-foreach($fields as $field) {
+foreach ($fields as $field) {
 	$class = null;
-	if($i++ % 2 == 0) {
+	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
 
-	if(in_array($field['name'], array_keys($foreignKeys))) {
+	if (in_array($field['name'], array_keys($foreignKeys))) {
 		$otherModelClass = $foreignKeys[$field['name']][1];
 		$otherModelKey = Inflector::underscore($otherModelClass);
 		$otherControllerName = Inflector::pluralize($otherModelClass);
 		$otherControllerPath = Inflector::underscore($otherControllerName);
-		if(isset($foreignKeys[$field['name']][2])) {
+		if (isset($foreignKeys[$field['name']][2])) {
 			$otherModelClass = $foreignKeys[$field['name']][2];
 		}
 		$otherSingularVar = Inflector::variable($otherModelClass);
@@ -65,9 +65,9 @@ foreach($fields as $field) {
 	echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index')); ?> </li>\n";
 	echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$singularHumanName}', true), array('action'=>'add')); ?> </li>\n";
 
-	foreach($foreignKeys as $field => $value) {
+	foreach ($foreignKeys as $field => $value) {
 		$otherModelClass = $value['1'];
-		if($otherModelClass != $modelClass) {
+		if ($otherModelClass != $modelClass) {
 			$otherModelKey = Inflector::underscore($otherModelClass);
 			$otherControllerName = Inflector::pluralize($otherModelClass);
 			$otherControllerPath = Inflector::underscore($otherControllerName);
@@ -96,13 +96,13 @@ foreach ($hasOne as $assocName => $assocData):
 ?>
 <div class="related">
 	<h3><?php echo "<?php  __('Related');?> <?php __('{$otherSingularHumanName}');?>";?></h3>
-	<?php echo "<?php if(!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
+	<?php echo "<?php if (!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<dl>
 <?php
 		$i = 0;
-		foreach($otherFields as $field) {
+		foreach ($otherFields as $field) {
 			$class = null;
-			if($i++ % 2 == 0) {
+			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
 
@@ -124,7 +124,7 @@ endforeach;
 
 $relations = array_merge($hasMany, $hasAndBelongsToMany);
 $i = 0;
-foreach($relations as $assocName => $assocData):
+foreach ($relations as $assocName => $assocData):
 	$otherModelKey = Inflector::underscore($assocData['className']);
 	$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 	$otherControllerPath = Inflector::pluralize($otherModelKey);
@@ -138,11 +138,11 @@ foreach($relations as $assocName => $assocData):
 ?>
 <div class="related">
 	<h3><?php echo "<?php  __('Related');?> <?php __('{$otherPluralHumanName}');?>";?></h3>
-	<?php echo "<?php if(!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
+	<?php echo "<?php if (!empty(\${$singularVar}['{$assocName}'])):?>\n";?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>
 <?php
-		foreach($otherFields as $field) {
+		foreach ($otherFields as $field) {
 			echo "\t\t<th>".Inflector::humanize($field['name'])."</th>\n";
 		}
 ?>
@@ -151,15 +151,15 @@ foreach($relations as $assocName => $assocData):
 <?php
 echo "\t<?php
 		\$i = 0;
-		foreach(\${$singularVar}['{$assocName}'] as \${$otherSingularVar}):
+		foreach (\${$singularVar}['{$assocName}'] as \${$otherSingularVar}):
 			\$class = null;
-			if(\$i++ % 2 == 0) {
+			if (\$i++ % 2 == 0) {
 				\$class = ' class=\"altrow\"';
 			}
 		?>\n";
 		echo "\t\t<tr<?php echo \$class;?>>\n";
 
-			foreach($otherFields as $field) {
+			foreach ($otherFields as $field) {
 				echo "\t\t\t<td><?php echo \${$otherSingularVar}['{$field['name']}'];?></td>\n";
 			}
 

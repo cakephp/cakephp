@@ -94,7 +94,7 @@ class TimeHelper extends AppHelper {
 
 		if ($this->isToday($date)) {
 			$ret = "Today, " . date("H:i", $date);
-		} elseif($this->wasYesterday($date)) {
+		} elseif ($this->wasYesterday($date)) {
 			$ret = "Yesterday, " . date("H:i", $date);
 		} else {
 			$ret = date("M jS{$y}, H:i", $date);
@@ -280,15 +280,15 @@ class TimeHelper extends AppHelper {
 				// weeks and days
 				$relative_date .= ($relative_date ? ', ' : '') . $weeks . ' week' . ($weeks > 1 ? 's' : '');
 				$relative_date .= $days > 0 ? ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '') : '';
-			} elseif($days > 0) {
+			} elseif ($days > 0) {
 				// days and hours
 				$relative_date .= ($relative_date ? ', ' : '') . $days . ' day' . ($days > 1 ? 's' : '');
 				$relative_date .= $hours > 0 ? ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '') : '';
-			} elseif($hours > 0) {
+			} elseif ($hours > 0) {
 				// hours and minutes
 				$relative_date .= ($relative_date ? ', ' : '') . $hours . ' hour' . ($hours > 1 ? 's' : '');
 				$relative_date .= $minutes > 0 ? ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '') : '';
-			} elseif($minutes > 0) {
+			} elseif ($minutes > 0) {
 				// minutes only
 				$relative_date .= ($relative_date ? ', ' : '') . $minutes . ' minute' . ($minutes > 1 ? 's' : '');
 			} else {

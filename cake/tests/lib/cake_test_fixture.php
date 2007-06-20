@@ -57,7 +57,7 @@ class CakeTestFixture extends Object {
 				$import = am(array('records' => false), ife(is_array($this->import), $this->import, array()));
 
 				$import['model'] = ife(is_array($this->import), $this->import['model'], $this->import);
-			} else if (isset($this->import['table'])) {
+			} elseif (isset($this->import['table'])) {
 				$import = am(array('connection' => 'default', 'records' => false), $this->import);
 			}
 
@@ -71,7 +71,7 @@ class CakeTestFixture extends Object {
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 
 				$this->primaryKey = array( $model->primaryKey );
-			} else if (isset($import['table'])) {
+			} elseif (isset($import['table'])) {
 				$model =& new stdClass();
 				$modelDb =& ConnectionManager::getDataSource($import['connection']);
 
@@ -96,7 +96,7 @@ class CakeTestFixture extends Object {
 					'limit' => null
 				);
 
-				foreach($query['fields'] as $index => $field) {
+				foreach ($query['fields'] as $index => $field) {
 					$query['fields'][$index] = $modelDb->name($query['alias']) . '.' . $modelDb->name($field);
 				}
 
@@ -125,7 +125,7 @@ class CakeTestFixture extends Object {
 		}
 
 		if (isset($this->fields)) {
-			foreach($this->fields as $index => $field) {
+			foreach ($this->fields as $index => $field) {
 				if (empty($field['default'])) {
 					unset($this->fields[$index]['default']);
 				}
@@ -147,10 +147,10 @@ class CakeTestFixture extends Object {
 
 			$create = 'CREATE TABLE ' . $this->db->name($this->db->config['prefix'] . $this->table) . ' (' . "\n";
 
-			foreach($this->fields as $field => $attributes) {
+			foreach ($this->fields as $field => $attributes) {
 				if (!is_array($attributes)) {
 					$attributes = array('type' => $attributes);
-				} else if (isset($attributes['key']) && low($attributes['key']) == 'primary' && !isset($this->primaryKey)) {
+				} elseif (isset($attributes['key']) && low($attributes['key']) == 'primary' && !isset($this->primaryKey)) {
 					$this->primaryKey = array ( $field );
 				}
 
@@ -165,7 +165,7 @@ class CakeTestFixture extends Object {
 			}
 
 			if (isset($this->primaryKey)) {
-				foreach($this->primaryKey as $index => $field) {
+				foreach ($this->primaryKey as $index => $field) {
 					$this->primaryKey[$index] = $this->db->name($field);
 				}
 			}
@@ -223,20 +223,20 @@ class CakeTestFixture extends Object {
 			$inserts = array();
 
 			if (isset($this->records) && !empty($this->records)) {
-				foreach($this->records as $record) {
+				foreach ($this->records as $record) {
 					$fields = array_keys($record);
 					$values = array_values($record);
 
 					$insert = 'INSERT INTO ' . $this->db->name($this->db->config['prefix'] . $this->table) . '(';
 
-					foreach($fields as $field) {
+					foreach ($fields as $field) {
 						$insert .= $this->db->name($field) . ',';
 					}
 					$insert = substr($insert, 0, -1);
 
 					$insert .= ') VALUES (';
 
-					foreach($values as $values) {
+					foreach ($values as $values) {
 						$insert .= $this->db->value($values) . ',';
 					}
 					$insert = substr($insert, 0, -1);

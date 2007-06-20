@@ -47,13 +47,13 @@ class Sanitize{
 	function paranoid($string, $allowed = array()) {
 		$allow = null;
 		if (!empty($allowed)) {
-			foreach($allowed as $value) {
+			foreach ($allowed as $value) {
 				$allow .= "\\$value";
 			}
 		}
 
 		if (is_array($string)) {
-			foreach($string as $key => $clean) {
+			foreach ($string as $key => $clean) {
 				$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $clean);
 			}
 		} else {
@@ -153,7 +153,7 @@ class Sanitize{
 		$params = params(func_get_args());
 		$str = $params[0];
 
-		for($i = 1; $i < count($params); $i++) {
+		for ($i = 1; $i < count($params); $i++) {
 			$str = preg_replace('/<' . $params[$i] . '[^>]*>/i', '', $str);
 			$str = preg_replace('/<\/' . $params[$i] . '[^>]*>/i', '', $str);
 		}
@@ -209,7 +209,7 @@ class Sanitize{
  * @static
  */
 	function formatColumns(&$model) {
-		foreach($model->data as $name => $values) {
+		foreach ($model->data as $name => $values) {
 			if ($name == $model->name) {
 				$curModel =& $model;
 			} elseif (isset($model->{$name}) && is_object($model->{$name}) && is_subclass_of($model->{$name}, 'Model')) {
@@ -219,7 +219,7 @@ class Sanitize{
 			}
 
 			if ($curModel != null) {
-				foreach($values as $column => $data) {
+				foreach ($values as $column => $data) {
 					$colType = $curModel->getColumnType($column);
 
 					if ($colType != null) {

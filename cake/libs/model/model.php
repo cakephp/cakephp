@@ -368,9 +368,9 @@ class Model extends Overloadable {
 
 		$this->id = $id;
 
-		if($table === false) {
+		if ($table === false) {
 			$this->useTable = false;
-		} else if($table) {
+		} elseif ($table) {
 			$this->useTable = $table;
 		}
 
@@ -485,7 +485,7 @@ class Model extends Overloadable {
 			return $this->behaviors[$it[1]]->{$it[0]}($this, $params);
 		}
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if (strpos($methods[$i], '/') === 0 && preg_match($methods[$i] . 'i', $method)) {
 				return call_user_func_array(array($this->behaviors[$call[$i][1]], $call[$i][0]), $pass);
 			}
@@ -514,16 +514,16 @@ class Model extends Overloadable {
 			$model = array($model => $options);
 		}
 
-		foreach($model as $name => $options) {
+		foreach ($model as $name => $options) {
 			if (isset($options['type'])) {
 				$assoc = $options['type'];
 			} elseif (isset($options[0])) {
 				$assoc = $options[0];
 			}
-			if(!$permanent) {
+			if (!$permanent) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
-			foreach($model as $key => $value) {
+			foreach ($model as $key => $value) {
 				$assocName = $key;
 				$modelName = $key;
 
@@ -549,12 +549,12 @@ class Model extends Overloadable {
  */
 	function bindModel($params, $reset = true) {
 
-		foreach($params as $assoc => $model) {
-			if($reset === true) {
+		foreach ($params as $assoc => $model) {
+			if ($reset === true) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 
-			foreach($model as $key => $value) {
+			foreach ($model as $key => $value) {
 				$assocName = $key;
 
 				if (is_numeric($key)) {
@@ -585,12 +585,12 @@ class Model extends Overloadable {
  * @return boolean Always true
  */
 	function unbindModel($params, $reset = true) {
-		foreach($params as $assoc => $models) {
-			if($reset === true) {
+		foreach ($params as $assoc => $models) {
+			if ($reset === true) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
 
-			foreach($models as $model) {
+			foreach ($models as $model) {
 				$this->__backAssociation = array_merge($this->__backAssociation, $this->{$assoc});
 				unset ($this->{$assoc}[$model]);
 			}
@@ -605,18 +605,18 @@ class Model extends Overloadable {
 	function __createLinks() {
 
 		// Convert all string-based associations to array based
-		foreach($this->__associations as $type) {
+		foreach ($this->__associations as $type) {
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
 
-				foreach($this->{$type} as $i => $className) {
+				foreach ($this->{$type} as $i => $className) {
 					$className = trim($className);
 					unset ($this->{$type}[$i]);
 					$this->{$type}[$className] = array();
 				}
 			}
 
-			foreach($this->{$type} as $assoc => $value) {
+			foreach ($this->{$type} as $assoc => $value) {
 				if (is_numeric($assoc)) {
 					unset ($this->{$type}[$assoc]);
 					$assoc = $value;
@@ -649,7 +649,7 @@ class Model extends Overloadable {
 	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
 
-		if(!class_exists($className)) {
+		if (!class_exists($className)) {
 			if (!loadModel($className)) {
 				return $this->cakeError('missingModel', array(array('className' => $className)));
 			}
@@ -686,10 +686,10 @@ class Model extends Overloadable {
  * @access private
  */
 	function __generateAssociation($type) {
-		foreach($this->{$type} as $assocKey => $assocData) {
+		foreach ($this->{$type} as $assocKey => $assocData) {
 			$class = $assocKey;
 
-			foreach($this->__associationKeys[$type] as $key) {
+			foreach ($this->__associationKeys[$type] as $key) {
 				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] == null) {
 					$data = '';
 
@@ -722,7 +722,7 @@ class Model extends Overloadable {
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
-					if($this->{$class}->name != $class) {
+					if ($this->{$class}->name != $class) {
 						$this->keyToTable[$this->{$type}[$assocKey][$key]][2] = $class;
 					}
 				}
@@ -807,9 +807,9 @@ class Model extends Overloadable {
 			$data = array($this->name => array($one => $two));
 		}
 
-		foreach($data as $n => $v) {
+		foreach ($data as $n => $v) {
 			if (is_array($v)) {
-				foreach($v as $x => $y) {
+				foreach ($v as $x => $y) {
 					if ($n == $this->name) {
 						if (isset($this->validationErrors[$x])) {
 							unset ($this->validationErrors[$x]);
@@ -965,7 +965,7 @@ class Model extends Overloadable {
 		if ($conditions === null) {
 			$conditions = array($this->name . '.' . $this->primaryKey => $this->id);
 		}
-		if($this->recursive >= 1) {
+		if ($this->recursive >= 1) {
 			$recursive = -1;
 		} else {
 			$recursive = $this->recursive;
@@ -1047,7 +1047,7 @@ class Model extends Overloadable {
 			$weHaveMulti = false;
 		}
 
-		foreach($this->data as $n => $v) {
+		foreach ($this->data as $n => $v) {
 			if (isset($weHaveMulti) && isset($v[$n]) && $count > 0 && count($this->hasAndBelongsToMany) > 0) {
 				$joined[] = $v;
 			} else {
@@ -1058,7 +1058,7 @@ class Model extends Overloadable {
 						}
 					}
 
-					foreach($v as $x => $y) {
+					foreach ($v as $x => $y) {
 						if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist)) {
 							$fields[] = $x;
 							$values[] = $y;
@@ -1142,8 +1142,8 @@ class Model extends Overloadable {
  */
 	function __saveMulti($joined, $id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		foreach($joined as $x => $y) {
-			foreach($y as $assoc => $value) {
+		foreach ($joined as $x => $y) {
+			foreach ($y as $assoc => $value) {
 				if (isset($this->hasAndBelongsToMany[$assoc])) {
 					$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
 					$mainKey[$assoc] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
@@ -1152,7 +1152,7 @@ class Model extends Overloadable {
 					$fields[$assoc]  = join(',', $keys);
 					unset($keys);
 
-					foreach($value as $update) {
+					foreach ($value as $update) {
 						if (!empty($update)) {
 							$values[]  = $db->value($id, $this->getColumnType($this->primaryKey));
 							$values[]  = $db->value($update);
@@ -1175,7 +1175,7 @@ class Model extends Overloadable {
 		if (isset($joinTable)) {
 			$total = count($joinTable);
 
-			if(is_array($newValue)) {
+			if (is_array($newValue)) {
 				foreach ($newValue as $loopAssoc => $val) {
 					$db =& ConnectionManager::getDataSource($this->useDbConfig);
 					$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
@@ -1183,7 +1183,7 @@ class Model extends Overloadable {
 
 					if (!empty($newValue[$loopAssoc])) {
 						$secondCount = count($newValue[$loopAssoc]);
-						for($x = 0; $x < $secondCount; $x++) {
+						for ($x = 0; $x < $secondCount; $x++) {
 							$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
 						}
 					}
@@ -1275,7 +1275,7 @@ class Model extends Overloadable {
 			$savedAssociatons = $this->__backAssociation;
 			$this->__backAssociation = array();
 		}
-		foreach(am($this->hasMany, $this->hasOne) as $assoc => $data) {
+		foreach (am($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 
 				$model =& $this->{$assoc};
@@ -1283,8 +1283,8 @@ class Model extends Overloadable {
 				$model->recursive = -1;
 				$records = $model->findAll(array($field => $id), $model->primaryKey);
 
-				if(!empty($records)) {
-					foreach($records as $record) {
+				if (!empty($records)) {
+					foreach ($records as $record) {
 						$model->delete($record[$model->name][$model->primaryKey]);
 					}
 				}
@@ -1303,13 +1303,13 @@ class Model extends Overloadable {
  */
 	function _deleteLinks($id) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		foreach($this->hasAndBelongsToMany as $assoc => $data) {
+		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			if (isset($data['with'])) {
 				$model =& $this->{$data['with']};
 				$records = $model->findAll(array($data['foreignKey'] => $id), $model->primaryKey, null, null, null, -1);
 
 				if (!empty($records)) {
-					foreach($records as $record) {
+					foreach ($records as $record) {
 						$model->delete($record[$model->name][$model->primaryKey]);
 					}
 				}
@@ -1479,7 +1479,7 @@ class Model extends Overloadable {
  * @access private
  */
 	function __resetAssociations() {
-		foreach($this->__associations as $type) {
+		foreach ($this->__associations as $type) {
 			if (isset($this->__backAssociation[$type])) {
 				$this->{$type} = $this->__backAssociation[$type];
 			}
@@ -1498,8 +1498,8 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$data = $db->fetchAll($data, $this->cacheQueries);
 
-		foreach($data as $key => $value) {
-			foreach($this->tableToModel as $key1 => $value1) {
+		foreach ($data as $key => $value) {
+			foreach ($this->tableToModel as $key1 => $value1) {
 				if (isset($data[$key][$key1])) {
 					$newData[$key][$value1] = $data[$key][$key1];
 				}
@@ -1594,7 +1594,7 @@ class Model extends Overloadable {
 		$out = array();
 		$sizeOf = sizeof($data);
 
-		for($ii = 0; $ii < $sizeOf; $ii++) {
+		for ($ii = 0; $ii < $sizeOf; $ii++) {
 			if (($data[$ii][$this->name]['parent_id'] == $root) || (($root === null) && ($data[$ii][$this->name]['parent_id'] == '0'))) {
 				$tmp = $data[$ii];
 
@@ -1692,7 +1692,7 @@ class Model extends Overloadable {
 
 		$Validation = new Validation();
 
-		foreach($this->validate as $fieldName => $ruleSet) {
+		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
 				$ruleSet = array($ruleSet);
 			}
@@ -1722,7 +1722,7 @@ class Model extends Overloadable {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
-						if(empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
+						if (empty($data[$fieldName]) && $data[$fieldName] != '0' && $validator['allowEmpty'] === true) {
 							break;
 						}
 						if (is_array($validator['rule'])) {
@@ -1788,7 +1788,7 @@ class Model extends Overloadable {
 		$foreignKeys = array();
 
 		if (count($this->belongsTo)) {
-			foreach($this->belongsTo as $assoc => $data) {
+			foreach ($this->belongsTo as $assoc => $data) {
 				$foreignKeys[] = $data['foreignKey'];
 			}
 		}
@@ -1822,15 +1822,15 @@ class Model extends Overloadable {
 		}
 		$recursive = $this->recursive;
 
-		if($groupPath == null && $recursive >= 1) {
+		if ($groupPath == null && $recursive >= 1) {
 			$this->recursive = -1;
-		} else if($groupPath && $recursive >= 1){
+		} elseif ($groupPath && $recursive >= 1){
 			$this->recursive = 0;
 		}
 		$result = $this->findAll($conditions, $fields, $order, $limit);
 		$this->recursive = $recursive;
 
-		if(!$result) {
+		if (!$result) {
 			return false;
 		}
 
@@ -1853,7 +1853,7 @@ class Model extends Overloadable {
 				if (!empty($group)) {
 					$c = count($keys);
 					for ($i = 0; $i < $c; $i++) {
-						if(!isset($group[$i])) {
+						if (!isset($group[$i])) {
 							$group[$i] = 0;
 						}
 						if (!isset($out[$group[$i]])) {
@@ -1911,7 +1911,7 @@ class Model extends Overloadable {
 			return false;
 		}
 
-		foreach($this->id as $id) {
+		foreach ($this->id as $id) {
 			return $id;
 		}
 
@@ -2107,8 +2107,8 @@ class Model extends Overloadable {
 			if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
 				$assoc[] = strtolower(Inflector::pluralize($this->name));
 
-				foreach($this->__associations as $key => $association) {
-					foreach($this->$association as $key => $className) {
+				foreach ($this->__associations as $key => $association) {
+					foreach ($this->$association as $key => $className) {
 						$check = strtolower(Inflector::pluralize($className['className']));
 
 						if (!in_array($check, $assoc)) {

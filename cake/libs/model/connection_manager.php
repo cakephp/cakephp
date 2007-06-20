@@ -155,9 +155,9 @@ class ConnectionManager extends Object {
 			return false;
 		}
 
-		if(file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
+		if (file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
-		} else if (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
+		} elseif (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
 			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
 		} else {
 			trigger_error(sprintf(__('Unable to load DataSource file %s.php', true), $conn['filename']), E_USER_ERROR);
@@ -179,7 +179,7 @@ class ConnectionManager extends Object {
 		$connections = get_object_vars($_this->config);
 
 		if ($connections != null) {
-			foreach($connections as $name => $config) {
+			foreach ($connections as $name => $config) {
 				$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
 			}
 			return $_this->_connectionsEnum;

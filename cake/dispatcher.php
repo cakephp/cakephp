@@ -111,14 +111,14 @@ class Dispatcher extends Object {
 			if (!loadController($ctrlName)) {
 				$pluginName = Inflector::camelize($params['action']);
 				if (!loadController($ctrlName . '.' . $pluginName)) {
-					if(preg_match('/([\\.]+)/', $ctrlName)) {
+					if (preg_match('/([\\.]+)/', $ctrlName)) {
 						Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
 
 						return $this->cakeError('error404',
 														array(array('url' => strtolower($ctrlName),
 																'message' => 'Was not found on this server',
 																'base' => $this->base)));
-					} elseif(!class_exists($ctrlClass)) {
+					} elseif (!class_exists($ctrlClass)) {
 						$missingController = true;
 					} else {
 						$params['plugin'] = null;
@@ -133,7 +133,7 @@ class Dispatcher extends Object {
 			}
 		}
 
-		if(isset($params['plugin'])) {
+		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 			$pluginName = Inflector::camelize($params['action']);
 			$pluginClass = $pluginName.'Controller';
@@ -144,7 +144,7 @@ class Dispatcher extends Object {
 			loadPluginModels($plugin);
 			$this->base = $this->base.'/'.Inflector::underscore($ctrlName);
 
-			if(empty($params['controller']) || !class_exists($pluginClass)) {
+			if (empty($params['controller']) || !class_exists($pluginClass)) {
 				$params['controller'] = Inflector::underscore($ctrlName);
 				$ctrlClass = $ctrlName.'Controller';
 				if (!is_null($params['action'])) {
@@ -158,8 +158,8 @@ class Dispatcher extends Object {
 			$params['action'] = 'index';
 		}
 
-		if(defined('CAKE_ADMIN')) {
-			if(isset($params[CAKE_ADMIN])) {
+		if (defined('CAKE_ADMIN')) {
+			if (isset($params[CAKE_ADMIN])) {
 				$this->admin = '/'.CAKE_ADMIN ;
 				$url = preg_replace('/'.CAKE_ADMIN.'\/?/', '', $url);
 				$params['action'] = CAKE_ADMIN.'_'.$params['action'];
@@ -168,7 +168,7 @@ class Dispatcher extends Object {
 			}
 		}
 		$base = Router::stripPlugin($this->base, $this->plugin);
-		if(defined('BASE_URL')) {
+		if (defined('BASE_URL')) {
 			$this->here = $base . $this->admin . $url;
 		} else {
 			$this->here = $base . $this->admin . '/' . $url;
@@ -191,11 +191,11 @@ class Dispatcher extends Object {
 		$classMethods = get_class_methods($controller);
 		$classVars = get_object_vars($controller);
 
-		if((in_array($params['action'], $classMethods) || in_array(strtolower($params['action']), $classMethods)) && strpos($params['action'], '_', 0) === 0) {
+		if ((in_array($params['action'], $classMethods) || in_array(strtolower($params['action']), $classMethods)) && strpos($params['action'], '_', 0) === 0) {
 			$privateAction = true;
 		}
 
-		if(!in_array($params['action'], $classMethods) && !in_array(strtolower($params['action']), $classMethods)) {
+		if (!in_array($params['action'], $classMethods) && !in_array(strtolower($params['action']), $classMethods)) {
 			$missingAction = true;
 		}
 
@@ -206,7 +206,7 @@ class Dispatcher extends Object {
 			$missingAction = true;
 		}
 
-		if(in_array('return', array_keys($params)) && $params['return'] == 1) {
+		if (in_array('return', array_keys($params)) && $params['return'] == 1) {
 			$controller->autoRender = false;
 		}
 
@@ -224,7 +224,7 @@ class Dispatcher extends Object {
 
 		$namedArgs = array();
 		if (is_array($controller->namedArgs)) {
-			if(array_key_exists($params['action'], $controller->namedArgs)) {
+			if (array_key_exists($params['action'], $controller->namedArgs)) {
 				$namedArgs = $controller->namedArgs[$params['action']];
 			} else {
 				$namedArgs = $controller->namedArgs;
@@ -241,18 +241,18 @@ class Dispatcher extends Object {
 				for ($i = 0; $i <= $c; $i++) {
 					if (isset($controller->passedArgs[$i]) && strpos($controller->passedArgs[$i], $controller->argSeparator) !== false) {
 						list($argKey, $argVal) = explode($controller->argSeparator, $controller->passedArgs[$i]);
-						if(empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
+						if (empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
 							$controller->passedArgs[$argKey] = $argVal;
 							$controller->namedArgs[$argKey] = $argVal;
 							unset($controller->passedArgs[$i]);
 							unset($params['pass'][$i]);
 						}
-					} else if($controller->argSeparator === '/') {
+					} elseif ($controller->argSeparator === '/') {
 						$ii = $i + 1;
-						if(isset($controller->passedArgs[$i]) && isset($controller->passedArgs[$ii])) {
+						if (isset($controller->passedArgs[$i]) && isset($controller->passedArgs[$ii])) {
 							$argKey = $controller->passedArgs[$i];
 							$argVal = $controller->passedArgs[$ii];
-							if(empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
+							if (empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
 								$controller->passedArgs[$argKey] = $argVal;
 								$controller->namedArgs[$argKey] = $argVal;
 								unset($controller->passedArgs[$i], $controller->passedArgs[$ii]);
@@ -292,14 +292,14 @@ class Dispatcher extends Object {
 				$controller->layout = $params['layout'];
 			}
 		}
-		foreach(array('components', 'helpers') as $var) {
+		foreach (array('components', 'helpers') as $var) {
 			if (isset($params[$var]) && !empty($params[$var]) && is_array($controller->{$var})) {
 				$diff = array_diff($params[$var], $controller->{$var});
 				$controller->{$var} = array_merge($controller->{$var}, $diff);
 			}
 		}
 
-		if(!is_null($controller->webservices)) {
+		if (!is_null($controller->webservices)) {
 			array_push($controller->components, $controller->webservices);
 			array_push($controller->helpers, $controller->webservices);
 			$component =& new Component($controller);
@@ -361,7 +361,7 @@ class Dispatcher extends Object {
 		}
 		$controller->output =& $output;
 
-		foreach($controller->components as $c) {
+		foreach ($controller->components as $c) {
 			$path = preg_split('/\/|\./', $c);
 			$c = $path[count($path) - 1];
 			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'shutdown'))) {
@@ -382,22 +382,22 @@ class Dispatcher extends Object {
  */
 	function start(&$controller) {
 		if (!empty($controller->beforeFilter)) {
-			if(is_array($controller->beforeFilter)) {
+			if (is_array($controller->beforeFilter)) {
 
-				foreach($controller->beforeFilter as $filter) {
-					if(is_callable(array($controller,$filter)) && $filter != 'beforeFilter') {
+				foreach ($controller->beforeFilter as $filter) {
+					if (is_callable(array($controller,$filter)) && $filter != 'beforeFilter') {
 						$controller->$filter();
 					}
 				}
 			} else {
-				if(is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter') {
+				if (is_callable(array($controller, $controller->beforeFilter)) && $controller->beforeFilter != 'beforeFilter') {
 					$controller->{$controller->beforeFilter}();
 				}
 			}
 		}
 		$controller->beforeFilter();
 
-		foreach($controller->components as $c) {
+		foreach ($controller->components as $c) {
 			$path = preg_split('/\/|\./', $c);
 			$c = $path[count($path) - 1];
 			if (isset($controller->{$c}) && is_object($controller->{$c}) && is_callable(array($controller->{$c}, 'startup'))) {
@@ -422,7 +422,7 @@ class Dispatcher extends Object {
 		$params = Router::parse($fromUrl);
 
 		if (ini_get('magic_quotes_gpc') == 1) {
-			if(!empty($_POST)) {
+			if (!empty($_POST)) {
 				$params['form'] = stripslashes_deep($_POST);
 			}
 		} else {
@@ -492,7 +492,7 @@ class Dispatcher extends Object {
 
 			if (preg_match('/^(.*)\/index\.php$/', $scriptName, $r)) {
 
-				if(!empty($r[1])) {
+				if (!empty($r[1])) {
 					return  $base.$r[1];
 				}
 			}
@@ -504,7 +504,7 @@ class Dispatcher extends Object {
 
 			if (preg_match('/^(.*)\\/'.$appDirName.'\\/'.$webrootDirName.'\\/index\\.php$/', $scriptName, $regs)) {
 
-				if(APP_DIR === 'app') {
+				if (APP_DIR === 'app') {
 					$appDir = null;
 				} else {
 					$appDir = '/'.APP_DIR;
@@ -533,7 +533,7 @@ class Dispatcher extends Object {
 	function _restructureParams($params) {
 		$params['controller'] = $params['action'];
 
-		if(isset($params['pass'][0])) {
+		if (isset($params['pass'][0])) {
 			$params['action'] = $params['pass'][0];
 			array_shift($params['pass']);
 		} else {

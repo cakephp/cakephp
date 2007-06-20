@@ -82,7 +82,7 @@ class FileEngine extends CacheEngine {
 			$dir = $folder->slashTerm($dir);
 		}
 
-		if(empty($dir) || !$folder->isAbsolute($dir) || !is_writable($dir)) {
+		if (empty($dir) || !$folder->isAbsolute($dir) || !is_writable($dir)) {
 			return false;
 		}
 
@@ -113,7 +113,7 @@ class FileEngine extends CacheEngine {
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		$serialized = serialize($value);
 
-		if(!$serialized) {
+		if (!$serialized) {
 			return false;
 		}
 		$expires = time() + $duration;
@@ -152,28 +152,28 @@ class FileEngine extends CacheEngine {
 	function read($key) {
 		$filename = $this->_getFilename($key);
 
-		if(!is_file($filename) || !is_readable($filename)) {
+		if (!is_file($filename) || !is_readable($filename)) {
 			return false;
 		}
 		$fp = fopen($filename, 'r');
 
-		if(!$fp) {
+		if (!$fp) {
 			return false;
 		}
 
-		if($this->_lock && !flock($fp, LOCK_SH)) {
+		if ($this->_lock && !flock($fp, LOCK_SH)) {
 			return false;
 		}
 		$expires = fgets($fp, 11);
 
-		if(intval($expires) < time()) {
+		if (intval($expires) < time()) {
 			fclose($fp);
 			unlink($filename);
 			return false;
 		}
 		$data = '';
 
-		while(!feof($fp)) {
+		while (!feof($fp)) {
 			$data .= fgets($fp, 4096);
 		}
 		$data = trim($data);
@@ -189,11 +189,11 @@ class FileEngine extends CacheEngine {
 	function _getExpiry($filename) {
 		$fp = fopen($filename, 'r');
 
-		if(!$fp) {
+		if (!$fp) {
 			return false;
 		}
 
-		if($this->_lock && !flock($fp, LOCK_SH)) {
+		if ($this->_lock && !flock($fp, LOCK_SH)) {
 			return false;
 		}
 		$expires = intval(fgets($fp, 11));
@@ -226,21 +226,21 @@ class FileEngine extends CacheEngine {
 			$threshold = $now - 86400;
 		}
 
-		while(($entry = $dir->read()) !== false) {
-			if(strpos($entry, $this->_prefix) !== 0) {
+		while (($entry = $dir->read()) !== false) {
+			if (strpos($entry, $this->_prefix) !== 0) {
 				continue;
 			}
 			$filename = $this->_dir.$entry;
 
-			if($checkExpiry) {
+			if ($checkExpiry) {
 				$mtime = filemtime($filename);
 
-				if($mtime === false || $mtime > $threshold) {
+				if ($mtime === false || $mtime > $threshold) {
 					continue;
 				}
 				$expires = $this->_getExpiry($filename);
 
-				if($expires > $now) {
+				if ($expires > $now) {
 					continue;
 				}
 			}
@@ -257,7 +257,7 @@ class FileEngine extends CacheEngine {
  */
 	function settings() {
 		$lock = 'false';
-		if($this->_lock) {
+		if ($this->_lock) {
 			$lock = 'true';
 		}
 		return array('class' => get_class($this),

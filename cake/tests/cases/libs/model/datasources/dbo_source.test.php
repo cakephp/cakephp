@@ -627,8 +627,8 @@ class DboSourceTest extends UnitTestCase {
 
 		$queryData = array();
 
-		foreach($this->model->Category2->__associations as $type) {
-			foreach($this->model->Category2->{$type} as $assoc => $assocData) {
+		foreach ($this->model->Category2->__associations as $type) {
+			foreach ($this->model->Category2->{$type} as $assoc => $assocData) {
 				$linkModel =& $this->model->Category2->{$assoc};
 				$external = isset($assocData['external']);
 
@@ -1279,11 +1279,11 @@ class DboSourceTest extends UnitTestCase {
 	}
 
 	function _buildRelatedModels(&$model) {
-		foreach($model->__associations as $type) {
-			foreach($model->{$type} as $assoc => $assocData) {
+		foreach ($model->__associations as $type) {
+			foreach ($model->{$type} as $assoc => $assocData) {
 				if (is_string($assocData)) {
 					$className = $assocData;
-				} else if (isset($assocData['className'])) {
+				} elseif (isset($assocData['className'])) {
 					$className = $assocData['className'];
 				}
 				$model->$className = new $className();

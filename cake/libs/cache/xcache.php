@@ -81,7 +81,7 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		if(xcache_isset($key)) {
+		if (xcache_isset($key)) {
 			return xcache_get($key);
 		}
 		return false;
@@ -106,8 +106,8 @@ class XcacheEngine extends CacheEngine {
 		$result = true;
 		$this->_phpAuth();
 
-		for($i = 0, $max = xcache_count(XC_TYPE_VAR); $i < $max; $i++) {
-			if(!xcache_clear_cache(XC_TYPE_VAR, $i)) {
+		for ($i = 0, $max = xcache_count(XC_TYPE_VAR); $i < $max; $i++) {
+			if (!xcache_clear_cache(XC_TYPE_VAR, $i)) {
 				$result = false;
 				break;
 			}
@@ -137,9 +137,9 @@ class XcacheEngine extends CacheEngine {
 		static $backup = array();
 		$keys = array('PHP_AUTH_USER', 'PHP_AUTH_PW');
 
-		foreach($keys as $key) {
-			if($reverse) {
-				if(isset($backup[$key])) {
+		foreach ($keys as $key) {
+			if ($reverse) {
+				if (isset($backup[$key])) {
 					$_SERVER[$key] = $backup[$key];
 					unset($backup[$key]);
 				} else {
@@ -147,7 +147,7 @@ class XcacheEngine extends CacheEngine {
 				}
 			} else {
 				$value = env($key);
-				if(!empty($value)) {
+				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
 				$varName = '_' . low($key);

@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if(!class_exists('File')) {
+if (!class_exists('File')) {
 	uses('file');
 }
 /**
@@ -43,7 +43,7 @@ class DbConfigTask extends Shell {
  * @return void
  */
 	function execute() {
-		if(empty($this->args)) {
+		if (empty($this->args)) {
 			$this->__interactive();
 		}
 	}
@@ -65,7 +65,7 @@ class DbConfigTask extends Shell {
 		while ($persistent == '') {
 			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
 		}
-		if(low($persistent) == 'n') {
+		if (low($persistent) == 'n') {
 			$persistent = 'false';
 		} else {
 			$persistent = 'true';
@@ -87,7 +87,7 @@ class DbConfigTask extends Shell {
 			$password = $this->in('Password:');
 			if ($password == '') {
 				$blank = $this->in('The password you supplied was empty. Use an empty password?', array('y', 'n'), 'n');
-				if($blank == 'y')
+				if ($blank == 'y')
 				{
 					$blankPassword = true;
 				}
@@ -103,12 +103,12 @@ class DbConfigTask extends Shell {
 		while ($prefix == '') {
 			$prefix = $this->in('Table Prefix?', null, 'n');
 		}
-		if(low($prefix) == 'n') {
+		if (low($prefix) == 'n') {
 			$prefix = null;
 		}
 
 		$config = compact('driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix');
-		while($this->__verify($config) == false) {
+		while ($this->__verify($config) == false) {
 			$this->__interactive();
 		}
 
@@ -162,7 +162,7 @@ class DbConfigTask extends Shell {
 		$config = am($defaults, $config);
 		extract($config);
 
-		if(is_dir(CONFIGS)) {
+		if (is_dir(CONFIGS)) {
 			$out = "<?php\n";
 			$out .= "class DATABASE_CONFIG {\n\n";
 			$out .= "\tvar \$default = array(\n";
@@ -172,7 +172,7 @@ class DbConfigTask extends Shell {
 			$out .= "\t\t'login' => '{$login}',\n";
 			$out .= "\t\t'password' => '{$password}',\n";
 			$out .= "\t\t'database' => '{$database}', \n";
-			if($schema) {
+			if ($schema) {
 				$out .= "\t\t'schema' => '{$schema}', \n";
 			}
 			$out .= "\t\t'prefix' => '{$prefix}' \n";

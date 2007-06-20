@@ -305,7 +305,7 @@ class JavascriptHelper extends AppHelper {
 			$files = scandir(JS);
 			$javascript = '';
 
-			foreach($files as $file) {
+			foreach ($files as $file) {
 				if (substr($file, -3) == '.js') {
 					$javascript .= file_get_contents(JS . "{$file}") . "\n\n";
 				}
@@ -345,7 +345,7 @@ class JavascriptHelper extends AppHelper {
 			$numeric = (array_values($keys) === array_keys(array_values($keys)));
 		}
 
-		foreach($data as $key => $val) {
+		foreach ($data as $key => $val) {
 			if (is_array($val) || is_object($val)) {
 				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
 			} else {

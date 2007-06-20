@@ -86,11 +86,11 @@ class Object {
  */
 	function requestAction($url, $extra = array()) {
 		if (!empty($url)) {
-			if(!class_exists('dispatcher')) {
+			if (!class_exists('dispatcher')) {
 				require CAKE . 'dispatcher.php';
 			}
 			$dispatcher =& new Dispatcher();
-			if(isset($this->plugin)){
+			if (isset($this->plugin)){
 				$extra['plugin'] = $this->plugin;
 			}
 			if (in_array('return', $extra, true)) {
@@ -242,12 +242,12 @@ class Object {
 		switch($type) {
 			case 'registry':
 				$vars = unserialize(${$name});
-				foreach($vars['0'] as $key => $value) {
+				foreach ($vars['0'] as $key => $value) {
 					loadModel(Inflector::classify($key));
 				}
 				unset($vars);
 				$vars = unserialize(${$name});
-				foreach($vars['0'] as $key => $value) {
+				foreach ($vars['0'] as $key => $value) {
 					ClassRegistry::addObject($key, $value);
 					unset ($value);
 				}

@@ -136,7 +136,7 @@ class RequestHandlerComponent extends Object {
 	function __construct() {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
 
-		foreach($this->__acceptTypes as $i => $type) {
+		foreach ($this->__acceptTypes as $i => $type) {
 			if (strpos($type, ';')) {
 				$type = explode(';', $type);
 				$this->__acceptTypes[$i] = $type[0];
@@ -389,14 +389,14 @@ class RequestHandlerComponent extends Object {
 		if ($type == null) {
 			return $this->mapType($this->__acceptTypes);
 
-		} else if(is_array($type)) {
-			foreach($type as $t) {
+		} elseif (is_array($type)) {
+			foreach ($type as $t) {
 				if ($this->accepts($t) == true) {
 					return true;
 				}
 			}
 			return false;
-		} else if(is_string($type)) {
+		} elseif (is_string($type)) {
 
 			if (!in_array($type, array_keys($this->__requestContent))) {
 				return false;
@@ -405,7 +405,7 @@ class RequestHandlerComponent extends Object {
 			$content = $this->__requestContent[$type];
 
 			if (is_array($content)) {
-				foreach($content as $c) {
+				foreach ($content as $c) {
 					if (in_array($c, $this->__acceptTypes)) {
 						return true;
 					}
@@ -433,14 +433,14 @@ class RequestHandlerComponent extends Object {
 		if ($type == null) {
 			return $this->mapType(env('CONTENT_TYPE'));
 
-		} else if(is_array($type)) {
-			foreach($type as $t) {
+		} elseif (is_array($type)) {
+			foreach ($type as $t) {
 				if ($this->requestedWith($t)) {
 					return $this->mapType($t);
 				}
 			}
 			return false;
-		} else if(is_string($type)) {
+		} elseif (is_string($type)) {
 
 			return ($type == $this->mapType(env('CONTENT_TYPE')));
 		}

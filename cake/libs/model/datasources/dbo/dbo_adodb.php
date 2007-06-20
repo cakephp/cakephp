@@ -220,7 +220,7 @@ class DboAdodb extends DboSource {
 		$fields = false;
 		$cols = $this->_adodb->MetaColumns($this->fullTableName($model, false));
 
-		foreach($cols as $column) {
+		foreach ($cols as $column) {
 			$fields[] = array('name' => $column->name,
 									'type' => $this->column($column->type));
 		}
@@ -347,7 +347,7 @@ class DboAdodb extends DboSource {
 				}
 				$fields = array_map('trim', $fields);
 			} else {
-				foreach($model->_tableInfo->value as $field) {
+				foreach ($model->_tableInfo->value as $field) {
 					$fields[] = $field['name'];
 				}
 			}
@@ -356,7 +356,7 @@ class DboAdodb extends DboSource {
 		$count = count($fields);
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
-			for($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
@@ -389,7 +389,7 @@ class DboAdodb extends DboSource {
 		$index = 0;
 		$j = 0;
 
-		while($j < $num_fields) {
+		while ($j < $num_fields) {
 			$columnName = $fields[$j];
 
 			if (strpos($columnName, '__')) {

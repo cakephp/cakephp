@@ -29,7 +29,7 @@
 /**
  * Load Security class
  */
-if(!class_exists('Security')){
+if (!class_exists('Security')){
 	uses('Security');
 }
 /**
@@ -162,23 +162,23 @@ class CookieComponent extends Object {
  * @deprecated use Controller::beforeFilter() to set the properties of the CookieComponent
  */
 	function initialize(&$controller) {
-		if(is_object($controller)){
-			if(isset($controller->cookieName)) {
+		if (is_object($controller)){
+			if (isset($controller->cookieName)) {
 				$this->name = $controller->cookieName;
 			}
-			if(isset($controller->cookieTime)){
+			if (isset($controller->cookieTime)){
 				$this->time = $controller->cookieTime;
 			}
-			if(isset($controller->cookieKey)){
+			if (isset($controller->cookieKey)){
 				$this->key = $controller->cookieKey;
 			}
-			if(isset($controller->cookiePath)) {
+			if (isset($controller->cookiePath)) {
 				$this->path = $controller->cookiePath;
 			}
-			if(isset($controller->cookieDomain)) {
+			if (isset($controller->cookieDomain)) {
 				$this->domain = $controller->cookieDomain;
 			}
-			if(isset($controller->cookieSecure)) {
+			if (isset($controller->cookieSecure)) {
 				$this->secure = $controller->cookieSecure;
 			}
 		}
@@ -191,7 +191,7 @@ class CookieComponent extends Object {
 	function startup() {
 		$this->__expire($this->time);
 
-		if(isset($_COOKIE[$this->name])) {
+		if (isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
 	}
@@ -214,17 +214,17 @@ class CookieComponent extends Object {
  * @access public
  */
 	function write($key, $value = null, $encrypt = true, $expires = null) {
-		if(is_null($encrypt)){
+		if (is_null($encrypt)){
 			$encrypt = true;
 		}
 
 		$this->__encrypted = $encrypt;
 		$this->__expire($expires);
 
-		if(!is_array($key) && $value !== null) {
+		if (!is_array($key) && $value !== null) {
 			$name = $this->__cookieVarNames($key);
 
-			if(count($name) > 1){
+			if (count($name) > 1){
 				$this->__values[$name[0]][$name[1]] = $value;
 				$this->__write("[".$name[0]."][".$name[1]."]", $value);
 			} else {
@@ -232,10 +232,10 @@ class CookieComponent extends Object {
 				$this->__write("[".$name[0]."]", $value);
 			}
 		} else {
-			foreach($key as $names => $value){
+			foreach ($key as $names => $value){
 				$name = $this->__cookieVarNames($names);
 
-				if(count($name) > 1){
+				if (count($name) > 1){
 					$this->__values[$name[0]][$name[1]] = $value;
 					$this->__write("[".$name[0]."][".$name[1]."]", $value);
 				} else {
@@ -256,23 +256,23 @@ class CookieComponent extends Object {
  * @access public
  */
 	function read($key = null) {
-		if(empty($this->__values) && isset($_COOKIE[$this->name])) {
+		if (empty($this->__values) && isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
 
-		if(is_null($key)){
+		if (is_null($key)){
 			return $this->__values;
 		}
 		$name = $this->__cookieVarNames($key);
 
-		if(count($name) > 1){
-			if(isset($this->__values[$name[0]])) {
+		if (count($name) > 1){
+			if (isset($this->__values[$name[0]])) {
 				$value = $this->__values[$name[0]][$name[1]];
 				return $value;
 			}
 			return null;
 		} else {
-			if(isset($this->__values[$name[0]])) {
+			if (isset($this->__values[$name[0]])) {
 				$value = $this->__values[$name[0]];
 				return $value;
 			}
@@ -294,14 +294,14 @@ class CookieComponent extends Object {
 	function del($key) {
 		$name = $this->__cookieVarNames($key);
 
-		if(count($name) > 1){
-			if(isset($this->__values[$name[0]])) {
+		if (count($name) > 1){
+			if (isset($this->__values[$name[0]])) {
 				unset($this->__values[$name[0]][$name[1]]);
 				$this->__delete("[".$name[0]."][".$name[1]."]");
 			}
 		} else {
-			if(isset($this->__values[$name[0]])) {
-				if(is_array($this->__values[$name[0]])) {
+			if (isset($this->__values[$name[0]])) {
+				if (is_array($this->__values[$name[0]])) {
 					foreach ($this->__values[$name[0]] as $key => $value) {
 						$this->__delete("[".$name[0]."][".$key."]");
 					}
@@ -320,12 +320,12 @@ class CookieComponent extends Object {
  * @access public
  */
 	function destroy() {
-		if(isset($_COOKIE[$this->name])) {
+		if (isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
 
 		foreach ($this->__values as $name => $value) {
-			if(is_array($value)) {
+			if (is_array($value)) {
 				foreach ($value as $key => $val) {
 					unset($this->__values[$name][$key]);
 					$this->__delete("[$name][$key]");
@@ -362,7 +362,7 @@ class CookieComponent extends Object {
  */
 	function __expire($expires = null){
 		$now = time();
-		if(is_null($expires)){
+		if (is_null($expires)){
 			return $this->__expires;
 		}
 		$this->__reset = $this->__expires;
@@ -382,7 +382,7 @@ class CookieComponent extends Object {
 	function __write($name, $value) {
 		setcookie($this->name . "$name", $this->__encrypt($value), $this->__expires, $this->path, $this->domain, $this->secure);
 
-		if(!is_null($this->__reset)){
+		if (!is_null($this->__reset)){
 			$this->__expires = $this->__reset;
 			$this->__reset = null;
 		}
@@ -405,11 +405,11 @@ class CookieComponent extends Object {
   * @access private
   */
 	 function __encrypt($value) {
-	 	if(is_array($value)){
+	 	if (is_array($value)){
 	 		$value = $this->__implode($value);
 	 	}
 
-	 	if($this->__encrypted === true) {
+	 	if ($this->__encrypted === true) {
 	 		$type = $this->__type;
 	 		$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
 	 	}
@@ -426,8 +426,8 @@ class CookieComponent extends Object {
 		$decrypted = array();
 		$type = $this->__type;
 
-		foreach($values as $name => $value) {
-			if(is_array($value)){
+		foreach ($values as $name => $value) {
+			if (is_array($value)){
 				foreach ($value as $key => $val) {
 					$pos = strpos($val, 'Q2FrZQ==.');
 					$decrypted[$name][$key] = $this->__explode($val);
@@ -494,7 +494,7 @@ class CookieComponent extends Object {
 		$array = array();
 		foreach (explode(',', $string) as $pair) {
 			$key = explode('|', $pair);
-			if(!isset($key[1])){
+			if (!isset($key[1])){
 				return $key[0];
 			}
 			$array[$key[0]] = $key[1];

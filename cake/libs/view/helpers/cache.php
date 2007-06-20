@@ -82,7 +82,7 @@ class CacheHelper extends AppHelper {
 			$index = null;
 			$count = 0;
 
-			foreach($keys as $key => $value) {
+			foreach ($keys as $key => $value) {
 				if (strpos($check, $value) === 0) {
 					$index = $found[$count];
 					break;
@@ -143,7 +143,7 @@ class CacheHelper extends AppHelper {
 		if (!empty($result['0'])) {
 			$count = 0;
 
-			foreach($result['0'] as $result) {
+			foreach ($result['0'] as $result) {
 				if (isset($oresult['0'][$count])) {
 					$this->__replace[] = $result;
 					$this->__match[] = $oresult['0'][$count];
@@ -163,7 +163,7 @@ class CacheHelper extends AppHelper {
 		$count = 0;
 		if (!empty($this->__match)) {
 
-			foreach($this->__match as $found) {
+			foreach ($this->__match as $found) {
 				$original = $cache;
 				$length = strlen($found);
 				$position = 0;
@@ -171,7 +171,7 @@ class CacheHelper extends AppHelper {
 					for ($i = 1; $i <= 1; $i++) {
 						$position = strpos($cache, $found, $position);
 
-						if($position !== false) {
+						if ($position !== false) {
 							$cache = substr($original, 0, $position);
 							$cache .= $this->__replace[$count];
 							$cache .= substr($original, $position + $length);
@@ -203,13 +203,13 @@ class CacheHelper extends AppHelper {
 		}
 
 		$cache = convertSlash($this->here);
-		if(empty($cache)){
+		if (empty($cache)){
 			return;
 		}
 
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
-		if(empty($this->plugin)) {
+		if (empty($this->plugin)) {
 			$file .= '
 			loadController(\'' . $this->controllerName. '\');
 			loadModels();
@@ -244,15 +244,15 @@ class CacheHelper extends AppHelper {
 					$this->plugin = \'' . $this->plugin . '\';
 					$loadedHelpers = array();
 					$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
-					foreach(array_keys($loadedHelpers) as $helper)
+					foreach (array_keys($loadedHelpers) as $helper)
 					{
 						$replace = strtolower(substr($helper, 0, 1));
 						$camelBackedHelper = preg_replace(\'/\\w/\', $replace, $helper, 1);
 						${$camelBackedHelper} =& $loadedHelpers[$helper];
 
-						if(isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
+						if (isset(${$camelBackedHelper}->helpers) && is_array(${$camelBackedHelper}->helpers))
 						{
-							foreach(${$camelBackedHelper}->helpers as $subHelper)
+							foreach (${$camelBackedHelper}->helpers as $subHelper)
 							{
 								${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
 							}

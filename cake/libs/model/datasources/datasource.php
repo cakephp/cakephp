@@ -214,7 +214,7 @@ class DataSource extends Object {
 	function setConfig($config) {
 		if (is_array($this->_baseConfig)) {
 			$this->config = $this->_baseConfig;
-			foreach($config as $key => $val) {
+			foreach ($config as $key => $val) {
 				$this->config[$key] = $val;
 			}
 		}
@@ -227,7 +227,7 @@ class DataSource extends Object {
  * @return void
  */
 	function __cacheDescription($object, $data = null) {
-		if($this->cacheSources === false){
+		if ($this->cacheSources === false){
 			return null;
 		}
 		if (Configure::read() > 0) {
@@ -282,7 +282,7 @@ class DataSource extends Object {
  * @return mixed
  */
 	function describe($model) {
-		if($this->cacheSources === false){
+		if ($this->cacheSources === false){
 			return null;
 		}
 
@@ -374,7 +374,7 @@ class DataSource extends Object {
 	function insertQueryData($query, $data, $association, $assocData, &$model, &$linkModel, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
 
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			$val = null;
 
 			if (strpos($query, $key) !== false) {
@@ -401,8 +401,8 @@ class DataSource extends Object {
 						}
 					break;
 					case '{$__cakeForeignKey__$}':
-						foreach($model->__associations as $id => $name) {
-							foreach($model->$name as $assocName => $assoc) {
+						foreach ($model->__associations as $id => $name) {
+							foreach ($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {
 										$foreignKey = $assoc['foreignKey'];
@@ -431,7 +431,7 @@ class DataSource extends Object {
 						}
 					break;
 				}
-				if(empty($val) && $val !== '0') {
+				if (empty($val) && $val !== '0') {
 					return false;
 				}
 				$query = r($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);

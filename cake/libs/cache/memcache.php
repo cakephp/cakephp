@@ -56,31 +56,31 @@ class MemcacheEngine extends CacheEngine {
  * @access public
  */
 	function init(&$params) {
-		if(!class_exists('Memcache')) {
+		if (!class_exists('Memcache')) {
 			return false;
 		}
 		$servers = array('127.0.0.1');
 		$compress = false;
 		extract($params);
 
-		if($compress) {
+		if ($compress) {
 			$this->_compress = MEMCACHE_COMPRESSED;
 		} else {
 			$this->_compress = 0;
 		}
 
-		if(!is_array($servers)) {
+		if (!is_array($servers)) {
 			$servers = array($servers);
 		}
 		$this->__Memcache =& new Memcache();
 		$connected = false;
 
-		foreach($servers as $server) {
+		foreach ($servers as $server) {
 			$parts = explode(':', $server);
 			$host = $parts[0];
 			$port = isset($parts[1]) ? $parts[1] : 11211;
 
-			if($this->__Memcache->addServer($host, $port)) {
+			if ($this->__Memcache->addServer($host, $port)) {
 				$connected = true;
 			}
 		}

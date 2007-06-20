@@ -72,7 +72,7 @@ class ModelEngine extends CacheEngine {
 		$expiryField = 'expires';
 		extract($params);
 
-		if(!class_exists($modelName) && !loadModel($modelName)) {
+		if (!class_exists($modelName) && !loadModel($modelName)) {
 			return false;
 		}
 		$this->_Model = new $modelName;
@@ -99,7 +99,7 @@ class ModelEngine extends CacheEngine {
 	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
 		$serialized = serialize($value);
 
-		if(!$serialized) {
+		if (!$serialized) {
 			return false;
 		}
 		$data = array($this->_Model->name => array(
@@ -150,7 +150,7 @@ class ModelEngine extends CacheEngine {
  */
 	function settings() {
 		$class = null;
-		if(is_a($this->_Model, 'Model')) {
+		if (is_a($this->_Model, 'Model')) {
 			$class = get_class($this->_Model);
 		}
 		return array('class' => get_class($this),

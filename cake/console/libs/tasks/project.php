@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if(!class_exists('File')) {
+if (!class_exists('File')) {
 	uses('file');
 }
 /**
@@ -51,9 +51,9 @@ class ProjectTask extends Shell {
  * @return bool
  */
 	function execute($project = null) {
-		if($project === null) {
+		if ($project === null) {
 			$project = $this->params['app'];
-			if(isset($this->args[0])) {
+			if (isset($this->args[0])) {
 				$project = $this->args[0];
 				$this->Dispatch->shiftArgs();
 			}
@@ -63,12 +63,12 @@ class ProjectTask extends Shell {
 		$app = basename($working);
 		$root = dirname($working) . DS;
 
-		if($project) {
-			if($project{0} != '/') {
+		if ($project) {
+			if ($project{0} != '/') {
 				$root = $working;
 				$app = $project;
 			}
-			if($root{strlen($root) -1} != '/') {
+			if ($root{strlen($root) -1} != '/') {
 				$root = $root . DS;
 			}
 
@@ -77,7 +77,7 @@ class ProjectTask extends Shell {
 			$response = false;
 			while ($response == false && is_dir($path) === true && config('database') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
-				if(low($response) === 'n') {
+				if (low($response) === 'n') {
 					$this->out('Bake Aborted');
 					exit();
 				}
@@ -108,7 +108,7 @@ class ProjectTask extends Shell {
  */
 	function __buildDirLayout($path) {
 		$skel = '';
-		if(is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
+		if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
 			$skel = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 		} else {
 			while ($skel == '') {
@@ -138,32 +138,32 @@ class ProjectTask extends Shell {
 			}
 
 			$Folder = new Folder($skel);
-			if($Folder->copy($path)) {
+			if ($Folder->copy($path)) {
 				$path = $Folder->slashTerm($path);
 				$this->hr();
 				$this->out(__(sprintf("Created: %s in %s", $app, $path), true));
 				$this->hr();
 
-				if($this->createHome($path, $app)) {
+				if ($this->createHome($path, $app)) {
 					$this->out('Welcome page created');
 				} else {
 					$this->out('The Welcome page was NOT created');
 				}
 
-				if($this->cakeSessionString($path) === true ){
+				if ($this->cakeSessionString($path) === true ){
 					$this->out('Random hash key created for CAKE_SESSION_STRING');
 				} else {
 					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 				}
 
 				$corePath = $this->corePath($path);
-				if($corePath === true ){
+				if ($corePath === true ){
 					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
-				} else if($corePath === false){
+				} elseif ($corePath === false){
 					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
 				}
 
-				if($Folder->chmod($path . DS . 'tmp', 0777) === false) {
+				if ($Folder->chmod($path . DS . 'tmp', 0777) === false) {
 					$this->err('Could path set permissions on '. $project . DS .'tmp' . DS . '*');
 					$this->out('You must manually check that these directories can be wrote to by the server');
 				}
@@ -171,8 +171,8 @@ class ProjectTask extends Shell {
 				$this->err(" '".$app."' could not be created properly");
 			}
 
-			if($verbose) {
-				foreach($Folder->messages() as $message) {
+			if ($verbose) {
+				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
 			}
@@ -207,7 +207,7 @@ class ProjectTask extends Shell {
 			uses('Security');
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $contents);
-			if($File->write($result)){
+			if ($File->write($result)){
 				return true;
 			} else {
 				return false;
@@ -222,12 +222,12 @@ class ProjectTask extends Shell {
  * @return bool
  */
 	function corePath($path){
-		if(dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
+		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if($File->write($result)){
+				if ($File->write($result)){
 					return true;
 				} else {
 					return false;
@@ -247,7 +247,7 @@ class ProjectTask extends Shell {
 		$contents = $File->read();
 		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
 			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $contents);
-			if($File->write($result)){
+			if ($File->write($result)){
 				return true;
 			} else {
 				return false;

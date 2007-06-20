@@ -605,7 +605,7 @@ class AjaxHelper extends AppHelper {
 		$url = $this->url($url);
 		$options['ajaxOptions'] = $this->__optionsForAjax($options);
 
-		foreach($this->ajaxOptions as $opt) {
+		foreach ($this->ajaxOptions as $opt) {
 			if (isset($options[$opt])) {
 				unset($options[$opt]);
 			}
@@ -682,7 +682,7 @@ class AjaxHelper extends AppHelper {
 		);
 		$options = $this->_optionsToString($options, array('method'));
 
-		foreach($options as $key => $value) {
+		foreach ($options as $key => $value) {
 			switch($key) {
 				case 'type':
 					$jsOptions['asynchronous'] = ife(($value == 'synchronous'), 'false', 'true');
@@ -721,13 +721,13 @@ class AjaxHelper extends AppHelper {
  * @access private
  */
 	function __getHtmlOptions($options, $extra = array()) {
-		foreach($this->ajaxOptions as $key) {
+		foreach ($this->ajaxOptions as $key) {
 			if (isset($options[$key])) {
 				unset($options[$key]);
 			}
 		}
 
-		foreach($extra as $key) {
+		foreach ($extra as $key) {
 			if (isset($options[$key])) {
 				unset($options[$key]);
 			}
@@ -747,7 +747,7 @@ class AjaxHelper extends AppHelper {
 		if (is_array($options)) {
 			$out = array();
 
-			foreach($options as $k => $v) {
+			foreach ($options as $k => $v) {
 				if (in_array($k, $acceptable)) {
 					$out[] = "$k:$v";
 				}
@@ -789,7 +789,7 @@ class AjaxHelper extends AppHelper {
 	function _buildCallbacks($options) {
 		$callbacks = array();
 
-		foreach($this->callbacks as $callback) {
+		foreach ($this->callbacks as $callback) {
 			if (isset($options[$callback])) {
 				$name = 'on' . ucfirst($callback);
 				$code = $options[$callback];
@@ -816,7 +816,7 @@ class AjaxHelper extends AppHelper {
  * @return array
  */
 	function _optionsToString($options, $stringOpts = array()) {
-		foreach($stringOpts as $option) {
+		foreach ($stringOpts as $option) {
 			if (isset($options[$option]) && !$options[$option][0] != "'") {
 				if ($options[$option] === true || $options[$option] === 'true') {
 					$options[$option] = 'true';

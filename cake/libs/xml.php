@@ -205,7 +205,7 @@ class XMLNode extends Object {
  * @access public
  */
 	function &first() {
-		if(isset($this->children[0])) {
+		if (isset($this->children[0])) {
 			return $this->children[0];
 		} else {
 			return null;
@@ -218,7 +218,7 @@ class XMLNode extends Object {
  * @access public
  */
 	function &last() {
-		if(count($this->children) > 0) {
+		if (count($this->children) > 0) {
 			return $this->children[count($this->children) - 1];
 		} else {
 			return null;
@@ -234,15 +234,15 @@ class XMLNode extends Object {
 	function &child($id) {
 		$null = null;
 
-		if(is_int($id)) {
-			if(isset($this->children[$id])) {
+		if (is_int($id)) {
+			if (isset($this->children[$id])) {
 				return $this->children[$id];
 			} else {
 				return null;
 			}
-		} elseif(is_string($id)) {
-			for($i = 0; $i < count($this->children); $i++) {
-				if($this->children[$i]->name == $id) {
+		} elseif (is_string($id)) {
+			for ($i = 0; $i < count($this->children); $i++) {
+				if ($this->children[$i]->name == $id) {
 					return $this->children[$i];
 				}
 			}
@@ -261,8 +261,8 @@ class XMLNode extends Object {
 	function children($name) {
 		$nodes = array();
 		$count = count($this->children);
-		for($i = 0; $i < $count; $i++) {
-			if($this->children[$i]->name == $name) {
+		for ($i = 0; $i < $count; $i++) {
+			if ($this->children[$i]->name == $name) {
 				$nodes[] =& $this->children[$i];
 			}
 		}
@@ -318,7 +318,7 @@ class XMLNode extends Object {
  * @access public
  */
 	function hasChildren() {
-		if(is_array($this->children) && count($this->children) > 0) {
+		if (is_array($this->children) && count($this->children) > 0) {
 			return true;
 		}
 		return false;
@@ -331,36 +331,36 @@ class XMLNode extends Object {
  */
 	function toString() {
 		$d = '';
-		if($this->name != '') {
+		if ($this->name != '') {
 			$d .= '<' . $this->name;
-			if(is_array($this->attributes) && count($this->attributes) > 0) {
-				foreach($this->attributes as $key => $val) {
+			if (is_array($this->attributes) && count($this->attributes) > 0) {
+				foreach ($this->attributes as $key => $val) {
 					$d .= " $key=\"$val\"";
 				}
 			}
 		}
 
-		if(!$this->hasChildren() && empty($this->value)) {
-			if($this->name != '') {
+		if (!$this->hasChildren() && empty($this->value)) {
+			if ($this->name != '') {
 				$d .= " />\n";
 			}
 		} else {
-			if($this->name != '') {
+			if ($this->name != '') {
 				$d .= ">";
 			}
-			if($this->hasChildren()) {
+			if ($this->hasChildren()) {
 				if (is_string($this->value) || empty($this->value)) {
 					if (!empty($this->value)) {
 						$d .= $this->value;
 					}
 					$count = count($this->children);
 
-					for($i = 0; $i < $count; $i++) {
+					for ($i = 0; $i < $count; $i++) {
 						$d .= $this->children[$i]->toString();
 					}
 				} elseif (is_array($this->value)) {
 					$count = count($this->value);
-					for($i = 0; $i < $count; $i++) {
+					for ($i = 0; $i < $count; $i++) {
 						$d .= $this->value[$i];
 						if (isset($this->children[$i])) {
 							$d .= $this->children[$i]->toString();
@@ -379,7 +379,7 @@ class XMLNode extends Object {
 				$d .= $this->value;
 			}
 
-			if($this->name != '' && ($this->hasChildren() || !empty($this->value))) {
+			if ($this->name != '' && ($this->hasChildren() || !empty($this->value))) {
 				$d .= "</" . $this->name . ">\n";
 			}
 		}
@@ -403,8 +403,8 @@ class XMLNode extends Object {
  */
 	function __killParent($recursive = true) {
 		unset($this->__parent);
-		if($recursive && $this->hasChildren()) {
-			for($i = 0; $i < count($this->children); $i++) {
+		if ($recursive && $this->hasChildren()) {
+			for ($i = 0; $i < count($this->children); $i++) {
 				$this->children[$i]->__killParent(true);
 			}
 		}
@@ -485,7 +485,7 @@ class XML extends XMLNode {
 
 		$this->children = array();
 
-		if($input != null) {
+		if ($input != null) {
 			$vars = null;
 			if (is_string($input)) {
 				$this->load($input);
@@ -529,12 +529,12 @@ class XML extends XMLNode {
 
 		if (is_string($in)) {
 
-			if(strstr($in, "<")) {
+			if (strstr($in, "<")) {
 				// Input is raw xml data
 				$this->__rawData = $in;
 			} else {
 				// Input is an xml file
-				if(strpos($in, '://') || file_exists($in)) {
+				if (strpos($in, '://') || file_exists($in)) {
 					$this->__rawData = @file_get_contents($in);
 					if ($this->__rawData == null) {
 						$this->error("XML file $in is empty or could not be read (possible permissions error).");
@@ -572,10 +572,10 @@ class XML extends XMLNode {
 					$tmpXML = new XMLNode();
 					$tmpXML->name = $data['tag'];
 
-					if(isset($data['value'])) {
+					if (isset($data['value'])) {
 						$tmpXML->value = $data['value'];
 					}
-					if(isset($data['attributes'])) {
+					if (isset($data['attributes'])) {
 						$tmpXML->attributes = $data['attributes'];
 					}
 
@@ -593,10 +593,10 @@ class XML extends XMLNode {
 					$tmpXML = new XMLNode();
 					$tmpXML->name = $data['tag'];
 
-					if(isset($data['value'])) {
+					if (isset($data['value'])) {
 						$tmpXML->value = $data['value'];
 					}
-					if(isset($data['attributes'])) {
+					if (isset($data['attributes'])) {
 						$tmpXML->attributes = $data['attributes'];
 					}
 
@@ -653,7 +653,7 @@ class XML extends XMLNode {
  * @access public
  */
 	function error($msg, $code = 0, $line = 0) {
-		if(DEBUG) {
+		if (DEBUG) {
 			echo $msg . " " . $code . " " . $line;
 		}
 	}

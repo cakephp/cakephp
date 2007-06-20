@@ -70,7 +70,7 @@ class TranslateBehavior extends ModelBehavior {
 		$this->runtime[$model->name] = array('fields' => array());
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 
-		if(!$db->connected) {
+		if (!$db->connected) {
 			trigger_error('Datasource '.$model->useDbConfig.' for I18nBehavior of model '.$model->name.' is not connected', E_USER_ERROR);
 			return false;
 		}
@@ -83,7 +83,7 @@ class TranslateBehavior extends ModelBehavior {
 	function beforeFind(&$model, $query) {
 		$locale = $this->_getLocale($model);
 
-		if(is_string($query['fields']) && 'COUNT(*) AS count' == $query['fields']) {
+		if (is_string($query['fields']) && 'COUNT(*) AS count' == $query['fields']) {
 			$this->runtime[$model->name]['count'] = true;
 
 			$db =& ConnectionManager::getDataSource($model->useDbConfig);
@@ -103,21 +103,21 @@ class TranslateBehavior extends ModelBehavior {
 			return $query;
 		}
 
-		if(empty($locale) || is_array($locale)) {
+		if (empty($locale) || is_array($locale)) {
 			return $query;
 		}
 		$autoFields = false;
 
-		if(empty($query['fields'])) {
+		if (empty($query['fields'])) {
 			$query['fields'] = array($model->name.'.*');
 
-			foreach(array('hasOne', 'belongsTo') as $type) {
-				foreach($model->{$type} as $key => $value) {
+			foreach (array('hasOne', 'belongsTo') as $type) {
+				foreach ($model->{$type} as $key => $value) {
 
-					if(empty($value['fields'])) {
+					if (empty($value['fields'])) {
 						$query['fields'][] = $key.'.*';
 					} else {
-						foreach($value['fields'] as $field) {
+						foreach ($value['fields'] as $field) {
 							$query['fields'][] = $key.'.'.$field;
 						}
 					}
@@ -130,27 +130,27 @@ class TranslateBehavior extends ModelBehavior {
 		$tablePrefix = $this->runtime[$model->name]['tablePrefix'];
 		$addFields = array();
 
-		if(is_array($query['fields'])) {
-			if(in_array($model->name.'.*', $query['fields'])) {
-				foreach($fields as $key => $value) {
+		if (is_array($query['fields'])) {
+			if (in_array($model->name.'.*', $query['fields'])) {
+				foreach ($fields as $key => $value) {
 					$addFields[] = ife(is_numeric($key), $value, $key);
 				}
 			} else {
-				foreach($fields as $key => $value) {
+				foreach ($fields as $key => $value) {
 					$field = ife(is_numeric($key), $value, $key);
-					if($autoFields || in_array($model->name.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
+					if ($autoFields || in_array($model->name.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
 						$addFields[] = $field;
 					}
 				}
 			}
 		}
 
-		if($addFields) {
+		if ($addFields) {
 			$db =& ConnectionManager::getDataSource($model->useDbConfig);
 
-			foreach($addFields as $field) {
+			foreach ($addFields as $field) {
 				$key = array_search($model->name.'.'.$field, $query['fields']);
-				if(false !== $key) {
+				if (false !== $key) {
 					unset($query['fields'][$key]);
 				}
 
@@ -171,38 +171,38 @@ class TranslateBehavior extends ModelBehavior {
  * Callback
  */
 	function afterFind(&$model, $results, $primary) {
-		if(!empty($this->runtime[$model->name]['count'])) {
+		if (!empty($this->runtime[$model->name]['count'])) {
 			unset($this->runtime[$model->name]['count']);
 			return $results;
 		}
 		$this->runtime[$model->name]['fields'] = array();
 		$locale = $this->_getLocale($model);
 
-		if(empty($locale) || empty($results)) {
+		if (empty($locale) || empty($results)) {
 			return $results;
 		}
 
-		if(is_array($locale)) {
+		if (is_array($locale)) {
 			$fields = am($this->settings[$model->name], $this->runtime[$model->name]['fields']);
 			$emptyFields = array('locale' => '');
 
-			foreach($fields as $key => $value) {
+			foreach ($fields as $key => $value) {
 				$field = ife(is_numeric($key), $value, $key);
 				$emptyFields[$field] = '';
 			}
 			unset($fields);
 
-			foreach($results as $key => $row) {
+			foreach ($results as $key => $row) {
 				$results[$key][$model->name] = am($results[$key][$model->name], $emptyFields);
 			}
 			unset($emptyFields);
-		} elseif(!empty($this->runtime[$model->name]['beforeFind'])) {
+		} elseif (!empty($this->runtime[$model->name]['beforeFind'])) {
 			$beforeFind = $this->runtime[$model->name]['beforeFind'];
 
-			foreach($results as $key => $row) {
+			foreach ($results as $key => $row) {
 				$results[$key][$model->name]['locale'] = $locale;
 
-				foreach($beforeFind as $field) {
+				foreach ($beforeFind as $field) {
 					$value = ife(empty($results[$key]['I18n__'.$field]['content']), '', $results[$key]['I18n__'.$field]['content']);
 					$results[$key][$model->name][$field] = $value;
 					unset($results[$key]['I18n__'.$field]);
@@ -217,16 +217,16 @@ class TranslateBehavior extends ModelBehavior {
 	function beforeSave(&$model) {
 		$locale = $this->_getLocale($model);
 
-		if(empty($locale) || is_array($locale)) {
+		if (empty($locale) || is_array($locale)) {
 			return true;
 		}
 		$fields = am($this->settings[$model->name], $this->runtime[$model->name]['fields']);
 		$tempData = array();
 
-		foreach($fields as $key => $value) {
+		foreach ($fields as $key => $value) {
 			$field = ife(is_numeric($key), $value, $key);
 
-			if(isset($model->data[$model->name][$field])) {
+			if (isset($model->data[$model->name][$field])) {
 				$tempData[$field] = $model->data[$model->name][$field];
 				unset($model->data[$model->name][$field]);
 			}
@@ -242,7 +242,7 @@ class TranslateBehavior extends ModelBehavior {
 	function afterSave(&$model, $created) {
 		$locale = $this->_getLocale($model);
 
-		if(empty($locale) || is_array($locale) || empty($this->runtime[$model->name]['beforeSave'])) {
+		if (empty($locale) || is_array($locale) || empty($this->runtime[$model->name]['beforeSave'])) {
 			return true;
 		}
 		$tempData = $this->runtime[$model->name]['beforeSave'];
@@ -252,8 +252,8 @@ class TranslateBehavior extends ModelBehavior {
 									'model' => $model->name,
 									'row_id' => $model->id);
 
-		if($created) {
-			foreach($tempData as $field => $value) {
+		if ($created) {
+			foreach ($tempData as $field => $value) {
 				$this->_model->Content->create();
 				$this->_model->Content->save(array('I18nContent' => array('content' => $value)));
 
@@ -268,8 +268,8 @@ class TranslateBehavior extends ModelBehavior {
 			$fields = Set::extract($translations, '{n}.I18nModel.field');
 			$ids = Set::extract($translations, '{n}.I18nModel.i18n_content_id');
 
-			foreach($fields as $key => $field) {
-				if(array_key_exists($field, $tempData)) {
+			foreach ($fields as $key => $field) {
+				if (array_key_exists($field, $tempData)) {
 					$this->_model->Content->create();
 					$this->_model->Content->save(array('I18nContent' => array(
 																	'id' => $ids[$key],
@@ -322,7 +322,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return mixed string or false
  */
 	function _getLocale(&$model) {
-		if(!isset($model->locale) || is_null($model->locale)) {
+		if (!isset($model->locale) || is_null($model->locale)) {
 			$model->locale = $this->_autoDetectLocale();
 		}
 		return $model->locale;
@@ -338,11 +338,11 @@ class TranslateBehavior extends ModelBehavior {
  * @return boolean
  */
 	function bindTranslation(&$model, $fields, $reset = true) {
-		if(empty($fields)) {
+		if (empty($fields)) {
 			return true;
 		}
 
-		if(is_string($fields)) {
+		if (is_string($fields)) {
 			$fields = array($fields);
 		}
 		$settings =& $this->settings[$model->name];
@@ -351,9 +351,9 @@ class TranslateBehavior extends ModelBehavior {
 
 		$default = array('className' => 'I18nModel', 'foreignKey' => 'row_id');
 
-		foreach($fields as $key => $value) {
+		foreach ($fields as $key => $value) {
 
-			if(is_numeric($key)) {
+			if (is_numeric($key)) {
 				$field = $value;
 				$association = null;
 			} else {
@@ -361,33 +361,33 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 
-			if(in_array($field, $settings)) {
+			if (in_array($field, $settings)) {
 				$this->settings[$model->name] = array_diff_assoc($settings, array($field));
-			} elseif(array_key_exists($field, $settings)) {
+			} elseif (array_key_exists($field, $settings)) {
 				unset($settings[$field]);
 			}
 
-			if(in_array($field, $runtime)) {
+			if (in_array($field, $runtime)) {
 				$this->runtime[$model->name]['fields'] = array_diff_assoc($runtime, array($field));
-			} elseif(array_key_exists($field, $runtime)) {
+			} elseif (array_key_exists($field, $runtime)) {
 				unset($runtime[$field]);
 			}
 
-			if(is_null($association)) {
-				if($reset) {
+			if (is_null($association)) {
+				if ($reset) {
 					$runtime[] = $field;
 				} else {
 					$settings[] = $field;
 				}
 			} else {
-				if($reset) {
+				if ($reset) {
 					$runtime[$field] = $association;
 				} else {
 					$settings[$field] = $association;
 				}
 
-				foreach(array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
-					if(isset($model->{$type}[$association]) || isset($model->__backAssociation[$type][$association])) {
+				foreach (array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
+					if (isset($model->{$type}[$association]) || isset($model->__backAssociation[$type][$association])) {
 						trigger_error('Association '.$association.' is already binded to model '.$model->name, E_USER_ERROR);
 						return false;
 					}
@@ -398,7 +398,7 @@ class TranslateBehavior extends ModelBehavior {
 			}
 		}
 
-		if(!empty($associations)) {
+		if (!empty($associations)) {
 			$model->bindModel(array('hasMany' => $associations), $reset);
 		}
 		return true;
@@ -412,11 +412,11 @@ class TranslateBehavior extends ModelBehavior {
  * @return boolean
  */
 	function unbindTranslation(&$model, $fields) {
-		if(empty($fields)) {
+		if (empty($fields)) {
 			return true;
 		}
 
-		if(is_string($fields)) {
+		if (is_string($fields)) {
 			$fields = array($fields);
 		}
 		$settings =& $this->settings[$model->name];
@@ -425,8 +425,8 @@ class TranslateBehavior extends ModelBehavior {
 		$default = array('className' => 'I18nModel', 'foreignKey' => 'row_id');
 		$associations = array();
 
-		foreach($fields as $key => $value) {
-			if(is_numeric($key)) {
+		foreach ($fields as $key => $value) {
+			if (is_numeric($key)) {
 				$field = $value;
 				$association = null;
 			} else {
@@ -434,24 +434,24 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 
-			if(in_array($field, $settings)) {
+			if (in_array($field, $settings)) {
 				$this->settings[$model->name] = array_diff_assoc($settings, array($field));
 			} elseif (array_key_exists($field, $settings)) {
 				unset($settings[$field]);
 			}
 
-			if(in_array($field, $runtime)) {
+			if (in_array($field, $runtime)) {
 				$this->runtime[$model->name]['fields'] = array_diff_assoc($runtime, array($field));
-			} elseif(array_key_exists($field, $runtime)) {
+			} elseif (array_key_exists($field, $runtime)) {
 				unset($runtime[$field]);
 			}
 
-			if(!is_null($association) && (isset($model->hasMany[$association]) || isset($model->__backAssociation['hasMany'][$association]))) {
+			if (!is_null($association) && (isset($model->hasMany[$association]) || isset($model->__backAssociation['hasMany'][$association]))) {
 				$associations[] = $association;
 			}
 		}
 
-		if(!empty($associations)) {
+		if (!empty($associations)) {
 			$model->unbindModel(array('hasMany' => $associations), false);
 		}
 		return true;

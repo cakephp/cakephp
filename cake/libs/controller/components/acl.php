@@ -52,7 +52,7 @@ class AclComponent extends Object {
  * @return MyACL
  */
 	function &getACL() {
-		if($this->_instance == null) {
+		if ($this->_instance == null) {
 			$classname = ACL_CLASSNAME;
 			$this->_instance = new $classname;
 			$this->_instance->initialize($this);
@@ -268,7 +268,7 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
-		for($i = count($aroPath) - 1; $i >= 0; $i--) {
+		for ($i = count($aroPath) - 1; $i >= 0; $i--) {
 			$perms = $this->Aro->Permission->findAll(
 				array(
 					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
@@ -280,10 +280,10 @@ class DB_ACL extends AclBase {
 			if (empty($perms)) {
 				continue;
 			} else {
-				foreach(Set::extract($perms, '{n}.Permission') as $perm) {
+				foreach (Set::extract($perms, '{n}.Permission') as $perm) {
 					if ($action == '*') {
 						// ARO must be cleared for ALL ACO actions
-						foreach($permKeys as $key) {
+						foreach ($permKeys as $key) {
 							if (!empty($perm)) {
 								if ($perm[$key] != 1) {
 									return false;
@@ -330,16 +330,16 @@ class DB_ACL extends AclBase {
 		if ($actions == "*") {
 			$permKeys = $this->_getAcoKeys($this->Aro->Permission->loadInfo());
 
-			foreach($permKeys as $key) {
+			foreach ($permKeys as $key) {
 				$save[$key] = $value;
 			}
 		} else {
-			if(!is_array($actions)) {
+			if (!is_array($actions)) {
 				$actions = array('_' . $actions);
 				$actions = am($permKeys, $actions);
 			}
-			if(is_array($actions)) {
-				foreach($actions as $action) {
+			if (is_array($actions)) {
+				foreach ($actions as $action) {
 					if ($action{0} != '_') {
 						$action = '_' . $action;
 					}
@@ -448,7 +448,7 @@ class DB_ACL extends AclBase {
 		$newKeys = array();
 		$keys = $keys->extract('{n}.name');
 
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			if (!in_array($key, array('id', 'aro_id', 'aco_id'))) {
 				$newKeys[] = $key;
 			}
@@ -511,7 +511,7 @@ class INI_ACL extends AclBase {
 		if (isset($aclConfig[$aro]['groups'])) {
 			$userGroups = $this->arrayTrim(explode(",", $aclConfig[$aro]['groups']));
 
-			foreach($userGroups as $group) {
+			foreach ($userGroups as $group) {
 				//If such a group exists,
 				if (array_key_exists($group, $aclConfig)) {
 					//If the group is specifically denied, then DENY
@@ -550,7 +550,7 @@ class INI_ACL extends AclBase {
 	function readConfigFile($fileName) {
 		$fileLineArray = file($fileName);
 
-		foreach($fileLineArray as $fileLine) {
+		foreach ($fileLineArray as $fileLine) {
 				$dataLine = trim($fileLine);
 				$firstChar = substr($dataLine, 0, 1);
 
@@ -590,7 +590,7 @@ class INI_ACL extends AclBase {
  * @return array
  */
 	function arrayTrim($array) {
-		foreach($array as $element) {
+		foreach ($array as $element) {
 			$element = trim($element);
 		}
 

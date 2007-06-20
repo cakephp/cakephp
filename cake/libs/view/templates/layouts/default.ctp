@@ -45,7 +45,7 @@
 		</div>
 		<div id="content">
 			<?php
-				if($session->check('Message.flash')):
+				if ($session->check('Message.flash')):
 						$session->flash();
 				endif;
 			?>

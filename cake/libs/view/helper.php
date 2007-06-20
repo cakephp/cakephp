@@ -157,7 +157,7 @@ class Helper extends Overloadable {
 	function loadConfig($name = 'tags') {
 		if (file_exists(APP . 'config' . DS . $name .'.php')) {
 			require(APP . 'config' . DS . $name .'.php');
-			if(isset($tags)) {
+			if (isset($tags)) {
 				$this->tags = am($this->tags, $tags);
 			}
 		}
@@ -190,14 +190,14 @@ class Helper extends Overloadable {
  */
 	function webroot($file) {
 		$webPath = "{$this->webroot}" . $file;
-		if(!empty($this->themeWeb)) {
+		if (!empty($this->themeWeb)) {
 			$os = env('OS');
 			if (!empty($os) && strpos($os, 'Windows') !== false) {
 				$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
 			} else {
 				$path = WWW_ROOT . $this->themeWeb  . $file;
 			}
-			if(file_exists($path)){
+			if (file_exists($path)){
 				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
@@ -268,7 +268,7 @@ class Helper extends Overloadable {
 			$values = array_intersect_key(array_values($options), $keys);
 			$escape = $options['escape'];
 			$attributes = array();
-			foreach($keys as $index => $key) {
+			foreach ($keys as $index => $key) {
 				$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
 			}
 			$out = implode(' ', $attributes);
@@ -305,7 +305,7 @@ class Helper extends Overloadable {
 	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
 		
-		if($tagValue === null) {
+		if ($tagValue === null) {
 			$view->model = null;
 			$view->association = null;
 			$view->modelId = null;
@@ -330,7 +330,7 @@ class Helper extends Overloadable {
 			$view->modelId = $parts[1];
 			$view->field   = $parts[2];
 		}
-		if(!isset($view->model)) {
+		if (!isset($view->model)) {
 			$view->model = $view->association;
 			$view->association = null;
 		}
@@ -342,7 +342,7 @@ class Helper extends Overloadable {
  */
 	function model() {
 		$view =& ClassRegistry::getObject('view');
-		if($view->association == null) {
+		if ($view->association == null) {
 			return $view->model;
 		} else {
 			return $view->association;
@@ -591,18 +591,18 @@ class Helper extends Overloadable {
  * @access private
  */
 	function __selectedArray($data, $key = 'id') {
-		if(!is_array($data)) {
+		if (!is_array($data)) {
 			$model = $data;
-			if(!empty($this->data[$model][$model])) {
+			if (!empty($this->data[$model][$model])) {
 				return $this->data[$model][$model];
 			}
-			if(!empty($this->data[$model])) {
+			if (!empty($this->data[$model])) {
 				$data = $this->data[$model];
 			}
 		}
 		$array = array();
-		if(!empty($data)) {
-			foreach($data as $var) {
+		if (!empty($data)) {
+			foreach ($data as $var) {
 				$array[$var[$key]] = $var[$key];
 			}
 		}

@@ -96,33 +96,33 @@ class NumberHelper extends AppHelper {
  */
 	function format($number, $options = false) {
 		$places = 0;
-		if(is_int($options)) {
+		if (is_int($options)) {
 			$places = $options;
 		}
 		
 		$seperators = array(',', '.', '-', ':');
 		
 		$before = null;
-		if(is_string($options) && !in_array( $options, $seperators)) {
+		if (is_string($options) && !in_array( $options, $seperators)) {
 			$before = $options;
 		}
 		$seperator = ',';
-		if(!is_array($options) && in_array( $options, $seperators)) {
+		if (!is_array($options) && in_array( $options, $seperators)) {
 			$seperator = $options;
 		}
 		
-		if(is_array($options)) {
-			if(isset($options['places'])) {
+		if (is_array($options)) {
+			if (isset($options['places'])) {
 				$places = $options['places'];
 				unset($options['places']);
 			}
 		
-			if(isset($options['before'])) {
+			if (isset($options['before'])) {
 				$before = $options['before'];
 				unset($options['before']);
 			}
 		
-			if(isset($options['seperator'])) {
+			if (isset($options['seperator'])) {
 				$seperator = $options['seperator'];
 				unset($options['seperator']);
 			}

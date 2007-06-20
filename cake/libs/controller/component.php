@@ -64,10 +64,10 @@ class Component extends Object {
 			$this->controller->components = array_merge($this->controller->components, array('Session'));
 			$loaded = $this->_loadComponents($loaded, $this->controller->components);
 
-			foreach(array_keys($loaded) as $component) {
+			foreach (array_keys($loaded) as $component) {
 				$tempComponent =& $loaded[$component];
 				if (isset($tempComponent->components) && is_array($tempComponent->components)) {
-					foreach($tempComponent->components as $subComponent) {
+					foreach ($tempComponent->components as $subComponent) {
 						$this->controller->{$component}->{$subComponent} =& $loaded[$subComponent];
 					}
 				}
@@ -88,10 +88,10 @@ class Component extends Object {
 	function &_loadComponents(&$loaded, $components) {
 		$components[] = 'Session';
 
-		foreach($components as $component) {
+		foreach ($components as $component) {
 			$parts = preg_split('/\/|\./', $component);
 
-			if(count($parts) === 1) {
+			if (count($parts) === 1) {
 				$plugin = $this->controller->plugin;
 			} else {
 				$plugin = Inflector::underscore($parts['0']);

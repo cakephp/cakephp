@@ -188,7 +188,7 @@ class Inflector extends Object {
 			return $word;
 		}
 
-		foreach($pluralRules as $rule => $replacement) {
+		foreach ($pluralRules as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				$_this->pluralized[$word] = preg_replace($rule, $replacement, $word);
 				return $_this->pluralized[$word];
@@ -328,7 +328,7 @@ class Inflector extends Object {
 			return $word;
 		}
 
-		foreach($singularRules as $rule => $replacement) {
+		foreach ($singularRules as $rule => $replacement) {
 			if (preg_match($rule, $word)) {
 				$_this->singularized[$word] = preg_replace($rule, $replacement, $word);
 				return $_this->singularized[$word];

@@ -137,10 +137,10 @@ class File extends Object{
  * @access public
  */
 	function safe($name = null, $ext = null) {
-		if(!$name) {
+		if (!$name) {
 			$name = $this->name;
 		}
-		if(!$ext) {
+		if (!$ext) {
 			$ext = $this->ext();
 		}
 		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
@@ -177,10 +177,10 @@ class File extends Object{
  * @access public
  */
 	function info() {
-		if($this->info == null) {
+		if ($this->info == null) {
 			$this->info = pathinfo($this->pwd());
 		}
-		if(!isset($this->info['filename'])) {
+		if (!isset($this->info['filename'])) {
 			$this->info['filename'] = $this->filename();
 		}
 		return $this->info;
@@ -192,10 +192,10 @@ class File extends Object{
  * @access public
  */
 	function ext() {
-		if($this->info == null) {
+		if ($this->info == null) {
 			$this->info();
 		}
-		if(isset($this->info['extension'])) {
+		if (isset($this->info['extension'])) {
 			return $this->info['extension'];
 		}
 		return false;
@@ -207,10 +207,10 @@ class File extends Object{
  * @access public
  */
 	function filename() {
-		if($this->info == null) {
+		if ($this->info == null) {
 			$this->info();
 		}
-		if(isset($this->info['extension'])) {
+		if (isset($this->info['extension'])) {
 			return basename($this->name, '.'.$this->info['extension']);
 		}
 		return false;

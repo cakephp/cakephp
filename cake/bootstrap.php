@@ -46,14 +46,14 @@ if (!defined('PHP5')) {
 	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();
 
-	if(isset($cakeCache)) {
+	if (isset($cakeCache)) {
 		$cache = 'File';
 		$settings = array();
 
-		if(isset($cakeCache[0])) {
+		if (isset($cakeCache[0])) {
 			$cache = $cakeCache[0];
 		}
-		if(isset($cakeCache[1])) {
+		if (isset($cakeCache[1])) {
 			$settings = $cakeCache[1];
 		}
 		Cache::engine($cache, $settings);
@@ -135,7 +135,7 @@ if (!defined('PHP5')) {
 			$v = null;
 			$view = new View($v);
 			$view->renderCache($filename, $TIME_START);
-		} elseif(file_exists(CACHE . 'views' . DS . convertSlash($uri) . '_index.php')) {
+		} elseif (file_exists(CACHE . 'views' . DS . convertSlash($uri) . '_index.php')) {
 			uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
 			$v = null;
 			$view = new View($v);

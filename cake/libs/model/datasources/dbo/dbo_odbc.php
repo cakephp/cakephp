@@ -154,7 +154,7 @@ class DboOdbc extends DboSource{
 			array_push($tables, odbc_result($result, "TABLE_NAME"));
 		}
 
-		foreach( $tables as $t ) {
+		foreach ( $tables as $t ) {
 			echo "$t\n";
 		}
 
@@ -180,11 +180,11 @@ class DboOdbc extends DboSource{
 
 		$count=odbc_num_fields($result);
 
-		for($i = 1; $i <= $count; $i++) {
+		for ($i = 1; $i <= $count; $i++) {
 				$cols[$i - 1] = odbc_field_name($result, $i);
 		}
 
-		foreach($cols as $column) {
+		foreach ($cols as $column) {
 				$type
 				= odbc_field_type(
 					odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)),
@@ -402,7 +402,7 @@ class DboOdbc extends DboSource{
 		$index        =0;
 		$j            =0;
 
-		while($j < $num_fields) {
+		while ($j < $num_fields) {
 				$column = odbc_fetch_array($results, $j);
 
 				if (!empty($column->table)) {
@@ -430,7 +430,7 @@ class DboOdbc extends DboSource{
 				$resultRow=array();
 				$i=0;
 
-				foreach($row as $index => $field) {
+				foreach ($row as $index => $field) {
 					list($table, $column)      = $this->map[$index];
 					$resultRow[$table][$column]=$row[$index];
 					$i++;

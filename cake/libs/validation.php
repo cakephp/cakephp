@@ -126,12 +126,12 @@ class Validation extends Object {
 			$this->_extract($check);
 		}
 
-		if(empty($this->check)) {
+		if (empty($this->check)) {
 			return false;
 		}
 
 		$this->regex = '/[^\\dA-Z]/i';
-		if($this->_check() === true){
+		if ($this->_check() === true){
 			return false;
 		} else {
 			return true;
@@ -177,7 +177,7 @@ class Validation extends Object {
 		}
 
 		$this->regex = '/[^\\s]/';
-		if($this->_check() === true){
+		if ($this->_check() === true){
 			return false;
 		} else {
 			return true;
@@ -210,12 +210,12 @@ class Validation extends Object {
 
 		$this->check = str_replace(array('-', ' '), '', $this->check);
 
-		if(strlen($this->check) < 13){
+		if (strlen($this->check) < 13){
 			return false;
 		}
 
-		if(!is_null($this->regex)) {
-			if($this->_check()) {
+		if (!is_null($this->regex)) {
+			if ($this->_check()) {
 				return $this->_luhn();
 			}
 		}
@@ -240,23 +240,23 @@ class Validation extends Object {
 				$card = low($value);
 				$this->regex = $cards['all'][$card];
 
-				if($this->_check()) {
+				if ($this->_check()) {
 					return $this->_luhn();
 				}
 			}
 		} else {
-			if($this->type == 'all') {
+			if ($this->type == 'all') {
 				foreach ($cards['all'] as $key => $value) {
 					$this->regex = $value;
 
-					if($this->_check()) {
+					if ($this->_check()) {
 						return $this->_luhn();
 					}
 				}
 			} else {
 				$this->regex = $cards['fast'];
 
-				if($this->_check()) {
+				if ($this->_check()) {
 					return $this->_luhn();
 				}
 			}
@@ -284,37 +284,37 @@ class Validation extends Object {
 		switch($operator) {
 			case 'isgreater':
 			case '>':
-				if($check1 > $check2) {
+				if ($check1 > $check2) {
 					$return = true;
 				}
 			break;
 			case 'isless':
 			case '<':
-				if($check1 < $check2) {
+				if ($check1 < $check2) {
 					$return = true;
 				}
 			break;
 			case 'greaterorequal':
 			case '>=':
-				if($check1 >= $check2) {
+				if ($check1 >= $check2) {
 					$return = true;
 				}
 			break;
 			case 'lessorequal':
 			case '<=':
-				if($check1 <= $check2) {
+				if ($check1 <= $check2) {
 					$return = true;
 				}
 			break;
 			case 'equalto':
 			case '==':
-				if($check1 == $check2) {
+				if ($check1 == $check2) {
 					$return = true;
 				}
 			break;
 			case 'notequal':
 			case '!=':
-				if($check1 != $check2) {
+				if ($check1 != $check2) {
 					$return = true;
 				}
 			break;
@@ -341,7 +341,7 @@ class Validation extends Object {
 		if (is_array($check)) {
 			$this->_extract($check);
 		}
-		if($this->regex === null){
+		if ($this->regex === null){
 			$this->errors[] = __('You must define a regular expression for Validation::custom()', true);
 			return false;
 		}
@@ -369,14 +369,14 @@ class Validation extends Object {
 		$this->check = $check;
 		$this->regex = $regex;
 
-		if(!is_null($this->regex)) {
+		if (!is_null($this->regex)) {
 			return $this->_check();
 		}
 
 		$search = array();
 
-		if(is_array($format)){
-			foreach($format as $key => $value){
+		if (is_array($format)){
+			foreach ($format as $key => $value){
 				$search[$value] = $value;
 			}
 		} else {
@@ -393,7 +393,7 @@ class Validation extends Object {
 		foreach ($search as $key){
 			$this->regex = $regex[$key];
 
-			if($this->_check() === true){
+			if ($this->_check() === true){
 				return true;
 			}
 		}
@@ -414,11 +414,11 @@ class Validation extends Object {
 		$this->regex = $regex;
 		$this->check = $check;
 
-		if(!is_null($this->regex)) {
+		if (!is_null($this->regex)) {
 			return $this->_check();
 		}
 
-		if(is_null($places)) {
+		if (is_null($places)) {
 			$this->regex = '/^[-+]?[0-9]*\\.{1}[0-9]+(?:[eE][-+]?[0-9]+)?$/';
 			return $this->_check();
 		}
@@ -445,12 +445,12 @@ class Validation extends Object {
 			$this->_extract($check);
 		}
 
-		if(is_null($this->regex)) {
+		if (is_null($this->regex)) {
 			$this->regex = '/\\A(?:^([a-z0-9][a-z0-9_\\-\\.\\+]*)@([a-z0-9][a-z0-9\\.\\-]{0,63}\\.(com|org|net|biz|info|name|net|pro|aero|coop|museum|[a-z]{2,4}))$)\\z/i';
 		}
 		$return = $this->_check();
 
-		if($this->deep === false || $this->deep === null) {
+		if ($this->deep === false || $this->deep === null) {
 			return $return;
 		}
 
@@ -580,7 +580,7 @@ class Validation extends Object {
 		if (isset($lower) && isset($upper) && $lower > $upper) {
 			//error
 		}
-		if(is_float($check)) {
+		if (is_float($check)) {
 
 		}
 	}
@@ -614,7 +614,7 @@ class Validation extends Object {
 			$this->country = $country;
 		}
 
-		if(is_null($this->regex)) {
+		if (is_null($this->regex)) {
 			switch ($this->country) {
 				case 'us':
 					$this->regex  = '/1?[-. ]?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})/';
@@ -642,7 +642,7 @@ class Validation extends Object {
 			$this->country = $country;
 		}
 
-		if(is_null($this->regex)) {
+		if (is_null($this->regex)) {
 			switch ($this->country) {
 				case 'us':
 					$this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
@@ -676,7 +676,7 @@ class Validation extends Object {
 			$this->country = $country;
 		}
 
-		if(is_null($this->regex)) {
+		if (is_null($this->regex)) {
 			switch ($this->country) {
 				case 'us':
 					$this->regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
@@ -768,8 +768,8 @@ class Validation extends Object {
  * @access protected
  */
 	function _luhn() {
-		if($this->deep === true){
-			if($this->check == 0) {
+		if ($this->deep === true){
+			if ($this->check == 0) {
 				return false;
 			}
 			$sum = 0;

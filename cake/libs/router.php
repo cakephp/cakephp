@@ -212,7 +212,7 @@ class Router extends Object {
 				return false;
 			}
 
-			foreach($elements as $element) {
+			foreach ($elements as $element) {
 				$q = null;
 
 				if (preg_match('/^:(.+)$/', $element, $r)) {
@@ -225,7 +225,7 @@ class Router extends Object {
 						$parsed[] = '(?:\/([^\/]+))?';
 					}
 					$names[] = $r[1];
-				} elseif(preg_match('/^\*$/', $element, $r)) {
+				} elseif (preg_match('/^\*$/', $element, $r)) {
 					$parsed[] = '(?:\/(.*))?';
 				} else {
 					$parsed[] = '/' . $element;
@@ -257,7 +257,7 @@ class Router extends Object {
 		}
 		extract($_this->__parseExtension($url));
 
-		foreach($_this->routes as $route) {
+		foreach ($_this->routes as $route) {
 			list($route, $regexp, $names, $defaults) = $route;
 
 			if (preg_match($regexp, $url, $r)) {
@@ -266,12 +266,12 @@ class Router extends Object {
 				// remove the first element, which is the url
 				array_shift ($r);
 				// hack, pre-fill the default route names
-				foreach($names as $name) {
+				foreach ($names as $name) {
 					$out[$name] = null;
 				}
 
 				if (is_array($defaults)) {
-					foreach($defaults as $name => $value) {
+					foreach ($defaults as $name => $value) {
 						if (preg_match('#[a-zA-Z_\-]#i', $name)) {
 							$out[$name] = $_this->stripEscape($value);
 						} else {
@@ -280,16 +280,16 @@ class Router extends Object {
 					}
 				}
 
-				foreach(Set::filter($r, true) as $key => $found) {
+				foreach (Set::filter($r, true) as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $found;
-					} else if (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
+					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
 						// unnamed elements go in as 'pass'
 						$search = explode('/', $found);
-						foreach($search as $k => $value) {
+						foreach ($search as $k => $value) {
 							$out['pass'][] = $_this->stripEscape($value);
 						}
 					}
@@ -314,14 +314,14 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 
 		if ($_this->__parseExtensions) {
-			if(preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
+			if (preg_match('/\.[0-9a-zA-Z]*$/', $url, $match) == 1) {
 				$match = substr($match[0], 1);
-				if(empty($_this->__validExtensions)) {
+				if (empty($_this->__validExtensions)) {
 					$url = substr($url, 0, strpos($url, '.' . $match));
 					$ext = $match;
 				} else {
-					foreach($_this->__validExtensions as $name) {
-						if(strcasecmp($name, $match) === 0) {
+					foreach ($_this->__validExtensions as $name) {
+						if (strcasecmp($name, $match) === 0) {
 							$url = substr($url, 0, strpos($url, '.' . $name));
 							$ext = $match;
 						}
@@ -457,19 +457,19 @@ class Router extends Object {
 		$_this =& Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
-		if(!empty($_this->__params)) {
-			if(!isset($_this->params['requested'])) {
+		if (!empty($_this->__params)) {
+			if (!isset($_this->params['requested'])) {
 				$params = $_this->__params[0];
-			} else if(isset($_this->params['requested'])) {
+			} elseif (isset($_this->params['requested'])) {
 				$params = end($_this->__params);
 			}
 		}
 		$path = array('base' => null);
 
-		if(!empty($_this->__paths)) {
-			if(!isset($_this->params['requested'])) {
+		if (!empty($_this->__paths)) {
+			if (!isset($_this->params['requested'])) {
 				$path = $_this->__paths[0];
-			} else if(isset($_this->params['requested'])) {
+			} elseif (isset($_this->params['requested'])) {
 				$path = end($_this->__paths);
 			}
 		}
@@ -521,7 +521,7 @@ class Router extends Object {
 			$named = $args = array();
 			$skip = am(array_keys($_this->__mapped), array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#'));
 
-			if(defined('CAKE_ADMIN')) {
+			if (defined('CAKE_ADMIN')) {
 				$skip[] = CAKE_ADMIN;
 			}
 			$_this->__mapped = array();
@@ -531,11 +531,11 @@ class Router extends Object {
 			for ($i = 0; $i < $count; $i++) {
 				if ($i == 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
 					$args[0] = $url[$keys[$i]];
-				} else if (is_numeric($keys[$i]) || $keys[$i] == 'id') {
+				} elseif (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
-				} else if(!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs'])) && !empty($url[$keys[$i]])) {
+				} elseif (!empty($path['namedArgs']) && in_array($keys[$i], array_keys($path['namedArgs'])) && !empty($url[$keys[$i]])) {
 					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
-				} elseif(!empty($url[$keys[$i]]) || is_numeric($url[$keys[$i]])) {
+				} elseif (!empty($url[$keys[$i]]) || is_numeric($url[$keys[$i]])) {
 					$named[] = $keys[$i] . $path['argSeparator'] . $url[$keys[$i]];
 				}
 			}
@@ -547,7 +547,7 @@ class Router extends Object {
 
 				$urlOut = Set::filter(array($url['plugin'], $url['controller'], $url['action']));
 
-				if($url['plugin'] == $url['controller']) {
+				if ($url['plugin'] == $url['controller']) {
 					array_shift($urlOut);
 				}
 				if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
@@ -557,7 +557,7 @@ class Router extends Object {
 			}
 
 			if (!empty($args)) {
-				if($output{strlen($output)-1} == '/') {
+				if ($output{strlen($output)-1} == '/') {
 					$output .= join('/', Set::filter($args, true));
 				} else {
 					$output .= '/'. join('/', Set::filter($args, true));
@@ -565,7 +565,7 @@ class Router extends Object {
 			}
 
 			if (!empty($named)) {
-				if($output{strlen($output)-1} == '/') {
+				if ($output{strlen($output)-1} == '/') {
 					$output .= join('/', Set::filter($named, true));
 				} else {
 					$output .= '/'. join('/', Set::filter($named, true));
@@ -580,7 +580,7 @@ class Router extends Object {
 
 			if (empty($url)) {
 				return $path['here'];
-			} elseif($url{0} == '/') {
+			} elseif ($url{0} == '/') {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
@@ -624,8 +624,8 @@ class Router extends Object {
 			return false;
 		}
 
-		foreach($pass as $key => $value) {
-			if(!is_numeric($key)) {
+		foreach ($pass as $key => $value) {
+			if (!is_numeric($key)) {
 				unset($pass[$key]);
 			}
 		}
@@ -637,7 +637,7 @@ class Router extends Object {
 			return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), array());
 		} elseif (!empty($params) && !empty($route[3])) {
 			$required = array_diff(array_keys($defaults), array_keys($url));
-			if(!empty($required)) {
+			if (!empty($required)) {
 			 	return false;
 			}
 
@@ -655,17 +655,17 @@ class Router extends Object {
 			}
 		} else {
 			$required = array_diff(array_keys($defaults), array_keys($url));
-			if(empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
+			if (empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
 				return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
 			}
 			return false;
 		}
 
-		if(isset($route[3]['controller']) && !empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
+		if (isset($route[3]['controller']) && !empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
 			return false;
 		}
 
-		if(!empty($route[4])) {
+		if (!empty($route[4])) {
 			foreach ($route[4] as $key => $reg) {
 				if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
 					return false;
@@ -786,16 +786,16 @@ class Router extends Object {
  */
 	function stripEscape($param) {
 		$_this =& Router::getInstance();
-		if(!is_array($param) || empty($param)) {
-			if(is_bool($param)) {
+		if (!is_array($param) || empty($param)) {
+			if (is_bool($param)) {
 				return $param;
 			}
 
 			$return = preg_replace('/^[\\t ]*(?:-!)+/', '', $param);
 			return $return;
 		}
-		foreach($param as $key => $value) {
-			if(is_string($value)) {
+		foreach ($param as $key => $value) {
+			if (is_string($value)) {
 				$return[$key] = preg_replace('/^[\\t ]*(?:-!)+/', '', $value);
 			} else {
 				foreach ($value as $array => $string) {
@@ -829,7 +829,7 @@ class Router extends Object {
 	}
 }
 
-if(!function_exists('http_build_query')) {
+if (!function_exists('http_build_query')) {
 /**
  * Implements http_build_query for PHP4.
  *
@@ -841,7 +841,7 @@ if(!function_exists('http_build_query')) {
  * @see http://php.net/http_build_query
  */
 	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
-		if(empty($argSep)) {
+		if (empty($argSep)) {
 			$argSep = ini_get('arg_separator.output');
 		}
 		if (is_object($data)) {
@@ -849,17 +849,17 @@ if(!function_exists('http_build_query')) {
 		}
 		$out = array();
 
-		foreach((array)$data as $key => $v) {
-			if(is_numeric($key) && !empty($prefix)) {
+		foreach ((array)$data as $key => $v) {
+			if (is_numeric($key) && !empty($prefix)) {
 				$key = $prefix . $key;
 			}
 			$key = urlencode($key);
 
-			if(!empty($baseKey)) {
+			if (!empty($baseKey)) {
 				$key = $baseKey . '[' . $key . ']';
 			}
 
-			if(is_array($v) || is_object($v)) {
+			if (is_array($v) || is_object($v)) {
 				$out[] = http_build_query($v, $prefix, $argSep, $key);
 			} else {
 				$out[] = $key . '=' . urlencode($v);

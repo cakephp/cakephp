@@ -107,24 +107,24 @@ class I18n extends Object {
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
 
-		if($_this->__l10n->found === false) {
+		if ($_this->__l10n->found === false) {
 			$language = Configure::read('Config.language');
 
-			if($language === null && !empty($_SESSION['Config']['language'])) {
+			if ($language === null && !empty($_SESSION['Config']['language'])) {
 				$language = $_SESSION['Config']['language'];
 			}
 			$_this->__l10n->get($language);
 			$_this->locale = $_this->__l10n->locale;
 		}
 
-		if(is_null($domain)) {
+		if (is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
 				$domain = $regs[1];
 			} elseif (preg_match('/controllers{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
 				$domain = $regs[1];
 			}
 
-			if(isset($domain) && $domain == 'templates') {
+			if (isset($domain) && $domain == 'templates') {
 				if (preg_match('/templates{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
 					$domain = $regs[1];
 				}
@@ -132,7 +132,7 @@ class I18n extends Object {
 			$directory = null;
 		}
 
-		if(!isset($_this->__domains[$_this->category][$domain])) {
+		if (!isset($_this->__domains[$_this->category][$domain])) {
 			$_this->__bindTextDomain($domain, $directory);
 		}
 
@@ -149,7 +149,7 @@ class I18n extends Object {
 			}
 		}
 
-		if(!empty($_this->__domains[$_this->category][$domain][$singular])) {
+		if (!empty($_this->__domains[$_this->category][$domain][$singular])) {
 			if (($trans = $_this->__domains[$_this->category][$domain][$singular]) || ($pli) && ($trans = $_this->__domains[$_this->category][$domain][$plural])) {
 				if (is_array($trans)) {
 					if (!isset($trans[$pli])) {
@@ -164,7 +164,7 @@ class I18n extends Object {
 			}
 		}
 
-		if(!empty($pli)) {
+		if (!empty($pli)) {
 			return($plural);
 		}
 		return($singular);
@@ -308,7 +308,7 @@ class I18n extends Object {
 	function __bindTextDomain($domain, $directory = null) {
 		$_this =& I18n::getInstance();
 		$_this->__noLocale = true;
-		if(is_null($directory)) {
+		if (is_null($directory)) {
 			$searchPath[] = APP . 'locale';
 			$searchPath[] = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale';
 		} else {
@@ -349,7 +349,7 @@ class I18n extends Object {
 			}
 		}
 
-		if(empty($_this->__domains[$_this->category][$domain])) {
+		if (empty($_this->__domains[$_this->category][$domain])) {
 			return($domain);
 		}
 
@@ -360,7 +360,7 @@ class I18n extends Object {
 				$_this->__domains[$_this->category][$domain]["%po-header"][strtolower($header)] = $line;
 			}
 
-			if(isset($_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"])) {
+			if (isset($_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"])) {
 				$switch = preg_replace("/[(){}\\[\\]^\\s*\\]]+/", "", $_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"]);
 				$_this->__domains[$_this->category][$domain]["%plural-c"] = $switch;
 			}

@@ -50,7 +50,7 @@
  * Loads all models.
  */
 	function loadModels() {
-		if(!class_exists('Model')){
+		if (!class_exists('Model')){
 			require LIBS . 'model' . DS . 'model.php';
 		}
 		$path = Configure::getInstance();
@@ -64,8 +64,8 @@
 		}
 		$loadedModels = array();
 
-		foreach($path->modelPaths as $path) {
-			foreach(listClasses($path) as $model_fn) {
+		foreach ($path->modelPaths as $path) {
+			foreach (listClasses($path) as $model_fn) {
 				list($name) = explode('.', $model_fn);
 				$className = Inflector::camelize($name);
 				$loadedModels[$model_fn] = $model_fn;
@@ -86,7 +86,7 @@
  * @deprecated
  */
 	function loadPluginModels($plugin) {
-		if(!class_exists('AppModel')){
+		if (!class_exists('AppModel')){
 			loadModel();
 		}
 
@@ -100,8 +100,8 @@
 		}
 
 		$pluginModelDir = APP . 'plugins' . DS . $plugin . DS . 'models' . DS;
-		if(is_dir($pluginModelDir)) {
-			foreach(listClasses($pluginModelDir)as $modelFileName) {
+		if (is_dir($pluginModelDir)) {
+			foreach (listClasses($pluginModelDir)as $modelFileName) {
 				list($name) = explode('.', $modelFileName);
 				$className = Inflector::camelize($name);
 
@@ -120,7 +120,7 @@
  * @return boolean Success
  */
 	function loadView($viewClass) {
-		if(strpos($viewClass, '.') !== false){
+		if (strpos($viewClass, '.') !== false){
 			list($plugin, $viewClass) = explode('.', $viewClass);
 			$file = APP . 'plugins' . DS . Inflector::underscore($plugin) . DS . 'views' . DS . Inflector::underscore($viewClass) . '.php';
 			if (file_exists($file)) {
@@ -133,7 +133,7 @@
 			$paths = Configure::getInstance();
 			$file = Inflector::underscore($viewClass) . '.php';
 
-			foreach($paths->viewPaths as $path) {
+			foreach ($paths->viewPaths as $path) {
 				if (file_exists($path . $file)) {
 					 return require($path . $file);
 				}
@@ -159,7 +159,7 @@
  * @return boolean Success
  */
 	function loadModel($name = null) {
-		if(!class_exists('Model')){
+		if (!class_exists('Model')){
 			require LIBS . 'model' . DS . 'model.php';
 		}
 		if (!class_exists('AppModel')) {
@@ -171,7 +171,7 @@
 			Overloadable::overload('AppModel');
 		}
 
-		if(strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 
 			$pluginAppModel = Inflector::camelize($plugin . '_app_model');
@@ -200,12 +200,12 @@
 			$className = $name;
 			$name = Inflector::underscore($name);
 			$models = Configure::read('Models');
-			if(is_array($models)) {
-				if(array_key_exists($className, $models)) {
+			if (is_array($models)) {
+				if (array_key_exists($className, $models)) {
 					require($models[$className]['path']);
 					Overloadable::overload($className);
 					return true;
-				} elseif(isset($models['Core']) && array_key_exists($className, $models['Core'])) {
+				} elseif (isset($models['Core']) && array_key_exists($className, $models['Core'])) {
 					require($models['Core'][$className]['path']);
 					Overloadable::overload($className);
 					return true;
@@ -213,7 +213,7 @@
 			}
 
 			$paths = Configure::getInstance();
-			foreach($paths->modelPaths as $path) {
+			foreach ($paths->modelPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
@@ -238,23 +238,23 @@
 		$directories = Configure::getInstance();
 		$paths = array();
 
-		foreach($directories->modelPaths as $path) {
+		foreach ($directories->modelPaths as $path) {
 			$paths['Models'][] = $path;
 		}
-		foreach($directories->behaviorPaths as $path) {
+		foreach ($directories->behaviorPaths as $path) {
 			$paths['Behaviors'][] = $path;
 		}
-		foreach($directories->controllerPaths as $path) {
+		foreach ($directories->controllerPaths as $path) {
 			$paths['Controllers'][] = $path;
 		}
-		foreach($directories->componentPaths as $path) {
+		foreach ($directories->componentPaths as $path) {
 			$paths['Components'][] = $path;
 		}
-		foreach($directories->helperPaths as $path) {
+		foreach ($directories->helperPaths as $path) {
 			$paths['Helpers'][] = $path;
 		}
 
-		if(!class_exists('Folder')){
+		if (!class_exists('Folder')){
 			uses('Folder');
 		}
 
@@ -262,9 +262,9 @@
 		$plugins = $folder->ls();
 		$classPaths = array('models', 'models'.DS.'behaviors',  'controllers', 'controllers'.DS.'components', 'views'.DS.'helpers');
 
-		foreach($plugins[0] as $plugin){
-			foreach($classPaths as $path){
-				if(strpos($path, DS) !== false){
+		foreach ($plugins[0] as $plugin){
+			foreach ($classPaths as $path){
+				if (strpos($path, DS) !== false){
 					$key = explode(DS, $path);
 					$key = $key[1];
 				} else {
@@ -292,8 +292,8 @@
 		}
 		$loadedControllers = array();
 
-		foreach($paths->controllerPaths as $path) {
-			foreach(listClasses($path) as $controller) {
+		foreach ($paths->controllerPaths as $path) {
+			foreach (listClasses($path) as $controller) {
 				list($name) = explode('.', $controller);
 				$className = Inflector::camelize($name);
 				if (loadController($name)) {
@@ -320,7 +320,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if(strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 
 			$pluginAppController = Inflector::camelize($plugin . '_app_controller');
@@ -352,7 +352,7 @@
 					require($file);
 					return true;
 				} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
-					if(file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+					if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 						return true;
 					} else {
@@ -367,18 +367,18 @@
 		if (!class_exists($className)) {
 			$name = Inflector::underscore($className);
 			$controllers = Configure::read('Controllers');
-			if(is_array($controllers)) {
-				if(array_key_exists($className, $controllers)) {
+			if (is_array($controllers)) {
+				if (array_key_exists($className, $controllers)) {
 					require($controllers[$className]['path']);
 					return true;
-				} elseif(isset($controllers['Core']) && array_key_exists($className, $controllers['Core'])) {
+				} elseif (isset($controllers['Core']) && array_key_exists($className, $controllers['Core'])) {
 					require($controllers['Core'][$className]['path']);
 					return true;
 				}
 			}
 
 			$paths = Configure::getInstance();
-			foreach($paths->controllerPaths as $path) {
+			foreach ($paths->controllerPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					Configure::store('Controllers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
@@ -435,7 +435,7 @@
 				require($file);
 				return true;
 			} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
-				if(file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
+				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 					return true;
 				} else {
@@ -464,7 +464,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if(strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -473,18 +473,18 @@
 			$name = Inflector::underscore($name);
 			$helpers = Configure::read('Helpers');
 
-			if(is_array($helpers)) {
-				if(array_key_exists($className, $helpers)) {
+			if (is_array($helpers)) {
+				if (array_key_exists($className, $helpers)) {
 					require($helpers[$className]['path']);
 					return true;
-				} elseif(isset($helpers['Core']) && array_key_exists($className, $helpers['Core'])) {
+				} elseif (isset($helpers['Core']) && array_key_exists($className, $helpers['Core'])) {
 					require($helpers['Core'][$className]['path']);
 					return true;
 				}
 			}
 
 			$paths = Configure::getInstance();
-			foreach($paths->helperPaths as $path) {
+			foreach ($paths->helperPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					Configure::store('Helpers', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
@@ -538,7 +538,7 @@
 			return true;
 		}
 
-		if(strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -547,18 +547,18 @@
 			$name = Inflector::underscore($name);
 			$components = Configure::read('Components');
 
-			if(is_array($components)) {
-				if(array_key_exists($className, $components)) {
+			if (is_array($components)) {
+				if (array_key_exists($className, $components)) {
 					require($components[$className]['path']);
 					return true;
-				} elseif(isset($components['Core']) && array_key_exists($className, $components['Core'])) {
+				} elseif (isset($components['Core']) && array_key_exists($className, $components['Core'])) {
 					require($components['Core'][$className]['path']);
 					return true;
 				}
 			}
 			$paths = Configure::getInstance();
 
-			foreach($paths->componentPaths as $path) {
+			foreach ($paths->componentPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					Configure::store('Components', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 					require($path . $name . '.php');
@@ -609,7 +609,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if(strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false){
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -618,7 +618,7 @@
 		if (!class_exists($name . 'Behavior')) {
 			$name = Inflector::underscore($name);
 
-			foreach($paths->behaviorPaths as $path) {
+			foreach ($paths->behaviorPaths as $path) {
 				if (file_exists($path . $name . '.php')) {
 					require($path . $name . '.php');
 					return true;
@@ -645,7 +645,7 @@
 	function listClasses($path) {
 		$dir = opendir($path);
 		$classes=array();
-		while(false !== ($file = readdir($dir))) {
+		while (false !== ($file = readdir($dir))) {
 			if ((substr($file, -3, 3) == 'php') && substr($file, 0, 1) != '.') {
 				$classes[] = $file;
 			}
@@ -665,7 +665,7 @@
  */
 	function config() {
 		$args = func_get_args();
-		foreach($args as $arg) {
+		foreach ($args as $arg) {
 			if (('database' == $arg) && file_exists(CONFIGS . $arg . '.php')) {
 				include_once(CONFIGS . $arg . '.php');
 			} elseif (file_exists(CONFIGS . $arg . '.php')) {
@@ -712,7 +712,7 @@
 		for ($i = 0; $i < $c; $i++) {
 			$arg = $args[$i];
 
-			if(strpos($arg, '.') !== false){
+			if (strpos($arg, '.') !== false){
 				$file = explode('.', $arg);
 				$plugin = Inflector::underscore($file[0]);
 				unset($file[0]);
@@ -780,7 +780,7 @@
 				return null;
 			}
 
-			foreach($array as $key => $val) {
+			foreach ($array as $key => $val) {
 				$sa[$key] = $val[$sortby];
 			}
 
@@ -790,7 +790,7 @@
 				arsort($sa, $type);
 			}
 
-			foreach($sa as $key => $val) {
+			foreach ($sa as $key => $val) {
 				$out[] = $array[$key];
 			}
 			return $out;
@@ -819,7 +819,7 @@
 			}
 
 			$output=array();
-			for($i = 0; $i < $c1; $i++) {
+			for ($i = 0; $i < $c1; $i++) {
 				$output[$a1[$i]] = $a2[$i];
 			}
 			return $output;
@@ -873,7 +873,7 @@
  */
 	function aa() {
 		$args = func_get_args();
-		for($l = 0, $c = count($args); $l < $c; $l++) {
+		for ($l = 0, $c = count($args); $l < $c; $l++) {
 			if ($l + 1 < count($args)) {
 				$a[$args[$l]] = $args[$l + 1];
 			} else {
@@ -962,7 +962,7 @@
  */
 	function am() {
 		$r = array();
-		foreach(func_get_args()as $a) {
+		foreach (func_get_args()as $a) {
 			if (!is_array($a)) {
 				$a = array($a);
 			}
@@ -979,7 +979,7 @@
 	function setUri() {
 		if (env('HTTP_X_REWRITE_URL')) {
 			$uri = env('HTTP_X_REWRITE_URL');
-		} elseif(env('REQUEST_URI')) {
+		} elseif (env('REQUEST_URI')) {
 			$uri = env('REQUEST_URI');
 		} else {
 			if ($uri = env('argv')) {
@@ -1086,7 +1086,7 @@
 			$res = @fopen($fileName, 'w+b');
 			if ($res) {
 				$write = @fwrite($res, $data);
-				if($write === false) {
+				if ($write === false) {
 					return false;
 				} else {
 					return $write;
@@ -1129,7 +1129,7 @@
 
 		$timediff = $expires - $now;
 		$filetime = false;
-		if(file_exists($filename)) {
+		if (file_exists($filename)) {
 			$filetime = @filemtime($filename);
 		}
 
@@ -1143,7 +1143,7 @@
 					$data = file_get_contents($filename);
 				}
 			}
-		} else if(is_writable(dirname($filename))) {
+		} elseif (is_writable(dirname($filename))) {
 			file_put_contents($filename, $data);
 		}
 		return $data;
@@ -1167,14 +1167,14 @@
 			if (is_file($cache . $ext)) {
 				@unlink($cache . $ext);
 				return true;
-			} else if(is_dir($cache)) {
+			} elseif (is_dir($cache)) {
 				$files = glob("$cache*");
 
 				if ($files === false) {
 					return false;
 				}
 
-				foreach($files as $file) {
+				foreach ($files as $file) {
 					if (is_file($file)) {
 						@unlink($file);
 					}
@@ -1187,7 +1187,7 @@
 				if ($files === false) {
 					return false;
 				}
-				foreach($files as $file) {
+				foreach ($files as $file) {
 					if (is_file($file)) {
 						@unlink($file);
 					}
@@ -1195,16 +1195,16 @@
 				return true;
 			}
 		} elseif (is_array($params)) {
-			foreach($params as $key => $file) {
+			foreach ($params as $key => $file) {
 				$file = preg_replace('/\/\//', '/', $file);
 				$cache = CACHE . $type . DS . '*' . $file . '*' . $ext;
 				$files[] = glob($cache);
 			}
 
 			if (!empty($files)) {
-				foreach($files as $key => $delete) {
+				foreach ($files as $key => $delete) {
 					if (is_array($delete)) {
-						foreach($delete as $file) {
+						foreach ($delete as $file) {
 							if (is_file($file)) {
 								@unlink($file);
 							}
@@ -1243,13 +1243,13 @@
  * @return mixed translated string if $return is false string will be echoed
  */
 	function __($singular, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($singular, null, null, 5, null, $dir);
 		} else {
 			return I18n::translate($singular, null, null, 5, null, $dir);
@@ -1267,13 +1267,13 @@
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($singular, $plural, null, 5, $count, $dir);
 		} else {
 			return I18n::translate($singular, $plural, null, 5, $count, $dir);
@@ -1289,11 +1289,11 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __d($domain, $msg, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($msg, null, $domain);
 		} else {
 			return I18n::translate($msg, null, $domain);
@@ -1313,11 +1313,11 @@
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dn($domain, $singular, $plural, $count, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($singular, $plural, $domain, 5, $count);
 		} else {
 			return I18n::translate($singular, $plural, $domain, 5, $count);
@@ -1347,11 +1347,11 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __dc($domain, $msg, $category, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($msg, null, $domain, $category);
 		} else {
 			return I18n::translate($msg, null, $domain, $category);
@@ -1385,11 +1385,11 @@
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($singular, $plural, $domain, $category, $count);
 		} else {
 			return I18n::translate($singular, $plural, $domain, $category, $count);
@@ -1415,13 +1415,13 @@
  * @return translated string if $return is false string will be echoed
  */
 	function __c($msg, $category, $return = false) {
-		if(!class_exists('I18n')) {
+		if (!class_exists('I18n')) {
 			uses('i18n');
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
 
-		if($return === false) {
+		if ($return === false) {
 			echo I18n::translate($msg, null, null, $category, null, $dir);
 		} else {
 			return I18n::translate($msg, null, null, $category, null, $dir);
@@ -1470,8 +1470,8 @@
 	if (!function_exists('array_intersect_key')) {
 		function array_intersect_key($arr1, $arr2) {
 			$res = array();
-			foreach($arr1 as $key=>$value) {
-				if(array_key_exists($key, $arr2)) {
+			foreach ($arr1 as $key=>$value) {
+				if (array_key_exists($key, $arr2)) {
 					$res[$key] = $arr1[$key];
 				}
 			}
@@ -1499,7 +1499,7 @@
  */
 	function fileExistsInPath($file) {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-		foreach($paths as $path) {
+		foreach ($paths as $path) {
 			$fullPath = $path . DIRECTORY_SEPARATOR . $file;
 
 			if (file_exists($fullPath)) {
@@ -1535,7 +1535,7 @@
 		}
 		$dir = opendir($path);
 
-		while($file = readdir($dir)) {
+		while ($file = readdir($dir)) {
 			if ($file != '.' && $file != '..') {
 				$fullpath = $path . '/' . $file;
 

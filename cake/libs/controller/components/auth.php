@@ -232,7 +232,7 @@ class AuthComponent extends Object {
 				CAKE_ADMIN . '_delete'	=> 'delete'
 			));
 		}
-		if(Configure::read() > 0) {
+		if (Configure::read() > 0) {
 			uses('debugger');
 			Debugger::checkSessionKey();
 		}
@@ -266,7 +266,7 @@ class AuthComponent extends Object {
 		if ($this->_normalizeURL($this->loginAction) == $this->_normalizeURL($url)) {
 			// We're already at the login action
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
-				if(!$this->Session->check('Auth.redirect')) {
+				if (!$this->Session->check('Auth.redirect')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
 				}
 				return;
@@ -537,7 +537,7 @@ class AuthComponent extends Object {
  * @return string Redirect URL
  */
 	function redirect($url = null) {
-		if(!is_null($url)) {
+		if (!is_null($url)) {
 			return $this->Session->write('Auth.redirect', $url);
 		}
 		if ($this->Session->check('Auth.redirect')) {
@@ -638,13 +638,13 @@ class AuthComponent extends Object {
 			if (empty($user)) {
 				return null;
 			}
-		} else if (is_object($user) && is_a($user, 'Model')) {
+		} elseif (is_object($user) && is_a($user, 'Model')) {
 			if (!$user->exists()) {
 				return null;
 			}
 			$user = $user->read();
 			$user = $user[$this->userModel];
-		} else if (is_array($user) && isset($user[$this->userModel])) {
+		} elseif (is_array($user) && isset($user[$this->userModel])) {
 			$user = $user[$this->userModel];
 		}
 		
@@ -673,7 +673,7 @@ class AuthComponent extends Object {
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
-		} else if (is_numeric($user)) {
+		} elseif (is_numeric($user)) {
 			// Assume it's a user's ID
 			$model =& $this->getUserModel();
 			$data = $model->find(am(array($model->escapeField() => $user), $this->userScope));
@@ -683,7 +683,7 @@ class AuthComponent extends Object {
 			}
 		}
 		if (isset($data) && !empty($data)) {
-			if(!empty($data[$this->userModel][$this->fields['password']])) {
+			if (!empty($data[$this->userModel][$this->fields['password']])) {
 				unset($data[$this->userModel][$this->fields['password']]);
 			}
 			return $data[$this->userModel];

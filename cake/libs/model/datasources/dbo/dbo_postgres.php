@@ -142,7 +142,7 @@ class DboPostgres extends DboSource {
 		} else {
 			$tables = array();
 
-			foreach($result as $item) {
+			foreach ($result as $item) {
 				$tables[] = $item[0]['name'];
 			}
 
@@ -170,7 +170,7 @@ class DboPostgres extends DboSource {
 		$fields = false;
 		$cols = $this->fetchAll("SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null, column_default AS default, ordinal_position AS position, character_maximum_length AS char_length, character_octet_length AS oct_length FROM information_schema.columns WHERE table_name =" . $this->value($model->tablePrefix . $model->table) . " ORDER BY position");
 
-		foreach($cols as $column) {
+		foreach ($cols as $column) {
 			$colKey = array_keys($column);
 
 			if (isset($column[$colKey[0]]) && !isset($column[0])) {
@@ -386,7 +386,7 @@ class DboPostgres extends DboSource {
 		$count = count($fields);
 
 		if ($count >= 1 && $fields[0] != '*' && strpos($fields[0], 'COUNT(*)') === false) {
-			for($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i]) && !preg_match('/\s+AS\s+/', $fields[$i])) {
 					$prepend = '';
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
@@ -512,7 +512,7 @@ class DboPostgres extends DboSource {
 		$index = 0;
 		$j = 0;
 
-		while($j < $num_fields) {
+		while ($j < $num_fields) {
 			$columnName = pg_field_name($results, $j);
 
 			if (strpos($columnName, '__')) {
@@ -534,7 +534,7 @@ class DboPostgres extends DboSource {
 			$resultRow = array();
 			$i = 0;
 
-			foreach($row as $index => $field) {
+			foreach ($row as $index => $field) {
 				list($table, $column) = $this->map[$index];
 				$resultRow[$table][$column] = $row[$index];
 				$i++;

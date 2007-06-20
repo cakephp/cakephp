@@ -211,7 +211,7 @@ class ShellDispatcher {
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
 		);
 
-		if(!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
+		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			$includes[] = CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 		} else {
 			$includes[] = APP_PATH . 'config' . DS . 'core.php';
@@ -257,7 +257,7 @@ class ShellDispatcher {
 				$this->help();
 			} else {
 				$loaded = false;
-				foreach($this->shellPaths as $path) {
+				foreach ($this->shellPaths as $path) {
 					$this->shellPath = $path . $this->shell . ".php";
 					if (file_exists($this->shellPath)) {
 						$loaded = true;
@@ -268,18 +268,18 @@ class ShellDispatcher {
 				if ($loaded) {
 					require CONSOLE_LIBS . 'shell.php';
 					require $this->shellPath;
-					if(class_exists($this->shellClass)) {
+					if (class_exists($this->shellClass)) {
 
 						$command = null;
-						if(isset($this->args[0])) {
+						if (isset($this->args[0])) {
 							$command = $this->args[0];
 						}
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 						$this->shiftArgs();
 
-						if($command == 'help') {
-							if(method_exists($shell, 'help')) {
+						if ($command == 'help') {
+							if (method_exists($shell, 'help')) {
 								$shell->help();
 								exit();
 							} else {
@@ -290,16 +290,16 @@ class ShellDispatcher {
 						$shell->initialize();
 						$shell->loadTasks();
 
-						foreach($shell->taskNames as $task) {
+						foreach ($shell->taskNames as $task) {
 							$shell->{$task}->initialize();
 							$shell->{$task}->loadTasks();
 						}
 
 						$task = Inflector::camelize($command);
-						if(in_array($task, $shell->taskNames)) {
+						if (in_array($task, $shell->taskNames)) {
 							$shell->{$task}->startup();
-							if(isset($this->args[0]) && $this->args[0] == 'help') {
-								if(method_exists($shell->{$task}, 'help')) {
+							if (isset($this->args[0]) && $this->args[0] == 'help') {
+								if (method_exists($shell->{$task}, 'help')) {
 									$shell->{$task}->help();
 									exit();
 								} else {
@@ -313,11 +313,11 @@ class ShellDispatcher {
 						$classMethods = get_class_methods($shell);
 
 						$privateMethod = $missingCommand = false;
-						if((in_array($command, $classMethods) || in_array(strtolower($command), $classMethods)) && strpos($command, '_', 0) === 0) {
+						if ((in_array($command, $classMethods) || in_array(strtolower($command), $classMethods)) && strpos($command, '_', 0) === 0) {
 							$privateMethod = true;
 						}
 
-						if(!in_array($command, $classMethods) && !in_array(strtolower($command), $classMethods)) {
+						if (!in_array($command, $classMethods) && !in_array(strtolower($command), $classMethods)) {
 							$missingCommand = true;
 						}
 
@@ -331,12 +331,12 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
-						if($missingCommand && method_exists($shell, 'main')) {
+						if ($missingCommand && method_exists($shell, 'main')) {
 							$shell->startup();
 							$shell->main();
-						} else if($missingCommand && method_exists($shell, 'help')) {
+						} elseif ($missingCommand && method_exists($shell, 'help')) {
 							$shell->help();
-						} else if(!$privateMethod && method_exists($shell, $command)) {
+						} elseif (!$privateMethod && method_exists($shell, $command)) {
 							$shell->startup();
 							$shell->{$command}();
 						} else {
@@ -369,14 +369,14 @@ class ShellDispatcher {
 			$print_options = '(' . implode('/', $options) . ')';
 		}
 
-		if($default == null) {
+		if ($default == null) {
 			$this->stdout($prompt . " $print_options \n" . '> ', false);
 		} else {
 			$this->stdout($prompt . " $print_options \n" . "[$default] > ", false);
 		}
 		$result = trim(fgets($this->stdin));
 
-		if($default != null && empty($result)) {
+		if ($default != null && empty($result)) {
 			return $default;
 		} else {
 			return $result;
@@ -425,15 +425,15 @@ class ShellDispatcher {
 		$root = dirname(dirname(dirname(__FILE__)));
 		$working = $root;
 
-		if(!empty($this->params['working'])) {
+		if (!empty($this->params['working'])) {
 			$root = dirname($this->params['working']);
 			$app = basename($this->params['working']);
  		} else {
 			$this->params['working'] = $root;
 		}
 
-		if(!empty($this->params['app'])) {
-			if($this->params['app']{0} == '/') {
+		if (!empty($this->params['app'])) {
+			if ($this->params['app']{0} == '/') {
 				$root = dirname($this->params['app']);
 				$app = basename($this->params['app']);
 			} else {
@@ -443,7 +443,7 @@ class ShellDispatcher {
 			unset($this->params['app']);
 		}
 
-		if(in_array($app, array('cake', 'console')) || realpath($root.DS.$app) === dirname(dirname(dirname(__FILE__)))) {
+		if (in_array($app, array('cake', 'console')) || realpath($root.DS.$app) === dirname(dirname(dirname(__FILE__)))) {
 			$root = dirname(dirname(dirname(__FILE__)));
 			$app = 'app';
 		}
@@ -484,12 +484,12 @@ class ShellDispatcher {
 		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
 
 		$this->stdout("\nAvailable Shells:");
-		foreach($this->shellPaths as $path) {
-			if(is_dir($path)) {
+		foreach ($this->shellPaths as $path) {
+			if (is_dir($path)) {
 				$shells = listClasses($path);
 				$path = r(CORE_PATH, '', $path);
 				$this->stdout("\n " . $path . ":");
-				if(empty($shells)) {
+				if (empty($shells)) {
 					$this->stdout("\t - none");
 				} else {
 					foreach ($shells as $shell) {

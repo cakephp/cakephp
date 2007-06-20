@@ -32,10 +32,10 @@
  * directory we will define ROOT there, otherwise we set it
  * here.
  */
-	if(!defined('ROOT')) {
+	if (!defined('ROOT')) {
 		define ('ROOT', '../');
 	}
-	if(!defined('WEBROOT_DIR')) {
+	if (!defined('WEBROOT_DIR')) {
 		define ('WEBROOT_DIR', 'webroot');
 	}
 /**

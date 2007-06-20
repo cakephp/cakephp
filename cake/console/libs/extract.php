@@ -69,28 +69,28 @@ class ExtractShell extends Shell{
 	var $__output = null;
 
 	function initialize() {
-		if(isset($this->params['files']) && !is_array($this->params['files'])){
+		if (isset($this->params['files']) && !is_array($this->params['files'])){
 			$this->files = explode(',', $this->params['files']);
 		}
 
-		if(isset($this->params['path'])) {
+		if (isset($this->params['path'])) {
 			$this->path = $this->params['path'];
 		} else {
 			$this->path = ROOT . DS . APP_DIR;
 		}
 
-		if(isset($this->params['debug'])) {
+		if (isset($this->params['debug'])) {
 			$this->path = ROOT;
 			$this->files = array(__FILE__);
 		}
 
-		if(isset($this->params['output'])) {
+		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
 			$this->__output = APP . 'locale' . DS;
 		}
 
-		if(empty($this->files)){
+		if (empty($this->files)){
 			$this->files = $this->__searchDirectory();
 		}
 	}
@@ -105,12 +105,12 @@ class ExtractShell extends Shell{
 
 		$response = '';
 		$filename = '';
-		while($response == '') {
+		while ($response == '') {
 			$response = $this->in('Would you like to merge all translations into one file?', array('y','n'), 'y');
-			if(strtolower($response) == 'n') {
+			if (strtolower($response) == 'n') {
 				$this->__oneFile = false;
 			} else {
-				while($filename == '') {
+				while ($filename == '') {
 					$filename = $this->in('What should we name this file?', null, $this->__filename);
 					if ($filename == '') {
 						$this->out('The filesname you supplied was empty. Please try again.');
@@ -154,15 +154,15 @@ class ExtractShell extends Shell{
 			$this->__tokens = array();
 			$lineNumber = 1;
 
-			foreach($allTokens as $token) {
-				if((!is_array($token)) || (($token[0] != T_WHITESPACE) && ($token[0] != T_INLINE_HTML))) {
-					if(is_array($token)) {
+			foreach ($allTokens as $token) {
+				if ((!is_array($token)) || (($token[0] != T_WHITESPACE) && ($token[0] != T_INLINE_HTML))) {
+					if (is_array($token)) {
 						$token[] = $lineNumber;
 					}
 					$this->__tokens[] = $token;
 				}
 
-				if(is_array($token)) {
+				if (is_array($token)) {
 					$lineNumber += count(split("\n", $token[1])) - 1;
 				} else {
 					$lineNumber += count(split("\n", $token)) - 1;
@@ -190,7 +190,7 @@ class ExtractShell extends Shell{
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
-		while(($tokenCount - $count) > 3) {
+		while (($tokenCount - $count) > 3) {
 			list($countToken, $parenthesis, $middle, $right) = array($this->__tokens[$count], $this->__tokens[$count + 1], $this->__tokens[$count + 2], $this->__tokens[$count + 3]);
 			if (!is_array($countToken)) {
 				$count++;
@@ -198,9 +198,9 @@ class ExtractShell extends Shell{
 			}
 
 			list($type, $string, $line) = $countToken;
-			if(($type == T_STRING) && ($string == $functionname) && ($parenthesis == "(")) {
+			if (($type == T_STRING) && ($string == $functionname) && ($parenthesis == "(")) {
 
-				if(in_array($right, array(")", ","))
+				if (in_array($right, array(")", ","))
 				&& (is_array($middle) && ($middle[0] == T_CONSTANT_ENCAPSED_STRING))) {
 
 					if ($this->__oneFile === true) {
@@ -226,9 +226,9 @@ class ExtractShell extends Shell{
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
-		while(($tokenCount - $count) > 7) {
+		while (($tokenCount - $count) > 7) {
 			list($countToken, $firstParenthesis) = array($this->__tokens[$count], $this->__tokens[$count + 1]);
-			if(!is_array($countToken)) {
+			if (!is_array($countToken)) {
 				$count++;
 				continue;
 			}
@@ -238,23 +238,23 @@ class ExtractShell extends Shell{
 				$position = $count;
 				$depth = 0;
 
-				while($depth == 0) {
+				while ($depth == 0) {
 					if ($this->__tokens[$position] == "(") {
 						$depth++;
-					} elseif($this->__tokens[$position] == ")") {
+					} elseif ($this->__tokens[$position] == ")") {
 						$depth--;
 					}
 					$position++;
 				}
 
-				if($plural) {
+				if ($plural) {
 					$end = $position + $shift + 7;
 
-					if($this->__tokens[$position + $shift + 5] === ')') {
+					if ($this->__tokens[$position + $shift + 5] === ')') {
 						$end = $position + $shift + 5;
 					}
 
-					if(empty($shift)) {
+					if (empty($shift)) {
 						list($singular, $firstComma, $plural, $seoncdComma, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $this->__tokens[$position + 3], $this->__tokens[$end]);
 						$condition = ($seoncdComma == ",");
 					} else {
@@ -265,7 +265,7 @@ class ExtractShell extends Shell{
 						(is_array($singular) && ($singular[0] == T_CONSTANT_ENCAPSED_STRING)) &&
 						(is_array($plural) && ($plural[0] == T_CONSTANT_ENCAPSED_STRING));
 				} else {
-					if($this->__tokens[$position + $shift + 5] === ')') {
+					if ($this->__tokens[$position + $shift + 5] === ')') {
 						$comma = $this->__tokens[$position + $shift + 3];
 						$end = $position + $shift + 5;
 					} else {
@@ -279,15 +279,15 @@ class ExtractShell extends Shell{
 						(is_array($text) && ($text[0] == T_CONSTANT_ENCAPSED_STRING));
 				}
 
-				if(($endParenthesis == ")") && $condition) {
-					if($this->__oneFile === true) {
-						if($plural) {
+				if (($endParenthesis == ")") && $condition) {
+					if ($this->__oneFile === true) {
+						if ($plural) {
 							$this->__strings[$this->__formatString($singular[1]) . "\0" . $this->__formatString($plural[1])][$this->__file][] = $line;
 						} else {
 							$this->__strings[$this->__formatString($text[1])][$this->__file][] = $line;
 						}
 					} else {
-						if($plural) {
+						if ($plural) {
 							$this->__strings[$this->__file][$this->__formatString($singular[1]) . "\0" . $this->__formatString($plural[1])][] = $line;
 						} else {
 							$this->__strings[$this->__file][$this->__formatString($text[1])][] = $line;
@@ -302,14 +302,14 @@ class ExtractShell extends Shell{
 	}
 	function __buildFiles() {
 		$output = '';
-		foreach($this->__strings as $str => $fileInfo) {
+		foreach ($this->__strings as $str => $fileInfo) {
 			$occured = $fileList = array();
 
-			if($this->__oneFile === true) {
-				foreach($fileInfo as $file => $lines) {
+			if ($this->__oneFile === true) {
+				foreach ($fileInfo as $file => $lines) {
 					$occured[] = "$file:" . join(";", $lines);
 
-					if(isset($this->__fileVersions[$file])) {
+					if (isset($this->__fileVersions[$file])) {
 						$fileList[] = $this->__fileVersions[$file];
 					}
 				}
@@ -318,7 +318,7 @@ class ExtractShell extends Shell{
 				$output = "#: $occurances\n";
 				$filename = $this->__filename;
 
-				if(strpos($str, "\0") === false) {
+				if (strpos($str, "\0") === false) {
 					$output .= "msgid \"$str\"\n";
 					$output .= "msgstr \"\"\n";
 				} else {
@@ -330,18 +330,18 @@ class ExtractShell extends Shell{
 				}
 				$output .= "\n";
 			} else {
-				foreach($fileInfo as $file => $lines) {
+				foreach ($fileInfo as $file => $lines) {
 					$filename = $str;
 					$occured = array("$str:" . join(";", $lines));
 
-					if(isset($this->__fileVersions[$str])) {
+					if (isset($this->__fileVersions[$str])) {
 						$fileList[] = $this->__fileVersions[$str];
 					}
 					$occurances = join("\n#: ", $occured);
 					$occurances = str_replace($this->path, '', $occurances);
 					$output .= "#: $occurances\n";
 
-					if(strpos($file, "\0") === false) {
+					if (strpos($file, "\0") === false) {
 						$output .= "msgid \"$file\"\n";
 						$output .= "msgstr \"\"\n";
 					} else {
@@ -360,8 +360,8 @@ class ExtractShell extends Shell{
 	function __store($file = 0, $input = 0, $fileList = array(), $get = 0) {
 		static $storage = array();
 
-		if(!$get) {
-			if(isset($storage[$file])) {
+		if (!$get) {
+			if (isset($storage[$file])) {
 				$storage[$file][1] = array_unique(array_merge($storage[$file][1], $fileList));
 				$storage[$file][] = $input;
 			} else {
@@ -378,7 +378,7 @@ class ExtractShell extends Shell{
 		$output = $this->__store(0, 0, array(), 1);
 		$output = $this->__mergeFiles($output);
 
-		foreach($output as $file => $content) {
+		foreach ($output as $file => $content) {
 			$tmp = str_replace(array($this->path, '.php','.ctp','.thtml', '.inc','.tpl' ), '', $file);
 			$tmp = str_replace(DS, '.', $tmp);
 			$file = str_replace('.', '-', $tmp) .'.pot';
@@ -388,9 +388,9 @@ class ExtractShell extends Shell{
 
 			$fileList = str_replace(array($this->path), '', $fileList);
 
-			if(count($fileList) > 1) {
+			if (count($fileList) > 1) {
 				$fileList = "Generated from files:\n#  " . join("\n#  ", $fileList);
-			} elseif(count($fileList) == 1) {
+			} elseif (count($fileList) == 1) {
 				$fileList = "Generated from file: " . join("", $fileList);
 			} else {
 				$fileList = "No version information was available in the source files.";
@@ -401,17 +401,17 @@ class ExtractShell extends Shell{
 		}
 	}
 	function __mergeFiles($output){
-		foreach($output as $file => $content) {
-			if(count($content) <= 1 && $file != $this->__filename) {
+		foreach ($output as $file => $content) {
+			if (count($content) <= 1 && $file != $this->__filename) {
 				@$output[$this->__filename][1] = array_unique(array_merge($output[$this->__filename][1], $content[1]));
 
-				if(!isset($output[$this->__filename][0])) {
+				if (!isset($output[$this->__filename][0])) {
 					$output[$this->__filename][0] = $content[0];
 				}
 				unset($content[0]);
 				unset($content[1]);
 
-				foreach($content as $msgid) {
+				foreach ($content as $msgid) {
 					$output[$this->__filename][] = $msgid;
 				}
 				unset($output[$file]);
@@ -448,7 +448,7 @@ class ExtractShell extends Shell{
 	function __formatString($string) {
 		$quote = substr($string, 0, 1);
 		$string = substr($string, 1, -1);
-		if($quote == '"') {
+		if ($quote == '"') {
 			$string = stripcslashes($string);
 		} else {
 			$string = strtr($string, array("\\'" => "'", "\\\\" => "\\"));
@@ -461,16 +461,16 @@ class ExtractShell extends Shell{
 		$tokenCount = count($this->__tokens);
 		$parenthesis = 1;
 
-		while((($tokenCount - $count) > 0) && $parenthesis) {
-			if(is_array($this->__tokens[$count])) {
+		while ((($tokenCount - $count) > 0) && $parenthesis) {
+			if (is_array($this->__tokens[$count])) {
 				$this->out($this->__tokens[$count][1], false);
 			} else {
 				$this->out($this->__tokens[$count], false);
-				if($this->__tokens[$count] == "(") {
+				if ($this->__tokens[$count] == "(") {
 					$parenthesis++;
 				}
 
-				if($this->__tokens[$count] == ")") {
+				if ($this->__tokens[$count] == ")") {
 					$parenthesis--;
 				}
 			}
@@ -479,16 +479,16 @@ class ExtractShell extends Shell{
 		$this->out("\n", true);
 	}
 	function __searchDirectory($path = null) {
-		if($path === null){
+		if ($path === null){
 			$path = $this->path .DS;
 		}
 		$files = glob("$path*.{php,ctp,thtml,inc,tpl}", GLOB_BRACE);
 		$dirs = glob("$path*", GLOB_ONLYDIR);
 
-		foreach($dirs as $dir) {
-			if(!preg_match("!(^|.+/)(CVS|.svn)$!", $dir)) {
+		foreach ($dirs as $dir) {
+			if (!preg_match("!(^|.+/)(CVS|.svn)$!", $dir)) {
 				$files = array_merge($files, $this->__searchDirectory("$dir" . DS));
-				if(($id = array_search($dir . DS . 'extract.php', $files)) !== FALSE) {
+				if (($id = array_search($dir . DS . 'extract.php', $files)) !== FALSE) {
 					unset($files[$id]);
 				}
 			}

@@ -51,21 +51,21 @@ class ControllerTask extends Shell {
  * @return void
  */
 	function execute() {
-		if(empty($this->args)) {
+		if (empty($this->args)) {
 			$this->__interactive();
 		}
 
-		if(isset($this->args[0])) {
+		if (isset($this->args[0])) {
 			$controller = Inflector::camelize($this->args[0]);
 			$actions = null;
-			if(isset($this->args[1]) && $this->args[1] == 'scaffold') {
+			if (isset($this->args[1]) && $this->args[1] == 'scaffold') {
 				$this->out('Baking scaffold for ' . $controller);
 				$actions = $this->__bakeActions($controller);
 			} else {
 				$actions = 'scaffold';
 			}
-			if(isset($this->args[2]) && $this->args[2] == 'admin') {
-				if($admin = $this->getAdmin()) {
+			if (isset($this->args[2]) && $this->args[2] == 'admin') {
+				if ($admin = $this->getAdmin()) {
 					$this->out('Adding ' . CAKE_ADMIN .' methods');
 					if ($actions == 'scaffold') {
 						$actions = $this->__bakeActions($controller, $admin);
@@ -155,12 +155,12 @@ class ControllerTask extends Shell {
 
 		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
 			$actions = $this->__bakeActions($controllerName, null, $wannaUseSession);
-			if($admin) {
+			if ($admin) {
 				$actions .= $this->__bakeActions($controllerName, $admin, $wannaUseSession);
 			}
 		}
 
-		if($this->interactive === true) {
+		if ($this->interactive === true) {
 			$this->out('');
 			$this->hr();
 			$this->out('The following controller will be created:');
@@ -171,10 +171,10 @@ class ControllerTask extends Shell {
 				$this->out("		var \$scaffold;");
 				$actions = 'scaffold';
 			}
-			if(count($uses)) {
+			if (count($uses)) {
 				$this->out("Uses:            ", false);
 
-				foreach($uses as $use) {
+				foreach ($uses as $use) {
 					if ($use != $uses[count($uses) - 1]) {
 						$this->out(ucfirst($use) . ", ", false);
 					} else {
@@ -183,10 +183,10 @@ class ControllerTask extends Shell {
 				}
 			}
 
-			if(count($helpers)) {
+			if (count($helpers)) {
 				$this->out("Helpers:			", false);
 
-				foreach($helpers as $help) {
+				foreach ($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
 						$this->out(ucfirst($help) . ", ", false);
 					} else {
@@ -195,10 +195,10 @@ class ControllerTask extends Shell {
 				}
 			}
 
-			if(count($components)) {
+			if (count($components)) {
 				$this->out("Components:            ", false);
 
-				foreach($components as $comp) {
+				foreach ($components as $comp) {
 					if ($comp != $components[count($components) - 1]) {
 						$this->out(ucfirst($comp) . ", ", false);
 					} else {
@@ -228,7 +228,7 @@ class ControllerTask extends Shell {
 
 	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
 		$currentModelName = $this->_modelName($controllerName);
-		if(!loadModel($currentModelName)) {
+		if (!loadModel($currentModelName)) {
 			$this->out('You must have a model for this class to build scaffold methods. Please try again.');
 			exit;
 		}
@@ -246,7 +246,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
-		$actions .= "\t\tif(!\$id) {\n";
+		$actions .= "\t\tif (!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -261,10 +261,10 @@ class ControllerTask extends Shell {
 		/* ADD ACTION */
 		$compact = array();
 		$actions .= "\tfunction {$admin}add() {\n";
-		$actions .= "\t\tif(!empty(\$this->data)) {\n";
+		$actions .= "\t\tif (!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
-		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
+		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -278,8 +278,8 @@ class ControllerTask extends Shell {
 		}
 		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($associationName)) {
+		foreach ($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if (!empty($associationName)) {
 				$habtmModelName = $this->_modelName($associationName);
 				$habtmSingularName = $this->_singularName($associationName);
 				$habtmPluralName = $this->_pluralName($associationName);
@@ -287,15 +287,15 @@ class ControllerTask extends Shell {
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
-		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($associationName)) {
+		foreach ($modelObj->belongsTo as $associationName => $relation) {
+			if (!empty($associationName)) {
 				$belongsToModelName = $this->_modelName($associationName);
 				$belongsToPluralName = $this->_pluralName($associationName);
 				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
 				$compact[] = "'{$belongsToPluralName}'";
 			}
 		}
-		if(!empty($compact)) {
+		if (!empty($compact)) {
 			$actions .= "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
 		}
 		$actions .= "\t}\n";
@@ -304,7 +304,7 @@ class ControllerTask extends Shell {
 		/* EDIT ACTION */
 		$compact = array();
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
-		$actions .= "\t\tif(!\$id && empty(\$this->data)) {\n";
+		$actions .= "\t\tif (!\$id && empty(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -313,9 +313,9 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\texit();\n";
 		}
 		$actions .= "\t\t}\n";
-		$actions .= "\t\tif(!empty(\$this->data)) {\n";
+		$actions .= "\t\tif (!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
-		$actions .= "\t\t\tif(\$this->{$currentModelName}->save(\$this->data)) {\n";
+		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." saved');\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -329,12 +329,12 @@ class ControllerTask extends Shell {
 		}
 		$actions .= "\t\t\t}\n";
 		$actions .= "\t\t}\n";
-		$actions .= "\t\tif(empty(\$this->data)) {\n";
+		$actions .= "\t\tif (empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->data = \$this->{$currentModelName}->read(null, \$id);\n";
 		$actions .= "\t\t}\n";
 
-		foreach($modelObj->hasAndBelongsToMany as $associationName => $relation) {
-			if(!empty($associationName)) {
+		foreach ($modelObj->hasAndBelongsToMany as $associationName => $relation) {
+			if (!empty($associationName)) {
 				$habtmModelName = $this->_modelName($associationName);
 				$habtmSingularName = $this->_singularName($associationName);
 				$habtmPluralName = $this->_pluralName($associationName);
@@ -342,21 +342,21 @@ class ControllerTask extends Shell {
 				$compact[] = "'{$habtmPluralName}'";
 			}
 		}
-		foreach($modelObj->belongsTo as $associationName => $relation) {
-			if(!empty($associationName)) {
+		foreach ($modelObj->belongsTo as $associationName => $relation) {
+			if (!empty($associationName)) {
 				$belongsToModelName = $this->_modelName($associationName);
 				$belongsToPluralName = $this->_pluralName($associationName);
 				$actions .= "\t\t\${$belongsToPluralName} = \$this->{$currentModelName}->{$belongsToModelName}->generateList();\n";
 				$compact[] = "'{$belongsToPluralName}'";
 			}
 		}
-		if(!empty($compact)) {
+		if (!empty($compact)) {
 			$actions .= "\t\t\$this->set(compact(".join(',', $compact)."));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
-		$actions .= "\t\tif(!\$id) {\n";
+		$actions .= "\t\tif (!\$id) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -364,7 +364,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->flash('Invalid {$singularHumanName}', array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
-		$actions .= "\t\tif(\$this->{$currentModelName}->del(\$id)) {\n";
+		$actions .= "\t\tif (\$this->{$currentModelName}->del(\$id)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
 			$actions .= "\t\t\t\$this->Session->setFlash('".$singularHumanName." #'.\$id.' deleted');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
@@ -392,14 +392,14 @@ class ControllerTask extends Shell {
 		$out .= "class $controllerName" . "Controller extends AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
 
-		if(low($actions) == 'scaffold') {
+		if (low($actions) == 'scaffold') {
 			$out .= "\tvar \$scaffold;\n";
 		} else {
 
 			if (count($uses)) {
 				$out .= "\tvar \$uses = array('" . $this->_modelName($controllerName) . "', ";
 
-				foreach($uses as $use) {
+				foreach ($uses as $use) {
 					if ($use != $uses[count($uses) - 1]) {
 						$out .= "'" . $this->_modelName($use) . "', ";
 					} else {
@@ -411,7 +411,7 @@ class ControllerTask extends Shell {
 
 			$out .= "\tvar \$helpers = array('Html', 'Form' ";
 			if (count($helpers)) {
-				foreach($helpers as $help) {
+				foreach ($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
 						$out .= ", '" . Inflector::camelize($help) . "'";
 					} else {
@@ -424,7 +424,7 @@ class ControllerTask extends Shell {
 			if (count($components)) {
 				$out .= "\tvar \$components = array(";
 
-				foreach($components as $comp) {
+				foreach ($components as $comp) {
 					if ($comp != $components[count($components) - 1]) {
 						$out .= "'" . Inflector::camelize($comp) . "', ";
 					} else {
@@ -463,7 +463,7 @@ class ControllerTask extends Shell {
 
 		$this->out("Baking unit test for $className...");
 		$Folder =& new Folder($path, true);
-		if($path = $Folder->cd($path)) {
+		if ($path = $Folder->cd($path)) {
 			$path = $Folder->slashTerm($path);
 			return $this->createFile($path . $filename, $out);
 		}
@@ -536,7 +536,7 @@ class ControllerTask extends Shell {
  */
 	function getAdmin() {
 		$admin = null;
-		if(defined('CAKE_ADMIN')) {
+		if (defined('CAKE_ADMIN')) {
 			$admin = CAKE_ADMIN.'_';
 		} else {
 			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
@@ -545,7 +545,7 @@ class ControllerTask extends Shell {
 			while ($admin == '') {
 				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
 			}
-			if($this->Project->cakeAdmin($admin) !== true){
+			if ($this->Project->cakeAdmin($admin) !== true){
 				$this->out('Unable to write to /app/config/core.php.');
 				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 				exit();

@@ -57,7 +57,7 @@ class TestManager {
 	function runAllTests(&$reporter) {
 		$manager =& new TestManager();
 
-		if(!empty($manager->usersAppTest)) {
+		if (!empty($manager->usersAppTest)) {
 			$testCasePath = APP_TEST_CASES . DIRECTORY_SEPARATOR;
 		} else {
 			$testCasePath = CORE_TEST_CASES . DIRECTORY_SEPARATOR;
@@ -80,7 +80,7 @@ class TestManager {
 	function runTestCase($testCaseFile, &$reporter) {
 		$manager =& new TestManager();
 
-		if(!empty($manager->usersAppTest)) {
+		if (!empty($manager->usersAppTest)) {
 			$testCaseFileWithPath = APP_TEST_CASES . DIRECTORY_SEPARATOR . $testCaseFile;
 		} else {
 			$testCaseFileWithPath = CORE_TEST_CASES . DIRECTORY_SEPARATOR . $testCaseFile;
@@ -108,7 +108,7 @@ class TestManager {
 		foreach ($manager->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
-			if(isset($testCase->label)) {
+			if (isset($testCase->label)) {
 				$test->_label = $testCase->label;
 			}
 		}

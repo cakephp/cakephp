@@ -89,7 +89,7 @@ class JsHelper extends Overloadable2 {
 			$if{$len} = null;
 		}
 
-		$out = 'if(' . $if . ') { ' . $then . ' }';
+		$out = 'if (' . $if . ') { ' . $then . ' }';
 
 		foreach ($elseif as $cond => $exec) {
 			//$out .= 
@@ -237,7 +237,7 @@ class JsHelper extends Overloadable2 {
 		$numeric = true;
 
 		if (!empty($keys)) {
-			foreach($keys as $key) {
+			foreach ($keys as $key) {
 				if (!is_numeric($key)) {
 					$numeric = false;
 					break;
@@ -245,7 +245,7 @@ class JsHelper extends Overloadable2 {
 			}
 		}
 
-		foreach($data as $key => $val) {
+		foreach ($data as $key => $val) {
 			if (is_array($val) || is_object($val)) {
 				$val = $this->object($val, false, '', '', $stringKeys, $quoteKeys, $q);
 			} else {

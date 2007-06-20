@@ -116,7 +116,7 @@ class DboSource extends DataSource {
 			$out = array();
 			$keys = array_keys($data);
 			$count = count($data);
-			for($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				$out[$keys[$i]] = $this->value($data[$keys[$i]]);
 			}
 			return $out;
@@ -132,7 +132,7 @@ class DboSource extends DataSource {
  * @return array
  */
 	function listSources($data = null) {
-		if($this->cacheSources === false){
+		if ($this->cacheSources === false){
 			return null;
 		}
 		if ($this->_sources != null) {
@@ -209,7 +209,7 @@ class DboSource extends DataSource {
 				$order = $params[2 + $off];
 			}
 
-			if(!array_key_exists(0, $params)) {
+			if (!array_key_exists(0, $params)) {
 				return false;
 			}
 
@@ -249,7 +249,7 @@ class DboSource extends DataSource {
 				return $args[2]->find($query, $fields, $order, $recursive);
 			}
 		} else {
-			if(isset($args[1]) && $args[1] === true){
+			if (isset($args[1]) && $args[1] === true){
 				return $this->fetchAll($args[0], true);
 			}
 			return $this->fetchAll($args[0], false);
@@ -281,7 +281,7 @@ class DboSource extends DataSource {
 		$this->error = $this->lastError();
 		$this->numRows = $this->lastNumRows($this->_result);
 
-		if($this->fullDebug && Configure::read() > 1) {
+		if ($this->fullDebug && Configure::read() > 1) {
 			$this->logQuery($sql);
 		}
 
@@ -331,7 +331,7 @@ class DboSource extends DataSource {
 		if ($this->execute($sql)) {
 			$out = array();
 
-			while($item = $this->fetchRow()) {
+			while ($item = $this->fetchRow()) {
 				$out[] = $item;
 			}
 
@@ -413,12 +413,12 @@ class DboSource extends DataSource {
 			print ("<table class=\"cakeSqlLog\" id=\"cakeSqlLog_" . preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true)) . "\" summary=\"Cake SQL Log\" cellspacing=\"0\" border = \"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
 			print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
 
-			foreach($log as $k => $i) {
+			foreach ($log as $k => $i) {
 				print ("<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n");
 			}
 			print ("</tbody></table>\n");
 		} else {
-			foreach($log as $k => $i) {
+			foreach ($log as $k => $i) {
 				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
 			}
 		}
@@ -568,8 +568,8 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($model);
 		}
 
-		foreach($model->__associations as $type) {
-			foreach($model->{$type} as $assoc => $assocData) {
+		foreach ($model->__associations as $type) {
+			foreach ($model->{$type} as $assoc => $assocData) {
 				if ($model->recursive > -1) {
 					$linkModel =& $model->{$assoc};
 
@@ -600,8 +600,8 @@ class DboSource extends DataSource {
 		$filtered = $this->__filterResults($resultSet, $model);
 
 		if ($model->recursive > 0) {
-			foreach($model->__associations as $type) {
-				foreach($model->{$type} as $assoc => $assocData) {
+			foreach ($model->__associations as $type) {
+				foreach ($model->{$type} as $assoc => $assocData) {
 					$db = null;
 					$linkModel =& $model->{$assoc};
 
@@ -611,7 +611,7 @@ class DboSource extends DataSource {
 						} else {
 							$db =& ConnectionManager::getDataSource($linkModel->useDbConfig);
 						}
-					} elseif($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
+					} elseif ($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
 						// Do recursive joins on belongsTo and hasOne relationships
 						$db =& $this;
 					} else {
@@ -647,12 +647,12 @@ class DboSource extends DataSource {
 		$associations = am($model->belongsTo, $model->hasOne, $model->hasMany, $model->hasAndBelongsToMany);
 		$count = count($results);
 
-		for($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $count; $i++) {
 			if (is_array($results[$i])) {
 				$keys = array_keys($results[$i]);
 				$count2 = count($keys);
 
-				for($j = 0; $j < $count2; $j++) {
+				for ($j = 0; $j < $count2; $j++) {
 
 					$key = $keys[$j];
 					if (isset($associations[$key])) {
@@ -707,16 +707,16 @@ class DboSource extends DataSource {
 				return null;
 			}
 			$count = count($resultSet);
-			if($type === 'hasMany' && !isset($assocData['limit'])) {
+			if ($type === 'hasMany' && !isset($assocData['limit'])) {
 				$ins = array();
-				for($i = 0; $i < $count; $i++) {
+				for ($i = 0; $i < $count; $i++) {
 					$in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
 					if ($in !== false) {
 						$ins[] = $in;
 					}
 				}
 
-				if(!empty($ins)){
+				if (!empty($ins)){
 					$query = r('{$__cakeID__$}', join(', ',$ins), $query);
 					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
 				} else {
@@ -726,8 +726,8 @@ class DboSource extends DataSource {
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
 
-						foreach($linkModel->__associations as $type1) {
-							foreach($linkModel->{$type1} as $assoc1 => $assocData1) {
+						foreach ($linkModel->__associations as $type1) {
+							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
 								$deepModel =& $linkModel->{$assocData1['className']};
 								if ($deepModel->alias != $model->name) {
@@ -746,12 +746,12 @@ class DboSource extends DataSource {
 				}
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			}
-			for($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 
 				$row =& $resultSet[$i];
 				$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
 
-				if($q != false){
+				if ($q != false){
 					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 				} else {
 					$fetch = null;
@@ -760,8 +760,8 @@ class DboSource extends DataSource {
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
 
-						foreach($linkModel->__associations as $type1) {
-							foreach($linkModel->{$type1} as $assoc1 => $assocData1) {
+						foreach ($linkModel->__associations as $type1) {
+							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
 								$deepModel =& $linkModel->{$assocData1['className']};
 								if ($deepModel->alias != $model->name) {
@@ -789,12 +789,12 @@ class DboSource extends DataSource {
 	}
 
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel){
-		foreach($resultSet as $key => $value) {
+		foreach ($resultSet as $key => $value) {
 			$merged[$association] = array();
 			$count = 0;
 			foreach ($merge as $assoc => $data) {
-				if(isset($value[$model->name]) && $value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
-					if(count($data) > 1) {
+				if (isset($value[$model->name]) && $value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
+					if (count($data) > 1) {
 						$temp[] = Set::pushDiff($data[$association], $data);
 						unset($temp[$count][$association]);
 						$merged[$association] = $temp;
@@ -804,7 +804,7 @@ class DboSource extends DataSource {
 				}
 				$count++;
 			}
-			if(isset($value[$model->name])){
+			if (isset($value[$model->name])){
 				$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
 				unset($merged);
 				unset($temp);
@@ -831,33 +831,33 @@ class DboSource extends DataSource {
 				$data[$association] = $merge[$association][0];
 			} else {
 				if (count($merge[0][$association]) > 1) {
-					foreach($merge[0] as $assoc => $data2) {
+					foreach ($merge[0] as $assoc => $data2) {
 						if ($assoc != $association) {
 							$merge[0][$association][$assoc] = $data2;
 						}
 					}
 				}
-				if(!isset($data[$association])) {
-					if($merge[0][$association] != null) {
+				if (!isset($data[$association])) {
+					if ($merge[0][$association] != null) {
 						$data[$association] = $merge[0][$association];
 					} else {
 						$data[$association] = array();
 					}
 				} else {
-					if(is_array($merge[0][$association])){
+					if (is_array($merge[0][$association])){
 						foreach ($data[$association] as $k => $v) {
-							if(!is_array($v)){
+							if (!is_array($v)){
 								$dataAssocTmp[$k] = $v;
 							}
 						}
 
 						foreach ($merge[0][$association] as $k => $v) {
-							if(!is_array($v)){
+							if (!is_array($v)){
 								$mergeAssocTmp[$k] = $v;
 							}
 						}
 
-						if(array_keys($merge[0]) === array_keys($data)) {
+						if (array_keys($merge[0]) === array_keys($data)) {
 							$data[$association][$association] = $merge[0][$association];
 						} else {
 							$diff = Set::diff($dataAssocTmp, $mergeAssocTmp);
@@ -868,11 +868,11 @@ class DboSource extends DataSource {
 			}
 		} else {
 			if ($merge[0][$association] === false) {
-				if(!isset($data[$association])){
+				if (!isset($data[$association])){
 					$data[$association] = array();
 				}
 			} else {
-				foreach($merge as $i => $row) {
+				foreach ($merge as $i => $row) {
 					if (count($row) == 1) {
 						$data[$association][] = $row[$association];
 					} else {
@@ -925,12 +925,12 @@ class DboSource extends DataSource {
 			}
 
 			if (!empty($queryData['joins'])) {
-				foreach($queryData['joins'] as $join) {
+				foreach ($queryData['joins'] as $join) {
 					$self['joins'][] = $join;
 				}
 			}
 
-			if($this->__bypass === false) {
+			if ($this->__bypass === false) {
 				$self['fields'] = am($self['fields'], $this->fields($linkModel, $alias, (isset($assocData['fields']) ? $assocData['fields'] : '')));
 			}
 
@@ -945,8 +945,8 @@ class DboSource extends DataSource {
 		} else {
 			$result = $queryData['selfJoin'][0];
 			if (!empty($queryData['joins'])) {
-				foreach($queryData['joins'] as $join) {
-					if(!in_array($join, $result['joins'])) {
+				foreach ($queryData['joins'] as $join) {
+					if (!in_array($join, $result['joins'])) {
 						$result['joins'][] = $join;
 					}
 				}
@@ -981,13 +981,13 @@ class DboSource extends DataSource {
 
 		if (empty($queryData['fields'])) {
 			$queryData['fields'] = $this->fields($model, $model->name);
-		} elseif(!empty($model->hasMany) && $model->recursive > -1) {
+		} elseif (!empty($model->hasMany) && $model->recursive > -1) {
 			$assocFields = $this->fields($model, $model->name, array("{$model->name}.{$model->primaryKey}"));
 			$passedFields = $this->fields($model, $model->name, $queryData['fields']);
-			if(count($passedFields) === 1) {
+			if (count($passedFields) === 1) {
 				$match = strpos($passedFields[0], $assocFields[0]);
 				$match1 = strpos($passedFields[0], 'COUNT(');
-				if($match === false && $match1 === false){
+				if ($match === false && $match1 === false){
 					$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
 				} else {
 					$queryData['fields'] = $passedFields;
@@ -1227,7 +1227,7 @@ class DboSource extends DataSource {
 			$combined = array_combine($fields, $values);
 		}
 
-		foreach($combined as $field => $value) {
+		foreach ($combined as $field => $value) {
 			if ($value === null) {
 				$updates[] = $this->name($field) . ' = NULL';
 			} else {
@@ -1404,7 +1404,7 @@ class DboSource extends DataSource {
 		$count = count($fields);
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
-			for($i = 0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
 
@@ -1464,7 +1464,7 @@ class DboSource extends DataSource {
 				return ' WHERE 1 = 1';
 			}
 			if (!preg_match('/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i', $conditions, $match)) {
-				if($where) {
+				if ($where) {
 					$clause = ' WHERE ';
 				}
 			}
@@ -1475,7 +1475,7 @@ class DboSource extends DataSource {
 			}
 			return $clause . $conditions;
 		} else {
-			if($where) {
+			if ($where) {
 				$clause = ' WHERE ';
 			}
 			if (!empty($conditions)) {
@@ -1500,7 +1500,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 	$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
 	$join = ' AND ';
 
-	foreach($conditions as $key => $value) {
+	foreach ($conditions as $key => $value) {
 		if (is_numeric($key) && empty($value)) {
 			continue;
 		} elseif (is_numeric($key) && is_string($value)) {
@@ -1530,7 +1530,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 						$data .= ')';
 					} else {
 						if ($quoteValues) {
-							foreach($value as $valElement) {
+							foreach ($value as $valElement) {
 								$data .= $this->value($valElement) . ', ';
 							}
 						}
@@ -1564,7 +1564,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 				} elseif (empty($mValue)) {
 					$match['1'] = ' = ';
 					$match['2'] = $match['0'];
-				} elseif(!isset($match['2'])) {
+				} elseif (!isset($match['2'])) {
 					$match['1'] = ' = ';
 					$match['2'] = $match['0'];
 				}
@@ -1574,13 +1574,13 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 					$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 				} else {
 					if (!empty($match['2']) && $quoteValues) {
-						if(!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
+						if (!preg_match('/[A-Za-z]+\\([a-z0-9]*\\),?\\x20+/', $match['2'])) {
 							$match['2'] = $this->value($match['2']);
 						}
 						$match['2'] = str_replace(' AND ', "' AND '", $match['2']);
 					}
 					$data = $this->__quoteFields($key);
-					if($data === $key) {
+					if ($data === $key) {
 						$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 					} else {
 						$data = $data . ' ' . $match['1'] . ' ' . $match['2'];
@@ -1609,21 +1609,21 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 		$end  = null;
 		$original = $conditions;
 
-		if(!empty($this->startQuote)) {
+		if (!empty($this->startQuote)) {
 			$start = preg_quote($this->startQuote);
 		}
 
-		if(!empty($this->endQuote)) {
+		if (!empty($this->endQuote)) {
 			$end = preg_quote($this->endQuote);
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
 		preg_match_all('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $replace, PREG_PATTERN_ORDER);
 
-		if(isset($replace['1']['0'])) {
+		if (isset($replace['1']['0'])) {
 			$pregCount = count($replace['1']);
 
-			for($i = 0; $i < $pregCount; $i++) {
-				if(!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
+			for ($i = 0; $i < $pregCount; $i++) {
+				if (!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
 					$conditions = preg_replace('/\b' . preg_quote($replace['1'][$i]) . '\b/', $this->name($replace['1'][$i]), $conditions);
 				}
 			}
@@ -1668,7 +1668,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 		}
 
 		if (is_array($keys)) {
-			foreach($keys as $key => $val) {
+			foreach ($keys as $key => $val) {
 				if (is_numeric($key) && empty($val)) {
 					unset ($keys[$key]);
 				}
@@ -1683,7 +1683,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 			if (Set::countDim($keys) > 1) {
 				$new = array();
 
-				foreach($keys as $val) {
+				foreach ($keys as $val) {
 					$val = $this->order($val);
 					$new[] = $val;
 				}
@@ -1691,7 +1691,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 				$keys = $new;
 			}
 
-			foreach($keys as $key => $value) {
+			foreach ($keys as $key => $value) {
 				if (is_numeric($key)) {
 					$value = ltrim(r('ORDER BY ', '', $this->order($value)));
 					$key  = $value;
@@ -1729,7 +1729,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 									PREG_PATTERN_ORDER);
 				$pregCount = count($result['0']);
 
-				for($i = 0; $i < $pregCount; $i++) {
+				for ($i = 0; $i < $pregCount; $i++) {
 					$keys = preg_replace('/' . $result['0'][$i] . '/', $this->name($result['0'][$i]), $keys);
 				}
 
@@ -1738,7 +1738,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 				} else {
 					return ' ORDER BY ' . $keys . ' ' . $direction;
 				}
-			} elseif(preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
+			} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
 				$direction = $match['1'];
 				$keys     = preg_replace('/' . $match['1'] . '/', '', $keys);
 				return ' ORDER BY ' . $keys . $direction;

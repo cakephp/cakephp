@@ -358,7 +358,7 @@ class DboDb2 extends DboSource {
  * @return array
  */
 	function update(&$model, $fields = array(), $values = array()) {
-		foreach($fields as $i => $field) {
+		foreach ($fields as $i => $field) {
 			if ($field == $model->primaryKey) {
 				unset ($fields[$i]);
 				unset ($values[$i]);
@@ -377,7 +377,7 @@ class DboDb2 extends DboSource {
 	function lastError() {
 		if (db2_stmt_error()) {
 			return db2_stmt_error() . ': ' . db2_stmt_errormsg();
-		} else if (db2_conn_error()) {
+		} elseif (db2_conn_error()) {
 			return db2_conn_error() . ': ' . db2_conn_errormsg();
 		}
 		return null;

@@ -95,8 +95,8 @@ class SessionComponent extends CakeSession {
  */
 	function write($name, $value = null) {
 		if ($this->__active === true) {
-			if(is_array($name)) {
-				foreach($name as $key => $value) {
+			if (is_array($name)) {
+				foreach ($name as $key => $value) {
 					if (parent::write($key, $value) === false) {
 						return false;
 					}

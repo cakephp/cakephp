@@ -129,7 +129,7 @@ class CakeSession extends Object {
 		}
 		$this->time = time();
 
-		if($start === true) {
+		if ($start === true) {
 			$this->host = env('HTTP_HOST');
 
 			if (empty($base) || strpos($base, '?')) {
@@ -188,7 +188,7 @@ class CakeSession extends Object {
 				$names = array($name);
 			}
 			$expression = "\$_SESSION";
-			foreach($names as $item) {
+			foreach ($names as $item) {
 				$expression .= is_numeric($item) ? "[$item]" : "['$item']";
 			}
 			return $expression;
@@ -575,7 +575,7 @@ class CakeSession extends Object {
  */
 	function __close() {
 		$probability = mt_rand(1, 150);
-		if($probability <= 3) {
+		if ($probability <= 3) {
 			CakeSession::__gc();
 		}
 		return true;

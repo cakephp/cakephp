@@ -29,7 +29,7 @@
 	<span class="notice">
 		<?php
 			__('Your tmp directory is ');
-			if(is_writable(TMP)):
+			if (is_writable(TMP)):
 				__('writable.');
 			else:
 				__('NOT writable.');
@@ -57,7 +57,7 @@
 			else:
 				__('NOT working.');
 				echo '<br />';
-				if(is_writable(TMP)):
+				if (is_writable(TMP)):
 					__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
 				endif;
 			endif;
@@ -69,7 +69,7 @@
 		<?php
 			__('Your database configuration file is ');
 			$filePresent = null;
-			if(file_exists(CONFIGS.'database.php')):
+			if (file_exists(CONFIGS.'database.php')):
 				__('present.');
 				$filePresent = true;
 			else:
@@ -90,7 +90,7 @@ if (!empty($filePresent)):
 	<span class="notice">
 		<?php
 			__('Cake');
-			if($connected->isConnected()):
+			if ($connected->isConnected()):
 		 		__(' is able to ');
 			else:
 				__(' is NOT able to ');

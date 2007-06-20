@@ -114,8 +114,8 @@ class Shell extends Object {
  */
 	function __construct(&$dispatch) {
 		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
-		foreach($vars as $key => $var) {
-			if(is_string($key)){
+		foreach ($vars as $key => $var) {
+			if (is_string($key)){
 				$this->{$var} =& $dispatch->{$key};
 			} else {
 				$this->{$var} =& $dispatch->{$var};
@@ -125,10 +125,10 @@ class Shell extends Object {
 		$shellKey = Inflector::underscore($this->name);
 		ClassRegistry::addObject($shellKey, $this);
 		ClassRegistry::map($shellKey, $shellKey);
-		if(!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
+		if (!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
 			$dispatch->shiftArgs();
 		} 
-		if(!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
+		if (!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
 			$dispatch->shiftArgs();
 		}
 		$this->Dispatch =& $dispatch;
@@ -170,7 +170,7 @@ class Shell extends Object {
  * @return bool
  */
 	function _loadDbConfig() {
-		if(config('database')) {
+		if (config('database')) {
 			if (class_exists('DATABASE_CONFIG')) {
 				$this->dbConfig = new DATABASE_CONFIG();
 				return true;
@@ -190,7 +190,7 @@ class Shell extends Object {
  */
 	function _loadModels() {
 
-		if($this->uses === null || $this->uses === false) {
+		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
 
@@ -198,7 +198,7 @@ class Shell extends Object {
 			'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'model'
 		);
 
-		if($this->uses === true && loadModel()) {
+		if ($this->uses === true && loadModel()) {
 			$this->AppModel = & new AppModel(false, false, false);
 			return true;
 		}
@@ -207,13 +207,13 @@ class Shell extends Object {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 			$this->modelClass = $uses[0];
 
-			foreach($uses as $modelClass) {
+			foreach ($uses as $modelClass) {
 				$modelKey = Inflector::underscore($modelClass);
 
-				if(!class_exists($modelClass)){
+				if (!class_exists($modelClass)){
 					loadModel($modelClass);
 				}
-				if(class_exists($modelClass)) {
+				if (class_exists($modelClass)) {
 					$model =& new $modelClass();
 					$this->modelNames[] = $modelClass;
 					$this->{$modelClass} =& $model;
@@ -232,20 +232,20 @@ class Shell extends Object {
  * @return bool
  */
 	function loadTasks() {
-		if($this->tasks === null || $this->tasks === false) {
+		if ($this->tasks === null || $this->tasks === false) {
 			return;
 		}
 
 		if ($this->tasks !== true && !empty($this->tasks)) {
 
 			$tasks = $this->tasks;
-			if(!is_array($tasks)) {
+			if (!is_array($tasks)) {
 				$tasks = array($tasks);
 			}
 
-			foreach($tasks as $taskName) {
+			foreach ($tasks as $taskName) {
 				$loaded = false;
-				foreach($this->Dispatch->shellPaths as $path) {
+				foreach ($this->Dispatch->shellPaths as $path) {
 					$taskPath = $path . 'tasks' . DS . Inflector::underscore($taskName).'.php';
 					if (file_exists($taskPath)) {
 						$loaded = true;
@@ -256,7 +256,7 @@ class Shell extends Object {
 				if ($loaded) {
 					$taskKey = Inflector::underscore($taskName);
 					$taskClass = Inflector::camelize($taskName.'Task');
-					if(!class_exists($taskClass)) {
+					if (!class_exists($taskClass)) {
 						require_once $taskPath;
 					}
 					if (ClassRegistry::isKeySet($taskKey)) {
@@ -277,7 +277,7 @@ class Shell extends Object {
 						}
 					}
 
-					if(!isset($this->{$taskName})) {
+					if (!isset($this->{$taskName})) {
 						$this->err("Task '".$taskName."' could not be loaded");
 						exit();
 					}
@@ -300,21 +300,21 @@ class Shell extends Object {
  */
 	function in($prompt, $options = null, $default = null) {
 		$in = $this->Dispatch->getInput($prompt, $options, $default);
-		if($options && is_string($options)) {
-			if(strpos($options, ',')) {
+		if ($options && is_string($options)) {
+			if (strpos($options, ',')) {
 				$options = explode(',', $options);
-			} else if(strpos($options, '/')) {
+			} elseif (strpos($options, '/')) {
 				$options = explode('/', $options);
 			} else {
 				$options = array($options);
 			}
 		}
-		if(is_array($options)) {
-			while($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
+		if (is_array($options)) {
+			while ($in == '' || ($in && (!in_array(low($in), $options) && !in_array(up($in), $options)) && !in_array($in, $options))) {
 				 $in = $this->Dispatch->getInput($prompt, $options, $default);
 			}
 		}
-		if($in) {
+		if ($in) {
 			return $in;
 		}
 	}
@@ -368,7 +368,7 @@ class Shell extends Object {
  * @param unknown_type $command
  */
 	function _checkArgs($expectedNum, $command = null) {
-		if(!$command) {
+		if (!$command) {
 			$command = $this->command;
 		}
 		if (count($this->args) < $expectedNum) {
@@ -390,14 +390,14 @@ class Shell extends Object {
 			if (low($key) == 'q') {
 				$this->out(__("Quitting.", true) ."\n");
 				exit;
-			} else if (low($key) == 'a') {
+			} elseif (low($key) == 'a') {
 				$this->dont_ask = true;
-			} else if (low($key) != 'y') {
+			} elseif (low($key) != 'y') {
 				$this->out(__("Skip", true) ." {$path}\n");
 				return false;
 			}
 		}
-		if(!class_exists('File')) {
+		if (!class_exists('File')) {
 			uses('file');
 		}
 		if ($File = new File($path, true)) {
@@ -414,7 +414,7 @@ class Shell extends Object {
  *
  */
 	function help() {
-		if($this->command != null) {
+		if ($this->command != null) {
 			$this->err("Unknown {$this->name} command '$this->command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
 		} else{
 			$this->Dispatch->help();

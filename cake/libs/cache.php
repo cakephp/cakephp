@@ -28,16 +28,16 @@
 /**
  * Included libraries.
  */
-if(!class_exists('Object')) {
+if (!class_exists('Object')) {
 	uses('object');
 }
 /**
  * Set defines if not set in core.php
  */
-if(!defined('CACHE_DEFAULT_DURATION')) {
+if (!defined('CACHE_DEFAULT_DURATION')) {
 	define('CACHE_DEFAULT_DURATION', 3600);
 }
-if(!defined('CACHE_GC_PROBABILITY')) {
+if (!defined('CACHE_GC_PROBABILITY')) {
 	define('CACHE_GC_PROBABILITY', 100);
 }
 /**
@@ -67,7 +67,7 @@ class Cache extends Object {
  */
 	function &getInstance() {
 		static $instance = array();
-		if(!isset($instance[0]) || !$instance[0]) {
+		if (!isset($instance[0]) || !$instance[0]) {
 			$instance[0] =& new Cache();
 		}
 		return $instance[0];
@@ -85,12 +85,12 @@ class Cache extends Object {
 		}
 		$fileName = strtolower($name);
 
-		if(vendor('cache_engines/'.$fileName)) {
+		if (vendor('cache_engines/'.$fileName)) {
 			return true;
 		}
 		$fileName = dirname(__FILE__) . DS . 'cache' . DS . $fileName . '.php';
 
-		if(is_readable($fileName)) {
+		if (is_readable($fileName)) {
 			include $fileName;
 			return true;
 		}
@@ -105,7 +105,7 @@ class Cache extends Object {
  * @access public
  */
 	function engine($name = 'File', $params = array()) {
-		if(defined('DISABLE_CACHE')) {
+		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
@@ -117,7 +117,7 @@ class Cache extends Object {
 		$_this->_Engine =& new $cacheClass();
 
 		if ($_this->_Engine->init($params)) {
-			if(time() % CACHE_GC_PROBABILITY == 0) {
+			if (time() % CACHE_GC_PROBABILITY == 0) {
 				$_this->_Engine->gc();
 			}
 			return true;
@@ -140,21 +140,21 @@ class Cache extends Object {
 		}
 		$key = strval($key);
 
-		if(empty($key)) {
+		if (empty($key)) {
 			return false;
 		}
 
-		if(is_resource($value)) {
+		if (is_resource($value)) {
 			return false;
 		}
 		$duration = ife(is_string($duration), strtotime($duration), intval($duration));
 
-		if($duration < 1) {
+		if ($duration < 1) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
 
-		if(!isset($_this->_Engine)) {
+		if (!isset($_this->_Engine)) {
 			return false;
 		}
 		return $_this->_Engine->write($key, $value, $duration);
@@ -167,18 +167,18 @@ class Cache extends Object {
  * @access public
  */
 	function read($key) {
-		if(defined('DISABLE_CACHE')) {
+		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$key = strval($key);
 
-		if(empty($key)) {
+		if (empty($key)) {
 			return false;
 		}
 
 		$_this =& Cache::getInstance();
 
-		if(!isset($_this->_Engine)) {
+		if (!isset($_this->_Engine)) {
 			return false;
 		}
 		return $_this->_Engine->read($key);
@@ -191,17 +191,17 @@ class Cache extends Object {
  * @access public
  */
 	function delete($key) {
-		if(defined('DISABLE_CACHE')) {
+		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$key = strval($key);
 
-		if(empty($key)) {
+		if (empty($key)) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
 
-		if(!isset($_this->_Engine)) {
+		if (!isset($_this->_Engine)) {
 			return false;
 		}
 		return $_this->_Engine->delete($key);
@@ -213,12 +213,12 @@ class Cache extends Object {
  * @access public
  */
 	function clear() {
-		if(defined('DISABLE_CACHE')) {
+		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
 
-		if(!isset($_this->_Engine)) {
+		if (!isset($_this->_Engine)) {
 			return false;
 		}
 		return $_this->_Engine->clear();
@@ -230,7 +230,7 @@ class Cache extends Object {
  * @access public
  */
 	function isInitialized() {
-		if(defined('DISABLE_CACHE')) {
+		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
@@ -245,7 +245,7 @@ class Cache extends Object {
  */
 	function settings() {
 		$_this =& Cache::getInstance();
-		if(!is_null($_this->_Engine)) {
+		if (!is_null($_this->_Engine)) {
 			return $_this->_Engine->settings();
 		}
 	}

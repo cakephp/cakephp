@@ -30,14 +30,14 @@
  		<legend><?php echo "<?php __('".Inflector::humanize($action)."', true);?> <?php __('{$singularHumanName}');?>";?></legend>
 <?php
 		echo "\t<?php\n";
-		foreach($fields as $field) {
-			if($action == 'add' && $field['name'] == $primaryKey) {
+		foreach ($fields as $field) {
+			if ($action == 'add' && $field['name'] == $primaryKey) {
 				continue;
-			} else if(!in_array($field['name'], array('created', 'modified', 'updated'))){
+			} elseif (!in_array($field['name'], array('created', 'modified', 'updated'))){
 				echo "\t\techo \$form->input('{$field['name']}');\n";
 			}
 		}
-		foreach($hasAndBelongsToMany as $assocName => $assocData) {
+		foreach ($hasAndBelongsToMany as $assocName => $assocData) {
 			echo "\t\techo \$form->input('{$assocName}');\n";
 		}
 		echo "\t?>\n";
@@ -49,14 +49,14 @@
 </div>
 <div class="actions">
 	<ul>
-<?php if($action != 'add'):?>
+<?php if ($action != 'add'):?>
 		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, __('Are you sure you want to delete', true).' #' . \$form->value('{$modelClass}.{$primaryKey}')); ?>";?></li>
 <?php endif;?>
 		<li><?php echo "<?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
 <?php
-		foreach($foreignKeys as $field => $value) {
+		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
-			if($otherModelClass != $modelClass) {
+			if ($otherModelClass != $modelClass) {
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);

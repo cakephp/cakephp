@@ -226,9 +226,9 @@ class HtmlHelper extends AppHelper {
  * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
-		if(is_null($charset)){
+		if (is_null($charset)){
 			$charset = Configure::read('charset');
-			if(is_null($charset)){
+			if (is_null($charset)){
 				$charset = 'utf-8';
 			}
 		}
@@ -252,7 +252,7 @@ class HtmlHelper extends AppHelper {
  * @return string	An <a /> element.
  */
 	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
-		if($url !== null) {
+		if ($url !== null) {
 			$url = $this->url($url);
 		} else {
 			$url = $this->url($title);
@@ -260,17 +260,17 @@ class HtmlHelper extends AppHelper {
 			$escapeTitle = false;
 		}
 
-		if(isset($htmlAttributes['escape'])) {
+		if (isset($htmlAttributes['escape'])) {
 			$escapeTitle = $htmlAttributes['escape'];
 			unset($htmlAttributes['escape']);
 		}
-		if($escapeTitle === true) {
+		if ($escapeTitle === true) {
 			$title = htmlspecialchars($title, ENT_QUOTES);
-		} elseif(is_string($escapeTitle)) {
+		} elseif (is_string($escapeTitle)) {
 			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}
 
-		if(!empty($htmlAttributes['confirm'])) {
+		if (!empty($htmlAttributes['confirm'])) {
 			$confirmMessage = $htmlAttributes['confirm'];
 			unset($htmlAttributes['confirm']);
 		}
@@ -339,10 +339,10 @@ class HtmlHelper extends AppHelper {
 			return $data;
 		}
 		$out = array();
-		foreach($data as $key=> $value) {
+		foreach ($data as $key=> $value) {
 			$out[] = $key.':'.$value.';';
 		}
-		if($inline) {
+		if ($inline) {
 			return 'style="'.join(' ', $out).'"';
 		}
 		return join("\n", $out);
@@ -361,8 +361,8 @@ class HtmlHelper extends AppHelper {
 				$out[] = $this->link($startText, '/');
 			}
 
-			foreach($this->_crumbs as $crumb) {
-				if(!empty($crumb[1])){
+			foreach ($this->_crumbs as $crumb) {
+				if (!empty($crumb[1])){
 					$out[] = $this->link($crumb[0], $crumb[1]);
 				} else {
 					$out[] = $crumb[0];
@@ -407,7 +407,7 @@ class HtmlHelper extends AppHelper {
 		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
 		$out = array();
 
-		foreach($options as $optValue => $optTitle) {
+		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
  	        if (!empty($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
@@ -430,7 +430,7 @@ class HtmlHelper extends AppHelper {
  */
 	function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
-		foreach($names as $arg) {
+		foreach ($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
 		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
@@ -450,11 +450,11 @@ class HtmlHelper extends AppHelper {
 		}
 		static $count = 0;
 
-		foreach($data as $line) {
+		foreach ($data as $line) {
 			$count++;
 			$cellsOut = array();
 
-			foreach($line as $cell) {
+			foreach ($line as $cell) {
 				$cellsOut[] = sprintf($this->tags['tablecell'], null, $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
@@ -568,7 +568,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$model = $this->model();
 			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
-				if(isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
+				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
 					$htmlAttributes['checked'] = 'checked';
 				} else {
 					$htmlAttributes['checked'] = null;
@@ -662,7 +662,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		$errors = array();
-		foreach($objects as $object) {
+		foreach ($objects as $object) {
 			$errors = array_merge($errors, $object->invalidFields($object->data));
 		}
 		return $this->validationErrors = (count($errors) ? $errors : false);

@@ -88,15 +88,15 @@ class AclShell extends Shell {
 			exit();
 		}
 
-		if($this->command && !in_array($this->command, array('help'))) {
-			if(!config('database')) {
+		if ($this->command && !in_array($this->command, array('help'))) {
+			if (!config('database')) {
 				$this->out(__("Your database configuration was not found. Take a moment to create one.", true), true);
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
 			require_once (CONFIGS.'database.php');
 
-			if(!in_array($this->command, array('initdb'))) {
+			if (!in_array($this->command, array('initdb'))) {
 				$this->Acl = new AclComponent();
 				$this->db =& ConnectionManager::getDataSource($this->dataSource);
 			}
@@ -169,7 +169,7 @@ class AclShell extends Shell {
 		$data['parent_id'] = $parent;
 		$object->create();
 
-		if($object->save($data)) {
+		if ($object->save($data)) {
 			$this->out(sprintf(__("New %s '%s' created.\n", true), $class, $this->args[2]), true);
 		} else {
 			$this->err(sprintf(__("There was a problem creating a new %s '%s'.", true), $class, $this->args[2]));
@@ -184,7 +184,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if(!$this->Acl->{$class}->delete($this->args[1])) {
+		if (!$this->Acl->{$class}->delete($this->args[1])) {
 			$this->error(__("Node Not Deleted", true), sprintf(__("There was an error deleting the %s. Check that the node exists", true), $class) . ".\n");
 		}
 		$this->out(sprintf(__("%s deleted", true), $class) . ".\n", true);
@@ -233,7 +233,7 @@ class AclShell extends Shell {
 		//add existence checks for nodes involved
 		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
 		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
-		if($this->Acl->allow($aro, $aco, $this->args[2])) {
+		if ($this->Acl->allow($aro, $aco, $this->args[2])) {
 			$this->out(__("Permission granted.", true), true);
 		}
 	}
@@ -284,15 +284,15 @@ class AclShell extends Shell {
 		$this->hr();
 		$nodeCount = count($nodes);
 		$right = $left = array();
-		for($i = 0; $i < $nodeCount; $i++) {
+		for ($i = 0; $i < $nodeCount; $i++) {
 			$count = 0;
 			$right[$i] = $nodes[$i][$class]['rght'];
 			$left[$i] = $nodes[$i][$class]['lft'];
-			if(isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {
+			if (isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {
 				array_pop($left);
 				$count = count($left);
 			}
-			if(isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
+			if (isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
 				array_pop($right);
 				$count = count($right);
 			}
@@ -431,7 +431,7 @@ class AclShell extends Shell {
  * @access public
  */
 	function checkNodeType() {
-		if(!isset($this->args[0])) {
+		if (!isset($this->args[0])) {
 			return false;
 		}
 		if ($this->args[0] != 'aco' && $this->args[0] != 'aro') {

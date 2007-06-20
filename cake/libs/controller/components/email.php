@@ -217,8 +217,8 @@ class EmailComponent extends Object{
 		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
 
-		if($this->template === null) {
-			if(is_array($content)){
+		if ($this->template === null) {
+			if (is_array($content)){
 				$message = null;
 				foreach ($content as $key => $value){
 					$message .= $value . $this->_newLine;
@@ -231,7 +231,7 @@ class EmailComponent extends Object{
 			$this->__message = $this->__renderTemplate($content);
 		}
 
-		if(!empty($this->attachments)) {
+		if (!empty($this->attachments)) {
 			$this->__attachFiles();
 		}
 
@@ -274,7 +274,7 @@ class EmailComponent extends Object{
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
 		$View->layout = $this->layout;
-		if($this->sendAs === 'both'){
+		if ($this->sendAs === 'both'){
 			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
@@ -320,14 +320,14 @@ class EmailComponent extends Object{
 		}
 
 		$addresses = null;
-		if(!empty($this->cc)) {
+		if (!empty($this->cc)) {
 			foreach ($this->cc as $cc) {
 				$addresses .= $this->__formatAddress($cc) . ', ';
 			}
 			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
 		}
 		$addresses = null;
-		if(!empty($this->bcc)) {
+		if (!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
 				$addresses .= $this->__formatAddress($bcc) . ', ';
 			}
@@ -336,18 +336,18 @@ class EmailComponent extends Object{
 
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
-		if(!empty($this->attachments) && $this->sendAs === 'text') {
+		if (!empty($this->attachments) && $this->sendAs === 'text') {
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"' . $this->_newLine;
-		} elseif(!empty($this->attachments) && $this->sendAs === 'html') {
+		} elseif (!empty($this->attachments) && $this->sendAs === 'html') {
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__boundary . '"' . $this->_newLine;
-		} elseif($this->sendAs === 'html') {
+		} elseif ($this->sendAs === 'html') {
 			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-		} elseif($this->sendAs === 'both') {
+		} elseif ($this->sendAs === 'both') {
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/alternative; boundary="' . $this->__boundary . '"' . $this->_newLine;
@@ -362,7 +362,7 @@ class EmailComponent extends Object{
 	function __formatMessage($message){
 		$message = $this->__wrap($message);
 
-		if($this->sendAs === 'both'){
+		if ($this->sendAs === 'both'){
 			$this->__message = '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
@@ -385,11 +385,11 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __attachFiles(){
-		foreach($this->attachments as $attachment) {
+		foreach ($this->attachments as $attachment) {
 			$files[] = $this->__findFiles($attachment);
 		}
 
-		foreach($files as $file) {
+		foreach ($files as $file) {
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
 			$data = chunk_split(base64_encode($data)) ;
@@ -410,7 +410,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __findFiles($attachment){
-		foreach($this->filePaths as $path) {
+		foreach ($this->filePaths as $path) {
 			if (file_exists($path . DS . $attachment)) {
 				$file = $path . DS . $attachment;
 				return $file;
@@ -442,7 +442,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __encode($subject) {
-		if(low($this->charset) !== 'iso-8859-15') {
+		if (low($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
 			$spacer = $end . "\n " . $start;
@@ -467,7 +467,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __formatAddress($string){
-		if(strpos($string, '<') !== false){
+		if (strpos($string, '<') !== false){
 			$value = explode('<', $string);
 			$string = $this->__encode($value[0]) . ' <' . $value[1];
 		}

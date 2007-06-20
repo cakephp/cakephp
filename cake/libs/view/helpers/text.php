@@ -64,7 +64,7 @@ class TextHelper extends AppHelper {
 			$replace = array();
 			$with = array();
 
-			foreach($phrase as $key => $value) {
+			foreach ($phrase as $key => $value) {
 				$key = $value;
 				$value = $highlighter;
 
@@ -97,7 +97,7 @@ class TextHelper extends AppHelper {
 	function autoLinkUrls($text, $htmlOptions = array()) {
 		$options = 'array(';
 
-		foreach($htmlOptions as $option => $value) {
+		foreach ($htmlOptions as $option => $value) {
 				$options .= "'$option' => '$value', ";
 		}
 		$options .= ')';
@@ -118,7 +118,7 @@ class TextHelper extends AppHelper {
 	function autoLinkEmails($text, $htmlOptions = array()) {
 		$options = 'array(';
 
-		foreach($htmlOptions as $option => $value) {
+		foreach ($htmlOptions as $option => $value) {
 			$options .= "'$option' => '$value', ";
 		}
 		$options .= ')';

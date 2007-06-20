@@ -147,8 +147,8 @@ class Security extends Object{
 		srand (CIPHER_SEED);
 		$out = '';
 
-		for($i = 0; $i < strlen($text); $i++) {
-			for($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
+		for ($i = 0; $i < strlen($text); $i++) {
+			for ($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
 				$toss = rand(0, 255);
 			}
 			$mask = rand(0, 255);

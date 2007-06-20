@@ -34,7 +34,7 @@
  * @package		cake
  * @subpackage	cake.cake.console.libs
  */
-if(!defined('CAKE_ADMIN')) {
+if (!defined('CAKE_ADMIN')) {
 	define('CAKE_ADMIN', null);
 }
 class BakeShell extends Shell {
@@ -43,11 +43,11 @@ class BakeShell extends Shell {
 
 	function main() {
 
-		if(!is_dir(CONFIGS)) {
+		if (!is_dir(CONFIGS)) {
 			$this->Project->execute();
 		}
 
-		if(!config('database')) {
+		if (!config('database')) {
 			$this->out("Your database configuration was not found. Take a moment to create one.\n");
 			$this->args = null;
 			return $this->DbConfig->execute();

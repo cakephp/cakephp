@@ -63,7 +63,7 @@ require_once CORE_PATH . 'cake' . DS . 'bootstrap.php';
 require_once CAKE . 'basics.php';
 require_once CAKE . 'config' . DS . 'paths.php';
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
-if(DEBUG < 1) {
+if (DEBUG < 1) {
 	die('Invalid url.');
 }
 
@@ -85,13 +85,13 @@ if (!defined('BASE_URL')){
 define('CAKE_TEST_OUTPUT_HTML',1);
 define('CAKE_TEST_OUTPUT_TEXT',2);
 
-if(isset($_GET['output']) && $_GET['output'] == 'html') {
+if (isset($_GET['output']) && $_GET['output'] == 'html') {
 	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_HTML);
 } else {
 	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_TEXT);
 }
 
-if(!vendor('simpletest' . DS . 'reporter')) {
+if (!vendor('simpletest' . DS . 'reporter')) {
 	CakePHPTestHeader();
 	include CAKE . 'tests' . DS . 'lib' . DS . 'simpletest.php';
 	CakePHPTestSuiteFooter();
@@ -118,14 +118,14 @@ if(!vendor('simpletest' . DS . 'reporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				if (isset($_GET['group'])) {
-					if(isset($_GET['app'])) {
+					if (isset($_GET['app'])) {
 						$show = '?show=groups&amp;app=true';
 					} else {
 						$show = '?show=groups';
 					}
 				}
 				if (isset($_GET['case'])) {
-					if(isset($_GET['app'])) {
+					if (isset($_GET['app'])) {
 						$show = '??show=cases&amp;app=truee';
 					} else {
 						$show = '?show=cases';

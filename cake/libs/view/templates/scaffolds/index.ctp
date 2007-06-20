@@ -33,28 +33,28 @@ echo $paginator->counter(array(
 ?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
-<?php foreach($fields as $field):?>
+<?php foreach ($fields as $field):?>
 	<th><?php echo $paginator->sort("{$field['name']}");?></th>
 <?php endforeach;?>
 	<th><?php __('Actions');?></th>
 </tr>
 <?php
 $i = 0;
-foreach(${$pluralVar} as ${$singularVar}):
+foreach (${$pluralVar} as ${$singularVar}):
 	$class = null;
-	if($i++ % 2 == 0) {
+	if ($i++ % 2 == 0) {
 		$class = ' class=\"altrow\"';
 	}
 echo "\n";
 	echo "\t<tr" . $class . ">\n";
 
-		foreach($fields as $field) {
-			if(in_array($field['name'], array_keys($foreignKeys))) {
+		foreach ($fields as $field) {
+			if (in_array($field['name'], array_keys($foreignKeys))) {
 				$otherModelClass = $foreignKeys[$field['name']][1];
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);
-				if(isset($foreignKeys[$field['name']][2])) {
+				if (isset($foreignKeys[$field['name']][2])) {
 					$otherModelClass = $foreignKeys[$field['name']][2];
 				}
 				$otherVariableName = Inflector::variable($otherModelClass);
@@ -88,9 +88,9 @@ echo "\n";
 	<ul>
 		<li><?php echo $html->link('New '.$singularHumanName, array('action'=>'add')); ?></li>
 <?php
-		foreach($foreignKeys as $field => $value) {
+		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
-			if($otherModelClass != $modelClass) {
+			if ($otherModelClass != $modelClass) {
 				$otherModelKey = Inflector::underscore($otherModelClass);
 				$otherControllerName = Inflector::pluralize($otherModelClass);
 				$otherControllerPath = Inflector::underscore($otherControllerName);
