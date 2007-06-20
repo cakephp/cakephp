@@ -115,7 +115,7 @@ class Shell extends Object {
 	function __construct(&$dispatch) {
 		$vars = array('params', 'args', 'shell', 'shellName'=> 'name', 'shellClass'=> 'className', 'shellCommand'=> 'command');
 		foreach ($vars as $key => $var) {
-			if (is_string($key)){
+			if (is_string($key)) {
 				$this->{$var} =& $dispatch->{$key};
 			} else {
 				$this->{$var} =& $dispatch->{$var};
@@ -210,7 +210,7 @@ class Shell extends Object {
 			foreach ($uses as $modelClass) {
 				$modelKey = Inflector::underscore($modelClass);
 
-				if (!class_exists($modelClass)){
+				if (!class_exists($modelClass)) {
 					loadModel($modelClass);
 				}
 				if (class_exists($modelClass)) {
@@ -416,7 +416,7 @@ class Shell extends Object {
 	function help() {
 		if ($this->command != null) {
 			$this->err("Unknown {$this->name} command '$this->command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
-		} else{
+		} else {
 			$this->Dispatch->help();
 		}
 	}

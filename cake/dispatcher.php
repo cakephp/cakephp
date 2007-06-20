@@ -308,7 +308,7 @@ class Dispatcher extends Object {
 		$controller->_initComponents();
 		$controller->constructClasses();
 
-		if ($missingAction && !in_array('scaffold', array_keys($classVars))){
+		if ($missingAction && !in_array('scaffold', array_keys($classVars))) {
 			$this->start($controller);
 			return $this->cakeError('missingAction', array(
 				array(

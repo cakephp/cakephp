@@ -361,7 +361,7 @@ class I18n extends Object {
 			}
 
 			if (isset($_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"])) {
-				$switch = preg_replace("/[(){}\\[\\]^\\s*\\]]+/", "", $_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"]);
+				$switch = preg_replace("/[() {}\\[\\]^\\s*\\]]+/", "", $_this->__domains[$_this->category][$domain]["%po-header"]["plural-forms"]);
 				$_this->__domains[$_this->category][$domain]["%plural-c"] = $switch;
 			}
 		}

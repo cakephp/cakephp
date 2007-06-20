@@ -227,7 +227,7 @@ class DataSource extends Object {
  * @return void
  */
 	function __cacheDescription($object, $data = null) {
-		if ($this->cacheSources === false){
+		if ($this->cacheSources === false) {
 			return null;
 		}
 		if (Configure::read() > 0) {
@@ -282,7 +282,7 @@ class DataSource extends Object {
  * @return mixed
  */
 	function describe($model) {
-		if ($this->cacheSources === false){
+		if ($this->cacheSources === false) {
 			return null;
 		}
 

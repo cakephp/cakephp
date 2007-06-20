@@ -335,7 +335,7 @@ class L10n extends Object {
 	function get($language = null) {
 		if (!is_null($language)) {
 			return $this->__setLanguage($language);
-		} elseif ($this->__autoLanguage() === false){
+		} elseif ($this->__autoLanguage() === false) {
 			return $this->__setLanguage($language);
 		}
 	}

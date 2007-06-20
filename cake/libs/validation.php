@@ -131,7 +131,7 @@ class Validation extends Object {
 		}
 
 		$this->regex = '/[^\\dA-Z]/i';
-		if ($this->_check() === true){
+		if ($this->_check() === true) {
 			return false;
 		} else {
 			return true;
@@ -177,7 +177,7 @@ class Validation extends Object {
 		}
 
 		$this->regex = '/[^\\s]/';
-		if ($this->_check() === true){
+		if ($this->_check() === true) {
 			return false;
 		} else {
 			return true;
@@ -210,7 +210,7 @@ class Validation extends Object {
 
 		$this->check = str_replace(array('-', ' '), '', $this->check);
 
-		if (strlen($this->check) < 13){
+		if (strlen($this->check) < 13) {
 			return false;
 		}
 
@@ -341,7 +341,7 @@ class Validation extends Object {
 		if (is_array($check)) {
 			$this->_extract($check);
 		}
-		if ($this->regex === null){
+		if ($this->regex === null) {
 			$this->errors[] = __('You must define a regular expression for Validation::custom()', true);
 			return false;
 		}
@@ -375,8 +375,8 @@ class Validation extends Object {
 
 		$search = array();
 
-		if (is_array($format)){
-			foreach ($format as $key => $value){
+		if (is_array($format)) {
+			foreach ($format as $key => $value) {
 				$search[$value] = $value;
 			}
 		} else {
@@ -390,10 +390,10 @@ class Validation extends Object {
 		$regex['My'] = '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)[ /]((1[6-9]|[2-9]\\d)\\d{2})$%';
 		$regex['my'] = '%^(((0[123456789]|10|11|12)([- /.])(([1][9][0-9][0-9])|([2][0-9][0-9][0-9]))))$%';
 
-		foreach ($search as $key){
+		foreach ($search as $key) {
 			$this->regex = $regex[$key];
 
-			if ($this->_check() === true){
+			if ($this->_check() === true) {
 				return true;
 			}
 		}
@@ -768,7 +768,7 @@ class Validation extends Object {
  * @access protected
  */
 	function _luhn() {
-		if ($this->deep === true){
+		if ($this->deep === true) {
 			if ($this->check == 0) {
 				return false;
 			}
@@ -800,7 +800,7 @@ class Validation extends Object {
  *
  * @access private
  */
-	function __reset(){
+	function __reset() {
 		$this->check = null;
 		$this->regex = null;
 		$this->country = null;

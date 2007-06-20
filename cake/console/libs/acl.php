@@ -199,7 +199,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (!$this->Acl->{$class}->setParent($this->args[2], $this->args[1])){
+		if (!$this->Acl->{$class}->setParent($this->args[2], $this->args[1])) {
 			$this->out(__("Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.", true), true);
 		} else {
 			$this->out(sprintf(__("Node parent set to %s", true), $this->args[2]) . "\n", true);

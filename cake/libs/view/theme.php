@@ -61,7 +61,7 @@ class ThemeView extends View {
 
     	$this->theme =& $controller->theme;
     	if (!empty($this->theme)) {
-    		if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)){
+    		if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
     			$this->themeWeb = 'themed/'. $this->theme .'/';
     		}
     		$this->themeElement = 'themed'. DS . $this->theme . DS .'elements'. DS;

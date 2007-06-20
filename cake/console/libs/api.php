@@ -79,7 +79,7 @@ class ApiShell extends Shell {
 				if (!preg_match('/' . Inflector::camelize($path) . '$/', $class)) {
 					$class .= Inflector::camelize($path);
 				}
-			} elseif (low($path) === low($class)){
+			} elseif (low($path) === low($class)) {
 				$class = Inflector::camelize($path);
 			}
 

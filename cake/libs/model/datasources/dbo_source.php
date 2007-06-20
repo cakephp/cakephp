@@ -132,7 +132,7 @@ class DboSource extends DataSource {
  * @return array
  */
 	function listSources($data = null) {
-		if ($this->cacheSources === false){
+		if ($this->cacheSources === false) {
 			return null;
 		}
 		if ($this->_sources != null) {
@@ -249,7 +249,7 @@ class DboSource extends DataSource {
 				return $args[2]->find($query, $fields, $order, $recursive);
 			}
 		} else {
-			if (isset($args[1]) && $args[1] === true){
+			if (isset($args[1]) && $args[1] === true) {
 				return $this->fetchAll($args[0], true);
 			}
 			return $this->fetchAll($args[0], false);
@@ -716,7 +716,7 @@ class DboSource extends DataSource {
 					}
 				}
 
-				if (!empty($ins)){
+				if (!empty($ins)) {
 					$query = r('{$__cakeID__$}', join(', ',$ins), $query);
 					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
 				} else {
@@ -751,7 +751,7 @@ class DboSource extends DataSource {
 				$row =& $resultSet[$i];
 				$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
 
-				if ($q != false){
+				if ($q != false) {
 					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 				} else {
 					$fetch = null;
@@ -788,7 +788,7 @@ class DboSource extends DataSource {
 		}
 	}
 
-	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel){
+	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
 		foreach ($resultSet as $key => $value) {
 			$merged[$association] = array();
 			$count = 0;
@@ -804,7 +804,7 @@ class DboSource extends DataSource {
 				}
 				$count++;
 			}
-			if (isset($value[$model->name])){
+			if (isset($value[$model->name])) {
 				$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
 				unset($merged);
 				unset($temp);
@@ -844,15 +844,15 @@ class DboSource extends DataSource {
 						$data[$association] = array();
 					}
 				} else {
-					if (is_array($merge[0][$association])){
+					if (is_array($merge[0][$association])) {
 						foreach ($data[$association] as $k => $v) {
-							if (!is_array($v)){
+							if (!is_array($v)) {
 								$dataAssocTmp[$k] = $v;
 							}
 						}
 
 						foreach ($merge[0][$association] as $k => $v) {
-							if (!is_array($v)){
+							if (!is_array($v)) {
 								$mergeAssocTmp[$k] = $v;
 							}
 						}
@@ -868,7 +868,7 @@ class DboSource extends DataSource {
 			}
 		} else {
 			if ($merge[0][$association] === false) {
-				if (!isset($data[$association])){
+				if (!isset($data[$association])) {
 					$data[$association] = array();
 				}
 			} else {
@@ -987,7 +987,7 @@ class DboSource extends DataSource {
 			if (count($passedFields) === 1) {
 				$match = strpos($passedFields[0], $assocFields[0]);
 				$match1 = strpos($passedFields[0], 'COUNT(');
-				if ($match === false && $match1 === false){
+				if ($match === false && $match1 === false) {
 					$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
 				} else {
 					$queryData['fields'] = $passedFields;
@@ -1524,7 +1524,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 				$keys = array_keys($value);
 				if ($keys[0] === 0) {
 					$data = $this->name($key) . ' IN (';
-					if	(strpos($value[0], '-!') === 0){
+					if	(strpos($value[0], '-!') === 0) {
 						$value[0] = str_replace('-!', '', $value[0]);
 						$data .= $value[0];
 						$data .= ')';

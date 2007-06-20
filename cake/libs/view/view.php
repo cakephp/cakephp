@@ -892,7 +892,7 @@ class View extends Object {
 				unset ($out);
 				return;
 			} else {
-				if ($this->layout === 'xml'){
+				if ($this->layout === 'xml') {
 					header('Content-type: text/xml');
 				}
 				$out = str_replace('<!--cachetime:'.$match['1'].'-->', '', $out);

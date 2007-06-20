@@ -203,7 +203,7 @@ class CacheHelper extends AppHelper {
 		}
 
 		$cache = convertSlash($this->here);
-		if (empty($cache)){
+		if (empty($cache)) {
 			return;
 		}
 

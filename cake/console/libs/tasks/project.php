@@ -150,16 +150,16 @@ class ProjectTask extends Shell {
 					$this->out('The Welcome page was NOT created');
 				}
 
-				if ($this->cakeSessionString($path) === true ){
+				if ($this->cakeSessionString($path) === true ) {
 					$this->out('Random hash key created for CAKE_SESSION_STRING');
 				} else {
 					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
 				}
 
 				$corePath = $this->corePath($path);
-				if ($corePath === true ){
+				if ($corePath === true ) {
 					$this->out('CAKE_CORE_INCLUDE_PATH set to ' . CAKE_CORE_INCLUDE_PATH);
-				} elseif ($corePath === false){
+				} elseif ($corePath === false) {
 					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
 				}
 
@@ -200,14 +200,14 @@ class ProjectTask extends Shell {
  *
  * @return bool
  */
-	function cakeSessionString($path){
+	function cakeSessionString($path) {
 		$File =& new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 			uses('Security');
 			$string = Security::generateAuthKey();
 			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $contents);
-			if ($File->write($result)){
+			if ($File->write($result)) {
 				return true;
 			} else {
 				return false;
@@ -221,13 +221,13 @@ class ProjectTask extends Shell {
  *
  * @return bool
  */
-	function corePath($path){
+	function corePath($path) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
-				if ($File->write($result)){
+				if ($File->write($result)) {
 					return true;
 				} else {
 					return false;
@@ -242,12 +242,12 @@ class ProjectTask extends Shell {
  *
  * @return bool
  */	
-	function cakeAdmin($name){
+	function cakeAdmin($name) {
 		$File =& new File($path . 'webroot' . DS . 'index.php');
 		$contents = $File->read();
 		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
 			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $contents);
-			if ($File->write($result)){
+			if ($File->write($result)) {
 				return true;
 			} else {
 				return false;

@@ -1618,7 +1618,7 @@ class DboSourceTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testMixedConditionsParsing(){
+	function testMixedConditionsParsing() {
 		$conditions[] = 'User.first_name = \'Firstname\'';
 		$conditions[] = array('User.last_name' => 'Lastname');
 		$result = $this->db->conditions($conditions);

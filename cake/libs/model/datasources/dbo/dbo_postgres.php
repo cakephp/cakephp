@@ -222,7 +222,7 @@ class DboPostgres extends DboSource {
 
 		switch($column) {
 			case 'inet':
-				if (!strlen($data)){
+				if (!strlen($data)) {
 					return 'DEFAULT';
 				} else {
 					$data = pg_escape_string($data);

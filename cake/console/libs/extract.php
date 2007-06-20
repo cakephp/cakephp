@@ -69,7 +69,7 @@ class ExtractShell extends Shell{
 	var $__output = null;
 
 	function initialize() {
-		if (isset($this->params['files']) && !is_array($this->params['files'])){
+		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->files = explode(',', $this->params['files']);
 		}
 
@@ -90,7 +90,7 @@ class ExtractShell extends Shell{
 			$this->__output = APP . 'locale' . DS;
 		}
 
-		if (empty($this->files)){
+		if (empty($this->files)) {
 			$this->files = $this->__searchDirectory();
 		}
 	}
@@ -142,7 +142,7 @@ class ExtractShell extends Shell{
 		$this->out('   -debug: Perform self test.');
 		$this->out('');
 	}
-	function __extractTokens(){
+	function __extractTokens() {
 		foreach ($this->files as $file) {
 			$this->__file = $file;
 			$this->out("Processing $file...");
@@ -400,7 +400,7 @@ class ExtractShell extends Shell{
 			fclose($fp);
 		}
 	}
-	function __mergeFiles($output){
+	function __mergeFiles($output) {
 		foreach ($output as $file => $content) {
 			if (count($content) <= 1 && $file != $this->__filename) {
 				@$output[$this->__filename][1] = array_unique(array_merge($output[$this->__filename][1], $content[1]));
@@ -479,7 +479,7 @@ class ExtractShell extends Shell{
 		$this->out("\n", true);
 	}
 	function __searchDirectory($path = null) {
-		if ($path === null){
+		if ($path === null) {
 			$path = $this->path .DS;
 		}
 		$files = glob("$path*.{php,ctp,thtml,inc,tpl}", GLOB_BRACE);

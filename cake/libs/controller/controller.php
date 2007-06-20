@@ -342,7 +342,7 @@ class Controller extends Object {
  * @access public
  */
 	function constructClasses() {
-		if ($this->uses === null || ($this->uses === array())){
+		if ($this->uses === null || ($this->uses === array())) {
 			return false;
 		}
 		if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
@@ -359,7 +359,7 @@ class Controller extends Object {
 		}
 
 		if ($this->uses === false) {
-			if (!class_exists($this->modelClass)){
+			if (!class_exists($this->modelClass)) {
 				loadModel($plugin . $this->modelClass);
 			}
 		}
@@ -399,7 +399,7 @@ class Controller extends Object {
 				$object = null;
 				$modelKey = Inflector::underscore($modelClass);
 
-				if (!class_exists($modelClass)){
+				if (!class_exists($modelClass)) {
 					loadModel($plugin . $modelClass);
 				}
 
@@ -610,7 +610,7 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			if (strpos($viewClass, '.') !== false){
+			if (strpos($viewClass, '.') !== false) {
 				list($plugin, $viewClass) = explode('.', $viewClass);
 			}
 			$viewClass = $viewClass . 'View';

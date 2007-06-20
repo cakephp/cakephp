@@ -404,7 +404,7 @@ class FormHelper extends AppHelper {
 				$legend = 'Edit ';
 			}
 			$legend .= Inflector::humanize(Inflector::underscore($this->model()));
-		} elseif (is_string($fieldset)){
+		} elseif (is_string($fieldset)) {
 			$legend = $fieldset;
 		} elseif (isset($fieldset['legend'])) {
 			$legend = $fields['legend'];
@@ -1082,7 +1082,7 @@ class FormHelper extends AppHelper {
 
 			$meridian = 'am';
 			$pos = strpos($selected, '-');
-			if ($pos !== false){
+			if ($pos !== false) {
 				$date = explode('-', $selected);
 				$days = explode(' ', $date[2]);
 				$day = $days[0];

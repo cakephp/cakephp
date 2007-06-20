@@ -545,7 +545,7 @@ class ControllerTask extends Shell {
 			while ($admin == '') {
 				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
 			}
-			if ($this->Project->cakeAdmin($admin) !== true){
+			if ($this->Project->cakeAdmin($admin) !== true) {
 				$this->out('Unable to write to /app/config/core.php.');
 				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 				exit();

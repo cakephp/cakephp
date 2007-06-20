@@ -84,11 +84,11 @@ class AjaxTest extends UnitTestCase {
 
 	function testEvalScripts() {
 		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'evalScripts' => false));
-		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:false, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content'));
-		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:true, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -99,13 +99,13 @@ class AjaxTest extends UnitTestCase {
 		$this->assertPattern('/<div[^<>]+id="PostTitle_autoComplete"[^<>]*><\/div>/', $result);
 		$this->assertPattern('/<div[^<>]+class="auto_complete"[^<>]*><\/div>/', $result);
 		$this->assertPattern('/<\/div>\s+<script type="text\/javascript">new Ajax\.Autocompleter\(\'PostTitle\', \'PostTitle_autoComplete\', \'\/posts\',/', $result);
-		$this->assertPattern('/<script(.*)>(.*){minChars:2}\);/', $result);
+		$this->assertPattern('/<script(.*)>(.*) {minChars:2}\);/', $result);
 		$this->assertPattern('/<\/script>$/', $result);
 	}
 
 	function testAsynchronous() {
 		$result = $this->Ajax->link('Test Link', '/', array('id' => 'link1', 'update' => 'content', 'type' => 'synchronous'));
-		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event){ new Ajax.Updater(\'content\',\'/\', {asynchronous:false, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
+		$expected = '<a href="/"  id="link1" onclick=" return false;">Test Link</a><script type="text/javascript">Event.observe(\'link1\', \'click\', function(event) { new Ajax.Updater(\'content\',\'/\', {asynchronous:false, evalScripts:true, requestHeaders:[\'X-Update\', \'content\']}) }, false);</script>';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -121,14 +121,14 @@ class AjaxTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Ajax->dropRemote('droppable', array('accept' => 'crap'), array('url' => '/posts'));
-		$expected = '<script type="text/javascript">Droppables.add(\'droppable\', {accept:\'crap\', onDrop:function(element, droppable){new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true})}});</script>';
+		$expected = '<script type="text/javascript">Droppables.add(\'droppable\', {accept:\'crap\', onDrop:function(element, droppable) {new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true})}});</script>';
 		$this->assertEqual($result, $expected);
 	}
 
 	function testSubmitWithIndicator() {
 		$result = $this->Ajax->submit('Add', array('div' => false, 'url' => "/controller/action", 'indicator' => 'loading', 'loading' => "doSomething()", 'complete' => 'doSomethingElse() '));
-		$this->assertPattern('/onLoading:function\(request\){doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
-		$this->assertPattern('/onComplete:function\(request, json\){doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
+		$this->assertPattern('/onLoading:function\(request\) {doSomething\(\);\s+Element.show\(\'loading\'\);}/', $result);
+		$this->assertPattern('/onComplete:function\(request, json\) {doSomethingElse\(\) ;\s+Element.hide\(\'loading\'\);}/', $result);
 	}
 
 	function tearDown() {

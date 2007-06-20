@@ -226,9 +226,9 @@ class HtmlHelper extends AppHelper {
  * @return string A meta tag containing the specified character set.
  */
 	function charset($charset = null) {
-		if (is_null($charset)){
+		if (is_null($charset)) {
 			$charset = Configure::read('charset');
-			if (is_null($charset)){
+			if (is_null($charset)) {
 				$charset = 'utf-8';
 			}
 		}
@@ -362,7 +362,7 @@ class HtmlHelper extends AppHelper {
 			}
 
 			foreach ($this->_crumbs as $crumb) {
-				if (!empty($crumb[1])){
+				if (!empty($crumb[1])) {
 					$out[] = $this->link($crumb[0], $crumb[1]);
 				} else {
 					$out[] = $crumb[0];
@@ -568,7 +568,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$model = $this->model();
 			if (isset($htmlAttributes['value']) || (!class_exists($model) && !loadModel($model))) {
-				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value){
+				if (isset($htmlAttributes['value']) && $htmlAttributes['value'] == $value) {
 					$htmlAttributes['checked'] = 'checked';
 				} else {
 					$htmlAttributes['checked'] = null;

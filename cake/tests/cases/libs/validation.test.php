@@ -35,7 +35,7 @@ uses('Validation');
  */
 class ValidationTestCase extends UnitTestCase {
 
-	function testAlphaNumeric(){
+	function testAlphaNumeric() {
 		$validation = new Validation();
 
 		$this->assertTrue($validation->alphaNumeric('frferrf'));
@@ -50,7 +50,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->alphaNumeric(''));
 	}
 
-	function testAlphaNumericPassedAsArray(){
+	function testAlphaNumericPassedAsArray() {
 		$validation = new Validation();
 
 		$this->assertTrue($validation->alphaNumeric(array('check' => 'frferrf')));
@@ -65,14 +65,14 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->alphaNumeric(array('check' =>  '')));
 	}
 
-	function testBetween(){
+	function testBetween() {
 		$validation = new Validation();
 		$this->assertTrue($validation->between('abcdefg', 1, 7));
 		$this->assertTrue($validation->between('', 0, 7));
 		$this->assertFalse($validation->between('abcdefg', 1, 6));
 	}
 
-	function testBlank(){
+	function testBlank() {
 		$validation = new Validation();
 		$this->assertTrue($validation->blank(''));
 		$this->assertTrue($validation->blank(' '));
@@ -83,7 +83,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->blank('Blank'));
 	}
 
-	function testBlankAsArray(){
+	function testBlankAsArray() {
 		$validation = new Validation();
 		$this->assertTrue($validation->blank(array('check' => '')));
 		$this->assertTrue($validation->blank(array('check' => ' ')));
@@ -94,7 +94,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertFalse($validation->blank(array('check' => 'Blank')));
 	}
 
-	function testcc(){
+	function testcc() {
 		$validation = new Validation();
 		//American Express
 		$this->assertTrue($validation->cc('370482756063980', array('amex')));
@@ -534,7 +534,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue($validation->cc('869972521242198', array('voyager')));
 	}
 
-	function testLuhn(){
+	function testLuhn() {
 		$validation = new Validation();
 		$validation->deep = true;
 

@@ -139,7 +139,7 @@ class DboFirebird extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		if (strpos(strtolower($sql),"update") > 0){
+		if (strpos(strtolower($sql),"update") > 0) {
 			break;
 		}
 		return @ibase_query($this->connection,  $sql  );

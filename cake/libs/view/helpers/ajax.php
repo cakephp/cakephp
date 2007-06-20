@@ -552,7 +552,7 @@ class AjaxHelper extends AppHelper {
  * @return string JavaScript block to create a droppable element
  */
 	function dropRemote($id, $options = array(), $ajaxOptions = array()) {
-		$options['onDrop'] = "function(element, droppable){" . $this->remoteFunction($ajaxOptions) . "}";
+		$options['onDrop'] = "function(element, droppable) {" . $this->remoteFunction($ajaxOptions) . "}";
 		$options = $this->_optionsToString($options, array('accept', 'overlap', 'hoverclass'));
 		$options = $this->_buildOptions($options, $this->dropOptions);
 		return $this->Javascript->codeBlock("Droppables.add('{$id}', {$options});");
@@ -643,7 +643,7 @@ class AjaxHelper extends AppHelper {
 			if (empty($options['with'])) {
 				$options['with'] = "Sortable.serialize('$id')";
 			}
-			$options['onUpdate'] = 'function(sortable){' . $this->remoteFunction($options) . '}';
+			$options['onUpdate'] = 'function(sortable) {' . $this->remoteFunction($options) . '}';
 		}
 
 		$options = $this->_optionsToString($options, array('tag', 'constraint', 'only', 'handle', 'hoverclass', 'scroll', 'tree', 'treeTag'));
@@ -794,9 +794,9 @@ class AjaxHelper extends AppHelper {
 				$name = 'on' . ucfirst($callback);
 				$code = $options[$callback];
 				if ($name == 'onComplete') {
-					$callbacks[$name] = "function(request, json){" . $code . "}";
+					$callbacks[$name] = "function(request, json) {" . $code . "}";
 				} else {
-					$callbacks[$name] = "function(request){" . $code . "}";
+					$callbacks[$name] = "function(request) {" . $code . "}";
 				}
 				if (isset($options['bind'])) {
 					if ((is_array($options['bind']) && in_array($callback, $options['bind'])) || (is_string($options['bind']) && strpos($options['bind'], $callback) !== false)) {

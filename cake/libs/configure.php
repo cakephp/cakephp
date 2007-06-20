@@ -111,22 +111,22 @@ class Configure extends Object {
  * @param mixed $value Value to set for var
  * @access public
  */
-	function write($config, $value = null){
+	function write($config, $value = null) {
 		$_this =& Configure::getInstance();
 
 		if (!is_array($config) && $value !== null) {
 			$name = $_this->__configVarNames($config);
 
-			if (count($name) > 1){
+			if (count($name) > 1) {
 				$_this->{$name[0]}[$name[1]] = $value;
 			} else {
 				$_this->{$name[0]} = $value;
 			}
 		} else {
 
-			foreach ($config as $names => $value){
+			foreach ($config as $names => $value) {
 				$name = $_this->__configVarNames($names);
-				if (count($name) > 1){
+				if (count($name) > 1) {
 					$_this->{$name[0]}[$name[1]] = $value;
 				} else {
 					$_this->{$name[0]} = $value;
@@ -166,17 +166,17 @@ class Configure extends Object {
  * @return string value of Configure::$var
  * @access public
  */
-	function read($var = 'debug'){
+	function read($var = 'debug') {
 		$_this =& Configure::getInstance();
 		if ($var === 'debug') {
-			if (!isset($_this->debug)){
+			if (!isset($_this->debug)) {
 				$_this->debug = DEBUG;
 			}
 			return $_this->debug;
 		}
 
 		$name = $_this->__configVarNames($var);
-		if (count($name) > 1){
+		if (count($name) > 1) {
 			if (isset($_this->{$name[0]}[$name[1]])) {
 				return $_this->{$name[0]}[$name[1]];
 			}
@@ -198,11 +198,11 @@ class Configure extends Object {
  * @param string $var the var to be deleted
  * @access public
  */
-	function delete($var = null){
+	function delete($var = null) {
 		$_this =& Configure::getInstance();
 
 		$name = $_this->__configVarNames($var);
-		if (count($name) > 1){
+		if (count($name) > 1) {
 			unset($_this->{$name[0]}[$name[1]]);
 		} else {
 			unset($_this->{$name[0]});
@@ -230,7 +230,7 @@ class Configure extends Object {
 			return false;
 		}
 
-		if (!isset($config)){
+		if (!isset($config)) {
 			trigger_error(sprintf(__("Configure::load() - no variable \$config found in %s.php", true), $fileName), E_USER_WARNING);
 			return false;
 		}
@@ -268,9 +268,9 @@ class Configure extends Object {
 		$content = '';
 		foreach ($data as $key => $value) {
 			$content .= "\$config['$type']['$key']";
-			if (is_array($value)){
+			if (is_array($value)) {
 				$content .= " = array(";
-				foreach ($value as $key1 => $value2){
+				foreach ($value as $key1 => $value2) {
 					$value2 = addslashes($value2);
 					$content .= "'$key1' => '$value2', ";
 				}
@@ -294,7 +294,7 @@ class Configure extends Object {
  * @param boolean $write true if content should be written, false otherwise
  * @access private
  */
-	function __writeConfig($content, $name, $write = true){
+	function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 		$_this =& Configure::getInstance();
 		if ($_this->read() > 0) {
@@ -304,12 +304,12 @@ class Configure extends Object {
 		}
 
 		$cache = cache('persistent' . DS . $name . '.php', null, $expires);
-		if ($cache === null){
+		if ($cache === null) {
 			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n", $expires);
 		}
 
-		if ($write === true){
-			if (!class_exists('File')){
+		if ($write === true) {
+			if (!class_exists('File')) {
 				uses('File');
 			}
 			$fileClass = new File($file);

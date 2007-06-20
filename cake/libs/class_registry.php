@@ -129,11 +129,11 @@ class ClassRegistry {
 		$_this =& ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 
-		if (isset($_this->__objects[$key])){
+		if (isset($_this->__objects[$key])) {
 			return $_this->__objects[$key];
 		} else {
 			$key = $_this->__getMap($key);
-			if (isset($_this->__objects[$key])){
+			if (isset($_this->__objects[$key])) {
 				return $_this->__objects[$key];
 			}
 		}

@@ -197,7 +197,7 @@ class Helper extends Overloadable {
 			} else {
 				$path = WWW_ROOT . $this->themeWeb  . $file;
 			}
-			if (file_exists($path)){
+			if (file_exists($path)) {
 				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
@@ -211,7 +211,7 @@ class Helper extends Overloadable {
  * @return cleaned content for output
  * @access public
  */
-	function clean($output){
+	function clean($output) {
 		$this->__reset();
 		if (is_array($output)) {
 			foreach ($output as $key => $value) {
@@ -614,7 +614,7 @@ class Helper extends Overloadable {
  * @return void
  * @access private
  */
-	function __reset(){
+	function __reset() {
 		$this->__tainted = null;
 		$this->__cleaned = null;
 	}
@@ -624,7 +624,7 @@ class Helper extends Overloadable {
  * @return void
  * @access private
  */
-	function __clean(){
+	function __clean() {
 		if (get_magic_quotes_gpc()) {
 			$this->__cleaned = stripslashes($this->__tainted);
 		} else {

@@ -327,7 +327,7 @@ class HtmlTestManager extends TestManager {
 			return $noGroupTests;
 		}
 
-		if (isset($_GET['app'])){
+		if (isset($_GET['app'])) {
 			$buffer = "<h3>Available App Test Groups:</h3>\n<ul>";
 		} else {
 			$buffer = "<h3>Available Core Test Groups:</h3>\n<ul>";

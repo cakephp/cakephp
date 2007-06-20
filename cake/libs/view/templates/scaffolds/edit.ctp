@@ -32,7 +32,7 @@
 		foreach ($fields as $field) {
 			if ($this->action == 'add' && $field['name'] == $primaryKey) {
 				continue;
-			} elseif (!in_array($field['name'], array('created', 'modified', 'updated'))){
+			} elseif (!in_array($field['name'], array('created', 'modified', 'updated'))) {
 				echo "\t\t".$form->input($field['name'])."\n";
 			}
 		}

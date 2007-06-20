@@ -203,7 +203,7 @@ class EmailComponent extends Object{
  * @param unknown_type $controller
  * @access public
  */
-	function startup(&$controller){
+	function startup(&$controller) {
 		$this->Controller = & $controller;
 	}
 /**
@@ -213,14 +213,14 @@ class EmailComponent extends Object{
  * @return unknown
  * @access public
  */
-	function send($content = null){
+	function send($content = null) {
 		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
 
 		if ($this->template === null) {
-			if (is_array($content)){
+			if (is_array($content)) {
 				$message = null;
-				foreach ($content as $key => $value){
+				foreach ($content as $key => $value) {
 					$message .= $value . $this->_newLine;
 				}
 			} else {
@@ -239,7 +239,7 @@ class EmailComponent extends Object{
 			$this->__message .= $this->_newLine .'--' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
 		}
 
-		if ($this->_debug){
+		if ($this->_debug) {
 			$this->delivery = 'debug';
 		}
 		$__method = '__'.$this->delivery;
@@ -274,7 +274,7 @@ class EmailComponent extends Object{
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
 		$View->layout = $this->layout;
-		if ($this->sendAs === 'both'){
+		if ($this->sendAs === 'both') {
 			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
@@ -302,7 +302,7 @@ class EmailComponent extends Object{
  *
  * @access private
  */
-	function __createBoundary(){
+	function __createBoundary() {
 		$this->__boundary = md5(uniqid(time()));
 	}
 /**
@@ -310,7 +310,7 @@ class EmailComponent extends Object{
  *
  * @access private
  */
-	function __createHeader(){
+	function __createHeader() {
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
@@ -359,10 +359,10 @@ class EmailComponent extends Object{
  * @param string $message
  * @access private
  */
-	function __formatMessage($message){
+	function __formatMessage($message) {
 		$message = $this->__wrap($message);
 
-		if ($this->sendAs === 'both'){
+		if ($this->sendAs === 'both') {
 			$this->__message = '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
 			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
@@ -384,7 +384,7 @@ class EmailComponent extends Object{
  *
  * @access private
  */
-	function __attachFiles(){
+	function __attachFiles() {
 		foreach ($this->attachments as $attachment) {
 			$files[] = $this->__findFiles($attachment);
 		}
@@ -409,7 +409,7 @@ class EmailComponent extends Object{
  * @return unknown
  * @access private
  */
-	function __findFiles($attachment){
+	function __findFiles($attachment) {
 		foreach ($this->filePaths as $path) {
 			if (file_exists($path . DS . $attachment)) {
 				$file = $path . DS . $attachment;
@@ -466,8 +466,8 @@ class EmailComponent extends Object{
  * @return unknown
  * @access private
  */
-	function __formatAddress($string){
-		if (strpos($string, '<') !== false){
+	function __formatAddress($string) {
+		if (strpos($string, '<') !== false) {
 			$value = explode('<', $string);
 			$string = $this->__encode($value[0]) . ' <' . $value[1];
 		}
@@ -479,7 +479,7 @@ class EmailComponent extends Object{
  * @return unknown
  * @access private
  */
-	function __mail(){
+	function __mail() {
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
@@ -487,7 +487,7 @@ class EmailComponent extends Object{
  *
  * @access private
  */
-	function __smtp(){
+	function __smtp() {
 
 	}
 /**

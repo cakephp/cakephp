@@ -50,7 +50,7 @@
  * Loads all models.
  */
 	function loadModels() {
-		if (!class_exists('Model')){
+		if (!class_exists('Model')) {
 			require LIBS . 'model' . DS . 'model.php';
 		}
 		$path = Configure::getInstance();
@@ -86,7 +86,7 @@
  * @deprecated
  */
 	function loadPluginModels($plugin) {
-		if (!class_exists('AppModel')){
+		if (!class_exists('AppModel')) {
 			loadModel();
 		}
 
@@ -120,7 +120,7 @@
  * @return boolean Success
  */
 	function loadView($viewClass) {
-		if (strpos($viewClass, '.') !== false){
+		if (strpos($viewClass, '.') !== false) {
 			list($plugin, $viewClass) = explode('.', $viewClass);
 			$file = APP . 'plugins' . DS . Inflector::underscore($plugin) . DS . 'views' . DS . Inflector::underscore($viewClass) . '.php';
 			if (file_exists($file)) {
@@ -159,7 +159,7 @@
  * @return boolean Success
  */
 	function loadModel($name = null) {
-		if (!class_exists('Model')){
+		if (!class_exists('Model')) {
 			require LIBS . 'model' . DS . 'model.php';
 		}
 		if (!class_exists('AppModel')) {
@@ -171,7 +171,7 @@
 			Overloadable::overload('AppModel');
 		}
 
-		if (strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 
 			$pluginAppModel = Inflector::camelize($plugin . '_app_model');
@@ -234,7 +234,7 @@
  *
  * @return array Array of paths indexed by type
  */
-	function paths(){
+	function paths() {
 		$directories = Configure::getInstance();
 		$paths = array();
 
@@ -254,7 +254,7 @@
 			$paths['Helpers'][] = $path;
 		}
 
-		if (!class_exists('Folder')){
+		if (!class_exists('Folder')) {
 			uses('Folder');
 		}
 
@@ -262,9 +262,9 @@
 		$plugins = $folder->ls();
 		$classPaths = array('models', 'models'.DS.'behaviors',  'controllers', 'controllers'.DS.'components', 'views'.DS.'helpers');
 
-		foreach ($plugins[0] as $plugin){
-			foreach ($classPaths as $path){
-				if (strpos($path, DS) !== false){
+		foreach ($plugins[0] as $plugin) {
+			foreach ($classPaths as $path) {
+				if (strpos($path, DS) !== false) {
 					$key = explode(DS, $path);
 					$key = $key[1];
 				} else {
@@ -320,7 +320,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if (strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 
 			$pluginAppController = Inflector::camelize($plugin . '_app_controller');
@@ -351,7 +351,7 @@
 				if (file_exists($file)) {
 					require($file);
 					return true;
-				} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
+				} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')) {
 					if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 						require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 						return true;
@@ -434,7 +434,7 @@
 			if (file_exists($file)) {
 				require($file);
 				return true;
-			} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')){
+			} elseif (!class_exists(Inflector::camelize($plugin) . 'Controller')) {
 				if (file_exists(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php')) {
 					require(APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $plugin . '_controller.php');
 					return true;
@@ -464,7 +464,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if (strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -538,7 +538,7 @@
 			return true;
 		}
 
-		if (strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -609,7 +609,7 @@
 		if ($name === null) {
 			return true;
 		}
-		if (strpos($name, '.') !== false){
+		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 		}
 
@@ -712,7 +712,7 @@
 		for ($i = 0; $i < $c; $i++) {
 			$arg = $args[$i];
 
-			if (strpos($arg, '.') !== false){
+			if (strpos($arg, '.') !== false) {
 				$file = explode('.', $arg);
 				$plugin = Inflector::underscore($file[0]);
 				unset($file[0]);

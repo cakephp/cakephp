@@ -74,7 +74,7 @@ if (empty( $_GET['output'])) {
 	$_GET['output'] = 'html';
 }
 
-if (!defined('BASE_URL')){
+if (!defined('BASE_URL')) {
 	$dispatch =& new Dispatcher();
 	define('BASE_URL', $dispatch->baseUrl());
 }

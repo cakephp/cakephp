@@ -506,7 +506,7 @@ class SecurityComponent extends Object {
 					}
 
 					foreach ($k as  $lookup) {
-						if (isset($controller->data[$newKey][$lookup])){
+						if (isset($controller->data[$newKey][$lookup])) {
 							unset($controller->data[$key][$lookup]);
 						} elseif ($controller->data[$key][$lookup] === '0') {
 							$merge[] = $lookup;
