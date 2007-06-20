@@ -857,10 +857,11 @@ class DboSource extends DataSource {
 							}
 						}
 
-						if ($mergeAssocTmp == $dataAssocTmp) {
-							$data[$association] = array_merge($merge[0][$association], $data[$association]);
-						} else {
+						if(array_keys($merge[0]) === array_keys($data)) {
 							$data[$association][$association] = $merge[0][$association];
+						} else {
+							$diff = Set::diff($dataAssocTmp, $mergeAssocTmp);
+							$data[$association] = array_merge($merge[0][$association], $diff);
 						}
 					}
 				}
