@@ -256,6 +256,10 @@ class CookieComponent extends Object {
  * @access public
  */
 	function read($key = null) {
+		if(empty($this->__values) && isset($_COOKIE[$this->name])) {
+			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
+		}
+
 		if(is_null($key)){
 			return $this->__values;
 		}
