@@ -655,8 +655,8 @@ class FormHelper extends AppHelper {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
 			$value = $db->boolean($options['value']);
 			$options['value'] = 1;
-			$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
 		}
+		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
 
 		if(isset($options['value']) && $value == $options['value']) {
 			$options['checked'] = 'checked';
