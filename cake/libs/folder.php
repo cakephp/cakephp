@@ -285,7 +285,7 @@ class Folder extends Object{
  * @access public
  * @static
  */
-	function correctSlashfor ($path) {
+	function correctSlashFor($path) {
 		if ($this->isWindowsPath($path)) {
 			return '\\';
 		}
@@ -303,7 +303,7 @@ class Folder extends Object{
 		if ($this->isSlashTerm($path)) {
 			return $path;
 		}
-		return $path . $this->correctSlashfor ($path);
+		return $path . $this->correctSlashFor($path);
 	 }
 /**
  * Returns $path with $element added, with correct slash in-between.
