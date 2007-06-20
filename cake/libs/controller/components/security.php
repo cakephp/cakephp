@@ -356,14 +356,14 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __authRequired(&$controller) {
-		if(is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->params)) {
+		if(is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
 			if(in_array($controller->action, $this->requireAuth) || $this->requireAuth == array('*')) {
-				if(!isset($controller->params['_Token'] )) {
+				if(!isset($controller->data['__Token'] )) {
 					if(!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
 				}
-				$token = $controller->params['_Token']['key'];
+				$token = $controller->data['__Token']['key'];
 
 				if($this->Session->check('_Token')) {
 					$tData = unserialize($this->Session->read('_Token'));
