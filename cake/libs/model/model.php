@@ -1715,7 +1715,7 @@ class Model extends Overloadable {
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
 				} else {
-					$message = 'This field cannot be left blank';
+					$message = __('This field cannot be left blank',true);
 				}
 
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
