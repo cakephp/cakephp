@@ -84,7 +84,7 @@ class FormHelper extends AppHelper {
 			$defaultModel = $this->params['models'][0];
 		} elseif (empty($model) && empty($this->params['models'])) {
 			$model = false;
-		} else if (is_string($model) && (strpos($model, '/') !== false || strpos($model, '.') !== false)) {
+		} elseif (is_string($model) && (strpos($model, '/') !== false || strpos($model, '.') !== false)) {
 			$path = preg_split('/\/|\./', $model);
 			$model = $path[count($path) - 1];
 		}
@@ -94,10 +94,10 @@ class FormHelper extends AppHelper {
 		}
 
 		$models = ClassRegistry::keys();
-		foreach($models as $currentModel) {
+		foreach ($models as $currentModel) {
 			if (ClassRegistry::isKeySet($currentModel)) {
 				$currentObject =& ClassRegistry::getObject($currentModel);
-				if(is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
+				if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
 					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
 				}
 			}
@@ -107,7 +107,7 @@ class FormHelper extends AppHelper {
 		$append = '';
 		$created = $id = false;
 
-		if(isset($object)) {
+		if (isset($object)) {
 			$fields = $object->loadInfo();
 			$fieldNames = $fields->extract('{n}.name');
 			$fieldTypes = $fields->extract('{n}.type');
@@ -126,7 +126,7 @@ class FormHelper extends AppHelper {
 			);
 
 			$habtm = array();
-			if(!empty($object->hasAndBelongsToMany)) {
+			if (!empty($object->hasAndBelongsToMany)) {
 				$habtm = array_combine(array_keys($object->hasAndBelongsToMany), array_keys($object->hasAndBelongsToMany));
 			}
 			$data['fields'] = am($habtm, $data['fields']);
@@ -163,7 +163,7 @@ class FormHelper extends AppHelper {
 				'action' => $options['action'],
 				'id' => $id
 			);
-			if(!empty($options['action']) && !isset($options['id'])) {
+			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
 			}
 			$options['action'] = am($actionDefaults, (array)$options['url']);
@@ -221,32 +221,32 @@ class FormHelper extends AppHelper {
 		}
 
 		$submitOptions = true;
-		if(!is_array($options)) {
+		if (!is_array($options)) {
 			$submitOptions = $options;
-		} else if(isset($options['submit'])) {
+		} elseif (isset($options['submit'])) {
 			$submitOptions = $options['submit'];
 			unset($options['submit']);
 
-			if(isset($options['label'])) {
+			if (isset($options['label'])) {
 				$submitOptions = $options['label'];
 				unset($options['label']);
 			}
 		}
 
-		if($submitOptions === true) {
+		if ($submitOptions === true) {
 			$submit = 'Submit';
-		} else if(is_string($submitOptions)) {
+		} elseif (is_string($submitOptions)) {
 			$submit = $submitOptions;
 		}
 
-		if(!is_array($submitOptions)) {
+		if (!is_array($submitOptions)) {
 			$submitOptions = array();
 		}
 		$out = null;
 
-		if(isset($submit)) {
+		if (isset($submit)) {
 			$out .= $this->submit($submit, $submitOptions);
-		} elseif(isset($this->params['_Token']) && !empty($this->params['_Token']) && !empty($this->fields)) {
+		} elseif (isset($this->params['_Token']) && !empty($this->params['_Token']) && !empty($this->fields)) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -261,32 +261,32 @@ class FormHelper extends AppHelper {
 		return $append;
 	}
 	function __secure($model = null, $options = null) {
-		if(!$model) {
+		if (!$model) {
 			$model = $this->model();
 		}
 
-		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			if(!empty($this->params['_Token']['disabledFields'])) {
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+			if (!empty($this->params['_Token']['disabledFields'])) {
 				foreach ($this->params['_Token']['disabledFields'] as $value) {
 					$parts = preg_split('/\/|\./', $value);
 					if (count($parts) == 1) {
-						if($parts[0] === $this->field()) {
+						if ($parts[0] === $this->field()) {
 							return;
 						}
 					} elseif (count($parts) == 2) {
-						if($parts[0] === $this->model() && $parts[1] === $this->field()) {
+						if ($parts[0] === $this->model() && $parts[1] === $this->field()) {
 							return;
 						}
 					}
 				}
-				if(!is_null($options)) {
+				if (!is_null($options)) {
 					$this->fields[$model][$this->field()] = $options;
 					return;
 				}
 				$this->fields[$model][] = $this->field();
 				return;
 			}
-			if(!is_null($options)) {
+			if (!is_null($options)) {
 				$this->fields[$model][$this->field()] = $options;
 				return;
 			}
@@ -323,7 +323,7 @@ class FormHelper extends AppHelper {
 			}
 			if (is_array($text) && isset($text[$error])) {
 				$text = $text[$error];
-			} else if (is_array($text)) {
+			} elseif (is_array($text)) {
 				$text = null;
 			}
 
@@ -387,46 +387,46 @@ class FormHelper extends AppHelper {
  * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
-		if(!is_array($fields)) {
+		if (!is_array($fields)) {
 			$fieldset = $fields;
 			$fields = array_keys($this->fieldset['fields']);
 		}
-		if(isset($fields['fieldset'])) {
+		if (isset($fields['fieldset'])) {
 			$fieldset = $fields['fieldset'];
 			unset($fields['fieldset']);
 		} else {
 			$fieldset = true;
 		}
 
-		if($fieldset === true) {
+		if ($fieldset === true) {
 			$legend = 'New ';
-			if(in_array($this->action, array('update', 'edit'))) {
+			if (in_array($this->action, array('update', 'edit'))) {
 				$legend = 'Edit ';
 			}
 			$legend .= Inflector::humanize(Inflector::underscore($this->model()));
-		} else if(is_string($fieldset)){
+		} elseif (is_string($fieldset)){
 			$legend = $fieldset;
-		} else if(isset($fieldset['legend'])) {
+		} elseif (isset($fieldset['legend'])) {
 			$legend = $fields['legend'];
 			unset($fields['legend']);
 		}
 
 		$out = null;
-		foreach($fields as $name => $options) {
-			if(is_array($blacklist) && in_array($name, $blacklist)) {
+		foreach ($fields as $name => $options) {
+			if (is_array($blacklist) && in_array($name, $blacklist)) {
 				break;
 			}
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
 				$options = array();
 			}
-			if(is_array($options) && isset($options['fieldName'])) {
+			if (is_array($options) && isset($options['fieldName'])) {
 				$name = $options['fieldName'];
 				unset($options['fieldName']);
 			}
 			$out .= $this->input($name, $options);
 		}
-		if(isset($legend)) {
+		if (isset($legend)) {
 			return sprintf($this->Html->tags['fieldset'], $legend, $out);
 		} else {
 			return $out;
@@ -465,16 +465,16 @@ class FormHelper extends AppHelper {
 				$options['type'] = 'select';
 			} elseif (in_array($this->field(), array('passwd', 'password'))) {
 				$options['type'] = 'password';
-			} else if(isset($this->fieldset['fields'][$this->field()])) {
+			} elseif (isset($this->fieldset['fields'][$this->field()])) {
 				$type = $this->fieldset['fields'][$this->field()];
 				$primaryKey = $this->fieldset['key'];
-			} else if (ClassRegistry::isKeySet($this->model())) {
+			} elseif (ClassRegistry::isKeySet($this->model())) {
 				$model =& ClassRegistry::getObject($this->model());
 				$type = $model->getColumnType($this->field());
 				$primaryKey = $model->primaryKey;
 			}
 
-			if(isset($type)) {
+			if (isset($type)) {
 				$map = array(
 					'string'	=> 'text',	'datetime'	=> 'datetime',
 					'boolean'	=> 'checkbox',	'timestamp' => 'datetime',
@@ -484,26 +484,26 @@ class FormHelper extends AppHelper {
 				if (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				}
-				if($this->field() == $primaryKey) {
+				if ($this->field() == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
 			}
 		}
 
-		if($options['type'] == 'select') {
-			if(in_array($this->field(), array_values($this->fieldset['fields']))) {
-				if($this->model() != $this->field()) {
+		if ($options['type'] == 'select') {
+			if (in_array($this->field(), array_values($this->fieldset['fields']))) {
+				if ($this->model() != $this->field()) {
 					$this->setFormTag($this->field().'.'.$this->field());
 					$fieldName = $this->field().'.'.$this->field();
 				}
-				if(!isset($options['multiple'])) {
+				if (!isset($options['multiple'])) {
 					$options['multiple'] = 'multiple';
 				}
 			}
 		}
 
-		if(!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
-			if(isset($this->fieldset['sizes'][$this->field()])) {
+		if (!array_key_exists('maxlength', $options) && $options['type'] == 'text') {
+			if (isset($this->fieldset['sizes'][$this->field()])) {
 				$options['maxlength'] = $this->fieldset['sizes'][$this->field()];
 			}
 		}
@@ -515,7 +515,7 @@ class FormHelper extends AppHelper {
 			unset($options['div']);
 		}
 
-		if(!empty($div)) {
+		if (!empty($div)) {
 			$divOptions = array('class'=>'input');
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
@@ -567,12 +567,12 @@ class FormHelper extends AppHelper {
 			$selected = $options['selected'];
 			unset($options['selected']);
 		}
-		if(isset($options['rows']) || isset($options['cols'])) {
+		if (isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
 
 		$empty = false;
-		if(isset($options['empty'])) {
+		if (isset($options['empty'])) {
 			$empty = $options['empty'];
 			unset($options['empty']);
 		}
@@ -637,7 +637,7 @@ class FormHelper extends AppHelper {
  */
 	function checkbox($fieldName, $options = array()) {
 		$value = 1;
-		if(isset($options['value'])) {
+		if (isset($options['value'])) {
 			$value = $options['value'];
 			unset($options['value']);
 		}
@@ -651,16 +651,16 @@ class FormHelper extends AppHelper {
 		}
 
 		$output = null;
-		if(isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
+		if (isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
 			$value = $db->boolean($options['value']);
 			$options['value'] = 1;
 		}
 		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
 
-		if(isset($options['value']) && $value == $options['value']) {
+		if (isset($options['value']) && $value == $options['value']) {
 			$options['checked'] = 'checked';
-		} else if(!empty($value)) {
+		} elseif (!empty($value)) {
 			$options['value'] = $value;
 		}
 
@@ -722,7 +722,7 @@ class FormHelper extends AppHelper {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 
-		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$model = '_' . $model;
 		}
 		$value = '';
@@ -790,7 +790,7 @@ class FormHelper extends AppHelper {
 	function submit($caption = 'Submit', $options = array()) {
 		$options['value'] = $caption;
 		$secured = null;
-		if(isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$secured = $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -865,7 +865,7 @@ class FormHelper extends AppHelper {
 		}
 		if (is_string($options) && isset($this->__options[$options])) {
 			$options = $this->__generateOptions($options);
-		} elseif(!is_array($options)) {
+		} elseif (!is_array($options)) {
 			$options = array();
 		}
 		if (isset($attributes['type'])) {
@@ -889,7 +889,7 @@ class FormHelper extends AppHelper {
 		$select[] = sprintf($tag, $this->model(), $this->field(), $this->_parseAttributes($attributes));
 
 		if ($showEmpty !== null && $showEmpty !== false) {
-			if($showEmpty === true) {
+			if ($showEmpty === true) {
 				$showEmpty = '';
 			}
 			$options = array_reverse($options, true);
@@ -911,16 +911,18 @@ class FormHelper extends AppHelper {
  */
 	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
+
 		if (empty($value)) {
-			if(!$showEmpty) {
+			if (!$showEmpty && !$selected) {
 				$value = 'now';
-			} else if(strlen($selected) > 2) {
+			} elseif (strlen($selected) > 2) {
 				$value = $selected;
-			} else if($selected === false) {
+			} elseif ($selected === false) {
 				$selected = null;
 			}
 		}
-		if(!empty($value)) {
+
+		if (!empty($value)) {
 			$selected = date('d', strtotime($value));
 		}
 		return $this->select($fieldName . "_day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty);
@@ -938,21 +940,22 @@ class FormHelper extends AppHelper {
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
-		if(!empty($value)) {
-			$selected = date('Y', strtotime($value));
-		}
-		if (empty($selected)) {
-			if(!$showEmpty && !$maxYear) {
+
+		if (empty($value)) {
+			if (!$showEmpty && !$maxYear && !$selected) {
 				$value = 'now';
-			} else if(!$showEmpty && $maxYear) {
+			} elseif (!$showEmpty && $maxYear && !$selected) {
 				$selected = $maxYear;
-			} else if(strlen($selected) > 4) {
+			} elseif (strlen($selected) > 4) {
 				$value = $selected;
-			} else if($selected === false) {
+			} elseif ($selected === false) {
 				$selected = null;
 			}
 		}
 
+		if (!empty($value)) {
+			$selected = date('Y', strtotime($value));
+		}
 		return $this->select($fieldName . "_year", $this->__generateOptions('year', $minYear, $maxYear), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -965,16 +968,18 @@ class FormHelper extends AppHelper {
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
+
 		if (empty($value)) {
-			if(!$showEmpty) {
+			if (!$showEmpty && !$selected) {
 				$value = 'now';
-			} else if(strlen($selected) > 2) {
+			} elseif (strlen($selected) > 2) {
 				$value = $selected;
-			} else if($selected === false) {
+			} elseif ($selected === false) {
 				$selected = null;
 			}
 		}
-		if(!empty($value)) {
+
+		if (!empty($value)) {
 			$selected = date('m', strtotime($value));
 		}
 		return $this->select($fieldName . "_month", $this->__generateOptions('month'), $selected, $attributes, $showEmpty);
@@ -991,21 +996,22 @@ class FormHelper extends AppHelper {
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
+
 		if (empty($value)) {
-			if(!$showEmpty) {
+			if (!$showEmpty && !$selected) {
 				$value = 'now';
-			} else if(strlen($selected) > 2) {
+			} elseif (strlen($selected) > 2) {
 				$value = $selected;
-			} else if($selected === false) {
+			} elseif ($selected === false) {
 				$selected = null;
 			}
 		}
-		if(!empty($value) && $format24Hours) {
+
+		if (!empty($value) && $format24Hours) {
 			$selected = date('H', strtotime($value));
-		} else if(!empty($value) && !$format24Hours) {
+		} elseif (!empty($value) && !$format24Hours) {
 			$selected = date('g', strtotime($value));
 		}
-
 		return $this->select($fieldName . "_hour", $this->__generateOptions($format24Hours ? 'hour24' : 'hour'), $selected, $attributes, $showEmpty);
 	}
 /**
@@ -1017,16 +1023,18 @@ class FormHelper extends AppHelper {
  */
 	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
 		$value = $this->value($fieldName);
+
 		if (empty($value)) {
-			if(!$showEmpty) {
+			if (!$showEmpty  && !$selected) {
 				$value = 'now';
-			} else if(strlen($selected) > 2) {
+			} elseif (strlen($selected) > 2) {
 				$value = $selected;
-			} else if($selected === false) {
+			} elseif ($selected === false) {
 				$selected = null;
 			}
 		}
-		if(!empty($value)) {
+
+		if (!empty($value)) {
 			$selected = date('i', strtotime($value));
 		}
 		return $this->select($fieldName . "_min", $this->__generateOptions('minute'), $selected, $attributes, $showEmpty);
@@ -1074,7 +1082,7 @@ class FormHelper extends AppHelper {
 
 			$meridian = 'am';
 			$pos = strpos($selected, '-');
-			if($pos !== false){
+			if ($pos !== false){
 				$date = explode('-', $selected);
 				$days = explode(' ', $date[2]);
 				$day = $days[0];
@@ -1091,7 +1099,7 @@ class FormHelper extends AppHelper {
 				if (($check > 115959) && $timeFormat == '12') {
 					$time[0] = $time[0] - 12;
 					$meridian = 'pm';
-				} elseif($time[0] > 12) {
+				} elseif ($time[0] > 12) {
 					$meridian = 'pm';
 				}
 
@@ -1176,7 +1184,7 @@ class FormHelper extends AppHelper {
 		$attributes = am(array('escape' => true), $attributes);
 
 		$select = array();
-		foreach($elements as $name => $title) {
+		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
 				if (!empty($name)) {
@@ -1197,11 +1205,11 @@ class FormHelper extends AppHelper {
 			if ($name !== null) {
 				if ($selected !== '' && ($selected !== null) && ($selected == $name)) {
 					$htmlOptions['selected'] = 'selected';
-				} else if(is_array($selected) && in_array($name, $selected)) {
+				} elseif (is_array($selected) && in_array($name, $selected)) {
 					$htmlOptions['selected'] = 'selected';
 				}
 
-				if($showParents || (!in_array($title, $parents))) {
+				if ($showParents || (!in_array($title, $parents))) {
 					$title = ife($attributes['escape'], h($title), $title);
 					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
 				}
