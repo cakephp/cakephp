@@ -229,8 +229,6 @@ class TranslateBehavior extends ModelBehavior {
 			if(isset($model->data[$model->name][$field])) {
 				$tempData[$field] = $model->data[$model->name][$field];
 				unset($model->data[$model->name][$field]);
-			} else {
-				$tempData[$field] = '';
 			}
 		}
 		$this->runtime[$model->name]['beforeSave'] = $tempData;
