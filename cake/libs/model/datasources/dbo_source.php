@@ -1271,7 +1271,9 @@ class DboSource extends DataSource {
 		$table = $this->fullTableName($model);
 		$conditions = $this->conditions($query);
 
-		if ($this->execute("DELETE FROM {$table} {$conditions}") === false) {
+		$alias = $this->alias . $this->name($model->name);
+
+		if ($this->execute("DELETE FROM {$table} {$alias} {$conditions}") === false) {
 			$model->onError();
 			return false;
 		}
