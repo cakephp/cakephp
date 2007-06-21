@@ -304,14 +304,14 @@ class Helper extends Overloadable {
  */
 	function setFormTag($tagValue) {
 		$view =& ClassRegistry::getObject('view');
-		
+
 		if ($tagValue === null) {
 			$view->model = null;
 			$view->association = null;
 			$view->modelId = null;
 			return;
 		}
-		
+
 		$parts = preg_split('/\/|\./', $tagValue);
 		$view->association = null;
 		if (count($parts) == 1) {
@@ -347,7 +347,7 @@ class Helper extends Overloadable {
 		} else {
 			return $view->association;
 		}
-	}	
+	}
 /**
  * Gets the ID of the currently-used model of the rendering context.
  *
