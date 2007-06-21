@@ -48,10 +48,10 @@
 
 	if (!class_exists('Post')) {
 		class Post extends Model {
-		
+
 			var $primaryKey = 'id';
 			var $useTable = false;
-		
+
 			function loadInfo() {
 				return new Set(array(
 					array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -94,7 +94,7 @@ class AjaxTest extends UnitTestCase {
 
 	function testAutoComplete() {
 		$result = $this->Ajax->autoComplete('Post/title' , '/posts', array('minChars' => 2));
-		
+
 		$this->assertPattern('/^<input[^<>]+name="data\[Post\]\[title\]"[^<>]+autocomplete="off"[^<>]+\/>/', $result);
 		$this->assertPattern('/<div[^<>]+id="PostTitle_autoComplete"[^<>]*><\/div>/', $result);
 		$this->assertPattern('/<div[^<>]+class="auto_complete"[^<>]*><\/div>/', $result);
@@ -122,6 +122,16 @@ class AjaxTest extends UnitTestCase {
 
 		$result = $this->Ajax->dropRemote('droppable', array('accept' => 'crap'), array('url' => '/posts'));
 		$expected = '<script type="text/javascript">Droppables.add(\'droppable\', {accept:\'crap\', onDrop:function(element, droppable) {new Ajax.Request(\'/posts\', {asynchronous:true, evalScripts:true})}});</script>';
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSortable() {
+		$result = $this->Ajax->sortable('ull', array('constraint'=>false,'ghosting'=>true));
+		$expected = '<script type="text/javascript">Sortable.create(\'ull\', {constraint:false, ghosting:true});</script>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Ajax->sortable('ull', array('constraint'=>'false','ghosting'=>'true'));
+		$expected = '<script type="text/javascript">Sortable.create(\'ull\', {constraint:false, ghosting:true});</script>';
 		$this->assertEqual($result, $expected);
 	}
 

@@ -749,6 +749,11 @@ class AjaxHelper extends AppHelper {
 
 			foreach ($options as $k => $v) {
 				if (in_array($k, $acceptable)) {
+					if ($v === true) {
+						$v = 'true';
+					} elseif ($v === false) {
+						$v = 'false';
+					}
 					$out[] = "$k:$v";
 				}
 			}
@@ -817,7 +822,7 @@ class AjaxHelper extends AppHelper {
  */
 	function _optionsToString($options, $stringOpts = array()) {
 		foreach ($stringOpts as $option) {
-			if (isset($options[$option]) && !$options[$option][0] != "'") {
+			if (isset($options[$option]) && $options[$option][0] != "'") {
 				if ($options[$option] === true || $options[$option] === 'true') {
 					$options[$option] = 'true';
 				} elseif ($options[$option] === false || $options[$option] === 'false') {
