@@ -413,16 +413,24 @@ class FormHelper extends AppHelper {
 
 		$out = null;
 		foreach ($fields as $name => $options) {
-			if (is_array($blacklist) && in_array($name, $blacklist)) {
-				break;
-			}
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
 				$options = array();
 			}
+			if (is_array($options) && isset($options['fieldset'])) {
+				$out .= $this->inputs($options);
+				continue;
+			}
 			if (is_array($options) && isset($options['fieldName'])) {
 				$name = $options['fieldName'];
 				unset($options['fieldName']);
+			}
+			if (isset($options['blacklist'])) {
+				$blacklist = $options['blacklist'];
+				unset($options['blacklist']);
+			}
+			if (is_array($blacklist) && in_array($name, $blacklist)) {
+				continue;
 			}
 			$out .= $this->input($name, $options);
 		}
