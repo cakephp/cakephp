@@ -69,6 +69,18 @@ class NumberTest extends UnitTestCase {
 		$result = $this->Helper->currency($value, false);
 		$expected = '100,100,100.00';
 		$this->assertEqual($expected, $result);
+
+		$result = $this->Helper->currency($value, 'USD');
+		$expected = '$100,100,100.00';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Helper->currency($value, 'EUR');
+		$expected = '&#8364;100.100.100,00';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Helper->currency($value, 'GBP');
+		$expected = '&#163;100,100,100.00';
+		$this->assertEqual($expected, $result);
 	}
 
 	function testToReadableSize() {
@@ -76,7 +88,7 @@ class NumberTest extends UnitTestCase {
 		$expected = '0 Bytes';
 		$this->assertEqual($expected, $result);
 	}
-	
+
 	function tearDown() {
 		unset($this->Helper);
 	}

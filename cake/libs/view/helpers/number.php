@@ -99,9 +99,9 @@ class NumberHelper extends AppHelper {
 		if (is_int($options)) {
 			$places = $options;
 		}
-		
+
 		$seperators = array(',', '.', '-', ':');
-		
+
 		$before = null;
 		if (is_string($options) && !in_array( $options, $seperators)) {
 			$before = $options;
@@ -110,26 +110,43 @@ class NumberHelper extends AppHelper {
 		if (!is_array($options) && in_array( $options, $seperators)) {
 			$seperator = $options;
 		}
-		
+		$decimals = '.';
+		if(!is_array($options) && in_array( $options, $seperators)) {
+			$decimals = $options;
+		}
+		$escape = true;
+		if (is_array($options) && isset($options['escape'])) {
+			$escape = $options['escape'];
+		}
+
 		if (is_array($options)) {
 			if (isset($options['places'])) {
 				$places = $options['places'];
 				unset($options['places']);
 			}
-		
+
 			if (isset($options['before'])) {
 				$before = $options['before'];
 				unset($options['before']);
 			}
-		
+
+			if(isset($options['decimals'])) {
+				$decimals = $options['decimals'];
+				unset($options['decimals']);
+			}
+
 			if (isset($options['seperator'])) {
 				$seperator = $options['seperator'];
 				unset($options['seperator']);
 			}
 		}
-		
-		return h($before) . number_format ($number, $places, ".", $seperator);
-	}	
+
+		if ($escape) {
+			$before = h($before);
+		}
+
+		return $before . number_format ($number, $places, $decimals, $seperator);
+	}
 /**
  * Formats a number into a currency format.
  *
@@ -139,16 +156,16 @@ class NumberHelper extends AppHelper {
  * @static
  */
 	function currency ($number, $currency = 'USD') {
-		
+
 		switch ($currency) {
 			case "EUR":
-				return $this->format($number, array('places'=>'2', 'before'=>"&#128"));
+				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#8364;', 'seperator'=>'.', 'decimals'=>','));
 			break;
 			case "GBP":
-				return $this->format($number, array('places'=>'2', 'before'=>"&#163"));
+				return $this->format($number, array('escape' => false, 'places'=>'2', 'before'=>'&#163;'));
 			break;
 			case 'USD':
-				return $this->format($number, array('places'=>'2', 'before'=>"$"));
+				return $this->format($number, array('places'=>'2', 'before'=>'$'));
 			break;
 			default:
 				return $this->format($number, array('places'=>'2', 'before'=> $currency));
