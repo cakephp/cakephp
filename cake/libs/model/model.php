@@ -1036,9 +1036,7 @@ class Model extends Overloadable {
 		if (!$this->beforeSave()) {
 			return false;
 		}
-
 		$fields = $values = array();
-		$count = 0;
 
 		if (count($this->data) > 1) {
 			$weHaveMulti = true;
@@ -1046,9 +1044,10 @@ class Model extends Overloadable {
 		} else {
 			$weHaveMulti = false;
 		}
+		$habtm = count($this->hasAndBelongsToMany);
 
 		foreach ($this->data as $n => $v) {
-			if (isset($weHaveMulti) && isset($v[$n]) && $count > 0 && count($this->hasAndBelongsToMany) > 0) {
+			if (isset($weHaveMulti) && isset($v[$n]) && $habtm > 0) {
 				$joined[] = $v;
 			} else {
 				if ($n === $this->name) {
@@ -1066,7 +1065,6 @@ class Model extends Overloadable {
 					}
 				}
 			}
-			$count++;
 		}
 		$exists = $this->exists();
 
