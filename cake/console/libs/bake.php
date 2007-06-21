@@ -34,9 +34,6 @@
  * @package		cake
  * @subpackage	cake.cake.console.libs
  */
-if (!defined('CAKE_ADMIN')) {
-	define('CAKE_ADMIN', null);
-}
 class BakeShell extends Shell {
 
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
@@ -79,7 +76,7 @@ class BakeShell extends Shell {
  * Displays help contents
  *
  * @return void
- */	
+ */
 	function help() {
 		$this->out('CakePHP Bake:');
 		$this->hr();
@@ -100,7 +97,7 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
 		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
 		$this->out("");
-		
+
 	}
 }
 ?>

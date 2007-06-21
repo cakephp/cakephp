@@ -96,7 +96,7 @@ class ConsoleShell extends Shell {
 						$data = strip_tags($data);
 						$data = str_replace($this->badCommandChars, "", $data);
 					}
-					
+
 					$modelA = $tmp[1];
 					$association = $tmp[2];
 					$modelB = $tmp[3];
@@ -113,11 +113,11 @@ class ConsoleShell extends Shell {
 						$data = strip_tags($data);
 						$data = str_replace($this->badCommandChars, "", $data);
 					}
-					
+
 					$modelA = $tmp[1];
 					$association = $tmp[2];
 					$modelB = $tmp[3];
-				
+
 					// Verify that there is actually an association to unbind
 					$currentAssociations = $this->{$modelA}->getAssociated();
 					$validCurrentAssociation = false;
@@ -142,8 +142,8 @@ class ConsoleShell extends Shell {
 
 					// Do we have a valid model?
 					list($modelToCheck, $tmp) = explode('->', $command);
-				   
-					if ($this->isValidModel($modelToCheck)) {	
+
+					if ($this->isValidModel($modelToCheck)) {
 						$findCommand = "\$data = \$this->$command;";
 						@eval($findCommand);
 
@@ -194,7 +194,7 @@ class ConsoleShell extends Shell {
 					$command = strip_tags($command);
 					$command = str_replace($this->badCommandChars, "", $command);
 					list($modelToSave, $tmp) = explode("->", $command);
-					
+
 					if ($this->isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
 						list($foo, $data) = explode("->save", $command);
@@ -208,7 +208,7 @@ class ConsoleShell extends Shell {
 				break;
 				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
 					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
-					
+
 					if ($this->isValidModel($modelToCheck)) {
 						// Get the column info for this model
 						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
@@ -239,6 +239,4 @@ class ConsoleShell extends Shell {
 		}
 	}
 }
-
-
 ?>

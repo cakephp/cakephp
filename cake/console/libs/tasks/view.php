@@ -79,46 +79,51 @@ class ViewTask extends Shell {
 			$this->__interactive();
 		}
 
-		$controller = $action = $alias = null;
 		if (isset($this->args[0])) {
+			$controller = $action = $alias = null;
 			$this->controllerName = Inflector::camelize($this->args[0]);
 			$this->controllerPath = Inflector::underscore($this->controllerName);
-		}
 
-		if (isset($this->args[1])) {
-			$this->template = $this->args[1];
-		}
+			if (isset($this->args[1])) {
+				$this->template = $this->args[1];
+			}
 
-		if (isset($this->args[2])) {
-			$action = $this->args[2];
-		}
+			if (isset($this->args[2])) {
+				$action = $this->args[2];
+			}
 
-		if (!$action) {
-			$action = $this->template;
-		}
+			if (!$action) {
+				$action = $this->template;
+			}
 
-		if (in_array($action, $this->scaffoldActions)) {
-			$this->bake($action, true);
-		} elseif ($action) {
-			$this->bake($action, true);
-		} else {
-			$vars = $this->__loadController();
-			if ($vars) {
-				$protected = array( 'object', low($this->controllerName. 'Controller'), 'controller', 'appcontroller',
-					'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
-					'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
-					'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
+			if (in_array($action, $this->scaffoldActions)) {
+				$this->bake($action, true);
+			} elseif ($action) {
+				$this->bake($action, true);
+			} else {
+				$vars = $this->__loadController();
+				if ($vars) {
+					$protected = array( 'object', low($this->controllerName. 'Controller'), 'controller', 'appcontroller',
+						'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
+						'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
+						'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
 
-				$classVars = get_class_vars($this->controllerName . 'Controller');
-				if (array_key_exists('scaffold', $classVars)) {
-					$methods = $this->scaffoldActions;
-				} else {
-					$methods = get_class_methods($this->controllerName . 'Controller');
-				}
-				foreach ($methods as $method) {
-					if ($method{0} != '_' && !in_array(low($method), am($protected, array('delete', CAKE_ADMIN.'_delete')))) {
-						$content = $this->getContent($method, $vars);
-						$this->bake($method, $content);
+					$classVars = get_class_vars($this->controllerName . 'Controller');
+					if (array_key_exists('scaffold', $classVars)) {
+						$methods = $this->scaffoldActions;
+					} else {
+						$methods = get_class_methods($this->controllerName . 'Controller');
+					}
+					$adminDelete = null;
+
+					if (defined('CAKE_ADMIN')) {
+						$adminDelete = CAKE_ADMIN.'_delete';
+					}
+					foreach ($methods as $method) {
+						if ($method{0} != '_' && !in_array(low($method), am($protected, array('delete', $adminDelete)))) {
+							$content = $this->getContent($method, $vars);
+							$this->bake($method, $content);
+						}
 					}
 				}
 			}
@@ -136,6 +141,7 @@ class ViewTask extends Shell {
 		$this->hr();
 		$wannaDoAdmin = 'n';
 		$wannaDoScaffold = 'y';
+		$this->interactive = false;
 
 		$this->controllerName = $this->Controller->getName();
 
@@ -144,33 +150,19 @@ class ViewTask extends Shell {
 		$interactive = $this->in("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite {$this->controllerName} views if it exist.", array('y','n'), 'y');
 
 		if (low($interactive) == 'y' || low($interactive) == 'yes') {
+			$this->interactive = true;
 			$wannaDoScaffold = $this->in("Would you like to create some scaffolded views (index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller and model classes (including associated models).", array('y','n'), 'n');
 		}
 
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
 			$wannaDoAdmin = $this->in("Would you like to create the views for admin routing?", array('y','n'), 'y');
 		}
+		$admin = false;
 
-		$admin = '';
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
-			if (defined('CAKE_ADMIN')) {
-				$admin = CAKE_ADMIN . '_';
-			} else {
-				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-				$this->out('What would you like the admin route to be?');
-				$this->out('Example: www.example.com/admin/controller');
-				while ($admin == '') {
-					$admin = $this->in("What would you like the admin route to be?", null, 'admin');
-				}
-				if ($this->Project->cakeAdmin($admin) !== true) {
-					$this->err('Unable to write to /app/config/core.php.');
-					$this->err('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-					exit();
-				} else {
-					$admin = $admin . '_';
-				}
-			}
+			$admin = $this->getAdmin();
 		}
+
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 
@@ -180,6 +172,7 @@ class ViewTask extends Shell {
 				}
 			}
 			$vars = $this->__loadController();
+
 			if ($vars) {
 				foreach ($this->scaffoldActions as $action) {
 					$content = $this->getContent($action, $vars);
@@ -230,7 +223,7 @@ class ViewTask extends Shell {
 			$this->err('could not find the controller');
 		}
 
-		if (!loadController($this->controllerName)) {
+		if (!class_exists($this->controllerName . 'Controller') && !loadController($this->controllerName)) {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 			$shortPath = $this->shortPath($file);
 			$this->err("The file '{$shortPath}' could not be found.\nIn order to bake a view, you'll need to first create the controller.");
@@ -297,7 +290,7 @@ class ViewTask extends Shell {
 		}
 		$action = $template;
 
-		if (strpos($template, CAKE_ADMIN) !== false) {
+		if (defined('CAKE_ADMIN') && strpos($template, CAKE_ADMIN) !== false) {
 			$template = str_replace(CAKE_ADMIN.'_', '', $template);
 		}
 
@@ -346,3 +339,4 @@ class ViewTask extends Shell {
 		exit();
 	}
 }
+?>

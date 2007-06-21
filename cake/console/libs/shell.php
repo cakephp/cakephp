@@ -127,7 +127,7 @@ class Shell extends Object {
 		ClassRegistry::map($shellKey, $shellKey);
 		if (!PHP5 && isset($this->args[0]) && strpos(low(get_class($this)), low(Inflector::camelize($this->args[0]))) !== false) {
 			$dispatch->shiftArgs();
-		} 
+		}
 		if (!PHP5 && isset($this->args[0]) && low($this->command) == low(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
 			$dispatch->shiftArgs();
 		}
@@ -447,7 +447,32 @@ class Shell extends Object {
 		$shortPath = str_replace('..'.DS, '', $shortPath);
 		return str_replace(DS.DS, DS, $shortPath);
 	}
-
+/**
+ * Checks for CAKE_ADMIN and Forces user to input it if not enabled
+ *
+ * @return the controller name
+ */
+	function getAdmin() {
+		$admin = null;
+		if (defined('CAKE_ADMIN')) {
+			$admin = CAKE_ADMIN.'_';
+		} else {
+			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+			$this->out('What would you like the admin route to be?');
+			$this->out('Example: www.example.com/admin/controller');
+			while ($admin == '') {
+				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
+			}
+			if ($this->Project->cakeAdmin($admin) !== true) {
+				$this->out('Unable to write to /app/config/core.php.');
+				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				exit();
+			} else {
+				$admin = $admin . '_';
+			}
+		}
+		return $admin;
+	}
 /**
  * creates the proper pluralize controller for the url
  *

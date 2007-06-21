@@ -84,6 +84,7 @@ class ControllerTask extends Shell {
  * @return void
  */
 	function __interactive() {
+		$this->interactive = false;
 		$this->hr();
 		$this->out('Controller Bake:');
 		$this->hr();
@@ -148,6 +149,7 @@ class ControllerTask extends Shell {
 				$wannaDoAdmin = $this->in("Would you like to create the methods for admin routing?", array('y','n'), 'y');
 			}
 		}
+		$admin = false;
 
 		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
 			$admin = $this->getAdmin();
@@ -222,7 +224,6 @@ class ControllerTask extends Shell {
 			if ($baked && $this->_checkUnitTest()) {
 				$this->__bakeTest($controllerName);
 			}
-			exit();
 		}
 	}
 
@@ -530,32 +531,6 @@ class ControllerTask extends Shell {
 		return $controllerName;
 	}
 /**
- * Checks for CAKE_ADMIN and Forces user to input it if not enabled
- *
- * @return the controller name
- */
-	function getAdmin() {
-		$admin = null;
-		if (defined('CAKE_ADMIN')) {
-			$admin = CAKE_ADMIN.'_';
-		} else {
-			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-			$this->out('What would you like the admin route to be?');
-			$this->out('Example: www.example.com/admin/controller');
-			while ($admin == '') {
-				$admin = $this->in("What would you like the admin route to be?", null, 'admin');
-			}
-			if ($this->Project->cakeAdmin($admin) !== true) {
-				$this->out('Unable to write to /app/config/core.php.');
-				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
-				exit();
-			} else {
-				$admin = $admin . '_';
-			}
-		}
-		return $admin;
-	}
-/**
  * Displays help contents
  *
  * @return void
@@ -571,5 +546,6 @@ class ControllerTask extends Shell {
 		$this->out("\n\tcontroller <name> null admin\n\t\tbakes a controller with scaffold actions for CAKE_ADMIN");
 		$this->out("");
 		exit();
-	}	
+	}
 }
+?>
