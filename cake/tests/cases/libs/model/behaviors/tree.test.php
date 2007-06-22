@@ -34,10 +34,8 @@
  * @package		cake
  * @subpackage	cake.tests.cases.libs.model.behaviors
  */
-class NumberTree extends Model {
+class NumberTree extends CakeTestModel {
 	var $name = 'NumberTree';
-	var $useDbConfig = 'test_suite';
-	var $cacheQueries = false;
 	var $actsAs = array('Tree');
 
 	function __initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
