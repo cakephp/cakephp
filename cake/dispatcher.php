@@ -200,7 +200,7 @@ class Dispatcher extends Object {
 		}
 
 		if (in_array(strtolower($params['action']), array(
-			'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
+			'object', 'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
 			'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
 			'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate'))) {
 			$missingAction = true;
