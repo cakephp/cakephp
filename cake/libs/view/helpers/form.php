@@ -689,33 +689,33 @@ class FormHelper extends AppHelper {
 		$this->setFormTag($fieldName);
 		$attributes = $this->domId((array)$attributes);
 		$this->__secure();
-		
+
 		if ($this->tagIsInvalid()) {
 			$attributes = $this->addClass($attributes, 'form-error');
 		}
-		
+
 		if (isset($attributes['type'])) {
 			unset($attributes['type']);
 		}
-		
+
 		$value = isset($attributes['value']) ? $attributes['value'] : $this->value($fieldName);
 		$out = array();
-		
+
 		$count = 0;
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
-			
+
 			if(empty($value) && $count == 0) {
 				$optionsHere['checked'] = 'checked';
 			} else if (!empty($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
  	        }
- 	        
+
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), null, '', ' ');
 			$individualTagName = $this->field() . "_{$optValue}";
 			$out[] = sprintf($this->Html->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
-			
-			$count++; 
+
+			$count++;
 		}
 
 		$out = join($inbetween, $out);
@@ -849,12 +849,13 @@ class FormHelper extends AppHelper {
 			$this->fields = array();
 		}
 		$div = true;
+
 		if (isset($options['div'])) {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-
 		$divOptions = array();
+
 		if ($div === true) {
 			$divOptions['class'] = 'submit';
 		} elseif ($div === false) {
@@ -864,12 +865,11 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = am(array('class' => 'submit'), $div);
 		}
+		$out = $secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 
-		$out =	$secured . $this->output(sprintf($this->Html->tags['submit'], $this->_parseAttributes($options, null, '', ' ')));
 		if (isset($divOptions)) {
-			$out = $secured . $this->Html->div($divOptions['class'], $out, $divOptions);
+			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
 		}
-
 		return $out;
 	}
 /**
