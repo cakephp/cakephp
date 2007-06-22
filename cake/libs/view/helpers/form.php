@@ -676,6 +676,52 @@ class FormHelper extends AppHelper {
 		return $this->output($output);
 	}
 /**
+ * Creates a set of radio widgets.
+ *
+ * @param  string  	$fieldName 		Name of a field, like this "Modelname/fieldname"
+ * @param  array	$options		Radio button options array
+ * @param  array	$inbetween		String that separates the radio buttons.
+ * @param  array	$attributes		Array of HTML attributes.
+ * @return string
+ */
+	function radio($fieldName, $options, $inbetween = null, $attributes = array()) {
+
+		$this->setFormTag($fieldName);
+		$attributes = $this->domId((array)$attributes);
+		$this->__secure();
+		
+		if ($this->tagIsInvalid()) {
+			$attributes = $this->addClass($attributes, 'form-error');
+		}
+		
+		if (isset($attributes['type'])) {
+			unset($attributes['type']);
+		}
+		
+		$value = isset($attributes['value']) ? $attributes['value'] : $this->value($fieldName);
+		$out = array();
+		
+		$count = 0;
+		foreach ($options as $optValue => $optTitle) {
+			$optionsHere = array('value' => $optValue);
+			
+			if(empty($value) && $count == 0) {
+				$optionsHere['checked'] = 'checked';
+			} else if (!empty($value) && $optValue == $value) {
+ 	        	$optionsHere['checked'] = 'checked';
+ 	        }
+ 	        
+			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), null, '', ' ');
+			$individualTagName = $this->field() . "_{$optValue}";
+			$out[] = sprintf($this->Html->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
+			
+			$count++; 
+		}
+
+		$out = join($inbetween, $out);
+		return $this->output($out ? $out : null);
+	}
+/**
  * Creates a text input widget.
  *
  * @param string $fieldNamem Name of a field, like this "Modelname.fieldname", "Modelname/fieldname" is deprecated
