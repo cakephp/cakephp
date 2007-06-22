@@ -1561,6 +1561,7 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 					$key = preg_replace('/' . $regs['1'] . '/', '', $key);
 				}
 
+				$not = false;
 				$mValue = trim($match['1']);
 				if (empty($match['1'])) {
 					$match['1'] = ' = ';
@@ -1570,9 +1571,13 @@ function conditionKeysToString($conditions, $quoteValues = true) {
 				} elseif (!isset($match['2'])) {
 					$match['1'] = ' = ';
 					$match['2'] = $match['0'];
+				} else if(low($mValue) == 'not') {
+					$not = $this->conditionKeysToString(array($mValue => array($key => $match[2])), $quoteValues);
 				}
 
-				if (strpos($match['2'], '-!') === 0) {
+				if($not) {
+					$data = $not[0];
+				} elseif (strpos($match['2'], '-!') === 0) {
 					$match['2'] = str_replace('-!', '', $match['2']);
 					$data = $this->name($key) . ' ' . $match['1'] . ' ' . $match['2'];
 				} else {
