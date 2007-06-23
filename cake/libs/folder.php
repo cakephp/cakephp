@@ -114,7 +114,7 @@ class Folder extends Object{
  * @access public
  */
 	function cd($path) {
-		$path = realpath($path);
+		$path = $this->realpath($path);
 		if (!$this->isAbsolute($path)) {
 			$path = $this->addPathElement($this->path, $path);
 		}
@@ -334,9 +334,19 @@ class Folder extends Object{
  * @return boolean
  * @access public
  */
-	function inPath($path = '') {
+	function inPath($path = '', $reverse = false) {
+		if (!$this->isAbsolute($path)) {
+			$path = $this->addPathElement($this->path, $path);
+		}
+		$path = $this->realpath($path);
 		$dir = substr($this->slashTerm($path), 0, -1);
-		$return = preg_match('/^' . preg_quote($this->slashTerm($dir), '/') . '(.*)/', $this->slashTerm($this->pwd()));
+
+		if (!$reverse) {
+			$return = preg_match('/^' . preg_quote($this->slashTerm($dir), '/') . '(.*)/', $this->slashTerm($this->pwd()));
+		} else {
+			$return = preg_match('/^' . preg_quote($this->slashTerm($this->pwd()), '/') . '(.*)/', $this->slashTerm($dir));
+		}
+
 		if ($return == 1) {
 			return true;
 		} else {
@@ -670,6 +680,42 @@ class Folder extends Object{
  */
 	function rm($path) {
 		return $this->delete($path);
+	}
+/**
+ * Get the real path (taking ".." and such into account)
+ *
+ * @param string $path Path to resolve
+ * @return string The resolved path
+ */
+	function realpath($path) {
+		$path = trim($path);
+		if (strpos($path, '..') === false) {
+			return $path;
+		}
+		$parts = explode(DS, $path);
+		$newparts = array();
+		$newpath = ife($path{0} == DS, DS, '');
+
+		while (($part = array_shift($parts)) !== NULL) {
+			if ($part == '.' || $part == '') {
+				continue;
+			}
+			if ($part == '..') {
+				if (count($newparts) > 0) {
+					array_pop($newparts);
+					continue;
+				} else {
+					return false;
+				}
+			}
+			$newparts[] = $part;
+		}
+		$newpath .= implode(DS, $newparts);
+
+		if (strlen($path > 1) && $path{strlen($path)-1} == DS) {
+			$newpath .= DS;
+		}
+		return $newpath;
 	}
 /**
  *

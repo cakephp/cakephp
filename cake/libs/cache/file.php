@@ -29,6 +29,9 @@
  * Included libraries.
  *
  */
+if (!class_exists('File')) {
+	uses ('file');
+}
 if (!class_exists('Folder')) {
 	uses ('folder');
 }
@@ -40,6 +43,14 @@ if (!class_exists('Folder')) {
  * @subpackage	cake.cake.libs.cache
  */
 class FileEngine extends CacheEngine {
+
+/**
+ * Does the cache engine handle prefixes on it's own?
+ *
+ * @var boolean
+ * @access private
+ */
+	var $_usesPrefixes = true;
 /**
  * Cache directory
  *
@@ -117,17 +128,31 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 		$expires = time() + $duration;
-		return $this->_writeCache($this->_getFilename($key), $serialized, $expires);
+
+		$fileName = $this->_getFilename($key);
+		if ($fileName === false) {
+			return false;
+		}
+		return $this->_writeCache($fileName, $serialized, $expires);
 	}
 /**
  * Get absolute filename for a key
  *
  * @param string $key The key
- * @return string Absolute cache filename for the given key
+ * @return mixed Absolute cache filename for the given key or false if erroneous
  * @access private
  */
 	function _getFilename($key) {
-		return $this->_dir . $this->_prefix . $this->base64url_encode($key);
+		$fullpath = $this->_dir . $key;
+		$directoryName = dirname($fullpath);
+		$fileName = $this->_prefix.basename($fullpath);
+		$fullpath = Folder::realpath($directoryName . DS . $fileName);
+
+		$folder = new Folder($this->_dir);
+		if (!$folder->inPath($fullpath, true)) {
+			return false;
+		}
+		return $fullpath;
 	}
 /**
  * write serialized data to a file
@@ -139,6 +164,13 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	function _writeCache(&$filename, &$value, &$expires) {
+		$directoryName = dirname($filename);
+		if (!is_writable($directoryName)) {
+			$folder = new Folder($directoryName);
+			if (!$folder->create($directoryName)) {
+				return false;
+			}
+		}
 		$contents = $expires."\n".$value."\n";
 		return ife(file_put_contents($filename, $contents, ife($this->_lock, LOCK_EX, 0)), true, false);
 	}
@@ -152,7 +184,7 @@ class FileEngine extends CacheEngine {
 	function read($key) {
 		$filename = $this->_getFilename($key);
 
-		if (!is_file($filename) || !is_readable($filename)) {
+		if ($filename === false || !is_file($filename) || !is_readable($filename)) {
 			return false;
 		}
 		$fp = fopen($filename, 'r');
@@ -209,6 +241,9 @@ class FileEngine extends CacheEngine {
  */
 	function delete($key) {
 		$filename = $this->_getFilename($key);
+		if ($filename === false) {
+			return false;
+		}
 		return unlink($filename);
 	}
 /**
@@ -264,16 +299,6 @@ class FileEngine extends CacheEngine {
 						'directory' => $this->_dir,
 						'prefix' => $this->_prefix,
 						'lock' => $lock);
-	}
-/**
- * Get a filename-safe version of a string
- *
- * @param string $str String to encode
- * @return string Encoded version of the string
- * @access public
- */
-	function base64url_encode($str) {
-		return strtr(base64_encode($str), '+/', '-_');
 	}
 }
 ?>
