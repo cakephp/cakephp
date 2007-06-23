@@ -91,6 +91,7 @@ class DboPostgres extends DboSource {
 
 		if ($this->connection) {
 			$this->connected = true;
+			$this->_execute("SET search_path TO " . $config['schema']);
 		} else {
 			$this->connected = false;
 		}
