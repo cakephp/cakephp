@@ -186,9 +186,9 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
-		$this->NumberTree->save(array('NumberTree' => array('name' => __METHOD__,'parent_id' => null)));
+		$this->NumberTree->save(array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null)));
 		$result = $this->NumberTree->find(null, array('name', 'parent_id'), 'NumberTree.lft desc');
-		$expected = array('NumberTree' => array('name' => __METHOD__, 'parent_id' => null));
+		$expected = array('NumberTree' => array('name' => 'testAddOrphan', 'parent_id' => null));
 		$this->assertEqual($result, $expected);
 
 		$validTree = $this->NumberTree->verify();
@@ -203,7 +203,7 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 
 		$this->NumberTree->create();
-		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => __METHOD__, 'parent_id' => $data['NumberTree']['id'])));
+		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddMiddle', 'parent_id' => $data['NumberTree']['id'])));
 		$this->assertIdentical($saveSuccess, true);
 
 		$laterCount = $this->NumberTree->findCount();
@@ -214,7 +214,7 @@ class NumberTreeCase extends CakeTestCase {
 		$children = $this->NumberTree->children($data['NumberTree']['id'], true, array('name'));
 		$expects = array(array('NumberTree' => array('name' => '1.1.1')),
 							array('NumberTree' => array('name' => '1.1.2')),
-							array('NumberTree' => array('name' => __METHOD__)));
+							array('NumberTree' => array('name' => 'testAddMiddle')));
 		$this->assertIdentical($children, $expects);
 
 		$validTree = $this->NumberTree->verify();
@@ -229,7 +229,7 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 		$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 
-		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => __METHOD__, 'parent_id' => 99999)));
+		$saveSuccess = $this->NumberTree->save(array('NumberTree' => array('name' => 'testAddInvalid', 'parent_id' => 99999)));
 		$this->assertIdentical($saveSuccess, false);
 
 		$laterCount = $this->NumberTree->findCount();

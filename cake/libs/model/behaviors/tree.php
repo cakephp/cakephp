@@ -128,7 +128,7 @@ class TreeBehavior extends ModelBehavior {
 				$parentNode = $model->find(array($scope, $model->escapeField() => $model->data[$model->name][$parent]),
 													array($model->primaryKey), null, -1);
 				if (!$parentNode) {
-					trigger_error(__('Trying to save a node under a none-existant node in ' . __METHOD__, E_USER_WARNING));
+					trigger_error(__('Trying to save a node under a none-existant node in TreeBehavior::beforeSave', E_USER_WARNING));
 					return false;
 				}
 			}
@@ -142,16 +142,16 @@ class TreeBehavior extends ModelBehavior {
 				$parentNode = $model->find(array($scope, $model->escapeField() => $model->data[$model->name][$parent]),
 													array($model->primaryKey, $left, $right), null, -1);
 				if (!$parentNode) {
-					trigger_error(__('Trying to save a node under a none-existant node in ' . __METHOD__, E_USER_WARNING));
+					trigger_error(__('Trying to save a node under a none-existant node in TreeBehavior::beforeSave', E_USER_WARNING));
 					return false;
 				} else {
 					list($parentNode) = array_values($parentNode);
 					if (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
-						trigger_error(__('Trying to save a node under itself in ' . __METHOD__, E_USER_WARNING));
+						trigger_error(__('Trying to save a node under itself in TreeBehavior::beforeSave', E_USER_WARNING));
 						return false;
 					}
 					elseif ($node[$model->primaryKey] == $parentNode[$model->primaryKey]) {
-						trigger_error(__('Trying to set a node to be the parent of itself in ' . __METHOD__, E_USER_WARNING));
+						trigger_error(__('Trying to set a node to be the parent of itself in TreeBehavior::beforeSave', E_USER_WARNING));
 						return false;
 					}
 				}
@@ -321,7 +321,8 @@ class TreeBehavior extends ModelBehavior {
 
 		if ($parentId) {
 			$parentId = $parentId[$model->name][$parent];
-			$parent = $model->findById($parentId, $fields, null, $recursive);
+			$parent = $model->find(array($model->name . '.' . $model->primaryKey => $parentId), $fields, null, $recursive);
+
 			return $parent;
 		} else {
 			return false;
@@ -342,7 +343,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = $model->id;
 		}
 		extract($this->settings[$model->name]);
-		@list($item) = array_values($model->findById($id, array($left, $right)));
+		@list($item) = array_values($model->find(array($model->name . '.' . $model->primaryKey => $id), array($left, $right)));
 
 		if (empty ($item)) {
 			return null;
@@ -626,15 +627,15 @@ class TreeBehavior extends ModelBehavior {
 			list($parentNode)= array_values($model->find(array($scope, $model->escapeField() => $parentId),
 										array($model->primaryKey, $left, $right), null, -1));
 			if (empty ($parentNode)) {
-				trigger_error(__('Trying to move a node under a none-existant node in ' . __METHOD__, true), E_USER_WARNING);
+				trigger_error(__('Trying to move a node under a none-existant node in TreeBehavior::_setParent', true), E_USER_WARNING);
 				return false;
 			}
 			elseif (($model->id == $parentId)) {
-				trigger_error(__('Trying to set a node to be the parent of itself in ' . __METHOD__, E_USER_WARNING));
+				trigger_error(__('Trying to set a node to be the parent of itself in TreeBehavior::_setParent', E_USER_WARNING));
 				return false;
 			}
 			elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
-				trigger_error(__('Trying to move a node under itself in ' . __METHOD__, E_USER_WARNING));
+				trigger_error(__('Trying to move a node under itself in TreeBehavior::_setParent', E_USER_WARNING));
 				return false;
 			}
 			if (empty ($node[$left]) && empty ($node[$right])) {
