@@ -48,6 +48,7 @@
 class ViewTest extends UnitTestCase {
 
 	function setUp() {
+		Router::reload();
 		$this->PostsController = new PostsController();
 		$this->PostsController->index();
 		$this->view = new View($this->PostsController);
@@ -80,5 +81,4 @@ class ViewTest extends UnitTestCase {
 		unset($this->PostsController);
 	}
 }
-
 ?>

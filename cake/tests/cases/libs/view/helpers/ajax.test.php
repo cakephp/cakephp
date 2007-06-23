@@ -26,42 +26,38 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
+
+require_once LIBS.'../app_helper.php';
+require_once LIBS.DS.'model'.DS.'model.php';
+require_once LIBS.DS.'view'.DS.'helper.php';
+require_once LIBS.DS.'view'.DS.'helpers'.DS.'ajax.php';
+require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
+require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
+require_once LIBS.DS.'view'.DS.'helpers'.DS.'javascript.php';
+require_once LIBS.DS.'controller'.DS.'controller.php';
+
+
+class AjaxTestController extends Controller {
+	var $name = 'AjaxTest';
+	var $uses = null;
+}
+
+class PostAjaxTest extends Model {
+	var $primaryKey = 'id';
+	var $useTable = false;
+
+	function loadInfo() {
+		return new Set(array(
+			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)));
 	}
+}
 
-	require_once LIBS.'../app_helper.php';
-	require_once LIBS.DS.'model'.DS.'model.php';
-	require_once LIBS.DS.'view'.DS.'helper.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'ajax.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'javascript.php';
-	require_once LIBS.DS.'controller'.DS.'controller.php';
-
-	if (!class_exists('TheTestController')) {
-		class TheTestController extends Controller {
-			var $name = 'TheTest';
-			var $uses = null;
-		}
-	}
-
-	if (!class_exists('Post')) {
-		class Post extends Model {
-
-			var $primaryKey = 'id';
-			var $useTable = false;
-
-			function loadInfo() {
-				return new Set(array(
-					array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-					array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-					array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-					array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-				));
-			}
-		}
-	}
 
 /**
  * Short description for class.
@@ -77,9 +73,9 @@ class AjaxTest extends UnitTestCase {
 		$this->Ajax->Form = new FormHelper();
 		$this->Ajax->Javascript = new JavascriptHelper();
 		$this->Ajax->Form->Html =& $this->Ajax->Html;
-		$view = new View(new TheTestController());
+		$view = new View(new AjaxTestController());
 		ClassRegistry::addObject('view', $view);
-		ClassRegistry::addObject('Post', new Post());
+		ClassRegistry::addObject('PostAjaxTest', new PostAjaxTest());
 	}
 
 	function testEvalScripts() {
@@ -93,12 +89,12 @@ class AjaxTest extends UnitTestCase {
 	}
 
 	function testAutoComplete() {
-		$result = $this->Ajax->autoComplete('Post/title' , '/posts', array('minChars' => 2));
+		$result = $this->Ajax->autoComplete('PostAjaxTest/title' , '/posts', array('minChars' => 2));
 
-		$this->assertPattern('/^<input[^<>]+name="data\[Post\]\[title\]"[^<>]+autocomplete="off"[^<>]+\/>/', $result);
-		$this->assertPattern('/<div[^<>]+id="PostTitle_autoComplete"[^<>]*><\/div>/', $result);
+		$this->assertPattern('/^<input[^<>]+name="data\[PostAjaxTest\]\[title\]"[^<>]+autocomplete="off"[^<>]+\/>/', $result);
+		$this->assertPattern('/<div[^<>]+id="PostAjaxTestTitle_autoComplete"[^<>]*><\/div>/', $result);
 		$this->assertPattern('/<div[^<>]+class="auto_complete"[^<>]*><\/div>/', $result);
-		$this->assertPattern('/<\/div>\s+<script type="text\/javascript">new Ajax\.Autocompleter\(\'PostTitle\', \'PostTitle_autoComplete\', \'\/posts\',/', $result);
+		$this->assertPattern('/<\/div>\s+<script type="text\/javascript">new Ajax\.Autocompleter\(\'PostAjaxTestTitle\', \'PostAjaxTestTitle_autoComplete\', \'\/posts\',/', $result);
 		$this->assertPattern('/<script(.*)>(.*) {minChars:2}\);/', $result);
 		$this->assertPattern('/<\/script>$/', $result);
 	}
