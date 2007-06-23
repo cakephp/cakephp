@@ -58,9 +58,9 @@ class TestManager {
 		$manager =& new TestManager();
 
 		if (!empty($manager->usersAppTest)) {
-			$testCasePath = APP_TEST_CASES . DIRECTORY_SEPARATOR;
+			$testCasePath = APP_TEST_CASES;
 		} else {
-			$testCasePath = CORE_TEST_CASES . DIRECTORY_SEPARATOR;
+			$testCasePath = CORE_TEST_CASES;
 		}
 		$testCases =& $manager->_getTestFileList($testCasePath);
 		$test =& new GroupTest('All Core Tests');
