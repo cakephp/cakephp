@@ -167,6 +167,10 @@ class ValidateItem extends Model {
  */
 class FormHelperTest extends CakeTestCase {
 
+	function setUp() {
+		Router::reload();
+	}
+
 	function startTest($method) {
 		$this->Form =& new FormHelper();
 		$this->Form->Html =& new HtmlHelper();

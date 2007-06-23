@@ -68,6 +68,7 @@ class PostAjaxTest extends Model {
 class AjaxTest extends UnitTestCase {
 
 	function setUp() {
+		Router::reload();
 		$this->Ajax = new AjaxHelper();
 		$this->Ajax->Html = new HtmlHelper();
 		$this->Ajax->Form = new FormHelper();
