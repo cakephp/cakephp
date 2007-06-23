@@ -875,13 +875,15 @@ class Controller extends Object {
  * @return array An array of model conditions
  */
 	function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
-		if ((!is_array($data) || empty($data)) && empty($this->data)) {
-			return null;
-		} elseif (!empty($this->data)) {
-			$data = $this->data;
+		if (!is_array($data) || empty($data)) {
+			if (!empty($this->data)) {
+				$data = $this->data;
+			} else {
+				return null;
+			}
 		}
-
 		$cond = array();
+
 		if ($op === null) {
 			$op = '';
 		}
