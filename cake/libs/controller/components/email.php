@@ -148,6 +148,17 @@ class EmailComponent extends Object{
  * @access public
  */
 	var $filePaths = array();
+
+/**
+ * SMTP options variable
+ *
+ * @var array
+ * @access public
+ */
+	var $smtpOptions = array('port'=> 25,
+							 'host' => 'localhost',
+							 'timeout' => 30);
+	
 /**
  * Enter description here...
  *
@@ -197,6 +208,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	var $__message = null;
+
 /**
  * Enter description here...
  *
@@ -483,12 +495,24 @@ class EmailComponent extends Object{
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
- * Enter description here...
+ * Sends out email via SMTP 
  *
  * @access private
  */
 	function __smtp() {
+		$smtpConnect = fsockopen($this->smtpOptions['host'], $this->smtpOptions['port'], $errno, $errstr, $this->smtpOptions['timeout']);
 
+		if (!$smtpConnect) {
+			return false;
+		}
+
+		fputs($smtpConnect, "HELO {$this->smtpOptions['host']}" . $this->_newLine);
+		fputs($smtpConnect, "MAIL FROM: {$this->smtpOptions['from']}" . $this->_newLine);
+		fputs($smtpConnect, "RCPT TO: {$this->to}" . $this->_newLine);
+		fputs($smtpConnect, "DATE" . $this->_newLine);
+		fputs($smtpConnect, "To: {$this->to}\r\nFrom: {$this->smtpOptions['from']}\r\n{$thos->subject}\r\n{$this->__header}\r\n\r\n{$this->__message}\r\n");
+		fputs($smtpConnect, "QUIT" . $this->_newLine);
+		fclose($smtpConnect);								 
 	}
 /**
  * Enter description here...
