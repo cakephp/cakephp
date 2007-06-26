@@ -510,7 +510,7 @@ class EmailComponent extends Object{
 		fputs($smtpConnect, "MAIL FROM: {$this->smtpOptions['from']}" . $this->_newLine);
 		fputs($smtpConnect, "RCPT TO: {$this->to}" . $this->_newLine);
 		fputs($smtpConnect, "DATE" . $this->_newLine);
-		fputs($smtpConnect, "To: {$this->to}\r\nFrom: {$this->smtpOptions['from']}\r\n{$thos->subject}\r\n{$this->__header}\r\n\r\n{$this->__message}\r\n");
+		fputs($smtpConnect, "To: {$this->to}\r\nFrom: {$this->smtpOptions['from']}\r\n{$this->subject}\r\n{$this->__header}\r\n\r\n{$this->__message}\r\n");
 		fputs($smtpConnect, "QUIT" . $this->_newLine);
 		fclose($smtpConnect);
 	}
