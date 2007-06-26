@@ -160,6 +160,13 @@ class EmailComponent extends Object{
 							 'timeout' => 30);
 
 /**
+ * SMTP errors variable
+ *
+ * @var string
+ * @access public
+ */
+	var $smtpError = null;
+/**
  * Enter description here...
  *
  * @var string
@@ -500,19 +507,71 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		$smtpConnect = fsockopen($this->smtpOptions['host'], $this->smtpOptions['port'], $errno, $errstr, $this->smtpOptions['timeout']);
+		$this-> smtpConnection = @fsockopen($this->smtpOptions['host'], $this->smtpOptions['port'], $errno, $errstr, $this->smtpOptions['timeout']);
+		$this->__getSmtpResponse();
 
-		if (!$smtpConnect) {
+		if (!$this->smtpConnection) {
 			return false;
 		}
 
-		fputs($smtpConnect, "HELO {$this->smtpOptions['host']}" . $this->_newLine);
-		fputs($smtpConnect, "MAIL FROM: {$this->smtpOptions['from']}" . $this->_newLine);
-		fputs($smtpConnect, "RCPT TO: {$this->to}" . $this->_newLine);
-		fputs($smtpConnect, "DATE" . $this->_newLine);
-		fputs($smtpConnect, "To: {$this->to}\r\nFrom: {$this->smtpOptions['from']}\r\n{$this->subject}\r\n{$this->__header}\r\n\r\n{$this->__message}\r\n");
-		fputs($smtpConnect, "QUIT" . $this->_newLine);
-		fclose($smtpConnect);
+		if (!$this->__sendData("HELO cake")) {
+			return false;
+		}
+		
+		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
+			return false;
+		}
+
+		if (!$this->__sendData("RCPT TO: {$this->to}\r\n")) {
+			return false;
+		}
+
+		$this->__sendData("DATA\r\n");
+	
+		if (!$this->__sendData("To: {$this->to}\r\n")) {
+			return false;
+		}
+
+		if (!$this->__sendData("{$this->__header}\r\n")) {
+			return false;
+		}
+
+		if (!$this->__sendData("{$this->__message}\r\n")) {
+			return false;
+		}
+
+		$this->__sendData("QUIT\r\n");
+		return true;
+	}
+
+	/**
+	 * Private method for getting SMTP response
+	 */
+	function __getSmtpResponse() {
+		$response = @fgets($this->smtpConnection, 512);
+		return $response;
+	}
+
+	/**
+	 * Private method for sending data to SMTP connection
+	 *
+	 * @param string data
+	 */
+	function __sendData($data) {
+		@fputs($this->smtpConnection, $data);
+		$response = $this->__getSmtpResponse();
+
+		/**
+		 * If there is a 250 in the response code, that means
+		 * everything went ok
+		 */	
+		if (stristr($response, '250') !== false) {
+			echo "Failed while sending:<pre>{$data}</pre>";
+			$this->smtpError = $response;
+			return false;
+		} else {
+			return false;
+		}
 	}
 /**
  * Enter description here...
@@ -522,7 +581,15 @@ class EmailComponent extends Object{
  */
 	function __debug() {
 		$fm = '<pre>';
+		
+		if ($this->delivery == 'smtp') {
+			$fm .= sprintf('%s %s', 'Host:', $this->smtpOptions['host']);
+			$fm .= sprintf('%s %s', 'Port:', $this->smtpOptions['port']);
+			$fm .= sprintf('%s %s', 'Timeout:', $this->smtpOptions['timeout']);
+		}
+
 		$fm .= sprintf('%s %s', 'To:', $this->to);
+		$fm .= sprintf('%s %s', 'From:', $this->from);
 		$fm .= sprintf('%s %s', 'Subject:', $this->subject);
 		$fm .= sprintf('%s\n\n%s', 'Header:', $this->__header);
 		$fm .= sprintf('%s\n\n%s', 'Parameters:', $this->additionalParams);

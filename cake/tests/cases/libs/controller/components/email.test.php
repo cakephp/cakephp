@@ -48,14 +48,15 @@ class EmailTest extends CakeTestCase {
 		ClassRegistry::addObject('view', new View($this->Controller));
 	}
 
-	function testConstruction() {
-		$this->assertTrue(is_object($this->Controller->Email));
+	function testSmtpSend() {
+		$this->Controller->Email->to = 'chartjes@localhost';
+		$this->Controller->Email->subject = 'Cake SMTP test';
+		$this->Controller->Email->replyTo = 'noreply@example.com';
+		$this->Controller->Email->from = 'noreply@example.com';
+		$this->Controller->Email->delivery = 'smtp';
+		$this->Controller->Email->template = null;
+		$this->assertTrue($this->Controller->Email->send("This is the body of the message"));
 	}
 
-	function testBadSmtpSent() {
-		$this->Controller->Email->smtpOptions['host'] = 'caketest.com';
-		$this->Controller->Email->delivery = 'smtp';
-		$this->assertFalse($this->Controller->Email->send('This should not work'));
-	}
 }
 ?>
