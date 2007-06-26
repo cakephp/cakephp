@@ -1477,7 +1477,9 @@ class Model extends Overloadable {
  * @see Model::findAll
  */
 	function findCount($conditions = null, $recursive = 0) {
-		list($data) = $this->findAll($conditions, 'COUNT(*) AS count', false, null, 1, $recursive);
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
+		list($data) = $this->findAll($conditions, 'COUNT(*) AS ' . $db->value('count'), false, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
 			return $data[0]['count'];
