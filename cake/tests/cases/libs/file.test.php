@@ -41,7 +41,7 @@ class FileTest extends UnitTestCase {
 	function testBasic() {
 
 		$file = dirname(__FILE__) . DS . basename(__FILE__);
-		
+
 		$this->File =& new File($file);
 
 		$result = $this->File->pwd();

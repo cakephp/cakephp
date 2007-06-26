@@ -158,7 +158,7 @@ class EmailComponent extends Object{
 	var $smtpOptions = array('port'=> 25,
 							 'host' => 'localhost',
 							 'timeout' => 30);
-	
+
 /**
  * Enter description here...
  *
@@ -495,7 +495,7 @@ class EmailComponent extends Object{
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
- * Sends out email via SMTP 
+ * Sends out email via SMTP
  *
  * @access private
  */
@@ -512,7 +512,7 @@ class EmailComponent extends Object{
 		fputs($smtpConnect, "DATE" . $this->_newLine);
 		fputs($smtpConnect, "To: {$this->to}\r\nFrom: {$this->smtpOptions['from']}\r\n{$thos->subject}\r\n{$this->__header}\r\n\r\n{$this->__message}\r\n");
 		fputs($smtpConnect, "QUIT" . $this->_newLine);
-		fclose($smtpConnect);								 
+		fclose($smtpConnect);
 	}
 /**
  * Enter description here...
