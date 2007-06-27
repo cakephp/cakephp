@@ -1607,7 +1607,94 @@ function testRecursiveFindAllWithLimit() {
 			array('Article' => array( 'id' => 2, 'title' => 'Second Article' )),
 			array('Article' => array( 'id' => 3, 'title' => 'Third Article' )),
 			array('Article' => array( 'id' => 4, 'title' => 'Fourth Article - New Title' )),
-			array('Article' => array( 'id' => 5, 'title' => 'Fifth Article - New Title 5' )),
+			array('Article' => array( 'id' => 5, 'title' => 'Fifth Article - New Title 5' ))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testDel() {
+		$this->model =& new Article();
+
+		$result = $this->model->del(2);
+		$this->assertTrue($result);
+
+		$result = $this->model->read(null, 2);
+		$this->assertFalse($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'title'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'title' => 'First Article' )),
+			array('Article' => array( 'id' => 3, 'title' => 'Third Article' ))
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->del(3);
+		$this->assertTrue($result);
+
+		$result = $this->model->read(null, 3);
+		$this->assertFalse($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'title'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'title' => 'First Article' ))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testDeleteAll() {
+		$this->model =& new Article();
+
+		// Add some more articles
+
+		$data = array('Article' => array('user_id' => 2, 'id' => 4, 'title' => 'Fourth Article', 'published' => 'N'));
+		$result = $this->model->set($data) && $this->model->save();
+		$this->assertTrue($result);
+
+		$data = array('Article' => array('user_id' => 2, 'id' => 5, 'title' => 'Fifth Article', 'published' => 'Y'));
+		$result = $this->model->set($data) && $this->model->save();
+		$this->assertTrue($result);
+
+		$data = array('Article' => array('user_id' => 1, 'id' => 6, 'title' => 'Sixth Article', 'published' => 'N'));
+		$result = $this->model->set($data) && $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 4, 'user_id' => 2, 'title' => 'Fourth Article', 'published' => 'N' )),
+			array('Article' => array( 'id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 6, 'user_id' => 1, 'title' => 'Sixth Article', 'published' => 'N' ))
+		);
+		$this->assertEqual($result, $expected);
+
+		// Delete with conditions
+
+		$result = $this->model->deleteAll(array('Article.published' => 'N'));
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' ))
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->deleteAll(array('Article.user_id' => array(2, 3)));
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
+		$expected = array(
+			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' ))
 		);
 		$this->assertEqual($result, $expected);
 	}
