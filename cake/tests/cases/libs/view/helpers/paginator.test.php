@@ -30,6 +30,8 @@
 	require_once LIBS.DS.'view'.DS.'helper.php';
 	require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
 	require_once LIBS.DS.'view'.DS.'helpers'.DS.'ajax.php';
+	require_once LIBS.DS.'view'.DS.'helpers'.DS.'javascript.php';
+	require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
 	require_once LIBS.DS.'view'.DS.'helpers'.DS.'paginator.php';
 /**
  * Short description for class.
@@ -63,6 +65,10 @@ class PaginatorTest extends UnitTestCase {
 		);
 		$this->paginator->Html =& new HtmlHelper();
 		$this->paginator->Ajax =& new AjaxHelper();
+		$this->paginator->Ajax->Html =& new HtmlHelper();
+		$this->paginator->Ajax->Javascript =& new JavascriptHelper();
+		$this->paginator->Ajax->Form =& new FormHelper();
+		
 	}
 
 	function testHasPrevious() {
@@ -91,6 +97,10 @@ class PaginatorTest extends UnitTestCase {
 
 		$result = $this->paginator->sort('date');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc"\s*>Date<\/a>$/', $result);
+		
+		$result = $this->paginator->numbers(array('url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
+		$this->assertPattern('/\/projects\/sort\/page:1/', $result);
+		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
 
 	function tearDown() {
