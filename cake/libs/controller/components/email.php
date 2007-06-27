@@ -217,6 +217,14 @@ class EmailComponent extends Object{
 	var $__message = null;
 
 /**
+ * Variable that holds SMTP connection
+ *
+ * @var resource
+ * @access private
+ */
+	var $__smtpConnection = null;
+	
+/**
  * Enter description here...
  *
  * @param unknown_type $controller
@@ -507,16 +515,14 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		$this-> smtpConnection = @fsockopen($this->smtpOptions['host'], $this->smtpOptions['port'], $errno, $errstr, $this->smtpOptions['timeout']);
-		$this->__getSmtpResponse();
-
-		if (!$this->smtpConnection) {
+		$response = $this->__smtpConnect($this->smtpOptions);
+		
+		if ($response['status'] == false) {
+			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
 			return false;
 		}
 
-		if (!$this->__sendData("HELO cake")) {
-			return false;
-		}
+		$this->__sendData("HELO cake\r\n", false);
 		
 		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
 			return false;
@@ -526,52 +532,60 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		$this->__sendData("DATA\r\n");
-	
-		if (!$this->__sendData("To: {$this->to}\r\n")) {
-			return false;
-		}
-
-		if (!$this->__sendData("{$this->__header}\r\n")) {
-			return false;
-		}
-
-		if (!$this->__sendData("{$this->__message}\r\n")) {
-			return false;
-		}
-
-		$this->__sendData("QUIT\r\n");
+		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false); 
+		$this->__sendData("QUIT\r\n", false);
 		return true;
 	}
+
+	/**
+	 * Private method for connecting to an SMTP server
+	 *
+	 * @access private
+	 * @param array $options SMTP connection options
+	 * @return array
+	 */
+	function __smtpConnect($options) {
+		$status = true;
+		$this->__smtpConnection = @fsockopen($options['host'], $options['port'], $errno, $errstr, $options['timeout']);
+		
+		if ($this->__smtpConnection == false) {
+			$status = false;
+		}
+
+		return array('status' => $status,
+					 'errno' => $errno,
+					 'errstr' => $errstr);
+	}
+		
 
 	/**
 	 * Private method for getting SMTP response
 	 */
 	function __getSmtpResponse() {
-		$response = @fgets($this->smtpConnection, 512);
+		$response = @fgets($this->__smtpConnection, 512);
 		return $response;
 	}
 
 	/**
 	 * Private method for sending data to SMTP connection
 	 *
-	 * @param string data
+	 * @param string $data data to be sent to SMTP server
+	 * @param boolean $check check for response from server
 	 */
-	function __sendData($data) {
-		@fputs($this->smtpConnection, $data);
+	function __sendData($data, $check = true) {
+		@fwrite($this->__smtpConnection, $data);
 		$response = $this->__getSmtpResponse();
 
 		/**
 		 * If there is a 250 in the response code, that means
 		 * everything went ok
 		 */	
-		if (stristr($response, '250') !== false) {
-			echo "Failed while sending:<pre>{$data}</pre>";
+		if ($check == true && !stristr($response, '250')) {
 			$this->smtpError = $response;
 			return false;
-		} else {
-			return false;
 		}
+
+		return true;
 	}
 /**
  * Enter description here...
