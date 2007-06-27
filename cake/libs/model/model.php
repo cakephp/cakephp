@@ -1300,7 +1300,7 @@ class Model extends Overloadable {
 		}
 
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->delete($this, $conditions);
+		return $db->delete($this, array($this->primaryKey => $ids));
 	}
 /**
  * Returns true if a record with set id exists.
