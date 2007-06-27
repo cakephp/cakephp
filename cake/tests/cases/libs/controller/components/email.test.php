@@ -54,7 +54,7 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testSmtpSend() {
-		$this->assertTrue(@fsockopen('localhost', 25));
+		$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
 		$this->Controller->Email->reset();
 		$this->Controller->Email->to = 'chartjes@localhost';
 		$this->Controller->Email->subject = 'Cake SMTP test';
