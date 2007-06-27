@@ -68,7 +68,7 @@ class PaginatorTest extends UnitTestCase {
 		$this->paginator->Ajax->Html =& new HtmlHelper();
 		$this->paginator->Ajax->Javascript =& new JavascriptHelper();
 		$this->paginator->Ajax->Form =& new FormHelper();
-		
+
 	}
 
 	function testHasPrevious() {
@@ -97,9 +97,9 @@ class PaginatorTest extends UnitTestCase {
 
 		$result = $this->paginator->sort('date');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc"\s*>Date<\/a>$/', $result);
-		
-		$result = $this->paginator->numbers(array('url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
-		$this->assertPattern('/\/projects\/sort\/page:1/', $result);
+
+		$result = $this->paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
+		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
 
