@@ -434,7 +434,7 @@ class PaginatorHelper extends AppHelper {
 
 		$params = $this->params($options['model']);
 		unset($options['model']);
-		
+
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
@@ -479,15 +479,14 @@ class PaginatorHelper extends AppHelper {
 				$out .= $separator;
 			}
 		} else {
-			
-			for ($i = 1; $i <= $params['pageCount']; $i++) {
-				if ($i == @$params['page']) {
-					$out .= $i;
+			for ($i = 1; $i < $params['pageCount']; $i++) {
+				if (isset($params['page']) && $i == $params['page']) {
+					$out .= $i . $separator;
 				} else {
-					$out .= $this->link($i, am($options['url'], array('page' => $i)), $options);
+					$out .= $this->link($i, am($options['url'], array('page' => $i)), $options) . $separator;
 				}
-				$out .= $separator;
 			}
+			$out .= $this->link($i, am($options['url'], array('page' => $params['pageCount'])), $options);
 		}
 		$out .= $after;
 		return $this->output($out);
