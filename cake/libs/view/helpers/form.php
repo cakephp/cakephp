@@ -479,7 +479,7 @@ class FormHelper extends AppHelper {
 				}
 				unset($options['options']);
 			}
-			
+
 			$inBetween = null;
 			if(isset($options['inbetween'])) {
 				if(!empty($options['inbetween'])) {
@@ -488,7 +488,7 @@ class FormHelper extends AppHelper {
 				unset($options['inbetween']);
 			}
 		}
-		
+
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
 			if (isset($options['options'])) {
@@ -686,7 +686,7 @@ class FormHelper extends AppHelper {
 		$output = null;
 		if (isset($object) && isset($options['value']) && ($options['value'] == 0 || $options['value'] == 1)) {
 			$db =& ConnectionManager::getDataSource($object->useDbConfig);
-			$value = $db->boolean($options['value']);
+			$value = $db->boolean($options['value'], false);
 			$options['value'] = 1;
 		}
 		$output = $this->hidden($fieldName, array('value' => '0', 'id' => $options['id'] . '_'), true);
