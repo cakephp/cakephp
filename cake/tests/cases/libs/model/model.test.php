@@ -1132,44 +1132,6 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSaveField() {
-		$this->model =& new Article();
-
-		$this->model->id = 1;
-		$result = $this->model->saveField('title', 'New First Article');
-		$this->assertTrue($result);
-
-		$this->model->recursive = -1;
-		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
-			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
-		));
-
-		$this->model->id = 1;
-		$result = $this->model->saveField('title', '');
-		$this->assertTrue($result);
-
-		$this->model->recursive = -1;
-		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
-			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
-		));
-
-		$this->model->id = 1;
-		$result = $this->model->saveField('title', 'First Article');
-		$this->assertTrue($result);
-
-		$this->model->recursive = -1;
-		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
-			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
-		));
-
-		$this->model->id = 1;
-		$result = $this->model->saveField('title', '', true);
-		$this->assertFalse($result);
-	}
-
 	function testAssociationAfterFind() {
 		$this->model =& new Post();
 		$result = $this->model->findAll();
@@ -1398,6 +1360,44 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertTrue($result);
 	}
 
+	function testSaveField() {
+		$this->model =& new Article();
+
+		$this->model->id = 1;
+		$result = $this->model->saveField('title', 'New First Article');
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
+		$expected = array('Article' => array (
+			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
+		));
+
+		$this->model->id = 1;
+		$result = $this->model->saveField('title', '');
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
+		$expected = array('Article' => array (
+			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
+		));
+
+		$this->model->id = 1;
+		$result = $this->model->saveField('title', 'First Article');
+		$this->assertTrue($result);
+
+		$this->model->recursive = -1;
+		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
+		$expected = array('Article' => array (
+			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
+		));
+
+		$this->model->id = 1;
+		$result = $this->model->saveField('title', '', true);
+		$this->assertFalse($result);
+	}
+
 	function testSaveWithCreate() {
 		$this->model =& new User();
 
@@ -1608,6 +1608,175 @@ function testRecursiveFindAllWithLimit() {
 			array('Article' => array( 'id' => 3, 'title' => 'Third Article' )),
 			array('Article' => array( 'id' => 4, 'title' => 'Fourth Article - New Title' )),
 			array('Article' => array( 'id' => 5, 'title' => 'Fifth Article - New Title 5' ))
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+	function testSaveHabtm() {
+		$this->model =& new Article();
+
+		$result = $this->model->findById(2);
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+			),
+			'User' => array (
+				'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
+			),
+			'Comment' => array(
+				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			),
+			'Tag' => array(
+				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		// Save with parent model data
+
+		$data = array(
+			'Article' => array( 'id' => '2', 'title' => 'New Second Article' ),
+			'Tag' => array(
+				'Tag' => array( 1, 2 )
+			)
+		);
+
+		$result = $this->model->set($data);
+		$this->assertTrue($result);
+
+		$result = $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
+		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+			),
+			'Tag' => array(
+				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		// Setting just parent ID
+
+		$data = array(
+			'Article' => array( 'id' => '2' ),
+			'Tag' => array(
+				'Tag' => array( 2, 3 )
+			)
+		);
+
+		$result = $this->model->set($data);
+		$this->assertTrue($result);
+
+		$result = $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
+		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+			),
+			'Tag' => array(
+				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		// Setting no parent data
+
+		$data = array(
+			'Tag' => array(
+				'Tag' => array( 1, 2, 3 )
+			)
+		);
+
+		$result = $this->model->set($data);
+		$this->assertTrue($result);
+
+		$result = $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
+		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+			),
+			'Tag' => array(
+				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'Tag' => array(
+				'Tag' => array( )
+			)
+		);
+
+		$result = $this->model->set($data);
+		$this->assertTrue($result);
+
+		$result = $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
+		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+			),
+			'Tag' => array()
+		);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'Tag' => array(
+				'Tag' => array( 2, 3 )
+			)
+		);
+
+		$result = $this->model->set($data);
+		$this->assertTrue($result);
+
+		$result = $this->model->save();
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment')
+		));
+		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$expected = array(
+			'Article' => array(
+				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
+			),
+			'Tag' => array(
+				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			)
 		);
 		$this->assertEqual($result, $expected);
 	}
