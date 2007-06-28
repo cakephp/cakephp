@@ -996,17 +996,10 @@ class Model extends Overloadable {
 			return false;
 		}
 		$fields = $values = array();
-
-		if (count($this->data) > 1) {
-			$weHaveMulti = true;
-			$joined = false;
-		} else {
-			$weHaveMulti = false;
-		}
 		$habtm = count($this->hasAndBelongsToMany);
 
 		foreach ($this->data as $n => $v) {
-			if (isset($weHaveMulti) && isset($v[$n]) && $habtm > 0) {
+			if (isset($v[$n]) && $habtm > 0) {
 				$joined[] = $v;
 			} else {
 				if ($n === $this->name) {
@@ -1040,24 +1033,24 @@ class Model extends Overloadable {
 				$values[] = $colType['formatter']($colType['format']);
 			}
 		}
+		$count = count($fields);
 
-		if (!$exists) {
+		if (!$exists && $count > 0) {
 			$this->id = false;
 		}
-		$success = false;
+		$success = true;
 		$created = false;
 
-		if (count($fields)) {
+		if ($count > 0) {
 			if (!empty($this->id)) {
-				if ($db->update($this, $fields, $values)) {
-					if (!empty($joined)) {
-						$this->__saveMulti($joined, $this->id);
-					}
-					$success = true;
+				if (!$db->update($this, $fields, $values)) {
+					$success = false;
 				}
 			} else {
-				if ($db->create($this, $fields, $values)) {
-
+				if (!$db->create($this, $fields, $values)) {
+					$success = $created = false;
+				} else {
+					$created = true;
 					if (!empty($this->belongsTo)) {
 						foreach ($this->belongsTo as $parent => $assoc) {
 							if (isset($assoc['counterCache']) && !empty($assoc['counterCache'])) {
@@ -1065,28 +1058,29 @@ class Model extends Overloadable {
 							}
 						}
 					}
-					if (!empty($joined)) {
-						$this->__saveMulti($joined, $this->id);
-					}
-					$success = $created = true;
 				}
-			}
-
-			if ($success) {
-				if (!empty($this->behaviors)) {
-					$behaviors = array_keys($this->behaviors);
-					$ct = count($behaviors);
-					for ($i = 0; $i < $ct; $i++) {
-						$this->behaviors[$behaviors[$i]]->afterSave($this, $created);
-					}
-				}
-				$this->afterSave($created);
-				$this->data = false;
-				$this->_clearCache();
-				$this->validationErrors = array();
-				return true;
 			}
 		}
+
+		if (!empty($joined) && $success === true) {
+			$this->__saveMulti($joined, $this->id);
+		}
+
+		if ($success && $count > 0) {
+			if (!empty($this->behaviors)) {
+				$behaviors = array_keys($this->behaviors);
+				$ct = count($behaviors);
+				for ($i = 0; $i < $ct; $i++) {
+					$this->behaviors[$behaviors[$i]]->afterSave($this, $created);
+				}
+			}
+			$this->afterSave($created);
+			$this->data = false;
+			$this->_clearCache();
+			$this->validationErrors = array();
+			return true;
+		}
+
 		return $success;
 	}
 /**
