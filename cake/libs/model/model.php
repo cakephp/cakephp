@@ -1097,9 +1097,9 @@ class Model extends Overloadable {
 			foreach ($y as $assoc => $value) {
 				if (isset($this->hasAndBelongsToMany[$assoc])) {
 					$joinTable[$assoc] = $this->hasAndBelongsToMany[$assoc]['joinTable'];
-					$mainKey[$assoc] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-					$keys[] = $this->hasAndBelongsToMany[$assoc]['foreignKey'];
-					$keys[] = $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
+					$mainKey[$assoc] = $db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']);
+					$keys[] = $db->name($this->hasAndBelongsToMany[$assoc]['foreignKey']);
+					$keys[] = $db->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey']);
 					$fields[$assoc]  = join(',', $keys);
 					unset($keys);
 
@@ -1123,27 +1123,14 @@ class Model extends Overloadable {
 			}
 		}
 
-		if (isset($joinTable)) {
-			$total = count($joinTable);
+		if (isset($joinTable) && is_array($newValue)) {
+			foreach ($newValue as $loopAssoc => $val) {
+				$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
+				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
 
-			if (is_array($newValue)) {
-				foreach ($newValue as $loopAssoc => $val) {
-					$db =& ConnectionManager::getDataSource($this->useDbConfig);
-					$table = $db->name($db->fullTableName($joinTable[$loopAssoc]));
-					$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
-
-					if (!empty($newValue[$loopAssoc])) {
-						$secondCount = count($newValue[$loopAssoc]);
-						$insertValues = null;
-
-						for ($x = 0; $x < $secondCount; $x++) {
-							$insertValues .= $newValue[$loopAssoc][$x];
-							if($x < $secondCount - 1) {
-								$insertValues .= ', ';
-							}
-						}
-						$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$insertValues};");
-					}
+				if (!empty($newValue[$loopAssoc])) {
+					$insertValues = implode(', ', $newValue[$loopAssoc]);
+					$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$insertValues};");
 				}
 			}
 		}
