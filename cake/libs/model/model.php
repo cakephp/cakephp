@@ -1134,9 +1134,15 @@ class Model extends Overloadable {
 
 					if (!empty($newValue[$loopAssoc])) {
 						$secondCount = count($newValue[$loopAssoc]);
+						$insertValues = null;
+
 						for ($x = 0; $x < $secondCount; $x++) {
-							$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$newValue[$loopAssoc][$x]}");
+							$insertValues .= $newValue[$loopAssoc][$x];
+							if($x < $secondCount - 1) {
+								$insertValues .= ', ';
+							}
 						}
+						$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$insertValues};");
 					}
 				}
 			}
