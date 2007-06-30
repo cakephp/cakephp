@@ -603,6 +603,41 @@ class Set extends Object {
 		}
 		return $list;
 	}
+/**
+ * Creates an associative array using a $path1 as the path to build its keys, and optionally
+ * $path2 as path to get the values. If $path2 is not specified, all values will be initialized
+ * to null (useful for Set::merge).
+ *
+ * @param array $data Array from where to extract keys and values
+ * @param mixed $path1 As an array, or as a dot-separated string.
+ * @param mixed $path2 As an array, or as a dot-separated string.
+ * @return array Combined array
+ * @access public
+ */
+	function combine($data, $path1 = null, $path2 = null) {
+		if (is_a($this, 'set') && is_string($data) && empty($path2)) {
+			$path2 = $path1;
+			$path1 = $data;
+			$data = $this->get();
+		}
+
+		if (is_object($data)) {
+			$data = get_object_vars($data);
+		}
+
+		$data1 = Set::extract($data, $path1);
+
+		if (!empty($path2)) {
+			$data2 = Set::extract($data, $path2);
+		} else {
+			$count = count($data1);
+			for($i=0; $i < $count; $i++) {
+				$data2[$i] = null;
+			}
+		}
+
+		return array_combine($data1, $data2);
+	}
 
 	function reverse($object) {
 		if (is_object($object)) {

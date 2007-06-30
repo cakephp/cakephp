@@ -275,6 +275,100 @@ class SetTest extends UnitTestCase {
 		$this->assertTrue($set->insert('Session Test.Test Case', "test"));
 		$this->assertTrue($set->check('Session Test.Test Case'));
 	}
+
+	function testCombine() {
+		$a = array(
+			array('User' => array(
+				'id' => 2,
+				'Data' => array(
+					'user' => 'mariano.iglesias',
+					'name' => 'Mariano Iglesias'
+				)
+			)),
+			array('User' => array(
+				'id' => 14,
+				'Data' => array(
+					'user' => 'phpnut',
+					'name' => 'Larry E. Masters'
+				)
+			)),
+			array('User' => array(
+				'id' => 25,
+				'Data' => array(
+					'user' => 'gwoo',
+					'name' => 'The Gwoo'
+				)
+			))
+		);
+
+		$result = Set::combine($a, '{n}.User.id');
+		$expected = array(
+			2 => null,
+			14 => null,
+			25 => null
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data');
+		$expected = array(
+			2 => array(
+				'user' => 'mariano.iglesias',
+				'name' => 'Mariano Iglesias'
+			),
+			14 => array(
+				'user' => 'phpnut',
+				'name' => 'Larry E. Masters'
+			),
+			25 => array(
+				'user' => 'gwoo',
+				'name' => 'The Gwoo'
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data.name');
+		$expected = array(
+			2 => 'Mariano Iglesias',
+			14 => 'Larry E. Masters',
+			25 => 'The Gwoo'
+		);
+		$this->assertIdentical($result, $expected);
+
+		$Set =& new Set($a);
+
+		$result = $Set->combine('{n}.User.id');
+		$expected = array(
+			2 => null,
+			14 => null,
+			25 => null
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $Set->combine('{n}.User.id', '{n}.User.Data');
+		$expected = array(
+			2 => array(
+				'user' => 'mariano.iglesias',
+				'name' => 'Mariano Iglesias'
+			),
+			14 => array(
+				'user' => 'phpnut',
+				'name' => 'Larry E. Masters'
+			),
+			25 => array(
+				'user' => 'gwoo',
+				'name' => 'The Gwoo'
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $Set->combine('{n}.User.id', '{n}.User.Data.name');
+		$expected = array(
+			2 => 'Mariano Iglesias',
+			14 => 'Larry E. Masters',
+			25 => 'The Gwoo'
+		);
+		$this->assertIdentical($result, $expected);
+	}
 }
 
 ?>
