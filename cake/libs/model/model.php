@@ -738,23 +738,17 @@ class Model extends Overloadable {
  */
 	function set($one, $two = null) {
 		if (is_object($one)) {
-			if (is_a($one, 'xmlnode') || is_a($one, 'XMLNode')) {
-				if ($one->name != Inflector::underscore($this->name)) {
-					if (is_object($one->child(Inflector::underscore($this->name)))) {
-						$one = $one->child(Inflector::underscore($this->name));
-						$one = $one->attributes;
+			$one = Set::reverse($one);
+			$count = count($one);
+			for ($i = 0; $i < $count; $i++) {
+				if(isset($one[$i])){
+					if($i === 0) {
+						$one[$this->name] = $one[$i];
 					} else {
-						return null;
+						$name = array_keys($one[$i]);
+						$one[$name[0]] = $one[$i][$name[0]];
 					}
-				}
-			} elseif (is_a($one, 'stdclass') || is_a($one, 'stdClass')) {
-				$one = get_object_vars($one);
-				$keys = array_keys($one);
-				$count = count($keys);
-				for ($i = 0; $i < $count; $i++) {
-					if ($keys[$i] == '__identity__' || is_array($one[$keys[$i]]) || is_object($one[$keys[$i]])) {
-						unset($one[$keys[$i]]);
-					}
+					unset($one[$i]);
 				}
 			}
 		}

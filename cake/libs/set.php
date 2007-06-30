@@ -603,5 +603,51 @@ class Set extends Object {
 		}
 		return $list;
 	}
+
+	function reverse($object) {
+		if (is_object($object)) {
+			$merge = array();
+			if (is_a($object, 'xmlnode') || is_a($object, 'XMLNode')) {
+				if ($object->name != Inflector::underscore($this->name)) {
+					if (is_object($object->child(Inflector::underscore($this->name)))) {
+						$object = $object->child(Inflector::underscore($this->name));
+						$object = $object->attributes;
+					} else {
+						return null;
+					}
+				}
+			} elseif (is_a($object, 'stdclass') || is_a($object, 'stdClass')) {
+				$object = get_object_vars($object);
+				$keys = array_keys($object);
+				$count = count($keys);
+
+				for ($i = 0; $i < $count; $i++) {
+					if ($keys[$i] == '__identity__') {
+						unset($object[$keys[$i]]);
+					} elseif (is_array($object[$keys[$i]])) {
+							$keys1 = array_keys($object[$keys[$i]]);
+							$count1 = count($keys1);
+							for ($ii = 0; $ii < $count1; $ii++) {
+								$merge[$keys[$i]][$ii] = Set::reverse($object[$keys[$i]][$ii]);
+							}
+						unset($object[$keys[$i]]);
+					} elseif (is_object($object[$keys[$i]])) {
+						$object1 = get_object_vars($one[$keys[$i]]);
+						$keys1 = array_keys($object1);
+						$count1 = count($keys1);
+						for ($ii = 0; $ii < $count1; $ii++) {
+							$merge[$keys[$i]][$ii] = Set::reverse($object1[$keys1[$i]][$ii]);
+						}
+						unset($object[$keys[$i]]);
+					}
+				}
+			}
+			$return = $object;
+			if(!empty($merge)) {
+				$object = array($object, $merge);
+			}
+			return $object;
+		}
+	}
 }
 ?>
