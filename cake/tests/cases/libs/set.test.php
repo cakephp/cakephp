@@ -280,6 +280,7 @@ class SetTest extends UnitTestCase {
 		$a = array(
 			array('User' => array(
 				'id' => 2,
+				'group_id' => 1,
 				'Data' => array(
 					'user' => 'mariano.iglesias',
 					'name' => 'Mariano Iglesias'
@@ -287,6 +288,7 @@ class SetTest extends UnitTestCase {
 			)),
 			array('User' => array(
 				'id' => 14,
+				'group_id' => 2,
 				'Data' => array(
 					'user' => 'phpnut',
 					'name' => 'Larry E. Masters'
@@ -294,6 +296,7 @@ class SetTest extends UnitTestCase {
 			)),
 			array('User' => array(
 				'id' => 25,
+				'group_id' => 1,
 				'Data' => array(
 					'user' => 'gwoo',
 					'name' => 'The Gwoo'
@@ -334,6 +337,39 @@ class SetTest extends UnitTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 
+		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => array(
+					'user' => 'mariano.iglesias',
+					'name' => 'Mariano Iglesias'
+				),
+				25 => array(
+					'user' => 'gwoo',
+					'name' => 'The Gwoo'
+				)
+			),
+			2 => array(
+				14 => array(
+					'user' => 'phpnut',
+					'name' => 'Larry E. Masters'
+				)
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($a, '{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => 'Mariano Iglesias',
+				25 => 'The Gwoo'
+			),
+			2 => array(
+				14 => 'Larry E. Masters'
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
 		$Set =& new Set($a);
 
 		$result = $Set->combine('{n}.User.id');
@@ -366,6 +402,39 @@ class SetTest extends UnitTestCase {
 			2 => 'Mariano Iglesias',
 			14 => 'Larry E. Masters',
 			25 => 'The Gwoo'
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $Set->combine('{n}.User.id', '{n}.User.Data', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => array(
+					'user' => 'mariano.iglesias',
+					'name' => 'Mariano Iglesias'
+				),
+				25 => array(
+					'user' => 'gwoo',
+					'name' => 'The Gwoo'
+				)
+			),
+			2 => array(
+				14 => array(
+					'user' => 'phpnut',
+					'name' => 'Larry E. Masters'
+				)
+			)
+		);
+		$this->assertIdentical($result, $expected);
+
+		$result = $Set->combine('{n}.User.id', '{n}.User.Data.name', '{n}.User.group_id');
+		$expected = array(
+			1 => array(
+				2 => 'Mariano Iglesias',
+				25 => 'The Gwoo'
+			),
+			2 => array(
+				14 => 'Larry E. Masters'
+			)
 		);
 		$this->assertIdentical($result, $expected);
 	}

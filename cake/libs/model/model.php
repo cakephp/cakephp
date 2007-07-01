@@ -1782,33 +1782,7 @@ class Model extends Overloadable {
 			$valuePath = '{n}.' . $this->name . '.' . $this->displayField;
 		}
 
-		$keys = Set::extract($result, $keyPath);
-		$vals = Set::extract($result, $valuePath);
-
-		if (!empty($keys) && !empty($vals)) {
-			$out = array();
-
-			if ($groupPath != null) {
-				$group = Set::extract($result, $groupPath);
-				if (!empty($group)) {
-					$c = count($keys);
-					for ($i = 0; $i < $c; $i++) {
-						if (!isset($group[$i])) {
-							$group[$i] = 0;
-						}
-						if (!isset($out[$group[$i]])) {
-							$out[$group[$i]] = array();
-						}
-						$out[$group[$i]][$keys[$i]] = $vals[$i];
-					}
-					return $out;
-				}
-			}
-
-			$return = array_combine($keys, $vals);
-			return $return;
-		}
-		return null;
+		return Set::combine($result, $keyPath, $valuePath, $groupPath);
 	}
 /**
  * Escapes the field name and prepends the model name. Escaping will be done according to the current database driver's rules.

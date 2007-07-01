@@ -608,6 +608,115 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testGenerateList() {
+		$this->model =& new Article();
+		$this->model->displayField = 'title';
+
+		$result = $this->model->generateList(null, 'Article.title ASC');
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id');
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article');
+		$expected = array(
+			1 => array(
+				'id' => 1,
+				'user_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:39:23',
+				'updated' => '2007-03-18 10:41:31'
+			),
+			2 => array(
+				'id' => 2,
+				'user_id' => 3,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:41:23',
+				'updated' => '2007-03-18 10:43:31'
+			),
+			3 => array(
+				'id' => 3,
+				'user_id' => 1,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'published' => 'Y',
+				'created' => '2007-03-18 10:43:23',
+				'updated' => '2007-03-18 10:45:31'
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title');
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article', '{n}.Article.user_id');
+		$expected = array(
+			1 => array(
+				1 => array(
+					'id' => 1,
+					'user_id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
+				),
+				3 => array(
+					'id' => 3,
+					'user_id' => 1,
+					'title' => 'Third Article',
+					'body' => 'Third Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				)
+			),
+			3 => array(
+				2 => array(
+					'id' => 2,
+					'user_id' => 3,
+					'title' => 'Second Article',
+					'body' => 'Second Article Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->model->generateList(null, 'Article.title ASC', null, '{n}.Article.id', '{n}.Article.title', '{n}.Article.user_id');
+		$expected = array(
+			1 => array(
+				1 => 'First Article',
+				3 => 'Third Article'
+			),
+			3 => array(
+				2 => 'Second Article'
+			)
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 	function testFindField() {
 		$this->model =& new User();
 
