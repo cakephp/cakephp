@@ -709,8 +709,21 @@ class Set extends Object {
 				$objectKeys = array_keys($object);
 				$count = count($mergeKeys);
 				$change = $object;
+				$count1 = count($objectKeys);
 
 				for ($i = 0; $i < $count; $i++) {
+					$loop = $count1;
+
+					for ($ii = 0; $ii < $loop; $ii++) {
+						if(is_array($object[$objectKeys[$ii]])) {
+							if(array_key_exists($objectKeys[$ii], $object[$objectKeys[$ii]])) {
+								unset($change[$objectKeys[$ii]][$objectKeys[$ii]]);
+							}
+						} else {
+							unset($change[$objectKeys[$ii]]);
+						}
+					}
+
 					foreach ($objectKeys as $key => $value) {
 						if(is_array($object[$value])) {
 							if(array_key_exists($mergeKeys[$i], $object[$value])) {
@@ -720,6 +733,7 @@ class Set extends Object {
 							unset($change[$value]);
 						}
 					}
+
 				}
 				$object = Set::pushDiff($change, $merge);
 			}
