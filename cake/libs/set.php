@@ -682,7 +682,9 @@ class Set extends Object {
 
 				for ($i = 0; $i < $count; $i++) {
 					if ($keys[$i] == '__identity__') {
+						$key = $object[$keys[$i]];
 						unset($object[$keys[$i]]);
+						$object[$key] = $object;
 					} elseif (is_array($object[$keys[$i]])) {
 						$keys1 = array_keys($object[$keys[$i]]);
 						$count1 = count($keys1);
@@ -701,8 +703,25 @@ class Set extends Object {
 				}
 			}
 			$return = $object;
+
 			if(!empty($merge)) {
-				$object = array($object, $merge);
+				$mergeKeys = array_keys($merge);
+				$objectKeys = array_keys($object);
+				$count = count($mergeKeys);
+				$change = $object;
+
+				for ($i = 0; $i < $count; $i++) {
+					foreach ($objectKeys as $key => $value) {
+						if(is_array($object[$value])) {
+							if(array_key_exists($mergeKeys[$i], $object[$value])) {
+								unset($change[$value][$mergeKeys[$i]]);
+							}
+						} else {
+							unset($change[$value]);
+						}
+					}
+				}
+				$object = Set::pushDiff($change, $merge);
 			}
 			return $object;
 		}

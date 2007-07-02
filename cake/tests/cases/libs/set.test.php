@@ -438,6 +438,75 @@ class SetTest extends UnitTestCase {
 		);
 		$this->assertIdentical($result, $expected);
 	}
-}
 
+	function testMapReverse() {
+		$expected = array('Array1' => array(
+		'Array1Data1' => 'Array1Data1 value 1',
+		'Array1Data2' => 'Array1Data2 value 2',
+		'Array1Data3' => 'Array1Data3 value 3',
+		'Array1Data4' => 'Array1Data4 value 4',
+		'Array1Data5' => 'Array1Data5 value 5',
+		'Array1Data6' => 'Array1Data6 value 6',
+		'Array1Data7' => 'Array1Data7 value 7',
+		'Array1Data8' => 'Array1Data8 value 8'),
+
+		'Array2' => array(
+		0 => array(
+		'Array2Data1' => 1,
+		'Array2Data2' => 'Array2Data2 value 2',
+		'Array2Data3' => 'Array2Data3 value 2',
+		'Array2Data4' => 'Array2Data4 value 4'),
+		1 => array(
+		'Array2Data1' => 2,
+		'Array2Data2' => 'Array2Data2 value 2',
+		'Array2Data3' => 'Array2Data3 value 2',
+		'Array2Data4' => 'Array2Data4 value 4'),
+		2 => array(
+		'Array2Data1' => 3,
+		'Array2Data2' => 'Array2Data2 value 2',
+		'Array2Data3' => 'Array2Data3 value 2',
+		'Array2Data4' => 'Array2Data4 value 4'),
+		3 => array(
+		'Array2Data1' => 4,
+		'Array2Data2' => 'Array2Data2 value 2',
+		'Array2Data3' => 'Array2Data3 value 2',
+		'Array2Data4' => 'Array2Data4 value 4'),
+		4 => array(
+		'Array2Data1' => 5,
+		'Array2Data2' => 'Array2Data2 value 2',
+		'Array2Data3' => 'Array2Data3 value 2',
+		'Array2Data4' => 'Array2Data4 value 4')),
+
+		'Array3' => array(
+		0 => array(
+		'Array3Data1' => 1,
+		'Array3Data2' => 'Array3Data2 value 2',
+		'Array3Data3' => 'Array3Data3 value 2',
+		'Array3Data4' => 'Array3Data4 value 4'),
+		1 => array(
+		'Array3Data1' => 2,
+		'Array3Data2' => 'Array3Data2 value 2',
+		'Array3Data3' => 'Array3Data3 value 2',
+		'Array3Data4' => 'Array3Data4 value 4'),
+		2 => array(
+		'Array3Data1' => 3,
+		'Array3Data2' => 'Array3Data2 value 2',
+		'Array3Data3' => 'Array3Data3 value 2',
+		'Array3Data4' => 'Array3Data4 value 4'),
+		3 => array(
+		'Array3Data1' => 4,
+		'Array3Data2' => 'Array3Data2 value 2',
+		'Array3Data3' => 'Array3Data3 value 2',
+		'Array3Data4' => 'Array3Data4 value 4'),
+		4 => array(
+		'Array3Data1' => 5,
+		'Array3Data2' => 'Array3Data2 value 2',
+		'Array3Data3' => 'Array3Data3 value 2',
+		'Array3Data4' => 'Array3Data4 value 4')));
+
+		$map = Set::map($expected);
+		$result = Set::reverse($map);
+		$this->assertIdentical($result, $expected);
+	}
+}
 ?>

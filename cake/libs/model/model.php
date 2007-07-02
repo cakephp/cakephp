@@ -739,18 +739,6 @@ class Model extends Overloadable {
 	function set($one, $two = null) {
 		if (is_object($one)) {
 			$one = Set::reverse($one);
-			$count = count($one);
-			for ($i = 0; $i < $count; $i++) {
-				if(isset($one[$i])){
-					if($i === 0) {
-						$one[$this->name] = $one[$i];
-					} else {
-						$name = array_keys($one[$i]);
-						$one[$name[0]] = $one[$i][$name[0]];
-					}
-					unset($one[$i]);
-				}
-			}
 		}
 
 		if (is_array($one)) {
