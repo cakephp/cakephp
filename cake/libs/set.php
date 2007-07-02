@@ -684,19 +684,18 @@ class Set extends Object {
 					if ($keys[$i] == '__identity__') {
 						unset($object[$keys[$i]]);
 					} elseif (is_array($object[$keys[$i]])) {
-							$keys1 = array_keys($object[$keys[$i]]);
-							$count1 = count($keys1);
-							for ($ii = 0; $ii < $count1; $ii++) {
-								$merge[$keys[$i]][$ii] = Set::reverse($object[$keys[$i]][$ii]);
-							}
-						unset($object[$keys[$i]]);
-					} elseif (is_object($object[$keys[$i]])) {
-						$object1 = get_object_vars($one[$keys[$i]]);
-						$keys1 = array_keys($object1);
+						$keys1 = array_keys($object[$keys[$i]]);
 						$count1 = count($keys1);
 						for ($ii = 0; $ii < $count1; $ii++) {
-							$merge[$keys[$i]][$ii] = Set::reverse($object1[$keys1[$i]][$ii]);
+							if (is_object($object[$keys[$i]][$keys1[$ii]])) {
+								$merge[$keys[$i]][$keys1[$ii]] = Set::reverse($object[$keys[$i]][$keys1[$ii]]);
+							} else {
+								$merge[$keys[$i]][$keys1[$ii]] = $object[$keys[$i]][$keys1[$ii]];
+							}
 						}
+						unset($object[$keys[$i]]);
+					} elseif (is_object($object[$keys[$i]])) {
+						$merge[$keys[$i]] = Set::reverse($object[$keys[$i]]);
 						unset($object[$keys[$i]]);
 					}
 				}
