@@ -153,7 +153,7 @@ foreach ($relations as $assocName => $assocData):
 		foreach (${$singularVar}[$assocName] as ${$otherSingularVar}):
 			$class = null;
 			if ($i++ % 2 == 0) {
-				$class = ' class=\"altrow\"';
+				$class = ' class="altrow"';
 			}
 		echo "\t\t<tr{$class}>\n";
 

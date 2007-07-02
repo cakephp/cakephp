@@ -43,7 +43,7 @@ $i = 0;
 foreach (${$pluralVar} as ${$singularVar}):
 	$class = null;
 	if ($i++ % 2 == 0) {
-		$class = ' class=\"altrow\"';
+		$class = ' class="altrow"';
 	}
 echo "\n";
 	echo "\t<tr" . $class . ">\n";
