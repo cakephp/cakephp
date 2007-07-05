@@ -43,6 +43,15 @@ class ModelTask extends Shell {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
+		
+		if(!empty($this->args[0])) {
+			$model = $this->args[0];
+			if ($this->__bake($model)) {
+				if ($this->_checkUnitTest()) {
+					$this->__bakeTest($model);
+				}
+			}			
+		}
 	}
 /**
  * Handles interactive baking

@@ -256,7 +256,11 @@ class RequestHandlerComponent extends Object {
  * @return bool True if user agent is a mobile web browser
  */
 	function isMobile() {
-		return (preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT')) > 0 || $this->accepts('wap'));
+		preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT'), $match);
+		if(!empty($match) || $this->accepts('wap')) {
+			return true;
+		}
+		return false;
 	}
 /**
  * Returns true if the client accepts WAP content
