@@ -744,7 +744,7 @@ class View extends Object {
 						${$camelBackedHelper}->{$subHelper} =& $loadedHelpers[$subHelper];
 					}
 				}
-				$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
+				$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 			}
 		}
 

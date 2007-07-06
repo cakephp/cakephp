@@ -742,7 +742,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" type="checkbox" id="theID" value="1" />');
 	}
 
-
 	function tearDown() {
 		unset($this->Form);
 	}

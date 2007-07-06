@@ -40,46 +40,41 @@ class TheHtmlTestController extends Controller {
 
 class HtmlHelperTest extends UnitTestCase {
 	var $html = null;
-	
+
 	function setUp() {
 		$this->Html =& new HtmlHelper();
 		$view =& new View(new TheHtmlTestController());
 		ClassRegistry::addObject('view', $view);
 	}
-	
+
 	function testLinkEscape() {
 		$result = $this->Html->link('Next >', '#');
 		$expected = '/^<a href="#"\s+>Next &gt;<\/a>$/';
-		
+
 		$this->assertPattern($expected, $result);
-		
+
 		$result = $this->Html->link('Next >', '#', array('escape' => false));
 		$expected = '/^<a href="#"\s+>Next ><\/a>$/';
-		
+
 		$this->assertPattern($expected, $result);
 	}
-	
+
 	function testImageLink() {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
 		$expected = '/^<a href="#"\s+><img\s+src="img\/test.gif"\s+alt=""\s+\/><\/a>$/';
-		
+
 		$this->assertPattern($expected, $result);
 	}
-	
-	function testRadio() {
-		$result = $this->Html->radio('Tests/process', array('0'=> 'zero', '1'=>'one'));
-		$this->assertNoPattern('/checked="checked"/', $result);
-	}
-	
+
 	function testStyle() {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
 		$expected = 'style="display:none; margin:10px;"';
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
 		$expected = "display:none;\nmargin:10px;";
 		$this->assertEqual($expected, $result);
-		
+
 	}
 
 	function tearDown() {
