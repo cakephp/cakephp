@@ -128,14 +128,7 @@ class Object {
 		}
 
 		if (!is_string($msg)) {
-			ob_start();
-			print_r ($msg);
-			$msg = ob_get_contents();
-			ob_end_clean();
-		}
-
-		if (!isset($this->_log->levels[$type])) {
-			$type = LOG_ERROR;
+			$msg = print_r ($msg);
 		}
 		return $this->_log->write($type, $msg);
 	}
