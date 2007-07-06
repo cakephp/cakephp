@@ -434,7 +434,8 @@ class View extends Object {
 					return $cache;
 				} else {
 					$element = $this->renderElement($name, $params);
-					return cache('views' . DS . $cacheFile, $element, $expires);
+               cache('views' . DS . $cacheFile, $element, $expires);
+               return $element;
 				}
 			}
 		}
