@@ -45,8 +45,16 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'menu';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->inflector->singularize('food_menus');
+		$expected = 'food_menu';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->inflector->singularize('Menus');
 		$expected = 'Menu';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->singularize('FoodMenus');
+		$expected = 'FoodMenu';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->inflector->singularize('houses');
@@ -92,7 +100,7 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->inflector->singularize('Alias');
 		$expected = 'Alias';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->inflector->singularize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
@@ -119,8 +127,16 @@ class InflectorTest extends UnitTestCase {
 		$expected = 'menus';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->inflector->pluralize('food_menu');
+		$expected = 'food_menus';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->inflector->pluralize('Menu');
 		$expected = 'Menus';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->inflector->pluralize('FoodMenu');
+		$expected = 'FoodMenus';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->inflector->pluralize('quiz');
@@ -150,7 +166,7 @@ class InflectorTest extends UnitTestCase {
 		$result = $this->inflector->pluralize('Aliases');
 		$expected = 'Aliases';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->inflector->pluralize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);

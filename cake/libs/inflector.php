@@ -120,7 +120,6 @@ class Inflector extends Object {
 										'hoof' => 'hoofs',
 										'loaf' => 'loaves',
 										'man' => 'men',
-										'menu' => 'menus',
 										'money' => 'monies',
 										'mongoose' => 'mongooses',
 										'move' => 'moves',
@@ -206,6 +205,7 @@ class Inflector extends Object {
 
 		$_this =& Inflector::getInstance();
 		$coreSingularRules = array('/(s)tatuses$/i' => '\1\2tatus',
+									'/^(.*)(menu)s$/i' => '\1\2',
 									'/(quiz)zes$/i' => '\\1',
 									'/(matr)ices$/i' => '\1ix',
 									'/(vert|ind)ices$/i' => '\1ex',
@@ -234,9 +234,10 @@ class Inflector extends Object {
 									'/(m)en$/i' => '\1an',
 									'/(c)hildren$/i' => '\1\2hild',
 									'/(n)ews$/i' => '\1\2ews',
+									'/^(.*us)$/' => '\\1',
 									'/s$/i' => '');
 
-		$coreUninflectedSingular = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*us', '.*ss', 'Amoyese',
+		$coreUninflectedSingular = array('.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss', 'Amoyese',
 											'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus', 'carp', 'chassis', 'clippers',
 											'cod', 'coitus', 'Congoese', 'contretemps', 'corps', 'debris', 'diabetes', 'djinn', 'eland', 'elk',
 											'equipment', 'Faroese', 'flounder', 'Foochowese', 'gallows', 'Genevese', 'Genoese', 'Gilbertese', 'graffiti',
@@ -260,7 +261,6 @@ class Inflector extends Object {
 										'hoofs' => 'hoof',
 										'loaves' => 'loaf',
 										'men' => 'man',
-										'menus' => 'menu',
 										'monies' => 'money',
 										'mongooses' => 'mongoose',
 										'moves' => 'move',
@@ -300,7 +300,6 @@ class Inflector extends Object {
  * @static
  */
 	function singularize($word) {
-
 		$_this =& Inflector::getInstance();
 		if (!isset($_this->singularRules) || empty($_this->singularRules)) {
 			$_this->__initSingularRules();
