@@ -128,7 +128,7 @@ class Object {
 		}
 
 		if (!is_string($msg)) {
-			$msg = print_r ($msg);
+			$msg = print_r ($msg, true);
 		}
 		return $this->_log->write($type, $msg);
 	}
