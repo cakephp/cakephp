@@ -395,13 +395,10 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a set of radio widgets.
  *
- * @param  string  $fieldName Name of a field, like this "Modelname/fieldname"
- * @param  array	$options			Radio button options array
- * @param  array	$inbetween		String that separates the radio buttons.
- * @param  array	$htmlAttributes Array of HTML attributes.
- * @return string
+ * @deprecated
  */
 	function radio($fieldName, $options, $inbetween = null, $htmlAttributes = array()) {
+		trigger_error(__('(HtmlHelper::radio) Deprecated: Use FormHelper::radio instead', true), E_USER_WARNING);
 
 		$this->setFormTag($fieldName);
 		$value = isset($htmlAttributes['value']) ? $htmlAttributes['value'] : $this->value($fieldName);
