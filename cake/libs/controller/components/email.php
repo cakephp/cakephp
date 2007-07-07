@@ -86,6 +86,14 @@ class EmailComponent extends Object{
  */
 	var $subject = null;
 /**
+ * Associative array of a user defined headers
+ * Keys will be prefixed 'X-' as per RFC822 Section 4.7.5
+ *
+ * @var array
+ * @access public
+ */
+	var $headers = array();
+/**
  * Enter description here...
  *
  * @var string
@@ -105,7 +113,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $template = 'default';
+	var $template = null;
 /**
  * Enter description here...
  *
@@ -148,7 +156,6 @@ class EmailComponent extends Object{
  * @access public
  */
 	var $filePaths = array();
-
 /**
  * SMTP options variable
  *
@@ -158,7 +165,6 @@ class EmailComponent extends Object{
 	var $smtpOptions = array('port'=> 25,
 							 'host' => 'localhost',
 							 'timeout' => 30);
-
 /**
  * SMTP errors variable
  *
@@ -215,7 +221,6 @@ class EmailComponent extends Object{
  * @access private
  */
 	var $__message = null;
-
 /**
  * Variable that holds SMTP connection
  *
@@ -223,7 +228,6 @@ class EmailComponent extends Object{
  * @access private
  */
 	var $__smtpConnection = null;
-	
 /**
  * Enter description here...
  *
@@ -240,11 +244,19 @@ class EmailComponent extends Object{
  * @return unknown
  * @access public
  */
-	function send($content = null) {
+	function send($content = null, $template = null, $layout = null) {
 		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
 
-		if ($this->template === null) {
+		if ($template) {
+			$this->template = $template;
+		}
+
+		if ($layout) {
+			$this->layout = $layout;
+		}
+
+		if ($template === null && $this->template === null) {
 			if (is_array($content)) {
 				$message = null;
 				foreach ($content as $key => $value) {
@@ -279,6 +291,7 @@ class EmailComponent extends Object{
  * @access public
  */
 	function reset() {
+		$this->template = null;
 		$this->to = null;
 		$this->from = null;
 		$this->replyTo = null;
@@ -301,6 +314,8 @@ class EmailComponent extends Object{
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
 		$View->layout = $this->layout;
+		$content = $this->__strip($content);
+
 		if ($this->sendAs === 'both') {
 			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
@@ -339,29 +354,36 @@ class EmailComponent extends Object{
  */
 	function __createHeader() {
 		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
+
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
 		}
 		if (!empty($this->return)) {
 			$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
 		}
-
 		$addresses = null;
+
 		if (!empty($this->cc)) {
 			foreach ($this->cc as $cc) {
-				$addresses .= $this->__formatAddress($cc) . ', ';
+				$addresses .= ', ' . $this->__formatAddress($cc);
 			}
-			$this->__header .= 'cc: ' . $addresses . $this->_newLine;
+			$this->__header .= 'cc: ' . substr($addresses, 2) . $this->_newLine;
 		}
 		$addresses = null;
+
 		if (!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
-				$addresses .= $this->__formatAddress($bcc) . ', ';
+				$addresses .= ', ' . $this->__formatAddress($bcc);
 			}
-			$this->__header .= 'Bcc: ' . $addresses . $this->_newLine;
+			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
-
 		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
+
+		if (!empty($this->headers)) {
+			foreach ($this->headers as $key => $val) {
+				$this->__header .= 'X-'.$key.': '.$val . $this->_newLine;
+			}
+		}
 
 		if (!empty($this->attachments) && $this->sendAs === 'text') {
 			$this->__createBoundary();
@@ -452,9 +474,11 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __wrap($message) {
+		$message = $this->__strip($message, true);
 		$message = str_replace(array('\r','\n'), '\n', $message);
 		$words = explode('\n', $message);
 		$formated = null;
+
 		foreach ($words as $word) {
 			$formated .= wordwrap($word, $this->_lineLength, "\n", true);
 			$formated .= "\n";
@@ -469,6 +493,8 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __encode($subject) {
+		$subject = $this->__strip($subject);
+
 		if (low($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
@@ -483,7 +509,6 @@ class EmailComponent extends Object{
 			$subject = preg_replace("/" . $spacer . "$/", "", $subject);
 			$subject = $start . $subject . $end;
 		}
-
 		return $subject;
 	}
 /**
@@ -498,7 +523,26 @@ class EmailComponent extends Object{
 			$value = explode('<', $string);
 			$string = $this->__encode($value[0]) . ' <' . $value[1];
 		}
-		return $string;
+		return $this->__strip($string);
+	}
+/**
+ * Enter description here...
+ *
+ * @param string $value
+ * @param boolean $message
+ * @return unknown
+ * @access private
+ */
+	function __strip($value, $message = false) {
+		$search = array('/%0a/i', '/%0d/i', '/Content-Type\:/i',
+							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
+							'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
+
+		if($message === false) {
+			array_pop($search);
+			array_pop($search);
+		}
+		return preg_replace($search, '', $value);
 	}
 /**
  * Enter description here...
@@ -507,6 +551,9 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __mail() {
+		if (ini_get('safe_mode')) {
+			return @mail($this->to, $this->subject, $this->__message, $this->__header);
+		}
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
@@ -516,14 +563,14 @@ class EmailComponent extends Object{
  */
 	function __smtp() {
 		$response = $this->__smtpConnect($this->smtpOptions);
-		
+
 		if ($response['status'] == false) {
 			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
 			return false;
 		}
 
 		$this->__sendData("HELO cake\r\n", false);
-		
+
 		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
 			return false;
 		}
@@ -532,22 +579,21 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false); 
+		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false);
 		$this->__sendData("QUIT\r\n", false);
 		return true;
 	}
-
-	/**
-	 * Private method for connecting to an SMTP server
-	 *
-	 * @access private
-	 * @param array $options SMTP connection options
-	 * @return array
-	 */
+/**
+ * Private method for connecting to an SMTP server
+ *
+ * @access private
+ * @param array $options SMTP connection options
+ * @return array
+ */
 	function __smtpConnect($options) {
 		$status = true;
 		$this->__smtpConnection = @fsockopen($options['host'], $options['port'], $errno, $errstr, $options['timeout']);
-		
+
 		if ($this->__smtpConnection == false) {
 			$status = false;
 		}
@@ -556,35 +602,27 @@ class EmailComponent extends Object{
 					 'errno' => $errno,
 					 'errstr' => $errstr);
 	}
-		
-
-	/**
-	 * Private method for getting SMTP response
-	 */
+/**
+ * Private method for getting SMTP response
+ */
 	function __getSmtpResponse() {
 		$response = @fgets($this->__smtpConnection, 512);
 		return $response;
 	}
-
-	/**
-	 * Private method for sending data to SMTP connection
-	 *
-	 * @param string $data data to be sent to SMTP server
-	 * @param boolean $check check for response from server
-	 */
+/**
+ * Private method for sending data to SMTP connection
+ *
+ * @param string $data data to be sent to SMTP server
+ * @param boolean $check check for response from server
+ */
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
 		$response = $this->__getSmtpResponse();
 
-		/**
-		 * If there is a 250 in the response code, that means
-		 * everything went ok
-		 */	
 		if ($check == true && !stristr($response, '250')) {
 			$this->smtpError = $response;
 			return false;
 		}
-
 		return true;
 	}
 /**
@@ -595,7 +633,7 @@ class EmailComponent extends Object{
  */
 	function __debug() {
 		$fm = '<pre>';
-		
+
 		if ($this->delivery == 'smtp') {
 			$fm .= sprintf('%s %s', 'Host:', $this->smtpOptions['host']);
 			$fm .= sprintf('%s %s', 'Port:', $this->smtpOptions['port']);
