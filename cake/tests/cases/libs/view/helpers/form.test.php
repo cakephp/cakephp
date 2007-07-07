@@ -45,6 +45,7 @@ class ContactTestController extends Controller {
 }
 
 class Contact extends Model {
+
 	var $primaryKey = 'id';
 	var $useTable = false;
 	var $name = 'Contact';
@@ -193,8 +194,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->UserForm =& new UserForm();
 		$this->UserForm->OpenidUrl =& new OpenidUrl();
 
-		$data = array('UserForm' => array('name' => 'user'),
-							'OpenidUrl' => array('url' => 'http://www.cakephp.org'));
+		$data = array('UserForm' => array('name' => 'user'), 'OpenidUrl' => array('url' => 'http://www.cakephp.org'));
 
 		$result = $this->UserForm->OpenidUrl->create($data);
 		$this->assertTrue($result);
@@ -301,6 +301,23 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		unset($this->Form->data);
+
+		$this->Form->validationErrors['Model']['field'] = 'Badness!';
+		$result = $this->Form->input('Model.field');
+		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="" id="ModelField" /></div>';
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelField"[^<>]*>Field<\/label><input[^<>]+class="[^"]*form-error"[^<>]+\/><div[^<>]+class="error-message">Badness!<\/div><\/div>$/', $result);
+
+		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy'));
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelField"[^<>]*>Field<\/label><input[^<>]+class="[^"]*form-error"[^<>]+\/>A message to you, Rudy<div[^<>]+class="error-message">Badness!<\/div><\/div>$/', $result);
+
+		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy', 'error' => false));
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelField"[^<>]*>Field<\/label><input[^<>]+class="[^"]*form-error"[^<>]+\/>A message to you, Rudy<\/div>$/', $result);
+
+		unset($this->Form->validationErrors['Model']['field']);
+		$result = $this->Form->input('Model.field', array('after' => 'A message to you, Rudy'));
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelField"[^<>]*>Field<\/label><input[^<>]+\/>A message to you, Rudy<\/div>$/', $result);
+		$this->assertNoPattern('/form-error/', $result);
+		$this->assertNoPattern('/error-message/', $result);
 	}
 
 	function testLabel() {
@@ -644,12 +661,22 @@ class FormHelperTest extends CakeTestCase {
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
+		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
 
+		/*
+		 * This is how you write tests for tag-based output.
+		 */
 		$result = $this->Form->input('name');
-		$this->assertPattern('/^<div class="input">' .
-												 '<label for="ContactName">Name<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>'.
-												 '<\/div>$/', $result);
+		$this->assertPattern('/^<div[^<>]+><label[^<>]+>Name<\/label><input [^<>]+ \/><\/div>$/', $result);
+		$this->assertPattern('/^<div[^<>]+class="input">/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactName">/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]+\/>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|maxlength|name|type|value]=[^<>]*>/', $result);
+
 		$result = $this->Form->input('Address.street');
 		$this->assertPattern('/^<div class="input">' .
 												 '<label for="AddressStreet">Street<\/label>' .

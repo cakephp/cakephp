@@ -140,7 +140,6 @@ class FormHelper extends AppHelper {
 		$view->modelId = $id;
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
-			'id' => $model . ife($created, 'Edit', 'Add') . 'Form',
 			'action' => null,
 			'url' => null,
 			'default' => true),
@@ -652,9 +651,11 @@ class FormHelper extends AppHelper {
 			break;
 		}
 
-		if ($type != 'hidden' && $error !== false) {
-			$out .= $this->error($fieldName, $error);
+		if ($type != 'hidden') {
 			$out .= $after;
+			if ($error !== false) {
+				$out .= $this->error($fieldName, $error);
+			}
 		}
 		if (isset($divOptions)) {
 			$out = $this->Html->div($divOptions['class'], $out, $divOptions);
