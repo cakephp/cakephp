@@ -60,7 +60,7 @@ class Folder extends Object{
  * @var boolean
  * @access public
  */
-	var $mode = '755';
+	var $mode = 0755;
 /**
  * holds messages from last method.
  *
@@ -89,7 +89,7 @@ class Folder extends Object{
 		}
 
 		if ($mode) {
-			$this->mode = strval($mode);
+			$this->mode = intval($mode, 8);
 		}
 
 		if (!file_exists($path) && $create == true) {
