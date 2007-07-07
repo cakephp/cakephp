@@ -319,6 +319,7 @@ class View extends Object {
 		if (!$action) {
 			$action = $this->action;
 		}
+		$tempLayout = $this->layout;
 
 		if ($layout) {
 			$this->layout = $layout;
@@ -348,6 +349,7 @@ class View extends Object {
 				}
 
 				print $out;
+				$this->layout = $tempLayout;
 				$this->hasRendered = true;
 			} else {
 				$out = $this->_render($viewFileName, $this->viewVars);
