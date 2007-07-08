@@ -500,9 +500,8 @@
 				} else {
 					return false;
 				}
-			} else {
-				return false;
 			}
+			return false;
 		}
 		return true;
 	}
