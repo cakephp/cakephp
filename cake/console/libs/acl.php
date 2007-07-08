@@ -218,7 +218,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$id = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
+		$id = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
 		$nodes = $this->Acl->{$class}->getPath($id);
 		if (empty($nodes)) {
 			$this->error(sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), __("No tree returned.", true));
@@ -235,8 +235,8 @@ class AclShell extends Shell {
 	function grant() {
 		$this->_checkArgs(3, 'grant');
 		//add existence checks for nodes involved
-		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
-		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
+		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
+		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
 		if ($this->Acl->allow($aro, $aco, $this->args[2])) {
 			$this->out(__("Permission granted.", true), true);
 		}
@@ -249,8 +249,8 @@ class AclShell extends Shell {
 	function deny() {
 		$this->_checkArgs(3, 'deny');
 		//add existence checks for nodes involved
-		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
-		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
+		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
+		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
 		$this->Acl->deny($aro, $aco, $this->args[2]);
 		$this->out(__("Requested permission successfully denied.", true), true);
 	}
@@ -261,8 +261,8 @@ class AclShell extends Shell {
  */
 	function inherit() {
 		$this->_checkArgs(3, 'inherit');
-		$aro = (is_numeric($this->args[0])) ? intval($this->args[0]) : $this->args[0];
-		$aco = (is_numeric($this->args[1])) ? intval($this->args[1]) : $this->args[1];
+		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
+		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
 		$this->Acl->inherit($aro, $aco, $this->args[2]);
 		$this->out(__("Requested permission successfully inherited.", true), true);
 	}
@@ -276,7 +276,8 @@ class AclShell extends Shell {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (isset($this->args[1]) && !is_null($this->args[1])) {
-			$conditions = $this->Acl->{$class}->_resolveID($this->args[1]);
+			$key = ife(is_numeric($this->args[1]), $secondary_id, 'alias');
+			$conditions = array($class . '.' . $key => $this->args[1]);
 		} else {
 			$conditions = null;
 		}
@@ -450,10 +451,17 @@ class AclShell extends Shell {
  * @return boolean Success
  * @access public
  */
-	function nodeExists($type, $id) {
-		extract($this->__dataVars($type));
-		$conditions = $this->Acl->{$class}->_resolveID($id);
+	function nodeExists() {
+		if (!$this->checkNodeType() && !isset($this->args[1])) {
+			return false;
+		}
+		extract($this->__dataVars($this->args[0]));
+		$key = (ife(is_numeric($this->args[1]), $secondary_id, 'alias'));
+		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->findAll($conditions);
+		if (empty($possibility)) {
+			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
+		}
 		return $possibility;
 	}
 
@@ -470,7 +478,7 @@ class AclShell extends Shell {
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = ($class == 'aro' ? 'foreign_key' : 'object_id');
+		$vars['secondary_id'] = ife(strtolower($class) == 'aro', 'foreign_key', 'object_id');
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;
