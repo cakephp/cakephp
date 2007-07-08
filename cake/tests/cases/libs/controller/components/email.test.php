@@ -49,21 +49,27 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testBadSmtpSend() {
-		$this->Controller->Email->smtpOptions['host'] = 'blah';
-		$this->assertFalse($this->Controller->Email->send('Should not work'));
+		if(@fsockopen('localhost', 25)) {
+			$this->skipUnless(@fsockopen('localhost', 25), 'Must be able to connect to localhost port');
+			$this->Controller->Email->smtpOptions['host'] = 'blah';
+			$this->assertFalse($this->Controller->Email->send('Should not work'));
+		} else {
+			$this->skipUnless(@fsockopen('localhost', 25), 'Must be able to connect to localhost port');
+		}
 	}
 
 	function testSmtpSend() {
-		$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
-		$this->Controller->Email->reset();
-		$this->Controller->Email->to = 'chartjes@localhost';
-		$this->Controller->Email->subject = 'Cake SMTP test';
-		$this->Controller->Email->replyTo = 'noreply@example.com';
-		$this->Controller->Email->from = 'noreply@example.com';
-		$this->Controller->Email->delivery = 'smtp';
-		$this->Controller->Email->template = null;
-		$this->assertTrue($this->Controller->Email->send("This is the body of the message"));
+		if(@fsockopen('localhost', 25)) {
+			$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
+			$this->Controller->Email->reset();
+			$this->Controller->Email->to = 'chartjes@localhost';
+			$this->Controller->Email->subject = 'Cake SMTP test';
+			$this->Controller->Email->replyTo = 'noreply@example.com';
+			$this->Controller->Email->from = 'noreply@example.com';
+			$this->Controller->Email->delivery = 'smtp';
+			$this->Controller->Email->template = null;
+			$this->assertTrue($this->Controller->Email->send("This is the body of the message"));
+		}
 	}
-
 }
 ?>
