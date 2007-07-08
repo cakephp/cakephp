@@ -622,7 +622,7 @@ class TreeBehavior extends ModelBehavior {
 
 		if (empty ($parentId)) {
 			$this->__sync($model, $edge - $node[$left] + 1, '+', "BETWEEN {$node[$left]} AND {$node[$right]}", $scope);
-			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', "> $node[$left]", $scope);
+			$this->__sync($model, $node[$right] - $node[$left] + 1, '-', "> {$node[$left]}", $scope);
 		} else {
 			list($parentNode)= array_values($model->find(array($scope, $model->escapeField() => $parentId),
 										array($model->primaryKey, $left, $right), null, -1));
@@ -639,7 +639,7 @@ class TreeBehavior extends ModelBehavior {
 				return false;
 			}
 			if (empty ($node[$left]) && empty ($node[$right])) {
-				$this->__sync($model, 2, '+', ">= $parentNode[$right]}", $scope);
+				$this->__sync($model, 2, '+', ">= {$parentNode[$right]}", $scope);
 				$model->save(array($left => $parentNode[$right], $right => $parentNode[$right] + 1, $parent => $parentId), false);
 			} else {
 				$this->__sync($model, $edge - $node[$left] +1, '+', "BETWEEN {$node[$left]} AND {$node[$right]}", $scope);
