@@ -318,9 +318,9 @@ class AclShell extends Shell {
 		$sql = " CREATE TABLE ".$db->fullTableName('acos')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." default '' NOT NULL,
+				".$db->name('model')." ".$db->column($db->columns['string'])." default '',
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." default '' NOT NULL,
+				".$db->name('alias')." ".$db->column($db->columns['string'])." default '',
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
@@ -333,9 +333,9 @@ class AclShell extends Shell {
 		$sql2 = "CREATE TABLE ".$db->fullTableName('aros')." (
 				".$db->name('id')." ".$db->column($db->columns['primary_key']).",
 				".$db->name('parent_id')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('model')." ".$db->column($db->columns['string'])." default '' NOT NULL,
+				".$db->name('model')." ".$db->column($db->columns['string'])." default '',
 				".$db->name('foreign_key')." ".$db->column($db->columns['integer'])." default NULL,
-				".$db->name('alias')." ".$db->column($db->columns['string'])." default '' NOT NULL,
+				".$db->name('alias')." ".$db->column($db->columns['string'])." default '',
 				".$db->name('lft')." ".$db->column($db->columns['integer'])." default NULL,
 				".$db->name('rght')." ".$db->column($db->columns['integer'])." default NULL,
 				PRIMARY KEY  (".$db->name('id').")
