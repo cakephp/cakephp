@@ -54,8 +54,9 @@ class BakeShell extends Shell {
 		$this->out('[M]odel');
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
+		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C')));
+		$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C', 'Q')));
 		switch($classToBake) {
 			case 'M':
 				$this->Model->execute();
@@ -65,6 +66,9 @@ class BakeShell extends Shell {
 				break;
 			case 'C':
 				$this->Controller->execute();
+				break;
+			case 'Q':
+				exit(0);
 				break;
 			default:
 				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
