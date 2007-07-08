@@ -59,23 +59,21 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		$working = $this->params['working'];
-		$app = basename($working);
-		$root = dirname($working) . DS;
-
 		if ($project) {
-			if ($project{0} != '/') {
-				$root = $working;
+			if ($project{0} == DS || $project{0} == '/') {
+				$app = basename($project);
+				$root = dirname($project);
+			} else {
 				$app = $project;
-			}
-			if ($root{strlen($root) -1} != '/') {
-				$root = $root . DS;
+				$root = $this->params['root'] . DS;
 			}
 
-			$path = $root . $app;
+			$root = str_replace(DS . DS, DS, $root . DS);
+
+			$project = $root . $app;
 
 			$response = false;
-			while ($response == false && is_dir($path) === true && config('database') === true) {
+			while ($response == false && is_dir($project) === true && config('core') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
 				if (low($response) === 'n') {
 					$this->out('Bake Aborted');
@@ -94,7 +92,7 @@ class ProjectTask extends Shell {
 			$this->err('The directory path you supplied was not found. Please try again.');
 		}
 
-		$this->__buildDirLayout($path);
+		$this->__buildDirLayout($project);
 		exit();
 	}
 
@@ -163,7 +161,7 @@ class ProjectTask extends Shell {
 					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
 				}
 
-				if ($Folder->chmod($path . DS . 'tmp', 0777) === false) {
+				if (!$Folder->chmod($path . DS . 'tmp', 0777)) {
 					$this->err('Could path set permissions on '. $project . DS .'tmp' . DS . '*');
 					$this->out('You must manually check that these directories can be wrote to by the server');
 				}
