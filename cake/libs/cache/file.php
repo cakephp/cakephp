@@ -143,6 +143,8 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	function _getFilename($key) {
+		$file = new File($this->_dir);
+		$key = implode(DS, array_map(array($file , 'safe'), explode(DS, $key)));
 		$fullpath = $this->_dir . $key;
 		$directoryName = dirname($fullpath);
 		$fileName = $this->_prefix.basename($fullpath);
