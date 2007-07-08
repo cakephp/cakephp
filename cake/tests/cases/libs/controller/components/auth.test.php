@@ -29,7 +29,7 @@
 uses('controller' . DS . 'components' . DS .'auth');
 
 class AuthUser extends CakeTestModel {
-	var $name = 'User';
+	var $name = 'AuthUser';
 
 	function parentNode() {
 		return true;
@@ -52,6 +52,7 @@ class AuthTestController extends Controller {
 	}
 
 	function beforeFilter() {
+		$this->Auth->userModel = 'AuthUser';
 		$this->Auth->logoutAction = 'login';
 		$this->Auth->allow('logout');
 	}
@@ -67,7 +68,7 @@ class AuthTestController extends Controller {
 	}
 
 	function redirect() {
-		return true;
+		return false;
 	}
 
 	function isAuthorized() {
@@ -86,12 +87,14 @@ class AuthTest extends CakeTestCase {
 		set_error_handler('simpleTestErrorHandler');
 		ClassRegistry::addObject('view', new View($this->Controller));
 	}
-
 	function testIt(){
-		$this->User =& new AuthUser();
-		$user = $this->User->find();
+		$this->assertTrue(true);
+	}
+	function testAuthController(){
+		$this->AuthUser =& new AuthUser();
+		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
-		$this->Auth->authorize = 'controller';
+		$this->Controller->Auth->authorize = 'controller';
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(true);
 	}
@@ -100,17 +103,17 @@ class AuthTest extends CakeTestCase {
 	}
 
 	function testUserData() {
-		$this->User =& new AuthUser();
-		foreach ($this->User->findAll() as $key => $result) {
+		$this->AuthUser =& new AuthUser();
+		foreach ($this->AuthUser->findAll() as $key => $result) {
 			$result['User']['password'] = Security::hash(CAKE_SESSION_STRING . $result['User']['password']);
-			$this->User->save($result, false);
+			$this->AuthUser->save($result, false);
 		}
 
-		$authTestUser = $this->User->read();
+		$authTestUser = $this->AuthUser->read();
 		$data['User']['username'] = $authTestUser['User']['username'];
 		$data['User']['password'] = $authTestUser['User']['password'];
 
-		$this->Auth->authorize = 'Acl';
+		$this->Controller->Auth->authorize = 'Acl';
 		$this->Controller->Auth->startup($this->Controller);
 
 		$this->Controller->Auth->params['controller'] = 'AuthTest';
