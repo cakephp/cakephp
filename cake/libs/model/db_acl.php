@@ -70,6 +70,7 @@ class AclNode extends AppModel {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$type = $this->name;
 		$prefix = $this->tablePrefix;
+		$result = null;
 
 		if (!empty($this->useTable)) {
 			$table = $this->useTable;
@@ -84,14 +85,14 @@ class AclNode extends AppModel {
 			$start = $path[count($path) - 1];
 			unset($path[count($path) - 1]);
 
-			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
-			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
+			$query  = "SELECT {$type}.id, {$type}.parent_id, {$type}.model, {$type}.foreign_key, {$type}.alias FROM {$prefix}{$table} {$db->alias} {$type} ";
+			$query .=  "LEFT JOIN {$prefix}{$table} {$db->alias} {$type}0 ";
 			$query .= "ON {$type}0.alias = " . $db->value($start) . " ";
 
 			foreach ($path as $i => $alias) {
 				$j = $i - 1;
 				$k = $i + 1;
-				$query .= "LEFT JOIN {$prefix}{$table} AS {$type}{$k} ";
+				$query .= "LEFT JOIN {$prefix}{$table} {$db->alias} {$type}{$k} ";
 				$query .= "ON {$type}{$k}.lft > {$type}{$i}.lft AND {$type}{$k}.rght < {$type}{$i}.rght ";
 				$query .= "AND {$type}{$k}.alias = " . $db->value($alias) . " ";
 			}
@@ -129,8 +130,8 @@ class AclNode extends AppModel {
 					$ref["{$type}0.{$key}"] = $val;
 				}
 			}
-			$query  = "SELECT {$type}.* From {$prefix}{$table} AS {$type} ";
-			$query .=  "LEFT JOIN {$prefix}{$table} AS {$type}0 ";
+			$query  = "SELECT {$type}.id, {$type}.parent_id, {$type}.model, {$type}.foreign_key, {$type}.alias FROM {$prefix}{$table} {$db->alias} {$type} ";
+			$query .=  "LEFT JOIN {$prefix}{$table} {$db->alias} {$type}0 ";
 			$query .= "ON {$type}.lft <= {$type}0.lft AND {$type}.rght >= {$type}0.rght ";
 			$result = $this->query("{$query} " . $db->conditions($ref) ." ORDER BY {$type}.lft DESC", $this->cacheQueries);
 
