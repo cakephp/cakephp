@@ -26,282 +26,279 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-	}
-	require_once LIBS.'model'.DS.'model.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql.php';
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
+uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource', 'model'.DS.'datasources'.DS.'dbo_source',
+	'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Test extends Model {
+	var $useTable = false;
+	var $name = 'Test';
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Test extends Model {
-		var $useTable = false;
-		var $name = 'Test';
-
-		function loadInfo() {
-			return new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8'),
-				array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-				array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
-		}
-	}
-
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class TestValidate extends Model {
-		var $useTable = false;
-		var $name = 'TestValidate';
-
-		function validateNumber($value, $options) {
-			$options = am(array(
-				'min' => 0,
-				'max' => 100
-			), $options);
-
-			$valid = ($value >= $options['min'] && $value <= $options['max']);
-
-			return $valid;
-		}
-
-		function validateTitle($title) {
-			if (!empty($title) && strpos(low($title), 'title-') === 0) {
-				return true;
-			}
-
-			return false;
-		}
-
-		function loadInfo() {
-			return new Set(array(
-				array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'title', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-				array('name' => 'body', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'number', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-				array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-				array('name' => 'modified', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-			));
-		}
-	}
-
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class User extends CakeTestModel {
-		var $name = 'User';
-		var $validate = array(
-			'user' => VALID_NOT_EMPTY,
-			'password' => VALID_NOT_EMPTY
-		);
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Article extends CakeTestModel {
-		var $name = 'Article';
-		var $belongsTo = array('User');
-		var $hasMany = array(
-			'Comment' => array('className'=>'Comment', 'dependent' => true)
-		);
-		var $hasAndBelongsToMany = array('Tag');
-		var $validate = array(
-			'user_id' => VALID_NUMBER,
-			'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
-			'body' => VALID_NOT_EMPTY
-		);
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class ArticleFeatured extends CakeTestModel {
-		var $name = 'ArticleFeatured';
-		var $belongsTo = array('User', 'Category');
-		var $hasOne = array('Featured');
-		var $hasMany = array(
-			'Comment' => array('className'=>'Comment', 'dependent' => true)
-		);
-		var $hasAndBelongsToMany = array('Tag');
-		var $validate = array(
-			'user_id' => VALID_NUMBER,
-			'title' => VALID_NOT_EMPTY,
-			'body' => VALID_NOT_EMPTY
-		);
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Featured extends CakeTestModel {
-		var $name = 'Featured';
-		var $belongsTo = array(
-			'ArticleFeatured'=> array('className' => 'ArticleFeatured'),
-			'Category'=> array('className' => 'Category')
-		);
-	}
-
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Tag extends CakeTestModel {
-		var $name = 'Tag';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Comment extends CakeTestModel {
-		var $name = 'Comment';
-		var $belongsTo = array('Article', 'User');
-		var $hasOne = array(
-			'Attachment' => array('className'=>'Attachment', 'dependent' => true)
-		);
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Attachment extends CakeTestModel {
-		var $name = 'Attachment';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Category extends CakeTestModel {
-		var $name = 'Category';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class CategoryThread extends CakeTestModel {
-		var $name = 'CategoryThread';
-		var $belongsTo = array(
-			'ParentCategory' => array(
-				'className' => 'CategoryThread',
-				'foreignKey' => 'parent_id'
-			)
-		);
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Apple extends CakeTestModel {
-		var $name = 'Apple';
-		var $validate = array('name' => VALID_NOT_EMPTY);
-		var $hasOne = array('Sample');
-		var $hasMany = array('Child' => array(
-			'className' => 'Apple',
-			'dependent' => true
-		));
-		var $belongsTo = array('Parent' => array(
-			'className' => 'Apple',
-			'foreignKey' => 'apple_id'
+	function loadInfo() {
+		return new Set(array(
+			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8'),
+			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		));
 	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Sample extends CakeTestModel {
-		var $name = 'Sample';
-		var $belongsTo = 'Apple';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class AnotherArticle extends CakeTestModel {
-		var $name = 'AnotherArticle';
-		var $hasMany = 'Home';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Advertisement extends CakeTestModel {
-		var $name = 'Advertisement';
-		var $hasMany = 'Home';
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Home extends CakeTestModel {
-		var $name = 'Home';
-		var $belongsTo = array('AnotherArticle', 'Advertisement');
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Post extends CakeTestModel {
-		var $name = 'Post';
-		var $belongsTo = array('Author');
-	}
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.model
-	 */
-	class Author extends CakeTestModel {
-		var $name = 'Author';
-		var $hasMany = array('Post');
+}
 
-		function afterFind($results) {
-			$results[0]['Author']['test'] = 'working';
-			return $results;
-		}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class TestValidate extends Model {
+	var $useTable = false;
+	var $name = 'TestValidate';
+
+	function validateNumber($value, $options) {
+		$options = am(array(
+			'min' => 0,
+			'max' => 100
+		), $options);
+
+		$valid = ($value >= $options['min'] && $value <= $options['max']);
+
+		return $valid;
 	}
+
+	function validateTitle($title) {
+		if (!empty($title) && strpos(low($title), 'title-') === 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	function loadInfo() {
+		return new Set(array(
+			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			array('name' => 'title', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			array('name' => 'body', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
+			array('name' => 'number', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			array('name' => 'modified', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		));
+	}
+}
+
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class User extends CakeTestModel {
+	var $name = 'User';
+	var $validate = array(
+		'user' => VALID_NOT_EMPTY,
+		'password' => VALID_NOT_EMPTY
+	);
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Article extends CakeTestModel {
+	var $name = 'Article';
+	var $belongsTo = array('User');
+	var $hasMany = array(
+		'Comment' => array('className'=>'Comment', 'dependent' => true)
+	);
+	var $hasAndBelongsToMany = array('Tag');
+	var $validate = array(
+		'user_id' => VALID_NUMBER,
+		'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
+		'body' => VALID_NOT_EMPTY
+	);
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ArticleFeatured extends CakeTestModel {
+	var $name = 'ArticleFeatured';
+	var $belongsTo = array('User', 'Category');
+	var $hasOne = array('Featured');
+	var $hasMany = array(
+		'Comment' => array('className'=>'Comment', 'dependent' => true)
+	);
+	var $hasAndBelongsToMany = array('Tag');
+	var $validate = array(
+		'user_id' => VALID_NUMBER,
+		'title' => VALID_NOT_EMPTY,
+		'body' => VALID_NOT_EMPTY
+	);
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Featured extends CakeTestModel {
+	var $name = 'Featured';
+	var $belongsTo = array(
+		'ArticleFeatured'=> array('className' => 'ArticleFeatured'),
+		'Category'=> array('className' => 'Category')
+	);
+}
+
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Tag extends CakeTestModel {
+	var $name = 'Tag';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Comment extends CakeTestModel {
+	var $name = 'Comment';
+	var $belongsTo = array('Article', 'User');
+	var $hasOne = array(
+		'Attachment' => array('className'=>'Attachment', 'dependent' => true)
+	);
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Attachment extends CakeTestModel {
+	var $name = 'Attachment';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Category extends CakeTestModel {
+	var $name = 'Category';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class CategoryThread extends CakeTestModel {
+	var $name = 'CategoryThread';
+	var $belongsTo = array(
+		'ParentCategory' => array(
+			'className' => 'CategoryThread',
+			'foreignKey' => 'parent_id'
+		)
+	);
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Apple extends CakeTestModel {
+	var $name = 'Apple';
+	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $hasOne = array('Sample');
+	var $hasMany = array('Child' => array(
+		'className' => 'Apple',
+		'dependent' => true
+	));
+	var $belongsTo = array('Parent' => array(
+		'className' => 'Apple',
+		'foreignKey' => 'apple_id'
+	));
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Sample extends CakeTestModel {
+	var $name = 'Sample';
+	var $belongsTo = 'Apple';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class AnotherArticle extends CakeTestModel {
+	var $name = 'AnotherArticle';
+	var $hasMany = 'Home';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Advertisement extends CakeTestModel {
+	var $name = 'Advertisement';
+	var $hasMany = 'Home';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Home extends CakeTestModel {
+	var $name = 'Home';
+	var $belongsTo = array('AnotherArticle', 'Advertisement');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Post extends CakeTestModel {
+	var $name = 'Post';
+	var $belongsTo = array('Author');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Author extends CakeTestModel {
+	var $name = 'Author';
+	var $hasMany = array('Post');
+
+	function afterFind($results) {
+		$results[0]['Author']['test'] = 'working';
+		return $results;
+	}
+}
 /**
  * Short description for class.
  *

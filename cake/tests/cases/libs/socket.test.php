@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'socket.php';
+uses('socket');
 /**
  * Short description for class.
  *
@@ -36,27 +36,31 @@
 class SocketTest extends UnitTestCase {
 
 	function setUp() {
-		$this->socket = new CakeSocket();
+		$this->Socket = new CakeSocket();
 	}
 
 	function testSocketConnection() {
-		$this->assertFalse($this->socket->connected);
-		$this->socket->disconnect();
-		$this->assertFalse($this->socket->connected);
-		$this->socket->connect();
-		$this->assertTrue($this->socket->connected);
+		$this->assertFalse($this->Socket->connected);
+		$this->Socket->disconnect();
+		$this->assertFalse($this->Socket->connected);
+		$this->Socket->connect();
+		$this->assertTrue($this->Socket->connected);
 	}
 
 	function testSocketHost() {
-		$this->assertEqual($this->socket->address(), '127.0.0.1');
-		$this->assertPattern('/local/', $this->socket->host());
-		$this->assertEqual($this->socket->lastError(), null);
-		$this->assertTrue(in_array('127.0.0.1', $this->socket->addresses()));
+		$this->assertEqual($this->Socket->address(), '127.0.0.1');
+		$this->assertPattern('/local/', $this->Socket->host());
+		$this->assertEqual($this->Socket->lastError(), null);
+		$this->assertTrue(in_array('127.0.0.1', $this->Socket->addresses()));
 	}
 
 	function testSocketWriting() {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
-		$this->assertTrue($this->socket->write($request));
+		$this->assertTrue($this->Socket->write($request));
+	}
+	
+	function tearDown() {
+		unset($this->Socket);
 	}
 }
 ?>

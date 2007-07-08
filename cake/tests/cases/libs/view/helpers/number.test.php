@@ -26,9 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'../app_helper.php';
-	require_once LIBS.DS.'view'.DS.'helper.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'number.php';
+require_once CAKE.'app_helper.php';
+uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'number');
 /**
  * Short description for class.
  *
@@ -40,57 +39,57 @@ class NumberTest extends UnitTestCase {
 
 
 	function setUp() {
-		$this->Helper =& new NumberHelper();
+		$this->Number =& new NumberHelper();
 	}
 
 	function testFormatAndCurrency() {
 		$value = '100100100';
 
-		$result = $this->Helper->format($value, '#');
+		$result = $this->Number->format($value, '#');
 		$expected = '#100,100,100';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->format($value);
+		$result = $this->Number->format($value);
 		$expected = '100,100,100';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->format($value, '-');
+		$result = $this->Number->format($value, '-');
 		$expected = '100-100-100';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value);
+		$result = $this->Number->currency($value);
 		$expected = '$100,100,100.00';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value, '#');
+		$result = $this->Number->currency($value, '#');
 		$expected = '#100,100,100.00';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value, false);
+		$result = $this->Number->currency($value, false);
 		$expected = '100,100,100.00';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value, 'USD');
+		$result = $this->Number->currency($value, 'USD');
 		$expected = '$100,100,100.00';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value, 'EUR');
+		$result = $this->Number->currency($value, 'EUR');
 		$expected = '&#8364;100.100.100,00';
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Helper->currency($value, 'GBP');
+		$result = $this->Number->currency($value, 'GBP');
 		$expected = '&#163;100,100,100.00';
 		$this->assertEqual($expected, $result);
 	}
 
 	function testToReadableSize() {
-		$result = $this->Helper->toReadableSize(0);
+		$result = $this->Number->toReadableSize(0);
 		$expected = '0 Bytes';
 		$this->assertEqual($expected, $result);
 	}
 
 	function tearDown() {
-		unset($this->Helper);
+		unset($this->Number);
 	}
 }
 

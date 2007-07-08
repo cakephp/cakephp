@@ -26,52 +26,52 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-	}
-	require_once LIBS.'controller'.DS.'components'.DS.'acl.php';
-	require_once LIBS.'model'.DS.'db_acl.php';
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
-	 */
+uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
+
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+ */
 	class AclNodeTestBase extends AclNode {
 		var $useDbConfig = 'test_suite';
 	}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
-	 */
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+ */
 	class AroTest extends AclNodeTestBase {
 		var $name = 'AroTest';
 		var $useTable = 'aros';
 		var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
 	}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
-	 */
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+ */
 	class AcoTest extends AclNodeTestBase {
 		var $name = 'AcoTest';
 		var $useTable = 'acos';
 		var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
 	}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
-	 */
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+ */
 	class PermissionTest extends CakeTestModel {
 		var $name = 'PermissionTest';
 		var $useTable = 'aros_acos';
@@ -80,12 +80,12 @@
 		var $actsAs = null;
 	}
 
-	/**
-	 * Short description for class.
-	 *
-	 * @package		cake.tests
-	 * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
-	 */
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
+ */
 	class AcoActionTest extends CakeTestModel {
 		var $name = 'AcoActionTest';
 		var $useTable = 'aco_actions';
@@ -98,11 +98,11 @@
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
  */
-class AclNodeTest extends CakeTestCase {
-	var $fixtures = array( 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action' );
+	class AclNodeTest extends CakeTestCase {
+		var $fixtures = array( 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action' );
 
-	function testNodeNesting() {
+		function testNodeNesting() {
+		}
 	}
-}
 
 ?>

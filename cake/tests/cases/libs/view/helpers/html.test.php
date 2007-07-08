@@ -26,12 +26,9 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'../app_helper.php';
-	require_once LIBS.'class_registry.php';
-	require_once LIBS.DS.'view'.DS.'view.php';
-	require_once LIBS.DS.'view'.DS.'helper.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
-	require_once LIBS.DS.'controller'.DS.'controller.php';
+require_once CAKE.'app_helper.php';
+uses('class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 
+	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
 
 class TheHtmlTestController extends Controller {
 	var $name = 'TheTest';

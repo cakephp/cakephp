@@ -26,9 +26,8 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'../app_helper.php';
-	require_once LIBS.DS.'view'.DS.'helper.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'text.php';
+require_once CAKE.'app_helper.php';
+uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'text');
 /**
  * Short description for class.
  *
@@ -37,33 +36,33 @@
  */
 class TextTest extends UnitTestCase {
 	var $helper = null;
-	
-	
+
+
 	function setUp() {
-		$this->helper = new TextHelper();
+		$this->Text = new TextHelper();
 	}
 
 	function testHighlight() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
-		$result = $this->helper->highlight($text, $phrases, '<b>\1</b>');
+		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
 		$expected = '<b>This</b> is a test <b>text</b>';
 		$this->assertEqual($expected, $result);
 	}
-	
+
 	function testHighlightCaseInsensitivity() {
 		$text = 'This is a Test text';
 		$expected = 'This is a <b>Test</b> text';
-		
-		$result = $this->helper->highlight($text, 'test', '<b>\1</b>');
+
+		$result = $this->Text->highlight($text, 'test', '<b>\1</b>');
 		$this->assertEqual($expected, $result);
-		
-		$result = $this->helper->highlight($text, array('test'), '<b>\1</b>');
+
+		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
 		$this->assertEqual($expected, $result);
 	}
 
 	function tearDown() {
-		unset($this->helper);
+		unset($this->Text);
 	}
 }
 

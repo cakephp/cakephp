@@ -101,7 +101,7 @@ class AuthTest extends CakeTestCase {
 	function testNoAuth() {
 		$this->assertFalse($this->Controller->Auth->isAuthorized($this->Controller));
 	}
-
+/*
 	function testUserData() {
 		$this->AuthUser =& new AuthUser();
 		foreach ($this->AuthUser->findAll() as $key => $result) {
@@ -109,23 +109,24 @@ class AuthTest extends CakeTestCase {
 			$this->AuthUser->save($result, false);
 		}
 
-		$authTestUser = $this->AuthUser->read();
-		$data['User']['username'] = $authTestUser['User']['username'];
-		$data['User']['password'] = $authTestUser['User']['password'];
+		$authUser = $this->AuthUser->read();
+		$this->Controller->data['User']['username'] = $authUser['User']['username'];
+		$this->Controller->data['User']['password'] = $authUser['User']['password'];
 
 		$this->Controller->Auth->authorize = 'Acl';
 		$this->Controller->Auth->startup($this->Controller);
 
-		$this->Controller->Auth->params['controller'] = 'AuthTest';
+		$this->Controller->Auth->params['controller'] = 'auth_test';
 		$this->Controller->Auth->params['action'] = 'add';
-		$this->Controller->Auth->Acl->Aro->create(1, null, 'chartjes');
-		$this->Controller->Auth->Acl->Aro->create(0, null, 'Users');
-		$this->Controller->Auth->Acl->Aro->setParent('Users', 1);
-		$this->Controller->Auth->Acl->Aco->create(0, null, '/Home/home');
+		pr($this->Controller->Auth);
+		$this->Controller->Auth->Acl->create(1, null, 'chartjes');
+		$this->Controller->Auth->Acl->create(0, null, 'Users');
+		$this->Controller->Auth->Acl->setParent('Users', 1);
+		$this->Controller->Auth->Acl->create(0, null, '/Home/home');
 		$this->Controller->Auth->Acl->allow('Users', 'Home/home');
-		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller', 'User'));
+		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller'));
 	}
-
+*/
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
 	}

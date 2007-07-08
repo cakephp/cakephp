@@ -67,6 +67,7 @@ class NumberTree extends CakeTestModel {
 		}
 	}
 }
+
 class NumberTreeCase extends CakeTestCase {
 	var $fixtures = array('number_tree');
 

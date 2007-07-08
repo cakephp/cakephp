@@ -26,7 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once LIBS . '/controller/components/email.php';
+uses('controller' . DS . 'components' . DS .'email');
 
 class EmailTestController extends Controller {
 	var $name = 'EmailTest';

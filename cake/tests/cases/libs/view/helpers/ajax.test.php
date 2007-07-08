@@ -30,15 +30,9 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-require_once LIBS.'../app_helper.php';
-require_once LIBS.DS.'model'.DS.'model.php';
-require_once LIBS.DS.'view'.DS.'helper.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'ajax.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'javascript.php';
-require_once LIBS.DS.'controller'.DS.'controller.php';
-
+require_once CAKE.'app_helper.php';
+uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view'.DS.'helpers'.DS.'ajax',
+	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form', 'view'.DS.'helpers'.DS.'javascript');
 
 class AjaxTestController extends Controller {
 	var $name = 'AjaxTest';

@@ -26,7 +26,7 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'file.php';
+uses('file');
 /**
  * Short description for class.
  *
@@ -36,7 +36,7 @@
  */
 class FileTest extends UnitTestCase {
 
-	var $File;
+	var $File = null;
 
 	function testBasic() {
 

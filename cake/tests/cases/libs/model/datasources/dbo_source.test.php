@@ -26,13 +26,12 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-		define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-	}
-	require_once LIBS.'model'.DS.'model.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'datasource.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo_source.php';
-	require_once LIBS.'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql.php';
+if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
+	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
+}
+
+uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource',
+	'model'.DS.'datasources'.DS.'dbo_source', 'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
 /**
  * Short description for class.
  *
@@ -604,7 +603,7 @@ class DboTest extends DboMysql {
 class DboSourceTest extends UnitTestCase {
 
 	function setUp() {
-		require_once r('//', '/', APP) . 'config/database.php';
+		config('database');
 		$config = new DATABASE_CONFIG();
 		$this->db =& new DboTest($config->default);
 		$this->db->fullDebug = false;
@@ -1623,7 +1622,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions($conditions);
 		$expected = " WHERE `User`.`first_name` = 'Firstname' AND `User`.`last_name`  =  'Lastname'";
 		$this->assertEqual($result, $expected);
-		
+
 		$conditions = array(
 			'Thread.project_id' => 5,
 			'Thread.buyer_id' => 14,
@@ -1692,7 +1691,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->fields($this->model, null, 'COUNT(*)');
 		$expected = array('COUNT(*)');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->db->fields($this->model, null, 'SUM(Thread.unread_buyer) AS ' . $this->db->name('sum_unread_buyer'));
 		$expected = array('SUM(`Thread`.`unread_buyer`) AS `sum_unread_buyer`');
 		$this->assertEqual($result, $expected);

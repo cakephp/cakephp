@@ -30,14 +30,10 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-require_once LIBS.'../app_helper.php';
-require_once LIBS.'class_registry.php';
-require_once LIBS.DS.'view'.DS.'view.php';
-require_once LIBS.DS.'view'.DS.'helper.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
-require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
-require_once LIBS.DS.'controller'.DS.'controller.php';
-require_once LIBS.DS.'model'.DS.'model.php';
+require_once CAKE.'app_helper.php';
+uses('class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper',
+	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
+
 
 class ContactTestController extends Controller {
 	var $name = 'ContactTest';

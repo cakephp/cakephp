@@ -26,7 +26,7 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'folder.php';
+uses('folder');
 /**
  * Short description for class.
  *
@@ -35,6 +35,9 @@
  * @since      CakePHP Test Suite v 1.0.0.0
  */
 class FolderTest extends UnitTestCase {
+
+	var $Folder = null;
+
 	function testBasic() {
 		$path = dirname(__FILE__);
 		$this->Folder =& new Folder($path);
@@ -86,37 +89,37 @@ class FolderTest extends UnitTestCase {
 	function testOperations() {
 		$path = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 		$this->Folder =& new Folder($path);
-		
+
 		$result = is_dir($this->Folder->pwd());
 		$this->assertTrue($result);
-		
+
 		$new = TMP . 'test_folder_new';
 		$result = $this->Folder->create($new);
 		$this->assertTrue($result);
-		
+
 		$copy = TMP . 'test_folder_copy';
 		$result = $this->Folder->copy($copy);
 		$this->assertTrue($result);
-		
+
 		$copy = TMP . 'test_folder_copy';
 		$result = $this->Folder->chmod($copy, 0755);
 		$this->assertTrue($result);
-		
+
 		$result = $this->Folder->cd($copy);
 		$this->assertTrue($result);
-		
+
 		$mv = TMP . 'test_folder_mv';
 		$result = $this->Folder->move($mv);
 		$this->assertTrue($result);
-		
+
 		$result = $this->Folder->delete($new);
 		$this->assertTrue($result);
-		
+
 		$result = $this->Folder->delete($mv);
 		$this->assertTrue($result);
-		
+
 		//pr($this->Folder->messages());
-		
+
 		//pr($this->Folder->errors());
 	}
 }

@@ -26,7 +26,7 @@
  * @lastmodified $Date$
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'inflector.php';
+uses('inflector');
 /**
  * Short description for class.
  *
@@ -35,146 +35,147 @@
  * @since      CakePHP Test Suite v 1.0.0.0
  */
 class InflectorTest extends UnitTestCase {
+	
+	var $Inflector = null;
 
 	function setUp() {
-		$this->inflector = new Inflector();
+		$this->Inflector = new Inflector();
 	}
 
 	function testInflectingSingulars() {
-		$result = $this->inflector->singularize('menus');
+		$result = $this->Inflector->singularize('menus');
 		$expected = 'menu';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('food_menus');
+		$result = $this->Inflector->singularize('food_menus');
 		$expected = 'food_menu';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('Menus');
+		$result = $this->Inflector->singularize('Menus');
 		$expected = 'Menu';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('FoodMenus');
+		$result = $this->Inflector->singularize('FoodMenus');
 		$expected = 'FoodMenu';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('houses');
+		$result = $this->Inflector->singularize('houses');
 		$expected = 'house';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('powerhouses');
+		$result = $this->Inflector->singularize('powerhouses');
 		$expected = 'powerhouse';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('quizzes');
+		$result = $this->Inflector->singularize('quizzes');
 		$expected = 'quiz';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('Buses');
+		$result = $this->Inflector->singularize('Buses');
 		$expected = 'Bus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('buses');
+		$result = $this->Inflector->singularize('buses');
 		$expected = 'bus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('matrix_rows');
+		$result = $this->Inflector->singularize('matrix_rows');
 		$expected = 'matrix_row';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('matrices');
+		$result = $this->Inflector->singularize('matrices');
 		$expected = 'matrix';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('vertices');
+		$result = $this->Inflector->singularize('vertices');
 		$expected = 'vertex';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('indices');
+		$result = $this->Inflector->singularize('indices');
 		$expected = 'index';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('Aliases');
+		$result = $this->Inflector->singularize('Aliases');
 		$expected = 'Alias';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('Alias');
+		$result = $this->Inflector->singularize('Alias');
 		$expected = 'Alias';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->singularize('Media');
+		$result = $this->Inflector->singularize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
 	}
 
 	function testInflectingPlurals() {
-		$result = $this->inflector->pluralize('house');
+		$result = $this->Inflector->pluralize('house');
 		$expected = 'houses';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('powerhouse');
+		$result = $this->Inflector->pluralize('powerhouse');
 		$expected = 'powerhouses';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('Bus');
+		$result = $this->Inflector->pluralize('Bus');
 		$expected = 'Buses';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('bus');
+		$result = $this->Inflector->pluralize('bus');
 		$expected = 'buses';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('menu');
+		$result = $this->Inflector->pluralize('menu');
 		$expected = 'menus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('food_menu');
+		$result = $this->Inflector->pluralize('food_menu');
 		$expected = 'food_menus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('Menu');
+		$result = $this->Inflector->pluralize('Menu');
 		$expected = 'Menus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('FoodMenu');
+		$result = $this->Inflector->pluralize('FoodMenu');
 		$expected = 'FoodMenus';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('quiz');
+		$result = $this->Inflector->pluralize('quiz');
 		$expected = 'quizzes';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('matrix_row');
+		$result = $this->Inflector->pluralize('matrix_row');
 		$expected = 'matrix_rows';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('matrix');
+		$result = $this->Inflector->pluralize('matrix');
 		$expected = 'matrices';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('vertex');
+		$result = $this->Inflector->pluralize('vertex');
 		$expected = 'vertices';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('index');
+		$result = $this->Inflector->pluralize('index');
 		$expected = 'indices';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('Alias');
+		$result = $this->Inflector->pluralize('Alias');
 		$expected = 'Aliases';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('Aliases');
+		$result = $this->Inflector->pluralize('Aliases');
 		$expected = 'Aliases';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->inflector->pluralize('Media');
+		$result = $this->Inflector->pluralize('Media');
 		$expected = 'Media';
 		$this->assertEqual($result, $expected);
 	}
 
 	function tearDown() {
-		unset($this->inflector);
+		unset($this->Inflector);
 	}
 }
-
 ?>

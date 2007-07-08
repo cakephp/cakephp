@@ -33,6 +33,10 @@ uses('http_socket');
  *
  */
 class HttpSocketTest extends UnitTestCase {
+
+	var $Socket = null;
+
+	var $RequestSocket = null;
 /**
  * This function sets up a TestHttpSocket instance we are going to use for testing
  *
@@ -972,6 +976,6 @@ class HttpSocketTest extends UnitTestCase {
 		}
 		$this->assertIdentical($return, true);
 	}
-}
 
+}
 ?>

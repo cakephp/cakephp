@@ -26,11 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	uses('router', 'debugger');
+uses('router', 'debugger');
 
-	if (!defined('CAKE_ADMIN')) {
-		define('CAKE_ADMIN', 'admin');
-	}
+if (!defined('CAKE_ADMIN')) {
+	define('CAKE_ADMIN', 'admin');
+}
 /**
  * Short description for class.
  *

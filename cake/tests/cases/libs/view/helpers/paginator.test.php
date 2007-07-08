@@ -26,13 +26,9 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'../app_helper.php';
-	require_once LIBS.DS.'view'.DS.'helper.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'html.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'ajax.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'javascript.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'form.php';
-	require_once LIBS.DS.'view'.DS.'helpers'.DS.'paginator.php';
+require_once CAKE.'app_helper.php';
+uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form',
+	'view'.DS.'helpers'.DS.'ajax', 'view'.DS.'helpers'.DS.'javascript', 'view'.DS.'helpers'.DS.'paginator');
 /**
  * Short description for class.
  *
@@ -42,8 +38,8 @@
 class PaginatorTest extends UnitTestCase {
 
 	function setUp() {
-		$this->paginator = new PaginatorHelper();
-		$this->paginator->params['paging'] = array(
+		$this->Paginator = new PaginatorHelper();
+		$this->Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
 				'count' => 62,
@@ -63,26 +59,26 @@ class PaginatorTest extends UnitTestCase {
 				)
 			)
 		);
-		$this->paginator->Html =& new HtmlHelper();
-		$this->paginator->Ajax =& new AjaxHelper();
-		$this->paginator->Ajax->Html =& new HtmlHelper();
-		$this->paginator->Ajax->Javascript =& new JavascriptHelper();
-		$this->paginator->Ajax->Form =& new FormHelper();
+		$this->Paginator->Html =& new HtmlHelper();
+		$this->Paginator->Ajax =& new AjaxHelper();
+		$this->Paginator->Ajax->Html =& new HtmlHelper();
+		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
+		$this->Paginator->Ajax->Form =& new FormHelper();
 
 	}
 
 	function testHasPrevious() {
-		$this->assertIdentical($this->paginator->hasPrev(), false);
-		$this->paginator->params['paging']['Article']['prevPage'] = true;
-		$this->assertIdentical($this->paginator->hasPrev(), true);
-		$this->paginator->params['paging']['Article']['prevPage'] = false;
+		$this->assertIdentical($this->Paginator->hasPrev(), false);
+		$this->Paginator->params['paging']['Article']['prevPage'] = true;
+		$this->assertIdentical($this->Paginator->hasPrev(), true);
+		$this->Paginator->params['paging']['Article']['prevPage'] = false;
 	}
 
 	function testHasNext() {
-		$this->assertIdentical($this->paginator->hasNext(), true);
-		$this->paginator->params['paging']['Article']['nextPage'] = false;
-		$this->assertIdentical($this->paginator->hasNext(), false);
-		$this->paginator->params['paging']['Article']['nextPage'] = true;
+		$this->assertIdentical($this->Paginator->hasNext(), true);
+		$this->Paginator->params['paging']['Article']['nextPage'] = false;
+		$this->assertIdentical($this->Paginator->hasNext(), false);
+		$this->Paginator->params['paging']['Article']['nextPage'] = true;
 	}
 
 	function testSortLinks() {
@@ -91,20 +87,20 @@ class PaginatorTest extends UnitTestCase {
 			array ('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0, 'webservices' => null),
 			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
 		));
-		$this->paginator->options(array('url' => array('param')));
-		$result = $this->paginator->sort('title');
+		$this->Paginator->options(array('url' => array('param')));
+		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc"\s*>Title<\/a>$/', $result);
 
-		$result = $this->paginator->sort('date');
+		$result = $this->Paginator->sort('date');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:date\/direction:desc"\s*>Date<\/a>$/', $result);
 
-		$result = $this->paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
+		$result = $this->Paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
 		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
 
 	function tearDown() {
-		unset($this->paginator);
+		unset($this->Paginator);
 	}
 }
 

@@ -26,18 +26,17 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once LIBS.'view'.DS.'view.php';
-	require_once LIBS.'controller'.DS.'controller.php';
+uses('controller' . DS . 'controller', 'view'.DS.'view');
 
-	class PostsController extends Controller {
-		var $name = 'Posts';
-		function index() {
-			$this->set('testData', 'Some test data');
-			$test2 = 'more data';
-			$test3 = 'even more data';
-			$this->set(compact('test2', 'test3'));
-		}
+class PostsController extends Controller {
+	var $name = 'Posts';
+	function index() {
+		$this->set('testData', 'Some test data');
+		$test2 = 'more data';
+		$test3 = 'even more data';
+		$this->set(compact('test2', 'test3'));
 	}
+}
 
 /**
  * Short description for class.
