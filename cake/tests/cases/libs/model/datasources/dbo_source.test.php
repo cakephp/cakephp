@@ -1695,6 +1695,18 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->fields($this->model, null, 'SUM(Thread.unread_buyer) AS ' . $this->db->name('sum_unread_buyer'));
 		$expected = array('SUM(`Thread`.`unread_buyer`) AS `sum_unread_buyer`');
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'name, count(*)');
+		$expected = array('`TestModel`.`name`', 'count(*)');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'count(*), name');
+		$expected = array('count(*)', '`TestModel`.`name`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, 'field1, field2, field3, count(*), name');
+		$expected = array('`TestModel`.`field1`', '`TestModel`.`field2`', '`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`');
+		$this->assertEqual($result, $expected);
 	}
 
  	function testMergeAssociations() {

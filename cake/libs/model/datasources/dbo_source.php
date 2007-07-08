@@ -1354,7 +1354,7 @@ class DboSource extends DataSource {
 				$results = array();
 				$length = strlen($fields);
 
-				while ($offset < $length) {
+				while ($offset <= $length) {
 					$tmpOffset = -1;
 					$offsets = array(strpos($fields, ',', $offset), strpos($fields, '(', $offset), strpos($fields, ')', $offset));
 					for ($i = 0; $i < 3; $i++) {
@@ -1379,7 +1379,7 @@ class DboSource extends DataSource {
 						$offset = ++$tmpOffset;
 					} else {
 						$results[] = $buffer . substr($fields, $offset);
-						$offset = $length;
+						$offset = $length + 1;
 					}
 				}
 				if (empty($results) && !empty($buffer)) {
