@@ -260,7 +260,7 @@ class CacheHelper extends AppHelper {
 						$this->loaded[$camelBackedHelper] = (${$camelBackedHelper});
 					}
 					?>';
-        $content = preg_replace("/((<\\?)|(\\?>))/", "<?php echo '$1';?>", $content);
+        $content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
         $file .= $content;
         return cache('views' . DS . $cache, $file, $timestamp);
 	 }
