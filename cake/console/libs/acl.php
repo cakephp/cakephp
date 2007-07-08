@@ -163,7 +163,11 @@ class AclShell extends Shell {
 				'foreign_key' => $matches[2],
 			);
 		} else {
-			$data = array('alias' => $this->args[2]);
+			if (!($this->args[2] == '/')) {
+				$data = array('alias' => $this->args[2]);
+			} else {
+				$this->error(__('/ can not be used as an alias!', true), __('\t/ is the root, please supply a sub alias', true));
+			}
 		}
 
 		$data['parent_id'] = $parent;
