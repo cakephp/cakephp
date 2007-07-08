@@ -1051,6 +1051,11 @@
 		}
 
 		switch ($key) {
+			case 'SCRIPT_FILENAME':
+				if (defined('SERVER_IIS') && SERVER_IIS === true){
+					return str_replace('\\\\', '\\', env('PATH_TRANSLATED') );
+				}
+			break;
 			case 'DOCUMENT_ROOT':
 				$offset = 0;
 				if (!strpos(env('SCRIPT_NAME'), '.php')) {
