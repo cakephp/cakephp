@@ -28,9 +28,9 @@
  */
 uses('controller' . DS . 'components' . DS .'auth');
 
-class User extends CakeTestModel {
+class AuthUser extends CakeTestModel {
 	var $name = 'User';
-	
+
 	function parentNode() {
 		return true;
 	}
@@ -42,9 +42,9 @@ class User extends CakeTestModel {
 
 class AuthTestController extends Controller {
 	var $name = 'AuthTest';
-	var $uses = array('User'); 
+	var $uses = array('AuthUser');
 	var $components = array('Auth', 'Acl');
-	
+
 	function __construct() {
 		$this->params = Router::parse('/auth_test');
 		Router::setRequestInfo(array($this->params, array('base' => '/', 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
@@ -65,11 +65,11 @@ class AuthTestController extends Controller {
 
 	function add() {
 	}
-	
+
 	function redirect() {
 		return true;
 	}
-	
+
 	function isAuthorized() {
 		return true;
 	}
@@ -77,8 +77,8 @@ class AuthTestController extends Controller {
 
 class AuthTest extends CakeTestCase {
 	var $name = 'Auth';
-	var $fixtures = array('core.user', 'core.aco', 'core.aro', 'core.aros_aco');
-	
+	var $fixtures = array('core.auth_user', 'core.aco', 'core.aro', 'core.aros_aco');
+
 	function setUp() {
 		$this->Controller =& new AuthTestController();
 		restore_error_handler();
@@ -86,9 +86,9 @@ class AuthTest extends CakeTestCase {
 		set_error_handler('simpleTestErrorHandler');
 		ClassRegistry::addObject('view', new View($this->Controller));
 	}
-	
+
 	function testIt(){
-		$this->User =& new User();
+		$this->User =& new AuthUser();
 		$user = $this->User->find();
 		$this->Controller->Session->write('Auth', $user);
 		$this->Auth->authorize = 'controller';
@@ -98,21 +98,21 @@ class AuthTest extends CakeTestCase {
 	function testNoAuth() {
 		$this->assertFalse($this->Controller->Auth->isAuthorized($this->Controller));
 	}
-	
+
 	function testUserData() {
-		$this->User =& new User();
+		$this->User =& new AuthUser();
 		foreach ($this->User->findAll() as $key => $result) {
 			$result['User']['password'] = Security::hash(CAKE_SESSION_STRING . $result['User']['password']);
-			$this->User->save($result, false);		
+			$this->User->save($result, false);
 		}
-		
+
 		$authTestUser = $this->User->read();
 		$data['User']['username'] = $authTestUser['User']['username'];
 		$data['User']['password'] = $authTestUser['User']['password'];
-		
+
 		$this->Auth->authorize = 'Acl';
 		$this->Controller->Auth->startup($this->Controller);
-		
+
 		$this->Controller->Auth->params['controller'] = 'AuthTest';
 		$this->Controller->Auth->params['action'] = 'add';
 		$this->Controller->Auth->Acl->Aro->create(1, null, 'chartjes');
@@ -122,9 +122,9 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->Acl->allow('Users', 'Home/home');
 		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller', 'User'));
 	}
-	
+
 	function tearDown() {
-		unset($this->Controller, $this->User);
+		unset($this->Controller, $this->AuthUser);
 	}
 }
 ?>
