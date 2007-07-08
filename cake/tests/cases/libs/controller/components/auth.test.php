@@ -26,42 +26,11 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once LIBS . '/controller/components/auth.php';
+uses('controller' . DS . 'components' . DS .'auth');
 
-class AuthTestUser extends CakeTestModel {
-	var $name = 'AuthTestUser';
-}
-
-class AuthTestController extends Controller {
-	var $name = 'AuthTest';
-	var $uses = 'AuthTestUser'; 
-	var $components = array('Auth', 'Acl');
-
-	function beforeFilter() {
-		$this->Auth->userModel('AuthTestUser');
-		$this->Auth->logoutAction = 'login';
-		$this->Auth->allow('logout');
-		$this->Auth->authorize = 'controller';
-	}
-
-	function login() {
-	}
-
-	function logout() {
-		$this->redirect($this->Auth->logout());
-	}
-
-	function add() {
-	}
-
-	function redirect($url) {
-		return $url;
-	}
-
-	function isAuthorized() {
-		return true;
-	}
-
+class User extends CakeTestModel {
+	var $name = 'User';
+	
 	function parentNode() {
 		return true;
 	}
@@ -71,35 +40,79 @@ class AuthTestController extends Controller {
 	}
 }
 
-loadModel('AuthTestUser');
+class AuthTestController extends Controller {
+	var $name = 'AuthTest';
+	var $uses = array('User'); 
+	var $components = array('Auth', 'Acl');
+	
+	function __construct() {
+		$this->params = Router::parse('/auth_test');
+		Router::setRequestInfo(array($this->params, array('base' => '/', 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
+		parent::__construct();
+	}
+
+	function beforeFilter() {
+		$this->Auth->logoutAction = 'login';
+		$this->Auth->allow('logout');
+	}
+
+	function login() {
+	}
+
+	function logout() {
+		//$this->redirect($this->Auth->logout());
+	}
+
+	function add() {
+	}
+	
+	function redirect() {
+		return true;
+	}
+	
+	function isAuthorized() {
+		return true;
+	}
+}
 
 class AuthTest extends CakeTestCase {
 	var $name = 'Auth';
-	var $fixtures = array('auth_test_user', 'aco', 'aro', 'aros_aco');
-
-	function startCase() {
+	var $fixtures = array('core.user', 'core.aco', 'core.aro', 'core.aros_aco');
+	
+	function setUp() {
 		$this->Controller =& new AuthTestController();
 		restore_error_handler();
 		@$this->Controller->_initComponents();
 		set_error_handler('simpleTestErrorHandler');
-		$this->Controller->Auth->startup(&$this->Controller);
 		ClassRegistry::addObject('view', new View($this->Controller));
-		$this->AuthTestUser = new AuthTestUser;
 	}
-
+	
+	function testIt(){
+		$this->User =& new User();
+		$user = $this->User->find();
+		$this->Controller->Session->write('Auth', $user);
+		$this->Auth->authorize = 'controller';
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue(true);
+	}
 	function testNoAuth() {
 		$this->assertFalse($this->Controller->Auth->isAuthorized($this->Controller));
 	}
-
+	
 	function testUserData() {
-		foreach ($this->AuthTestUser->findAll() as $key => $result) {
-			$result['AuthTestUser']['password'] = Security::hash(CAKE_SESSION_STRING . $result['AuthTestUser']['password']);
-			$this->AuthTestUser->save($result, false);		
+		$this->User =& new User();
+		foreach ($this->User->findAll() as $key => $result) {
+			$result['User']['password'] = Security::hash(CAKE_SESSION_STRING . $result['User']['password']);
+			$this->User->save($result, false);		
 		}
-
-		$authTestUser = $this->AuthTestUser->read();
-		$data['AuthTestUser']['username'] = $authTestUser['AuthTestUser']['username'];
-		$data['AuthTestUser']['password'] = $authTestUser['AuthTestUser']['password'];
+		
+		$authTestUser = $this->User->read();
+		$data['User']['username'] = $authTestUser['User']['username'];
+		$data['User']['password'] = $authTestUser['User']['password'];
+		
+		$this->Auth->authorize = 'Acl';
+		$this->Controller->Auth->startup($this->Controller);
+		
 		$this->Controller->Auth->params['controller'] = 'AuthTest';
 		$this->Controller->Auth->params['action'] = 'add';
 		$this->Controller->Auth->Acl->Aro->create(1, null, 'chartjes');
@@ -107,8 +120,11 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->Acl->Aro->setParent('Users', 1);
 		$this->Controller->Auth->Acl->Aco->create(0, null, '/Home/home');
 		$this->Controller->Auth->Acl->allow('Users', 'Home/home');
-		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller', 'AuthTestUser'));
+		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller', 'User'));
+	}
 	
+	function tearDown() {
+		unset($this->Controller, $this->User);
 	}
 }
 ?>
