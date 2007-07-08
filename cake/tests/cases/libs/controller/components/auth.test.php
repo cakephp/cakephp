@@ -36,7 +36,7 @@ class AuthUser extends CakeTestModel {
 	}
 
 	function bindNode($object) {
-		return 'Roles/User';
+		return 'Roles/Admin';
 	}
 }
 
@@ -47,13 +47,11 @@ class AuthTestController extends Controller {
 
 	function __construct() {
 		$this->params = Router::parse('/auth_test');
-		Router::setRequestInfo(array($this->params, array('base' => '/', 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
+		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
 		parent::__construct();
 	}
 
 	function beforeFilter() {
-		$this->Auth->userModel = 'AuthUser';
-		$this->Auth->logoutAction = 'login';
 		$this->Auth->allow('logout');
 	}
 
@@ -69,6 +67,7 @@ class AuthTestController extends Controller {
 
 	function redirect() {
 		return false;
+		exit();
 	}
 
 	function isAuthorized() {
@@ -90,43 +89,95 @@ class AuthTest extends CakeTestCase {
 	function testIt(){
 		$this->assertTrue(true);
 	}
+
+	function testNoAuth() {
+		$this->assertFalse($this->Controller->Auth->isAuthorized());
+	}
+
+	function testLogin() {
+		$this->AuthUser =& new AuthUser();
+		$user['id'] = 1;
+		$user['username'] = 'mariano';
+		$user['password'] = Security::hash(CAKE_SESSION_STRING . 'cake');
+		$this->AuthUser->save($user, false);
+
+		$authUser = $this->AuthUser->find();
+
+		$this->Controller->data['AuthUser']['username'] = $authUser['AuthUser']['username'];
+		$this->Controller->data['AuthUser']['password'] = 'cake';
+
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$this->assertEqual($user, array('AuthUser'=>array('id'=>1, 'username'=>'mariano', 'created'=> '2007-03-17 01:16:23', 'updated'=> date('Y-m-d H:i:s'))));
+		$this->Controller->Session->del('Auth');
+	}
+
 	function testAuthController(){
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->authorize = 'controller';
-		$this->Controller->Auth->startup($this->Controller);
-		$this->assertTrue(true);
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result);
+		$this->Controller->Session->del('Auth');
 	}
-	function testNoAuth() {
-		$this->assertFalse($this->Controller->Auth->isAuthorized($this->Controller));
-	}
-/*
-	function testUserData() {
+
+	function testAuthWithDB_ACL() {
 		$this->AuthUser =& new AuthUser();
-		foreach ($this->AuthUser->findAll() as $key => $result) {
-			$result['User']['password'] = Security::hash(CAKE_SESSION_STRING . $result['User']['password']);
-			$this->AuthUser->save($result, false);
-		}
+		$user = $this->AuthUser->find();
+		$this->Controller->Session->write('Auth', $user);
 
-		$authUser = $this->AuthUser->read();
-		$this->Controller->data['User']['username'] = $authUser['User']['username'];
-		$this->Controller->data['User']['password'] = $authUser['User']['password'];
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
 
-		$this->Controller->Auth->authorize = 'Acl';
+		$this->Controller->Acl->startup($this->Controller);
+
+		$this->Controller->Acl->Aro->id = null;
+		$this->Controller->Acl->Aro->create(array('alias'=>'Roles'));
+		$this->Controller->Acl->Aro->save();
+		$this->Controller->Acl->Aro->create(array('alias'=>'Admin'));
+		$this->Controller->Acl->Aro->save();
+		$this->Controller->Acl->Aro->create(array('model'=>'AuthUser', 'foreign_key'=>'1', 'alias'=> 'mariano'));
+		$this->Controller->Acl->Aro->save();
+		$this->Controller->Acl->Aro->setParent(1, 2);
+		$this->Controller->Acl->Aro->setParent(2, 3);
+
+		$this->Controller->Acl->Aco->create(array('alias'=>'Root'));
+		$this->Controller->Acl->Aco->save();
+		$this->Controller->Acl->Aco->create(array('alias'=>'AuthTest'));
+		$this->Controller->Acl->Aco->save();
+		$this->Controller->Acl->Aco->setParent(1, 2);
+
+		$this->Controller->Acl->allow('Roles/Admin', 'Root');
+		$this->Controller->Acl->allow('Roles/Admin', 'Root/AuthTest');
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->authorize = 'crud';
+		$this->Controller->Auth->actionPath = 'Root/';
+
 		$this->Controller->Auth->startup($this->Controller);
 
-		$this->Controller->Auth->params['controller'] = 'auth_test';
-		$this->Controller->Auth->params['action'] = 'add';
-		pr($this->Controller->Auth);
-		$this->Controller->Auth->Acl->create(1, null, 'chartjes');
-		$this->Controller->Auth->Acl->create(0, null, 'Users');
-		$this->Controller->Auth->Acl->setParent('Users', 1);
-		$this->Controller->Auth->Acl->create(0, null, '/Home/home');
-		$this->Controller->Auth->Acl->allow('Users', 'Home/home');
-		$this->assertTrue($this->Controller->Auth->isAuthorized($this->Controller, 'controller'));
+
+		$this->assertTrue($this->Controller->Auth->isAuthorized());
+
+
+		$this->Controller->Session->del('Auth');
+		$this->Controller->Acl->Aro->execute('truncate users;');
+		$this->Controller->Acl->Aro->execute('truncate aros;');
+		$this->Controller->Acl->Aro->execute('truncate acos;');
+		$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
-*/
+
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
 	}

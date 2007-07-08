@@ -564,6 +564,15 @@ class Controller extends Object {
 		call_user_func_array(array(&$this, $action), $args);
 	}
 /**
+ * contoroller callback to tie into Auth component.
+ *
+ * @return bool
+ */
+ 	function isAuthorized() {
+		trigger_error(__($this->name.'::isAuthorized() is not defined.', true), E_USER_WARNING);
+		return false;
+	}
+/**
  * Returns number of errors in a submitted FORM.
  *
  * @return int Number of errors

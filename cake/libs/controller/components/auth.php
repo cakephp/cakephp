@@ -46,7 +46,16 @@ class AuthComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('Session', 'Acl', 'RequestHandler');
+	var $components = array('Session', 'RequestHandler');
+/**
+ * The name of the component to use for Authorization or set this to 'controller'
+ * and the Controller::isAuthorized() method will be used
+ * The component used for Authorization should have a "check" method
+ *
+ * @var string
+ * @access public
+ */
+	var $authorize = 'Acl';
 /**
  * The name of an optional view element to render when an Ajax request is made
  * with an invalid or expired session
@@ -62,13 +71,6 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $userModel = 'User';
-/**
- * The name of the model that represents objects which users can be authorized for against.
- *
- * @var string
- * @access public
- */
-	var $objectModel = null;
 /**
  * Additional query conditions to use when looking up and authenticating users,
  * i.e. array('User.is_active' => 1).
@@ -133,14 +135,13 @@ class AuthComponent extends Object {
  */
 	var $logoutRedirect = null;
 /**
- * The type of automatic ACL validation to perform, where 'actions' validates
- * the controller action of the current request, 'objects' validates against
- * model objects accessed, and null prevents automatic validation.
+ * The name of the model that represents objects which users can be authorized for against.
  *
  * @var string
  * @access public
  */
-	var $validate = 'actions';
+	var $objectModel = null;
+
 /**
  * Error to display when user login fails.  For security purposes, only one error is used for all
  * login failures, so as not to expose information on why the login failed.
@@ -249,9 +250,11 @@ class AuthComponent extends Object {
 		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
 			return;
 		}
+
 		if (!$this->__setDefaults()) {
-			return;
+			return false;
 		}
+
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
 
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
@@ -269,35 +272,65 @@ class AuthComponent extends Object {
 				if (!$this->Session->check('Auth.redirect')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
 				}
-				return;
+				return false;
 			}
 			$data = array(
 				$this->userModel . '.' . $this->fields['username'] => '= ' . $controller->data[$this->userModel][$this->fields['username']],
 				$this->userModel . '.' . $this->fields['password'] => '= ' . $controller->data[$this->userModel][$this->fields['password']]
 			);
+
 			if ($this->login($data) && $this->autoRedirect) {
 				$controller->redirect($this->redirect(), null, true);
+				return true;
 			} else {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
 				unset($controller->data[$this->userModel][$this->fields['password']]);
 			}
-			return;
+			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect($this->_normalizeURL($this->loginAction));
+					$controller->redirect($this->_normalizeURL($this->loginAction), null, true);
+					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
 					$controller->render($this->ajaxLogin, 'ajax');
+					exit();
 				}
-				exit();
 			}
 		}
-		if (!$this->isAuthorized($controller)) {
-			$this->Session->setFlash($this->authError);
-			$controller->redirect($controller->referer(), null, true);
+		extract($this->__authType($this->authorize));
+		if($type !== 'controller') {
+			if(isset($controller->Acl)) {
+				$this->Acl =& $controller->Acl;
+				if($type == 'model') {
+					if(!isset($object)) {
+						if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+							$object = $controller->modelClass;
+						} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+							$object = $controller->uses[0];
+						} else {
+							$object = $this->objectModel;
+						}
+					}
+				}
+				if ($this->isAuthorized($type, null, $object)) {
+					return true;
+				}
+			} else {
+				trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+			}
+		} else {
+			if (method_exists($controller, 'isAuthorized')) {
+				if($controller->isAuthorized()) {
+					return true;
+				}
+			}
 		}
+		$this->Session->setFlash($this->authError);
+		$controller->redirect($controller->referer(), null, true);
+		return false;
 	}
 /**
  * Attempts to introspect the correct values for object properties including
@@ -313,7 +346,7 @@ class AuthComponent extends Object {
 			return false;
 		}
 		if (empty($this->loginAction)) {
-			$this->loginAction = Inflector::underscore(Inflector::pluralize($this->userModel)) . '/login';
+			$this->loginAction = Router::url(array('controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)), 'action'=>'login'));
 		}
 		if (empty($this->sessionKey)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
@@ -333,27 +366,17 @@ class AuthComponent extends Object {
  * @param string $type
  * @return boolean True if $user is authorized, otherwise false
  */
-	function isAuthorized(&$controller, $type = null, $user = null) {
+	function isAuthorized($type = null, $user = null, $object = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
 		} elseif (empty($user)) {
 			$user = $this->user();
 		}
+
 		extract($this->__authType($type));
 
-		if (($type == 'objects' || $type == 'association')) {
-			if (!isset($this->params['id'])) {
-				return;
-			} elseif (empty($this->objectModel)) {
-				if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-					$this->objectModel = $controller->modelClass;
-				} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-					$this->objectModel = $controller->uses[0];
-				} else {
-					trigger_error(__('Could not find $objectModel.  Please set AuthComponent::$objectModel in beforeFilter().', true), E_USER_WARNING);
-					return;
-				}
-			}
+		if(!$object) {
+			$object = $this->objectModel;
 		}
 
 		$valid = false;
@@ -361,13 +384,7 @@ class AuthComponent extends Object {
 			case 'actions':
 				$valid = $this->Acl->check($user, $this->action());
 			break;
-			case 'objects':
-
-			break;
-			case 'association':
-
-			break;
-			case 'controller':
+			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
 					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '" in controller "' . $this->params['controller'] . '"', E_USER_WARNING);
@@ -375,12 +392,26 @@ class AuthComponent extends Object {
 					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
 			break;
+			case 'model':
+				if(empty($object)) {
+					trigger_error(__('Could not find $this->objectModel.  Please set AuthComponent::$objectModel in beforeFilter().', true), E_USER_WARNING);
+					return;
+				}
+				$model = $this->getModel($object);
+				if (method_exists($model, 'isAuthorized')) {
+					if($model->isAuthorized()) {
+						return true;
+					}
+				} else {
+					trigger_error(__($object.'::isAuthorized() is not defined.', true), E_USER_WARNING);
+				}
+			break;
 			case null:
 			case false:
 				return true;
 			break;
 			default:
-				trigger_error(__('Auth::startup() - $validate is set to an incorrect value.  Allowed settings are: "controller", "actions", "objects", "association" or null.', true), E_USER_WARNING);
+				trigger_error(__('Auth::startup() - $authorize is set to an incorrect value.  Allowed settings are:  "actions", "crud", "model" or null.', true), E_USER_WARNING);
 			break;
 		}
 		return $valid;
@@ -393,21 +424,19 @@ class AuthComponent extends Object {
  */
 	function __authType($auth = null) {
 		if (empty($auth)) {
-			$auth = $this->validate;
+			$auth = $this->authorize;
 		}
-		$object = $assoc = null;
-
+		$object = null;
 		if (is_array($auth)) {
 			$type = key($auth);
 			$object = $auth[$type];
-
 			if (isset($auth[0])) {
 				$assoc = $auth[0];
 			}
 		} else {
 			$type = $auth;
 		}
-		return compact('type', 'object', 'assoc');
+		return compact('type', 'object');
 	}
 /**
  * Takes a list of actions in the current controller for which authentication is not required, or
@@ -518,6 +547,7 @@ class AuthComponent extends Object {
 		if (!$this->Session->check($this->sessionKey)) {
 			return null;
 		}
+
 		if ($key == null) {
 			return array($this->userModel => $this->Session->read($this->sessionKey));
 		} else {
@@ -566,7 +596,7 @@ class AuthComponent extends Object {
  */
 	function validate($object, $user = null, $action = null) {
 		if (empty($user)) {
-			$this->getUserModel();
+			$this->getModel();
 			$user = $this->user();
 		}
 		if (empty($user)) {
@@ -597,32 +627,34 @@ class AuthComponent extends Object {
  * @access public
  * @return object A reference to a model object.
  */
-	function &getUserModel() {
-		$user = null;
-
-		if (!ClassRegistry::isKeySet($this->userModel)) {
-			if (!loadModel(Inflector::underscore($this->userModel))) {
-				trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found', true) . $this->userModel, E_USER_WARNING);
+	function &getModel($name = null) {
+		$model = null;
+		if(!$name) {
+			$name = $this->userModel;
+		}
+		if (!ClassRegistry::isKeySet($name)) {
+			if (!loadModel(Inflector::underscore($name))) {
+				trigger_error(__('Auth::getModel() - $userModel is not set or could not be found', true) . $name, E_USER_WARNING);
 				return null;
 			} else {
-				$model = $this->userModel;
-				$user = new $model();
+				$model = new $name();
 			}
 		}
 
-		if (empty($user)) {
+		if (empty($model)) {
 			if (PHP5) {
-				$user = ClassRegistry::getObject($this->userModel);
+				$model = ClassRegistry::getObject($name);
 			} else {
-				$user =& ClassRegistry::getObject($this->userModel);
+				$model =& ClassRegistry::getObject($name);
 			}
 		}
 
-		if (empty($user)) {
-			trigger_error(__('Auth::getUserModel() - $userModel is not set or could not be found', true) . $this->userModel, E_USER_WARNING);
+		if (empty($model)) {
+			trigger_error(__('Auth::getModel() - $name is not set or could not be found', true) . $name, E_USER_WARNING);
 			return null;
 		}
-		return $user;
+
+		return $model;
 	}
 /**
  * Identifies a user based on specific criteria.
@@ -667,7 +699,8 @@ class AuthComponent extends Object {
 					$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
 				);
 			}
-			$model =& $this->getUserModel();
+			$model =& $this->getModel();
+
 			$data = $model->find(am($find, $this->userScope), null, null, -1);
 
 			if (empty($data) || empty($data[$this->userModel])) {
@@ -675,7 +708,7 @@ class AuthComponent extends Object {
 			}
 		} elseif (is_numeric($user)) {
 			// Assume it's a user's ID
-			$model =& $this->getUserModel();
+			$model =& $this->getModel();
 			$data = $model->find(am(array($model->escapeField() => $user), $this->userScope));
 
 			if (empty($data) || empty($data[$this->userModel])) {
@@ -701,7 +734,7 @@ class AuthComponent extends Object {
 	function hashPasswords($data) {
 		if (isset($data[$this->userModel])) {
 			if (!empty($data[$this->userModel][$this->fields['username']]) && !empty($data[$this->userModel][$this->fields['password']])) {
-				$model =& $this->getUserModel();
+				$model =& $this->getModel();
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}
 		}
@@ -735,9 +768,13 @@ class AuthComponent extends Object {
 	function _normalizeURL($url = '/') {
 		if (is_array($url)) {
 			$url = Router::url($url);
-			$paths = Router::getPaths();
+		}
+
+		$paths = Router::getPaths();
+		if(stristr($url, $paths['base'])) {
 			$url = r($paths['base'], '', $url);
 		}
+
 		$url = '/' . $url . '/';
 
 		while (strpos($url, '//') !== false) {

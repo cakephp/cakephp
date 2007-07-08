@@ -232,9 +232,7 @@ class Dispatcher extends Object {
 			$controller->namedArgs = true;
 		}
 		if (!empty($controller->params['pass'])) {
-			$controller->passed_args =& $controller->params['pass'];
 			$controller->passedArgs =& $controller->params['pass'];
-
 			if ($controller->namedArgs === true) {
 				$controller->namedArgs = array();
 				$c = count($controller->passedArgs);
@@ -265,9 +263,7 @@ class Dispatcher extends Object {
 				$controller->namedArgs = am($namedArgs, $controller->namedArgs);
 			}
 		} else {
-			$controller->passed_args = null;
 			$controller->passedArgs = null;
-			/* set default namedArgs if they exist*/
 			if ($controller->namedArgs === true) {
 				$controller->passedArgs = array();
 				$controller->namedArgs = array();
@@ -292,6 +288,7 @@ class Dispatcher extends Object {
 				$controller->layout = $params['layout'];
 			}
 		}
+
 		foreach (array('components', 'helpers') as $var) {
 			if (isset($params[$var]) && !empty($params[$var]) && is_array($controller->{$var})) {
 				$diff = array_diff($params[$var], $controller->{$var});
@@ -302,7 +299,6 @@ class Dispatcher extends Object {
 		if (!is_null($controller->webservices)) {
 			array_push($controller->components, $controller->webservices);
 			array_push($controller->helpers, $controller->webservices);
-			$component =& new Component($controller);
 		}
 		Router::setRequestInfo(array($params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		$controller->_initComponents();
