@@ -662,7 +662,12 @@ class Set extends Object {
 
 		return array_combine($keys, $vals);
 	}
-
+/**
+ * Converts an object into an array
+ *
+ * @param object $object
+ * @return array
+ */
 	function reverse($object) {
 		if (is_object($object)) {
 			$merge = array();
