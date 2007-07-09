@@ -86,6 +86,10 @@ class AuthTest extends CakeTestCase {
 	var $name = 'Auth';
 	var $fixtures = array('core.auth_user', 'core.aco', 'core.aro', 'core.aros_aco');
 
+	function skip() {
+		$this->skipIf(true, 'Auth tests currently disabled, to test use a clean database with tables needed for acl and comment out this line');
+	}
+
 	function setUp() {
 		$this->Controller =& new AuthTestController();
 		restore_error_handler();
@@ -125,7 +129,7 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($user, array('AuthUser'=>array('id'=>1, 'username'=>'mariano', 'created'=> '2007-03-17 01:16:23', 'updated'=> date('Y-m-d H:i:s'))));
 		$this->Controller->Session->del('Auth');
 	}
-	
+
 	function testAuthFalse() {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
@@ -135,7 +139,7 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 	}
-	
+
 	function testAuthController(){
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
