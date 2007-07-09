@@ -19,7 +19,7 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
- * @subpackage		cake.tests.cases.libs.model
+ * @subpackage		cake.tests.cases.libs
  * @since			CakePHP(tm) v 1.2.0.4206
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
@@ -33,8 +33,8 @@ uses('set');
 /**
  * UnitTestCase for the Set class
  *
- * @package		cake
- * @subpackage	cake.cake.libs
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs
  */
 class SetTest extends UnitTestCase {
 

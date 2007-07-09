@@ -72,9 +72,12 @@ class Sanitize{
  */
 	function escape($string, $connection = 'default') {
 		$db = ConnectionManager::getDataSource($connection);
-		$value = substr($db->value($string), 1);
-		$value = substr($value, 0, -1);
-		return $value;
+		if(is_numeric($string)) {
+			return $string;
+		}
+		$string = substr($db->value($string), 1);
+		$string = substr($string, 0, -1);
+		return $string;
 	}
 /**
  * Returns given string safe for display as HTML. Renders entities.
