@@ -548,6 +548,9 @@ class DboOracle extends DboSource {
 			break;
 			default:
 				$data2 = str_replace("'", "''", $data);
+				if (is_numeric($data)) {
+					return $data2;
+				}
 				return "'".$data2."'";
 			break;
 		}
