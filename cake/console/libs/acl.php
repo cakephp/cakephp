@@ -98,7 +98,8 @@ class AclShell extends Shell {
 
 			if (!in_array($this->command, array('initdb'))) {
 				$this->Acl = new AclComponent();
-				$this->db =& ConnectionManager::getDataSource($this->dataSource);
+				$controller = null;
+				$this->Acl->startup($controller);
 			}
 		}
 	}
