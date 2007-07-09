@@ -300,34 +300,38 @@ class AuthComponent extends Object {
 				}
 			}
 		}
-		extract($this->__authType($this->authorize));
-		if($type !== 'controller') {
-			if(isset($controller->Acl)) {
-				$this->Acl =& $controller->Acl;
-				if($type == 'model') {
-					if(!isset($object)) {
-						if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-							$object = $controller->modelClass;
-						} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-							$object = $controller->uses[0];
-						} else {
-							$object = $this->objectModel;
+
+		if($this->authorize) {
+			extract($this->__authType($this->authorize));
+			if($type !== 'controller') {
+				if(isset($controller->Acl)) {
+					$this->Acl =& $controller->Acl;
+					if($type == 'model') {
+						if(!isset($object)) {
+							if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+								$object = $controller->modelClass;
+							} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+								$object = $controller->uses[0];
+							} else {
+								$object = $this->objectModel;
+							}
 						}
 					}
-				}
-				if ($this->isAuthorized($type, null, $object)) {
-					return true;
+					if ($this->isAuthorized($type, null, $object)) {
+						return true;
+					}
+				} else {
+					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
 				}
 			} else {
-				trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
-			}
-		} else {
-			if (method_exists($controller, 'isAuthorized')) {
-				if($controller->isAuthorized()) {
-					return true;
+				if (method_exists($controller, 'isAuthorized')) {
+					if($controller->isAuthorized()) {
+						return true;
+					}
 				}
 			}
 		}
+
 		$this->Session->setFlash($this->authError);
 		$controller->redirect($controller->referer(), null, true);
 		return false;
