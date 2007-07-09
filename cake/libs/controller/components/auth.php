@@ -267,7 +267,6 @@ class AuthComponent extends Object {
 		}
 
 		if ($this->_normalizeURL($this->loginAction) == $this->_normalizeURL($url)) {
-			// We're already at the login action
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
 				if (!$this->Session->check('Auth.redirect')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
@@ -302,39 +301,40 @@ class AuthComponent extends Object {
 		}
 
 		if($this->authorize) {
-			extract($this->__authType($this->authorize));
-			if($type !== 'controller') {
+			extract($this->__authType());
+			if(in_array($type, array('crud', 'actions'))) {
 				if(isset($controller->Acl)) {
 					$this->Acl =& $controller->Acl;
-					if($type == 'model') {
-						if(!isset($object)) {
-							if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-								$object = $controller->modelClass;
-							} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-								$object = $controller->uses[0];
-							} else {
-								$object = $this->objectModel;
-							}
-						}
-					}
-					if ($this->isAuthorized($type, null, $object)) {
+					if ($this->isAuthorized($type)) {
 						return true;
 					}
 				} else {
 					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
 				}
-			} else {
-				if (method_exists($controller, 'isAuthorized')) {
-					if($controller->isAuthorized()) {
-						return true;
+			} else if($type == 'model') {
+				if(!isset($object)) {
+					if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+						$object = $controller->modelClass;
+					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+						$object = $controller->uses[0];
+					} else {
+						$object = $this->objectModel;
 					}
 				}
+				if ($this->isAuthorized($type, null, $object)) {
+					return true;
+				}
+			} else if($type == 'controller'){
+				if($controller->isAuthorized()) {
+					return true;
+				}
 			}
+			$this->Session->setFlash($this->authError);
+			$controller->redirect($controller->referer(), null, true);
+			return false;
+		} else {
+			return true;
 		}
-
-		$this->Session->setFlash($this->authError);
-		$controller->redirect($controller->referer(), null, true);
-		return false;
 	}
 /**
  * Attempts to introspect the correct values for object properties including
@@ -377,7 +377,7 @@ class AuthComponent extends Object {
 			$user = $this->user();
 		}
 
-		extract($this->__authType($type));
+		extract($this->__authType(array($type => $object)));
 
 		if(!$object) {
 			$object = $this->objectModel;
@@ -391,23 +391,23 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error('Auth::startup() - Attempted access of un-mapped action "' . $this->params['action'] . '" in controller "' . $this->params['controller'] . '"', E_USER_WARNING);
+					trigger_error(__(sprintf('Auth::startup() - Attempted access of un-mapped action "%s" in controller "%s"', $this->params['action'], $this->params['controller']), true), E_USER_WARNING);
 				} else {
 					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
 			break;
 			case 'model':
 				if(empty($object)) {
-					trigger_error(__('Could not find $this->objectModel.  Please set AuthComponent::$objectModel in beforeFilter().', true), E_USER_WARNING);
+					trigger_error(__(sprintf('Could not find %s.  Set AuthComponent::$objectModel in beforeFilter() or pass object name.', $this->objectModel), true), E_USER_WARNING);
 					return;
 				}
 				$model = $this->getModel($object);
 				if (method_exists($model, 'isAuthorized')) {
-					if($model->isAuthorized()) {
+					if($model->isAuthorized($user)) {
 						return true;
 					}
-				} else {
-					trigger_error(__($object.'::isAuthorized() is not defined.', true), E_USER_WARNING);
+				} else if($model){
+					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', $model), true), E_USER_WARNING);
 				}
 			break;
 			case null:
@@ -415,7 +415,7 @@ class AuthComponent extends Object {
 				return true;
 			break;
 			default:
-				trigger_error(__('Auth::startup() - $authorize is set to an incorrect value.  Allowed settings are:  "actions", "crud", "model" or null.', true), E_USER_WARNING);
+				trigger_error(__('Auth::startup() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.', true), E_USER_WARNING);
 			break;
 		}
 		return $valid;
@@ -638,8 +638,8 @@ class AuthComponent extends Object {
 		}
 		if (!ClassRegistry::isKeySet($name)) {
 			if (!loadModel(Inflector::underscore($name))) {
-				trigger_error(__('Auth::getModel() - $userModel is not set or could not be found', true) . $name, E_USER_WARNING);
-				return null;
+				trigger_error(__(sprintf('Auth::getModel() - %s is not set or could not be found', $name), true), E_USER_WARNING);
+				return $model;
 			} else {
 				$model = new $name();
 			}
@@ -654,7 +654,7 @@ class AuthComponent extends Object {
 		}
 
 		if (empty($model)) {
-			trigger_error(__('Auth::getModel() - $name is not set or could not be found', true) . $name, E_USER_WARNING);
+			trigger_error(__(sprintf('Auth::getModel() - %s is not set or could not be found', $name), true) . $name, E_USER_WARNING);
 			return null;
 		}
 

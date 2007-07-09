@@ -38,6 +38,13 @@ class AuthUser extends CakeTestModel {
 	function bindNode($object) {
 		return 'Roles/Admin';
 	}
+
+	function isAuthorized($user) {
+		if(!empty($user)) {
+			return true;
+		}
+		return false;
+	}
 }
 
 class AuthTestController extends Controller {
@@ -118,7 +125,17 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($user, array('AuthUser'=>array('id'=>1, 'username'=>'mariano', 'created'=> '2007-03-17 01:16:23', 'updated'=> date('Y-m-d H:i:s'))));
 		$this->Controller->Session->del('Auth');
 	}
-
+	
+	function testAuthFalse() {
+		$this->AuthUser =& new AuthUser();
+		$user = $this->AuthUser->find();
+		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->authorize = false;
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result);
+	}
+	
 	function testAuthController(){
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
@@ -128,6 +145,17 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
 		$this->Controller->Session->del('Auth');
+	}
+
+	function testAuthorizeModel() {
+		$this->AuthUser =& new AuthUser();
+		$user = $this->AuthUser->find();
+		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->authorize = array('model'=>'AuthUser');
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($result);
 	}
 
 	function testAuthWithDB_ACL() {
@@ -172,11 +200,11 @@ class AuthTest extends CakeTestCase {
 
 
 		$this->Controller->Session->del('Auth');
-		$this->Controller->Acl->Aro->execute('truncate users;');
 		$this->Controller->Acl->Aro->execute('truncate aros;');
 		$this->Controller->Acl->Aro->execute('truncate acos;');
 		$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
+
 
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
