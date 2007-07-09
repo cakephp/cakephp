@@ -72,7 +72,8 @@ class Sanitize{
  */
 	function escape($string, $connection = 'default') {
 		$db = ConnectionManager::getDataSource($connection);
-		$value = trim($db->value($string), '\'');
+		$value = substr($db->value($string), 1);
+		$value = substr($value, 0, -1);
 		return $value;
 	}
 /**
