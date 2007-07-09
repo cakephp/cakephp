@@ -492,10 +492,6 @@ class DboPostgres extends DboSource {
 
 		if ($limit != null) {
 			return intval($limit);
-		} elseif ($col == 'integer') {
-			return 11;
-		} elseif (in_array($col, array('int2', 'int4', 'int8'))) {
-			return intval(r('int', '', $col));
 		}
 		return null;
 	}
