@@ -421,14 +421,14 @@ class AclShell extends Shell {
 		);
 
 		$this->out($head);
-		if (!isset($this->args[1])) {
+		if (!isset($this->args[0])) {
 			foreach ($commands as $cmd) {
 				$this->out("{$cmd}\n\n");
 			}
-		} elseif (isset($commands[low($this->args[1])])) {
-			$this->out($commands[low($this->args[1])] . "\n\n");
+		} elseif (isset($commands[low($this->args[0])])) {
+			$this->out($commands[low($this->args[0])] . "\n\n");
 		} else {
-			$this->out(sprintf(__("Command '%s' not found", true), $this->args[1]));
+			$this->out(sprintf(__("Command '%s' not found", true), $this->args[0]));
 		}
 	}
 /**
