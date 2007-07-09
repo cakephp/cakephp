@@ -55,7 +55,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $authorize = 'Acl';
+	var $authorize = false;
 /**
  * The name of an optional view element to render when an Ajax request is made
  * with an invalid or expired session
