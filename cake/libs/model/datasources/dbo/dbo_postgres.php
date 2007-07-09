@@ -241,14 +241,12 @@ class DboPostgres extends DboSource {
 
 			break;
 			case 'boolean':
-				$data = $this->boolean((bool)$data, false);
-				if ($data === true) {
-					$data = '1';
-				} elseif ($data === false) {
-					$data = '0';
-				}
-			break;
 			default:
+				if ($data === true) {
+					return 'TRUE';
+				} elseif ($data === false) {
+					return 'FALSE';
+				}
 				$data = pg_escape_string($data);
 			break;
 		}
@@ -558,7 +556,7 @@ class DboPostgres extends DboSource {
 		if ($data === true || $data === false) {
 			$result = $data;
 		} elseif (is_string($data) && !is_numeric($data)) {
-			if (strpos($data, 't') !== false) {
+			if (strpos(low($data), 't') !== false) {
 				$result = true;
 			} else {
 				$result = false;
@@ -566,11 +564,6 @@ class DboPostgres extends DboSource {
 		} else {
 			$result = (bool)$data;
 		}
-
-		if ($quote) {
-			$result = "'" . $result . "'";
-		}
-
 		return $result;
 	}
 /**
