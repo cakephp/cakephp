@@ -53,7 +53,18 @@ class AclComponent extends Object {
  */
 	function &getACL() {
 		if ($this->_instance == null) {
-			$this->_instance =& new $this->name();
+			$name = $this->name;
+			if(!class_exists($name)) {
+				if(loadComponent($name)) {
+					if (strpos($name, '.') !== false) {
+						list($plugin, $name) = explode('.', $name);
+					}
+					$name .= 'Component';
+				} else {
+					trigger_error(__(sprintf('Could not find %s.', $name), true), E_USER_WARNING);
+				}
+			}
+			$this->_instance =& new $name();
 			$this->_instance->initialize($this);
 		}
 		return $this->_instance;
