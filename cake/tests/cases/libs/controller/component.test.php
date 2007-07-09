@@ -19,24 +19,24 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
- * @subpackage		cake.tests.cases.libs.controller.components
- * @since			CakePHP(tm) v 1.2.0.5435
+ * @subpackage		cake.tests.cases.libs.controller
+ * @since			CakePHP(tm) v 1.2.0.5436
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'security');
+uses('controller' . DS . 'component');
 /**
  * Short description for class.
  *
  * @package    cake.tests
- * @subpackage cake.tests.cases.libs.controller.components
+ * @subpackage cake.tests.cases.libs.controller
  */
-class SecurityComponentTest extends CakeTestCase {
+class ComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'SecurityComponentTest not implemented');
+		$this->skipIf(true, 'ComponentTest not implemented');
 	}
 }
 ?>

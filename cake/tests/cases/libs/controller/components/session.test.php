@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Series of tests for email component.
+ * Short description for file.
  *
  * Long description for file
  *
@@ -20,7 +20,7 @@
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.cases.libs.controller.components
- * @since			CakePHP(tm) v 1.2.0.5435
+ * @since			CakePHP(tm) v 1.2.0.5436
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$

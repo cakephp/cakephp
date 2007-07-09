@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Series of tests for email component.
+ * Short description for file.
  *
  * Long description for file
  *
