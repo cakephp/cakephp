@@ -39,7 +39,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.view.helpers
  */
-class CacheTest extends UnitTestCase {
+class CacheHelperTest extends UnitTestCase {
 
 	function skip() {
 		$this->skipIf(true, 'CacheHelper test not implemented');
