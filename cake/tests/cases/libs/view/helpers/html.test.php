@@ -65,7 +65,7 @@ class HtmlHelperTest extends UnitTestCase {
 
 	function testStyle() {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'));
-		$expected = 'style="display:none; margin:10px;"';
+		$expected = 'display:none; margin:10px;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);

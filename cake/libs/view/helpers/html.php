@@ -343,7 +343,7 @@ class HtmlHelper extends AppHelper {
 			$out[] = $key.':'.$value.';';
 		}
 		if ($inline) {
-			return 'style="'.join(' ', $out).'"';
+			return join(' ', $out);
 		}
 		return join("\n", $out);
 	}
