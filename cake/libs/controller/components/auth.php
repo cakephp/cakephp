@@ -317,8 +317,6 @@ class AuthComponent extends Object {
 						$object = $controller->modelClass;
 					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
 						$object = $controller->uses[0];
-					} else {
-						$object = $this->objectModel;
 					}
 				}
 				if ($this->isAuthorized($type, null, $object)) {
@@ -403,9 +401,7 @@ class AuthComponent extends Object {
 				}
 				$model = $this->getModel($object);
 				if (method_exists($model, 'isAuthorized')) {
-					if($model->isAuthorized($user)) {
-						return true;
-					}
+					$valid = $model->isAuthorized($user, $this->action(':controller'), $this->action(':action'));
 				} else if($model){
 					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', $model), true), E_USER_WARNING);
 				}
@@ -430,13 +426,10 @@ class AuthComponent extends Object {
 		if (empty($auth)) {
 			$auth = $this->authorize;
 		}
-		$object = null;
+		$object = $this->objectModel;
 		if (is_array($auth)) {
 			$type = key($auth);
 			$object = $auth[$type];
-			if (isset($auth[0])) {
-				$assoc = $auth[0];
-			}
 		} else {
 			$type = $auth;
 		}
