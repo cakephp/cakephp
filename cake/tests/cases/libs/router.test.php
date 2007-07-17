@@ -158,6 +158,12 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testUrlGenerationWithExtensions() {
+		$result = $this->router->url(array('plugin' => null, 'controller' => 'articles', 'action' => 'add', 'id' => null, 'ext' => 'json'));
+		$expected = '/articles/add.json';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testPluginUrlGeneration() {
 		$this->router->setRequestInfo(array(
 			array(
