@@ -45,6 +45,13 @@ class ProjectTask extends Shell {
 	function initialize() {}
 
 /**
+ * Override
+ *
+ * @return void
+ */
+	function startup() {}
+
+/**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls __buildDirLayout() with that information.
  *
@@ -59,18 +66,26 @@ class ProjectTask extends Shell {
 			}
 		}
 
+		if(empty($this->params['skel'])) {
+			$this->params['skel'] = '';
+			if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
+				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
+			}
+		}
 		if ($project) {
 			if ($project{0} == DS || $project{0} == '/') {
-				$app = basename($project);
-				$root = dirname($project);
+				$this->params['app'] = basename($project);
+				$this->params['root'] = dirname($project);
+				$this->params['working'] = $this->params['root'];
 			} else {
-				$app = $project;
-				$root = $this->params['root'] . DS;
+				$this->params['app'] = basename($project);
 			}
 
-			$root = str_replace(DS . DS, DS, $root . DS);
+			if($this->params['root'] === dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
+				$this->params['working'] = $this->params['root'] . DS;
+			}
 
-			$project = $root . $app;
+			$project = str_replace(DS.DS, DS, $this->params['working'] . DS . $this->params['app']);
 
 			$response = false;
 			while ($response == false && is_dir($project) === true && config('core') === true) {
@@ -83,12 +98,12 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$working . "myapp", null, $working . 'myapp');
+			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp", null, $this->params['root'] . DS . 'myapp');
 			$this->execute($project);
 			exit();
 		}
 
-		if (!is_dir($root)) {
+		if (!is_dir($this->params['root'])) {
 			$this->err('The directory path you supplied was not found. Please try again.');
 		}
 
@@ -105,23 +120,20 @@ class ProjectTask extends Shell {
  * @param string $path
  */
 	function __buildDirLayout($path) {
-		$skel = '';
-		if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
-			$skel = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
-		} else {
-			while ($skel == '') {
-				$skel = $this->in("What is the path to the app directory you wish to copy?\nExample: ".APP, null, ROOT.DS.'myapp'.DS);
-				if ($skel == '') {
-					$this->out('The directory path you supplied was empty. Please try again.');
-				} else {
-					while (is_dir($skel) === false) {
-						$skel = $this->in('Directory path does not exist please choose another:');
-					}
+		$skel = $this->params['skel'];
+		while ($skel == '') {
+			$skel = $this->in("What is the path to the app directory you wish to copy?\nExample: ".APP, null, ROOT.DS.'myapp'.DS);
+			if ($skel == '') {
+				$this->out('The directory path you supplied was empty. Please try again.');
+			} else {
+				while (is_dir($skel) === false) {
+					$skel = $this->in('Directory path does not exist please choose another:');
 				}
 			}
 		}
+
 		$app = basename($path);
-		$this->out('');
+		$this->out('Bake Project');
 		$this->out("Skel Directory: $skel");
 		$this->out("Will be copied to: {$path}");
 		$this->hr();
