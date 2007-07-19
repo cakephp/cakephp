@@ -29,7 +29,7 @@ uses('socket', 'set');
 /**
  * Cake network socket connection class.
  *
- * Core base class for network communication.
+ * Core base class for HTTP network communication.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
