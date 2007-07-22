@@ -128,9 +128,9 @@ class SecurityComponent extends Object {
  */
 	var $components = array('RequestHandler', 'Session');
 /**
- * Security class constructor
+ * Security class initialization
  */
-	function __construct () {
+	function initialize(&$controller) {
 		$this->Security =& Security::getInstance();
 	}
 /**
