@@ -435,9 +435,9 @@ class ShellDispatcher {
 				$root = dirname($this->params['app']);
 				$app = basename($this->params['app']);
 			} else {
-				$root = realpath($this->params['working']);
-				$app = $this->params['app'];
+				$root = realpath($root . DS . $app);
  			}
+			$app = $this->params['app'];
 			unset($this->params['app']);
 		}
 
