@@ -545,10 +545,11 @@ class Router extends Object {
 			}
 
 			if ($match === false) {
+				list($args, $named)  = array(Set::filter($args, true), Set::filter($named, true));
+
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
 				}
-
 				$urlOut = Set::filter(array($url['plugin'], $url['controller'], $url['action']));
 
 				if ($url['plugin'] == $url['controller']) {
@@ -560,25 +561,18 @@ class Router extends Object {
 				$output = join('/', $urlOut);
 			}
 
-			if (!empty($args)) {
-				if ($output{strlen($output)-1} == '/') {
-					$output .= join('/', Set::filter($args, true));
-				} else {
-					$output .= '/'. join('/', Set::filter($args, true));
+			foreach (array('args', 'named') as $var) {
+				if (!empty(${$var})) {
+					${$var} = join('/', ${$var});
+					if ($output{strlen($output) - 1} != '/') {
+						${$var} = '/'. ${$var};
+					}
+					$output .= ${$var};
 				}
 			}
-
-			if (!empty($named)) {
-				if ($output{strlen($output)-1} == '/') {
-					$output .= join('/', Set::filter($named, true));
-				} else {
-					$output .= '/'. join('/', Set::filter($named, true));
-				}
-			}
-
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url,0,1) == '#')) {
+			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url, 0, 1) == '#')) {
 				return $url;
 			}
 
