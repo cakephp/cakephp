@@ -99,7 +99,7 @@ class DboMysql extends DboSource {
 		if (!$config['persistent'] || $config['connect'] === 'mysql_connect') {
 			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
 		} else {
-			$this->connection = $connect($config['host'], $config['login'], $config['password']);
+			$this->connection = $connect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
 		}
 
 		if (mysql_select_db($config['database'], $this->connection)) {
