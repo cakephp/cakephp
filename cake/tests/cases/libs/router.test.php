@@ -48,8 +48,6 @@ class RouterTest extends UnitTestCase {
 		$this->router->testVar = 'test';
 		$this->assertIdentical($this->router, Router::getInstance());
 		unset($this->router->testVar);
-		//pr($_SERVER);
-		echo "<form method='post' action='http://localhost/cake/testbed/webroot/test.php?case=libs%2Frouter.test.php'><input type='text' /></form>";
 	}
 
 	function testRouteWriting() {
@@ -329,7 +327,7 @@ class RouterTest extends UnitTestCase {
 		$expected = '/posts/index/published:0/deleted:0';
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testParamsUrlParsing() {
 		$this->router->routes = array();
 		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
