@@ -91,6 +91,30 @@ class Router extends Object {
  */
 	var $__currentRoute = array();
 /**
+ * HTTP header shortcut map.  Used for evaluating header-based route expressions.
+ *
+ * @var array
+ * @access private
+ */
+	var $__headerMap = array(
+		'type'		=> 'content_type',
+		'method'	=> 'request_method',
+		'server'	=> 'server_name'
+	);
+/**
+ * Default HTTP request method => controller action map.
+ *
+ * @var array
+ * @access private
+ */
+	var $__resourceMap = array(
+		'index'		=> array('method' => 'GET',		'id' => false),
+		'view'		=> array('method' => 'GET',		'id' => true),
+		'add'		=> array('method' => 'POST',	'id' => false),
+		'edit'		=> array('method' => 'PUT', 	'id' => true),
+		'delete'	=> array('method' => 'DELETE',	'id' => true)
+	);
+/**
  * Maintains the parameter stack for the current request
  *
  * @var array
@@ -167,21 +191,13 @@ class Router extends Object {
  */
 	function connect($route, $default = array(), $params = array()) {
 		$_this =& Router::getInstance();
-		$parsed = array();
 
-		if (defined('CAKE_ADMIN') && $default == null) {
-			if ($route == CAKE_ADMIN) {
-				$_this->routes[] = $_this->__admin;
-				$_this->__admin = null;
-			}
+		if (defined('CAKE_ADMIN') && $default == null && $route == CAKE_ADMIN) {
+			$_this->routes[] = $_this->__admin;
+			$_this->__admin = null;
 		}
+		$default = am(array('plugin' => null, 'controller' => null), $default);
 
-		if (empty($default['plugin'])) {
-			$default['plugin'] = null;
-		}
-		if (empty($default['controller'])) {
-			$default['controller'] = null;
-		}
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
 		}
@@ -189,6 +205,36 @@ class Router extends Object {
 			$_this->routes[] = $route;
 		}
 		return $_this->routes;
+	}
+/**
+ * Creates REST resource routes for the given controller(s)
+ *
+ * @param mixed $controller		A controller name or array of controller names (i.e. "Posts" or "ListItems")
+ * @param array $options			
+ * @access public
+ * @static
+ */
+	function mapResources($controller, $options = array()) {
+		$_this =& Router::getInstance();
+		$options = am(
+			array('prefix' => '/'),
+			$options
+		);
+		$prefix = $options['prefix'];
+
+		foreach((array)$controller as $ctlName) {
+			$urlName = Inflector::underscore($ctlName);
+			foreach ($_this->__resourceMap as $action => $params) {
+				$id = null;
+				if ($params['id']) {
+					$id = '/:id';
+				}
+				Router::connect(
+					"{$prefix}{$urlName}{$id}",
+					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method'])
+				);
+			}
+		}
 	}
 /**
  * Builds a route regular expression
@@ -246,7 +292,7 @@ class Router extends Object {
 	function parse($url) {
 		$_this =& Router::getInstance();
 		$_this->__connectDefaultRoutes();
-		$out = array('pass'=>array());
+		$out = array('pass' => array());
 		$r = $ext = null;
 
 		if ($url && strpos($url, '/') !== 0) {
@@ -258,13 +304,12 @@ class Router extends Object {
 		extract($_this->__parseExtension($url));
 
 		foreach ($_this->routes as $route) {
-			list($route, $regexp, $names, $defaults) = $route;
-
-			if (preg_match($regexp, $url, $r)) {
+			if (($r = $_this->matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
+				list($route, $regexp, $names, $defaults) = $route;
 
 				// remove the first element, which is the url
-				array_shift ($r);
+				array_shift($r);
 				// hack, pre-fill the default route names
 				foreach ($names as $name) {
 					$out[$name] = null;
@@ -301,6 +346,36 @@ class Router extends Object {
 			$out['url']['ext'] = $ext;
 		}
 		return $out;
+	}
+/**
+ * Checks to see if the given URL matches the given route
+ *
+ * @param array $route
+ * @param string $url
+ * @return mixed Boolean false on failure, otherwise array
+ * @access public
+ */
+	function matchRoute($route, $url) {
+		$_this =& Router::getInstance();
+		list($route, $regexp, $names, $defaults) = $route;
+
+		if (!preg_match($regexp, $url, $r)) {
+			return false;
+		} else {
+			foreach ($defaults as $key => $val) {
+				if (preg_match('/^\[(\w+)\]$/', $key, $header)) {
+					if (isset($_this->__headerMap[$header[1]])) {
+						$header = $_this->__headerMap[$header[1]];
+					} else {
+						$header = 'http_' . $header[1];
+					}
+					if (env(strtoupper($header)) != $val) {
+						return false;
+					}
+				}
+			}
+		}
+		return $r;
 	}
 /**
  * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
@@ -558,7 +633,7 @@ class Router extends Object {
 				if (defined('CAKE_ADMIN') && isset($url[CAKE_ADMIN]) && $url[CAKE_ADMIN]) {
 					array_unshift($urlOut, CAKE_ADMIN);
 				}
-				$output = join('/', $urlOut);
+				$output = join('/', $urlOut) . '/';
 			}
 
 			foreach (array('args', 'named') as $var) {
@@ -827,6 +902,56 @@ class Router extends Object {
 		if (func_num_args() > 0) {
 			$_this->__validExtensions = func_get_args();
 		}
+	}
+
+/**
+ * Takes an array of params and converts it to named args
+ *
+ * @access public
+ * @param array $params
+ * @param mixed $named
+ * @param string $separator
+ * @static
+ */
+	function getArgs($params, $named = true, $separator = ':') {
+		$passedArgs = $namedArgs = array();
+		if (is_array($named)) {
+			if (array_key_exists($params['action'], $named)) {
+				$named = $named[$params['action']];
+			}
+			$namedArgs = true;
+		}
+		if (!empty($params['pass'])) {
+			$passedArgs = $params['pass'];
+			if ($namedArgs === true || $named == true) {
+				$namedArgs = array();
+				$c = count($passedArgs);
+				for ($i = 0; $i <= $c; $i++) {
+					if (isset($passedArgs[$i]) && strpos($passedArgs[$i], $separator) !== false) {
+						list($argKey, $argVal) = explode($separator, $passedArgs[$i]);
+						if ($named === true || (!empty($named) && in_array($argKey, array_keys($named)))) {
+							$passedArgs[$argKey] = $argVal;
+							$namedArgs[$argKey] = $argVal;
+							unset($passedArgs[$i]);
+							unset($params['pass'][$i]);
+						}
+					} elseif ($separator === '/') {
+						$ii = $i + 1;
+						if (isset($passedArgs[$i]) && isset($passedArgs[$ii])) {
+							$argKey = $passedArgs[$i];
+							$argVal = $passedArgs[$ii];
+							if (empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
+								$passedArgs[$argKey] = $argVal;
+								$namedArgs[$argKey] = $argVal;
+								unset($passedArgs[$i], $passedArgs[$ii]);
+								unset($params['pass'][$i], $params['pass'][$ii]);
+							}
+						}
+					}
+				}
+			}
+		}
+		return array($passedArgs, $namedArgs);
 	}
 }
 

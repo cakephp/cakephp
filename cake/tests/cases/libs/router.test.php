@@ -48,6 +48,8 @@ class RouterTest extends UnitTestCase {
 		$this->router->testVar = 'test';
 		$this->assertIdentical($this->router, Router::getInstance());
 		unset($this->router->testVar);
+		//pr($_SERVER);
+		echo "<form method='post' action='http://localhost/cake/testbed/webroot/test.php?case=libs%2Frouter.test.php'><input type='text' /></form>";
 	}
 
 	function testRouteWriting() {
@@ -98,6 +100,31 @@ class RouterTest extends UnitTestCase {
 		);
 		$router2 = new Router();
 		$this->assertEqual(get_object_vars($this->router), get_object_vars($router2));
+	}
+
+	function testResourceRoutes() {
+		$this->router->reload();
+		$this->router->mapResources('Posts');
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->router->parse('/posts');
+		$this->assertEqual($result, array ('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = $this->router->parse('/posts/13');
+		$this->assertEqual($result, array ('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => '13', '[method]' => 'GET'));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$result = $this->router->parse('/posts');
+		$this->assertEqual($result, array ('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$result = $this->router->parse('/posts/13');
+		$this->assertEqual($result, array ('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '13', '[method]' => 'PUT'));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$result = $this->router->parse('/posts/13');
+		$this->assertEqual($result, array ('pass' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'delete', 'id' => '13', '[method]' => 'DELETE'));
 	}
 
 	function testUrlGeneration() {
@@ -300,6 +327,15 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', 'published' => 0, 'deleted' => 0));
 		$expected = '/posts/index/published:0/deleted:0';
+		$this->assertEqual($result, $expected);
+	}
+	
+	function testParamsUrlParsing() {
+		$this->router->routes = array();
+		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
+		Router::connect('/view/:user/*', array('controller' => 'posts', 'action' => 'view'), array('user'));
+		$result = $this->router->parse('/view/gwoo/');
+		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array());
 		$this->assertEqual($result, $expected);
 	}
 }

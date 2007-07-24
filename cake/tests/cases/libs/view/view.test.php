@@ -59,11 +59,11 @@ class ViewTest extends UnitTestCase {
 
 	function testUUIDGeneration() {
 		$result = $this->view->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'form5988016017');
+		$this->assertEqual($result, 'form0425fe3bad');
 		$result = $this->view->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'formc3dc6be854');
+		$this->assertEqual($result, 'forma9918342a7');
 		$result = $this->view->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'form28f92cc87f');
+		$this->assertEqual($result, 'form3ecf2e3e96');
 	}
 
 	function testAddInlineScripts() {
