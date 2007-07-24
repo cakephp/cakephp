@@ -37,49 +37,58 @@
  */
 class EmailComponent extends Object{
 /**
- * Enter description here...
+ * Recipient of the email
  *
  * @var string
  * @access public
  */
 	var $to = null;
 /**
- * Enter description here...
+ * The mail which the email is sent from
  *
  * @var string
  * @access public
  */
 	var $from = null;
 /**
- * Enter description here...
+ * The email the recipient will reply to
  *
  * @var string
  * @access public
  */
 	var $replyTo = null;
 /**
- * Enter description here...
+ * The mail that will be used in case of any errors like
+ * - Remote mailserver down
+ * - Remote user has exceeded his quota
+ * - Unknown user
  *
  * @var string
  * @access public
  */
 	var $return = null;
 /**
- * Enter description here...
+ * Carbon Copy
+ *
+ * List of email's that should receive a copy of the email.
+ * The Recipient WILL be able to see this list
  *
  * @var array
  * @access public
  */
 	var $cc = array();
 /**
- * Enter description here...
+ * Blind Carbon Copy
+ *
+ * List of email's that should receive a copy of the email.
+ * The Recipient WILL NOT be able to see this list
  *
  * @var array
  * @access public
  */
 	var $bcc = array();
 /**
- * Enter description here...
+ * The subject of the email
  *
  * @var string
  * @access public
@@ -94,70 +103,89 @@ class EmailComponent extends Object{
  */
 	var $headers = array();
 /**
- * Enter description here...
+ * List of additional headers
+ *
+ * These will NOT be used if you are using safemode and mail()
  *
  * @var string
  * @access public
  */
 	var $additionalParams = null;
 /**
- * Enter description here...
+ * Layout for the View
  *
  * @var string
  * @access public
  */
 	var $layout = 'default';
 /**
- * Enter description here...
+ * Template for the view
  *
  * @var string
  * @access public
  */
 	var $template = null;
 /**
- * Enter description here...
+ * What format should the email be sent in
+ *
+ * Supported formats:
+ * - text
+ * - html
+ * - both
  *
  * @var string
  * @access public
  */
-	var $sendAs = 'text';  //html, text, both
+	var $sendAs = 'text';
 /**
- * Enter description here...
+ * What method should the email be sent by
+ *
+ * Supported methods:
+ * - mail
+ * - smtp
+ * - debug
  *
  * @var string
  * @access public
  */
-	var $delivery = 'mail'; //mail, smtp, debug
+	var $delivery = 'mail';
 /**
- * Enter description here...
+ * charset the email is sent in
  *
  * @var string
  * @access public
  */
 	var $charset = 'ISO-8859-15';
 /**
- * Enter description here...
+ * List of files that should be attached to the email.
+ *
+ * Can be both absolute and relative paths
  *
  * @var array
  * @access public
  */
 	var $attachments = array();
 /**
- * Enter description here...
+ * What mailer should EmailComponent identify itself as
  *
  * @var string
  * @access public
  */
 	var $xMailer = 'CakePHP Email Component';
 /**
- * Enter description here...
+ * The list of paths to search if an attachment isnt absolute
  *
  * @var array
  * @access public
  */
 	var $filePaths = array();
 /**
- * SMTP options variable
+ * List of options to use for smtp mail method
+ *
+ * Options is:
+ * - port
+ * - host
+ * - timeout
  *
  * @var array
  * @access public
@@ -166,14 +194,15 @@ class EmailComponent extends Object{
 							 'host' => 'localhost',
 							 'timeout' => 30);
 /**
- * SMTP errors variable
+ * Placeholder for any errors that might happen with the
+ * smtp mail methods
  *
  * @var string
  * @access public
  */
 	var $smtpError = null;
 /**
- * Enter description here...
+ * If set to true, the mail method will be auto-set to 'debug'
  *
  * @var string
  * @access protected
@@ -187,7 +216,7 @@ class EmailComponent extends Object{
  */
 	var $_error = false;
 /**
- * Enter description here...
+ * New lines char
  *
  * @var string
  * @access protected
@@ -282,7 +311,6 @@ class EmailComponent extends Object{
 			$this->delivery = 'debug';
 		}
 		$__method = '__'.$this->delivery;
-
 		return $this->$__method();
 	}
 /**
@@ -320,14 +348,14 @@ class EmailComponent extends Object{
 			$htmlContent = $content;
 			$msg = '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
 			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
 			$msg .= $View->renderLayout($content);
@@ -538,9 +566,8 @@ class EmailComponent extends Object{
 							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
 							'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
 
-		if($message === false) {
-			array_pop($search);
-			array_pop($search);
+		if ($message === true) {
+			$search = array_slice($search, 0, -2);
 		}
 		return preg_replace($search, '', $value);
 	}
