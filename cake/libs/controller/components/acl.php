@@ -585,16 +585,11 @@ class INI_ACL extends AclBase {
  * @return array
  */
 	function arrayTrim($array) {
-		foreach ($array as $element) {
-			$element = trim($element);
+		foreach ($array as $key => $value) {
+			$array[$key] = trim($value);
 		}
-
-		//Adding this element keeps array_search from returning 0:
-		//0 is the first key, which may be correct, but 0 is interpreted as false.
-		//Adding this element makes all the keys be positive integers.
 		array_unshift($array, "");
 		return $array;
 	}
 }
-
 ?>
