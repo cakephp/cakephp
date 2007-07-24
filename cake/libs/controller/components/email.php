@@ -35,231 +35,292 @@
  * @subpackage	cake.cake.libs.controller.components
  *
  */
-class EmailComponent extends Object{
+class EmailComponent extends Object {
 /**
- * Enter description here...
+ * Recipient of the email
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $to = null;
 /**
- * Enter description here...
+ * The mail which the email is sent from
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $from = null;
 /**
- * Enter description here...
+ * The email the recipient will reply to
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $replyTo = null;
 /**
- * Enter description here...
+ * The mail that will be used in case of any errors like
+ * - Remote mailserver down
+ * - Remote user has exceeded his quota
+ * - Unknown user
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $return = null;
 /**
- * Enter description here...
+ * Carbon Copy
  *
- * @var array
+ * List of email's that should receive a copy of the email.
+ * The Recipient WILL be able to see this list
+ *
  * @access public
+ * @var string|array
  */
 	var $cc = array();
 /**
- * Enter description here...
+ * Blind Carbon Copy
  *
- * @var array
+ * List of email's that should receive a copy of the email.
+ * The Recipient WILL NOT be able to see this list
+ *
  * @access public
+ * @var string|array
  */
 	var $bcc = array();
 /**
- * Enter description here...
+ * The subject of the email
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $subject = null;
 /**
- * Associative array of a user defined headers
- * Keys will be prefixed 'X-' as per RFC822 Section 4.7.5
+ * List of extra / custom headers
  *
- * @var array
  * @access public
+ * @var array
  */
 	var $headers = array();
 /**
- * Enter description here...
+ * List of additional headers
  *
- * @var string
+ * These will NOT be used if you are using safemode and mail()
+ *
  * @access public
+ * @var array
  */
 	var $additionalParams = null;
 /**
- * Enter description here...
+ * Layout for the View
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $layout = 'default';
 /**
- * Enter description here...
+ * Template for the view
  *
- * @var string
  * @access public
+ * @var string
  */
 	var $template = null;
 /**
- * Enter description here...
+ * What format should the email be sent in
+ * Supported formats:
+ *  - text
+ *  - html
+ *  - both
  *
- * @var string
  * @access public
+ * @var string
  */
-	var $sendAs = 'text';  //html, text, both
+	var $sendAs = 'text';
 /**
- * Enter description here...
+ * What method should the email be sent by
+ * Supported methods:
+ *  - mail
+ *  - smtp
+ *  - debug
  *
- * @var string
  * @access public
+ * @var string
  */
-	var $delivery = 'mail'; //mail, smtp, debug
+	var $delivery = 'mail';
 /**
- * Enter description here...
+ * What charset should the email be sent in
  *
- * @var string
+ * @example UTF-8
  * @access public
+ * @var string
  */
 	var $charset = 'ISO-8859-15';
 /**
- * Enter description here...
+ * List of files that should be attached to the email.
+ * Can be both absolute and relative paths
  *
- * @var array
  * @access public
+ * @var array
  */
 	var $attachments = array();
 /**
- * Enter description here...
+ * The list of paths to search if an attachment isnt absolute
  *
- * @var string
  * @access public
- */
-	var $xMailer = 'CakePHP Email Component';
-/**
- * Enter description here...
- *
  * @var array
- * @access public
  */
 	var $filePaths = array();
 /**
- * SMTP options variable
+ * What mailer should EmailComponent identify itself as
  *
- * @var array
  * @access public
- */
-	var $smtpOptions = array('port'=> 25,
-							 'host' => 'localhost',
-							 'timeout' => 30);
-/**
- * SMTP errors variable
- *
  * @var string
+ */
+	var $xMailer = 'CakePHP Email Component';
+/**
+ * Placeholder for any errors that might happen with the
+ * smtp mail methods
+ *
  * @access public
+ * @var string
  */
 	var $smtpError = null;
 /**
- * Enter description here...
+ * List of options to use for smtp mail method
+ * Options is:
+ *  - port
+ *  - host
+ *  - timeout
  *
- * @var string
+ * @access public
+ * @var array
+ */
+	var $smtpOptions = array(
+		'port'=> 25,
+		'host' => 'localhost',
+		'timeout' => 30);
+/**
+ * If set to true, the mail method will be auto-set to 'debug'
+ *
  * @access protected
+ * @var boolean
  */
 	var $_debug = false;
 /**
- * Enter description here...
- *
- * @var string
+ * ???
+ * @deprecated Isnt used anywhere
  * @access protected
+ * @var boolean
  */
 	var $_error = false;
 /**
- * Enter description here...
+ * Placeholder for the newline (\n)
  *
- * @var string
  * @access protected
+ * @var string
  */
 	var $_newLine = "\n";
 /**
- * Enter description here...
+ * Placeholder for the maximum allowed line length
  *
- * @var integer
  * @access protected
+ * @var integer
  */
 	var $_lineLength = 70;
 /**
- * Enter description here...
+ * Placeholder for header data
  *
- * @var string
  * @access private
+ * @var string
  */
 	var $__header = null;
 /**
- * Enter description here...
+ * Placeholder for the boundary seperator.
  *
- * @var string
+ * Used to split the message up into different parts eg. for
+ * HTML and Text email or file attachments
+ *
  * @access private
+ * @var string
  */
 	var $__boundary = null;
 /**
- * Enter description here...
+ * The email message.
  *
- * @var string
+ * Can contain cleartext and bass64 encoded data (File attachments)
+ *
  * @access private
+ * @var string
  */
 	var $__message = null;
 /**
- * Variable that holds SMTP connection
+ * Placeholder for the SMTP socket connection
  *
- * @var resource
  * @access private
+ * @var string
  */
 	var $__smtpConnection = null;
 /**
- * Enter description here...
+ * Placeholder for the default object variables
  *
- * @param unknown_type $controller
+ * @access private
+ * @var array
+ */
+	var $__defaults = array();
+/**
+ * Called from the controller to start up the component
+ *
  * @access public
+ * @param AppController $controller
  */
 	function startup(&$controller) {
+		$this->__defaults = get_object_vars($this);
 		$this->Controller = & $controller;
 	}
 /**
- * Enter description here...
+ * Reset the EmailComponent settings to default, with the
+ * possibilty to inject some changes.
  *
- * @param mixed $content
- * @return unknown
  * @access public
+ * @param array $settings
+ * @param array $exempt
+ */
+	function reset($settings = array(), $exempt = array()) {
+		foreach ($this->__defaults as $key => $value) {
+			if(array_key_exists($key,$exempt)) {
+				continue;
+			}
+			if(array_key_exists($key,$settings)) {
+				$this->{$key} = $settings[$key];
+			} else {
+				$this->{$key} = $value;
+			}
+		}
+	}
+/**
+ * Send Email(s)
+ *
+ * @access public
+ * @param mixed $content
+ * @param mixed $template
+ * @param mixed $layout
+ * @return boolean true on success, false on failure
  */
 	function send($content = null, $template = null, $layout = null) {
 		$this->__createHeader();
 		$this->subject = $this->__encode($this->subject);
 
-		if ($template) {
+		if (!empty($template)) {
 			$this->template = $template;
 		}
 
-		if ($layout) {
+		if (!empty($layout)) {
 			$this->layout = $layout;
 		}
 
 		if ($template === null && $this->template === null) {
 			if (is_array($content)) {
-				$message = null;
-				foreach ($content as $key => $value) {
+				$message = "";
+				foreach ($content as $value) {
 					$message .= $value . $this->_newLine;
 				}
 			} else {
@@ -271,45 +332,30 @@ class EmailComponent extends Object{
 		}
 
 		if (!empty($this->attachments)) {
+			$this->__message .= $this->_newLine . $this->_newLine;
 			$this->__attachFiles();
-		}
-
-		if (!is_null($this->__boundary)) {
-			$this->__message .= $this->_newLine .'--' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
 		}
 
 		if ($this->_debug) {
 			$this->delivery = 'debug';
 		}
-		$__method = '__'.$this->delivery;
 
-		return $this->$__method();
+		$__method = '__'.$this->delivery;
+		if(method_exists($this,$__method)) {
+			return call_user_func(array($this,$__method));
+		}
+
+		user_error('Invalid mailer defined. (mail,smtp,debug)',E_USER_ERROR);
+		return false;
 	}
 /**
- * Enter description here...
+ * Rendering the cake template, using the current View class
  *
- * @access public
- */
-	function reset() {
-		$this->template = null;
-		$this->to = null;
-		$this->from = null;
-		$this->replyTo = null;
-		$this->return = null;
-		$this->cc = array();
-		$this->bcc = array();
-		$this->subject = null;
-		$this->additionalParams = null;
-		$this->__header = null;
-		$this->__boundary = null;
-		$this->__message = null;
-	}
-/**
- * Enter description here...
- *
- * @param string $content
- * @return unknown
+ * @uses View to render the templates
+ * @see http://manual.cakephp.org/chapter/views
  * @access private
+ * @param string $content
+ * @return string The rendered view
  */
 	function __renderTemplate($content) {
 		$View = new View($this->Controller);
@@ -318,38 +364,57 @@ class EmailComponent extends Object{
 
 		if ($this->sendAs === 'both') {
 			$htmlContent = $content;
-			$msg = '--' . $this->__boundary . $this->_newLine;
+			$msg = '--' . $this->__createBoundary() . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
-			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
+			$msg .= $this->_newLine. '--' . $this->__createBoundary() . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
-			$msg .= $View->renderLayout($content);
-
-			return $msg;
+			return $msg . $View->renderLayout($content);
 		} else {
+			$msg = "";
+			if(!empty($this->attachments)) {
+				$msg .= $this->_newLine. '--' . $this->__createBoundary() . $this->_newLine;
+				$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+				$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
+			}
 			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . $this->sendAs;
-			return $View->renderLayout($content);
+			return $msg . $View->renderLayout($content);
 		}
 	}
 /**
- * Enter description here...
+ * Creates a unique boundary used to seperate
+ * - Header
+ * - Html / Text content
+ * - attached files
  *
  * @access private
+ * @return string
  */
 	function __createBoundary() {
-		$this->__boundary = md5(uniqid(time()));
+		if(empty($this->__boundary)) {
+			$this->__boundary = '==Multipart_Boundary_x'.md5(uniqid(time())).'x';
+		}
+		return $this->__boundary;
 	}
 /**
- * Enter description here...
+ * Create the mail headers
  *
+ * - From
+ * - Reply-To (Optimal)
+ * - Return-Path (Optimal)
+ * - Carbon Copy [CC] (Optimal)
+ * - Blind Carbon Copy [BCC] (Optimal)
+ * - Additional headers (Optimal)
+ *
+ * @see http://www.faqs.org/rfcs/rfc822.html (4.1)
  * @access private
  */
 	function __createHeader() {
@@ -358,26 +423,29 @@ class EmailComponent extends Object{
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
 		}
+
 		if (!empty($this->return)) {
 			$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
 		}
-		$addresses = null;
 
+		$addresses = null;
 		if (!empty($this->cc)) {
+			if(!is_array($this->cc)) {
+				$this->cc = array($this->cc);
+			}
 			foreach ($this->cc as $cc) {
 				$addresses .= ', ' . $this->__formatAddress($cc);
 			}
 			$this->__header .= 'cc: ' . substr($addresses, 2) . $this->_newLine;
 		}
-		$addresses = null;
 
+		$addresses = null;
 		if (!empty($this->bcc)) {
 			foreach ($this->bcc as $bcc) {
 				$addresses .= ', ' . $this->__formatAddress($bcc);
 			}
 			$this->__header .= 'Bcc: ' . substr($addresses, 2) . $this->_newLine;
 		}
-		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
 
 		if (!empty($this->headers)) {
 			foreach ($this->headers as $key => $val) {
@@ -385,52 +453,68 @@ class EmailComponent extends Object{
 			}
 		}
 
+		$this->__header .= 'X-Mailer: ' . $this->xMailer . $this->_newLine;
+
 		if (!empty($this->attachments) && $this->sendAs === 'text') {
-			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"' . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__createBoundary() . '"' . $this->_newLine;
 		} elseif (!empty($this->attachments) && $this->sendAs === 'html') {
-			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__boundary . '"' . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__createBoundary() . '"' . $this->_newLine;
 		} elseif ($this->sendAs === 'html') {
 			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 		} elseif ($this->sendAs === 'both') {
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/alternative; boundary="' . $this->__boundary . '"' . $this->_newLine;
+			$this->__header .= 'Content-Type: multipart/alternative; boundary="' . $this->__createBoundary() . '"' . $this->_newLine;
 		}
 	}
 /**
- * Enter description here...
+ * Format the mail message.
  *
- * @param string $message
+ * Used only if you havent specified a view template and layout.
+ * Adds a Text and Html version of the specified content from send()'s $content
+ *
+ * @see send()
  * @access private
+ * @param string $message
  */
 	function __formatMessage($message) {
 		$message = $this->__wrap($message);
 
 		if ($this->sendAs === 'both') {
-			$this->__message = '--' . $this->__boundary . $this->_newLine;
+			$this->__message = '--' . $this->__createBoundary() . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
+			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$this->__message .= 'If you are seeing this is because you may need to change your'.$this->_newLine;
 			$this->__message .= 'preferred message format from HTML to plain text.'.$this->_newLine.$this->_newLine;
-			$this->__message .=  strip_tags($message) . $this->_newLine;
+			$this->__message .= strip_tags($message) . $this->_newLine;
 
-			$this->__message .= '--' .  $this->__boundary . $this->_newLine;
+			$this->__message .= $this->__createBoundary() . $this->_newLine;
 			$this->__message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 			$this->__message .= $message . $this->_newLine;
-			$this->__message .=  $this->_newLine . $this->_newLine;
+			$this->__message .= $this->_newLine . $this->_newLine;
 		} else {
 			$this->__message .= $message . $this->_newLine;
 		}
 	}
 /**
- * Enter description here...
+ * attach files to the mail message.
  *
+ * For each element in the attachments list it will:
+ *      - Check if the attachment exists (eg. absolute path)
+ *      - Check if the attachment exists within any of the filePaths
+ * If none of the two scenarios above is a success, the attachment will be ignored!
+ *
+ * When the absolute path for the attachment has been found, it will attemp to
+ * guess the mimetype for the file (application/pdf, test/javascript ect).
+ * If it cannot find the mime-type, an E_USER_ERROR is raised and the operation is aborted
+ *
+ * Finally it will attach the file to the message
+ *
+ * @see __findFiles()
  * @access private
  */
 	function __attachFiles() {
@@ -442,9 +526,14 @@ class EmailComponent extends Object{
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
 			$data = chunk_split(base64_encode($data)) ;
-			$filetype = mime_content_type($file);
+			$filetype = trim(mime_content_type($file));
 
-			$this->__message .= '--' . $this->__boundary . $this->_newLine;
+			if(empty($filetype)) {
+				user_error('Unable to get mimetype for e-mail attachment', E_USER_ERROR);
+				break;
+			}
+
+			$this->__message .= '--' . $this->__createBoundary() . $this->_newLine;
 			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . basename($file) . '"' . $this->_newLine;
 			$this->__message .= 'Content-Transfer-Encoding: base64' . $this->_newLine;
 			$this->__message .= 'Content-Disposition: attachment; filename="' . basename($file) . '"' . $this->_newLine . $this->_newLine;
@@ -452,13 +541,18 @@ class EmailComponent extends Object{
 		}
 	}
 /**
- * Enter description here...
+ * Attempt to locate the absolute path of an attachment.
  *
- * @param string $attachment
- * @return unknown
+ * @see __attachFiles()
  * @access private
+ * @param string $attachment
+ * @return string|null
  */
 	function __findFiles($attachment) {
+		if(is_file($attachment)) {
+			return $attachment;
+		}
+
 		foreach ($this->filePaths as $path) {
 			if (file_exists($path . DS . $attachment)) {
 				$file = $path . DS . $attachment;
@@ -467,11 +561,13 @@ class EmailComponent extends Object{
 		}
 	}
 /**
- * Enter description here...
+ * Wrap a string so a line cannot be no longer than _lineLength
  *
- * @param string $message
- * @return unknown
+ * @see _lineLength
+ * @see __formatMessage()
  * @access private
+ * @param string $message
+ * @return string
  */
 	function __wrap($message) {
 		$message = $this->__strip($message, true);
@@ -486,14 +582,16 @@ class EmailComponent extends Object{
 		return $formated;
 	}
 /**
- * Enter description here...
+ * base64_encode a string if charset isnt ISO-8859-15 to fit the RFC
  *
- * @param string $subject
- * @return unknown
+ * @example Subject: =?UTF-8?B?RmFrdHVyYSBmb3IgaW5ka8O4Yg==?=
+ * @see http://www.faqs.org/rfcs/rfc822.html
  * @access private
+ * @param string $subject
+ * @return string
  */
-	function __encode($subject) {
-		$subject = $this->__strip($subject);
+	function __encode($string) {
+		$string = $this->__strip($string);
 
 		if (low($this->charset) !== 'iso-8859-15') {
 			$start = "=?" . $this->charset . "?B?";
@@ -503,20 +601,22 @@ class EmailComponent extends Object{
 			$length = 75 - strlen($start) - strlen($end);
 			$length = $length - ($length % 4);
 
-			$subject = base64_encode($subject);
-			$subject = chunk_split($subject, $length, $spacer);
+			$string = base64_encode($string);
+			$string = chunk_split($string, $length, $spacer);
 			$spacer = preg_quote($spacer);
-			$subject = preg_replace("/" . $spacer . "$/", "", $subject);
-			$subject = $start . $subject . $end;
+			$string = preg_replace("/" . $spacer . "$/", "", $string);
+			$string = $start . $string . $end;
 		}
-		return $subject;
+		return $string;
 	}
 /**
- * Enter description here...
+ * Format a string to fit the RFC
  *
- * @param string $string
- * @return unknown
+ * @example John Doe <john@cakephp.org>
+ * @see http://www.faqs.org/rfcs/rfc822.html (A.2)
  * @access private
+ * @param string $string
+ * @return string
  */
 	function __formatAddress($string) {
 		if (strpos($string, '<') !== false) {
@@ -526,29 +626,29 @@ class EmailComponent extends Object{
 		return $this->__strip($string);
 	}
 /**
- * Enter description here...
+ * Strip a string from anything that could be related
  *
+ * @access private
  * @param string $value
  * @param boolean $message
- * @return unknown
- * @access private
+ * @return string
  */
 	function __strip($value, $message = false) {
 		$search = array('/%0a/i', '/%0d/i', '/Content-Type\:/i',
-							'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
-							'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
+		'/charset\=/i', '/mime-version\:/i', '/multipart\/mixed/i',
+		'/bcc\:/i','/to\:/i','/cc\:/i', '/\\r/i', '/\\n/i');
 
-		if($message === false) {
-			array_pop($search);
-			array_pop($search);
+		if(false === $message) {
+			$search = array_slice($search,2);
 		}
 		return preg_replace($search, '', $value);
 	}
 /**
- * Enter description here...
+ * Default delivery method for EmailComponent
  *
- * @return unknown
+ * @see http://www.php.net/manual/en/function.mail.php
  * @access private
+ * @return boolean true on success, false on error
  */
 	function __mail() {
 		if (ini_get('safe_mode')) {
@@ -557,9 +657,10 @@ class EmailComponent extends Object{
 		return @mail($this->to, $this->subject, $this->__message, $this->__header, $this->additionalParams);
 	}
 /**
- * Sends out email via SMTP
+ * Optimal SMTP delivery method
  *
  * @access private
+ * @return boolean true on success, false on error
  */
 	function __smtp() {
 		$response = $this->__smtpConnect($this->smtpOptions);
@@ -583,12 +684,12 @@ class EmailComponent extends Object{
 		$this->__sendData("QUIT\r\n", false);
 		return true;
 	}
+
 /**
- * Private method for connecting to an SMTP server
+ * Enter description here...
  *
- * @access private
- * @param array $options SMTP connection options
- * @return array
+ * @param unknown_type $options
+ * @return unknown
  */
 	function __smtpConnect($options) {
 		$status = true;
@@ -599,21 +700,24 @@ class EmailComponent extends Object{
 		}
 
 		return array('status' => $status,
-					 'errno' => $errno,
-					 'errstr' => $errstr);
+			'errno' => $errno,
+			'errstr' => $errstr);
 	}
 /**
- * Private method for getting SMTP response
+ * Enter description here...
+ *
+ * @return unknown
  */
 	function __getSmtpResponse() {
 		$response = @fgets($this->__smtpConnection, 512);
 		return $response;
 	}
 /**
- * Private method for sending data to SMTP connection
+ * Enter description here...
  *
- * @param string $data data to be sent to SMTP server
- * @param boolean $check check for response from server
+ * @param unknown_type $data
+ * @param unknown_type $check
+ * @return unknown
  */
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
@@ -629,7 +733,6 @@ class EmailComponent extends Object{
  * Enter description here...
  *
  * @return unknown
- * @access private
  */
 	function __debug() {
 		$fm = '<pre>';
