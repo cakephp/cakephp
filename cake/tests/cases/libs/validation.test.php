@@ -45,6 +45,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue($this->Validation->alphaNumeric('frferrf'));
 		$this->assertTrue($this->Validation->alphaNumeric('12234'));
 		$this->assertTrue($this->Validation->alphaNumeric('1w2e2r3t4y'));
+		$this->assertTrue($this->Validation->alphaNumeric('0'));
 		$this->assertFalse($this->Validation->alphaNumeric('12 234'));
 		$this->assertFalse($this->Validation->alphaNumeric('dfd 234'));
 		$this->assertFalse($this->Validation->alphaNumeric("\n"));
@@ -58,6 +59,7 @@ class ValidationTestCase extends UnitTestCase {
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => 'frferrf')));
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '12234')));
 		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '1w2e2r3t4y')));
+		$this->assertTrue($this->Validation->alphaNumeric(array('check' => '0')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => '12 234')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => 'dfd 234')));
 		$this->assertFalse($this->Validation->alphaNumeric(array('check' => "\n")));

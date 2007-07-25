@@ -126,7 +126,7 @@ class Validation extends Object {
 			$this->_extract($check);
 		}
 
-		if (empty($this->check)) {
+		if (empty($this->check) && $this->check != '0') {
 			return false;
 		}
 
