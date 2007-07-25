@@ -63,6 +63,21 @@ class TestDispatcher extends Dispatcher {
 class MyPluginAppController extends Controller {
 
 }
+
+class MyPluginController extends MyPluginAppController {
+
+	var $name = 'MyPlugin';
+	var $uses = array();
+
+	function index() {
+		return true;
+	}
+
+	function add() {
+		return true;
+	}
+}
+
 class SomePagesController extends MyPluginAppController {
 
 	var $name = 'SomePages';
@@ -70,6 +85,10 @@ class SomePagesController extends MyPluginAppController {
 
 	function display($page = null) {
 		return $page;
+	}
+
+	function index() {
+		return true;
 	}
 }
 
@@ -320,7 +339,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = setUrl('/some_controller/home/param:value/param2:value2');
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'missingController';
@@ -438,6 +457,9 @@ class DispatcherTest extends UnitTestCase {
 							'form'=> null, //array('testdata'=> 'My Posted Data'),
 							'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
 							'bare'=> 0, 'webservices'=> '');
+		ksort($expected);
+		ksort($result);
+
 		$this->assertEqual($expected, $result);
 
 		$expected = 'my_plugin';
@@ -455,6 +477,111 @@ class DispatcherTest extends UnitTestCase {
 		$expected = '/cake/repo/branches/1.2.x.x';
 		$this->assertIdentical($expected, $controller->base);
 	}
+
+
+	function testAutomaticPluginDispatch() {
+		$_POST = array();
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		Router::reload();
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+
+		$url = setUrl('/my_plugin/some_pages/index/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		pr($dispatcher->params);
+		$expected = 'my_plugin';
+		$this->assertIdentical($expected, $controller->plugin);
+
+		$expected = 'SomePages';
+		$this->assertIdentical($expected, $controller->name);
+
+		$expected = 'index';
+		$this->assertIdentical($expected, $controller->action);
+
+		$expected = array('param'=>'value', 'param2'=>'value2');
+		$this->assertIdentical($expected, $controller->namedArgs);
+
+		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/index/param:value/param2:value2';
+		$this->assertIdentical($expected, $controller->here);
+
+		$expected = '/cake/repo/branches/1.2.x.x';
+		$this->assertIdentical($expected, $controller->base);
+	}
+
+	function testAutomaticPluginControllerDispatch() {
+		$_POST = array();
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		Router::reload();
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+
+		$url = setUrl('/my_plugin/add/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'my_plugin';
+		$this->assertIdentical($expected, $controller->plugin);
+
+		$expected = 'MyPlugin';
+		$this->assertIdentical($expected, $controller->name);
+
+		$expected = 'add';
+		$this->assertIdentical($expected, $controller->action);
+	}
+
+	function testAutomaticPluginPluginControllerDispatch() {
+		$_POST = array();
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		Router::reload();
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+
+		$url = setUrl('/my_plugin/param:value/param2:value2');
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'my_plugin';
+		$this->assertIdentical($expected, $controller->plugin);
+
+		$expected = 'MyPlugin';
+		$this->assertIdentical($expected, $controller->name);
+
+		$expected = 'index';
+		$this->assertIdentical($expected, $controller->action);
+	}
+
+	function testRouterPluginNullControllerDispatch() {
+		$_POST = array();
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		Router::reload();
+		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=> 'my_plugin'));
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+
+		$url = setUrl('/my_plugin/param:value/param2:value2');
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'missingController';
+		$this->assertIdentical($expected, $controller);
+	}
+
 
 	function tearDown() {
 		$_GET = $this->_get;

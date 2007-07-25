@@ -75,6 +75,14 @@ class Dispatcher extends Object {
  * @access public
  */
 	var $plugin = null;
+
+/**
+ * the params for this request
+ *
+ * @var string
+ * @access public
+ */
+	var $params = null;
 /**
  * Constructor.
  */
@@ -98,54 +106,42 @@ class Dispatcher extends Object {
  * @access public
  */
 	function dispatch($url, $additionalParams = array()) {
-		$params = array_merge($this->parseParams($url), $additionalParams);
+		$this->params = array_merge($this->parseParams($url), $additionalParams);
 		$missingAction = $missingView = $privateAction = false;
 
 		$this->base = $this->baseUrl();
+		$controller = $this->__getController($this->params);
 
-		$pluginPath = null;
-		if (!empty($params['plugin'])) {
-			$this->plugin = $params['plugin'];
-			$pluginPath = Inflector::camelize($this->plugin).'.';
-		}
+		if(!is_object($controller)) {
+			if (preg_match('/([\\.]+)/', $controller)) {
+				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
 
-		if (!empty($params['controller'])) {
-			$ctrlName = Inflector::camelize($params['controller']);
-			$ctrlClass = $ctrlName.'Controller';
-		}
-
-		if (!loadController($pluginPath . $ctrlName)) {
-			if (preg_match('/([\\.]+)/', $ctrlName)) {
-				Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
-
-				return $this->cakeError('error404',	array(array('url' => strtolower($ctrlName),
+				return $this->cakeError('error404',	array(array('url' => strtolower($controller),
 														'message' => 'Was not found on this server',
 														'base' => $this->base)));
 			} else {
-				Router::setRequestInfo(array($params, array('base' => $this->base, 'webroot' => $this->webroot)));
+				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
 				return $this->cakeError('missingController', array(
 					array(
-						'className' => Inflector::camelize($params['controller']."Controller"),
+						'className' => $controller.'Controller',
 						'webroot' => $this->webroot,
 						'url' => $url,
 						'base' => $this->base
 					)
 				));
 			}
-		} else {
-			$controller =& new $ctrlClass();
 		}
 
-		if (empty($params['action'])) {
-			$params['action'] = 'index';
+		if (empty($this->params['action'])) {
+			$this->params['action'] = 'index';
 		}
 
 		if (defined('CAKE_ADMIN')) {
-			if (isset($params[CAKE_ADMIN])) {
+			if (isset($this->params[CAKE_ADMIN])) {
 				$this->admin = '/'.CAKE_ADMIN ;
 				$url = preg_replace('/'.CAKE_ADMIN.'(\/|$)/', '', $url);
-				$params['action'] = CAKE_ADMIN.'_'.$params['action'];
-			} elseif (strpos($params['action'], CAKE_ADMIN) === 0) {
+				$this->params['action'] = CAKE_ADMIN.'_'.$this->params['action'];
+			} elseif (strpos($this->params['action'], CAKE_ADMIN) === 0) {
 				$privateAction = true;
 			}
 		}
@@ -160,27 +156,27 @@ class Dispatcher extends Object {
 
 		$classMethods = array_map("low", get_class_methods($controller));
 
-		if (in_array(low($params['action']), $protected)  || strpos($params['action'], '_', 0) === 0) {
+		if (in_array(low($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
 			$privateAction = true;
 		}
 
-		if (!in_array(low($params['action']), $classMethods)) {
+		if (!in_array(low($this->params['action']), $classMethods)) {
 			$missingAction = true;
 		}
 
-		if (in_array('return', array_keys($params)) && $params['return'] == 1) {
+		if (in_array('return', array_keys($this->params)) && $this->params['return'] == 1) {
 			$controller->autoRender = false;
 		}
 
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
-		$controller->params = $params;
+		$controller->params = $this->params;
 		$controller->plugin = $this->plugin;
-		$controller->action = $params['action'];
-		$controller->webservices = $params['webservices'];
+		$controller->action = $this->params['action'];
+		$controller->webservices = $this->params['webservices'];
 
-		list($passedArgs, $namedArgs) = Router::getArgs($params, $controller->namedArgs, $controller->argSeparator);
+		list($passedArgs, $namedArgs) = Router::getArgs($this->params, $controller->namedArgs, $controller->argSeparator);
 		$controller->passedArgs = $passedArgs;
 		$controller->namedArgs = $namedArgs;
 
@@ -190,25 +186,25 @@ class Dispatcher extends Object {
 			$controller->data = null;
 		}
 
-		if (!empty($params['bare'])) {
+		if (!empty($this->params['bare'])) {
 			$controller->autoLayout = false;
 		}
 
-		if (isset($params['layout'])) {
-			if ($params['layout'] === '') {
+		if (isset($this->params['layout'])) {
+			if ($this->params['layout'] === '') {
 				$controller->autoLayout = false;
 			} else {
-				$controller->layout = $params['layout'];
+				$controller->layout = $this->params['layout'];
 			}
 		}
 
-		if (isset($params['viewPath'])) {
-			$controller->viewPath = $params['viewPath'];
+		if (isset($this->params['viewPath'])) {
+			$controller->viewPath = $this->params['viewPath'];
 		}
 
 		foreach (array('components', 'helpers') as $var) {
-			if (isset($params[$var]) && !empty($params[$var]) && is_array($controller->{$var})) {
-				$diff = array_diff($params[$var], $controller->{$var});
+			if (isset($this->params[$var]) && !empty($this->params[$var]) && is_array($controller->{$var})) {
+				$diff = array_diff($this->params[$var], $controller->{$var});
 				$controller->{$var} = array_merge($controller->{$var}, $diff);
 			}
 		}
@@ -217,16 +213,21 @@ class Dispatcher extends Object {
 			array_push($controller->components, $controller->webservices);
 			array_push($controller->helpers, $controller->webservices);
 		}
-		Router::setRequestInfo(array($params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
+		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
 		$controller->_initComponents();
+
+		if(isset($this->plugin)) {
+			loadPluginModels($this->plugin);
+		}
+
 		$controller->constructClasses();
 
 		if ($privateAction) {
 			$this->start($controller);
 			return $this->cakeError('privateAction', array(
 				array(
-					'className' => Inflector::camelize($params['controller']."Controller"),
-					'action' => $params['action'],
+					'className' => Inflector::camelize($this->params['controller']."Controller"),
+					'action' => $this->params['action'],
 					'webroot' => $this->webroot,
 					'url' => $url,
 					'base' => $this->base
@@ -234,7 +235,7 @@ class Dispatcher extends Object {
 			));
 		}
 
-		return $this->_invoke($controller, $params, $missingAction);
+		return $this->_invoke($controller, $this->params, $missingAction);
 	}
 /**
  * Invokes given controller's render action if autoRender option is set. Otherwise the
@@ -448,6 +449,7 @@ class Dispatcher extends Object {
  * @access protected
  */
 	function _restructureParams($params) {
+		$params['plugin'] = $params['controller'];
 		$params['controller'] = $params['action'];
 
 		if (isset($params['pass'][0])) {
@@ -457,6 +459,47 @@ class Dispatcher extends Object {
 			$params['action'] = null;
 		}
 		return $params;
+	}
+/**
+ * Get controller to use, either plugin controller or application controller
+ *
+ * @param array $params Array on where to re-set 'controller', 'action', and 'pass' indexes
+ * @return mixed name of controller if not loaded, or object if loaded
+ * @access protected
+ */
+	function __getController($params = null, $continue = true) {
+
+		if(!$params) {
+			$params = $this->params;
+		}
+
+		$controller = $pluginPath = null;
+
+		if (!empty($params['controller'])) {
+			$controller = Inflector::camelize($params['controller']);
+			$ctrlClass = $controller.'Controller';
+		}
+
+		if (!empty($params['plugin'])) {
+			$this->plugin = $params['plugin'];
+			$pluginPath = Inflector::camelize($this->plugin).'.';
+
+			if(!$controller) {
+				$controller = Inflector::camelize($params['plugin']);
+				$ctrlClass = $controller.'Controller';
+			}
+		}
+		if ($pluginPath . $controller && loadController($pluginPath . $controller)) {
+			$controller =& new $ctrlClass();
+		} elseif ($continue){
+			$this->params = $this->_restructureParams($params);
+			$controller = $this->__getController($this->params, false);
+		}
+
+		if(!isset($ctrlClass)) {
+			return false;
+		}
+		return $controller;
 	}
 }
 

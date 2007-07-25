@@ -768,7 +768,7 @@ class AuthComponent extends Object {
 		}
 
 		$paths = Router::getPaths();
-		if (stristr($url, $paths['base'])) {
+		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
 			$url = r($paths['base'], '', $url);
 		}
 
