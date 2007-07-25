@@ -738,31 +738,31 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Model']['field'] = 'myvalue';
 		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" type="checkbox" id="theID" value="myvalue" class="form-error" checked="checked" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" id="theID" value="myvalue" class="form-error" checked="checked" />');
 
 		$this->Form->data['Model']['field'] = '';
 		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" type="checkbox" id="theID" value="myvalue" class="form-error" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" id="theID" value="myvalue" class="form-error" />');
 
 		$this->Form->validationErrors['Model']['field'] = 0;
 		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" type="checkbox" value="myvalue" id="ModelField" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="myvalue" id="ModelField" />');
 
 		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][field]" value="0" id="ContactField_" /><input type="checkbox" name="data[Contact][field]" type="checkbox" value="myvalue" id="ContactField" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][field]" value="0" id="ContactField_" /><input type="checkbox" name="data[Contact][field]" value="myvalue" id="ContactField" />');
 
 		$result = $this->Form->checkbox('Model.field');
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" type="checkbox" value="1" id="ModelField" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="1" id="ModelField" />');
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 1;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" type="checkbox" id="theID" value="1" checked="checked" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" checked="checked" />');
 
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$this->Form->data['Contact']['published'] = 0;
 		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" type="checkbox" id="theID" value="1" />');
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" />');
 	}
 
 	function tearDown() {

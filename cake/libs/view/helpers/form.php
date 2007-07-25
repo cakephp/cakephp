@@ -698,6 +698,10 @@ class FormHelper extends AppHelper {
 			$options['value'] = $value;
 		}
 
+		if (isset($options['type'])) {
+			unset($options['type']);
+		}
+
 		$output .= sprintf($this->Html->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' '));
 		return $this->output($output);
 	}
