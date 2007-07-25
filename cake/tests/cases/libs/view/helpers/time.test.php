@@ -42,7 +42,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class TimeTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'TimeHelper test not implemented');
+		$this->skipif (true, 'TimeHelper test not implemented');
 	}
 
 	function setUp() {

@@ -36,7 +36,7 @@ uses('i18n');
 class I18nTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'I18nTest not implemented');
+		$this->skipif (true, 'I18nTest not implemented');
 	}
 }
 ?>

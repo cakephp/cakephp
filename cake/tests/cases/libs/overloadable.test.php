@@ -36,7 +36,7 @@ uses('overloadable');
 class OverloadableTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'OverloadableTest not implemented');
+		$this->skipif (true, 'OverloadableTest not implemented');
 	}
 }
 ?>

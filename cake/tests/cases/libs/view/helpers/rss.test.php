@@ -42,7 +42,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class RssTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'RssHelper test not implemented');
+		$this->skipif (true, 'RssHelper test not implemented');
 	}
 
 	function setUp() {

@@ -36,7 +36,7 @@ uses('controller' . DS . 'controller');
 class ControllerTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ControllerTest not implemented');
+		$this->skipif (true, 'ControllerTest not implemented');
 	}
 }
 ?>

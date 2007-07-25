@@ -495,7 +495,7 @@ class SecurityComponent extends Object {
 				if ($string === '_') {
 					$newKey = substr($key, 1);
 
-					if(!isset($controller->data[$newKey])) {
+					if (!isset($controller->data[$newKey])) {
 						$controller->data[$newKey] = array();
 					}
 

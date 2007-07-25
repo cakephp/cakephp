@@ -471,7 +471,7 @@ class PaginatorHelper extends AppHelper {
 			for ($i = $start; $i < $end; $i++) {
 				$out .= $this->link($i, array('page' => $i), $options) . $separator;
 			}
-			
+
 			if ($end != $params['page']) {
 				$out .= $this->link($i, array('page' => $end), $options);
 			}

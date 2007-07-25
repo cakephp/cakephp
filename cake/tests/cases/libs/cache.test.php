@@ -36,7 +36,7 @@ uses('cache');
 class CacheTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'CacheTest not implemented');
+		$this->skipif (true, 'CacheTest not implemented');
 	}
 }
 ?>

@@ -36,7 +36,7 @@ uses('cache', 'cache' . DS . 'memcache');
 class MemcacheEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'MemcacheEngineTest not implemented');
+		$this->skipif (true, 'MemcacheEngineTest not implemented');
 	}
 }
 ?>

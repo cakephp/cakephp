@@ -36,7 +36,7 @@ uses('cache', 'cache' . DS . 'model');
 class ModelEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ModelEngineTest not implemented');
+		$this->skipif (true, 'ModelEngineTest not implemented');
 	}
 }
 ?>

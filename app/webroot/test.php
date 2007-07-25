@@ -74,10 +74,11 @@ if (empty( $_GET['output'])) {
 	$_GET['output'] = 'html';
 }
 
-if (!defined('BASE_URL')) {
-	$dispatch =& new Dispatcher();
-	define('BASE_URL', $dispatch->baseUrl());
-}
+$dispatch =& new Dispatcher();
+$dispatch->base = env('SCRIPT_NAME');
+$dispatch->baseUrl();
+define('BASE', $dispatch->webroot);
+
 /**
  *
  * Used to determine output to display
@@ -179,7 +180,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 	function CakePHPTestHeader() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
-				$baseUrl = BASE_URL;
+				$baseUrl = BASE;
 				$characterSet = 'ISO-8859-1';
 				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
@@ -203,7 +204,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 	function CakePHPTestSuiteFooter() {
 		switch ( CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
-				$baseUrl = BASE_URL;
+				$baseUrl = BASE;
 				include CAKE . 'tests' . DS . 'lib' . DS . 'footer.php';
 			break;
 		}

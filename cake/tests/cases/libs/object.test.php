@@ -36,7 +36,7 @@ uses('object');
 class ObjectTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ObjectTest not implemented');
+		$this->skipif (true, 'ObjectTest not implemented');
 	}
 }
 ?>

@@ -42,7 +42,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class JsTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'JsHelper test not implemented');
+		$this->skipif (true, 'JsHelper test not implemented');
 	}
 
 	function setUp() {

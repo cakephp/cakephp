@@ -36,7 +36,7 @@ uses('class_registry');
 class ClassRegistryTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ClassRegistry not implemented');
+		$this->skipif (true, 'ClassRegistry not implemented');
 	}
 }
 ?>

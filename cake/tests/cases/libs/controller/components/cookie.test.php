@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS .'cookie');
 class CookieComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'CookieComponentTest not implemented');
+		$this->skipif (true, 'CookieComponentTest not implemented');
 	}
 }
 ?>

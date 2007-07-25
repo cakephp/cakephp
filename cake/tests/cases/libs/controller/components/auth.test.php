@@ -40,7 +40,7 @@ class AuthUser extends CakeTestModel {
 	}
 
 	function isAuthorized($user) {
-		if(!empty($user)) {
+		if (!empty($user)) {
 			return true;
 		}
 		return false;
@@ -87,7 +87,7 @@ class AuthTest extends CakeTestCase {
 	var $fixtures = array('core.auth_user', 'core.aco', 'core.aro', 'core.aros_aco');
 
 	function skip() {
-		$this->skipIf(true, 'Auth tests currently disabled, to test use a clean database with tables needed for acl and comment out this line');
+		$this->skipif (true, 'Auth tests currently disabled, to test use a clean database with tables needed for acl and comment out this line');
 	}
 
 	function setUp() {

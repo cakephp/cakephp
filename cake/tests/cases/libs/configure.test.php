@@ -36,7 +36,7 @@ uses('configure');
 class ConfigureTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ConfigureTest not implemented');
+		$this->skipif (true, 'ConfigureTest not implemented');
 	}
 }
 ?>

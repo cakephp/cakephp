@@ -622,7 +622,7 @@ class Set extends Object {
 			$path2 = $path1;
 			$path1 = $data;
 			$data = $this->get();
-		} else if (is_a($this, 'set') && is_string($data) && empty($path2)) {
+		} elseif (is_a($this, 'set') && is_string($data) && empty($path2)) {
 			$path2 = $path1;
 			$path1 = $data;
 			$data = $this->get();
@@ -638,7 +638,7 @@ class Set extends Object {
 			$vals = Set::extract($data, $path2);
 		} else {
 			$count = count($keys);
-			for($i=0; $i < $count; $i++) {
+			for ($i=0; $i < $count; $i++) {
 				$vals[$i] = null;
 			}
 		}
@@ -709,7 +709,7 @@ class Set extends Object {
 			}
 			$return = $object;
 
-			if(!empty($merge)) {
+			if (!empty($merge)) {
 				$mergeKeys = array_keys($merge);
 				$objectKeys = array_keys($object);
 				$count = count($mergeKeys);
@@ -720,8 +720,8 @@ class Set extends Object {
 					$loop = $count1;
 
 					for ($ii = 0; $ii < $loop; $ii++) {
-						if(is_array($object[$objectKeys[$ii]])) {
-							if(array_key_exists($objectKeys[$ii], $object[$objectKeys[$ii]])) {
+						if (is_array($object[$objectKeys[$ii]])) {
+							if (array_key_exists($objectKeys[$ii], $object[$objectKeys[$ii]])) {
 								unset($change[$objectKeys[$ii]][$objectKeys[$ii]]);
 							}
 						} else {
@@ -730,8 +730,8 @@ class Set extends Object {
 					}
 
 					foreach ($objectKeys as $key => $value) {
-						if(is_array($object[$value])) {
-							if(array_key_exists($mergeKeys[$i], $object[$value])) {
+						if (is_array($object[$value])) {
+							if (array_key_exists($mergeKeys[$i], $object[$value])) {
 								unset($change[$value][$mergeKeys[$i]]);
 							}
 						} else {

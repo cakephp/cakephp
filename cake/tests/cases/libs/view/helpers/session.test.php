@@ -42,7 +42,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class SessionHelperTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'SessionHelper test not implemented');
+		$this->skipif (true, 'SessionHelper test not implemented');
 	}
 
 	function setUp() {

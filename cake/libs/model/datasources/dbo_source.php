@@ -1569,11 +1569,11 @@ class DboSource extends DataSource {
 					} elseif (!isset($match['2'])) {
 						$match['1'] = ' = ';
 						$match['2'] = $match['0'];
-					} else if(low($mValue) == 'not') {
+					} elseif (low($mValue) == 'not') {
 						$not = $this->conditionKeysToString(array($mValue => array($key => $match[2])), $quoteValues);
 					}
 
-					if($not) {
+					if ($not) {
 						$data = $not[0];
 					} elseif (strpos($match['2'], '-!') === 0) {
 						$match['2'] = str_replace('-!', '', $match['2']);
@@ -1814,6 +1814,16 @@ class DboSource extends DataSource {
 		$this->close();
 		parent::__destruct();
 	}
+/**
+ * Inserts multiple values into a join table
+ *
+ * @param string $table
+ * @param string $fields
+ * @param array $values
+ */
+	function insertMulti($table, $fields, $values) {
+		$values = implode(', ', $values);
+		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
+	}
 }
-
 ?>

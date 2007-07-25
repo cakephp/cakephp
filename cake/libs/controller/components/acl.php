@@ -54,8 +54,8 @@ class AclComponent extends Object {
 	function &getACL() {
 		if ($this->_instance == null) {
 			$name = $this->name;
-			if(!class_exists($name)) {
-				if(loadComponent($name)) {
+			if (!class_exists($name)) {
+				if (loadComponent($name)) {
 					if (strpos($name, '.') !== false) {
 						list($plugin, $name) = explode('.', $name);
 					}

@@ -300,10 +300,10 @@ class AuthComponent extends Object {
 			}
 		}
 
-		if($this->authorize) {
+		if ($this->authorize) {
 			extract($this->__authType());
-			if(in_array($type, array('crud', 'actions'))) {
-				if(isset($controller->Acl)) {
+			if (in_array($type, array('crud', 'actions'))) {
+				if (isset($controller->Acl)) {
 					$this->Acl =& $controller->Acl;
 					if ($this->isAuthorized($type)) {
 						return true;
@@ -311,8 +311,8 @@ class AuthComponent extends Object {
 				} else {
 					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
 				}
-			} else if($type == 'model') {
-				if(!isset($object)) {
+			} elseif ($type == 'model') {
+				if (!isset($object)) {
 					if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
 						$object = $controller->modelClass;
 					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
@@ -322,8 +322,8 @@ class AuthComponent extends Object {
 				if ($this->isAuthorized($type, null, $object)) {
 					return true;
 				}
-			} else if($type == 'controller'){
-				if($controller->isAuthorized()) {
+			} elseif ($type == 'controller'){
+				if ($controller->isAuthorized()) {
 					return true;
 				}
 			}
@@ -377,7 +377,7 @@ class AuthComponent extends Object {
 
 		extract($this->__authType(array($type => $object)));
 
-		if(!$object) {
+		if (!$object) {
 			$object = $this->objectModel;
 		}
 
@@ -395,14 +395,14 @@ class AuthComponent extends Object {
 				}
 			break;
 			case 'model':
-				if(empty($object)) {
+				if (empty($object)) {
 					trigger_error(__(sprintf('Could not find %s.  Set AuthComponent::$objectModel in beforeFilter() or pass object name.', $this->objectModel), true), E_USER_WARNING);
 					return;
 				}
 				$model = $this->getModel($object);
 				if (method_exists($model, 'isAuthorized')) {
 					$valid = $model->isAuthorized($user, $this->action(':controller'), $this->action(':action'));
-				} else if($model){
+				} elseif ($model){
 					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', $model), true), E_USER_WARNING);
 				}
 			break;
@@ -626,7 +626,7 @@ class AuthComponent extends Object {
  */
 	function &getModel($name = null) {
 		$model = null;
-		if(!$name) {
+		if (!$name) {
 			$name = $this->userModel;
 		}
 		if (!ClassRegistry::isKeySet($name)) {
@@ -768,7 +768,7 @@ class AuthComponent extends Object {
 		}
 
 		$paths = Router::getPaths();
-		if(stristr($url, $paths['base'])) {
+		if (stristr($url, $paths['base'])) {
 			$url = r($paths['base'], '', $url);
 		}
 

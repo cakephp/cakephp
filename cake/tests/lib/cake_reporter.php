@@ -50,7 +50,7 @@ class CakeHtmlReporter extends HtmlReporter {
  */
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
-		$baseUrl = BASE_URL;
+		$baseUrl = BASE;
 		print "<h2>$testName</h2>\n";
 		flush();
 	}

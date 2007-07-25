@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS .'request_handler');
 class RequestHandlerComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'RequestHandlerComponentTest not implemented');
+		$this->skipif (true, 'RequestHandlerComponentTest not implemented');
 	}
 }
 ?>

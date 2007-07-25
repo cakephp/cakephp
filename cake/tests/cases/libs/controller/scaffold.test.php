@@ -36,7 +36,7 @@ uses('controller' . DS . 'scaffold');
 class ScaffoldTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ScaffoldTest not implemented');
+		$this->skipif (true, 'ScaffoldTest not implemented');
 	}
 }
 ?>

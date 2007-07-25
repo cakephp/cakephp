@@ -275,7 +275,7 @@ class Scaffold extends Object {
 				} else {
 					return $this->controller->flash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
 				}
-			} elseif($action == 'edit') {
+			} elseif ($action == 'edit') {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			}
 
@@ -506,7 +506,7 @@ class Scaffold extends Object {
 				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			}
 		}
-		if($action === 'add') {
+		if ($action === 'add') {
 			$action = 'edit';
 		}
 		return LIBS . 'view' . DS . 'templates' . DS . 'scaffolds' . DS . $action . '.ctp';

@@ -257,7 +257,7 @@ class RequestHandlerComponent extends Object {
  */
 	function isMobile() {
 		preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT'), $match);
-		if(!empty($match) || $this->accepts('wap')) {
+		if (!empty($match) || $this->accepts('wap')) {
 			return true;
 		}
 		return false;

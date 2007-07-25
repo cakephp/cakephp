@@ -670,7 +670,7 @@ class Router extends Object {
 		if ($full) {
 			$output = FULL_BASE_URL . $output;
 		}
-		if(!empty($extension) && substr($output, -1) == '/') {
+		if (!empty($extension) && substr($output, -1) == '/') {
 			$output = substr($output, 0, -1);
 		}
 		return $output . $extension . $_this->queryString($q) . $frag;

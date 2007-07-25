@@ -36,7 +36,7 @@ uses('cake_log');
 class CakeLogTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'CakeLogTest not implemented');
+		$this->skipif (true, 'CakeLogTest not implemented');
 	}
 }
 ?>

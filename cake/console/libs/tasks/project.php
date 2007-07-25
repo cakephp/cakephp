@@ -66,7 +66,7 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		if(empty($this->params['skel'])) {
+		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
 			if (is_dir(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel') === true) {
 				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
@@ -81,7 +81,7 @@ class ProjectTask extends Shell {
 				$this->params['app'] = basename($project);
 			}
 
-			if($this->params['root'] === dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
+			if ($this->params['root'] === dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
 				$this->params['working'] = $this->params['root'] . DS;
 			}
 

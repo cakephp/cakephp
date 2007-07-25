@@ -36,7 +36,7 @@ uses('xml');
 class XMLNodeTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'XMLNodeTest not implemented');
+		$this->skipif (true, 'XMLNodeTest not implemented');
 	}
 }
 /**
@@ -48,7 +48,7 @@ class XMLNodeTest extends UnitTestCase {
 class XMLTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'XMLTest not implemented');
+		$this->skipif (true, 'XMLTest not implemented');
 	}
 }
 ?>

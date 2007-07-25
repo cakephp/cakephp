@@ -320,6 +320,7 @@
 		if ($name === null) {
 			return true;
 		}
+
 		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 
@@ -364,7 +365,9 @@
 		}
 
 		$className = $name . 'Controller';
-		if (!class_exists($className)) {
+		if (class_exists($className)) {
+			return true;
+		} else {
 			$name = Inflector::underscore($className);
 			$controllers = Configure::read('Controllers');
 			if (is_array($controllers)) {
@@ -1003,7 +1006,50 @@
 				$uri = env('PHP_SELF') . '/' . env('QUERY_STRING');
 			}
 		}
-		return preg_replace('/\?url=\//', '', $uri);
+		return str_replace('//', '/', preg_replace('/\?url=/', '/', $uri));
+	}
+/**
+ * Returns and sets the $_GET[url] derived from the REQUEST_INFO
+ *
+ * @param string $uri
+ * @return string URL
+ */
+	function setUrl($uri = null, $script = null) {
+		if ($uri == null) {
+			$uri = setUri();
+		}
+		if ($script == null) {
+			if (defined('BASE_URL')) {
+				$script = BASE_URL;
+			} else {
+				$script = env('SCRIPT_NAME');
+			}
+		}
+		$url = null;
+		if ($uri === '/' || $uri === $script || $uri === '/'.APP_DIR.'/') {
+			$url = $_GET['url'] = '/';
+		} else {
+			if (strpos($uri, $script) !== false) {
+				$elements = explode($script, $uri);
+			} elseif (strpos($uri, APP_DIR) !== false) {
+				$elements = explode(APP_DIR, $uri);
+			} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
+				$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
+			} else {
+				$elements = array();
+			}
+
+			if (!empty($elements[1])) {
+				$_GET['url'] = $elements[1];
+				$url = $elements[1];
+			} else {
+				$url = $_GET['url'] = '/';
+			}
+			if (strpos($url, '/') === 0 && $url != '/') {
+				$url = $_GET['url'] = substr($url, 1);
+			}
+		}
+		return $url;
 	}
 /**
  * Gets an environment variable from available sources, and provides emulation

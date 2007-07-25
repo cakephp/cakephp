@@ -36,7 +36,7 @@ uses('cache', 'cache' . DS . 'file');
 class FileEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'FileEngineTest not implemented');
+		$this->skipif (true, 'FileEngineTest not implemented');
 	}
 }
 ?>

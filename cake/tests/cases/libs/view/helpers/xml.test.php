@@ -42,7 +42,7 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
 class XmlHelperTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'XmlHelper test not implemented');
+		$this->skipif (true, 'XmlHelper test not implemented');
 	}
 
 	function setUp() {

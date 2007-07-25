@@ -49,7 +49,7 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testBadSmtpSend() {
-		if(@fsockopen('localhost', 25)) {
+		if (@fsockopen('localhost', 25)) {
 			$this->Controller->Email->smtpOptions['host'] = 'blah';
 			$this->assertFalse($this->Controller->Email->send('Should not work'));
 		} else {
@@ -58,7 +58,7 @@ class EmailTest extends CakeTestCase {
 	}
 
 	function testSmtpSend() {
-		if(@fsockopen('localhost', 25)) {
+		if (@fsockopen('localhost', 25)) {
 			$this->assertTrue(@fsockopen('localhost', 25), "Local mail server is running");
 			$this->Controller->Email->reset();
 			$this->Controller->Email->to = 'chartjes@localhost';

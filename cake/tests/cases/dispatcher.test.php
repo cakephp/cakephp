@@ -26,7 +26,62 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	require_once CAKE.'dispatcher.php';
+require_once CAKE.'dispatcher.php';
+
+class TestDispatcher extends Dispatcher {
+
+	function _invoke(&$controller, $params, $missingAction) {
+		$this->start($controller);
+		$classVars = get_object_vars($controller);
+		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
+			uses('controller'. DS . 'scaffold');
+			return new Scaffold($controller, $params);
+		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
+				return $this->cakeError('missingAction', array(
+					array(
+						'className' => Inflector::camelize($params['controller']."Controller"),
+						'action' => $params['action'],
+						'webroot' => $this->webroot,
+						'url' => $this->here,
+						'base' => $this->base
+					)
+				));
+		}
+		return $controller;
+	}
+
+	function start(&$controller) {
+		return;
+	}
+
+	function cakeError($filename) {
+		return $filename;
+	}
+
+}
+
+class MyPluginAppController extends Controller {
+
+}
+class SomePagesController extends MyPluginAppController {
+
+	var $name = 'SomePages';
+	var $uses = array();
+
+	function display($page = null) {
+		return $page;
+	}
+}
+
+class TestDispatchPagesController extends Controller {
+
+	var $name = 'TestDispatchPages';
+	var $uses = array();
+
+	function admin_index() {
+		return true;
+	}
+}
 /**
  * Short description for class.
  *
@@ -34,6 +89,15 @@
  * @subpackage	cake.tests.cases
  */
 class DispatcherTest extends UnitTestCase {
+
+	function setUp() {
+		$this->_get = $_GET;
+		$_GET = array();
+		Configure::write('baseUrl', false);
+		Configure::write('app', 'app');
+		Configure::write('webroot', 'webroot');
+
+	}
 
 	function testParseParamsWithoutZerosAndEmptyPost() {
 		$dispatcher =& new Dispatcher();
@@ -95,6 +159,305 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertPattern('/\\A(?:000002)\\z/', $test['pass'][3]);
 		$this->assertPattern('/\\A(?:000030)\\z/', $test['pass'][4]);
 		$this->assertPattern('/\\A(?:0000400)\\z/', $test['pass'][5]);
+	}
+
+	function testSetUrl() {
+		$uri = '/app/webroot/index.php/posts/add';
+		$_SERVER['SCRIPT_NAME'] = '/app/webroot/index.php';
+		$result = setUrl($uri);
+		$expected = 'posts/add';
+		$this->assertEqual($expected, $result);
+
+		$uri = APP_DIR . '/posts/add';
+		$_SERVER['SCRIPT_NAME'] = APP_DIR . '/webroot/index.php';
+		$result = setUrl($uri);
+		$expected = 'posts/add';
+		$this->assertEqual($expected, $result);
+
+		$uri = '/posts/add';
+		$_SERVER['SCRIPT_NAME'] = '/app/webroot/index.php';
+		$result = setUrl($uri);
+		$expected = 'posts/add';
+		$this->assertEqual($expected, $result);
+	}
+
+	function testBaseUrlAndWebrootWithModRewrite() {
+		$dispatcher =& new Dispatcher();
+
+		Configure::write('app', 'app');
+		Configure::write('webroot', 'webroot');
+		Configure::write('baseUrl', false);
+
+		$dispatcher->base = false;
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '/1.2.x.x';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/1.2.x.x/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		$dispatcher->base = false;
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+
+		Configure::write('app', 'auth');
+
+		$dispatcher->base = false;;
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '/demos/auth';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/demos/auth/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('app', 'code');
+
+		$dispatcher->base = false;;
+		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
+		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '/clients/PewterReport/code';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/clients/PewterReport/code/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+	}
+
+	function testBaseUrlAndWebrootWithBaseUrl() {
+		$dispatcher =& new Dispatcher();
+
+		Configure::write('app', 'app');
+
+		Configure::write('baseUrl', '/app/webroot/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/app/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('baseUrl', '/app/webroot/test.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/app/test.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('baseUrl', '/app/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/app/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('baseUrl', '/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('baseUrl', '/CakeBB/app/webroot/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/CakeBB/app/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/CakeBB/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('baseUrl', '/CakeBB/app/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/CakeBB/app/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/CakeBB/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+
+		Configure::write('baseUrl', '/CakeBB/index.php');
+		$result = $dispatcher->baseUrl();
+		$expected = '/CakeBB/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/CakeBB/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+	}
+
+	function testBaseUrlAndWebrootWithBase() {
+		$dispatcher =& new Dispatcher();
+		Configure::write('baseUrl',false);
+		$dispatcher->base = '/app/webroot';
+		$result = $dispatcher->baseUrl();
+		$expected = '/app';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/app/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		$dispatcher->base = '/app';
+		$result = $dispatcher->baseUrl();
+		$expected = '';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('app', 'testbed');
+		$dispatcher->base = '/cake/testbed/webroot/test.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '/cake/testbed/test.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/cake/testbed/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+	}
+
+	function testMissingController() {
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = '/index.php';
+		$url = setUrl('/some_controller/home/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'missingController';
+		$this->assertEqual($expected, $controller);
+	}
+
+	function testPrivate() {
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = '/index.php';
+		$url = setUrl('/some_pages/redirect/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'privateAction';
+		$this->assertEqual($expected, $controller);
+	}
+
+	function testMissingAction() {
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = '/index.php';
+		$url = setUrl('/some_pages/home/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+		$expected = 'missingAction';
+		$this->assertEqual($expected, $controller);
+	}
+
+	function testDispatch() {
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = '/index.php';
+		$url = setUrl('/pages/home/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'Pages';
+		$this->assertEqual($expected, $controller->name);
+
+		$expected = array('param'=>'value', 'param2'=>'value2');
+		$this->assertIdentical($expected, $controller->namedArgs);
+	}
+
+	function testAdminDispatch() {
+		$_POST = array();
+
+		if (!defined('CAKE_ADMIN')) {
+			define('CAKE_ADMIN', 'admin');
+		}
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+		$url = setUrl('/admin/test_dispatch_pages/index/param:value/param2:value2');
+
+		Router::reload();
+		$Router =& Router::getInstance();
+		if (defined('CAKE_ADMIN')) {
+			$admin = CAKE_ADMIN;
+			if (!empty($admin)) {
+				$Router->__admin = array(
+					'/:' . $admin . '/:controller/:action/*',
+					'/^(?:\/(?:(' . $admin . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
+					array($admin, 'controller', 'action'), array()
+				);
+			}
+		}
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'TestDispatchPages';
+		$this->assertEqual($expected, $controller->name);
+
+		$expected = array('param'=>'value', 'param2'=>'value2');
+		$this->assertIdentical($expected, $controller->namedArgs);
+
+		$expected = 'admin';
+		$this->assertIdentical($expected, $controller->params['admin']);
+
+		$expected = '/cake/repo/branches/1.2.x.x/admin/test_dispatch_pages/index/param:value/param2:value2';
+		$this->assertIdentical($expected, $controller->here);
+
+		$expected = '/cake/repo/branches/1.2.x.x';
+		$this->assertIdentical($expected, $controller->base);
+
+	}
+
+	function testPluginDispatch() {
+		$_POST = array();
+		$_SERVER['DOCUMENT_ROOT'] = '';
+		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+
+		Router::reload();
+		$dispatcher =& new TestDispatcher();
+		Router::connect('/my_plugin/:controller/*', array('plugin'=>'my_plugin', 'controller'=>'pages', 'action'=>'display'));
+
+		$dispatcher->base = false;
+		$url = setUrl('/my_plugin/some_pages/home/param:value/param2:value2');
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		set_error_handler('simpleTestErrorHandler');
+
+
+		$result = $dispatcher->parseParams($url);
+		$expected = array('pass' => array('home', 'param:value', 'param2:value2'),
+							'plugin'=> 'my_plugin', 'controller'=> 'some_pages', 'action'=> 'display',
+							'form'=> null, //array('testdata'=> 'My Posted Data'),
+							'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
+							'bare'=> 0, 'webservices'=> '');
+		$this->assertEqual($expected, $result);
+
+		$expected = 'my_plugin';
+		$this->assertIdentical($expected, $controller->plugin);
+
+		$expected = 'SomePages';
+		$this->assertIdentical($expected, $controller->name);
+
+		$expected = array('param'=>'value', 'param2'=>'value2');
+		$this->assertIdentical($expected, $controller->namedArgs);
+
+		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/home/param:value/param2:value2';
+		$this->assertIdentical($expected, $controller->here);
+
+		$expected = '/cake/repo/branches/1.2.x.x';
+		$this->assertIdentical($expected, $controller->base);
+	}
+
+	function tearDown() {
+		$_GET = $this->_get;
 	}
 }
 ?>

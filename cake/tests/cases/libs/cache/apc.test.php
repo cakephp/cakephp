@@ -36,7 +36,7 @@ uses('cache', 'cache' . DS . 'apc');
 class APCEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'APCEngineTest not implemented');
+		$this->skipif (true, 'APCEngineTest not implemented');
 	}
 }
 ?>

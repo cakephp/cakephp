@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS .'security');
 class SecurityComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'SecurityComponentTest not implemented');
+		$this->skipif (true, 'SecurityComponentTest not implemented');
 	}
 }
 ?>

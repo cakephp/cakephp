@@ -36,7 +36,7 @@ uses('cache', 'cache' . DS . 'xcache');
 class XcacheEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'XcacheEngineTest not implemented');
+		$this->skipif (true, 'XcacheEngineTest not implemented');
 	}
 }
 ?>

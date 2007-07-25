@@ -36,7 +36,7 @@ uses('neat_string');
 class NeatStringTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'NeatString not implemented');
+		$this->skipif (true, 'NeatString not implemented');
 	}
 }
 ?>

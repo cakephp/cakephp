@@ -31,7 +31,7 @@
  		<div id="footer">
  			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
  			<a href="http://www.cakephp.org/" target="_new">
- 				<img src="<?php echo $baseUrl; ?>/img/cake.power.png" alt="CakePHP(tm) :: Rapid Development Framework" height = "15" width = "80" /></a></p>
+ 				<img src="<?php echo $baseUrl; ?>img/cake.power.png" alt="CakePHP(tm) :: Rapid Development Framework" height = "15" width = "80" /></a></p>
  		</div>
 	</div>
 </body>

@@ -452,6 +452,14 @@ class Configure extends Object {
 		$_this->__buildHelperPaths($helperPaths);
 		$_this->__buildComponentPaths($componentPaths);
 		$_this->__buildBehaviorPaths($behaviorPaths);
+
+		$_this->write('app', APP_DIR);
+		$_this->write('webroot', WEBROOT_DIR);
+		$baseUrl = false;
+		if (defined('BASE_URL')) {
+			$baseUrl = BASE_URL;
+		}
+		$_this->write('baseUrl', $baseUrl);
 	}
 }
 ?>

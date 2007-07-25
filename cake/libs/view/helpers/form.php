@@ -466,12 +466,12 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		if(isset($options['type']) && $options['type'] == 'radio') {
-			if(!isset($options['options']) && isset($options['value'])) {
+		if (isset($options['type']) && $options['type'] == 'radio') {
+			if (!isset($options['options']) && isset($options['value'])) {
 				$radioOptions = array($options['value']);
 				unset($options['value']);
-			} else if(isset($options['options'])) {
-				if(is_array($options['options'])) {
+			} elseif (isset($options['options'])) {
+				if (is_array($options['options'])) {
 					$radioOptions = $options['options'];
 				} else {
 					$radioOptions = array($options['options']);
@@ -480,8 +480,8 @@ class FormHelper extends AppHelper {
 			}
 
 			$inBetween = null;
-			if(isset($options['inbetween'])) {
-				if(!empty($options['inbetween'])) {
+			if (isset($options['inbetween'])) {
+				if (!empty($options['inbetween'])) {
 					$inBetween = $options['inbetween'];
 				}
 				unset($options['inbetween']);
@@ -731,9 +731,9 @@ class FormHelper extends AppHelper {
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
-			if(empty($value) && $count == 0) {
+			if (empty($value) && $count == 0) {
 				$optionsHere['checked'] = 'checked';
-			} else if (!empty($value) && $optValue == $value) {
+			} elseif (!empty($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
  	        }
 

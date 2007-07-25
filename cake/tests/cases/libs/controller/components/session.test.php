@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS .'session');
 class SessionComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'SessionComponentTest not implemented');
+		$this->skipif (true, 'SessionComponentTest not implemented');
 	}
 }
 ?>

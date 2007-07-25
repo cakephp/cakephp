@@ -36,7 +36,7 @@ uses('security');
 class SecurityTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'SecurityTest not implemented');
+		$this->skipif (true, 'SecurityTest not implemented');
 	}
 }
 ?>

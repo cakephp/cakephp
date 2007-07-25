@@ -36,7 +36,7 @@ uses('l10n');
 class L10nTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'L10nTest not implemented');
+		$this->skipif (true, 'L10nTest not implemented');
 	}
 }
 ?>

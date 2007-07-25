@@ -1111,8 +1111,7 @@ class Model extends Overloadable {
 				$db->query("DELETE FROM {$table} WHERE {$mainKey[$loopAssoc]} = '{$id}'");
 
 				if (!empty($newValue[$loopAssoc])) {
-					$insertValues = implode(', ', $newValue[$loopAssoc]);
-					$db->query("INSERT INTO {$table} ({$fields[$loopAssoc]}) VALUES {$insertValues};");
+					$db->insertMulti($table, $fields[$loopAssoc], $newValue[$loopAssoc]);
 				}
 			}
 		}

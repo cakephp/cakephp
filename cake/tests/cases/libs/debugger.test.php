@@ -36,7 +36,7 @@ uses('debugger');
 class DebuggerTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'ConfigureTest not implemented');
+		$this->skipif (true, 'ConfigureTest not implemented');
 	}
 }
 ?>

@@ -36,7 +36,7 @@ uses('controller' . DS . 'components' . DS .'acl');
 class AclComponentTest extends CakeTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'AclComponentTest not implemented');
+		$this->skipif (true, 'AclComponentTest not implemented');
 	}
 }
 ?>

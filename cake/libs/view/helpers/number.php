@@ -111,7 +111,7 @@ class NumberHelper extends AppHelper {
 			$seperator = $options;
 		}
 		$decimals = '.';
-		if(!is_array($options) && in_array( $options, $seperators)) {
+		if (!is_array($options) && in_array( $options, $seperators)) {
 			$decimals = $options;
 		}
 		$escape = true;
@@ -130,7 +130,7 @@ class NumberHelper extends AppHelper {
 				unset($options['before']);
 			}
 
-			if(isset($options['decimals'])) {
+			if (isset($options['decimals'])) {
 				$decimals = $options['decimals'];
 				unset($options['decimals']);
 			}

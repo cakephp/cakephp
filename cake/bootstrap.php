@@ -36,14 +36,14 @@ if (!defined('PHP5')) {
 		require CORE_PATH . 'cake' . DS . 'basics.php';
 		require APP_PATH . 'config' . DS . 'core.php';
 		require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
+		require LIBS . 'object.php';
+		require LIBS . 'configure.php';
 	}
 	$TIME_START = getMicrotime();
-	require LIBS . 'object.php';
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'inflector.php';
-	require LIBS . 'configure.php';
 	$paths = Configure::getInstance();
 
 	if (isset($cakeCache)) {
@@ -73,31 +73,7 @@ if (!defined('PHP5')) {
  * Get the application path and request URL
  */
 	if (empty($uri) && defined('BASE_URL')) {
-		$uri = setUri();
-
-		if ($uri === '/' || $uri === '/index.php' || $uri === '/'.APP_DIR.'/') {
-			$_GET['url'] = '/';
-			$url = '/';
-		} else {
-			if (strpos($uri, 'index.php') !== false) {
-				$uri = r('?', '', $uri);
-				$elements = explode('/index.php', $uri);
-			} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
-				$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
-			} else {
-				$elements = array();
-			}
-
-			if (!empty($elements[1])) {
-				$_GET['url'] = $elements[1];
-				$url = $elements[1];
-			} else {
-				$url = $_GET['url'] = '/';
-			}
-			if (strpos($url, '/') === 0 && $url != '/') {
-				$url = $_GET['url'] = substr($url, 1);
-			}
-		}
+		$url = setUrl();
 	} else {
 		if (empty($_GET['url'])) {
 			$url = null;

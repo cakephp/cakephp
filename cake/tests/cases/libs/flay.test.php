@@ -36,7 +36,7 @@ uses('flay');
 class FlayTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipIf(true, 'FlayTest not implemented');
+		$this->skipif (true, 'FlayTest not implemented');
 	}
 }
 ?>

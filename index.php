@@ -54,24 +54,11 @@
 	require CORE_PATH . 'cake' . DS . 'basics.php';
 	require APP_PATH . 'config' . DS . 'core.php';
 	require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
-	$bootstrap=true;
-	$uri      =setUri();
-/**
- * As mod_rewrite (or .htaccess files) is not working, we need to take care
- * of what would normally be rewritten, i.e. the static files in app/webroot/
- */
-	if ($uri === '/' || $uri === '/index.php') {
-		$_GET['url'] = '/';
-		require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
-	} else {
-		$elements=explode('/index.php', $uri);
+	require LIBS . 'object.php';
+	require LIBS . 'configure.php';
 
-		if (!empty($elements[1])) {
-			$path = $elements[1];
-		} else {
-			$path = '/';
-		}
-		$_GET['url']=$path;
-		require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
-	}
+	$bootstrap = true;
+	$url = setUrl();
+
+	require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
 ?>
