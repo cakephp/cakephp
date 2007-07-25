@@ -320,15 +320,15 @@
 		if ($name === null) {
 			return true;
 		}
-
+		$parent = 'AppController';
 		if (strpos($name, '.') !== false) {
 			list($plugin, $name) = explode('.', $name);
 
-			$pluginAppController = Inflector::camelize($plugin . '_app_controller');
+			$parent = Inflector::camelize($plugin . '_app_controller');
 			$plugin = Inflector::underscore($plugin);
 			$pluginAppControllerFile = APP . 'plugins' . DS . $plugin . DS . $plugin . '_app_controller.php';
 
-			if (!class_exists($pluginAppController)) {
+			if (!class_exists($parent)) {
 				if (file_exists($pluginAppControllerFile)) {
 					require($pluginAppControllerFile);
 				} else {
@@ -346,6 +346,7 @@
 			}
 
 			if (!class_exists($name . 'Controller')) {
+
 				$name = Inflector::underscore($name);
 				$file = APP . 'plugins' . DS . $plugin . DS . 'controllers' . DS . $name . '_controller.php';
 
@@ -365,7 +366,8 @@
 		}
 
 		$className = $name . 'Controller';
-		if (class_exists($className)) {
+
+		if (class_exists($className) && get_parent_class($className) == $parent) {
 			return true;
 		} else {
 			$name = Inflector::underscore($className);

@@ -110,7 +110,7 @@ class Dispatcher extends Object {
 		$missingAction = $missingView = $privateAction = false;
 
 		$this->base = $this->baseUrl();
-		$controller = $this->__getController($this->params);
+		$controller = $this->__getController();
 
 		if(!is_object($controller)) {
 			if (preg_match('/([\\.]+)/', $controller)) {
@@ -473,7 +473,7 @@ class Dispatcher extends Object {
 			$params = $this->params;
 		}
 
-		$controller = $pluginPath = null;
+		$pluginPath = $controller = $ctrlClass = null;
 
 		if (!empty($params['controller'])) {
 			$controller = Inflector::camelize($params['controller']);
@@ -484,21 +484,27 @@ class Dispatcher extends Object {
 			$this->plugin = $params['plugin'];
 			$pluginPath = Inflector::camelize($this->plugin).'.';
 
-			if(!$controller) {
-				$controller = Inflector::camelize($params['plugin']);
-				$ctrlClass = $controller.'Controller';
-			}
 		}
 		if ($pluginPath . $controller && loadController($pluginPath . $controller)) {
-			$controller =& new $ctrlClass();
-		} elseif ($continue){
-			$this->params = $this->_restructureParams($params);
-			$controller = $this->__getController($this->params, false);
+			if(!class_exists($ctrlClass) && $this->plugin) {
+				$controller = Inflector::camelize($params['plugin']);
+				$ctrlClass = $controller.'Controller';
+				$params = am($this->params, array('plugin'=> $params['plugin'], 'controller'=> $params['plugin']));
+			}
+			if(class_exists($ctrlClass)) {
+				$controller =& new $ctrlClass();
+			}
+		} elseif ($continue == true){
+			$params = $this->_restructureParams($params);
+			$controller = $this->__getController($params, false);
+			return $controller;
 		}
 
-		if(!isset($ctrlClass)) {
+		if(!$ctrlClass) {
 			return false;
 		}
+
+		$this->params = $params;
 		return $controller;
 	}
 }

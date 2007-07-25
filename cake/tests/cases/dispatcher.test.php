@@ -27,6 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE.'dispatcher.php';
+require_once CAKE.'app_controller.php';
 
 class TestDispatcher extends Dispatcher {
 
@@ -78,7 +79,7 @@ class MyPluginController extends MyPluginAppController {
 	}
 }
 
-class SomePagesController extends MyPluginAppController {
+class SomePagesController extends AppController {
 
 	var $name = 'SomePages';
 	var $uses = array();
@@ -92,7 +93,21 @@ class SomePagesController extends MyPluginAppController {
 	}
 }
 
-class TestDispatchPagesController extends Controller {
+class OtherPagesController extends MyPluginAppController {
+
+	var $name = 'OtherPages';
+	var $uses = array();
+
+	function display($page = null) {
+		return $page;
+	}
+
+	function index() {
+		return true;
+	}
+}
+
+class TestDispatchPagesController extends AppController {
 
 	var $name = 'TestDispatchPages';
 	var $uses = array();
@@ -488,17 +503,16 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
 
-		$url = setUrl('/my_plugin/some_pages/index/param:value/param2:value2');
+		$url = setUrl('/my_plugin/other_pages/index/param:value/param2:value2');
 
 		restore_error_handler();
 		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 
-		pr($dispatcher->params);
 		$expected = 'my_plugin';
 		$this->assertIdentical($expected, $controller->plugin);
 
-		$expected = 'SomePages';
+		$expected = 'OtherPages';
 		$this->assertIdentical($expected, $controller->name);
 
 		$expected = 'index';
@@ -507,7 +521,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected = array('param'=>'value', 'param2'=>'value2');
 		$this->assertIdentical($expected, $controller->namedArgs);
 
-		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/index/param:value/param2:value2';
+		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/other_pages/index/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
 
 		$expected = '/cake/repo/branches/1.2.x.x';
@@ -539,7 +553,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertIdentical($expected, $controller->action);
 	}
 
-	function testAutomaticPluginPluginControllerDispatch() {
+	function testAutomaticPluginControllerMissingActionDispatch() {
 		$_POST = array();
 		$_SERVER['DOCUMENT_ROOT'] = '';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
@@ -553,35 +567,9 @@ class DispatcherTest extends UnitTestCase {
 		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 
-		$expected = 'my_plugin';
-		$this->assertIdentical($expected, $controller->plugin);
-
-		$expected = 'MyPlugin';
-		$this->assertIdentical($expected, $controller->name);
-
-		$expected = 'index';
-		$this->assertIdentical($expected, $controller->action);
-	}
-
-	function testRouterPluginNullControllerDispatch() {
-		$_POST = array();
-		$_SERVER['DOCUMENT_ROOT'] = '';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
-
-		Router::reload();
-		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=> 'my_plugin'));
-		$dispatcher =& new TestDispatcher();
-		$dispatcher->base = false;
-
-		$url = setUrl('/my_plugin/param:value/param2:value2');
-		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
-		set_error_handler('simpleTestErrorHandler');
-
-		$expected = 'missingController';
+		$expected = 'missingAction';
 		$this->assertIdentical($expected, $controller);
 	}
-
 
 	function tearDown() {
 		$_GET = $this->_get;
