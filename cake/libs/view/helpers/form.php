@@ -676,7 +676,7 @@ class FormHelper extends AppHelper {
 			unset($options['value']);
 		}
 
-		$options = $this->__initInputField($fieldName, am(array('type' => 'checkbox'), $options));
+		$options = $this->__initInputField($fieldName, $options);
 		$this->__secure();
 
 		$model = $this->model();
@@ -696,10 +696,6 @@ class FormHelper extends AppHelper {
 			$options['checked'] = 'checked';
 		} elseif (!empty($value)) {
 			$options['value'] = $value;
-		}
-
-		if (isset($options['type'])) {
-			unset($options['type']);
 		}
 
 		$output .= sprintf($this->Html->tags['checkbox'], $this->model(), $this->field(), $this->_parseAttributes($options, null, null, ' '));
@@ -805,6 +801,7 @@ class FormHelper extends AppHelper {
 	function hidden($fieldName, $options = array()) {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
+		unset($options['class']);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$model = '_' . $model;

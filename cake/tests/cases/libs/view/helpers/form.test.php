@@ -473,6 +473,73 @@ class FormHelperTest extends CakeTestCase {
 			'/i', $result);
 	}
 
+	function testCheckbox() {
+		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
+
+		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value]=[^<>]*>$/', $result);
+
+		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="hidden"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="theID_"[^<>]+\/><input[^<>]+\/>$/', $result);
+
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+type="checkbox"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="myvalue"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="theID"[^<>]+\/>$/', $result);
+
+		$this->Form->validationErrors['Model']['field'] = 1;
+		$this->Form->data['Model']['field'] = 'myvalue';
+		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
+
+		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
+
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+class="form-error"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+
+		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
+		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
+
+		$this->assertPattern('/^<input[^<>]+id="ModelField_"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="myvalue"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+
+		$this->Form->data['Model']['field'] = '';
+		$result = $this->Form->checkbox('Model.field', array('id' => 'theID'));
+		$this->assertPattern('/^<input[^<>]+value="0"[^<>]+\/><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+\/><input[^<>]+value="1"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+checked="checked"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value|class|checked]=[^<>]*>$/', $result);
+
+		unset($this->Form->validationErrors['Model']['field']);
+		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
+		$this->assertNoPattern('/^<input[^<>]+[^type|name|id|value]=[^<>]*\/><input[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+\/><input[^<>]+[^type|name|id|value]=[^<>]*>$/', $result);
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="myvalue" id="ModelField" />');
+
+		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][field]" value="0" id="ContactField_" /><input type="checkbox" name="data[Contact][field]" value="myvalue" id="ContactField" />');
+
+		$result = $this->Form->checkbox('Model.field');
+		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="1" id="ModelField" />');
+
+		$this->Form->validationErrors['Model']['field'] = 1;
+		$this->Form->data['Contact']['published'] = 1;
+		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" checked="checked" />');
+
+		$this->Form->validationErrors['Model']['field'] = 1;
+		$this->Form->data['Contact']['published'] = 0;
+		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
+		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" />');
+	}
+
 	function testMonth() {
 		$result = $this->Form->month('Model.field');
 		$this->assertPattern('/' .
@@ -732,37 +799,6 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->end(array('submit' => 'save'));
 		$this->assertEqual($result, '<div class="submit"><input type="submit" value="save" /></div></form>');
-	}
-
-	function testCheckboxField() {
-		$this->Form->validationErrors['Model']['field'] = 1;
-		$this->Form->data['Model']['field'] = 'myvalue';
-		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" id="theID" value="myvalue" class="form-error" checked="checked" />');
-
-		$this->Form->data['Model']['field'] = '';
-		$result = $this->Form->checkbox('Model.field', array('id'=>'theID', 'value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="theID_" class="form-error" /><input type="checkbox" name="data[Model][field]" id="theID" value="myvalue" class="form-error" />');
-
-		$this->Form->validationErrors['Model']['field'] = 0;
-		$result = $this->Form->checkbox('Model.field', array('value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="myvalue" id="ModelField" />');
-
-		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][field]" value="0" id="ContactField_" /><input type="checkbox" name="data[Contact][field]" value="myvalue" id="ContactField" />');
-
-		$result = $this->Form->checkbox('Model.field');
-		$this->assertEqual($result, '<input type="hidden" name="data[Model][field]" value="0" id="ModelField_" /><input type="checkbox" name="data[Model][field]" value="1" id="ModelField" />');
-
-		$this->Form->validationErrors['Model']['field'] = 1;
-		$this->Form->data['Contact']['published'] = 1;
-		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" checked="checked" />');
-
-		$this->Form->validationErrors['Model']['field'] = 1;
-		$this->Form->data['Contact']['published'] = 0;
-		$result = $this->Form->checkbox('Contact.published', array('id'=>'theID'));
-		$this->assertEqual($result, '<input type="hidden" name="data[Contact][published]" value="0" id="theID_" /><input type="checkbox" name="data[Contact][published]" id="theID" value="1" />');
 	}
 
 	function tearDown() {
