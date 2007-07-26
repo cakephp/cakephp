@@ -39,6 +39,13 @@ uses('set', 'security');
  * @subpackage	cake.cake.libs.controller.components
  */
 class AuthComponent extends Object {
+/**
+ * Maintains current user login state.
+ *
+ * @var boolean
+ * @access private
+ */
+	var $_loggedIn = false;
 
 /**
  * Other components utilized by AuthComponent
@@ -48,9 +55,12 @@ class AuthComponent extends Object {
  */
 	var $components = array('Session', 'RequestHandler');
 /**
- * The name of the component to use for Authorization or set this to 'controller'
- * and the Controller::isAuthorized() method will be used
- * The component used for Authorization should have a "check" method
+ * The name of the component to use for Authorization or set this to
+ * 'controller' will validate Controller::action against Controller::isAuthorized(user, controller, action)
+ * 'actions' will validate Controller::action against an AclComponent::check()
+ * 'crud' will validate mapActions against an AclComponent::check()
+ * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
+ * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
  *
  * @var string
  * @access public
@@ -87,6 +97,13 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $fields = array('username' => 'username', 'password' => 'password');
+/**
+ * the hash function to use, options: sha1, sha256, md5
+ *
+ * @var string
+ * @access public
+ */
+	var $hash = 'sha1';
 /**
  * The session key name where the record of the current user is stored.  If
  * unspecified, it will be "Auth.{$userModel name}".
@@ -135,12 +152,12 @@ class AuthComponent extends Object {
  */
 	var $logoutRedirect = null;
 /**
- * The name of the model that represents objects which users can be authorized for against.
+ * The name of model or model object, or any other object has an isAuthorized method.
  *
  * @var string
  * @access public
  */
-	var $objectModel = null;
+	var $object = null;
 
 /**
  * Error to display when user login fails.  For security purposes, only one error is used for all
@@ -158,13 +175,6 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $authError = 'You are not authorized to access that location.';
-/**
- * Maintains current user login state.
- *
- * @var boolean
- * @access private
- */
-	var $_loggedIn = false;
 /**
  * Determines whether AuthComponent will automatically redirect and exit if login is successful.
  *
@@ -260,6 +270,7 @@ class AuthComponent extends Object {
 		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
 			return false;
 		}
+
 		if (!isset($controller->params['url']['url'])) {
 			$url = '';
 		} else {
@@ -273,19 +284,21 @@ class AuthComponent extends Object {
 				}
 				return false;
 			}
+
 			$data = array(
 				$this->userModel . '.' . $this->fields['username'] => '= ' . $controller->data[$this->userModel][$this->fields['username']],
 				$this->userModel . '.' . $this->fields['password'] => '= ' . $controller->data[$this->userModel][$this->fields['password']]
 			);
 
-			if ($this->login($data) && $this->autoRedirect) {
-				$controller->redirect($this->redirect(), null, true);
+			if ($this->login($data)) {
+				if ($this->autoRedirect) {
+					$controller->redirect($this->redirect(), null, true);
+				}
 				return true;
 			} else {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
 				unset($controller->data[$this->userModel][$this->fields['password']]);
 			}
-			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
@@ -302,28 +315,34 @@ class AuthComponent extends Object {
 
 		if ($this->authorize) {
 			extract($this->__authType());
-			if (in_array($type, array('crud', 'actions'))) {
-				if (isset($controller->Acl)) {
-					$this->Acl =& $controller->Acl;
-					if ($this->isAuthorized($type)) {
-						return true;
-					}
-				} else {
-					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
-				}
-			} elseif ($type == 'model') {
-				if (!isset($object)) {
-					if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-						$object = $controller->modelClass;
-					} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-						$object = $controller->uses[0];
-					}
-				}
-				if ($this->isAuthorized($type, null, $object)) {
+			if ($type == 'controller') {
+				if ($controller->isAuthorized()) {
 					return true;
 				}
-			} elseif ($type == 'controller'){
-				if ($controller->isAuthorized()) {
+			} else {
+				switch ($type) {
+					case 'crud':
+					case 'actions':
+						if (isset($controller->Acl)) {
+							$this->Acl =& $controller->Acl;
+						} else {
+							trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+						}
+					break;
+					case 'model':
+						if (!isset($object)) {
+							if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+								$object = $controller->modelClass;
+							} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+								$object = $controller->uses[0];
+							}
+						}
+						$type = array('model' => $object);
+					break;
+					default:
+					break;
+				}
+				if ($this->isAuthorized($type)) {
 					return true;
 				}
 			}
@@ -360,25 +379,32 @@ class AuthComponent extends Object {
 	}
 /**
  * Determines whether the given user is authorized to perform an action.  The type of authorization
- * used is based on the value of AuthComponent::$validate.
+ * used is based on the value of AuthComponent::$authorize or the passed $type param.
+ *
+ * Types:
+ * 'controller' will validate Controller::action against Controller::isAuthorized(user, controller, action)
+ * 'actions' will validate Controller::action against an AclComponent::check()
+ * 'crud' will validate mapActions against an AclComponent::check()
+ * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
+ * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
  *
  * @access public
- * @param object $controller
- * @param mixed $user  The user to check the authorization of
  * @param string $type
+ * @param mixed $object object, model object, or model name
+ * @param mixed $user  The user to check the authorization of
  * @return boolean True if $user is authorized, otherwise false
  */
-	function isAuthorized($type = null, $user = null, $object = null) {
+	function isAuthorized($type = null, $object = null, $user = null) {
 		if (empty($user) && !$this->user()) {
 			return false;
 		} elseif (empty($user)) {
 			$user = $this->user();
 		}
 
-		extract($this->__authType(array($type => $object)));
+		extract($this->__authType($type));
 
 		if (!$object) {
-			$object = $this->objectModel;
+			$object = $this->object;
 		}
 
 		$valid = false;
@@ -395,15 +421,23 @@ class AuthComponent extends Object {
 				}
 			break;
 			case 'model':
+				$this->mapActions();
+				$action = $this->actionMap[$this->params['action']];
+				if (is_string($object)) {
+					$object = $this->getModel($object);
+				}
+			case 'object':
+				if (!isset($action)) {
+					$action = $this->action(':action');
+				}
 				if (empty($object)) {
-					trigger_error(__(sprintf('Could not find %s.  Set AuthComponent::$objectModel in beforeFilter() or pass object name.', $this->objectModel), true), E_USER_WARNING);
+					trigger_error(__(sprintf('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', get_class($object)), true), E_USER_WARNING);
 					return;
 				}
-				$model = $this->getModel($object);
-				if (method_exists($model, 'isAuthorized')) {
-					$valid = $model->isAuthorized($user, $this->action(':controller'), $this->action(':action'));
-				} elseif ($model){
-					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', $model), true), E_USER_WARNING);
+				if (method_exists($object, 'isAuthorized')) {
+					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
+				} elseif ($object){
+					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', get_class($object)), true), E_USER_WARNING);
 				}
 			break;
 			case null:
@@ -411,7 +445,7 @@ class AuthComponent extends Object {
 				return true;
 			break;
 			default:
-				trigger_error(__('Auth::startup() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.', true), E_USER_WARNING);
+				trigger_error(__('Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.', true), E_USER_WARNING);
 			break;
 		}
 		return $valid;
@@ -423,10 +457,10 @@ class AuthComponent extends Object {
  * @return type, object, asssoc
  */
 	function __authType($auth = null) {
-		if (empty($auth)) {
+		if ($auth == null) {
 			$auth = $this->authorize;
 		}
-		$object = $this->objectModel;
+		$object = null;
 		if (is_array($auth)) {
 			$type = key($auth);
 			$object = $auth[$type];
@@ -726,12 +760,12 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param array $data
+ * @param array $hash sha1, sha256, md5
  * @return array
  */
 	function hashPasswords($data) {
 		if (isset($data[$this->userModel])) {
 			if (!empty($data[$this->userModel][$this->fields['username']]) && !empty($data[$this->userModel][$this->fields['password']])) {
-				$model =& $this->getModel();
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}
 		}
@@ -742,10 +776,11 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param string $password
+ * @param array $hash sha1, sha256, md5
  * @return string
  */
 	function password($password) {
-		return Security::hash(CAKE_SESSION_STRING . $password);
+		return Security::hash(CAKE_SESSION_STRING . $password, $this->hash);
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
@@ -780,5 +815,4 @@ class AuthComponent extends Object {
 		return $url;
 	}
 }
-
 ?>

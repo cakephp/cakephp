@@ -39,7 +39,7 @@ class AuthUser extends CakeTestModel {
 		return 'Roles/Admin';
 	}
 
-	function isAuthorized($user) {
+	function isAuthorized($user, $controller = null, $action = null) {
 		if (!empty($user)) {
 			return true;
 		}
@@ -54,12 +54,11 @@ class AuthTestController extends Controller {
 
 	function __construct() {
 		$this->params = Router::parse('/auth_test');
-		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
+		Router::setRequestInfo(array($this->params, array('base' => null, 'here' => '/auth_test', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)));
 		parent::__construct();
 	}
 
 	function beforeFilter() {
-		$this->Auth->allow('logout');
 	}
 
 	function login() {
@@ -74,10 +73,12 @@ class AuthTestController extends Controller {
 
 	function redirect() {
 		return false;
-		exit();
 	}
 
 	function isAuthorized() {
+		if(isset($this->params['testControllerAuth'])) {
+			return false;
+		}
 		return true;
 	}
 }
@@ -130,7 +131,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 	}
 
-	function testAuthFalse() {
+	function testAuthorizeFalse() {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -140,7 +141,7 @@ class AuthTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 
-	function testAuthController(){
+	function testAuthorizeController(){
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -148,6 +149,11 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->authorize = 'controller';
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
+
+		$this->Controller->params['testControllerAuth'] = 1;
+		$result = $this->Controller->Auth->startup($this->Controller);
+		$this->assertFalse($result);
+
 		$this->Controller->Session->del('Auth');
 	}
 
@@ -155,14 +161,22 @@ class AuthTest extends CakeTestCase {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
+
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
 		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->authorize = array('model'=>'AuthUser');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
+		
+		$this->Controller->Session->del('Auth');
+		$result = $this->Controller->Auth->isAuthorized();
+		$this->assertFalse($result);
+		
 	}
 
-	function testAuthWithDB_ACL() {
+	function testAuthorizeCrud() {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
@@ -208,7 +222,6 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Acl->Aro->execute('truncate acos;');
 		$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
-
 
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
