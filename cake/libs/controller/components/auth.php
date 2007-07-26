@@ -299,6 +299,7 @@ class AuthComponent extends Object {
 				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
 				unset($controller->data[$this->userModel][$this->fields['password']]);
 			}
+			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
