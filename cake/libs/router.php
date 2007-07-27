@@ -318,9 +318,9 @@ class Router extends Object {
 				if (is_array($defaults)) {
 					foreach ($defaults as $name => $value) {
 						if (preg_match('#[a-zA-Z_\-]#i', $name)) {
-							$out[$name] = $_this->stripEscape($value);
+							$out[$name] = $value;
 						} else {
-							$out['pass'][] = $_this->stripEscape($value);
+							$out['pass'][] = $value;
 						}
 					}
 				}
@@ -328,7 +328,7 @@ class Router extends Object {
 				foreach (Set::filter($r, true) as $key => $found) {
 					// if $found is a named url element (i.e. ':action')
 					if (isset($names[$key])) {
-						$out[$names[$key]] = $found;
+						$out[$names[$key]] = $_this->stripEscape($found);
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {

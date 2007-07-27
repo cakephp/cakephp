@@ -254,7 +254,7 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/pages/display/home');
 		$expected = array('pass' => array ('home'), 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->router->parse('pages/display/home/');
 		$this->assertEqual($result, $expected);
 
@@ -350,8 +350,13 @@ class RouterTest extends UnitTestCase {
 
 	function testPagesUrlParsing() {
 		$this->router->routes = array();
-		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
-		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display', 'home'));
+		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+
+		$result = $this->router->parse('/');
+		$expected = array('pass'=>array('home'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$this->assertEqual($result, $expected);
+
 		$result = $this->router->parse('/pages/home/');
 		$expected = array('pass'=>array('home'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
