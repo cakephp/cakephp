@@ -333,10 +333,10 @@ class Router extends Object {
 						break; //leave the default values;
 					} else {
 						// unnamed elements go in as 'pass'
-						$search = explode('/', $found);
-						foreach (Set::filter($search, true)  as $k => $value) {
-							$out['pass'][$k] = $_this->stripEscape($value);
-						}
+						$out['pass'] = am($out['pass'], array_map(
+							array(&$_this, 'stripEscape'),
+							Set::filter(explode('/', $found), true)
+						));
 					}
 				}
 				break;

@@ -249,6 +249,17 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/posts/2007/08/01/title-of-post-here');
 		$expected = array('year' => '2007', 'month' => '08', 'day' => '01', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'));
 		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		$result = $this->router->parse('/pages/display/home');
+		$expected = array('pass' => array ('home'), 'controller' => 'pages', 'action' => 'display');
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->router->parse('pages/display/home/');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('pages/display/home');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testAdminRouting() {
