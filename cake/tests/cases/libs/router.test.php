@@ -336,6 +336,23 @@ class RouterTest extends UnitTestCase {
 		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array());
 		$this->assertEqual($result, $expected);
 	}
+
+	function testPagesUrlParsing() {
+		$this->router->routes = array();
+		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
+		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$result = $this->router->parse('/pages/home/');
+		$expected = array('pass'=>array('home'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$this->assertEqual($result, $expected);
+
+		$this->router->routes = array();
+		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
+		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+		$result = $this->router->parse('/pages/contact/');
+
+		$expected = array('pass'=>array('contact'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$this->assertEqual($result, $expected);
+	}
 }
 
 ?>

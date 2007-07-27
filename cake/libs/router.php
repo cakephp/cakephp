@@ -210,7 +210,7 @@ class Router extends Object {
  * Creates REST resource routes for the given controller(s)
  *
  * @param mixed $controller		A controller name or array of controller names (i.e. "Posts" or "ListItems")
- * @param array $options			
+ * @param array $options
  * @access public
  * @static
  */
@@ -334,8 +334,8 @@ class Router extends Object {
 					} else {
 						// unnamed elements go in as 'pass'
 						$search = explode('/', $found);
-						foreach ($search as $k => $value) {
-							$out['pass'][] = $_this->stripEscape($value);
+						foreach (Set::filter($search, true)  as $k => $value) {
+							$out['pass'][$k] = $_this->stripEscape($value);
 						}
 					}
 				}
