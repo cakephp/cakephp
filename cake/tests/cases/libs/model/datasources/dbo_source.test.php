@@ -1631,6 +1631,7 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions($conditions);
 		$this->assertPattern('/^\s*WHERE\s+`Thread`.`project_id`\s*=\s*5\s+AND\s+`Thread`.`buyer_id`\s*=\s*14\s+AND\s+1\s*=\s*1\s+GROUP BY `Thread`.`project_id`$/', $result);
 	}
+
 	function testFieldParsing() {
 		$result = $this->db->fields($this->model, 'Vendor', "Vendor.id, COUNT(Model.vendor_id) AS `Vendor`.`count`");
 		$expected = array('`Vendor`.`id`', 'COUNT(`Model`.`vendor_id`) AS `Vendor`.`count`');
@@ -1706,6 +1707,10 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->fields($this->model, null, 'field1, field2, field3, count(*), name');
 		$expected = array('`TestModel`.`field1`', '`TestModel`.`field2`', '`TestModel`.`field3`', 'count(*)', '`TestModel`.`name`');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($this->model, null, array('dayofyear(now())'));
+		$expected = array('dayofyear(now())');
 		$this->assertEqual($result, $expected);
 	}
 
