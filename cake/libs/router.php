@@ -689,7 +689,6 @@ class Router extends Object {
 
 		$params = $route[2];
 		$defaults = am(array('plugin'=> null, 'controller'=> null, 'action'=> null), $route[3]);
-
 		$pass = Set::diff($url, $defaults);
 
 		if (!strpos($route[0], '*') && !empty($pass)) {
@@ -709,14 +708,15 @@ class Router extends Object {
 		krsort($defaults);
 		krsort($url);
 
-		if (Set::diff($defaults, $url) == array()) {
-			return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), array());
+		
+		if (Set::diff($url, $defaults) == array()) {
+			return array(Router::__mapRoute($route, am($url, compact('pass'))), array());
 		} elseif (!empty($params) && !empty($route[3])) {
 			$required = array_diff(array_keys($defaults), array_keys($url));
+
 			if (!empty($required)) {
 			 	return false;
 			}
-
 			$filled = array_intersect_key($url, array_combine($params, array_keys($params)));
 			$keysFilled = array_keys($filled);
 			sort($params);
@@ -725,7 +725,6 @@ class Router extends Object {
 			if ($keysFilled != $params) {
 				return false;
 			}
-
 			if (Set::diff($keysFilled, $params) != array()) {
 				return false;
 			}
@@ -748,7 +747,7 @@ class Router extends Object {
 				}
 			}
 		}
-		return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
+		return array(Router::__mapRoute($route, am($url, compact('pass'))), $url);
 	}
 /**
  * Merges URL parameters into a route string

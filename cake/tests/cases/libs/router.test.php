@@ -181,9 +181,28 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'posts', 'action' => 'view', '1'));
 		$expected = '/view/1';
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => 'admin'));
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
+			    'admin' => 'admin', 'url' => array('url' => 'admin/subscriptions/index/page:2'), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/index/page:2',
+				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'argSeparator' => ':', 'namedArgs' => array('page' => 2),
+				'webservices' => null
+			)
+		));
+		$this->router->testing = true;
+		$result = $this->router->url(array('page' => 3));
+		$expected = '/magazine/admin/subscriptions/index/page:3';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlGenerationWithExtensions() {
+		$this->router->reload();
 		$result = $this->router->url(array('plugin' => null, 'controller' => 'articles', 'action' => 'add', 'id' => null, 'ext' => 'json'));
 		$expected = '/articles/add.json';
 		$this->assertEqual($result, $expected);
