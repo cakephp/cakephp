@@ -708,7 +708,7 @@ class Router extends Object {
 		krsort($defaults);
 		krsort($url);
 
-		
+
 		if (Set::diff($url, $defaults) == array()) {
 			return array(Router::__mapRoute($route, am($url, compact('pass'))), array());
 		} elseif (!empty($params) && !empty($route[3])) {
@@ -772,11 +772,14 @@ class Router extends Object {
 		}
 
 		foreach ($route[2] as $key) {
-			$out = str_replace(':' . $key, $params[$key], $out);
-			$_this->__mapped[$key] = $params[$key];
-			unset($params[$key]);
+			$string = null;
+			if (isset($params[$key])) {
+				$string = $params[$key];
+				unset($params[$key]);
+			}
+			$out = str_replace(':' . $key, $string, $out);
+			$_this->__mapped[$key] = $string;
 		}
-
 		return $out;
 	}
 /**
