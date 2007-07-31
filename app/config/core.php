@@ -147,11 +147,10 @@
  */
 	define('MAX_MD5SIZE', (5 * 1024) * 1024);
 /**
- * The classname, filename, (and database) used in CakePHP's
+ * The classname and database used in CakePHP's
  * access control lists.
  */
 	define('ACL_CLASSNAME', 'DB_ACL');
-	define('ACL_FILENAME', 'db_acl');
 	define('ACL_DATABASE', 'default');
 /**
  * How long to cache data if not defined
