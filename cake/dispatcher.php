@@ -501,7 +501,9 @@ class Dispatcher extends Object {
 		}
 
 		if(!$ctrlClass) {
-			return false;
+			$controller = Inflector::camelize($this->plugin);
+			$this->plugin = null;
+			return $controller;
 		}
 
 		$this->params = $params;
