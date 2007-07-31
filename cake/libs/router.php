@@ -765,6 +765,14 @@ class Router extends Object {
 		} elseif (!isset($params['pass'])) {
 			$params['pass'] = '';
 		}
+
+		if (isset($params['plugin'])) {
+			if(strpos($route[0], 'plugin') === false && !empty($route[2])) {
+				$route[2] = array_merge($route[2], array('plugin'));
+				$route[0] = '/:plugin' . $route[0];
+			}
+		}
+
 		if (strpos($route[0], '*')) {
 			$out = str_replace('*', $params['pass'], $route[0]);
 		} else {

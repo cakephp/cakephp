@@ -27,7 +27,7 @@
  * @license      http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE.'app_helper.php';
-uses('class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 
+uses('class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper',
 	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
 
 class TheHtmlTestController extends Controller {
