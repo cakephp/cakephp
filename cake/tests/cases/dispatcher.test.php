@@ -278,6 +278,18 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
 		Configure::write('App.base', false);
+		Configure::write('App.dir', 'affiliate');
+		Configure::write('App.webroot', 'newaffiliate');
+
+		$_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
+		$_SERVER['SCRIPT_FILENAME'] = '/var/www/abtravaff/html/newaffiliate/index.php';
+
+		$dispatcher =& new Dispatcher();
+		$result = $dispatcher->baseUrl();
+		$expected = '/newaffiliate';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/newaffiliate/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 	}
 
 	function testBaseUrlAndWebrootWithBaseUrl() {

@@ -367,7 +367,7 @@
 
 		$className = $name . 'Controller';
 
-		if (class_exists($className) && get_parent_class($className) == $parent) {
+		if (class_exists(low($className)) && low(get_parent_class($className)) == low($parent)) {
 			return true;
 		} else {
 			$name = Inflector::underscore($className);

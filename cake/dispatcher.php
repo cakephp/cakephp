@@ -407,31 +407,30 @@ class Dispatcher extends Object {
 		$webroot = Configure::read('App.webroot');
 
 		$file = $script = null;
-		if (!$baseUrl && $this->base == false) {
+		if (!$baseUrl) {
 			$docRoot = env('DOCUMENT_ROOT');
 			$script = env('SCRIPT_FILENAME');
 			$base = r($docRoot, '', $script);
-		} elseif ($baseUrl && $this->base == false) {
+		} elseif ($baseUrl) {
 			$base = $baseUrl;
-		}
-
-		$file = basename($base);
-		if ($baseUrl && strpos($file, '.php') !== false) {
-			$baseUrl = true;
-			$file = '/'. $file;
+			$file = '/' . basename($base);
 		}
 
 		$base = dirname($base);
 
 		if (in_array($base, array(DS, '.'))) {
 			$base = '';
+			$this->webroot = '/';
+			return $base . $file;
 		}
 
-		if (!$baseUrl && strpos($script, $app) !== false && $app === 'app') {
-			$base =  str_replace($app.'/', '', $base);
+		if(strpos($script, $app) !== false && $app === 'app') {
+			$base =  str_replace('/'.$app, '', $base);
 		}
 
-		$base = str_replace('//', '/', str_replace('/'.$webroot, '', $base));
+		if ($webroot === 'webroot') {
+			$base =  str_replace('/'.$webroot, '', $base);
+		}
 
 		$this->webroot = $base .'/';
 
@@ -439,19 +438,13 @@ class Dispatcher extends Object {
 			return $base;
 		}
 
-		if ($baseUrl && $base == '') {
-			return $file;
+		if (strpos($this->webroot, $app) === false) {
+			$this->webroot .=  $app . '/' ;
 		}
 
-		if (strpos($base, $app) === false) {
-			$this->webroot .=  '/' . $app . '/' ;
-		}
-
-		if ($baseUrl && strpos($this->webroot, $webroot) === false) {
+		if (strpos($this->webroot, $webroot) === false) {
 			$this->webroot .= $webroot . '/';
 		}
-		$this->webroot = str_replace('//', '/', $this->webroot);
-
 		return $base . $file;
 	}
 /**
@@ -480,7 +473,7 @@ class Dispatcher extends Object {
  * @return mixed name of controller if not loaded, or object if loaded
  * @access protected
  */
-	function &__getController($params = null, $continue = true) {
+	function __getController($params = null, $continue = true) {
 
 		if(!$params) {
 			$params = $this->params;
@@ -500,12 +493,12 @@ class Dispatcher extends Object {
 		}
 
 		if ($pluginPath . $controller && loadController($pluginPath . $controller)) {
-			if(!class_exists($ctrlClass) && $this->plugin) {
+			if(!class_exists(low($ctrlClass)) && $this->plugin) {
 				$controller = Inflector::camelize($params['plugin']);
 				$ctrlClass = $controller.'Controller';
 				$params = am($this->params, array('plugin'=> $params['plugin'], 'controller'=> $params['plugin']));
 			}
-			if(class_exists($ctrlClass)) {
+			if(class_exists(low($ctrlClass))) {
 				$controller =& new $ctrlClass();
 			}
 		} elseif ($continue == true){
@@ -514,7 +507,7 @@ class Dispatcher extends Object {
 			return $controller;
 		}
 
-		if(!class_exists($ctrlClass)) {
+		if(!class_exists(low($ctrlClass))) {
 			$controller = Inflector::camelize($this->params['controller']);
 			$this->plugin = null;
 			return $controller;
