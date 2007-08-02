@@ -127,9 +127,9 @@ class DispatcherTest extends UnitTestCase {
 	function setUp() {
 		$this->_get = $_GET;
 		$_GET = array();
-		Configure::write('baseUrl', false);
-		Configure::write('app', 'app');
-		Configure::write('webroot', 'webroot');
+		Configure::write('App.baseUrl', false);
+		Configure::write('App.dir', 'app');
+		Configure::write('App.webroot', 'webroot');
 
 	}
 
@@ -218,9 +218,7 @@ class DispatcherTest extends UnitTestCase {
 	function testBaseUrlAndWebrootWithModRewrite() {
 		$dispatcher =& new Dispatcher();
 
-		Configure::write('app', 'app');
-		Configure::write('webroot', 'webroot');
-		Configure::write('baseUrl', false);
+		Configure::write('App.baseUrl', false);
 
 		$dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
@@ -241,7 +239,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
 
-		Configure::write('app', 'auth');
+		Configure::write('App.dir', 'auth');
 
 		$dispatcher->base = false;;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
@@ -252,7 +250,7 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/demos/auth/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('app', 'code');
+		Configure::write('App.dir', 'code');
 
 		$dispatcher->base = false;;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
@@ -265,47 +263,64 @@ class DispatcherTest extends UnitTestCase {
 
 	}
 
+	function testBaseUrlwithModRewriteAlias() {
+		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
+		$_SERVER['SCRIPT_FILENAME'] = '/home/aplusnur/cake2/app/webroot/index.php';
+		$_SERVER['SCRIPT_NAME'] = '/control/index.php';
+
+		Configure::write('App.base', '/control');
+
+		$dispatcher =& new Dispatcher();
+		$result = $dispatcher->baseUrl();
+		$expected = '/control';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/control/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
+		Configure::write('App.base', false);
+	}
+
 	function testBaseUrlAndWebrootWithBaseUrl() {
 		$dispatcher =& new Dispatcher();
 
-		Configure::write('app', 'app');
+		Configure::write('App.dir', 'app');
 
-		Configure::write('baseUrl', '/app/webroot/index.php');
+		Configure::write('App.baseUrl', '/app/webroot/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/app/index.php';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/app/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('baseUrl', '/app/webroot/test.php');
+		Configure::write('App.baseUrl', '/app/webroot/test.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/app/test.php';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/app/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('baseUrl', '/app/index.php');
+		Configure::write('App.baseUrl', '/app/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/app/index.php';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/app/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('baseUrl', '/index.php');
+		Configure::write('App.baseUrl', '/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/index.php';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('baseUrl', '/CakeBB/app/webroot/index.php');
+		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/CakeBB/app/index.php';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/CakeBB/app/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('baseUrl', '/CakeBB/app/index.php');
+		Configure::write('App.baseUrl', '/CakeBB/app/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/CakeBB/app/index.php';
 		$this->assertEqual($expected, $result);
@@ -313,7 +328,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
 
-		Configure::write('baseUrl', '/CakeBB/index.php');
+		Configure::write('App.baseUrl', '/CakeBB/index.php');
 		$result = $dispatcher->baseUrl();
 		$expected = '/CakeBB/index.php';
 		$this->assertEqual($expected, $result);
@@ -324,25 +339,25 @@ class DispatcherTest extends UnitTestCase {
 
 	function testBaseUrlAndWebrootWithBase() {
 		$dispatcher =& new Dispatcher();
-		Configure::write('baseUrl',false);
-		$dispatcher->base = '/app/webroot';
+		Configure::write('App.baseUrl',false);
+		$dispatcher->base = '/app';
 		$result = $dispatcher->baseUrl();
 		$expected = '/app';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/app/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		$dispatcher->base = '/app';
+		$dispatcher->base = '';
 		$result = $dispatcher->baseUrl();
 		$expected = '';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
-		Configure::write('app', 'testbed');
-		$dispatcher->base = '/cake/testbed/webroot/test.php';
+		Configure::write('App.dir', 'testbed');
+		$dispatcher->base = '/cake/testbed/webroot';
 		$result = $dispatcher->baseUrl();
-		$expected = '/cake/testbed/test.php';
+		$expected = '/cake/testbed/webroot';
 		$this->assertEqual($expected, $result);
 		$expectedWebroot = '/cake/testbed/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);

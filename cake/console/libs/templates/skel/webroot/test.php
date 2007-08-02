@@ -75,7 +75,6 @@ if (empty( $_GET['output'])) {
 }
 
 $dispatch =& new Dispatcher();
-$dispatch->base = env('SCRIPT_NAME');
 $dispatch->baseUrl();
 define('BASE', $dispatch->webroot);
 

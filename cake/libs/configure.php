@@ -435,6 +435,11 @@ class Configure extends Object {
  */
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
+		$baseUrl = false;
+		if (defined('BASE_URL')) {
+			$baseUrl = BASE_URL;
+		}
+		$_this->write('App', array('base'=> false, 'baseUrl'=> $baseUrl, 'dir'=> APP_DIR, 'webroot'=> WEBROOT_DIR));
 		$modelPaths = null;
 		$viewPaths = null;
 		$controllerPaths = null;
@@ -452,14 +457,6 @@ class Configure extends Object {
 		$_this->__buildHelperPaths($helperPaths);
 		$_this->__buildComponentPaths($componentPaths);
 		$_this->__buildBehaviorPaths($behaviorPaths);
-
-		$_this->write('app', APP_DIR);
-		$_this->write('webroot', WEBROOT_DIR);
-		$baseUrl = false;
-		if (defined('BASE_URL')) {
-			$baseUrl = BASE_URL;
-		}
-		$_this->write('baseUrl', $baseUrl);
 	}
 }
 ?>
