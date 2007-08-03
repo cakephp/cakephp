@@ -164,17 +164,15 @@ class ViewTask extends Shell {
 		}
 
 		if (low($wannaDoScaffold) == 'y' || low($wannaDoScaffold) == 'yes') {
-			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
-
+			$actions = $this->scaffoldActions;
 			if ($admin) {
-				foreach ($this->scaffoldActions as $action) {
-					$this->scaffoldActions[] = $admin . $action;
+				foreach ($actions as $action) {
+					$actions[] = $admin . $action;
 				}
 			}
 			$vars = $this->__loadController();
-
 			if ($vars) {
-				foreach ($this->scaffoldActions as $action) {
+				foreach ($actions as $action) {
 					$content = $this->getContent($action, $vars);
 					$this->bake($action, $content);
 				}
@@ -293,7 +291,6 @@ class ViewTask extends Shell {
 		if (defined('CAKE_ADMIN') && strpos($template, CAKE_ADMIN) !== false) {
 			$template = str_replace(CAKE_ADMIN.'_', '', $template);
 		}
-
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
 			$template = 'form';
@@ -309,7 +306,6 @@ class ViewTask extends Shell {
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
-
 		if ($loaded) {
 			extract($vars);
 			ob_start();
@@ -318,7 +314,6 @@ class ViewTask extends Shell {
 			$content = ob_get_clean();
 			return $content;
 		}
-
 		$this->err('Template for '. $template .' could not be found');
 		return false;
 	}
