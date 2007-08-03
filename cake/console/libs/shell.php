@@ -453,9 +453,10 @@ class Shell extends Object {
  * @return the controller name
  */
 	function getAdmin() {
-		$admin = null;
+		$admin = '';
+		$cakeAdmin = null;
 		if (defined('CAKE_ADMIN')) {
-			$admin = CAKE_ADMIN.'_';
+			$cakeAdmin = CAKE_ADMIN . '_';
 		} else {
 			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 			$this->out('What would you like the admin route to be?');
@@ -468,10 +469,10 @@ class Shell extends Object {
 				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
 				exit();
 			} else {
-				$admin = $admin . '_';
+				$cakeAdmin = $admin . '_';
 			}
 		}
-		return $admin;
+		return $cakeAdmin;
 	}
 /**
  * creates the proper pluralize controller for the url
