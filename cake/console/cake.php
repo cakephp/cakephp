@@ -270,14 +270,12 @@ class ShellDispatcher {
 					require CONSOLE_LIBS . 'shell.php';
 					require $this->shellPath;
 					if (class_exists($this->shellClass)) {
-
 						$command = null;
 						if (isset($this->args[0])) {
 							$command = $this->args[0];
 						}
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
-						$this->shiftArgs();
 
 						if ($command == 'help') {
 							if (method_exists($shell, 'help')) {
@@ -298,6 +296,7 @@ class ShellDispatcher {
 
 						$task = Inflector::camelize($command);
 						if (in_array($task, $shell->taskNames)) {
+							$this->shiftArgs();
 							$shell->{$task}->startup();
 							if (isset($this->args[0]) && $this->args[0] == 'help') {
 								if (method_exists($shell->{$task}, 'help')) {
@@ -322,7 +321,7 @@ class ShellDispatcher {
 							$missingCommand = true;
 						}
 
-						$protectedCommands = array('initialize', 'main','in','out','err','hr',
+						$protectedCommands = array('initialize','in','out','err','hr',
 													'createfile', 'isdir','copydir','object','tostring',
 													'requestaction','log','cakeerror', 'shelldispatcher',
 													'__initconstants','__initenvironment','__construct',
@@ -338,6 +337,7 @@ class ShellDispatcher {
 						} elseif ($missingCommand && method_exists($shell, 'help')) {
 							$shell->help();
 						} elseif (!$privateMethod && method_exists($shell, $command)) {
+							$this->shiftArgs();
 							$shell->startup();
 							$shell->{$command}();
 						} else {
