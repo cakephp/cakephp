@@ -116,7 +116,7 @@ class CookieComponent extends Object {
  * @var string
  * @access protected
  */
-	var $key = CAKE_SESSION_COOKIE;
+	var $key = CAKE_SESSION_STRING;
 /**
  * Values stored in the cookie.
  *
