@@ -1393,6 +1393,14 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions('DATEDIFF(NOW(),Article.published) < 1 && Article.live=1');
 		$expected = " WHERE DATEDIFF(NOW(),`Article`.`published`) < 1 && `Article`.`live`=1";
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions('file = "index.html"');
+		$expected = ' WHERE file = "index.html"';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->conditions("file = 'index.html'");
+		$expected = " WHERE file = 'index.html'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testQuotesInStringConditions() {
