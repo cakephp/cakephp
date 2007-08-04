@@ -1450,9 +1450,9 @@ class Model extends Overloadable {
 		list($data) = $this->findAll($conditions, 'COUNT(*) AS ' . $db->name('count'), false, null, 1, $recursive);
 
 		if (isset($data[0]['count'])) {
-			return $data[0]['count'];
+			return intval($data[0]['count']);
 		} elseif (isset($data[$this->name]['count'])) {
-			return $data[$this->name]['count'];
+			return intval($data[$this->name]['count']);
 		}
 
 		return false;
