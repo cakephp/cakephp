@@ -78,10 +78,13 @@ class FolderTest extends UnitTestCase {
 		$result = $this->Folder->isSlashTerm($inside);
 		$this->assertTrue($result);
 
-		//$result = $this->Folder->inPath('tests/');
-		//$this->assertTrue($result);
+		$result = $this->Folder->realpath('tests/');
+		$this->assertEqual($result, $path . DS .'tests/');
 
-		$result = $this->Folder->inPath(DS . 'non-existing' . DS . $inside);
+		$result = $this->Folder->inPath('tests/');
+		$this->assertTrue($result);
+
+		$result = $this->Folder->inPath(DS . 'non-existing' . $inside);
 		$this->assertFalse($result);
 	}
 
@@ -120,6 +123,11 @@ class FolderTest extends UnitTestCase {
 		//pr($this->Folder->messages());
 
 		//pr($this->Folder->errors());
+	}
+
+	function testRealPathForWebroot() {
+		$Folder = new Folder('files/');
+		$this->assertEqual(realpath('files/'), $Folder->path);
 	}
 }
 ?>

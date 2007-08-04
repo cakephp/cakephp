@@ -87,13 +87,14 @@ class Folder extends Object{
 		if (empty($path)) {
 			$path = TMP;
 		}
-
 		if ($mode) {
 			$this->mode = intval($mode, 8);
 		}
-
 		if (!file_exists($path) && $create == true) {
 			$this->create($path, $this->mode);
+		}
+		if($path{0} != '/') {
+			$path = realpath($path);
 		}
 		$this->cd($path);
 	}
@@ -115,9 +116,6 @@ class Folder extends Object{
  */
 	function cd($path) {
 		$path = $this->realpath($path);
-		if (!$this->isAbsolute($path)) {
-			$path = $this->addPathElement($this->path, $path);
-		}
 		if (is_dir($path) && file_exists($path)) {
 			return $this->path = $path;
 		}
@@ -325,7 +323,7 @@ class Folder extends Object{
  */
 	function inCakePath($path = '') {
 		$dir = substr($this->slashTerm(ROOT), 0, -1);
-		$newdir = $this->slashTerm($dir . $path);
+		$newdir = $dir . $path;
 		return $this->inPath($newdir);
 	 }
 /**
@@ -335,18 +333,13 @@ class Folder extends Object{
  * @access public
  */
 	function inPath($path = '', $reverse = false) {
-		if (!$this->isAbsolute($path)) {
-			$path = $this->addPathElement($this->path, $path);
-		}
-		$path = $this->realpath($path);
-		$dir = substr($this->slashTerm($path), 0, -1);
-
+		$dir = $this->slashTerm($path);
+		$current = $this->slashTerm($this->pwd());
 		if (!$reverse) {
-			$return = preg_match('/^' . preg_quote($this->slashTerm($dir), '/') . '(.*)/', $this->slashTerm($this->pwd()));
+			$return = preg_match('/^(.*)' . preg_quote($dir, '/') . '(.*)/', $current);
 		} else {
-			$return = preg_match('/^' . preg_quote($this->slashTerm($this->pwd()), '/') . '(.*)/', $this->slashTerm($dir));
+			$return = preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
 		}
-
 		if ($return == 1) {
 			return true;
 		} else {
@@ -690,6 +683,9 @@ class Folder extends Object{
 	function realpath($path) {
 		$path = trim($path);
 		if (strpos($path, '..') === false) {
+			if (!$this->isAbsolute($path)) {
+				$path = $this->addPathElement($this->path, $path);
+			}
 			return $path;
 		}
 		$parts = explode(DS, $path);
