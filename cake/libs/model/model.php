@@ -315,6 +315,16 @@ class Model extends Overloadable {
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
 
+		if (is_array($id) && isset($id['name'])) {
+			$options = am(array(
+				'id' => false,
+				'table' => null,
+				'ds' => null
+			), $id);
+			list($id, $table, $ds) = array($options['id'], $options['table'], $options['ds']);
+			$this->name = $options['name'];
+		}
+
 		if ($this->name === null) {
 			$this->name = get_class($this);
 		}
