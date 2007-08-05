@@ -279,6 +279,7 @@ class ShellDispatcher {
 
 						if ($command == 'help') {
 							if (method_exists($shell, 'help')) {
+								$this->shiftArgs();
 								$shell->help();
 								exit();
 							} else {
@@ -334,8 +335,6 @@ class ShellDispatcher {
 						if ($missingCommand && method_exists($shell, 'main')) {
 							$shell->startup();
 							$shell->main();
-						} elseif ($missingCommand && method_exists($shell, 'help')) {
-							$shell->help();
 						} elseif (!$privateMethod && method_exists($shell, $command)) {
 							$this->shiftArgs();
 							$shell->startup();
