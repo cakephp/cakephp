@@ -48,6 +48,13 @@ class Dispatcher extends Object {
  */
 	var $base = false;
 /**
+ * webroot path
+ *
+ * @var string
+ * @access public
+ */
+	var $webroot = '/';
+/**
  * Current URL
  *
  * @var string
@@ -88,13 +95,10 @@ class Dispatcher extends Object {
  */
 	function __construct($url = null, $base = false) {
 		parent::__construct();
-
 		if($base !== false) {
 			Configure::write('App.base', $base);
 		}
-
 		$this->base = Configure::read('App.base');
-
 		if ($url !== null) {
 			return $this->dispatch($url);
 		}
@@ -112,13 +116,22 @@ class Dispatcher extends Object {
  * @return boolean		Success
  * @access public
  */
-	function dispatch($url, $additionalParams = array()) {
+	function dispatch($url = null, $additionalParams = array()) {
+		if ($this->base === false) {
+			$this->base = $this->baseUrl();
+		}
+		if ($url !== null) {
+			$_GET['url'] = $url;
+		}
+		$url = $this->getUrl();
+
+		$this->here = $this->base . '/' . $url;
+
+		$this->cached();
+
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
-		$missingAction = $missingView = $privateAction = false;
 
-		$this->base = $this->baseUrl();
 		$controller = $this->__getController();
-
 		if(!is_object($controller)) {
 			if (preg_match('/([\\.]+)/', $controller)) {
 				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
@@ -139,22 +152,20 @@ class Dispatcher extends Object {
 			}
 		}
 
+		$missingAction = $missingView = $privateAction = false;
+
 		if (empty($this->params['action'])) {
 			$this->params['action'] = 'index';
 		}
 
 		if (defined('CAKE_ADMIN')) {
-			if (isset($this->params[CAKE_ADMIN])) {
-				$this->admin = '/'.CAKE_ADMIN ;
-				$url = preg_replace('/'.CAKE_ADMIN.'(\/|$)/', '', $url);
-				$this->params['action'] = CAKE_ADMIN.'_'.$this->params['action'];
-			} elseif (strpos($this->params['action'], CAKE_ADMIN) === 0) {
+			$this->admin = CAKE_ADMIN ;
+			if (isset($this->params[$this->admin])) {
+				$this->params['action'] = $this->admin.'_'.$this->params['action'];
+			} elseif (strpos($this->params['action'], $this->admin) === 0) {
 				$privateAction = true;
 			}
 		}
-
-		$this->here = $this->base . $this->admin . '/' . $url;
-
 
 		$protected = array('constructclasses', 'redirect', 'set', 'setAction', 'isauthorized', 'validate', 'validateerrors',
 							'render', 'referer', 'disablecache', 'flash', 'generatefieldnames', 'postconditions', 'cleanupfields',
@@ -402,9 +413,10 @@ class Dispatcher extends Object {
 		$base = '';
 		$this->webroot = '/';
 
-		$baseUrl = Configure::read('App.baseUrl');
-		$app = Configure::read('App.dir');
-		$webroot = Configure::read('App.webroot');
+		$config = Configure::read('App');
+		$baseUrl = $config['baseUrl'];
+		$app = $config['dir'];
+		$webroot = $config['webroot'];
 
 		$file = $script = null;
 		if (!$baseUrl) {
@@ -417,18 +429,13 @@ class Dispatcher extends Object {
 		}
 
 		$base = dirname($base);
-
 		if (in_array($base, array(DS, '.'))) {
 			$base = '';
-			$this->webroot = '/';
-			return $base . $file;
 		}
-
 		if(strpos($script, $app) !== false && $app === 'app') {
 			$base =  str_replace('/'.$app, '', $base);
 		}
-
-		if ($webroot === 'webroot') {
+		if (!$baseUrl && $webroot === 'webroot') {
 			$base =  str_replace('/'.$webroot, '', $base);
 		}
 
@@ -441,7 +448,6 @@ class Dispatcher extends Object {
 		if (strpos($this->webroot, $app) === false) {
 			$this->webroot .=  $app . '/' ;
 		}
-
 		if (strpos($this->webroot, $webroot) === false) {
 			$this->webroot .= $webroot . '/';
 		}
@@ -507,7 +513,7 @@ class Dispatcher extends Object {
 			return $controller;
 		}
 
-		if(!class_exists(low($ctrlClass))) {
+		if (!class_exists(low($ctrlClass))) {
 			$controller = Inflector::camelize($this->params['controller']);
 			$this->plugin = null;
 			return $controller;
@@ -515,6 +521,121 @@ class Dispatcher extends Object {
 
 		$this->params = $params;
 		return $controller;
+	}
+/**
+ * Returns the REQUEST_URI from the server environment, or, failing that,
+ * constructs a new one, using the PHP_SELF constant and other variables.
+ *
+ * @return string URI
+ */
+	function uri() {
+		if ($uri = env('HTTP_X_REWRITE_URL')) {
+		} elseif ($uri = env('REQUEST_URI')) {
+		} else {
+			if ($uri = env('argv')) {
+				if (defined('SERVER_IIS') && SERVER_IIS) {
+					if (key($_GET) && strpos(key($_GET), '?') !== false) {
+						unset($_GET[key($_GET)]);
+					}
+					$uri = preg_split('/\?/', $uri[0], 2);
+					if (isset($uri[1])) {
+						foreach (preg_split('/&/', $uri[1]) as $var) {
+							@list($key, $val) = explode('=', $var);
+							$_GET[$key] = $val;
+						}
+					}
+					$uri = $this->base . $uri[0];
+				} else {
+					$uri = env('PHP_SELF') . '/' . $uri[0];
+				}
+			} else {
+				$uri = env('PHP_SELF') . '/' . env('QUERY_STRING');
+			}
+		}
+		return str_replace('//', '/', preg_replace('/\?url=/', '/', $uri));
+	}
+/**
+ * Returns and sets the $_GET[url] derived from the REQUEST_URI
+ *
+ * @param string $uri
+ * @param string $script
+ * @return string URL
+ */
+	function getUrl($uri = null, $base = null) {
+		if (empty($_GET['url'])) {
+			if ($uri == null) {
+				$uri = $this->uri();
+			}
+			if ($base == null) {
+				$base = $this->base;
+			}
+			$url = null;
+			if ($uri === '/' || $uri == dirname($base).'/' || $url == $base) {
+				$url = $_GET['url'] = '/';
+			} else {
+				if (strpos($uri, $base) !== false) {
+					$elements = explode($base, $uri);
+				} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
+					$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
+				} else {
+					$elements = array();
+				}
+				if (!empty($elements[1])) {
+					$_GET['url'] = $elements[1];
+					$url = $elements[1];
+				} else {
+					$url = $_GET['url'] = '/';
+				}
+				if (strpos($url, '/') === 0 && $url != '/') {
+					$url = $_GET['url'] = substr($url, 1);
+				}
+			}
+		} else {
+			$url = $_GET['url'];
+		}
+		if($url{0} == '/') {
+			$url = substr($url, 1);
+		}
+		return $url;
+	}
+/**
+ * Outputs cached dispatch for js, css, view cache
+ *
+ * @param string $url
+ * @return string URL
+ */
+	function cached($uri = null) {
+		if($uri == null) {
+			$uri = $this->here;
+		}
+		if (strpos($uri, 'ccss/') === 0) {
+			include WWW_ROOT . DS . 'css.php';
+			exit();
+		}
+
+		$folders = array('js' => 'text/javascript', 'css' => 'text/css');
+		$requestPath = explode('/', $uri);
+
+		if (in_array($requestPath[0], array_keys($folders))) {
+			if (file_exists(VENDORS . join(DS, $requestPath))) {
+				header('Content-type: ' . $folders[$requestPath[0]]);
+				include (VENDORS . join(DS, $requestPath));
+				exit();
+			}
+		}
+
+		if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
+			$filename = CACHE . 'views' . DS . convertSlash($uri) . '.php';
+			if (!file_exists($filename)) {
+				$filename = CACHE . 'views' . DS . convertSlash($uri) . '_index.php';
+			}
+			if (file_exists($filename)) {
+				uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
+				$v = null;
+				$view = new View($v);
+				$view->renderCache($filename, getMicrotime());
+			}
+		}
 	}
 }
 

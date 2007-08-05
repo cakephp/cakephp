@@ -64,7 +64,7 @@ class ControllerTask extends Shell {
 			} else {
 				$actions = 'scaffold';
 			}
-			if (isset($this->args[2]) && $this->args[2] == 'admin') {
+			if ((isset($this->args[1]) && $this->args[1] == 'admin') || (isset($this->args[2]) && $this->args[2] == 'admin')) {
 				if ($admin = $this->getAdmin()) {
 					$this->out('Adding ' . CAKE_ADMIN .' methods');
 					if ($actions == 'scaffold') {

@@ -52,13 +52,13 @@
 		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 	}
 	require CORE_PATH . 'cake' . DS . 'basics.php';
+	$TIME_START = getMicrotime();
 	require APP_PATH . 'config' . DS . 'core.php';
 	require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 	require LIBS . 'object.php';
 	require LIBS . 'configure.php';
 
 	$bootstrap = true;
-	$url = setUrl();
-
+	$url = null;
 	require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';
 ?>

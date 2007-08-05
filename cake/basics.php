@@ -650,7 +650,7 @@
  */
 	function listClasses($path) {
 		$dir = opendir($path);
-		$classes=array();
+		$classes = array();
 		while (false !== ($file = readdir($dir))) {
 			if ((substr($file, -3, 3) == 'php') && substr($file, 0, 1) != '.') {
 				$classes[] = $file;
@@ -977,81 +977,20 @@
 		return $r;
 	}
 /**
- * Returns the REQUEST_URI from the server environment, or, failing that,
- * constructs a new one, using the PHP_SELF constant and other variables.
+ * see Dispatcher::uri();
  *
- * @return string URI
+ * @deprecated
  */
 	function setUri() {
-		if (env('HTTP_X_REWRITE_URL')) {
-			$uri = env('HTTP_X_REWRITE_URL');
-		} elseif (env('REQUEST_URI')) {
-			$uri = env('REQUEST_URI');
-		} else {
-			if ($uri = env('argv')) {
-				if (defined('SERVER_IIS') && SERVER_IIS) {
-					if (key($_GET) && strpos(key($_GET), '?') !== false) {
-						unset($_GET[key($_GET)]);
-					}
-					$uri = preg_split('/\?/', $uri[0], 2);
-					if (isset($uri[1])) {
-						foreach (preg_split('/&/', $uri[1]) as $var) {
-							@list($key, $val) = explode('=', $var);
-							$_GET[$key] = $val;
-						}
-					}
-					$uri = BASE_URL . $uri[0];
-				} else {
-					$uri = env('PHP_SELF') . '/' . $uri[0];
-				}
-			} else {
-				$uri = env('PHP_SELF') . '/' . env('QUERY_STRING');
-			}
-		}
-		return str_replace('//', '/', preg_replace('/\?url=/', '/', $uri));
+		return null;
 	}
 /**
- * Returns and sets the $_GET[url] derived from the REQUEST_INFO
+ * see Dispatcher::getUrl();
  *
- * @param string $uri
- * @return string URL
+ * @deprecated
  */
-	function setUrl($uri = null, $script = null) {
-		if ($uri == null) {
-			$uri = setUri();
-		}
-		if ($script == null) {
-			if (defined('BASE_URL')) {
-				$script = BASE_URL;
-			} else {
-				$script = env('SCRIPT_NAME');
-			}
-		}
-		$url = null;
-		if ($uri === '/' || $uri === $script || $uri === '/'.APP_DIR.'/') {
-			$url = $_GET['url'] = '/';
-		} else {
-			if (strpos($uri, $script) !== false) {
-				$elements = explode($script, $uri);
-			} elseif (strpos($uri, APP_DIR) !== false) {
-				$elements = explode(APP_DIR, $uri);
-			} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
-				$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
-			} else {
-				$elements = array();
-			}
-
-			if (!empty($elements[1])) {
-				$_GET['url'] = $elements[1];
-				$url = $elements[1];
-			} else {
-				$url = $_GET['url'] = '/';
-			}
-			if (strpos($url, '/') === 0 && $url != '/') {
-				$url = $_GET['url'] = substr($url, 1);
-			}
-		}
-		return $url;
+	function setUrl() {
+		return null;
 	}
 /**
  * Gets an environment variable from available sources, and provides emulation
@@ -1577,13 +1516,12 @@
 		return $string;
 	}
 /**
- * chmod recursively on a directory
+ * See Folder::chmod
  *
- * @param string $path Path to chmod
- * @param int $mode Mode to apply
- * @return boolean Success
+ * @deprecated
  */
 	function chmodr($path, $mode = 0755) {
+		trigger_error("Deprecated. See Folder::chmod()", E_USER_ERROR);
 		if (!is_dir($path)) {
 			return chmod($path, $mode);
 		}

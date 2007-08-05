@@ -26,6 +26,13 @@
 ?>
 <div class="<?php echo $pluralVar;?>">
 <h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
+<p>
+<?php echo "<?php
+echo $paginator->counter(array(
+'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
+));
+?>";?>
+</p>
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php  foreach ($fields as $field):?>

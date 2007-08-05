@@ -34,17 +34,16 @@ if (!defined('PHP5')) {
  */
 	if (!isset($bootstrap)) {
 		require CORE_PATH . 'cake' . DS . 'basics.php';
+		$TIME_START = getMicrotime();
 		require APP_PATH . 'config' . DS . 'core.php';
 		require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 		require LIBS . 'object.php';
 		require LIBS . 'configure.php';
 	}
-	$TIME_START = getMicrotime();
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'inflector.php';
-	$paths = Configure::getInstance();
 
 	if (isset($cakeCache)) {
 		$cache = 'File';
@@ -60,6 +59,7 @@ if (!defined('PHP5')) {
 	} else {
 		Cache::engine();
 	}
+
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');
 	Configure::write('debug', DEBUG);
@@ -69,53 +69,7 @@ if (!defined('PHP5')) {
 	if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 		define('SERVER_IIS', true);
 	}
-/**
- * Get the application path and request URL
- */
-	if (empty($uri) && defined('BASE_URL')) {
-		$url = setUrl();
-	} else {
-		if (empty($_GET['url'])) {
-			$url = null;
-		} else {
-			$url = $_GET['url'];
-		}
-	}
 
-	if (strpos($url, 'ccss/') === 0) {
-		include WWW_ROOT . DS . 'css.php';
-		exit();
-	}
-
-	$folders = array('js' => 'text/javascript', 'css' => 'text/css');
-	$requestPath = explode('/', $url);
-
-	if (in_array($requestPath[0], array_keys($folders))) {
-		if (file_exists(VENDORS . join(DS, $requestPath))) {
-			header('Content-type: ' . $folders[$requestPath[0]]);
-			include (VENDORS . join(DS, $requestPath));
-			exit();
-		}
-	}
-
+	$url = null;
 	require CAKE . 'dispatcher.php';
-
-	if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
-		if (empty($uri)) {
-			$uri = setUri();
-		}
-		$filename = CACHE . 'views' . DS . convertSlash($uri) . '.php';
-
-		if (file_exists($filename)) {
-			uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
-			$v = null;
-			$view = new View($v);
-			$view->renderCache($filename, $TIME_START);
-		} elseif (file_exists(CACHE . 'views' . DS . convertSlash($uri) . '_index.php')) {
-			uses('controller' . DS . 'component', DS . 'view' . DS . 'view');
-			$v = null;
-			$view = new View($v);
-			$view->renderCache(CACHE . 'views' . DS . convertSlash($uri) . '_index.php', $TIME_START);
-		}
-	}
 ?>
