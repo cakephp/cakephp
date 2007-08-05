@@ -66,14 +66,21 @@ class FileEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, "+1 second");
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
 	}
 
 	function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('test', $data);
+		$result = Cache::write('delete_test', $data);
 		$this->assertTrue($result);
 
-		$result = Cache::delete('test');
+		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
 	}
 

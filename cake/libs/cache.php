@@ -143,7 +143,7 @@ class Cache extends Object {
 		if (is_resource($value)) {
 			return false;
 		}
-		$duration = ife(is_string($duration), strtotime($duration), intval($duration));
+		$duration = ife(is_string($duration), strtotime($duration) - time(), intval($duration));
 		if ($duration < 1) {
 			return false;
 		}
