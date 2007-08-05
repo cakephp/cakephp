@@ -29,10 +29,7 @@
  * Included libraries.
  *
  */
-if (!class_exists('File')) {
-	uses ('file');
-}
-if (!class_exists('Folder')) {
+if (!class_exists('folder')) {
 	uses ('folder');
 }
 /**
@@ -87,13 +84,13 @@ class FileEngine extends CacheEngine {
 		$lock = false;
 		extract($params);
 		$dir = trim($dir);
-		$folder =& new Folder();
+		$this->Folder =& new Folder();
 
 		if (!empty($dir)) {
-			$dir = $folder->slashTerm($dir);
+			$dir = $this->Folder->slashTerm($dir);
 		}
 
-		if (empty($dir) || !$folder->isAbsolute($dir) || !is_writable($dir)) {
+		if (empty($dir) || !$this->Folder->isAbsolute($dir) || !is_writable($dir)) {
 			return false;
 		}
 
@@ -121,8 +118,12 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
-		$serialized = serialize($value);
+	function write($key, &$data, $duration = CACHE_DEFAULT_DURATION) {
+		if(!$data) {
+			return false;
+		}
+
+		$serialized = serialize($data);
 
 		if (!$serialized) {
 			return false;
@@ -133,6 +134,7 @@ class FileEngine extends CacheEngine {
 		if ($fileName === false) {
 			return false;
 		}
+
 		return $this->_writeCache($fileName, $serialized, $expires);
 	}
 /**
@@ -145,13 +147,9 @@ class FileEngine extends CacheEngine {
 	function _getFilename($key) {
 		$file = new File($this->_dir);
 		$key = implode(DS, array_map(array($file , 'safe'), explode(DS, $key)));
-		$fullpath = $this->_dir . $key;
-		$directoryName = dirname($fullpath);
-		$fileName = $this->_prefix.basename($fullpath);
-		$fullpath = Folder::realpath($directoryName . DS . $fileName);
-
-		$folder = new Folder($this->_dir);
-		if (!$folder->inPath($fullpath, true)) {
+		$fileName = $this->_prefix . $key;
+		$fullpath = $this->Folder->realpath($this->_dir . DS . $fileName);
+		if (!$this->Folder->inPath($fullpath, true)) {
 			return false;
 		}
 		return $fullpath;
@@ -165,15 +163,14 @@ class FileEngine extends CacheEngine {
  * @return boolean True on success, false on failure
  * @access private
  */
-	function _writeCache(&$filename, &$value, &$expires) {
+	function _writeCache(&$filename, &$data, &$expires) {
 		$directoryName = dirname($filename);
 		if (!is_writable($directoryName)) {
-			$folder = new Folder($directoryName);
-			if (!$folder->create($directoryName)) {
+			if (!$this->Folder->create($directoryName)) {
 				return false;
 			}
 		}
-		$contents = $expires."\n".$value."\n";
+		$contents = $expires."\n".$data."\n";
 		return ife(file_put_contents($filename, $contents, ife($this->_lock, LOCK_EX, 0)), true, false);
 	}
 /**
@@ -185,28 +182,23 @@ class FileEngine extends CacheEngine {
  */
 	function read($key) {
 		$filename = $this->_getFilename($key);
-
 		if ($filename === false || !is_file($filename) || !is_readable($filename)) {
 			return false;
 		}
 		$fp = fopen($filename, 'r');
-
 		if (!$fp) {
 			return false;
 		}
-
 		if ($this->_lock && !flock($fp, LOCK_SH)) {
 			return false;
 		}
-		$expires = fgets($fp, 11);
-
-		if (intval($expires) < time()) {
+		$cachetime = fgets($fp, 11);
+		if (intval($cachetime) < time()) {
 			fclose($fp);
 			unlink($filename);
 			return false;
 		}
 		$data = '';
-
 		while (!feof($fp)) {
 			$data .= fgets($fp, 4096);
 		}
@@ -267,7 +259,7 @@ class FileEngine extends CacheEngine {
 			if (strpos($entry, $this->_prefix) !== 0) {
 				continue;
 			}
-			$filename = $this->_dir.$entry;
+			$filename = $this->_dir . $entry;
 
 			if ($checkExpiry) {
 				$mtime = filemtime($filename);

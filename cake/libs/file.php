@@ -62,7 +62,7 @@ class File extends Object{
  * @var string
  * @access public
  */
-	var $info = null;	
+	var $info = array();
 /**
  * Constructor
  *

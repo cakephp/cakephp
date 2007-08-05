@@ -28,7 +28,7 @@
 /**
  * Included libraries.
  */
-if (!class_exists('Object')) {
+if (!class_exists('object')) {
 	uses('object');
 }
 /**
@@ -84,14 +84,12 @@ class Cache extends Object {
 			return true;
 		}
 		$fileName = strtolower($name);
-
-		if (vendor('cache_engines/'.$fileName)) {
+		if (vendor('cache_engines' . DS . $fileName)) {
 			return true;
 		}
 		$fileName = dirname(__FILE__) . DS . 'cache' . DS . $fileName . '.php';
-
 		if (is_readable($fileName)) {
-			include $fileName;
+			require $fileName;
 			return true;
 		}
 		return false;
@@ -110,10 +108,10 @@ class Cache extends Object {
 		}
 		$_this =& Cache::getInstance();
 		$cacheClass = $name.'Engine';
-
 		if (!Cache::_includeEngine($name) || !class_exists($cacheClass)) {
 			return false;
 		}
+
 		$_this->_Engine =& new $cacheClass();
 
 		if ($_this->_Engine->init($params)) {
@@ -139,21 +137,18 @@ class Cache extends Object {
 			return false;
 		}
 		$key = strval($key);
-
 		if (empty($key)) {
 			return false;
 		}
-
 		if (is_resource($value)) {
 			return false;
 		}
 		$duration = ife(is_string($duration), strtotime($duration), intval($duration));
-
 		if ($duration < 1) {
 			return false;
 		}
-		$_this =& Cache::getInstance();
 
+		$_this =& Cache::getInstance();
 		if (!isset($_this->_Engine)) {
 			return false;
 		}
@@ -171,13 +166,11 @@ class Cache extends Object {
 			return false;
 		}
 		$key = strval($key);
-
 		if (empty($key)) {
 			return false;
 		}
 
 		$_this =& Cache::getInstance();
-
 		if (!isset($_this->_Engine)) {
 			return false;
 		}
@@ -195,12 +188,11 @@ class Cache extends Object {
 			return false;
 		}
 		$key = strval($key);
-
 		if (empty($key)) {
 			return false;
 		}
-		$_this =& Cache::getInstance();
 
+		$_this =& Cache::getInstance();
 		if (!isset($_this->_Engine)) {
 			return false;
 		}
@@ -216,8 +208,8 @@ class Cache extends Object {
 		if (defined('DISABLE_CACHE')) {
 			return false;
 		}
-		$_this =& Cache::getInstance();
 
+		$_this =& Cache::getInstance();
 		if (!isset($_this->_Engine)) {
 			return false;
 		}
