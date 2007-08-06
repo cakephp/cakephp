@@ -127,7 +127,7 @@ class Dispatcher extends Object {
 
 		$this->here = $this->base . '/' . $url;
 
-		$this->cached();
+		$this->cached($url);
 
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
 
@@ -414,15 +414,11 @@ class Dispatcher extends Object {
 		$this->webroot = '/';
 
 		$config = Configure::read('App');
-		$baseUrl = $config['baseUrl'];
-		$app = $config['dir'];
-		$webroot = $config['webroot'];
+		extract($config);
 
-		$file = $script = null;
+		$file = null;
 		if (!$baseUrl) {
-			$docRoot = env('DOCUMENT_ROOT');
-			$script = env('SCRIPT_FILENAME');
-			$base = r($docRoot, '', $script);
+			$base = env('PHP_SELF');
 		} elseif ($baseUrl) {
 			$base = $baseUrl;
 			$file = '/' . basename($base);
@@ -432,21 +428,26 @@ class Dispatcher extends Object {
 		if (in_array($base, array(DS, '.'))) {
 			$base = '';
 		}
-		if(strpos($script, $app) !== false && $app === 'app') {
-			$base =  str_replace('/'.$app, '', $base);
-		}
-		if (!$baseUrl && $webroot === 'webroot') {
-			$base =  str_replace('/'.$webroot, '', $base);
+
+		if(!$baseUrl) {
+			if($base == '') {
+				$this->webroot = '/';
+				return $base;
+			}
+			if($dir === 'app') {
+				$base =  str_replace('/app', '', $base);
+			}
+			if ($webroot === 'webroot') {
+				$base =  str_replace('/webroot', '', $base);
+			}
+			$this->webroot = $base .'/';
+			return $base;
 		}
 
 		$this->webroot = $base .'/';
 
-		if (!$baseUrl) {
-			return $base;
-		}
-
-		if (strpos($this->webroot, $app) === false) {
-			$this->webroot .=  $app . '/' ;
+		if (strpos($this->webroot, $dir) === false) {
+			$this->webroot .=  $dir . '/' ;
 		}
 		if (strpos($this->webroot, $webroot) === false) {
 			$this->webroot .= $webroot . '/';
@@ -604,17 +605,15 @@ class Dispatcher extends Object {
  * @param string $url
  * @return string URL
  */
-	function cached($uri = null) {
-		if($uri == null) {
-			$uri = $this->here;
-		}
-		if (strpos($uri, 'ccss/') === 0) {
+	function cached($url) {
+
+		if (strpos($url, 'ccss/') === 0) {
 			include WWW_ROOT . DS . 'css.php';
 			exit();
 		}
 
 		$folders = array('js' => 'text/javascript', 'css' => 'text/css');
-		$requestPath = explode('/', $uri);
+		$requestPath = explode('/', $url);
 
 		if (in_array($requestPath[0], array_keys($folders))) {
 			if (file_exists(VENDORS . join(DS, $requestPath))) {
@@ -625,9 +624,9 @@ class Dispatcher extends Object {
 		}
 
 		if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
-			$filename = CACHE . 'views' . DS . convertSlash($uri) . '.php';
+			$filename = CACHE . 'views' . DS . convertSlash($url) . '.php';
 			if (!file_exists($filename)) {
-				$filename = CACHE . 'views' . DS . convertSlash($uri) . '_index.php';
+				$filename = CACHE . 'views' . DS . convertSlash($url) . '_index.php';
 			}
 			if (file_exists($filename)) {
 				uses('controller' . DS . 'component', DS . 'view' . DS . 'view');

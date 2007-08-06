@@ -36,7 +36,7 @@ class TestDispatcher extends Dispatcher {
 		$classVars = get_object_vars($controller);
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
 			uses('controller'. DS . 'scaffold');
-			
+
 			return new Scaffold($controller, $params);
 		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
 				return $this->cakeError('missingAction', array(
@@ -228,6 +228,7 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
 		$result = $dispatcher->baseUrl();
 		$expected = '/1.2.x.x';
 		$this->assertEqual($expected, $result);
@@ -237,6 +238,7 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/index.php';
 		$result = $dispatcher->baseUrl();
 		$expected = '';
 		$this->assertEqual($expected, $result);
@@ -249,6 +251,8 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
+
 		$result = $dispatcher->baseUrl();
 		$expected = '/demos/auth';
 		$this->assertEqual($expected, $result);
@@ -260,6 +264,7 @@ class DispatcherTest extends UnitTestCase {
 		$dispatcher->base = false;;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
 		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
 		$result = $dispatcher->baseUrl();
 		$expected = '/clients/PewterReport/code';
 		$this->assertEqual($expected, $result);
@@ -271,7 +276,7 @@ class DispatcherTest extends UnitTestCase {
 	function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
 		$_SERVER['SCRIPT_FILENAME'] = '/home/aplusnur/cake2/app/webroot/index.php';
-		$_SERVER['SCRIPT_NAME'] = '/control/index.php';
+		$_SERVER['PHP_SELF'] = '/control/index.php';
 
 		Configure::write('App.base', '/control');
 
@@ -288,7 +293,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$_SERVER['DOCUMENT_ROOT'] = '/var/www/abtravaff/html';
 		$_SERVER['SCRIPT_FILENAME'] = '/var/www/abtravaff/html/newaffiliate/index.php';
-
+		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
 		$dispatcher =& new Dispatcher();
 		$result = $dispatcher->baseUrl();
 		$expected = '/newaffiliate';
@@ -476,8 +481,7 @@ class DispatcherTest extends UnitTestCase {
 
 	function testPluginDispatch() {
 		$_POST = array();
-		$_SERVER['DOCUMENT_ROOT'] = '';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
@@ -521,8 +525,7 @@ class DispatcherTest extends UnitTestCase {
 
 	function testAutomaticPluginDispatch() {
 		$_POST = array();
-		$_SERVER['DOCUMENT_ROOT'] = '';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
@@ -555,8 +558,7 @@ class DispatcherTest extends UnitTestCase {
 
 	function testAutomaticPluginControllerDispatch() {
 		$_POST = array();
-		$_SERVER['DOCUMENT_ROOT'] = '';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
@@ -580,8 +582,7 @@ class DispatcherTest extends UnitTestCase {
 
 	function testAutomaticPluginControllerMissingActionDispatch() {
 		$_POST = array();
-		$_SERVER['DOCUMENT_ROOT'] = '';
-		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
