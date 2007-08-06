@@ -36,6 +36,7 @@ class TestDispatcher extends Dispatcher {
 		$classVars = get_object_vars($controller);
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
 			uses('controller'. DS . 'scaffold');
+			
 			return new Scaffold($controller, $params);
 		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
 				return $this->cakeError('missingAction', array(
