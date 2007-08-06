@@ -24,6 +24,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
+ * Base class for all CakePHP Components.
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller
@@ -47,7 +48,7 @@ class Component extends Object {
 /**
  * Constructor
  *
- * @return Component
+ * @return object
  */
 	function __construct() {
 	}
