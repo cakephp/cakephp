@@ -144,24 +144,25 @@ class Configure extends Object {
  * Returns an array of filenames of PHP files in given directory.
  *
  * @param  string $path Path to scan for files
- * @return array  List of files in directory
+ * @param  string $suffix if false, return only directories. if string, match and return files
+ * @return array  List of directories or files in directory
  */
-	function __list($path, $suffix = null) {
-		$dir = opendir($path);
-		$items = array();
-
-		while (false !== ($item = readdir($dir))) {
-			if (substr($item, 0, 1) != '.') {
-				if (empty($suffix) || (!empty($suffix) && substr($item, -strlen($suffix)) == $suffix)) {
-					if (!empty($suffix)) {
+	function __list($path, $suffix = false) {
+		$Folder =& new Folder($path);
+		$contents = $Folder->read(false, true);
+		if(is_array($contents)) {
+			if(!$suffix) {
+				return $contents[0];
+			} else {
+				foreach($content[1] as $item) {
+					if (substr($item, -strlen($suffix)) == $suffix) {
 						$item = substr($item, 0, strlen($item) - strlen($suffix));
+						$items[] = $item;
 					}
-					$items[] = $item;
 				}
+				return $items;
 			}
 		}
-		closedir($dir);
-		return $items;
 	}
 /**
  * Used to write a dynamic var in the Configure instance.
