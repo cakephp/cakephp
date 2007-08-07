@@ -35,8 +35,20 @@ uses('configure');
  */
 class ConfigureTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (true, 'ConfigureTest not implemented');
+	function setUp() {
+		$this->Configure =& Configure::getInstance();
+	}
+
+	function testListCoreObjects() {
+		$result = $this->Configure->listObjects('class', CAKE_CORE_INCLUDE_PATH . DS . LIBS);
+		$this->assertTrue(in_array('Xml', $result));
+		$this->assertTrue(in_array('Cache', $result));
+		$this->assertTrue(in_array('HttpSocket', $result));
+	}
+
+	function tearDown() {
+		unset($this->Configure);
 	}
 }
+
 ?>

@@ -99,6 +99,71 @@ class Configure extends Object {
 		return $instance[0];
 	}
 /**
+ * Returns an index of objects of the given type, with the physical path to each object
+ *
+ * @param string	$type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
+ * @param mixed		$path Optional
+ * @return Configure instance
+ * @access public
+ */
+	function listObjects($type, $path = null) {
+		$_this =& Configure::getInstance();
+		$Inflector =& Inflector::getInstance();
+
+		$types = array(
+			'model'			=> array('suffix' => '.php', 'base' => 'AppModel'),
+			'controller'	=> array('suffix' => '_controller.php', 'base' => 'AppController'),
+			'helper'		=> array('suffix' => '.php', 'base' => 'AppHelper'),
+			'plugin'		=> array('suffix' => '', 'base' => null),
+			'class'			=> array('suffix' => '.php', 'base' => null)
+		);
+
+		if (!isset($types[$type])) {
+			return false;
+		}
+		if (empty($path)) {
+			$pathVar = $type . 'Paths';
+			$path = $_this->{$pathVar};
+		}
+		$objects = array();
+
+		foreach ((array)$path as $dir) {
+			$items = $_this->__list($dir, $types[$type]['suffix']);
+			$objects = am($items, $objects);
+
+			/*if (file_exists($path . $name . '.php')) {
+				Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
+				require($path . $name . '.php');
+				Overloadable::overload($className);
+				return true;
+			}*/
+		}
+		return array_map(array(&$Inflector, 'camelize'), $objects);
+	}
+/**
+ * Returns an array of filenames of PHP files in given directory.
+ *
+ * @param  string $path Path to scan for files
+ * @return array  List of files in directory
+ */
+	function __list($path, $suffix = null) {
+		$dir = opendir($path);
+		$items = array();
+
+		while (false !== ($item = readdir($dir))) {
+			if (substr($item, 0, 1) != '.') {
+				if (empty($suffix) || (!empty($suffix) && substr($item, -strlen($suffix)) == $suffix)) {
+					if (!empty($suffix)) {
+						$item = substr($item, 0, strlen($item) - strlen($suffix));
+					}
+					$items[] = $item;
+				}
+			}
+		}
+		closedir($dir);
+		return $items;
+	}
+/**
  * Used to write a dynamic var in the Configure instance.
  *
  * Usage
@@ -426,6 +491,21 @@ class Configure extends Object {
 		}
 	}
 /**
+ * Sets the var pluginPaths
+ *
+ * @param array $pluginPaths Path to plugins
+ * @access private
+ */
+	function __buildPluginPaths($pluginPaths) {
+		$_this =& Configure::getInstance();
+		$_this->pluginPaths[] = APP . 'plugins' . DS;
+		if (isset($pluginPaths)) {
+			foreach ($pluginPaths as $value) {
+				$_this->pluginPaths[] = $value;
+			}
+		}
+	}
+/**
  * Loads the app/config/bootstrap.php
  * If the alternative paths are set in this file
  * they will be added to the paths vars
@@ -446,6 +526,7 @@ class Configure extends Object {
 		$helperPaths = null;
 		$componentPaths = null;
 		$behaviorPaths = null;
+		$pluginPaths = null;
 		if ($boot) {
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
@@ -457,6 +538,7 @@ class Configure extends Object {
 		$_this->__buildHelperPaths($helperPaths);
 		$_this->__buildComponentPaths($componentPaths);
 		$_this->__buildBehaviorPaths($behaviorPaths);
+		$_this->__buildPluginPaths($pluginPaths);
 	}
 }
 ?>
