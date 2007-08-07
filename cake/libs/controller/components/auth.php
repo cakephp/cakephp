@@ -296,7 +296,7 @@ class AuthComponent extends Object {
 				}
 				return true;
 			} else {
-				$this->Session->setFlash($this->loginError, 'default', array(), 'Auth.login');
+				$this->Session->setFlash($this->loginError, 'default', array(), 'auth');
 				unset($controller->data[$this->userModel][$this->fields['password']]);
 			}
 			return false;
@@ -347,7 +347,7 @@ class AuthComponent extends Object {
 					return true;
 				}
 			}
-			$this->Session->setFlash($this->authError);
+			$this->Session->setFlash($this->authError, 'default', array(), 'auth');
 			$controller->redirect($controller->referer(), null, true);
 			return false;
 		} else {
@@ -467,6 +467,7 @@ class AuthComponent extends Object {
 			$object = $auth[$type];
 		} else {
 			$type = $auth;
+			return compact('type');
 		}
 		return compact('type', 'object');
 	}

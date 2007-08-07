@@ -38,6 +38,13 @@ class PostsController extends Controller {
 	}
 }
 
+class TestView extends View {
+
+	function renderElement($name, $params = array()) {
+		return $name;
+	}
+}
+
 /**
  * Short description for class.
  *
@@ -73,6 +80,47 @@ class ViewTest extends UnitTestCase {
 
 		$this->view->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
 		$this->assertEqual($this->view->__scripts, array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
+	}
+
+	function testElementCache() {
+		$View = new TestView($this->PostsController);
+		$element = 'element_name';
+		$result = $View->element($element);
+		$this->assertEqual($result, $element);
+
+		$cached = false;
+		$result = $View->element($element, array('cache'=>'+1 second'));
+		if(file_exists(CACHE . 'views' . DS . 'element_cache_'.$element)) {
+			$cached = true;
+			unlink(CACHE . 'views' . DS . 'element_cache_'.$element);
+		}
+		$this->assertTrue($cached);
+
+		$cached = false;
+		$result = $View->element($element, array('cache'=>'+1 second', 'other_param'=> true, 'anotherParam'=> true));
+		if(file_exists(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element)) {
+			$cached = true;
+			unlink(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element);
+		}
+		$this->assertTrue($cached);
+
+		$cached = false;
+		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'/whatever/here')));
+		if(file_exists(CACHE . 'views' . DS . 'element_'.convertSlash('/whatever/here').'_'.$element)) {
+			$cached = true;
+			unlink(CACHE . 'views' . DS . 'element_'.convertSlash('/whatever/here').'_'.$element);
+		}
+		$this->assertTrue($cached);
+
+		$cached = false;
+		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'whatever_here')));
+		if(file_exists(CACHE . 'views' . DS . 'element_whatever_here_'.$element)) {
+			$cached = true;
+			unlink(CACHE . 'views' . DS . 'element_whatever_here_'.$element);
+		}
+		$this->assertTrue($cached);
+		$this->assertEqual($result, $element);
+
 	}
 
 	function tearDown() {

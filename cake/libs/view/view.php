@@ -420,24 +420,29 @@ class View extends Object {
  * @access public
  */
 	function element($name, $params = array()) {
-		if (in_array('cache', array_keys($params))) {
+		if (isset($params['cache'])) {
 			$expires = '+1 day';
-			if ($params['cache'] !== true) {
+			$key = null;
+			if (is_array($params['cache'])) {
+				$expires = $params['cache']['time'];
+				$key = convertSlash($params['cache']['key']);
+			} elseif ($params['cache'] !== true) {
 				$expires = $params['cache'];
+				$key = implode('_', array_keys($params));
 			}
 			if ($expires) {
 				$plugin = null;
 				if (isset($params['plugin'])) {
-					$plugin = $params['plugin'];
+					$plugin = $params['plugin'].'_';
 				}
-				$cacheFile = 'element_' . $plugin .'_' . convertSlash($name);
+				$cacheFile = 'element_' . $key .'_'. $plugin . convertSlash($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
-				if ($cache) {
+				if (is_string($cache)) {
 					return $cache;
 				} else {
 					$element = $this->renderElement($name, $params);
-               cache('views' . DS . $cacheFile, $element, $expires);
-               return $element;
+               		cache('views' . DS . $cacheFile, $element, $expires);
+               		return $element;
 				}
 			}
 		}
