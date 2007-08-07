@@ -436,6 +436,16 @@ class Router extends Object {
 			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
 		$_this->routes[] = $default_route;
+
+		$Inflector =& Inflector::getInstance();
+		$plugins = array_map(array(&$Inflector, 'underscore'), Configure::listObjects('plugin'));
+		if(!empty($plugins)) {
+			array_unshift($_this->routes, array(
+				"/:plugin/:controller/:action/*",
+				'/^(?:\/(?:(' . implode('|', $plugins) . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
+				array('plugin', 'controller', 'action'), array()
+			));
+		}
 	}
 /**
  * Takes parameter and path information back from the Dispatcher
@@ -704,11 +714,8 @@ class Router extends Object {
 				unset($pass[$key]);
 			}
 		}
-
 		krsort($defaults);
 		krsort($url);
-
-
 		if (Set::diff($url, $defaults) == array()) {
 			return array(Router::__mapRoute($route, am($url, compact('pass'))), array());
 		} elseif (!empty($params) && !empty($route[3])) {
@@ -1004,5 +1011,4 @@ if (!function_exists('http_build_query')) {
 		return implode($argSep, $out);
 	}
 }
-
 ?>
