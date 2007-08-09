@@ -81,6 +81,7 @@ class NumberTreeCase extends CakeTestCase {
 		$validTree = $this->NumberTree->verify();
 		$this->assertIdentical($validTree, true);
 	}
+
 	function testDetectInvalidLeft() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -143,12 +144,11 @@ class NumberTreeCase extends CakeTestCase {
 
 		$result = $this->NumberTree->findByName('1.1');
 		$this->NumberTree->updateAll(array('parent_id' => 999999), array('id' => $result['NumberTree']['id']));
-
+		
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
 		$this->NumberTree->recover('MPTT');
-
 		$result = $this->NumberTree->verify();
 		$this->assertIdentical($result, true);
 	}
@@ -424,6 +424,54 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 	}
 
+	function testMoveUp2() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(1, 10);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
+		$this->NumberTree->moveUp($data['NumberTree']['id'], 2);
+
+		$parent = $this->NumberTree->findByName('1. Root', array('id'));
+		$this->NumberTree->id = $parent['NumberTree']['id'];
+		$result = $this->NumberTree->children(null, true, array('name'));
+		$expected = array(
+				array('NumberTree' => array('name' => '1.1',)),
+				array('NumberTree' => array('name' => '1.2',)),
+				array('NumberTree' => array('name' => '1.5',)),
+				array('NumberTree' => array('name' => '1.3',)),
+				array('NumberTree' => array('name' => '1.4',)),
+				array('NumberTree' => array('name' => '1.6',)),
+				array('NumberTree' => array('name' => '1.7',)),
+				array('NumberTree' => array('name' => '1.8',)),
+				array('NumberTree' => array('name' => '1.9',)),
+				array('NumberTree' => array('name' => '1.10',)));
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testMoveUpFirst() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(1, 10);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
+		$this->NumberTree->moveUp($data['NumberTree']['id'], true);
+
+		$parent = $this->NumberTree->findByName('1. Root', array('id'));
+		$this->NumberTree->id = $parent['NumberTree']['id'];
+		$result = $this->NumberTree->children(null, true, array('name'));
+		$expected = array(
+				array('NumberTree' => array('name' => '1.5',)),
+				array('NumberTree' => array('name' => '1.1',)),
+				array('NumberTree' => array('name' => '1.2',)),
+				array('NumberTree' => array('name' => '1.3',)),
+				array('NumberTree' => array('name' => '1.4',)),
+				array('NumberTree' => array('name' => '1.6',)),
+				array('NumberTree' => array('name' => '1.7',)),
+				array('NumberTree' => array('name' => '1.8',)),
+				array('NumberTree' => array('name' => '1.9',)),
+				array('NumberTree' => array('name' => '1.10',)));
+		$this->assertIdentical($result, $expected);
+	}
+	
 	function testMoveDownSuccess() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -454,14 +502,69 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 	}
 
+	function testMoveDownLast() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(1, 10);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
+		$this->NumberTree->moveDown($data['NumberTree']['id'], true);
+
+		$parent = $this->NumberTree->findByName('1. Root', array('id'));
+		$this->NumberTree->id = $parent['NumberTree']['id'];
+		$result = $this->NumberTree->children(null, true, array('name'));
+		$expected = array(
+				array('NumberTree' => array('name' => '1.1',)),
+				array('NumberTree' => array('name' => '1.2',)),
+				array('NumberTree' => array('name' => '1.3',)),
+				array('NumberTree' => array('name' => '1.4',)),
+				array('NumberTree' => array('name' => '1.6',)),
+				array('NumberTree' => array('name' => '1.7',)),
+				array('NumberTree' => array('name' => '1.8',)),
+				array('NumberTree' => array('name' => '1.9',)),
+				array('NumberTree' => array('name' => '1.10',)),
+				array('NumberTree' => array('name' => '1.5',)));
+		$this->assertIdentical($result, $expected);
+	}
+
+	function testMoveDown2() {
+		$this->NumberTree = & new NumberTree();
+		$this->NumberTree->__initialize(1, 10);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1.5'), array('id'));
+		$this->NumberTree->moveDown($data['NumberTree']['id'], 2);
+
+		$parent = $this->NumberTree->findByName('1. Root', array('id'));
+		$this->NumberTree->id = $parent['NumberTree']['id'];
+		$result = $this->NumberTree->children(null, true, array('name'));
+		$expected = array(
+				array('NumberTree' => array('name' => '1.1',)),
+				array('NumberTree' => array('name' => '1.2',)),
+				array('NumberTree' => array('name' => '1.3',)),
+				array('NumberTree' => array('name' => '1.4',)),
+				array('NumberTree' => array('name' => '1.6',)),
+				array('NumberTree' => array('name' => '1.7',)),
+				array('NumberTree' => array('name' => '1.5',)),
+				array('NumberTree' => array('name' => '1.8',)),
+				array('NumberTree' => array('name' => '1.9',)),
+				array('NumberTree' => array('name' => '1.10',)));
+		$this->assertIdentical($result, $expected);
+	}
+
+
 	function testDelete() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
 
 		$initialCount = $this->NumberTree->findCount();
 		$result = $this->NumberTree->findByName('1.1.1');
-
-		$this->NumberTree->delete($result['NumberTree']['id']);
+		
+		//pr ($this->NumberTree->findAll());
+		//$db =& ConnectionManager::getDataSource($this->NumberTree->useDbConfig);
+		//$db->fullDebug = true;
+		$return = $this->NumberTree->delete($result['NumberTree']['id']);
+		//pr ($this->NumberTree->findAll());
+		$this->assertEqual($return, true);
+		//die;
 
 		$laterCount = $this->NumberTree->findCount();
 		$this->assertEqual($initialCount - 1, $laterCount);
@@ -472,7 +575,8 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 		$result= $this->NumberTree->findByName('1.1');
 
-		$this->NumberTree->delete($result['NumberTree']['id']);
+		$return = $this->NumberTree->delete($result['NumberTree']['id']);
+		$this->assertEqual($return, true);
 
 		$laterCount = $this->NumberTree->findCount();
 		$this->assertEqual($initialCount - 2, $laterCount);
