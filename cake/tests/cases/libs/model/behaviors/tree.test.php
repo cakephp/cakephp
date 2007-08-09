@@ -345,7 +345,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->id = $data['NumberTree']['id'];
 		$this->NumberTree->saveField('parent_id', null);
 		//$this->NumberTree->setparent(null);
-				// Find the last parent node in the tree
+		// Find the last parent node in the tree
 		$result = $this->NumberTree->find(null, array('name','parent_id'), 'NumberTree.rght desc');
 		$expected = array('NumberTree' => array('name' => '1.1', 'parent_id' => null));
 		$this->assertEqual($result, $expected);
@@ -558,13 +558,8 @@ class NumberTreeCase extends CakeTestCase {
 		$initialCount = $this->NumberTree->findCount();
 		$result = $this->NumberTree->findByName('1.1.1');
 		
-		//pr ($this->NumberTree->findAll());
-		//$db =& ConnectionManager::getDataSource($this->NumberTree->useDbConfig);
-		//$db->fullDebug = true;
 		$return = $this->NumberTree->delete($result['NumberTree']['id']);
-		//pr ($this->NumberTree->findAll());
 		$this->assertEqual($return, true);
-		//die;
 
 		$laterCount = $this->NumberTree->findCount();
 		$this->assertEqual($initialCount - 1, $laterCount);
