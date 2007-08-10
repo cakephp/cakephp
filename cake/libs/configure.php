@@ -154,7 +154,7 @@ class Configure extends Object {
 			if(!$suffix) {
 				return $contents[0];
 			} else {
-				foreach($content[1] as $item) {
+				foreach($contents[1] as $item) {
 					if (substr($item, -strlen($suffix)) == $suffix) {
 						$item = substr($item, 0, strlen($item) - strlen($suffix));
 						$items[] = $item;
