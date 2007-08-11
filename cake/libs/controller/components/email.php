@@ -310,7 +310,9 @@ class EmailComponent extends Object{
 		if ($this->_debug) {
 			$this->delivery = 'debug';
 		}
+
 		$__method = '__'.$this->delivery;
+		
 		return $this->$__method();
 	}
 /**
@@ -589,14 +591,17 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __smtp() {
-		$response = $this->__smtpConnect($this->smtpOptions);
-
-		if ($response['status'] == false) {
+		$response = $this->__smtpConnect();
+		debug($response);
+		
+		if ($response['errno'] != 0 && $response['status'] === false) {
 			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
 			return false;
 		}
 
-		$this->__sendData("HELO cake\r\n", false);
+		if (!$this->__sendData("HELO cake\r\n")) {
+			return false;
+		}
 
 		if (!$this->__sendData("MAIL FROM: {$this->from}\r\n")) {
 			return false;
@@ -608,8 +613,10 @@ class EmailComponent extends Object{
 
 		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false);
 		$this->__sendData("QUIT\r\n", false);
-		return true;
+
+		return true;		
 	}
+	
 /**
  * Private method for connecting to an SMTP server
  *
@@ -617,14 +624,20 @@ class EmailComponent extends Object{
  * @param array $options SMTP connection options
  * @return array
  */
-	function __smtpConnect($options) {
+	function __smtpConnect() {
 		$status = true;
-		$this->__smtpConnection = @fsockopen($options['host'], $options['port'], $errno, $errstr, $options['timeout']);
+		$this->__smtpConnection = @fsockopen($this->smtpOptions['host'],
+											$this->smtpOptions['port'],
+											$errno,
+											$errstr,
+											$this->smtpOptions['timeout']);
 
 		if ($this->__smtpConnection == false) {
 			$status = false;
 		}
-
+		
+		$response = $this->__getSmtpResponse();
+		
 		return array('status' => $status,
 					 'errno' => $errno,
 					 'errstr' => $errstr);
@@ -645,11 +658,14 @@ class EmailComponent extends Object{
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
 		$response = $this->__getSmtpResponse();
-
-		if ($check == true && !stristr($response, '250')) {
-			$this->smtpError = $response;
-			return false;
+		
+		if ($check != false) {
+			if (stristr($response, '250') === false) {
+				$this->smtpError = $response;
+				return false;
+			}
 		}
+		
 		return true;
 	}
 /**
