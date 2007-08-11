@@ -414,7 +414,7 @@ class ControllerTask extends Shell {
 			if (count($helpers)) {
 				foreach ($helpers as $help) {
 					if ($help != $helpers[count($helpers) - 1]) {
-						$out .= ", '" . Inflector::camelize($help) . "'";
+						$out .= ", '" . Inflector::camelize($help) . "', ";
 					} else {
 						$out .= ", '" . Inflector::camelize($help) . "'";
 					}
