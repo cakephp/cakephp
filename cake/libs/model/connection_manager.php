@@ -114,6 +114,15 @@ class ConnectionManager extends Object {
 		return $_this->_dataSources[$name];
 	}
 /**
+ * Gets the list of available DataSource connections
+ *
+ * @return array
+ */
+	function sourceList() {
+		$_this =& ConnectionManager::getInstance();
+		return array_keys($_this->_dataSources);
+	}
+/**
  * Gets a DataSource name from an object reference
  *
  * @param object $source
