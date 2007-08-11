@@ -304,6 +304,50 @@ class Set extends Object {
 		return $return;
 	}
 /**
+ * Returns a series of values extracted from an array, formatted in a format string.
+ *
+ * @param array		$data Source array from which to extract the data
+ * @param string	$format Format string into which values will be inserted
+ * @param array		$keys An array containing one or more Set::extract()-style key paths
+ * @return array	An array of strings extracted from $keys and formatted with $format
+ * @access public
+ */
+	function format($data, $format, $keys) {
+		$extracted = array();
+		$count = count($keys);
+
+		if (!$count) {
+			return;
+		}
+
+		for ($i = 0; $i < $count; $i++) {
+			$extracted[] = Set::extract($data, $keys[$i]);
+		}
+
+		if (preg_match_all('/\{([0-9]+)\}/msi', $format, $keys) && isset($keys[1])) {
+			$out = array();
+			$keys = $keys[1];
+			$data = $extracted;
+			$count = count($data[0]);
+			$format = preg_split('/\{([0-9]+)\}/msi', $format);
+			$count2 = count($format);
+
+			for ($j = 0; $j < $count; $j++) {
+				$formatted = '';
+				for ($i = 0; $i <= $count2; $i++) {
+					if (isset($format[$i])) {
+						$formatted .= $format[$i];
+					}
+					if (isset($keys[$i]) && isset($data[$keys[$i]][$j])) {
+						$formatted .= $data[$keys[$i]][$j];
+					}
+				}
+				$out[] = $formatted;
+			}
+		}
+		return $out;
+	}
+/**
  * Gets a value from an array or object that maps a given path.
  * The special {n}, as seen in the Model::generateList method, is taken care of here.
  *

@@ -508,5 +508,51 @@ class SetTest extends UnitTestCase {
 		$result = Set::reverse($map);
 		$this->assertIdentical($result, $expected);
 	}
+
+	function testFormatting() {
+		$data = array(
+			array('Person'		=> array(
+				'first_name'	=> 'Nate',
+				'last_name'		=> 'Abele',
+				'city'			=> 'Boston',
+				'state'			=> 'MA',
+				'something'		=> '42'
+			)),
+			array('Person'		=> array(
+				'first_name'	=> 'Larry',
+				'last_name'		=> 'Masters',
+				'city'			=> 'Boondock',
+				'state'			=> 'TN',
+				'something'		=> '{0}'
+			)),
+			array('Person'		=> array(
+				'first_name'	=> 'Garrett',
+				'last_name'		=> 'Woodworth',
+				'city'			=> 'Venice Beach',
+				'state'			=> 'CA',
+				'something'		=> '{1}'
+			))
+		);
+
+		$result = Set::format($data, '{1}, {0}', array('{n}.Person.first_name', '{n}.Person.last_name'));
+		$expected = array('Abele, Nate', 'Masters, Larry', 'Woodworth, Garrett');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{0}, {1}', array('{n}.Person.last_name', '{n}.Person.first_name'));
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{0}, {1}', array('{n}.Person.city', '{n}.Person.state'));
+		$expected = array('Boston, MA', 'Boondock, TN', 'Venice Beach, CA');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{{0}, {1}}', array('{n}.Person.city', '{n}.Person.state'));
+		$expected = array('{Boston, MA}', '{Boondock, TN}', '{Venice Beach, CA}');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::format($data, '{{0}, {1}}', array('{n}.Person.something', '{n}.Person.something'));
+		$expected = array('{42, 42}', '{{0}, {0}}', '{{1}, {1}}');
+		$this->assertEqual($result, $expected);
+	}
 }
+
 ?>
