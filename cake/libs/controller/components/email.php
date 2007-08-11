@@ -592,7 +592,6 @@ class EmailComponent extends Object{
  */
 	function __smtp() {
 		$response = $this->__smtpConnect();
-		debug($response);
 		
 		if ($response['errno'] != 0 && $response['status'] === false) {
 			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
