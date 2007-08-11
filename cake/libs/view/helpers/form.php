@@ -606,6 +606,12 @@ class FormHelper extends AppHelper {
 			unset($options['empty']);
 		}
 
+		$timeFormat = 12;
+		if (isset($options['timeFormat'])) {
+			$timeFormat = $options['timeFormat'];
+			unset($options['timeFormat']);
+		}
+
 		$type	 = $options['type'];
 		$before	 = $options['before'];
 		$between = $options['between'];
@@ -637,13 +643,13 @@ class FormHelper extends AppHelper {
 				$out = $before . $out . $between . $this->select($fieldName, $list, $selected, $options, $empty);
 			break;
 			case 'time':
-				$out = $before . $out . $between . $this->dateTime($fieldName, null, '12', $selected, $options, $empty);
+				$out = $before . $out . $between . $this->dateTime($fieldName, null, $timeFormat, $selected, $options, $empty);
 			break;
 			case 'date':
 				$out = $before . $out . $between . $this->dateTime($fieldName, 'MDY', null, $selected, $options, $empty);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTime($fieldName, 'MDY', '12', $selected, $options, $empty);
+				$out = $before . $out . $between . $this->dateTime($fieldName, 'MDY', $timeFormat, $selected, $options, $empty);
 			break;
 			case 'textarea':
 			default:

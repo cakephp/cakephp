@@ -291,6 +291,28 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Model.field', array('type' => 'file', 'class' => 'textbox'));
 		$this->assertPattern('/class="textbox"/', $result);
 
+		$result = $this->Form->input('Model.field', array('type' => 'time', 'timeFormat' => 24));
+		$result = explode(':', $result);
+		$this->assertPattern('/option value="23"/', $result[0]);
+		$this->assertNoPattern('/option value="24"/', $result[0]);
+
+		$result = $this->Form->input('Model.field', array('type' => 'time', 'timeFormat' => 12));
+		$result = explode(':', $result);
+		$this->assertPattern('/option value="12"/', $result[0]);
+		$this->assertNoPattern('/option value="13"/', $result[0]);
+
+		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 24));
+		$result = explode('</select><select', $result);
+		$result = explode(':', $result[1]);
+		$this->assertPattern('/option value="23"/', $result[0]);
+		$this->assertNoPattern('/option value="24"/', $result[0]);
+
+		$result = $this->Form->input('Model.field', array('type' => 'datetime', 'timeFormat' => 12));
+		$result = explode('</select><select', $result);
+		$result = explode(':', $result[1]);
+		$this->assertPattern('/option value="12"/', $result[0]);
+		$this->assertNoPattern('/option value="13"/', $result[0]);
+
 		$this->Form->data = array('Model' => array( 'field' => 'Hello & World > weird chars' ));
 		$result = $this->Form->input('Model.field');
 		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="Hello &amp; World &gt; weird chars" id="ModelField" /></div>';
