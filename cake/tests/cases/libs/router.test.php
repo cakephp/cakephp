@@ -195,9 +195,27 @@ class RouterTest extends UnitTestCase {
 				'webservices' => null
 			)
 		));
-		$this->router->testing = true;
+
 		$result = $this->router->url(array('page' => 3));
 		$expected = '/magazine/admin/subscriptions/index/page:3';
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'real_controller_name',
+			    'url' => array('url' => ''), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/', 'here' => '/',
+				'webroot' => '/', 'passedArgs' => array('page' => 2), 'argSeparator' => ':', 'namedArgs' => array('page' => 2),
+				'webservices' => null
+			)
+		));
+		$this->router->connect('short_controller_name/index/*', array('controller' => 'real_controller_name'));
+
+		$result = $this->router->url(array('controller' => 'real_controller_name', 'page' => '1'));
+		$expected = '/short_controller_name/index/page:1';
 		$this->assertEqual($result, $expected);
 	}
 
