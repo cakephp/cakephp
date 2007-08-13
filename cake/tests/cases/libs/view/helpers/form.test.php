@@ -480,19 +480,46 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select('Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array(), false);
 		$this->assertPattern('/' .
-			'<select[^>]*>\s+' .
+			'<select[^>]*>\s*' .
 			'<option\s+value="first"[^>]*>first &quot;html&quot; &lt;chars&gt;<\/option>\s+'.
 			'<option\s+value="second"[^>]*>value<\/option>\s+'.
-			'<\/select>'.
-			'/i', $result);
+			'<\/select>/i',
+		$result);
 
 		$result = $this->Form->select('Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'), null, array('escape' => false), false);
 		$this->assertPattern('/' .
-			'<select[^>]*>\s+' .
-			'<option\s+value="first"[^>]*>first "html" <chars><\/option>\s+'.
-			'<option\s+value="second"[^>]*>value<\/option>\s+'.
+			'<select[^>]*>\s*' .
+			'<option[^<>\/]+value="first"[^>]*>first "html" <chars><\/option>\s+'.
+			'<option[^<>\/]+value="second"[^>]*>value<\/option>\s+'.
 			'<\/select>'.
-			'/i', $result);
+			'/i',
+		$result);
+	}
+
+	function testSelectMultiple() {
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => true));
+		$this->assertPattern('/^<select[^<>]+name="data\[Model\]\[multi_field\]\[\]"[^<>\/]*>/', $result);
+		$this->assertPattern('/^<select[^<>]+id="ModelMultiField"[^<>\/]*>/', $result);
+		$this->assertPattern('/^<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
+		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
+
+		$this->assertNoPattern('/option value=""/', $result);
+		$this->assertNoPattern('/selected/', $result);
+		$this->assertPattern('/<option[^<>]+value="0">first/', $result);
+		$this->assertPattern('/<option[^<>]+value="1">second/', $result);
+		$this->assertPattern('/<option[^<>]+value="2">third/', $result);
+		$this->assertNoPattern('/<option[^<>]+value="[^012]"[^<>\/]*>/', $result);
+		$this->assertPattern('/<\/select>$/', $result);
+
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), null, array('multiple' => 'multiple'));
+		$this->assertPattern('/^<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
+		$this->assertNoPattern('/^<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
+
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => true));
+		$this->assertPattern('/<option[^<>]+value="0"[^<>]+selected="selected">first/', $result);
+		$this->assertPattern('/<option[^<>]+value="1"[^<>]+selected="selected">second/', $result);
+		$this->assertPattern('/<option[^<>]+value="2">third/', $result);
+		$this->assertNoPattern('/<option[^<>]+value="[^012]"[^<>\/]*>/', $result);
 	}
 
 	function testCheckbox() {

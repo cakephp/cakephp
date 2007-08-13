@@ -545,7 +545,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($div)) {
-			$divOptions = array('class'=>'input');
+			$divOptions = array('class' => 'input');
 			if (is_string($div)) {
 				$divOptions['class'] = $div;
 			} elseif (is_array($div)) {
@@ -567,7 +567,7 @@ class FormHelper extends AppHelper {
 
 			if (in_array($options['type'], array('date', 'datetime'))) {
 				$labelFor = $this->domId(implode('.', array_filter(array($this->model(), $this->field()))));
-				$labelAttributes = array( 'for' => $labelFor . 'Month' );
+				$labelAttributes = array('for' => $labelFor . 'Month');
 			}
 
 			if (is_array($label)) {
@@ -975,7 +975,7 @@ class FormHelper extends AppHelper {
 		}
 		$select[] = sprintf($tag, $this->model(), $this->field(), $this->_parseAttributes($attributes));
 
-		if ($showEmpty !== null && $showEmpty !== false) {
+		if ($showEmpty !== null && $showEmpty !== false && !(empty($showEmpty) && (isset($attributes) && array_key_exists('multiple', $attributes)))) {
 			if ($showEmpty === true) {
 				$showEmpty = '';
 			}
@@ -1268,9 +1268,12 @@ class FormHelper extends AppHelper {
  * @return array
  */
 	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
-		$attributes = am(array('escape' => true), $attributes);
 
 		$select = array();
+		$attributes = am(array('escape' => true), $attributes);
+		$selectedIsEmpty = ($selected === '' || $selected === null);
+		$selectedIsArray = is_array($selected);
+		
 		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
@@ -1290,12 +1293,9 @@ class FormHelper extends AppHelper {
 				unset($htmlOptions['name'], $htmlOptions['value']);
 			}
 			if ($name !== null) {
-				if ($selected !== '' && ($selected !== null) && ($selected == $name)) {
-					$htmlOptions['selected'] = 'selected';
-				} elseif (is_array($selected) && in_array($name, $selected)) {
+				if ((!$selectedIsEmpty && ($selected == $name)) || ($selectedIsArray && in_array($name, $selected))) {
 					$htmlOptions['selected'] = 'selected';
 				}
-
 				if ($showParents || (!in_array($title, $parents))) {
 					$title = ife($attributes['escape'], h($title), $title);
 					$select[] = sprintf($this->Html->tags['selectoption'], $name, $this->Html->_parseAttributes($htmlOptions), $title);
