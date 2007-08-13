@@ -101,11 +101,11 @@ class Debugger extends Object {
  * @access public
  */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
-		$_this = Debugger::getInstance();
-		if (error_reporting() == 0) {
-			// Error suppression (@) enabled
+		if (error_reporting() == 0 || $code === 2048) {
 			return;
 		}
+
+		$_this = Debugger::getInstance();
 
 		if (empty($file)) {
 			$file = '[internal]';
