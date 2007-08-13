@@ -20,25 +20,26 @@
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.groups
- * @since			CakePHP(tm) v 1.2.0.4206
+ * @since			CakePHP(tm) v 1.2.0.5517
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AllCoreHelpersGroupTest
+/** RoutingSystemGroupTest
  *
- * This test group will run all test in the cases/libs/view/helpers directory.
+ * This test group will run all the Router/Dispatcher (and related) tests
  *
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
-class AllCoreHelpersGroupTest extends GroupTest {
+class RoutingSystemGroupTest extends GroupTest {
 
-	var $label = 'All core helpers';
+	var $label = 'Routing system';
 
-	function AllCoreHelpersGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers');
+	function RoutingSystemGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'dispatcher');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');
 	}
 }
 ?>

@@ -20,25 +20,29 @@
  * @link				https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package			cake.tests
  * @subpackage		cake.tests.groups
- * @since			CakePHP(tm) v 1.2.0.4206
+ * @since			CakePHP(tm) v 1.2.0.5517
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/** AllCoreHelpersGroupTest
+/** ModelGroupTest
  *
- * This test group will run all test in the cases/libs/view/helpers directory.
+ * This test group will run all model-layer and related tests, (behaviors, etc.) excluding
+ * database driver-specific tests
  *
  * @package    cake.tests
  * @subpackage cake.tests.groups
  */
-class AllCoreHelpersGroupTest extends GroupTest {
+class ModelGroupTest extends GroupTest {
 
-	var $label = 'All core helpers';
+	var $label = 'All model tests';
 
-	function AllCoreHelpersGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers');
+	function ModelGroupTest() {
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'datasources' . DS . 'dbo_source');
+		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors');
 	}
 }
 ?>
