@@ -313,6 +313,7 @@ class Set extends Object {
  * @access public
  */
 	function format($data, $format, $keys) {
+
 		$extracted = array();
 		$count = count($keys);
 
@@ -676,13 +677,21 @@ class Set extends Object {
 			$data = get_object_vars($data);
 		}
 
-		$keys = Set::extract($data, $path1);
+		if (is_array($path1)) {
+			$format = array_shift($path2);
+			$keys = Set::format($data, $format, $path1);
+		} else {
+			$keys = Set::extract($data, $path1);
+		}
 
-		if (!empty($path2)) {
+		if (!empty($path2) && is_array($path2)) {
+			$format = array_shift($path2);
+			$vals = Set::format($data, $format, $path2);
+		} elseif (!empty($path2)) {
 			$vals = Set::extract($data, $path2);
 		} else {
 			$count = count($keys);
-			for ($i=0; $i < $count; $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				$vals[$i] = null;
 			}
 		}

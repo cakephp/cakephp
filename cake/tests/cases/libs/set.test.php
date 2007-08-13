@@ -437,6 +437,16 @@ class SetTest extends UnitTestCase {
 			)
 		);
 		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($a, '{n}.User.id', array('{0}: {1}', '{n}.User.Data.user', '{n}.User.Data.name'), '{n}.User.group_id');
+		$expected = array (
+			1 => array (
+				2 => 'mariano.iglesias: Mariano Iglesias',
+				25 => 'gwoo: The Gwoo'
+			),
+			2 => array (14 => 'phpnut: Larry E. Masters')
+		);
+		$this->assertIdentical($result, $expected);
 	}
 
 	function testMapReverse() {
