@@ -108,12 +108,20 @@ class Router extends Object {
  * @access private
  */
 	var $__resourceMap = array(
-		'index'		=> array('method' => 'GET',		'id' => false),
-		'view'		=> array('method' => 'GET',		'id' => true),
-		'add'		=> array('method' => 'POST',	'id' => false),
-		'edit'		=> array('method' => 'PUT', 	'id' => true),
-		'delete'	=> array('method' => 'DELETE',	'id' => true)
+		array('action' => 'index',	'method' => 'GET',		'id' => false),
+		array('action' => 'view',	'method' => 'GET',		'id' => true),
+		array('action' => 'add',	'method' => 'POST',		'id' => false),
+		array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
+		array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
+		array('action' => 'edit',	'method' => 'POST', 	'id' => true)
 	);
+/**
+ * List of resource-mapped controllers
+ *
+ * @var array
+ * @access private
+ */
+	var $__resourceMapped = array();
 /**
  * Maintains the parameter stack for the current request
  *
@@ -224,16 +232,16 @@ class Router extends Object {
 
 		foreach((array)$controller as $ctlName) {
 			$urlName = Inflector::underscore($ctlName);
-			foreach ($_this->__resourceMap as $action => $params) {
-				$id = null;
-				if ($params['id']) {
-					$id = '/:id';
-				}
+			foreach ($_this->__resourceMap as $params) {
+				extract($params);
+				$id = ife($id, '/:id', '');
+
 				Router::connect(
 					"{$prefix}{$urlName}{$id}",
 					array('controller' => $urlName, 'action' => $action, '[method]' => $params['method'])
 				);
 			}
+			$this->__resourceMapped[] = $urlName;
 		}
 	}
 /**
@@ -424,6 +432,7 @@ class Router extends Object {
 			$_this->routes[] = $_this->__admin;
 			$_this->__admin = null;
 		}
+		$_this->connect('/:controller', array('action' => 'index'));
 		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
 		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
 
@@ -436,6 +445,10 @@ class Router extends Object {
 			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
 		$_this->routes[] = $default_route;
+		//$_this->connect('/:controller/:action/*');
+		//pr($this->routes[count($_this->routes) - 1]);
+		//pr($default_route);
+		//die();
 
 		$Inflector =& Inflector::getInstance();
 		$plugins = array_map(array(&$Inflector, 'underscore'), Configure::listObjects('plugin'));
@@ -696,49 +709,51 @@ class Router extends Object {
  */
 	function mapRouteElements($route, $url) {
 		$_this =& Router::getInstance();
+		$defaults = am(array('plugin' => null, 'controller' => null, 'action' => 'index'), $route[3]);
+		$params = Set::diff($url, $defaults);
+		$routeParams = $route[2];
+		$pass = array();
 
-		$params = $route[2];
-		$defaults = am(array('plugin'=> null, 'controller'=> null, 'action'=> null), $route[3]);
-		$pass = Set::diff($url, $defaults);
+		foreach ($params as $key => $value) {
+			if (is_numeric($key)) {
+				$pass[$key] = $value;
+				unset($params[$key]);
+			}
+		}
 
 		if (!strpos($route[0], '*') && !empty($pass)) {
 			return false;
 		}
-
-		if (defined('CAKE_ADMIN') && isset($pass[CAKE_ADMIN])) {
+		if (defined('CAKE_ADMIN') && isset($params[CAKE_ADMIN])) {
 			return false;
 		}
 
-		foreach ($pass as $key => $value) {
-			if (!is_numeric($key)) {
-				unset($pass[$key]);
-			}
-		}
 		krsort($defaults);
 		krsort($url);
-		if (Set::diff($url, $defaults) == array()) {
+
+		if (empty($params)) {
 			return array(Router::__mapRoute($route, am($url, compact('pass'))), array());
-		} elseif (!empty($params) && !empty($route[3])) {
+		} elseif (!empty($routeParams) && !empty($route[3])) {
 			$required = array_diff(array_keys($defaults), array_keys($url));
 
 			if (!empty($required)) {
 			 	return false;
 			}
-			$filled = array_intersect_key($url, array_combine($params, array_keys($params)));
+			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
 			$keysFilled = array_keys($filled);
-			sort($params);
+			sort($routeParams);
 			sort($keysFilled);
 
-			if ($keysFilled != $params) {
+			if ($keysFilled != $routeParams) {
 				return false;
 			}
-			if (Set::diff($keysFilled, $params) != array()) {
+			if (Set::diff($keysFilled, $routeParams) != array()) {
 				return false;
 			}
 		} else {
 			$required = array_diff(array_keys($defaults), array_keys($url));
 			if (empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
-				return array(Router::__mapRoute($route, am($url, array('pass' => $pass))), $url);
+				return array(Router::__mapRoute($route, am($url, compact('pass'))), $url);
 			}
 			return false;
 		}

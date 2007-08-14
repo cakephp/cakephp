@@ -217,6 +217,35 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('controller' => 'real_controller_name', 'page' => '1'));
 		$expected = '/short_controller_name/index/page:1';
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->testing = true;
+
+		$this->router->connect(
+			':language/galleries',
+			array('controller' => 'galleries', 'action' => 'index'),
+			array('language' => '[a-z]{3}')
+		);
+
+		$this->router->connect(
+			'/:language/:'. CAKE_ADMIN .'/:controller/:action/*',
+			array(CAKE_ADMIN => CAKE_ADMIN),
+			array('language' => '[a-z]{3}', CAKE_ADMIN => CAKE_ADMIN)
+		);
+
+		$this->router->connect('/:language/:controller/:action/*',
+			array(),
+			array('language' => '[a-z]{3}')
+		);
+
+		$result = $this->router->url(array(CAKE_ADMIN => false, 'language' => 'dan', 'action' => 'index', 'controller' => 'galleries'));
+		$expected = '/dan/galleries'; // Passes
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array(CAKE_ADMIN => false, 'language' => 'eng', 'action' => 'index', 'controller' => 'galleries'));
+		$expected = '/eng/galleries'; // Fails, actual result: /eng/galleries/index/
+		$this->assertEqual($result, $expected);
+		unset($this->router->testing);
 	}
 
 	function testUrlGenerationWithExtensions() {
@@ -319,7 +348,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions();
 
 		$result = $this->router->parse('/posts.rss');
-		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'rss'), 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'rss'), 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss');
@@ -337,11 +366,11 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions('rss', 'xml');
 
 		$result = $this->router->parse('/posts.xml');
-		$expected = array('controller' => 'posts', 'action' => null, 'url' => array ('ext' => 'xml'), 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array ('ext' => 'xml'), 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts.atom?hello=goodbye');
-		$expected = array('controller' => 'posts.atom', 'action' => null, 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array());
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
