@@ -637,6 +637,10 @@ class Controller extends Object {
 		}
 		$this->params['models'] = $this->modelNames;
 
+		if (Configure::read() > 2) {
+			$this->set('cakeDebug', $this);
+		}
+
 		$this->__viewClass =& new $viewClass($this);
 		if (!empty($this->modelNames)) {
 			$models = array();
@@ -1005,8 +1009,9 @@ class Controller extends Object {
 			$scope = $object;
 			$object = null;
 		}
+		$assoc = null;
 
-		if (is_string($object)) {
+		if (is_string($object) && !strpos($object, '.')) {
 			if (isset($this->{$object})) {
 				$object = $this->{$object};
 			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
@@ -1020,6 +1025,11 @@ class Controller extends Object {
 					}
 				}
 			}
+		} elseif (is_string($object)) {
+			list($object, $assoc) = explode('.', $object);
+			if (isset($this->{$object})) {
+				$object = $this->{$object};
+			}
 		} elseif (empty($object) || $object == null) {
 			if (isset($this->{$this->modelClass})) {
 				$object = $this->{$this->modelClass};
@@ -1029,7 +1039,7 @@ class Controller extends Object {
 		}
 
 		if (!is_object($object)) {
-			// Error: can't find object
+			trigger_error(sprintf(__("Controller::paginate() - can't find model %s in controller %sController", true), $object, $this->name), E_USER_WARNING);
 			return array();
 		}
 		$options = am($this->params, $this->params['url'], $this->passedArgs);
