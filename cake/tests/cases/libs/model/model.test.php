@@ -308,7 +308,7 @@ class Author extends CakeTestModel {
 class ModelTest extends CakeTestCase {
 
 	var $fixtures = array(
-		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured',
+		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author'
 	);
@@ -328,50 +328,50 @@ class ModelTest extends CakeTestCase {
 
 		$this->model->recursive = 2;
 		$result = $this->model->findAll();
-		$expected = array (
-			array (
-				'Home' => array (
+		$expected = array(
+			array(
+				'Home' => array(
 					'id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home',  'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 				),
-				'AnotherArticle' => array (
+				'AnotherArticle' => array(
 					'id' => '1', 'title' => 'First Article', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-					'Home' => array (
-						array (
+					'Home' => array(
+						array(
 							'id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 						)
 					)
 				),
-				'Advertisement' => array (
+				'Advertisement' => array(
 					'id' => '1', 'title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-					'Home' => array (
-						array (
+					'Home' => array(
+						array(
 							'id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 						),
-						array (
+						array(
 							'id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						)
 					)
 				)
 			),
-			array (
-				'Home' => array (
+			array(
+				'Home' => array(
 					'id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 				),
-				'AnotherArticle' => array (
+				'AnotherArticle' => array(
 					'id' => '3', 'title' => 'Third Article', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31',
-					'Home' => array (
-						array (
+					'Home' => array(
+						array(
 							'id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						)
 					)
 				),
-				'Advertisement' => array (
+				'Advertisement' => array(
 					'id' => '1', 'title' => 'First Ad', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31',
-					'Home' => array (
-						array (
+					'Home' => array(
+						array(
 							'id' => '1', 'another_article_id' => '1', 'advertisement_id' => '1', 'title' => 'First Home', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 						),
-						array (
+						array(
 							'id' => '2', 'another_article_id' => '3', 'advertisement_id' => '1', 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						)
 					)
@@ -407,7 +407,7 @@ class ModelTest extends CakeTestCase {
 			$intLength = 11;
 		}
 
-		$expected = array (
+		$expected = array(
 			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength),
 			array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
 			array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
@@ -418,7 +418,7 @@ class ModelTest extends CakeTestCase {
 
 		$this->model =& new Article();
 		$result = $this->model->create();
-		$expected = array ('Article' => array('published' => 'N'));
+		$expected = array('Article' => array('published' => 'N'));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -516,24 +516,24 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll();
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
+			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
+			array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
+			array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll('User.id > 2');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
+			array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(array('User.id' => '!= 0', 'User.user' => 'LIKE %arr%'));
 		$expected = array(
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
+			array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -543,60 +543,60 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(array('or' => array('User.id' => '0', 'User.user' => 'LIKE %a%')));
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
+			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
+			array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31')),
+			array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'))
+			array('User' => array('id' => '1', 'user' => 'mariano')),
+			array('User' => array('id' => '2', 'user' => 'nate')),
+			array('User' => array('id' => '3', 'user' => 'larry')),
+			array('User' => array('id' => '4', 'user' => 'garrett'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, 'User.user', 'User.user ASC');
 		$expected = array(
-			array ( 'User' => array ( 'user' => 'garrett')),
-			array ( 'User' => array ( 'user' => 'larry')),
-			array ( 'User' => array ( 'user' => 'mariano')),
-			array ( 'User' => array ( 'user' => 'nate'))
+			array('User' => array('user' => 'garrett')),
+			array('User' => array('user' => 'larry')),
+			array('User' => array('user' => 'mariano')),
+			array('User' => array('user' => 'nate'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, 'User.user', 'User.user ASC');
 		$expected = array(
-			array ( 'User' => array ( 'user' => 'garrett')),
-			array ( 'User' => array ( 'user' => 'larry')),
-			array ( 'User' => array ( 'user' => 'mariano')),
-			array ( 'User' => array ( 'user' => 'nate'))
+			array('User' => array('user' => 'garrett')),
+			array('User' => array('user' => 'larry')),
+			array('User' => array('user' => 'mariano')),
+			array('User' => array('user' => 'nate'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, 'User.user', 'User.user DESC');
 		$expected = array(
-			array ( 'User' => array ( 'user' => 'nate')),
-			array ( 'User' => array ( 'user' => 'mariano')),
-			array ( 'User' => array ( 'user' => 'larry')),
-			array ( 'User' => array ( 'user' => 'garrett'))
+			array('User' => array('user' => 'nate')),
+			array('User' => array('user' => 'mariano')),
+			array('User' => array('user' => 'larry')),
+			array('User' => array('user' => 'garrett'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, null, null, 3, 1);
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'))
+			array('User' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31')),
+			array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31')),
+			array('User' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, null, null, 3, 2);
 		$expected = array(
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
+			array('User' => array('id' => '4', 'user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -747,18 +747,18 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array( 'id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array( 'id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
+				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
 			)),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
+				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			)),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
+				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
 			))
 		);
 		$this->assertEqual($result, $expected);
@@ -772,24 +772,24 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array( 'id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array( 'id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
+				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
 			)),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
+				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			)),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
+				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
 			))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->hasMany;
-		$expected = array( 'Comment' => array('className' => 'Comment', 'foreignKey' => 'user_id', 'conditions' => null, 'fields' => null, 'order' => null, 'limit' => null, 'offset' => null, 'dependent' => null, 'exclusive' => null, 'finderQuery' => null, 'counterQuery' => null) );
+		$expected = array('Comment' => array('className' => 'Comment', 'foreignKey' => 'user_id', 'conditions' => null, 'fields' => null, 'order' => null, 'limit' => null, 'offset' => null, 'dependent' => null, 'exclusive' => null, 'finderQuery' => null, 'counterQuery' => null) );
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->unbindModel(array('hasMany' => array('Comment')));
@@ -801,27 +801,27 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'))
+			array('User' => array('id' => '1', 'user' => 'mariano')),
+			array('User' => array('id' => '2', 'user' => 'nate')),
+			array('User' => array('id' => '3', 'user' => 'larry')),
+			array('User' => array('id' => '4', 'user' => 'garrett'))
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array( 'id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array( 'id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
-				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
+				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'),
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
 			)),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
+				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			)),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
+				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
 			))
 		);
 		$this->assertEqual($result, $expected);
@@ -831,10 +831,10 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano')),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate')),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry')),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'))
+			array('User' => array('id' => '1', 'user' => 'mariano')),
+			array('User' => array('id' => '2', 'user' => 'nate')),
+			array('User' => array('id' => '3', 'user' => 'larry')),
+			array('User' => array('id' => '4', 'user' => 'garrett'))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -847,17 +847,17 @@ class ModelTest extends CakeTestCase {
 
 		$result = $this->model->findAll(null, 'User.id, User.user');
 		$expected = array(
-			array ( 'User' => array ( 'id' => '1', 'user' => 'mariano'), 'Comment' => array(
-				array( 'id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
+			array('User' => array('id' => '1', 'user' => 'mariano'), 'Comment' => array(
+				array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31')
 			)),
-			array ( 'User' => array ( 'id' => '2', 'user' => 'nate'), 'Comment' => array(
-				array( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+			array('User' => array('id' => '2', 'user' => 'nate'), 'Comment' => array(
+				array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			)),
-			array ( 'User' => array ( 'id' => '3', 'user' => 'larry'), 'Comment' => array()),
-			array ( 'User' => array ( 'id' => '4', 'user' => 'garrett'), 'Comment' => array(
-				array( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
+			array('User' => array('id' => '3', 'user' => 'larry'), 'Comment' => array()),
+			array('User' => array('id' => '4', 'user' => 'garrett'), 'Comment' => array(
+				array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31')
 			))
 		);
 		$this->assertEqual($result, $expected);
@@ -884,13 +884,13 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new User();
 
 		$result = $this->model->findByUser('mariano');
-		$expected = array ( 'User' => array (
+		$expected = array('User' => array(
 			'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 		));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findByPassword('5f4dcc3b5aa765d61d8327deb882cf99');
-		$expected = array ( 'User' => array (
+		$expected = array('User' => array(
 			'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 		));
 		$this->assertEqual($result, $expected);
@@ -904,20 +904,20 @@ class ModelTest extends CakeTestCase {
 
 		$this->model->id = 2;
 		$result = $this->model->read();
-		$expected = array('User' => array ( 'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
+		$expected = array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->read(null, 2);
-		$expected = array('User' => array ( 'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
+		$expected = array('User' => array('id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'));
 		$this->assertEqual($result, $expected);
 
 		$this->model->id = 2;
 		$result = $this->model->read(array('id', 'user'));
-		$expected = array('User' => array ( 'id' => '2', 'user' => 'nate'));
+		$expected = array('User' => array('id' => '2', 'user' => 'nate'));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->read('id, user', 2);
-		$expected = array('User' => array ( 'id' => '2', 'user' => 'nate'));
+		$expected = array('User' => array('id' => '2', 'user' => 'nate'));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->bindModel(array('hasMany' => array('Article')));
@@ -926,10 +926,10 @@ class ModelTest extends CakeTestCase {
 		$this->model->id = 1;
 		$result = $this->model->read('id, user');
 		$expected = array(
-			'User' => array ( 'id' => '1', 'user' => 'mariano'),
+			'User' => array('id' => '1', 'user' => 'mariano'),
 			'Article' => array(
-				array( 'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
-				array( 'id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )
+				array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
+				array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -944,17 +944,17 @@ class ModelTest extends CakeTestCase {
 		$this->model->recursive = 0;
 		$result = $this->model->read('id, user', 1);
 		$expected = array(
-			'User' => array ( 'id' => '1', 'user' => 'mariano'),
+			'User' => array('id' => '1', 'user' => 'mariano'),
 		);
 		$this->assertEqual($result, $expected);
 
 		$this->model->recursive = 1;
 		$result = $this->model->read('id, user', 1);
 		$expected = array(
-			'User' => array ( 'id' => '1', 'user' => 'mariano'),
+			'User' => array('id' => '1', 'user' => 'mariano'),
 			'Article' => array(
-				array( 'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
-				array( 'id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )
+				array('id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31' ),
+				array('id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31' )
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -962,20 +962,20 @@ class ModelTest extends CakeTestCase {
 		$this->model->recursive = 2;
 		$result = $this->model->read('id, user', 3);
 		$expected = array(
-			'User' => array ( 'id' => '3', 'user' => 'larry'),
+			'User' => array('id' => '3', 'user' => 'larry'),
 			'Article' => array(
 				array(
 					'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31',
-					'User' => array (
+					'User' => array(
 						'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
 					),
 					'Comment' => array(
-						array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-						array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+						array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+						array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 					),
 					'Tag' => array(
-						array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-						array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31'),
+						array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+						array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31'),
 					)
 				)
 			)
@@ -987,74 +987,74 @@ class ModelTest extends CakeTestCase {
 		$this->model =& new Article();
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
-		$expected = array (
-			array (
-				'Article' => array (
+		$expected = array(
+			array(
+				'Article' => array(
 					'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 				),
-				'Comment' => array (
-					array ( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array ( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
-					array ( 'id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
-					array ( 'id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+					array('id' => '3', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Third Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:49:23', 'updated' => '2007-03-18 10:51:31'),
+					array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
 				),
-				'Tag' => array (
-					array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array ( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 				)
 			),
-			array (
-				'Article' => array (
+			array(
+				'Article' => array(
 					'id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 				),
-				'Comment' => array ( ),
-				'Tag' => array ( )
+				'Comment' => array(),
+				'Tag' => array()
 			)
 		);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAll(array('Article.user_id' => 3), null, null, null, 1, 2);
-		$expected = array (
-			array (
-				'Article' => array (
+		$expected = array(
+			array(
+				'Article' => array(
 					'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
 				),
-				'Comment' => array (
-					array (
+				'Comment' => array(
+					array(
 						'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
-						'Article' => array (
+						'Article' => array(
 							'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						),
-						'User' => array (
+						'User' => array(
 							'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 						),
 						'Attachment' => array(
 							'id' => '1', 'comment_id' => 5, 'attachment' => 'attachment.zip', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31'
 						)
 					),
-					array (
+					array(
 						'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31',
-						'Article' => array (
+						'Article' => array(
 							'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						),
-						'User' => array (
+						'User' => array(
 							'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
 						),
 						'Attachment' => false
 					)
 				),
-				'Tag' => array (
-					array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array ( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 				)
 			)
 		);
@@ -1080,9 +1080,9 @@ class ModelTest extends CakeTestCase {
 		$orderBy = 'ArticleFeatured.id ASC';
 		$result = $this->Featured->findAll(null, null, $orderBy, 3);
 
-		$expected = array (
-			array (
-				'Featured' => array (
+		$expected = array(
+			array(
+				'Featured' => array(
 					'id' => '1',
 					'article_featured_id' => '1',
 					'category_id' => '1',
@@ -1091,12 +1091,12 @@ class ModelTest extends CakeTestCase {
 					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31'
 				),
-				'ArticleFeatured' => array (
+				'ArticleFeatured' => array(
 					'id' => '1',
 					'title' => 'First Article',
 					'user_id' => '1',
 					'published' => 'Y',
-					'User' => array (
+					'User' => array(
 						'id' => '1',
 						'user' => 'mariano',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
@@ -1104,7 +1104,7 @@ class ModelTest extends CakeTestCase {
 						'updated' => '2007-03-17 01:18:31'
 					),
 					'Category' => array(),
-					'Featured' => array (
+					'Featured' => array(
 						'id' => '1',
 						'article_featured_id' => '1',
 						'category_id' => '1',
@@ -1114,7 +1114,7 @@ class ModelTest extends CakeTestCase {
 						'updated' => '2007-03-18 10:41:31'
 					)
 				),
-				'Category' => array (
+				'Category' => array(
 					'id' => '1',
 					'parent_id' => '0',
 					'name' => 'Category 1',
@@ -1122,8 +1122,8 @@ class ModelTest extends CakeTestCase {
 					'updated' => '2007-03-18 15:32:31'
 				)
 			),
-			array (
-				'Featured' => array (
+			array(
+				'Featured' => array(
 					'id' => '2',
 					'article_featured_id' => '2',
 					'category_id' => '1',
@@ -1132,12 +1132,12 @@ class ModelTest extends CakeTestCase {
 					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31'
 				),
-				'ArticleFeatured' => array (
+				'ArticleFeatured' => array(
 					'id' => '2',
 					'title' => 'Second Article',
 					'user_id' => '3',
 					'published' => 'Y',
-					'User' => array (
+					'User' => array(
 						'id' => '3',
 						'user' => 'larry',
 						'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
@@ -1145,7 +1145,7 @@ class ModelTest extends CakeTestCase {
 						'updated' => '2007-03-17 01:22:31'
 					),
 					'Category' => array(),
-					'Featured' => array (
+					'Featured' => array(
 						'id' => '2',
 						'article_featured_id' => '2',
 						'category_id' => '1',
@@ -1155,7 +1155,7 @@ class ModelTest extends CakeTestCase {
 						'updated' => '2007-03-18 10:41:31'
 					)
 				),
-				'Category' => array (
+				'Category' => array(
 					'id' => '1',
 					'parent_id' => '0',
 					'name' => 'Category 1',
@@ -1174,32 +1174,32 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->hasMany['Comment']['limit'] = 2;
 
 		$result = $this->model->findAll(array('Article.user_id' => 1));
-		$expected = array (
-			array (
-				'Article' => array (
+		$expected = array(
+			array(
+				'Article' => array(
 					'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 				),
-				'Comment' => array (
-					array ( 'id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
-					array ( 'id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
+				'Comment' => array(
+					array('id' => '1', 'article_id' => '1', 'user_id' => '2', 'comment' => 'First Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:45:23', 'updated' => '2007-03-18 10:47:31'),
+					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
 				),
-				'Tag' => array (
-					array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array ( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 				)
 			),
-			array (
-				'Article' => array (
+			array(
+				'Article' => array(
 					'id' => '3', 'user_id' => '1', 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 				),
-				'Comment' => array ( ),
-				'Tag' => array ( )
+				'Comment' => array(),
+				'Tag' => array()
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1207,21 +1207,21 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->hasMany['Comment']['limit'] = 1;
 
 		$result = $this->model->findAll(array('Article.user_id' => 3), null, null, null, 1, 2);
-		$expected = array (
-			array (
-				'Article' => array (
+		$expected = array(
+			array(
+				'Article' => array(
 					'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 				),
-				'User' => array (
+				'User' => array(
 					'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
 				),
-				'Comment' => array (
-					array (
+				'Comment' => array(
+					array(
 						'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31',
-						'Article' => array (
+						'Article' => array(
 							'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 						),
-						'User' => array (
+						'User' => array(
 							'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 						),
 						'Attachment' => array(
@@ -1229,9 +1229,9 @@ function testRecursiveFindAllWithLimit() {
 						)
 					)
 				),
-				'Tag' => array (
-					array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-					array ( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				'Tag' => array(
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 				)
 			)
 		);
@@ -1246,7 +1246,7 @@ function testRecursiveFindAllWithLimit() {
 				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 				'Author' => array('id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31', 'test' => 'working'),
 			), array(
-				'Post' => array ('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 				'Author' => array('id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31', 'test' => 'working'),
 			), array(
 				'Post' => array('id' => '3', 'author_id' => '1', 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'),
@@ -1475,7 +1475,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body'
 		));
 
@@ -1485,7 +1485,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => '', 'body' => 'First Article Body'
 		));
 
@@ -1495,7 +1495,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body'), 1);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body'
 		));
 
@@ -1529,7 +1529,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 1);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'New First Article', 'body' => 'First Article Body', 'published' => 'N'
 		));
 		$this->assertEqual($result, $expected);
@@ -1540,7 +1540,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 1);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '1', 'user_id' => '1', 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1558,17 +1558,17 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = 2;
 		$result = $this->model->read(null, 4);
-		$expected = array (
-			'Article' => array (
+		$expected = array(
+			'Article' => array(
 				'id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'
 			),
 			'User' => array(
 				'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
 			),
-			'Comment' => array ( ),
-			'Tag' => array (
-				array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array ( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			'Comment' => array(),
+			'Tag' => array(
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1587,20 +1587,20 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = 2;
 		$result = $this->model->read(null, 4);
-		$expected = array (
-			'Article' => array (
+		$expected = array(
+			'Article' => array(
 				'id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'
 			),
 			'User' => array(
 				'id' => '2', 'user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'
 			),
-			'Comment' => array (
-				array (
+			'Comment' => array(
+				array(
 					'id' => '7', 'article_id' => '4', 'user_id' => '1', 'comment' => 'Comment New Article', 'published' => 'Y', 'created' => '2007-03-18 14:57:23', 'updated' => '2007-03-18 14:59:31',
-					'Article' => array (
+					'Article' => array(
 						'id' => '4', 'user_id' => '2', 'title' => 'New Article', 'body' => 'New Article Body', 'published' => 'N', 'created' => '2007-03-18 14:55:23', 'updated' => '2007-03-18 14:57:31'
 					),
-					'User' => array (
+					'User' => array(
 						'id' => '1', 'user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'
 					),
 					'Attachment' => array(
@@ -1608,9 +1608,9 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			'Tag' => array (
-				array ( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array ( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+			'Tag' => array(
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1629,7 +1629,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1642,7 +1642,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1651,7 +1651,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article', 'body' => 'Fourth Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1674,7 +1674,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 4);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '4', 'user_id' => '1', 'title' => 'Fourth Article - New Title', 'body' => 'Fourth Article Body', 'published' => 'N'
 		));
 		$this->assertEqual($result, $expected);
@@ -1683,7 +1683,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article', 'body' => 'Fifth Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1699,7 +1699,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$this->model->recursive = -1;
 		$result = $this->model->read(array('id', 'user_id', 'title', 'body', 'published'), 5);
-		$expected = array('Article' => array (
+		$expected = array('Article' => array(
 			'id' => '5', 'user_id' => '4', 'title' => 'Fifth Article - New Title 5', 'body' => 'Fifth Article Body', 'published' => 'Y'
 		));
 		$this->assertEqual($result, $expected);
@@ -1709,11 +1709,11 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'title'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'title' => 'First Article' )),
-			array('Article' => array( 'id' => 2, 'title' => 'Second Article' )),
-			array('Article' => array( 'id' => 3, 'title' => 'Third Article' )),
-			array('Article' => array( 'id' => 4, 'title' => 'Fourth Article - New Title' )),
-			array('Article' => array( 'id' => 5, 'title' => 'Fifth Article - New Title 5' ))
+			array('Article' => array('id' => 1, 'title' => 'First Article' )),
+			array('Article' => array('id' => 2, 'title' => 'Second Article' )),
+			array('Article' => array('id' => 3, 'title' => 'Third Article' )),
+			array('Article' => array('id' => 4, 'title' => 'Fourth Article - New Title' )),
+			array('Article' => array('id' => 5, 'title' => 'Fifth Article - New Title 5' ))
 		);
 		$this->assertEqual($result, $expected);
 	}
@@ -1726,16 +1726,16 @@ function testRecursiveFindAllWithLimit() {
 			'Article' => array(
 				'id' => '2', 'user_id' => '3', 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
 			),
-			'User' => array (
+			'User' => array(
 				'id' => '3', 'user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'
 			),
 			'Comment' => array(
-				array( 'id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
-				array( 'id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
+				array('id' => '5', 'article_id' => '2', 'user_id' => '1', 'comment' => 'First Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:53:23', 'updated' => '2007-03-18 10:55:31'),
+				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1743,10 +1743,8 @@ function testRecursiveFindAllWithLimit() {
 		// Save with parent model data
 
 		$data = array(
-			'Article' => array( 'id' => '2', 'title' => 'New Second Article' ),
-			'Tag' => array(
-				'Tag' => array( 1, 2 )
-			)
+			'Article' => array('id' => '2', 'title' => 'New Second Article'),
+			'Tag' => array('Tag' => array(1, 2))
 		);
 
 		$result = $this->model->set($data);
@@ -1765,8 +1763,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1774,7 +1772,7 @@ function testRecursiveFindAllWithLimit() {
 		// Setting just parent ID
 
 		$data = array(
-			'Article' => array( 'id' => '2' ),
+			'Article' => array('id' => '2' ),
 			'Tag' => array(
 				'Tag' => array( 2, 3 )
 			)
@@ -1796,8 +1794,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1826,9 +1824,9 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1880,8 +1878,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1892,7 +1890,7 @@ function testRecursiveFindAllWithLimit() {
 			'Tag' => array(
 				'Tag' => array( 1, 2 )
 			),
-			'Article' => array( 'id' => '2', 'title' => 'New Second Article' ),
+			'Article' => array('id' => '2', 'title' => 'New Second Article' ),
 		);
 
 		$result = $this->model->set($data);
@@ -1911,8 +1909,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1921,7 +1919,7 @@ function testRecursiveFindAllWithLimit() {
 			'Tag' => array(
 				'Tag' => array( 1, 2 )
 			),
-			'Article' => array( 'id' => '2', 'title' => 'New Second Article Title' ),
+			'Article' => array('id' => '2', 'title' => 'New Second Article Title' ),
 		);
 
 		$result = $this->model->set($data);
@@ -1940,8 +1938,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article Title', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1950,7 +1948,7 @@ function testRecursiveFindAllWithLimit() {
 			'Tag' => array(
 				'Tag' => array( 2, 3 )
 			),
-			'Article' => array( 'id' => '2', 'title' => 'Changed Second Article' ),
+			'Article' => array('id' => '2', 'title' => 'Changed Second Article' ),
 		);
 
 		$result = $this->model->set($data);
@@ -1969,8 +1967,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1979,7 +1977,7 @@ function testRecursiveFindAllWithLimit() {
 			'Tag' => array(
 				'Tag' => array( 1, 3 )
 			),
-			'Article' => array( 'id' => '2' ),
+			'Article' => array('id' => '2' ),
 		);
 
 		$result = $this->model->set($data);
@@ -1998,8 +1996,8 @@ function testRecursiveFindAllWithLimit() {
 				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array( 'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
-				array( 'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2017,8 +2015,8 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'title'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'title' => 'First Article' )),
-			array('Article' => array( 'id' => 3, 'title' => 'Third Article' ))
+			array('Article' => array('id' => 1, 'title' => 'First Article' )),
+			array('Article' => array('id' => 3, 'title' => 'Third Article' ))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -2031,7 +2029,7 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'title'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'title' => 'First Article' ))
+			array('Article' => array('id' => 1, 'title' => 'First Article' ))
 		);
 		$this->assertEqual($result, $expected);
 	}
@@ -2056,12 +2054,12 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 4, 'user_id' => 2, 'title' => 'Fourth Article', 'published' => 'N' )),
-			array('Article' => array( 'id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 6, 'user_id' => 1, 'title' => 'Sixth Article', 'published' => 'N' ))
+			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 4, 'user_id' => 2, 'title' => 'Fourth Article', 'published' => 'N' )),
+			array('Article' => array('id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 6, 'user_id' => 1, 'title' => 'Sixth Article', 'published' => 'N' ))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -2073,10 +2071,10 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' ))
+			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 5, 'user_id' => 2, 'title' => 'Fifth Article', 'published' => 'Y' ))
 		);
 		$this->assertEqual($result, $expected);
 
@@ -2086,8 +2084,8 @@ function testRecursiveFindAllWithLimit() {
 		$this->model->recursive = -1;
 		$result = $this->model->findAll(null, array('id', 'user_id', 'title', 'published'));
 		$expected = array(
-			array('Article' => array( 'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
-			array('Article' => array( 'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' ))
+			array('Article' => array('id' => 1, 'user_id' => 1, 'title' => 'First Article', 'published' => 'Y' )),
+			array('Article' => array('id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'published' => 'Y' ))
 		);
 		$this->assertEqual($result, $expected);
 	}
@@ -2125,30 +2123,30 @@ function testRecursiveFindAllWithLimit() {
 		$this->model =& new Category();
 
 		$result = $this->model->findAllThreaded();
-		$expected = array (
-			array (
-				'Category' => array ( 'id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'children' => array (
-					array (
-						'Category' => array ( 'id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'children' => array ( )
+		$expected = array(
+			array(
+				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'children' => array(
+					array(
+						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'children' => array()
 					),
-					array (
-						'Category' => array ( 'id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'children' => array ( )
+					array(
+						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'children' => array()
 					)
 				)
 			),
-			array (
-				'Category' => array ( 'id' => '4', 'parent_id' => '0', 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'children' => array ( )
+			array(
+				'Category' => array('id' => '4', 'parent_id' => '0', 'name' => 'Category 2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'children' => array()
 			),
-			array (
-				'Category' => array ( 'id' => '5', 'parent_id' => '0', 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'children' => array (
-					array (
-						'Category' => array ( 'id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'children' => array ( )
+			array(
+				'Category' => array('id' => '5', 'parent_id' => '0', 'name' => 'Category 3', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'children' => array(
+					array(
+						'Category' => array('id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'children' => array()
 					)
 				)
 			)
@@ -2156,17 +2154,17 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAllThreaded(array('Category.name' => 'LIKE Category 1%'));
-		$expected = array (
-			array (
-				'Category' => array ( 'id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-				'children' => array (
-					array (
-						'Category' => array ( 'id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'children' => array ( )
+		$expected = array(
+			array(
+				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+				'children' => array(
+					array(
+						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'children' => array()
 					),
-					array (
-						'Category' => array ( 'id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
-						'children' => array ( )
+					array(
+						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2', 'created' => '2007-03-18 15:30:23', 'updated' => '2007-03-18 15:32:31'),
+						'children' => array()
 					)
 				)
 			)
@@ -2174,30 +2172,30 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->model->findAllThreaded(null, 'id, parent_id, name');
-		$expected = array (
-			array (
-				'Category' => array ( 'id' => '1', 'parent_id' => '0', 'name' => 'Category 1'),
-				'children' => array (
-					array (
-						'Category' => array ( 'id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1'),
-						'children' => array ( )
+		$expected = array(
+			array(
+				'Category' => array('id' => '1', 'parent_id' => '0', 'name' => 'Category 1'),
+				'children' => array(
+					array(
+						'Category' => array('id' => '2', 'parent_id' => '1', 'name' => 'Category 1.1'),
+						'children' => array()
 					),
-					array (
-						'Category' => array ( 'id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2'),
-						'children' => array ( )
+					array(
+						'Category' => array('id' => '3', 'parent_id' => '1', 'name' => 'Category 1.2'),
+						'children' => array()
 					)
 				)
 			),
-			array (
-				'Category' => array ( 'id' => '4', 'parent_id' => '0', 'name' => 'Category 2'),
-				'children' => array ( )
+			array(
+				'Category' => array('id' => '4', 'parent_id' => '0', 'name' => 'Category 2'),
+				'children' => array()
 			),
-			array (
-				'Category' => array ( 'id' => '5', 'parent_id' => '0', 'name' => 'Category 3'),
-				'children' => array (
-					array (
-						'Category' => array ( 'id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1'),
-						'children' => array ( )
+			array(
+				'Category' => array('id' => '5', 'parent_id' => '0', 'name' => 'Category 3'),
+				'children' => array(
+					array(
+						'Category' => array('id' => '6', 'parent_id' => '5', 'name' => 'Category 3.1'),
+						'children' => array()
 					)
 				)
 			)
@@ -2221,9 +2219,7 @@ function testRecursiveFindAllWithLimit() {
 
 		$result = $this->model->findNeighbours(null, 'Article.id', '3');
 		$expected = array(
-			'prev' => array(
-				'Article' => array('id' => 2)
-			),
+			'prev' => array('Article' => array('id' => 2)),
 			'next' => array()
 		);
 		$this->assertEqual($result, $expected);
@@ -2234,9 +2230,9 @@ function testRecursiveFindAllWithLimit() {
 
 		$result = $this->model->findAll();
 
-		$expected = array (
-			array (
-				'Apple' => array (
+		$expected = array(
+			array(
+				'Apple' => array(
 					'id' => '1',
 					'apple_id' => '2',
 					'color' => 'Red 1',
@@ -2245,7 +2241,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '1951-01-04',
 					'modified' => '2006-12-01 13:31:26'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '2',
 					'apple_id' => '1',
 					'color' => 'Bright Red 1',
@@ -2254,13 +2250,13 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2014-01-01',
 					'modified' => '2006-11-30 18:38:10'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => null,
 					'apple_id' => null,
 					'name' => null
 				),
-				'Child' => array (
-					array (
+				'Child' => array(
+					array(
 						'id' => '2',
 						'apple_id' => '1',
 						'color' => 'Bright Red 1',
@@ -2271,8 +2267,8 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '2',
 					'apple_id' => '1',
 					'color' => 'Bright Red 1',
@@ -2281,7 +2277,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2014-01-01',
 					'modified' => '2006-11-30 18:38:10'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '1',
 					'apple_id' => '2',
 					'color' => 'Red 1',
@@ -2290,13 +2286,13 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '1951-01-04',
 					'modified' => '2006-12-01 13:31:26'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => '2',
 					'apple_id' => '2',
 					'name' => 'sample2'
 				),
-				'Child' => array (
-					array (
+				'Child' => array(
+					array(
 						'id' => '1',
 						'apple_id' => '2',
 						'color' => 'Red 1',
@@ -2305,7 +2301,7 @@ function testRecursiveFindAllWithLimit() {
 						'date' => '1951-01-04',
 						'modified' => '2006-12-01 13:31:26'
 					),
-					array (
+					array(
 						'id' => '3',
 						'apple_id' => '2',
 						'color' => 'blue green',
@@ -2314,7 +2310,7 @@ function testRecursiveFindAllWithLimit() {
 						'date' => '2006-12-25',
 						'modified' => '2006-12-25 05:23:24'
 					),
-					array (
+					array(
 						'id' => '6',
 						'apple_id' => '2',
 						'color' => 'Blue Green',
@@ -2325,8 +2321,8 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '3',
 					'apple_id' => '2',
 					'color' => 'blue green',
@@ -2335,7 +2331,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:23:24'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '2',
 					'apple_id' => '1',
 					'color' => 'Bright Red 1',
@@ -2344,15 +2340,15 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2014-01-01',
 					'modified' => '2006-11-30 18:38:10'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => '1',
 					'apple_id' => '3',
 					'name' => 'sample1'
 				),
-				'Child' => array ( )
+				'Child' => array()
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '6',
 					'apple_id' => '2',
 					'color' => 'Blue Green',
@@ -2361,7 +2357,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:23:36'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '2',
 					'apple_id' => '1',
 					'color' => 'Bright Red 1',
@@ -2370,13 +2366,13 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2014-01-01',
 					'modified' => '2006-11-30 18:38:10'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => '3',
 					'apple_id' => '6',
 					'name' => 'sample3'
 				),
-				'Child' => array (
-					array (
+				'Child' => array(
+					array(
 						'id' => '8',
 						'apple_id' => '6',
 						'color' => 'My new appleOrange',
@@ -2387,8 +2383,8 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '7',
 					'apple_id' => '7',
 					'color' => 'Green',
@@ -2397,7 +2393,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:29:16'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '7',
 					'apple_id' => '7',
 					'color' => 'Green',
@@ -2406,13 +2402,13 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:29:16'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => '4',
 					'apple_id' => '7',
 					'name' => 'sample4'
 				),
-				'Child' => array (
-					array (
+				'Child' => array(
+					array(
 						'id' => '7',
 						'apple_id' => '7',
 						'color' => 'Green',
@@ -2423,8 +2419,8 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '8',
 					'apple_id' => '6',
 					'color' => 'My new appleOrange',
@@ -2433,7 +2429,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:29:39'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '6',
 					'apple_id' => '2',
 					'color' => 'Blue Green',
@@ -2442,13 +2438,13 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:23:36'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => null,
 					'apple_id' => null,
 					'name' => null
 				),
-				'Child' => array (
-					array (
+				'Child' => array(
+					array(
 						'id' => '9',
 						'apple_id' => '8',
 						'color' => 'Some wierd color',
@@ -2459,8 +2455,8 @@ function testRecursiveFindAllWithLimit() {
 					)
 				)
 			),
-			array (
-				'Apple' => array (
+			array(
+				'Apple' => array(
 					'id' => '9',
 					'apple_id' => '8',
 					'color' => 'Some wierd color',
@@ -2469,7 +2465,7 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:34:21'
 				),
-				'Parent' => array (
+				'Parent' => array(
 					'id' => '8',
 					'apple_id' => '6',
 					'color' => 'My new appleOrange',
@@ -2478,12 +2474,12 @@ function testRecursiveFindAllWithLimit() {
 					'date' => '2006-12-25',
 					'modified' => '2006-12-25 05:29:39'
 				),
-				'Sample' => array (
+				'Sample' => array(
 					'id' => null,
 					'apple_id' => null,
 					'name' => null
 				),
-				'Child' => array ( )
+				'Child' => array()
 			)
 		);
 

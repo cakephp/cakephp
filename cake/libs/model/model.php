@@ -601,10 +601,6 @@ class Model extends Overloadable {
 					$className = $value['className'];
 				}
 				$this->__constructLinkedModel($assoc, $className);
-
-				if (isset($value['with']) && !empty($value['with'])) {
-					$this->__constructLinkedModel($value['with'], $value['with']);
-				}
 			}
 			$this->__generateAssociation($type);
 		}
@@ -618,8 +614,11 @@ class Model extends Overloadable {
  * @param string $ds Name of DataSource the model should be bound to
  * @access private
  */
-	function __constructLinkedModel($assoc, $className, $id = false, $table = null, $ds = null) {
+	function __constructLinkedModel($assoc, $className = null, $id = false, $table = null, $ds = null) {
 		$colKey = Inflector::underscore($className);
+		if (empty($className)) {
+			$className = $assoc;
+		}
 
 		if (!class_exists($className)) {
 			if (!loadModel($className)) {
@@ -694,14 +693,25 @@ class Model extends Overloadable {
 				if ($key == 'foreignKey' && !isset($this->keyToTable[$this->{$type}[$assocKey][$key]])) {
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][0] = $this->{$class}->table;
 					$this->keyToTable[$this->{$type}[$assocKey][$key]][1] = $this->{$class}->name;
+
 					if ($this->{$class}->name != $class) {
 						$this->keyToTable[$this->{$type}[$assocKey][$key]][2] = $class;
 					}
 				}
 			}
+
 			if (isset($this->{$type}[$assocKey]['with'])) {
 				$with = $this->{$type}[$assocKey]['with'];
+				$this->__constructLinkedModel($with);
 				$this->{$type}[$assocKey]['joinTable'] = $this->{$with}->table;
+			} elseif ($type == 'hasAndBelongsToMany') {
+				$joinClass = Inflector::camelize($this->name . $assocKey);
+				$this->{$type}[$assocKey]['_with'] = $joinClass;
+				$this->{$joinClass} = new AppModel(array(
+					'name' => $joinClass,
+					'table' => $this->{$type}[$assocKey]['joinTable'],
+					'ds' => $this->useDbConfig
+				));
 			}
 		}
 	}
@@ -967,8 +977,7 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
 		$this->set($data);
-
-		$whitelist = !(empty($fieldList) || count($fieldList) == 0);
+		$whitelist = !empty($fieldList);
 
 		if ($validate && !$this->validates()) {
 			return false;
@@ -1883,10 +1892,9 @@ class Model extends Overloadable {
 		if ($dataSource != null) {
 			$this->useDbConfig = $dataSource;
 		}
-
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (!empty($db->config['prefix']) && $this->tablePrefix == null) {
+		if (!empty($db->config['prefix']) && $this->tablePrefix !== false) {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 
