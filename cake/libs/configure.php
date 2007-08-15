@@ -134,7 +134,6 @@ class Configure extends Object {
 			/*if (file_exists($path . $name . '.php')) {
 				Configure::store('Models', 'class.paths', array($className => array('path' => $path . $name . '.php')));
 				require($path . $name . '.php');
-				Overloadable::overload($className);
 				return true;
 			}*/
 		}
@@ -148,6 +147,9 @@ class Configure extends Object {
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false) {
+		if(!class_exists('folder')) {
+			uses('folder'); 
+		}
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
 		if(is_array($contents)) {
