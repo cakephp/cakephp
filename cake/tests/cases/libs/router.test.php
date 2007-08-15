@@ -39,11 +39,6 @@ if (!defined('CAKE_ADMIN')) {
  */
 class RouterTest extends UnitTestCase {
 
-	function RouterTest() {
-		parent::UnitTestCase();
-		$this->startTime = getMicrotime();
-	}
-
 	function setUp() {
 		$this->router =& Router::getInstance();
 		//$this->router->reload();
@@ -355,6 +350,11 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->parse('pages/display/home');
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->connect('/page/*', array('controller' => 'test'));
+		$result = $this->router->parse('/page/my-page');
+		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index');
 	}
 
 	function testAdminRouting() {
@@ -463,10 +463,6 @@ class RouterTest extends UnitTestCase {
 
 		$expected = array('pass'=>array('contact'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
-	}
-
-	function testEnd() {
-		pr(round(getMicrotime() - $this->startTime, 5));
 	}
 }
 
