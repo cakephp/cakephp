@@ -277,9 +277,10 @@ class AuthComponent extends Object {
 			$url = $controller->params['url']['url'];
 		}
 
-		if ($this->_normalizeURL($this->loginAction) == $this->_normalizeURL($url)) {
+		$this->loginAction = $this->_normalizeURL($this->loginAction);
+		if ($this->loginAction == $this->_normalizeURL($url)) {
 			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
-				if (!$this->Session->check('Auth.redirect')) {
+				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer());
 				}
 				return false;
@@ -304,7 +305,7 @@ class AuthComponent extends Object {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->write('Auth.redirect', $url);
-					$controller->redirect($this->_normalizeURL($this->loginAction), null, true);
+					$controller->redirect($this->loginAction, null, true);
 					return false;
 				} elseif (!empty($this->ajaxLogin)) {
 					$controller->viewPath = 'elements';
@@ -607,7 +608,7 @@ class AuthComponent extends Object {
 			$redir = $this->Session->read('Auth.redirect');
 			$this->Session->delete('Auth.redirect');
 
-			if ($this->_normalizeURL($redir) == $this->_normalizeURL($this->loginAction)) {
+			if ($this->_normalizeURL($redir) == $this->loginAction) {
 				$redir = $this->loginRedirect;
 			}
 		} else {

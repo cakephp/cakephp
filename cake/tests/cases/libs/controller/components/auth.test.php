@@ -169,11 +169,11 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->authorize = array('model'=>'AuthUser');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($result);
-		
+
 		$this->Controller->Session->del('Auth');
 		$result = $this->Controller->Auth->isAuthorized();
 		$this->assertFalse($result);
-		
+
 	}
 
 	function testAuthorizeCrud() {
@@ -222,6 +222,23 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Acl->Aro->execute('truncate acos;');
 		$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
+
+	function testLoginRedirect() {
+        $backup = $_SERVER['HTTP_REFERER'];
+
+        $_SERVER['HTTP_REFERER'] = false;
+        $this->Controller->data = array();
+        $this->Controller->params['url']['url'] = 'users/login';
+
+        $this->Controller->Auth->initialize($this->Controller);
+        $this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
+        $this->Controller->Auth->startup($this->Controller);
+
+        $expected = $this->Controller->Auth->_normalizeURL($this->Controller->Auth->loginRedirect);
+        $this->assertEqual($expected, $this->Controller->Auth->redirect());
+
+        $_SERVER['HTTP_REFERER'] = $backup;
+    }
 
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
