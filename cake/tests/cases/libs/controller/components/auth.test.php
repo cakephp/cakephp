@@ -228,17 +228,33 @@ class AuthTest extends CakeTestCase {
 
         $_SERVER['HTTP_REFERER'] = false;
         $this->Controller->data = array();
-        $this->Controller->params['url']['url'] = 'users/login';
-
-        $this->Controller->Auth->initialize($this->Controller);
         $this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
-        $this->Controller->Auth->startup($this->Controller);
 
+        $this->Controller->params['url']['url'] = 'users/login';
+        $this->Controller->Auth->initialize($this->Controller);
+        $this->Controller->Auth->startup($this->Controller);
         $expected = $this->Controller->Auth->_normalizeURL($this->Controller->Auth->loginRedirect);
         $this->assertEqual($expected, $this->Controller->Auth->redirect());
+        $this->Controller->Session->del('Auth');
+
+        $this->Controller->params['url']['url'] = 'admin/';
+        $this->Controller->Auth->initialize($this->Controller);
+        $this->Controller->Auth->startup($this->Controller);
+        $expected = $this->Controller->Auth->_normalizeURL('admin/');
+        $this->assertEqual($expected, $this->Controller->Auth->redirect());
+        $this->Controller->Session->del('Auth');
+
+        $_SERVER['HTTP_REFERER'] = '/admin/';
+        $this->Controller->params['url']['url'] = 'users/login';
+        $this->Controller->Auth->initialize($this->Controller);
+        $this->Controller->Auth->startup($this->Controller);
+        $expected = '/admin/';
+        $this->assertEqual($expected, $this->Controller->Auth->redirect());
+        $this->Controller->Session->del('Auth');
 
         $_SERVER['HTTP_REFERER'] = $backup;
     }
+
 
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
