@@ -213,10 +213,14 @@ class RouterTest extends UnitTestCase {
 				'webservices' => null
 			)
 		));
-		$this->router->connect('short_controller_name/index/*', array('controller' => 'real_controller_name'));
+		$this->router->connect('short_controller_name/:action/*', array('controller' => 'real_controller_name'));
 
 		$result = $this->router->url(array('controller' => 'real_controller_name', 'page' => '1'));
 		$expected = '/short_controller_name/index/page:1';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('action' => 'add'));
+		$expected = '/short_controller_name/add/';
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
