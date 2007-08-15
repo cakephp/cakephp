@@ -675,9 +675,8 @@ class Controller extends Object {
  */
 	function referer($default = null, $local = false) {
 		$ref = env('HTTP_REFERER');
-		$base = FULL_BASE_URL . $this->webroot;
-
-		if ($ref != null && defined('FULL_BASE_URL')) {
+		if (!empty($ref) && defined('FULL_BASE_URL')) {
+			$base = FULL_BASE_URL . $this->webroot;
 			if (strpos($ref, $base) === 0) {
 				return substr($ref, strlen($base) - 1);
 			} elseif (!$local) {
