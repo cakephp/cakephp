@@ -39,6 +39,11 @@ if (!defined('CAKE_ADMIN')) {
  */
 class RouterTest extends UnitTestCase {
 
+	function RouterTest() {
+		parent::UnitTestCase();
+		$this->startTime = getMicrotime();
+	}
+
 	function setUp() {
 		$this->router =& Router::getInstance();
 		//$this->router->reload();
@@ -57,7 +62,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($this->router->routes[0][1], '/^[\/]*$/');
 		$this->assertEqual($this->router->routes[0][2], array());
 
-		$this->router->routes = array();
+		$this->router->reload();
 		$this->router->connect('/', array('controller' => 'testing'));
 		$this->assertTrue(is_array($this->router->routes[0][3]) && !empty($this->router->routes[0][3]));
 		$this->assertEqual($this->router->routes[0][3]['controller'], 'testing');
@@ -126,10 +131,11 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testUrlGeneration() {
+		$this->router->reload();
 		extract($this->router->getNamedExpressions());
 
-		$this->router->connect('/', array('controller'=>'pages', 'action'=>'display', 'home'));
-		$out = $this->router->url(array('controller'=>'pages', 'action'=>'display', 'home'));
+		$this->router->connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$out = $this->router->url(array('controller' => 'pages', 'action' => 'display', 'home'));
 		$this->assertEqual($out, '/');
 
 		$this->router->connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
@@ -219,7 +225,6 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
-		$this->router->testing = true;
 
 		$this->router->connect(
 			':language/galleries',
@@ -228,9 +233,9 @@ class RouterTest extends UnitTestCase {
 		);
 
 		$this->router->connect(
-			'/:language/:'. CAKE_ADMIN .'/:controller/:action/*',
-			array(CAKE_ADMIN => CAKE_ADMIN),
-			array('language' => '[a-z]{3}', CAKE_ADMIN => CAKE_ADMIN)
+			'/:language/:admin/:controller/:action/*',
+			array('admin' => 'admin'),
+			array('language' => '[a-z]{3}', 'admin' => 'admin')
 		);
 
 		$this->router->connect('/:language/:controller/:action/*',
@@ -238,14 +243,38 @@ class RouterTest extends UnitTestCase {
 			array('language' => '[a-z]{3}')
 		);
 
-		$result = $this->router->url(array(CAKE_ADMIN => false, 'language' => 'dan', 'action' => 'index', 'controller' => 'galleries'));
-		$expected = '/dan/galleries'; // Passes
+		$result = $this->router->url(array('admin' => false, 'language' => 'dan', 'action' => 'index', 'controller' => 'galleries'));
+		$expected = '/dan/galleries';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->router->url(array(CAKE_ADMIN => false, 'language' => 'eng', 'action' => 'index', 'controller' => 'galleries'));
-		$expected = '/eng/galleries'; // Fails, actual result: /eng/galleries/index/
+		$result = $this->router->url(array('admin' => false, 'language' => 'eng', 'action' => 'index', 'controller' => 'galleries'));
+		$expected = '/eng/galleries';
 		$this->assertEqual($result, $expected);
-		unset($this->router->testing);
+
+		$this->router->reload();
+		$this->router->connect('/:language/pages',
+			array(
+				  'controller' => 'pages',
+				  'action' => 'index'
+			),
+			array('language' => '[a-z]{3}')
+		);
+
+		$this->router->connect('/:language/:controller/:action/*',
+			array(),
+			array('language' => '[a-z]{3}')
+		);
+
+		$result = $this->router->url(array('language' => 'eng', 'action' => 'index', 'controller' => 'pages'));
+		$expected = '/eng/pages'; // Passes as expected
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('language' => 'eng', 'controller' => 'pages'));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('language' => 'eng', 'controller' => 'pages', 'action' => 'add'));
+		$expected = '/eng/pages/add/';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlGenerationWithExtensions() {
@@ -318,7 +347,7 @@ class RouterTest extends UnitTestCase {
 
 		$this->router->routes = array();
 		$result = $this->router->parse('/pages/display/home');
-		$expected = array('pass' => array ('home'), 'controller' => 'pages', 'action' => 'display');
+		$expected = array('plugin' => null, 'pass' => array('home'), 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('pages/display/home/');
@@ -352,7 +381,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss');
-		$expected = array('controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'url' => array('ext' => 'rss'));
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'pass' => array('1'), 'url' => array('ext' => 'rss'));
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts/view/1.rss?query=test');
@@ -434,6 +463,10 @@ class RouterTest extends UnitTestCase {
 
 		$expected = array('pass'=>array('contact'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
+	}
+
+	function testEnd() {
+		pr(round(getMicrotime() - $this->startTime, 5));
 	}
 }
 

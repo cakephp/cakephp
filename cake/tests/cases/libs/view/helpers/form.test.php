@@ -768,6 +768,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$this->assertPattern('/id="TestId"/', $result);
+
+		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
+		$this->assertPattern('/id="UserAddForm"/', $result);
+		$this->assertPattern('/action="\/users\/login[\/]"/', $result);
+
+		$result = $this->Form->create('User', array('action' => 'login'));
+		$this->assertPattern('/id="UserLoginForm"/', $result);
+		$this->assertPattern('/action="\/users\/login[\/]"/', $result);
 	}
 
 	function testFormMagicInput() {

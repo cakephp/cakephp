@@ -204,7 +204,7 @@ class Router extends Object {
 			$_this->routes[] = $_this->__admin;
 			$_this->__admin = null;
 		}
-		$default = am(array('plugin' => null, 'controller' => null), $default);
+		$default = am(array('plugin' => null, 'controller' => null, 'action' => null), $default);
 
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
@@ -261,10 +261,6 @@ class Router extends Object {
 		} else {
 			$names = array();
 			$elements = Set::filter(array_map('trim', explode('/', $route)));
-
-			if (!count($elements)) {
-				return false;
-			}
 
 			foreach ($elements as $element) {
 				$q = null;
@@ -422,11 +418,6 @@ class Router extends Object {
  */
 	function __connectDefaultRoutes() {
 		$_this =& Router::getInstance();
-		$default_route = array(
-			'/:controller/:action/*',
-			'/^(?:\/(?:([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?))[\\/]*$/',
-			array('controller', 'action'), array()
-		);
 
 		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
 			$_this->routes[] = $_this->__admin;
@@ -444,20 +435,15 @@ class Router extends Object {
 			$_this->connect('/xml/:controller/:action/*', array('webservices' => 'Xml'));
 			$_this->connect('/xmlrpc/:controller/:action/*', array('webservices' => 'XmlRpc'));
 		}
-		$_this->routes[] = $default_route;
-		//$_this->connect('/:controller/:action/*');
-		//pr($this->routes[count($_this->routes) - 1]);
-		//pr($default_route);
-		//die();
+		$_this->connect('/:controller/:action/*');
 
 		$Inflector =& Inflector::getInstance();
 		$plugins = array_map(array(&$Inflector, 'underscore'), Configure::listObjects('plugin'));
+
 		if(!empty($plugins)) {
-			array_unshift($_this->routes, array(
-				"/:plugin/:controller/:action/*",
-				'/^(?:\/(?:(' . implode('|', $plugins) . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
-				array('plugin', 'controller', 'action'), array()
-			));
+			$_this->connect('/:plugin/:controller/:action/*', array('action' => 'index'), array('plugin' => implode('|', $plugins)));
+			array_unshift($_this->routes, $_this->routes[count($_this->routes) - 1]);
+			unset($_this->routes[count($_this->routes) - 1]);
 		}
 	}
 /**
@@ -564,13 +550,11 @@ class Router extends Object {
 				$params = end($_this->__params);
 			}
 		}
-		$path = array('base' => null);
+		$path = array('base' => null, 'argSeparator' => ':');
 
 		if (!empty($_this->__paths)) {
 			if (isset($this) && !isset($this->params['requested'])) {
 				$path = $_this->__paths[0];
-			} elseif (isset($this) && isset($this->params['requested'])) {
-				$path = end($_this->__paths);
 			} else {
 				$path = end($_this->__paths);
 			}
@@ -709,14 +693,14 @@ class Router extends Object {
  */
 	function mapRouteElements($route, $url) {
 		$_this =& Router::getInstance();
-		$defaults = am(array('plugin' => null, 'controller' => null, 'action' => 'index'), $route[3]);
+		$defaults = $route[3];
 		$params = Set::diff($url, $defaults);
 		$routeParams = $route[2];
 		$pass = array();
 
 		foreach ($params as $key => $value) {
-			if (is_numeric($key)) {
-				$pass[$key] = $value;
+			if (is_int($key)) {
+				$pass[] = $value;
 				unset($params[$key]);
 			}
 		}
@@ -727,6 +711,9 @@ class Router extends Object {
 		if (defined('CAKE_ADMIN') && isset($params[CAKE_ADMIN])) {
 			return false;
 		}
+		if (!empty($params)) {
+			$required = array_diff(array_keys($defaults), array_keys($url));
+		}
 
 		krsort($defaults);
 		krsort($url);
@@ -734,31 +721,36 @@ class Router extends Object {
 		if (empty($params)) {
 			return array(Router::__mapRoute($route, am($url, compact('pass'))), array());
 		} elseif (!empty($routeParams) && !empty($route[3])) {
-			$required = array_diff(array_keys($defaults), array_keys($url));
-
 			if (!empty($required)) {
 			 	return false;
 			}
-			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
-			$keysFilled = array_keys($filled);
-			sort($routeParams);
-			sort($keysFilled);
 
-			if ($keysFilled != $routeParams) {
-				return false;
+			if (isset($_this->testing)) {
+				pr($defaults);
+				pr($url);
+				pr($params);
+				pr($required);
 			}
-			if (Set::diff($keysFilled, $routeParams) != array()) {
+
+			foreach ($defaults as $key => $val) {
+				if ($url[$key] != $val && !in_array($key, $routeParams)) {
+					return false;
+				}
+			}
+
+			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
+
+			if (array_keys($filled) != $routeParams) {
 				return false;
 			}
 		} else {
-			$required = array_diff(array_keys($defaults), array_keys($url));
 			if (empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {
 				return array(Router::__mapRoute($route, am($url, compact('pass'))), $url);
 			}
 			return false;
 		}
 
-		if (isset($route[3]['controller']) && !empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
+		if (!empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
 			return false;
 		}
 
@@ -769,6 +761,7 @@ class Router extends Object {
 				}
 			}
 		}
+
 		return array(Router::__mapRoute($route, am($url, compact('pass'))), $url);
 	}
 /**
