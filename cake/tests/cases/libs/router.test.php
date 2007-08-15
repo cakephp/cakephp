@@ -259,13 +259,10 @@ class RouterTest extends UnitTestCase {
 			array('language' => '[a-z]{3}')
 		);
 
-		$this->router->connect('/:language/:controller/:action/*',
-			array(),
-			array('language' => '[a-z]{3}')
-		);
+		$this->router->connect('/:language/:controller/:action/*', array(), array('language' => '[a-z]{3}'));
 
 		$result = $this->router->url(array('language' => 'eng', 'action' => 'index', 'controller' => 'pages'));
-		$expected = '/eng/pages'; // Passes as expected
+		$expected = '/eng/pages';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->url(array('language' => 'eng', 'controller' => 'pages'));
@@ -274,6 +271,23 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('language' => 'eng', 'controller' => 'pages', 'action' => 'add'));
 		$expected = '/eng/pages/add/';
 		$this->assertEqual($result, $expected);
+
+        $this->router->reload();
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'users',
+				'url' => array('url' => 'users'), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/', 'here' => '/',
+				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
+				'webservices' => null
+			)
+		));
+
+		$result = $this->router->url(array('action' => 'login'));
+		$expected = '/users/login/';
+		$this->assertEqual($result, $expected); 
 	}
 
 	function testUrlGenerationWithExtensions() {
