@@ -28,9 +28,6 @@
  */
 uses('router', 'debugger');
 
-if (!defined('CAKE_ADMIN')) {
-	define('CAKE_ADMIN', 'admin');
-}
 /**
  * Short description for class.
  *
@@ -41,7 +38,6 @@ class RouterTest extends UnitTestCase {
 
 	function setUp() {
 		$this->router =& Router::getInstance();
-		//$this->router->reload();
 	}
 
 	function testReturnedInstanceReference() {
@@ -91,11 +87,6 @@ class RouterTest extends UnitTestCase {
 
 	function testRouterIdentity() {
 		$this->router->reload();
-		$this->router->__admin = array(
-			'/:' . CAKE_ADMIN . '/:controller/:action/*',
-			'/^(?:\/(?:(' . CAKE_ADMIN . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
-			array(CAKE_ADMIN, 'controller', 'action'), array()
-		);
 		$router2 = new Router();
 		$this->assertEqual(get_object_vars($this->router), get_object_vars($router2));
 	}
@@ -376,6 +367,12 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/page/*', array('controller' => 'test'));
 		$result = $this->router->parse('/page/my-page');
 		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index');
+
+		$this->router->reload();
+		$this->router->connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));		
+		$result = $this->router->parse('/eng/contact');
+		$expected = array('pass' => array(), 'language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index');
+		$this->assertEqual($result, $expected);
 	}
 
 	function testAdminRouting() {
