@@ -193,7 +193,7 @@ class Dispatcher extends Object {
 		$controller->action = $this->params['action'];
 		$controller->webservices = $this->params['webservices'];
 
-		list($passedArgs, $namedArgs) = Router::getArgs($this->params, $controller->namedArgs, $controller->argSeparator);
+		list($passedArgs, $namedArgs) = Router::getArgs($this->params);
 		$controller->passedArgs = $passedArgs;
 		$controller->namedArgs = $namedArgs;
 
@@ -495,14 +495,19 @@ class Dispatcher extends Object {
 		if (!empty($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 			$pluginPath = Inflector::camelize($this->plugin).'.';
-
 		}
 
 		if ($pluginPath . $controller && loadController($pluginPath . $controller)) {
 			if(!class_exists(low($ctrlClass)) && $this->plugin) {
-				$controller = Inflector::camelize($params['plugin']);
-				$ctrlClass = $controller.'Controller';
-				$params = am($this->params, array('plugin'=> $params['plugin'], 'controller'=> $params['plugin']));
+				$ctrlClass = Inflector::camelize($params['plugin']) . 'Controller';
+				$pass = $params['action'];
+
+				$params = am($params, array(
+					'plugin' => $params['plugin'],
+					'controller' => $params['plugin'],
+					'action' => $params['controller'],
+				));
+				array_unshift($params['pass'], $pass);
 			}
 			if(class_exists(low($ctrlClass))) {
 				$controller =& new $ctrlClass();
