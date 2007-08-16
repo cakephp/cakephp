@@ -2497,7 +2497,6 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertEqual($this->model->invalidFields(), array('published' => 'This field cannot be left blank'));
 
 		$this->model->create();
-		$this->model->testing = true;
 		$this->model->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
 		$this->assertEqual($this->model->invalidFields(), array('body' => 'This field cannot be left blank'));
 	}*/

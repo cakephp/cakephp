@@ -427,13 +427,13 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'pages/home/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
-		$expected = array('param'=>'value', 'param2' => 'value2');
+		$expected = array('param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->namedArgs);
 	}
 
@@ -478,7 +478,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'my_plugin/some_pages/home/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 
@@ -550,21 +550,23 @@ class DispatcherTest extends UnitTestCase {
 		Router::reload();
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
-
 		$url = 'my_plugin/add/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'my_plugin';
-		$this->assertIdentical($expected, $controller->plugin);
+		$this->assertIdentical($controller->plugin, $expected);
 
 		$expected = 'MyPlugin';
-		$this->assertIdentical($expected, $controller->name);
+		$this->assertIdentical($controller->name, $expected);
 
 		$expected = 'add';
-		$this->assertIdentical($expected, $controller->action);
+		$this->assertIdentical($controller->action, $expected);
+
+		$expected = array('param:value', 'param2:value2');
+		$this->assertEqual($controller->params['pass'], $expected);
 	}
 
 	function testAutomaticPluginControllerMissingActionDispatch() {

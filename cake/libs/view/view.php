@@ -252,24 +252,12 @@ class View extends Object {
  */
 	var $passedArgs = array();
 /**
- * Controller URL-generation data
- *
- * @var mixed
- */
-	var $namedArgs = array();
-/**
- * Controller URL-generation data
- *
- * @var string
- */
-	var $argSeparator = null;
-/**
  * List of variables to collect from the associated controller
  *
  * @var array
  * @access protected
  */
-	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot', 'helpers', 'here', 'layout', 'modelNames', 'name', 'pageTitle', 'layoutPath', 'viewPath', 'params', 'data', 'webservices', 'plugin', 'passedArgs', 'cacheAction');
 /**
  * List of generated DOM UUIDs
  *
@@ -457,8 +445,9 @@ class View extends Object {
 	function renderLayout($content_for_layout) {
 		$layout_fn = $this->_getLayoutFileName();
 
-		if (Configure::read() > 2 && $this->controller != null) {
-			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->controller), false);
+		if (Configure::read() > 2 && isset($this->viewVars['cakeDebug'])) {
+			$debug = View::_render(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . 'dump.ctp', array('controller' => $this->viewVars['cakeDebug']), false);
+			unset($this->viewVars['cakeDebug']);
 		} else {
 			$debug = '';
 		}

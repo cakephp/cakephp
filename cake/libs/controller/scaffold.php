@@ -110,24 +110,12 @@ class Scaffold extends Object {
  */
 	var $plugin = null;
 /**
- * Controller URL-generation data
- *
- * @var mixed
- */
-	var $namedArgs = null;
-/**
- * Controller URL-generation data
- *
- * @var string
- */
-	var $argSeparator = null;
-/**
  * List of variables to collect from the associated controller
  *
  * @var array
  * @access protected
  */
-	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'namedArgs', 'argSeparator', 'cacheAction');
+	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'cacheAction');
 /**
  * Title HTML element for current scaffolded view
  *

@@ -46,8 +46,6 @@ class JsHelper extends Overloadable2 {
 	var $data = null;
 	var $themeWeb = null;
 	var $plugin = null;
-	var $namedArgs = null;
-	var $argSeparator = null;
 
 	var $helpers = array();
 

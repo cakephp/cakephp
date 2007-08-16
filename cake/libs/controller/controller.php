@@ -274,21 +274,6 @@ class Controller extends Object {
  */
 	var $passedArgs = array();
 /**
- * Set to true to enable named URL parameters (/controller/action/name:value).
- * Or set an array of actions and default named args: array('action'=> array('name'=>'defaultValue'));
- *
- * @var mixed
- */
-	var $namedArgs = true;
-/**
- * The character that separates named arguments in URLs.
- *
- *  Example URL: /posts/view/title:first+post/category:general
- *
- * @var string
- */
-	var $argSeparator = ':';
-/**
  * Constructor.
  *
  */
