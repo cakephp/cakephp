@@ -847,7 +847,7 @@ class View extends Object {
 				$camelBackedHelper = Inflector::variable($helper);
 				${$camelBackedHelper} =& new $helperCn();
 
-				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin', 'namedArgs', 'argSeparator');
+				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin');
 				$c = count($vars);
 				for ($j = 0; $j < $c; $j++) {
 					${$camelBackedHelper}->{$vars[$j]} = $this->{$vars[$j]};

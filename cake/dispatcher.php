@@ -231,7 +231,7 @@ class Dispatcher extends Object {
 			array_push($controller->helpers, $controller->webservices);
 		}
 
-		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot, 'passedArgs' => $controller->passedArgs, 'argSeparator' => $controller->argSeparator, 'namedArgs' => $controller->namedArgs, 'webservices' => $controller->webservices)));
+		Router::setRequestInfo(array($this->params, array('base' => $this->base, 'here' => $this->here, 'webroot' => $this->webroot)));
 		$controller->_initComponents();
 
 		if(isset($this->plugin)) {
