@@ -63,7 +63,7 @@ require_once CORE_PATH . 'cake' . DS . 'bootstrap.php';
 require_once CAKE . 'basics.php';
 require_once CAKE . 'config' . DS . 'paths.php';
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
-if (DEBUG < 1) {
+if (Configure::read('debug') < 1) {
 	die('Invalid url.');
 }
 

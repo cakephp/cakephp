@@ -742,7 +742,7 @@
 /**
  * Prints out debug information about given variable.
  *
- * Only runs if DEBUG level is non-zero.
+ * Only runs if debug level is non-zero.
  *
  * @param boolean $var		Variable to show debug information for.
  * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
@@ -1548,6 +1548,45 @@
 			return true;
 		} else {
 			return false;
+		}
+	}
+/**
+ * Implements http_build_query for PHP4.
+ *
+ * @param string $data Data to set in query string
+ * @param string $prefix If numeric indices, prepend this to index for elements in base array.
+ * @param string $argSep String used to separate arguments
+ * @param string $baseKey Base key
+ * @return string URL encoded query string
+ * @see http://php.net/http_build_query
+ */
+	if (!function_exists('http_build_query')) {
+		function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
+			if (empty($argSep)) {
+				$argSep = ini_get('arg_separator.output');
+			}
+			if (is_object($data)) {
+				$data = get_object_vars($data);
+			}
+			$out = array();
+
+			foreach ((array)$data as $key => $v) {
+				if (is_numeric($key) && !empty($prefix)) {
+					$key = $prefix . $key;
+				}
+				$key = urlencode($key);
+
+				if (!empty($baseKey)) {
+					$key = $baseKey . '[' . $key . ']';
+				}
+
+				if (is_array($v) || is_object($v)) {
+					$out[] = http_build_query($v, $prefix, $argSep, $key);
+				} else {
+					$out[] = $key . '=' . urlencode($v);
+				}
+			}
+			return implode($argSep, $out);
 		}
 	}
 /**

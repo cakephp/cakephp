@@ -518,20 +518,29 @@ class Set extends Object {
 			$val2 = $val1;
 			$val1 = $this->get();
 		}
+
 		if (is_object($val2) && (is_a($val2, 'set') || is_a($val2, 'Set'))) {
 			$val2 = $val2->get();
 		}
-
 		$out = array();
+
 		if (empty($val1)) {
 			return (array)$val2;
 		} elseif (empty($val2)) {
 			return (array)$val1;
 		}
+
 		foreach ($val1 as $key => $val) {
 			if (isset($val2[$key]) && $val2[$key] != $val) {
 				$out[$key] = $val;
 			} elseif (!array_key_exists($key, $val2)) {
+				$out[$key] = $val;
+			}
+			unset($val2[$key]);
+		}
+
+		foreach ($val2 as $key => $val) {
+			if (!isset($out[$key])) {
 				$out[$key] = $val;
 			}
 		}

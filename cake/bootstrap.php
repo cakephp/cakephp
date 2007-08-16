@@ -35,10 +35,10 @@ if (!defined('PHP5')) {
 	if (!isset($bootstrap)) {
 		require CORE_PATH . 'cake' . DS . 'basics.php';
 		$TIME_START = getMicrotime();
-		require APP_PATH . 'config' . DS . 'core.php';
 		require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 		require LIBS . 'object.php';
 		require LIBS . 'configure.php';
+		require APP_PATH . 'config' . DS . 'core.php';
 	}
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
@@ -62,7 +62,10 @@ if (!defined('PHP5')) {
 
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');
-	Configure::write('debug', DEBUG);
+
+	if (defined('DEBUG')) {
+		Configure::write('debug', DEBUG);
+	}
 /**
  * Check for IIS Server
  */

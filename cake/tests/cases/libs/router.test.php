@@ -376,8 +376,13 @@ class RouterTest extends UnitTestCase {
 	}
 
 	function testAdminRouting() {
-		$out = $this->router->url(array(CAKE_ADMIN => true, 'controller' => 'posts', 'action'=>'index', '0', '?' => 'var=test&var2=test2'));
-		$expected = '/' . CAKE_ADMIN . '/posts/index/0?var=test&var2=test2';
+		Configure::write('Routing.admin', 'admin');
+		$this->router->reload();
+		$this->router->parse('/');
+
+		$this->router->testing = true;
+		$out = $this->router->url(array('admin' => true, 'controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/admin/posts/index/0?var=test&var2=test2';
 		$this->assertEqual($out, $expected);
 	}
 
@@ -467,11 +472,11 @@ class RouterTest extends UnitTestCase {
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 		$result = $this->router->parse('/');
-		$expected = array('pass'=>array('home'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$expected = array('pass'=>array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/pages/home/');
-		$expected = array('pass'=>array('home'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
+		$expected = array('pass' => array('home'), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
@@ -481,6 +486,36 @@ class RouterTest extends UnitTestCase {
 
 		$expected = array('pass'=>array('contact'), 'plugin'=> null, 'controller'=>'pages', 'action'=>'display');
 		$this->assertEqual($result, $expected);
+	}
+
+	function testParsingWithPrefixes() {
+		$this->router->reload();
+		$this->router->testing = true;
+		$adminParams = array('prefix' => 'admin', 'admin' => true);
+		$this->router->connect('/admin/:controller', $adminParams);
+		$this->router->connect('/admin/:controller/:action', $adminParams);
+		$this->router->connect('/admin/:controller/:action/*', $adminParams);
+
+		$this->router->setRequestInfo(array(
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array (), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array ('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array (), 'argSeparator' => ':', 'namedArgs' => array (), 'webservices' => null)
+		));
+
+		$result = $this->router->parse('/admin/posts/');
+		$expected = array('pass' => array(), 'prefix' => 'admin', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'admin' => true);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->parse('/admin/posts');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('admin' => true, 'controller' => 'posts'));
+		$expected = '/base/admin/posts';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->prefixes();
+		$expected = array('admin');
+		$this->assertEqual($result, $expected);
+		unset($this->router->testing);
 	}
 }
 

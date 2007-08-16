@@ -645,7 +645,7 @@ class XML extends XMLNode {
 		return $data;
 	}
 /**
- * If DEBUG is on, this method echoes an error message.
+ * If debug mode is on, this method echoes an error message.
  *
  * @param string $msg Error message
  * @param int $code Error code
@@ -653,7 +653,7 @@ class XML extends XMLNode {
  * @access public
  */
 	function error($msg, $code = 0, $line = 0) {
-		if (DEBUG) {
+		if (Configure::read('debug')) {
 			echo $msg . " " . $code . " " . $line;
 		}
 	}

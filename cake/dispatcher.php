@@ -123,12 +123,10 @@ class Dispatcher extends Object {
 		if ($url !== null) {
 			$_GET['url'] = $url;
 		}
+
 		$url = $this->getUrl();
-
 		$this->here = $this->base . '/' . $url;
-
 		$this->cached($url);
-
 		$this->params = array_merge($this->parseParams($url), $additionalParams);
 
 		$controller = $this->__getController();
@@ -158,12 +156,13 @@ class Dispatcher extends Object {
 			$this->params['action'] = 'index';
 		}
 
-		if (defined('CAKE_ADMIN')) {
-			$this->admin = CAKE_ADMIN ;
-			if (isset($this->params[$this->admin])) {
-				$this->params['action'] = $this->admin.'_'.$this->params['action'];
-			} elseif (strpos($this->params['action'], $this->admin) === 0) {
-				$privateAction = true;
+		$prefixes = Router::prefixes();
+		if (!empty($prefixes)) {
+			if (isset($this->params['prefix'])) {
+				$this->params['action'] = $this->params['prefix'] . '_' . $this->params['action'];
+			} elseif (strpos($this->params['action'], '_') !== false) {
+				list($prefix, $action) = explode('_', $this->params['action']);
+				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
 

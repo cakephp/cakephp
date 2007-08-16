@@ -238,7 +238,11 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		if ($var === 'debug') {
 			if (!isset($_this->debug)) {
-				$_this->debug = DEBUG;
+				if (defined('DEBUG')) {
+					$_this->debug = DEBUG;
+				} else {
+					$_this->debug = 0;
+				}
 			}
 			return $_this->debug;
 		}
@@ -522,7 +526,15 @@ class Configure extends Object {
 		if (defined('BASE_URL')) {
 			$baseUrl = BASE_URL;
 		}
-		$_this->write('App', array('base'=> false, 'baseUrl'=> $baseUrl, 'dir'=> APP_DIR, 'webroot'=> WEBROOT_DIR));
+		$_this->write('App', array('base' => false, 'baseUrl' => $baseUrl, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
+
+		if (defined('CAKE_ADMIN')) {
+			$_this->write('Routing.admin', CAKE_ADMIN);
+		}
+		if (defined('WEBSERVICES')) {
+			$_this->write('Routing.webservices', WEBSERVICES);
+		}
+
 		$modelPaths = null;
 		$viewPaths = null;
 		$controllerPaths = null;

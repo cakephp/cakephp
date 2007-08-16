@@ -315,12 +315,13 @@ class ModelTest extends CakeTestCase {
 
 	function start() {
 		parent::start();
+		$this->debug = Configure::read('debug');
 		Configure::write('debug', 2);
 	}
 
 	function end() {
 		parent::end();
-		Configure::write('debug', DEBUG);
+		Configure::write('debug', $this->debug);
 	}
 
 	function testFindAllRecursiveSelfJoin() {

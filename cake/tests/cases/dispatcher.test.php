@@ -389,7 +389,7 @@ class DispatcherTest extends UnitTestCase {
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_controller/home/param:value/param2:value2';
 		restore_error_handler();
-		$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'missingController';
@@ -402,7 +402,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'some_pages/redirect/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'privateAction';
@@ -433,43 +433,30 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
-		$expected = array('param'=>'value', 'param2'=>'value2');
+		$expected = array('param'=>'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->namedArgs);
 	}
 
 	function testAdminDispatch() {
 		$_POST = array();
-		if (!defined('CAKE_ADMIN')) {
-			define('CAKE_ADMIN', 'admin');
-		}
 		$dispatcher =& new TestDispatcher();
+		Configure::write('Routing.admin', 'admin');
 		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = 'admin/test_dispatch_pages/index/param:value/param2:value2';
+
 		Router::reload();
 		$Router =& Router::getInstance();
-		if (defined('CAKE_ADMIN')) {
-			$admin = CAKE_ADMIN;
-			if (!empty($admin)) {
-				$Router->__admin = array(
-					'/:' . $admin . '/:controller/:action/*',
-					'/^(?:\/(?:(' . $admin . ')(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:\\/([a-zA-Z0-9_\\-\\.\\;\\:]+)(?:[\\/\\?](.*))?)?)?))[\/]*$/',
-					array($admin, 'controller', 'action'), array()
-				);
-			}
-		}
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'TestDispatchPages';
 		$this->assertEqual($expected, $controller->name);
 
-		$expected = array('param'=>'value', 'param2'=>'value2');
+		$expected = array('param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->namedArgs);
-
-		$expected = 'admin';
-		$this->assertIdentical($expected, $controller->params['admin']);
+		$this->assertTrue($controller->params['admin']);
 
 		$expected = '/cake/repo/branches/1.2.x.x/index.php/admin/test_dispatch_pages/index/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
@@ -595,6 +582,25 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = 'missingAction';
 		$this->assertIdentical($expected, $controller);
+	}
+
+	function testPrefixProtection() {
+		$_POST = array();
+		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+
+		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'), array('controller', 'action'));
+		
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+
+		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+					
+		$expected = 'privateAction';
+		$this->assertIdentical($expected, $controller);		
 	}
 
 	function tearDown() {

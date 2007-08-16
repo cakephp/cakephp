@@ -54,7 +54,7 @@
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-	define('DEBUG', 2);
+	Configure::write('debug', 2);
 /**
  * Turn off or enable cache checking application-wide.
  *
@@ -126,11 +126,14 @@
  * 'admin' 		-> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
  */
-//	define('CAKE_ADMIN', 'admin');
+//	Configure::write('Routing.admin', 'admin');
 /**
  *  Enable or disable CakePHP webservices routing. Set to 'off' or 'on'.
+ * 
+ * @deprecated
+ * @see Router::parseExtensions()
  */
-	define('WEBSERVICES', 'off');
+	Configure::write('Routing.webservices', 'off');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.

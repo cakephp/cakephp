@@ -57,6 +57,13 @@ class Router extends Object {
  */
 	var $__admin = null;
 /**
+ * List of action prefixes used in connected routes
+ *
+ * @var array
+ * @access private
+ */
+	var $__prefixes = array();
+/**
  * Directive for Router to parse out file extensions for mapping to Content-types.
  *
  * @var boolean
@@ -209,6 +216,10 @@ class Router extends Object {
 		if (!empty($default) && empty($default['action'])) {
 			$default['action'] = 'index';
 		}
+		if (isset($default['prefix'])) {
+			$_this->__prefixes[] = $default['prefix'];
+			$_this->__prefixes = array_unique($_this->__prefixes);
+		}
 		if ($route = $_this->writeRoute($route, $default, $params)) {
 			$_this->routes[] = $route;
 		}
@@ -283,6 +294,17 @@ class Router extends Object {
 			}
 			return array($route, '#^' . join('', $parsed) . '[\/]*$#', $names, $default, $params);
 		}
+	}
+/**
+ * Returns the list of prefixes used in connected routes
+ *
+ * @return array A list of prefixes used in connected routes
+ * @access public
+ * @static
+ */
+	function prefixes() {
+		$_this =& Router::getInstance();
+		return $_this->__prefixes;
 	}
 /**
  * Parses given URL and returns an array of controllers, action and parameters
@@ -419,15 +441,21 @@ class Router extends Object {
 	function __connectDefaultRoutes() {
 		$_this =& Router::getInstance();
 
-		if (defined('CAKE_ADMIN') && $_this->__admin != null) {
-			$_this->routes[] = $_this->__admin;
-			$_this->__admin = null;
+		if ($admin = Configure::read('Routing.admin')) {
+			$params = array('prefix' => $admin, $admin => true);
+			$_this->connect("/{$admin}/:controller", $params);
+			$_this->connect("/{$admin}/:controller/:action/*", $params);
 		}
 		$_this->connect('/:controller', array('action' => 'index'));
+
+		/**
+		 * Deprecated
+		 *
+		 */
 		$_this->connect('/bare/:controller/:action/*', array('bare' => '1'));
 		$_this->connect('/ajax/:controller/:action/*', array('bare' => '1'));
 
-		if (defined('WEBSERVICES') && WEBSERVICES == 'on') {
+		if (Configure::read('Routing.webservices') == 'on') {
 			trigger_error('Deprecated: webservices routes are deprecated and will not be supported in future versions.  Use Router::parseExtensions() instead.', E_USER_WARNING);
 			$_this->connect('/rest/:controller/:action/*', array('webservices' => 'Rest'));
 			$_this->connect('/rss/:controller/:action/*', array('webservices' => 'Rss'));
@@ -441,9 +469,14 @@ class Router extends Object {
 		$plugins = array_map(array(&$Inflector, 'underscore'), Configure::listObjects('plugin'));
 
 		if(!empty($plugins)) {
+			$match = array('plugin' => implode('|', $plugins));
 			$_this->connect('/:plugin/:controller/:action/*', array('action' => 'index'), array('plugin' => implode('|', $plugins)));
-			array_unshift($_this->routes, $_this->routes[count($_this->routes) - 1]);
-			unset($_this->routes[count($_this->routes) - 1]);
+			$_this->promote();
+
+			if ($admin) {
+				$_this->connect("/{$admin}/:plugin/:controller/:action/*", am($params, array('action' => 'index')), $match);
+				$_this->promote();
+			}
 		}
 	}
 /**
@@ -520,6 +553,27 @@ class Router extends Object {
 		}
 	}
 /**
+ * Promote a route (by default, the last one added) to the beginning of the list
+ *
+ * @param $which A zero-based array index representing the route to move. For example,
+ *               if 3 routes have been added, the last route would be 2.
+ * @return boolean Retuns false if no route exists at the position specified by $which.
+ * @access public
+ * @static
+ */
+	function promote($which = null) {
+		$_this =& Router::getInstance();
+		if ($which == null) {
+			$which = count($_this->routes) - 1;
+		}
+		if (!isset($_this->routes[$which])) {
+			return false;
+		}
+		array_unshift($_this->routes, $_this->routes[$which]);
+		unset($_this->routes[$which]);
+		return true;
+	}
+/**
  * Finds URL for specified action.
  *
  * Returns an URL pointing to a combination of controller and action. Param
@@ -544,8 +598,6 @@ class Router extends Object {
 		if (!empty($_this->__params)) {
 			if (isset($this) && !isset($this->params['requested'])) {
 				$params = $_this->__params[0];
-			} elseif (isset($this) && isset($this->params['requested'])) {
-				$params = end($_this->__params);
 			} else {
 				$params = end($_this->__params);
 			}
@@ -693,6 +745,8 @@ class Router extends Object {
  */
 	function mapRouteElements($route, $url) {
 		$_this =& Router::getInstance();
+		unset($route[3]['prefix']);
+
 		$defaults = $route[3];
 		$params = Set::diff($url, $defaults);
 		$routeParams = $route[2];
@@ -706,9 +760,6 @@ class Router extends Object {
 		}
 
 		if (!strpos($route[0], '*') && !empty($pass)) {
-			return false;
-		}
-		if (defined('CAKE_ADMIN') && isset($params[CAKE_ADMIN])) {
 			return false;
 		}
 		if (!empty($params)) {
@@ -725,19 +776,11 @@ class Router extends Object {
 			 	return false;
 			}
 
-			if (isset($_this->testing)) {
-				pr($defaults);
-				pr($url);
-				pr($params);
-				pr($required);
-			}
-
 			foreach ($defaults as $key => $val) {
 				if ($url[$key] != $val && !in_array($key, $routeParams)) {
 					return false;
 				}
 			}
-
 			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
 
 			if (array_keys($filled) != $routeParams) {
@@ -750,10 +793,6 @@ class Router extends Object {
 			return false;
 		}
 
-		if (!empty($route[3]['controller']) && $url['controller'] != $route[3]['controller']) {
-			return false;
-		}
-
 		if (!empty($route[4])) {
 			foreach ($route[4] as $key => $reg) {
 				if (isset($url[$key]) && !preg_match('/' . $reg . '/', $url[$key])) {
@@ -761,7 +800,6 @@ class Router extends Object {
 				}
 			}
 		}
-
 		return array(Router::__mapRoute($route, am($url, compact('pass'))), $url);
 	}
 /**
@@ -980,43 +1018,4 @@ class Router extends Object {
 	}
 }
 
-if (!function_exists('http_build_query')) {
-/**
- * Implements http_build_query for PHP4.
- *
- * @param string $data Data to set in query string
- * @param string $prefix If numeric indices, prepend this to index for elements in base array.
- * @param string $argSep String used to separate arguments
- * @param string $baseKey Base key
- * @return string URL encoded query string
- * @see http://php.net/http_build_query
- */
-	function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
-		if (empty($argSep)) {
-			$argSep = ini_get('arg_separator.output');
-		}
-		if (is_object($data)) {
-			$data = get_object_vars($data);
-		}
-		$out = array();
-
-		foreach ((array)$data as $key => $v) {
-			if (is_numeric($key) && !empty($prefix)) {
-				$key = $prefix . $key;
-			}
-			$key = urlencode($key);
-
-			if (!empty($baseKey)) {
-				$key = $baseKey . '[' . $key . ']';
-			}
-
-			if (is_array($v) || is_object($v)) {
-				$out[] = http_build_query($v, $prefix, $argSep, $key);
-			} else {
-				$out[] = $key . '=' . urlencode($v);
-			}
-		}
-		return implode($argSep, $out);
-	}
-}
 ?>
