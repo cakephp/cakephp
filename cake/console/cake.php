@@ -206,36 +206,33 @@ class ShellDispatcher {
 		define('ROOT', $this->params['root']);
 		define('APP_DIR', $this->params['app']);
 		define('APP_PATH', ROOT . DS . APP_DIR . DS);
+		define('WWW_ROOT', 'webroot');
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'basics.php',
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 		);
 
-		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			$includes[] = CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
-		} else {
-			$includes[] = APP_PATH . 'config' . DS . 'core.php';
-		}
-
 		foreach ($includes as $inc) {
-			if (!@include_once($inc)) {
+			if (!require($inc)) {
 				$this->stderr("Failed to load Cake core file {$inc}");
 				return false;
 			}
 		}
 
-		$libraries = array('object', 'session', 'configure', 'inflector', 'model'.DS.'connection_manager',
-							'debugger', 'security', 'controller' . DS . 'controller');
-		foreach ($libraries as $inc) {
-			if (!file_exists(LIBS . $inc . '.php')) {
-				$this->stderr("Failed to load Cake core class " . ucwords($inc));
-				$this->stderr("(" . LIBS.$inc.".php)");
-				return false;
-			}
-			uses($inc);
-		}
 		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
+
+		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
+			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'libs' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+		} else {
+			include_once APP_PATH . 'config' . DS . 'core.php';
+		}
+
+		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php';
+		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php';
+
 		Configure::write('debug', 1);
 		return true;
 	}
