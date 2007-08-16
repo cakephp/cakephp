@@ -53,9 +53,9 @@
 	}
 	require CORE_PATH . 'cake' . DS . 'basics.php';
 	$TIME_START = getMicrotime();
-	require APP_PATH . 'config' . DS . 'core.php';
 	require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 	require LIBS . 'object.php';
+	require LIBS . 'inflector.php';
 	require LIBS . 'configure.php';
 
 	$bootstrap = true;

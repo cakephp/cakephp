@@ -37,13 +37,13 @@ if (!defined('PHP5')) {
 		$TIME_START = getMicrotime();
 		require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 		require LIBS . 'object.php';
+		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
-		require APP_PATH . 'config' . DS . 'core.php';
 	}
+	require APP_PATH . 'config' . DS . 'core.php';
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
-	require LIBS . 'inflector.php';
 
 	if (isset($cakeCache)) {
 		$cache = 'File';
