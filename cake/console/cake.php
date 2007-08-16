@@ -212,6 +212,7 @@ class ShellDispatcher {
 			CORE_PATH . 'cake' . DS . 'basics.php',
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
+		 	CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
 		);
 
@@ -230,7 +231,6 @@ class ShellDispatcher {
 			include_once APP_PATH . 'config' . DS . 'core.php';
 		}
 
-		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php';
 		require CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php';
 
 		Configure::write('debug', 1);
