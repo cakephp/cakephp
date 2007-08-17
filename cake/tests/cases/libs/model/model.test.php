@@ -385,7 +385,7 @@ class ModelTest extends CakeTestCase {
 						'id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
 						'Message' => array(
 							array(
-								'id' => 1, 'thread' => 1, 'name' => 'Thread 1, Message 1',
+								'id' => 1, 'thread_id' => 1, 'name' => 'Thread 1, Message 1',
 								'Bid' => array(
 									'id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1'
 								)
@@ -396,7 +396,7 @@ class ModelTest extends CakeTestCase {
 						'id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
 						'Message' => array(
 							array(
-								'id' => 2, 'thread' => 2, 'name' => 'Thread 2, Message 1',
+								'id' => 2, 'thread_id' => 2, 'name' => 'Thread 2, Message 1',
 								'Bid' => array(
 									'id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1'
 								)
@@ -414,7 +414,7 @@ class ModelTest extends CakeTestCase {
 						'id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
 						'Message' => array(
 							array(
-								'id' => 3, 'thread' => 3, 'name' => 'Thread 3, Message 1',
+								'id' => 3, 'thread_id' => 3, 'name' => 'Thread 3, Message 1',
 								'Bid' => array(
 									'id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1'
 								)
