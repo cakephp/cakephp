@@ -448,6 +448,13 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
 	}
 
+	function testRadio() {
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'));
+		$this->assertPattern('/id="field_0"/', $result);
+		$this->assertPattern('/id="field_1"/', $result);
+		$this->assertNoPattern('/id="ModelField"/', $result);
+	}
+
 	function testSelect() {
 		$result = $this->Form->select('Model.field', array());
 		$this->assertPattern('/^<select [^<>]+>\n<option [^<>]+>/', $result);

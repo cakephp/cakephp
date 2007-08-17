@@ -730,6 +730,10 @@ class FormHelper extends AppHelper {
 			unset($attributes['type']);
 		}
 
+		if (isset($attributes['id'])) {
+			unset($attributes['id']);
+		}
+
 		$value = isset($attributes['value']) ? $attributes['value'] : $this->value($fieldName);
 		$out = array();
 
