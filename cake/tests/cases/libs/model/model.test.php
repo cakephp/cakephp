@@ -31,6 +31,11 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 uses('model'.DS.'model', 'model'.DS.'datasources'.DS.'datasource', 'model'.DS.'datasources'.DS.'dbo_source',
 	'model'.DS.'datasources'.DS.'dbo'.DS.'dbo_mysql');
+
+if (!class_exists('AppModel')) {
+	loadModel();
+}
+
 /**
  * Short description for class.
  *
@@ -305,12 +310,53 @@ class Author extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
+class Project extends CakeTestModel {
+	var $name = 'Project';
+	var $hasMany = array('Thread');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Thread extends CakeTestModel {
+	var $name = 'Thread';
+	var $hasMany = array('Message');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Message extends CakeTestModel {
+	var $name = 'Message';
+	var $hasOne = array('Bid');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class Bid extends CakeTestModel {
+	var $name = 'Bid';
+	var $belongsTo = array('Message');
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
 class ModelTest extends CakeTestCase {
 
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
-		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author'
+		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
+		'core.project', 'core.thread', 'core.message', 'core.bid'
 	);
 
 	function start() {
@@ -322,6 +368,72 @@ class ModelTest extends CakeTestCase {
 	function end() {
 		parent::end();
 		Configure::write('debug', $this->debug);
+	}
+
+	function testHasManyOptimization() {
+		$this->Project =& new Project();
+
+		$this->Project->recursive = 3;
+		$result = $this->Project->findAll();
+		$expected = array(
+			array(
+				'Project' => array(
+					'id' => 1, 'name' => 'Project 1'
+				),
+				'Thread' => array(
+					array(
+						'id' => 1, 'project_id' => 1, 'name' => 'Project 1, Thread 1',
+						'Message' => array(
+							array(
+								'id' => 1, 'thread' => 1, 'name' => 'Thread 1, Message 1',
+								'Bid' => array(
+									'id' => 1, 'message_id' => 1, 'name' => 'Bid 1.1'
+								)
+							)
+						)
+					),
+					array(
+						'id' => 2, 'project_id' => 1, 'name' => 'Project 1, Thread 2',
+						'Message' => array(
+							array(
+								'id' => 2, 'thread' => 2, 'name' => 'Thread 2, Message 1',
+								'Bid' => array(
+									'id' => 4, 'message_id' => 2, 'name' => 'Bid 2.1'
+								)
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Project' => array(
+					'id' => 2, 'name' => 'Project 2'
+				),
+				'Thread' => array(
+					array(
+						'id' => 3, 'project_id' => 2, 'name' => 'Project 2, Thread 1',
+						'Message' => array(
+							array(
+								'id' => 3, 'thread' => 3, 'name' => 'Thread 3, Message 1',
+								'Bid' => array(
+									'id' => 3, 'message_id' => 3, 'name' => 'Bid 3.1'
+								)
+							)
+						)
+					)
+				)
+			),
+			array(
+				'Project' => array(
+					'id' => 3, 'name' => 'Project 3'
+				),
+				'Thread' => array()
+			)
+		);
+
+		$this->assertEqual($result, $expected);
+
+		unset($this->Project);
 	}
 
 	function testFindAllRecursiveSelfJoin() {
