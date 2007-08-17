@@ -453,6 +453,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="field_0"/', $result);
 		$this->assertPattern('/id="field_1"/', $result);
 		$this->assertNoPattern('/id="ModelField"/', $result);
+		$this->assertNoPattern('/checked="checked"/', $result);
 	}
 
 	function testSelect() {
