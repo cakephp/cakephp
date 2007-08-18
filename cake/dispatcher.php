@@ -313,8 +313,9 @@ class Dispatcher extends Object {
  */
 	function start(&$controller) {
 		if (!empty($controller->beforeFilter)) {
-			if (is_array($controller->beforeFilter)) {
+			trigger_error(sprintf(__('Dispatcher::start - Controller::$beforeFilter property usage is deprecated and will no longer be supported.  Use Controller::beforeFilter().', true)), E_USER_WARNING);
 
+			if (is_array($controller->beforeFilter)) {
 				foreach ($controller->beforeFilter as $filter) {
 					if (is_callable(array($controller,$filter)) && $filter != 'beforeFilter') {
 						$controller->$filter();
