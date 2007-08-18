@@ -26,6 +26,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('controller'.DS.'controller');
 /**
  * Task class for creating and updating view files.
  *
@@ -220,7 +221,8 @@ class ViewTask extends Shell {
 		if (!$this->controllerName) {
 			$this->err('could not find the controller');
 		}
-
+		
+		$controllerClassName = $this->controllerName . 'Controller';
 		if (!class_exists($this->controllerName . 'Controller') && !loadController($this->controllerName)) {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
 			$shortPath = $this->shortPath($file);
@@ -228,7 +230,6 @@ class ViewTask extends Shell {
 			exit();
 		}
 
-		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj = & new $controllerClassName();
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
