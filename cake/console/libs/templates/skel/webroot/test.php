@@ -65,7 +65,7 @@ if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 
 if (Configure::read('debug') < 1) {
-	die('Debug setting does not all access to this url.');
+	die(__('Debug setting does not allow access to this url.', true));
 }
 
 if (!isset($_SERVER['SERVER_NAME'])) {
