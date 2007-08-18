@@ -282,16 +282,16 @@ class DB_ACL extends AclBase {
 		for ($i = count($aroPath) - 1; $i >= 0; $i--) {
 			$perms = $this->Aro->Permission->findAll(
 				array(
-					'Permission.aro_id' => $aroPath[$i]['Aro']['id'],
-					'Permission.aco_id' => $acoPath->extract('{n}.Aco.id')
+					$this->Aro->Permission->name . '.aro_id' => $aroPath[$i][$this->Aro->name]['id'],
+					$this->Aro->Permission->name . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->name . '.id')
 				),
-				null, array('Aco.lft' => 'desc'), null, null, 0
+				null, array($this->Aco->name .'.lft' => 'desc'), null, null, 0
 			);
 
 			if (empty($perms)) {
 				continue;
 			} else {
-				foreach (Set::extract($perms, '{n}.Permission') as $perm) {
+				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->name) as $perm) {
 					if ($action == '*') {
 						// ARO must be cleared for ALL ACO actions
 						foreach ($permKeys as $key) {
@@ -335,7 +335,7 @@ class DB_ACL extends AclBase {
 		}
 
 		if (isset($perms[0])) {
-			$save = $perms[0]['Permission'];
+			$save = $perms[0][$this->Aro->Permission->name];
 		}
 
 		if ($actions == "*") {
@@ -365,7 +365,7 @@ class DB_ACL extends AclBase {
 		$save['aco_id'] = $perms['aco'];
 
 		if ($perms['link'] != null && count($perms['link']) > 0) {
-			$save['id'] = $perms['link'][0]['Permission']['id'];
+			$save['id'] = $perms['link'][0][$this->Aro->Permission->name]['id'];
 		}
 		$this->Aro->Permission->create($save);
 		return $this->Aro->Permission->save();
@@ -439,11 +439,11 @@ class DB_ACL extends AclBase {
 		}
 
 		return array(
-			'aro' => Set::extract($obj, 'Aro.0.Aro.id'),
-			'aco'  => Set::extract($obj, 'Aco.0.Aco.id'),
+			'aro' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
+			'aco'  => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id'),
 			'link' => $this->Aro->Permission->findAll(array(
-				'Permission.aro_id' => Set::extract($obj, 'Aro.0.Aro.id'),
-				'Permission.aco_id' => Set::extract($obj, 'Aco.0.Aco.id')
+				$this->Aro->Permission->name . '.aro_id' => Set::extract($obj, 'Aro.0.'.$this->Aro->name.'.id'),
+				$this->Aro->Permission->name . '.aco_id' => Set::extract($obj, 'Aco.0.'.$this->Aco->name.'.id')
 			))
 		);
 	}

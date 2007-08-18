@@ -26,10 +26,95 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('controller' . DS . 'components' . DS .'auth');
+uses('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl');
 
+uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class AclNodeTestBase extends AclNode {
+	var $useDbConfig = 'test_suite';
+}
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class AroTest extends AclNodeTestBase {
+	var $name = 'AroTest';
+	var $useTable = 'aros';
+	var $hasAndBelongsToMany = array('AcoTest' => array('with' => 'PermissionTest'));
+}
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class AcoTest extends AclNodeTestBase {
+	var $name = 'AcoTest';
+	var $useTable = 'acos';
+	var $hasAndBelongsToMany = array('AroTest' => array('with' => 'PermissionTest'));
+}
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class PermissionTest extends CakeTestModel {
+	var $name = 'PermissionTest';
+	var $useTable = 'aros_acos';
+	var $cacheQueries = false;
+	var $belongsTo = array('AroTest' => array('foreignKey' => 'aro_id'),
+							'AcoTest' => array('foreignKey' => 'aco_id')
+							);
+	var $actsAs = null;
+}
+
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class AcoActionTest extends CakeTestModel {
+	var $name = 'AcoActionTest';
+	var $useTable = 'aco_actions';
+	var $belongsTo = array('AcoTest' => array('foreignKey' => 'aco_id'));
+}
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
+class DB_ACL_TEST extends DB_ACL {
+
+	function __construct() {
+		$this->Aro =& new AroTest();
+		$this->Aro->Permission =& new PermissionTest();
+		$this->Aco =& new AcoTest();
+		$this->Aro->Permission =& new PermissionTest();
+	}
+}
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class AuthUser extends CakeTestModel {
 	var $name = 'AuthUser';
+	var $useDbConfig = 'test_suite';
 
 	function parentNode() {
 		return true;
@@ -46,7 +131,12 @@ class AuthUser extends CakeTestModel {
 		return false;
 	}
 }
-
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class AuthTestController extends Controller {
 	var $name = 'AuthTest';
 	var $uses = array('AuthUser');
@@ -82,14 +172,16 @@ class AuthTestController extends Controller {
 		return true;
 	}
 }
-
+/**
+* Short description for class.
+*
+* @package		cake.tests
+* @subpackage	cake.tests.cases.libs.controller.components
+*/
 class AuthTest extends CakeTestCase {
 	var $name = 'Auth';
-	var $fixtures = array('core.auth_user', 'core.aco', 'core.aro', 'core.aros_aco');
 
-	function skip() {
-		$this->skipif (true, 'Auth tests currently disabled, to test use a clean database with tables needed for acl and comment out this line');
-	}
+	var $fixtures = array('core.auth_user', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
 	function setUp() {
 		$this->Controller =& new AuthTestController();
@@ -97,9 +189,6 @@ class AuthTest extends CakeTestCase {
 		@$this->Controller->_initComponents();
 		set_error_handler('simpleTestErrorHandler');
 		ClassRegistry::addObject('view', new View($this->Controller));
-	}
-	function testIt(){
-		$this->assertTrue(true);
 	}
 
 	function testNoAuth() {
@@ -184,22 +273,33 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['controller'] = 'auth_test';
 		$this->Controller->params['action'] = 'add';
 
+		$this->Controller->Acl->name = 'DB_ACL_TEST';
 		$this->Controller->Acl->startup($this->Controller);
 
 		$this->Controller->Acl->Aro->id = null;
 		$this->Controller->Acl->Aro->create(array('alias'=>'Roles'));
-		$this->Controller->Acl->Aro->save();
+		$result = $this->Controller->Acl->Aro->save();
+		$this->assertTrue($result);
+
 		$this->Controller->Acl->Aro->create(array('alias'=>'Admin'));
-		$this->Controller->Acl->Aro->save();
+		$result = $this->Controller->Acl->Aro->save();
+		$this->assertTrue($result);
+
 		$this->Controller->Acl->Aro->create(array('model'=>'AuthUser', 'foreign_key'=>'1', 'alias'=> 'mariano'));
-		$this->Controller->Acl->Aro->save();
+		$result = $this->Controller->Acl->Aro->save();
+		$this->assertTrue($result);
+
 		$this->Controller->Acl->Aro->setParent(1, 2);
 		$this->Controller->Acl->Aro->setParent(2, 3);
 
 		$this->Controller->Acl->Aco->create(array('alias'=>'Root'));
-		$this->Controller->Acl->Aco->save();
+		$result = $this->Controller->Acl->Aco->save();
+		$this->assertTrue($result);
+
 		$this->Controller->Acl->Aco->create(array('alias'=>'AuthTest'));
-		$this->Controller->Acl->Aco->save();
+		$result = $this->Controller->Acl->Aco->save();
+		$this->assertTrue($result);
+
 		$this->Controller->Acl->Aco->setParent(1, 2);
 
 		$this->Controller->Acl->allow('Roles/Admin', 'Root');
@@ -218,9 +318,9 @@ class AuthTest extends CakeTestCase {
 
 
 		$this->Controller->Session->del('Auth');
-		$this->Controller->Acl->Aro->execute('truncate aros;');
-		$this->Controller->Acl->Aro->execute('truncate acos;');
-		$this->Controller->Acl->Aro->execute('truncate aros_acos;');
+		//$this->Controller->Acl->Aro->execute('truncate aros;');
+		//$this->Controller->Acl->Aro->execute('truncate acos;');
+		//$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
 
 	function testLoginRedirect() {
@@ -255,6 +355,30 @@ class AuthTest extends CakeTestCase {
         $_SERVER['HTTP_REFERER'] = $backup;
     }
 
+	function testEmptyUsernameOrPassword() {
+		$this->AuthUser =& new AuthUser();
+		$user['id'] = 1;
+		$user['username'] = 'mariano';
+		$user['password'] = Security::hash(CAKE_SESSION_STRING . 'cake');
+		$this->AuthUser->save($user, false);
+
+		$authUser = $this->AuthUser->find();
+
+		$this->Controller->data['AuthUser']['username'] = '';
+		$this->Controller->data['AuthUser']['password'] = '';
+
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$this->assertEqual($user, false);
+		$this->Controller->Session->del('Auth');
+    }
 
 	function tearDown() {
 		unset($this->Controller, $this->AuthUser);
