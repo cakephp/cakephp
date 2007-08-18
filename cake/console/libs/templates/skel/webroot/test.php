@@ -59,12 +59,13 @@ if (!defined('CORE_PATH')) {
 }
 
 ini_set('display_errors', 1);
-require_once CORE_PATH . 'cake' . DS . 'bootstrap.php';
-require_once CAKE . 'basics.php';
-require_once CAKE . 'config' . DS . 'paths.php';
+if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
+	trigger_error("Can't find CakePHP core.  Check the value of CAKE_CORE_INCLUDE_PATH in app/webroot/test.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
+}
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
+
 if (Configure::read('debug') < 1) {
-	die('Invalid url.');
+	die('Debug setting does not all access to this url.');
 }
 
 if (!isset($_SERVER['SERVER_NAME'])) {
