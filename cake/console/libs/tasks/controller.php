@@ -318,10 +318,10 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
-			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." saved');\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
-			$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." saved.', array('action'=>'index'));\n";
+			$actions .= "\t\t\t\t\$this->flash('The ".$singularHumanName." has been saved.', array('action'=>'index'));\n";
 			$actions .= "\t\t\t\texit();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
