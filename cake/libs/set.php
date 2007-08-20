@@ -115,8 +115,7 @@ class Set extends Object {
  */
 	function filter($var, $isArray = false) {
 		if (is_array($var) && (!empty($var) || $isArray)) {
-			$set = new Set();
-			return array_filter($var, array(&$set, 'filter'));
+			return array_filter($var, array('Set', 'filter'));
 		} else {
 			if ($var === 0 || $var === '0' || !empty($var)) {
 				return true;
@@ -531,7 +530,7 @@ class Set extends Object {
 		}
 
 		foreach ($val1 as $key => $val) {
-			if (isset($val2[$key]) && $val2[$key] != $val) {
+			if (array_key_exists($key, $val2) && $val2[$key] != $val) {
 				$out[$key] = $val;
 			} elseif (!array_key_exists($key, $val2)) {
 				$out[$key] = $val;
@@ -540,7 +539,7 @@ class Set extends Object {
 		}
 
 		foreach ($val2 as $key => $val) {
-			if (!isset($out[$key])) {
+			if (!array_key_exists($key, $out)) {
 				$out[$key] = $val;
 			}
 		}

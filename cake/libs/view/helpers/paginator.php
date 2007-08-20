@@ -267,7 +267,7 @@ class PaginatorHelper extends AppHelper {
 
 		$obj = isset($options['update']) ? 'Ajax' : 'Html';
 		$url = am(array('page' => $this->current($model)), $url);
-		return $this->{$obj}->link($title, $url, $options);
+		return $this->{$obj}->link($title, Set::filter($url, true), $options);
 	}
 /**
  * Protected method for generating prev/next links

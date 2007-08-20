@@ -83,6 +83,7 @@ class PaginatorTest extends UnitTestCase {
 
 	function testSortLinks() {
 		Router::reload();
+		Router::parse('/');
 		Router::setRequestInfo(array(
 			array ('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
 			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
