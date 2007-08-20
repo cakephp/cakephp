@@ -786,12 +786,27 @@ class Router extends Object {
 		if (!strpos($route[0], '*') && (!empty($pass) || !empty($named))) {
 			return false;
 		}
+
+		$urlKeys = array_keys($url);
+		$paramsKeys = array_keys($params);
+		$defaultsKeys = array_keys($defaults);
+
 		if (!empty($params)) {
-			if (array_diff(array_keys($params), $routeParams) != array()) {
+			if (array_diff($paramsKeys, $routeParams) != array()) {
 				return false;
 			}
-			$required = array_diff(array_keys($defaults), array_keys($url));
+			$required = array_diff($defaultsKeys, $urlKeys);
 		}
+
+		$isFilled = true;
+		if (!empty($routeParams)) {
+			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
+			$isFilled = (array_diff($routeParams, array_keys($filled)) == array());
+			if (!$isFilled && empty($params)) {
+				return false;
+			}
+		}
+
 		if (empty($params)) {
 			return Router::__mapRoute($route, am($url, compact('pass', 'named', 'prefix')));
 		} elseif (!empty($routeParams) && !empty($route[3])) {
@@ -802,11 +817,6 @@ class Router extends Object {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
 					return false;
 				}
-			}
-			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
-
-			if (array_diff(array_keys($filled), $routeParams) != array()) {
-				return false;
 			}
 		} else {
 			if (empty($required) && $defaults['plugin'] == $url['plugin'] && $defaults['controller'] == $url['controller'] && $defaults['action'] == $url['action']) {

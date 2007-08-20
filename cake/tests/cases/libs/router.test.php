@@ -326,6 +326,27 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('admin' => true, 'controller' => 'users', 'action' => 'login'));
 		$expected = '/admin/users/login';
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->parse('/');
+
+		$this->router->connect('/kalender/:month/:year/*',
+			array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'),
+			array('month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}')
+		);
+
+		$this->router->connect('/kalender/*', array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'));
+				  
+		$this->router->testing = true;
+		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'min-forestilling'));		
+		unset($this->router->testing);
+		$expected = '/kalender/min-forestilling';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10, 'min-forestilling'));		
+		$expected = '/kalender/10/2007/min-forestilling';
+		$this->assertEqual($result, $expected);
+		
 		
 	}
 
