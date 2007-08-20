@@ -44,6 +44,7 @@ if (!defined('PHP5')) {
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
+	require LIBS . 'string.php';
 
 	if (isset($cakeCache)) {
 		$cache = 'File';

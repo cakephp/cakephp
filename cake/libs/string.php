@@ -3,7 +3,6 @@
 /**
  * String handling methods.
  *
- * Random passwords, splitting strings into arrays, removing Cyrillic characters, stripping whitespace.
  *
  * PHP versions 4 and 5
  *
@@ -29,68 +28,67 @@
 /**
  * String handling methods.
  *
- * Random passwords, splitting strings into arrays, removing Cyrillic characters, stripping whitespace.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class NeatString{
+class String extends Object {
 /**
- * Returns an array with each of the non-empty characters in $string as an element.
+ * Gets a reference to the String object instance
  *
- * @param string $string String to split
- * @return array An array where each element is a non empty character
+ * @return object String instance
  * @access public
  * @static
  */
-	function toArray($string) {
-		$split = preg_split('//', $string, -1, PREG_SPLIT_NO_EMPTY);
-		return $split;
-	}
-/**
- * Returns string with Cyrillic characters translated to Roman ones.
- *
- * @param string $string String to translate
- * @return string String with cyrillic chracters translated
- * @access public
- * @static
- */
-	function toRoman($string) {
-		$pl = array('ą','ć','ę','ł','ń','ó','ś','ź','ż','Ą','Ć','Ę','�?','Ń','Ó','Ś','Ź','Ż');
-		$ro = array('a','c','e','l','n','o','s','z','z','A','C','E','L','N','O','S','Z','Z');
-		$replace = str_replace($pl, $ro, $string);
-		return $replace;
-	}
-/**
- * Returns string as lowercase with whitespace removed.
- *
- * @param string $string String to convert
- * @return string Converted string
- * @access public
- * @static
- */
-	function toCompressed($string) {
-		$whitespace = array("\n", "	", "\r", "\0", "\x0B", " ");
-		$replace = strtolower(str_replace($whitespace, '', $string));
-		return $replace;
-	}
-/**
- * Returns a random password.
- *
- * @param integer $length Length of generated password
- * @param string $available_chars List of characters to use in password
- * @return string Generated password
- * @access public
- * @static
- */
-	function randomPassword($length, $available_chars = 'ABDEFHKMNPRTWXYABDEFHKMNPRTWXY23456789') {
-		$chars = preg_split('//', $available_chars, -1, PREG_SPLIT_NO_EMPTY);
-		$char_count = count($chars);
-		$out = '';
-		for ($ii = 0; $ii < $length; $ii++) {
-			$out .= $chars[rand(1, $char_count)-1];
+	function &getInstance() {
+		static $instance = array();
+
+		if (!isset($instance[0]) || !$instance[0]) {
+			$instance[0] =& new String();
 		}
-		return $out;
+		return $instance[0];
+	}
+/**
+ * Generate a random UUID
+ *
+ * @see http://www.ietf.org/rfc/rfc4122.txt
+ * @return RFC 4122 UUID
+ * @static
+ */
+	function uuid() {
+		$node = env('SERVER_ADDR');
+
+		if(empty($node)) {
+			$host = env('HOSTNAME');
+
+			if (empty($host)) {
+				$host = env('HOST');
+			}
+
+			if (empty($host)) {
+				$node = ip2long('127.0.0.1');
+			} else {
+				$ip = gethostbyname($host);
+				if ($ip === $host) {
+					$node = crc32($host);
+				} else {
+					$node = ip2long($ip);
+				}
+			}
+		} else {
+			$node = ip2long($node);
+		}
+
+		if (function_exists('zend_thread_id')) {
+			$pid = zend_thread_id();
+		} else {
+			$pid = getmypid();
+		}
+
+		list($timeMid, $timeLow) = explode(' ', microtime());
+		$uuid = sprintf("%08x-%04x-%04x-%02x%02x-%04x%08x", (int)$timeLow, (int)substr($timeMid, 2) & 0xffff,
+					mt_rand(0, 0xfff) | 0x4000, mt_rand(0, 0x3f) | 0x80, mt_rand(0, 0xff), $pid, $node);
+		return $uuid;
 	}
 }
 ?>

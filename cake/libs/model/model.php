@@ -1048,6 +1048,16 @@ class Model extends Overloadable {
 					$success = false;
 				}
 			} else {
+				foreach ($this->_tableInfo->value as $key => $value) {
+					if(in_array($this->primaryKey, $value)) {
+						if($this->_tableInfo->value[$key]['type'] === 'string' && $this->_tableInfo->value[$key]['length'] === 36) {
+							$fields[] = $this->primaryKey;
+							$values[] = String::uuid();
+						}
+						break;
+					}
+				}
+
 				if (!$db->create($this, $fields, $values)) {
 					$success = $created = false;
 				} else {

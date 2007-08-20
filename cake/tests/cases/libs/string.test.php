@@ -26,17 +26,31 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-uses('neat_string');
+uses('string');
 /**
  * Short description for class.
  *
  * @package    cake.tests
  * @subpackage cake.tests.cases.libs
  */
-class NeatStringTest extends UnitTestCase {
+class StringTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (true, 'NeatString not implemented');
+	function testUuidGeneration() {
+		$result = String::uuid();
+		$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
+		$this->assertTrue($match);
+	}
+
+	function testMultipleUuidGeneration() {
+		$check = array();
+		$count = rand(10, 1000);
+		for($i = 0; $i < $count; $i++) {
+			$result = String::uuid();
+			$match = preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/", $result);
+			$this->assertTrue($match);
+			$this->assertFalse(in_array($result, $check));
+			$check[] = $result;
+		}
 	}
 }
 ?>
