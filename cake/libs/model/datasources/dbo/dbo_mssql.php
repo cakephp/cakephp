@@ -354,7 +354,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message($this->connection);
 
 		if ($error) {
-			if (strpos('changed database', low($error)) !== false) {
+			if (strpos(low($error), 'changed database') === false) {
 				return $error;
 			}
 		}
