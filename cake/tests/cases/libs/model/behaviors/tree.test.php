@@ -41,7 +41,7 @@ class NumberTree extends CakeTestModel {
 	function __initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
 			$this->deleteAll('1=1');
-			$this->save(array('NumberTree' => array('name' => '1. Root')));
+			$this->save(array($this->name => array('name' => '1. Root')));
 			$this->__initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
 			$this->create(array());
 		}
@@ -56,11 +56,11 @@ class NumberTree extends CakeTestModel {
 
 		for ($i = 1; $i <= $childLimit; $i++) {
 			$name = $prefix . '.' . $i;
-			$data = array('NumberTree' => array('name' => $name));
+			$data = array($this->name => array('name' => $name));
 			$this->create($data);
 
 			if ($hierachial) {
-				$data['NumberTree']['parent_id'] = $parent_id;
+				$data[$this->name]['parent_id'] = $parent_id;
 			}
 			$this->save($data);
 			$this->__initialize($levelLimit, $childLimit, $currentLevel + 1, $this->id, $name, $hierachial);
@@ -252,7 +252,7 @@ class NumberTreeCase extends CakeTestCase {
 		$this->NumberTree->id= $data['NumberTree']['id'];
 		$this->NumberTree->saveField('parent_id', $parent_id);
 		//$this->NumberTree->setparent($parent_id);
-		$direct = $this->NumberTree->children($parent_id, true);
+		$direct = $this->NumberTree->children($parent_id, true, array('id', 'name', 'parent_id', 'lft', 'rght'));
 		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 5)),
 						array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 6, 'rght' => 11)),
 						array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 1, 'lft' => 12, 'rght' => 13)));
@@ -666,18 +666,18 @@ class NumberTreeCase extends CakeTestCase {
 		$data = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
 		$this->NumberTree->id= $data['NumberTree']['id'];
 
-		$direct = $this->NumberTree->children(null, true);
+		$direct = $this->NumberTree->children(null, true, array('id', 'name', 'parent_id', 'lft', 'rght'));
 		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
 					array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)));
 		$this->assertEqual($direct, $expects);
 
+		$total = $this->NumberTree->children(null, null, array('id', 'name', 'parent_id', 'lft', 'rght'));
 		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
 						array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 2, 'lft' => 3, 'rght' => 4)),
 						array('NumberTree' => array('id' => 4, 'name' => '1.1.2', 'parent_id' => 2, 'lft' => 5, 'rght' => 6)),
 						array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)),
 						array('NumberTree' => array( 'id' => 6, 'name' => '1.2.1', 'parent_id' => 5, 'lft' => 9, 'rght' => 10)),
 						array('NumberTree' => array('id' => 7, 'name' => '1.2.2', 'parent_id' => 5, 'lft' => 11, 'rght' => 12)));
-		$total = $this->NumberTree->children();
 		$this->assertEqual($total, $expects);
 	}
 
