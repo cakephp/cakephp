@@ -36,11 +36,6 @@ uses('router', 'debugger');
  */
 class RouterTest extends UnitTestCase {
 
-	function RouterTest() {
-		parent::UnitTestCase();
-		$this->startTime = getMicrotime();
-	}
-
 	function setUp() {
 		$this->router =& Router::getInstance();
 	}
@@ -584,10 +579,6 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->prefixes();
 		$expected = array('admin');
 		$this->assertEqual($result, $expected);
-	}
-
-	function testTheEnd() {
-		pr(getMicrotime() - $this->startTime);
 	}
 }
 
