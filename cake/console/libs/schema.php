@@ -148,7 +148,11 @@ class SchemaShell extends Shell {
 		if('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
 			$contents = $db->createSchema($Schema);
 			$this->out('Updating Database...');
+			if(!$this->Schema->before($compare)) {
+				return false;
+			}
 			if ($db->_execute($contents)) {
+				$this->Schema->after($compare);
 				$this->out(__('Database created', true));
 				exit();
 			} else {
@@ -179,6 +183,7 @@ class SchemaShell extends Shell {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
 		Configure::write('debug', 2);
+
 		$contents = $db->alterSchema($compare);
 		if(empty($contents)) {
 			$this->out(__('Current database is up to date.', true));
@@ -188,7 +193,11 @@ class SchemaShell extends Shell {
 		}
 		if('y' == $this->in('Are you sure you want to update your database?', array('y', 'n'), 'n')) {
 			$this->out('Updating Database...');
+			if(!$this->Schema->before($compare)) {
+				return false;
+			}
 			if ($db->_execute($contents)) {
+				$this->Schema->after($compare);
 				$this->out(__('Database updated', true));
 				exit();
 			} else {

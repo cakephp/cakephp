@@ -96,6 +96,25 @@ class CakeSchema extends Object {
 		}
 	}
 /**
+ * before callback to be implemented in subclasses
+ *
+ * @param array $events schema object properties
+ * @access public
+ * @return boolean
+ */
+	function before($event = array()) {
+		return true;
+	}
+/**
+ * after callback to be implemented in subclasses
+ *
+ * @param array $events schema object properties
+ * @access public
+ * @return void
+ */
+	function after($event = array()) {
+	}
+/**
  * Reads database and creates schema tables
  *
  * @param array $options schema object properties
