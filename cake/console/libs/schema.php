@@ -62,7 +62,7 @@ class SchemaShell extends Shell {
  * @return void
  */
 	function view() {
-		$path = TMP;
+		$path = $this->Schema->path;
 		if (!empty($this->args[0])) {
 			$path = $this->args[0];
 		}
