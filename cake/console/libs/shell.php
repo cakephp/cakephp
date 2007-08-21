@@ -325,6 +325,13 @@ class Shell extends Object {
  * @param boolean $newline If true, the outputs gets an added newline.
  */
 	function out($string, $newline = true) {
+		if(is_array($string)) {
+			$str = '';
+			foreach($string as $message) {
+				$str .= $message ."\n";
+			}
+			$string = $str;
+		}
 		return $this->Dispatch->stdout($string, $newline);
 	}
 /**
@@ -333,6 +340,13 @@ class Shell extends Object {
  * @param string $string Error text to output.
  */
 	function err($string) {
+		if(is_array($string)) {
+			$str = '';
+			foreach($string as $message) {
+				$str .= $message ."\n";
+			}
+			$string = $str;
+		}
 		return $this->Dispatch->stderr($string."\n");
 	}
 /**
