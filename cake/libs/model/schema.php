@@ -165,7 +165,7 @@ class CakeSchema extends Object {
 			} else {
 				trigger_error('Schema generation error: model class ' . $class . ' not found', E_USER_WARNING);
 			}
-			
+
 		}
 		return compact('name', 'tables');
 	}
@@ -207,7 +207,7 @@ class CakeSchema extends Object {
 		if(empty($tables)) {
 			$this->read();
 		}
-		
+
 		foreach ($tables as $table => $fields) {
 			if(!is_numeric($table)) {
 				$out .= "\tvar \${$table} = array(\n";
@@ -226,12 +226,12 @@ class CakeSchema extends Object {
 							$col = "\t\t\t'indexes' => array(";
 							$props = array();
 							foreach ($value as $key => $index) {
-								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";	
+								$props[] = "'{$key}' => array(".join(', ',  $this->__values($index)).")";
 							}
 							$col .= join(', ', $props);
 						}
-						$col .= ")";	
-						$cols[] = $col;				
+						$col .= ")";
+						$cols[] = $col;
 					}
 					$out .= join(",\n", $cols);
 				}
@@ -239,7 +239,7 @@ class CakeSchema extends Object {
 				$out .="\n";
 			}
 		}
-		$out .= "\n\tfunction setup(\$version) {\n\t}\n\n\tfunction teardown(\$version) {\n";
+		$out .= "\n\tfunction before(\$event = array()) {\n\t}\n\n\tfunction after(\$event = array()) {\n";
 		$out .= "\t}\n}\n\n";
 
 		$File =& new File($path . DS . 'schema.php', true);
@@ -316,7 +316,7 @@ class CakeSchema extends Object {
  * @param array $value options keys(type, null, default, key, length, extra)
  * @access public
  * @return array $name, $tables
- */	
+ */
 	function __values($values) {
 		$vals = array();
 		if(is_array($values)) {
@@ -385,6 +385,6 @@ class CakeSchema extends Object {
 		}
 
 		return $columns;
-	}	
+	}
 }
 ?>
