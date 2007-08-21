@@ -347,7 +347,27 @@ class RouterTest extends UnitTestCase {
 		$expected = '/kalender/10/2007/min-forestilling';
 		$this->assertEqual($result, $expected);
 		
-		
+		Configure::write('Routing.admin', 'admin');
+		$this->router->reload();
+
+		$this->router->setRequestInfo(array(
+			array(
+				'pass' => array(), 'admin' => true, 'action' => 'index', 'plugin' => null, 'controller' => 'users',
+				'url' => array('url' => 'users'), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/', 'here' => '/',
+				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
+				'webservices' => null
+			)
+		));
+
+		$this->router->connect('/page/*', array('controller' => 'pages', 'action' => 'view', 'admin' => true, 'prefix' => 'admin'));
+		$this->router->parse('/');
+
+		$result = $this->router->url(array('admin' => true, 'controller' => 'pages', 'action' => 'view', 'my-page'));
+		$expected = '/page/my-page';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlGenerationWithExtensions() {
