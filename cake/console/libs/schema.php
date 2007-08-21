@@ -52,7 +52,17 @@ class SchemaShell extends Shell {
  * @return void
  */
 	function startup() {
-		$this->Schema =& new CakeSchema(array('path'=> CONFIGS .'sql'));
+		$settings = am(array('path'=> CONFIGS .'sql'), $this->params);
+		$this->Schema =& new CakeSchema($settings);
+	}
+/**
+ * Override main
+ *
+ * @access public
+ * @return void
+ */
+	function main() {
+		$this->help();
 	}
 /**
  * Read and output contents od schema object
@@ -62,11 +72,7 @@ class SchemaShell extends Shell {
  * @return void
  */
 	function view() {
-		$path = $this->Schema->path;
-		if (!empty($this->args[0])) {
-			$path = $this->args[0];
-		}
-		$File = new File($path . DS .'schema.php');
+		$File = new File($this->Schema->path . DS .'schema.php');
 		if ($File->exists()) {
 			$this->out($File->read());
 			exit();
@@ -84,13 +90,6 @@ class SchemaShell extends Shell {
  */
 	function generate() {
 		$this->out('Generating Schema...');
-		if (!empty($this->args[0])) {
-			$this->Schema->connection = $this->args[0];
-		}
-		if (!empty($this->args[1])) {
-			$this->Schema->path = $this->args[1];
-		}
-
 		$content = $this->Schema->read();
 		if ($this->Schema->write($content)) {
 			$this->out(__('Schema file created.', true));
@@ -110,13 +109,8 @@ class SchemaShell extends Shell {
  */
 	function dump() {
 		$write = false;
-		if (!empty($this->args[0])) {
-			if($this->args[0] == 'write') {
-				$write = true;
-			}
-		}
-		if (!empty($this->args[1])) {
-			$this->Schema->path = $this->args[1];
+		if (!empty($this->args[0]) && $this->args[0] == 'write') {
+			$write = true;
 		}
 		$Schema = $this->Schema->load();
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
@@ -142,17 +136,25 @@ class SchemaShell extends Shell {
  */
 	function create() {
 		$Schema = $this->Schema->load();
+
+		$table = null;
+		$event = array_keys($Schema->tables);
+		if(isset($this->args[0])) {
+			$table = $this->args[0];
+			$event = array($table);
+		}
+
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$drop = $db->dropSchema($Schema);
+		$drop = $db->dropSchema($Schema, $table);
 		$this->out($drop);
 		if('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
-			$contents = $db->createSchema($Schema);
+			$contents = $db->createSchema($Schema, $table);
 			$this->out('Updating Database...');
-			if(!$this->Schema->before($compare)) {
+			if(!$this->Schema->before($event)) {
 				return false;
 			}
 			if ($db->_execute($contents)) {
-				$this->Schema->after($compare);
+				$this->Schema->after($event);
 				$this->out(__('Database created', true));
 				exit();
 			} else {
@@ -169,22 +171,23 @@ class SchemaShell extends Shell {
  * @return void
  */
 	function update() {
+
 		$this->out('Comparing Database to Schema...');
-		if (!empty($this->args[0])) {
-			$this->Schema->connection = $this->args[0];
-		}
-		if (!empty($this->args[1])) {
-			$this->Schema->path = $this->args[1];
-		}
 		$Old = $this->Schema->read();
 		$Schema = $this->Schema->load();
 		$compare = $this->Schema->compare($Old, $Schema);
+
+		$table = null;
+		if(isset($this->args[0])) {
+			$table = $this->args[0];
+			$compare = array($table => $compare[$table]);
+		}
 
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
 		Configure::write('debug', 2);
 
-		$contents = $db->alterSchema($compare);
+		$contents = $db->alterSchema($compare, $table);
 		if(empty($contents)) {
 			$this->out(__('Current database is up to date.', true));
 			exit();
@@ -217,13 +220,16 @@ class SchemaShell extends Shell {
 		$this->hr();
 		$this->out("Usage: cake schema <command> <arg1> <arg2>...");
 		$this->hr();
+		$this->out('Params:');
+		$this->out("\n\t-connection\n\t\tset db config. uses 'default' if none is specified");
+		$this->out("\n\t-path\n\t\tpath to read and write schema.php. uses ". $this->Schema->path ." by default");
 		$this->out('Commands:');
 		$this->out("\n\tschema help\n\t\tshows this help message.");
-		$this->out("\n\tschema view <path>\n\t\tread and output contents of schema file");
-		$this->out("\n\tschema generate <connection> <path>\n\t\treads from 'connection' writes to 'path'");
-		$this->out("\n\tschema dump 'write' <path>\n\t\tdump database sql based on schema file");
-		$this->out("\n\tschema create <path>\n\t\tdrop tables and create database based on schema file");
-		$this->out("\n\tschema update <path>\n\t\tmodify database based on schema file");
+		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
+		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'");
+		$this->out("\n\tschema dump 'write'\n\t\tdump database sql based on schema file");
+		$this->out("\n\tschema create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table");
+		$this->out("\n\tschema update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table");
 		$this->out("");
 		exit();
 	}

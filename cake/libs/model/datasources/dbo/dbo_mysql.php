@@ -537,41 +537,43 @@ class DboMysql extends DboSource {
  * @param unknown_type $schema
  * @return unknown
  */
-	function alterSchema($compare) {
+	function alterSchema($compare, $table = null) {
 		if(!is_array($compare)) {
 			return false;
 		}
 		$out = '';
 		$colList = array();
-		foreach($compare as $table => $types) {
-			$out .= 'ALTER TABLE ' . $this->fullTableName($table) . " \n";
-			foreach($types as $type => $column) {
-				switch($type) {
-					case 'add':
-						foreach($column as $field => $col) {
-							$col['name'] = $field;
-							$alter = 'ADD '.$this->buildColumn($col);
-							if(isset($col['after'])) {
-								$alter .= ' AFTER '. $this->name($col['after']);
+		foreach($compare as $curTable => $types) {
+			if (!$table || $table == $curTable) {
+				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
+				foreach($types as $type => $column) {
+					switch($type) {
+						case 'add':
+							foreach($column as $field => $col) {
+								$col['name'] = $field;
+								$alter = 'ADD '.$this->buildColumn($col);
+								if(isset($col['after'])) {
+									$alter .= ' AFTER '. $this->name($col['after']);
+								}
+								$colList[] = $alter;
 							}
-							$colList[] = $alter;
-						}
-					break;
-					case 'drop':
-						foreach($column as $field => $col) {
-							$col['name'] = $field;
-							$colList[] = 'DROP '.$this->name($field);
-						}
-					break;
-					case 'change':
-						foreach($column as $field => $col) {
-							$col['name'] = $field;
-							$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
-						}
-					break;
+						break;
+						case 'drop':
+							foreach($column as $field => $col) {
+								$col['name'] = $field;
+								$colList[] = 'DROP '.$this->name($field);
+							}
+						break;
+						case 'change':
+							foreach($column as $field => $col) {
+								$col['name'] = $field;
+								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
+							}
+						break;
+					}
 				}
+				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
 			}
-			$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
 		}
 		return $out;
 	}

@@ -222,7 +222,9 @@ class CakeSchema extends Object {
 		if ($connection !== 'default') {
 			$out .= "\tvar \$connection = '{$connection}';\n\n";
 		}
-
+		
+		$out .= "\tfunction before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tfunction after(\$event = array()) {\n\t}\n\n";
+		
 		if(empty($tables)) {
 			$this->read();
 		}
@@ -258,8 +260,7 @@ class CakeSchema extends Object {
 				$out .="\n";
 			}
 		}
-		$out .= "\n\tfunction before(\$event = array()) {\n\t}\n\n\tfunction after(\$event = array()) {\n";
-		$out .= "\t}\n}\n\n";
+		$out .="\n}\n\n";
 
 		$File =& new File($path . DS . 'schema.php', true);
 		$content = "<?php \n/*<!--". $name ." schema generated on: " . date('Y-m-d H:m:s') . " : ". time() . "-->*/\n{$out}?>";

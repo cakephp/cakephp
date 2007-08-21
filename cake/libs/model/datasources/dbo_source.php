@@ -1732,7 +1732,7 @@ class DboSource extends DataSource {
  * @param unknown_type $schema
  * @return unknown
  */
-	function alterSchema($compare) {
+	function alterSchema($compare, $table = null) {
 		return false;
 	}
 /**
