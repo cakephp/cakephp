@@ -205,11 +205,11 @@ class DboFirebird extends DboSource {
 			$col_info = ibase_field_info($rs, $i);
 			$col_info['type'] = $this->column($col_info['type']);
 
-			$fields[] = array(
-				'name' => strtolower($col_info['name']),
-				'type' => $col_info['type'],
-				'null' => '',
-				'length' => $col_info['length']);
+			$fields[strtolower($col_info['name'])] = array(
+					'type' => $col_info['type'],
+					'null' => '',
+					'length' => $col_info['length']
+				);
         }
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;

@@ -216,8 +216,7 @@ class DboDb2 extends DboSource {
 		$result = db2_columns($this->connection, '', '', strtoupper($this->fullTableName($model)));
 
 		while (db2_fetch_row($result)) {
-			$fields[] = array(
-				'name' => strtolower(db2_result($result, 'COLUMN_NAME')),
+			$fields[strtolower(db2_result($result, 'COLUMN_NAME'))] = array(
 				'type' => db2_result($result, 'TYPE_NAME'),
 				'null' => db2_result($result, 'NULLABLE'),
 				'default' => db2_result($result, 'COLUMN_DEF'));

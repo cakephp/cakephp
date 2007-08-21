@@ -181,10 +181,9 @@ class CakeTestCase extends UnitTestCase {
 
 				foreach ($models as $model) {
 					$object =& $classRegistry->getObject($model['key']);
-
 					if ($object !== false) {
-						$object->useDbConfig = 'test_suite';
-						$object->setDataSource();
+						$object->setDataSource('test_suite');
+						$object->cacheSources = false;
 					}
 				}
 			}
@@ -336,7 +335,6 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach ($this->_fixtures as $fixture) {
 				$query = $fixture->create();
-
 				if (isset($query) && $query !== false) {
 					$this->db->_execute($query);
 				}
@@ -352,7 +350,6 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			foreach (array_reverse($this->_fixtures) as $fixture) {
 				$query = $fixture->drop();
-
 				if (isset($query) && $query !== false) {
 					$this->db->_execute($query);
 				}
@@ -370,7 +367,6 @@ class CakeTestCase extends UnitTestCase {
 		if (isset($this->_fixtures) && isset($this->db) && !in_array(low($method), array('start', 'end'))) {
 			foreach ($this->_fixtures as $fixture) {
 				$query = $fixture->truncate();
-
 				if (isset($query) && $query !== false) {
 					$this->db->_execute($query);
 				}
@@ -393,9 +389,7 @@ class CakeTestCase extends UnitTestCase {
  */
 	function getTests() {
 		$methods = array_diff(parent::getTests(), array('testAction', 'testaction'));
-
 		$methods = am(am(array('start', 'startCase'), $methods), array('endCase', 'end'));
-
 		return $methods;
 	}
 /**
@@ -433,6 +427,7 @@ class CakeTestCase extends UnitTestCase {
 
 		// Get db connection
 		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->db->cacheSources  = false;
 		$this->db->fullDebug = false;
 	}
 /**

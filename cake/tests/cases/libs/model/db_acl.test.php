@@ -41,6 +41,7 @@ uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 if(!class_exists('aclnodetestbase')) {
 	class AclNodeTestBase extends AclNode {
 		var $useDbConfig = 'test_suite';
+		var $cacheSources = false;
 	}
 }
 
@@ -131,6 +132,45 @@ if(!class_exists('db_acl_test')) {
 		function testNodeNesting() {
 		}
 
+		function testNode(){
+			$aco = new AcoTest();
+			$result = Set::extract($aco->node('Controller1'), '{n}.AcoTest.id');
+			$expected = array(2, 1);
+			$this->assertEqual($result, $expected);
+
+			$result = Set::extract($aco->node('Controller1/action1'), '{n}.AcoTest.id');
+			$expected = array(3, 2, 1);
+			$this->assertEqual($result, $expected);
+
+			$result = Set::extract($aco->node('Controller2/action1'), '{n}.AcoTest.id');
+			$expected = array(7, 6, 1);
+			$this->assertEqual($result, $expected);
+
+			$result = Set::extract($aco->node('Controller1/action2'), '{n}.AcoTest.id');
+			$expected = array(5, 2, 1);
+			$this->assertEqual($result, $expected);
+
+			$result = Set::extract($aco->node('Controller1/action1/record1'), '{n}.AcoTest.id');
+			$expected = array(4, 3, 2, 1);
+			$this->assertEqual($result, $expected);
+
+			$result = Set::extract($aco->node('Controller2/action1/record1'), '{n}.AcoTest.id');
+			$expected = array(8, 7, 6, 1);
+			$this->assertEqual($result, $expected);
+
+			//action3 is an action with no ACO entry
+			//the default returned ACOs should be its parents
+			$result = Set::extract($aco->node('Controller2/action3'), '{n}.AcoTest.id');
+			$expected = array(6, 1);
+			$this->assertEqual($result, $expected);
+
+			//action3 and record5 have none ACO entry
+			//the default returned ACOs should be their parents ACO
+			$result = Set::extract($aco->node('Controller2/action3/record5'), '{n}.AcoTest.id');
+			$expected = array(6, 1);
+			$this->assertEqual($result, $expected);
+
+		}
 	}
 
 ?>

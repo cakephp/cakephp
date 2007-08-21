@@ -106,7 +106,12 @@ class Model extends Overloadable {
  * Table metadata
  *
  * @var array
- * @access private
+ * @access protected
+ */
+	var $_schema = null;
+/**
+ *
+ * @deprecated see $_schema
  */
 	var $_tableInfo = null;
 /**
@@ -706,12 +711,14 @@ class Model extends Overloadable {
 				$this->{$type}[$assocKey]['joinTable'] = $this->{$with}->table;
 			} elseif ($type == 'hasAndBelongsToMany') {
 				$joinClass = Inflector::camelize($this->name . $assocKey);
-				$this->{$type}[$assocKey]['_with'] = $joinClass;
-				$this->{$joinClass} = new AppModel(array(
-					'name' => $joinClass,
-					'table' => $this->{$type}[$assocKey]['joinTable'],
-					'ds' => $this->useDbConfig
-				));
+				if(!class_exists(low($joinClass))) {
+					$this->{$type}[$assocKey]['_with'] = $joinClass;
+					$this->{$joinClass} = new AppModel(array(
+						'name' => $joinClass,
+						'table' => $this->{$type}[$assocKey]['joinTable'],
+						'ds' => $this->useDbConfig
+					));
+				}
 			}
 		}
 	}
@@ -724,7 +731,6 @@ class Model extends Overloadable {
 		$this->setDataSource($this->useDbConfig);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = $this->cacheSources;
-
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
@@ -733,13 +739,13 @@ class Model extends Overloadable {
 					'table' => $this->tablePrefix . $tableName
 				)));
 			} else {
-				$this->table = $tableName;
+				$this->table = $this->useTable = $tableName;
 				$this->tableToModel[$this->table] = $this->name;
 				$this->_tableInfo = null;
 				$this->loadInfo();
 			}
 		} else {
-			$this->table = $tableName;
+			$this->table = $this->useTable = $tableName;
 			$this->tableToModel[$this->table] = $this->name;
 			$this->loadInfo();
 		}
@@ -792,20 +798,34 @@ class Model extends Overloadable {
 	}
 /**
  * Returns an array of table metadata (column names and types) from the database.
+ * $field => keys(type, null, default, key, length, extra)
  *
  * @return array Array of table metadata
  */
-	function loadInfo($clear = false) {
-		if (!is_object($this->_tableInfo) || $clear) {
+	function schema($clear = false) {
+		if (!is_object($this->_schema) || $clear) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$db->cacheSources = $this->cacheSources;
-
 			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
-				$this->_tableInfo = new Set($db->describe($this, $clear));
+				$this->_schema = new Set($db->describe($this, $clear));
 			} elseif ($this->useTable === false) {
-				$this->_tableInfo = new Set();
+				$this->_schema = new Set();
 			}
 		}
+		return $this->_schema;
+	}
+/**
+ * See Model::schema
+ *
+ * @deprecated
+ */
+	function loadInfo($clear = false) {
+		$info = $this->schema($clear);
+		foreach($info->value as $field => $value) {
+			$fields[] = am(array('name'=> $field), $value);
+		}
+		unset($info);
+		$this->_tableInfo = new Set($fields);
 		return $this->_tableInfo;
 	}
 /**

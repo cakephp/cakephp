@@ -48,12 +48,23 @@ class Test extends Model {
 
 	function loadInfo() {
 		return new Set(array(
-			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8'),
+			array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 			array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 			array('name' => 'email', 'type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
 			array('name' => 'notes', 'type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
 			array('name' => 'created', 'type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		));
+	}
+	
+	function schema() {
+		return new Set(array(
+			'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
+			'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
+			'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
+			'notes'=> array('type' => 'text', 'null' => '1', 'default' => 'write some notes here', 'length' => ''),
+			'created'=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
+			'updated'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		));
 	}
 }
@@ -173,6 +184,24 @@ class Featured extends CakeTestModel {
  */
 class Tag extends CakeTestModel {
 	var $name = 'Tag';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ArticleTag extends CakeTestModel {
+	var $name = 'ArticleTag';
+}
+/**
+ * Short description for class.
+ *
+ * @package		cake.tests
+ * @subpackage	cake.tests.cases.libs.model
+ */
+class ArticleFeaturedTag extends CakeTestModel {
+	var $name = 'ArticleFeaturedTag';
 }
 /**
  * Short description for class.
@@ -354,7 +383,7 @@ class ModelTest extends CakeTestCase {
 
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
-		'core.article_featured', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
+		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid'
 	);
@@ -430,9 +459,7 @@ class ModelTest extends CakeTestCase {
 				'Thread' => array()
 			)
 		);
-
 		$this->assertEqual($result, $expected);
-
 		unset($this->Project);
 	}
 
@@ -521,7 +548,7 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$expected = array(
-			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength),
+			array('name' => 'id', 		'type' => 'integer',	'null' => false, 'default' => null,	'length' => $intLength, 'key' => 'primary', 'extra' => 'auto_increment'),
 			array('name' => 'user', 	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
 			array('name' => 'password',	'type' => 'string',		'null' => false, 'default' => '',	'length' => 255),
 			array('name' => 'created',	'type' => 'datetime',	'null' => true, 'default' => null,	'length' => null),

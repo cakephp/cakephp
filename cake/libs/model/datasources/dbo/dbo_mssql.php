@@ -575,16 +575,6 @@ class DboMssql extends DboSource {
 			return false;
 		}
 	}
-
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}', '{BOOLEAN}', '{UTF_8}');
-
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned', 'FULLTEXT',
-		'enum (\'true\', \'false\') NOT NULL default \'true\'', '/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-
-		$query = trim(r($search, $replace, $schema));
-		return $query;
-	}
 /**
  * Inserts multiple values into a join table
  *
@@ -598,5 +588,6 @@ class DboMssql extends DboSource {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
 	}
+
 }
 ?>

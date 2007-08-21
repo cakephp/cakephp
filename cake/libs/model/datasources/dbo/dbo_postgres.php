@@ -190,8 +190,7 @@ class DboPostgres extends DboSource {
 				} else {
 					$length = $this->length($c['type']);
 				}
-				$fields[] = array(
-					'name'    => $c['name'],
+				$fields[$c['name']] = array(
 					'type'    => $this->column($c['type']),
 					'null'    => ($c['null'] == 'NO' ? false : true),
 					'default' => $c['default'],
@@ -578,59 +577,6 @@ class DboPostgres extends DboSource {
  */
 	function getEncoding() {
 		return pg_client_encoding($this->connection);
-	}
-/**
- * Generate a PostgreSQL-native column schema string
- *
- * @param array $column An array structured like the following: array('name', 'type'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
- * @return string
- */
-	function generateColumnSchema($column) {
-		$name = $type = $out = null;
-		$column = am(array('null' => true), $column);
-		list($name, $type) = $column;
-
-		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
-			return null;
-		}
-		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
-			return null;
-		}
-		$out = "\t" . $this->name($name) . ' ';
-
-		if (!isset($column['key']) || $column['key'] != 'primary') {
-			$real = $this->columns[$type];
-			$out .= $real['name'];
-
-			if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-				if (isset($column['length'])) {
-					$length = $column['length'];
-				} elseif (isset($column['limit'])) {
-					$length = $column['limit'];
-				} elseif (isset($real['length'])) {
-					$length = $real['length'];
-				} else {
-					$length = $real['limit'];
-				}
-				$out .= '(' . $length . ')';
-			}
-		}
-
-		if (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= $this->columns['primary_key']['name'];
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
 	}
 }
 

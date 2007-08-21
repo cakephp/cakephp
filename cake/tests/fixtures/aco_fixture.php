@@ -44,6 +44,15 @@ class AcoFixture extends CakeTestFixture {
 		'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
 	);
 	var $records = array(
+		array ('id' => 1, 'parent_id' => null, 'model' => '', 'foreign_key' => '', 'alias' => 'ROOT', 'lft' => 1, 'rght' => 18),
+        array ('id' => 2, 'parent_id' => 1, 'model' => '', 'foreign_key' => '', 'alias' => 'Controller1', 'lft' => 2, 'rght' => 9),
+        array ('id' => 3, 'parent_id' => 2, 'model' => '', 'foreign_key' => '', 'alias' => 'action1', 'lft' => 3, 'rght' => 6),
+        array ('id' => 4, 'parent_id' => 3, 'model' => '', 'foreign_key' => '', 'alias' => 'record1', 'lft' => 4, 'rght' => 5),
+        array ('id' => 5, 'parent_id' => 2, 'model' => '', 'foreign_key' => '', 'alias' => 'action2', 'lft' => 7, 'rght' => 8),
+        array ('id' => 6, 'parent_id' => 1, 'model' => '', 'foreign_key' => '', 'alias' => 'Controller2', 'lft' => 10, 'rght' => 17),
+        array ('id' => 7, 'parent_id' => 6, 'model' => '', 'foreign_key' => '', 'alias' => 'action1', 'lft' => 11, 'rght' => 14),
+        array ('id' => 8, 'parent_id' => 7, 'model' => '', 'foreign_key' => '', 'alias' => 'record1', 'lft' => 12, 'rght' => 13),
+        array ('id' => 9, 'parent_id' => 6, 'model' => '', 'foreign_key' => '', 'alias' => 'action2', 'lft' => 15, 'rght' => 16),
 	);
 }
 

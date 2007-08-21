@@ -192,6 +192,270 @@ class DataSource extends Object {
 			$this->setConfig(func_get_arg(0));
 		}
 	}
+
+/**
+ * Datsrouce Query abstraction
+ *
+ * @return resource Result resource identifier
+ */
+	function query() {
+		$args     = func_get_args();
+		$fields   = null;
+		$order    = null;
+		$limit    = null;
+		$page     = null;
+		$recursive = null;
+
+		if (count($args) == 1) {
+			return $this->fetchAll($args[0]);
+
+		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
+			$params = $args[1];
+
+			if (strpos(strtolower($args[0]), 'findby') === 0) {
+				$all  = false;
+				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+			} else {
+				$all  = true;
+				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+			}
+
+			$or = (strpos($field, '_or_') !== false);
+			if ($or) {
+				$field = explode('_or_', $field);
+			} else {
+				$field = explode('_and_', $field);
+			}
+			$off = count($field) - 1;
+
+			if (isset($params[1 + $off])) {
+				$fields = $params[1 + $off];
+			}
+
+			if (isset($params[2 + $off])) {
+				$order = $params[2 + $off];
+			}
+
+			if (!array_key_exists(0, $params)) {
+				return false;
+			}
+
+			$c = 0;
+			$query = array();
+			foreach ($field as $f) {
+				if (!is_array($params[$c]) && !empty($params[$c]) && $params[$c] !== true && $params[$c] !== false) {
+					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
+				} else {
+					$query[$args[2]->name . '.' . $f] = $params[$c];
+				}
+				$c++;
+			}
+
+			if ($or) {
+				$query = array('OR' => $query);
+			}
+
+			if ($all) {
+
+				if (isset($params[3 + $off])) {
+					$limit = $params[3 + $off];
+				}
+
+				if (isset($params[4 + $off])) {
+					$page = $params[4 + $off];
+				}
+
+				if (isset($params[5 + $off])) {
+					$recursive = $params[5 + $off];
+				}
+				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
+			} else {
+				if (isset($params[3 + $off])) {
+					$recursive = $params[3 + $off];
+				}
+				return $args[2]->find($query, $fields, $order, $recursive);
+			}
+		} else {
+			if (isset($args[1]) && $args[1] === true) {
+				return $this->fetchAll($args[0], true);
+			}
+			return $this->fetchAll($args[0], false);
+		}
+	}
+/**
+ * Returns an array of all result rows for a given SQL query.
+ * Returns false if no rows matched.
+ *
+ * @param string $sql SQL statement
+ * @param boolean $cache Enables returning/storing cached query results
+ * @return array Array of resultset rows, or false if no rows matched
+ */
+	function fetchAll($sql, $cache = true, $modelName = null) {
+		if ($cache && isset($this->_queryCache[$sql])) {
+			if (preg_match('/^\s*select/i', $sql)) {
+				return $this->_queryCache[$sql];
+			}
+		}
+
+		if ($this->execute($sql)) {
+			$out = array();
+
+			while ($item = $this->fetchRow()) {
+				$out[] = $item;
+			}
+
+			if ($cache) {
+				if (strpos(trim(strtolower($sql)), 'select') !== false) {
+					$this->_queryCache[$sql] = $out;
+				}
+			}
+			return $out;
+
+		} else {
+			return false;
+		}
+	}
+/**
+ * Caches/returns cached results for child instances
+ *
+ * @return array
+ */
+	function listSources($data = null) {
+		if ($this->cacheSources === false) {
+			return null;
+		}
+		if ($this->_sources != null) {
+			return $this->_sources;
+		}
+
+		if (Configure::read() > 0) {
+			$expires = "+30 seconds";
+		} else {
+			$expires = "+999 days";
+		}
+
+		if ($data != null) {
+			$data = serialize($data);
+		}
+		$filename = ConnectionManager::getSourceName($this) . '_' . preg_replace("/[^A-Za-z0-9_-]/", "_", $this->config['database']) . '_list';
+		$new = cache('models' . DS . $filename, $data, $expires);
+
+		if ($new != null) {
+			$new = unserialize($new);
+			$this->_sources = $new;
+		}
+		return $new;
+	}
+/**
+ * Convenience method for DboSource::listSources().  Returns source names in lowercase.
+ *
+ * @return array
+ */
+	function sources() {
+		$return = array_map('strtolower', $this->listSources());
+		return $return;
+	}
+/**
+ * Returns a Model description (metadata) or null if none found.
+ *
+ * @param Model $model
+ * @return mixed
+ */
+	function describe($model) {
+		if ($this->cacheSources === false) {
+			return null;
+		}
+
+		if (isset($this->__descriptions[$model->tablePrefix.$model->table])) {
+			return $this->__descriptions[$model->tablePrefix.$model->table];
+		}
+		$cache = $this->__cacheDescription($model->tablePrefix.$model->table);
+
+		if ($cache !== null) {
+			$this->__descriptions[$model->tablePrefix.$model->table] =& $cache;
+			return $cache;
+		}
+		return null;
+	}
+/**
+ * Converts column types to basic types
+ *
+ * @param string $real Real  column type (i.e. "varchar(255)")
+ * @return string Abstract column type (i.e. "string")
+ */
+	function column($real) {
+		return false;
+	}
+/**
+ * To-be-overridden in subclasses.
+ *
+ * @param unknown_type $model
+ * @param unknown_type $fields
+ * @param unknown_type $values
+ * @return unknown
+ */
+	function create(&$model, $fields = null, $values = null) {
+		return false;
+	}
+/**
+ * To-be-overridden in subclasses.
+ *
+ * @param unknown_type $model
+ * @param unknown_type $queryData
+ * @return unknown
+ */
+	function read(&$model, $queryData = array()) {
+		return false;
+	}
+/**
+ * To-be-overridden in subclasses.
+ *
+ * @param unknown_type $model
+ * @param unknown_type $fields
+ * @param unknown_type $values
+ * @return unknown
+ */
+	function update(&$model, $fields = null, $values = null) {
+		return false;
+	}
+/**
+ * To-be-overridden in subclasses.
+ *
+ * @param unknown_type $model
+ * @param unknown_type $id
+ */
+	function delete(&$model, $id = null) {
+		if ($id == null) {
+			$id = $model->id;
+		}
+	}
+/**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastInsertId($source = null) {
+		return false;
+	}
+/**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastNumRows($source = null) {
+		return false;
+	}
+/**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastAffected($source = null) {
+		return false;
+	}
 /**
  * Returns true if the DataSource supports the given interface (method)
  *
@@ -248,116 +512,6 @@ class DataSource extends Object {
 			$new = unserialize($new);
 		}
 		return $new;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @return string
- */
-	function conditions($conditions) {
-		return $conditions;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $name
- * @return unknown
- */
-	function name($name) {
-		return $name;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $value
- * @return unknown
- */
-	function value($value) {
-		return $value;
-	}
-/**
- * Returns a Model description (metadata) or null if none found.
- *
- * @param Model $model
- * @return mixed
- */
-	function describe($model) {
-		if ($this->cacheSources === false) {
-			return null;
-		}
-
-		if (isset($this->__descriptions[$model->tablePrefix.$model->table])) {
-			return $this->__descriptions[$model->tablePrefix.$model->table];
-		}
-		$cache = $this->__cacheDescription($model->tablePrefix.$model->table);
-
-		if ($cache !== null) {
-			$this->__descriptions[$model->tablePrefix.$model->table] =& $cache;
-			return $cache;
-		}
-		return null;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $model
- * @param unknown_type $fields
- * @param unknown_type $values
- * @return unknown
- */
-	function create(&$model, $fields = null, $values = null) {
-		return false;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $model
- * @param unknown_type $queryData
- * @return unknown
- */
-	function read(&$model, $queryData = array()) {
-		return false;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $model
- * @param unknown_type $fields
- * @param unknown_type $values
- * @return unknown
- */
-	function update(&$model, $fields = null, $values = null) {
-		return false;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param unknown_type $model
- * @param unknown_type $id
- */
-	function delete(&$model, $id = null) {
-		if ($id == null) {
-			$id = $model->id;
-		}
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param mixed $fields
- * @return mixed
- */
-	function fields($fields) {
-		return $fields;
-	}
-/**
- * To-be-overridden in subclasses.
- *
- * @param Model $model
- * @param unknown_type $fields
- * @return unknown
- */
-	function getColumnType(&$model, $fields) {
-		return false;
 	}
 /**
  * Enter description here...

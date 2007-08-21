@@ -43,11 +43,11 @@ class DboSource extends DataSource {
  */
 	var $description = "Database Data Source";
 /**
- * Enter description here...
+ * index definition, standard cake, primary, index, unique
  *
- * @var unknown_type
+ * @var array
  */
-	var $__bypass = false;
+	var $index = array('PRI'=> 'primary', 'MUL'=> 'index', 'UNI'=>'unique');
 /**
  * Enter description here...
  *
@@ -67,17 +67,23 @@ class DboSource extends DataSource {
  */
 	var $alias = 'AS ';
 /**
- * The set of valid SQL operations usable in a WHERE statement
- *
- * @var array
- */
-	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
-/**
  * Enter description here...
  *
  * @var unknown_type
  */
 	var $goofyLimit = false;
+/**
+ * Enter description here...
+ *
+ * @var unknown_type
+ */
+	var $__bypass = false;
+/**
+ * The set of valid SQL operations usable in a WHERE statement
+ *
+ * @var array
+ */
+	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 /**
  * Constructor
  */
@@ -124,135 +130,6 @@ class DboSource extends DataSource {
 			return $data;
 		} else {
 			return null;
-		}
-	}
-/**
- * Caches/returns cached results for child instances
- *
- * @return array
- */
-	function listSources($data = null) {
-		if ($this->cacheSources === false) {
-			return null;
-		}
-		if ($this->_sources != null) {
-			return $this->_sources;
-		}
-
-		if (Configure::read() > 0) {
-			$expires = "+30 seconds";
-		} else {
-			$expires = "+999 days";
-		}
-
-		if ($data != null) {
-			$data = serialize($data);
-		}
-		$filename = ConnectionManager::getSourceName($this) . '_' . preg_replace("/[^A-Za-z0-9_-]/", "_", $this->config['database']) . '_list';
-		$new = cache('models' . DS . $filename, $data, $expires);
-
-		if ($new != null) {
-			$new = unserialize($new);
-			$this->_sources = $new;
-		}
-		return $new;
-	}
-/**
- * Convenience method for DboSource::listSources().  Returns source names in lowercase.
- *
- * @return array
- */
-	function sources() {
-		$return = array_map('strtolower', $this->listSources());
-		return $return;
-	}
-/**
- * SQL Query abstraction
- *
- * @return resource Result resource identifier
- */
-	function query() {
-		$args     = func_get_args();
-		$fields   = null;
-		$order    = null;
-		$limit    = null;
-		$page     = null;
-		$recursive = null;
-
-		if (count($args) == 1) {
-			return $this->fetchAll($args[0]);
-
-		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
-			$params = $args[1];
-
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
-				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
-			} else {
-				$all  = true;
-				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
-			}
-
-			$or = (strpos($field, '_or_') !== false);
-			if ($or) {
-				$field = explode('_or_', $field);
-			} else {
-				$field = explode('_and_', $field);
-			}
-			$off = count($field) - 1;
-
-			if (isset($params[1 + $off])) {
-				$fields = $params[1 + $off];
-			}
-
-			if (isset($params[2 + $off])) {
-				$order = $params[2 + $off];
-			}
-
-			if (!array_key_exists(0, $params)) {
-				return false;
-			}
-
-			$c = 0;
-			$query = array();
-			foreach ($field as $f) {
-				if (!is_array($params[$c]) && !empty($params[$c]) && $params[$c] !== true && $params[$c] !== false) {
-					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
-				} else {
-					$query[$args[2]->name . '.' . $f] = $params[$c];
-				}
-				$c++;
-			}
-
-			if ($or) {
-				$query = array('OR' => $query);
-			}
-
-			if ($all) {
-
-				if (isset($params[3 + $off])) {
-					$limit = $params[3 + $off];
-				}
-
-				if (isset($params[4 + $off])) {
-					$page = $params[4 + $off];
-				}
-
-				if (isset($params[5 + $off])) {
-					$recursive = $params[5 + $off];
-				}
-				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
-			} else {
-				if (isset($params[3 + $off])) {
-					$recursive = $params[3 + $off];
-				}
-				return $args[2]->find($query, $fields, $order, $recursive);
-			}
-		} else {
-			if (isset($args[1]) && $args[1] === true) {
-				return $this->fetchAll($args[0], true);
-			}
-			return $this->fetchAll($args[0], false);
 		}
 	}
 /**
@@ -1828,6 +1705,65 @@ class DboSource extends DataSource {
 	function insertMulti($table, $fields, $values) {
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
+	}
+/**
+ * Returns an array of the indexes in given datasource name.
+ *
+ * @param string $model Name of model to inspect
+ * @return array Fields in table. Keys are column and unique
+ */
+	function index($model) {
+		return false;
+	}
+/**
+ * Generate a create syntax from CakeSchema
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *                      Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	function createSchema($schema, $table = null) {
+		return false;
+	}
+/**
+ * Generate a alter syntax from  CakeSchema::compare()
+ *
+ * @param unknown_type $schema
+ * @return unknown
+ */
+	function alterSchema($compare) {
+		return false;
+	}
+/**
+ * Generate a drop syntax from CakeSchema
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *                      Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	function dropSchema($schema, $table = null) {
+		return false;
+	}
+/**
+ * Generate a column schema string
+ *
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
+ *                      where options can be 'default', 'length', or 'key'.
+ * @return string
+ */
+	function buildColumn($column) {
+		return false;
+	}
+/**
+ * Format indexes for create table
+ *
+ * @param array $indexes
+ * @return string
+ */
+	function buildIndex($indexes) {
+		return false;
 	}
 }
 ?>

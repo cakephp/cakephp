@@ -34,11 +34,11 @@
  */
 class ArticleFeaturedsTagsFixture extends CakeTestFixture {
 	var $name = 'ArticleFeaturedsTags';
-	var $primaryKey = array('article_featured_id', 'tag_id');
 
 	var $fields = array(
 		'article_featured_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'integer', 'null' => false),
+		'indexes' => array('UNIQUE_FEATURED' => array('column'=> array('article_featured_id', 'tag_id'), 'unique'=> 1))
 	);
 }
 

@@ -39,6 +39,7 @@ uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 if(!class_exists('aclnodetestbase')) {
 	class AclNodeTestBase extends AclNode {
 		var $useDbConfig = 'test_suite';
+		var $cacheSources = false;
 	}
 }
 
@@ -329,41 +330,49 @@ class AuthTest extends CakeTestCase {
 
 
 		$this->Controller->Session->del('Auth');
-		//$this->Controller->Acl->Aro->execute('truncate aros;');
-		//$this->Controller->Acl->Aro->execute('truncate acos;');
-		//$this->Controller->Acl->Aro->execute('truncate aros_acos;');
 	}
 
 	function testLoginRedirect() {
         $backup = $_SERVER['HTTP_REFERER'];
 
         $_SERVER['HTTP_REFERER'] = false;
-        $this->Controller->data = array();
-        $this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
-
+		
+		$this->Controller->Session->write('Auth', array('AuthUser' => array('id'=>'1', 'username'=>'nate')));
+		
         $this->Controller->params['url']['url'] = 'users/login';
         $this->Controller->Auth->initialize($this->Controller);
+
+ 		$this->Controller->Auth->userModel = 'AuthUser';
+        $this->Controller->Auth->loginRedirect = array('controller' => 'pages', 'action' => 'display', 'welcome');
         $this->Controller->Auth->startup($this->Controller);
         $expected = $this->Controller->Auth->_normalizeURL($this->Controller->Auth->loginRedirect);
         $this->assertEqual($expected, $this->Controller->Auth->redirect());
-        $this->Controller->Session->del('Auth');
 
+		$this->Controller->Session->del('Auth');
+       
         $this->Controller->params['url']['url'] = 'admin/';
         $this->Controller->Auth->initialize($this->Controller);
+ 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->loginRedirect = null;
         $this->Controller->Auth->startup($this->Controller);
         $expected = $this->Controller->Auth->_normalizeURL('admin/');
         $this->assertEqual($expected, $this->Controller->Auth->redirect());
-        $this->Controller->Session->del('Auth');
-
+		
+		$this->Controller->Session->del('Auth');
+		
         $_SERVER['HTTP_REFERER'] = '/admin/';
+		$this->Controller->Session->write('Auth', array('AuthUser' => array('id'=>'1', 'username'=>'nate')));
+		
         $this->Controller->params['url']['url'] = 'users/login';
         $this->Controller->Auth->initialize($this->Controller);
+ 		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->loginRedirect = null;
         $this->Controller->Auth->startup($this->Controller);
-        $expected = '/admin/';
+        $expected = $this->Controller->Auth->_normalizeURL('admin');
         $this->assertEqual($expected, $this->Controller->Auth->redirect());
-        $this->Controller->Session->del('Auth');
 
         $_SERVER['HTTP_REFERER'] = $backup;
+        $this->Controller->Session->del('Auth');
     }
 
 	function testEmptyUsernameOrPassword() {

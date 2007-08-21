@@ -424,9 +424,8 @@ class DboOracle extends DboSource {
 		$fields = array();
 
 		for($i=0; $row = $this->fetchRow(); $i++) {
-			$fields[$i]['name'] = strtolower($row[0]['COLUMN_NAME']);
-			$fields[$i]['length'] = $row[0]['DATA_LENGTH'];
-			$fields[$i]['type'] = $this->column($row[0]['DATA_TYPE']);
+			$fields[strtolower($row[0]['COLUMN_NAME'])] = array('type'=> $this->column($row[0]['DATA_TYPE']),
+			 													'length'=> $row[0]['DATA_LENGTH']);
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
@@ -616,56 +615,6 @@ class DboOracle extends DboSource {
  */
 	function lastAffected() {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;
-	}
-
-/**
- * Generate a Oracle-native column schema string
- *
- * @param array $column An array structured like the following: array('name', 'type'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
- * @return string
- */
-	function generateColumnSchema($column) {
-		$name = $type = null;
-		$column = am(array('null' => true), $column);
-		list($name, $type) = $column;
-
-		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
-			return null;
-		}
-		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
-			return null;
-		}
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
-
-		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-			if (isset($column['length'])) {
-				$length = $column['length'];
-			} elseif (isset($column['limit'])) {
-				$length = $column['limit'];
-			} elseif (isset($real['length'])) {
-				$length = $real['length'];
-			} else {
-				$length = $real['limit'];
-			}
-			$out .= '(' . $length . ')';
-		}
-
-		if (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= ' NOT NULL ';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
 	}
 /**
  * Inserts multiple values into a join table

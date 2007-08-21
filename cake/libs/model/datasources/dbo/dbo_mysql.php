@@ -163,12 +163,10 @@ class DboMysql extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	function describe(&$model) {
-
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
-
 		$fields = false;
 		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
 
@@ -178,16 +176,20 @@ class DboMysql extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[] = array(
-					'name'		=> $column[0]['Field'],
+				$fields[$column[0]['Field']] = array(
 					'type'		=> $this->column($column[0]['Type']),
 					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
 					'default'	=> $column[0]['Default'],
-					'length'	=> $this->length($column[0]['Type'])
+					'length'	=> $this->length($column[0]['Type']),
 				);
+				if(!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
+				}
+				if(!empty($column[0]['Extra'])) {
+					$fields[$column[0]['Field']]['extra'] = $column[0]['Extra'];
+				}
 			}
 		}
-
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
@@ -452,6 +454,33 @@ class DboMysql extends DboSource {
 		return mysql_client_encoding($this->connection);
 	}
 /**
+ * Returns an array of the indexes in given table name.
+ *
+ * @param string $model Name of model to inspect
+ * @return array Fields in table. Keys are column and unique
+ */
+	function index($model) {
+		$index = array();
+		$table = $this->fullTableName($model, false);
+		if($table) {
+			$indexes = $this->query('SHOW INDEX FROM ' . $table);
+			$keys = Set::extract($indexes, '{n}.STATISTICS');
+			foreach ($keys as $i => $key) {
+				if(!isset($index[$key['Key_name']])) {
+					$index[$key['Key_name']]['column'] = $key['Column_name'];
+					$index[$key['Key_name']]['unique'] = ife($key['Non_unique'] == 0, 1, 0);
+				} else {
+					if(!is_array($index[$key['Key_name']]['column'])) {
+						$col[] = $index[$key['Key_name']]['column'];
+					}
+					$col[] = $key['Column_name'];
+					$index[$key['Key_name']]['column'] = $col;
+				}
+			}
+		}
+		return $index;
+	}
+/**
  * Generate a MySQL schema for the given Schema object
  *
  * @param object $schema An instance of a subclass of CakeSchema
@@ -459,31 +488,110 @@ class DboMysql extends DboSource {
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	function generateSchema($schema, $table = null) {
+	function createSchema($schema, $table = null) {
 		if (!is_a($schema, 'CakeSchema')) {
 			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
 			return null;
 		}
 		$out = '';
-
 		foreach ($schema->tables as $curTable => $columns) {
-			if (empty($table) || $table == $curTable) {
+			if (!$table || $table == $curTable) {
 				$out .= 'CREATE TABLE ' . $this->fullTableName($curTable) . " (\n";
-				$colList = array();
+				$cols = $colList = $index = array();
 				$primary = null;
-
-				foreach ($columns as $col) {
-					if (isset($col['key']) && $col['key'] == 'primary') {
-						$primary = $col;
+				foreach ($columns as $name => $col) {
+					if (is_string($col)) {
+						$col = array('type' => $col);
 					}
-					$colList[] = $this->generateColumnSchema($col);
+					if (isset($col['key']) && $col['key'] == 'primary') {
+						$primary = $name;
+					}
+					if($name !== 'indexes') {
+						$col['name'] = $name;
+						if(!isset($col['type'])) {
+							$col['type'] = 'string';
+						}
+						$cols[] = $this->buildColumn($col);
+					} else {
+						$index[] =  $this->buildIndex($col);
+					}
+
 				}
-				if (empty($primary)) {
-					$primary = array('id', 'integer', 'key' => 'primary');
-					array_unshift($colList, $this->generateColumnSchema($primary));
+				if (empty($index) && empty($primary)) {
+					$primary = 'id';
+					$col = array('type'=>'integer', 'key' => 'primary');
+					array_unshift($cols, $this->buildColumn($col));
 				}
-				$colList[] = 'PRIMARY KEY (' . $this->name($primary[0]) . ')';
-				$out .= "\t" . join(",\n\t", $colList) . "\n);\n\n";
+				if(empty($index) && !empty($primary)) {
+					$col = array('PRIMARY'=> array('column'=> $primary, 'unique' => 1));
+					$index[] = $this->buildIndex($col);
+				}
+				$out .= "\t" . join(",\n\t", $cols) . ",\n\t". join(",\n\t", $index) . "\n);\n\n";
+			}
+		}
+		return $out;
+	}
+/**
+ * Generate a MySQL Alter Table syntax for the given Schema comparison
+ *
+ * @param unknown_type $schema
+ * @return unknown
+ */
+	function alterSchema($compare) {
+		if(!is_array($compare)) {
+			return false;
+		}
+		$out = '';
+		$colList = array();
+		foreach($compare as $table => $types) {
+			$out .= 'ALTER TABLE ' . $this->fullTableName($table) . " \n";
+			foreach($types as $type => $column) {
+				switch($type) {
+					case 'add':
+						foreach($column as $field => $col) {
+							$col['name'] = $field;
+							$alter = 'ADD '.$this->buildColumn($col);
+							if(isset($col['after'])) {
+								$alter .= ' AFTER '. $this->name($col['after']);
+							}
+							$colList[] = $alter;
+						}
+					break;
+					case 'drop':
+						foreach($column as $field => $col) {
+							$col['name'] = $field;
+							$colList[] = 'DROP '.$this->name($field);
+						}
+					break;
+					case 'change':
+						foreach($column as $field => $col) {
+							$col['name'] = $field;
+							$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
+						}
+					break;
+				}
+			}
+			$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
+		}
+		return $out;
+	}
+/**
+ * Generate a MySQL Drop table for the given Schema object
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *                      Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	function dropSchema($schema, $table = null) {
+		if (!is_a($schema, 'CakeSchema')) {
+			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			return null;
+		}
+		$out = '';
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$table || $table == $curTable) {
+				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . ";\n";
 			}
 		}
 		return $out;
@@ -491,23 +599,25 @@ class DboMysql extends DboSource {
 /**
  * Generate a MySQL-native column schema string
  *
- * @param array $column An array structured like the following: array('name', 'type'[, options]),
+ * @param array $column An array structured like the following: array('name'=>'value', 'type'=>'value'[, options]),
  *                      where options can be 'default', 'length', or 'key'.
  * @return string
  */
-	function generateColumnSchema($column) {
+	function buildColumn($column) {
 		$name = $type = null;
 		$column = am(array('null' => true), $column);
-		list($name, $type) = $column;
+		extract($column);
 
 		if (empty($name) || empty($type)) {
 			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
 			return null;
 		}
+
 		if (!isset($this->columns[$type])) {
 			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
 			return null;
 		}
+
 		$real = $this->columns[$type];
 		$out = $this->name($name) . ' ' . $real['name'];
 
@@ -523,9 +633,10 @@ class DboMysql extends DboSource {
 			}
 			$out .= '(' . $length . ')';
 		}
-
-		if (isset($column['key']) && $column['key'] == 'primary') {
+		if (isset($column['key']) && $column['key'] == 'primary' && (!isset($column['extra']) || (isset($column['extra']) && $column['extra'] == 'auto_increment'))) {
 			$out .= ' NOT NULL AUTO_INCREMENT';
+		} elseif (isset($column['key']) && $column['key'] == 'primary') {
+			$out .= ' NOT NULL';
 		} elseif (isset($column['default'])) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
 		} elseif (isset($column['null']) && $column['null'] == true) {
@@ -538,19 +649,30 @@ class DboMysql extends DboSource {
 		return $out;
 	}
 /**
- * Enter description here...
+ * Format indexes for create table
  *
- * @param unknown_type $schema
- * @return unknown
+ * @param array $indexes
+ * @return string
  */
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-						'{FULLTEXT_MYSQL}', '{BOOLEAN}', '{UTF_8}');
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
-						'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
-						'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-		$query = trim(r($search, $replace, $schema));
-		return $query;
+	function buildIndex($indexes) {
+		$join = array();
+		foreach ($indexes as $name => $value) {
+			$out = null;
+			if ($name == 'PRIMARY') {
+				$out .= 'PRIMARY KEY (' . $this->name($value['column']) . ')';
+			} else {
+				if (!empty($value['unique'])) {
+					$out .= 'UNIQUE ';
+				}
+				if (is_array($value['column'])) {
+					$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				} else {
+					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
+				}
+			}
+			$join[] = $out;
+		}
+		return join(",\n\t", $join);
 	}
 }
 ?>

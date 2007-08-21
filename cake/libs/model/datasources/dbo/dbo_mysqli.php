@@ -167,8 +167,7 @@ class DboMysqli extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[] = array(
-					'name'		=> $column[0]['Field'],
+				$fields[$column[0]['Field']] = array(
 					'type'		=> $this->column($column[0]['Type']),
 					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
 					'default'	=> $column[0]['Default'],
@@ -437,107 +436,6 @@ class DboMysqli extends DboSource {
  */
 	function getEncoding() {
 		return mysqli_client_encoding($this->connection);
-	}
-/**
- * Generate a MySQL schema for the given Schema object
- *
- * @param object $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *                      Otherwise, all tables defined in the schema are generated.
- * @return string
- */
-	function generateSchema($schema, $table = null) {
-		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
-			return null;
-		}
-		$out = '';
-
-		foreach ($schema->tables as $curTable => $columns) {
-			if (empty($table) || $table == $curTable) {
-				$out .= 'CREATE TABLE ' . $this->fullTableName($curTable) . " (\n";
-				$colList = array();
-				$primary = null;
-
-				foreach ($columns as $col) {
-					if (isset($col['key']) && $col['key'] == 'primary') {
-						$primary = $col;
-					}
-					$colList[] = $this->generateColumnSchema($col);
-				}
-				if (empty($primary)) {
-					$primary = array('id', 'integer', 'key' => 'primary');
-					array_unshift($colList, $this->generateColumnSchema($primary));
-				}
-				$colList[] = 'PRIMARY KEY (' . $this->name($primary[0]) . ')';
-				$out .= "\t" . join(",\n\t", $colList) . "\n);\n\n";
-			}
-		}
-		return $out;
-	}
-/**
- * Generate a MySQL-native column schema string
- *
- * @param array $column An array structured like the following: array('name', 'type'[, options]),
- *                      where options can be 'default', 'length', or 'key'.
- * @return string
- */
-	function generateColumnSchema($column) {
-		$name = $type = null;
-		$column = am(array('null' => true), $column);
-		list($name, $type) = $column;
-
-		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
-			return null;
-		}
-		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
-			return null;
-		}
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
-
-		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-			if (isset($column['length'])) {
-				$length = $column['length'];
-			} elseif (isset($column['limit'])) {
-				$length = $column['limit'];
-			} elseif (isset($real['length'])) {
-				$length = $real['length'];
-			} else {
-				$length = $real['limit'];
-			}
-			$out .= '(' . $length . ')';
-		}
-
-		if (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= ' NOT NULL AUTO_INCREMENT';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $schema
- * @return unknown
- */
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-						'{FULLTEXT_MYSQL}', '{BOOLEAN}', '{UTF_8}');
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
-						'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
-						'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-		$query = trim(r($search, $replace, $schema));
-		return $query;
 	}
 }
 ?>

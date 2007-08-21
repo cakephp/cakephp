@@ -69,7 +69,7 @@ class NumberTree extends CakeTestModel {
 }
 
 class NumberTreeCase extends CakeTestCase {
-	var $fixtures = array('number_tree');
+	var $fixtures = array('core.number_tree');
 
 	function testInitialize() {
 		$this->NumberTree = & new NumberTree();
@@ -720,6 +720,10 @@ class NumberTreeCase extends CakeTestCase {
 					array('NumberTree' => array('name' => '1.2')),
 					array('NumberTree' => array('name' => '1.2.2')));
 		$this->assertIdentical($result, $expects);
+	}
+	
+	function tearDown() {
+		unset($this->NumberTree);
 	}
 }
 ?>

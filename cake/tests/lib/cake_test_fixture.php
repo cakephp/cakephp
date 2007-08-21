@@ -44,12 +44,17 @@ class CakeTestFixture extends Object {
 	function __construct(&$db) {
 		$this->db =& $db;
 		$this->init();
+		if(!class_exists('cakeschema')) {
+			uses('model' . DS .'schema');
+		}
+		$this->Schema = new CakeSchema(array('name'=>'TestSuite', 'connection'=>'test_suite'));
 	}
 /**
  * Initialize the fixture.
  *
  */
 	function init() {
+
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array();
 
@@ -63,33 +68,29 @@ class CakeTestFixture extends Object {
 
 			if (isset($import['model']) && (class_exists($import['model']) || loadModel($import['model']))) {
 				$model =& new $import['model'];
-				$modelDb =& ConnectionManager::getDataSource($model->useDbConfig);
-
-				$info = $model->loadInfo();
-
-				$this->fields = array_combine(Set::extract($info->value, '{n}.name'), $info->value);
+				$db =& ConnectionManager::getDataSource($model->useDbConfig);
+				$db->cacheSources = false;
+				$this->table = $this->useTable;
+				$schema = $model->schema(true);
+				$this->fields = $schema->value;
 				$this->fields[$model->primaryKey]['key'] = 'primary';
-
-				$this->primaryKey = array( $model->primaryKey );
 			} elseif (isset($import['table'])) {
-				$model =& new stdClass();
-				$modelDb =& ConnectionManager::getDataSource($import['connection']);
-
+				$model =& new Model(null, $import['table'], $import['connection']);
+				$db =& ConnectionManager::getDataSource($import['connection']);
+				$db->cacheSources = false;
 				$model->name = Inflector::camelize(Inflector::singularize($import['table']));
 				$model->table = $import['table'];
-				$model->tablePrefix = $modelDb->config['prefix'];
-
-				$info = $modelDb->describe($model);
-
-				$this->fields = array_combine(Set::extract($info, '{n}.name'), $info);
+				$model->tablePrefix = $db->config['prefix'];
+				$schema = $model->schema(true);
+				$this->fields = $schema->value;
 			}
 
-			if ($import['records'] !== false && isset($model) && isset($modelDb)) {
+			if ($import['records'] !== false && isset($model) && isset($db)) {
 				$this->records = array();
 
 				$query = array(
-					'fields' => Set::extract($this->fields, '{n}.name'),
-					'table' => $modelDb->name($model->table),
+					'fields' => array_keys($this->fields),
+					'table' => $db->name($model->table),
 					'alias' => $model->name,
 					'conditions' => array(),
 					'order' => null,
@@ -97,10 +98,10 @@ class CakeTestFixture extends Object {
 				);
 
 				foreach ($query['fields'] as $index => $field) {
-					$query['fields'][$index] = $modelDb->name($query['alias']) . '.' . $modelDb->name($field);
+					$query['fields'][$index] = $db->name($query['alias']) . '.' . $db->name($field);
 				}
 
-				$records = $modelDb->fetchAll($modelDb->buildStatement($query, $model), false, $model->name);
+				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->name);
 
 				if ($records !== false && !empty($records)) {
 					$this->records = Set::extract($records, '{n}.' . $model->name);
@@ -114,14 +115,6 @@ class CakeTestFixture extends Object {
 
 		if (!isset($this->primaryKey) && isset($this->fields['id'])) {
 			$this->primaryKey = 'id';
-		}
-
-		if (isset($this->primaryKey) && !is_array($this->primaryKey)) {
-			$this->primaryKey = array( $this->primaryKey );
-		}
-
-		if (isset($this->primaryKey) && isset($this->fields[$this->primaryKey[0]])) {
-			$this->fields[$this->primaryKey[0]]['key'] = 'primary';
 		}
 
 		if (isset($this->fields)) {
@@ -144,43 +137,9 @@ class CakeTestFixture extends Object {
 			if (!isset($this->fields) || empty($this->fields)) {
 				return null;
 			}
-
-			$create = 'CREATE TABLE ' . $this->db->name($this->db->config['prefix'] . $this->table) . ' (' . "\n";
-
-			foreach ($this->fields as $field => $attributes) {
-				if (!is_array($attributes)) {
-					$attributes = array('type' => $attributes);
-				} elseif (isset($attributes['key']) && low($attributes['key']) == 'primary' && !isset($this->primaryKey)) {
-					$this->primaryKey = array ( $field );
-				}
-
-				$column = array($field, $attributes['type']);
-				unset($attributes['type']);
-
-				if (!empty($attributes)) {
-					$column = array_merge($column, $attributes);
-				}
-
-				$create .= $this->db->generateColumnSchema($column) . ',' . "\n";
-			}
-
-			if (isset($this->primaryKey)) {
-				foreach ($this->primaryKey as $index => $field) {
-					$this->primaryKey[$index] = $this->db->name($field);
-				}
-			}
-
-			if (!isset($this->primaryKey)) {
-				$create = substr($create, 0, -1);
-			} else {
-				$create .= 'PRIMARY KEY(' . implode(', ', $this->primaryKey) . ')' . "\n";
-			}
-
-			$create .= ')';
-
-			$this->_create = $create;
+			$this->Schema->_build(array($this->table => $this->fields));
+			$this->_create = $this->db->createSchema($this->Schema);
 		}
-
 		return $this->_create;
 	}
 /**
@@ -192,9 +151,9 @@ class CakeTestFixture extends Object {
  */
 	function drop() {
 		if (!isset($this->_drop)) {
-			$this->_drop = 'DROP TABLE ' . $this->db->name($this->db->config['prefix'] . $this->table);
+			$this->Schema->_build(array($this->table => $this->fields));
+			$this->_drop = $this->db->dropSchema($this->Schema);
 		}
-
 		return $this->_drop;
 	}
 /**

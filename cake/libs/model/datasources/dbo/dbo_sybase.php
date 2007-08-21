@@ -170,7 +170,9 @@ class DboSybase extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[] = array('name' => $column[0]['Field'], 'type' => $this->column($column[0]['Type']), 'null' => $column[0]['Null']);
+				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']), 
+														'null' => $column[0]['Null']
+													);
 			}
 		}
 
@@ -378,21 +380,6 @@ class DboSybase extends DboSource {
 		}
 	}
 /**
- * Enter description here...
- *
- * @param unknown_type $schema
- *  @return unknown
- */
-	function buildSchemaQuery($schema) {
-		$search = array('{AUTOINCREMENT}', '{PRIMARY}', '{UNSIGNED}', '{FULLTEXT}',
-						'{FULLTEXT_SYBASE}', '{BOOLEAN}', '{UTF_8}');
-		$replace = array('int(11) not null auto_increment', 'primary key', 'unsigned',
-						'FULLTEXT', 'FULLTEXT', 'enum (\'true\', \'false\') NOT NULL default \'true\'',
-						'/*!40100 CHARACTER SET utf8 COLLATE utf8_unicode_ci */');
-		$query = trim(r($search, $replace, $schema));
-		return $query;
-	}
-/**
  * Inserts multiple values into a join table
  *
  * @param string $table
@@ -404,6 +391,6 @@ class DboSybase extends DboSource {
 		for ($x = 0; $x < $count; $x++) {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
-	}
+	}	
 }
 ?>

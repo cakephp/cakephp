@@ -112,9 +112,9 @@ class ModelTask extends Shell {
 		$validate = array();
 
 		if (array_search($useTable, $this->__tables) !== false && (low($wannaDoValidation) == 'y' || low($wannaDoValidation) == 'yes')) {
-			foreach ($modelFields as $field) {
+			foreach ($modelFields as $fieldName => $field) {
 				$this->out('');
-				$prompt = 'Name: ' . $field['name'] . "\n";
+				$prompt = 'Name: ' . $fieldName . "\n";
 				$prompt .= 'Type: ' . $field['type'] . "\n";
 				$prompt .= '---------------------------------------------------------------'."\n";
 				$prompt .= 'Please select one of the following validation options:'."\n";
@@ -126,7 +126,7 @@ class ModelTask extends Shell {
 				$prompt .= "5- Do not do any validation on this field.\n\n";
 				$prompt .= "... or enter in a valid regex validation string.\n\n";
 
-				if ($field['null'] == 1 || $field['name'] == $primaryKey || $field['name'] == 'created' || $field['name'] == 'modified') {
+				if ($field['null'] == 1 || $fieldName == $primaryKey || $fieldName == 'created' || $fieldName == 'modified') {
 					$validation = $this->in($prompt, null, '5');
 				} else {
 					$validation = $this->in($prompt, null, '1');
@@ -134,21 +134,21 @@ class ModelTask extends Shell {
 
 				switch ($validation) {
 					case '1':
-						$validate[$field['name']] = 'VALID_NOT_EMPTY';
+						$validate[$fieldName] = 'VALID_NOT_EMPTY';
 						break;
 					case '2':
-						$validate[$field['name']] = 'VALID_EMAIL';
+						$validate[$fieldName] = 'VALID_EMAIL';
 						break;
 					case '3':
-						$validate[$field['name']] = 'VALID_NUMBER';
+						$validate[$fieldName] = 'VALID_NUMBER';
 						break;
 					case '4':
-						$validate[$field['name']] = 'VALID_YEAR';
+						$validate[$fieldName] = 'VALID_YEAR';
 						break;
 					case '5':
 						break;
 					default:
-						$validate[$field['name']] = $validation;
+						$validate[$fieldName] = $validation;
 					break;
 				}
 			}
@@ -161,13 +161,13 @@ class ModelTask extends Shell {
 			$possibleKeys = array();
 			//Look for belongsTo
 			$i = 0;
-			foreach ($modelFields as $field) {
-				$offset = strpos($field['name'], '_id');
-				if ($field['name'] != $primaryKey && $offset !== false) {
-					$tmpModelName = $this->_modelNameFromKey($field['name']);
+			foreach ($modelFields as $fieldName => $field) {
+				$offset = strpos($fieldName, '_id');
+				if ($fieldName != $primaryKey && $offset !== false) {
+					$tmpModelName = $this->_modelNameFromKey($fieldName);
 					$associations['belongsTo'][$i]['alias'] = $tmpModelName;
 					$associations['belongsTo'][$i]['className'] = $tmpModelName;
-					$associations['belongsTo'][$i]['foreignKey'] = $field['name'];
+					$associations['belongsTo'][$i]['foreignKey'] = $fieldName;
 					$i++;
 				}
 			}
@@ -179,17 +179,17 @@ class ModelTask extends Shell {
 				$modelFieldsTemp = $db->describe($tempOtherModel);
 				foreach ($modelFieldsTemp as $field) {
 					if ($field['type'] == 'integer' || $field['type'] == 'string') {
-						$possibleKeys[$otherTable][] = $field['name'];
+						$possibleKeys[$otherTable][] = $fieldName;
 					}
-					if ($field['name'] != $primaryKey && $field['name'] == $this->_modelKey($currentModelName)) {
+					if ($fieldName != $primaryKey && $fieldName == $this->_modelKey($currentModelName)) {
 						$tmpModelName = $this->_modelName($otherTable);
 						$associations['hasOne'][$j]['alias'] = $tmpModelName;
 						$associations['hasOne'][$j]['className'] = $tmpModelName;
-						$associations['hasOne'][$j]['foreignKey'] = $field['name'];
+						$associations['hasOne'][$j]['foreignKey'] = $fieldName;
 
 						$associations['hasMany'][$j]['alias'] = $tmpModelName;
 						$associations['hasMany'][$j]['className'] = $tmpModelName;
-						$associations['hasMany'][$j]['foreignKey'] = $field['name'];
+						$associations['hasMany'][$j]['foreignKey'] = $fieldName;
 						$j++;
 					}
 				}

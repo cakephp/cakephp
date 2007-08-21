@@ -160,8 +160,7 @@ class DboSqlite extends DboSource {
 		$result = $this->fetchAll('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
 
 		foreach ($result as $column) {
-			$fields[] = array(
-				'name' => $column[0]['name'],
+			$fields[$column[0]['name']] = array(
 				'type' => $this->column($column[0]['type']),
 				'null' => ! $column[0]['notnull'],
 				'default' => $column[0]['dflt_value']
@@ -405,6 +404,6 @@ class DboSqlite extends DboSource {
 		for ($x = 0; $x < $count; $x++) {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
-	}
+	}	
 }
 ?>

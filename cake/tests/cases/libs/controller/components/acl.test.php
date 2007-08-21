@@ -39,6 +39,7 @@ uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
 if(!class_exists('aclnodetestbase')) {
 	class AclNodeTestBase extends AclNode {
 		var $useDbConfig = 'test_suite';
+		var $cacheSources = false;
 	}
 }
 
