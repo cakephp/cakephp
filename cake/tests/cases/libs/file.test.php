@@ -59,7 +59,7 @@ class FileTest extends UnitTestCase {
 		$expecting = 'php';
 		$this->assertEqual($result, $expecting);
 
-		$result = $this->File->filename();
+		$result = $this->File->name();
 		$expecting = 'file.test';
 		$this->assertEqual($result, $expecting);
 

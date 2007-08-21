@@ -181,7 +181,7 @@ class File extends Object{
 			$this->info = pathinfo($this->pwd());
 		}
 		if (!isset($this->info['filename'])) {
-			$this->info['filename'] = $this->filename();
+			$this->info['filename'] = $this->name();
 		}
 		return $this->info;
 	}
@@ -206,7 +206,7 @@ class File extends Object{
  * @return string The File name without extension.
  * @access public
  */
-	function filename() {
+	function name() {
 		if ($this->info == null) {
 			$this->info();
 		}
@@ -360,6 +360,7 @@ class File extends Object{
  * @see File::pwd
  */
 	function getFullPath() {
+		trigger_error('Deprecated: Use File::pwd() instead.', E_USER_WARNING);
 		return $this->pwd();
 	}
 /**
@@ -367,20 +368,31 @@ class File extends Object{
  * @see File::name
  */
 	function getName() {
+		trigger_error('Deprecated: Use File::name() instead.', E_USER_WARNING);
 		return $this->name;
+	}
+/**
+ * @deprecated
+ * @see File::name()
+ */
+	function filename() {
+		trigger_error('Deprecated: Use File::name() instead.', E_USER_WARNING);
+		return $this->name();
 	}
 /**
  * @deprecated
  * @see File::ext()
  */
 	function getExt() {
+		trigger_error('Deprecated: Use File::ext() instead.', E_USER_WARNING);
 		return $this->ext();
 	}
 /**
  * @deprecated
- * @see File::group()
+ * @see File::md5()
  */
 	function getMd5() {
+		trigger_error('Deprecated: Use File::md5() instead.', E_USER_WARNING);
 		return $this->md5();
 	}
 /**
@@ -388,6 +400,7 @@ class File extends Object{
  * @see File::size()
  */
 	function getSize() {
+		trigger_error('Deprecated: Use File::size() instead.', E_USER_WARNING);
 		return $this->size();
 	}
 /**
@@ -395,6 +408,7 @@ class File extends Object{
  * @see File::owner()
  */
 	function getOwner() {
+		trigger_error('Deprecated: Use File::owner() instead.', E_USER_WARNING);
 		return $this->owner();
 	}
 /**
@@ -402,6 +416,7 @@ class File extends Object{
  * @see File::group()
  */
 	function getGroup() {
+		trigger_error('Deprecated: Use File::group() instead.', E_USER_WARNING);
 		return $this->group();
 	}
 /**
@@ -409,6 +424,7 @@ class File extends Object{
  * @see File::perms()
  */
 	function getChmod() {
+		trigger_error('Deprecated: Use File::perms() instead.', E_USER_WARNING);
 		return $this->perms();
 	}
 /**
@@ -416,6 +432,7 @@ class File extends Object{
  * @see File::Folder()
  */
 	function getFolder() {
+		trigger_error('Deprecated: Use File::Folder() instead.', E_USER_WARNING);
 		return $this->Folder();
 	}
 }
