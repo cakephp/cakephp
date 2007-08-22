@@ -27,6 +27,11 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('controller' . DS . 'controller');
+
+class ControllerPost extends CakeTestModel {
+	var $name = 'ControllerPost';
+	var $useTable = 'posts';
+}
 /**
  * Short description for class.
  *
@@ -35,8 +40,56 @@ uses('controller' . DS . 'controller');
  */
 class ControllerTest extends CakeTestCase {
 
-	function skip() {
-		$this->skipif (true, 'ControllerTest not implemented');
+	var $fixtures = array('core.post');
+
+	function testCleanUpFields() {
+		$Controller =& new Controller();
+		$Controller->modelClass = 'ControllerPost';
+		$Controller->ControllerPost =& new ControllerPost();
+
+		$Controller->data['ControllerPost']['created_year'] = '';
+		$Controller->data['ControllerPost']['created_month'] = '';
+		$Controller->data['ControllerPost']['created_day'] = '';
+		$Controller->data['ControllerPost']['created_hour'] = '';
+		$Controller->data['ControllerPost']['created_min'] = '';
+		$Controller->data['ControllerPost']['created_sec'] = '';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> ''));
+		$this->assertEqual($Controller->data, $expected);
+
+		$Controller->data['ControllerPost']['created_year'] = '2007';
+		$Controller->data['ControllerPost']['created_month'] = '08';
+		$Controller->data['ControllerPost']['created_day'] = '20';
+		$Controller->data['ControllerPost']['created_hour'] = '';
+		$Controller->data['ControllerPost']['created_min'] = '';
+		$Controller->data['ControllerPost']['created_sec'] = '';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> '2007-08-20'));
+		$this->assertEqual($Controller->data, $expected);
+
+		$Controller->data['ControllerPost']['created_year'] = '2007';
+		$Controller->data['ControllerPost']['created_month'] = '08';
+		$Controller->data['ControllerPost']['created_day'] = '20';
+		$Controller->data['ControllerPost']['created_hour'] = '10';
+		$Controller->data['ControllerPost']['created_min'] = '12';
+		$Controller->data['ControllerPost']['created_sec'] = '';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> '2007-08-20 10:12'));
+		$this->assertEqual($Controller->data, $expected);
+
+		$Controller->data['ControllerPost']['created_year'] = '2007';
+		$Controller->data['ControllerPost']['created_month'] = '';
+		$Controller->data['ControllerPost']['created_day'] = '12';
+		$Controller->data['ControllerPost']['created_hour'] = '20';
+		$Controller->data['ControllerPost']['created_min'] = '';
+		$Controller->data['ControllerPost']['created_sec'] = '';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> ''));
+		$this->assertEqual($Controller->data, $expected);
 	}
 }
 ?>
