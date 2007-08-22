@@ -504,7 +504,7 @@ class Router extends Object {
 		$_this->connect('/:controller/:action/*');
 
 		if (empty($_this->__namedArgs)) {
-			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction'));
+			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'));
 		}
 
 		$_this->__defaultsMapped = true;
