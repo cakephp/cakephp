@@ -35,7 +35,7 @@
 class AuthorFixture extends CakeTestFixture {
 	var $name = 'Author';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'user' => array('type' => 'string', 'null' => false),
 		'password' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',

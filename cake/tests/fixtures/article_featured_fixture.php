@@ -35,7 +35,7 @@
 class ArticleFeaturedFixture extends CakeTestFixture {
 	var $name = 'ArticleFeatured';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'user_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
 		'body' => 'text',

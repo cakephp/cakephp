@@ -35,7 +35,7 @@
 class HomeFixture extends CakeTestFixture {
 	var $name = 'Home';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'another_article_id' => array('type' => 'integer', 'null' => false),
 		'advertisement_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),

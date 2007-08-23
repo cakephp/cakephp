@@ -35,7 +35,7 @@
 class ProjectFixture extends CakeTestFixture {
 	var $name = 'Project';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
 	var $records = array(

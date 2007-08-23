@@ -35,7 +35,7 @@
 class AdvertisementFixture extends CakeTestFixture {
 	var $name = 'Advertisement';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'title' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
 		'updated' => 'datetime'

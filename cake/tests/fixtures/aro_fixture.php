@@ -35,7 +35,7 @@
 class AroFixture extends CakeTestFixture {
 	var $name = 'Aro';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
 		'model' => array('type' => 'string', 'default' => ''),
 		'foreign_key' => array('type' => 'integer', 'length' => 10, 'null' => true),

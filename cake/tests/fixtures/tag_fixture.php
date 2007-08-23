@@ -35,7 +35,7 @@
 class TagFixture extends CakeTestFixture {
 	var $name = 'Tag';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'tag' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
 		'updated' => 'datetime'

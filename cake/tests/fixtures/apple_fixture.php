@@ -35,7 +35,7 @@
 class AppleFixture extends CakeTestFixture {
 	var $name = 'Apple';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'apple_id' => array('type' => 'integer', 'null' => true),
 		'color' => array('type' => 'string', 'length' => 40, 'null' => false),
 		'name' => array('type' => 'string', 'length' => 40, 'null' => false),

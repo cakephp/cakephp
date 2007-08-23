@@ -35,7 +35,7 @@
 class AttachmentFixture extends CakeTestFixture {
 	var $name = 'Attachment';
 	var $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => array('type' => 'integer', 'key' => 'primary', 'extra'=> 'auto_increment'),
 		'comment_id' => array('type' => 'integer', 'null' => false),
 		'attachment' => array('type' => 'string', 'null' => false),
 		'created' => 'datetime',
