@@ -159,33 +159,52 @@ class CakeSchema extends Object {
 			$options
 		));
 		$db =& ConnectionManager::getDataSource($connection);
+		$tables = $db->sources();
+
 
 		if (empty($models)) {
 			$models = Configure::listObjects('model');
 		}
+
+		$Inflector = Inflector::getInstance();
+		$tablesWithoutModels = array_diff(array_map(array($Inflector, 'classify'), $tables), $models);
+		$modelsWithoutTables = array_diff($models, array_map(array($Inflector, 'classify'), $tables));
+
+		$models = am($tablesWithoutModels, array_diff($models, $modelsWithoutTables));
+
 		$tables = array();
 		foreach ($models as $model) {
-			if (!class_exists($model)) {
-				loadModel($model);
+			if($model == 'ArosAco') {
+				$model = 'Permission';
 			}
-			$Object =& new $model();
-			$Object->setDataSource($connection);
-			if (is_object($Object)) {
-				if(empty($tables[$Object->table])) {
-					$tables[$Object->table] = $this->__columns($Object);
-					$tables[$Object->table]['indexes'] = $db->index($Object);
+			if (!class_exists(low($model))) {
+				if(!class_exists(low('AclNode')) && in_array($model, array('Aro','Aco', 'Permission'))) {
+					uses('model' . DS . 'db_acl');
+				} else {
+					loadModel($model);
+				}
+			}
+			if(class_exists(low($model))) {
+				$Object =& new $model();
+				$Object->setDataSource($connection);
+				if (is_object($Object)) {
+					if(empty($tables[$Object->table])) {
+						$tables[$Object->table] = $this->__columns($Object);
+						$tables[$Object->table]['indexes'] = $db->index($Object);
+					}
 					if(!empty($Object->hasAndBelongsToMany)) {
 						foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-							$tables[$Object->$Assoc->table] = $this->__columns($Object->$Assoc);
-							$tables[$Object->$Assoc->table]['indexes'] = $db->index($Object->$Assoc);
+							$class = $assocData['className'];
+							$tables[$Object->$Assoc->table] = $this->__columns($Object->$class);
+							$tables[$Object->$Assoc->table]['indexes'] = $db->index($Object->$class);
 						}
 					}
+				} else {
+					trigger_error('Schema generation error: model class ' . $class . ' not found', E_USER_WARNING);
 				}
-			} else {
-				trigger_error('Schema generation error: model class ' . $class . ' not found', E_USER_WARNING);
 			}
-
 		}
+		ksort($tables);
 		return compact('name', 'tables');
 	}
 /**
@@ -222,9 +241,9 @@ class CakeSchema extends Object {
 		if ($connection !== 'default') {
 			$out .= "\tvar \$connection = '{$connection}';\n\n";
 		}
-		
+
 		$out .= "\tfunction before(\$event = array()) {\n\t\treturn true;\n\t}\n\n\tfunction after(\$event = array()) {\n\t}\n\n";
-		
+
 		if(empty($tables)) {
 			$this->read();
 		}
@@ -370,6 +389,7 @@ class CakeSchema extends Object {
 	function __columns(&$Obj) {
 		$db =& ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
+		//pr($fields);
 		$columns = $props = array();
 		foreach ($fields->value as $name => $value) {
 
@@ -389,7 +409,7 @@ class CakeSchema extends Object {
 				unset($value['limit']);
 			}
 
-			if (empty($value['default']) && $value['null'] == true) {
+			if (empty($value['default'])) {
 				unset($value['default']);
 			}
 			if (empty($value['length'])) {

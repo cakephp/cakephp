@@ -593,7 +593,7 @@ class DboMysql extends DboSource {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {
-				$out .= 'DROP TABLE ' . $this->fullTableName($curTable) . ";\n";
+				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
 			}
 		}
 		return $out;
@@ -635,16 +635,16 @@ class DboMysql extends DboSource {
 			}
 			$out .= '(' . $length . ')';
 		}
-		if (isset($column['key']) && $column['key'] == 'primary' && (!isset($column['extra']) || (isset($column['extra']) && $column['extra'] == 'auto_increment'))) {
+		if (isset($column['key']) && $column['key'] == 'primary' && (isset($column['extra']) && $column['extra'] == 'auto_increment')) {
 			$out .= ' NOT NULL AUTO_INCREMENT';
 		} elseif (isset($column['key']) && $column['key'] == 'primary') {
 			$out .= ' NOT NULL';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
 		} elseif (isset($column['null']) && $column['null'] == true) {
 			$out .= ' DEFAULT NULL';
 		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
+		} elseif (isset($column['default'])) {
+			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
 		}

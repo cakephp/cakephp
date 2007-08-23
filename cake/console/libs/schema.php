@@ -109,14 +109,22 @@ class SchemaShell extends Shell {
  */
 	function dump() {
 		$write = false;
-		if (!empty($this->args[0]) && $this->args[0] == 'write') {
-			$write = true;
-		}
 		$Schema = $this->Schema->load();
+		if (!empty($this->args[0])) {
+			if($this->args[0] == 'true') {
+				$write = Inflector::underscore($this->Schema->name);
+			} else {
+				$write = $this->args[0];
+			}
+		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = $db->dropSchema($Schema) . $db->createSchema($Schema);
-		if($write === true) {
-			$File = new File($this->Schema->path . DS . Inflector::underscore($this->Schema->name) .'.sql', true);
+		$contents = "#". $Schema->name ." sql generated on: " . date('Y-m-d H:m:s') . " : ". time()."\n\n";
+		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+		if($write) {
+			if(strpos($write, '.sql') === false) {
+				$write .= '.sql';
+			}
+			$File = new File($this->Schema->path . DS . $write, true);
 			if($File->write($contents)) {
 				$this->out(__('SQL dump file created in '. $File->pwd(), true));
 				exit();
@@ -143,26 +151,32 @@ class SchemaShell extends Shell {
 			$table = $this->args[0];
 			$event = array($table);
 		}
-
+		$errors = array();
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$drop = $db->dropSchema($Schema, $table);
 		$this->out($drop);
 		if('y' == $this->in('Are you sure you want to drop tables and create your database?', array('y', 'n'), 'n')) {
-			$contents = $db->createSchema($Schema, $table);
+			$create = $db->createSchema($Schema, $table);
 			$this->out('Updating Database...');
-			if(!$this->Schema->before($event)) {
-				return false;
-			}
-			if ($db->_execute($contents)) {
-				$this->Schema->after($event);
-				$this->out(__('Database created', true));
-				exit();
-			} else {
-				$this->err(__('Database could not be created', true));
-				$this->err($db->lastError());
-				exit();
+			$contents = array_map('trim', explode(";", $drop. $create));
+			foreach($contents as $sql) {
+				if(!empty($sql)) {
+					if(!$this->Schema->before(array('created'=> $event))) {
+						return false;
+					}
+					if (!$db->_execute($sql)) {
+						$errors[] = $db->lastError();
+					}
+					$this->Schema->after(array('created'=> $event, 'errors'=> $errors));
+				}
 			}
 		}
+		if(!empty($errors)) {
+			$this->err($errors);
+			exit();
+		}
+		$this->out(__('Database updated', true));
+		exit();
 	}
 /**
  * Update database with Schema object
@@ -227,7 +241,7 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema help\n\t\tshows this help message.");
 		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
 		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'");
-		$this->out("\n\tschema dump 'write'\n\t\tdump database sql based on schema file");
+		$this->out("\n\tschema dump <filename>\n\t\tdump database sql based on schema file to filename in schema path. if filename is true, default will use the app directory name.");
 		$this->out("\n\tschema create <table>\n\t\tdrop tables and create database based on schema file\n\t\toptional <table> arg for creating only one table");
 		$this->out("\n\tschema update <table>\n\t\talter tables based on schema file\n\t\toptional <table> arg for altering only one table");
 		$this->out("");
