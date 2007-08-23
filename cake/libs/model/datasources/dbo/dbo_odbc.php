@@ -186,7 +186,7 @@ class DboOdbc extends DboSource{
 
 		foreach ($cols as $column) {
 			$type = odbc_field_type(odbc_exec($this->connection, "SELECT " . $column . " FROM " . $this->fullTableName($model)), 1);
-			$fields[$column] array('type' => $type));
+			$fields[$column] = array('type' => $type);
 		}
 
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
