@@ -150,6 +150,7 @@ class Configure extends Object {
 		if(!class_exists('folder')) {
 			uses('folder'); 
 		}
+		$items = array();
 		$Folder =& new Folder($path);
 		$contents = $Folder->read(false, true);
 		if(is_array($contents)) {
@@ -158,13 +159,12 @@ class Configure extends Object {
 			} else {
 				foreach($contents[1] as $item) {
 					if (substr($item, -strlen($suffix)) == $suffix) {
-						$item = substr($item, 0, strlen($item) - strlen($suffix));
-						$items[] = $item;
+						$items[] = substr($item, 0, strlen($item) - strlen($suffix));
 					}
 				}
-				return $items;
 			}
 		}
+		return $items;
 	}
 /**
  * Used to write a dynamic var in the Configure instance.
