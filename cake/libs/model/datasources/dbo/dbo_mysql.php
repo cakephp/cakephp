@@ -639,15 +639,16 @@ class DboMysql extends DboSource {
 			$out .= ' NOT NULL AUTO_INCREMENT';
 		} elseif (isset($column['key']) && $column['key'] == 'primary') {
 			$out .= ' NOT NULL';
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
 		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
 		} elseif (isset($column['default'])) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
+		} elseif (isset($column['null']) && $column['null'] == true) {
+			$out .= ' DEFAULT NULL';
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
 		}
+		
 		return $out;
 	}
 /**
