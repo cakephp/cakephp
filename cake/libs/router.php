@@ -666,18 +666,19 @@ class Router extends Object {
 					$url['action'] = 'index';
 				}
 			}
-			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
-
-			if (isset($url['ext'])) {
-				$extension = '.' . $url['ext'];
-				unset($url['ext']);
-			}
 			if ($admin) {
 				if (!isset($url[$admin]) && isset($params[$admin])) {
 					$url[$admin] = true;
 				} elseif ($admin && array_key_exists($admin, $url) && !$url[$admin]) {
 					unset($url[$admin]);
 				}
+			}
+
+			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
+
+			if (isset($url['ext'])) {
+				$extension = '.' . $url['ext'];
+				unset($url['ext']);
 			}
 			$match = false;
 

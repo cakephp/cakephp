@@ -396,9 +396,9 @@ class RouterTest extends UnitTestCase {
 				'controller' => 'controller', 'action' => 'index', 'form' => array(),
 				'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => 'test'
 			),
-			array (
+			array(
 				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/',
-				'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array (), 'webservices' => null
+				'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null
 			)
 		));
 
@@ -482,6 +482,27 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
+		$this->router->parse('/');
+		$result = $this->router->url(array('admin' => false, 'controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->setRequestInfo(array(
+			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+		));
+
+		$this->router->parse('/');
+		$result = $this->router->url(array('admin' => false, 'controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/admin/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
 		$result = $this->router->parse('admin/users/view/');
 		$expected = array('pass' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'admin', 'admin' => true);
 		$this->assertEqual($result, $expected);
@@ -519,7 +540,7 @@ class RouterTest extends UnitTestCase {
 		$this->router->parseExtensions('rss', 'xml');
 
 		$result = $this->router->parse('/posts.xml');
-		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array ('ext' => 'xml'), 'pass'=> array());
+		$expected = array('plugin' => null, 'controller' => 'posts', 'action' => 'index', 'url' => array('ext' => 'xml'), 'pass'=> array());
 		$this->assertEqual($result, $expected);
 
 		$result = $this->router->parse('/posts.atom?hello=goodbye');
@@ -602,8 +623,8 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/admin/:controller/:action/*', $adminParams);
 
 		$this->router->setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array (), 'bare' => 0, 'webservices' => null, 'plugin' => null),
-			array ('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array (), 'argSeparator' => ':', 'namedArgs' => array (), 'webservices' => null)
+			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
 		));
 
 		$result = $this->router->parse('/admin/posts/');
