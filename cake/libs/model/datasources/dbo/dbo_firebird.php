@@ -46,7 +46,7 @@ class DboFirebird extends DboSource {
  *
  * @var unknown_type
  */
-	var $modeltmp= "";
+	var $modeltmp = array();
 /**
  * Enter description here...
  *
@@ -98,14 +98,14 @@ class DboFirebird extends DboSource {
  */
 	var $columns = array(
 		'primary_key' => array('name' => 'integer IDENTITY (1, 1) NOT NULL'),
-		'string'	=> array('name'  => 'varchar', 'limit' => '255'),
+		'string'	=> array('name'	 => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'BLOB SUB_TYPE 1 SEGMENT SIZE 100 CHARACTER SET NONE'),
-		'integer' 	=> array('name' => 'integer'),
-		'float'		=> array('name'      => 'float', 'formatter' => 'floatval'),
-		'datetime'	=> array('name' => 'timestamp', 'format'    => 'd.m.Y H:i:s', 'formatter' => 'date'),
-		'timestamp' => array('name'      => 'timestamp', 'format'    => 'd.m.Y H:i:s', 'formatter' => 'date'),
-		'time'		=> array('name' => 'time', 'format'    => 'H:i:s', 'formatter' => 'date'),
-		'date'		=> array('name' => 'date', 'format'    => 'd.m.Y', 'formatter' => 'date'),
+		'integer'	=> array('name' => 'integer'),
+		'float'		=> array('name' => 'float', 'formatter' => 'floatval'),
+		'datetime'	=> array('name' => 'timestamp', 'format'	=> 'd.m.Y H:i:s', 'formatter' => 'date'),
+		'timestamp' => array('name'	=> 'timestamp', 'format'	 => 'd.m.Y H:i:s', 'formatter' => 'date'),
+		'time'		=> array('name' => 'time', 'format'	   => 'H:i:s', 'formatter' => 'date'),
+		'date'		=> array('name' => 'date', 'format'	   => 'd.m.Y', 'formatter' => 'date'),
 		'binary'	=> array('name' => 'blob'),
 		'boolean'	=> array('name' => 'smallint')
 	);
@@ -142,7 +142,7 @@ class DboFirebird extends DboSource {
 		if (strpos(strtolower($sql),"update") > 0) {
 			break;
 		}
-		return @ibase_query($this->connection,  $sql  );
+		return @ibase_query($this->connection,	$sql);
 	}
 /**
  * Returns a row from given resultset as an array .
@@ -171,8 +171,8 @@ class DboFirebird extends DboSource {
 			return $cache;
 		}
 		$sql = "select RDB" . "$" . "RELATION_NAME as name
-                FROM RDB" ."$" . "RELATIONS
-                Where RDB" . "$" . "SYSTEM_FLAG =0";
+				FROM RDB" ."$" . "RELATIONS
+				Where RDB" . "$" . "SYSTEM_FLAG =0";
 
 		$result = @ibase_query($this->connection,$sql);
 		$tables=array();
@@ -189,14 +189,14 @@ class DboFirebird extends DboSource {
  * @return array Fields in table. Keys are name and type
  */
 	function describe(&$model) {
-		$this->modeltmp = $model->name;
+		$this->modeltmp[$model->table] = $model->name;
 		$cache = parent::describe($model);
 
 		if ($cache != null) {
 			return $cache;
 		}
 		$fields = false;
-		$sql = "SELECT * FROM " . $model->tablePrefix . $model->table;
+		$sql = "SELECT * FROM " . $this->fullTableName($model, false);
 		$rs = ibase_query($sql);
 		$coln = ibase_num_fields($rs);
 		$fields = false;
@@ -210,8 +210,8 @@ class DboFirebird extends DboSource {
 					'null' => '',
 					'length' => $col_info['length']
 				);
-        }
-		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
+		}
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
 /**
@@ -353,7 +353,7 @@ class DboFirebird extends DboSource {
 		}
 
 		if (!empty($generator)) {
-			$sql = "SELECT GEN_ID(". $generator  . ",0) AS maxi FROM RDB" . "$" . "DATABASE";
+			$sql = "SELECT GEN_ID(". $generator	 . ",0) AS maxi FROM RDB" . "$" . "DATABASE";
 			$res = $this->rawQuery($sql);
 			$data = $this->fetchRow($res);
 			return $data['maxi'];
@@ -447,7 +447,11 @@ class DboFirebird extends DboSource {
 
 		while ($j < $num_fields) {
 			$column = ibase_field_info($results, $j);
-			$this->map[$index++] = array(ucfirst(strtolower($this->modeltmp)), strtolower($column[1]));
+			if (!empty($column[2])) {
+				$this->map[$index++] = array(ucfirst(strtolower($this->modeltmp[strtolower($column[2])])), strtolower($column[1]));
+			} else {
+				$this->map[$index++] = array(0, strtolower($column[1]));
+			}
 			$j++;
 		}
 	}
