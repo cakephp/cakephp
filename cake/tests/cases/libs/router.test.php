@@ -368,6 +368,24 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('admin' => true, 'controller' => 'pages', 'action' => 'view', 'my-page'));
 		$expected = '/page/my-page';
 		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+
+		$this->router->setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller',
+			    'admin' => false, 'url' => array('url' => array()), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/', 'here' => '/',
+				'webroot' => '/', 'passedArgs' => array(), 'namedArgs' => array(),
+				'webservices' => null
+			)
+		));
+
+		$result = $this->router->url(array('plugin' => null, 'controller' => 'myothercontroller'));
+		$expected = '/myothercontroller/';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testUrlGenerationWithExtensions() {

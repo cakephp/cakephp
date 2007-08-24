@@ -674,7 +674,16 @@ class Router extends Object {
 				}
 			}
 
+			$plugin = false;
+			if (array_key_exists('plugin', $url)) {
+				$plugin = $url['plugin'];
+			}
+
 			$url = am(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
+
+			if ($plugin !== false) {
+				$url['plugin'] = $plugin;
+			}
 
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
