@@ -159,19 +159,11 @@ class CakeSchema extends Object {
 			$options
 		));
 		$db =& ConnectionManager::getDataSource($connection);
-		$tables = $db->sources();
-
-
+		$currentTables = array_flip($db->sources());
 		if (empty($models)) {
 			$models = Configure::listObjects('model');
 		}
-
-		$Inflector = Inflector::getInstance();
-		$tablesWithoutModels = array_diff(array_map(array($Inflector, 'classify'), $tables), $models);
-		$modelsWithoutTables = array_diff($models, array_map(array($Inflector, 'classify'), $tables));
-
-		$models = am($tablesWithoutModels, array_diff($models, $modelsWithoutTables));
-
+		loadModel(null);
 		$tables = array();
 		foreach ($models as $model) {
 			if($model == 'ArosAco') {
@@ -187,23 +179,38 @@ class CakeSchema extends Object {
 			if(class_exists(low($model))) {
 				$Object =& new $model();
 				$Object->setDataSource($connection);
-				if (is_object($Object)) {
+				if (is_object($Object) && isset($currentTables[$Object->table])) {
 					if(empty($tables[$Object->table])) {
 						$tables[$Object->table] = $this->__columns($Object);
 						$tables[$Object->table]['indexes'] = $db->index($Object);
+						unset($currentTables[$Object->table]);
 					}
 					if(!empty($Object->hasAndBelongsToMany)) {
 						foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-							$class = $assocData['className'];
-							$tables[$Object->$Assoc->table] = $this->__columns($Object->$class);
-							$tables[$Object->$Assoc->table]['indexes'] = $db->index($Object->$class);
+							if (isset($assocData['with'])) {
+								$class = $assocData['with'];
+							} elseif ($assocData['_with']) {
+								$class = $assocData['_with'];
+							}
+							if (is_object($Object->$class) && isset($currentTables[$Object->$class->table])) {
+								$tables[$Object->$class->table] = $this->__columns($Object->$class);
+								$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
+								unset($currentTables[$Object->$class->table]);
+							}
 						}
 					}
-				} else {
-					trigger_error('Schema generation error: model class ' . $class . ' not found', E_USER_WARNING);
 				}
 			}
 		}
+
+		if(!empty($currentTables)) {
+			foreach(array_flip($currentTables) as $table) {
+				$Object = new AppModel(array('name'=> Inflector::classify($table), 'table'=> $table, 'ds'=> $connection));
+				$tables['missing'][$table] = $this->__columns($Object);
+				$tables['missing'][$table]['indexes'] = $db->index($Object);
+			}
+		}
+
 		ksort($tables);
 		return compact('name', 'tables');
 	}
@@ -249,7 +256,7 @@ class CakeSchema extends Object {
 		}
 
 		foreach ($tables as $table => $fields) {
-			if(!is_numeric($table)) {
+			if(!is_numeric($table) && $table !== 'missing') {
 				$out .= "\tvar \${$table} = array(\n";
 				if (is_array($fields)) {
 					$cols = array();
@@ -317,6 +324,9 @@ class CakeSchema extends Object {
 		}
 		$tables = array();
 		foreach ($new as $table => $fields) {
+			if($table == 'missing') {
+				break;
+			}
 			if (!array_key_exists($table, $old)) {
 				$tables[$table]['add'] = $fields;
 			} else {
