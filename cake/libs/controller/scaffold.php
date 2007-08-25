@@ -391,16 +391,17 @@ class Scaffold extends Object {
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 
+        $admin = Configure::read('Routing.admin');
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array('index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete');
-			} elseif (defined('CAKE_ADMIN') && $this->scaffoldActions == CAKE_ADMIN) {
-				$this->scaffoldActions = array(CAKE_ADMIN .'_index', CAKE_ADMIN .'_list', CAKE_ADMIN .'_view', CAKE_ADMIN .'_add', CAKE_ADMIN .'_create', CAKE_ADMIN .'_edit', CAKE_ADMIN .'_update', CAKE_ADMIN .'_delete');
+			} elseif (!empty($admin) && $this->scaffoldActions === $admin) {
+				$this->scaffoldActions = array($admin .'_index', $admin .'_list', $admin .'_view', $admin .'_add', $admin .'_create', $admin .'_edit', $admin .'_update', $admin .'_delete');
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				if (defined('CAKE_ADMIN')) {
-					$params['action'] = str_replace(CAKE_ADMIN . '_', '', $params['action']);
+				if (!empty($admin)) {
+					$params['action'] = str_replace($admin . '_', '', $params['action']);
 				}
 				switch($params['action']) {
 					case 'index':

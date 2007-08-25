@@ -230,17 +230,18 @@ class AuthComponent extends Object {
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
 
-		if (defined('CAKE_ADMIN')) {
+		$admin = Configure::read('Routing.admin');
+		if (!empty($admin)) {
 			$this->actionMap = am($this->actionMap, array(
-				CAKE_ADMIN . '_index'	=> 'read',
-				CAKE_ADMIN . '_add'		=> 'create',
-				CAKE_ADMIN . '_edit'	=> 'update',
-				CAKE_ADMIN . '_view'	=> 'read',
-				CAKE_ADMIN . '_remove'	=> 'delete',
-				CAKE_ADMIN . '_create'	=> 'create',
-				CAKE_ADMIN . '_read'	=> 'read',
-				CAKE_ADMIN . '_update'	=> 'update',
-				CAKE_ADMIN . '_delete'	=> 'delete'
+				$admin . '_index'	=> 'read',
+				$admin . '_add'		=> 'create',
+				$admin . '_edit'	=> 'update',
+				$admin . '_view'	=> 'read',
+				$admin . '_remove'	=> 'delete',
+				$admin . '_create'	=> 'create',
+				$admin . '_read'	=> 'read',
+				$admin . '_update'	=> 'update',
+				$admin . '_delete'	=> 'delete'
 			));
 		}
 		if (Configure::read() > 0) {
