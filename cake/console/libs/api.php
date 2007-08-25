@@ -108,7 +108,7 @@ class ApiShell extends Shell {
 
 			if ($File->exists()) {
 				if (!class_exists($class)) {
-					include($File->getFullPath());
+					include($File->pwd());
 				}
 				if (class_exists($class)) {
 					break;
@@ -223,6 +223,7 @@ class ApiShell extends Shell {
 				loadComponent(null);
 				break;
 			case 'helper':
+				uses('view'.DS.'helper');
 				loadHelper(null);
 				break;
 			case 'model':

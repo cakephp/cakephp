@@ -222,7 +222,7 @@ class ViewTask extends Shell {
 		if (!$this->controllerName) {
 			$this->err('could not find the controller');
 		}
-		
+
 		$controllerClassName = $this->controllerName . 'Controller';
 		if (!class_exists($this->controllerName . 'Controller') && !loadController($this->controllerName)) {
 			$file = CONTROLLERS . $this->controllerPath . '_controller.php';
