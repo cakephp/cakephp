@@ -126,7 +126,7 @@
  * 'admin' 		-> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
  */
-//	define('CAKE_ADMIN', 'admin');
+//	Configure::write('Routing.admin', 'admin')
 /**
  *  Enable or disable CakePHP webservices routing. Set to 'off' or 'on'.
  */

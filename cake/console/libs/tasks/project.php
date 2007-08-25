@@ -248,17 +248,17 @@ class ProjectTask extends Shell {
 		}
 	}
 /**
- * Enables CAKE_ADMIN in /app/config/core.php
+ * Enables Configure::read('Routing.admin') in /app/config/core.php
  *
  * @return bool
  */
 	function cakeAdmin($name) {
 		$File =& new File(CONFIGS . 'core.php');
 		$contents = $File->read();
-		if (preg_match('%([/\\t\\x20]*define\\(\'CAKE_ADMIN\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
-			$result = str_replace($match[0], 'define(\'CAKE_ADMIN\', \''.$name.'\');', $contents);
+		if (preg_match('%([/\\t\\x20]*Configure::write(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
+			$result = str_replace($match[0], 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
 			if ($File->write($result)) {
-				define('CAKE_ADMIN', $name);
+				Configure::write('Routing.admin', $name);
 				return true;
 			} else {
 				return false;

@@ -462,17 +462,18 @@ class Shell extends Object {
 		return str_replace(DS.DS, DS, $shortPath);
 	}
 /**
- * Checks for CAKE_ADMIN and Forces user to input it if not enabled
+ * Checks for Configure::read('Routing.admin') and Forces user to input it if not enabled
  *
  * @return the controller name
  */
 	function getAdmin() {
 		$admin = '';
 		$cakeAdmin = null;
-		if (defined('CAKE_ADMIN')) {
-			$cakeAdmin = CAKE_ADMIN . '_';
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute)) {
+			$cakeAdmin = $adminRoute . '_';
 		} else {
-			$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+			$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
 			$this->out('What would you like the admin route to be?');
 			$this->out('Example: www.example.com/admin/controller');
 			while ($admin == '') {
@@ -480,7 +481,7 @@ class Shell extends Object {
 			}
 			if ($this->Project->cakeAdmin($admin) !== true) {
 				$this->out('Unable to write to /app/config/core.php.');
-				$this->out('You need to enable CAKE_ADMIN in /app/config/core.php to use admin routing.');
+				$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
 				exit();
 			} else {
 				$cakeAdmin = $admin . '_';

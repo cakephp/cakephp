@@ -66,7 +66,7 @@ class ControllerTask extends Shell {
 			}
 			if ((isset($this->args[1]) && $this->args[1] == 'admin') || (isset($this->args[2]) && $this->args[2] == 'admin')) {
 				if ($admin = $this->getAdmin()) {
-					$this->out('Adding ' . CAKE_ADMIN .' methods');
+					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
 					if ($actions == 'scaffold') {
 						$actions = $this->__bakeActions($controller, $admin);
 					} else {
@@ -542,8 +542,8 @@ class ControllerTask extends Shell {
 		$this->out('Commands:');
 		$this->out("\n\tcontroller <name>\n\t\tbakes controller with var \$scaffold");
 		$this->out("\n\tcontroller <name> scaffold\n\t\tbakes controller with scaffold actions.\n\t\t(index, view, add, edit, delete)");
-		$this->out("\n\tcontroller <name> scaffold admin\n\t\tbakes a controller with scaffold actions for both public and CAKE_ADMIN");
-		$this->out("\n\tcontroller <name> admin\n\t\tbakes a controller with scaffold actions only for CAKE_ADMIN");
+		$this->out("\n\tcontroller <name> scaffold admin\n\t\tbakes a controller with scaffold actions for both public and Configure::read('Routing.admin')");
+		$this->out("\n\tcontroller <name> admin\n\t\tbakes a controller with scaffold actions only for Configure::read('Routing.admin')");
 		$this->out("");
 		exit();
 	}

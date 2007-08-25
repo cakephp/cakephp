@@ -117,8 +117,9 @@ class ViewTask extends Shell {
 					}
 					$adminDelete = null;
 
-					if (defined('CAKE_ADMIN')) {
-						$adminDelete = CAKE_ADMIN.'_delete';
+					$adminRoute = Configure::read('Routing.admin');
+					if (!empty($adminRoute)) {
+						$adminDelete = $adminRoute.'_delete';
 					}
 					foreach ($methods as $method) {
 						if ($method{0} != '_' && !in_array(low($method), am($protected, array('delete', $adminDelete)))) {
@@ -289,8 +290,9 @@ class ViewTask extends Shell {
 		}
 		$action = $template;
 
-		if (defined('CAKE_ADMIN') && strpos($template, CAKE_ADMIN) !== false) {
-			$template = str_replace(CAKE_ADMIN.'_', '', $template);
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
+			$template = str_replace($adminRoute.'_', '', $template);
 		}
 		if (in_array($template, array('add', 'edit'))) {
 			$action = $template;
