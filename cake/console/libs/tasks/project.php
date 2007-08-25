@@ -255,7 +255,7 @@ class ProjectTask extends Shell {
 	function cakeAdmin($name) {
 		$File =& new File(CONFIGS . 'core.php');
 		$contents = $File->read();
-		if (preg_match('%([/\\t\\x20]*Configure::write(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
+		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
 			$result = str_replace($match[0], 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
 			if ($File->write($result)) {
 				Configure::write('Routing.admin', $name);
