@@ -274,16 +274,6 @@ class ShellDispatcher {
 						$this->shellCommand = Inflector::variable($command);
 						$shell = new $this->shellClass($this);
 
-						if ($command == 'help') {
-							if (method_exists($shell, 'help')) {
-								$this->shiftArgs();
-								$shell->help();
-								exit();
-							} else {
-								$this->help();
-							}
-						}
-
 						$shell->initialize();
 						$shell->loadTasks();
 
