@@ -576,7 +576,7 @@ class FormHelper extends AppHelper {
 					$labelText = $label['text'];
 					unset($label['text']);
 				}
-				
+
 				$labelAttributes = am($labelAttributes, $label);
 			} else {
 				$labelText = $label;
@@ -760,7 +760,7 @@ class FormHelper extends AppHelper {
 			$fieldName = $this->field() . '_'.Inflector::underscore($optValue);
 			$tagName = Inflector::camelize($fieldName);
 			if($label) {
-				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optValue);
+				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optTitle);
 			}
 			$out[] =  sprintf($this->Html->tags['radio'], $this->model(), $this->field(), $tagName, $parsedOptions, $optTitle);
 
