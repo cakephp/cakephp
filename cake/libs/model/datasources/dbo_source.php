@@ -170,6 +170,95 @@ class DboSource extends DataSource {
 		}
 	}
 /**
+ * DataSource Query abstraction
+ *
+ * @return resource Result resource identifier
+ */
+	function query() {
+		$args     = func_get_args();
+		$fields   = null;
+		$order    = null;
+		$limit    = null;
+		$page     = null;
+		$recursive = null;
+
+		if (count($args) == 1) {
+			return $this->fetchAll($args[0]);
+
+		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
+			$params = $args[1];
+
+			if (strpos(strtolower($args[0]), 'findby') === 0) {
+				$all  = false;
+				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
+			} else {
+				$all  = true;
+				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
+			}
+
+			$or = (strpos($field, '_or_') !== false);
+			if ($or) {
+				$field = explode('_or_', $field);
+			} else {
+				$field = explode('_and_', $field);
+			}
+			$off = count($field) - 1;
+
+			if (isset($params[1 + $off])) {
+				$fields = $params[1 + $off];
+			}
+
+			if (isset($params[2 + $off])) {
+				$order = $params[2 + $off];
+			}
+
+			if (!array_key_exists(0, $params)) {
+				return false;
+			}
+
+			$c = 0;
+			$query = array();
+			foreach ($field as $f) {
+				if (!is_array($params[$c]) && !empty($params[$c]) && $params[$c] !== true && $params[$c] !== false) {
+					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
+				} else {
+					$query[$args[2]->name . '.' . $f] = $params[$c];
+				}
+				$c++;
+			}
+
+			if ($or) {
+				$query = array('OR' => $query);
+			}
+
+			if ($all) {
+
+				if (isset($params[3 + $off])) {
+					$limit = $params[3 + $off];
+				}
+
+				if (isset($params[4 + $off])) {
+					$page = $params[4 + $off];
+				}
+
+				if (isset($params[5 + $off])) {
+					$recursive = $params[5 + $off];
+				}
+				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
+			} else {
+				if (isset($params[3 + $off])) {
+					$recursive = $params[3 + $off];
+				}
+				return $args[2]->find($query, $fields, $order, $recursive);
+			}
+		} else {
+			if (isset($args[1]) && $args[1] === true) {
+				return $this->fetchAll($args[0], true);
+			}
+			return $this->fetchAll($args[0], false);
+		}
+	}
+/**
  * Returns a row from current resultset as an array .
  *
  * @return array The fetched row as an array
@@ -574,9 +663,8 @@ class DboSource extends DataSource {
  * @param array $stack
  */
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
-		$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
-		if ($query) {
 
+		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
 					e('<div style = "font: Verdana bold 12px; color: #FF0000">SQL Error in model ' . $model->name . ': ');
@@ -588,20 +676,19 @@ class DboSource extends DataSource {
 				return null;
 			}
 			$count = count($resultSet);
+
 			if ($type === 'hasMany' && (!isset($assocData['limit']) || empty($assocData['limit']))) {
-				$ins = array();
+			//if ($type === 'hasMany' && !isset($assocData['limit'])) {
+				$ins = $fetch = array();
 				for ($i = 0; $i < $count; $i++) {
-					$in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
-					if ($in !== false) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
 						$ins[] = $in;
 					}
 				}
 
 				if (!empty($ins)) {
-					$query = r('{$__cakeID__$}', join(', ',$ins), $query);
+					$query = r('{$__cakeID__$}', join(', ', $ins), $query);
 					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
-				} else {
-					$fetch = array();
 				}
 
 				if (!empty($fetch) && is_array($fetch)) {
@@ -670,15 +757,15 @@ class DboSource extends DataSource {
 	}
 
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
-		foreach ($resultSet as $key => $value) {
-			$merged[$association] = array();
+		foreach ($resultSet as $i => $value) {
 			$count = 0;
-			foreach ($merge as $assoc => $data) {
+			$merged[$association] = array();
+			foreach ($merge as $j => $data) {
 				if (isset($value[$model->name]) && $value[$model->name][$model->primaryKey] === $data[$association][$model->hasMany[$association]['foreignKey']]) {
 					if (count($data) > 1) {
-						$temp[] = Set::pushDiff($data[$association], $data);
-						unset($temp[$count][$association]);
-						$merged[$association] = $temp;
+						$data = am($data[$association], $data);
+						unset($data[$association]);
+						$merged[$association][] = $data;
 					} else {
 						$merged[$association][] = $data[$association];
 					}
@@ -686,8 +773,7 @@ class DboSource extends DataSource {
 				$count++;
 			}
 			if (isset($value[$model->name])) {
-				$resultSet[$key] = Set::pushDiff($resultSet[$key], $merged);
-				unset($merged);
+				$resultSet[$i] = Set::pushDiff($resultSet[$i], $merged);
 				unset($temp);
 			}
 		}
@@ -787,19 +873,22 @@ class DboSource extends DataSource {
 		if (!isset($queryData['selfJoin'])) {
 			$queryData['selfJoin'] = array();
 
-			$self = array('fields'	=> $this->fields($model, null, $queryData['fields']),
-							'joins' => array(array(
-								'table' => $this->fullTableName($linkModel),
-								'alias' => $alias,
-								'type' => 'LEFT',
-								'conditions' => array($model->escapeField($assocData['foreignKey']) =>
-										'{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'))),
-							'table' => $this->fullTableName($model),
-							'alias' => $model->name,
-							'limit' => $queryData['limit'],
-							'offset'	=> $queryData['offset'],
-							'conditions'=> $queryData['conditions'],
-							'order' => $queryData['order']);
+			$self = array(
+				'fields'	=> $this->fields($model, null, $queryData['fields']),
+				'joins' => array(array(
+					'table' => $this->fullTableName($linkModel),
+					'alias' => $alias,
+					'type' => 'LEFT',
+					'conditions' => array(
+						$model->escapeField($assocData['foreignKey']) => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'))
+					),
+				'table' => $this->fullTableName($model),
+				'alias' => $model->name,
+				'limit' => $queryData['limit'],
+				'offset'	=> $queryData['offset'],
+				'conditions'=> $queryData['conditions'],
+				'order' => $queryData['order']
+			);
 
 			if (!empty($assocData['conditions'])) {
 				$self['joins'][0]['conditions'] = trim($this->conditions(am($self['joins'][0]['conditions'], $assocData['conditions']), true, false));
@@ -865,6 +954,7 @@ class DboSource extends DataSource {
 		} elseif (!empty($model->hasMany) && $model->recursive > -1) {
 			$assocFields = $this->fields($model, $model->name, array("{$model->name}.{$model->primaryKey}"));
 			$passedFields = $this->fields($model, $model->name, $queryData['fields']);
+
 			if (count($passedFields) === 1) {
 				$match = strpos($passedFields[0], $assocFields[0]);
 				$match1 = strpos($passedFields[0], 'COUNT(');
@@ -876,22 +966,23 @@ class DboSource extends DataSource {
 			} else {
 				$queryData['fields'] = array_unique(array_merge($passedFields, $assocFields));
 			}
-			unset($assocFields);
-			unset($passedFields);
+			unset($assocFields, $passedFields);
 		}
 
 		if ($linkModel == null) {
 			if (array_key_exists('selfJoin', $queryData)) {
 				return $this->generateSelfAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet);
 			} else {
-				return $this->buildStatement(array('fields' => array_unique($queryData['fields']),
-													'table' => $this->fullTableName($model),
-													'alias' => $model->name,
-													'limit' => $queryData['limit'],
-													'offset' => $queryData['offset'],
-													'joins' => $queryData['joins'],
-													'conditions' => $queryData['conditions'],
-													'order' => $queryData['order']), $model);
+				return $this->buildStatement(array(
+					'fields' => array_unique($queryData['fields']),
+					'table' => $this->fullTableName($model),
+					'alias' => $model->name,
+					'limit' => $queryData['limit'],
+					'offset' => $queryData['offset'],
+					'joins' => $queryData['joins'],
+					'conditions' => $queryData['conditions'],
+					'order' => $queryData['order']), $model
+				);
 			}
 		}
 		$alias = $association;
@@ -931,16 +1022,17 @@ class DboSource extends DataSource {
 					} elseif ($type == 'belongsTo') {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'));
 					}
-					$query = am($assocData, array('conditions' => $conditions,
-												'table' => $this->fullTableName($linkModel),
-												'fields' => $fields,
-												'alias' => $alias));
+					$query = am($assocData, array(
+						'conditions' => $conditions,
+						'table' => $this->fullTableName($linkModel),
+						'fields' => $fields,
+						'alias' => $alias
+					));
 
 					if ($type == 'belongsTo') {
 						// Dunno if we should be doing this for hasOne also...?
 						// Or maybe not doing it at all...?
-						$query = am($query, array('order' => $assocData['order'],
-												'limit' => $limit));
+						$query = am($query, array('order' => $assocData['order'], 'limit' => $limit));
 					}
 				} else {
 					if ($type == 'hasOne') {
@@ -949,10 +1041,12 @@ class DboSource extends DataSource {
 						$conditions = $this->__mergeConditions($assocData['conditions'], array("{$model->name}.{$assocData['foreignKey']}" => '{$__cakeIdentifier[' . "{$alias}.{$linkModel->primaryKey}" . ']__$}'));
 					}
 
-					$join = array('table' => $this->fullTableName($linkModel),
-									'alias' => $alias,
-									'type' => 'LEFT',
-									'conditions' => trim($this->conditions($conditions, true, false)));
+					$join = array(
+						'table' => $this->fullTableName($linkModel),
+						'alias' => $alias,
+						'type' => 'LEFT',
+						'conditions' => trim($this->conditions($conditions, true, false))
+					);
 
 					$queryData['fields'] = am($queryData['fields'], $fields);
 
@@ -966,11 +1060,11 @@ class DboSource extends DataSource {
 				}
 			break;
 			case 'hasMany':
-				$assocFields = $this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"));
-				$passedFields = $this->fields($linkModel, $alias, $assocData['fields']);
-				$assocData['fields'] = array_unique(array_merge($passedFields, $assocFields));
-				unset($assocFields);
-				unset($passedFields);
+				$assocData['fields'] = array_unique(array_merge(
+					$this->fields($linkModel, $alias, $assocData['fields']),
+					$this->fields($linkModel, $alias, array("{$alias}.{$assocData['foreignKey']}"))
+				));
+
 				$query = array(
 					'conditions' => $this->__mergeConditions(array("{$alias}.{$assocData['foreignKey']}" => array('{$__cakeID__$}')), $assocData['conditions']),
 					'fields' => $assocData['fields'],
@@ -990,6 +1084,7 @@ class DboSource extends DataSource {
 					$joinAssoc = $joinAlias = $model->{$assocData['with']}->name;
 					$joinFields = $model->{$assocData['with']}->loadInfo();
 					$joinFields = $joinFields->extract('{n}.name');
+
 					if (is_array($joinFields) && !empty($joinFields)) {
 						$joinFields = $this->fields($model->{$assocData['with']}, $model->{$assocData['with']}->name, $joinFields);
 					}

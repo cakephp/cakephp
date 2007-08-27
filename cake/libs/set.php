@@ -128,7 +128,7 @@ class Set extends Object {
  * Pushes the differences in $array2 onto the end of $array
  *
  * @param mixed $array Original array
- * @param mixed $array2 Diferences to push
+ * @param mixed $array2 Differences to push
  * @return array Combined array
  * @access public
  */

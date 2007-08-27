@@ -87,12 +87,6 @@ class DataSource extends Object {
 /**
  * Enter description here...
  *
- * @var boolean
- */
-	var $cacheSources = true;
-/**
- * Enter description here...
- *
  * @var array
  * @access private
  */
@@ -184,135 +178,18 @@ class DataSource extends Object {
  */
 	var $_transactionStarted = false;
 /**
+ * Enter description here...
+ *
+ * @var boolean
+ */
+       var $cacheSources = true;
+/**
  * Constructor.
  */
 	function __construct() {
 		parent::__construct();
 		if (func_num_args() > 0) {
 			$this->setConfig(func_get_arg(0));
-		}
-	}
-
-/**
- * Datsrouce Query abstraction
- *
- * @return resource Result resource identifier
- */
-	function query() {
-		$args     = func_get_args();
-		$fields   = null;
-		$order    = null;
-		$limit    = null;
-		$page     = null;
-		$recursive = null;
-
-		if (count($args) == 1) {
-			return $this->fetchAll($args[0]);
-
-		} elseif (count($args) > 1 && (strpos(low($args[0]), 'findby') === 0 || strpos(low($args[0]), 'findallby') === 0)) {
-			$params = $args[1];
-
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
-				$field = Inflector::underscore(preg_replace('/findBy/i', '', $args[0]));
-			} else {
-				$all  = true;
-				$field = Inflector::underscore(preg_replace('/findAllBy/i', '', $args[0]));
-			}
-
-			$or = (strpos($field, '_or_') !== false);
-			if ($or) {
-				$field = explode('_or_', $field);
-			} else {
-				$field = explode('_and_', $field);
-			}
-			$off = count($field) - 1;
-
-			if (isset($params[1 + $off])) {
-				$fields = $params[1 + $off];
-			}
-
-			if (isset($params[2 + $off])) {
-				$order = $params[2 + $off];
-			}
-
-			if (!array_key_exists(0, $params)) {
-				return false;
-			}
-
-			$c = 0;
-			$query = array();
-			foreach ($field as $f) {
-				if (!is_array($params[$c]) && !empty($params[$c]) && $params[$c] !== true && $params[$c] !== false) {
-					$query[$args[2]->name . '.' . $f] = '= ' . $params[$c];
-				} else {
-					$query[$args[2]->name . '.' . $f] = $params[$c];
-				}
-				$c++;
-			}
-
-			if ($or) {
-				$query = array('OR' => $query);
-			}
-
-			if ($all) {
-
-				if (isset($params[3 + $off])) {
-					$limit = $params[3 + $off];
-				}
-
-				if (isset($params[4 + $off])) {
-					$page = $params[4 + $off];
-				}
-
-				if (isset($params[5 + $off])) {
-					$recursive = $params[5 + $off];
-				}
-				return $args[2]->findAll($query, $fields, $order, $limit, $page, $recursive);
-			} else {
-				if (isset($params[3 + $off])) {
-					$recursive = $params[3 + $off];
-				}
-				return $args[2]->find($query, $fields, $order, $recursive);
-			}
-		} else {
-			if (isset($args[1]) && $args[1] === true) {
-				return $this->fetchAll($args[0], true);
-			}
-			return $this->fetchAll($args[0], false);
-		}
-	}
-/**
- * Returns an array of all result rows for a given SQL query.
- * Returns false if no rows matched.
- *
- * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
- * @return array Array of resultset rows, or false if no rows matched
- */
-	function fetchAll($sql, $cache = true, $modelName = null) {
-		if ($cache && isset($this->_queryCache[$sql])) {
-			if (preg_match('/^\s*select/i', $sql)) {
-				return $this->_queryCache[$sql];
-			}
-		}
-
-		if ($this->execute($sql)) {
-			$out = array();
-
-			while ($item = $this->fetchRow()) {
-				$out[] = $item;
-			}
-
-			if ($cache) {
-				if (strpos(trim(strtolower($sql)), 'select') !== false) {
-					$this->_queryCache[$sql] = $out;
-				}
-			}
-			return $out;
-
-		} else {
-			return false;
 		}
 	}
 /**
@@ -365,14 +242,13 @@ class DataSource extends Object {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-
-		if (isset($this->__descriptions[$model->tablePrefix.$model->table])) {
-			return $this->__descriptions[$model->tablePrefix.$model->table];
+		if (isset($this->__descriptions[$model->tablePrefix . $model->table])) {
+			return $this->__descriptions[$model->tablePrefix . $model->table];
 		}
-		$cache = $this->__cacheDescription($model->tablePrefix.$model->table);
+		$cache = $this->__cacheDescription($model->tablePrefix . $model->table);
 
 		if ($cache !== null) {
-			$this->__descriptions[$model->tablePrefix.$model->table] =& $cache;
+			$this->__descriptions[$model->tablePrefix . $model->table] =& $cache;
 			return $cache;
 		}
 		return null;
