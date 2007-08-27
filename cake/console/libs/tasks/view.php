@@ -104,11 +104,7 @@ class ViewTask extends Shell {
 			} else {
 				$vars = $this->__loadController();
 				if ($vars) {
-					$protected = array( 'object', low($this->controllerName. 'Controller'), 'controller', 'appcontroller',
-						'tostring', 'requestaction', 'log', 'cakeerror', 'constructclasses', 'redirect', 'set', 'setaction',
-						'validate', 'validateerrors', 'render', 'referer', 'flash', 'flashout', 'generatefieldnames',
-						'postconditions', 'cleanupfields', 'beforefilter', 'beforerender', 'afterfilter', 'disablecache', 'paginate');
-
+					$protected = array_map('strtolower', get_class_methods('appcontroller'));
 					$classVars = get_class_vars($this->controllerName . 'Controller');
 					if (array_key_exists('scaffold', $classVars)) {
 						$methods = $this->scaffoldActions;
