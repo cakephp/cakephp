@@ -576,7 +576,7 @@ class FormHelper extends AppHelper {
 					$labelText = $label['text'];
 					unset($label['text']);
 				}
-
+				
 				$labelAttributes = am($labelAttributes, $label);
 			} else {
 				$labelText = $label;
@@ -585,7 +585,11 @@ class FormHelper extends AppHelper {
 			if (!empty($labelText)) {
 				$labelText = __($labelText, true);
 			}
-			$out = $this->label(null, $labelText, $labelAttributes);
+			if($options['type'] != 'radio') {
+				$out = $this->label(null, $labelText, $labelAttributes);
+			} else {
+				$options['label'] = $labelText;
+			}
 		}
 
 		$error = null;
@@ -736,6 +740,11 @@ class FormHelper extends AppHelper {
 		if (isset($attributes['id'])) {
 			unset($attributes['id']);
 		}
+		$label = $this->field();
+		if (isset($attributes['label'])) {
+			$label = $attributes['label'];
+			unset($attributes['label']);
+		}
 
 		$value = isset($attributes['value']) ? $attributes['value'] : $this->value($fieldName);
 		$out = array();
@@ -747,16 +756,19 @@ class FormHelper extends AppHelper {
 			if (!empty($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
  	        }
-
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), null, '', ' ');
-			$individualTagName = $this->field() . "_{$optValue}";
-			$out[] = sprintf($this->Html->tags['radio'], $this->model(), $this->field(), $individualTagName, $parsedOptions, $optTitle);
+			$fieldName = $this->field() . '_'.Inflector::underscore($optValue);
+			$tagName = Inflector::camelize($fieldName);
+			if($label) {
+				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optValue);
+			}
+			$out[] =  sprintf($this->Html->tags['radio'], $this->model(), $this->field(), $tagName, $parsedOptions, $optTitle);
 
 			$count++;
 		}
 
-		$out = join($inbetween, $out);
-		return $this->output($out ? $out : null);
+		$out = sprintf($this->Html->tags['fieldset'], $label, join($inbetween, $out));
+		return $this->output($out);
 	}
 /**
  * Creates a text input widget.
@@ -1278,7 +1290,6 @@ class FormHelper extends AppHelper {
 		$attributes = am(array('escape' => true), $attributes);
 		$selectedIsEmpty = ($selected === '' || $selected === null);
 		$selectedIsArray = is_array($selected);
-		
 		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {

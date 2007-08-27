@@ -196,6 +196,10 @@ fieldset legend {
 	font-size: 160%;
 	font-weight: bold;
 }
+fieldset fieldset legend {
+	font-size: 120%;
+	font-weight: normal;
+}
 form div {
 	clear: both;
 	margin-bottom: 1em;
