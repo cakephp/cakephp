@@ -127,7 +127,7 @@ if(!class_exists('db_acl_test')) {
  * @subpackage	cake.tests.cases.libs.controller.components.dbacl.models
  */
 	class AclNodeTest extends CakeTestCase {
-		var $fixtures = array( 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+		var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
 		function testNodeNesting() {
 		}
