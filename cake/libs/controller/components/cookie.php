@@ -330,10 +330,9 @@ class CookieComponent extends Object {
 					unset($this->__values[$name][$key]);
 					$this->__delete("[$name][$key]");
 				}
-			} else {
-				unset($this->__values[$name]);
-				$this->__delete("[$name]");
 			}
+			unset($this->__values[$name]);
+			$this->__delete("[$name]");
 		}
 	}
 /**
