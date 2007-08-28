@@ -183,10 +183,9 @@ class RouterTest extends UnitTestCase {
 
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
-		$this->router->connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'));
 		$this->router->setRequestInfo(array(
 			array(
-				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
+				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscriptions',
 			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'), 'bare' => 0, 'webservices' => ''
 			),
 			array(
@@ -199,6 +198,26 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array('page' => 3));
 		$expected = '/magazine/admin/subscriptions/index/page:3';
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Routing.admin', 'admin');
+		$this->router->reload();
+		//$this->router->connect('/admin/subscriptions/edit/*', array('controller' => 'subscriptions', 'admin' => true, 'prefix' => 'admin'));
+		$this->router->setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscriptions',
+			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1'), 'bare' => 0, 'webservices' => ''
+			),
+			array(
+				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/edit/1',
+				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
+				'webservices' => null
+			)
+		));
+		$this->router->parse('/');
+
+		$result = $this->router->url(array('action'=>'edit', 'id'=> 1));
+		$expected = '/magazine/admin/subscriptions/edit/1';
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
@@ -336,17 +355,17 @@ class RouterTest extends UnitTestCase {
 		);
 
 		$this->router->connect('/kalender/*', array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'));
-				  
+
 		$this->router->testing = true;
-		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'min-forestilling'));		
+		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'min-forestilling'));
 		unset($this->router->testing);
 		$expected = '/kalender/min-forestilling';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10, 'min-forestilling'));		
+		$result = $this->router->url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10, 'min-forestilling'));
 		$expected = '/kalender/10/2007/min-forestilling';
 		$this->assertEqual($result, $expected);
-		
+
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
 
@@ -370,6 +389,7 @@ class RouterTest extends UnitTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->reload();
+		//Configure::write('Routing.admin', false);
 
 		$this->router->setRequestInfo(array(
 			array(
@@ -473,11 +493,11 @@ class RouterTest extends UnitTestCase {
 		$expected = array('pass' => array('my-page'), 'plugin' => null, 'controller' => 'test', 'action' => 'index');
 
 		$this->router->reload();
-		$this->router->connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));		
+		$this->router->connect('/:language/contact', array('language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index'), array('language' => '[a-z]{3}'));
 		$result = $this->router->parse('/eng/contact');
 		$expected = array('pass' => array(), 'language' => 'eng', 'plugin' => 'contact', 'controller' => 'contact', 'action' => 'index');
 		$this->assertEqual($result, $expected);
-		
+
 		$this->router->reload();
 		$this->router->connect('/forestillinger/:month/:year/*',
 			array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar'),
@@ -487,7 +507,7 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('/forestillinger/10/2007/min-forestilling');
 		$expected = array('pass' => array('min-forestilling'), 'plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10);
 		$this->assertEqual($result, $expected);
-		
+
 	}
 
 	function testAdminRouting() {
@@ -658,6 +678,39 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->prefixes();
 		$expected = array('admin');
+		$this->assertEqual($result, $expected);
+	}
+
+	function testGenerateUrl() {
+		Configure::write('Routing.admin', 'admin');
+
+		// ADD (Passes)
+		$this->router->reload();
+
+		$this->router->setRequestInfo(array(
+			array ( 'plugin' => NULL, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array ( ), 'prefix' => 'admin', 'admin' => true, 'form' => array ( ), 'url' => array ( 'url' => 'admin/pages/add', ), 'bare' => 0, 'webservices' => NULL, ),
+			array ( 'plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/', )
+		));
+
+		$this->router->parse('/');
+
+		$result = $this->router->url(array ( 'plugin' => NULL, 'controller' => 'pages', 'action' => 'add', 'id' => false, ));
+		$expected = '/admin/pages/add';
+		$this->assertEqual($result, $expected);
+
+
+		// EDIT (Fails)
+		$this->router->reload();
+
+		$this->router->setRequestInfo(array(
+			array ( 'plugin' => NULL, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array ( 0 => '284', ), 'prefix' => 'admin', 'admin' => true, 'form' => array ( ), 'url' => array ( 'url' => 'admin/pages/edit/284', ), 'bare' => 0, 'webservices' => NULL, ),
+			array ( 'plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/', )
+		));
+
+		$this->router->parse('/');
+
+		$result = $this->router->url(array ( 'plugin' => NULL, 'controller' => 'pages', 'action' => 'edit', 'id' => '284'));
+		$expected = '/admin/pages/edit/284';
 		$this->assertEqual($result, $expected);
 	}
 }

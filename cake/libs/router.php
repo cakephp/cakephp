@@ -643,7 +643,7 @@ class Router extends Object {
 				$path = end($_this->__paths);
 			}
 		}
-		$base = $_this->stripPlugin($path['base'], $params['plugin']);
+		$base = $path['base']; // dont need this anymore $_this->stripPlugin($path['base'], $params['plugin']);
 		$extension = $output = $mapped = $q = $frag = null;
 
 		if (is_array($url) && !empty($url)) {
@@ -667,7 +667,7 @@ class Router extends Object {
 				}
 			}
 			if ($admin) {
-				if (!isset($url[$admin]) && isset($params[$admin])) {
+				if (!isset($url[$admin]) && !empty($params[$admin])) {
 					$url[$admin] = true;
 				} elseif ($admin && array_key_exists($admin, $url) && !$url[$admin]) {
 					unset($url[$admin]);
@@ -719,10 +719,15 @@ class Router extends Object {
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] == 'index')) {
 					$url['action'] = null;
 				}
-				$urlOut = Set::filter(array($url['plugin'], $url['controller'], $url['action']));
 
-				if ($url['plugin'] == $url['controller']) {
-					array_shift($urlOut);
+				$urlOut = Set::filter(array($url['controller'], $url['action']));
+
+				if($admin && isset($url['admin'])) {
+					array_unshift($urlOut, $admin);
+				}
+
+				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+					array_unshift($urlOut, $url['plugin']);
 				}
 				$output = join('/', $urlOut) . '/';
 			}
