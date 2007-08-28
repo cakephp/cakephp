@@ -84,5 +84,12 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertTrue($result);
 	}
 
+	function testCacheName() {
+		$cache =& Cache::getInstance();
+		$result = $cache->_Engine->_getFilename('models' . DS . 'default_' . 'posts');
+		$expecting = CACHE . 'models' . DS .'cake_default_posts';
+		$this->assertEqual($result, $expecting);
+	}
+
 }
 ?>

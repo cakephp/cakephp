@@ -32,6 +32,9 @@
 if (!class_exists('folder')) {
 	uses ('folder');
 }
+if (!class_exists('file')) {
+	uses ('file');
+}
 /**
  * File Storage engine for cache
  *
@@ -123,9 +126,9 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		$serialized = serialize($data);
+		$data = serialize($data);
 
-		if (!$serialized) {
+		if (!$data) {
 			return false;
 		}
 		$expires = time() + $duration;
@@ -135,7 +138,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		return $this->_writeCache($fileName, $serialized, $expires);
+		return $this->_writeCache($fileName, $data, $expires);
 	}
 /**
  * Get absolute filename for a key
@@ -145,10 +148,10 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	function _getFilename($key) {
-		$file = new File($this->_dir);
-		$key = implode(DS, array_map(array($file , 'safe'), explode(DS, $key)));
-		$fileName = $this->_prefix . $key;
-		$fullpath = $this->Folder->realpath($this->_dir . DS . $fileName);
+		$file =& new File($this->_dir);
+		$path = array_map(array($file , 'safe'), explode(DS, $key));
+		$key = array_pop($path);
+		$fullpath = $this->Folder->realpath($this->_dir . implode(DS, $path) . DS . $this->_prefix . $key);
 		if (!$this->Folder->inPath($fullpath, true)) {
 			return false;
 		}
