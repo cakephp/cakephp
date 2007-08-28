@@ -1218,5 +1218,4 @@ class Controller extends Object {
 		return $array;
 	}
 }
-
 ?>
