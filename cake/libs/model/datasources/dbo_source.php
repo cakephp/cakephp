@@ -446,10 +446,7 @@ class DboSource extends DataSource {
  */
 	function fullTableName($model, $quote = true) {
 		if (is_object($model)) {
-			$table = $model->table;
-			if ($model->tablePrefix != null && !empty($model->tablePrefix)) {
-				$table = $model->tablePrefix . $table;
-			}
+			$table = $model->tablePrefix . $model->table;
 		} elseif (isset($this->config['prefix'])) {
 			$table = $this->config['prefix'] . strval($model);
 		} else {
