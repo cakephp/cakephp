@@ -154,10 +154,6 @@ class DboOdbc extends DboSource{
 			array_push($tables, odbc_result($result, "TABLE_NAME"));
 		}
 
-		foreach ( $tables as $t ) {
-			echo "$t\n";
-		}
-
 		parent::listSources($tables);
 		return $tables;
 	}
@@ -175,7 +171,7 @@ class DboOdbc extends DboSource{
 		}
 
 		$fields = array();
-		$sql = 'SELECT * FROM ' . $this->fullTableName($model) . ' LIMIT 1';
+		$sql = 'SELECT * FROM ' . $this->fullTableName($model);
 		$result = odbc_exec($this->connection, $sql);
 
 		$count = odbc_num_fields($result);
