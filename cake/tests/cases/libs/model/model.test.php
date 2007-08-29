@@ -401,7 +401,24 @@ class NodeNoAfterFind extends CakeTestModel {
 		'className' => 'NodeAfterFind',
 		'foreignKey' => 'apple_id'));
 }
-
+class ModelA extends CakeTestModel {
+	var $name = 'ModelA';
+	var $useTable = 'apples';
+	var $hasMany = array('ModelB', 'ModelC');
+}
+class ModelB extends CakeTestModel {
+	var $name = 'ModelB';
+	var $useTable = 'messages';
+	var $hasMany = array('ModelD');
+}
+class ModelC extends CakeTestModel {
+	var $name = 'ModelC';
+	var $useTable = 'bids';
+	var $hasMany = array('ModelD');
+}
+class ModelD extends CakeTestModel {
+	var $useTable = 'threads';
+}
 /**
  * Short description for class.
  *
@@ -1425,16 +1442,25 @@ function testRecursiveFindAllWithLimit() {
 		$this->assertEqual($result, $expected);
 	}
 
-	function testSelFAssociationAfterFind() {
-		$afterFindModel =& new NodeAfterFind();
+	function testSelfAssociationAfterFind() {
+		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
 		$afterFindData = $afterFindModel->findAll();
 
-		$noAfterFindModel =& new NodeNoAfterFind();
+		$duplicateModel = new NodeAfterFind();
+		$duplicateModel->recursive = 3;
+		$duplicateModelData = $duplicateModel->findAll();
+
+		$noAfterFindModel = new NodeNoAfterFind();
 		$noAfterFindModel->recursive = 3;
 		$noAfterFindData = $noAfterFindModel->findAll();
 
-		$this->assertNotEqual($afterFindModel, $noAfterFindModel);
+		$this->assertFalse($afterFindModel == $noAfterFindModel);
+		// Limitation of PHP 4 when comparing objects
+		if (PHP5) {
+			$this->assertTrue($afterFindModel == $duplicateModel);
+		}
+
 		$this->assertEqual($afterFindData, $noAfterFindData);
 	}
 
@@ -2685,6 +2711,17 @@ function testRecursiveFindAllWithLimit() {
 	function testMultipleValidation() {
 		$this->model =& new ValidationTest();
 	}
+
+	function testLoadModelSecondIteration (){
+		$model = new ModelA();
+		$this->assertIsA($model,'ModelA');
+
+		$this->assertIsA($model->ModelB, 'ModelB');
+		$this->assertIsA($model->ModelB->ModelD, 'ModelD');
+
+		$this->assertIsA($model->ModelC, 'ModelC');
+		$this->assertIsA($model->ModelC->ModelD, 'ModelD');
+	}
 }
 /**
  * Short description for class.
@@ -2714,5 +2751,4 @@ class ValidationTest extends CakeTestModel {
 		return new Set();
 	}
 }
-
 ?>
