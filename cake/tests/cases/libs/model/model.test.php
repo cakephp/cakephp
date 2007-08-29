@@ -1427,9 +1427,11 @@ function testRecursiveFindAllWithLimit() {
 
 	function testSelFAssociationAfterFind() {
 		$afterFindModel =& new NodeAfterFind();
+		$afterFindModel->recursive = 3;
 		$afterFindData = $afterFindModel->findAll();
 
 		$noAfterFindModel =& new NodeNoAfterFind();
+		$noAfterFindModel->recursive = 3;
 		$noAfterFindData = $noAfterFindModel->findAll();
 
 		$this->assertNotEqual($afterFindModel, $noAfterFindModel);
