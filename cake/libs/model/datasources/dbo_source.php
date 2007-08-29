@@ -715,6 +715,23 @@ class DboSource extends DataSource {
 				}
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			}
+
+			if ($type === 'hasAndBelongsToMany') {
+				$ins = $fetch = array();
+				for ($i = 0; $i < $count; $i++) {
+					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
+						$ins[] = $in;
+					}
+				}
+				if (!empty($ins)) {
+					$query = r('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
+					$query = r('=  (', 'IN (', $query);
+					$query = r('  WHERE 1 = 1', '', $query);
+					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
+				}
+				return $this->__mergeHabtm($resultSet, $fetch, $association, $model, $linkModel, $recursive);
+			}
+
 			for ($i = 0; $i < $count; $i++) {
 
 				$row =& $resultSet[$i];
@@ -776,6 +793,30 @@ class DboSource extends DataSource {
 			if (isset($value[$model->name])) {
 				$resultSet[$i] = Set::pushDiff($resultSet[$i], $merged);
 				unset($temp);
+			}
+		}
+	}
+
+	function __mergeHabtm(&$resultSet, $merge, $association, &$model, &$linkModel) {
+		if (isset($model->hasAndBelongsToMany[$association])) {
+			$with = $model->hasAndBelongsToMany[$association]['with'];
+			$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
+			$fields = $model->{$with}->loadInfo();
+			$fields = $fields->extract('{n}.name');
+			$count = count($fields);
+
+			foreach ($resultSet as $i => $value) {
+				$merged = array();
+				foreach ($merge as $j => $data) {
+					if($data[$with][$foreignKey] === $value[$model->name][$model->primaryKey]) {
+						if($count > 2) {
+							$merged[] = Set::pushDiff($merge[$j][$association], array($with => $data[$with]));
+						} else {
+							$merged[] = $merge[$j][$association];
+						}
+					}
+				}
+				$resultSet[$i][$association] = $merged;
 			}
 		}
 	}
@@ -1082,16 +1123,15 @@ class DboSource extends DataSource {
 				$joinAlias = $joinTbl;
 
 				if (isset($assocData['with']) && !empty($assocData['with'])) {
-					$joinAssoc = $joinAlias = $model->{$assocData['with']}->name;
 					$joinFields = $model->{$assocData['with']}->loadInfo();
 					$joinFields = $joinFields->extract('{n}.name');
 
-					if (is_array($joinFields) && !empty($joinFields) && count($joinFields) > 2) {
+					if (is_array($joinFields) && !empty($joinFields)) {
 						$joinFields = $this->fields($model->{$assocData['with']}, $model->{$assocData['with']}->name, $joinFields);
+						$joinAssoc = $joinAlias = $model->{$assocData['with']}->name;
+
 					} else {
 						$joinFields = array();
-						$joinAssoc = null;
-						$joinAlias = $joinTbl;
 					}
 				}
 
