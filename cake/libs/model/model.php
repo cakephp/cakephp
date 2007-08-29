@@ -580,8 +580,6 @@ class Model extends Overloadable {
  * @access private
  */
 	function __createLinks() {
-
-		// Convert all string-based associations to array based
 		foreach ($this->__associations as $type) {
 			if (!is_array($this->{$type})) {
 				$this->{$type} = explode(',', $this->{$type});
@@ -617,6 +615,12 @@ class Model extends Overloadable {
  * @param mixed $id Primary key ID of linked model
  * @param string $table Database table associated with linked model
  * @param string $ds Name of DataSource the model should be bound to
+ * @deprecated $this->$className use $this->$assoc instead. $assoc is the 'key' in the associations array;
+ * 	examples: var $hasMany = array('Assoc' => array('className' => 'ModelName'));
+ * 					usage: $this->Assoc->modelMethods();
+ *
+ * 				var $hasMany = array('ModelName');
+ * 					usage: $this->ModelName->modelMethods();
  * @access private
  */
 	function __constructLinkedModel($assoc, $className = null, $id = false, $table = null, $ds = null) {
@@ -634,20 +638,16 @@ class Model extends Overloadable {
 		if (ClassRegistry::isKeySet($colKey)) {
 			if (!PHP5) {
 				$this->{$assoc} =& ClassRegistry::getObject($colKey);
-				$this->{$className} =& $this->{$assoc};
 				ClassRegistry::map($assoc, $colKey);
 			} else {
 				$this->{$assoc} = ClassRegistry::getObject($colKey);
-				$this->{$className} = $this->{$assoc};
 				ClassRegistry::map($assoc, $colKey);
 			}
 		} else {
 			if (!PHP5) {
 				$this->{$assoc} =& new $className($id, $table, $ds);
-				$this->{$className} =& $this->{$assoc};
 			} else {
 				$this->{$assoc} = new $className($id, $table, $ds);
-				$this->{$className} = $this->{$assoc};
 			}
 		}
 
@@ -713,7 +713,11 @@ class Model extends Overloadable {
 			if (isset($this->{$type}[$assocKey]['with']) && !empty($this->{$type}[$assocKey]['with'])) {
 				$joinClass = $this->{$type}[$assocKey]['with'];
 				if (!loadModel($joinClass)) {
-					$this->__constructLinkedModel($joinClass, 'AppModel', false, $this->{$type}[$assocKey]['joinTable'], $this->useDbConfig);
+					$this->{$joinClass} = new AppModel(array(
+						'name' => $joinClass,
+						'table' => $this->{$type}[$assocKey]['joinTable'],
+						'ds' => $this->useDbConfig
+					));
 					$this->{$joinClass}->name = $joinClass;
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 
@@ -724,6 +728,7 @@ class Model extends Overloadable {
 					}
 				} else {
 					$this->__constructLinkedModel($joinClass);
+					$this->{$joinClass}->name = $joinClass;
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 			}
@@ -1696,8 +1701,9 @@ class Model extends Overloadable {
 				} else {
 					$message = __('This field cannot be left blank',true);
 				}
+				$exists = $this->exists();
 
-				if (empty($validator['on']) || ($validator['on'] == 'create' && !$this->exists()) || ($validator['on'] == 'update' && $this->exists())) {
+				if (empty($validator['on']) || ($validator['on'] == 'create' && !$exists) || ($validator['on'] == 'update' && $exists)) {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
 						$this->invalidate($fieldName, $message);
 					} elseif (isset($data[$fieldName])) {
@@ -1901,7 +1907,6 @@ class Model extends Overloadable {
  * @return int
  */
 	function getNumRows() {
-		//return $this->__numRows;
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastNumRows();
 	}
@@ -1911,7 +1916,6 @@ class Model extends Overloadable {
  * @return int
  */
 	function getAffectedRows() {
-		//return $this->__affectedRows;
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastAffected();
 	}

@@ -624,13 +624,7 @@ class DboSource extends DataSource {
 				$count2 = count($keys);
 
 				for ($j = 0; $j < $count2; $j++) {
-
-					$key = $keys[$j];
-					if (isset($associations[$key])) {
-						$className = $associations[$key]['className'];
-					} else {
-						$className = $key;
-					}
+					$className = $key = $keys[$j];
 
 					if ($model->name != $className && !in_array($key, $filtered)) {
 						if (!in_array($key, $filtering)) {
@@ -698,7 +692,7 @@ class DboSource extends DataSource {
 						foreach ($linkModel->__associations as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
-								$deepModel =& $linkModel->{$assocData1['className']};
+								$deepModel =& $linkModel->{$assoc1};
 								if ($deepModel->alias != $model->name) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
@@ -749,7 +743,7 @@ class DboSource extends DataSource {
 						foreach ($linkModel->__associations as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
-								$deepModel =& $linkModel->{$assocData1['className']};
+								$deepModel =& $linkModel->{$assoc1};
 								if ($deepModel->alias != $model->name) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
