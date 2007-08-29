@@ -1456,9 +1456,9 @@ function testRecursiveFindAllWithLimit() {
 		$noAfterFindData = $noAfterFindModel->findAll();
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
-		// Limitation of PHP 4 when comparing objects
-		if (PHP5) {
-			$this->assertTrue($afterFindModel == $duplicateModel);
+		// Limitation of PHP 4 and PHP 5 > 5.1.6 when comparing recursive objects
+		if (PHP_VERSION === '5.1.6') {
+			$this->assertFalse($afterFindModel != $duplicateModel);
 		}
 
 		$this->assertEqual($afterFindData, $noAfterFindData);
