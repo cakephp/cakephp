@@ -2025,7 +2025,10 @@ class DboSourceTest extends UnitTestCase {
 
 		$result = $this->db->order(array(array("title")));
 		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
+
+		$result = $this->db->order("Dealer.id = 7 desc, Dealer.id = 3 desc, Dealer.title asc");
+		$expected = " ORDER BY Dealer`.`id` = 7 desc,  Dealer`.`id` = 3 desc,  `Dealer`.`title` asc";
+		$this->assertEqual($result, $expected);
 	}
 }
-
 ?>
