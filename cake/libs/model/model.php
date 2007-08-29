@@ -731,24 +731,20 @@ class Model extends Overloadable {
 		$this->setDataSource($this->useDbConfig);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = $this->cacheSources;
+
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(low($this->tablePrefix . $tableName), array_map('low', $sources))) {
 				return $this->cakeError('missingTable', array(array(
-					'className' => $this->name,
-					'table' => $this->tablePrefix . $tableName
-				)));
-			} else {
-				$this->table = $this->useTable = $tableName;
-				$this->tableToModel[$this->table] = $this->name;
-				$this->_tableInfo = null;
-				$this->loadInfo();
+												'className' => $this->name,
+												'table' => $this->tablePrefix . $tableName)));
+
 			}
-		} else {
-			$this->table = $this->useTable = $tableName;
-			$this->tableToModel[$this->table] = $this->name;
-			$this->loadInfo();
+			$this->_tableInfo = null;
 		}
+		$this->table = $this->useTable = $tableName;
+		$this->tableToModel[$this->table] = $this->name;
+		$this->loadInfo();
 	}
 /**
  * This function does two things: 1) it scans the array $one for the primary key,
