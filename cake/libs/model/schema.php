@@ -160,6 +160,10 @@ class CakeSchema extends Object {
 		));
 		$db =& ConnectionManager::getDataSource($connection);
 		$currentTables = array_flip($db->sources());
+		$prefix = null;
+		if(isset($db->config['prefix'])) {
+			$prefix = $db->config['prefix'];
+		}
 		if (empty($models)) {
 			$models = Configure::listObjects('model');
 		}
@@ -179,23 +183,30 @@ class CakeSchema extends Object {
 			if(class_exists(low($model))) {
 				$Object =& new $model();
 				$Object->setDataSource($connection);
-				if (is_object($Object) && isset($currentTables[$Object->table])) {
-					if(empty($tables[$Object->table])) {
-						$tables[$Object->table] = $this->__columns($Object);
-						$tables[$Object->table]['indexes'] = $db->index($Object);
-						unset($currentTables[$Object->table]);
-					}
-					if(!empty($Object->hasAndBelongsToMany)) {
-						foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
-							if (isset($assocData['with'])) {
-								$class = $assocData['with'];
-							} elseif ($assocData['_with']) {
-								$class = $assocData['_with'];
-							}
-							if (is_object($Object->$class) && isset($currentTables[$Object->$class->table])) {
-								$tables[$Object->$class->table] = $this->__columns($Object->$class);
-								$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
-								unset($currentTables[$Object->$class->table]);
+				$table = $db->fullTableName($Object, false);
+				if (is_object($Object)) {
+					$table = $db->fullTableName($Object, false);
+					if(isset($currentTables[$table])) {
+						if(empty($tables[$Object->table])) {
+							$tables[$Object->table] = $this->__columns($Object);
+							$tables[$Object->table]['indexes'] = $db->index($Object);
+							unset($currentTables[$table]);
+						}
+						if(!empty($Object->hasAndBelongsToMany)) {
+							foreach($Object->hasAndBelongsToMany as $Assoc => $assocData) {
+								if (isset($assocData['with'])) {
+									$class = $assocData['with'];
+								} elseif ($assocData['_with']) {
+									$class = $assocData['_with'];
+								}
+								if (is_object($Object->$class)) { 
+									$table = $db->fullTableName($Object->$class, false);
+									if(isset($currentTables[$table])) {
+										$tables[$Object->$class->table] = $this->__columns($Object->$class);
+										$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
+										unset($currentTables[$table]);
+									}
+								}
 							}
 						}
 					}
@@ -205,6 +216,9 @@ class CakeSchema extends Object {
 
 		if(!empty($currentTables)) {
 			foreach(array_flip($currentTables) as $table) {
+				if($prefix) {
+					$table = str_replace($prefix, '', $table);
+				}
 				$Object = new AppModel(array('name'=> Inflector::classify($table), 'table'=> $table, 'ds'=> $connection));
 				$tables['missing'][$table] = $this->__columns($Object);
 				$tables['missing'][$table]['indexes'] = $db->index($Object);
@@ -341,7 +355,7 @@ class CakeSchema extends Object {
 			}
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
-					$diff = array_diff($value, $old[$table][$field]);
+					$diff = array_diff_assoc($value, $old[$table][$field]);
 					if (!empty($diff)) {
 						$tables[$table]['change'][$field] = am($old[$table][$field], $diff);
 					}
@@ -419,7 +433,7 @@ class CakeSchema extends Object {
 				unset($value['limit']);
 			}
 
-			if (empty($value['default'])) {
+			if (isset($value['default']) && $value['default'] != 0) {
 				unset($value['default']);
 			}
 			if (empty($value['length'])) {

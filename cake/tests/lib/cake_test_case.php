@@ -418,13 +418,9 @@ class CakeTestCase extends UnitTestCase {
 			$db =& ConnectionManager::getDataSource('default');
 		}
 
-		// Add test prefix
-		$config = $db->config;
-		$config['prefix'] .= 'test_suite_';
+		$db->config['prefix'] = 'test_suite_';
 
-		// Set up db connection
-		ConnectionManager::create('test_suite', $config);
-
+		ConnectionManager::create('test_suite', $db->config);
 		// Get db connection
 		$this->db =& ConnectionManager::getDataSource('test_suite');
 		$this->db->cacheSources  = false;
@@ -457,11 +453,13 @@ class CakeTestCase extends UnitTestCase {
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
 				$fixturePaths = array(
-					APP . 'tests' . DS . 'fixtures'
+					TESTS . DS . 'fixtures',
+					VENDORS . 'tests' . DS . 'fixtures'
 				);
 			} else {
 				$fixturePaths = array(
 					TESTS . 'fixtures',
+					VENDORS . 'tests' . DS . 'fixtures',
 					CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
 				);
 			}
