@@ -56,7 +56,7 @@ class Test extends Model {
 			array('name' => 'updated', 'type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 		));
 	}
-	
+
 	function schema() {
 		return new Set(array(
 			'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
@@ -373,6 +373,35 @@ class Bid extends CakeTestModel {
 	var $name = 'Bid';
 	var $belongsTo = array('Message');
 }
+class NodeAfterFind extends CakeTestModel {
+	var $name = 'NodeAfterFind';
+	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $useTable = 'apples';
+	var $hasOne = array('Sample');
+	var $hasMany = array('Child' => array(
+		'className' => 'NodeAfterFind',
+		'dependent' => true));
+	var $belongsTo = array('Parent' => array(
+		'className' => 'NodeAfterFind',
+		'foreignKey' => 'apple_id'));
+
+	function afterFind($results) {
+		return $results;
+	}
+}
+class NodeNoAfterFind extends CakeTestModel {
+	var $name = 'NodeAfterFind';
+	var $validate = array('name' => VALID_NOT_EMPTY);
+	var $useTable = 'apples';
+	var $hasOne = array('Sample');
+	var $hasMany = array('Child' => array(
+		'className' => 'NodeAfterFind',
+		'dependent' => true));
+	var $belongsTo = array('Parent' => array(
+		'className' => 'NodeAfterFind',
+		'foreignKey' => 'apple_id'));
+}
+
 /**
  * Short description for class.
  *
@@ -1394,6 +1423,17 @@ function testRecursiveFindAllWithLimit() {
 			)
 		);
 		$this->assertEqual($result, $expected);
+	}
+
+	function testSelFAssociationAfterFind() {
+		$afterFindModel =& new NodeAfterFind();
+		$afterFindData = $afterFindModel->findAll();
+
+		$noAfterFindModel =& new NodeNoAfterFind();
+		$noAfterFindData = $noAfterFindModel->findAll();
+
+		$this->assertNotEqual($afterFindModel, $noAfterFindModel);
+		$this->assertEqual($afterFindData, $noAfterFindData);
 	}
 
 	function testValidatesBackwards() {
