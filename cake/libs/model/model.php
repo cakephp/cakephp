@@ -273,7 +273,7 @@ class Model extends Overloadable {
 		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-		'hasAndBelongsToMany' => array('className', 'joinTable', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
+		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
 	);
 /**
  * Holds provided/generated association key names and other data for all associations
@@ -682,6 +682,10 @@ class Model extends Overloadable {
 							$data = Inflector::singularize($this->{$class}->table) . '_id';
 						break;
 
+						case 'with':
+							$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
+						break;
+
 						case 'joinTable':
 							$tables = array($this->table, $this->{$class}->table);
 							sort ($tables);
@@ -691,6 +695,7 @@ class Model extends Overloadable {
 						case 'className':
 							$data = $class;
 						break;
+
 					}
 					$this->{$type}[$assocKey][$key] = $data;
 				}
@@ -705,19 +710,21 @@ class Model extends Overloadable {
 				}
 			}
 
-			if (isset($this->{$type}[$assocKey]['with'])) {
-				$with = $this->{$type}[$assocKey]['with'];
-				$this->__constructLinkedModel($with);
-				$this->{$type}[$assocKey]['joinTable'] = $this->{$with}->table;
-			} elseif ($type == 'hasAndBelongsToMany') {
-				$joinClass = Inflector::camelize($this->name . $assocKey);
-				if(!class_exists(low($joinClass))) {
-					$this->{$type}[$assocKey]['_with'] = $joinClass;
-					$this->{$joinClass} = new AppModel(array(
-						'name' => $joinClass,
-						'table' => $this->{$type}[$assocKey]['joinTable'],
-						'ds' => $this->useDbConfig
-					));
+			if (isset($this->{$type}[$assocKey]['with']) && !empty($this->{$type}[$assocKey]['with'])) {
+				$joinClass = $this->{$type}[$assocKey]['with'];
+				if (!loadModel($joinClass)) {
+					$this->__constructLinkedModel($joinClass, 'AppModel', false, $this->{$type}[$assocKey]['joinTable'], $this->useDbConfig);
+					$this->{$joinClass}->name = $joinClass;
+					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
+
+					if(count($this->{$joinClass}->_schema->value) > 2) {
+						if(isset($this->{$joinClass}->_schema->value['id'])) {
+							$this->{$joinClass}->primaryKey = 'id';
+						}
+					}
+				} else {
+					$this->__constructLinkedModel($joinClass);
+					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 			}
 		}

@@ -1086,8 +1086,12 @@ class DboSource extends DataSource {
 					$joinFields = $model->{$assocData['with']}->loadInfo();
 					$joinFields = $joinFields->extract('{n}.name');
 
-					if (is_array($joinFields) && !empty($joinFields)) {
+					if (is_array($joinFields) && !empty($joinFields) && count($joinFields) > 2) {
 						$joinFields = $this->fields($model->{$assocData['with']}, $model->{$assocData['with']}->name, $joinFields);
+					} else {
+						$joinFields = array();
+						$joinAssoc = null;
+						$joinAlias = $joinTbl;
 					}
 				}
 

@@ -648,7 +648,7 @@ class DboMysql extends DboSource {
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
 		}
-		
+
 		return $out;
 	}
 /**
