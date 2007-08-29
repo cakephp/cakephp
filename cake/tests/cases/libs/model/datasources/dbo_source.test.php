@@ -1401,6 +1401,12 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions("file = 'index.html'");
 		$expected = " WHERE file = 'index.html'";
 		$this->assertEqual($result, $expected);
+
+		$letter = $letter = 'd.a';
+		$conditions = array('Company.name' => 'like '.$letter.'%');
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `Company`.`name` like  'd.a%'";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testQuotesInStringConditions() {
