@@ -361,12 +361,17 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		
         $_SERVER['HTTP_REFERER'] = '/admin/';
+		
 		$this->Controller->Session->write('Auth', array('AuthUser' => array('id'=>'1', 'username'=>'nate')));
 		
-        $this->Controller->params['url']['url'] = 'users/login';
-        $this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		
  		$this->Controller->Auth->userModel = 'AuthUser';
-		$this->Controller->Auth->loginRedirect = null;
+		$this->Controller->Auth->loginRedirect = false;
         $this->Controller->Auth->startup($this->Controller);
         $expected = $this->Controller->Auth->_normalizeURL('admin');
         $this->assertEqual($expected, $this->Controller->Auth->redirect());
