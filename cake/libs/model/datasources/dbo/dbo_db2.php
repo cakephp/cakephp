@@ -28,7 +28,6 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * IBM DB2 for DBO
  *
@@ -158,22 +157,27 @@ class DboDb2 extends DboSource {
 	function _execute($sql) {
 		// get result from db
 		$result = db2_exec($this->connection, $sql);
-
-		// build table/column map for this result
-		$map = array();
-		$num_fields = db2_num_fields($result);
-		$index = 0;
-		$j = 0;
-
-		while ($j < $num_fields) {
-			$columnName = strtolower(db2_field_name($result, $j));
-			$tableName = substr($sql, 0, strpos($sql, '.' . $columnName));
-			$tableName = substr($tableName, strrpos($tableName, ' ') + 1);
-			$map[$index++] = array($tableName, $columnName);
-			$j++;
+		
+		if(!is_bool($result)){
+			// build table/column map for this result
+			$map = array();
+			$num_fields = db2_num_fields($result);
+			$index = 0;
+			$j = 0;
+			$offset = 0;
+	
+			while ($j < $num_fields) {
+				$columnName = strtolower(db2_field_name($result, $j));
+				$tmp = strpos($sql, '.' . $columnName, $offset);
+				$tableName = substr($sql, $offset, ($tmp-$offset));
+				$tableName = substr($tableName, strrpos($tableName, ' ') + 1);
+				$map[$index++] = array($tableName, $columnName);
+				$j++;
+				$offset = strpos($sql, ' ', $tmp);
+			}
+	
+			$this->_resultMap[$result] = $map;
 		}
-
-		$this->_resultMap[$result] = $map;
 
 		return $result;
 	}
@@ -217,7 +221,7 @@ class DboDb2 extends DboSource {
 
 		while (db2_fetch_row($result)) {
 			$fields[strtolower(db2_result($result, 'COLUMN_NAME'))] = array(
-				'type' => db2_result($result, 'TYPE_NAME'),
+				'type' => strtolower(db2_result($result, 'TYPE_NAME')),
 				'null' => db2_result($result, 'NULLABLE'),
 				'default' => db2_result($result, 'COLUMN_DEF'));
 		}
