@@ -191,7 +191,7 @@ class Tag extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
-class ArticleTag extends CakeTestModel {
+class ArticlesTag extends CakeTestModel {
 	var $name = 'ArticleTag';
 }
 /**
@@ -200,7 +200,7 @@ class ArticleTag extends CakeTestModel {
  * @package		cake.tests
  * @subpackage	cake.tests.cases.libs.model
  */
-class ArticleFeaturedTag extends CakeTestModel {
+class ArticleFeaturedsTag extends CakeTestModel {
 	var $name = 'ArticleFeaturedTag';
 }
 /**
