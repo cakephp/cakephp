@@ -32,6 +32,10 @@ class ControllerPost extends CakeTestModel {
 	var $name = 'ControllerPost';
 	var $useTable = 'posts';
 }
+class ControllerComment extends CakeTestModel {
+	var $name = 'ControllerComment';
+	var $useTable = 'comments';
+}
 /**
  * Short description for class.
  *
@@ -40,7 +44,7 @@ class ControllerPost extends CakeTestModel {
  */
 class ControllerTest extends CakeTestCase {
 
-	var $fixtures = array('core.post');
+	var $fixtures = array('core.post', 'core.comment');
 
 	function testCleanUpFields() {
 		$Controller =& new Controller();
@@ -90,6 +94,44 @@ class ControllerTest extends CakeTestCase {
 		$Controller->cleanUpFields();
 		$expected = array('ControllerPost'=> array('created'=> ''));
 		$this->assertEqual($Controller->data, $expected);
+		unset($Controller);
+	}
+
+	function testConstructClasses() {
+		$Controller =& new Controller();
+		$Controller->modelClass = 'ControllerPost';
+		$Controller->passedArgs[] = '1';
+		$Controller->constructClasses();
+		$this->assertEqual($Controller->ControllerPost->id, 1);
+
+		unset($Controller);
+
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->constructClasses();
+		$this->assertTrue($Controller->ControllerPost == new ControllerPost());
+		$this->assertTrue($Controller->ControllerComment == new ControllerComment());
+		$this->assertFalse($Controller->ControllerComment != new ControllerComment());
+
+		unset($Controller);
+
+	}
+
+	function testPersistent() {
+
+		$Controller =& new Controller();
+		$Controller->modelClass = 'ControllerPost';
+		$Controller->persistModel = true;
+		$Controller->constructClasses();
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS .'controllerpost.php'));
+		$this->assertTrue($Controller->ControllerPost == new ControllerPost());
+		unlink(CACHE . 'persistent' . DS . 'controllerpost.php');
+		unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
+
+		unset($Controller);
+
+
 	}
 }
 ?>
