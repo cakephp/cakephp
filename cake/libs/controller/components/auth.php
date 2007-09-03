@@ -375,7 +375,7 @@ class AuthComponent extends Object {
 		if (empty($this->sessionKey)) {
 			$this->sessionKey = 'Auth.' . $this->userModel;
 		}
-		if (empty($this->logoutAction)) {
+		if (empty($this->logoutRedirect)) {
 			$this->logoutRedirect = $this->loginAction;
 		}
 		return true;
