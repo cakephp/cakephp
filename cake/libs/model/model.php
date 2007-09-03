@@ -721,15 +721,17 @@ class Model extends Overloadable {
 					$this->{$joinClass}->name = $joinClass;
 					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 
-					if(count($this->{$joinClass}->_schema->value) > 2) {
-						if(isset($this->{$joinClass}->_schema->value['id'])) {
-							$this->{$joinClass}->primaryKey = 'id';
-						}
-					}
 				} else {
 					$this->__constructLinkedModel($joinClass);
 					$this->{$joinClass}->name = $joinClass;
+					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
+				}
+
+				if(count($this->{$joinClass}->_schema->value) > 2) {
+					if(isset($this->{$joinClass}->_schema->value['id'])) {
+						$this->{$joinClass}->primaryKey = 'id';
+					}
 				}
 			}
 		}
