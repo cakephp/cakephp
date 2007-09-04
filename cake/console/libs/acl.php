@@ -288,23 +288,24 @@ class AclShell extends Shell {
 		}
 		$this->out($class . " tree:");
 		$this->hr();
-		$nodeCount = count($nodes);
-		$right = $left = array();
-		for ($i = 0; $i < $nodeCount; $i++) {
-			$count = 0;
-			$right[$i] = $nodes[$i][$class]['rght'];
-			$left[$i] = $nodes[$i][$class]['lft'];
-			if (isset($left[$i]) && isset($left[$i-1]) && $left[$i] > $left[$i-1]) {
-				array_pop($left);
-				$count = count($left);
+		$stack = array();
+		$last  = null;
+		foreach ($nodes as $n) {
+			$stack[] = $n;
+			if (!empty($last)) {
+				$end = end($stack);
+				if ($end[$class]['rght'] > $last) {
+					foreach ($stack as $k => $v) {
+						$end = end($stack);
+                        if ($v[$class]['rght'] < $end[$class]['rght']) {
+                            unset($stack[$k]);
+                        }
+                    }
+				}
 			}
-			if (isset($right[$i]) && isset($right[$i-1]) && $right[$i] < $right[$i-1]) {
-				array_pop($right);
-				$count = count($right);
-			}
-
-			$this->out(str_repeat('  ', $count) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias']."\n");
-			$right[] = $nodes[$i][$class]['rght'];
+			$last   = $n[$class]['rght'];
+			$count  = count($stack);
+			$this->out(str_repeat('  ', $count) . "[" . $n[$class]['id'] . "]" . $n[$class]['alias']."\n");
 		}
 		$this->hr();
 	}
