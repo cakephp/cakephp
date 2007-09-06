@@ -151,7 +151,7 @@ class TextHelper extends AppHelper {
  * @param string  $text	String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param string  $ending Ending to be appended to the trimmed string.
- * @param boolean $exact If false, $test will not be cut mid-word
+ * @param boolean $exact If false, $text will not be cut mid-word
  * @return string Trimmed string.
  * @access public
  */
