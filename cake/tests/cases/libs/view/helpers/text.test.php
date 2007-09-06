@@ -37,7 +37,6 @@ uses('view'.DS.'helper', 'view'.DS.'helpers'.DS.'text');
 class TextTest extends UnitTestCase {
 	var $helper = null;
 
-
 	function setUp() {
 		$this->Text = new TextHelper();
 	}
@@ -50,6 +49,67 @@ class TextTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
+	function testStripLinks() {
+		$text = 'This is a test text';
+		$expected = 'This is a test text';
+		$result = $this->Text->stripLinks($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'This is a <a href="#">test</a> text';
+		$expected = 'This is a test text';
+		$result = $this->Text->stripLinks($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'This <strong>is</strong> a <a href="#">test</a> <a href="#">text</a>';
+		$expected = 'This <strong>is</strong> a test text';
+		$result = $this->Text->stripLinks($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
+		$expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
+		$result = $this->Text->stripLinks($text);
+		$this->assertEqual($expected, $result);
+	}
+
+	function testAutoLinkUrls() {
+		$text = 'This is a test text';
+		$expected = 'This is a test text';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'Text with a partial www.cakephp.org URL';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>www.cakephp.org</a> URL';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertPattern('#^' . $expected . '$#', $result);
+
+		$text = 'Text with a partial www.cakephp.org URL';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org" \s*class="link">www.cakephp.org</a> URL';
+		$result = $this->Text->autoLinkUrls($text, array('class' => 'link'));
+		$this->assertPattern('#^' . $expected . '$#', $result);
+
+		$text = 'Text with a partial WWW.cakephp.org URL';
+		$expected = 'Text with a partial <a href="http://www.cakephp.org"\s*>WWW.cakephp.org</a> URL';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertPattern('#^' . $expected . '$#', $result);
+	}
+
+	function testAutoLinkEmails() {
+		$text = 'This is a test text';
+		$expected = 'This is a test text';
+		$result = $this->Text->autoLinkUrls($text);
+		$this->assertEqual($expected, $result);
+
+		$text = 'Text with email@example.com address';
+		$expected = 'Text with <a href="mailto:email@example.com"\s*>email@example.com</a> address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertPattern('#^' . $expected . '$#', $result);
+
+		$text = 'Text with email@example.com address';
+		$expected = 'Text with <a href="mailto:email@example.com" \s*class="link">email@example.com</a> address';
+		$result = $this->Text->autoLinkEmails($text, array('class' => 'link'));
+		$this->assertPattern('#^' . $expected . '$#', $result);
+	}
+
 	function testHighlightCaseInsensitivity() {
 		$text = 'This is a Test text';
 		$expected = 'This is a <b>Test</b> text';
@@ -58,6 +118,30 @@ class TextTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
+		$this->assertEqual($expected, $result);
+	}
+
+	function testExcerpt() {
+		$text = 'This is a phrase with test text to play with';
+
+		$expected = '...with test text...';
+		$result = $this->Text->excerpt($text, 'test', 9, '...');
+		$this->assertEqual($expected, $result);
+
+		$expected = 'This is a...';
+		$result = $this->Text->excerpt($text, 'not_found', 9, '...');
+		$this->assertEqual($expected, $result);
+	}
+
+	function testExcerptCaseInsensitivity() {
+		$text = 'This is a phrase with test text to play with';
+
+		$expected = '...with test text...';
+		$result = $this->Text->excerpt($text, 'TEST', 9, '...');
+		$this->assertEqual($expected, $result);
+
+		$expected = 'This is a...';
+		$result = $this->Text->excerpt($text, 'NOT_FOUND', 9, '...');
 		$this->assertEqual($expected, $result);
 	}
 
