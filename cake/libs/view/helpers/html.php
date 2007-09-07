@@ -623,10 +623,10 @@ class HtmlHelper extends AppHelper {
  * Returns value of $fieldName. False if the tag does not exist.
  *
  * @deprecated 1.2.0.5147
- * @see FormHelper::errors
+ * @see Helper::value
  */
 	function tagValue($fieldName) {
-		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see HtmlHelper::value', true), get_class($this)), E_USER_NOTICE);
+		trigger_error(sprintf(__('Method tagValue() is deprecated in %s: see Helper::value', true), get_class($this)), E_USER_NOTICE);
 		$this->setFormTag($fieldName);
 		if (isset($this->data[$this->model()][$this->field()])) {
 			return h($this->data[$this->model()][$this->field()]);

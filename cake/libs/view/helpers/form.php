@@ -147,7 +147,7 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			$options = (array)$options;
-			if (!empty($model) && $model != $defaultModel) {
+			if (!isset($this->params['controller']) && !empty($model) && $model != $defaultModel) {
 				$controller = Inflector::underscore(Inflector::pluralize($model));
 			} else {
 				$controller = Inflector::underscore($this->params['controller']);
@@ -373,7 +373,9 @@ class FormHelper extends AppHelper {
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
-
+		if(!empty($text)) {
+			$text = __($text, true);
+		}
 		return $this->output(sprintf($this->Html->tags['label'], $labelFor, $this->_parseAttributes($attributes), $text));
 	}
 /**
@@ -582,9 +584,6 @@ class FormHelper extends AppHelper {
 				$labelText = $label;
 			}
 
-			if (!empty($labelText)) {
-				$labelText = __($labelText, true);
-			}
 			if($options['type'] != 'radio') {
 				$out = $this->label(null, $labelText, $labelAttributes);
 			} else {
@@ -753,7 +752,7 @@ class FormHelper extends AppHelper {
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
-			if (!empty($value) && $optValue == $value) {
+			if (isset($value) && $optValue == $value) {
  	        	$optionsHere['checked'] = 'checked';
  	        }
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), null, '', ' ');

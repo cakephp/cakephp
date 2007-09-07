@@ -454,6 +454,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertNoPattern('/id="ModelField"/', $result);
 		$this->assertNoPattern('/checked="checked"/', $result);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), null, array('value' => '1'));
+		$this->assertPattern('/id="Field1".*checked="checked"/', $result);
+		$this->assertPattern('/id="Field0"/', $result);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), null, array('value' => '0'));
+		$this->assertPattern('/id="Field1"/', $result);
+		$this->assertPattern('/id="Field0".*checked="checked"/', $result);
 	}
 
 	function testSelect() {
