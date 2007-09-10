@@ -1,7 +1,11 @@
 <?php
 $output = "<h2>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h2>\n";
 $output .="
-<?php Debugger::checkSessionKey(); ?>
+<?php
+if(Configure::read() > 0):
+	Debugger::checkSessionKey();
+endif;
+?>
 <p>
 	<span class=\"notice\">
 		<?php
