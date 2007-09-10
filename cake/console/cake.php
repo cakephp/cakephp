@@ -361,7 +361,12 @@ class ShellDispatcher {
 		} else {
 			$this->stdout($prompt . " $print_options \n" . "[$default] > ", false);
 		}
-		$result = trim(fgets($this->stdin));
+		$result = fgets($this->stdin);
+
+		if($result === false){
+			exit;
+		}
+		$result = trim($result);
 
 		if ($default != null && empty($result)) {
 			return $default;
