@@ -43,14 +43,14 @@ class ModelTask extends Shell {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
-		
+
 		if (!empty($this->args[0])) {
 			$model = $this->args[0];
 			if ($this->__bake($model)) {
 				if ($this->_checkUnitTest()) {
 					$this->__bakeTest($model);
 				}
-			}			
+			}
 		}
 	}
 /**
@@ -105,8 +105,12 @@ class ModelTask extends Shell {
 			loadModel();
 			$tempModel = new Model(false, $useTable);
 			$modelFields = $db->describe($tempModel);
-			if (isset($modelFields[0]['name']) && $modelFields[0]['name'] != 'id') {
-				$primaryKey = $this->in('What is the primaryKey?', null, $modelFields[0]['name']);
+
+			if (!array_key_exists('id', $modelFields)) {
+				foreach ($modelFields as $name => $field) {
+					break;
+				}
+				$primaryKey = $this->in('What is the primaryKey?', null, $name);
 			}
 		}
 		$validate = array();
@@ -177,7 +181,7 @@ class ModelTask extends Shell {
 			foreach ($this->__tables as $otherTable) {
 				$tempOtherModel = & new Model(false, $otherTable);
 				$modelFieldsTemp = $db->describe($tempOtherModel);
-				foreach ($modelFieldsTemp as $field) {
+				foreach ($modelFieldsTemp as $fieldName => $field) {
 					if ($field['type'] == 'integer' || $field['type'] == 'string') {
 						$possibleKeys[$otherTable][] = $fieldName;
 					}
