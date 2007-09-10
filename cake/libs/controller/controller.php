@@ -974,7 +974,7 @@ class Controller extends Object {
 					}
 				}
 
-				if($useNewDate) {
+				if ($useNewDate && (isset($date) || $value['null'])) {
 					$this->data[$modelClass][$field] = $date;
 				}
 			}
