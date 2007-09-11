@@ -61,8 +61,10 @@ endif;
 			else:
 				__('NOT working.');
 				echo '<br />';
-				if (is_writable(TMP)):
-					__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
+				if (is_writable(TMP . 'cache')):
+					__('Edit: config/core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+				else:
+					__('Your cache directory is not writable');
 				endif;
 			endif;
 		?>
@@ -79,7 +81,7 @@ endif;
 			else:
 				__('NOT present.');
 				echo '<br/>';
-				__('Rename config/database.php.default to config/database.php');
+				__('Rename config'.DS.'database.php.default to config'.DS.'database.php');
 			endif;
 		?>
 	</span>
@@ -111,13 +113,12 @@ if (!empty($filePresent)):
 <?php __('To change the content of this page, create: /app/views/pages/home.ctp.'); ?><br />
 <?php __('To change its layout, create: /app/views/layouts/default.ctp.'); ?><br />
 <a href="http://manual.cakephp.org/"><?php __('See the views section of the manual for more info.'); ?> </a><br />
-<?php __('You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
+<?php __('You can also add some CSS styles for your pages at: /app/webroot/css/.'); ?>
 </p>
 <h2><?php __('Getting Started'); ?></h2>
 <p>
-<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
-<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?php __('Cook up Web sites fast with CakePHP'); ?></a><br />
-<a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?php __('Create an interactive production wiki using PHP'); ?></a>
+	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
+	<a href="http://cakephp.org/files/OCPHP.pdf"><?php __('The OCPHP presentation on new features in 1.2'); ?></a><br />
 </p>
 <h2><?php __('More about Cake'); ?></h2>
 <p>

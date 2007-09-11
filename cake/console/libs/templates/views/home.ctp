@@ -26,7 +26,7 @@ endif;
 				__('set up and initialized properly.');
 				\$settings = Cache::settings();
 				echo '<p>' . \$settings['class'];
-				__(' is being used to cache, to change this edit config/core.php ');
+				__(' is being used to cache, to change this edit config'.DS.'core.php ');
 				echo '</p>';
 
 				echo 'Settings: <ul>';
@@ -38,8 +38,10 @@ endif;
 			else:
 				__('NOT working.');
 				echo '<br />';
-				if (is_writable(TMP)):
-					__('Edit: config/core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+				if (is_writable(TMP . 'cache')):
+					__('Edit: config'.DS.'core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+				else:
+					__('Your cache directory is not writable');
 				endif;
 			endif;
 		?>
@@ -56,7 +58,7 @@ endif;
 			else:
 				__('NOT present.');
 				echo '<br/>';
-				__('Rename config/database.php.default to config/database.php');
+				__('Rename config'.DS.'database.php.default to config'.DS.'database.php');
 			endif;
 		?>
 	</span>
@@ -83,8 +85,8 @@ if (!empty(\$filePresent)):
 $output .= "<?php endif;?>\n";
 $output .= "<h3>Editing this Page</h3>\n";
 $output .= "<p>\n";
-$output .= "To change the content of this page, edit: ".$dir.DS."views".DS."pages".DS."home.ctp.<br />\n";
-$output .= "To change its layout, edit: ".$dir.DS."views".DS."layouts".DS."default.ctp.<br />\n";
-$output .= "You can also add some CSS styles for your pages at: ".$dir.DS."webroot/css/.\n";
+$output .= "To change the content of this page, edit: ".VIEWS."pages".DS."home.ctp.<br />\n";
+$output .= "To change its layout, edit: ".VIEWS."layouts".DS."default.ctp.<br />\n";
+$output .= "You can also add some CSS styles for your pages at: ".$dir."webroot".DS."css.\n";
 $output .= "</p>\n";
 ?>
