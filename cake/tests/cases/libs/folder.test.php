@@ -39,29 +39,29 @@ class FolderTest extends UnitTestCase {
 
 	function testBasic() {
 		$path = dirname(__FILE__);
-		$this->Folder =& new Folder($path);
+		$Folder =& new Folder($path);
 
-		$result = $this->Folder->pwd();
+		$result = $Folder->pwd();
 		$this->assertEqual($result, $path);
 
-		$result = $this->Folder->isWindowsPath($path);
+		$result = $Folder->isWindowsPath($path);
 		$expected = (DS == '\\' ? true : false);
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Folder->isAbsolute($path);
+		$result = $Folder->isAbsolute($path);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->isSlashTerm($path);
+		$result = $Folder->isSlashTerm($path);
 		$this->assertFalse($result);
 
-		$result = $this->Folder->isSlashTerm($path . DS);
+		$result = $Folder->isSlashTerm($path . DS);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->addPathElement($path, 'test');
+		$result = $Folder->addPathElement($path, 'test');
 		$expected = $path . DS . 'test';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Folder->cd(ROOT);
+		$result = $Folder->cd(ROOT);
 		$expected = ROOT;
 		$this->assertEqual($result, $expected);
 	}
@@ -70,64 +70,78 @@ class FolderTest extends UnitTestCase {
 		$path = dirname(dirname(__FILE__));
 		$inside = dirname($path) . DS;
 
-		$this->Folder =& new Folder($path);
+		$Folder =& new Folder($path);
 
-		$result = $this->Folder->pwd();
+		$result = $Folder->pwd();
 		$this->assertEqual($result, $path);
 
-		$result = $this->Folder->isSlashTerm($inside);
+		$result = $Folder->isSlashTerm($inside);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->realpath('tests/');
+		$result = $Folder->realpath('tests/');
 		$this->assertEqual($result, $path . DS .'tests/');
 
-		$result = $this->Folder->inPath('tests/');
+		$result = $Folder->inPath('tests/');
 		$this->assertTrue($result);
 
-		$result = $this->Folder->inPath(DS . 'non-existing' . $inside);
+		$result = $Folder->inPath(DS . 'non-existing' . $inside);
 		$this->assertFalse($result);
 	}
 
 	function testOperations() {
 		$path = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
-		$this->Folder =& new Folder($path);
+		$Folder =& new Folder($path);
 
-		$result = is_dir($this->Folder->pwd());
+		$result = is_dir($Folder->pwd());
 		$this->assertTrue($result);
 
 		$new = TMP . 'test_folder_new';
-		$result = $this->Folder->create($new);
+		$result = $Folder->create($new);
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
-		$result = $this->Folder->copy($copy);
+		$result = $Folder->copy($copy);
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
-		$result = $this->Folder->chmod($copy, 0755);
+		$result = $Folder->chmod($copy, 0755);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->cd($copy);
+		$result = $Folder->cd($copy);
 		$this->assertTrue($result);
 
 		$mv = TMP . 'test_folder_mv';
-		$result = $this->Folder->move($mv);
+		$result = $Folder->move($mv);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->delete($new);
+		$result = $Folder->delete($new);
 		$this->assertTrue($result);
 
-		$result = $this->Folder->delete($mv);
+		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
 
-		//pr($this->Folder->messages());
+		//pr($Folder->messages());
 
-		//pr($this->Folder->errors());
+		//pr($Folder->errors());
 	}
 
 	function testRealPathForWebroot() {
 		$Folder = new Folder('files/');
 		$this->assertEqual(realpath('files/'), $Folder->path);
+	}
+
+	function testZeroAsDirectory() {
+		$Folder =& new Folder(TMP);
+		$new = TMP . '0';
+		$result = $Folder->create($new);
+		$this->assertTrue($result);
+
+		$result = $Folder->read(true, '.');
+		$expected = array(array('0', 'cache', 'logs', 'sessions', 'tests'), array());
+		$this->assertEqual($expected, $result);
+
+		$result = $Folder->delete($new);
+		$this->assertTrue($result);
 	}
 }
 ?>

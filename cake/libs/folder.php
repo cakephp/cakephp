@@ -133,7 +133,7 @@ class Folder extends Object{
 	function read($sort = true, $exceptions = false) {
 		$dirs = $files = array();
 		$dir = opendir($this->path);
-		if ($dir) {
+		if ($dir !== false) {
 			while (false !== ($n = readdir($dir))) {
 				$item = false;
 				if (is_array($exceptions)) {
@@ -144,7 +144,7 @@ class Folder extends Object{
 					$item = $n;
 				}
 
-				if ($item) {
+				if ($item !== false) {
 					if (is_dir($this->addPathElement($this->path, $item))) {
 						$dirs[] = $item;
 					} else {

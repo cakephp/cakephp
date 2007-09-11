@@ -166,12 +166,8 @@ class Dispatcher extends Object {
 			}
 		}
 
-		$protected = array('constructclasses', 'redirect', 'set', 'setAction', 'isauthorized', 'validate', 'validateerrors',
-							'render', 'referer', 'disablecache', 'flash', 'generatefieldnames', 'postconditions', 'cleanupfields',
-							'paginate', 'beforefilter', 'beforerender', 'afterfilter', 'object', 'tostring', 'requestaction', 'log',
-							'cakeerror');
-
-		$classMethods = array_map("low", get_class_methods($controller));
+		$protected = array_map('strtolower', get_class_methods('appcontroller'));
+		$classMethods = array_map('strtolower', get_class_methods($controller));
 
 		if (in_array(low($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
 			$privateAction = true;
