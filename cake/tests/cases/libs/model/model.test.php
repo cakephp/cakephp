@@ -419,6 +419,22 @@ class ModelC extends CakeTestModel {
 class ModelD extends CakeTestModel {
 	var $useTable = 'threads';
 }
+class Portfolio extends CakeTestModel {
+	var $name = 'Portfolio';
+	var $hasAndBelongsToMany = array('Item');
+}
+class Item extends CakeTestModel {
+	var $name = 'Item';
+	var $belongsTo = array('Syfile');
+	var $hasAndBelongsToMany = array('Portfolio');
+}
+class Syfile extends CakeTestModel {
+	var $name = 'Syfile';
+	var $belongsTo = array('Image');
+}
+class Image extends CakeTestModel {
+	var $name = 'Image';
+}
 /**
  * Short description for class.
  *
@@ -426,12 +442,12 @@ class ModelD extends CakeTestModel {
  * @subpackage	cake.tests.cases.libs.model
  */
 class ModelTest extends CakeTestCase {
-
 	var $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.article', 'core.featured', 'core.article_featureds_tags',
 		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
-		'core.project', 'core.thread', 'core.message', 'core.bid'
+		'core.project', 'core.thread', 'core.message', 'core.bid',
+		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image'
 	);
 
 	function start() {
@@ -443,6 +459,58 @@ class ModelTest extends CakeTestCase {
 	function end() {
 		parent::end();
 		Configure::write('debug', $this->debug);
+	}
+
+	function testHabtmRecursiveBelongsTo() {
+		$this->Portfolio =& new Portfolio();
+
+		$result = $this->Portfolio->find(array('id' => 2), null, null, 3);
+		$expected = array(
+			'Portfolio' => array(
+				'id' => 2,
+				'seller_id' => 1,
+				'name' => 'Portfolio 2'
+			),
+			'Item' => array(
+				array(
+					'id' => 2,
+					'syfile_id' => 2,
+					'name' => 'Item 2',
+					'ItemsPortfolio' => array(
+						'id' => 2,
+						'item_id' => 2,
+						'portfolio_id' => 2
+					),
+					'Syfile' => array(
+						'id' => 2,
+						'image_id' => 2,
+						'name' => 'Syfile 2',
+						'Image' => array(
+							'id' => 2,
+							'name' => 'Image 2'
+						)
+					)
+				),
+				array(
+					'id' => 6,
+					'syfile_id' => 6,
+					'name' => 'Item 6',
+					'ItemsPortfolio' => array(
+						'id' => 6,
+						'item_id' => 6,
+						'portfolio_id' => 2
+					),
+					'Syfile' => array(
+						'id' => 2,
+						'image_id' => null,
+						'name' => 'Syfile 2',
+						'Image' => array()
+					)
+				)
+			)
+		);
+		$this->assertEqual($result, $expected);
+		unset($this->Portfolio);
 	}
 
 	function testHasManyOptimization() {
