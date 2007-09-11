@@ -416,31 +416,27 @@ class ShellDispatcher {
 		$app = 'app';
 		$root = dirname(dirname(dirname(__FILE__)));
 
-		if (!empty($this->params['working'])) {
-			$root = dirname($this->params['working']);
-			$app = basename($this->params['working']);
+		if (!empty($this->params['working']) && (!isset($this->args[0]) || isset($this->args[0]) && $this->args[0]{0} !== '.')) {
+			if (empty($this->params['app'])) {
+				$root = dirname($this->params['working']);
+				$app = basename($this->params['working']);
+			} else {
+				$root = $this->params['working'];
+			}
 			unset($this->params['working']);
  		}
 
 		if (!empty($this->params['app'])) {
 			if ($this->params['app']{0} == '/') {
 				$root = dirname($this->params['app']);
-				$app = basename($this->params['app']);
-			} elseif (!empty($this->params['working'])) {
-				$root = realpath($this->params['working']);
- 			}
-			$app = $this->params['app'];
+			}
+			$app = basename($this->params['app']);
 			unset($this->params['app']);
 		}
 
-		if (in_array($app, array('cake', 'console')) || realpath($root.DS.$app) === dirname(dirname(dirname(__FILE__)))) {
-			$root = dirname(dirname(dirname(__FILE__)));
-			$app = 'app';
-		}
+		$working = str_replace(DS . DS, DS, $root . DS . $app);
 
-		$working = $root . DS . $app;
-
-		$this->params = array_merge(array('app'=> $app, 'root'=> $root, 'working'=> $working), $this->params);
+		$this->params = array_merge($this->params, array('app'=> $app, 'root'=> $root, 'working'=> $working));
 	}
 /**
  * Removes first argument and shifts other arguments up

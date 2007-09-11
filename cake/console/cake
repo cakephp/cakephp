@@ -27,7 +27,7 @@
 clear
 
 LIB=${0/%cake/}
-APP=`pwd`/
+APP=`pwd`
 
 echo "Hello $USER,"
 

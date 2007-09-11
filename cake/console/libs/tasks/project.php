@@ -59,12 +59,21 @@ class ProjectTask extends Shell {
  */
 	function execute($project = null) {
 		if ($project === null) {
-			$project = $this->params['app'];
 			if (isset($this->args[0])) {
 				$project = $this->args[0];
 				$this->Dispatch->shiftArgs();
 			}
 		}
+
+		if($project) {
+			if($project{0} == '/' || $project{0} == DS) {
+				$this->Dispatch->parseParams(array('-working', $project));
+			} else {
+				$this->Dispatch->parseParams(array('-app', $project));
+			}
+		}
+
+		$project = $this->params['working'];
 
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
@@ -72,21 +81,8 @@ class ProjectTask extends Shell {
 				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'skel';
 			}
 		}
+
 		if ($project) {
-			if ($project{0} == DS || $project{0} == '/') {
-				$this->params['app'] = basename($project);
-				$this->params['root'] = dirname($project);
-				$this->params['working'] = $this->params['root'];
-			} else {
-				$this->params['app'] = basename($project);
-			}
-
-			if ($this->params['root'] === dirname(dirname(dirname(dirname(dirname(__FILE__)))))) {
-				$this->params['working'] = $this->params['root'] . DS;
-			}
-
-			$project = str_replace(DS.DS, DS, $this->params['working'] . DS . $this->params['app']);
-
 			$response = false;
 			while ($response == false && is_dir($project) === true && config('core') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
