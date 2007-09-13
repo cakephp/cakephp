@@ -799,9 +799,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
 
-		/*
-		 * This is how you write tests for tag-based output.
-		 */
 		$result = $this->Form->input('name');
 		$this->assertPattern('/^<div[^<>]+><label[^<>]+>Name<\/label><input [^<>]+ \/><\/div>$/', $result);
 		$this->assertPattern('/^<div[^<>]+class="input">/', $result);

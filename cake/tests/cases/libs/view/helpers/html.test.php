@@ -71,7 +71,35 @@ class HtmlHelperTest extends UnitTestCase {
 		$result = $this->Html->style(array('display'=> 'none', 'margin'=>'10px'), false);
 		$expected = "display:none;\nmargin:10px;";
 		$this->assertEqual($expected, $result);
+	}
 
+	function testBreadcrumb() {
+		$this->Html->addCrumb('First', '#first');
+		$this->Html->addCrumb('Second', '#second');
+		$this->Html->addCrumb('Third', '#third');
+
+		$result = $this->Html->getCrumbs();
+		$this->assertPattern('/^<a[^<>]+>First<\/a>&raquo;<a[^<>]+>Second<\/a>&raquo;<a[^<>]+>Third<\/a>$/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
+		$this->assertNoPattern('/<a[^<>]+[^href]=[^<>]*>/', $result);
+
+		$result = $this->Html->getCrumbs(' &gt; ');
+		$this->assertPattern('/^<a[^<>]+>First<\/a> &gt; <a[^<>]+>Second<\/a> &gt; <a[^<>]+>Third<\/a>$/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
+		$this->assertNoPattern('/<a[^<>]+[^href]=[^<>]*>/', $result);
+
+		$this->Html->addCrumb('Fourth', null);
+
+		$result = $this->Html->getCrumbs();
+		$this->assertPattern('/^<a[^<>]+>First<\/a>&raquo;<a[^<>]+>Second<\/a>&raquo;<a[^<>]+>Third<\/a>&raquo;Fourth$/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#first["\']+[^<>]*>First<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#second["\']+[^<>]*>Second<\/a>/', $result);
+		$this->assertPattern('/<a\s+href=["\']+\#third["\']+[^<>]*>Third<\/a>/', $result);
+		$this->assertNoPattern('/<a[^<>]+[^href]=[^<>]*>/', $result);
 	}
 
 	function tearDown() {
