@@ -459,7 +459,6 @@ class Model extends Overloadable {
 		if (in_array(low($method), $methods)) {
 			$it = $map[low($method)];
 			return call_user_func_array(array(&$this->behaviors[$it[1]], $it[0]), $pass);
-			return $this->behaviors[$it[1]]->{$it[0]}($this, $params);
 		}
 
 		for ($i = 0; $i < $count; $i++) {
