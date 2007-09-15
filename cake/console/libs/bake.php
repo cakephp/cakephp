@@ -51,13 +51,17 @@ class BakeShell extends Shell {
 		}
 		$this->out('Interactive Bake Shell');
 		$this->hr();
+		$this->out('[D]atabase Configuration');
 		$this->out('[M]odel');
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in('What would you like to Bake?', array('M', 'V', 'C', 'Q')));
+		$classToBake = strtoupper($this->in('What would you like to Bake?', array('D', 'M', 'V', 'C', 'Q')));
 		switch($classToBake) {
+			case 'D':
+				$this->DbConfig->execute();
+				break;
 			case 'M':
 				$this->Model->execute();
 				break;
@@ -71,7 +75,7 @@ class BakeShell extends Shell {
 				exit(0);
 				break;
 			default:
-				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering M, V, or C.');
+				$this->out('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.');
 		}
 		$this->hr();
 		$this->main();

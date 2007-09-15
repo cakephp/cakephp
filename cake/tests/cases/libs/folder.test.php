@@ -119,10 +119,6 @@ class FolderTest extends UnitTestCase {
 
 		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
-
-		//pr($Folder->messages());
-
-		//pr($Folder->errors());
 	}
 
 	function testRealPathForWebroot() {
