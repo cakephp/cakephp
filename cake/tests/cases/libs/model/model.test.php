@@ -1228,14 +1228,8 @@ class ModelTest extends CakeTestCase {
 						array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 					),
 					'Tag' => array(
-						array(
-							'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-							'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-							),
-						array(
-							'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-							'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-						)
+						array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+						array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 					)
 				)
 			)
@@ -1262,14 +1256,8 @@ class ModelTest extends CakeTestCase {
 					array('id' => '4', 'article_id' => '1', 'user_id' => '1', 'comment' => 'Fourth Comment for First Article', 'published' => 'N', 'created' => '2007-03-18 10:51:23', 'updated' => '2007-03-18 10:53:31')
 				),
 				'Tag' => array(
-					array(
-						'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-						'ArticlesTag' => array('article_id' => '1', 'tag_id' => '1')
-					),
-					array(
-						'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-						'ArticlesTag' => array('article_id' => '1', 'tag_id' => '2')
-					)
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 				)
 			),
 			array(
@@ -1319,14 +1307,8 @@ class ModelTest extends CakeTestCase {
 					)
 				),
 				'Tag' => array(
-					array(
-						'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-						'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-					),
-					array(
-						'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-						'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-					)
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 				)
 			)
 		);
@@ -1459,14 +1441,8 @@ class ModelTest extends CakeTestCase {
 					array('id' => '2', 'article_id' => '1', 'user_id' => '4', 'comment' => 'Second Comment for First Article', 'published' => 'Y', 'created' => '2007-03-18 10:47:23', 'updated' => '2007-03-18 10:49:31'),
 				),
 				'Tag' => array(
-					array(
-						'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-						'ArticlesTag' => array('article_id' => '1', 'tag_id' => '1')
-					),
-					array(
-						'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-						'ArticlesTag' => array('article_id' => '1', 'tag_id' => '2')
-					)
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 				)
 			),
 			array(
@@ -1508,14 +1484,8 @@ class ModelTest extends CakeTestCase {
 					)
 				),
 				'Tag' => array(
-					array(
-						'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-						'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-					),
-					array(
-						'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-						'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-					)
+					array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+					array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 				)
 			)
 		);
@@ -1873,14 +1843,8 @@ class ModelTest extends CakeTestCase {
 			),
 			'Comment' => array(),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '4', 'tag_id' => '1')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '4', 'tag_id' => '3')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -1921,14 +1885,8 @@ class ModelTest extends CakeTestCase {
 				)
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '4', 'tag_id' => '1')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '4', 'tag_id' => '3')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2052,14 +2010,8 @@ class ModelTest extends CakeTestCase {
 				array('id' => '6', 'article_id' => '2', 'user_id' => '2', 'comment' => 'Second Comment for Second Article', 'published' => 'Y', 'created' => '2007-03-18 10:55:23', 'updated' => '2007-03-18 10:57:31')
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2087,14 +2039,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2124,14 +2070,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2160,18 +2100,9 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2223,14 +2154,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2260,14 +2185,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2295,14 +2214,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article Title', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2330,14 +2243,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '2')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '2', 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -2365,14 +2272,8 @@ class ModelTest extends CakeTestCase {
 				'id' => '2', 'user_id' => '3', 'title' => 'Changed Second Article', 'body' => 'Second Article Body'
 			),
 			'Tag' => array(
-				array(
-					'id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '1')
-				),
-				array(
-					'id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31',
-					'ArticlesTag' => array('article_id' => '2', 'tag_id' => '3')
-				)
+				array('id' => '1', 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
 		$this->assertEqual($result, $expected);
