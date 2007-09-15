@@ -332,14 +332,12 @@ class DboAdodb extends DboSource {
  * @param mixed $fields
  * @return array
  */
-	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+	function fields(&$model, $alias = null, $fields = null, $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->name;
 		}
 
-		if (is_array($fields)) {
-				$fields = $fields;
-		} else {
+		if (!is_array($fields)) {
 			if ($fields != null) {
 				if (strpos($fields, ',')) {
 					$fields = explode(',', $fields);
