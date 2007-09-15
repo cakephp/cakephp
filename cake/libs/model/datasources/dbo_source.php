@@ -721,9 +721,7 @@ class DboSource extends DataSource {
 					$query = r('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
 					$query = r('=  (', 'IN (', $query);
 					$query = r('  WHERE 1 = 1', '', $query);
-					$fetch = $this->fetchAll($query, $model->cacheQueries, $model->name);
 				}
-				return $this->__mergeHabtm($resultSet, $fetch, $association, $model, $linkModel, $recursive);
 			}
 
 			for ($i = 0; $i < $count; $i++) {
@@ -744,7 +742,7 @@ class DboSource extends DataSource {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
 								$deepModel =& $linkModel->{$assoc1};
-								if ($deepModel->alias != $model->name) {
+								if (($type1 === 'belongsTo') || ($deepModel->name === $model->name && $type === 'belongsTo') || ($deepModel->name != $model->name)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
@@ -790,31 +788,6 @@ class DboSource extends DataSource {
 			}
 		}
 	}
-
-	function __mergeHabtm(&$resultSet, $merge, $association, &$model, &$linkModel) {
-		if (isset($model->hasAndBelongsToMany[$association])) {
-			$with = $model->hasAndBelongsToMany[$association]['with'];
-			$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
-			$fields = $model->{$with}->loadInfo();
-			$fields = $fields->extract('{n}.name');
-			$count = count($fields);
-
-			foreach ($resultSet as $i => $value) {
-				$merged = array();
-				foreach ($merge as $j => $data) {
-					if($data[$with][$foreignKey] === $value[$model->name][$model->primaryKey]) {
-						if($count > 2) {
-							$merged[] = Set::pushDiff($merge[$j][$association], array($with => $data[$with]));
-						} else {
-							$merged[] = $merge[$j][$association];
-						}
-					}
-				}
-				$resultSet[$i][$association] = $merged;
-			}
-		}
-	}
-
 /**
  * Enter description here...
  *
