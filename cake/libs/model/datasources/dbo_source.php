@@ -662,7 +662,7 @@ class DboSource extends DataSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
-					e('<div style = "font: Verdana bold 12px; color: #FF0000">SQL Error in model ' . $model->name . ': ');
+					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->name) . ' ');
 					if (isset($this->error) && $this->error != null) {
 						e($this->error);
 					}
@@ -673,7 +673,6 @@ class DboSource extends DataSource {
 			$count = count($resultSet);
 
 			if ($type === 'hasMany' && (!isset($assocData['limit']) || empty($assocData['limit']))) {
-			//if ($type === 'hasMany' && !isset($assocData['limit'])) {
 				$ins = $fetch = array();
 				for ($i = 0; $i < $count; $i++) {
 					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
@@ -708,9 +707,7 @@ class DboSource extends DataSource {
 					}
 				}
 				return $this->__mergeHasMany($resultSet, $fetch, $association, $model, $linkModel, $recursive);
-			}
-
-			if ($type === 'hasAndBelongsToMany') {
+			} elseif ($type === 'hasAndBelongsToMany') {
 				$ins = $fetch = array();
 				for ($i = 0; $i < $count; $i++) {
 					if ($in = $this->insertQueryData('{$__cakeID__$}', $resultSet[$i], $association, $assocData, $model, $linkModel, $stack)) {
@@ -722,17 +719,31 @@ class DboSource extends DataSource {
 					$query = r('=  (', 'IN (', $query);
 					$query = r('  WHERE 1 = 1', '', $query);
 				}
-			}
 
-			for ($i = 0; $i < $count; $i++) {
+				$with = $model->hasAndBelongsToMany[$association]['with'];
+				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
+				$habtmFields = $model->{$with}->loadInfo();
+				$habtmFields = $habtmFields->extract('{n}.name');
+				$habtmFieldsCount = count($habtmFields);
 
-				$row =& $resultSet[$i];
-				$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
-
+				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
 				if ($q != false) {
 					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
 				} else {
 					$fetch = null;
+				}
+			}
+
+			for ($i = 0; $i < $count; $i++) {
+				$row =& $resultSet[$i];
+
+				if ($type !== 'hasAndBelongsToMany') {
+					$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
+					if ($q != false) {
+						$fetch = $this->fetchAll($q, $model->cacheQueries, $model->name);
+					} else {
+						$fetch = null;
+					}
 				}
 
 				if (!empty($fetch) && is_array($fetch)) {
@@ -755,7 +766,25 @@ class DboSource extends DataSource {
 							}
 						}
 					}
-					$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+					if ($type == 'hasAndBelongsToMany') {
+						$merge = array();
+						foreach($fetch as $j => $data) {
+							if(isset($data[$with]) && $data[$with][$foreignKey] === $row[$model->name][$model->primaryKey]) {
+								if ($habtmFieldsCount > 2) {
+									$merge[] = $data;
+								} else {
+									$merge[] = Set::diff($data, array($with => $data[$with]));
+								}
+							}
+						}
+						if (empty($merge) && !isset($row[$association])) {
+							$row[$association] = $merge;
+						} else {
+							$this->__mergeAssociation($resultSet[$i], $merge, $association, $type);
+						}
+					} else {
+						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type);
+					}
 					$resultSet[$i][$association] = $linkModel->afterfind($resultSet[$i][$association]);
 
 				} else {
