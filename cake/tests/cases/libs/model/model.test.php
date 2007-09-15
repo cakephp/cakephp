@@ -501,9 +501,9 @@ class ModelTest extends CakeTestCase {
 						'portfolio_id' => 2
 					),
 					'Syfile' => array(
-						'id' => 2,
+						'id' => 6,
 						'image_id' => null,
-						'name' => 'Syfile 2',
+						'name' => 'Syfile 6',
 						'Image' => array()
 					)
 				)
