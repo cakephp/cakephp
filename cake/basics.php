@@ -314,8 +314,9 @@
 		foreach ($paths->controllerPaths as $path) {
 			foreach (listClasses($path) as $controller) {
 				list($name) = explode('.', $controller);
-				$className = Inflector::camelize($name);
-				if (loadController($name)) {
+				$className = Inflector::camelize(str_replace('_controller', '', $name));
+
+				if (loadController($className)) {
 					$loadedControllers[$controller] = $className;
 				}
 			}
