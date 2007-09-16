@@ -488,7 +488,10 @@ class ModelTask extends Shell {
 		$out .= "\n";
 
 		if (!empty($associations)) {
-			$out.= "\t//The Associations below have been created with all possible keys, those that are not needed can be removed\n";
+			if(!empty($associations['belongsTo']) || !empty($associations['$hasOne']) || !empty($associations['hasMany']) || !empty($associations['hasAndBelongsToMany'])) {
+				$out.= "\t//The Associations below have been created with all possible keys, those that are not needed can be removed\n";
+			}
+
 			if (!empty($associations['belongsTo'])) {
 				$out .= "\tvar \$belongsTo = array(\n";
 
