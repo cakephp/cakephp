@@ -36,7 +36,6 @@ class HtmlHelper extends AppHelper {
 /*************************************************************************
  * Public variables
  *************************************************************************/
-
 /**#@+
  * @access public
  */
@@ -86,7 +85,10 @@ class HtmlHelper extends AppHelper {
 		'legend' => '<legend>%s</legend>',
 		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
 		'style' => '<style type="text/css"%s>%s</style>',
-		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />'
+		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
+		'ul' => '<ul%s>%s</ul>',
+		'ol' => '<ol%s>%s</ol>',
+		'li' => '<li%s>%s</li>'
 	);
 /**
  * Base URL
@@ -151,9 +153,9 @@ class HtmlHelper extends AppHelper {
  * Adds a link to the breadcrumbs array.
  *
  * @param string $name Text for link
- * @param string $link URL for link
+ * @param string $link URL for link (if empty it won't be a link)
  */
-	function addCrumb($name, $link) {
+	function addCrumb($name, $link = null) {
 		$this->_crumbs[] = array($name, $link);
 	}
 /**
@@ -506,7 +508,49 @@ class HtmlHelper extends AppHelper {
 		}
 		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
 	}
+/**
+ * Build a nested list (UL/OL) out of an associative array.
+ *
+ * @param array $list Set of elements to list
+ * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
+ * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param string $tag Type of list tag to use (ol/ul)
+ * @return string The nested list
+ * @access public
+ */
+	function nestedList($list, $attributes = array(), $itemAttributes = array(), $tag = 'ul') {
+		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
+		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
+	}
+/**
+ * Internal function to build a nested list (UL/OL) out of an associative array.
+ *
+ * @param array $list Set of elements to list
+ * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
+ * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param string $tag Type of list tag to use (ol/ul)
+ * @return string The nested list element
+ * @access private
+ * @see nestedList()
+ */
+	function __nestedListItem($items, $attributes, $itemAttributes, $tag) {
+		$out = '';
 
+		$index = 1;
+		foreach($items as $key => $item) {
+			if (is_array($item)) {
+				$item = $key . $this->nestedList($item, $attributes, $itemAttributes, $tag);
+			}
+			if (isset($itemAttributes['even']) && $index % 2 == 0) {
+				$itemAttributes['class'] = $itemAttributes['even'];
+			} else if (isset($itemAttributes['odd']) && $index % 2 != 0) {
+				$itemAttributes['class'] = $itemAttributes['odd'];
+			}
+			$out .= sprintf($this->tags['li'], $this->_parseAttributes(array_diff_key($itemAttributes, array_flip(array('even', 'odd'))), null, ' ', ''), $item);
+			$index++;
+		}
+		return $out;
+	}
 /**
  * Creates a password input widget.
  *
