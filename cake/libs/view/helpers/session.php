@@ -161,5 +161,15 @@ class SessionHelper extends CakeSession {
 			return parent::valid();
 		}
 	}
+/**
+ * Override CakeSession::write().
+ * This method should not be used in a view
+ *
+ * @return boolean
+ * @access public
+ */
+	function write() {
+		trigger_error(__('You can not write to a Session from the view', true), E_USER_WARNING);
+	}
 }
 ?>
