@@ -47,13 +47,16 @@
 		}');
 	}
 /**
- * Loads all models.
+ * Loads all models, or set of specified models.
+ * E.g:
+ *
+ * loadModels() - Loads all models
+ * loadModels('User', 'Group') loads models User & Group
  */
 	function loadModels() {
 		if (!class_exists('Model')) {
 			require LIBS . 'model' . DS . 'model.php';
 		}
-		$path = Configure::getInstance();
 		if (!class_exists('AppModel')) {
 			if (file_exists(APP . 'app_model.php')) {
 				require(APP . 'app_model.php');
@@ -62,17 +65,33 @@
 			}
 			Overloadable::overload('AppModel');
 		}
+
+		$loadModels = array();
+		if (func_num_args() > 0) {
+			$args = func_get_args();
+			foreach($args as $arg) {
+				if (is_array($arg)) {
+					$loadModels = am($loadModels, $arg);
+				} else {
+					$loadModels[] = $arg;
+				}
+			}
+		}
+
 		$loadedModels = array();
-
+		$path = Configure::getInstance();
 		foreach ($path->modelPaths as $path) {
-			foreach (listClasses($path) as $model_fn) {
-				list($name) = explode('.', $model_fn);
+			foreach (listClasses($path) as $modelFilename) {
+				list($name) = explode('.', $modelFilename);
 				$className = Inflector::camelize($name);
-				$loadedModels[$model_fn] = $model_fn;
 
-				if (!class_exists($className)) {
-					require($path . $model_fn);
-					list($name) = explode('.', $model_fn);
+				if (empty($loadModels) || in_array($className, $loadModels)) {
+					$loadedModels[$modelFilename] = $modelFilename;
+				}
+
+				if (isset($loadedModels[$modelFilename]) && !class_exists($className)) {
+					require($path . $modelFilename);
+					list($name) = explode('.', $modelFilename);
 					Overloadable::overload(Inflector::camelize($name));
 				}
 			}
