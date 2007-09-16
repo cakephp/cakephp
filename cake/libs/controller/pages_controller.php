@@ -1,11 +1,9 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
- * Short description for file.
+ * Static content controller.
  *
- * This file is application-wide controller file. You can put all
- * application-wide controller-related methods here.
+ * This file will render views from views/pages/
  *
  * PHP versions 4 and 5
  *
@@ -28,78 +26,64 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
- * Short description for class.
+ * Static content controller
  *
- * This file is application-wide controller file. You can put all
- * application-wide controller-related methods here.
- *
- * Add your application-wide methods in the class below, your controllers
- * will inherit them.
+ * Override this controller by placing a copy in controllers directory of an application
  *
  * @package		cake
  * @subpackage	cake.cake.libs.controller
  */
 class PagesController extends AppController{
-
 /**
- * Enter description here...
+ * Controller name
  *
- * @var unknown_type
+ * @var string
  */
-	 var $name = 'Pages';
-
+	var $name = 'Pages';
 /**
- * Enter description here...
+ * Default helper
  *
- * @var unknown_type
+ * @var array
  */
-	 var $helpers = array('Html');
-
+	var $helpers = array('Html');
 /**
  * This controller does not use a model
  *
- * @var $uses
+ * @var array
  */
-	 var $uses = array();
-
+	var $uses = array();
 /**
  * Displays a view
  *
  */
-	 function display() {
-		  if (!func_num_args()) {
-				$this->redirect('/');
-		  }
+	function display() {
+		if (!func_num_args()) {
+			$this->redirect('/');
+		}
+		$path = func_get_args();
 
-		  $path=func_get_args();
+		if (!count($path)) {
+			$this->redirect('/');
+		}
+		$count = count($path);
+		$page = null;
+		$subpage = null;
+		$title = null;
 
-		  if (!count($path)) {
-				$this->redirect('/');
-		  }
-
-		  $count  =count($path);
-		  $page   =null;
-		  $subpage=null;
-		  $title  =null;
-
-		  if (!empty($path[0])) {
-				$page = $path[0];
-		  }
-
-		  if (!empty($path[1])) {
-				$subpage = $path[1];
-		  }
-
-		  if (!empty($path[$count - 1])) {
-				$title = ucfirst($path[$count - 1]);
-		  }
-
-		  $this->set('page', $page);
-		  $this->set('subpage', $subpage);
-		  $this->set('title', $title);
-		  $this->render(join('/', $path));
-	 }
+		if (!empty($path[0])) {
+			$page = $path[0];
+		}
+		if (!empty($path[1])) {
+			$subpage = $path[1];
+		}
+		if (!empty($path[$count - 1])) {
+			$title = Inflector::humanize($path[$count - 1]);
+		}
+		$this->set('page', $page);
+		$this->set('subpage', $subpage);
+		$this->set('title', $title);
+		$this->render(join('/', $path));
+	}
 }
 ?>
