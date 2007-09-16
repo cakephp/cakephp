@@ -1723,7 +1723,7 @@ class Model extends Overloadable {
 						$valid = true;
 						$msg   = null;
 
-						if (method_exists($this, $rule)) {
+						if (method_exists($this, $rule) || isset($this->__behaviorMethods[$rule]) || isset($this->__behaviorMethods[low($rule)])) {
 							$ruleParams[] = array_diff_key($validator, $default);
 							$valid = call_user_func_array(array(&$this, $rule), $ruleParams);
 						} elseif (method_exists($Validation, $rule)) {
