@@ -38,6 +38,12 @@ uses('set');
  */
 class SetTest extends UnitTestCase {
 
+	function testNumericKeyExtraction() {
+		$data = array('plugin' => null, 'controller' => '', 'action' => '', 1, 'whatever');
+		$this->assertIdentical(Set::extract($data, '{n}'), array(1, 'whatever'));
+		$this->assertIdentical(Set::diff($data, Set::extract($data, '{n}')), array('plugin' => null, 'controller' => '', 'action' => ''));
+	}
+
 	function testMerge() {
 		// Test that passing in just 1 array returns it "as-is"
 		$r = Set::merge(array('foo'));

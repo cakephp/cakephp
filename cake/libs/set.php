@@ -385,7 +385,14 @@ class Set extends Object {
 				}
 			} elseif ($key == '{n}') {
 				foreach ($data as $j => $val) {
-					$tmp[] = Set::extract($val, array_slice($path, $i + 1));
+					if (is_int($j)) {
+						$tmpPath = array_slice($path, $i + 1);
+						if (empty($tmpPath)) {
+							$tmp[] = $val;
+						} else {
+							$tmp[] = Set::extract($val, $tmpPath);
+						}
+					}
 				}
 				return $tmp;
 			} else {
