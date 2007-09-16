@@ -891,12 +891,7 @@ class Router extends Object {
 			}
 			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
 		}
-
-		if (strpos($route[0], '*')) {
-			$out = str_replace('*', $params['pass'], $route[0]);
-		} else {
-			$out = $route[0];
-		}
+		$out = $route[0];
 
 		foreach ($route[2] as $key) {
 			$string = null;
@@ -905,6 +900,10 @@ class Router extends Object {
 				unset($params[$key]);
 			}
 			$out = str_replace(':' . $key, $string, $out);
+		}
+
+		if (strpos($route[0], '*')) {
+			$out = str_replace('*', $params['pass'], $out);
 		}
 		return $out;
 	}

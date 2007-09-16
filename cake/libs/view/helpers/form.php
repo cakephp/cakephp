@@ -53,8 +53,10 @@ class FormHelper extends AppHelper {
  *
  * @var unknown_type
  */
-	var $__options = array('day' => array(), 'minute' => array(), 'hour' => array(),
-									'month' => array(), 'year' => array(), 'meridian' => array());
+	var $__options = array(
+		'day' => array(), 'minute' => array(), 'hour' => array(),
+		'month' => array(), 'year' => array(), 'meridian' => array()
+	);
 /**
  * Enter description here...
  *

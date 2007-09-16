@@ -100,6 +100,12 @@ class PaginatorTest extends UnitTestCase {
 		$this->assertPattern('/<script type="text\/javascript">Event.observe/', $result);
 	}
 
+	function testUrlGeneration() {
+		$result = $this->Paginator->sort('controller');
+		$this->assertPattern('/\/page:1\//', $result);
+		$this->assertPattern('/\/sort:controller\//', $result);
+	}
+
 	function tearDown() {
 		unset($this->Paginator);
 	}

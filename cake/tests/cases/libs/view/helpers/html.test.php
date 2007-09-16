@@ -73,6 +73,17 @@ class HtmlHelperTest extends UnitTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
+	function testCssLink() {
+		$result = $this->Html->css('screen');
+		debug($result, true);
+		/*$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value]=[^<>]*>/', $result);*/
+	}
+
 	function testBreadcrumb() {
 		$this->Html->addCrumb('First', '#first');
 		$this->Html->addCrumb('Second', '#second');

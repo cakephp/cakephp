@@ -31,8 +31,12 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 
 require_once CAKE.'app_helper.php';
-uses('class_registry', 'controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper',
-	'view'.DS.'helpers'.DS.'html', 'view'.DS.'helpers'.DS.'form');
+
+uses(
+	'class_registry', 'controller'.DS.'controller', 'model'.DS.'model',
+	'view'.DS.'helper', 'view'.DS.'helpers'.DS.'html', 'view'.DS.'view',
+	'view'.DS.'helpers'.DS.'form'
+);
 
 
 class ContactTestController extends Controller {
@@ -166,6 +170,14 @@ class FormHelperTest extends CakeTestCase {
 
 	function setUp() {
 		Router::reload();
+
+		ClassRegistry::addObject('view', $view);
+		ClassRegistry::addObject('Contact', new Contact());
+		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
+		ClassRegistry::addObject('UserForm', new UserForm());
+		ClassRegistry::addObject('ValidateItem', new ValidateItem());
+		ClassRegistry::addObject('ValidateUser', new ValidateUser());
+		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
 	}
 
 	function startTest($method) {
@@ -173,8 +185,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->Html =& new HtmlHelper();
 		$this->Controller =& new ContactTestController();
 		$this->View =& new View($this->Controller);
-		ClassRegistry::addObject('view', $view);
-		ClassRegistry::addObject('Contact', new Contact());
 	}
 
 	function endTest($method) {
@@ -187,8 +197,8 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormValidationAssociated() {
-		$this->UserForm =& new UserForm();
-		$this->UserForm->OpenidUrl =& new OpenidUrl();
+		$this->UserForm =& ClassRegistry::getObject('UserForm');
+		$this->UserForm->OpenidUrl =& ClassRegistry::getObject('OpenidUrl');
 
 		$data = array('UserForm' => array('name' => 'user'), 'OpenidUrl' => array('url' => 'http://www.cakephp.org'));
 
@@ -212,27 +222,22 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormValidationAssociatedFirstLevel() {
-		$this->ValidateUser =& new ValidateUser();
-		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
+		$this->ValidateUser =& ClassRegistry::getObject('ValidateUser');
+		$this->ValidateUser->ValidateProfile =& ClassRegistry::getObject('ValidateProfile');
 
-		$data = array('ValidateUser' => array('name' => 'mariano'),
-							'ValidateProfile' => array('full_name' => 'Mariano Iglesias'));
+		$data = array('ValidateUser' => array('name' => 'mariano'), 'ValidateProfile' => array('full_name' => 'Mariano Iglesias'));
 
-		$result = $this->ValidateUser->create($data);
-		$this->assertTrue($result);
-
-		$result = $this->ValidateUser->validates();
-		$this->assertFalse($result);
-
-		$result = $this->ValidateUser->ValidateProfile->validates();
-		$this->assertFalse($result);
+		$this->assertTrue($this->ValidateUser->create($data));
+		$this->assertFalse($this->ValidateUser->validates());
+		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 
-		$expected = array('OpenidUrl' => array('openid_not_registered' => 1),
-								'ValidateUser' => array('email' => 1),
-								'ValidateProfile' => array('full_name' => 1, 'city' => 1));
+		$expected = array(
+			'ValidateUser' => array('email' => 1),
+			'ValidateProfile' => array('full_name' => 1, 'city' => 1)
+		);
 
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
@@ -241,34 +246,29 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testFormValidationAssociatedSecondLevel() {
-		$this->ValidateUser =& new ValidateUser();
-		$this->ValidateUser->ValidateProfile =& new ValidateProfile();
-		$this->ValidateUser->ValidateProfile->ValidateItem =& new ValidateItem();
+		$this->ValidateUser =& ClassRegistry::getObject('ValidateUser');
+		$this->ValidateUser->ValidateProfile =& ClassRegistry::getObject('ValidateProfile');
+		$this->ValidateUser->ValidateProfile->ValidateItem =& ClassRegistry::getObject('ValidateItem');
 
-		$data = array('ValidateUser' => array('name' => 'mariano'),
-							'ValidateProfile' => array('full_name' => 'Mariano Iglesias'),
-							'ValidateItem' => array('name' => 'Item'));
+		$data = array(
+			'ValidateUser' => array('name' => 'mariano'),
+			'ValidateProfile' => array('full_name' => 'Mariano Iglesias'),
+			'ValidateItem' => array('name' => 'Item')
+		);
 
-		$result = $this->ValidateUser->create($data);
-		$this->assertTrue($result);
-
-		$result = $this->ValidateUser->validates();
-		$this->assertFalse($result);
-
-		$result = $this->ValidateUser->ValidateProfile->validates();
-		$this->assertFalse($result);
-
-		$result = $this->ValidateUser->ValidateProfile->ValidateItem->validates();
-		$this->assertFalse($result);
+		$this->assertTrue($this->ValidateUser->create($data));
+		$this->assertFalse($this->ValidateUser->validates());
+		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
+		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$this->assertPattern('/^<form\s+id="[^"]+"\s+method="post"\s+action="\/validate_users\/add\/"[^>]*>$/', $result);
 
-		$expected = array('OpenidUrl' => array('openid_not_registered' => 1),
-								'ValidateUser' => array('email' => 1),
-								'ValidateProfile' => array('full_name' => 1, 'city' => 1),
-								'ValidateItem' => array('description' => 1));
-
+		$expected = array(
+			'ValidateUser' => array('email' => 1),
+			'ValidateProfile' => array('full_name' => 1, 'city' => 1),
+			'ValidateItem' => array('description' => 1)
+		);
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
 		unset($this->ValidateUser->ValidateProfile->ValidateItem);
@@ -811,14 +811,25 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^id|maxlength|name|type|value]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('Address.street');
-		$this->assertPattern('/^<div class="input">' .
-												 '<label for="AddressStreet">Street<\/label>' .
-												 '<input name="data\[Address\]\[street\]" type="text" value="" id="AddressStreet" \/>'.
-												 '<\/div>$/', $result);
+		$this->assertPattern('/^<div\s+[^<>]+><label\s+[^<>]+>[^<>]+<\/label><input\s+[^<>]+\/><\/div>$/', $result);
+		$this->assertPattern('/<div\s+class="input">/', $result);
+		$this->assertPattern('/<label\s+for="AddressStreet">Street<\/label>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Address\]\[street\]"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+id="AddressStreet"[^<>]+\/>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('name', array('div' => false));
-		$this->assertPattern('/^<label for="ContactName">Name<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		$this->assertPattern('/^<label\s+[^<>]+>Name<\/label><input\s+[^<>]+\/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>Name<\/label>/', $result);
+		$this->assertNoPattern('/<label[^<>]+[^for]=[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]*\/>$/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]*\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|maxlength|name|type|value]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('Contact.non_existing');
 		$this->assertPattern('/^<div class="input">' .
@@ -849,16 +860,33 @@ class FormHelperTest extends CakeTestCase {
 												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory')));
-		$this->assertPattern('/^<label for="ContactName" class="mandatory">Name<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		$this->assertPattern('/^<label[^<>]+>Name<\/label><input [^<>]+ \/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>/', $result);
+		$this->assertPattern('/<label[^<>]+class="mandatory"[^<>]*>/', $result);
+		$this->assertPattern('/<input[^<>]+name="data\[Contact\]\[name\]"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+type="text"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+maxlength="255"[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+value=""[^<>]+\/>/', $result);
+		$this->assertPattern('/<input[^<>]+id="ContactName"[^<>]+\/>/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^name|type|maxlength|value|id]=[^<>]*>/', $result);
+		$this->assertNoPattern('/^<label[^<>]+[^for|class]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')));
-		$this->assertPattern('/^<label for="ContactName" class="mandatory">My label<\/label>' .
-												 '<input name="data\[Contact\]\[name\]" type="text" maxlength="255" value="" id="ContactName" \/>$/', $result);
+		$this->assertPattern('/^<label[^<>]+>My label<\/label><input[^<>]+\/>$/', $result);
+		$this->assertPattern('/<label[^<>]+for="ContactName"[^<>]*>/', $result);
+		$this->assertPattern('/<label[^<>]+class="mandatory"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<label[^<>]+[^for|class]=[^<>]*>/', $result);
 
 		$result = $this->Form->input('Contact.name', array('div' => false, 'id' => 'my_id', 'label' => array('for' => 'my_id')));
 		$this->assertPattern('/^<label for="my_id">Name<\/label>' .
 												 '<input name="data\[Contact\]\[name\]" type="text" id="my_id" maxlength="255" value="" \/>$/', $result);
+	}
+
+	function testSetFormTag() {
+		$controller = null;
+		new View($controller);
+
+		$this->Form->setFormTag('Model.field');
 	}
 
 	function testFormEnd() {
@@ -872,7 +900,16 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function tearDown() {
+		ClassRegistry::removeObject('view');
+		ClassRegistry::removeObject('Contact');
+		ClassRegistry::removeObject('OpenidUrl');
+		ClassRegistry::removeObject('UserForm');
+		ClassRegistry::removeObject('ValidateItem');
+		ClassRegistry::removeObject('ValidateUser');
+		ClassRegistry::removeObject('ValidateProfile');
+
 		unset($this->Form);
 	}
 }
+
 ?>
