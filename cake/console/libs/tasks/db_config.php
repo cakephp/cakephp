@@ -145,7 +145,7 @@ class DbConfigTask extends Shell {
 	function __verify($config) {
 		$defaults = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 								'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
-								'schema'=> null,'prefix'=> null, 'schema' => null);
+								'schema'=> null,'prefix'=> null);
 		$config = am($defaults, $config);
 		extract($config);
 		$this->out('');
