@@ -159,7 +159,7 @@ class Debugger extends Object {
 		$out = "<a href='javascript:void(0);' onclick='{$link}'><b>{$error}</b> ({$code})</a>: {$description} [<b>{$file}</b>, line <b>{$line}</b>]";
 
 		if (Configure::read() > 0) {
-			debug($out);
+			debug($out, false, false);
 			e('<div id="CakeStackTrace' . count($_this->errors) . '" class="cake-stack-trace" style="display: none;">');
 			if (!empty($context)) {
 				$link = "document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display = (document.getElementById(\"CakeErrorContext" . count($_this->errors) . "\").style.display == \"none\" ? \"\" : \"none\")";
@@ -184,10 +184,10 @@ class Debugger extends Object {
 
 		if (Configure::read() > 0) {
 			e("<div id=\"CakeErrorCode" . count($_this->errors) . "\" class=\"cake-code-dump\" style=\"display: none;\">");
-			pr(implode("\n", $listing));
+			pr(implode("\n", $listing), false);
 			e('</div>');
 
-			pr($_this->trace(array('start' => 1)));
+			pr($_this->trace(array('start' => 1)), false);
 			e('</div>');
 		}
 

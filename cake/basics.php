@@ -764,10 +764,15 @@
  * Only runs if debug level is non-zero.
  *
  * @param boolean $var		Variable to show debug information for.
- * @param boolean $show_html	If set to true, the method prints the debug data in a screen-friendly way.
+ * @param boolean $showHtml	If set to true, the method prints the debug data in a screen-friendly way.
+ * @param boolean $showFrom	If set to true, the method prints from where the function was called.
  */
-	function debug($var = false, $showHtml = false) {
+	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {
+			if ($showFrom) {
+				$calledFrom = debug_backtrace();
+				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
+			}
 			print "\n<pre class=\"cake_debug\">\n";
 			ob_start();
 			print_r($var);
@@ -950,10 +955,15 @@
  * the output of given array. Similar to debug().
  *
  * @see	debug()
- * @param array	$var Variable to print out
+ * @param array $var Variable to print out
+ * @param boolean $showFrom If set to true, the method prints from where the function was called
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
+			if ($showFrom) {
+				$calledFrom = debug_backtrace();
+				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
+			}
 			echo "<pre>";
 			print_r($var);
 			echo "</pre>";
