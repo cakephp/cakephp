@@ -312,7 +312,7 @@ class EmailComponent extends Object{
 		}
 
 		$__method = '__'.$this->delivery;
-		
+
 		return $this->$__method();
 	}
 /**
@@ -592,7 +592,7 @@ class EmailComponent extends Object{
  */
 	function __smtp() {
 		$response = $this->__smtpConnect();
-		
+
 		if ($response['errno'] != 0 && $response['status'] === false) {
 			$this->smtpError = "{$response['errno']}: {$response['errstr']}";
 			return false;
@@ -613,9 +613,9 @@ class EmailComponent extends Object{
 		$this->__sendData("DATA\r\n{$this->__header}\r\n{$this->__message}\r\n\r\n\r\n.\r\n", false);
 		$this->__sendData("QUIT\r\n", false);
 
-		return true;		
+		return true;
 	}
-	
+
 /**
  * Private method for connecting to an SMTP server
  *
@@ -634,9 +634,9 @@ class EmailComponent extends Object{
 		if ($this->__smtpConnection == false) {
 			$status = false;
 		}
-		
+
 		$response = $this->__getSmtpResponse();
-		
+
 		return array('status' => $status,
 					 'errno' => $errno,
 					 'errstr' => $errstr);
@@ -657,14 +657,14 @@ class EmailComponent extends Object{
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
 		$response = $this->__getSmtpResponse();
-		
+
 		if ($check != false) {
 			if (stristr($response, '250') === false) {
 				$this->smtpError = $response;
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 /**
@@ -677,17 +677,16 @@ class EmailComponent extends Object{
 		$fm = '<pre>';
 
 		if ($this->delivery == 'smtp') {
-			$fm .= sprintf('%s %s', 'Host:', $this->smtpOptions['host']);
-			$fm .= sprintf('%s %s', 'Port:', $this->smtpOptions['port']);
-			$fm .= sprintf('%s %s', 'Timeout:', $this->smtpOptions['timeout']);
+			$fm .= sprintf("%s %s\n", 'Host:', $this->smtpOptions['host']);
+			$fm .= sprintf("%s %s\n", 'Port:', $this->smtpOptions['port']);
+			$fm .= sprintf("%s %s\n", 'Timeout:', $this->smtpOptions['timeout']);
 		}
-
-		$fm .= sprintf('%s %s', 'To:', $this->to);
-		$fm .= sprintf('%s %s', 'From:', $this->from);
-		$fm .= sprintf('%s %s', 'Subject:', $this->subject);
-		$fm .= sprintf('%s\n\n%s', 'Header:', $this->__header);
-		$fm .= sprintf('%s\n\n%s', 'Parameters:', $this->additionalParams);
-		$fm .= sprintf('%s\n\n%s', 'Message:', $this->__message);
+		$fm .= sprintf("%s %s\n", 'To:', $this->to);
+		$fm .= sprintf("%s %s\n", 'From:', $this->from);
+		$fm .= sprintf("%s %s\n", 'Subject:', $this->subject);
+		$fm .= sprintf("%s\n\n%s", 'Header:', $this->__header);
+		$fm .= sprintf("%s\n\n%s", 'Parameters:', $this->additionalParams);
+		$fm .= sprintf("%s\n\n%s", 'Message:', $this->__message);
 		$fm .= '</pre>';
 
 		$this->Controller->Session->setFlash($fm, 'default', null, 'email');
