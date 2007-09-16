@@ -75,13 +75,11 @@ class HtmlHelperTest extends UnitTestCase {
 
 	function testCssLink() {
 		$result = $this->Html->css('screen');
-		debug($result, true);
-		/*$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[field\]"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
-		$this->assertPattern('/^<input[^<>]+id="ModelField"[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
-		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value]=[^<>]*>/', $result);*/
+		$this->assertPattern('/^<link[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+rel="stylesheet"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+type="text\/css"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<link[^<>]+href=".*css\/screen\.css"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^rel|type|href]=[^<>]*>/', $result);
 	}
 
 	function testBreadcrumb() {
