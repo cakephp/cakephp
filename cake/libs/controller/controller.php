@@ -962,10 +962,10 @@ class Controller extends Object {
 					}
 
 					if (isset($time['_hour']) && $time['_hour'] != 12 && 'pm' == $meridian) {
-						$time['_hour'] = $_hour + 12;
+						$time['_hour'] = $time['_hour'] + 12;
 					}
 					if (isset($time['_hour']) && $time['_hour'] == 12 && 'am' == $meridian) {
-					     $time['_hour'] = '00';
+						$time['_hour'] = '00';
 					}
 
 					$time = join(':', array_values($time));
@@ -974,7 +974,7 @@ class Controller extends Object {
 					}
 				}
 
-				if ($useNewDate && (isset($date) || $value['null'])) {
+				if ($useNewDate && (isset($date) || isset($value['null']))) {
 					$this->data[$modelClass][$field] = $date;
 				}
 			}
