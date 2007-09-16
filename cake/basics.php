@@ -960,10 +960,6 @@
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
-			if ($showFrom) {
-				$calledFrom = debug_backtrace();
-				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
-			}
 			echo "<pre>";
 			print_r($var);
 			echo "</pre>";
