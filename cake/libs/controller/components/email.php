@@ -423,6 +423,9 @@ class EmailComponent extends Object{
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__boundary . '"' . $this->_newLine;
+		} elseif ($this->sendAs === 'text') {
+			$this->__header .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 		} elseif ($this->sendAs === 'html') {
 			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
