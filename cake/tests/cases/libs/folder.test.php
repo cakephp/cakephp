@@ -104,7 +104,7 @@ class FolderTest extends UnitTestCase {
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
-		$result = $Folder->chmod($copy, 0755);
+		$result = $Folder->chmod($copy, 0755, false);
 		$this->assertTrue($result);
 
 		$result = $Folder->cd($copy);

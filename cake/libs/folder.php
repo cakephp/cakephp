@@ -76,6 +76,20 @@ class Folder extends Object{
  */
 	var $__errors = false;
 /**
+ * holds array of complete directory paths.
+ *
+ * @var array
+ * @access private
+ */
+	var $__directories;
+/**
+ * holds array of complete file paths.
+ *
+ * @var array
+ * @access private
+ */
+	var $__files;
+/**
  * Constructor.
  *
  * @param string $path Path to folder
@@ -350,66 +364,101 @@ class Folder extends Object{
  * Change the mode on a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
+ * @param int $mode octal value 0755
+ * @param boolean $recursive chmod recursively
+ * @param array $exceptions array of files, directories to skip
  * @return bool Returns TRUE on success, FALSE on failure
  * @access public
  */
-	function chmod($path, $mode = false, $exceptions = false) {
+ 	function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
+ 		if (!$mode) {
+ 			$mode = $this->mode;
+ 		}
 
-		if (!$mode) {
-			$mode = $this->mode;
+ 		if ($recursive === false && is_dir($path)) {
+ 				if (chmod($path, intval($mode, 8))) {
+ 					$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
+ 					return true;
+ 				} else {
+ 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
+ 					return false;
+ 				}
+ 		}
+
+ 		if (is_dir($path)) {
+ 			list($paths) = $this->tree($path);
+
+ 			foreach ($paths as $key => $fullpath) {
+ 				$check = explode(DS, $fullpath);
+ 				$count = count($check);
+
+ 				if (in_array($check[$count - 1], $exceptions)) {
+ 					continue;
+ 				}
+
+ 				if (chmod($fullpath, intval($mode, 8))) {
+ 					$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
+ 				} else {
+ 					$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+ 				}
+ 			}
+ 			if (empty($this->__errors)) {
+ 				return true;
+ 			}
+ 		}
+ 		return false;
+ 	}
+/**
+ * Returns an array of nested directories and files in each directory
+ *
+ * @param string $path the directory path to build the tree from
+ * @return mixed array of nested directories and fiels in each directory
+ * @access public
+ */
+	function tree($path) {
+		$path = DS . trim($path, DS);
+		$this->__files = array();
+		$this->__directories = array($path);
+		$directories = array();
+
+		while (count($this->__directories)) {
+			$dir = array_pop($this->__directories);
+			$this->__tree($dir);
+			array_push($directories, $dir);
+
 		}
-
+        $return = array($directories, $this->__files);
+        return $return;
+	}
+/**
+ * Private method to list directories and files in each directory
+ *
+ * @param string $path
+ * @access private
+ */
+	function __tree($path) {
 		if (is_dir($path)) {
-			return chmod($path, intval($mode, 8));
-		}
+			$dirHandle = @opendir($path);
 
-		$dir = opendir($path);
-		if ($dir) {
-			while (false !== ($n = readdir($dir))) {
-				$item = false;
-				if (is_array($exceptions)) {
-					if (!in_array($n, $exceptions)) {
-						$item = $n;
-					}
-				} elseif ((!preg_match('#^\.+$#', $n) && $exceptions == false) || ($exceptions == true && !preg_match('#^\.(.*)$#', $n))) {
-					$item = $n;
-				}
+			while (false !== ($item = @readdir($dirHandle))) {
+				if ($item != '.' && $item != '..') {
+					$item = $path . DS . $item;
 
-				if ($item) {
-					$fullpath = $this->addPathElement($path, $item);
-					if (!is_dir($fullpath)) {
-						if (chmod($fullpath, intval($mode, 8))) {
-							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
-							return true;
-						} else {
-							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
-							return false;
-						}
+					if (is_dir($item)) {
+						array_push($this->__directories, $item);
 					} else {
-						if ($this->chmod($fullpath, $mode)) {
-							$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
-							return true;
-						} else {
-							$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
-							return false;
-						}
+						array_push($this->__files, $item);
 					}
 				}
 			}
-			closedir($dir);
-		}
-
-		if (chmod($path, intval($mode, 8))) {
-			$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
-			return true;
-		} else {
-			return false;
+			closedir($dirHandle);
 		}
 	}
 /**
  * Create a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
+ * @param int $mode octal value 0755
  * @return bool Returns TRUE on success, FALSE on failure
  * @access public
  */
