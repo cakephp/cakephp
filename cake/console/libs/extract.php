@@ -29,7 +29,8 @@
 /**
  * Only used when -debug option
  */
-return null;
+	ob_start();
+
 	$singularReturn = __('Singular string  return __()', true);
 	$singularEcho = __('Singular string  echo __()');
 
@@ -50,13 +51,15 @@ return null;
 
 	$categoryReturn = __c('Category string lookup line return __c()', 5, true);
 	$categoryEcho = __c('Category string  lookup line echo __c()', 5);
+
+	ob_end_clean();
 /**
  * Language string extractor
  *
  * @package     cake
  * @subpackage  cake.cake.console.libs
  */
-class ExtractShell extends Shell{
+class ExtractTask extends Shell{
 	var $path = null;
 	var $files = array();
 
@@ -68,6 +71,11 @@ class ExtractShell extends Shell{
 	var $__fileVersions = array();
 	var $__output = null;
 
+/**
+ * Override initialize
+ *
+ * @return void
+ */
 	function initialize() {
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->files = explode(',', $this->params['files']);
@@ -94,26 +102,37 @@ class ExtractShell extends Shell{
 			$this->files = $this->__searchDirectory();
 		}
 	}
-	function main() {
+/**
+ * Override startup
+ *
+ * @return void
+ */
+	function startup() {}
+/**
+ * Execution method always used for tasks
+ *
+ * @return void
+ */
+	function execute() {
 		$this->out('');
 		$this->out('');
-		$this->out('Extracting...');
+		$this->out(__('Extracting...', true));
 		$this->hr();
-		$this->out('Path: '. $this->path);
-		$this->out('Output Directory: '. $this->__output);
+		$this->out(__('Path: ', true). $this->path);
+		$this->out(__('Output Directory: ', true). $this->__output);
 		$this->hr();
 
 		$response = '';
 		$filename = '';
 		while ($response == '') {
-			$response = $this->in('Would you like to merge all translations into one file?', array('y','n'), 'y');
+		    $response = $this->in(__('Would you like to merge all translations into one file?', true), array('y','n'), 'y');
 			if (strtolower($response) == 'n') {
 				$this->__oneFile = false;
 			} else {
 				while ($filename == '') {
-					$filename = $this->in('What should we name this file?', null, $this->__filename);
+					$filename = $this->in(__('What should we name this file?', true), null, $this->__filename);
 					if ($filename == '') {
-						$this->out('The filesname you supplied was empty. Please try again.');
+						$this->out(__('The filesname you supplied was empty. Please try again.', true));
 					}
 				}
 				$this->__filename = $filename;
@@ -122,30 +141,29 @@ class ExtractShell extends Shell{
 		$this->__extractTokens();
 	}
 	function help() {
-		$this->out('CakePHP Language String Extraction:');
+	    $this->out(__('CakePHP Language String Extraction:', true));
 		$this->hr();
-		$this->out('The Extract script generates .pot file(s) with translations');
-		$this->out('By default the .pot file(s) will be place in the locale directory of -app');
-		$this->out('By default -app is ROOT/app');
+		$this->out(__('The Extract script generates .pot file(s) with translations', true));
+		$this->out(__('By default the .pot file(s) will be place in the locale directory of -app', true));
+		$this->out(__('By default -app is ROOT/app', true));
+		$this->hr();
+		$this->out(__('usage: cake i18n extract [command] [path...]', true));
 		$this->out('');
-		$this->hr('');
-		$this->out('usage: php extract.php [command] [path...]');
-		$this->out('');
-		$this->out('commands:');
-		$this->out('   -app [path...]: directory where your application is located');
-		$this->out('   -root [path...]: path to install');
-		$this->out('   -core [path...]: path to cake directory');
-		$this->out('   -path [path...]: Full path to directory to extract strings');
-		$this->out('   -output [path...]: Full path to output directory');
-		$this->out('   -files: [comma separated list of files, full path to file is needed]');
-		$this->out('   cake extract help: Shows this help message.');
-		$this->out('   -debug: Perform self test.');
+		$this->out(__('commands:', true));
+		$this->out(__('   -app [path...]: directory where your application is located', true));
+		$this->out(__('   -root [path...]: path to install', true));
+		$this->out(__('   -core [path...]: path to cake directory', true));
+		$this->out(__('   -path [path...]: Full path to directory to extract strings', true));
+		$this->out(__('   -output [path...]: Full path to output directory', true));
+		$this->out(__('   -files: [comma separated list of files, full path to file is needed]', true));
+		$this->out(__('   cake i18n extract help: Shows this help message.', true));
+		$this->out(__('   -debug: Perform self test.', true));
 		$this->out('');
 	}
 	function __extractTokens() {
 		foreach ($this->files as $file) {
 			$this->__file = $file;
-			$this->out("Processing $file...");
+			$this->out(sprintf(__('Processing %s...', true), $file));
 
 			$code = file_get_contents($file);
 
@@ -198,9 +216,9 @@ class ExtractShell extends Shell{
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionname) && ($parenthesis == "(")) {
+			if (($type == T_STRING) && ($string == $functionname) && ($parenthesis == '(')) {
 
-				if (in_array($right, array(")", ","))
+				if (in_array($right, array(')', ','))
 				&& (is_array($middle) && ($middle[0] == T_CONSTANT_ENCAPSED_STRING))) {
 
 					if ($this->__oneFile === true) {
@@ -234,14 +252,14 @@ class ExtractShell extends Shell{
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionname) && ($firstParenthesis == "(")) {
+			if (($type == T_STRING) && ($string == $functionname) && ($firstParenthesis == '(')) {
 				$position = $count;
 				$depth = 0;
 
 				while ($depth == 0) {
-					if ($this->__tokens[$position] == "(") {
+					if ($this->__tokens[$position] == '(') {
 						$depth++;
-					} elseif ($this->__tokens[$position] == ")") {
+					} elseif ($this->__tokens[$position] == ')') {
 						$depth--;
 					}
 					$position++;
@@ -256,10 +274,10 @@ class ExtractShell extends Shell{
 
 					if (empty($shift)) {
 						list($singular, $firstComma, $plural, $seoncdComma, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $this->__tokens[$position + 3], $this->__tokens[$end]);
-						$condition = ($seoncdComma == ",");
+						$condition = ($seoncdComma == ',');
 					} else {
 						list($domain, $firstComma, $singular, $seoncdComma, $plural, $comma3, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $this->__tokens[$position + 3], $this->__tokens[$position + 4], $this->__tokens[$position + 5], $this->__tokens[$end]);
-						$condition = ($comma3 == ",");
+						$condition = ($comma3 == ',');
 					}
 					$condition = $condition &&
 						(is_array($singular) && ($singular[0] == T_CONSTANT_ENCAPSED_STRING)) &&
@@ -274,12 +292,12 @@ class ExtractShell extends Shell{
 					}
 
 					list($domain, $firstComma, $text, $seoncdComma, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $comma, $this->__tokens[$end]);
-					$condition = ($seoncdComma == "," || $seoncdComma === null) &&
+					$condition = ($seoncdComma == ',' || $seoncdComma === null) &&
 						(is_array($domain) && ($domain[0] == T_CONSTANT_ENCAPSED_STRING)) &&
 						(is_array($text) && ($text[0] == T_CONSTANT_ENCAPSED_STRING));
 				}
 
-				if (($endParenthesis == ")") && $condition) {
+				if (($endParenthesis == ')') && $condition) {
 					if ($this->__oneFile === true) {
 						if ($plural) {
 							$this->__strings[$this->__formatString($singular[1]) . "\0" . $this->__formatString($plural[1])][$this->__file][] = $line;
@@ -307,7 +325,7 @@ class ExtractShell extends Shell{
 
 			if ($this->__oneFile === true) {
 				foreach ($fileInfo as $file => $lines) {
-					$occured[] = "$file:" . join(";", $lines);
+					$occured[] = "$file:" . join(';', $lines);
 
 					if (isset($this->__fileVersions[$file])) {
 						$fileList[] = $this->__fileVersions[$file];
@@ -332,7 +350,7 @@ class ExtractShell extends Shell{
 			} else {
 				foreach ($fileInfo as $file => $lines) {
 					$filename = $str;
-					$occured = array("$str:" . join(";", $lines));
+					$occured = array("$str:" . join(';', $lines));
 
 					if (isset($this->__fileVersions[$str])) {
 						$fileList[] = $this->__fileVersions[$str];
@@ -391,12 +409,12 @@ class ExtractShell extends Shell{
 			if (count($fileList) > 1) {
 				$fileList = "Generated from files:\n#  " . join("\n#  ", $fileList);
 			} elseif (count($fileList) == 1) {
-				$fileList = "Generated from file: " . join("", $fileList);
+				$fileList = 'Generated from file: ' . join('', $fileList);
 			} else {
-				$fileList = "No version information was available in the source files.";
+				$fileList = 'No version information was available in the source files.';
 			}
 			$fp = fopen($this->__output . $file, 'w');
-			fwrite($fp, str_replace("--VERSIONS--", $fileList, join("", $content)));
+			fwrite($fp, str_replace('--VERSIONS--', $fileList, join('', $content)));
 			fclose($fp);
 		}
 	}
@@ -466,11 +484,11 @@ class ExtractShell extends Shell{
 				$this->out($this->__tokens[$count][1], false);
 			} else {
 				$this->out($this->__tokens[$count], false);
-				if ($this->__tokens[$count] == "(") {
+				if ($this->__tokens[$count] == '(') {
 					$parenthesis++;
 				}
 
-				if ($this->__tokens[$count] == ")") {
+				if ($this->__tokens[$count] == ')') {
 					$parenthesis--;
 				}
 			}
