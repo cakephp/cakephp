@@ -11,20 +11,18 @@
 CREATE TABLE i18n (
 	id int(10) NOT NULL auto_increment,
 	locale varchar(6) NOT NULL,
-	i18n_content_id int(10) NOT NULL,
 	model varchar(255) NOT NULL,
-	row_id int(10) NOT NULL,
+	foreign_key int(10) NOT NULL,
 	field varchar(255) NOT NULL,
+	content mediumtext,
 	PRIMARY KEY	(id),
-	KEY locale	(locale),
-	KEY i18n_content_id (i18n_content_id),
-	KEY row_id	(row_id),
-	KEY model	(model),
-	KEY field (field)
-);
-
-CREATE TABLE i18n_content (
-	id int(10) NOT NULL auto_increment,
-	content text,
-	PRIMARY KEY  (id)
+#	UNIQUE INDEX I18N_LOCALE_FIELD(locale, model, foreign_key, field),
+#	INDEX I18N_LOCALE_ROW(locale, model, foreign_key),
+#	INDEX I18N_LOCALE_MODEL(locale, model),
+#	INDEX I18N_FIELD(model, foreign_key, field),
+#	INDEX I18N_ROW(model, foreign_key),
+	INDEX locale (locale),
+	INDEX model (model),
+	INDEX row_id (foreign_key),
+	INDEX field (field)
 );

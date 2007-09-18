@@ -27,8 +27,8 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
-  * Included libraries.
-  */
+ * Included libraries.
+ */
 uses('l10n');
 /**
  * Short description for file.
@@ -43,16 +43,9 @@ class I18n extends Object {
  * Instance of the I10n class for localization
  *
  * @var object
- * @access private
- */
-	var $__l10n = null;
-/**
- * The locale for current translation
- *
- * @var string
  * @access public
  */
-	var $locale = null;
+	var $l10n = null;
 /**
  * Translation strings for a specific domain read from the .mo or .po files
  *
@@ -86,7 +79,13 @@ class I18n extends Object {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new I18n();
-			$instance[0]->__l10n =& new L10n();
+			$instance[0]->l10n =& new L10n();
+
+			$language = Configure::read('Config.language');
+			if ($language === null && !empty($_SESSION['Config']['language'])) {
+				$language = $_SESSION['Config']['language'];
+			}
+			$instance[0]->l10n->get($language);
 		}
 		return $instance[0];
 	}
@@ -106,16 +105,6 @@ class I18n extends Object {
 	function translate($singular, $plural = null, $domain = null, $category = 5, $count = null, $directory = null) {
 		$_this =& I18n::getInstance();
 		$_this->category = $_this->__categories[$category];
-
-		if ($_this->__l10n->found === false) {
-			$language = Configure::read('Config.language');
-
-			if ($language === null && !empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			}
-			$_this->__l10n->get($language);
-			$_this->locale = $_this->__l10n->locale;
-		}
 
 		if (is_null($domain)) {
 			if (preg_match('/views{0,1}\\'.DS.'([^\/]*)/', $directory, $regs)) {
@@ -168,7 +157,7 @@ class I18n extends Object {
 			return($plural);
 		}
 		return($singular);
-    }
+	}
 /**
  * Attempts to find the plural form of a string.
  *
@@ -215,7 +204,7 @@ class I18n extends Object {
 
 		switch ($type) {
 			case -1:
-				return   (0);
+				return (0);
 			case 1:
 				if ($n != 1) {
 					return (1);
@@ -227,7 +216,7 @@ class I18n extends Object {
 				}
 				return (0);
 			case 7:
-				return   ($n);
+				return ($n);
 			case 21:
 				if (($n % 10 == 1) && ($n % 100 != 11)) {
 					return (0);
@@ -316,7 +305,7 @@ class I18n extends Object {
 		}
 
 		foreach ($searchPath as $directory) {
-			foreach ($_this->__l10n->languagePath as $lang) {
+			foreach ($_this->l10n->languagePath as $lang) {
 				$file = $directory . DS . $lang . DS . $_this->category . DS . $domain;
 				$default = APP . 'locale'. DS . $lang . DS . $_this->category . DS . 'default';
 				$core = CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'locale'. DS . $lang . DS . $_this->category . DS . 'core';

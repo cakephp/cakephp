@@ -61,7 +61,7 @@ class AclComponent extends Object {
 					}
 					$name .= 'Component';
 				} else {
-					trigger_error(__(sprintf('Could not find %s.', $name), true), E_USER_WARNING);
+					trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
 				}
 			}
 			$this->_instance =& new $name();

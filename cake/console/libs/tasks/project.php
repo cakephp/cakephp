@@ -147,7 +147,7 @@ class ProjectTask extends Shell {
 			if ($Folder->copy($path)) {
 				$path = $Folder->slashTerm($path);
 				$this->hr();
-				$this->out(__(sprintf("Created: %s in %s", $app, $path), true));
+				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
 				$this->hr();
 
 				if ($this->createHome($path, $app)) {

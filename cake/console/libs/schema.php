@@ -126,7 +126,7 @@ class SchemaShell extends Shell {
 			}
 			$File = new File($this->Schema->path . DS . $write, true);
 			if($File->write($contents)) {
-				$this->out(__('SQL dump file created in '. $File->pwd(), true));
+				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
 				exit();
 			} else {
 				$this->err(__('SQL dump could not be created', true));

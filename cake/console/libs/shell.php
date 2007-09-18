@@ -398,7 +398,7 @@ class Shell extends Object {
  */
 	function createFile ($path, $contents) {
 		$path = str_replace(DS . DS, DS, $path);
-		$this->out("\n".__(sprintf("Creating file %s", $path), true));
+		$this->out("\n" . sprintf(__("Creating file %s", true), $path));
 		if (is_file($path) && $this->interactive === true) {
 			$key = $this->in(__("File exists, overwrite?", true). " {$path}",  array('y', 'n', 'q'), 'n');
 			if (low($key) == 'q') {

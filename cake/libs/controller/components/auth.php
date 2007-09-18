@@ -418,7 +418,7 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					trigger_error(__(sprintf('Auth::startup() - Attempted access of un-mapped action "%s" in controller "%s"', $this->params['action'], $this->params['controller']), true), E_USER_WARNING);
+					trigger_error(sprintf(__('Auth::startup() - Attempted access of un-mapped action "%s" in controller "%s"', true), $this->params['action'], $this->params['controller']), E_USER_WARNING);
 				} else {
 					$valid = $this->Acl->check($user, $this->action(':controller'), $this->actionMap[$this->params['action']]);
 				}
@@ -434,13 +434,13 @@ class AuthComponent extends Object {
 					$action = $this->action(':action');
 				}
 				if (empty($object)) {
-					trigger_error(__(sprintf('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', get_class($object)), true), E_USER_WARNING);
+					trigger_error(sprintf(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', true), get_class($object)), E_USER_WARNING);
 					return;
 				}
 				if (method_exists($object, 'isAuthorized')) {
 					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
 				} elseif ($object){
-					trigger_error(__(sprintf('%s::isAuthorized() is not defined.', get_class($object)), true), E_USER_WARNING);
+					trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), get_class($object)), E_USER_WARNING);
 				}
 			break;
 			case null:
@@ -669,7 +669,7 @@ class AuthComponent extends Object {
 		}
 		if (!ClassRegistry::isKeySet($name)) {
 			if (!loadModel(Inflector::underscore($name))) {
-				trigger_error(__(sprintf('Auth::getModel() - %s is not set or could not be found', $name), true), E_USER_WARNING);
+				trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
 				return $model;
 			} else {
 				$model = new $name();
@@ -685,7 +685,7 @@ class AuthComponent extends Object {
 		}
 
 		if (empty($model)) {
-			trigger_error(__(sprintf('Auth::getModel() - %s is not set or could not be found', $name), true) . $name, E_USER_WARNING);
+			trigger_error(sprintf(__('Auth::getModel() - %s is not set or could not be found', true), $name), E_USER_WARNING);
 			return null;
 		}
 
