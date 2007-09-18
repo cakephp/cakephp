@@ -41,10 +41,6 @@ uses('controller'.DS.'controller', 'model'.DS.'model', 'view'.DS.'helper', 'view
  */
 class RssTest extends UnitTestCase {
 
-	function skip() {
-		$this->skipif (true, 'RssHelper test not implemented');
-	}
-
 	function setUp() {
 		$this->Rss = new RssHelper();
 	}
@@ -52,6 +48,66 @@ class RssTest extends UnitTestCase {
 	function tearDown() {
 		unset($this->Rss);
 	}
-}
 
+	function testDocument() {
+		$res = $this->Rss->document();
+		$this->assertPattern('/^<rss version="2.0" \/>$/', $res);
+
+		$res = $this->Rss->document(array('contrived' => 'parameter'));
+		$this->assertPattern('/^<rss version="2.0"><\/rss>$/', $res);
+
+		$res = $this->Rss->document(null, 'content');
+		$this->assertPattern('/^<rss version="2.0">content<\/rss>$/', $res);
+
+		$res = $this->Rss->document(array('contrived' => 'parameter'), 'content');
+		$this->assertPattern('/^<rss[^<>]+version="2.0"[^<>]*>/', $res);
+		$this->assertPattern('/<rss[^<>]+contrived="parameter"[^<>]*>/', $res);
+		$this->assertNoPattern('/<rss[^<>]+[^version|contrived]=[^<>]*>/', $res);
+	}
+
+	function testChannel() {
+		$attrib = array('a' => '1', 'b' => '2');
+		$elements['title'] = 'title';
+		$content = 'content';
+		$res = $this->Rss->channel($attrib, $elements, $content);
+		$this->assertPattern('/^<channel[^<>]+a="1"[^<>]*>/', $res);
+		$this->assertPattern('/^<channel[^<>]+b="2"[^<>]*>/', $res);
+		$this->assertNoPattern('/^<channel[^<>]+[^a|b]=[^<>]*/', $res);
+		$this->assertPattern('/<title>title<\/title>/', $res);
+		$this->assertPattern('/<link>'.str_replace('/', '\/', RssHelper::url('/', true)).'<\/link>/', $res);
+		$this->assertPattern('/<description \/>/', $res);
+		$this->assertPattern('/content<\/channel>$/', $res);
+	}
+
+	function testChannelElementLevelAttrib() {
+		$attrib = array();
+		$elements['title'] = 'title';
+		$elements['image'] = array('myImage', 'attrib' => array('href' => 'http://localhost'));
+		$content = 'content';
+		$res = $this->Rss->channel($attrib, $elements, $content);
+		$this->assertPattern('/^<channel>/', $res);
+		$this->assertPattern('/<title>title<\/title>/', $res);
+		$this->assertPattern('/<image[^<>]+href="http:\/\/localhost">myImage<\/image>/', $res);
+		$this->assertPattern('/<link>'.str_replace('/', '\/', RssHelper::url('/', true)).'<\/link>/', $res);
+		$this->assertPattern('/<description \/>/', $res);
+		$this->assertPattern('/content<\/channel>$/', $res);
+	}
+
+	function testItems() {
+	}
+
+	function testItem() {
+	}
+
+	function testTime() {
+	}
+
+	function testElementAttrNotInParent() {
+		$attributes = array('title' => 'Some Title', 'link' => 'http://link.com', 'description' => 'description');
+		$elements = array('enclosure' => array('url' => 'http://somewhere.com'));
+
+		$result = $this->Rss->item($attributes, $elements);
+		$this->assertPattern('/^<item title="Some Title" link="http:\/\/link.com" description="description"><enclosure url="http:\/\/somewhere.com" \/><\/item>$/', $result);
+	}
+}
 ?>
