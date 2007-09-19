@@ -166,7 +166,7 @@ class Dispatcher extends Object {
 			}
 		}
 
-		$protected = array_map('strtolower', get_class_methods('appcontroller'));
+		$protected = array_map('strtolower', get_class_methods('controller'));
 		$classMethods = array_map('strtolower', get_class_methods($controller));
 
 		if (in_array(low($this->params['action']), $protected)  || strpos($this->params['action'], '_', 0) === 0) {
