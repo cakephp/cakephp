@@ -967,10 +967,14 @@ class Controller extends Object {
 					if (isset($time['_hour']) && $time['_hour'] == 12 && 'am' == $meridian) {
 						$time['_hour'] = '00';
 					}
+					if (count($time) > 1) {
+						$time = join(':', array_values($time));
+					}
 
-					$time = join(':', array_values($time));
 					if($date && $time) {
 						$date = $date . ' ' . $time;
+					} elseif (is_string($time)) {
+						$date = $time;
 					}
 				}
 

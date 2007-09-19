@@ -94,6 +94,22 @@ class ControllerTest extends CakeTestCase {
 		$Controller->cleanUpFields();
 		$expected = array('ControllerPost'=> array('created'=> ''));
 		$this->assertEqual($Controller->data, $expected);
+
+		$Controller->data['ControllerPost']['created_hour'] = '20';
+		$Controller->data['ControllerPost']['created_min'] = '33';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> '20:33'));
+		$this->assertEqual($Controller->data, $expected);
+
+		$Controller->data['ControllerPost']['created_hour'] = '20';
+		$Controller->data['ControllerPost']['created_min'] = '33';
+		$Controller->data['ControllerPost']['created_sec'] = '33';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> '20:33:33'));
+		$this->assertEqual($Controller->data, $expected);
+
 		unset($Controller);
 	}
 
@@ -130,8 +146,6 @@ class ControllerTest extends CakeTestCase {
 		unlink(CACHE . 'persistent' . DS . 'controllerpostregistry.php');
 
 		unset($Controller);
-
-
 	}
 }
 ?>
