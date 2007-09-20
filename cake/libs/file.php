@@ -73,7 +73,9 @@ class File extends Object{
 	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
 		$this->Folder =& new Folder(dirname($path), $create, $mode);
-		$this->name = basename($path);
+		if (!is_dir($path)) {
+			$this->name = basename($path);
+		}
 		if (!$this->exists()) {
 			if ($create === true) {
 				$this->safe();
@@ -212,6 +214,8 @@ class File extends Object{
 		}
 		if (isset($this->info['extension'])) {
 			return basename($this->name, '.'.$this->info['extension']);
+		} elseif ($this->name) {
+			return $this->name;
 		}
 		return false;
 	}
