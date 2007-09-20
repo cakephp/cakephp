@@ -592,7 +592,7 @@ class DispatcherTest extends UnitTestCase {
 
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'), array('controller', 'action'));
-		
+
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
 
@@ -600,9 +600,9 @@ class DispatcherTest extends UnitTestCase {
 		restore_error_handler();
 		@$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
-					
+
 		$expected = 'privateAction';
-		$this->assertIdentical($expected, $controller);		
+		$this->assertIdentical($expected, $controller);
 	}
 
 	function tearDown() {
