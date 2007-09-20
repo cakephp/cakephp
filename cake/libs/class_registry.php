@@ -69,6 +69,7 @@ class ClassRegistry {
  *
  * @param string $key	Key for the object in registry
  * @param mixed $object	Object to store
+ * @return boolean True if the object was written, false if $key already exists
  * @access public
  */
 	function addObject($key, &$object) {
@@ -76,7 +77,9 @@ class ClassRegistry {
 		$key = Inflector::underscore($key);
 		if (array_key_exists($key, $_this->__objects) === false) {
 			$_this->__objects[$key] = &$object;
+			return true;
 		}
+		return false;
 	}
 /**
  * Remove object which corresponds to given key.
