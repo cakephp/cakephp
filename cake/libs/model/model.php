@@ -32,6 +32,7 @@
  * Included libs
  */
 uses('class_registry', 'validation', 'overloadable', 'model' . DS . 'behavior', 'model' . DS . 'connection_manager', 'set');
+
 /**
  * Object-relational mapper.
  *
@@ -376,6 +377,22 @@ class Model extends Overloadable {
 
 				if ($this->displayField == null) {
 					$this->displayField = $this->primaryKey;
+				}
+			}
+		}
+
+		if (is_subclass_of($this, 'AppModel')) {
+			$appVars = get_class_vars('AppModel');
+			$actsAs = $appVars['actsAs'];
+			$merge = array('actsAs');
+
+			if ($this->actsAs !== null || $this->actsAs !== false) {
+				$merge[] = 'actsAs';
+			}
+
+			foreach ($merge as $var) {
+				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
+					$this->{$var} = array_merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 				}
 			}
 		}
@@ -1654,9 +1671,20 @@ class Model extends Overloadable {
  * Returns an array of invalid fields.
  *
  * @param array $data
- * @return array Array of invalid fields or boolean case any error occurs
+ * @return array Array of invalid fields
  */
 	function invalidFields($data = array()) {
+
+		if (!empty($this->behaviors)) {
+			$behaviors = array_keys($this->behaviors);
+			$ct = count($behaviors);
+			for ($i = 0; $i < $ct; $i++) {
+				if ($this->behaviors[$behaviors[$i]]->beforeValidate($this) === false) {
+					return $this->validationErrors;
+				}
+			}
+		}
+
 		if (!$this->beforeValidate()) {
 			return $this->validationErrors;
 		}

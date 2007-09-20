@@ -64,6 +64,8 @@ class ModelBehavior extends Object {
 
 	function afterFind(&$model, $results, $primary) { }
 
+	function beforeValidate(&$model) { }
+
 	function beforeSave(&$model) { }
 
 	function afterSave(&$model, $created) { }
