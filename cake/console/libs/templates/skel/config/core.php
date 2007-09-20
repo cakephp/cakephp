@@ -129,6 +129,9 @@
 //	Configure::write('Routing.admin', 'admin');
 /**
  *  Enable or disable CakePHP webservices routing. Set to 'off' or 'on'.
+ * 
+ * @deprecated
+ * @see Router::parseExtensions()
  */
 	Configure::write('Routing.webservices', 'off');
 /**
