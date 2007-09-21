@@ -202,10 +202,10 @@ class RouterTest extends UnitTestCase {
 
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
-		$this->router->connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin')); 
-		$this->router->setRequestInfo(array( 
-			array( 
-				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe', 
+		$this->router->connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'));
+		$this->router->setRequestInfo(array(
+			array(
+				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
 			    'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1'), 'bare' => 0, 'webservices' => ''
 			),
 			array(
@@ -414,7 +414,7 @@ class RouterTest extends UnitTestCase {
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
 		));
 		$this->router->parse('/');
-		
+
 		$result = $this->router->url(array('plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false));
 		$expected = '/admin/pages/add';
 		$this->assertEqual($result, $expected);
@@ -432,7 +432,7 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->url(array('plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'id' => '284'));
 		$expected = '/admin/pages/edit/284';
 		$this->assertEqual($result, $expected);
-		
+
 		Configure::write('Routing.admin', 'admin');
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
@@ -457,6 +457,19 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array('plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'id' => '284'));
 		$expected = '/admin/pages/edit/284';
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->setRequestInfo(array(
+				array ('plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'admin_edit', 'pass' =>
+						array (0 => '6'), 'prefix' => 'admin', 'admin' => true, 'form' => array (), 'url' =>
+						array ('url' => 'admin/shows/show_tickets/edit/6'), 'bare' => 0, 'webservices' => NULL),
+				array ('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/')));
+
+		$this->router->parse('/');
+
+		$result = $this->router->url(array ( 'plugin' => 'shows', 'controller' => 'show_tickets', 'action' => 'edit', 'id' => '6', 'admin' => true, 'prefix' => 'admin', ));
+		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 	}
 

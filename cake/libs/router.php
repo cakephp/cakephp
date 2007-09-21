@@ -722,12 +722,12 @@ class Router extends Object {
 
 				$urlOut = Set::filter(array($url['controller'], $url['action']));
 
-				if($admin && isset($url['admin'])) {
-					array_unshift($urlOut, $admin);
-				}
-
 				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 					array_unshift($urlOut, $url['plugin']);
+				}
+
+				if($admin && isset($url['admin'])) {
+					array_unshift($urlOut, $admin);
 				}
 				$output = join('/', $urlOut) . '/';
 			}
