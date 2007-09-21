@@ -708,14 +708,15 @@ class Validation extends Object {
 /**
  * Runs an user-defined validation.
  *
- * @param object $object Object that holds validation method
- * @param string $method Method name for validation to run
- * @param array $args Arguments to send to method
- * @return mixed Whatever method returns
+ * @param mixed $check value that will be validated in user-defined methods.
+ * @param object $object class that holds validation method
+ * @param string $method class method name for validation to run
+ * @param array $args arguments to send to method
+ * @return mixed user-defined class class method returns
  * @access public
  */
-	function userDefined($object, $method, $args) {
-		return call_user_func_array(array(&$object, $method), $args);
+	function userDefined($check, $object, $method, $args = null) {
+		return call_user_func_array(array(&$object, $method), array($check,$args));
 	}
 
 /**

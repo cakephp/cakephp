@@ -141,6 +141,13 @@ class Article extends CakeTestModel {
 		'title' => array('allowEmpty' => false, 'rule' => VALID_NOT_EMPTY),
 		'body' => VALID_NOT_EMPTY
 	);
+
+	function titleDuplicate ($title) {
+		if($title === 'My Article Title') {
+			return false;
+		}
+		return true;
+	}
 }
 /**
  * Short description for class.
@@ -1762,6 +1769,20 @@ class ModelTest extends CakeTestCase {
 		);
 
 		$data = array('TestValidate' => array('title' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
+		$this->model->validate = array('title' => array('rule' => array('userDefined', 'Article', 'titleDuplicate')));
+
+		$data = array('TestValidate' => array('title' => 'My Article Title'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('title' => 'My Article With a Different Title'));
 		$result = $this->model->create($data);
 		$this->assertTrue($result);
 		$result = $this->model->validates();
