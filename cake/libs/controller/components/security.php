@@ -570,7 +570,7 @@ class SecurityComponent extends Object {
 		$options = am(array('type' => 'basic',
 							'realm' => env('SERVER_NAME'),
 							'qop' => 'auth',
-							'nonce' => uniqid()),
+							'nonce' => String::uuid()),
 							array_filter($options));
 		$options = am(array('opaque' => md5($options['realm'])), $options);
 	}

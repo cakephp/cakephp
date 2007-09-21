@@ -80,7 +80,7 @@ class Security extends Object{
   */
 	function generateAuthKey() {
 		$_this =& Security::getInstance();
-		return $_this->hash(uniqid(rand(), true));
+		return $_this->hash(String::uuid());
 	}
 /**
  * Validate authorization hash.

@@ -346,9 +346,9 @@ class AuthTest extends CakeTestCase {
 		$backup = $_SERVER['HTTP_REFERER'];
 
 		$_SERVER['HTTP_REFERER'] = false;
-		
+
 		$this->Controller->Session->write('Auth', array('AuthUser' => array('id'=>'1', 'username'=>'nate')));
-		
+
 		$this->Controller->params['url']['url'] = 'users/login';
 		$this->Controller->Auth->initialize($this->Controller);
 
@@ -359,7 +359,7 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
 
 		$this->Controller->Session->del('Auth');
-       
+
 		$this->Controller->params['url']['url'] = 'admin/';
 		$this->Controller->Auth->initialize($this->Controller);
  		$this->Controller->Auth->userModel = 'AuthUser';
@@ -368,19 +368,19 @@ class AuthTest extends CakeTestCase {
 		$expected = $this->Controller->Auth->_normalizeURL('admin/');
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
 		$this->assertEqual($expected, $this->Controller->Auth->redirect());
-		
+
 		$this->Controller->Session->del('Auth');
-		
+
 		$_SERVER['HTTP_REFERER'] = '/admin/';
-		
+
 		$this->Controller->Session->write('Auth', array('AuthUser' => array('id'=>'1', 'username'=>'nate')));
-		
+
 		$this->Controller->params['url']['url'] = 'auth_test/login';
 
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->loginAction = 'auth_test/login';
-		
+
  		$this->Controller->Auth->userModel = 'AuthUser';
 		$this->Controller->Auth->loginRedirect = false;
 		$this->Controller->Auth->startup($this->Controller);
