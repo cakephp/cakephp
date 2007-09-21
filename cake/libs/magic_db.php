@@ -24,14 +24,8 @@
  * @lastmodified	$Date: 2007-07-19 15:38:26 +0200 (Do, 19 Jul 2007) $
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-if (!class_exists('Object')) {
-	 uses ('object');
-}
 
-if (!class_exists('File')) {
-	 uses ('file');
-}
-
+uses ('object', 'file');
 /**
  * A class to parse and use the MagicDb for file type analysis
  *
@@ -50,7 +44,7 @@ class MagicDb extends Object {
  * Reads a MagicDb from various formats
  *
  * @var $magicDb mixed Can be an array containing the db, a magic db as a string, or a filename pointing to a magic db in .db or magic.db.php format
- * @return mixed
+ * @return boolean Returns false if reading / validation failed or true on success.
  * @author Felix
  **/
 	function read($magicDb = null) {
@@ -72,7 +66,7 @@ class MagicDb extends Object {
 				$data = $File->read();
 			}
 		}
-		
+
 		$magicDb = $this->toArray($data);
 		if (!$this->validates($magicDb)) {
 			return false;
@@ -83,8 +77,8 @@ class MagicDb extends Object {
 /**
  * Parses a MagicDb $data string into an array or returns the current MagicDb instance as an array
  *
- * @param string $data
- * @return array
+ * @param string $data A MagicDb string to turn into an array 
+ * @return array A parsed MagicDb array or an empty array if the $data param was invalid. Returns the db property if $data is not set.
  * @access public
  */
 	function toArray($data = null) {
@@ -133,12 +127,14 @@ class MagicDb extends Object {
 /**
  * Returns true if the MagicDb instance or the passed $magicDb is valid
  *
- * @param mixed $magicDb
- * @return boolean
+ * @param mixed $magicDb A $magicDb string / array to validate (optional)
+ * @return boolean True if the $magicDb / instance db validates, false if not
  * @access public
  */
 	function validates($magicDb = null) {
-		if ($magicDb !== null && !is_array($magicDb)) {
+		if (is_null($magicDb)) {
+			$magicDb = $this->db;
+		} elseif (!is_array($magicDb)) {
 			$magicDb = $this->toArray($magicDb);
 		}
 		
@@ -148,8 +144,8 @@ class MagicDb extends Object {
 /**
  * Analyzes a given $file using the currently loaded MagicDb information based on the desired $options
  *
- * @param string $file
- * @param array $options
+ * @param string $file Absolute path to the file to analyze
+ * @param array $options TBT
  * @return mixed
  * @access public
  */

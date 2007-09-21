@@ -25,7 +25,7 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-uses('magic_db');
+uses('magic_db', 'object');
 /**
  * The test class for the MagicDb classA
  *
@@ -59,45 +59,38 @@ class MagicDbTest extends UnitTestCase {
  * @access public
  */
 	function testRead() {
-		// Reset the db before runing any tests on it
 		$this->Db->db = array();
-		
-		// Passing a non string/array value to read should return false
+
 		$r = $this->Db->read(true);
 		$this->assertTrue($r === false);
 		$r = $this->Db->read(5);
 		$this->assertTrue($r === false);
-		
-		// Passing a non-valid array in should return false and not modify the db property
+
 		$this->Db->db = array('a');
 		$r = $this->Db->read(array('foo' => 'bar'));
 		$this->assertTrue($r === false);
 		$this->assertTrue($this->Db->db === array('a'));
 
-		// Passing a in a valid array should return true and set the db property
 		$magicDb = array('header' => array(), 'database' => array());
 		$r = $this->Db->read($magicDb);
 		$this->assertTrue($r === true);
 		$this->assertTrue($this->Db->db === $magicDb);
 
-		// Parsing a small MagicDb snippet string should return true and set the db value properly
-		$r = $this->Db->read(MagicDbTestData::get('wordperfect'));
-		$this->assertTrue($r === false);
-		// @TODO: Test $this->Db->data value
-		
 		// @TODO: Test parsing an actual magic.db file
 
-		// Reading a non-existing db file should return false and not modify the db property
 		$r = $this->Db->read('does-not-exist.db');
 		$this->assertTrue($r === false);
 		$this->assertTrue($this->Db->db === $magicDb);
-		
-		// Reading a sample magic.php file should return true and set the db property correctly
+
 		if (file_exists(VENDORS.'magic.php')) {
 			$r = $this->Db->read(VENDORS.'magic.php');
 			$this->assertTrue($r === true);
 			$this->assertTrue($this->Db->db === array('header' => array(), 'database' => array()));			
 		}
+
+		$r = $this->Db->read(MagicDbTestData::get('wordperfect'));
+		// @TODO: Test $this->Db->data value
+		// $this->assertTrue($r === true);
 	}
 
 /**
@@ -107,21 +100,17 @@ class MagicDbTest extends UnitTestCase {
  * @access public
  */
 	function testToArray() {
-		// Reset the db before runing any tests on it
 		$this->Db->db = array();
-		
-		// Calling toArray() w/o a parameter should return the db property directly
+
 		$r = $this->Db->toArray();
 		$this->assertTrue($r === array());
 		$this->Db->db = array('foo' => 'bar');
 		$r = $this->Db->toArray();
 		$this->assertTrue($r === array('foo' => 'bar'));
 
-		// Passing an array as a parameter should return it as is
 		$r = $this->Db->toArray(array('yeah'));
 		$this->assertTrue($r === array('yeah'));
 
-		// Passing in a non-magic db string should return an empty array
 		$r = $this->Db->toArray('foo');
 		$this->assertTrue($r === array());
 	}
@@ -133,30 +122,25 @@ class MagicDbTest extends UnitTestCase {
  * @access public
  */
 	function testValidates() {
-		// Validating an empty array should fail
 		$r = $this->Db->validates(array());
 		$this->assertTrue($r === false);
-		
-		// Validating a magic-db formated array should work
+
 		$r = $this->Db->validates(array('header' => true, 'database' => true));
 		$this->assertTrue($r === false);
 		$magicDb = array('header' => array(), 'database' => array());
 		$r = $this->Db->validates($magicDb);
 		$this->assertTrue($r === true);
 
-		// Validating a the instance db should fail if its empty
 		$this->Db->db = array();
 		$r = $this->Db->validates();
 		$this->assertTrue($r === false);
-		
-		// Validating a magic-db formated instance db array should work
+
 		$this->Db->db = $magicDb;
 		$r = $this->Db->validates();
 		$this->assertTrue($r === true);
 	}
 }
 
-uses('object');
 /**
  * Test data holding object for MagicDb tests
  *
@@ -176,18 +160,6 @@ class MagicDbTestData extends Object {
 	);
 
 /**
- * Base64 decodes all MagicDbTestData::data fields
- *
- * @return void
- * @access private
- **/
-	function __construct() {
-		foreach ($this->data as $key => $val) {
-			$this->data[$key] = base64_decode($val);
-		}
-	}
-
-/**
  * Returns the test data for a given key
  *
  * @param string $key
@@ -195,10 +167,19 @@ class MagicDbTestData extends Object {
  * @access public
  **/
 	function get($key) {
-		if (!isset($this->data[$key])) {
+		static $data = array();
+		
+		if (empty($data)) {
+			$vars = get_class_vars(__CLASS__);
+			foreach ($vars['data'] as $key => $val) {
+				$data[$key] = base64_decode($val);
+			}
+		}
+		
+		if (!isset($data[$key])) {
 			return false;
 		}
-		return $this->data[$key];
+		return $data[$key];
 	}
 }
 
