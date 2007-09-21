@@ -81,10 +81,12 @@ class RequestHandlerComponent extends Object {
 	var $__requestContent = array(
 		'javascript'	=> 'text/javascript',
 		'js'			=> 'text/javascript',
+		'json'			=> 'application/json',
 		'css'			=> 'text/css',
 		'html'			=> array('text/html', '*/*'),
 		'text'			=> 'text/plain',
 		'txt'			=> 'text/plain',
+		'csv'			=> array('application/vnd.ms-excel', 'text/plain'),
 		'form'			=> 'application/x-www-form-urlencoded',
 		'file'			=> 'multipart/form-data',
 		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
@@ -208,6 +210,19 @@ class RequestHandlerComponent extends Object {
 				$controller->data = $xml;
 			}
 		}
+	}
+/**
+ * Handles (fakes) redirects for Ajax requests using requestAction()
+ *
+ * @param object A reference to the controller
+ * @param mixed A string or array containing the redirect location
+ * @return void
+ */
+	function beforeRedirect(&$controller, $url) {
+		if (!$this->isAjax()) {
+			return;
+		}
+		
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise

@@ -412,6 +412,23 @@ class Controller extends Object {
 			extract($status, EXTR_OVERWRITE);
 		}
 
+		foreach ($this->components as $c) {
+			$path = preg_split('/\/|\./', $c);
+			$c = $path[count($path) - 1];
+			if (isset($this->{$c}) && is_object($this->{$c}) && is_callable(array($this->{$c}, 'beforeRedirect'))) {
+				if (!array_key_exists('enabled', get_object_vars($this->{$c})) || $this->{$c}->enabled == true) {
+					$resp = $this->{$c}->beforeRedirect($this, $url, $status, $exit);
+					if ($resp === false) {
+						return;
+					} elseif (is_array($resp) && isset($resp['url'])) {
+						extract($resp, EXTR_OVERWRITE);
+					} elseif ($resp !== null) {
+						$url = $resp;
+					}
+				}
+			}
+		}
+
 		if (function_exists('session_write_close')) {
 			session_write_close();
 		}
