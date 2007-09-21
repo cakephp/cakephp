@@ -1635,6 +1635,32 @@ class ModelTest extends CakeTestCase {
 		$result = $this->model->validates();
 		$this->assertFalse($result);
 
+		$this->model->validate['modified'] = array('allowEmpty' => false, 'rule' => 'date');
+
+		$data = array('TestValidate' => array('modified' => null));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('modified' => false));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('modified' => ''));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertFalse($result);
+
+		$data = array('TestValidate' => array('modified' => '2007-05-01'));
+		$result = $this->model->create($data);
+		$this->assertTrue($result);
+		$result = $this->model->validates();
+		$this->assertTrue($result);
+
 		$this->model->validate['slug'] = array('allowEmpty' => false, 'rule' => array('maxLength', 45));
 
 		$data = array('TestValidate' => array('user_id' => '1', 'title' => 0, 'body' => 'body', 'slug' => ''));
