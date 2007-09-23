@@ -75,15 +75,41 @@ class JavascriptTest extends UnitTestCase {
 		
 		$result = $this->Javascript->object(array(
 			'2007' => array(
-				'Spring'=>array('1'=>array('id'=>'1','name'=>'Josh'), '2'=>array('id'=>'2','name'=>'Becky')),
-				'Fall' => array('1'=>array('id'=>'1','name'=>'Josh'), '2'=>array('id'=>'2','name'=>'Becky'))
+				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky'))
 			), '2006' => array(
-				'Spring' => array('1'=>array('id'=>'1','name'=>'Josh'), '2'=>array('id'=>'2','name'=>'Becky')),
-				'Fall' => array('1' => array('id'=>'1','name'=>'Josh'), '2'=>array('id'=>'2','name'=>'Becky') 
+				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
+				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky') 
 			))
 		));
 		$expected = '{"2007":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}, "2006":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}}';
 		$this->assertEqual($result, $expected);
+	}
+
+	function testScriptBlock() {
+		$result = $this->Javascript->codeBlock("something");
+		$this->assertPattern('/^<script[^<>]+>something<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript">something<\/script>$/', $result);
+		$this->assertPattern('/^<script[^<>]+type="text\/javascript"[^<>]*>/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$result = $this->Javascript->codeBlock();
+		$this->assertPattern('/^<script[^<>]+>$/', $result);
+		$this->assertNoPattern('/^<script[^type]=[^<>]*>/', $result);
+
+		$result = $this->Javascript->blockEnd();
+		$this->assertEqual("</script>", $result);
+
+		$this->Javascript->cacheEvents(false, true);
+		$result = $this->Javascript->codeBlock();
+		$this->assertIdentical($result, null);
+		echo 'alert("this is a buffered script");';
+
+		$result = $this->Javascript->blockEnd();
+		$this->assertIdentical($result, null);
+
+		$result = $this->Javascript->getCache();
+		$this->assertEqual('alert("this is a buffered script");', $result);
 	}
 
 	function tearDown() {

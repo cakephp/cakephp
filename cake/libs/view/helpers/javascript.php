@@ -105,8 +105,8 @@ class JavascriptHelper extends AppHelper {
 
 		if (!empty($script)) {
 			$this->_cachedEvents[] = $script;
+			return null;
 		}
-
 		return $this->tags['javascriptend'];
 	}
 /**
