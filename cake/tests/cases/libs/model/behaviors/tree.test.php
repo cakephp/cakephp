@@ -144,7 +144,7 @@ class NumberTreeCase extends CakeTestCase {
 
 		$result = $this->NumberTree->findByName('1.1');
 		$this->NumberTree->updateAll(array('parent_id' => 999999), array('id' => $result['NumberTree']['id']));
-		
+
 		$result = $this->NumberTree->verify();
 		$this->assertNotIdentical($result, true);
 
@@ -471,7 +471,7 @@ class NumberTreeCase extends CakeTestCase {
 				array('NumberTree' => array('name' => '1.10',)));
 		$this->assertIdentical($result, $expected);
 	}
-	
+
 	function testMoveDownSuccess() {
 		$this->NumberTree = & new NumberTree();
 		$this->NumberTree->__initialize(2, 2);
@@ -557,7 +557,7 @@ class NumberTreeCase extends CakeTestCase {
 
 		$initialCount = $this->NumberTree->findCount();
 		$result = $this->NumberTree->findByName('1.1.1');
-		
+
 		$return = $this->NumberTree->delete($result['NumberTree']['id']);
 		$this->assertEqual($return, true);
 
@@ -721,7 +721,7 @@ class NumberTreeCase extends CakeTestCase {
 					array('NumberTree' => array('name' => '1.2.2')));
 		$this->assertIdentical($result, $expects);
 	}
-	
+
 	function tearDown() {
 		unset($this->NumberTree);
 	}

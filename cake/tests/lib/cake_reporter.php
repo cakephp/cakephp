@@ -39,7 +39,7 @@ class CakeHtmlReporter extends HtmlReporter {
  *    by a web browser.
  *    @access public
  */
-	function CakeHtmlReporter($characterSet = 'ISO-8859-1') {
+	function CakeHtmlReporter($characterSet = 'UTF-8') {
 		parent::HtmlReporter($characterSet);
 	}
 /**

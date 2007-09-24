@@ -148,7 +148,7 @@ class Configure extends Object {
  */
 	function __list($path, $suffix = false) {
 		if(!class_exists('folder')) {
-			uses('folder'); 
+			uses('folder');
 		}
 		$items = array();
 		$Folder =& new Folder($path);
@@ -293,11 +293,12 @@ class Configure extends Object {
  */
 	function load($fileName) {
 		$_this =& Configure::getInstance();
-
 		if (file_exists(CONFIGS . $fileName . '.php')) {
 			include(CONFIGS . $fileName . '.php');
 		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
 			include(CACHE . 'persistent' . DS . $fileName . '.php');
+		} elseif (file_exists(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . $fileName . '.php')) {
+			include(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . $fileName . '.php');
 		} else {
 			return false;
 		}

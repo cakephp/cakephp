@@ -58,7 +58,7 @@ class SocketTest extends UnitTestCase {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 		$this->assertTrue($this->Socket->write($request));
 	}
-	
+
 	function tearDown() {
 		unset($this->Socket);
 	}

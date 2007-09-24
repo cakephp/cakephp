@@ -70,7 +70,7 @@ class JsHelper extends Overloadable2 {
 
 	function call__($method, $params) {
 		if (is_object($this->hook) && method_exists($this->hook, $method)) {
-			
+
 		}
 		if (method_exists($this, $method . '_')) {
 			return call_user_func_array(array(&$this, $method . '_'), $params);
@@ -90,7 +90,7 @@ class JsHelper extends Overloadable2 {
 		$out = 'if (' . $if . ') { ' . $then . ' }';
 
 		foreach ($elseif as $cond => $exec) {
-			//$out .= 
+			//$out .=
 		}
 
 		if (!empty($else)) {
@@ -345,7 +345,7 @@ class JsHelperObject {
 				if (strpos($args[0], '_') || $args[0]{0} != strtoupper($args[0]{0})) {
 					$args[0] = Inflector::camelize($args[0]);
 				}
-			
+
 				if (strtolower($args[0]) == 'highlight') {
 					$data .= 'new ';
 				}

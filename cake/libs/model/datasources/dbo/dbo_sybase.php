@@ -170,7 +170,7 @@ class DboSybase extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']), 
+				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']),
 														'null' => $column[0]['Null']
 													);
 			}
@@ -391,6 +391,6 @@ class DboSybase extends DboSource {
 		for ($x = 0; $x < $count; $x++) {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
-	}	
+	}
 }
 ?>

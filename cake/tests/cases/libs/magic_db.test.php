@@ -85,7 +85,7 @@ class MagicDbTest extends UnitTestCase {
 		if (file_exists(VENDORS.'magic.php')) {
 			$r = $this->Db->read(VENDORS.'magic.php');
 			$this->assertTrue($r === true);
-			$this->assertTrue($this->Db->db === array('header' => array(), 'database' => array()));			
+			$this->assertTrue($this->Db->db === array('header' => array(), 'database' => array()));
 		}
 
 		$r = $this->Db->read(MagicDbTestData::get('wordperfect'));
@@ -114,7 +114,7 @@ class MagicDbTest extends UnitTestCase {
 		$r = $this->Db->toArray('foo');
 		$this->assertTrue($r === array());
 	}
-	
+
 /**
  * The MagicDb::validates function should return if the array passed to it or the local db property contains a valid MagicDb record set
  *
@@ -168,14 +168,14 @@ class MagicDbTestData extends Object {
  **/
 	function get($key) {
 		static $data = array();
-		
+
 		if (empty($data)) {
 			$vars = get_class_vars(__CLASS__);
 			foreach ($vars['data'] as $key => $val) {
 				$data[$key] = base64_decode($val);
 			}
 		}
-		
+
 		if (!isset($data[$key])) {
 			return false;
 		}

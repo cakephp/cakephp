@@ -105,7 +105,7 @@ class TreeBehavior extends ModelBehavior {
 			$model->deleteAll($constraint);
 		}
 		$this->__sync($model, $diff, '-', '> ' . $data[$right]);
-		return true;	
+		return true;
 	}
 /**
  * Before save method. Called before all saves
@@ -613,13 +613,13 @@ class TreeBehavior extends ModelBehavior {
 		foreach ($model->findAll($scope, null, null, null, null, 1) as $instance) {
 			if ($instance[$model->name][$parent]) {
 				if (!$instance['VerifyParent'][$model->primaryKey]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey], 
+					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
 						'The parent node ' . $instance[$model->name][$parent] . ' doesn\'t exist');
 				} elseif ($instance[$model->name][$left] < $instance['VerifyParent'][$left]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey], 
+					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
 						'left less than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				} elseif ($instance[$model->name][$right] > $instance['VerifyParent'][$right]) {
-					$errors[] = array('node', $instance[$model->name][$model->primaryKey], 
+					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
 						'right greater than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				}
 			} elseif ($model->findCount(array($scope, $left => '< ' . $instance[$model->name][$left], $right => '> ' . $instance[$model->name][$right]))) {

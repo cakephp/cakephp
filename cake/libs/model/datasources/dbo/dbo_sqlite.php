@@ -404,6 +404,6 @@ class DboSqlite extends DboSource {
 		for ($x = 0; $x < $count; $x++) {
 			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
 		}
-	}	
+	}
 }
 ?>

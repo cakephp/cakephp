@@ -52,7 +52,7 @@
  * where 'x' is the name of the database.
  *
  * persistent => true / false
- * Determines whether or not the database should use a persistent connection 
+ * Determines whether or not the database should use a persistent connection
  *
  * connect =>
  * ADOdb set the connect to one of these

@@ -157,7 +157,7 @@ class DboDb2 extends DboSource {
 	function _execute($sql) {
 		// get result from db
 		$result = db2_exec($this->connection, $sql);
-		
+
 		if(!is_bool($result)){
 			// build table/column map for this result
 			$map = array();
@@ -165,7 +165,7 @@ class DboDb2 extends DboSource {
 			$index = 0;
 			$j = 0;
 			$offset = 0;
-	
+
 			while ($j < $num_fields) {
 				$columnName = strtolower(db2_field_name($result, $j));
 				$tmp = strpos($sql, '.' . $columnName, $offset);
@@ -175,7 +175,7 @@ class DboDb2 extends DboSource {
 				$j++;
 				$offset = strpos($sql, ' ', $tmp);
 			}
-	
+
 			$this->_resultMap[$result] = $map;
 		}
 

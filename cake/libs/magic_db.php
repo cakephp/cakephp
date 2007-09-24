@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* SVN FILE: $Id: magic_db.php 5444 2007-07-19 13:38:26Z the_undefined $ */
 /**
  * MagicDb parser and file analyzer
@@ -77,7 +77,7 @@ class MagicDb extends Object {
 /**
  * Parses a MagicDb $data string into an array or returns the current MagicDb instance as an array
  *
- * @param string $data A MagicDb string to turn into an array 
+ * @param string $data A MagicDb string to turn into an array
  * @return array A parsed MagicDb array or an empty array if the $data param was invalid. Returns the db property if $data is not set.
  * @access public
  */
@@ -88,14 +88,14 @@ class MagicDb extends Object {
 		if (empty($data)) {
 			return $this->db;
 		}
-		
+
 		if (strpos($data, '# FILE_ID DB') !== 0) {
 			return array();
 		}
 
 		$lines = explode("\r\n", $data);
 		$db = array();
-		
+
 		$validHeader = count($lines > 3)
 					&& preg_match('/^# Date:([0-9]{4}-[0-9]{2}-[0-9]{2})$/', $lines[1], $date)
 					&& preg_match('/^# Source:(.+)$/', $lines[2], $source)
@@ -103,7 +103,7 @@ class MagicDb extends Object {
 		if (!$validHeader) {
 			return $db;
 		}
-		
+
 		$db = array('header' => array('Date' => $date[1], 'Source' => $source[1]), 'database' => array());
 		$lines = array_splice($lines, 3);
 
@@ -137,7 +137,7 @@ class MagicDb extends Object {
 		} elseif (!is_array($magicDb)) {
 			$magicDb = $this->toArray($magicDb);
 		}
-		
+
 		return isset($magicDb['header'], $magicDb['database']) && is_array($magicDb['header']) && is_array($magicDb['database']);
 	}
 
@@ -150,7 +150,7 @@ class MagicDb extends Object {
  * @access public
  */
 	function analyze($file, $options = array()) {
-		
+
 	}
 }
 

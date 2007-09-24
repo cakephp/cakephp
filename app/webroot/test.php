@@ -27,7 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 error_reporting(E_ALL);
-set_time_limit(600);
+set_time_limit(0);
 ini_set('memory_limit','128M');
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -181,7 +181,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				$baseUrl = BASE;
-				$characterSet = 'ISO-8859-1';
+				$characterSet = 'charset=utf-8';
 				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:

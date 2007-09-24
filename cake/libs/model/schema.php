@@ -199,7 +199,7 @@ class CakeSchema extends Object {
 								} elseif ($assocData['_with']) {
 									$class = $assocData['_with'];
 								}
-								if (is_object($Object->$class)) { 
+								if (is_object($Object->$class)) {
 									$table = $db->fullTableName($Object->$class, false);
 									if(isset($currentTables[$table])) {
 										$tables[$Object->$class->table] = $this->__columns($Object->$class);

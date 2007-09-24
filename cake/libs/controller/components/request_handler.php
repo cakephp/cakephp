@@ -222,7 +222,7 @@ class RequestHandlerComponent extends Object {
 		if (!$this->isAjax()) {
 			return;
 		}
-		
+
 	}
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise

@@ -48,20 +48,20 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->link('script.js');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Javascript->link('script');
 		$expected = '<script type="text/javascript" src="js/script.js"></script>';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Javascript->link('scriptaculous.js?load=effects');
 		$expected = '<script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 	}
-	
+
 	function testObjectGeneration() {
 		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8));
 
@@ -72,14 +72,14 @@ class JavascriptTest extends UnitTestCase {
 		$result = $this->Javascript->object(array('default' => 0));
 		$expected = '{"default":0}';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Javascript->object(array(
 			'2007' => array(
 				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
 				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky'))
 			), '2006' => array(
 				'Spring' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')),
-				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky') 
+				'Fall' => array('1' => array('id' => '1', 'name' => 'Josh'), '2' => array('id' => '2', 'name' => 'Becky')
 			))
 		));
 		$expected = '{"2007":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}, "2006":{"Spring":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}, "Fall":{"1":{"id":1, "name":"Josh"}, "2":{"id":2, "name":"Becky"}}}}';

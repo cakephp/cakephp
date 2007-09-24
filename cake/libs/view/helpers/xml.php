@@ -219,9 +219,9 @@ class XmlHelper extends AppHelper {
 				} elseif (is_array($content[$keys[$i]])) {
 					$attr = $child = array();
 					if (Set::countDim($content[$keys[$i]]) >= 2) {
-						
+
 					} else {
-						
+
 					}
 					//$out .= $this->elem($keys[$i]
 				}

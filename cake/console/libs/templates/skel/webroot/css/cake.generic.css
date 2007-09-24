@@ -62,18 +62,18 @@ ul, li {
 	padding: 10px 20px 0 20px;
 	height: 5em;
 }
-#header h1 { 
+#header h1 {
 	color: #ffffff;
 	background: url('../img/cake.icon.png') no-repeat;
 	padding: 5px 50px;
 	height: 5em;
 }
-#header h1 a { 
+#header h1 a {
 	color: #ffffff;
 	background: #2C6877;
 	text-decoration: none;
 }
-#header h1 a:hover { 
+#header h1 a:hover {
 	color: #ffffff;
 	background: #003d4c;
 	text-decoration: none;
