@@ -110,6 +110,16 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('ControllerPost'=> array('created'=> '20:33:33'));
 		$this->assertEqual($Controller->data, $expected);
 
+		$Controller->data['ControllerPost']['created_hour'] = '13';
+		$Controller->data['ControllerPost']['created_min'] = '00';
+		$Controller->data['ControllerPost']['updated_hour'] = '14';
+		$Controller->data['ControllerPost']['updated_min'] = '40';
+
+		$Controller->cleanUpFields();
+		$expected = array('ControllerPost'=> array('created'=> '13:00', 'updated'=> '14:40'));
+		$this->assertEqual($Controller->data, $expected);
+
+
 		unset($Controller);
 	}
 
