@@ -80,6 +80,9 @@ class Security extends Object{
   */
 	function generateAuthKey() {
 		$_this =& Security::getInstance();
+		if(!class_exists('String')) {
+			uses('string');
+		}
 		return $_this->hash(String::uuid());
 	}
 /**
