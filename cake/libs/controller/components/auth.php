@@ -56,7 +56,7 @@ class AuthComponent extends Object {
 	var $components = array('Session', 'RequestHandler');
 /**
  * The name of the component to use for Authorization or set this to
- * 'controller' will validate Controller::action against Controller::isAuthorized(user, controller, action)
+ * 'controller' will validate against Controller::isAuthorized()
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
  * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
@@ -386,7 +386,7 @@ class AuthComponent extends Object {
  * used is based on the value of AuthComponent::$authorize or the passed $type param.
  *
  * Types:
- * 'controller' will validate Controller::action against Controller::isAuthorized(user, controller, action)
+ * 'controller' will validate against Controller::isAuthorized()
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
  * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
