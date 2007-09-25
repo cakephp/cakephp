@@ -717,7 +717,6 @@ class AuthComponent extends Object {
 		}
 
 		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
-			$find = array();
 			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])  && !empty($user[$this->fields['password']])) {
 				if (trim($user[$this->fields['username']]) == '=' || trim($user[$this->fields['password']]) == '=') {
 					return false;
@@ -734,12 +733,11 @@ class AuthComponent extends Object {
 					$this->fields['username'] => $user[$this->userModel . '.' . $this->fields['username']],
 					$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
 				);
+			} else {
+				return false;
 			}
 			$model =& $this->getModel();
-			$model->set($find);
-			if($model->validates()) {
-				$data = $model->find(am($find, $this->userScope), null, null, -1);
-			}
+			$data = $model->find(am($find, $this->userScope), null, null, -1);
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
