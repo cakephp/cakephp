@@ -736,9 +736,10 @@ class AuthComponent extends Object {
 				);
 			}
 			$model =& $this->getModel();
-
-			$data = $model->find(am($find, $this->userScope), null, null, -1);
-
+			$model->set($find);
+			if($model->validates()) {
+				$data = $model->find(am($find, $this->userScope), null, null, -1);
+			}
 			if (empty($data) || empty($data[$this->userModel])) {
 				return null;
 			}
