@@ -62,7 +62,7 @@ class TestDispatcher extends Dispatcher {
 
 }
 
-class MyPluginAppController extends Controller {
+class MyPluginAppController extends AppController {
 
 }
 
@@ -483,7 +483,7 @@ class DispatcherTest extends UnitTestCase {
 
 
 		$result = $dispatcher->parseParams($url);
-		$expected = array('pass' => array('home', 'param:value', 'param2:value2'),
+		$expected = array('pass' => array('home', 'param'=> 'value', 'param2'=> 'value2'),
 							'plugin'=> 'my_plugin', 'controller'=> 'some_pages', 'action'=> 'display',
 							'form'=> null, //array('testdata'=> 'My Posted Data'),
 							'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),

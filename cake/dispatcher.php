@@ -189,9 +189,8 @@ class Dispatcher extends Object {
 		$controller->action = $this->params['action'];
 		$controller->webservices = $this->params['webservices'];
 
-		list($passedArgs, $namedArgs) = Router::getArgs($this->params);
-		$controller->passedArgs = $passedArgs;
-		$controller->namedArgs = $namedArgs;
+		$controller->passedArgs = $this->params['pass'];
+		$controller->namedArgs = Set::diff(Set::extract($this->params['pass'], '{n}'), $this->params['pass']);
 
 		if (!empty($controller->params['data'])) {
 			$controller->data =& $controller->params['data'];

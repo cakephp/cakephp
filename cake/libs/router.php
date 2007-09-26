@@ -260,7 +260,7 @@ class Router extends Object {
 		);
 		$prefix = $options['prefix'];
 
-		foreach((array)$controller as $ctlName) {
+		foreach ((array)$controller as $ctlName) {
 			$urlName = Inflector::underscore($ctlName);
 			foreach ($_this->__resourceMap as $params) {
 				extract($params);
@@ -377,16 +377,13 @@ class Router extends Object {
 					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
 						break; //leave the default values;
 					} else {
-						// unnamed elements go in as 'pass'
-						$out['pass'] = am($out['pass'], array_map(
-							array(&$_this, 'stripEscape'),
-							Set::filter(explode('/', $found), true)
-						));
+						$out['pass'] = am($out['pass'], $_this->getArgs($found));
 					}
 				}
 				break;
 			}
 		}
+
 		if (!empty($ext)) {
 			$out['url']['ext'] = $ext;
 		}
@@ -1073,58 +1070,28 @@ class Router extends Object {
 	}
 
 /**
- * Takes an array of params and converts it to named args
+ * Takes an passed params and converts it to args
  *
  * @access public
  * @param array $params
- * @param mixed $named
- * @param string $separator
  * @static
  */
-	function getArgs($params, $named = true) {
+	function getArgs($pass) {
 		$_this =& Router::getInstance();
-		$passedArgs = $namedArgs = array();
-		$separator = $_this->__argSeparator;
-		$namedArgs = true;
-
-		if (is_array($named)) {
-			if (array_key_exists($params['action'], $named)) {
-				$named = $named[$params['action']];
-			}
-			$namedArgs = true;
-		}
-		if (!empty($params['pass'])) {
-			$passedArgs = $params['pass'];
-			if ($namedArgs === true || $named == true) {
-				$namedArgs = array();
-				$c = count($passedArgs);
-				for ($i = 0; $i <= $c; $i++) {
-					if (isset($passedArgs[$i]) && strpos($passedArgs[$i], $separator) !== false) {
-						list($argKey, $argVal) = explode($separator, $passedArgs[$i]);
-						if ($named === true || (!empty($named) && in_array($argKey, array_keys($named)))) {
-							$passedArgs[$argKey] = $argVal;
-							$namedArgs[$argKey] = $argVal;
-							unset($passedArgs[$i]);
-							unset($params['pass'][$i]);
-						}
-					} elseif ($separator === '/') {
-						$ii = $i + 1;
-						if (isset($passedArgs[$i]) && isset($passedArgs[$ii])) {
-							$argKey = $passedArgs[$i];
-							$argVal = $passedArgs[$ii];
-							if (empty($namedArgs) || (!empty($namedArgs) && in_array($argKey, array_keys($namedArgs)))) {
-								$passedArgs[$argKey] = $argVal;
-								$namedArgs[$argKey] = $argVal;
-								unset($passedArgs[$i], $passedArgs[$ii]);
-								unset($params['pass'][$i], $params['pass'][$ii]);
-							}
-						}
-					}
-				}
+		$args = array();
+		$pass = array_map(
+					array(&$_this, 'stripEscape'),
+					Set::filter(explode('/', $pass), true)
+				);
+		foreach ($pass as $param) {
+			if (strpos($param, $_this->__argSeparator)) {
+				$param = explode($_this->__argSeparator, $param);
+				$args[$param[0]] = $param[1];
+			} else {
+				$args[] = $param;
 			}
 		}
-		return array($passedArgs, $namedArgs);
+		return $args;
 	}
 }
-
 ?>

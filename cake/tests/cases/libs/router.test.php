@@ -686,6 +686,8 @@ class RouterTest extends UnitTestCase {
 		$expected = '/posts/index/published:0/deleted:0';
 		$this->assertEqual($result, $expected);
 
+		Configure::write('Routing.admin', 'admin');
+
 		$this->router->reload();
 		$this->router->setRequestInfo(array(
 			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
@@ -695,6 +697,20 @@ class RouterTest extends UnitTestCase {
 
 		$result = $this->router->url(array('page' => 1, 0 => null, 'sort' => 'controller', 'direction' => 'asc', 'order' => null));
 		$expected = "/admin/controller/index/page:1/sort:controller/direction:asc";
+		$this->assertEqual($result, $expected);
+
+		$this->router->reload();
+		$this->router->setRequestInfo(array(
+			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array('type'=> 'whatever'), 'argSeparator' => ':', 'namedArgs' => array('type'=> 'whatever'), 'webservices' => null)
+		));
+
+		$this->router->connectNamed(array('type'));
+
+		$this->router->parse('/admin/controller/index/type:whatever');
+
+		$result = $this->router->url(array('type'=> 'new'));
+		$expected = "/admin/controller/index/type:new";
 		$this->assertEqual($result, $expected);
 	}
 
@@ -763,7 +779,28 @@ class RouterTest extends UnitTestCase {
 		$this->router->connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$this->router->connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
 		$this->router->parse('/');
+
+		$this->router->reload();
+
+        $this->router->setRequestInfo(array(
+            array ( 'plugin' => NULL, 'controller' => 'images', 'action' => 'index', 'pass' => array ( ), 'prefix' => 'protected', 'admin' => false,  'form' => array ( ), 'url' => array ( 'url' => 'protected/images/index', ), 'bare' => 0, 'webservices' => NULL, ),
+			array ( 'plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/', )
+		));
+
+		$this->router->connect('/protected/:controller/:action/*', array(
+                'controller'    => 'users',
+                'action'        => 'index',
+                'prefix'        => 'protected'
+            )
+        );
+		$this->router->parse('/');
+        $result = $this->router->url(array('controller' => 'images', 'action' => 'add'));
+        $expected = '/protected/images/add';
+        $this->assertEqual($result, $expected);
+
+        //debug($this->router->prefixes());
 	}
+
 }
 
 ?>
