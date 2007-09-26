@@ -128,7 +128,7 @@ class String extends Object {
  * @static
  */
 	function utf8($string) {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 		$_this->__reset();
 
 		$values = array();
@@ -202,7 +202,7 @@ class String extends Object {
  * @static
  */
 	function strpos($haystack, $needle, $offset = 0) {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 
 		$haystack = $_this->utf8($haystack);
 		$needle = $_this->utf8($needle);
@@ -241,7 +241,7 @@ class String extends Object {
  * @static
  */
 	function stripos($haystack, $needle, $offset = 0) {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 
 		$haystack = $_this->strtoupper($haystack);
 		$needle = $_this->strtoupper($needle);
@@ -258,7 +258,7 @@ class String extends Object {
  * @static
  */
 	function strtoupper($string) {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 		$_this->utf8($string);
 		$length = count($_this->__utf8Map);
 		$upperCase = array();
@@ -350,7 +350,7 @@ class String extends Object {
  * @access private
  */
 	function __codepoint ($decimal) {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 
 		if ($decimal < 128) {
 				$return = '0000_007f'; // Basic Latin
@@ -675,7 +675,7 @@ class String extends Object {
  * @access private
  */
 	function __find($char, $type = 'lower'){
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 		$value = false;
 		$found = array();
 		if(!isset($_this->__codeRange[$char])) {
@@ -702,7 +702,7 @@ class String extends Object {
  * @access private
  */
 	function __reset() {
-		$_this = String::getInstance();
+		$_this =& String::getInstance();
 		$_this->__utf8Map = array();
 	}
 }
