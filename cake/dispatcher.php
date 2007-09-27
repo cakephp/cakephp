@@ -141,7 +141,7 @@ class Dispatcher extends Object {
 				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
 				return $this->cakeError('missingController', array(
 					array(
-						'className' => $controller.'Controller',
+						'className' => Inflector::camelize($this->params['controller']) . 'Controller',
 						'webroot' => $this->webroot,
 						'url' => $url,
 						'base' => $this->base
@@ -471,57 +471,64 @@ class Dispatcher extends Object {
 /**
  * Get controller to use, either plugin controller or application controller
  *
- * @param array $params Array on where to re-set 'controller', 'action', and 'pass' indexes
+ * @param array $params Array
  * @return mixed name of controller if not loaded, or object if loaded
- * @access protected
+ * @access private
  */
-	function __getController($params = null, $continue = true) {
-
-		if(!$params) {
+	function __getController($params = null) {
+		if (!is_array($params)) {
 			$params = $this->params;
 		}
 
-		$pluginPath = $controller = $ctrlClass = null;
-
-		if (!empty($params['controller'])) {
-			$controller = Inflector::camelize($params['controller']);
-			$ctrlClass = $controller.'Controller';
+		$controller = false;
+		if (!$ctrlClass = $this->__loadController($params)) {
+			$params = $this->_restructureParams($params);
+			if (!$ctrlClass = $this->__loadController($params)) {
+				$params = am($params, array('controller'=> $params['plugin'], 'action'=> $params['controller']));
+				if (!$ctrlClass = $this->__loadController($params)) {
+					return false;
+				}
+			}
 		}
+
+		if (class_exists($ctrlClass)) {
+			$this->params = $params;
+			$controller =& new $ctrlClass();
+		}
+
+		return $controller;
+	}
+/**
+ * load controller and return controller class
+ *
+ * @param array $params Array
+ * @return mixed name of controller class name
+ * @access private
+ */
+	function __loadController($params) {
+		$pluginName = $pluginPath = $controller = $ctrlClass = null;
 
 		if (!empty($params['plugin'])) {
 			$this->plugin = $params['plugin'];
-			$pluginPath = Inflector::camelize($this->plugin).'.';
+			$pluginName = Inflector::camelize($params['plugin']);
+			$pluginPath = $pluginName . '.';
 		}
 
-		if ($pluginPath . $controller && loadController($pluginPath . $controller)) {
-			if(!class_exists(low($ctrlClass)) && $this->plugin) {
-				$ctrlClass = Inflector::camelize($params['plugin']) . 'Controller';
-				$pass = $params['action'];
+		if (!empty($params['controller'])) {
+			$controller = Inflector::camelize($params['controller']);
+			$ctrlClass = $controller . 'Controller';
+		} elseif ($this->plugin) {
+			$this->params['controller'] = $this->plugin;
+			$controller = $pluginName;
+			$ctrlClass = $controller . 'Controller';
+		}
 
-				$params = am($params, array(
-					'plugin' => $params['plugin'],
-					'controller' => $params['plugin'],
-					'action' => $params['controller'],
-				));
-				array_unshift($params['pass'], $pass);
+		if ($pluginPath . $controller) {
+			if (loadController($pluginPath . $controller)) {
+				return $ctrlClass;
 			}
-			if(class_exists(low($ctrlClass))) {
-				$controller =& new $ctrlClass();
-			}
-		} elseif ($continue == true){
-			$params = $this->_restructureParams($params);
-			$controller = $this->__getController($params, false);
-			return $controller;
 		}
-
-		if (!class_exists(low($ctrlClass))) {
-			$controller = Inflector::camelize($this->params['controller']);
-			$this->plugin = null;
-			return $controller;
-		}
-
-		$this->params = $params;
-		return $controller;
+		return false;
 	}
 /**
  * Returns the REQUEST_URI from the server environment, or, failing that,

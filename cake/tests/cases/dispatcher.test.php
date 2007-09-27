@@ -509,7 +509,6 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertIdentical($expected, $controller->base);
 	}
 
-
 	function testAutomaticPluginDispatch() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
@@ -565,7 +564,7 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'add';
 		$this->assertIdentical($controller->action, $expected);
 
-		$expected = array('param:value', 'param2:value2');
+		$expected = array('param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->params['pass'], $expected);
 	}
 
