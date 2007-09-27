@@ -170,7 +170,7 @@ class ProjectTask extends Shell {
 				}
 
 				if (!$Folder->chmod($path . DS . 'tmp', 0777)) {
-					$this->err('Could path set permissions on '. $project . DS .'tmp' . DS . '*');
+					$this->err('Could not set permissions on '. $path . DS .'tmp');
 					$this->out('You must manually check that these directories can be wrote to by the server');
 				}
 			} else {
