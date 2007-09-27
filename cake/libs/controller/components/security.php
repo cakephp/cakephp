@@ -524,7 +524,7 @@ class SecurityComponent extends Object {
 					$field[$key] = array_merge($merge, $field[$key]);
 				}
 			}
-			sort($field);
+			ksort($field);
 			$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
 
 			if ($form !== $check) {

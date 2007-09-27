@@ -257,7 +257,7 @@ class FormHelper extends AppHelper {
 	}
 	function secure($fields) {
 		$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
-		sort($fields);
+		ksort($fields);
 		$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
 		$append .= '</p>';
 		return $append;
