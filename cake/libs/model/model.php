@@ -847,6 +847,7 @@ class Model extends Overloadable {
  */
 	function loadInfo($clear = false) {
 		$info = $this->schema($clear);
+		$fields = array();
 		foreach($info->value as $field => $value) {
 			$fields[] = am(array('name'=> $field), $value);
 		}
