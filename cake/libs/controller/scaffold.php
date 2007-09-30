@@ -301,9 +301,17 @@ class Scaffold extends Object {
 					$this->controller->data = $this->ScaffoldModel->create();
 				}
 			}
-			$associations = am($this->ScaffoldModel->belongsTo, $this->ScaffoldModel->hasAndBelongsToMany);
-			foreach ($associations as $assocName => $assocData) {
-				$this->controller->set(Inflector::pluralize(Inflector::variable($assocName)), $this->ScaffoldModel->{$assocName}->generateList());
+
+			foreach ($this->ScaffoldModel->belongsTo as $assocName => $assocData) {
+				$varName = $assocName;
+				if($this->ScaffoldModel->name == $assocData['className']) {
+					$varName = $assocData['className'];
+				}
+				$this->controller->set(Inflector::pluralize(Inflector::variable($varName)), $this->ScaffoldModel->{$assocName}->generateList());
+			}
+
+			foreach($this->ScaffoldModel->hasAndBelongsToMany as $assocName => $assocData) {
+				$this->controller->set(Inflector::pluralize(Inflector::variable($varName)), $this->ScaffoldModel->{$assocName}->generateList());
 			}
 
 			return $this->__scaffoldForm($formAction);
@@ -483,16 +491,16 @@ class Scaffold extends Object {
 		foreach ($paths->viewPaths as $path) {
 			if (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext)) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . $this->ext;
 			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
 			} elseif (file_exists($path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
 				return $path . $this->viewPath . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
-			} elseif (file_exists($path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
-				return $path . $this->viewPath . DS . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp')) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.ctp';
+			} elseif (file_exists($path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml')) {
+				return $path . 'scaffolds' . DS . $this->subDir . $type . $scaffoldAction . '.thtml';
 			}
 		}
 		if ($action === 'add') {
