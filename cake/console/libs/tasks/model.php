@@ -69,12 +69,7 @@ class ModelTask extends Shell {
 		$primaryKey = 'id';
 		$validate = array();
 		$associations = array('belongsTo'=> array(), 'hasOne'=> array(), 'hasMany', 'hasAndBelongsToMany'=> array());
-		$usingDefault = $this->in('Will your model be using a database connection setting other than the default?');
-		$useDbConfig = 'default';
-
-		if (low($usingDefault) == 'y' || low($usingDefault) == 'yes') {
-			$useDbConfig = $this->in('Please provide the name of the connection you wish to use.');
-		}
+		$useDbConfig = $this->in('Database Connection:', null, 'default');
 
 		$currentModelName = $this->getName($useDbConfig);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
