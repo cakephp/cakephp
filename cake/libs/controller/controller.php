@@ -966,6 +966,8 @@ class Controller extends Object {
 						if (isset($this->data[$modelClass][$field . $var])) {
 							if (!empty($this->data[$modelClass][$field . $var])) {
 								$time[$var] = $this->data[$modelClass][$field . $var];
+							} elseif ($this->data[$modelClass][$field . $var] === '0') {
+								$time[$var] = '00';
 							}
 							$useNewDate = true;
 							unset($this->data[$modelClass][$field . $var]);
@@ -1107,7 +1109,7 @@ class Controller extends Object {
 		} else {
 			$count = $object->findCount($conditions, $recursive);
 		}
-		$pageCount = ceil($count / $limit);
+		$pageCount = intval(ceil($count / $limit));
 
 		if ($page == 'last') {
 			$options['page'] = $page = $pageCount;
