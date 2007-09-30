@@ -33,14 +33,7 @@
  * Database name for cake sessions.
  *
  */
-	if (!defined('CAKE_SESSION_TABLE')) {
-		 define('CAKE_SESSION_TABLE', 'cake_sessions');
-	}
-
-	if (CAKE_SESSION_SAVE === 'database') {
-		uses('model' . DS . 'connection_manager');
-	}
-	uses('set');
+uses('set');
 /**
  * Session class for Cake.
  *
@@ -122,6 +115,14 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
+		if (!defined('CAKE_SESSION_TABLE')) {
+			 define('CAKE_SESSION_TABLE', 'cake_sessions');
+		}
+
+		if (CAKE_SESSION_SAVE === 'database' && !class_exists('ConnectionManager')) {
+			uses('model' . DS . 'connection_manager');
+		}
+
 		if (env('HTTP_USER_AGENT') != null) {
 			$this->_userAgent = md5(env('HTTP_USER_AGENT') . CAKE_SESSION_STRING);
 		} else {

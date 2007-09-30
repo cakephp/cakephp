@@ -36,7 +36,71 @@ uses('cache', 'cache' . DS . 'xcache');
 class XcacheEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipif (true, 'XcacheEngineTest not implemented');
+		$skip = true;
+		if($result = Cache::engine('Xcache')) {
+			$skip = false;
+		}
+		$this->skipif($skip, 'XcacheEngineTest not implemented');
+	}
+
+	function setUp() {
+		Cache::engine('Xcache');
+	}
+
+	function testSettings() {
+		$settings = Cache::settings();
+		$expecting = array('duration'=> 3600,
+						'probability' => 100,
+						'PHP_AUTH_USER' => 'cake',
+						'PHP_AUTH_PW' => '',
+						'name' => 'Xcache'
+						);
+		$this->assertEqual($settings, $expecting);
+	}
+
+	function testReadAndWriteCache() {
+		$result = Cache::read('test');
+		$expecting = '';
+		$this->assertEqual($result, $expecting);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('test', $data, 1);
+		$this->assertTrue($result);
+
+		$result = Cache::read('test');
+		$expecting = $data;
+		$this->assertEqual($result, $expecting);
+	}
+
+	function testExpiry() {
+		sleep(2);
+		$result = Cache::read('test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, 1);
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, "+1 second");
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+	}
+
+	function testDeleteCache() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::delete('delete_test');
+		$this->assertTrue($result);
 	}
 }
 ?>

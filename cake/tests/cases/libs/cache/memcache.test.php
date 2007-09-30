@@ -36,7 +36,78 @@ uses('cache', 'cache' . DS . 'memcache');
 class MemcacheEngineTest extends UnitTestCase {
 
 	function skip() {
-		$this->skipif (true, 'MemcacheEngineTest not implemented');
+		$skip = true;
+		if($result = Cache::engine('Memcache')) {
+			$skip = false;
+		}
+		$this->skipif ($skip, 'Memcache not available');
+	}
+
+	function setUp() {
+		Cache::engine('Memcache');
+	}
+
+	function testSettings() {
+		$settings = Cache::settings();
+		$expecting = array('duration'=> 3600,
+						'probability' => 100,
+						'servers' => array('127.0.0.1'),
+						'compress' => false,
+						'name' => 'Memcache'
+						);
+		$this->assertEqual($settings, $expecting);
+	}
+
+	function testConnect() {
+		$Cache =& Cache::getInstance();
+		$result = $Cache->_Engine->connect('127.0.0.1');
+		$this->assertTrue($result);
+	}
+
+
+	function testReadAndWriteCache() {
+		$result = Cache::read('test');
+		$expecting = '';
+		$this->assertEqual($result, $expecting);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('test', $data, 1);
+		$this->assertTrue($result);
+
+		$result = Cache::read('test');
+		$expecting = $data;
+		$this->assertEqual($result, $expecting);
+	}
+
+	function testExpiry() {
+		sleep(2);
+		$result = Cache::read('test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, 1);
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, "+1 second");
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+	}
+
+	function testDeleteCache() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::delete('delete_test');
+		$this->assertTrue($result);
 	}
 }
 ?>

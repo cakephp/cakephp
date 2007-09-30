@@ -32,15 +32,6 @@ if (!class_exists('object')) {
 	uses('object');
 }
 /**
- * Set defines if not set in core.php
- */
-if (!defined('CACHE_DEFAULT_DURATION')) {
-	define('CACHE_DEFAULT_DURATION', 3600);
-}
-if (!defined('CACHE_GC_PROBABILITY')) {
-	define('CACHE_GC_PROBABILITY', 100);
-}
-/**
  * Caching for CakePHP.
  *
  * @package		cake
@@ -73,58 +64,57 @@ class Cache extends Object {
 		return $instance[0];
 	}
 /**
- * Tries to find and include a file for a cache engine
+ * Tries to find and include a file for a cache engine and returns object instance
  *
  * @param $name	Name of the engine (without 'Engine')
- * @return boolean
- * @access protected
+ * @return mixed $engine object or null
+ * @access private
  */
-	function _includeEngine($name) {
-		if (class_exists($name.'Engine')) {
-			return true;
+	function __loadEngine($name) {
+		if (!class_exists($name . 'Engine')) {
+			$fileName = LIBS . DS . 'cache' . DS . strtolower($name) . '.php';
+			if (!require($fileName)) {
+				return false;
+			}
 		}
-		$fileName = strtolower($name);
-		if (vendor('cache_engines' . DS . $fileName)) {
-			return true;
-		}
-		$fileName = dirname(__FILE__) . DS . 'cache' . DS . $fileName . '.php';
-		if (is_readable($fileName)) {
-			require $fileName;
-			return true;
-		}
-		return false;
+		return true;
 	}
 /**
  * Set the cache engine to use
  *
  * @param string $name Name of the engine (without 'Engine')
- * @param array $parmas Optional associative array of parameters passed to the engine
+ * @param array $settings Optional associative array of settings passed to the engine
  * @return boolean True on success, false on failure
  * @access public
  */
-	function engine($name = 'File', $params = array()) {
-		if (defined('DISABLE_CACHE')) {
+	function engine($name = 'File', $settings = array()) {
+		if (Configure::read('Cache.disable')) {
 			return false;
 		}
+		$cacheClass = $name . 'Engine';
 		$_this =& Cache::getInstance();
-		$cacheClass = $name.'Engine';
-		if (!Cache::_includeEngine($name) || !class_exists($cacheClass)) {
-			return false;
+		if (!isset($_this->_Engine)) {
+			if ($_this->__loadEngine($name) === false) {
+				return false;
+			}
 		}
 
-		$_this->_Engine =& new $cacheClass();
+		if (!isset($_this->_Engine) || (isset($_this->_Engine) && $_this->_Engine->name !== $name)) {
+			$_this->_Engine =& new $cacheClass($name);
+		}
 
-		if ($_this->_Engine->init($params)) {
-			if (time() % CACHE_GC_PROBABILITY == 0) {
+		if ($_this->_Engine->init($settings)) {
+			if (time() % $_this->_Engine->settings['probability'] == 0) {
 				$_this->_Engine->gc();
 			}
 			return true;
 		}
+
 		$_this->_Engine = null;
 		return false;
 	}
 /**
- * Write a value in the cache
+ * Write data for key into cache
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached - anything except a resource
@@ -132,10 +122,12 @@ class Cache extends Object {
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, $value, $duration = CACHE_DEFAULT_DURATION) {
-		if (defined('DISABLE_CACHE')) {
+	function write($key, $value, $duration = null) {
+		$_this =& Cache::getInstance();
+		if (!$_this->isInitialized()) {
 			return false;
 		}
+
 		$key = strval($key);
 		if (empty($key)) {
 			return false;
@@ -143,77 +135,64 @@ class Cache extends Object {
 		if (is_resource($value)) {
 			return false;
 		}
+		if ($duration == null) {
+			$duration = $_this->_Engine->settings['duration'];
+		}
 		$duration = ife(is_string($duration), strtotime($duration) - time(), intval($duration));
 		if ($duration < 1) {
-			return false;
-		}
-
-		$_this =& Cache::getInstance();
-		if (!isset($_this->_Engine)) {
 			return false;
 		}
 		return $_this->_Engine->write($key, $value, $duration);
 	}
 /**
- * Read a value from the cache
+ * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  * @access public
  */
 	function read($key) {
-		if (defined('DISABLE_CACHE')) {
+		$_this =& Cache::getInstance();
+		if (!$_this->isInitialized()) {
 			return false;
 		}
 		$key = strval($key);
 		if (empty($key)) {
 			return false;
 		}
-
-		$_this =& Cache::getInstance();
-		if (!isset($_this->_Engine)) {
-			return false;
-		}
 		return $_this->_Engine->read($key);
 	}
 /**
- * Delete a value from the cache
+ * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
  */
 	function delete($key) {
-		if (defined('DISABLE_CACHE')) {
+		$_this =& Cache::getInstance();
+		if (!$_this->isInitialized()) {
 			return false;
 		}
 		$key = strval($key);
 		if (empty($key)) {
 			return false;
 		}
-
-		$_this =& Cache::getInstance();
-		if (!isset($_this->_Engine)) {
-			return false;
-		}
 		return $_this->_Engine->delete($key);
 	}
 /**
- * Delete all values from the cache
+ * Delete all keys from the cache
  *
+ * @param boolean $check if true will check expiration, otherwise delete all
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
-	function clear() {
-		if (defined('DISABLE_CACHE')) {
-			return false;
-		}
-
+	function clear($check = false) {
 		$_this =& Cache::getInstance();
-		if (!isset($_this->_Engine)) {
+		if (!$_this->isInitialized()) {
 			return false;
 		}
-		return $_this->_Engine->clear();
+		return $_this->_Engine->clear($check);
 	}
 /**
  * Check if Cache has initialized a working storage engine
@@ -222,7 +201,7 @@ class Cache extends Object {
  * @access public
  */
 	function isInitialized() {
-		if (defined('DISABLE_CACHE')) {
+		if (Configure::read('Cache.disable')) {
 			return false;
 		}
 		$_this =& Cache::getInstance();
@@ -249,6 +228,29 @@ class Cache extends Object {
  * @subpackage	cake.cake.libs
  */
 class CacheEngine extends Object {
+
+/**
+ * Name of engine being used
+ *
+ * @var int
+ * @access public
+ */
+	var $name;
+/**
+ * settings of current engine instance
+ *
+ * @var int
+ * @access public
+ */
+	var $settings;
+/**
+ * Constructor
+ *
+ * @access private
+ */
+	function __construct($name = null) {
+		$this->name = $name;
+	}
 /**
  * Set up the cache engine
  *
@@ -258,7 +260,8 @@ class CacheEngine extends Object {
  * @return boolean True if the engine has been succesfully initialized, false if not
  * @access public
  */
-	function init($params) {
+	function init($settings = array()) {
+		$this->settings = am(array('duration'=> 3600, 'probability'=> 100), $settings);
 	}
 /**
  * Garbage collection
@@ -270,7 +273,7 @@ class CacheEngine extends Object {
 	function gc() {
 	}
 /**
- * Write a value in the cache
+ * Write value for a key into cache
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
@@ -278,11 +281,11 @@ class CacheEngine extends Object {
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
+	function write($key, &$value, $duration) {
 		trigger_error(sprintf(__('Method write() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
- * Read a value from the cache
+ * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
@@ -292,7 +295,7 @@ class CacheEngine extends Object {
 		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
- * Delete a value from the cache
+ * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
@@ -301,21 +304,22 @@ class CacheEngine extends Object {
 	function delete($key) {
 	}
 /**
- * Delete all values from the cache
+ * Delete all keys from the cache
  *
+ * @param boolean $check if true will check expiration, otherwise delete all
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
-	function clear() {
+	function clear($check) {
 	}
 /**
- * Delete all values from the cache
+ * Cache Engine settings
  *
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return array settings
  * @access public
  */
 	function settings() {
-		trigger_error(sprintf(__('Method settings() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		return am($this->settings, array('name'=> $this->name));
 	}
 }
 ?>

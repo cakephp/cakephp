@@ -28,7 +28,6 @@
 /**
  * Database Storage engine for cache
  *
- * @todo Not Implemented
  * @package		cake
  * @subpackage	cake.cake.libs.cache
  */
@@ -39,43 +38,35 @@ class ModelEngine extends CacheEngine {
  * @var object
  * @access private
  */
-	var $_Model = null;
+	var $__Model = null;
 /**
- * Fields that holds data.
+ * settings
+ * 		className = name of the model to use, default => Cache
+ * 		fields = database fields that hold data and ttl, default => data, expires
  *
- * @var string
- * @access private
+ * @var array
+ * @access public
  */
-	var $_dataField = '';
+	var $settings = array();
 /**
- * Field that holds expiration information.
- *
- * @var string
- * @access private
- */
-
-	var $_expiryField = '';
-/**
- * Set up the cache engine
+ * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
+ * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @todo does not work will return false
- * @param array $params Associative array of parameters for the engine
+ * @param array $setting array of setting for the engine
+ * @return boolean True if the engine has been successfully initialized, false if not
  * @return boolean True if the engine has been succesfully initialized, false if not
  */
-	function init($params) {
-		return false;
-
-		$modelName = 'DbCache';
-		$dataField = 'value';
-		$expiryField = 'expires';
-		extract($params);
-
-		if (!class_exists($modelName) && !loadModel($modelName)) {
-			return false;
+	function init($settings) {
+		parent::init($settings);
+		$defaults = array('className'=> 'Cache', 'fields'=> array('data', 'expires'));
+		$this->settings = am($this->settings, $defaults, $settings);
+		if (!class_exists($this->settings['className']) && !loadModel($this->settings['className'])) {
+			$this->__Model = new $modelName();
+		} else {
+			$this->__Model = new Model(array('name' => $this->settings['className']));
 		}
-		$this->_Model = new $modelName;
 	}
 /**
  * Garbage collection
@@ -85,78 +76,72 @@ class ModelEngine extends CacheEngine {
  * @access public
  */
 	function gc() {
-		return $this->_Model->deleteAll(array($this->_expiryField => '<= '.time()));
+		return $this->__Model->deleteAll(array($this->__fields[1] => '<= '.time()));
 	}
 /**
- * Write a value in the cache
+ * Write data for key into cache
  *
  * @param string $key Identifier for the data
- * @param mixed $value Data to be cached
+ * @param mixed $data Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
-		$serialized = serialize($value);
+	function write($key, &$data, $duration) {
+		if (isset($this->settings['serialize'])) {
+			$data = serialize($data);
+		}
 
-		if (!$serialized) {
+		if (!$data) {
 			return false;
 		}
-		$data = array($this->_Model->name => array(
-							$this->_dataField => $serialized,
-							$this->_expiryField => time() + $duration));
 
-		$oldId = $this->_Model->id;
-		$this->_Model->id = $key;
-		$res = $this->_Model->save($data);
-		$this->_Model->id = $oldId;
+		$cache = array($this->__Model->name => array(
+							$this->__fields[0] => $data,
+							$this->__fields[1] => time() + $duration));
+
+		$oldId = $this->__Model->id;
+		$this->__Model->id = $key;
+		$res = $this->__Model->save($cache);
+		$this->__Model->id = $oldId;
 		return $res;
 	}
 /**
- * Read a value from the cache
+ * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  * @access public
  */
 	function read($key) {
-		$val = $this->_Model->field($this->_expiryField, array($this->_Model->primaryKey => $key, $this->_expiryField => '> '.time()));
-		return ife($val, unserialize($val), false);
+		$data = $this->__Model->field($this->__fields[0], array($this->__Model->primaryKey => $key, $this->__fields[1] => '> '.time()));
+		if (!$data) {
+			return false;
+		}
+		if (isset($this->settings['serialize'])) {
+		 	return unserialize($val);
+		}
+		return $data;
 	}
 /**
- * Delete a value from the cache
+ * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
  */
 	function delete($key) {
-		return $this->_Model->del($key);
+		return $this->__Model->del($key);
 	}
 /**
- * Delete all values from the cache
+ * Delete all keys from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {
-		return $this->_Model->deleteAll(null);
+		return $this->__Model->deleteAll(null);
 	}
-/**
- * Return the settings for this cache engine
- *
- * @return array list of settings for this engine
- * @access public
- */
-	function settings() {
-		$class = null;
-		if (is_a($this->_Model, 'Model')) {
-			$class = get_class($this->_Model);
-		}
-		return array('class' => get_class($this),
-						'modelName' => $class,
-						'dataField' => $this->_dataField,
-						'expiryField' => $this->_expiryField);
-	}
+
 }
 ?>

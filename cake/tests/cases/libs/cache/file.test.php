@@ -39,6 +39,32 @@ class FileEngineTest extends UnitTestCase {
 		Cache::engine();
 	}
 
+	function testSettings() {
+		Cache::engine('File', array('path' => TMP . 'tests'));
+		$settings = Cache::settings();
+		$expecting = array('duration'=> 3600,
+						'probability' => 100,
+						'path'=> TMP . 'tests',
+						'prefix'=> 'cake_',
+						'lock' => false,
+						'serialize'=> true,
+						'name' => 'File'
+						);
+		$this->assertEqual($settings, $expecting);
+	}
+
+	function testCacheName() {
+		$cache =& Cache::getInstance();
+		$result = $cache->_Engine->fullpath('models' . DS . 'default_posts');
+		$expecting = CACHE . 'models' . DS .'cake_default_posts';
+		$this->assertEqual($result, $expecting);
+
+		$result = $cache->_Engine->fullpath('default_posts');
+		$expecting = CACHE . 'cake_default_posts';
+		$this->assertEqual($result, $expecting);
+
+	}
+
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
 		$expecting = '';
@@ -84,11 +110,17 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertTrue($result);
 	}
 
-	function testCacheName() {
-		$cache =& Cache::getInstance();
-		$result = $cache->_Engine->_getFilename('models' . DS . 'default_' . 'posts');
-		$expecting = CACHE . 'models' . DS .'cake_default_posts';
-		$this->assertEqual($result, $expecting);
+	function testSerialize() {
+		Cache::engine('File', array('serialize' => true));
+		$data = 'this is a test of the emergency broadcasting system';
+		$write = Cache::write('seriailze_test', $data, 1);
+
+		Cache::engine('File', array('serialize' => false));
+		$read = Cache::read('seriailze_test');
+
+		$result = Cache::delete('seriailze_test');
+
+		$this->assertNotIdentical($write, $read);
 	}
 
 }

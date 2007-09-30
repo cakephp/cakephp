@@ -33,19 +33,22 @@
  */
 class APCEngine extends CacheEngine {
 /**
- * Set up the cache engine
+ * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
+ * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @param array $params	Associative array of parameters for the engine
- * @return boolean	True if the engine has been succesfully initialized, false if not
+ * @see var $__defaults
+ * @param array $setting array of setting for the engine
+ * @return boolean True if the engine has been successfully initialized, false if not
  * @access public
  */
-	function init(&$params) {
+	function init($settings = array()) {
+		parent::init($settings);
 		return function_exists('apc_cache_info');
 	}
 /**
- * Write a value in the cache
+ * Write data for key into cache
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
@@ -53,11 +56,11 @@ class APCEngine extends CacheEngine {
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
+	function write($key, &$value, $duration) {
 		return apc_store($key, $value, $duration);
 	}
 /**
- * Read a value from the cache
+ * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
@@ -67,7 +70,7 @@ class APCEngine extends CacheEngine {
 		return apc_fetch($key);
 	}
 /**
- * Delete a value from the cache
+ * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
@@ -77,22 +80,13 @@ class APCEngine extends CacheEngine {
 		return apc_delete($key);
 	}
 /**
- * Delete all values from the cache
+ * Delete all keys from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {
 		return apc_clear_cache('user');
-	}
-/**
- * Return the settings for this cache engine
- *
- * @return array list of settings for this engine
- * @access public
- */
-	function settings() {
-		return array('class' => get_class($this));
 	}
 }
 ?>

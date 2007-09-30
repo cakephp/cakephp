@@ -1122,7 +1122,7 @@
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 
-		if (defined('DISABLE_CACHE')) {
+		if (Configure::read('Cache.disable')) {
 			return null;
 		}
 		$now = time();

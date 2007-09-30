@@ -523,18 +523,6 @@ class Configure extends Object {
  */
 	function __loadBootstrap($boot) {
 		$_this =& Configure::getInstance();
-		$baseUrl = false;
-		if (defined('BASE_URL')) {
-			$baseUrl = BASE_URL;
-		}
-		$_this->write('App', array('base' => false, 'baseUrl' => $baseUrl, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
-
-		if (defined('CAKE_ADMIN')) {
-			$_this->write('Routing.admin', CAKE_ADMIN);
-		}
-		if (defined('WEBSERVICES')) {
-			$_this->write('Routing.webservices', WEBSERVICES);
-		}
 
 		$modelPaths = null;
 		$viewPaths = null;
@@ -543,11 +531,16 @@ class Configure extends Object {
 		$componentPaths = null;
 		$behaviorPaths = null;
 		$pluginPaths = null;
+
 		if ($boot) {
+			if (!require_once(APP_PATH . 'config' . DS . 'core.php')) {
+				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+			}
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 		}
+
 		$_this->__buildModelPaths($modelPaths);
 		$_this->__buildViewPaths($viewPaths);
 		$_this->__buildControllerPaths($controllerPaths);
@@ -555,6 +548,25 @@ class Configure extends Object {
 		$_this->__buildComponentPaths($componentPaths);
 		$_this->__buildBehaviorPaths($behaviorPaths);
 		$_this->__buildPluginPaths($pluginPaths);
+
+		$baseUrl = false;
+		if (defined('BASE_URL')) {
+			$baseUrl = BASE_URL;
+		}
+		$_this->write('App', array('base' => false, 'baseUrl' => $baseUrl, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
+
+		if (defined('DEBUG')) {
+			trigger_error('Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');', E_USER_WARNING);
+			$_this->write('debug', DEBUG);
+		}
+		if (defined('CAKE_ADMIN')) {
+			trigger_error('Deprecated: Use Configure::write(\'Routing.admin\', ' . CAKE_ADMIN . ');', E_USER_WARNING);
+			$_this->write('Routing.admin', CAKE_ADMIN);
+		}
+		if (defined('WEBSERVICES')) {
+			trigger_error('Deprecated: Use Router::parseExtensions();', E_USER_WARNING);
+			$_this->write('Routing.webservices', WEBSERVICES);
+		}
 	}
 }
 ?>

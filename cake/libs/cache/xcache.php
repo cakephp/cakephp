@@ -34,35 +34,32 @@
  */
 class XcacheEngine extends CacheEngine {
 /**
- * Admin username (xcache.admin.user)
+ * settings
+ * 		PHP_AUTH_USER = xcache.admin.user, default cake
+ * 		PHP_AUTH_PW = xcache.admin.password, default cake
  *
- * @var string
- * @access private
- */
-	var $_php_auth_user = '';
-/**
- * Plaintext password for basic auth (xcache.admin.pass)
- *
- * @var string
- * @access private
- */
-	var $_php_auth_pw = '';
-/**
- * Set up the cache engine
- *
- * Called automatically by the cache frontend
- *
- * @param array $params	Associative array of parameters for the engine
- * @return boolean	True if the engine has been succesfully initialized, false if not
+ * @var array
  * @access public
  */
-	function init($params) {
-		$this->_php_auth_user = $params['user'];
-		$this->_php_auth_pw = $params['password'];
+	var $settings = array();
+/**
+ * Initialize the Cache Engine
+ *
+ * Called automatically by the cache frontend
+ * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
+ *
+ * @param array $setting array of setting for the engine
+ * @return boolean True if the engine has been successfully initialized, false if not
+ * @access public
+ */
+	function init($settings) {
+		parent::init($settings);
+		$defaults = array('PHP_AUTH_USER' => 'cake', 'PHP_AUTH_PW' => 'cake');
+		$this->settings = am($this->settings, $defaults, $settings);
 		return function_exists('xcache_info');
 	}
 /**
- * Write a value in the cache
+ * Write data for key into cache
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
@@ -70,11 +67,11 @@ class XcacheEngine extends CacheEngine {
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
-	function write($key, &$value, $duration = CACHE_DEFAULT_DURATION) {
+	function write($key, &$value, $duration) {
 		return xcache_set($key, $value, $duration);
 	}
 /**
- * Read a value from the cache
+ * Read a key from the cache
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
@@ -87,7 +84,7 @@ class XcacheEngine extends CacheEngine {
 		return false;
 	}
 /**
- * Delete a value from the cache
+ * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
@@ -97,46 +94,36 @@ class XcacheEngine extends CacheEngine {
 		return xcache_unset($key);
 	}
 /**
- * Delete all values from the cache
+ * Delete all keys from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {
 		$result = true;
-		$this->_phpAuth();
-
+		$this->__auth();
 		for ($i = 0, $max = xcache_count(XC_TYPE_VAR); $i < $max; $i++) {
 			if (!xcache_clear_cache(XC_TYPE_VAR, $i)) {
 				$result = false;
 				break;
 			}
 		}
-		$this->_phpAuth(true);
+		$this->__auth(true);
 		return $result;
 	}
 /**
- * Return the settings for this cache engine
- *
- * @return array list of settings for this engine
- * @access public
- */
-	function settings() {
-		return array('class' => get_class($this));
-	}
-/**
+ * Populates and reverses $_SERVER authentication values
  * Makes necessary changes (and reverting them back) in $_SERVER
  *
- * This has to be done because xcache_clear_cache() needs pass Basic Auth
+ * This has to be done because xcache_clear_cache() needs to pass Basic Http Auth
  * (see xcache.admin configuration settings)
  *
  * @param boolean	Revert changes
- * @access private
+ * @access protected
  */
-	function _phpAuth($reverse = false) {
+	function __auth($reverse = false) {
 		static $backup = array();
 		$keys = array('PHP_AUTH_USER', 'PHP_AUTH_PW');
-
 		foreach ($keys as $key) {
 			if ($reverse) {
 				if (isset($backup[$key])) {
@@ -150,8 +137,8 @@ class XcacheEngine extends CacheEngine {
 				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
-				$varName = '_' . low($key);
-				$_SERVER[$key] = $this->{$varName};
+				$varName = '__' . $key;
+				$_SERVER[$key] = $this->settings[$varName];
 			}
 		}
 	}

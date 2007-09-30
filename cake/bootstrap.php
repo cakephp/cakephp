@@ -1,4 +1,4 @@
-<?php
+ <?php
 /* SVN FILE: $Id$ */
 /**
  * Basic Cake functionality.
@@ -29,6 +29,9 @@
 if (!defined('PHP5')) {
 	define ('PHP5', (phpversion() >= 5));
 }
+if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
+	define('SERVER_IIS', true);
+}
 /**
  * Configuration, directory layout and standard libraries
  */
@@ -40,7 +43,7 @@ if (!defined('PHP5')) {
 		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
 	}
-	require APP_PATH . 'config' . DS . 'core.php';
+
 	require LIBS . 'cache.php';
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
@@ -48,11 +51,10 @@ if (!defined('PHP5')) {
 
 	if (isset($cakeCache)) {
 		$cache = 'File';
-		$settings = array();
-
 		if (isset($cakeCache[0])) {
 			$cache = $cakeCache[0];
 		}
+		$settings = array();
 		if (isset($cakeCache[1])) {
 			$settings = $cakeCache[1];
 		}
@@ -63,16 +65,6 @@ if (!defined('PHP5')) {
 
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');
-
-	if (defined('DEBUG')) {
-		Configure::write('debug', DEBUG);
-	}
-/**
- * Check for IIS Server
- */
-	if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
-		define('SERVER_IIS', true);
-	}
 
 	$url = null;
 	require CAKE . 'dispatcher.php';

@@ -38,5 +38,50 @@ class ModelEngineTest extends UnitTestCase {
 	function skip() {
 		$this->skipif (true, 'ModelEngineTest not implemented');
 	}
+
+	function testReadAndWriteCache() {
+		$result = Cache::read('test');
+		$expecting = '';
+		$this->assertEqual($result, $expecting);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('test', $data, 1);
+		$this->assertTrue($result);
+
+		$result = Cache::read('test');
+		$expecting = $data;
+		$this->assertEqual($result, $expecting);
+	}
+
+	function testExpiry() {
+		sleep(2);
+		$result = Cache::read('test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, 1);
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('other_test', $data, "+1 second");
+		$this->assertTrue($result);
+
+		sleep(2);
+		$result = Cache::read('other_test');
+		$this->assertFalse($result);
+	}
+
+	function testDeleteCache() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$result = Cache::write('delete_test', $data);
+		$this->assertTrue($result);
+
+		$result = Cache::delete('delete_test');
+		$this->assertTrue($result);
+	}
 }
 ?>
