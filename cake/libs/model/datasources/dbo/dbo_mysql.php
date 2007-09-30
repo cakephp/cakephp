@@ -223,7 +223,7 @@ class DboMysql extends DboSource {
 			case 'integer' :
 			case 'float' :
 			case null :
-				if (is_numeric($data)) {
+				if (is_numeric($data) && strpos($data, ',') === false) {
 					break;
 				}
 			default:
@@ -517,13 +517,8 @@ class DboMysql extends DboSource {
 					}
 
 				}
-				if (empty($index) && empty($primary)) {
-					$primary = 'id';
-					$col = array('type'=>'integer', 'key' => 'primary');
-					array_unshift($cols, $this->buildColumn($col));
-				}
 				if(empty($index) && !empty($primary)) {
-					$col = array('PRIMARY'=> array('column'=> $primary, 'unique' => 1));
+					$col = array('PRIMARY' => array('column'=> $primary, 'unique' => 1));
 					$index[] = $this->buildIndex($col);
 				}
 				$out .= "\t" . join(",\n\t", $cols) . ",\n\t". join(",\n\t", $index) . "\n);\n\n";
@@ -566,7 +561,9 @@ class DboMysql extends DboSource {
 						break;
 						case 'change':
 							foreach($column as $field => $col) {
-								$col['name'] = $field;
+								if(!isset($col['name'])) {
+									$col['name'] = $field;
+								}
 								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
 							}
 						break;
@@ -660,18 +657,19 @@ class DboMysql extends DboSource {
 	function buildIndex($indexes) {
 		$join = array();
 		foreach ($indexes as $name => $value) {
-			$out = null;
+			$out = '';
 			if ($name == 'PRIMARY') {
-				$out .= 'PRIMARY KEY (' . $this->name($value['column']) . ')';
+				$out .= 'PRIMARY ';
+				$name = null;
 			} else {
 				if (!empty($value['unique'])) {
 					$out .= 'UNIQUE ';
 				}
-				if (is_array($value['column'])) {
-					$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-				} else {
-					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
-				}
+			}
+			if (is_array($value['column'])) {
+				$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+			} else {
+				$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
 			}
 			$join[] = $out;
 		}
