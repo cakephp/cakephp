@@ -53,6 +53,12 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
+
+/**
+ * Turn off caching application-wide.
+ *
+ */
+	Configure::write('Cache.disable', false);
 /**
  * Turn off or enable cache checking application-wide.
  *
@@ -61,7 +67,7 @@
  * controller-wide by setting var $cacheAction = true, or in each action
  * using $this->cacheAction = true.
  */
-	Configure::write('Cache.check', true);
+	Configure::write('Cache.check', false);
 /**
  * Defines the default error type when using the log() function. Used for
  * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
@@ -196,7 +202,7 @@
  * 	$cakeCache = array('Model', array(
  *		[optional] 'duration'=> 3600,
  *		[optional] 'probability'=> 100,
- * 		[optional] 'name' => 'Cache',
+ * 		[optional] 'className' => 'Cache',
  * 		[optional] 'fields' => array('data' => 'data', 'expires => 'expires'),
  * 		[optional] 'serialize' => true,
  *		));
