@@ -195,12 +195,6 @@ class View extends Object {
  */
 	var $hasRendered = null;
 /**
- * Reference to the Controller for this view.
- *
- * @var Controller
- */
-	var $controller = null;
-/**
  * Array of loaded view helpers.
  *
  * @var array
