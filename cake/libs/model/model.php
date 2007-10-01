@@ -265,6 +265,12 @@ class Model extends Overloadable {
  */
 	var $order = null;
 /**
+ * whether or not the model record exists, set by Model::exists()
+ *
+ * @var bool
+ */
+	var $__exists = null;
+/**
  * Default association keys
  *
  * @var array
@@ -1066,6 +1072,7 @@ class Model extends Overloadable {
 				}
 			}
 		}
+
 		$exists = $this->exists();
 
 		if (!$exists && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
@@ -1250,6 +1257,7 @@ class Model extends Overloadable {
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
+				$this->__exists = null;
 				return true;
 			}
 		}
@@ -1349,13 +1357,17 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with set id exists.
  *
+ * @param boolean $reset if true will force database query
  * @return boolean True if such a record exists
  */
-	function exists() {
+	function exists($reset = false) {
 		if ($this->getID() === false) {
 			return false;
 		}
-		return ($this->findCount(array($this->name . '.' . $this->primaryKey => $this->getID()), -1) > 0);
+		if ($this->__exists !== null && $reset !== true) {
+			return $this->__exists;
+		}
+		return $this->__exists = ($this->findCount(array($this->name . '.' . $this->primaryKey => $this->getID()), -1) > 0);
 	}
 /**
  * Returns true if a record that meets given conditions exists
@@ -1705,6 +1717,7 @@ class Model extends Overloadable {
 		}
 
 		$Validation = new Validation();
+		$exists = $this->exists();
 
 		foreach ($this->validate as $fieldName => $ruleSet) {
 			if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
@@ -1729,9 +1742,8 @@ class Model extends Overloadable {
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
 				} else {
-					$message = __('This field cannot be left blank',true);
+					$message = __('This field cannot be left blank', true);
 				}
-				$exists = $this->exists();
 
 				if (empty($validator['on']) || ($validator['on'] == 'create' && !$exists) || ($validator['on'] == 'update' && $exists)) {
 					if ((!isset($data[$fieldName]) && $validator['required'] === true) || (isset($data[$fieldName]) && (empty($data[$fieldName]) && !is_numeric($data[$fieldName])) && $validator['allowEmpty'] === false)) {
@@ -2084,19 +2096,17 @@ class Model extends Overloadable {
 /**
  * Private method.  Clears cache for this model
  *
- * @param string $type If null this deletes cached views if CACHE_CHECK is true
+ * @param string $type If null this deletes cached views if Cache.check is true
  *                     Will be used to allow deleting query cache also
  * @return boolean true on delete
  */
 	function _clearCache($type = null) {
 		if ($type === null) {
-			if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
+			if (Configure::read('Cache.check') === true) {
 				$assoc[] = strtolower(Inflector::pluralize($this->name));
-
 				foreach ($this->__associations as $key => $association) {
 					foreach ($this->$association as $key => $className) {
 						$check = strtolower(Inflector::pluralize($className['className']));
-
 						if (!in_array($check, $assoc)) {
 							$assoc[] = strtolower(Inflector::pluralize($className['className']));
 						}

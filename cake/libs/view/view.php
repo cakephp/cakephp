@@ -330,7 +330,7 @@ class View extends Object {
 			if ($out !== false) {
 				if ($this->layout && $this->autoLayout) {
 					$out = $this->renderLayout($out);
-					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+					if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 						$replace = array('<cake:nocache>', '</cake:nocache>');
 						$out = str_replace($replace, '', $out);
 					}
@@ -780,7 +780,7 @@ class View extends Object {
 
 		$out = ob_get_clean();
 
-		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (defined('CACHE_CHECK') && CACHE_CHECK === true)) {
+		if (isset($this->loaded['cache']) && (($this->cacheAction != false)) && (Configure::read('Cache.check') === true)) {
 			if (is_a($this->loaded['cache'], 'CacheHelper')) {
 				$cache =& $this->loaded['cache'];
 

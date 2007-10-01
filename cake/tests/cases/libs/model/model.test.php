@@ -435,6 +435,9 @@ class Item extends CakeTestModel {
 	var $belongsTo = array('Syfile');
 	var $hasAndBelongsToMany = array('Portfolio');
 }
+class ItemsPortfolio extends CakeTestModel {
+	var $name = 'ItemsPortfolio';
+}
 class Syfile extends CakeTestModel {
 	var $name = 'Syfile';
 	var $belongsTo = array('Image');

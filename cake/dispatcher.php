@@ -630,7 +630,7 @@ class Dispatcher extends Object {
 			}
 		}
 
-		if (defined('CACHE_CHECK') && CACHE_CHECK === true) {
+		if (Configure::read('Cache.check') === true) {
 			$filename = CACHE . 'views' . DS . convertSlash($url) . '.php';
 			if (!file_exists($filename)) {
 				$filename = CACHE . 'views' . DS . convertSlash($url) . '_index.php';
