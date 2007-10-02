@@ -262,15 +262,15 @@ class AuthComponent extends Object {
 			return;
 		}
 
+		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
+			return false;
+		}
+
 		if (!$this->__setDefaults()) {
 			return false;
 		}
 
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
-
-		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
-			return false;
-		}
 
 		if (!isset($controller->params['url']['url'])) {
 			$url = '';
