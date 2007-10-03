@@ -426,7 +426,10 @@ class AuthComponent extends Object {
 			break;
 			case 'model':
 				$this->mapActions();
-				$action = $this->actionMap[$this->params['action']];
+				$action = $this->params['action'];
+				if(isset($this->actionMap[$action])) {
+					$action = $this->actionMap[$action];
+				}
 				if (is_string($object)) {
 					$object = $this->getModel($object);
 				}
