@@ -204,7 +204,7 @@ class FormHelper extends AppHelper {
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$append .= '<p style="display: inline; margin: 0px; padding: 0px;">';
-			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => $options['id'] . 'Token' . mt_rand()));
+			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
 			$append .= '</p>';
 		}
 
