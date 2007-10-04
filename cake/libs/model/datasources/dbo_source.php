@@ -351,9 +351,12 @@ class DboSource extends DataSource {
 		}
 		$data = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data) . $this->endQuote;
 		$data = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data);
-		$oddMatches = substr_count($data, $this->endQuote);
-		if ($oddMatches % 2 == 1) {
-			$data = trim($data, $this->endQuote);
+		
+		if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
+			$oddMatches = substr_count($data, $this->endQuote);
+			if ($oddMatches % 2 == 1) {
+				$data = trim($data, $this->endQuote);
+			}
 		}
 		return str_replace($this->endQuote . $this->endQuote, $this->endQuote, $data);
 	}

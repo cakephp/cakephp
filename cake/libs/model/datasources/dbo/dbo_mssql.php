@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * MS SQL layer for DBO
  *
@@ -100,13 +99,15 @@ class DboMssql extends DboSource {
  * @param array $config Configuration data from app/config/databases.php
  * @return boolean True if connected successfully, false on error
  */
-	function __construct($config) {
-		if (!function_exists('mssql_min_message_severity')) {
-			trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_ERROR);
+	function __construct($config, $autoConnect = true) {
+		if ($autoConnect) {
+			if (!function_exists('mssql_min_message_severity')) {
+				trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_WARNING);
+			}
+			mssql_min_message_severity(15);
+			mssql_min_error_severity(2);
 		}
-		mssql_min_message_severity(15);
-		mssql_min_error_severity(2);
-		return parent::__construct($config);
+		return parent::__construct($config, $autoConnect);
 	}
 /**
  * Connects to the database using options in the given configuration array.
@@ -247,6 +248,10 @@ class DboMssql extends DboSource {
 					$data = r("'", "''", $data);
 				}
 			break;
+		}
+
+		if (in_array($column, array('integer', 'float')) && is_numeric($data)) {
+			return $data;
 		}
 		return "'" . $data . "'";
 	}
