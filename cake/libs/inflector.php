@@ -411,8 +411,20 @@ class Inflector extends Object {
 		$variable = preg_replace('/\\w/', $replace, $string, 1);
 		return $variable;
 	}
+/**
+ * Returns a string with all spaces converted to $replacement and non word characters removed.
+ *
+ * @param string $string
+ * @param string $replacement
+ * @return string
+ * @access public
+ * @static
+ */
+	function slug($string, $replacement = '_') {
+		$string = preg_replace(array('/[^\w\s]/', '/\\s+/') , array(' ', $replacement), $string);
+		return $string;
+	}
 }
-
 /**
  * Enclose a string for preg matching.
  *
