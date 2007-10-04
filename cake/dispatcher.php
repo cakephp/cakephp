@@ -482,9 +482,15 @@ class Dispatcher extends Object {
 
 		$controller = false;
 		if (!$ctrlClass = $this->__loadController($params)) {
-			$params = $this->_restructureParams($params);
+			if(!isset($params['plugin'])) {
+				$params = $this->_restructureParams($params);
+			}
 			if (!$ctrlClass = $this->__loadController($params)) {
-				$params = am($params, array('controller'=> $params['plugin'], 'action'=> $params['controller']));
+				$params = am($params, array('controller'=> $params['plugin'],
+											'action'=> $params['controller'],
+											'pass' => am($params['pass'], Router::getArgs($params['action']))
+										)
+								);
 				if (!$ctrlClass = $this->__loadController($params)) {
 					return false;
 				}
@@ -512,19 +518,17 @@ class Dispatcher extends Object {
 			$this->plugin = $params['plugin'];
 			$pluginName = Inflector::camelize($params['plugin']);
 			$pluginPath = $pluginName . '.';
+			$this->params['controller'] = $this->plugin;
+			$controller = $pluginName;
 		}
 
 		if (!empty($params['controller'])) {
 			$controller = Inflector::camelize($params['controller']);
-			$ctrlClass = $controller . 'Controller';
-		} elseif ($this->plugin) {
-			$this->params['controller'] = $this->plugin;
-			$controller = $pluginName;
-			$ctrlClass = $controller . 'Controller';
 		}
 
 		if ($pluginPath . $controller) {
 			if (loadController($pluginPath . $controller)) {
+				$ctrlClass = $controller . 'Controller';
 				return $ctrlClass;
 			}
 		}
