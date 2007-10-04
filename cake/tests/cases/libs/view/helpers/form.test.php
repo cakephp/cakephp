@@ -198,7 +198,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->params['_Token'] = array('key' => 'testKey');
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
-		$this->assertPattern('/^<form[^<>]+id="MyForm"[^<>]*>.+$/', $result);
+		$this->assertPattern('/^<form[^<>]+id="\w+"[^<>]*>.+$/', $result);
 		$this->assertPattern('/^<form[^<>]+method="post"[^<>]*>.+$/', $result);
 		$this->assertPattern('/^<form[^<>]+action="[^"]+"[^<>]*>.+$/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^id|method|action]=[^<>]*>/', $result);
