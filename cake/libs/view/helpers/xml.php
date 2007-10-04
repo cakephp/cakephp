@@ -236,7 +236,6 @@ class XmlHelper extends AppHelper {
 		} else {
 			return $content;
 		}
-		return false;
 	}
 /**
  * Serializes a model resultset into XML

@@ -178,7 +178,6 @@ class PaginatorHelper extends AppHelper {
 		} else {
 			return 'asc';
 		}
-		return null;
 	}
 /**
  * Generates a "previous" link for a set of paged records
