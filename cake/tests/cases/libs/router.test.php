@@ -686,6 +686,17 @@ class RouterTest extends UnitTestCase {
 		$expected = '/posts/index/published:0/deleted:0';
 		$this->assertEqual($result, $expected);
 
+		$this->router->reload();
+		extract($this->router->getNamedExpressions());
+		$this->router->setRequestInfo(array(null, array('base' => '/', 'argSeparator' => ':')));
+		$this->router->connectNamed(array('file'=> '[\w\.\-]+\.(html|png)'));
+		$this->router->connect('/', array('controller' => 'graphs', 'action' => 'index'));
+		$this->router->connect('/:id/*', array('controller' => 'graphs', 'action' => 'view'), array('id' => $ID));
+
+		$result = $this->router->url(array('controller' => 'graphs', 'action' => 'view', 'id' => 12, 'file' => 'asdf.png'));
+		$expected = '/12/file:asdf.png';
+		$this->assertEqual($result, $expected);
+
 		Configure::write('Routing.admin', 'admin');
 
 		$this->router->reload();
