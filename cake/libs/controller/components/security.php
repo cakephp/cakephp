@@ -513,6 +513,7 @@ class SecurityComponent extends Object {
 							unset($controller->data[$key][$lookup]);
 						} elseif ($controller->data[$key][$lookup] === '0') {
 							$merge[] = $lookup;
+							$field[$newKey] = array_merge($merge, $field[$newKey]);
 						}
 					}
 					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
@@ -522,6 +523,12 @@ class SecurityComponent extends Object {
 				if (!array_key_exists($key, $value)) {
 					$field[$key] = array_keys($value);
 					$field[$key] = array_merge($merge, $field[$key]);
+				}
+			}
+
+			foreach ($field as $key => $value) {
+				if(strpos($key, '_') !== 0) {
+					sort($field[$key]);
 				}
 			}
 			ksort($field);
