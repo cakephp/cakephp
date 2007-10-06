@@ -119,9 +119,8 @@ class DboMysqlTest extends UnitTestCase {
 		if(function_exists('mysql_connect')) {
 			$skip = false;
 		}
-		$this->skipif ($skip, 'Mysql not installed');
+		$this->skipif ($skip, 'MySql not installed');
 	}
-
 /**
  * Sets up a Dbo class instance for testing
  *
@@ -129,9 +128,9 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once r('//', '/', APP) . 'config/database.php';
+		require_once APP . 'config' . DS . 'database.php';
 		$config = new DATABASE_CONFIG();
-		$this->Db =& new DboMysqlTestDb($config->default, false);
+		$this->Db =& new DboMysqlTestDb($config->default);
 		$this->Db->fullDebug = false;
 		$this->model = new MysqlTestModel();
 	}
@@ -151,27 +150,27 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function testQuoting() {
-
+$this->skipif ($this->Db->connected, 'Could not connect to database');
 		$result = $this->Db->fields($this->model);
 		$expected = array(
-			'MysqlTestModel`.`id` AS `MysqlTestModel__0`',
-			'`MysqlTestModel`.`client_id` AS `MysqlTestModel__1`',
-			'`MysqlTestModel`.`name` AS `MysqlTestModel__2`',
-			'`MysqlTestModel`.`login` AS `MysqlTestModel__3`',
-			'`MysqlTestModel`.`passwd` AS `MysqlTestModel__4`',
-			'`MysqlTestModel`.`addr_1` AS `MysqlTestModel__5`',
-			'`MysqlTestModel`.`addr_2` AS `MysqlTestModel__6`',
-			'`MysqlTestModel`.`zip_code` AS `MysqlTestModel__7`',
-			'`MysqlTestModel`.`city` AS `MysqlTestModel__8`',
-			'`MysqlTestModel`.`country` AS `MysqlTestModel__9`',
-			'`MysqlTestModel`.`phone` AS `MysqlTestModel__10`',
-			'`MysqlTestModel`.`fax` AS `MysqlTestModel__11`',
-			'`MysqlTestModel`.`url` AS `MysqlTestModel__12`',
-			'`MysqlTestModel`.`email` AS `MysqlTestModel__13`',
-			'`MysqlTestModel`.`comments` AS `MysqlTestModel__14`',
-			'`MysqlTestModel`.`last_login` AS `MysqlTestModel__15`',
-			'`MysqlTestModel`.`created` AS `MysqlTestModel__16`',
-			'`MysqlTestModel`.`updated` AS `MysqlTestModel__17`'
+			'`MysqlTestModel`.`id`',
+			'`MysqlTestModel`.`client_id`',
+			'`MysqlTestModel`.`name`',
+			'`MysqlTestModel`.`login`',
+			'`MysqlTestModel`.`passwd`',
+			'`MysqlTestModel`.`addr_1`',
+			'`MysqlTestModel`.`addr_2`',
+			'`MysqlTestModel`.`zip_code`',
+			'`MysqlTestModel`.`city`',
+			'`MysqlTestModel`.`country`',
+			'`MysqlTestModel`.`phone`',
+			'`MysqlTestModel`.`fax`',
+			'`MysqlTestModel`.`url`',
+			'`MysqlTestModel`.`email`',
+			'`MysqlTestModel`.`comments`',
+			'`MysqlTestModel`.`last_login`',
+			'`MysqlTestModel`.`created`',
+			'`MysqlTestModel`.`updated`'
 		);
 		$this->assertEqual($result, $expected);
 

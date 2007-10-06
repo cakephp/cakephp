@@ -247,7 +247,7 @@ class FormHelper extends AppHelper {
 
 		if (isset($submit)) {
 			$out .= $this->submit($submit, $submitOptions);
-		} elseif (isset($this->params['_Token']) && !empty($this->params['_Token']) && !empty($this->fields)) {
+		} elseif (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -256,16 +256,20 @@ class FormHelper extends AppHelper {
 		return $this->output($out);
 	}
 	function secure($fields) {
-		$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
-		foreach ($fields as $key => $value) {
-			if(strpos($key, '_') !== 0) {
-				sort($fields[$key]);
+		if (!empty($fields)) {
+			$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
+
+			foreach ($fields as $key => $value) {
+				if(strpos($key, '_') !== 0) {
+					sort($fields[$key]);
+				}
 			}
+			ksort($fields);
+			$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
+			$append .= '</p>';
+			return $append;
 		}
-		ksort($fields);
-		$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
-		$append .= '</p>';
-		return $append;
+		return null;
 	}
 	function __secure($model = null, $options = null) {
 		if (!$model) {

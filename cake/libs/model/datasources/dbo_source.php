@@ -351,7 +351,7 @@ class DboSource extends DataSource {
 		}
 		$data = $this->startQuote . str_replace('.', $this->endQuote . '.' . $this->startQuote, $data) . $this->endQuote;
 		$data = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data);
-		
+
 		if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
 			$oddMatches = substr_count($data, $this->endQuote);
 			if ($oddMatches % 2 == 1) {
@@ -1831,7 +1831,6 @@ class DboSource extends DataSource {
 			$null = null;
 			$this->rollback($null);
 		}
-		$this->close();
 		parent::__destruct();
 	}
 /**

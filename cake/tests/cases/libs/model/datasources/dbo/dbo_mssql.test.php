@@ -110,27 +110,13 @@ class DboMssqlTest extends UnitTestCase {
  */
 	var $Db = null;
 /**
- * Skip if cannot connect to mysql
- *
- * @return void
- * @access public
- */
-	function skip() {
-		$skip = true;
-		if(function_exists('mssql_connect')) {
-			$skip = false;
-		}
-		//$this->skipif ($skip, 'Mssql not installed');
-		$this->skipif (false, 'Mssql not installed');
-	}
-/**
  * Sets up a Dbo class instance for testing
  *
  * @return void
  * @access public
  */
 	function setUp() {
-		require_once r('//', '/', APP) . 'config/database.php';
+		require_once APP . 'config' . DS . 'database.php';
 		$config = new DATABASE_CONFIG();
 		$this->db =& new DboMssqlTestDb($config->default, false);
 		$this->db->fullDebug = false;
@@ -143,6 +129,7 @@ class DboMssqlTest extends UnitTestCase {
 	 * @return void
 	 * @access public
 	 */
+
 	function testQuoting() {
 		$result = $this->db->fields($this->model);
 		$expected = array(
@@ -175,16 +162,5 @@ class DboMssqlTest extends UnitTestCase {
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
 	}
-/**
- * Sets up a Dbo class instance for testing
- *
- * @return void
- * @access public
- */
-	function tearDown() {
-		unset($this->model);
-		//unset($this->db);
-	}
 }
-
 ?>

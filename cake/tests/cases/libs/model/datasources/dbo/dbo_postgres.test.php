@@ -109,7 +109,7 @@ class DboPostgresTest extends UnitTestCase {
  */
 	var $Db = null;
 /**
- * Skip if cannot connect to mysql
+ * Skip if cannot connect to postgres
  *
  * @return void
  * @access public
@@ -119,7 +119,7 @@ class DboPostgresTest extends UnitTestCase {
 		if(function_exists('pg_connect')) {
 			$skip = false;
 		}
-		$this->skipif (true, 'Postgres not installed');
+		$this->skipif ($skip, 'Postgres not installed');
 	}
 
 /**
@@ -129,7 +129,7 @@ class DboPostgresTest extends UnitTestCase {
  * @access public
  */
 	function setUp() {
-		require_once r('//', '/', APP) . 'config/database.php';
+		require_once APP . 'config' . DS . 'database.php';
 		$config = new DATABASE_CONFIG();
 		$this->Db =& new DboPostgresTestDb($config->default, false);
 		$this->Db->fullDebug = false;
@@ -154,28 +154,28 @@ class DboPostgresTest extends UnitTestCase {
 
 		$result = $this->Db->fields($this->model);
 		$expected = array(
-			'PostgresTestModel`.`id` AS `PostgresTestModel__0`',
-			'`PostgresTestModel`.`client_id` AS `PostgresTestModel__1`',
-			'`PostgresTestModel`.`name` AS `PostgresTestModel__2`',
-			'`PostgresTestModel`.`login` AS `PostgresTestModel__3`',
-			'`PostgresTestModel`.`passwd` AS `PostgresTestModel__4`',
-			'`PostgresTestModel`.`addr_1` AS `PostgresTestModel__5`',
-			'`PostgresTestModel`.`addr_2` AS `PostgresTestModel__6`',
-			'`PostgresTestModel`.`zip_code` AS `PostgresTestModel__7`',
-			'`PostgresTestModel`.`city` AS `PostgresTestModel__8`',
-			'`PostgresTestModel`.`country` AS `PostgresTestModel__9`',
-			'`PostgresTestModel`.`phone` AS `PostgresTestModel__10`',
-			'`PostgresTestModel`.`fax` AS `PostgresTestModel__11`',
-			'`PostgresTestModel`.`url` AS `PostgresTestModel__12`',
-			'`PostgresTestModel`.`email` AS `PostgresTestModel__13`',
-			'`PostgresTestModel`.`comments` AS `PostgresTestModel__14`',
-			'`PostgresTestModel`.`last_login` AS `PostgresTestModel__15`',
-			'`PostgresTestModel`.`created` AS `PostgresTestModel__16`',
-			'`PostgresTestModel`.`updated` AS `PostgresTestModel__17`'
+			'"PostgresTestModel"."id" AS "PostgresTestModel__id"',
+			'"PostgresTestModel"."client_id" AS "PostgresTestModel__client_id"',
+			'"PostgresTestModel"."name" AS "PostgresTestModel__name"',
+			'"PostgresTestModel"."login" AS "PostgresTestModel__login"',
+			'"PostgresTestModel"."passwd" AS "PostgresTestModel__passwd"',
+			'"PostgresTestModel"."addr_1" AS "PostgresTestModel__addr_1"',
+			'"PostgresTestModel"."addr_2" AS "PostgresTestModel__addr_2"',
+			'"PostgresTestModel"."zip_code" AS "PostgresTestModel__zip_code"',
+			'"PostgresTestModel"."city" AS "PostgresTestModel__city"',
+			'"PostgresTestModel"."country" AS "PostgresTestModel__country"',
+			'"PostgresTestModel"."phone" AS "PostgresTestModel__phone"',
+			'"PostgresTestModel"."fax" AS "PostgresTestModel__fax"',
+			'"PostgresTestModel"."url" AS "PostgresTestModel__url"',
+			'"PostgresTestModel"."email" AS "PostgresTestModel__email"',
+			'"PostgresTestModel"."comments" AS "PostgresTestModel__comments"',
+			'"PostgresTestModel"."last_login" AS "PostgresTestModel__last_login"',
+			'"PostgresTestModel"."created" AS "PostgresTestModel__created"',
+			'"PostgresTestModel"."updated" AS "PostgresTestModel__updated"'
 		);
 		$this->assertEqual($result, $expected);
 
-		$expected = 1.2;
+		$expected = "'1.2'";
 		$result = $this->Db->value(1.2, 'float');
 		$this->assertIdentical($expected, $result);
 
