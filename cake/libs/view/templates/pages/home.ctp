@@ -32,11 +32,10 @@ endif;
 <p>
 	<span class="notice">
 		<?php
-			__('Your tmp directory is ');
 			if (is_writable(TMP)):
-				__('writable.');
+				__('Your tmp directory is writable.');
 			else:
-				__('NOT writable.');
+				__('Your tmp directory is NOT writable.');
 			endif;
 		?>
 	</span>
@@ -44,12 +43,11 @@ endif;
 <p>
 	<span class="notice">
 		<?php
-			__('Your cache is ');
 			if (Cache::isInitialized()):
-				__('set up and initialized properly.');
+				__('Your cache is set up and initialized properly.');
 				$settings = Cache::settings();
-				echo '<p>' . $settings['class'];
-				__(' is being used to cache, to change this edit config/core.php ');
+				echo '<p>';
+				echo sprintf(__('%s is being used to cache, to change this edit config'.DS.'core.php ', true), $settings['name'] . 'Engine');
 				echo '</p>';
 
 				echo 'Settings: <ul>';
@@ -59,10 +57,10 @@ endif;
 				echo '</ul>';
 
 			else:
-				__('NOT working.');
+				__('Your cache is NOT working.');
 				echo '<br />';
 				if (is_writable(TMP . 'cache')):
-					__('Edit: config/core.php to insure you have the newset version of this file and the variable \$cakeCache set properly');
+					__('Edit: config'.DS.'core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
 				else:
 					__('Your cache directory is not writable');
 				endif;
@@ -73,13 +71,12 @@ endif;
 <p>
 	<span class="notice">
 		<?php
-			__('Your database configuration file is ');
 			$filePresent = null;
 			if (file_exists(CONFIGS.'database.php')):
-				__('present.');
+				__('Your database configuration file is present.');
 				$filePresent = true;
 			else:
-				__('NOT present.');
+				__('Your database configuration file is NOT present.');
 				echo '<br/>';
 				__('Rename config'.DS.'database.php.default to config'.DS.'database.php');
 			endif;
@@ -95,26 +92,23 @@ if (!empty($filePresent)):
 <p>
 	<span class="notice">
 		<?php
-			__('Cake');
 			if ($connected->isConnected()):
-		 		__(' is able to ');
+		 		__('Cake is able to connect to the database.');
 			else:
-				__(' is NOT able to ');
+				__('Cake is NOT able to connect to the database.');
 			endif;
-			__('connect to the database.');
 		?>
 	</span>
 </p>
-<?php endif; ?>
+<?php endif;?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <h2><?php __('Editing this Page'); ?></h2>
 <p>
-<?php __('To change the content of this page, create: /app/views/pages/home.ctp.'); ?><br />
-<?php __('To change its layout, create: /app/views/layouts/default.ctp.'); ?><br />
-<a href="http://manual.cakephp.org/"><?php __('See the views section of the manual for more info.'); ?> </a><br />
-<?php __('You can also add some CSS styles for your pages at: /app/webroot/css/.'); ?>
-</p>
+<?php __('To change the content of this page, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/pages/home.ctp.<br />
+To change its layout, edit: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/layouts/default.ctp.<br />
+You can also add some CSS styles for your pages at: /Users/phpnut/Sites/helloworld/1.2.x.x/sampleapp/webroot/css.
+') ?></p>
 <h2><?php __('Getting Started'); ?></h2>
 <p>
 	<a href="http://manual.cakephp.org/appendix/blog_tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
@@ -127,9 +121,12 @@ if (!empty($filePresent)):
 <p>
 <?php __('Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
 </p>
+<br />
 <ul>
 	<li><a href="http://www.cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
 	<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul></li>
+	<li><a href="http://live.cakephp.org"><?php __('The Show'); ?> </a>
+	<ul><li><?php __('The Show is a weekly live internet radio broadcast where we discuss CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
 	<li><a href="http://bakery.cakephp.org"><?php __('The Bakery'); ?> </a>
 	<ul><li><?php __('Everything CakePHP'); ?></li></ul></li>
 	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __('Book Store'); ?> </a>

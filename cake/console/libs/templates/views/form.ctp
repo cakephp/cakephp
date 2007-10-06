@@ -27,7 +27,7 @@
 <div class="<?php echo $singularVar;?>">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php __('".Inflector::humanize($action)."');?> <?php __('{$singularHumanName}');?>";?></legend>
+ 		<legend><?php echo "<?php echo sprintf(__('".Inflector::humanize($action)." %s', true), __('{$singularHumanName}', true));?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
@@ -50,9 +50,9 @@
 <div class="actions">
 	<ul>
 <?php if ($action != 'add'):?>
-		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, __('Are you sure you want to delete', true).' #' . \$form->value('{$modelClass}.{$primaryKey}')); ?>";?></li>
+		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action'=>'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?', true), \$form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
 <?php endif;?>
-		<li><?php echo "<?php echo \$html->link(__('List', true).' '.__('{$pluralHumanName}', true), array('action'=>'index'));?>";?></li>
+		<li><?php echo "<?php echo \$html->link(sprintf(__('List %s', true), __('{$pluralHumanName}', true)), array('action'=>'index'));?>";?></li>
 <?php
 		foreach ($foreignKeys as $field => $value) {
 			$otherModelClass = $value['1'];
@@ -63,8 +63,8 @@
 				$otherSingularName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(__('List', true).' '.__('{$otherPluralHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$html->link(__('New', true).' '.__('{$otherSingularHumanName}', true), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s', true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}
 ?>
