@@ -777,6 +777,7 @@ class Model extends Overloadable {
 
 			}
 			$this->_tableInfo = null;
+			$this->_schema = null;
 		}
 		$this->table = $this->useTable = $tableName;
 		$this->tableToModel[$this->table] = $this->name;
