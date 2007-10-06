@@ -85,8 +85,8 @@ if (!empty(\$filePresent)):
 $output .= "<?php endif;?>\n";
 $output .= "<h3>Editing this Page</h3>\n";
 $output .= "<p>\n";
-$output .= "To change the content of this page, edit: ".VIEWS."pages".DS."home.ctp.<br />\n";
-$output .= "To change its layout, edit: ".VIEWS."layouts".DS."default.ctp.<br />\n";
+$output .= "To change the content of this page, edit: ".$dir."pages".DS."home.ctp.<br />\n";
+$output .= "To change its layout, edit: ".$dir."layouts".DS."default.ctp.<br />\n";
 $output .= "You can also add some CSS styles for your pages at: ".$dir."webroot".DS."css.\n";
 $output .= "</p>\n";
 ?>
