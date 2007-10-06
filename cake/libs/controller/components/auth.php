@@ -319,37 +319,37 @@ class AuthComponent extends Object {
 
 		if ($this->authorize) {
 			extract($this->__authType());
-			if ($type == 'controller') {
-				if ($controller->isAuthorized()) {
-					return true;
-				}
-			} else {
-				switch ($type) {
-					case 'crud':
-					case 'actions':
-						if (isset($controller->Acl)) {
-							$this->Acl =& $controller->Acl;
-						} else {
-							trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+			switch ($type) {
+				case 'controller':
+					$this->object =& $controller;
+				break;
+				case 'crud':
+				case 'actions':
+					if (isset($controller->Acl)) {
+						$this->Acl =& $controller->Acl;
+					} else {
+						trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+					}
+				break;
+				case 'model':
+					if (!isset($object)) {
+						if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
+							$object = $controller->modelClass;
+						} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
+							$object = $controller->uses[0];
 						}
-					break;
-					case 'model':
-						if (!isset($object)) {
-							if (isset($controller->{$controller->modelClass}) && is_object($controller->{$controller->modelClass})) {
-								$object = $controller->modelClass;
-							} elseif (!empty($controller->uses) && isset($controller->{$controller->uses[0]}) && is_object($controller->{$controller->uses[0]})) {
-								$object = $controller->uses[0];
-							}
-						}
-						$type = array('model' => $object);
-					break;
-					default:
-					break;
-				}
-				if ($this->isAuthorized($type)) {
+					}
+					$type = array('model' => $object);
+				break;
+				default:
 					return true;
-				}
+				break;
 			}
+
+			if ($this->isAuthorized($type)) {
+				return true;
+			}
+
 			$this->Session->setFlash($this->authError, 'default', array(), 'auth');
 			$controller->redirect($controller->referer(), null, true);
 			return false;
@@ -386,7 +386,7 @@ class AuthComponent extends Object {
  * used is based on the value of AuthComponent::$authorize or the passed $type param.
  *
  * Types:
- * 'controller' will validate against Controller::isAuthorized()
+ * 'controller' will validate against Controller::isAuthorized() if controller instance is passed in $object
  * 'actions' will validate Controller::action against an AclComponent::check()
  * 'crud' will validate mapActions against an AclComponent::check()
  * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
@@ -413,6 +413,9 @@ class AuthComponent extends Object {
 
 		$valid = false;
 		switch ($type) {
+			case 'controller':
+				$valid = $object->isAuthorized();
+			break;
 			case 'actions':
 				$valid = $this->Acl->check($user, $this->action());
 			break;
