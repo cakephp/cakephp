@@ -999,6 +999,23 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 4);
 	}
 
+
+	function testUpdateExisting() {
+		$this->model =& new User();
+
+		$model_id = 1000;
+
+		$this->model->id = $model_id;
+		$this->model->delete();
+
+		$this->model->save( array('User'=>array('id'=>$model_id, 'user'=>'some user')) );
+		$this->assertEqual($this->model->id, $model_id);
+
+		$this->model->save( array('User'=>array('user'=>'updated user')) );
+		$this->assertEqual($this->model->id, $model_id);
+	}
+
+
 	function testBindUnbind() {
 		$this->model =& new User();
 

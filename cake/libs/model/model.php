@@ -1142,11 +1142,10 @@ class Model extends Overloadable {
 			}
 			$this->afterSave($created);
 			$this->data = false;
+			$this->__exists = null;
 			$this->_clearCache();
 			$this->validationErrors = array();
-			return true;
 		}
-
 		return $success;
 	}
 /**
