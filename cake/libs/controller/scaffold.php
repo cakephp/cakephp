@@ -303,15 +303,12 @@ class Scaffold extends Object {
 			}
 
 			foreach ($this->ScaffoldModel->belongsTo as $assocName => $assocData) {
-				$varName = $assocName;
-				if($this->ScaffoldModel->name == $assocData['className']) {
-					$varName = $assocData['className'];
-				}
-				$this->controller->set(Inflector::pluralize(Inflector::variable($varName)), $this->ScaffoldModel->{$assocName}->generateList());
+				$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $assocData['foreignKey'])));
+				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->generateList());
 			}
-
-			foreach($this->ScaffoldModel->hasAndBelongsToMany as $assocName => $assocData) {
-				$this->controller->set(Inflector::pluralize(Inflector::variable($varName)), $this->ScaffoldModel->{$assocName}->generateList());
+			foreach ($this->ScaffoldModel->hasAndBelongsToMany as $assocName => $assocData) {
+				$varName = Inflector::variable(Inflector::pluralize($assocName));
+				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->generateList());
 			}
 
 			return $this->__scaffoldForm($formAction);
