@@ -38,7 +38,7 @@
 			}
 		}
 		foreach ($hasAndBelongsToMany as $assocName => $assocData) {
-			echo "\t\techo \$form->input('{$assocName}');\n";
+			echo "\t\t echo \$form->input('{$assocName}');\n";
 		}
 		echo "\t?>\n";
 ?>

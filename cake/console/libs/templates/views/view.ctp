@@ -47,11 +47,11 @@ foreach ($fields as $field) {
 		$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 		$otherPrimaryKey = $otherModelObj->primaryKey;
 		$otherDisplayField = $otherModelObj->displayField;
-		echo "\t\t<dt{$class}>".Inflector::humanize($otherModelClass)."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($otherModelClass)."') ?></dt>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	} else {
-		echo "\t\t<dt{$class}>".Inflector::humanize($field['name'])."</dt>\n";
-		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}']?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dt{$class}><?php __('".Inflector::humanize($field['name'])."') ?></dt>\n";
+		echo "\t\t<dd{$class}>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
@@ -143,7 +143,7 @@ foreach ($relations as $assocName => $assocData):
 	<tr>
 <?php
 		foreach ($otherFields as $field) {
-			echo "\t\t<th>".Inflector::humanize($field['name'])."</th>\n";
+			echo "\t\t<th><?php __('".Inflector::humanize($field['name'])."') ?></th>\n";
 		}
 ?>
 		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>

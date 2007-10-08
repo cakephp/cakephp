@@ -64,9 +64,9 @@ foreach (\${$pluralVar} as \${$singularVar}):
 				$otherModelObj =& ClassRegistry::getObject($otherModelKey);
 				$otherPrimaryKey = $otherModelObj->primaryKey;
 				$otherDisplayField = $otherModelObj->displayField;
-				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t<?php echo \$html->link(__(\${$singularVar}['{$otherModelClass}']['{$otherDisplayField}'], true), array('controller'=> '{$otherControllerPath}', 'action'=>'view', \${$singularVar}['{$otherModelClass}']['{$otherPrimaryKey}'])); ?>\n\t\t</td>\n";
 			} else {
-				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}']?>\n\t\t</td>\n";
+				echo "\t\t<td>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field['name']}'] ?>\n\t\t</td>\n";
 			}
 		}
 
@@ -99,7 +99,7 @@ echo "<?php endforeach; ?>\n";
 				$otherVariableName = Inflector::variable($otherModelClass);
 				$otherPluralHumanName = Inflector::humanize($otherControllerPath);
 				$otherSingularHumanName = Inflector::humanize($otherModelKey);
-				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}, true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('{$otherPluralHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'index')); ?> </li>\n";
 				echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s',  true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'add')); ?> </li>\n";
 			}
 		}

@@ -28,7 +28,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>
-		CakePHP: the rapid development php framework:
+		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout;?>
 	</title>
 
@@ -41,7 +41,7 @@
 <body>
 	<div id="container">
 		<div id="header">
-			<h1><?php echo $html->link('CakePHP: the rapid development php framework', 'http://cakephp.org');?></h1>
+			<h1><?php echo $html->link(__('CakePHP: the rapid development php framework', true), 'http://cakephp.org');?></h1>
 		</div>
 		<div id="content">
 			<?php
@@ -55,7 +55,7 @@
 		</div>
 		<div id="footer">
 			<?php echo $html->link(
-							$html->image('cake.power.png', array('alt'=>"CakePHP: the rapid development php framework", 'border'=>"0")),
+							$html->image('cake.power.png', array('alt'=> __("CakePHP: the rapid development php framework", true), 'border'=>"0")),
 							'http://www.cakephp.org/',
 							array('target'=>'_new'), null, false
 						);
