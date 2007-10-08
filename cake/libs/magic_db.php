@@ -41,6 +41,13 @@ class MagicDb extends Object {
 	var $db = array();
 
 /**
+ * The file currently being read. Can be a string or a file resource
+ * 
+ * @var mixed
+ */
+	var $_file = null;
+
+/**
  * Reads a MagicDb from various formats
  *
  * @var $magicDb mixed Can be an array containing the db, a magic db as a string, or a filename pointing to a magic db in .db or magic.db.php format
@@ -85,7 +92,7 @@ class MagicDb extends Object {
 		if (is_array($data)) {
 			return $data;
 		}
-		if (empty($data)) {
+		if ($data === null) {
 			return $this->db;
 		}
 
@@ -117,11 +124,13 @@ class MagicDb extends Object {
 			$columns = explode("\t", $line);
 			if (in_array($columns[0]{0}, array('&', '>'))) {
 				$format[] = $columns;
-			} else {
+			} elseif (!empty($format)) {
 				$db['database'][] = $format;
 				$format = array();
 			}
 		}
+		
+		return $db;
 	}
 
 /**
@@ -150,6 +159,16 @@ class MagicDb extends Object {
  * @access public
  */
 	function analyze($file, $options = array()) {
+		if (!is_string($file)) {
+			return false;
+		}
+		
+		if (file_exists($file)) {
+			$this->_file =& new File($file);
+		} else {
+			$this->_file = $file;
+		}
+		
 
 	}
 }
