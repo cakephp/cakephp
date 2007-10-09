@@ -124,7 +124,7 @@ class String extends Object {
  *
  * @param multi-byte string $string
  * @return array
- * @access publice
+ * @access public
  * @static
  */
 	function utf8($string) {

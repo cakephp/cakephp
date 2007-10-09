@@ -479,11 +479,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/id="ModelField"/', $result);
 		$this->assertNoPattern('/checked="checked"/', $result);
 
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), null, array('value' => '1'));
+		$this->assertPattern('/^<fieldset><legend>field<\/legend>(<input[^<>]+><label[^<>]+>option [AB]<\/label>)+<\/fieldset>$/', $result);
+		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
+
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '1'));
 		$this->assertPattern('/id="Field1".*checked="checked"/', $result);
 		$this->assertPattern('/id="Field0"/', $result);
 
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), null, array('value' => '0'));
+		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '0'));
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertPattern('/id="Field0".*checked="checked"/', $result);
 	}
@@ -780,7 +783,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->submit('Next >');
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next &gt;"[^<>]+\/><\/div>$/', $result);
 
-		$result = $this->Form->submit('Next >', array('escape'=>false));
+		$result = $this->Form->submit('Next >', array('escape' => false));
 		$this->assertPattern('/^<div\s+class="submit"><input type="submit"[^<>]+value="Next >"[^<>]+\/><\/div>$/', $result);
 	}
 
@@ -821,6 +824,29 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/method="post"/', $result);
 		$this->assertPattern('/action="\/users\/login(\/)?"/', $result);
 		$this->assertNoPattern('/^<form[^<>]+[^method|action]=[^<>]*>/', $result);
+	}
+
+	function testGetFormCreate() {
+		$result = $this->Form->create('Contact', array('type' => 'get'));
+		$this->assertPattern('/^<form [^<>]+>/', $result);
+		$this->assertPattern('/\s+id="ContactAddForm"/', $result);
+		$this->assertPattern('/\s+method="get"/', $result);
+		$this->assertPattern('/\s+action="\/contacts\/add\/"/', $result);
+		$this->assertNoPattern('/^<form[^<>]+[^method|action|id]=[^<>]*>/', $result);
+
+		$result = $this->Form->text('Contact.name');
+		$this->assertPattern('/^<input[^<>]+name="name"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="ContactName"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+
+		$result = $this->Form->password('password');
+		$this->assertPattern('/^<input[^<>]+name="password"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+type="password"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value=""[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+id="ContactPassword"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 	}
 
 	function testFormMagicInput() {

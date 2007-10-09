@@ -314,8 +314,10 @@ class Helper extends Overloadable {
 
 		$parts = preg_split('/\/|\./', $tagValue);
 		$view->association = null;
+
 		if (count($parts) == 1) {
 			$view->field = $parts[0];
+		//} elseif (count($parts) == 2 && !ClassRegistry::isKeySet($parts[0]) && !ClassRegistry::isKeySet($parts[0])) {
 		} elseif (count($parts) == 2 && is_numeric($parts[0])) {
 			$view->modelId = $parts[0];
 			$view->field = $parts[1];
@@ -422,7 +424,6 @@ class Helper extends Overloadable {
 		}
 
 		switch($field) {
-			case 'method':
 			case '_method':
 				$name = $field;
 			break;
@@ -506,7 +507,6 @@ class Helper extends Overloadable {
 		if ($this->tagIsInvalid()) {
 			$options = $this->addClass($options, 'form-error');
 		}
-		unset($options['name']); // Temporary
 		return $options;
 	}
 /**
