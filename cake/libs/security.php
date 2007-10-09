@@ -34,7 +34,15 @@
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class Security extends Object{
+class Security extends Object {
+
+/**
+ * Default hash method
+ *
+ * @var string
+ * @access public
+ */
+	var $hashType = null;
 /**
   * Singleton implementation to get object instance.
   *
@@ -106,10 +114,14 @@ class Security extends Object{
  * @access public
  * @static
  */
-	function hash($string, $type = 'sha1') {
+	function hash($string, $type = null) {
 		$_this =& Security::getInstance();
+		if (empty($type)) {
+			$type = $_this->hashType;
+		}
 		$type = strtolower($type);
-		if ($type == 'sha1') {
+
+		if ($type == 'sha1' || $type == null) {
 			if (function_exists('sha1')) {
 				$return = sha1($string);
 				return $return;
@@ -131,6 +143,20 @@ class Security extends Object{
 			$return = md5($string);
 			return $return;
 		}
+	}
+/**
+ * Sets the default hash method for the Security object.  This affects all objects using
+ * Security::hash().
+ *
+ * @param string $hash Method to use (sha1/sha256/md5)
+ * @return void
+ * @access public
+ * @static
+ * @see Security::hash()
+ */
+	function setHash($hash) {
+		$_this =& Security::getInstance();
+		$_this->hashType = $hash;
 	}
 /**
  * Encripts/Decrypts a text using the given key.

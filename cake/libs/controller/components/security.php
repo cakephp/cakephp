@@ -36,13 +36,6 @@
  */
 class SecurityComponent extends Object {
 /**
- * Holds an instance of the core Security object
- *
- * @var object Security
- * @access public
- */
-	var $Security = null;
-/**
  * The controller method that will be called if this request is black-hole'd
  *
  * @var string
@@ -88,7 +81,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireLogin()
  */
-	var $loginOptions = array('type' => '');
+	var $loginOptions = array('type' => '', 'prompt' => null);
 /**
  * An associative array of usernames/passwords used for HTTP-authenticated logins.
  * If using digest authentication, passwords should be MD5-hashed.
@@ -127,12 +120,6 @@ class SecurityComponent extends Object {
  * @access public
  */
 	var $components = array('RequestHandler', 'Session');
-/**
- * Security class initialization
- */
-	function initialize(&$controller) {
-		$this->Security =& Security::getInstance();
-	}
 /**
  * Component startup.  All security checking happens here.
  *
@@ -196,6 +183,8 @@ class SecurityComponent extends Object {
  */
 	function requireLogin() {
 		$args = func_get_args();
+		$base = $this->loginOptions;
+
 		foreach ($args as $arg) {
 			if (is_array($arg)) {
 				$this->loginOptions = $arg;
@@ -203,6 +192,7 @@ class SecurityComponent extends Object {
 				$this->requireLogin[] = $arg;
 			}
 		}
+		$this->loginOptions = am($base, $this->loginOptions);
 
 		if (empty($this->requireLogin)) {
 			$this->requireLogin = array('*');
@@ -213,41 +203,40 @@ class SecurityComponent extends Object {
 		}
 	}
 /**
- * Gets the login credentials for an HTTP-authenticated request
+ * Attempts to validate the login credentials for an HTTP-authenticated request
  *
  * @param string $type Either 'basic', 'digest', or null. If null/empty, will try both.
  * @return mixed If successful, returns an array with login name and password, otherwise null.
  * @access public
  */
 	function loginCredentials($type = null) {
-		if (empty($type) || low($type) == 'basic') {
-			$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
-
-			if ($login['username'] != null) {
-				return $login;
-			}
-		}
-
-		if ($type == '' || low($type) == 'digest') {
-			$digest = null;
-
-			if (version_compare(phpversion(), '5.1') != -1) {
-				$digest = env('PHP_AUTH_DIGEST');
-			} elseif (function_exists('apache_request_headers')) {
-				$headers = apache_request_headers();
-				if (isset($headers['Authorization']) && !empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
-					$digest = substr($headers['Authorization'], 7);
+		switch (low($type)) {
+			case 'basic':
+				$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
+				if (!empty($login['username'])) {
+					return $login;
 				}
-			} else {
-				// Server doesn't support digest-auth headers
-				trigger_error(__('SecurityComponent::loginCredentials() - Server does not support digest authentication', true), E_USER_WARNING);
-				return null;
-			}
+			break;
+			case 'digest':
+			default:
+				$digest = null;
 
-			if ($digest == null) {
-				return null;
-			}
-			$data = $this->parseDigestAuthData($digest);
+				if (version_compare(phpversion(), '5.1') != -1) {
+					$digest = env('PHP_AUTH_DIGEST');
+				} elseif (function_exists('apache_request_headers')) {
+					$headers = apache_request_headers();
+					if (isset($headers['Authorization']) && !empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) == 'Digest ') {
+						$digest = substr($headers['Authorization'], 7);
+					}
+				} else {
+					// Server doesn't support digest-auth headers
+					trigger_error(__('SecurityComponent::loginCredentials() - Server does not support digest authentication', true), E_USER_WARNING);
+				}
+
+				if (!empty($digest)) {
+					return $this->parseDigestAuthData($digest);
+				}
+			break;
 		}
 		return null;
 	}
@@ -261,8 +250,16 @@ class SecurityComponent extends Object {
 	function loginRequest($options = array()) {
 		$options = am($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
-		$data  = 'WWW-Authenticate: ' . ucfirst($options['type']) . ' realm="' . $options['realm'] . '"';
-		return $data;
+		$auth  = 'WWW-Authenticate: ' . ucfirst($options['type']);
+		$out = array('realm="' . $options['realm'] . '"');
+
+		if (low($options['type']) == 'digest') {
+			$out[] = 'qop="auth"';
+			$out[] = 'nonce="' . uniqid() . '"'; //str_replace('-', '', String::uuid())
+			$out[] = 'opaque="' . md5($options['realm']).'"';
+		}
+
+		return $auth . ' ' . join(',', $out);
 	}
 /**
  * Parses an HTTP digest authentication response, and returns an array of the data, or null on failure.
@@ -290,6 +287,21 @@ class SecurityComponent extends Object {
 		} else {
 			return null;
 		}
+	}
+/**
+ * Generates a hash to be compared with an HTTP digest-authenticated response
+ *
+ * @param array $data HTTP digest response data, as parsed by SecurityComponent::parseDigestAuthData()
+ * @return string Digest authentication hash
+ * @access public
+ * @see SecurityComponent::parseDigestAuthData()
+ */
+	function generateDigestResponseHash($data) {
+		return md5(
+			md5($data['username'] . ':' . $this->loginOptions['realm'] . ':' . $this->loginUsers[$data['username']]) .
+			':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' .
+			md5(env('REQUEST_METHOD') . ':' . $data['uri'])
+		);
 	}
 /**
  * Black-hole an invalid request with a 404 error or custom callback
@@ -398,7 +410,7 @@ class SecurityComponent extends Object {
 					// User hasn't been authenticated yet
 					header($this->loginRequest());
 
-					if (isset($this->loginOptions['prompt'])) {
+					if (!empty($this->loginOptions['prompt'])) {
 						$this->__callback($controller, $this->loginOptions['prompt']);
 					} else {
 						$this->blackHole($controller, 'login');
@@ -409,6 +421,12 @@ class SecurityComponent extends Object {
 					} else {
 						if (low($this->loginOptions['type']) == 'digest') {
 							// Do digest authentication
+							if ($login && isset($this->loginUsers[$login['username']])) {
+								if ($login['response'] == $this->generateDigestResponseHash($login)) {
+									return true;
+								}
+							}
+							$this->blackHole($controller, 'login');
 						} else {
 							if (!(in_array($login['username'], array_keys($this->loginUsers)) && $this->loginUsers[$login['username']] == $login['password'])) {
 								$this->blackHole($controller, 'login');
@@ -579,11 +597,12 @@ class SecurityComponent extends Object {
  * @access private
  */
 	function __setLoginDefaults(&$options) {
-		$options = am(array('type' => 'basic',
-							'realm' => env('SERVER_NAME'),
-							'qop' => 'auth',
-							'nonce' => String::uuid()),
-							array_filter($options));
+		$options = am(array(
+			'type' => 'basic',
+			'realm' => env('SERVER_NAME'),
+			'qop' => 'auth',
+			'nonce' => String::uuid()
+		), array_filter($options));
 		$options = am(array('opaque' => md5($options['realm'])), $options);
 	}
 /**

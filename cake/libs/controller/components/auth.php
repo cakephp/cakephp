@@ -55,6 +55,13 @@ class AuthComponent extends Object {
  */
 	var $components = array('Session', 'RequestHandler');
 /**
+ * A reference to the object used for authentication
+ *
+ * @var object
+ * @access public
+ */
+	var $authenticate = null;
+/**
  * The name of the component to use for Authorization or set this to
  * 'controller' will validate against Controller::isAuthorized()
  * 'actions' will validate Controller::action against an AclComponent::check()
@@ -62,7 +69,7 @@ class AuthComponent extends Object {
  * array('model'=> 'name'); will validate mapActions against model $name::isAuthorize(user, controller, mapAction)
  * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
  *
- * @var string
+ * @var mixed
  * @access public
  */
 	var $authorize = false;
@@ -97,13 +104,6 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $fields = array('username' => 'username', 'password' => 'password');
-/**
- * the hash function to use, options: sha1, sha256, md5
- *
- * @var string
- * @access public
- */
-	var $hash = 'sha1';
 /**
  * The session key name where the record of the current user is stored.  If
  * unspecified, it will be "Auth.{$userModel name}".
@@ -262,15 +262,15 @@ class AuthComponent extends Object {
 			return;
 		}
 
-		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
-			return false;
-		}
-
 		if (!$this->__setDefaults()) {
 			return false;
 		}
 
 		$this->data = $controller->data = $this->hashPasswords($controller->data);
+
+		if ($this->allowedActions == array('*') || in_array($controller->action, $this->allowedActions)) {
+			return false;
+		}
 
 		if (!isset($controller->params['url']['url'])) {
 			$url = '';
@@ -774,6 +774,10 @@ class AuthComponent extends Object {
  * @return array
  */
 	function hashPasswords($data) {
+		if (is_object($this->authenticate) && method_exists($this->authenticate, 'hashPasswords')) {
+			return $this->authenticate->hashPasswords($data);
+		}
+
 		if (isset($data[$this->userModel])) {
 			if (!empty($data[$this->userModel][$this->fields['username']]) && !empty($data[$this->userModel][$this->fields['password']])) {
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
@@ -790,7 +794,7 @@ class AuthComponent extends Object {
  * @return string
  */
 	function password($password) {
-		return Security::hash(CAKE_SESSION_STRING . $password, $this->hash);
+		return Security::hash(CAKE_SESSION_STRING . $password);
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.
