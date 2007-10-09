@@ -63,6 +63,14 @@ class File extends Object{
  * @access public
  */
 	var $info = array();
+
+/**
+ * Holds the file handler resource if the file is opened
+ *
+ * @var string
+ * @access public
+ */
+	var $handle = null;
 /**
  * Constructor
  *
@@ -88,14 +96,60 @@ class File extends Object{
 		}
 	}
 /**
+ * Closes the current file if it is opened
+ *
+ * @return void
+ * @access public
+ */
+	function __destruct() {
+		$this->close();
+	}
+/**
+ * Opens the current file with a given $mode
+ *
+ * @param string $mode A valid 'fopen' mode string (r|w|a ...)
+ * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @return boolean True on success, false on failure
+ * @access public
+ */
+	function open($mode = 'r', $force = false) {
+		if (!$force && $this->opened()) {
+			return true;
+		}
+		
+		$file = $this->pwd();
+		$this->handle = @fopen($file, $mode);
+		if (!$this->opened()) {
+			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
+			return false;
+		}
+		return true;
+	}
+/**
+ * Closes the current file if it is opened.
+ *
+ * @return boolean True if closing was successful or file was already closed, otherwise false
+ * @access public
+ */
+	function close() {
+		if (!$this->opened()) {
+			return true;
+		}
+		return fclose($this->handle);
+	}
+/**
  * Return the contents of this File as a string.
  *
  * @return string Contents
  * @access public
  */
-	function read() {
-		$contents = file_get_contents($this->pwd());
-		return $contents;
+	function read($bytes = false, $mode = 'rb') {
+		if (!is_int($bytes)) {
+			$contents = file_get_contents($this->pwd());
+			return $contents;
+		}
+		
+		// TODO: Implement support for $bytes parameter
 	}
 /**
  * Append given data string to this File.
@@ -116,6 +170,7 @@ class File extends Object{
  * @access public
  */
 	function write($data, $mode = 'w') {
+		// TODO: Refactor to use File::open() instead
 		$file = $this->pwd();
 		if (!($handle = fopen($file, $mode))) {
 			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
@@ -299,6 +354,16 @@ class File extends Object{
 		$executable = is_executable($this->pwd());
 		return $executable;
 	}
+/**
+ * Returns true if the current file is currently opened by this class instance.
+ *
+ * @return boolean Ture if file is opened, false otherwise
+ * @access public
+ */
+	function opened() {
+		return is_resource($this->handle);
+	}
+
 /**
  * Returns true if the File is readable.
  *

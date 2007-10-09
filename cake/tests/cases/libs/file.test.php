@@ -39,8 +39,7 @@ class FileTest extends UnitTestCase {
 
 	function testBasic() {
 
-		$file = dirname(__FILE__) . DS . basename(__FILE__);
-
+		$file = __FILE__;
 		$this->File =& new File($file);
 
 		$result = $this->File->pwd();
@@ -86,6 +85,66 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->Folder();
 		$this->assertIsA($result, 'Folder');
 
+	}
+
+	function testRead() {
+		$this->File =& new File(__FILE__);
+	
+		$result = $this->File->read();
+		$expecting = file_get_contents(__FILE__);
+		$this->assertEqual($result, $expecting);
+		
+		$expecting = substr($expecting, 0, 3);
+		$result = $this->File->read(3);
+		$this->assertEqual($result, $expecting);
+	}
+
+	function testOpen() {
+		$this->File->handle = null;
+
+		$r = $this->File->open();
+		$this->assertTrue(is_resource($this->File->handle));
+		$this->assertTrue($r);
+
+		$handle = $this->File->handle;
+		$r = $this->File->open();
+		$this->assertTrue($r);
+		$this->assertTrue($handle === $this->File->handle);
+		$this->assertTrue(is_resource($this->File->handle));
+
+		$r = $this->File->open('r', true);
+		$this->assertTrue($r);
+		$this->assertFalse($handle === $this->File->handle);
+		$this->assertTrue(is_resource($this->File->handle));
+		
+		$InvalidFile =& new File('invalid-file.invalid-ext');
+		$expecting =& new PatternExpectation('/could not open/i');
+ 		$this->expectError($expecting);
+		$InvalidFile->open();
+		
+		$this->File->close();
+	}
+
+	function testClose() {
+		$this->File->handle = null;
+		$this->assertFalse($this->File->opened());
+		$this->assertTrue($this->File->close());
+		$this->assertFalse($this->File->opened());
+
+		$this->File->handle = fopen(__FILE__, 'r');
+		$this->assertTrue($this->File->opened());
+		$this->assertTrue($this->File->close());
+		$this->assertFalse($this->File->opened());
+	}
+
+	function testOpened() {
+		$this->File->handle = null;
+		$this->assertFalse($this->File->opened());
+
+		$this->File->handle = fopen(__FILE__, 'r');
+		$this->assertTrue($this->File->opened());
+		
+		$this->File->close();
 	}
 /*
 	function testOperations() {
