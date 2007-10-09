@@ -67,7 +67,7 @@ class File extends Object{
 /**
  * Holds the file handler resource if the file is opened
  *
- * @var string
+ * @var resource
  * @access public
  */
 	var $handle = null;
