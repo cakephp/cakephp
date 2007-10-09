@@ -357,7 +357,7 @@ class File extends Object{
 /**
  * Returns true if the current file is currently opened by this class instance.
  *
- * @return boolean Ture if file is opened, false otherwise
+ * @return boolean True if file is opened, false otherwise
  * @access public
  */
 	function opened() {
