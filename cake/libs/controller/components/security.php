@@ -515,7 +515,9 @@ class SecurityComponent extends Object {
 							$merge[] = $lookup;
 						}
 					}
-					$field[$newKey] = array_merge($merge, $field[$newKey]);
+					if (isset($field[$newKey])) {
+						$field[$newKey] = array_merge($merge, $field[$newKey]);
+					}
 					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 					unset($controller->data[$key]);
 					continue;
