@@ -484,8 +484,8 @@ class SecurityComponent extends Object {
 					}
 				}
 			}
-			$merge = array();
 			foreach ($check as $key => $value) {
+				$merge = array();
 				if ($key === '__Token') {
 					$field[$key] = $value;
 					continue;
@@ -515,8 +515,11 @@ class SecurityComponent extends Object {
 							$merge[] = $lookup;
 						}
 					}
+
 					if (isset($field[$newKey])) {
 						$field[$newKey] = array_merge($merge, $field[$newKey]);
+					} else {
+						$field[$newKey] = $merge;
 					}
 					$controller->data[$newKey] = Set::pushDiff($controller->data[$key], $controller->data[$newKey]);
 					unset($controller->data[$key]);
