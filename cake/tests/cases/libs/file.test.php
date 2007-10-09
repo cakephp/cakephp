@@ -27,6 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 uses('file');
+
 /**
  * Short description for class.
  *
@@ -38,7 +39,6 @@ class FileTest extends UnitTestCase {
 	var $File = null;
 
 	function testBasic() {
-
 		$file = __FILE__;
 		$this->File =& new File($file);
 
@@ -146,29 +146,68 @@ class FileTest extends UnitTestCase {
 		
 		$this->File->close();
 	}
-/*
-	function testOperations() {
+	
+	function testWrite() {
+		if (!$tmpFile = $this->_getTmpFile()) {
+			return false;
+		};
+		if (file_exists($tmpFile)) {
+			unlink($tmpFile);
+		}
 
-		$new = TMP . 'test_file_new.php';
-		$this->File =& new File($new, true);
+		$TmpFile =& new File($tmpFile);
+		$this->assertFalse(file_exists($tmpFile));
+	
+		$testData = array('CakePHP\'s test suite was here ...', '');
+		foreach ($testData as $data) {
+			$r = $TmpFile->write($data);
 
-		$data = 'hello';
-		$result = $this->File->write($data);
-		$this->assertTrue($result);
+			$this->assertTrue($r);
+			$this->assertTrue(file_exists($tmpFile));
+			$this->assertEqual($data, file_get_contents($tmpFile));
 
-		$result = $this->File->append($data);
-		$this->assertTrue($result);
-
-		$result = $this->File->read();
-		$expecting = 'hellohello';
-		$this->assertEqual($result, $expecting);
-
-		$result = $this->File->write('');
-		$this->assertTrue($result);
-
-		$result = $this->File->delete($new);
-		$this->assertTrue($result);
+		}
+		unlink($tmpFile);
 	}
-*/
+
+	function testAppend() {
+		// TODO: Test the append function
+	}
+	
+	function testDelete() {
+		if (!$tmpFile = $this->_getTmpFile()) {
+			return false;
+		};
+		
+		if (!file_exists($tmpFile)) {
+			touch($tmpFile);
+		}
+		$TmpFile =& new File($tmpFile);
+		$this->assertTrue(file_exists($tmpFile));
+		$TmpFile->delete();
+		$this->assertFalse(file_exists($tmpFile));
+	}
+
+	function _getTmpFile($paintSkip = true) {
+		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
+		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
+			return $tmpFile;
+		};
+		
+		if ($paintSkip) {
+			$caller = 'test';
+			if (function_exists('debug_backtrace')) {
+				$trace = debug_backtrace();
+				$caller = $trace[1]['function'].'()';
+			}
+			$assertLine = new SimpleStackTrace(array(__FUNCTION__));
+			$assertLine = $assertLine->traceMethod();
+			$shortPath = substr($tmpFile, strlen(ROOT));
+
+			$message = sprintf(__('[FileTest] Skipping %s because "%s" not writeable!', true), $caller, $shortPath).$assertLine;
+			$this->_reporter->paintSkip($message);
+		}
+		return false;
+	}
 }
 ?>
