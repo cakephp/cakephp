@@ -560,11 +560,11 @@ class Configure extends Object {
 			$_this->write('debug', DEBUG);
 		}
 		if (defined('CAKE_ADMIN')) {
-			trigger_error('Deprecated: Use Configure::write(\'Routing.admin\', ' . CAKE_ADMIN . ');', E_USER_WARNING);
+			trigger_error('CAKE_ADMIN Deprecated: Use Configure::write(\'Routing.admin\', \'' . CAKE_ADMIN . '\');', E_USER_WARNING);
 			$_this->write('Routing.admin', CAKE_ADMIN);
 		}
 		if (defined('WEBSERVICES')) {
-			trigger_error('Deprecated: Use Router::parseExtensions();', E_USER_WARNING);
+			trigger_error('WEBSERVICES Deprecated: Use Router::parseExtensions();', E_USER_WARNING);
 			$_this->write('Routing.webservices', WEBSERVICES);
 		}
 	}
