@@ -143,13 +143,14 @@ class File extends Object{
  * @return string Contents
  * @access public
  */
-	function read($bytes = false, $mode = 'rb') {
+	function read($bytes = false, $mode = 'rb', $forceMode = false) {
 		if (!is_int($bytes)) {
 			$contents = file_get_contents($this->pwd());
 			return $contents;
 		}
 		
-		// TODO: Implement support for $bytes parameter
+		$this->open($mode, $forceMode);
+		return fread($this->handle, $bytes);
 	}
 /**
  * Append given data string to this File.
@@ -169,19 +170,11 @@ class File extends Object{
  * @return boolean Success
  * @access public
  */
-	function write($data, $mode = 'w') {
-		// TODO: Refactor to use File::open() instead
-		$file = $this->pwd();
-		if (!($handle = fopen($file, $mode))) {
-			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
+	function write($data, $mode = 'w', $forceMode = false) {
+		if (!$this->open($mode, $forceMode)) {
 			return false;
 		}
-
-		if (false === fwrite($handle, $data)) {
-			return false;
-		}
-
-		if (!fclose($handle)) {
+		if (false === fwrite($this->handle, $data)) {
 			return false;
 		}
 		return true;

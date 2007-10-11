@@ -93,10 +93,17 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
 		$this->assertEqual($result, $expecting);
+		$this->assertTrue(!is_resource($this->File->handle));
 		
-		// $expecting = substr($expecting, 0, 3);
-		// $result = $this->File->read(3);
-		// $this->assertEqual($result, $expecting);
+		$data = $expecting;
+		$expecting = substr($data, 0, 3);
+		$result = $this->File->read(3);
+		$this->assertEqual($result, $expecting);
+		$this->assertTrue(is_resource($this->File->handle));
+		
+		$expecting = substr($data, 3, 3);
+		$result = $this->File->read(3);
+		$this->assertEqual($result, $expecting);
 	}
 
 	function testOpen() {
@@ -157,21 +164,43 @@ class FileTest extends UnitTestCase {
 
 		$TmpFile =& new File($tmpFile);
 		$this->assertFalse(file_exists($tmpFile));
-	
-		$testData = array('CakePHP\'s test suite was here ...', '');
+		$this->assertFalse(is_resource($TmpFile->handle));
+
+		$testData = array('CakePHP\'s', ' test suite', ' was here ...', '');
 		foreach ($testData as $data) {
 			$r = $TmpFile->write($data);
 
 			$this->assertTrue($r);
 			$this->assertTrue(file_exists($tmpFile));
 			$this->assertEqual($data, file_get_contents($tmpFile));
+			$this->assertTrue(is_resource($TmpFile->handle));
+			$TmpFile->close();
 
 		}
 		unlink($tmpFile);
 	}
 
 	function testAppend() {
-		// TODO: Test the append function
+		if (!$tmpFile = $this->_getTmpFile()) {
+			return false;
+		};
+		if (file_exists($tmpFile)) {
+			unlink($tmpFile);
+		}
+		
+		$TmpFile =& new File($tmpFile);
+		$this->assertFalse(file_exists($tmpFile));
+		
+		$fragments = array('CakePHP\'s', ' test suite', ' was here ...', '');
+		$data = null;
+		foreach ($fragments as $fragment) {
+			$r = $TmpFile->append($fragment);
+			$this->assertTrue($r);
+			$this->assertTrue(file_exists($tmpFile));
+			$data = $data.$fragment;
+			$this->assertEqual($data, file_get_contents($tmpFile));
+			$TmpFile->close();
+		}
 	}
 	
 	function testDelete() {
