@@ -478,8 +478,15 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertNoPattern('/id="ModelField"/', $result);
 		$this->assertNoPattern('/checked="checked"/', $result);
-
 		$this->assertPattern('/^<fieldset><legend>field<\/legend>(<input[^<>]+><label[^<>]+>option [AB]<\/label>)+<\/fieldset>$/', $result);
+		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
+		
+		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('separator' => '<br/>'));
+		$this->assertPattern('/id="Field0"/', $result);
+		$this->assertPattern('/id="Field1"/', $result);
+		$this->assertNoPattern('/id="ModelField"/', $result);
+		$this->assertNoPattern('/checked="checked"/', $result);
+		$this->assertPattern('/^<fieldset><legend>field<\/legend><input[^<>]+><label[^<>]+>option A<\/label><br[^<>+]><input[^<>]+><label[^<>]+>option B<\/label><\/fieldset>$/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
 
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '1'));

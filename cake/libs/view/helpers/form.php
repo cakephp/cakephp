@@ -517,14 +517,6 @@ class FormHelper extends AppHelper {
 				}
 				unset($options['options']);
 			}
-
-			$inBetween = null;
-			if (isset($options['inbetween'])) {
-				if (!empty($options['inbetween'])) {
-					$inBetween = $options['inbetween'];
-				}
-				unset($options['inbetween']);
-			}
 		}
 
 		if (!isset($options['type'])) {
@@ -670,7 +662,7 @@ class FormHelper extends AppHelper {
 				$out = $before . $this->checkbox($fieldName, $options) . $between . $out;
 			break;
 			case 'radio':
-				$out = $before . $out . $this->radio($fieldName, $radioOptions, $inBetween, $options) . $between;
+				$out = $before . $out . $this->radio($fieldName, $radioOptions, $options) . $between;
 			break;
 			case 'text':
 			case 'password':
