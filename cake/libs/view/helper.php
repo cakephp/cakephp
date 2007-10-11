@@ -428,7 +428,8 @@ class Helper extends Overloadable {
 				$name = $field;
 			break;
 			default:
-				$name = array_filter(array($this->model(), $this->field(), $this->modelID()));
+				//$name = array_filter(array($this->model(), $this->field(), $this->modelID()));
+				$name = array_filter(array($this->model(), $this->field()));
 				if ($this->modelID() === 0) {
 					$name[] = $this->modelID();
 				}
@@ -468,12 +469,13 @@ class Helper extends Overloadable {
 		}
 
 		$result = null;
+
 		if (isset($this->data[$this->model()][$this->field()])) {
 			$result = $this->data[$this->model()][$this->field()];
 		} elseif (isset($this->data[$this->field()]) && is_array($this->data[$this->field()])) {
 			if (ClassRegistry::isKeySet($this->field())) {
-				$key =& ClassRegistry::getObject($this->field());
-				$result = $this->__selectedArray($this->data[$this->field()], $key->primaryKey);
+				$model =& ClassRegistry::getObject($this->field());
+				$result = $this->__selectedArray($this->data[$this->field()], $model->primaryKey);
 			}
 		}
 
