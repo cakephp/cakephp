@@ -153,6 +153,27 @@ class File extends Object{
 		return fread($this->handle, $bytes);
 	}
 /**
+ * Sets or gets the offset for the currently opened file.
+ *
+ * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
+ * @param integer $whence PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
+ * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
+ * @access public
+ */
+	function offset($offset = false, $whence = SEEK_SET) {
+		if ($offset === false) {
+			if (!$this->opened()) {
+				return false;
+			}
+			return ftell($this->handle);
+		}
+		
+		if (!$this->open()) {
+			return false;
+		}
+		return fseek($this->handle, $offset, $whence) === 0;
+	}
+/**
  * Append given data string to this File.
  *
  * @param string $data Data to write

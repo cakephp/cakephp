@@ -88,8 +88,6 @@ class FileTest extends UnitTestCase {
 	}
 
 	function testRead() {
-		$this->File =& new File(__FILE__);
-	
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
 		$this->assertEqual($result, $expecting);
@@ -104,6 +102,33 @@ class FileTest extends UnitTestCase {
 		$expecting = substr($data, 3, 3);
 		$result = $this->File->read(3);
 		$this->assertEqual($result, $expecting);
+	}
+	
+	function testOffset() {
+		$this->File->close();
+		
+		$result = $this->File->offset();
+		$this->assertFalse($result);
+		
+		$this->assertFalse(is_resource($this->File->handle));
+		$success = $this->File->offset(0);
+		$this->assertTrue($success);
+		$this->assertTrue(is_resource($this->File->handle));
+
+		$result = $this->File->offset();
+		$expecting = 0;
+		$this->assertIdentical($result, $expecting);
+		
+		$data = file_get_contents(__FILE__);
+		$success = $this->File->offset(5);
+		$expecting = substr($data, 5, 3);
+		$result = $this->File->read(3);
+		$this->assertTrue($success);
+		$this->assertEqual($result, $expecting);
+		
+		$result = $this->File->offset();
+		$expecting = 5+3;
+		$this->assertIdentical($result, $expecting);
 	}
 
 	function testOpen() {
