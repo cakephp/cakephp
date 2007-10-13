@@ -129,7 +129,7 @@ class View extends Object {
  * Variables for the view
  *
  * @var array
- * @access private
+ * @access public
  */
 	var $viewVars = array();
 /**
@@ -142,8 +142,8 @@ class View extends Object {
 /**
  * Title HTML element of this View.
  *
- * @var boolean
- * @access private
+ * @var string
+ * @access public
  */
 	var $pageTitle = false;
 /**
@@ -181,13 +181,12 @@ class View extends Object {
  * @access public
  */
 	var $autoLayout = true;
-
 /**
  * Array of parameter data
  *
  * @var array Parameter data
  */
-	var $params;
+	var $params = array();
 /**
  * True when the view has been rendered.
  *
@@ -203,7 +202,7 @@ class View extends Object {
 /**
  * File extension. Defaults to Cake's template ".ctp".
  *
- * @var array
+ * @var string
  */
 	var $ext = '.ctp';
 /**
@@ -213,13 +212,13 @@ class View extends Object {
  */
 	var $subDir = null;
 /**
- * Enter description here... Themes. New in Cake RC4.
+ * Theme name.
  *
- * @var array
+ * @var string
  */
 	var $themeWeb = null;
 /**
- * Plugin name. A Plugin is a sub-application. New in Cake RC4.
+ * Plugin name. A Plugin is a sub-application.
  *
  * @link http://manual.cakephp.org/chapter/plugins
  * @var string
@@ -358,9 +357,9 @@ class View extends Object {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
 			$this->pluginPaths = array(
-									VIEWS . $this->pluginPath,
-									APP . $this->pluginPath . 'views' . DS,
-								);
+				VIEWS . $this->pluginPath,
+				APP . $this->pluginPath . 'views' . DS,
+			);
 		}
 
 		$paths = Configure::getInstance();
@@ -419,6 +418,7 @@ class View extends Object {
 				}
 				$cacheFile = 'element_' . $key .'_'. $plugin . convertSlash($name);
 				$cache = cache('views' . DS . $cacheFile, null, $expires);
+
 				if (is_string($cache)) {
 					return $cache;
 				} else {
@@ -484,11 +484,11 @@ class View extends Object {
 			}
 		} else {
 			return $this->cakeError('missingLayout', array(
-					array(
-						'layout' => $this->layout,
-						'file' => $layout_fn,
-						'base' => $this->base
-					)
+				array(
+					'layout' => $this->layout,
+					'file' => $layout_fn,
+					'base' => $this->base
+				)
 			));
 		}
 	}
@@ -924,14 +924,16 @@ class View extends Object {
 			}
 
 			if (strpos($action, 'missingView') === false) {
-				return $this->cakeError('missingView', array(
-											array('className' => $this->name,
-												'action' => $this->action,
-												'file' => $viewFileName,
-												'base' => $this->base)));
+				return $this->cakeError('missingView', array(array(
+					'className' => $this->name,
+					'action' => $this->action,
+					'file' => $viewFileName,
+					'base' => $this->base
+				)));
 				exit();
 			}
 		}
 	}
 }
+
 ?>
