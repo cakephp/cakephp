@@ -98,7 +98,7 @@
 /**
  * A random string used in session management.
  */
-	define('CAKE_SESSION_STRING', '0qyJfIxDYhG93bfs2guVoUubWwvniR2G0FgaC9mi');
+	define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 /**
  * The name of CakePHP's session cookie.
  */
