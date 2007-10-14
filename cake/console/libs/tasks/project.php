@@ -169,7 +169,7 @@ class ProjectTask extends Shell {
 					$this->err('Unable to to set CAKE_CORE_INCLUDE_PATH, please change this yourself in ' . $path . 'webroot' .DS .'index.php');
 				}
 
-				if (!$Folder->chmod($path . DS . 'tmp', 0777)) {
+				if (!$Folder->chmod($path . 'tmp', 0777)) {
 					$this->err('Could not set permissions on '. $path . DS .'tmp');
 					$this->out('You must manually check that these directories can be wrote to by the server');
 				}

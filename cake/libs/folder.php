@@ -416,7 +416,7 @@ class Folder extends Object{
  * @access public
  */
 	function tree($path) {
-		$path = DS . trim($path, DS);
+		$path = rtrim($path, DS);
 		$this->__files = array();
 		$this->__directories = array($path);
 		$directories = array();
