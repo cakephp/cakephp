@@ -117,6 +117,20 @@ class TestDispatchPagesController extends AppController {
 		return true;
 	}
 }
+
+class ArticlesTestAppController extends AppController {
+
+}
+
+class ArticlesTestController extends ArticlesTestAppController {
+
+	var $name = 'ArticlesTest';
+	var $uses = array();
+
+	function admin_index() {
+		return true;
+	}
+}
 /**
  * Short description for class.
  *
@@ -566,6 +580,29 @@ class DispatcherTest extends UnitTestCase {
 
 		$expected = array('param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->params['pass'], $expected);
+
+		Router::reload();
+		$dispatcher =& new TestDispatcher();
+		$dispatcher->base = false;
+		$url = 'admin/articles_test';
+
+		restore_error_handler();
+		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'articles_test';
+		$this->assertIdentical($controller->plugin, $expected);
+
+		$expected = 'ArticlesTest';
+		$this->assertIdentical($controller->name, $expected);
+
+		$expected = 'admin_index';
+		$this->assertIdentical($controller->action, $expected);
+		$expected = array('pass'=> array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
+							'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'),
+							'bare' => 0, 'webservices' => null, 'return' => 1
+						);
+		$this->assertIdentical($controller->params, $expected);
 	}
 
 	function testAutomaticPluginControllerMissingActionDispatch() {
