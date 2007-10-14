@@ -38,7 +38,8 @@ class FormHelper extends AppHelper {
 /**
  * Other helpers used by FormHelper
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
 	var $helpers = array('Html');
 /**
@@ -51,7 +52,7 @@ class FormHelper extends AppHelper {
 /**
  * Enter description here...
  *
- * @var unknown_type
+ * @var array
  */
 	var $__options = array(
 		'day' => array(), 'minute' => array(), 'hour' => array(),
@@ -61,12 +62,14 @@ class FormHelper extends AppHelper {
  * Enter description here...
  *
  * @var array
+ * @access public
  */
 	var $fields = array();
 /**
  * Defines the type of form being created.  Set by FormHelper::create().
  *
  * @var string
+ * @access public
  */
 	var $requestType = null;
 /**
@@ -145,7 +148,6 @@ class FormHelper extends AppHelper {
 			$created = true;
 			$id = $this->data[$model][$data['key']];
 		}
-		$view->modelId = $id;
 		$options = am(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
@@ -401,7 +403,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = Inflector::humanize($text);
+			$text = Inflector::humanize(Inflector::underscore($text));
 		}
 
 		if (isset($attributes['for'])) {
@@ -424,29 +426,36 @@ class FormHelper extends AppHelper {
  * @param array $blacklist a simple array of fields to skip
  * @return output
  */
-	function inputs($fields = null, $blacklist = null) {
-		if (!is_array($fields)) {
-			$fieldset = $fields;
-			$fields = array_keys($this->fieldset['fields']);
-		}
-		if (isset($fields['fieldset'])) {
-			$fieldset = $fields['fieldset'];
-			unset($fields['fieldset']);
+	function inputs($fields = true, $blacklist = null) {
+		if (is_array($fields)) {
+			if (array_key_exists('legend', $fields)) {
+				$legend = $fields['legend'];
+				unset($fields['legend']);
+			}
+
+			if (isset($fields['fieldset'])) {
+				$fields = $fields['fieldset'];
+				unset($fields['fieldset']);
+			}
 		} else {
-			$fieldset = true;
+			$legend = $fields;
+			unset($fields);
 		}
 
-		if ($fieldset === true) {
+		if (empty($fields)) {
+			$fields = array_keys($this->fieldset['fields']);
+		}
+
+		if ($legend === true) {
 			$legend = 'New ';
-			if (in_array($this->action, array('update', 'edit'))) {
+			$prefix = null;
+			if (isset($this->params['prefix'])) {
+				$prefix = $this->params['prefix'];
+			}
+			if (in_array(str_replace($prefix .'_', '', $this->action), array('update', 'edit'))) {
 				$legend = 'Edit ';
 			}
 			$legend .= Inflector::humanize(Inflector::underscore($this->model()));
-		} elseif (is_string($fieldset)) {
-			$legend = $fieldset;
-		} elseif (isset($fieldset['legend'])) {
-			$legend = $fields['legend'];
-			unset($fields['legend']);
 		}
 
 		$out = null;
@@ -454,18 +463,6 @@ class FormHelper extends AppHelper {
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
 				$options = array();
-			}
-			if (is_array($options) && isset($options['fieldset'])) {
-				$out .= $this->inputs($options);
-				continue;
-			}
-			if (is_array($options) && isset($options['fieldName'])) {
-				$name = $options['fieldName'];
-				unset($options['fieldName']);
-			}
-			if (isset($options['blacklist'])) {
-				$blacklist = $options['blacklist'];
-				unset($options['blacklist']);
 			}
 			if (is_array($blacklist) && in_array($name, $blacklist)) {
 				continue;

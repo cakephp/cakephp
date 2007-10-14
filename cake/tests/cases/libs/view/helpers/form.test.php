@@ -362,6 +362,18 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/error-message/', $result);
 	}
 
+	function testFormInputs() {
+		$this->Form->create('Contact');
+		$result = $this->Form->inputs('The Legend');
+		$this->assertPattern('/<legend>The Legend<\/legend>/', $result);
+
+		$this->Form->params['prefix'] = 'admin';
+		$this->Form->action = 'admin_edit';
+		$result = $this->Form->inputs();
+		$this->assertPattern('/<legend>Edit Contact<\/legend>/', $result);
+
+	}
+
 	function testLabel() {
 		$this->Form->text('Person/name');
 		$result = $this->Form->label();
@@ -480,7 +492,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/checked="checked"/', $result);
 		$this->assertPattern('/^<fieldset><legend>field<\/legend>(<input[^<>]+><label[^<>]+>option [AB]<\/label>)+<\/fieldset>$/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
-		
+
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('separator' => '<br/>'));
 		$this->assertPattern('/id="Field0"/', $result);
 		$this->assertPattern('/id="Field1"/', $result);
