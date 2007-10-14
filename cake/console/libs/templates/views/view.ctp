@@ -114,7 +114,7 @@ foreach ($hasOne as $assocName => $assocData):
 	<?php echo "<?php endif; ?>\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(sprinft(__('Edit %s', true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
+			<li><?php echo "<?php echo \$html->link(sprintf(__('Edit %s', true), __('{$otherSingularHumanName}', true)), array('controller'=> '{$otherControllerPath}', 'action'=>'edit', \${$singularVar}['{$assocName}']['{$otherPrimaryKey}']));?></li>\n";?>
 		</ul>
 	</div>
 </div>
