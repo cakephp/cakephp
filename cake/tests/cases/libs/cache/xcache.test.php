@@ -44,16 +44,16 @@ class XcacheEngineTest extends UnitTestCase {
 	}
 
 	function setUp() {
-		Cache::engine('Xcache');
+		Cache::config('xcache', array('engine'=>'Xcache'));
 	}
 
 	function testSettings() {
 		$settings = Cache::settings();
 		$expecting = array('duration'=> 3600,
 						'probability' => 100,
+						'engine' => 'Xcache',
 						'PHP_AUTH_USER' => 'cake',
-						'PHP_AUTH_PW' => '',
-						'name' => 'Xcache'
+						'PHP_AUTH_PW' => 'cake',
 						);
 		$this->assertEqual($settings, $expecting);
 	}
@@ -101,6 +101,10 @@ class XcacheEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+	}
+	
+	function tearDown() {
+		Cache::config('default');
 	}
 }
 ?>

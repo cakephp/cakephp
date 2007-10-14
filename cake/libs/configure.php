@@ -531,9 +531,8 @@ class Configure extends Object {
 		$componentPaths = null;
 		$behaviorPaths = null;
 		$pluginPaths = null;
-
 		if ($boot) {
-			if (!require_once(APP_PATH . 'config' . DS . 'core.php')) {
+			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
@@ -556,16 +555,24 @@ class Configure extends Object {
 		$_this->write('App', array('base' => false, 'baseUrl' => $baseUrl, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
 
 		if (defined('DEBUG')) {
-			trigger_error('Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');', E_USER_WARNING);
+			trigger_error('Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');  in APP/config/core.php', E_USER_WARNING);
 			$_this->write('debug', DEBUG);
 		}
 		if (defined('CAKE_ADMIN')) {
-			trigger_error('CAKE_ADMIN Deprecated: Use Configure::write(\'Routing.admin\', \'' . CAKE_ADMIN . '\');', E_USER_WARNING);
+			trigger_error('CAKE_ADMIN Deprecated: Use Configure::write(\'Routing.admin\', \'' . CAKE_ADMIN . '\');  in APP/config/core.php', E_USER_WARNING);
 			$_this->write('Routing.admin', CAKE_ADMIN);
 		}
 		if (defined('WEBSERVICES')) {
 			trigger_error('WEBSERVICES Deprecated: Use Router::parseExtensions();', E_USER_WARNING);
 			$_this->write('Routing.webservices', WEBSERVICES);
+		}
+		if (defined('ACL_CLASSNAME')) {
+			trigger_error('ACL_CLASSNAME Deprecated. Use Configure::write(\'Acl.classname\'); in APP/config/core.php', E_USER_WARNING);
+			$_this->write('Acl.classname', ACL_CLASSNAME);
+		}
+		if (defined('ACL_DATABASE')) {
+			trigger_error('ACL_DATABASE Deprecated. Use Configure::write(\'Acl.database\'); in APP/config/core.php', E_USER_WARNING);
+			$_this->write('Acl.database', ACL_CLASSNAME);
 		}
 	}
 }

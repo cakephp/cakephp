@@ -42,6 +42,10 @@ class APCEngineTest extends UnitTestCase {
 		}
 		$this->skipif ($skip, 'APCEngineTest not implemented');
 	}
+	
+	function setUp() {
+		Cache::config('apc', array('engine'=>'Apc'));
+	}
 
 	function testReadAndWriteCache() {
 		$result = Cache::read('test');
@@ -86,6 +90,10 @@ class APCEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+	}
+	
+	function tearDown() {
+		Cache::config('default');
 	}
 }
 ?>

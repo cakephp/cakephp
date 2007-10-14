@@ -43,25 +43,20 @@ if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 		require LIBS . 'inflector.php';
 		require LIBS . 'configure.php';
 	}
-
 	require LIBS . 'cache.php';
+	
+	Configure::getInstance();
+	
+	$cache = Cache::settings();
+	if(empty($cache)) {
+		trigger_error('Cache not configured. Please use Cache::config(); in APP/config/core.php', E_USER_WARNING);
+		Cache::config('default', array('engine' => 'File'));
+	}
+
 	require LIBS . 'session.php';
 	require LIBS . 'security.php';
 	require LIBS . 'string.php';
 
-	if (isset($cakeCache)) {
-		$cache = 'File';
-		if (isset($cakeCache[0])) {
-			$cache = $cakeCache[0];
-		}
-		$settings = array();
-		if (isset($cakeCache[1])) {
-			$settings = $cakeCache[1];
-		}
-		Cache::engine($cache, $settings);
-	} else {
-		Cache::engine();
-	}
 
 	Configure::store(null, 'class.paths');
 	Configure::load('class.paths');

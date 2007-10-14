@@ -35,31 +35,32 @@ uses('cache', 'cache' . DS . 'file');
  */
 class FileEngineTest extends UnitTestCase {
 
-	function setUp() {
-		Cache::engine();
+	function startTest() {
+		Cache::config();
 	}
 
-	function testSettings() {
-		Cache::engine('File', array('path' => TMP . 'tests'));
-		$settings = Cache::settings();
-		$expecting = array('duration'=> 3600,
-						'probability' => 100,
-						'path'=> TMP . 'tests',
-						'prefix'=> 'cake_',
-						'lock' => false,
-						'serialize'=> true,
-						'name' => 'File'
-						);
-		$this->assertEqual($settings, $expecting);
+	function testCacheDirChange() {
+		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
+		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertNotEqual($result, Cache::settings('File'));
+
+		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
+		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertNotEqual($result, Cache::settings('File'));
+
 	}
 
 	function testCacheName() {
+		Cache::config();
 		$cache =& Cache::getInstance();
-		$result = $cache->_Engine->fullpath('models' . DS . 'default_posts');
+		$engine = $cache->_Engine['File'];
+
+		$result = $engine->fullpath('models' . DS . 'default_posts');
 		$expecting = CACHE . 'models' . DS .'cake_default_posts';
 		$this->assertEqual($result, $expecting);
 
-		$result = $cache->_Engine->fullpath('default_posts');
+		$engine = $cache->_Engine['File'];
+		$result = $engine->fullpath('default_posts');
 		$expecting = CACHE . 'cake_default_posts';
 		$this->assertEqual($result, $expecting);
 
@@ -108,19 +109,30 @@ class FileEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'delete_test'));
 	}
 
 	function testSerialize() {
 		Cache::engine('File', array('serialize' => true));
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('seriailze_test', $data, 1);
+		$this->assertTrue($write);
 
 		Cache::engine('File', array('serialize' => false));
 		$read = Cache::read('seriailze_test');
 
-		$result = Cache::delete('seriailze_test');
+		$newread = Cache::read('seriailze_test');
 
-		$this->assertNotIdentical($write, $read);
+		$delete = Cache::delete('seriailze_test');
+
+		$this->assertIdentical($read, serialize($data));
+
+		$this->assertIdentical($newread, $data);
+
+	}
+	
+	function tearDown() {
+		Cache::config('default');
 	}
 
 }

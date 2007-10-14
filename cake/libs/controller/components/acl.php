@@ -37,37 +37,31 @@
 class AclComponent extends Object {
 
 	var $_instance = null;
-
-	var $name = ACL_CLASSNAME;
 /**
  * Constructor. Will return an instance of the correct ACL class.
  *
  */
-	function startup(&$controller) {
-		$this->getACL();
+	function __construct() {
+		$name = Configure::read('Acl.classname');
+		if (!class_exists($name)) {
+			if (loadComponent($name)) {
+				if (strpos($name, '.') !== false) {
+					list($plugin, $name) = explode('.', $name);
+				}
+				$name .= 'Component';
+			} else {
+				trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
+			}
+		}
+		$this->_instance =& new $name();
+		$this->_instance->initialize($this);
 	}
 /**
- * Static function used to gain an instance of the correct ACL class.
+ * startup is not used
  *
- * @return MyACL
  */
-	function &getACL() {
-		if ($this->_instance == null) {
-			$name = $this->name;
-			if (!class_exists($name)) {
-				if (loadComponent($name)) {
-					if (strpos($name, '.') !== false) {
-						list($plugin, $name) = explode('.', $name);
-					}
-					$name .= 'Component';
-				} else {
-					trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
-				}
-			}
-			$this->_instance =& new $name();
-			$this->_instance->initialize($this);
-		}
-		return $this->_instance;
+	function startup(&$controller) {
+		return true;
 	}
 /**
  * Empty class defintion, to be overridden in subclasses.
@@ -226,7 +220,9 @@ class DB_ACL extends AclBase {
  *
  */
 	function __construct() {
-		uses('model' . DS . 'db_acl');
+		if(!class_exists('DB_ACL')) {
+			uses('model' . DS . 'db_acl');
+		}
 		parent::__construct();
 		$this->Aro =& new Aro();
 		$this->Aco =& new Aco();

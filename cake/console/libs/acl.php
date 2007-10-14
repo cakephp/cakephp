@@ -40,8 +40,7 @@ class AclShell extends Shell {
  * @var object
  * @access public
  */
-	var $acl;
-/**
+	var $Acl;
 /**
  * Contains arguments parsed from the command line.
  *
@@ -238,6 +237,7 @@ class AclShell extends Shell {
 		//add existence checks for nodes involved
 		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
 		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+
 		if ($this->Acl->allow($aro, $aco, $this->args[2])) {
 			$this->out(__("Permission granted.", true), true);
 		}

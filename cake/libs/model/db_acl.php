@@ -29,9 +29,6 @@
 /**
  * Set database config if not defined.
  */
-if (!defined('ACL_DATABASE')) {
-	define('ACL_DATABASE', 'default');
-}
 /**
  * Load Model and AppModel
  */
@@ -46,8 +43,6 @@ loadModel();
  * @subpackage	cake.cake.libs.model
  */
 class AclNode extends AppModel {
-
-	var $useDbConfig = ACL_DATABASE;
 /**
  * Explicitly disable in-memory query caching for ACL models
  *
@@ -60,6 +55,17 @@ class AclNode extends AppModel {
  * @var mixed
  */
 	var $actsAs = array('Tree' => 'nested');
+/**
+ * Constructor
+ *
+ */
+	function __construct() {
+		$config = Configure::read('Acl.database');
+		if(isset($config)) {
+			$this->useDbConfig = $config;
+		}
+		parent::__construct();
+	}
 /**
  * Retrieves the Aro/Aco node for this model
  *
@@ -218,8 +224,6 @@ class Aro extends AclNode {
  * @subpackage	cake.cake.libs.model
  */
 class Permission extends AppModel {
-
-	var $useDbConfig = ACL_DATABASE;
 /**
  * Enter description here...
  *
@@ -250,5 +254,16 @@ class Permission extends AppModel {
  * @var unknown_type
  */
 	 var $actsAs = null;
+/**
+ * Constructor
+ *
+ */
+	function __construct() {
+		$config = Configure::read('Acl.database');
+		if(isset($config)) {
+			$this->useDbConfig = $config;
+		}
+		parent::__construct();
+	}
 }
 ?>

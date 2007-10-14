@@ -47,7 +47,7 @@ endif;
 				__('Your cache is set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>';
-				echo sprintf(__('%s is being used to cache, to change this edit config'.DS.'core.php ', true), $settings['name'] . 'Engine');
+				echo sprintf(__('%s is being used to cache, to change this edit config'.DS.'core.php ', true), $settings['engine'] . 'Engine');
 				echo '</p>';
 
 				echo 'Settings: <ul>';

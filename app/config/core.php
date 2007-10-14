@@ -98,7 +98,7 @@
 /**
  * A random string used in session management.
  */
-	define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+	define('CAKE_SESSION_STRING', '0qyJfIxDYhG93bfs2guVoUubWwvniR2G0FgaC9mi');
 /**
  * The name of CakePHP's session cookie.
  */
@@ -157,55 +157,60 @@
  * The classname and database used in CakePHP's
  * access control lists.
  */
-	define('ACL_CLASSNAME', 'DB_ACL');
-	define('ACL_DATABASE', 'default');
+	Configure::write('Acl.classname', 'DB_ACL');
+	Configure::write('Acl.database', 'default');
 /**
  * Cache Engine Configuration
  *
  * File storage engine.
  * default dir is /app/tmp/cache/
- * 	$cakeCache = array('File', array(
- *		[optional] 'duration'=> 3600,
- *		[optional] 'probability'=> 100,
- * 		[optional] 'dir' => '/tmp', // use system tmp directory - remember to use absolute path
- * 		[optional] 'prefix' => 'cake_', // prefix every cache file with this string
- * 		[optional] 'lock' => false, // use file locking
- * 		[optional] 'serialize' => true,
- * 		));
+ * 	 Cache::config('default', array('engine' => 'File' //[required]
+ *									'duration'=> 3600, //[optional]
+ *									'probability'=> 100, //[optional]
+ * 		 							'path' => '/tmp', //[optional] use system tmp directory - remember to use absolute path
+ * 									'prefix' => 'cake_', //[optional]  prefix every cache file with this string
+ * 									'lock' => false, //[optional]  use file locking
+ * 									'serialize' => true, [optional]
+ *								)
+ * 					);
  *
  * APC (Alternative PHP Cache)
- * 	$cakeCache = array('Apc', array(
- *		[optional] 'duration'=> 3600,
- *		[optional] 'probability'=> 100
- * 		));
+ * 	 Cache::config('default', array('engine' => 'Apc' //[required]
+ *									'duration'=> 3600, //[optional]
+ *									'probability'=> 100, //[optional]
+ *								)
+ * 					);
  *
  * Xcache (PHP opcode cacher)
- *  $cakeCache  = array('Xcache', array(
- *		[optional] 'duration'=> 3600,
- *		[optional] 'probability'=> 100,
- *      'user' => 'admin', // user from xcache.admin.user settings
- *      'password' => 'your_password', // plaintext password (xcache.admin.pass)
- *  	));
+ * 	 Cache::config('default', array('engine' => 'Xcache' //[required]
+ *									'duration'=> 3600, //[optional]
+ *									'probability'=> 100, //[optional]
+ *									'user' => 'admin', //user from xcache.admin.user settings
+ *      							password' => 'your_password', //plaintext password (xcache.admin.pass)
+ *								)
+ * 					);
  *
  * Memcache
- * 	$cakeCache = array('Memcache', array(
- *		[optional] 'duration'=> 3600,
- *		[optional] 'probability'=> 100,
- * 		[optional] 'servers' => array(
- * 							'127.0.0.1', // localhost, default port
- * 							'10.0.0.1:12345', // port 12345
- * 							),
- * 		[optional] 'compress' => true, // compress data in Memcache (slower, but uses less memory)
- * 				));
+ * 	 Cache::config('default', array('engine' => 'Memcache' //[required]
+ *									'duration'=> 3600, //[optional]
+ *									'probability'=> 100, //[optional]
+ * 									'servers' => array(
+ * 												'127.0.0.1', // localhost, default port
+ * 												'10.0.0.1:12345', // port 12345
+ * 											), //[optional]
+ * 									'compress' => true, // [optional] compress data in Memcache (slower, but uses less memory)
+ *								)
+ * 					);
  *
  * Cake Model
- * 	$cakeCache = array('Model', array(
- *		[optional] 'duration'=> 3600,
- *		[optional] 'probability'=> 100,
- * 		[optional] 'className' => 'Cache',
- * 		[optional] 'fields' => array('data' => 'data', 'expires => 'expires'),
- * 		[optional] 'serialize' => true,
- *		));
+ * 	 Cache::config('default', array('engine' => 'Model' //[required]
+ *									'duration'=> 3600, //[optional]
+ *									'probability'=> 100, //[optional]
+ * 									'className' => 'Cache', //[optional]
+ * 									'fields' => array('data' => 'data', 'expires => 'expires'), //[optional]
+ * 									'serialize' => true, [optional]
+ *								)
+ * 					);
  */
-	$cakeCache = array('File');
+	Cache::config('default', array('engine' => 'File'));
 ?>

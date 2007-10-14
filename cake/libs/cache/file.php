@@ -82,13 +82,14 @@ class FileEngine extends CacheEngine {
 	function init($settings = array()) {
 		parent::init($settings);
 		$defaults = array('path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true);
-		$this->settings = am($this->settings, $defaults, $settings);
-		$this->__Folder =& new Folder($this->settings['path']);
-		$this->settings['path'] = $this->__Folder->pwd();
+		$this->settings = am($defaults, $this->settings, $settings);
+		if(!isset($this->__Folder)) {
+			$this->__Folder =& new Folder();
+		}
+		$this->settings['path'] = $this->__Folder->cd($this->settings['path']);
 		if (!is_writable($this->settings['path'])) {
 			return false;
 		}
-
 		return true;
 	}
 /**
@@ -117,12 +118,10 @@ class FileEngine extends CacheEngine {
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
-		if (isset($this->settings['serialize'])) {
+		if (!empty($this->settings['serialize'])) {
 			$data = serialize($data);
 		}
-		if (!$data) {
-			return false;
-		}
+
 		$file = $this->fullpath($key);
 		if ($file === false) {
 			return false;
@@ -160,7 +159,8 @@ class FileEngine extends CacheEngine {
 			$data .= fgets($fp, 4096);
 		}
 		$data = trim($data);
-		if (isset($this->settings['serialize'])) {
+
+		if (!empty($this->settings['serialize'])) {
 			return unserialize($data);
 		}
 		return $data;
@@ -228,9 +228,12 @@ class FileEngine extends CacheEngine {
 		}
 		$parts = array_map(array($this->__File , 'safe'), explode(DS, $key));
 		$key = array_pop($parts);
-		$dir = implode(DS, $parts) . DS;
-		$path = str_replace(DS . DS, DS, $this->settings['path'] . $dir);
-		$fullpath = $this->__Folder->realpath($path . $this->settings['prefix'] . $key);
+		$dir = null;
+		if(count($parts) > 0) {
+			$dir = implode(DS, $parts) . DS;
+		}
+		$path = str_replace(DS . DS, DS, $this->settings['path'] . DS . $dir . $this->settings['prefix'] . $key);
+		$fullpath = $this->__Folder->realpath($path);
 		if (!$this->__Folder->inPath($fullpath, true)) {
 			return false;
 		}

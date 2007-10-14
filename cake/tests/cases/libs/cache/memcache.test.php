@@ -44,7 +44,7 @@ class MemcacheEngineTest extends UnitTestCase {
 	}
 
 	function setUp() {
-		Cache::engine('Memcache');
+		Cache::config('memcache', array('engine'=>'Memcache'));
 	}
 
 	function testSettings() {
@@ -53,14 +53,14 @@ class MemcacheEngineTest extends UnitTestCase {
 						'probability' => 100,
 						'servers' => array('127.0.0.1'),
 						'compress' => false,
-						'name' => 'Memcache'
+						'engine' => 'Memcache'
 						);
 		$this->assertEqual($settings, $expecting);
 	}
 
 	function testConnect() {
 		$Cache =& Cache::getInstance();
-		$result = $Cache->_Engine->connect('127.0.0.1');
+		$result = $Cache->_Engine['Memcache']->connect('127.0.0.1');
 		$this->assertTrue($result);
 	}
 
@@ -108,6 +108,10 @@ class MemcacheEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+	}
+	
+	function tearDown() {
+		Cache::config('default');
 	}
 }
 ?>
