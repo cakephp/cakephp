@@ -856,6 +856,28 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 	}
 
+	function testEditFormWithData() {
+		$this->Form->data = array('Person' => array(
+			'id'			=> 1,
+			'first_name'	=> 'Nate',
+			'last_name'		=> 'Abele',
+			'email'			=> 'nate@cakephp.org'
+		));
+		$this->Form->params = array(
+			'models'		=> array('Person'),
+			'controller'	=> 'people'
+		);
+		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
+
+		$this->Form->create();
+		$result = $this->Form->select('People.People', $options, null, array('multiple' => true));
+		$this->assertPattern('/^<select[^<>]+>\s*(<option[^<>]+>.+<\/option>\s*){3}<\/select>$/', $result);
+		$this->assertPattern('/^<select[^<>]+name="data\[People\]\[People\]\[\]"[^<>]*>/', $result);
+		$this->assertPattern('/^<select[^<>]+multiple="multiple"[^<>]*>/', $result);
+		$this->assertPattern('/^<select[^<>]+id="PeoplePeople"[^<>]*>/', $result);
+		$this->assertNoPattern('/<select[^<>]+[^id|name|multiple]=[^<>]*>$/', $result);
+	}
+
 	function testFormMagicInput() {
 		$result = $this->Form->create('Contact');
 		$this->assertPattern('/^<form\s+id="ContactAddForm"\s+method="post"\s+action="\/contacts\/add\/"\s*>$/', $result);
