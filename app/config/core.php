@@ -27,18 +27,6 @@
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * To configure CakePHP *not* to use mod_rewrite and to
- * use CakePHP pretty URLs, remove these .htaccess
- * files:
- *
- * /.htaccess
- * /app/.htaccess
- * /app/webroot/.htaccess
- *
- * And uncomment the baseUrl below:
- */
-	//Configure::write('baseUrl', env('SCRIPT_NAME'));
-/**
  * CakePHP Debug Level:
  *
  * Production Mode:
@@ -53,21 +41,44 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
+/**
+ * To configure CakePHP *not* to use mod_rewrite and to
+ * use CakePHP pretty URLs, remove these .htaccess
+ * files:
+ *
+ * /.htaccess
+ * /app/.htaccess
+ * /app/webroot/.htaccess
+ *
+ * And uncomment the App.baseUrl below:
+ */
+	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+/**
+ * Uncomment the define below to use CakePHP admin routes.
+ *
+ * The value of the define determines the name of the route
+ * and its associated controller actions:
+ *
+ * 'admin' 		-> admin_index() and /admin/controller/index
+ * 'superuser' -> superuser_index() and /superuser/controller/index
+ */
+	//Configure::write('Routing.admin', 'admin');
 
 /**
- * Turn off caching application-wide.
+ * Turn off all caching application-wide.
  *
  */
-	Configure::write('Cache.disable', false);
+	//Configure::write('Cache.disable', true);
 /**
- * Turn off or enable cache checking application-wide.
+ * Enable cache checking.
  *
- * If set to true, you must still use the controller var $cacheAction inside
- * your controllers to define caching settings. You can either set it
- * controller-wide by setting var $cacheAction = true, or in each action
- * using $this->cacheAction = true.
+ * If set to true, for view caching you must still use the controller
+ * var $cacheAction inside your controllers to define caching settings.
+ * You can either set it controller-wide by setting var $cacheAction = true,
+ * or in each action using $this->cacheAction = true.
+ *
  */
-	Configure::write('Cache.check', false);
+	//Configure::write('Cache.check', true);
 /**
  * Defines the default error type when using the log() function. Used for
  * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
@@ -121,23 +132,6 @@
  * Actual value depends on CAKE_SECURITY setting.
  */
 	define('CAKE_SESSION_TIMEOUT', '120');
-/**
- * Uncomment the define below to use CakePHP admin routes.
- *
- * The value of the define determines the name of the route
- * and its associated controller actions:
- *
- * 'admin' 		-> admin_index() and /admin/controller/index
- * 'superuser' -> superuser_index() and /superuser/controller/index
- */
-//	Configure::write('Routing.admin', 'admin');
-/**
- *  Enable or disable CakePHP webservices routing. Set to 'off' or 'on'.
- *
- * @deprecated
- * @see Router::parseExtensions()
- */
-	Configure::write('Routing.webservices', 'off');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -213,4 +207,5 @@
  * 					);
  */
 	Cache::config('default', array('engine' => 'File'));
+
 ?>

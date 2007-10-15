@@ -531,10 +531,13 @@ class Configure extends Object {
 		$componentPaths = null;
 		$behaviorPaths = null;
 		$pluginPaths = null;
+
 		if ($boot) {
+			$_this->write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
 			if (!include(APP_PATH . 'config' . DS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
+
 			if (!include(APP_PATH . 'config' . DS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
@@ -548,14 +551,12 @@ class Configure extends Object {
 		$_this->__buildBehaviorPaths($behaviorPaths);
 		$_this->__buildPluginPaths($pluginPaths);
 
-		$baseUrl = false;
 		if (defined('BASE_URL')) {
-			$baseUrl = BASE_URL;
+			trigger_error('BASE_URL Deprecated: See Configure::write(\'App.baseUrl\', \'' . BASE_URL . '\');  in APP/config/core.php', E_USER_WARNING);
+			$_this->write('App.baseUrl', BASE_URL);
 		}
-		$_this->write('App', array('base' => false, 'baseUrl' => $baseUrl, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
-
 		if (defined('DEBUG')) {
-			trigger_error('Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');  in APP/config/core.php', E_USER_WARNING);
+			trigger_error('DEBUG Deprecated: Use Configure::write(\'debug\', ' . DEBUG . ');  in APP/config/core.php', E_USER_WARNING);
 			$_this->write('debug', DEBUG);
 		}
 		if (defined('CAKE_ADMIN')) {
@@ -563,7 +564,7 @@ class Configure extends Object {
 			$_this->write('Routing.admin', CAKE_ADMIN);
 		}
 		if (defined('WEBSERVICES')) {
-			trigger_error('WEBSERVICES Deprecated: Use Router::parseExtensions();', E_USER_WARNING);
+			trigger_error('WEBSERVICES Deprecated: Use Router::parseExtensions(); or add Configure::write(\'Routing.webservices\', \'' . WEBSERVICES . '\');', E_USER_WARNING);
 			$_this->write('Routing.webservices', WEBSERVICES);
 		}
 		if (defined('ACL_CLASSNAME')) {
