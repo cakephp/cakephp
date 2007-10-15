@@ -212,7 +212,7 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = am($options, $htmlAttributes);
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$append .= '<p style="display: inline; margin: 0px; padding: 0px;">';
+			$append .= '<p style="display: none;">';
 			$append .= $this->hidden('_Token/key', array('value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand()));
 			$append .= '</p>';
 		}
@@ -275,10 +275,10 @@ class FormHelper extends AppHelper {
  */
 	function secure($fields) {
 		if (!empty($fields)) {
-			$append = '<p style="display: inline; margin: 0px; padding: 0px;">';
+			$append = '<p style="display: none;">';
 
 			foreach ($fields as $key => $value) {
-				if(strpos($key, '_') !== 0) {
+				if (strpos($key, '_') !== 0) {
 					sort($fields[$key]);
 				}
 			}
@@ -412,7 +412,7 @@ class FormHelper extends AppHelper {
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
-		if(!empty($text)) {
+		if (!empty($text)) {
 			$text = __($text, true);
 		}
 		return $this->output(sprintf($this->Html->tags['label'], $labelFor, $this->_parseAttributes($attributes), $text));
@@ -426,7 +426,8 @@ class FormHelper extends AppHelper {
  * @param array $blacklist a simple array of fields to skip
  * @return output
  */
-	function inputs($fields = true, $blacklist = null) {
+	function inputs($fields = null, $blacklist = null) {
+		$legend = true;
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields)) {
 				$legend = $fields['legend'];
@@ -437,7 +438,7 @@ class FormHelper extends AppHelper {
 				$fields = $fields['fieldset'];
 				unset($fields['fieldset']);
 			}
-		} else {
+		} elseif ($fields !== null) {
 			$legend = $fields;
 			unset($fields);
 		}
@@ -492,35 +493,11 @@ class FormHelper extends AppHelper {
 			),
 		$options);
 
-		if ((!isset($options['type']) || $options['type'] == 'select') && !isset($options['options'])) {
-			$view =& ClassRegistry::getObject('view');
-			$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
-			$varOptions = $view->getVar($varName);
-			if (is_array($varOptions)) {
-				$options['type'] = 'select';
-				$options['options'] = $varOptions;
-			}
-		}
-
-		if (isset($options['type']) && $options['type'] == 'radio') {
-			if (!isset($options['options']) && isset($options['value'])) {
-				$radioOptions = array($options['value']);
-				unset($options['value']);
-			} elseif (isset($options['options'])) {
-				if (is_array($options['options'])) {
-					$radioOptions = $options['options'];
-				} else {
-					$radioOptions = array($options['options']);
-				}
-				unset($options['options']);
-			}
-		}
-
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
-			} elseif (in_array($this->field(), array('passwd', 'password'))) {
+			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
 			} elseif (isset($this->fieldset['fields'][$this->field()])) {
 				$type = $this->fieldset['fields'][$this->field()];
@@ -547,15 +524,25 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		if ($options['type'] == 'select') {
-			if (in_array($this->field(), array_values($this->fieldset['fields']))) {
-				if ($this->model() != $this->field()) {
-					$this->setFormTag($this->field().'.'.$this->field());
-					$fieldName = $this->field().'.'.$this->field();
+		if (isset($type) && $type === $this->field()) {
+			$this->setFormTag($this->field().'.'.$this->field());
+			$fieldName = $this->field().'.'.$this->field();
+		}
+
+		if ($this->model() === $this->field()) {
+			$options['type'] = 'select';
+			$options['multiple'] = 'multiple';
+		}
+
+		if (!isset($options['options']) && in_array($options['type'], array('text', 'radio', 'select'))) {
+			$view =& ClassRegistry::getObject('view');
+			$varName = Inflector::variable(Inflector::pluralize(preg_replace('/_id$/', '', $this->field())));
+			$varOptions = $view->getVar($varName);
+			if (is_array($varOptions)) {
+				if ($options['type'] === 'text') {
+					$options['type'] = 'select';
 				}
-				if (!isset($options['multiple'])) {
-					$options['multiple'] = 'multiple';
-				}
+				$options['options'] = $varOptions;
 			}
 		}
 
@@ -585,9 +572,21 @@ class FormHelper extends AppHelper {
 		}
 
 		$label = null;
-		if (isset($options['label'])) {
+		if (isset($options['label']) && $options['type'] !== 'radio') {
 			$label = $options['label'];
 			unset($options['label']);
+		}
+
+		if ($options['type'] === 'radio') {
+			$label = false;
+			if (isset($options['options'])) {
+				if (is_array($options['options'])) {
+					$radioOptions = $options['options'];
+				} else {
+					$radioOptions = array($options['options']);
+				}
+				unset($options['options']);
+			}
 		}
 
 		if ($label !== false) {
@@ -610,11 +609,7 @@ class FormHelper extends AppHelper {
 				$labelText = $label;
 			}
 
-			if($options['type'] != 'radio') {
-				$out = $this->label(null, $labelText, $labelAttributes);
-			} else {
-				$options['label'] = $labelText;
-			}
+			$out = $this->label(null, $labelText, $labelAttributes);
 		}
 
 		$error = null;
@@ -749,44 +744,56 @@ class FormHelper extends AppHelper {
  * @return string
  */
 	function radio($fieldName, $options = array(), $attributes = array()) {
-
 		$attributes = $this->__initInputField($fieldName, $attributes);
 		$this->__secure();
-		$label = $this->field();
-		$inbetween = null;
 
-		if (isset($attributes['separator'])) {
-			$inbetween = $attributes['separator'];
-			unset($attributes['separator']);
+		$legend = false;
+		if (isset($attributes['legend'])) {
+			$legend = $attributes['legend'];
+			unset($attributes['legend']);
+		} elseif (count($options) > 1) {
+			$legend = Inflector::humanize($this->field());
 		}
 
+		$label = true;
 		if (isset($attributes['label'])) {
 			$label = $attributes['label'];
 			unset($attributes['label']);
 		}
 
-		$value = isset($attributes['value']) ? $attributes['value'] : $this->value($fieldName);
-		$out = array();
+		$inbetween = null;
+		if (isset($attributes['separator'])) {
+			$inbetween = $attributes['separator'];
+			unset($attributes['separator']);
+		}
 
-		$count = 0;
+		if (isset($attributes['value'])) {
+			$value = $attributes['value'];
+		} else {
+			$value =  $this->value($fieldName);
+		}
+
+		$out = array();
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
-
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
 			$parsedOptions = $this->_parseAttributes(array_merge($attributes, $optionsHere), array('name', 'type', 'id'), '', ' ');
-			$fieldName = $this->field() . '_'.Inflector::underscore($optValue);
-			$tagName = Inflector::camelize($fieldName);
-
-			if($label) {
+			$tagName = Inflector::camelize($this->field() . '_'.Inflector::underscore($optValue));
+			if ($label) {
 				$optTitle =  sprintf($this->Html->tags['label'], $tagName, null, $optTitle);
 			}
 			$out[] =  sprintf($this->Html->tags['radio'], $attributes['name'], $tagName, $parsedOptions, $optTitle);
-			$count++;
 		}
-
-		$out = sprintf($this->Html->tags['fieldset'], $label, join($inbetween, $out));
+		$hidden = null;
+		if (!isset($value)) {
+			$hidden = $this->hidden($fieldName, array('value' => '', 'id' => $attributes['id'] . '_'), true);
+		}
+		$out = $hidden . join($inbetween, $out);
+		if ($legend) {
+			$out = sprintf($this->Html->tags['fieldset'], $legend, $out);
+		}
 		return $this->output($out);
 	}
 /**

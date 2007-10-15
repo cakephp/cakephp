@@ -360,6 +360,22 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelField"[^<>]*>Field<\/label><input[^<>]+\/>A message to you, Rudy<\/div>$/', $result);
 		$this->assertNoPattern('/form-error/', $result);
 		$this->assertNoPattern('/error-message/', $result);
+
+		$this->Form->data = array('Model' => array('user_id' => 'value'));
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user_id', array('empty' => true));
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="ModelUserId"[^<>]*>User<\/label>/', $result);
+		$this->assertPattern('/<select [^<>]+>\s+<option value=""\s*><\/option>\s+<option value="value"/', $result);
+
+		$this->Form->data = array('User' => array('User' => array('value')));
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('User.User', array('empty' => true));
+		$this->assertPattern('/^<div[^<>]+class="input"[^<>]*><label[^<>]+for="UserUser"[^<>]*>User<\/label>/', $result);
+		$this->assertPattern('/<select[^<>]+>\s+<option value=""\s*><\/option>\s+<option value="value"/', $result);
+		$this->assertPattern('/<select[^<>]+multiple="multiple"[^<>\/]*>/', $result);
+		$this->assertNoPattern('/<select[^<>]+[^name|id|multiple]=[^<>\/]*>/', $result);
 	}
 
 	function testFormInputs() {
@@ -485,12 +501,18 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 	function testRadio() {
+		$result = $this->Form->radio('Model.field', array('option A'));
+		$this->assertPattern('/id="Field0"/', $result);
+		$this->assertNoPattern('/id="ModelField"/', $result);
+		$this->assertNoPattern('/^<fieldset><legend>Field<\/legend>$/', $result);
+		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){1}/', $result);
+
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'));
 		$this->assertPattern('/id="Field0"/', $result);
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertNoPattern('/id="ModelField"/', $result);
 		$this->assertNoPattern('/checked="checked"/', $result);
-		$this->assertPattern('/^<fieldset><legend>field<\/legend>(<input[^<>]+><label[^<>]+>option [AB]<\/label>)+<\/fieldset>$/', $result);
+		$this->assertPattern('/^<fieldset><legend>Field<\/legend><input[^<>]+>(<input[^<>]+><label[^<>]+>option [AB]<\/label>)+<\/fieldset>$/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
 
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('separator' => '<br/>'));
@@ -498,16 +520,33 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertNoPattern('/id="ModelField"/', $result);
 		$this->assertNoPattern('/checked="checked"/', $result);
-		$this->assertPattern('/^<fieldset><legend>field<\/legend><input[^<>]+><label[^<>]+>option A<\/label><br[^<>+]><input[^<>]+><label[^<>]+>option B<\/label><\/fieldset>$/', $result);
+		$this->assertPattern('/^<fieldset><legend>Field<\/legend><input[^<>]+><input[^<>]+><label[^<>]+>option A<\/label><br[^<>+]><input[^<>]+><label[^<>]+>option B<\/label><\/fieldset>$/', $result);
 		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
 
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '1'));
 		$this->assertPattern('/id="Field1".*checked="checked"/', $result);
 		$this->assertPattern('/id="Field0"/', $result);
+		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
 
 		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '0'));
 		$this->assertPattern('/id="Field1"/', $result);
 		$this->assertPattern('/id="Field0".*checked="checked"/', $result);
+		$this->assertPattern('/(<input[^<>]+name="data\[Model\]\[field\]"[^<>]+>.+){2}/', $result);
+
+		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
+		$expected = '<div class="input"><fieldset><legend>Legend title</legend><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe0" value="0"  /><label for="Subscribe0">Unsubscribe</label><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe1" value="1"  /><label for="Subscribe1">Subscribe</label></fieldset></div>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
+		$expected = '<div class="input"><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe0" value="0"  /><label for="Subscribe0">Unsubscribe</label><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe1" value="1"  /><label for="Subscribe1">Subscribe</label></div>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->input('Newsletter.subscribe', array('legend' => 'Legend title', 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
+		$expected = '<div class="input"><fieldset><legend>Legend title</legend><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe0" value="0"  />Unsubscribe<input type="radio" name="data[Newsletter][subscribe]" id="Subscribe1" value="1"  />Subscribe</fieldset></div>';
+		$this->assertEqual($result, $expected);
+		$result = $this->Form->input('Newsletter.subscribe', array('legend' => false, 'label' => false, 'type' => 'radio', 'options' => array('0' => 'Unsubscribe', '1' => 'Subscribe')));
+		$expected = '<div class="input"><input type="hidden" name="data[Newsletter][subscribe]" value="" id="NewsletterSubscribe_" /><input type="radio" name="data[Newsletter][subscribe]" id="Subscribe0" value="0"  />Unsubscribe<input type="radio" name="data[Newsletter][subscribe]" id="Subscribe1" value="1"  />Subscribe</div>';
+		$this->assertEqual($result, $expected);
 	}
 
 	function testSelect() {
