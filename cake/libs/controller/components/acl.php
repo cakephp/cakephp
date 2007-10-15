@@ -216,28 +216,24 @@ class AclBase extends Object {
  */
 class DB_ACL extends AclBase {
 /**
- * Enter description here...
+ * Constructor
  *
  */
 	function __construct() {
-		if(!class_exists('DB_ACL')) {
-			uses('model' . DS . 'db_acl');
-		}
 		parent::__construct();
+		uses('model' . DS . 'db_acl');
 		$this->Aro =& new Aro();
 		$this->Aco =& new Aco();
 	}
 /**
  * Enter description here...
  *
- * @param unknown_type $aro
- * @param unknown_type $aco
- * @param unknown_type $action
- * @return unknown
+ * @param object $component
+ * @return void
  */
 	function initialize(&$component) {
-		$component->Aro =& $this->Aro;
-		$component->Aco =& $this->Aco;
+		$component->Aro = $this->Aro;
+		$component->Aco = $this->Aco;
 	}
 /**
  * Enter description here...
