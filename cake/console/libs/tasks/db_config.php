@@ -36,6 +36,11 @@ if (!class_exists('File')) {
  * @subpackage	cake.cake.console.libs.tasks
  */
 class DbConfigTask extends Shell {
+	
+	var $__defaultConfig = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
+							'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
+							'schema'=> null, 'prefix'=> null);
+	
 
 /**
  * Execution method always used for tasks
@@ -143,10 +148,7 @@ class DbConfigTask extends Shell {
  * @return bool
  */
 	function __verify($config) {
-		$defaults = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
-								'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
-								'schema'=> null,'prefix'=> null);
-		$config = am($defaults, $config);
+		$config = am($this->__defaultConfig, $config);
 		extract($config);
 		$this->out('');
 		$this->hr();
@@ -165,7 +167,7 @@ class DbConfigTask extends Shell {
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
 		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
-			return true;
+			return $config;
 		}
 		return false;
 	}
@@ -182,9 +184,10 @@ class DbConfigTask extends Shell {
 		}
 		$out = "<?php\n";
 		$out .= "class DATABASE_CONFIG {\n\n";
-
+		
 		foreach ($configs as $config) {
-			extract($config);
+			$config = am($this->__defaultConfig, $config);
+			extract($config);			
 			$out .= "\tvar \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";

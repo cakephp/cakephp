@@ -750,8 +750,8 @@ class Model extends Overloadable {
 					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
 				}
 
-				if(count($this->{$joinClass}->_schema->value) > 2) {
-					if(isset($this->{$joinClass}->_schema->value['id'])) {
+				if (count($this->{$joinClass}->_schema->value) > 2) {
+					if (isset($this->{$joinClass}->_schema->value['id'])) {
 						$this->{$joinClass}->primaryKey = 'id';
 					}
 				}
@@ -853,13 +853,15 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function loadInfo($clear = false) {
-		$info = $this->schema($clear);
-		$fields = array();
-		foreach($info->value as $field => $value) {
-			$fields[] = am(array('name'=> $field), $value);
+		if (!is_object($this->_tableInfo) || $clear) {
+			$info = $this->schema($clear);
+			$fields = array();
+			foreach($info->value as $field => $value) {
+				$fields[] = am(array('name'=> $field), $value);
+			}
+			unset($info);
+			$this->_tableInfo = new Set($fields);
 		}
-		unset($info);
-		$this->_tableInfo = new Set($fields);
 		return $this->_tableInfo;
 	}
 /**
@@ -1104,7 +1106,7 @@ class Model extends Overloadable {
 				}
 			} else {
 				foreach ($this->_tableInfo->value as $key => $value) {
-					if(in_array($this->primaryKey, $value)) {
+					if (in_array($this->primaryKey, $value)) {
 						if (empty($this->data[$this->name][$this->primaryKey]) && $this->_tableInfo->value[$key]['type'] === 'string' && $this->_tableInfo->value[$key]['length'] === 36) {
 							$fields[] = $this->primaryKey;
 							$values[] = String::uuid();
