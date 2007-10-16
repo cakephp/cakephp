@@ -28,20 +28,20 @@
  * Included libraries.
  *
  */
-	if (!class_exists('Object')) {
-		 uses ('object');
-	}
+if (!class_exists('Object')) {
+	 uses ('object');
+}
 
-	if (!class_exists('Folder')) {
-		 uses ('folder');
-	}
+if (!class_exists('Folder')) {
+	 uses ('folder');
+}
 /**
  * Convenience class for reading, writing and appending to files.
  *
  * @package		cake
  * @subpackage	cake.cake.libs
  */
-class File extends Object{
+class File extends Object {
 /**
  * Folder object of the File
  *
@@ -77,6 +77,7 @@ class File extends Object{
  * @param string $path Path to file
  * @param boolean $create Create file if it does not exist (if true)
  * @param int $mode Mode to apply to the folder holding the file
+ * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
@@ -86,8 +87,7 @@ class File extends Object{
 		}
 		if (!$this->exists()) {
 			if ($create === true) {
-				$this->safe();
-				if (!$this->create()) {
+				if ($this->safe($path) && $this->create() === false) {
 					return false;
 				}
 			} else {
@@ -99,10 +99,25 @@ class File extends Object{
  * Closes the current file if it is opened
  *
  * @return void
- * @access public
+ * @access private
  */
 	function __destruct() {
 		$this->close();
+	}
+/**
+ * Creates the File.
+ *
+ * @return boolean Success
+ * @access public
+ */
+	function create() {
+		$dir = $this->Folder->pwd();
+		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
+			if (touch($this->pwd())) {
+				return true;
+			}
+		}
+		return false;
 	}
 /**
  * Opens the current file with a given $mode
@@ -113,17 +128,91 @@ class File extends Object{
  * @access public
  */
 	function open($mode = 'r', $force = false) {
-		if (!$force && $this->opened()) {
+		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
-		
-		$file = $this->pwd();
-		$this->handle = @fopen($file, $mode);
-		if (!$this->opened()) {
-			trigger_error(sprintf(__("[File] Could not open %s with mode %s!", true), $file, $mode), E_USER_WARNING);
-			return false;
+		if ($this->exists() === false) {
+			if ($this->create() === false) {
+				return false;
+			}
 		}
-		return true;
+		$this->handle = fopen($this->pwd(), $mode);
+		if (is_resource($this->handle)) {
+			return true;
+		}
+		return false;
+	}
+/**
+ * Return the contents of this File as a string.
+ *
+ * @param string $bytes where to start
+ * @param string $mode
+ * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @return mixed string on success, false on failure
+ * @access public
+ */
+	function read($bytes = false, $mode = 'rb', $force = false) {
+		if ($bytes === false) {
+			return file_get_contents($this->pwd());
+		}
+		if ($this->open($mode, $force) === true) {
+			if (is_int($bytes)) {
+				return fread($this->handle, $bytes);
+			} else {
+				$data = '';
+				while (!feof($this->handle)) {
+					$data .= fgets($this->handle, 4096);
+				}
+				return trim($data);
+			}
+		}
+		return false;
+	}
+/**
+ * Sets or gets the offset for the currently opened file.
+ *
+ * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
+ * @param integer $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
+ * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
+ * @access public
+ */
+	function offset($offset = false, $seek = SEEK_SET) {
+		if ($offset === false) {
+			if (is_resource($this->handle)) {
+				return ftell($this->handle);
+			}
+		} elseif ($this->open() === true) {
+			return fseek($this->handle, $offset, $seek) === 0;
+		}
+		return false;
+	}
+/**
+ * Write given data to this File.
+ *
+ * @param string $data	Data to write to this File.
+ * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
+ * @param string $force	force the file to open
+ * @return boolean Success
+ * @access public
+ */
+	function write($data, $mode = 'w', $force = false) {
+		if ($this->open($mode, $force) === true) {
+			if (fwrite($this->handle, $data) !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
+/**
+ * Append given data string to this File.
+ *
+ * @param string $data Data to write
+ * @param string $force	force the file to open
+ * @return boolean Success
+ * @access public
+ */
+	function append($data, $force = false) {
+		return $this->write($data, 'a', $force);
 	}
 /**
  * Closes the current file if it is opened.
@@ -132,115 +221,23 @@ class File extends Object{
  * @access public
  */
 	function close() {
-		if (!$this->opened()) {
+		if (!is_resource($this->handle)) {
 			return true;
 		}
 		return fclose($this->handle);
 	}
 /**
- * Return the contents of this File as a string.
+ * Deletes the File.
  *
- * @return string Contents
- * @access public
- */
-	function read($bytes = false, $mode = 'rb', $forceMode = false) {
-		if (!is_int($bytes)) {
-			$contents = file_get_contents($this->pwd());
-			return $contents;
-		}
-		
-		$this->open($mode, $forceMode);
-		return fread($this->handle, $bytes);
-	}
-/**
- * Sets or gets the offset for the currently opened file.
- *
- * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
- * @param integer $whence PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
- * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
- * @access public
- */
-	function offset($offset = false, $whence = SEEK_SET) {
-		if ($offset === false) {
-			if (!$this->opened()) {
-				return false;
-			}
-			return ftell($this->handle);
-		}
-		
-		if (!$this->open()) {
-			return false;
-		}
-		return fseek($this->handle, $offset, $whence) === 0;
-	}
-/**
- * Append given data string to this File.
- *
- * @param string $data Data to write
  * @return boolean Success
  * @access public
  */
-	function append($data) {
-		return $this->write($data, 'a');
-	}
-/**
- * Write given data to this File.
- *
- * @param string $data	Data to write to this File.
- * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
- * @return boolean Success
- * @access public
- */
-	function write($data, $mode = 'w', $forceMode = false) {
-		if (!$this->open($mode, $forceMode)) {
-			return false;
+	function delete() {
+		if ($this->exists()) {
+			return unlink($this->pwd());
 		}
-		if (false === fwrite($this->handle, $data)) {
-			return false;
-		}
-		return true;
-	}
-/**
- * makes filename safe for saving
- *
- * @param string $name the name of the file to make safe if different from $this->name
- * @return string $ext the extension of the file
- * @access public
- */
-	function safe($name = null, $ext = null) {
-		if (!$name) {
-			$name = $this->name;
-		}
-		if (!$ext) {
-			$ext = $this->ext();
-		}
-		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
-	}
-/**
- * Get md5 Checksum of file with previous check of Filesize
- *
- * @param string $force	Data to write to this File.
- * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
- * @access public
- */
-	function md5($force = false) {
-		$md5 = '';
-		if ($force == true || $this->size(false) < MAX_MD5SIZE) {
-			$md5 = md5_file($this->pwd());
-		}
-		return $md5;
-	}
-/**
- * Returns the Filesize, either in bytes or in human-readable format.
- *
- * @param boolean $humanReadeble	Data to write to this File.
- * @return string|int filesize as int or as a human-readable string
- * @access public
- */
-	function size() {
-		$size = filesize($this->pwd());
-		return $size;
-	}
+		return false;
+	 }
 /**
  * Returns the File extension.
  *
@@ -289,44 +286,47 @@ class File extends Object{
 		return false;
 	}
 /**
- * Returns the File's owner.
+ * makes filename safe for saving
  *
- * @return int the Fileowner
- */
-	function owner() {
-		$fileowner = fileowner($this->pwd());
-		return $fileowner;
-	 }
-/**
- * Returns the File group.
- *
- * @return int the Filegroup
+ * @param string $name the name of the file to make safe if different from $this->name
+ * @return string $ext the extension of the file
  * @access public
  */
-	function group() {
-		$filegroup = filegroup($this->pwd());
-		return $filegroup;
-	 }
-/**
- * Creates the File.
- *
- * @return boolean Success
- * @access public
- */
-	function create() {
-		$dir = $this->Folder->pwd();
-
-		if (file_exists($dir) && is_dir($dir) && is_writable($dir) && !$this->exists()) {
-			if (!touch($this->pwd())) {
-				print (sprintf(__('[File] Could not create %s', true), $this->name));
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			print (sprintf(__('[File] Could not create %s', true), $this->name));
-			return false;
+	function safe($name = null, $ext = null) {
+		if (!$name) {
+			$name = $this->name;
 		}
+		if (!$ext) {
+			$ext = $this->ext();
+		}
+		return preg_replace( "/[^\w\.-]+/", "_", basename($name, $ext));
+	}
+/**
+ * Get md5 Checksum of file with previous check of Filesize
+ *
+ * @param mixed $maxsize in MB or true to force
+ * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
+ * @access public
+ */
+	function md5($maxsize = 5) {
+		if ($maxsize === true) {
+			return md5_file($this->pwd());
+		} else {
+			$size = $this->size();
+			if ($size && $size < ($maxsize * 1024) * 1024) {
+				return md5_file($this->pwd());
+			}
+		}
+		return false;
+	}
+/**
+* Returns the full path of the File.
+*
+* @return string Full path to file
+* @access public
+*/
+	function pwd() {
+		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
 	}
 /**
  * Returns true if the File exists.
@@ -339,15 +339,30 @@ class File extends Object{
 		return $exists;
 	}
 /**
- * Deletes the File.
+ * Returns the "chmod" (permissions) of the File.
  *
- * @return boolean Success
+ * @return string Permissions for the file
  * @access public
  */
-	function delete() {
-		$unlink = unlink($this->pwd());
-		return $unlink;
-	 }
+	function perms() {
+		if ($this->exists()) {
+			return substr(sprintf('%o', fileperms($this->pwd())), -4);
+		}
+		return false;
+	}
+/**
+ * Returns the Filesize, either in bytes or in human-readable format.
+ *
+ * @param boolean $humanReadeble	Data to write to this File.
+ * @return string|int filesize as int or as a human-readable string
+ * @access public
+ */
+	function size() {
+		if ($this->exists()) {
+			return filesize($this->pwd());
+		}
+		return false;
+	}
 /**
  * Returns true if the File is writable.
  *
@@ -355,8 +370,7 @@ class File extends Object{
  * @access public
  */
 	function writable() {
-		$writable = is_writable($this->pwd());
-		return $writable;
+		return is_writable($this->pwd());
 	}
 /**
  * Returns true if the File is executable.
@@ -365,19 +379,8 @@ class File extends Object{
  * @access public
  */
 	function executable() {
-		$executable = is_executable($this->pwd());
-		return $executable;
+		return is_executable($this->pwd());
 	}
-/**
- * Returns true if the current file is currently opened by this class instance.
- *
- * @return boolean True if file is opened, false otherwise
- * @access public
- */
-	function opened() {
-		return is_resource($this->handle);
-	}
-
 /**
  * Returns true if the File is readable.
  *
@@ -385,9 +388,31 @@ class File extends Object{
  * @access public
  */
 	function readable() {
-		$readable = is_readable($this->pwd());
-		return $readable;
+		return is_readable($this->pwd());
 	}
+/**
+ * Returns the File's owner.
+ *
+ * @return int the Fileowner
+ */
+	function owner() {
+		if ($this->exists()) {
+			return fileowner($this->pwd());
+		}
+		return false;
+	 }
+/**
+ * Returns the File group.
+ *
+ * @return int the Filegroup
+ * @access public
+ */
+	function group() {
+		if ($this->exists()) {
+			return filegroup($this->pwd());
+		}
+		return false;
+	 }
 /**
  * Returns last access time.
  *
@@ -395,8 +420,10 @@ class File extends Object{
  * @access public
  */
 	function lastAccess() {
-		$fileatime = fileatime($this->pwd());
-		return $fileatime;
+		if ($this->exists()) {
+			return fileatime($this->pwd());
+		}
+		return false;
 	 }
 /**
  * Returns last modified time.
@@ -405,8 +432,10 @@ class File extends Object{
  * @access public
  */
 	function lastChange() {
-		$filemtime = filemtime($this->pwd());
-		return $filemtime;
+		if ($this->exists()) {
+			return filemtime($this->pwd());
+		}
+		return false;
 	}
 /**
  * Returns the current folder.
@@ -417,26 +446,6 @@ class File extends Object{
 	function &Folder() {
 		return $this->Folder;
 	}
-/**
- * Returns the "chmod" (permissions) of the File.
- *
- * @return string Permissions for the file
- * @access public
- */
-	function perms() {
-		$substr = substr(sprintf('%o', fileperms($this->pwd())), -4);
-		return $substr;
-	}
-/**
-* Returns the full path of the File.
-*
-* @return string Full path to file
-* @access public
-*/
-	function pwd() {
-		return $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
-	}
-
 /* Deprecated methods */
 /**
  * @deprecated

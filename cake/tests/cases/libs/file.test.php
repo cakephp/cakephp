@@ -92,24 +92,24 @@ class FileTest extends UnitTestCase {
 		$expecting = file_get_contents(__FILE__);
 		$this->assertEqual($result, $expecting);
 		$this->assertTrue(!is_resource($this->File->handle));
-		
+
 		$data = $expecting;
 		$expecting = substr($data, 0, 3);
 		$result = $this->File->read(3);
 		$this->assertEqual($result, $expecting);
 		$this->assertTrue(is_resource($this->File->handle));
-		
+
 		$expecting = substr($data, 3, 3);
 		$result = $this->File->read(3);
 		$this->assertEqual($result, $expecting);
 	}
-	
+
 	function testOffset() {
 		$this->File->close();
-		
+
 		$result = $this->File->offset();
 		$this->assertFalse($result);
-		
+
 		$this->assertFalse(is_resource($this->File->handle));
 		$success = $this->File->offset(0);
 		$this->assertTrue($success);
@@ -118,14 +118,14 @@ class FileTest extends UnitTestCase {
 		$result = $this->File->offset();
 		$expecting = 0;
 		$this->assertIdentical($result, $expecting);
-		
+
 		$data = file_get_contents(__FILE__);
 		$success = $this->File->offset(5);
 		$expecting = substr($data, 5, 3);
 		$result = $this->File->read(3);
 		$this->assertTrue($success);
 		$this->assertEqual($result, $expecting);
-		
+
 		$result = $this->File->offset();
 		$expecting = 5+3;
 		$this->assertIdentical($result, $expecting);
@@ -148,37 +148,33 @@ class FileTest extends UnitTestCase {
 		$this->assertTrue($r);
 		$this->assertFalse($handle === $this->File->handle);
 		$this->assertTrue(is_resource($this->File->handle));
-		
+
 		$InvalidFile =& new File('invalid-file.invalid-ext');
 		$expecting =& new PatternExpectation('/could not open/i');
  		$this->expectError($expecting);
 		$InvalidFile->open();
-		
+
 		$this->File->close();
 	}
 
 	function testClose() {
 		$this->File->handle = null;
-		$this->assertFalse($this->File->opened());
+		$this->assertFalse(is_resource($this->File->handle));
 		$this->assertTrue($this->File->close());
-		$this->assertFalse($this->File->opened());
+		$this->assertFalse(is_resource($this->File->handle));
 
 		$this->File->handle = fopen(__FILE__, 'r');
-		$this->assertTrue($this->File->opened());
+		$this->assertTrue(is_resource($this->File->handle));
 		$this->assertTrue($this->File->close());
-		$this->assertFalse($this->File->opened());
+		$this->assertFalse(is_resource($this->File->handle));
 	}
 
-	function testOpened() {
-		$this->File->handle = null;
-		$this->assertFalse($this->File->opened());
-
-		$this->File->handle = fopen(__FILE__, 'r');
-		$this->assertTrue($this->File->opened());
-		
-		$this->File->close();
+	function testCreate() {
+		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
+		$File =& new File($tmpFile, true, 0777);
+		$this->assertTrue($File->exists());
 	}
-	
+
 	function testWrite() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
@@ -194,7 +190,6 @@ class FileTest extends UnitTestCase {
 		$testData = array('CakePHP\'s', ' test suite', ' was here ...', '');
 		foreach ($testData as $data) {
 			$r = $TmpFile->write($data);
-
 			$this->assertTrue($r);
 			$this->assertTrue(file_exists($tmpFile));
 			$this->assertEqual($data, file_get_contents($tmpFile));
@@ -212,10 +207,10 @@ class FileTest extends UnitTestCase {
 		if (file_exists($tmpFile)) {
 			unlink($tmpFile);
 		}
-		
+
 		$TmpFile =& new File($tmpFile);
 		$this->assertFalse(file_exists($tmpFile));
-		
+
 		$fragments = array('CakePHP\'s', ' test suite', ' was here ...', '');
 		$data = null;
 		foreach ($fragments as $fragment) {
@@ -227,19 +222,24 @@ class FileTest extends UnitTestCase {
 			$TmpFile->close();
 		}
 	}
-	
+
 	function testDelete() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
 		};
-		
+
 		if (!file_exists($tmpFile)) {
 			touch($tmpFile);
 		}
 		$TmpFile =& new File($tmpFile);
 		$this->assertTrue(file_exists($tmpFile));
-		$TmpFile->delete();
+		$result = $TmpFile->delete();
+		$this->assertTrue($result);
 		$this->assertFalse(file_exists($tmpFile));
+
+		$TmpFile =& new File('/this/does/not/exist');
+		$result = $TmpFile->delete();
+		$this->assertFalse($result);
 	}
 
 	function _getTmpFile($paintSkip = true) {
@@ -247,7 +247,7 @@ class FileTest extends UnitTestCase {
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;
 		};
-		
+
 		if ($paintSkip) {
 			$caller = 'test';
 			if (function_exists('debug_backtrace')) {
