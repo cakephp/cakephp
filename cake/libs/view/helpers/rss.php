@@ -179,8 +179,12 @@ class RssHelper extends XmlHelper {
  */
 	function item($att = array(), $elements = array()) {
 		$content = null;
-		foreach ($elements as $key => $val) {
 
+		if (isset($elements['link']) && !isset($elements['guid'])) {
+			$elements['guid'] = $elements['link'];
+		}
+
+		foreach ($elements as $key => $val) {
 			$attrib = array();
 			switch ($key) {
 				case 'pubDate' :
@@ -223,10 +227,6 @@ class RssHelper extends XmlHelper {
 				$val = h($val);
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);
-		}
-
-		if (isset($elements['link']) && !isset($elements['guid'])) {
-			$elements['guid'] = $elements['link'];
 		}
 
 		if (!empty($elements)) {
