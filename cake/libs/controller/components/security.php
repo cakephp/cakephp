@@ -7,7 +7,7 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework <http://www.cakephp.org/>
+ * CakePHP(tm) : Rapid Development Framework <http://www.cakephp.org/>
  * Copyright 2005-2007, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
@@ -121,7 +121,7 @@ class SecurityComponent extends Object {
  */
 	var $components = array('RequestHandler', 'Session');
 /**
- * Component startup.  All security checking happens here.
+ * Component startup. All security checking happens here.
  *
  * @param object $controller
  * @return unknown
@@ -250,7 +250,7 @@ class SecurityComponent extends Object {
 	function loginRequest($options = array()) {
 		$options = am($this->loginOptions, $options);
 		$this->__setLoginDefaults($options);
-		$auth  = 'WWW-Authenticate: ' . ucfirst($options['type']);
+		$auth = 'WWW-Authenticate: ' . ucfirst($options['type']);
 		$out = array('realm="' . $options['realm'] . '"');
 
 		if (low($options['type']) == 'digest') {
@@ -485,9 +485,9 @@ class SecurityComponent extends Object {
 					$parts = preg_split('/\/|\./', $value);
 
 					if (count($parts) == 1) {
-						$key1[] =  $controller->modelClass . '.' . $parts['0'];
+						$key1[] = $controller->modelClass . '.' . $parts['0'];
 					} elseif (count($parts) == 2) {
-						$key1[] = $parts['0']  . '.' . $parts['1'];
+						$key1[] = $parts['0'] . '.' . $parts['1'];
 					}
 				}
 
@@ -526,7 +526,7 @@ class SecurityComponent extends Object {
 						}
 					}
 
-					foreach ($k as  $lookup) {
+					foreach ($k as $lookup) {
 						if (isset($controller->data[$newKey][$lookup])) {
 							unset($controller->data[$key][$lookup]);
 						} elseif ($controller->data[$key][$lookup] === '0') {
@@ -544,8 +544,11 @@ class SecurityComponent extends Object {
 					continue;
 				}
 				if (!array_key_exists($key, $value)) {
-					$field[$key] = array_keys($value);
-					$field[$key] = array_merge($merge, $field[$key]);
+					if (isset($field[$key])) {
+						$field[$key] = array_merge($field[$key], array_keys($value));
+					} else {
+						$field[$key] = array_keys($value);
+					}
 				}
 			}
 
@@ -555,7 +558,7 @@ class SecurityComponent extends Object {
 				}
 			}
 			ksort($field);
-			$check = urlencode(Security::hash(serialize($field) . CAKE_SESSION_STRING));
+			$check = urlencode(Security::hash(serialize($field) . Configure::read('Security.salt')));
 
 			if ($form !== $check) {
 				if (!$this->blackHole($controller, 'auth')) {

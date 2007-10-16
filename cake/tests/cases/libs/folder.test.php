@@ -44,19 +44,6 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->pwd();
 		$this->assertEqual($result, $path);
 
-		$result = $Folder->isWindowsPath($path);
-		$expected = (DS == '\\' ? true : false);
-		$this->assertEqual($result, $expected);
-
-		$result = $Folder->isAbsolute($path);
-		$this->assertTrue($result);
-
-		$result = $Folder->isSlashTerm($path);
-		$this->assertFalse($result);
-
-		$result = $Folder->isSlashTerm($path . DS);
-		$this->assertTrue($result);
-
 		$result = $Folder->addPathElement($path, 'test');
 		$expected = $path . DS . 'test';
 		$this->assertEqual($result, $expected);
@@ -132,12 +119,76 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->create($new);
 		$this->assertTrue($result);
 
-		$result = $Folder->read(true, '.');
+		$result = $Folder->read(true);
 		$expected = array(array('0', 'cache', 'logs', 'sessions', 'tests'), array());
+		$this->assertEqual($expected, $result);
+
+		$result = $Folder->read(true, array('.', '..', 'logs'));
+		$expected = array(array('0', 'cache', 'sessions', 'tests'), array());
 		$this->assertEqual($expected, $result);
 
 		$result = $Folder->delete($new);
 		$this->assertTrue($result);
+	}
+
+	function testFolderRead() {
+		$Folder =& new Folder(TMP);
+		$expected = array('cache', 'logs', 'sessions', 'tests');
+		$results = $Folder->read();
+		$this->assertEqual($results[0], $expected);
+	}
+
+	function testFolderTree() {
+		$Folder =& new Folder();
+		$expected = array(array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding'),
+								array(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'config.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'paths.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0000_007f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0080_00ff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0100_017f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0180_024F.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0300_036f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0370_03ff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0400_04ff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0500_052f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '0530_058f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10400_1044f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '10a0_10ff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1e00_1eff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '1f00_1fff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2100_214f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2150_218f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2460_24ff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c00_2c5f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c60_2c7f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . '2c80_2cff.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'fb00_fb4f.php',
+										CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config' . DS . 'unicode' .  DS . 'casefolding' . DS . 'ff00_ffef.php'));
+
+		$results = $Folder->tree(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'config', false);
+		$this->assertEqual($results, $expected);
+	}
+
+	function testWindowsPath(){
+		$Folder =& new Folder();
+		$this->assertTrue($Folder->isWindowsPath('C:\cake'));
+		$this->assertTrue($Folder->isWindowsPath('c:\cake'));
+	}
+
+	function testIsAbsolute(){
+		$Folder =& new Folder();
+		$this->assertTrue($Folder->isAbsolute('C:\cake'));
+		$this->assertTrue($Folder->isAbsolute('/usr/local'));
+		$this->assertFalse($Folder->isAbsolute('cake/'));
+	}
+
+	function testIsSlashTerm(){
+		$Folder =& new Folder();
+		$this->assertTrue($Folder->isSlashTerm('C:\cake\\'));
+		$this->assertTrue($Folder->isSlashTerm('/usr/local/'));
+		$this->assertFalse($Folder->isSlashTerm('cake'));
 	}
 }
 ?>

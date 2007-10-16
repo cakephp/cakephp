@@ -92,46 +92,46 @@
  * 'database'	Uses CakePHP's database sessions.
  *
  * To define a custom session handler, save it at /app/config/<name>.php.
- * Set the value of CAKE_SESSION_SAVE to <name> to utilize it in CakePHP.
+ * Set the value of 'Session.save' to <name> to utilize it in CakePHP.
  *
  * To use database sessions, execute the SQL file found at /app/config/sql/sessions.sql.
  *
  */
-	define('CAKE_SESSION_SAVE', 'php');
+	Configure::write('Session.save', 'php');
 /**
  * The name of the table used to store CakePHP database sessions.
  *
- * CAKE_SESSION_SAVE must be set to 'database' in order to utilize this constant.
+ * 'Session.save' must be set to 'database' in order to utilize this constant.
  *
  * The table name set here should *not* include any table prefix defined elsewhere.
  */
-	define('CAKE_SESSION_TABLE', 'cake_sessions');
+	Configure::write('Session.table', 'cake_sessions');
 /**
- * A random string used in session management.
+ * A random string used in security hashing methods.
  */
-	define('CAKE_SESSION_STRING', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 /**
  * The name of CakePHP's session cookie.
  */
-	define('CAKE_SESSION_COOKIE', 'CAKEPHP');
+	Configure::write('Session.cookie', 'CAKEPHP');
 /**
- * The level of CakePHP session security. The session timeout time defined
- * in CAKE_SESSION_TIMEOUT is multiplied according to the settings here.
+ * The level of CakePHP security. The session timeout time defined
+ * in 'Session.timeout' is multiplied according to the settings here.
  * Valid values:
  *
- * 'high'	Session timeout in CAKE_SESSION_TIMEOUT x 10
- * 'medium'	Session timeout in CAKE_SESSION_TIMEOUT x 100
- * 'low'		Session timeout in CAKE_SESSION_TIMEOUT x 300
+ * 'high'	Session timeout in 'Session.timeout' x 10
+ * 'medium'	Session timeout in 'Session.timeout' x 100
+ * 'low'		Session timeout in 'Session.timeout' x 300
  *
  * CakePHP session IDs are also regenerated between requests if
- * CAKE_SECURITY is set to 'high'.
+ * 'Security.level' is set to 'high'.
  */
-	define('CAKE_SECURITY', 'high');
+	Configure::write('Security.level', 'high');
 /**
  * Session time out time (in seconds).
- * Actual value depends on CAKE_SECURITY setting.
+ * Actual value depends on 'Security.level' setting.
  */
-	define('CAKE_SESSION_TIMEOUT', '120');
+	Configure::write('Session.timeout', '120');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -142,11 +142,7 @@
 /**
  * If set to false, sessions are not automatically started.
  */
-	define('AUTO_SESSION', true);
-/**
- * The max size of file allowed for MD5 hashes (in bytes).
- */
-	define('MAX_MD5SIZE', (5 * 1024) * 1024);
+	Configure::write('Session.start', true);
 /**
  * The classname and database used in CakePHP's
  * access control lists.
@@ -207,5 +203,4 @@
  * 					);
  */
 	Cache::config('default', array('engine' => 'File'));
-
 ?>

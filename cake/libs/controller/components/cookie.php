@@ -116,7 +116,7 @@ class CookieComponent extends Object {
  * @var string
  * @access protected
  */
-	var $key = CAKE_SESSION_STRING;
+	var $key = null;
 /**
  * Values stored in the cookie.
  *
@@ -190,6 +190,7 @@ class CookieComponent extends Object {
  */
 	function startup() {
 		$this->__expire($this->time);
+		$this->key = Configure::read('Security.salt');
 
 		if (isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);

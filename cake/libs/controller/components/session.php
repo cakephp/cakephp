@@ -27,6 +27,7 @@
  * @lastmodified	$Date$
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+uses('session');
 /**
  * Session Component.
  *
@@ -50,14 +51,14 @@ class SessionComponent extends CakeSession {
  * @param string $base
  */
 	function __construct($base = null) {
-		if (!defined('AUTO_SESSION') || AUTO_SESSION === true) {
+		if (Configure::read('Session.start') === true) {
 			parent::__construct($base);
 		} else {
 			$this->__active = false;
 		}
 	}
 /**
- * Turn sessions on if AUTO_SESSION is set to false in core.php
+ * Turn sessions on if 'Session.start' is set to false in core.php
  *
  * @param string $base
  */

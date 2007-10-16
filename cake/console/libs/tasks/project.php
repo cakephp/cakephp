@@ -156,10 +156,10 @@ class ProjectTask extends Shell {
 					$this->out('The Welcome page was NOT created');
 				}
 
-				if ($this->cakeSessionString($path) === true ) {
-					$this->out('Random hash key created for CAKE_SESSION_STRING');
+				if ($this->securitySalt($path) === true ) {
+					$this->out('Random hash key created for \'Security.salt\'');
 				} else {
-					$this->err('Unable to generate random hash for CAKE_SESSION_STRING, please change this yourself in ' . CONFIGS . 'core.php');
+					$this->err('Unable to generate random hash for \'Security.salt\', please change this yourself in ' . CONFIGS . 'core.php');
 				}
 
 				$corePath = $this->corePath($path);
@@ -202,17 +202,17 @@ class ProjectTask extends Shell {
 		return $this->createFile($path.'home.ctp', $output);
 	}
 /**
- * generates and writes CAKE_SESSION_STRING
+ * generates and writes 'Security.salt'
  *
  * @return bool
  */
-	function cakeSessionString($path) {
+	function securitySalt($path) {
 		$File =& new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
-		if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_SESSION_STRING\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
+		if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.salt\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
 			uses('Security');
 			$string = Security::generateAuthKey();
-			$result = str_replace($match[0], 'define(\'CAKE_SESSION_STRING\', \''.$string.'\');', $contents);
+			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \''.$string.'\');', $contents);
 			if ($File->write($result)) {
 				return true;
 			} else {
@@ -252,7 +252,7 @@ class ProjectTask extends Shell {
 		$File =& new File(CONFIGS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
-			$result = str_replace($match[0], 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
+			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
 			if ($File->write($result)) {
 				Configure::write('Routing.admin', $name);
 				return true;

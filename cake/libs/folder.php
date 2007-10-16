@@ -154,7 +154,7 @@ class Folder extends Object{
 					if (!in_array($n, $exceptions)) {
 						$item = $n;
 					}
-				} elseif ((!preg_match('#^\.+$#', $n) && $exceptions == false) || ($exceptions == true && !preg_match('#^\.(.*)$#', $n))) {
+				} elseif ((!preg_match('/^\\.+$/', $n) && $exceptions == false) || ($exceptions == true && !preg_match('/^\\.(.*)$/', $n))) {
 					$item = $n;
 				}
 
@@ -244,7 +244,7 @@ class Folder extends Object{
  * @static
  */
 	function isWindowsPath($path) {
-		if (preg_match('#^[A-Z]:\\\#i', $path)) {
+		if (preg_match('/^[A-Z]:\\\\/i', $path)) {
 			return true;
 		}
 		return false;
@@ -258,7 +258,7 @@ class Folder extends Object{
  * @static
  */
 	function isAbsolute($path) {
-		$match = preg_match('#^\/#', $path) || preg_match('#^[A-Z]:\\\#i', $path);
+		$match = preg_match('/^\\//', $path) || preg_match('/^[A-Z]:\\\\/i', $path);
 		return $match;
 	}
 /**
@@ -270,7 +270,7 @@ class Folder extends Object{
  * @static
  */
 	function isSlashTerm($path) {
-		if (preg_match('#[\\\/]$#', $path)) {
+		if (preg_match('/[\/\\\]$/', $path)) {
 			return true;
 		}
 		return false;
@@ -412,10 +412,11 @@ class Folder extends Object{
  * Returns an array of nested directories and files in each directory
  *
  * @param string $path the directory path to build the tree from
- * @return mixed array of nested directories and fiels in each directory
+ * @param = boolean $hidden return hidden files and directories
+ * @return mixed array of nested directories and files in each directory
  * @access public
  */
-	function tree($path) {
+	function tree($path, $hidden = true) {
 		$path = rtrim($path, DS);
 		$this->__files = array();
 		$this->__directories = array($path);
@@ -423,7 +424,7 @@ class Folder extends Object{
 
 		while (count($this->__directories)) {
 			$dir = array_pop($this->__directories);
-			$this->__tree($dir);
+			$this->__tree($dir, $hidden);
 			array_push($directories, $dir);
 
 		}
@@ -434,25 +435,30 @@ class Folder extends Object{
  * Private method to list directories and files in each directory
  *
  * @param string $path
+ * @param = boolean $hidden
  * @access private
  */
-	function __tree($path) {
+	function __tree($path, $hidden) {
 		if (is_dir($path)) {
 			$dirHandle = @opendir($path);
 
 			while (false !== ($item = @readdir($dirHandle))) {
-				if ($item != '.' && $item != '..') {
-					$item = $path . DS . $item;
+				$found = false;
 
-					if (is_dir($item)) {
-						array_push($this->__directories, $item);
+				if (($hidden === true && $item != '.' && $item != '..') || ($hidden === false && !preg_match('/^\\.(.*)$/', $item))) {
+					$found = $path . DS . $item;
+				}
+
+				if ($found !== false) {
+					if (is_dir($found)) {
+						array_push($this->__directories, $found);
 					} else {
-						array_push($this->__files, $item);
+						array_push($this->__files, $found);
 					}
 				}
 			}
-			closedir($dirHandle);
 		}
+		closedir($dirHandle);
 	}
 /**
  * Create a directory structure recursively.

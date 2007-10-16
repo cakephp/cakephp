@@ -786,7 +786,7 @@ class AuthComponent extends Object {
 		return $data;
 	}
 /**
- * Hash a password with the application's salt value (as defined in CAKE_SESSION_STRING)
+ * Hash a password with the application's salt value (as defined with Configure::write('Security.salt');
  *
  * @access public
  * @param string $password
@@ -794,7 +794,7 @@ class AuthComponent extends Object {
  * @return string
  */
 	function password($password) {
-		return Security::hash(CAKE_SESSION_STRING . $password);
+		return Security::hash(Configure::read('Security.salt') . $password);
 	}
 /**
  * Component shutdown.  If user is logged in, wipe out redirect.

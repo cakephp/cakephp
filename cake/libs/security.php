@@ -66,7 +66,7 @@ class Security extends Object {
   */
 	function inactiveMins() {
 		$_this =& Security::getInstance();
-		switch(CAKE_SECURITY) {
+		switch(Configure::read('Security.level')) {
 			case 'high':
 				return 10;
 			break;

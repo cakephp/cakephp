@@ -243,7 +243,7 @@ class ConnectionManager extends Object {
  *
  */
 	function __destruct() {
-		if (CAKE_SESSION_SAVE == 'database' && function_exists('session_write_close')) {
+		if (Configure::read('Session.save') == 'database' && function_exists('session_write_close')) {
 			session_write_close();
 		}
 	}

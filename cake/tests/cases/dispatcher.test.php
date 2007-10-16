@@ -416,7 +416,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'some_pages/redirect/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'privateAction';
@@ -429,7 +429,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'some_pages/home/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 		$expected = 'missingAction';
 		$this->assertEqual($expected, $controller);
@@ -441,7 +441,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'pages/home/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'Pages';
@@ -462,7 +462,7 @@ class DispatcherTest extends UnitTestCase {
 		$Router =& Router::getInstance();
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'TestDispatchPages';
@@ -492,7 +492,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'my_plugin/some_pages/home/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 
@@ -534,7 +534,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'my_plugin/other_pages/index/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'my_plugin';
@@ -566,7 +566,7 @@ class DispatcherTest extends UnitTestCase {
 		$url = 'my_plugin/add/param:value/param2:value2';
 
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'my_plugin';
@@ -615,7 +615,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$url = 'my_plugin/param:value/param2:value2';
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return'=> 1));
+		$controller = $dispatcher->dispatch($url, array('return'=> 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'missingAction';
@@ -634,7 +634,7 @@ class DispatcherTest extends UnitTestCase {
 
 		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
 		restore_error_handler();
-		@$controller = $dispatcher->dispatch($url, array('return' => 1));
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
 		set_error_handler('simpleTestErrorHandler');
 
 		$expected = 'privateAction';

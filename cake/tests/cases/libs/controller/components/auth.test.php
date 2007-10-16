@@ -29,6 +29,7 @@
 uses('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl');
 
 uses('controller'.DS.'components'.DS.'acl', 'model'.DS.'db_acl');
+Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 /**
 * Short description for class.
 *
@@ -124,7 +125,7 @@ class AuthTest extends CakeTestCase {
 		$this->AuthUser =& new AuthUser();
 		$user['id'] = 1;
 		$user['username'] = 'mariano';
-		$user['password'] = Security::hash(CAKE_SESSION_STRING . 'cake');
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
 		$this->AuthUser->save($user, false);
 
 		$authUser = $this->AuthUser->find();
@@ -253,7 +254,11 @@ class AuthTest extends CakeTestCase {
 	}
 
 	function testLoginRedirect() {
-		$backup = $_SERVER['HTTP_REFERER'];
+		if (isset($_SERVER['HTTP_REFERER'])) {
+			$backup = $_SERVER['HTTP_REFERER'];
+		} else {
+			$backup = null;
+		}
 
 		$_SERVER['HTTP_REFERER'] = false;
 
@@ -305,7 +310,7 @@ class AuthTest extends CakeTestCase {
 		$this->AuthUser =& new AuthUser();
 		$user['id'] = 1;
 		$user['username'] = 'mariano';
-		$user['password'] = Security::hash(CAKE_SESSION_STRING . 'cake');
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
 		$this->AuthUser->save($user, false);
 
 		$authUser = $this->AuthUser->find();

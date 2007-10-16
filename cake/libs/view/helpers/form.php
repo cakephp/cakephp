@@ -283,7 +283,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 			ksort($fields);
-			$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . CAKE_SESSION_STRING)), 'id' => 'TokenFields' . mt_rand()));
+			$append .= $this->hidden('_Token.fields', array('value' => urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt'))), 'id' => 'TokenFields' . mt_rand()));
 			$append .= '</p>';
 			return $append;
 		}
@@ -852,15 +852,16 @@ class FormHelper extends AppHelper {
 		$options = $this->__initInputField($fieldName, $options);
 		$model = $this->model();
 		$value = '';
+		$key = '_' . $model;
 
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
-			$options['name'] = str_replace($model, '_' . $model, $options['name']);
+			$options['name'] = str_replace($model, $key, $options['name']);
 		}
 
 		if (!empty($options['value']) || $options['value'] === '0') {
 			$value = $options['value'];
 		}
-		$this->__secure($model, $value);
+		$this->__secure($key, $value);
 
 		/*if (in_array($fieldName, array('_method', '_fields'))) {
 			$model = null;
