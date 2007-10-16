@@ -427,7 +427,8 @@ class FormHelper extends AppHelper {
  * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
-		$legend = true;
+		$fieldset = $legend = true;
+
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields)) {
 				$legend = $fields['legend'];
@@ -435,7 +436,7 @@ class FormHelper extends AppHelper {
 			}
 
 			if (isset($fields['fieldset'])) {
-				$fields = $fields['fieldset'];
+				$fieldset = $fields['fieldset'];
 				unset($fields['fieldset']);
 			}
 		} elseif ($fields !== null) {
@@ -470,7 +471,8 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->input($name, $options);
 		}
-		if (isset($legend)) {
+
+		if ($fieldset) {
 			return sprintf($this->Html->tags['fieldset'], $legend, $out);
 		} else {
 			return $out;
