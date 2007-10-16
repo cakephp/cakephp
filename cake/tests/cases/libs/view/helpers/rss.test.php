@@ -97,6 +97,9 @@ class RssTest extends UnitTestCase {
 	}
 
 	function testItem() {
+		$result = $this->Rss->item(null, array("title"=>"My title","description"=>"My description","link"=>"http://www.google.com/"));
+		$expecting = '<item><title>My title</title><description>My description</description><link>http://www.google.com/</link><guid>http://www.google.com/</guid></item>';
+		$this->assertEqual($result, $expecting);
 	}
 
 	function testTime() {
