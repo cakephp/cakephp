@@ -395,7 +395,7 @@ class CakeSession extends Object {
 	function __initSession() {
 		switch($this->security) {
 			case 'high':
-				$this->cookieLifeTime=0;
+				$this->cookieLifeTime = 0;
 				if (function_exists('ini_set')) {
 					ini_set('session.referer_check', $this->host);
 				}
@@ -483,6 +483,9 @@ class CakeSession extends Object {
 		} else {
 			session_cache_limiter ("must-revalidate");
 			session_start();
+			if (Configure::read('Security.level') === 'high') {
+				$this->renew();
+			}
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
 		}
 	}
