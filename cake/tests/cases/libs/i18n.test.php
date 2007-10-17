@@ -34,9 +34,29 @@ uses('i18n');
  * @subpackage cake.tests.cases.libs
  */
 class I18nTest extends UnitTestCase {
+	function setUp() {
+		$calledFrom = debug_backtrace();
+		$this->dir = dirname($calledFrom[0]['file']);
+	}
 
-	function skip() {
-		$this->skipif (true, 'I18nTest not implemented');
+	function tearDown() {
+		unset($this->dir);
+	}
+
+	function testPlural() {
+		$result = I18n::translate('chair', 'chairs', null, 5, 1, $this->dir);
+		$this->assertEqual($result, 'chair');
+
+		$result = I18n::translate('chair', 'chairs', null, 5, 2, $this->dir);
+		$this->assertEqual($result, 'chairs');
+
+		$data['count'] = 1;
+		$result = I18n::translate('chair', 'chairs', null, 5, $data['count'], $this->dir);
+		$this->assertEqual($result, 'chair');
+
+		$data['count'] = 8;
+		$result = I18n::translate('chair', 'chairs', null, 5, $data['count'], $this->dir);
+		$this->assertEqual($result, 'chairs');
 	}
 }
 ?>
