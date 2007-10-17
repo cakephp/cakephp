@@ -162,6 +162,7 @@ class CookieComponent extends Object {
  * @deprecated use Controller::beforeFilter() to set the properties of the CookieComponent
  */
 	function initialize(&$controller) {
+		$this->key = Configure::read('Security.salt');
 		if (is_object($controller)) {
 			if (isset($controller->cookieName)) {
 				$this->name = $controller->cookieName;
@@ -190,7 +191,6 @@ class CookieComponent extends Object {
  */
 	function startup() {
 		$this->__expire($this->time);
-		$this->key = Configure::read('Security.salt');
 
 		if (isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
@@ -268,8 +268,9 @@ class CookieComponent extends Object {
 
 		if (count($name) > 1) {
 			if (isset($this->__values[$name[0]])) {
-				$value = $this->__values[$name[0]][$name[1]];
-				return $value;
+				if(isset($this->__values[$name[0]][$name[1]])) {
+					return $this->__values[$name[0]][$name[1]];
+				}
 			}
 			return null;
 		} else {

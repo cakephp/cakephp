@@ -27,7 +27,7 @@
  * @license			http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 error_reporting(E_ALL);
-set_time_limit(600);
+set_time_limit(0);
 ini_set('memory_limit','128M');
 if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
@@ -132,7 +132,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 						$show = '?show=cases';
 					}
 				}
-				echo "<p><a href='" . $_SERVER['PHP_SELF'] . $show . "'>Run more tests</a></p>\n";
+				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a></p>\n";
 			break;
 		}
 	}
@@ -212,6 +212,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 
 	CakePHPTestHeader();
 	CakePHPTestSuiteHeader();
+	define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
 
 	if (isset($_GET['group'])) {
 		if ('all' == $_GET['group']) {

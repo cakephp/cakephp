@@ -220,6 +220,64 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<input[^<>]+[^type|name|value|id]=[^<>]*>/', $result);
 	}
 
+	function testFormSecurityFields() {
+		$key = 'testKey';
+		$fields = array('Model' => array('password', 'username', 'valid'),
+						'_Model' => array('valid' => '0'),
+						'__Token' => array('key' => $key));
+		$this->Form->params['_Token']['key'] = $key;
+		$result = $this->Form->secure($fields);
+		$expected = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$this->assertPattern('/'.$expected.'/', $result);
+		$this->assertPattern('/input type="hidden" name="data\[__Token\]\[fields\]" value="'.$expected.'"/', $result);
+	}
+
+	function testFormSecuredInput() {
+		$fields = array('Model' => array(
+									'0' => 'field',
+									'1' => 'field2',
+									'2' => 'field4'),
+							'_Model'=> array(
+									'field3' => '',
+									'field4' => '0'),
+							'__Token'=>array(
+									'key' => 'testKey'));
+
+		$fields = $this->__sortFields($fields);
+		$fieldsKey = urlencode(Security::hash(serialize($fields) . Configure::read('Security.salt')));
+		$fields['__Token']['fields'] = $fieldsKey;
+
+		$this->Form->params['_Token']['key'] = 'testKey';
+
+		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
+		$expected = '/^<form method="post" action="\/contacts\/add"(.+)<input type="hidden" name="data\[__Token\]\[key\]" value="testKey"(.+)<\/p>$/';
+		$this->assertPattern($expected, $result);
+
+		$result = $this->Form->input('Model.field', array('type' => 'text'));
+		$expected = '<div class="input"><label for="ModelField">Field</label><input name="data[Model][field]" type="text" value="" id="ModelField" /></div>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->input('Model.field2', array('type' => 'text'));
+		$expected = '<div class="input"><label for="ModelField2">Field2</label><input name="data[Model][field2]" type="text" value="" id="ModelField2" /></div>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->hidden('Model.field3', array('type' => 'text'));
+		$expected = '<input type="hidden" name="data[_Model][field3]" type="text" value="" id="ModelField3" />';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->input('Model.field4', array('type'=>'checkbox'));
+		$expected = '<div class="input"><input type="hidden" name="data[_Model][field4]" value="0" id="ModelField4_" /><input type="checkbox" name="data[Model][field4]" value="1" id="ModelField4" /><label for="ModelField4">Field4</label></div>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Form->secure($this->Form->fields);
+		$expected = '/<p style="display: none;"><input type="hidden" name="data\[__Token\]\[fields\]" value="'.$fieldsKey.'" id="(.+)" \/><\/p>$/';
+		$this->assertPattern($expected, $result);
+
+		$result = $this->Form->fields;
+		$result = $this->__sortFields($result);
+		$this->assertEqual($result, $fields);
+	}
+
 	function testFormValidationAssociated() {
 		$this->UserForm =& ClassRegistry::getObject('UserForm');
 		$this->UserForm->OpenidUrl =& ClassRegistry::getObject('OpenidUrl');
@@ -1058,6 +1116,16 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::removeObject('ValidateProfile');
 
 		unset($this->Form);
+	}
+
+	function __sortFields($fields) {
+		foreach ($fields as $key => $value) {
+			if(strpos($key, '_') !== 0) {
+				sort($fields[$key]);
+			}
+		}
+		ksort($fields);
+		return $fields;
 	}
 }
 

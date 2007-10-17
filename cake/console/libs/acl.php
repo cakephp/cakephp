@@ -74,14 +74,14 @@ class AclShell extends Shell {
 			$this->dataSource = $this->params['datasource'];
 		}
 
-		if (ACL_CLASSNAME != 'DB_ACL') {
+		if (Configure::read('Acl.classname') != 'DB_ACL') {
 			$out = "--------------------------------------------------\n";
 			$out .= __("Error: Your current Cake configuration is set to", true) . "\n";
 			$out .= __("an ACL implementation other than DB. Please change", true) . "\n";
 			$out .= __("your core config to reflect your decision to use", true) . "\n";
 			$out .= __("DB_ACL before attempting to use this script", true) . ".\n";
 			$out .= "--------------------------------------------------\n";
-			$out .= sprintf(__("Current ACL Classname: %s", true), ACL_CLASSNAME) . "\n";
+			$out .= sprintf(__("Current ACL Classname: %s", true), Configure::read('Acl.classname')) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
 			exit();
@@ -284,7 +284,11 @@ class AclShell extends Shell {
 		}
 		$nodes = $this->Acl->{$class}->findAll($conditions, null, 'lft ASC');
 		if (empty($nodes)) {
-			$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
+			if(isset($this->args[1])) {
+				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
+			} elseif (isset($this->args[0])) {
+				$this->error(sprintf(__("%s not found", true), $this->args[0]), __("No tree returned.", true));
+			}
 		}
 		$this->out($class . " tree:");
 		$this->hr();

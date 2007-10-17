@@ -271,29 +271,32 @@ class DB_ACL extends AclBase {
 			return false;
 		}
 
-		for ($i = count($aroPath) - 1; $i >= 0; $i--) {
-			$perms = $this->Aro->Permission->findAll(
-				array(
-					$this->Aro->Permission->name . '.aro_id' => $aroPath[$i][$this->Aro->name]['id'],
-					$this->Aro->Permission->name . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->name . '.id')
-				),
-				null, array($this->Aco->name .'.lft' => 'desc'), null, null, 0
-			);
+		$inherited = array();
+		for ($i = 0 ; $i < count($aroPath); $i++) {
+			$perms = $this->Aro->Permission->findAll(array(
+						$this->Aro->Permission->name . '.aro_id' => $aroPath[$i][$this->Aro->name]['id'],
+						$this->Aro->Permission->name . '.aco_id' => $acoPath->extract('{n}.' . $this->Aco->name . '.id')),
+						null, array($this->Aco->name . '.lft' => 'desc'), null, null, 0);
 
 			if (empty($perms)) {
 				continue;
 			} else {
 				foreach (Set::extract($perms, '{n}.' . $this->Aro->Permission->name) as $perm) {
 					if ($action == '*') {
-						// ARO must be cleared for ALL ACO actions
+
 						foreach ($permKeys as $key) {
 							if (!empty($perm)) {
-								if ($perm[$key] != 1) {
+								if ($perm[$key] == -1) {
 									return false;
+								} elseif ($perm[$key] == 1) {
+									$inherited[$key] = 1;
 								}
 							}
 						}
-						return true;
+						if (count($inherited) === count($permKeys)) {
+							return true;
+						}
+
 					} else {
 						switch($perm['_' . $action]) {
 							case -1:
@@ -339,7 +342,6 @@ class DB_ACL extends AclBase {
 		} else {
 			if (!is_array($actions)) {
 				$actions = array('_' . $actions);
-				$actions = am($permKeys, $actions);
 			}
 			if (is_array($actions)) {
 				foreach ($actions as $action) {

@@ -981,7 +981,7 @@ class Model extends Overloadable {
  * @return field contents
  */
 	function field($name, $conditions = null, $order = null) {
-		if ($conditions === null) {
+		if ($conditions === null && $this->id !== false) {
 			$conditions = array($this->name . '.' . $this->primaryKey => $this->id);
 		}
 		if ($this->recursive >= 1) {

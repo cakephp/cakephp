@@ -132,7 +132,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 						$show = '?show=cases';
 					}
 				}
-				echo "<p><a href='" . $_SERVER['PHP_SELF'] . $show . "'>Run more tests</a></p>\n";
+				echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a></p>\n";
 			break;
 		}
 	}
@@ -181,7 +181,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				$baseUrl = BASE;
-				$characterSet = 'charset=utf-8';
+				$characterSet = 'ISO-8859-1';
 				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:
@@ -212,6 +212,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 
 	CakePHPTestHeader();
 	CakePHPTestSuiteHeader();
+	define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
 
 	if (isset($_GET['group'])) {
 		if ('all' == $_GET['group']) {

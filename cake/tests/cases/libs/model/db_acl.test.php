@@ -129,7 +129,9 @@ if(!class_exists('db_acl_test')) {
 	class AclNodeTest extends CakeTestCase {
 		var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
-		function testNodeNesting() {
+		function startTest() {
+			Configure::write('Acl.classname', 'DB_ACL_TEST');
+			Configure::write('Acl.database', 'test_suite');
 		}
 
 		function testNode(){
@@ -158,14 +160,10 @@ if(!class_exists('db_acl_test')) {
 			$expected = array(8, 7, 6, 1);
 			$this->assertEqual($result, $expected);
 
-			//action3 is an action with no ACO entry
-			//the default returned ACOs should be its parents
 			$result = Set::extract($aco->node('Controller2/action3'), '{n}.AcoTest.id');
 			$expected = array(6, 1);
 			$this->assertEqual($result, $expected);
 
-			//action3 and record5 have none ACO entry
-			//the default returned ACOs should be their parents ACO
 			$result = Set::extract($aco->node('Controller2/action3/record5'), '{n}.AcoTest.id');
 			$expected = array(6, 1);
 			$this->assertEqual($result, $expected);

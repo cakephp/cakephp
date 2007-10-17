@@ -1632,6 +1632,11 @@ class DboSourceTest extends UnitTestCase {
 		$result = $this->db->conditions(array('MD5(CONCAT(Reg.email,Reg.id))' => 'blah'));
 		$expected = " WHERE MD5(CONCAT(`Reg`.`email`,`Reg`.`id`))  =  'blah'";
 		$this->assertEqual($result, $expected);
+
+		$conditions = array('id' => array(2, 5, 6, 9, 12, 45, 78, 43, 76));
+		$result = $this->db->conditions($conditions);
+		$expected = " WHERE `id` IN (2, 5, 6, 9, 12, 45, 78, 43, 76) ";
+		$this->assertEqual($result, $expected);
 	}
 
 	function testMixedConditionsParsing() {
