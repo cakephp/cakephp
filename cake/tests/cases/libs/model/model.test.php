@@ -1878,7 +1878,7 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$data = array('Article' => array('id' => 1, 'user_id' => '2', 'title' => 'First Article', 'body' => 'New First Article Body', 'published' => 'Y'));
-		$result = $this->model->create() && $this->model->save($data, true, array('title', 'published'));
+		$result = $this->model->create() && $this->model->save($data, true, array('id', 'title', 'published'));
 		$this->assertTrue($result);
 
 		$this->model->recursive = -1;
@@ -1896,6 +1896,7 @@ class ModelTest extends CakeTestCase {
 				'Tag' => array(1, 3)
 			)
 		);
+		$this->model->create();
 		$result = $this->model->create() && $this->model->save($data);
 		$this->assertTrue($result);
 
@@ -2161,7 +2162,7 @@ class ModelTest extends CakeTestCase {
 			'belongsTo' => array('User'),
 			'hasMany' => array('Comment')
 		));
-		$result = $this->model->find(array('Article.id'=>2), array('id', 'user_id', 'title', 'body'));
+		$result = $this->model->find(array('Article.id' => 2), array('id', 'user_id', 'title', 'body'));
 		$expected = array(
 			'Article' => array(
 				'id' => '2', 'user_id' => '3', 'title' => 'New Second Article', 'body' => 'Second Article Body'
@@ -2343,6 +2344,24 @@ class ModelTest extends CakeTestCase {
 				array('id' => '3', 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 			)
 		);
+		$this->assertEqual($result, $expected);
+
+		$data = array('Article' => array('id' => 10, 'user_id' => '2', 'title' => 'New Article With Tags and fieldList',
+									'body' => 'New Article Body with Tags and fieldList', 'created' => '2007-03-18 14:55:23',
+									'updated' => '2007-03-18 14:57:31'),
+							'Tag' => array('Tag' => array(1, 2, 3)));
+		$result = $this->model->create() && $this->model->save($data, true, array('user_id', 'title', 'published'));
+		$this->assertTrue($result);
+
+		$this->model->unbindModel(array('belongsTo' => array('User'), 'hasMany' => array('Comment')));
+		$result = $this->model->read();
+		$expected = array('Article' => array('id' => 4,
+									'user_id' => 2, 'title' => 'New Article With Tags and fieldList',
+									'body' => '', 'published' => 'N', 'created' => '', 'updated' => ''),
+								'Tag' => array(
+									0 => array('id' => 1, 'tag' => 'tag1', 'created' => '2007-03-18 12:22:23', 'updated' => '2007-03-18 12:24:31'),
+									1 => array('id' => 2, 'tag' => 'tag2', 'created' => '2007-03-18 12:24:23', 'updated' => '2007-03-18 12:26:31'),
+									2 => array('id' => 3, 'tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')));
 		$this->assertEqual($result, $expected);
 	}
 

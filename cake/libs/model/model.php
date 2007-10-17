@@ -239,6 +239,12 @@ class Model extends Overloadable {
  */
 	var $behaviors = array();
 /**
+ * Whitelist of fields allowed to be saved
+ *
+ * @var array
+ */
+	var $whitelist = array();
+/**
  * Enter description here...
  *
  * @var boolean
@@ -812,18 +818,17 @@ class Model extends Overloadable {
 
 		foreach ($data as $n => $v) {
 			if (is_array($v)) {
+
 				foreach ($v as $x => $y) {
-					if ($n == $this->name) {
+					if (empty($this->whitelist) || (in_array($x, $this->whitelist) || $n !== $this->name)) {
 						if (isset($this->validationErrors[$x])) {
 							unset ($this->validationErrors[$x]);
 						}
-
 						if ($x === $this->primaryKey) {
 							$this->id = $y;
 						}
+						$this->data[$n][$x] = $y;
 					}
-
-					$this->data[$n][$x] = $y;
 				}
 			}
 		}
@@ -1031,11 +1036,38 @@ class Model extends Overloadable {
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$_whitelist = $this->whitelist;
+
+		if (!empty($fieldList)) {
+			$this->whitelist = $fieldList;
+		} elseif ($fieldList === null) {
+			$this->whitelist = array();
+		}
 
 		$this->set($data);
-		$whitelist = !empty($fieldList);
+		foreach (array('created', 'updated', 'modified') as $field) {
+			if (array_key_exists($field, $this->data[$this->name]) && $this->data[$this->name][$field] === null) {
+				unset($this->data[$this->name][$field]);
+			}
+		}
+
+		$exists = $this->exists();
+		$fields = array_keys($this->data[$this->name]);
+
+		if (!$exists && $this->hasField('created') && !in_array('created', $fields)) {
+			$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType('created')]);
+			$this->set('created', $colType['formatter']($colType['format']));
+		}
+
+		foreach (array('modified', 'updated') as $updateCol) {
+			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
+				$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
+				$this->set($updateCol, $colType['formatter']($colType['format']));
+			}
+		}
 
 		if ($validate && !$this->validates()) {
+			$this->whitelist = $_whitelist;
 			return false;
 		}
 
@@ -1044,12 +1076,14 @@ class Model extends Overloadable {
 			$ct = count($behaviors);
 			for ($i = 0; $i < $ct; $i++) {
 				if ($this->behaviors[$behaviors[$i]]->beforeSave($this) === false) {
+					$this->whitelist = $_whitelist;
 					return false;
 				}
 			}
 		}
 
 		if (!$this->beforeSave()) {
+			$this->whitelist = $_whitelist;
 			return false;
 		}
 		$fields = $values = array();
@@ -1061,34 +1095,18 @@ class Model extends Overloadable {
 			} else {
 				if ($n === $this->name) {
 					foreach (array('created', 'updated', 'modified') as $field) {
-						if (array_key_exists($field, $v) && (empty($v[$field]) || $v[$field] === null)) {
+						if (array_key_exists($field, $v) && empty($v[$field])) {
 							unset($v[$field]);
 						}
 					}
 
 					foreach ($v as $x => $y) {
-						if ($this->hasField($x) && ($whitelist && in_array($x, $fieldList) || !$whitelist)) {
+						if ($this->hasField($x)) {
 							$fields[] = $x;
 							$values[] = $y;
 						}
 					}
 				}
-			}
-		}
-
-		$exists = $this->exists();
-
-		if (!$exists && $this->hasField('created') && !in_array('created', $fields) && ($whitelist && in_array('created', $fieldList) || !$whitelist)) {
-			$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType('created')]);
-			$fields[] = 'created';
-			$values[] = $colType['formatter']($colType['format']);
-		}
-
-		foreach (array('modified', 'updated') as $updateCol) {
-			if ($this->hasField($updateCol) && !in_array($updateCol, $fields) && ($whitelist && in_array($updateCol, $fieldList) || !$whitelist)) {
-				$colType = am(array('formatter' => 'date'), $db->columns[$this->getColumnType($updateCol)]);
-				$fields[] = $updateCol;
-				$values[] = $colType['formatter']($colType['format']);
 			}
 		}
 		$count = count($fields);
@@ -1148,6 +1166,7 @@ class Model extends Overloadable {
 			$this->_clearCache();
 			$this->validationErrors = array();
 		}
+		$this->whitelist = $_whitelist;
 		return $success;
 	}
 /**
