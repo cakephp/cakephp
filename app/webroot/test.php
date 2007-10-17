@@ -181,7 +181,7 @@ if (!vendor('simpletest' . DS . 'reporter')) {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				$baseUrl = BASE;
-				$characterSet = 'ISO-8859-1';
+				$characterSet = 'charset=utf-8';
 				include CAKE . 'tests' . DS . 'lib' . DS . 'header.php';
 			break;
 			case CAKE_TEST_OUTPUT_TEXT:
