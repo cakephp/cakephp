@@ -236,7 +236,11 @@ class Object {
 			case 'registry':
 				$vars = unserialize(${$name});
 				foreach ($vars['0'] as $key => $value) {
-					loadModel(Inflector::classify($key));
+					if(strpos($key, '_behavior')) {
+						loadBehavior(Inflector::classify(str_replace('_behavior', '', $key)));
+					} else {
+						loadModel(Inflector::classify($key));
+					}
 				}
 				unset($vars);
 				$vars = unserialize(${$name});
