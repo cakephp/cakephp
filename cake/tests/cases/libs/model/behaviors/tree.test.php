@@ -722,6 +722,30 @@ class NumberTreeCase extends CakeTestCase {
 		$this->assertIdentical($result, $expects);
 	}
 
+	function testNoAmbiguousColumn() {
+		$this->NumberTree =& new NumberTree();
+		$this->NumberTree->bindModel(array('belongsTo' => array('Dummy' =>
+					array('className' => 'NumberTree', 'foreignKey' => 'parent_id', 'conditions' => array('Dummy.id' => null)))), false);
+		$this->NumberTree->__initialize(2, 2);
+
+		$data = $this->NumberTree->find(array('NumberTree.name' => '1. Root'));
+		$this->NumberTree->id= $data['NumberTree']['id'];
+
+		$direct = $this->NumberTree->children(null, true, array('id', 'name', 'parent_id', 'lft', 'rght'), null, null, null, 1);
+		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
+					array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)));
+		$this->assertEqual($direct, $expects);
+
+		$total = $this->NumberTree->children(null, null, array('id', 'name', 'parent_id', 'lft', 'rght'), null, null, null, 1);
+		$expects = array(array('NumberTree' => array('id' => 2, 'name' => '1.1', 'parent_id' => 1, 'lft' => 2, 'rght' => 7)),
+					array('NumberTree' => array('id' => 3, 'name' => '1.1.1', 'parent_id' => 2, 'lft' => 3, 'rght' => 4)),
+					array('NumberTree' => array('id' => 4, 'name' => '1.1.2', 'parent_id' => 2, 'lft' => 5, 'rght' => 6)),
+					array('NumberTree' => array('id' => 5, 'name' => '1.2', 'parent_id' => 1, 'lft' => 8, 'rght' => 13)),
+					array('NumberTree' => array( 'id' => 6, 'name' => '1.2.1', 'parent_id' => 5, 'lft' => 9, 'rght' => 10)),
+					array('NumberTree' => array('id' => 7, 'name' => '1.2.2', 'parent_id' => 5, 'lft' => 11, 'rght' => 12)));
+					$this->assertEqual($total, $expects);
+	}
+
 	function tearDown() {
 		unset($this->NumberTree);
 	}
