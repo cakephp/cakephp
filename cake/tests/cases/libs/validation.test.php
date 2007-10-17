@@ -1192,7 +1192,19 @@ class ValidationTestCase extends UnitTestCase {
 	}
 
 	function testUrl() {
+		$this->assertTrue($this->Validation->url('http://www.cakephp.org'));
+		$this->assertTrue($this->Validation->url('http://www.cakephp.org/somewhere#anchor'));
+		$this->assertTrue($this->Validation->url('http://192.168.0.1'));
+		$this->assertTrue($this->Validation->url('ftps://192.168.0.1/pub/cake'));
+		$this->assertFalse($this->Validation->url('ftp://256.168.0.1/pub/cake'));
 		$this->assertTrue($this->Validation->url('https://my.gizmoproject.com/gizmo/app?class=MySip;proc=start'));
+		$this->assertTrue($this->Validation->url('www.domain.tld'));
+		$this->assertFalse($this->Validation->url('http://w_w.micr_soft.co_m'));
+		$this->assertFalse($this->Validation->url('http://www.domain.12com'));
+		$this->assertFalse($this->Validation->url('http://www.domain.longttldnotallowed'));
+		$this->assertFalse($this->Validation->url('http://www.-invaliddomain.tld'));
+		$this->assertFalse($this->Validation->url('http://www.domain.-invalidtld'));
+		$this->assertFalse($this->Validation->url('http://www.this-domain-is-just-too-long-and-inacceptable-by-icann-rules-the-maximum-limit-of-characters-is-57.com'));
 	}
 
 	function testValidNumber() {
