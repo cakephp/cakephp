@@ -47,23 +47,6 @@ class FileEngineTest extends UnitTestCase {
 		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
 		$this->assertEqual($result['settings'], Cache::settings('File'));
 		$this->assertNotEqual($result, Cache::settings('File'));
-
-	}
-
-	function testCacheName() {
-		Cache::config();
-		$cache =& Cache::getInstance();
-		$engine = $cache->_Engine['File'];
-
-		$result = $engine->fullpath('models' . DS . 'default_posts');
-		$expecting = CACHE . 'models' . DS .'cake_default_posts';
-		$this->assertEqual($result, $expecting);
-
-		$engine = $cache->_Engine['File'];
-		$result = $engine->fullpath('default_posts');
-		$expecting = CACHE . 'cake_default_posts';
-		$this->assertEqual($result, $expecting);
-
 	}
 
 	function testReadAndWriteCache() {
@@ -74,6 +57,7 @@ class FileEngineTest extends UnitTestCase {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 1);
 		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_test'));
 
 		$result = Cache::read('test');
 		$expecting = $data;
@@ -110,6 +94,10 @@ class FileEngineTest extends UnitTestCase {
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
 		$this->assertFalse(file_exists(TMP . 'tests' . DS . 'delete_test'));
+
+		$result = Cache::delete('delete_test');
+		$this->assertFalse($result);
+
 	}
 
 	function testSerialize() {
@@ -130,7 +118,39 @@ class FileEngineTest extends UnitTestCase {
 		$this->assertIdentical($newread, $data);
 
 	}
-	
+
+	function testClear() {
+		$data = 'this is a test of the emergency broadcasting system';
+		$write = Cache::write('seriailze_test1', $data, 1);
+		$write = Cache::write('seriailze_test2', $data, 1);
+		$write = Cache::write('seriailze_test3', $data, 1);
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test1'));
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test2'));
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test3'));
+		Cache::engine('File', array('duration' => 1));
+		sleep(4);
+		$result = Cache::clear(true);
+		$this->assertTrue($result);
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test1'));
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test2'));
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test3'));
+
+		$data = 'this is a test of the emergency broadcasting system';
+		$write = Cache::write('seriailze_test1', $data, 1);
+		$write = Cache::write('seriailze_test2', $data, 1);
+		$write = Cache::write('seriailze_test3', $data, 1);
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test1'));
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test2'));
+		$this->assertTrue(file_exists(CACHE . 'cake_seriailze_test3'));
+
+		$result = Cache::clear();
+		$this->assertTrue($result);
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test1'));
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test2'));
+		$this->assertFalse(file_exists(CACHE . 'cake_seriailze_test3'));
+
+	}
+
 	function tearDown() {
 		Cache::config('default');
 	}

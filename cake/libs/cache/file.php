@@ -29,9 +29,6 @@
  * Included libraries.
  *
  */
-if (!class_exists('folder')) {
-	uses ('folder');
-}
 if (!class_exists('file')) {
 	uses ('file');
 }
@@ -43,13 +40,6 @@ if (!class_exists('file')) {
  * @subpackage	cake.cake.libs.cache
  */
 class FileEngine extends CacheEngine {
-/**
- * instance of Folder class
- *
- * @var string
- * @access private
- */
-	var $__Folder = null;
 /**
  * instance of File class
  *
@@ -83,10 +73,10 @@ class FileEngine extends CacheEngine {
 		parent::init($settings);
 		$defaults = array('path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false, 'serialize'=> true);
 		$this->settings = am($defaults, $this->settings, $settings);
-		if(!isset($this->__Folder)) {
-			$this->__Folder =& new Folder();
+		if(!isset($this->__File)) {
+			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
-		$this->settings['path'] = $this->__Folder->cd($this->settings['path']);
+		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
 		if (!is_writable($this->settings['path'])) {
 			return false;
 		}
@@ -112,9 +102,14 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function write($key, &$data, $duration) {
-		if (!$data) {
+		if (empty($data)) {
 			return false;
 		}
+
+		if($this->__setKey($key) === false) {
+			return false;
+		}
+
 		if ($duration == null) {
 			$duration = $this->settings['duration'];
 		}
@@ -122,12 +117,17 @@ class FileEngine extends CacheEngine {
 			$data = serialize($data);
 		}
 
-		$file = $this->fullpath($key);
-		if ($file === false) {
-			return false;
+		if ($this->settings['lock']) {
+			$this->__File->lock = true;
 		}
+
 		$expires = time() + $duration;
-		return $this->__write($file, $data, $expires);
+
+		$contents = $expires."\n".$data."\n";
+
+		$success = $this->__File->write($contents);
+		$this->__File->close();
+		return $success;
 	}
 /**
  * Read a key from the cache
@@ -137,32 +137,24 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function read($key) {
-		$file = $this->fullpath($key);
-		if ($file === false || !is_file($file) || !is_readable($file)) {
+		if($this->__setKey($key) === false) {
 			return false;
 		}
-		$fp = fopen($file, 'r');
-		if (!$fp) {
-			return false;
+		if ($this->settings['lock']) {
+			$this->__File->lock = true;
 		}
-		if ($this->settings['lock'] && !flock($fp, LOCK_SH)) {
-			return false;
-		}
-		$cachetime = fgets($fp, 11);
-		if (intval($cachetime) < time()) {
-			fclose($fp);
-			unlink($file);
-			return false;
-		}
-		$data = '';
-		while (!feof($fp)) {
-			$data .= fgets($fp, 4096);
-		}
-		$data = trim($data);
+		$cachetime = $this->__File->read(11);
 
-		if (!empty($this->settings['serialize'])) {
-			return unserialize($data);
+		if ($cachetime !== false && intval($cachetime) < time()) {
+			$this->__File->close();
+			$this->__File->delete();
+			return false;
 		}
+		$data = $this->__File->read(true);
+		if (!empty($data) && !empty($this->settings['serialize'])) {
+			$data = unserialize($data);
+		}
+		$this->__File->close();
 		return $data;
 	}
 /**
@@ -173,11 +165,10 @@ class FileEngine extends CacheEngine {
  * @access public
  */
 	function delete($key) {
-		$file = $this->fullpath($key);
-		if ($file === false) {
+		if($this->__setKey($key) === false) {
 			return false;
 		}
-		return unlink($file);
+		return $this->__File->delete();
 	}
 /**
  * Delete all values from the cache
@@ -190,27 +181,27 @@ class FileEngine extends CacheEngine {
 		$dir = dir($this->settings['path']);
 		if ($check) {
 			$now = time();
-			$threshold = $now - 86400;
+			$threshold = $now - $this->settings['duration'];
 		}
 		while (($entry = $dir->read()) !== false) {
-			if (strpos($entry, $this->settings['prefix']) !== 0) {
+			if($this->__setKey(str_replace($this->settings['prefix'], '', $entry)) === false) {
 				continue;
 			}
-			$file = $this->settings['path'] . $entry;
-
 			if ($check) {
-				$mtime = filemtime($file);
+				$mtime = $this->__File->lastChange();
 
 				if ($mtime === false || $mtime > $threshold) {
 					continue;
 				}
-				$expires = $this->__expires($file);
+
+				$expires = $this->__File->read(11);
+				$this->__File->close();
 
 				if ($expires > $now) {
 					continue;
 				}
 			}
-			unlink($file);
+			$this->__File->delete();
 		}
 		$dir->close();
 		return true;
@@ -222,60 +213,12 @@ class FileEngine extends CacheEngine {
  * @return mixed Absolute cache file for the given key or false if erroneous
  * @access private
  */
-	function fullpath($key) {
-		if (!isset($this->__File)) {
-			$this->__File =& new File($this->settings['path']);
-		}
-		$parts = array_map(array($this->__File , 'safe'), explode(DS, $key));
-		$key = array_pop($parts);
-		$dir = null;
-		if(count($parts) > 0) {
-			$dir = implode(DS, $parts) . DS;
-		}
-		$path = str_replace(DS . DS, DS, $this->settings['path'] . DS . $dir . $this->settings['prefix'] . $key);
-		$fullpath = $this->__Folder->realpath($path);
-		if (!$this->__Folder->inPath($fullpath, true)) {
+	function __setKey($key) {
+		$this->__File->Folder->cd($this->settings['path']);
+		$this->__File->name = $this->settings['prefix'] . $key;
+		if (!$this->__File->Folder->inPath($this->__File->pwd(), true)) {
 			return false;
 		}
-		return $fullpath;
-	}
-/**
- * write data to a file
- *
- * @param string $file
- * @param string $value
- * @param integer $expires
- * @return boolean True on success, false on failure
- * @access private
- */
-	function __write(&$file, &$data, &$expires) {
-		$dir = dirname($file);
-		if (!is_writable($dir)) {
-			if (!$this->__Folder->create($dir)) {
-				return false;
-			}
-		}
-		$contents = $expires."\n".$data."\n";
-		return ife(file_put_contents($file, $contents, ife($this->settings['lock'], LOCK_EX, 0)), true, false);
-	}
-/**
- * Get the time to live for cache
- *
- * @param string $file
- * @return mixed Expiration timestamp, or false on failure
- * @access private
- */
-	function __expires($file) {
-		$fp = fopen($file, 'r');
-		if (!$fp) {
-			return false;
-		}
-		if ($this->settings['lock'] && !flock($fp, LOCK_SH)) {
-			return false;
-		}
-		$expires = intval(fgets($fp, 11));
-		fclose($fp);
-		return $expires;
 	}
 }
 ?>

@@ -63,7 +63,6 @@ class File extends Object {
  * @access public
  */
 	var $info = array();
-
 /**
  * Holds the file handler resource if the file is opened
  *
@@ -71,6 +70,13 @@ class File extends Object {
  * @access public
  */
 	var $handle = null;
+/**
+ * enable locking for file reading and writing
+ *
+ * @var boolean
+ * @access public
+ */
+	var $lock = null;
 /**
  * Constructor
  *
@@ -152,21 +158,29 @@ class File extends Object {
  * @access public
  */
 	function read($bytes = false, $mode = 'rb', $force = false) {
-		if ($bytes === false) {
-			return file_get_contents($this->pwd());
+		$success = false;
+		if ($this->lock !== null) {
+			if (flock($this->handle, LOCK_SH) === false) {
+				return false;
+			}
 		}
-		if ($this->open($mode, $force) === true) {
+		if ($bytes === false) {
+			$success = file_get_contents($this->pwd());
+		} elseif ($this->open($mode, $force) === true) {			
 			if (is_int($bytes)) {
-				return fread($this->handle, $bytes);
+				$success = fread($this->handle, $bytes);				
 			} else {
 				$data = '';
 				while (!feof($this->handle)) {
 					$data .= fgets($this->handle, 4096);
 				}
-				return trim($data);
+				$success = trim($data);
 			}
 		}
-		return false;
+		if ($this->lock !== null) {
+			flock($this->handle, LOCK_UN);
+		}
+		return $success;
 	}
 /**
  * Sets or gets the offset for the currently opened file.
@@ -196,12 +210,21 @@ class File extends Object {
  * @access public
  */
 	function write($data, $mode = 'w', $force = false) {
+		$success = false;
 		if ($this->open($mode, $force) === true) {
+			if($this->lock !== null) {
+				if(flock($this->handle, LOCK_EX) === false) {
+					return false;
+				}
+			}
 			if (fwrite($this->handle, $data) !== false) {
-				return true;
+				$success = true;
+			}
+			if($this->lock !== null) {
+				flock($this->handle, LOCK_UN);
 			}
 		}
-		return false;
+		return $success;
 	}
 /**
  * Append given data string to this File.
