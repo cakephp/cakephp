@@ -107,13 +107,23 @@
  */
 	Configure::write('Session.table', 'cake_sessions');
 /**
- * A random string used in security hashing methods.
- */
-	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
-/**
  * The name of CakePHP's session cookie.
  */
 	Configure::write('Session.cookie', 'CAKEPHP');
+/**
+ * Session time out time (in seconds).
+ * Actual value depends on 'Security.level' setting.
+ */
+	Configure::write('Session.timeout', '120');
+/**
+ * If set to false, sessions are not automatically started.
+ */
+	Configure::write('Session.start', true);
+/**
+ * When set to false, HTTP_USER_AGENT will not be checked
+ * in the session
+ */
+	Configure::write('Session.checkAgent', true);
 /**
  * The level of CakePHP security. The session timeout time defined
  * in 'Session.timeout' is multiplied according to the settings here.
@@ -128,10 +138,9 @@
  */
 	Configure::write('Security.level', 'high');
 /**
- * Session time out time (in seconds).
- * Actual value depends on 'Security.level' setting.
+ * A random string used in security hashing methods.
  */
-	Configure::write('Session.timeout', '120');
+	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -139,10 +148,6 @@
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use Controller::cssTag().
  */
 	define('COMPRESS_CSS', false);
-/**
- * If set to false, sessions are not automatically started.
- */
-	Configure::write('Session.start', true);
 /**
  * The classname and database used in CakePHP's
  * access control lists.

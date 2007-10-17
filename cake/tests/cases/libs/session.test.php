@@ -88,6 +88,18 @@ class SessionTest extends UnitTestCase {
 		$this->assertEqual($this->Session->read('SessionTestCase'), null);
 	}
 
+	function testCheckUserAgentFalse() {
+		Configure::write('Session.checkAgent', false);
+		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
+		$this->assertTrue($this->Session->valid());
+	}
+
+	function testCheckUserAgentTrue() {
+		Configure::write('Session.checkAgent', true);
+		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
+		$this->assertFalse($this->Session->valid());
+	}
+
 	function tearDown() {
 		$this->Session->del('SessionTestCase');
 		unset($this->Session);

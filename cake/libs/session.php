@@ -64,7 +64,7 @@ class CakeSession extends Object {
  * @var string
  * @access protected
  */
-	var $_userAgent = false;
+	var $_userAgent = '';
 /**
  * Path to where the session is active.
  *
@@ -115,15 +115,14 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-
 		if (Configure::read('Session.save') === 'database' && !class_exists('ConnectionManager')) {
 			uses('model' . DS . 'connection_manager');
 		}
 
-		if (env('HTTP_USER_AGENT') != null) {
-			$this->_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
-		} else {
-				$this->_userAgent = "";
+		if (Configure::read('Session.checkAgent') === true) {
+			if (env('HTTP_USER_AGENT') != null) {
+				$this->_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
+			}
 		}
 		$this->time = time();
 
@@ -268,8 +267,10 @@ class CakeSession extends Object {
  */
 	function valid() {
 		if ($this->read('Config')) {
-			if ($this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
-				$this->valid = true;
+			if (Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+				if ($this->error === false) {
+					$this->valid = true;
+				}
 			} else {
 				$this->valid = false;
 				$this->__setError(1, "Session Highjacking Attempted !!!");
@@ -401,6 +402,9 @@ class CakeSession extends Object {
 			break;
 			case 'medium':
 				$this->cookieLifeTime = 7 * 86400;
+				if (function_exists('ini_set')) {
+					ini_set('session.referer_check', $this->host);
+				}
 			break;
 			case 'low':
 			default:
@@ -489,13 +493,13 @@ class CakeSession extends Object {
  */
 	function __checkValid() {
 		if ($this->read('Config')) {
-			if ($this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
+			if (Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read("Config.userAgent") && $this->time <= $this->read("Config.time")) {
 				$this->write("Config.time", $this->sessionTime);
 				$this->valid = true;
 			} else {
+				$this->destroy();
 				$this->valid = false;
 				$this->__setError(1, "Session Highjacking Attempted !!!");
-				$this->destroy();
 			}
 		} else {
 			srand ((double)microtime() * 1000000);
