@@ -81,12 +81,20 @@ class PaginatorTest extends UnitTestCase {
 		$this->Paginator->params['paging']['Article']['nextPage'] = true;
 	}
 
+	function testDisabledLink() {
+		$this->Paginator->params['paging']['Article']['nextPage'] = false;
+		$this->Paginator->params['paging']['Article']['page'] = 1;
+		$result = $this->Paginator->next('Next', array(), true);
+		$expected = '<div>Next</div>';
+		$this->assertEqual($result, $expected);
+	}
+
 	function testSortLinks() {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
-			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('title');
