@@ -512,6 +512,14 @@ class FormHelperTest extends CakeTestCase {
 		$expected = '<input name="data[Model][field]" type="text" id="theID" value="" />';
 		$this->assertEqual($result, $expected);
 
+		$this->Form->data['Model']['text'] = 'test <strong>HTML</strong> values';
+		$result = $this->Form->text('Model/text');
+		$this->assertPattern('/^<input[^<>]+type="text"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+name="data\[Model\]\[text\]"[^<>]+\/>$/', $result);
+		$this->assertPattern('/^<input[^<>]+value="test &lt;strong&gt;HTML&lt;\/strong&gt; values"[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/^<input[^<>]+name="[^<>]+name="[^<>]+\/>$/', $result);
+		$this->assertNoPattern('/<input[^<>]+[^type|name|id|value|class]=[^<>]*>/', $result);
+
 		$this->Form->validationErrors['Model']['text'] = 1;
 		$this->Form->data['Model']['text'] = 'test';
 		$result = $this->Form->text('Model/text', array('id' => 'theID'));
@@ -876,6 +884,14 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->textarea('Model/tmp');
 		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[tmp\]"[^<>]+><\/textarea>/', $result);
+
+		$this->Form->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
+		$result = $this->Form->textarea('Model.field');
+		$this->assertPattern('/^<textarea[^<>]+name="data\[Model\]\[field\]"[^<>]+id="ModelField"/', $result);
+		$this->assertPattern('/^<textarea[^<>]+>some &lt;strong&gt;test&lt;\/strong&gt; data with &lt;a href=&quot;#&quot;&gt;HTML&lt;\/a&gt; chars<\/textarea>$/', $result);
+		$this->assertNoPattern('/^<textarea[^<>]+value="[^<>]+>/', $result);
+		$this->assertNoPattern('/^<textarea[^<>]+name="[^<>]+name="[^<>]+>$/', $result);
+		$this->assertNoPattern('/<textarea[^<>]+[^name|id]=[^<>]*>/', $result);
 	}
 
 	function testHiddenField() {

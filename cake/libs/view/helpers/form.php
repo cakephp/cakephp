@@ -836,9 +836,12 @@ class FormHelper extends AppHelper {
 
 		if (array_key_exists('value', $options)) {
 			$value = $options['value'];
+			if (!array_key_exists('escape', $options) || $options['escape'] !== false) {
+				$value = h($value);
+			}
 			unset($options['value']);
 		}
-		return $this->output(sprintf($this->Html->tags['textarea'], $options['name'], $this->_parseAttributes($options, array('type', 'name'), ' '), $value));
+		return $this->output(sprintf($this->Html->tags['textarea'], $options['name'], $this->_parseAttributes($options, array('type', 'name'), null, ' '), $value));
 	}
 /**
  * Creates a hidden input field.
