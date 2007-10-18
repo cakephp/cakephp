@@ -98,16 +98,15 @@ class Cache extends Object {
  * @return array(engine, settings) on success, false on failure
  * @access public
  */
-	function config($name = 'default', $settings = array()) {
+	function config($name = 'default', $settings = array('engine' => 'File')) {
 		$_this =& Cache::getInstance();
 		if(is_array($name)) {
-			$config = array_merge(array('name' => 'default', 'settings'=> $settings), $name);
-			extract($config);
+			extract($name);
 		}
 
 		if(isset($_this->__config[$name])) {
 			$settings = array_merge($_this->__config[$name], $settings);
-		} elseif (!empty($settings)) {
+		} elseif (!empty($name) && !empty($settings)) {
 			$settings = $_this->__config[$name] = array_merge(array('engine' => 'File'), $settings);
 		} else {
 			$name = 'default';
@@ -289,7 +288,7 @@ class Cache extends Object {
 			return false;
 		}
 		$_this =& Cache::getInstance();
-		if(!$engine) {
+		if(!$engine && $_this->__currentConfig !== null) {
 			$engine = $_this->__config[$_this->__currentConfig]['engine'];
 		}
 		return isset($_this->_Engine[$engine]);
@@ -302,12 +301,12 @@ class Cache extends Object {
  * @return array list of settings for this engine
  * @access public
  */
-	function settings($engine = null) {
+	function settings($engine = 'File') {
 		$_this =& Cache::getInstance();
 		if(!$engine && isset($_this->__config[$_this->__currentConfig]['engine'])) {
 			$engine = $_this->__config[$_this->__currentConfig]['engine'];
 		}
-		if (!is_null($_this->_Engine[$engine])) {
+		if (isset($_this->_Engine[$engine]) && !is_null($_this->_Engine[$engine])) {
 			return $_this->_Engine[$engine]->settings();
 		}
 		return array();
