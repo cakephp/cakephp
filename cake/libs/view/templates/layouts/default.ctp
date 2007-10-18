@@ -16,7 +16,7 @@
  * @copyright		Copyright 2005-2007, Cake Software Foundation, Inc.
  * @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package			cake
- * @subpackage		cake.cake.libs.view.templates.pages
+ * @subpackage		cake.cake.libs.view.templates.layouts
  * @since			CakePHP(tm) v 0.10.0.1076
  * @version			$Revision$
  * @modifiedby		$LastChangedBy$
