@@ -419,7 +419,7 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __createHeader() {
-		$this->__header .= 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
+		$this->__header = 'From: ' . $this->__formatAddress($this->from) . $this->_newLine;
 
 		if (!empty($this->replyTo)) {
 			$this->__header .= 'Reply-To: ' . $this->__formatAddress($this->replyTo) . $this->_newLine;
