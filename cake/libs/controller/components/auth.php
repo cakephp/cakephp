@@ -779,7 +779,7 @@ class AuthComponent extends Object {
 		}
 
 		if (isset($data[$this->userModel])) {
-			if (!empty($data[$this->userModel][$this->fields['username']]) && !empty($data[$this->userModel][$this->fields['password']])) {
+			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
 				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
 			}
 		}
