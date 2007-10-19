@@ -824,10 +824,13 @@ class Model extends Overloadable {
 						if (isset($this->validationErrors[$x])) {
 							unset ($this->validationErrors[$x]);
 						}
-						if ($x === $this->primaryKey) {
-							$this->id = $y;
+
+						if ($n == $this->name || is_array($y)) {
+							if ($x === $this->primaryKey) {
+								$this->id = $y;
+							}
+							$this->data[$n][$x] = $y;
 						}
-						$this->data[$n][$x] = $y;
 					}
 				}
 			}

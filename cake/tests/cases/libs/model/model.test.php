@@ -999,22 +999,28 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, 4);
 	}
 
-
 	function testUpdateExisting() {
 		$this->model =& new User();
-
-		$model_id = 1000;
-
-		$this->model->id = $model_id;
+		$this->model->id = $id = 1000;
 		$this->model->delete();
 
-		$this->model->save( array('User'=>array('id'=>$model_id, 'user'=>'some user')) );
-		$this->assertEqual($this->model->id, $model_id);
+		$this->model->save(array('User' => array('id' => $id, 'user' => 'some user')));
+		$this->assertEqual($this->model->id, $id);
 
-		$this->model->save( array('User'=>array('user'=>'updated user')) );
-		$this->assertEqual($this->model->id, $model_id);
+		$this->model->save(array('User' => array('user' => 'updated user')));
+		$this->assertEqual($this->model->id, $id);
+
+		$this->Article =& new Article();
+		$this->Comment =& new Comment();
+		$data = array('Comment' => array('id' => 1, 'comment' => 'First Comment for First Article'),
+			      'Article' => array('id' => 2, 'title' => 'Second Article'));
+
+		$result = $this->Article->save($data);
+		$this->assertTrue($result);
+
+		$result = $this->Comment->save($data);
+		$this->assertTrue($result);
 	}
-
 
 	function testBindUnbind() {
 		$this->model =& new User();
