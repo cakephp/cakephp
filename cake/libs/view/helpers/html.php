@@ -283,9 +283,9 @@ class HtmlHelper extends AppHelper {
 		} elseif (isset($htmlAttributes['default'])) {
 			if ($htmlAttributes['default'] == false) {
 				if (isset($htmlAttributes['onclick'])) {
-					$htmlAttributes['onclick'] .= ' return false;';
+					$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
 				} else {
-					$htmlAttributes['onclick'] = 'return false;';
+					$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
 				}
 				unset($htmlAttributes['default']);
 			}

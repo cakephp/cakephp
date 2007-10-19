@@ -193,7 +193,7 @@ class AjaxHelper extends AppHelper {
 			$htmlOptions['onclick'] = '';
 		}
 
-		$htmlOptions['onclick'] .= ' return false;';
+		$htmlOptions['onclick'] .= ' event.returnValue = false; return false;';
 		$return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
 		$script = $this->Javascript->event("'{$htmlOptions['id']}'", "click", $this->remoteFunction($options));
 
@@ -249,7 +249,7 @@ class AjaxHelper extends AppHelper {
 
 		if (isset($options['confirm'])) {
 			$func = "if (confirm('" . $this->Javascript->escapeString($options['confirm'])
-				. "')) { $func; } else { return false; }";
+				. "')) { $func; } else { event.returnValue = false; return false; }";
 		}
 		return $func;
 	}
@@ -305,7 +305,7 @@ class AjaxHelper extends AppHelper {
 			array(
 				'id'		=> 'form' . intval(rand()),
 				'action'	=> $action,
-				'onsubmit'	=> "return false;",
+				'onsubmit'	=> "event.returnValue = false; return false;",
 				'type'		=> $type
 			),
 			$this->__getHtmlOptions($options)
@@ -344,7 +344,7 @@ class AjaxHelper extends AppHelper {
 			$htmlOptions['id'] = 'submit' . intval(rand());
 		}
 
-		$htmlOptions['onclick'] = "return false;";
+		$htmlOptions['onclick'] = "event.returnValue = false; return false;";
 		return $this->Form->submit($title, $htmlOptions)
 			. $this->Javascript->event('"' . $htmlOptions['id'] . '"', 'click', $this->remoteFunction($options));
 	}
