@@ -50,6 +50,7 @@ class DbConfigTask extends Shell {
 	function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
+			exit();
 		}
 	}
 
@@ -136,6 +137,7 @@ class DbConfigTask extends Shell {
 				$done = true;
 			}
 		}
+		
 		$this->bake($dbConfigs);
 		config('database');
 		return true;
@@ -182,6 +184,40 @@ class DbConfigTask extends Shell {
 			$this->err(CONFIGS .' not found');
 			return false;
 		}
+
+		$filename = CONFIGS.'database.php';
+		$oldConfigs = array();
+
+		if (file_exists($filename)) {
+			$db = new DATABASE_CONFIG;
+			$temp = get_class_vars(get_class($db));
+
+			foreach ($temp as $configName => $info) {				
+				if (!isset($info['schema'])) {
+					$info['schema'] = null;
+				}
+					
+				$oldConfigs[] = array('name' => $configName,
+									 'driver' => $info['driver'],
+									 'persistent' => $info['persistent'],
+									 'host' => $info['host'],
+									 'login' => $info['login'],
+									 'password' => $info['password'],
+									 'database' => $info['database'],
+									 'prefix' => $info['prefix'],
+									 'schema' => $info['schema']);
+			}
+		}
+		
+		foreach ($oldConfigs as $oldConfig) {
+			foreach ($configs as $key => $config) {
+				if ($oldConfig['name'] == $config['name']) {
+					unset($configs[$key]);
+				}
+			}
+		}
+			
+		$configs = am($oldConfigs, $configs);
 		$out = "<?php\n";
 		$out .= "class DATABASE_CONFIG {\n\n";
 		
@@ -190,18 +226,16 @@ class DbConfigTask extends Shell {
 			extract($config);			
 			$out .= "\tvar \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
-			$out .= "\t\t'persistent' => {$persistent},\n";
+			$out .= "\t\t'persistent' => '{$persistent}',\n";
 			$out .= "\t\t'host' => '{$host}',\n";
 			$out .= "\t\t'login' => '{$login}',\n";
 			$out .= "\t\t'password' => '{$password}',\n";
 			$out .= "\t\t'database' => '{$database}', \n";
-
-			if ($schema) {
-				$out .= "\t\t'schema' => '{$schema}', \n";
-			}
+			$out .= "\t\t'schema' => '{$schema}', \n";
 			$out .= "\t\t'prefix' => '{$prefix}' \n";
 			$out .= "\t);\n";
 		}
+		
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONFIGS.'database.php';
