@@ -628,7 +628,12 @@ class Dispatcher extends Object {
 
 		if (in_array($requestPath[0], array_keys($folders))) {
 			if (file_exists(VENDORS . join(DS, $requestPath))) {
+				$fileModified = filemtime(VENDORS . join(DS, $requestPath));
+				header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
 				header('Content-type: ' . $folders[$requestPath[0]]);
+				header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
+				header("Cache-Control: cache");
+				header("Pragma: cache");
 				include (VENDORS . join(DS, $requestPath));
 				exit();
 			}
