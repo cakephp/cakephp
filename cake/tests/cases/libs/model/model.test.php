@@ -2854,6 +2854,14 @@ class ModelTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testSaveEmpty() {
+		$this->model =& new Article();
+		$data = array();
+		$expected = $this->model->save($data);
+		$this->assertFalse($expected);
+
+    }
+
 	/*function testBasicValidation() {
 		$this->model =& new ValidationTest();
 		$this->model->set(array('title' => '', 'published' => 1));

@@ -1048,6 +1048,11 @@ class Model extends Overloadable {
 		}
 
 		$this->set($data);
+
+		if (empty($this->data)) {
+			return false;
+		}
+
 		foreach (array('created', 'updated', 'modified') as $field) {
 			if (array_key_exists($field, $this->data[$this->name]) && $this->data[$this->name][$field] === null) {
 				unset($this->data[$this->name][$field]);
