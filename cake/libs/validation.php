@@ -460,10 +460,8 @@ class Validation extends Object {
 				return true;
 			}
 		}
-
 		return false;
 	}
-
 /**
  * Check that value is exactly $comparedTo.
  *
@@ -475,7 +473,6 @@ class Validation extends Object {
 	function equalTo($check, $comparedTo) {
 
 	}
-
 /**
  * Check that value is a file.
  *
@@ -530,7 +527,6 @@ class Validation extends Object {
 		$length = strlen($check);
 		return ($length <= $max);
 	}
-
 /**
  * Checks that a value is a monetary amount.
  *
@@ -551,7 +547,6 @@ class Validation extends Object {
     	}
     	return $this->_check();
     }
-
 /**
  * Validate a multiple select.
  *
@@ -566,7 +561,6 @@ class Validation extends Object {
     	//Validate a select against a list of restriced indexes.
     	//Validate a multiple-select for the quantity selected.
 	}
-
 /**
  * Validate that a number is in specified range.
  *
@@ -584,7 +578,6 @@ class Validation extends Object {
 
 		}
 	}
-
 /**
  * Checks if a value is numeric.
  *
@@ -595,7 +588,6 @@ class Validation extends Object {
 	function numeric($check) {
 		return is_numeric($check);
 	}
-
 /**
  * Check that a value is a valid phone number.
  *
@@ -623,7 +615,6 @@ class Validation extends Object {
 		}
 		return $this->_check();
 	}
-
 /**
  * Checks that a given value is a valid postal code.
  *
@@ -657,7 +648,6 @@ class Validation extends Object {
 		}
 		return $this->_check();
 	}
-
 /**
  * Checks that a value is a valid Social Security Number.
  *
@@ -691,7 +681,6 @@ class Validation extends Object {
 		}
 		return $this->_check();
 	}
-
 /**
  * Checks that a value is a valid URL.
  *
@@ -701,10 +690,11 @@ class Validation extends Object {
  */
 	function url($check) {
 		$this->check = $check;
-		$this->regex = '/\\A(?:(https?|ftps?|file|news|gopher):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,\'@?^=%&:;\/~\\+#]*[\\w\\-\\@?^=%&\/~\\+#])?)\\z/i';
-		return $this->_check();
+		$this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\\/\\/)?(?:(?:(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)\.){3}(?:25[0-5]|2[0-4]\d|(?:(?:1\d)?|[1-9]?)\d)'
+							. '|(?:[0-9a-z]{1}[0-9a-z\\-]*\\.)+(?:[0-9a-z]{1}[0-9a-z\\-]{0,56})\\.(?:[a-z]{2,6}|[a-z]{2}\\.[a-z]{2,6})'
+							. '(?::[0-9]{1,4})?)(?:\\/?|\\/[\\w\\-\\.,\'@?^=%&:;\/~\\+#]*[\\w\\-\\@?^=%&\/~\\+#])$/i';
+        return $this->_check();
 	}
-
 /**
  * Runs an user-defined validation.
  *
@@ -718,7 +708,6 @@ class Validation extends Object {
 	function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array(&$object, $method), array($check,$args));
 	}
-
 /**
  * Runs a regular expression match.
  *
@@ -734,7 +723,6 @@ class Validation extends Object {
 			return false;
 		}
 	}
-
 /**
  * Get the values to use when value sent to validation method is
  * an array.
@@ -795,7 +783,6 @@ class Validation extends Object {
 		}
 		return true;
 	}
-
 /**
  * Reset internal variables for another validation run.
  *
