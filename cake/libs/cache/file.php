@@ -78,7 +78,7 @@ class FileEngine extends CacheEngine {
 		}
 		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
 		if (!is_writable($this->settings['path'])) {
-			trigger_error(__(sprintf('%s is not writable', $this->settings['path']), true), E_USER_WARNING);
+			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;
