@@ -247,74 +247,51 @@ class TreeBehavior extends ModelBehavior {
 		}
 	}
 /**
- * Placeholder. Output multigrouped
- *
- * A means of putting mptt data in a select box (using groups?) is needed. Must still be possible to select
- * (intermediary) parents.
+ * A convenience method for returning a hierarchical array used for HTML select boxes
  *
  * @param AppModel $model
  * @param mixed $conditions SQL conditions as a string or as an array('field' =>'value',...)
- * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $limit SQL LIMIT clause, for calculating items per page
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
- * @param string $groupPath A string path to a value to group the elements by, i.e. "{n}.Post.category_id"
+ * @param string $spacer The character or characters which will be repeated
+ * @param int $recursive The number of levels deep to fetch associated records
  * @return array An associative array of records, where the id is the key, and the display field is the value
  * @access public
  */
-	function generatetreelist(&$model, $conditions = null, $order = null, $limit = null, $keyPath = null, $valuePath = null, $groupPath = null) {
+	function generatetreelist(&$model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = -1) {
 		extract($this->settings[$model->name]);
-		/*
-		 $model->bindModel(
-			array('hasOne'=>
-			array('TreeParent'=>
-			array(
-			'className'=>$model->name,
-			'foreignKey'=>'parent_id',
-			'conditions'=>'OR 1=1 AND '.$model->escapeField($left).' BETWEEN TreeParent.'.$left.' AND TreeParent.'.$right
-			)
-			)
-			)
-			);
-			$recursive = $model->recursive;
-			$model->recursive = 0;
-			....
-			$this->recursive = $recursive;
-			*/
-		$result = $model->query(
-			'SELECT Node.id AS id, CONCAT( REPEAT(\'.....\', COUNT(Parent.name)-1), Node.name) AS name ' .
-			'FROM ' . $model->tablePrefix . $model->table . ' As Node, ' . $model->tablePrefix . $model->table . ' As Parent ' .
-			'WHERE Node.' . $left . ' BETWEEN Parent.' . $left . ' AND Parent.' . $right . ' ' .
-			'GROUP BY Node.' . $model->displayField . ' ' .
-			'ORDER BY Node.' . $left
-		);
 
-		$keys = Set::extract($result, '{n}.Node.id');
-		$vals = Set::extract($result, '{n}.0.name');
-
-		if (!empty ($keys) && !empty ($vals)) {
-			$out = array();
-			if ($groupPath != null) {
-				$group = Set::extract($result, $groupPath);
-
-				if (!empty ($group)) {
-					$c = count($keys);
-					for ($i = 0; $i < $c; $i++) {
-						if (!isset($group[$i])) {
-							$group[$i] = 0;
-						}
-						if (!isset($out[$group[$i]])) {
-							$out[$group[$i]] = array();
-						}
-						$out[$group[$i]][$keys[$i]] = $vals[$i];
-					}
-					return $out;
-				}
-			}
-			$return = array_combine($keys, $vals);
-			return $return;
+		if ($keyPath == null && $valuePath == null && $model->hasField($model->displayField)) {
+			$fields = array($model->primaryKey, $model->displayField, $left, $right);
+		} else {
+			$fields = null;
 		}
-		return null;
+
+		if ($keyPath == null) {
+			$keyPath = '{n}.' . $model->name . '.' . $model->primaryKey;
+		}
+
+		if ($valuePath == null) {
+			$valuePath = array('{0}{1}', '{n}.tree_prefix', '{n}.' . $model->name . '.' . $model->displayField);
+
+		} elseif (is_string($valuePath)) {
+			$valuePath = array('{0}{1}', '{n}.tree_prefix', $valuePath);
+
+		} else {
+			$valuePath[0] = '{' . (count($valuePath) - 1) . '}' . $valuePath[0];
+			$valuePath[] = '{n}.tree_prefix';
+		}
+		$results = $model->findAll($conditions, $fields, $left, null, null, $recursive);
+		$stack = array();
+
+		foreach ($results as $i => $result) {
+			while ($stack && ($stack[count($stack)-1] < $result[$model->name][$right])) {
+				array_pop($stack);
+			}
+			$results[$i]['tree_prefix'] = str_repeat($spacer,count($stack));
+			$stack[] = $result[$model->name][$right];
+		}
+		return Set::combine($results, $keyPath, $valuePath);
 	}
 /**
  * Get the parent node
