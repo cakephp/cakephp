@@ -376,7 +376,11 @@ class View extends Object {
 			}
 		}
 
-		if (!is_null($file)) {
+		if (is_null($file)) {
+			$file = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . $name. '.ctp');
+		}
+
+		if ($file) {
 			$params = array_merge_recursive($params, $this->loaded);
 			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		}

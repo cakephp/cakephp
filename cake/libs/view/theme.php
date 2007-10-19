@@ -87,22 +87,27 @@ class ThemeView extends View {
 														'name' => $name,
 														'message' => $message)));
 	}
-
 /**
- * Enter description here...
+ * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
  *
- * @param unknown_type $name
- * @param unknown_type $params
- * @return unknown
+ * This realizes the concept of Elements, (or "partial layouts")
+ * and the $params array is used to send data to be used in the
+ * Element.
+ *
+ * @link
+ * @param string $name Name of template file in the/app/views/elements/ folder
+ * @param array $params Array of data to be made available to the for rendered view (i.e. the Element)
+ * @return string Rendered output
  */
-	function renderElement($name, $params = array()) {
+	function renderElement($name, $params = array(), $loadHelpers = false) {
+
 		if (isset($params['plugin'])) {
 			$this->plugin = $params['plugin'];
 			$this->pluginPath = 'plugins' . DS . $this->plugin . DS;
 			$this->pluginPaths = array(
-									VIEWS . $this->pluginPath,
-									APP . $this->pluginPath . 'views' . DS,
-								);
+				VIEWS . $this->pluginPath,
+				APP . $this->pluginPath . 'views' . DS,
+			);
 		}
 
 		$paths = Configure::getInstance();
@@ -125,9 +130,13 @@ class ThemeView extends View {
 			}
 		}
 
-		if (!is_null($file)) {
+		if (is_null($file)) {
+			$file = fileExistsInPath(LIBS . 'view' . DS . 'templates' . DS . 'elements' . DS . $name. '.ctp');
+		}
+
+		if ($file) {
 			$params = array_merge_recursive($params, $this->loaded);
-			return $this->_render($file, array_merge($this->viewVars, $params), false);
+			return $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 		}
 
 		if (!is_null($this->pluginPath)) {

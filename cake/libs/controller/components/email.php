@@ -58,6 +58,13 @@ class EmailComponent extends Object{
  */
 	var $replyTo = null;
 /**
+ * The read receipt email
+ *
+ * @var string
+ * @access public
+ */
+	var $readReceipt = null;
+/**
  * The mail that will be used in case of any errors like
  * - Remote mailserver down
  * - Remote user has exceeded his quota
@@ -155,7 +162,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $charset = 'ISO-8859-15';
+	var $charset = 'utf-8';
 /**
  * List of files that should be attached to the email.
  *
@@ -186,6 +193,8 @@ class EmailComponent extends Object{
  * - port
  * - host
  * - timeout
+ * - username
+ * - password
  *
  * @var array
  * @access public
@@ -285,18 +294,20 @@ class EmailComponent extends Object{
 			$this->layout = $layout;
 		}
 
-		if ($template === null && $this->template === null) {
-			if (is_array($content)) {
-				$message = null;
-				foreach ($content as $key => $value) {
-					$message .= $value . $this->_newLine;
-				}
-			} else {
-				$message = $content;
+		if (is_array($content)) {
+			$message = null;
+			foreach ($content as $key => $value) {
+				$message .= $value . $this->_newLine;
 			}
+		} else {
+			$message = $content;
+		}
+
+		if ($template === null && $this->template === null) {
 			$this->__formatMessage($message);
 		} else {
-			$this->__message = $this->__renderTemplate($content);
+			$message = $this->__wrap($message);
+			$this->__message = $this->__renderTemplate($message);
 		}
 
 		if (!empty($this->attachments)) {
@@ -310,9 +321,7 @@ class EmailComponent extends Object{
 		if ($this->_debug) {
 			$this->delivery = 'debug';
 		}
-
 		$__method = '__'.$this->delivery;
-
 		return $this->$__method();
 	}
 /**
@@ -342,32 +351,59 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __renderTemplate($content) {
+		$viewClass = $this->Controller->view;
+
+		if ($viewClass != 'View') {
+			if (strpos($viewClass, '.') !== false) {
+				list($plugin, $viewClass) = explode('.', $viewClass);
+			}
+			$viewClass = $viewClass . 'View';
+			loadView($this->Controller->view);
+		}
 		$View = new View($this->Controller);
 		$View->layout = $this->layout;
-		$content = $this->__strip($content);
+		$msg = null;
 
 		if ($this->sendAs === 'both') {
 			$htmlContent = $content;
-			$msg = '--' . $this->__boundary . $this->_newLine;
+
+			$msg .= '--' . $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"' . $this->_newLine . $this->_newLine;
+			$msg .= '--alt-' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$msg .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+
 			$content = $View->renderElement('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
 			$msg .= $View->renderLayout($content) . $this->_newLine;
 
-			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
+			$msg .= $this->_newLine. '--alt-' . $this->__boundary . $this->_newLine;
 			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$msg .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+
 			$content = $View->renderElement('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
-			$msg .= $View->renderLayout($content);
-
+			$msg .= $View->renderLayout($content) . $this->_newLine . $this->_newLine;
+			$msg .= '--alt-' . $this->__boundary . '--' . $this->_newLine . $this->_newLine;
 			return $msg;
-		} else {
-			$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
-			$View->layoutPath = 'email' . DS . $this->sendAs;
-			return $View->renderLayout($content);
+
 		}
+
+		if ($this->sendAs === 'html') {
+			$msg .= $this->_newLine. '--' . $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+
+		} elseif (!empty($this->attachments)) {
+			$msg .= '--' . $this->__boundary . $this->_newLine;
+			$msg .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
+			$msg .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
+		}
+
+		$content = $View->renderElement('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
+		$View->layoutPath = 'email' . DS . $this->sendAs;
+		$msg .= $View->renderLayout($content) . $this->_newLine;
+		return $msg;
 	}
 /**
  * Enter description here...
@@ -390,6 +426,9 @@ class EmailComponent extends Object{
 		}
 		if (!empty($this->return)) {
 			$this->__header .= 'Return-Path: ' . $this->__formatAddress($this->return) . $this->_newLine;
+		}
+		if (!empty($this->readReceipt)) {
+			$this->__header .= 'Disposition-Notification-To: ' . $this->__formatAddress($this->readReceipt) . $this->_newLine;
 		}
 		$addresses = null;
 
@@ -415,25 +454,24 @@ class EmailComponent extends Object{
 			}
 		}
 
-		if (!empty($this->attachments) && $this->sendAs === 'text') {
+		if (!empty($this->attachments)) {
 			$this->__createBoundary();
 			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
 			$this->__header .= 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"' . $this->_newLine;
-		} elseif (!empty($this->attachments) && $this->sendAs === 'html') {
-			$this->__createBoundary();
-			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/related; boundary="' . $this->__boundary . '"' . $this->_newLine;
 		} elseif ($this->sendAs === 'text') {
 			$this->__header .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
 		} elseif ($this->sendAs === 'html') {
-			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$this->__header .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-		} elseif ($this->sendAs === 'both') {
 			$this->__createBoundary();
-			$this->__header .= 'MIME-Version: 1.0' . $this->_newLine;
-			$this->__header .= 'Content-Type: multipart/alternative; boundary="' . $this->__boundary . '"' . $this->_newLine;
+			$this->__header .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
 		}
+
+		if ($this->sendAs !== 'text' || !empty($this->attachments)) {
+			$this->__header .= 'This part of the E-mail should never be seen. If' . $this->_newLine;
+			$this->__header .= 'you are reading this, consider upgrading your e-mail' . $this->_newLine;
+			$this->__header .= 'client to a MIME-compatible client.' . $this->_newLine;
+		}
+
+		$this->__header .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine;
 	}
 /**
  * Enter description here...
@@ -442,24 +480,13 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __formatMessage($message) {
-		$message = $this->__wrap($message);
-
-		if ($this->sendAs === 'both') {
-			$this->__message = '--' . $this->__boundary . $this->_newLine;
+		if (!empty($this->attachments)) {
+			$this->__message .= '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: text/plain; charset=' . $this->charset . $this->_newLine;
-			$this->__message .=  'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$this->__message .= 'If you are seeing this is because you may need to change your'.$this->_newLine;
-			$this->__message .= 'preferred message format from HTML to plain text.'.$this->_newLine.$this->_newLine;
-			$this->__message .=  strip_tags($message) . $this->_newLine;
-
-			$this->__message .= '--' .  $this->__boundary . $this->_newLine;
-			$this->__message .= 'Content-Type: text/html; charset=' . $this->charset . $this->_newLine;
-			$this->__message .= 'Content-Transfer-Encoding: 8bit' . $this->_newLine;
-			$this->__message .= $message . $this->_newLine;
-			$this->__message .=  $this->_newLine . $this->_newLine;
-		} else {
-			$this->__message .= $message . $this->_newLine;
+			$this->__message .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine . $this->_newLine;
 		}
+		$message = $this->__wrap($message);
+		$this->__message .= $message . $this->_newLine;
 	}
 /**
  * Enter description here...
@@ -475,7 +502,11 @@ class EmailComponent extends Object{
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
 			$data = chunk_split(base64_encode($data)) ;
-			$filetype = mime_content_type($file);
+			$info = pathinfo($file);
+			$filetype = 'unknown';
+			if (isset($info['extension'])) {
+				$filetype = $info['extension'];
+			}
 
 			$this->__message .= '--' . $this->__boundary . $this->_newLine;
 			$this->__message .= 'Content-Type: ' . $filetype . '; name="' . basename($file) . '"' . $this->_newLine;
@@ -508,13 +539,13 @@ class EmailComponent extends Object{
  */
 	function __wrap($message) {
 		$message = $this->__strip($message, true);
-		$message = str_replace(array('\r','\n'), '\n', $message);
-		$words = explode('\n', $message);
+		$message = str_replace(array("\r\n","\r"), "\n", $message);
+		$words = explode("\n", $message);
 		$formated = null;
 
 		foreach ($words as $word) {
-			$formated .= wordwrap($word, $this->_lineLength, "\n", true);
-			$formated .= "\n";
+			$formated .= wordwrap($word, $this->_lineLength, $this->_newLine, true);
+			$formated .= $this->_newLine;
 		}
 		return $formated;
 	}
@@ -528,7 +559,7 @@ class EmailComponent extends Object{
 	function __encode($subject) {
 		$subject = $this->__strip($subject);
 
-		if (low($this->charset) !== 'iso-8859-15') {
+		if (low($this->charset) !== 'utf-8') {
 			$start = "=?" . $this->charset . "?B?";
 			$end = "?=";
 			$spacer = $end . "\n " . $start;
@@ -577,9 +608,9 @@ class EmailComponent extends Object{
 		return preg_replace($search, '', $value);
 	}
 /**
- * Enter description here...
+ * wrapper form php mail function
  *
- * @return unknown
+ * @return boolean
  * @access private
  */
 	function __mail() {
@@ -591,6 +622,7 @@ class EmailComponent extends Object{
 /**
  * Sends out email via SMTP
  *
+ * @return boolean
  * @access private
  */
 	function __smtp() {
@@ -602,6 +634,10 @@ class EmailComponent extends Object{
 		}
 
 		if (!$this->__sendData("HELO cake\r\n")) {
+			return false;
+		}
+
+		if (isset($this->smtpOptions['username']) && isset($this->smtpOptions['password']) && !$this->__authenticate()){
 			return false;
 		}
 
@@ -622,9 +658,9 @@ class EmailComponent extends Object{
 /**
  * Private method for connecting to an SMTP server
  *
- * @access private
  * @param array $options SMTP connection options
  * @return array
+ * @access private
  */
 	function __smtpConnect() {
 		$status = true;
@@ -637,7 +673,6 @@ class EmailComponent extends Object{
 		if ($this->__smtpConnection == false) {
 			$status = false;
 		}
-
 		$response = $this->__getSmtpResponse();
 
 		return array('status' => $status,
@@ -646,6 +681,8 @@ class EmailComponent extends Object{
 	}
 /**
  * Private method for getting SMTP response
+ * @return SMTP server response
+ * @access private
  */
 	function __getSmtpResponse() {
 		$response = @fgets($this->__smtpConnection, 512);
@@ -656,6 +693,8 @@ class EmailComponent extends Object{
  *
  * @param string $data data to be sent to SMTP server
  * @param boolean $check check for response from server
+ * @return boolean
+ * @access private
  */
 	function __sendData($data, $check = true) {
 		@fwrite($this->__smtpConnection, $data);
@@ -667,7 +706,38 @@ class EmailComponent extends Object{
 				return false;
 			}
 		}
+		return true;
+	}
+/**
+ * SMTP authentication
+ *
+ * @return boolean
+ * @access private
+ */
+	function __authenticate(){
+		@fwrite($this->__smtpConnection, "AUTH LOGIN\r\n");
+		$response = $this->__getSmtpResponse();
 
+		if (stristr($response, '334') === false){
+			$this->smtpError = $response;
+			return false;
+		}
+
+		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['username'])."\r\n");
+		$response = $this->__getSmtpResponse();
+
+		if (stristr($response, '334') === false){
+			$this->smtpError = $response;
+			return false;
+		}
+
+		@fwrite($this->__smtpConnection, base64_encode($this->smtpOptions['password'])."\r\n");
+		$response = $this->__getSmtpResponse();
+
+		if (stristr($response, 'OK Authenticated') === false){
+			$this->smtpError = $response;
+			return false;
+		}
 		return true;
 	}
 /**
