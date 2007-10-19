@@ -278,7 +278,7 @@ class Dispatcher extends Object {
 					)
 				));
 		} else {
-			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? null: $params['pass']);
+			$output = call_user_func_array(array(&$controller, $params['action']), empty($params['pass'])? array(): $params['pass']);
 		}
 
 		if ($controller->autoRender) {
