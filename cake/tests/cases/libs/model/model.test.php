@@ -2859,8 +2859,7 @@ class ModelTest extends CakeTestCase {
 		$data = array();
 		$expected = $this->model->save($data);
 		$this->assertFalse($expected);
-
-    }
+	}
 
 	/*function testBasicValidation() {
 		$this->model =& new ValidationTest();

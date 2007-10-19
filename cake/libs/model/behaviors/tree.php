@@ -599,7 +599,7 @@ class TreeBehavior extends ModelBehavior {
 					$errors[] = array('node', $instance[$model->name][$model->primaryKey],
 						'right greater than parent (node ' . $instance['VerifyParent'][$model->primaryKey] . ').');
 				}
-			} elseif ($model->findCount(array($scope, $left => '< ' . $instance[$model->name][$left], $right => '> ' . $instance[$model->name][$right]))) {
+			} elseif ($model->findCount(array($scope, $left . '< ' . $instance[$model->name][$left], $right . '> ' . $instance[$model->name][$right]))) {
 				$errors[] = array('node', $instance[$model->name][$model->primaryKey], 'The parent field is blank, but has a parent');
 			}
 		}
