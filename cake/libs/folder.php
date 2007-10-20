@@ -182,8 +182,8 @@ class Folder extends Object{
  * @return array Files that match given pattern
  * @access public
  */
-	function find($regexp_pattern = '.*') {
-		$data = $this->ls();
+	function find($regexp_pattern = '.*', $sort = false) {
+		$data = $this->read($sort, $exceptions);
 
 		if (!is_array($data)) {
 			return array();
@@ -206,9 +206,9 @@ class Folder extends Object{
  * @return array Files matching $pattern
  * @access public
  */
-	function findRecursive($pattern = '.*') {
+	function findRecursive($pattern = '.*', $sort = false) {
 		$startsOn = $this->path;
-		$out = $this->_findRecursive($pattern);
+		$out = $this->_findRecursive($pattern, $sort);
 		$this->cd($startsOn);
 		return $out;
 	}
@@ -219,8 +219,8 @@ class Folder extends Object{
  * @return array Files matching pattern
  * @access private
  */
-	function _findRecursive($pattern) {
-		list($dirs, $files) = $this->ls();
+	function _findRecursive($pattern, $sort = false) {
+		list($dirs, $files) = $this->read($sort, $exceptions);
 
 		$found = array();
 		foreach ($files as $file) {
