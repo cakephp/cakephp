@@ -245,7 +245,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($submitOptions === true) {
-			$submit = 'Submit';
+			$submit = __('Submit', true);
 		} elseif (is_string($submitOptions)) {
 			$submit = $submitOptions;
 		}
