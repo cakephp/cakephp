@@ -184,16 +184,14 @@ class Dispatcher extends Object {
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
-		$controller->params = $this->params;
 		$controller->plugin = $this->plugin;
-		$controller->action = $this->params['action'];
-		$controller->webservices = $this->params['webservices'];
+		$controller->params =& $this->params;
+		$controller->action =& $this->params['action'];
+		$controller->webservices =& $this->params['webservices'];
+		$controller->passedArgs =& $this->params['pass'];
 
-		$controller->passedArgs = $this->params['pass'];
-		$controller->namedArgs = Set::diff(Set::extract($this->params['pass'], '{n}'), $this->params['pass']);
-
-		if (!empty($controller->params['data'])) {
-			$controller->data =& $controller->params['data'];
+		if (!empty($this->params['data'])) {
+			$controller->data =& $this->params['data'];
 		} else {
 			$controller->data = null;
 		}
@@ -235,8 +233,9 @@ class Dispatcher extends Object {
 
 		$controller->constructClasses();
 
+		$this->start($controller);
+
 		if ($privateAction) {
-			$this->start($controller);
 			return $this->cakeError('privateAction', array(
 				array(
 					'className' => Inflector::camelize($this->params['controller']."Controller"),
@@ -261,9 +260,7 @@ class Dispatcher extends Object {
  * @access protected
  */
 	function _invoke (&$controller, $params, $missingAction = false) {
-		$this->start($controller);
 		$classVars = get_object_vars($controller);
-
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
 			uses('controller'. DS . 'scaffold');
 			return new Scaffold($controller, $params);

@@ -32,11 +32,10 @@ require_once CAKE.'app_controller.php';
 class TestDispatcher extends Dispatcher {
 
 	function _invoke(&$controller, $params, $missingAction) {
-		$this->start($controller);
+		$controller->params =& $params;
 		$classVars = get_object_vars($controller);
 		if ($missingAction && in_array('scaffold', array_keys($classVars))) {
 			uses('controller'. DS . 'scaffold');
-
 			return new Scaffold($controller, $params);
 		} elseif ($missingAction && !in_array('scaffold', array_keys($classVars))) {
 				return $this->cakeError('missingAction', array(
@@ -50,10 +49,6 @@ class TestDispatcher extends Dispatcher {
 				));
 		}
 		return $controller;
-	}
-
-	function start(&$controller) {
-		return;
 	}
 
 	function cakeError($filename) {
@@ -128,6 +123,22 @@ class ArticlesTestController extends ArticlesTestAppController {
 	var $uses = array();
 
 	function admin_index() {
+		return true;
+	}
+}
+
+class SomePostsController extends AppController {
+
+	var $name = 'SomePosts';
+	var $uses = array();
+	var $autoRender = false;
+
+	function beforeFilter() {
+		$this->params['action'] = 'view';
+		$this->params['pass'] = array('changed');
+	}
+
+	function index() {
 		return true;
 	}
 }
@@ -370,6 +381,15 @@ class DispatcherTest extends UnitTestCase {
 		$expectedWebroot = '/CakeBB/app/webroot/';
 		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
 
+		Configure::write('App.baseUrl', '/dbhauser/index.php');
+		$_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
+		$_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
+		$result = $dispatcher->baseUrl();
+		$expected = '/dbhauser/index.php';
+		$this->assertEqual($expected, $result);
+		$expectedWebroot = '/dbhauser/app/webroot/';
+		$this->assertEqual($expectedWebroot, $dispatcher->webroot);
+
 	}
 
 	function testBaseUrlAndWebrootWithBase() {
@@ -447,8 +467,8 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
-		$expected = array('param' => 'value', 'param2' => 'value2');
-		$this->assertIdentical($expected, $controller->namedArgs);
+		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
+		$this->assertIdentical($expected, $controller->passedArgs);
 	}
 
 	function testAdminDispatch() {
@@ -469,7 +489,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($expected, $controller->name);
 
 		$expected = array('param' => 'value', 'param2' => 'value2');
-		$this->assertIdentical($expected, $controller->namedArgs);
+		$this->assertIdentical($expected, $controller->passedArgs);
 		$this->assertTrue($controller->params['admin']);
 
 		$expected = '/cake/repo/branches/1.2.x.x/index.php/admin/test_dispatch_pages/index/param:value/param2:value2';
@@ -513,8 +533,8 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'SomePages';
 		$this->assertIdentical($expected, $controller->name);
 
-		$expected = array('param'=>'value', 'param2'=>'value2');
-		$this->assertIdentical($expected, $controller->namedArgs);
+		$expected = array('0' => 'home', 'param'=>'value', 'param2'=>'value2');
+		$this->assertIdentical($expected, $controller->passedArgs);
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/home/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
@@ -547,7 +567,7 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertIdentical($expected, $controller->action);
 
 		$expected = array('param'=>'value', 'param2'=>'value2');
-		$this->assertIdentical($expected, $controller->namedArgs);
+		$this->assertIdentical($expected, $controller->passedArgs);
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/other_pages/index/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
@@ -582,6 +602,8 @@ class DispatcherTest extends UnitTestCase {
 		$this->assertEqual($controller->params['pass'], $expected);
 
 		Router::reload();
+		Router::connect('/admin/:controller/:action/*', array('controller' => 'pages', 'action' => 'index', 'admin' => true, 'prefix' => 'admin'));
+
 		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
 		$url = 'admin/articles_test';
@@ -602,7 +624,7 @@ class DispatcherTest extends UnitTestCase {
 							'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'),
 							'bare' => 0, 'webservices' => null, 'return' => 1
 						);
-		$this->assertIdentical($controller->params, $expected);
+		$this->assertEqual($controller->params, $expected);
 	}
 
 	function testAutomaticPluginControllerMissingActionDispatch() {
@@ -640,6 +662,26 @@ class DispatcherTest extends UnitTestCase {
 		$expected = 'privateAction';
 		$this->assertIdentical($expected, $controller);
 	}
+
+	function testChangingParamsFromBeforeFilter() {
+		$dispatcher =& new TestDispatcher();
+		$url = 'some_posts/index/param:value/param2:value2';
+
+		restore_error_handler();
+		$controller = $dispatcher->dispatch($url, array('return' => 1));
+		set_error_handler('simpleTestErrorHandler');
+
+		$expected = 'SomePosts';
+		$this->assertEqual($expected, $controller->name);
+
+		$expected = 'view';
+		$this->assertEqual($expected, $controller->action);
+
+
+		$expected = array('changed');
+		$this->assertIdentical($expected, $controller->params['pass']);
+	}
+
 
 	function tearDown() {
 		$_GET = $this->_get;
