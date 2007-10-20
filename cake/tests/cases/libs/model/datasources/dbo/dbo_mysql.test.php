@@ -150,7 +150,6 @@ class DboMysqlTest extends UnitTestCase {
  * @access public
  */
 	function testQuoting() {
-$this->skipif ($this->Db->connected, 'Could not connect to database');
 		$result = $this->Db->fields($this->model);
 		$expected = array(
 			'`MysqlTestModel`.`id`',
@@ -176,11 +175,23 @@ $this->skipif ($this->Db->connected, 'Could not connect to database');
 
 		$expected = 1.2;
 		$result = $this->Db->value(1.2, 'float');
-		$this->assertIdentical($expected, $result);
+		$this->assertEqual($expected, $result);
 
 		$expected = "'1,2'";
 		$result = $this->Db->value('1,2', 'float');
-		$this->assertIdentical($expected, $result);
+		$this->assertEqual($expected, $result);
+
+		$expected = "'4713e29446'";
+		$result = $this->Db->value('4713e29446');
+		$this->assertEqual($expected, $result);
+
+		$expected = 10010001;
+		$result = $this->Db->value(10010001);
+		$this->assertEqual($expected, $result);
+
+		$expected = "'00010010001'";
+		$result = $this->Db->value('00010010001');
+		$this->assertEqual($expected, $result);
 	}
 }
 ?>
