@@ -922,9 +922,13 @@ class FormHelper extends AppHelper {
  * @param  array   $options
  * @return string A HTML submit button
  */
-	function submit($caption = 'Submit', $options = array()) {
+	function submit($caption = null, $options = array()) {
+		if (!$caption) {
+			$caption = __('Submit');
+		}
 		$options['value'] = $caption;
 		$secured = null;
+
 		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
 			$secured = $this->secure($this->fields);
 			$this->fields = array();

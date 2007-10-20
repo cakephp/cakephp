@@ -546,12 +546,12 @@ class Controller extends Object {
 		call_user_func_array(array(&$this, $action), $args);
 	}
 /**
- * contoroller callback to tie into Auth component.
+ * controller callback to tie into Auth component.
  *
  * @return bool
  */
  	function isAuthorized() {
-		trigger_error(__($this->name.'::isAuthorized() is not defined.', true), E_USER_WARNING);
+		trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), $this->name), E_USER_WARNING);
 		return false;
 	}
 /**

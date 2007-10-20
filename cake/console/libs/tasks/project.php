@@ -87,8 +87,19 @@ class ProjectTask extends Shell {
 			while ($response == false && is_dir($project) === true && config('core') === true) {
 				$response = $this->in('A project already exists in this location: '.$project.' Overwrite?', array('y','n'), 'n');
 				if (low($response) === 'n') {
-					$this->out('Bake Aborted');
-					exit();
+					$response = false;
+
+					while (!$response) {
+						$response = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
+						if (strtoupper($response) === 'Q') {
+							$this->out('Bake Aborted');
+							exit();
+						}
+						$this->params['working'] = null;
+						$this->params['app'] = null;
+						$this->execute($response);
+						exit();
+					}
 				}
 			}
 		}
@@ -187,6 +198,8 @@ class ProjectTask extends Shell {
 		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
 			$this->out('Bake Aborted.');
 		} else {
+			$this->params['working'] = null;
+			$this->params['app'] = null;
 			$this->execute(false);
 		}
 	}

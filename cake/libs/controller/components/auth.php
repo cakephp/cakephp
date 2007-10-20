@@ -166,7 +166,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $loginError = 'Login failed.  Invalid username or password.';
+	var $loginError = '';
 /**
  * Error to display when user attempts to access an object or action to which they do not have
  * acccess.
@@ -174,7 +174,7 @@ class AuthComponent extends Object {
  * @var string
  * @access public
  */
-	var $authError = 'You are not authorized to access that location.';
+	var $authError = '';
 /**
  * Determines whether AuthComponent will automatically redirect and exit if login is successful.
  *
@@ -229,6 +229,8 @@ class AuthComponent extends Object {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = am($this->actionMap, array_combine($crud, $crud));
+		$this->loginError = __('Login failed.  Invalid username or password.', true);
+		$this->authError = __('You are not authorized to access that location.', true);
 
 		$admin = Configure::read('Routing.admin');
 		if (!empty($admin)) {
@@ -367,7 +369,7 @@ class AuthComponent extends Object {
  */
 	function __setDefaults() {
 		if (empty($this->userModel)) {
-			trigger_error(__('Could not find $userModel.  Please set AuthComponent::$userModel in beforeFilter().', true), E_USER_WARNING);
+			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter().", true), E_USER_WARNING);
 			return false;
 		}
 		if (empty($this->loginAction)) {

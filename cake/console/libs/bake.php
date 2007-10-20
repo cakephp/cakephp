@@ -55,9 +55,10 @@ class BakeShell extends Shell {
 		$this->out('[M]odel');
 		$this->out('[V]iew');
 		$this->out('[C]ontroller');
+		$this->out('[P]roject');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in('What would you like to Bake?', array('D', 'M', 'V', 'C', 'Q')));
+		$classToBake = strtoupper($this->in('What would you like to Bake?', array('D', 'M', 'V', 'C', 'P', 'Q')));
 		switch($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -70,6 +71,9 @@ class BakeShell extends Shell {
 				break;
 			case 'C':
 				$this->Controller->execute();
+				break;
+			case 'P':
+				$this->Project->execute();
 				break;
 			case 'Q':
 				exit(0);

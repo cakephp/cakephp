@@ -84,7 +84,21 @@ class ExtractTask extends Shell{
 		if (isset($this->params['path'])) {
 			$this->path = $this->params['path'];
 		} else {
-			$this->path = ROOT . DS . APP_DIR;
+			$response = '';
+			while ($response == '') {
+				$response = $this->in("What is the full path you would like to extract?\nExample: " . $this->params['root'] . DS . "myapp\n[Q]uit", null, 'Q');
+				if (strtoupper($response) === 'Q') {
+					$this->out('Extract Aborted');
+					exit();
+				}
+			}
+
+			if (is_dir($response)) {
+				$this->path = $response;
+			} else {
+				$this->err('The directory path you supplied was not found. Please try again.');
+				$this->initialize();
+			}
 		}
 
 		if (isset($this->params['debug'])) {
@@ -95,7 +109,21 @@ class ExtractTask extends Shell{
 		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
-			$this->__output = APP . 'locale' . DS;
+			$response = '';
+			while ($response == '') {
+				$response = $this->in("What is the full path you would like to output?\nExample: " . $this->path . DS . "locale\n[Q]uit", null, $this->path . DS . "locale");
+				if (strtoupper($response) === 'Q') {
+					$this->out('Extract Aborted');
+					exit();
+				}
+			}
+
+			if (is_dir($response)) {
+				$this->__output = $response . DS;
+			} else {
+				$this->err('The directory path you supplied was not found. Please try again.');
+				$this->initialize();
+			}
 		}
 
 		if (empty($this->files)) {
@@ -412,6 +440,23 @@ class ExtractTask extends Shell{
 				$fileList = 'Generated from file: ' . join('', $fileList);
 			} else {
 				$fileList = 'No version information was available in the source files.';
+			}
+
+			if (is_file($this->__output . $file)) {
+				$response = '';
+				while ($response == '') {
+					$response = $this->in("\n\nError: ".$file . ' already exists in this location. Overwrite?', array('y','n', 'q'), 'n');
+					if (strtoupper($response) === 'Q') {
+						$this->out('Extract Aborted');
+						exit();
+					} elseif (strtoupper($response) === 'N') {
+						$response = '';
+						while ($response == '') {
+							$response = $this->in("What would you like to name this file?\nExample: new_" . $file, null, "new_" . $file);
+							$file = $response;
+						}
+					}
+				}
 			}
 			$fp = fopen($this->__output . $file, 'w');
 			fwrite($fp, str_replace('--VERSIONS--', $fileList, join('', $content)));

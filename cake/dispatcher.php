@@ -135,7 +135,7 @@ class Dispatcher extends Object {
 				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
 
 				return $this->cakeError('error404',	array(array('url' => strtolower($controller),
-														'message' => 'Was not found on this server',
+														'message' => __('Was not found on this server'),
 														'base' => $this->base)));
 			} else {
 				Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));

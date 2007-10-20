@@ -47,7 +47,7 @@ endif;
 				__('Your cache is set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>';
-				echo sprintf(__('%s is being used to cache, to change this edit config'.DS.'core.php ', true), $settings['engine'] . 'Engine');
+				echo sprintf(__('%s is being used to cache, to change this edit config/core.php ', true), $settings['engine'] . 'Engine');
 				echo '</p>';
 
 				echo 'Settings: <ul>';
@@ -60,7 +60,7 @@ endif;
 				__('Your cache is NOT working.');
 				echo '<br />';
 				if (is_writable(TMP . 'cache')):
-					__('Edit: config'.DS.'core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
+					__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
 				else:
 					__('Your cache directory is not writable');
 				endif;
@@ -78,7 +78,7 @@ endif;
 			else:
 				__('Your database configuration file is NOT present.');
 				echo '<br/>';
-				__('Rename config'.DS.'database.php.default to config'.DS.'database.php');
+				__('Rename config/database.php.default to config/database.php');
 			endif;
 		?>
 	</span>

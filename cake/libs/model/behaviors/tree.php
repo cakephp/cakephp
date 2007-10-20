@@ -541,7 +541,7 @@ class TreeBehavior extends ModelBehavior {
  */
 	function setparent(&$model, $parentId = null , $created = null) {
 		extract($this->settings[$model->name]);
-		if ($created ===false && $parentId == $model->field($parent)) {
+		if ($created === false && $parentId == $model->field($parent)) {
 			return true;
 		}
 		return $model->saveField($parent, $parentId);
@@ -641,11 +641,11 @@ class TreeBehavior extends ModelBehavior {
 
 			if (empty ($parentNode)) {
 				return false;
-			}
-			elseif (($model->id == $parentId)) {
+
+			} elseif (($model->id == $parentId)) {
 				return false;
-			}
-			elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
+
+			} elseif (($node[$left] < $parentNode[$left]) && ($parentNode[$right] < $node[$right])) {
 				return false;
 			}
 

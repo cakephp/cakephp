@@ -276,6 +276,9 @@ class TranslateBehavior extends ModelBehavior {
  */
 	function _getLocale(&$model) {
 		if (!isset($model->locale) || is_null($model->locale)) {
+			if (!class_exists('I18n')) {
+				uses('i18n');
+			}
 			$I18n =& I18n::getInstance();
 			$model->locale = $I18n->l10n->locale;
 		}

@@ -130,7 +130,7 @@ class ErrorHandler extends Object{
 
 		header("HTTP/1.0 404 Not Found");
 		$this->error(array('code' => '404',
-							'name' => 'Not found',
+							'name' => __('Not found', true),
 							'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message),
 							'base' => $base));
 		exit();
