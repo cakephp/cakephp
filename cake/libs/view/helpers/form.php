@@ -924,7 +924,7 @@ class FormHelper extends AppHelper {
  */
 	function submit($caption = null, $options = array()) {
 		if (!$caption) {
-			$caption = __('Submit');
+			$caption = __('Submit', true);
 		}
 		$options['value'] = $caption;
 		$secured = null;
