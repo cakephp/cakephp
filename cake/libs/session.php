@@ -412,7 +412,7 @@ class CakeSession extends Object {
 			break;
 		}
 
-		switch(Configure::read('Session.cookie')) {
+		switch(Configure::read('Session.save')) {
 			case 'cake':
 				if (!isset($_SESSION)) {
 					if (function_exists('ini_set')) {
@@ -430,6 +430,12 @@ class CakeSession extends Object {
 			break;
 			case 'database':
 				if (!isset($_SESSION)) {
+					if (Configure::read('Session.table') === null) {
+						trigger_error(__("You must set the all Configure::write('Session.*') in core.php to use database storage"), E_USER_WARNING);
+						exit();
+					} elseif (Configure::read('Session.database') === null) {
+						Configure::write('Session.database', 'default');
+					}
 					if (function_exists('ini_set')) {
 						ini_set('session.use_trans_sid', 0);
 						ini_set('url_rewriter.tags', '');
@@ -611,7 +617,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __read($key) {
-		$db =& ConnectionManager::getDataSource('default');
+		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'), false);
 		$row = $db->query("SELECT " . $db->name($table.'.data') . " FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key), false);
 
@@ -634,7 +640,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __write($key, $value) {
-		$db =& ConnectionManager::getDataSource('default');
+		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'));
 
 		switch(Configure::read('Security.level')) {
@@ -677,7 +683,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __destroy($key) {
-		$db =& ConnectionManager::getDataSource('default');
+		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'));
 		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.id') . " = " . $db->value($key, 'integer'));
 		return true;
@@ -690,7 +696,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __gc($expires = null) {
-		$db =& ConnectionManager::getDataSource('default');
+		$db =& ConnectionManager::getDataSource(Configure::read('Session.database'));
 		$table = $db->fullTableName(Configure::read('Session.table'));
 		$db->execute("DELETE FROM " . $db->name($table) . " WHERE " . $db->name($table.'.expires') . " < ". $db->value(time()));
 		return true;

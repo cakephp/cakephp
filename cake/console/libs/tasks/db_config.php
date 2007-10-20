@@ -36,11 +36,11 @@ if (!class_exists('File')) {
  * @subpackage	cake.cake.console.libs.tasks
  */
 class DbConfigTask extends Shell {
-	
+
 	var $__defaultConfig = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 							'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
-							'schema'=> null, 'prefix'=> null);
-	
+							'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null);
+
 
 /**
  * Execution method always used for tasks
@@ -92,6 +92,15 @@ class DbConfigTask extends Shell {
 			while ($host == '') {
 				$host = $this->in('Database Host:', null, 'localhost');
 			}
+			$port = '';
+
+			while ($port == '') {
+				$port = $this->in('Port?', null, 'n');
+			}
+
+			if (low($port) == 'n') {
+				$port = null;
+			}
 			$login = '';
 
 			while ($login == '') {
@@ -125,7 +134,26 @@ class DbConfigTask extends Shell {
 			if (low($prefix) == 'n') {
 				$prefix = null;
 			}
-			$config = compact('name', 'driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix');
+			$encoding = '';
+
+			while ($encoding == '') {
+				$encoding = $this->in('Table encoding?', null, 'n');
+			}
+
+			if (low($encoding) == 'n') {
+				$encoding = null;
+			}
+			$schema = '';
+
+			while ($schema == '') {
+				$schema = $this->in('Table schema?', null, 'n');
+			}
+
+			if (low($schema) == 'n') {
+				$schema = null;
+			}
+
+			$config = compact('name', 'driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
 
 			while ($this->__verify($config) == false) {
 				$this->__interactive();
@@ -137,7 +165,7 @@ class DbConfigTask extends Shell {
 				$done = true;
 			}
 		}
-		
+
 		$this->bake($dbConfigs);
 		config('database');
 		return true;
@@ -156,15 +184,17 @@ class DbConfigTask extends Shell {
 		$this->hr();
 		$this->out('The following database configuration will be created:');
 		$this->hr();
-		$this->out("Name:          $name");
-		$this->out("Driver:		   $driver");
-		$this->out("Persistent:	   $persistent");
-		$this->out("Host:		   $host");
-		$this->out("User:		   $login");
-		$this->out("Pass:		   " . str_repeat('*', strlen($password)));
-		$this->out("Database:	   $database");
-		$this->out("Table prefix:  $prefix");
-		$this->out("Schema:		   $schema");
+		$this->out("Name:         $name");
+		$this->out("Driver:       $driver");
+		$this->out("Persistent:   $persistent");
+		$this->out("Host:         $host");
+		$this->out("Port:         $port");
+		$this->out("User:         $login");
+		$this->out("Pass:         " . str_repeat('*', strlen($password)));
+		$this->out("Database:     $database");
+		$this->out("Table prefix: $prefix");
+		$this->out("Schema:       $schema");
+		$this->out("Encoding:     $encoding");
 		$this->hr();
 		$looksGood = $this->in('Look okay?', array('y', 'n'), 'y');
 
@@ -192,50 +222,66 @@ class DbConfigTask extends Shell {
 			$db = new DATABASE_CONFIG;
 			$temp = get_class_vars(get_class($db));
 
-			foreach ($temp as $configName => $info) {				
+			foreach ($temp as $configName => $info) {
 				if (!isset($info['schema'])) {
 					$info['schema'] = null;
 				}
-					
+				if (!isset($info['encoding'])) {
+					$info['encoding'] = null;
+				}
+				if (!isset($info['port'])) {
+					$info['port'] = null;
+				}
+
+				if($info['persistent'] === false) {
+					$info['persistent'] = 'false';
+				} else {
+					$info['persistent'] = 'false';
+				}
+
 				$oldConfigs[] = array('name' => $configName,
 									 'driver' => $info['driver'],
 									 'persistent' => $info['persistent'],
 									 'host' => $info['host'],
+									 'port' => $info['port'],
 									 'login' => $info['login'],
 									 'password' => $info['password'],
 									 'database' => $info['database'],
 									 'prefix' => $info['prefix'],
-									 'schema' => $info['schema']);
+									 'schema' => $info['schema'],
+									 'encoding' => $info['encoding']);
 			}
 		}
-		
-		foreach ($oldConfigs as $oldConfig) {
-			foreach ($configs as $key => $config) {
+
+		foreach ($oldConfigs as $key => $oldConfig) {
+			foreach ($configs as $key1 => $config) {
 				if ($oldConfig['name'] == $config['name']) {
-					unset($configs[$key]);
+					unset($oldConfigs[$key]);
 				}
 			}
 		}
-			
+
 		$configs = am($oldConfigs, $configs);
 		$out = "<?php\n";
 		$out .= "class DATABASE_CONFIG {\n\n";
-		
+
 		foreach ($configs as $config) {
 			$config = am($this->__defaultConfig, $config);
-			extract($config);			
+			extract($config);
 			$out .= "\tvar \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
-			$out .= "\t\t'persistent' => '{$persistent}',\n";
+			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
+			$out .= "\t\t'port' => '{$port}',\n";
 			$out .= "\t\t'login' => '{$login}',\n";
 			$out .= "\t\t'password' => '{$password}',\n";
-			$out .= "\t\t'database' => '{$database}', \n";
-			$out .= "\t\t'schema' => '{$schema}', \n";
-			$out .= "\t\t'prefix' => '{$prefix}' \n";
+			$out .= "\t\t'database' => '{$database}',\n";
+			$out .= "\t\t'schema' => '{$schema}',\n";
+			$out .= "\t\t'prefix' => '{$prefix}',\n";
+			$out .= "\t\t'encoding' => '{$encoding}'\n";
 			$out .= "\t);\n";
 		}
-		
+
 		$out .= "}\n";
 		$out .= "?>";
 		$filename = CONFIGS.'database.php';

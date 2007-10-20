@@ -256,12 +256,12 @@ class Scaffold extends Object {
 		}
 
 		if ($this->controller->_beforeScaffold($action)) {
-			if ($action == 'edit' && !isset($params['pass'][0])) {
+			if ($action == 'edit' && !isset($params['pass'][0]) || !$this->ScaffoldModel->exists()) {
 				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
-					$this->controller->Session->setFlash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)));
+					$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(__("No id set for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+					return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
 				}
 			} elseif ($action == 'edit') {
 				$this->ScaffoldModel->id = $params['pass'][0];

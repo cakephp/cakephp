@@ -70,26 +70,29 @@
  *
  */
 class DATABASE_CONFIG {
-
 	var $default = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
+		'port' => '',
 		'login' => 'user',
 		'password' => 'password',
-		'database' => 'project_name',
-		'prefix' => ''
+		'database' => 'database_name',
+		'schema' => '',
+		'prefix' => '',
+		'encoding' => ''
 	);
-
 	var $test = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
+		'port' => '',
 		'login' => 'user',
 		'password' => 'password',
-		'database' => 'project_name-test',
-		'prefix' => ''
+		'database' => 'test_database_name',
+		'schema' => '',
+		'prefix' => '',
+		'encoding' => ''
 	);
 }
-
 ?>

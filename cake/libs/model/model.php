@@ -1832,7 +1832,7 @@ class Model extends Overloadable {
 		if (empty($value)) {
 			$value = true;
 		}
-		$this->validationErrors[$field] = $value;
+		$this->validationErrors[$field] = __($value, true);
 	}
 /**
  * Returns true if given field name is a foreign key in this Model.
