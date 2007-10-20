@@ -223,7 +223,7 @@ class DboMysql extends DboSource {
 			case 'integer' :
 			case 'float' :
 			case null :
-				if (is_int($data) || is_float($data) && strpos($data, ',') === false) {
+				if (is_numeric($data) && strpos($data, ',') === false && $data[0] != '0' && strpos($data, 'e') === false) {
 					break;
 				}
 			default:
