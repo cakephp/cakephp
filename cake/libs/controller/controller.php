@@ -127,12 +127,14 @@ class Controller extends Object {
  * The name of the views subfolder containing views for this controller.
  *
  * @var string
+ * @access public
  */
 	var $viewPath = null;
 /**
  * Sub-path for layout files.
  *
  * @var string
+ * @access public
  */
 	var $layoutPath = null;
 /**
@@ -264,13 +266,15 @@ class Controller extends Object {
 /**
  * Used in CakePHP webservices routing.
  *
- * @var unknown_type
+ * @var array
+ * @access public
  */
 	var $webservices = null;
 /**
  * Holds all params passed and named.
  *
  * @var mixed
+ * @access public
  */
 	var $passedArgs = array();
 /**
@@ -313,7 +317,11 @@ class Controller extends Object {
 		}
 		parent::__construct();
 	}
-
+/**
+ * Starts the components linked to this controller.
+ *
+ * @access protected
+ */
 	function _initComponents() {
 		$component = new Component();
 		$component->init($this);
@@ -351,6 +359,8 @@ class Controller extends Object {
  * If Controller::persistModel; is true, controller will create cached model instances on first request,
  * additional request will used cached models
  *
+ * @param string $modelClass Name of model class to load
+ * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created error returned if models not found.
  * @access public
  */
@@ -505,7 +515,7 @@ class Controller extends Object {
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
  * 				Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
+ * @access public
  */
 	function set($one, $two = null) {
 		$data = array();
@@ -538,6 +548,7 @@ class Controller extends Object {
  * @param string $action The new action to be redirected to
  * @param mixed  Any other parameters passed to this method will be passed as
  *               parameters to the new action.
+ * @access public
  */
 	function setAction($action) {
 		$this->action = $action;
@@ -549,6 +560,7 @@ class Controller extends Object {
  * controller callback to tie into Auth component.
  *
  * @return bool
+ * @access public
  */
  	function isAuthorized() {
 		trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), $this->name), E_USER_WARNING);
@@ -558,6 +570,7 @@ class Controller extends Object {
  * Returns number of errors in a submitted FORM.
  *
  * @return int Number of errors
+ * @access public
  */
 	function validate() {
 		$args = func_get_args();
@@ -572,6 +585,7 @@ class Controller extends Object {
  * Validates a FORM according to the rules set up in the Model.
  *
  * @return int Number of errors
+ * @access public
  */
 	function validateErrors() {
 		$objects = func_get_args();
@@ -590,10 +604,11 @@ class Controller extends Object {
  * Gets an instance of the view object & prepares it for rendering the output, then
  * asks the view to actualy do the job.
  *
- * @param unknown_type $action
- * @param unknown_type $layout
- * @param unknown_type $file
- * @return unknown
+ * @param string $action Action name to render
+ * @param string $layout Layout to use
+ * @param string $file File to use for rendering
+ * @return boolean Success
+ * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
 
@@ -653,6 +668,7 @@ class Controller extends Object {
  *
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
  * @param boolean $local If true, restrict referring URLs to local server
+ * @return string Referring URL
  * @access public
  */
 	function referer($default = null, $local = false) {
@@ -673,9 +689,8 @@ class Controller extends Object {
 		}
 	}
 /**
- * Tells the browser not to cache the results of the current request
+ * Tells the browser not to cache the results of the current request by sending headers
  *
- * @return void
  * @access public
  */
 	function disableCache() {
@@ -692,6 +707,7 @@ class Controller extends Object {
  * @param string $message Message to display to the user
  * @param string $url Relative URL to redirect to after the time expires
  * @param int $time Time to show the message
+ * @access public
  */
 	function flash($message, $url, $pause = 1) {
 		$this->autoRender = false;
@@ -711,7 +727,8 @@ class Controller extends Object {
 	}
 /**
  * @deprecated on 1.2.0.5258
- * @see FormHelper::create();
+ * @see FormHelper::create()
+ * @access public
  */
 	function generateFieldNames($data = null, $doCreateOptions = true) {
 		trigger_error(sprintf(__('Method generateFieldNames() is deprecated in %s: see FormHelper::create()', true), get_class($this)), E_USER_NOTICE);
@@ -859,6 +876,29 @@ class Controller extends Object {
 		return $fieldNames;
 	}
 /**
+ * @deprecated on 1.2.0.5821
+ * @see FormHelper::create()
+ * @access protected
+ */
+	function _selectedArray($data, $key = 'id') {
+		if (!is_array($data)) {
+			$model = $data;
+			if (!empty($this->data[$model][$model])) {
+				return $this->data[$model][$model];
+			}
+			if (!empty($this->data[$model])) {
+				$data = $this->data[$model];
+			}
+		}
+		$array = array();
+		if (!empty($data)) {
+			foreach ($data as $var) {
+				$array[$var[$key]] = $var[$key];
+			}
+		}
+		return $array;
+	}
+/**
  * Converts POST'ed model data to a model conditions array, suitable for a find
  * or findAll Model query
  *
@@ -867,6 +907,7 @@ class Controller extends Object {
  * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
+ * @access public
  */
 	function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
@@ -907,11 +948,13 @@ class Controller extends Object {
 		return $cond;
 	}
 /**
- * Private method used by postConditions
+ * Builds a matching condition using the specified operator and value, used by postConditions
  *
+ * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
+ * @param string $value Value to check against
+ * @access private
  */
 	function __postConditionMatch($op, $value) {
-
 		if (is_string($op)) {
 			$op = up(trim($op));
 		}
@@ -931,8 +974,11 @@ class Controller extends Object {
 		}
 	}
 /**
- * Cleans up the date fields of current Model.
+ * Cleans up the date fields of current Model. Goes through posted fields (in Controller::$data)
+ * and prepares their values to be used for model operations.
  *
+ * @param string $modelClass Model class to use (defaults to controller's model)
+ * @access public
  */
 	function cleanUpFields($modelClass = null) {
 		if ($modelClass == null) {
@@ -1004,15 +1050,15 @@ class Controller extends Object {
 		}
 	}
 /**
- * Handles automatic pagination of model records
+ * Handles automatic pagination of model records.
  *
- * @param mixed $object
- * @param mixed $scope
+ * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
+ * @param mixed $scope Conditions to use while paginating
  * @param array $whitelist
  * @return array Model query results
+ * @access public
  */
 	function paginate($object = null, $scope = array(), $whitelist = array()) {
-
 		if (is_array($object)) {
 			$whitelist = $scope;
 			$scope = $object;
@@ -1140,20 +1186,23 @@ class Controller extends Object {
 		return $results;
 	}
 /**
- * Called before the controller action.  Overridden in subclasses.
+ * Called before the controller action. Overridden in subclasses.
  *
+ * @access public
  */
 	function beforeFilter() {
 	}
 /**
- * Called after the controller action is run, but before the view is rendered.  Overridden in subclasses.
+ * Called after the controller action is run, but before the view is rendered. Overridden in subclasses.
  *
+ * @access public
  */
 	function beforeRender() {
 	}
 /**
- * Called after the controller action is run and rendered.  Overridden in subclasses.
+ * Called after the controller action is run and rendered. Overridden in subclasses.
  *
+ * @access public
  */
 	function afterFilter() {
 	}
@@ -1161,7 +1210,8 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called example index, edit, etc.
- * @return boolean
+ * @return boolean Success
+ * @access protected
  */
 	function _beforeScaffold($method) {
 		return true;
@@ -1170,7 +1220,8 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return boolean
+ * @return boolean Success
+ * @access protected
  */
 	function _afterScaffoldSave($method) {
 		return true;
@@ -1179,7 +1230,8 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return boolean
+ * @return boolean Success
+ * @access protected
  */
 	function _afterScaffoldSaveError($method) {
 		return true;
@@ -1190,35 +1242,11 @@ class Controller extends Object {
  * Method MUST return true in child classes
  *
  * @param string $method name of method called example index, edit, etc.
- * @return boolean
+ * @return boolean Success
+ * @access protected
  */
 	function _scaffoldError($method) {
 		return false;
-	}
-/**
- * Enter description here...
- *
- * @param unknown_type $data
- * @param unknown_type $key
- * @return unknown
- */
-	function _selectedArray($data, $key = 'id') {
-		if (!is_array($data)) {
-			$model = $data;
-			if (!empty($this->data[$model][$model])) {
-				return $this->data[$model][$model];
-			}
-			if (!empty($this->data[$model])) {
-				$data = $this->data[$model];
-			}
-		}
-		$array = array();
-		if (!empty($data)) {
-			foreach ($data as $var) {
-				$array[$var[$key]] = $var[$key];
-			}
-		}
-		return $array;
 	}
 }
 
