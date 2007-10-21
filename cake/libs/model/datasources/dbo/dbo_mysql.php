@@ -361,7 +361,7 @@ class DboMysql extends DboSource {
 		if (strpos($col, 'text') !== false) {
 			return 'text';
 		}
-		if (strpos($col, 'blob') !== false) {
+		if (strpos($col, 'blob') !== false || $col == 'binary') {
 			return 'binary';
 		}
 		if (in_array($col, array('float', 'double', 'decimal'))) {
