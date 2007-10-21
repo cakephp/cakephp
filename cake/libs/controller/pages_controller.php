@@ -39,23 +39,28 @@ class PagesController extends AppController{
  * Controller name
  *
  * @var string
+ * @access public
  */
 	var $name = 'Pages';
 /**
  * Default helper
  *
  * @var array
+ * @access public
  */
 	var $helpers = array('Html');
 /**
  * This controller does not use a model
  *
  * @var array
+ * @access public
  */
 	var $uses = array();
 /**
  * Displays a view
  *
+ * @param mixed What page to display
+ * @access public
  */
 	function display() {
 		if (!func_num_args()) {

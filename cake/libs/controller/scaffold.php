@@ -41,7 +41,8 @@ class Scaffold extends Object {
 /**
  * Controller object
  *
- * @var Controller
+ * @var object
+ * @access public
  */
 	var $controller = null;
 /**
@@ -62,12 +63,14 @@ class Scaffold extends Object {
  * Name of current model this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $model = null;
 /**
  * Path to View.
  *
- * @var string Path to View
+ * @var string
+ * @access public
  */
 	var $viewPath;
 /**
@@ -94,12 +97,14 @@ class Scaffold extends Object {
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var array
+ * @access public
  */
 	var $ext = '.ctp';
 /**
  * Sub-directory for this view file.
  *
  * @var string
+ * @access public
  */
 	var $subDir = null;
 /**
@@ -107,19 +112,21 @@ class Scaffold extends Object {
  *
  * @link http://wiki.cakephp.org/docs:plugins
  * @var string
+ * @access public
  */
 	var $plugin = null;
 /**
  * List of variables to collect from the associated controller
  *
  * @var array
- * @access protected
+ * @access private
  */
 	var $__passedVars = array('action', 'base', 'webroot', 'layout', 'name', 'viewPath', 'ext', 'params', 'data', 'webservices', 'plugin', 'cacheAction');
 /**
  * Title HTML element for current scaffolded view
  *
  * @var string
+ * @access public
  */
 	var $scaffoldTitle = null;
 /**
@@ -188,7 +195,7 @@ class Scaffold extends Object {
 /**
  * Renders a view action of scaffolded model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return A rendered view of a row from Models database table
  * @access private
  */
@@ -215,7 +222,7 @@ class Scaffold extends Object {
 /**
  * Renders index action of scaffolded model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return A rendered view listing rows from Models database table
  * @access private
  */
@@ -231,8 +238,7 @@ class Scaffold extends Object {
 /**
  * Renders an add or edit action for scaffolded model.
  *
- * @param array $params
- * @param string $params add or edit
+ * @param string $action Action (add or edit)
  * @return A rendered view with a form to edit or add a record in the Models database table
  * @access private
  */
@@ -242,8 +248,8 @@ class Scaffold extends Object {
 /**
  * Saves or updates the scaffolded model.
  *
- * @param array $params
- * @param string $type create or update
+ * @param array $params Parameters for scaffolding
+ * @param string $action create or update
  * @return success on save/update, add/edit form if data is empty or error if save or update fails
  * @access private
  */
@@ -320,7 +326,7 @@ class Scaffold extends Object {
 /**
  * Performs a delete on given scaffolded Model.
  *
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @return success on delete error if delete fails
  * @access private
  */
@@ -358,9 +364,10 @@ class Scaffold extends Object {
 		}
 	}
 /**
- * Enter description here...
+ * Show a scaffold error
  *
- * @return error
+ * @return A rendered view showing the error
+ * @access private
  */
 	function __scaffoldError() {
 		$pathToViewFile = '';
@@ -387,9 +394,7 @@ class Scaffold extends Object {
  * </code>
  * is placed in the controller's class definition.
  *
- * @param string $url
- * @param string $controller_class
- * @param array $params
+ * @param array $params Parameters for scaffolding
  * @since Cake v 0.10.0.172
  * @access private
  */
