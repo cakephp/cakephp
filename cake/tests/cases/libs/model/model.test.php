@@ -471,17 +471,6 @@ class ModelTest extends CakeTestCase {
 		Configure::write('debug', $this->debug);
 	}
 
-	function testSetWithNull() {
-		$this->Project =& new Project();
-		$expected = array('Project' => array('id' => 4, 'title' => 'My Project'));
-
-		$this->Project->set($expected);
-		$this->assertEqual($this->Project->data, $expected);
-
-		$this->Project->set(null);
-		$this->assertEqual($this->Project->data, $expected);
-	}
-
 	function testHabtmRecursiveBelongsTo() {
 		$this->Portfolio =& new Portfolio();
 
