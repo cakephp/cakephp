@@ -30,6 +30,7 @@
 	<title>
 		<?php __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout;?>
+		<?php echo $scripts_for_layout;?>
 	</title>
 
 	<?php echo $html->charset();?>
