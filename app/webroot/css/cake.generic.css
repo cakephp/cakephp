@@ -5,9 +5,11 @@ padding:0;
 
 /* General Style Info */
 body {
-	background-color: #2C6877;
-	color: #fff;
-	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
+	background-color: #003d4c;
+	color: #333;
+	font-family:'lucida grande',verdana,helvetica,arial,sans-serif;
+	font-size:13px;
+	margin: 0;
 }
 a {
 	background-color: inherit;
@@ -25,22 +27,24 @@ a img {
 }
 h1, h2, h3, h4 {
 	background-color: inherit;
-	font-weight:normal;
+	font-weight: normal;
 }
 h1 {
 	color: #003d4c;
-	font-size: 160%;
+	font-size: 130%;
 	margin: 0.1em 0;
 }
 h2 {
-	color: #2C6877;
+	color: #e32;
+	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
 	font-size: 160%;
 	margin: 0.3em 0;
 	padding-top: 1em;
 }
 h3 {
 	color: #c6c65b;
-	font-size: 120%;
+	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
+	font-size: 150%;
 	padding-top: 2em;
 }
 h4 {
@@ -58,25 +62,24 @@ ul, li {
 }
 
 #header{
-	background-color: #2C6877;
-	padding: 10px 20px 0 20px;
-	height: 5em;
+	padding: 10px 20px;
 }
 #header h1 {
+	background: url('../img/cake.icon.gif') no-repeat left;
 	color: #ffffff;
-	background: url('../img/cake.icon.png') no-repeat;
-	padding: 5px 50px;
-	height: 5em;
+	font-size: 110%;
+	padding: 0px 30px;
 }
 #header h1 a {
 	color: #ffffff;
-	background: #2C6877;
+	background: #003d4c;
+	font-weight: normal;
 	text-decoration: none;
 }
 #header h1 a:hover {
 	color: #ffffff;
 	background: #003d4c;
-	text-decoration: none;
+	text-decoration: underline;
 }
 #content{
 	background-color: #fff;
@@ -163,9 +166,9 @@ div.paging div.disabled {
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
-	width: 50%;
+	width: 60%;
 }
-dl .altrow {
+dl.altrow {
 	background: #f4f4f4;
 }
 dt {
@@ -192,7 +195,7 @@ fieldset {
 	padding: 16px 20px;
 }
 fieldset legend {
-	color: #2C6877;
+	color: #e32;
 	font-size: 160%;
 	font-weight: bold;
 }
@@ -206,12 +209,12 @@ form div {
 	padding: .5em;
 	vertical-align: text-top;
 }
+form div.input {
+	color: #444;
+}
 form div.required {
 	color: #333;
 	font-weight: bold;
-}
-form div.optional, form div.input {
-	color: #444;
 }
 form div.submit {
 	border: 0;
@@ -252,21 +255,24 @@ input[type=checkbox] {
 }
 input[type=submit] {
 	display: inline;
+	font-size: 110%;
 	padding: 2px 5px;
 	width: auto;
-	font-size: 110%;
 	vertical-align: bottom;
 }
 
 /* Notices and Errors */
-div.message, p.error, div.error-message {
+div.message {
+	clear: both;
 	color: #900;
 	font-size: 140%;
 	font-weight: bold;
-	margin: 8px 0px;
+	margin: 1em 0;
 }
 div.error-message {
 	clear: both;
+	color: #900;
+	font-weight: bold;
 }
 div.error em {
 	font-size: 140%;
@@ -280,67 +286,36 @@ span.notice {
 	padding: 0.5em;
 	margin: 1em 0;
 }
-
-/*  Nav & Actions */
-div.nav {
-	text-align: left;
-	position: absolute;
-	top: 9em;
-	left: 60%;
-}
-div.nav ul li a {
-	display: block;
-	background: #fff;
-	color: #003d4c;
-	padding: 3px 8px;
-	text-decoration: none;
-}
-div.nav ul {
-	background: #003d4c;
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-}
-div.nav li {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-div.nav ul li a {
-	background: #fff;
-	color: #003d4c;
-	padding: 3px 8px;
-	text-decoration: none;
-}
-div.nav ul li a:hover {
-	background: #003d4c;
-	color: #fff;
-}
-
 /*  Actions  */
-div.actions {
+div.index div.actions {
 	clear: both;
-	margin-top: .2em;
+	margin-top: .4em;
 	text-align: left;
+}
+div.view div.actions {
+	clear: both;
+	margin-top: .4em;
+	text-align: left;
+	width: 60%;
 }
 div.actions ul {
-	margin: 0;
+	margin: 0px 0;
 	padding: 0;
 }
 div.actions li {
 	display: inline;
 	list-style-type: none;
+	line-height: 2em;
 	margin: 0 2em 0 0;
-	padding: 0;
+	white-space: nowrap;
 }
 div.actions ul li a {
-	background: #fff;
 	color: #003d4c;
 	text-decoration: none;
 }
 div.actions ul li a:hover {
-	background: #003d4c;
-	color: #fff;
+	color: #333;
+	text-decoration: underline;
 }
 
 /* Related */
@@ -356,7 +331,7 @@ pre {
 	padding: 1em;
 }
 
-pre.cake_debug {
+pre.cake-debug {
 	background: #ffcc00;
 	font-size: 120%;
 	line-height: 18px;
