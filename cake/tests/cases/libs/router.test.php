@@ -609,6 +609,24 @@ class RouterTest extends UnitTestCase {
 		$result = $this->router->parse('admin/users/view/');
 		$expected = array('pass' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'admin', 'admin' => true);
 		$this->assertEqual($result, $expected);
+
+		Configure::write('Routing.admin', 'beheer');
+
+		$this->router->reload();
+		$this->router->setRequestInfo(array(
+			array('beheer' => true, 'controller' => 'posts', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'webservices' => null, 'plugin' => null),
+			array('base' => '/', 'here' => '/beheer/posts/index', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(), 'webservices' => null)
+		));
+
+		$result = $this->router->parse('beheer/users/view/');
+		$expected = array('pass' => array(), 'controller' => 'users', 'action' => 'view', 'plugin' => null, 'prefix' => 'beheer', 'beheer' => true);
+		$this->assertEqual($result, $expected);
+
+
+		$result = $this->router->url(array('controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
+		$expected = '/beheer/posts/index/0?var=test&var2=test2';
+		$this->assertEqual($result, $expected);
+
 	}
 
 	function testExtensionParsingSetting() {
