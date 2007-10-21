@@ -183,7 +183,7 @@ class Folder extends Object{
  * @access public
  */
 	function find($regexp_pattern = '.*', $sort = false) {
-		$data = $this->read($sort, $exceptions);
+		$data = $this->read($sort);
 
 		if (!is_array($data)) {
 			return array();
@@ -220,7 +220,7 @@ class Folder extends Object{
  * @access private
  */
 	function _findRecursive($pattern, $sort = false) {
-		list($dirs, $files) = $this->read($sort, $exceptions);
+		list($dirs, $files) = $this->read($sort);
 
 		$found = array();
 		foreach ($files as $file) {
