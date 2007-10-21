@@ -256,7 +256,7 @@ class Scaffold extends Object {
 		}
 
 		if ($this->controller->_beforeScaffold($action)) {
-			if ($action == 'edit' && !isset($params['pass'][0]) || !$this->ScaffoldModel->exists()) {
+			if ($action == 'edit' && (!isset($params['pass'][0]) || !$this->ScaffoldModel->exists())) {
 				if (isset($this->controller->Session) && $this->controller->Session->valid != false) {
 					$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
 					$this->controller->redirect($this->redirect);
