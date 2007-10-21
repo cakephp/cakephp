@@ -387,7 +387,7 @@ class DboSource extends DataSource {
 		}
 
 		if (php_sapi_name() != 'cli') {
-			print ("<table class=\"cakeSqlLog\" id=\"cakeSqlLog_" . preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true)) . "\" summary=\"Cake SQL Log\" cellspacing=\"0\" border = \"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
+			print ("<table class=\"cake-sql-log\" id=\"cakeSqlLog_" . preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true)) . "\" summary=\"Cake SQL Log\" cellspacing=\"0\" border = \"0\">\n<caption>{$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
 			print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
 
 			foreach ($log as $k => $i) {
@@ -529,6 +529,10 @@ class DboSource extends DataSource {
 		$array = array();
 		$linkedModels = array();
 		$this->__bypass = false;
+
+		if ($recursive === null && isset($queryData['recursive'])) {
+			$recursive = $queryData['recursive'];
+		}
 
 		if (!is_null($recursive)) {
 			$_recursive = $model->recursive;

@@ -324,6 +324,13 @@ class Model extends Overloadable {
  */
 	var $__affectedRows = null;
 /**
+ * List of valid finder method options
+ *
+ * @var array
+ * @access protected
+ */
+	var $__findMethods = array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true);
+/**
  * Constructor. Binds the Model's database table to the object.
  *
  * @param integer $id
@@ -1405,7 +1412,7 @@ class Model extends Overloadable {
  * @return boolean True if such a record exists
  */
 	function hasAny($conditions = null) {
-		return ($this->findCount($conditions, -1) != false);
+		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
 	}
 /**
  * Return a single row as a resultset array.
@@ -1419,12 +1426,95 @@ class Model extends Overloadable {
  * @return array Array of records
  */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-		$data = $this->findAll($conditions, $fields, $order, 1, null, $recursive);
 
-		if (empty($data[0])) {
-			return false;
+		if (!is_string($conditions) || (is_string($conditions) && !array_key_exists($conditions, $this->__findMethods))) {
+			$type = 'first';
+			$query = am(compact('conditions', 'fields', 'order', 'recursive'), array('limit' => 1));
+		} else {
+			$type = $conditions;
+			$query = $fields;
 		}
-		return $data[0];
+
+		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$this->id = $this->getID();
+
+		$query = am(
+			array(
+				'conditions' => null, 'fields' => null, 'joins' => array(),
+				'limit' => null, 'offset' => null, 'order' => null, 'page' => null
+			),
+			$query
+		);
+
+		if ($type == 'count' && empty($query['fields'])) {
+			$query['fields'] = 'COUNT(*) AS ' . $db->name('count');
+		}
+
+		if (!is_numeric($query['page']) || intval($query['page']) < 1) {
+			$query['page'] = 1;
+		}
+
+		if ($query['page'] > 1 && $query['limit'] != null) {
+			$query['offset'] = ($query['page'] - 1) * $query['limit'];
+		}
+
+		if ($query['order'] == null && $query['order'] !== false) {
+			if ($this->order == null) {
+				$query['order'] = array();
+			} else {
+				$query['order'] = array($this->order);
+			}
+		} else {
+			$query['order'] = array($query['order']);
+		}
+
+		if (!empty($this->behaviors)) {
+			$behaviors = array_keys($this->behaviors);
+			$ct = count($behaviors);
+
+			for ($i = 0; $i < $ct; $i++) {
+				$return = $this->behaviors[$behaviors[$i]]->beforeFind($this, $query);
+				if (is_array($return)) {
+					$query = $return;
+				} elseif ($return === false) {
+					return null;
+				}
+			}
+		}
+
+		$return = $this->beforeFind($query);
+
+		if (is_array($return)) {
+			$query = $return;
+		} elseif ($return === false) {
+			return null;
+		}
+		$results = $db->read($this, $query);
+
+		if (!empty($this->__backAssociation)) {
+			$this->__resetAssociations();
+		}
+
+		switch ($type) {
+			case 'all':
+				return $this->__filterResults($results, true);
+			break;
+			case 'first':
+				$results = $this->__filterResults($results, true);
+				if (empty($results[0])) {
+					return false;
+				}
+				return $results[0];
+			break;
+			case 'count':
+				if (isset($results[0][0]['count'])) {
+					return intval($results[0][0]['count']);
+				} elseif (isset($results[0][$this->name]['count'])) {
+					return intval($results[0][$this->name]['count']);
+				}
+				return false;
+			break;
+		}
 	}
 /**
  * Returns a resultset array with specified fields from database matching given conditions.
@@ -1440,77 +1530,28 @@ class Model extends Overloadable {
  * @return array Array of records
  */
 	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
-
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$this->id = $this->getID();
-		$offset = null;
-
-		if (empty($page) || !is_numeric($page) || intval($page) < 1) {
-			$page = 1;
-		}
-
-		if ($page > 1 && $limit != null) {
-			$offset = ($page - 1) * $limit;
-		}
-
-		if ($order == null && $order !== false) {
-			if ($this->order == null) {
-				$order = array();
-			} else {
-				$order = array($this->order);
-			}
-		} else {
-			$order = array($order);
-		}
-
-		$queryData = array(
-			'conditions' => $conditions,
-			'fields'    => $fields,
-			'joins'     => array(),
-			'limit'     => $limit,
-			'offset'	=> $offset,
-			'order'     => $order
-		);
-
-		if (!empty($this->behaviors)) {
-			$behaviors = array_keys($this->behaviors);
-			$ct = count($behaviors);
-			for ($i = 0; $i < $ct; $i++) {
-				$ret = $this->behaviors[$behaviors[$i]]->beforeFind($this, $queryData);
-				if (is_array($ret)) {
-					$queryData = $ret;
-				} elseif ($ret === false) {
-					return null;
-				}
-			}
-		}
-
-		$ret = $this->beforeFind($queryData);
-		if (is_array($ret)) {
-			$queryData = $ret;
-		} elseif ($ret === false) {
-			return null;
-		}
-
-		$results = $db->read($this, $queryData, $recursive);
+		return $this->find('all', compact('conditions', 'fields', 'order', 'limit', 'page', 'recursive'));
+	}
+/**
+ * Passes query results through model and behavior afterFilter() methods
+ *
+ * @return array
+ * @access private
+ */
+	function __filterResults($results, $primary = true) {
 
 		if (!empty($this->behaviors)) {
 			$b = array_keys($this->behaviors);
 			$c = count($b);
+
 			for ($i = 0; $i < $c; $i++) {
-				$ret = $this->behaviors[$b[$i]]->afterFind($this, $results, true);
-				if (is_array($ret)) {
-					$results = $ret;
+				$return = $this->behaviors[$b[$i]]->afterFind($this, $results, $primary);
+				if (is_array($return)) {
+					$results = $return;
 				}
 			}
 		}
-		$return = $this->afterFind($results, true);
-
-		if (!empty($this->__backAssociation)) {
-			$this->__resetAssociations();
-		}
-
-		return $return;
+		return $this->afterFind($results, $primary);
 	}
 /**
  * Method is called only when bindTo<ModelName>() is used.
@@ -1559,20 +1600,10 @@ class Model extends Overloadable {
  * @param array $conditions SQL conditions array for findAll
  * @param int $recursize The number of levels deep to fetch associated records
  * @return int Number of matching rows
- * @see Model::findAll
+ * @see Model::find
  */
 	function findCount($conditions = null, $recursive = 0) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
-		list($data) = $this->findAll($conditions, 'COUNT(*) AS ' . $db->name('count'), false, null, 1, $recursive);
-
-		if (isset($data[0]['count'])) {
-			return intval($data[0]['count']);
-		} elseif (isset($data[$this->name]['count'])) {
-			return intval($data[$this->name]['count']);
-		}
-
-		return false;
+		return $this->find('count', compact('conditions', 'recursive'));
 	}
 /**
  * False if any fields passed match any (by default, all if $or = false) of their matching values.
@@ -1669,19 +1700,12 @@ class Model extends Overloadable {
 		if (!is_null($conditions)) {
 			$conditions = $conditions . ' AND ';
 		}
+		$prev = $next = null;
 
 		@list($prev) = Model::findAll($conditions . $field . ' < ' . $db->value($value), $field, $field . ' DESC', 1, null, 0);
 		@list($next) = Model::findAll($conditions . $field . ' > ' . $db->value($value), $field, $field . ' ASC', 1, null, 0);
 
-		if (!isset($prev)) {
-			$prev = null;
-		}
-
-		if (!isset($next)) {
-			$next = null;
-		}
-
-		return array('prev' => $prev, 'next' => $next);
+		return compact('prev', 'next');
 	}
 /**
  * Returns a resultset for given SQL statement. Generic SQL queries should be made with this method.
@@ -2168,4 +2192,5 @@ class Model extends Overloadable {
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	Overloadable::overload('Model');
 }
+
 ?>

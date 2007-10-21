@@ -170,10 +170,6 @@ class TranslateBehavior extends ModelBehavior {
  * Callback
  */
 	function afterFind(&$model, $results, $primary) {
-		if (!empty($this->runtime[$model->name]['count'])) {
-			unset($this->runtime[$model->name]['count']);
-			return $results;
-		}
 		$this->runtime[$model->name]['fields'] = array();
 		$locale = $this->_getLocale($model);
 
