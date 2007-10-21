@@ -728,7 +728,7 @@
  *
  * @param string $name Filename without the .php part.
  */
-	function vendor($name) {
+	function vendor() {
 		$args = func_get_args();
 		$c = func_num_args();
 
@@ -771,7 +771,7 @@
 				$calledFrom = debug_backtrace();
 				print "<strong>".substr(r(ROOT, "", $calledFrom[0]['file']), 1)."</strong> (line <strong>".$calledFrom[0]['line']."</strong>)";
 			}
-			print "\n<pre class=\"cake_debug\">\n";
+			print "\n<pre class=\"cake-debug\">\n";
 			ob_start();
 			print_r($var);
 			$var = ob_get_clean();
