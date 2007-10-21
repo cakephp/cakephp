@@ -1405,7 +1405,7 @@ class Model extends Overloadable {
  * @return boolean True if such a record exists
  */
 	function hasAny($conditions = null) {
-		return ($this->findCount($conditions) != false);
+		return ($this->findCount($conditions, -1) != false);
 	}
 /**
  * Return a single row as a resultset array.
