@@ -43,7 +43,8 @@ class TreeBehavior extends ModelBehavior {
 		'right' => 'rght',
 		'scope' => '1 = 1',
 		'enabled' => true,
-		'type' => 'nested'
+		'type' => 'nested',
+		'__parentChange' => false
 		), $config);
 
 		/*if (in_array($settings['scope'], $model->getAssociated('belongsTo'))) {
@@ -70,12 +71,11 @@ class TreeBehavior extends ModelBehavior {
 		}
 		if ($created) {
 			if ((isset($model->data[$model->name][$parent])) && $model->data[$model->name][$parent]) {
-				return $this->_setParent($model, $model->data[$model->name][$parent], true);
-			} else {
-				return true;
+				return $this->_setParent($model, $model->data[$model->name][$parent]);
 			}
-		} elseif (array_key_exists($parent, $model->data[$model->name])) {
-			return $this->_setParent($model, $model->data[$model->name][$parent], true);
+		} elseif ($__parentChange) {
+			$this->settings[$model->name]['__parentChange'] = false;
+			return $this->_setParent($model, $model->data[$model->name][$parent]);
 		}
 	}
 /**
@@ -149,6 +149,9 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 		} elseif (isset($model->data[$model->name][$parent])) {
+			if ($model->data[$model->name][$parent] != $model->field($parent)) {
+				$this->settings[$model->name]['__parentChange'] = true;
+			}
 			if (!$model->data[$model->name][$parent]) {
 				$model->data[$model->name][$parent]= null;
 			} else {
@@ -619,15 +622,11 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $parentId
- * @param boolean $force process even if current parent_id is the same as the value to be saved
  * @return boolean true on success, false on failure
  * @access protected
  */
-	function _setParent(&$model, $parentId = null, $force = false) {
+	function _setParent(&$model, $parentId = null) {
 		extract($this->settings[$model->name]);
-		if (!$force && ($parentId == $model->field($parent))) {
-			return false;
-		}
 		list($node) = array_values($model->find(array($scope, $model->escapeField() => $model->id),
 									array($model->primaryKey, $parent, $left, $right), null, -1));
 		$edge = $this->__getMax($model, $scope, $right);
