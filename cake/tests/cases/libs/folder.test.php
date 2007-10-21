@@ -119,11 +119,11 @@ class FolderTest extends UnitTestCase {
 		$result = $Folder->create($new);
 		$this->assertTrue($result);
 
-		$result = $Folder->read(true);
+		$result = $Folder->read(true, true);
 		$expected = array(array('0', 'cache', 'logs', 'sessions', 'tests'), array());
 		$this->assertEqual($expected, $result);
 
-		$result = $Folder->read(true, array('.', '..', 'logs'));
+		$result = $Folder->read(true, array('.', '..', 'logs', '.svn'));
 		$expected = array(array('0', 'cache', 'sessions', 'tests'), array());
 		$this->assertEqual($expected, $result);
 
@@ -134,7 +134,7 @@ class FolderTest extends UnitTestCase {
 	function testFolderRead() {
 		$Folder =& new Folder(TMP);
 		$expected = array('cache', 'logs', 'sessions', 'tests');
-		$results = $Folder->read();
+		$results = $Folder->read(true, true);
 		$this->assertEqual($results[0], $expected);
 	}
 
