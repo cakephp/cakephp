@@ -333,7 +333,7 @@ class Model extends Overloadable {
 /**
  * Constructor. Binds the Model's database table to the object.
  *
- * @param int $id
+ * @param integer $id
  * @param string $table Name of database table to use.
  * @param DataSource $ds DataSource connection object.
  */
@@ -1423,7 +1423,7 @@ class Model extends Overloadable {
  * @param array $conditions SQL conditions array
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  */
 	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
@@ -1522,9 +1522,9 @@ class Model extends Overloadable {
  * @param mixed $conditions SQL conditions as a string or as an array('field' =>'value',...)
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $limit SQL LIMIT clause, for calculating items per page.
- * @param int $page Page number, for accessing paged data
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $limit SQL LIMIT clause, for calculating items per page.
+ * @param integer $page Page number, for accessing paged data
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of records
  */
 	function findAll($conditions = null, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
@@ -1606,7 +1606,7 @@ class Model extends Overloadable {
  * Returns number of rows matching given SQL condition.
  *
  * @param array $conditions SQL conditions array for findAll
- * @param int $recursize The number of levels deep to fetch associated records
+ * @param integer $recursize The number of levels deep to fetch associated records
  * @return int Number of matching rows
  * @see Model::find
  */
@@ -1895,7 +1895,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions SQL conditions as a string or as an array('field' =>'value',...)
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC")
- * @param int $limit SQL LIMIT clause, for calculating items per page
+ * @param integer $limit SQL LIMIT clause, for calculating items per page
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
  * @param string $groupPath A string path to a value to group the elements by, i.e. "{n}.Post.category_id"

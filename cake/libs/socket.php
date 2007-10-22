@@ -185,7 +185,7 @@ class CakeSocket extends Object {
 /**
  * Set the last error.
  *
- * @param int $errNum Error code
+ * @param integer $errNum Error code
  * @param string $errStr Error string
  * @access public
  */
@@ -213,7 +213,7 @@ class CakeSocket extends Object {
  * Read data from the socket. Returns false if no data is available or no connection could be
  * established.
  *
- * @param int $length Optional buffer length to read; defaults to 1024
+ * @param integer $length Optional buffer length to read; defaults to 1024
  * @return mixed Socket data
  * @access public
  */

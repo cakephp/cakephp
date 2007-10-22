@@ -411,7 +411,7 @@ class Controller extends Object {
  *
  * @param mixed $url A string or array-based URL pointing to another location
  *                   within the app, or an absolute URL
- * @param int $status Optional HTTP status code
+ * @param integer $status Optional HTTP status code
  * @param bool $exit If true, exit() will be called after the redirect
  * @access public
  */
@@ -706,7 +706,7 @@ class Controller extends Object {
  *
  * @param string $message Message to display to the user
  * @param string $url Relative URL to redirect to after the time expires
- * @param int $time Time to show the message
+ * @param integer $time Time to show the message
  * @access public
  */
 	function flash($message, $url, $pause = 1) {

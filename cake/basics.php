@@ -799,7 +799,7 @@
  * @param array $array Array to sort
  * @param string $sortby Sort by this key
  * @param string $order  Sort order asc/desc (ascending or descending).
- * @param int $type Type of sorting to perform
+ * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  */
 		function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
@@ -1273,7 +1273,7 @@
  *
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
- * @param int $count Count
+ * @param integer $count Count
  * @param bool $return true to return, false to echo
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
@@ -1317,7 +1317,7 @@
  * @param string $domain Domain
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param int $count Count
+ * @param integer $count Count
  * @param bool $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
@@ -1350,7 +1350,7 @@
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
- * @param int $category Category
+ * @param integer $category Category
  * @param bool $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
@@ -1386,8 +1386,8 @@
  * @param string $domain Domain
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param int $count Count
- * @param int $category Category
+ * @param integer $count Count
+ * @param integer $category Category
  * @param bool $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
@@ -1416,7 +1416,7 @@
  * LC_ALL       6
  *
  * @param string $msg String to translate
- * @param int $category Category
+ * @param integer $category Category
  * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */

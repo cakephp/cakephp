@@ -395,7 +395,7 @@ class Shell extends Object {
 /**
  * Will check the number args matches otherwise throw an error
  *
- * @param int $expectedNum Expected number of paramters
+ * @param integer $expectedNum Expected number of paramters
  * @param string $command Command
  * @access protected
  */

@@ -250,8 +250,8 @@ class DboOracle extends DboSource {
 /**
  * Modify a SQL query to limit (and offset) the result set
  *
- * @param int $limit Maximum number of rows to return
- * @param int $offset Row to begin returning
+ * @param integer $limit Maximum number of rows to return
+ * @param integer $offset Row to begin returning
  * @return modified SQL Query
  * @access public
  */

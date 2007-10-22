@@ -40,7 +40,7 @@ class TimeHelper extends AppHelper {
  * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
  *
  * @param string $string String to trim
- * @param int $length Length of returned string, excluding ellipsis
+ * @param integer $length Length of returned string, excluding ellipsis
  * @param string $ending Ending to be appended after trimmed string
  * @return string Trimmed string
  */

@@ -343,7 +343,7 @@ class DB_ACL extends AclBase {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $actions Action (defaults to *)
- * @param int $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
+ * @param integer $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
  * @return boolean Success
  * @access public
  */

@@ -364,7 +364,7 @@ class Folder extends Object{
  * Change the mode on a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
- * @param int $mode octal value 0755
+ * @param integer $mode octal value 0755
  * @param bool $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
  * @return boolean Returns TRUE on success, FALSE on failure
@@ -464,7 +464,7 @@ class Folder extends Object{
  * Create a directory structure recursively.
  *
  * @param string $pathname The directory structure to create
- * @param int $mode octal value 0755
+ * @param integer $mode octal value 0755
  * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */

@@ -198,7 +198,7 @@ class Flay extends Object{
  *
  * @param array $words			Words to look for and markup
  * @param string $string		String to look in
- * @param int $max_snippets	Max number of snippets to extract
+ * @param integer $max_snippets	Max number of snippets to extract
  * @return string String with words marked
  * @see colorMark
  * @access public
@@ -265,7 +265,7 @@ class Flay extends Object{
  * Return a fragment of a text, up to $length characters long, with an ellipsis after it.
  *
  * @param string $text		Text to be truncated.
- * @param int $length	Max length of text.
+ * @param integer $length	Max length of text.
  * @param string $ellipsis	Sign to print after truncated text.
  * @return string Fragment
  * @access public

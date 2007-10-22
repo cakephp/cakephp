@@ -219,9 +219,9 @@ class TreeBehavior extends ModelBehavior {
  * @param bool $direct whether to return only the direct, or all, children
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC") defaults to the tree order
- * @param int $limit SQL LIMIT clause, for calculating items per page.
- * @param int $page Page number, for accessing paged data
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $limit SQL LIMIT clause, for calculating items per page.
+ * @param integer $page Page number, for accessing paged data
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of child nodes
  * @access public
  */
@@ -257,7 +257,7 @@ class TreeBehavior extends ModelBehavior {
  * @param string $keyPath A string path to the key, i.e. "{n}.Post.id"
  * @param string $valuePath A string path to the value, i.e. "{n}.Post.title"
  * @param string $spacer The character or characters which will be repeated
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array An associative array of records, where the id is the key, and the display field is the value
  * @access public
  */
@@ -303,7 +303,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to read
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of data for the parent node
  * @access public
  */
@@ -329,7 +329,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to read
  * @param mixed $fields Either a single string of a field name, or an array of field names
- * @param int $recursive The number of levels deep to fetch associated records
+ * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of nodes from top most parent to current node
  * @access public
  */
@@ -703,7 +703,7 @@ class TreeBehavior extends ModelBehavior {
  * Handles table sync operations, Taking account of the behavior scope.
  *
  * @param AppModel $model
- * @param int $shift
+ * @param integer $shift
  * @param string $direction
  * @param array $conditions
  * @param string $field

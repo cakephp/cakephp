@@ -648,8 +648,8 @@ class XML extends XMLNode {
  * If debug mode is on, this method echoes an error message.
  *
  * @param string $msg Error message
- * @param int $code Error code
- * @param int $line Line in file
+ * @param integer $code Error code
+ * @param integer $line Line in file
  * @access public
  */
 	function error($msg, $code = 0, $line = 0) {
@@ -660,7 +660,7 @@ class XML extends XMLNode {
 /**
  * Returns a string with a textual description of the error code, or FALSE if no description was found.
  *
- * @param int $code Error code
+ * @param integer $code Error code
  * @return string Error message
  * @access public
  */

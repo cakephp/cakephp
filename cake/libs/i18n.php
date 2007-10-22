@@ -97,7 +97,7 @@ class I18n extends Object {
  * @param string $plural Plural string (if any)
  * @param string $domain Domain
  * @param string $category Category
- * @param int $count Count
+ * @param integer $count Count
  * @param string $directory Directory that contains the file that is requesting translation
  * @return string translated strings.
  * @access public

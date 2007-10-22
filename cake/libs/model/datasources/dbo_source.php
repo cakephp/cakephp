@@ -519,7 +519,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param array $queryData
- * @param int $recursive Number of levels of association
+ * @param integer $recursive Number of levels of association
  * @return unknown
  */
 	function read(&$model, $queryData = array(), $recursive = null) {
@@ -661,7 +661,7 @@ class DboSource extends DataSource {
  * @param unknown_type $queryData
  * @param unknown_type $external
  * @param unknown_type $resultSet
- * @param int $recursive Number of levels of association
+ * @param integer $recursive Number of levels of association
  * @param array $stack
  */
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
@@ -1664,8 +1664,8 @@ class DboSource extends DataSource {
 /**
  * Returns a limit statement in the correct format for the particular database.
  *
- * @param int $limit Limit of results returned
- * @param int $offset Offset from which to start results
+ * @param integer $limit Limit of results returned
+ * @param integer $offset Offset from which to start results
  * @return string SQL limit/offset statement
  */
 	function limit($limit, $offset = null) {

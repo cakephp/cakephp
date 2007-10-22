@@ -93,7 +93,7 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param int $duration How long to cache the data, in seconds
+ * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
@@ -133,7 +133,7 @@ class MemcacheEngine extends CacheEngine {
  * Connects to a server in connection pool
  *
  * @param string $host host ip address or name
- * @param int $port Server port
+ * @param integer $port Server port
  * @return boolean True if memcache server was connected
  * @access public
  */

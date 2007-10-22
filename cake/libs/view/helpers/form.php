@@ -1064,8 +1064,8 @@ class FormHelper extends AppHelper {
  * Returns a SELECT element for years
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param int $minYear First year in sequence
- * @param int $maxYear Last year in sequence
+ * @param integer $minYear First year in sequence
+ * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
  * @param bool $showEmpty Show/hide the empty select option

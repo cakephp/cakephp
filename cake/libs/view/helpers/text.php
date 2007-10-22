@@ -149,7 +149,7 @@ class TextHelper extends AppHelper {
  * with the ending if the text is longer than length.
  *
  * @param string  $text	String to truncate.
- * @param int $length Length of returned string, including ellipsis.
+ * @param integer $length Length of returned string, including ellipsis.
  * @param string  $ending Ending to be appended to the trimmed string.
  * @param bool $exact If false, $text will not be cut mid-word
  * @return string Trimmed string.
@@ -186,7 +186,7 @@ class TextHelper extends AppHelper {
  *
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for
- * @param int $radius The amount of characters that will be returned on each side of the founded phrase
+ * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
  * @access public

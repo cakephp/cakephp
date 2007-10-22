@@ -82,7 +82,7 @@ class File extends Object {
  *
  * @param string $path Path to file
  * @param bool $create Create file if it does not exist (if true)
- * @param int $mode Mode to apply to the folder holding the file
+ * @param integer $mode Mode to apply to the folder holding the file
  * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
@@ -185,7 +185,7 @@ class File extends Object {
  * Sets or gets the offset for the currently opened file.
  *
  * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
- * @param int $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
+ * @param integer $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
  * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
  * @access public
  */

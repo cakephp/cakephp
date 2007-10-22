@@ -92,10 +92,10 @@ class Debugger extends Object {
 /**
  * Overrides PHP's default error handling
  *
- * @param int $code Code of error
+ * @param integer $code Code of error
  * @param string $description Error description
  * @param string $file File on which error occurred
- * @param int $line Line that triggered the error
+ * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
  * @access public
@@ -298,8 +298,8 @@ class Debugger extends Object {
  * Grabs an excerpt from a file and highlights a given line of code
  *
  * @param string $file Absolute path to a PHP file
- * @param int $line Line number to highlight
- * @param int $context Number of lines of context to extract above and below $line
+ * @param integer $line Line number to highlight
+ * @param integer $context Number of lines of context to extract above and below $line
  * @return array Set of lines highlighted
  * @access protected
  */

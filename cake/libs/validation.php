@@ -143,8 +143,8 @@ class Validation extends Object {
  * Returns true is string matches value min, max, or between min and max,
  *
  * @param string $check Value to check for length
- * @param int $min Minimum value in range (inclusive)
- * @param int $max Maximum value in range (inclusive)
+ * @param integer $min Minimum value in range (inclusive)
+ * @param integer $max Maximum value in range (inclusive)
  * @return boolean Success
  * @access public
  */
@@ -270,7 +270,7 @@ class Validation extends Object {
  * @param string $operator Can be either a word or operand
  * 								is greater >, is less <, greater or equal >=
  * 								less or equal <=, is less <, equal to ==, not equal !=
- * @param int $check2 only needed if $check1 is a string
+ * @param integer $check2 only needed if $check1 is a string
  * @return bool
  * @access public
  */
@@ -403,8 +403,8 @@ class Validation extends Object {
  * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
  * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
  *
- * @param int $check The value the test for decimal
- * @param int $places if set $check value must have exactly $places after the decimal point
+ * @param integer $check The value the test for decimal
+ * @param integer $places if set $check value must have exactly $places after the decimal point
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  * @access public
@@ -507,7 +507,7 @@ class Validation extends Object {
  * Checks whether the length of a string is greater or equal to a minimal length.
  *
  * @param string $check The string to test
- * @param int $min The minimal string length
+ * @param integer $min The minimal string length
  * @return boolean Success
  * @access public
  */
@@ -519,7 +519,7 @@ class Validation extends Object {
  * Checks whether the length of a string is smaller or equal to a maximal length..
  *
  * @param string $check The string to test
- * @param int $max The maximal string length
+ * @param integer $max The maximal string length
  * @return boolean Success
  * @access public
  */
@@ -565,8 +565,8 @@ class Validation extends Object {
  * Validate that a number is in specified range.
  *
  * @param string $check Value to check
- * @param int $lower Lower limit
- * @param int $upper Upper limit
+ * @param integer $lower Lower limit
+ * @param integer $upper Upper limit
  * @access public
  * @todo Implement
  */

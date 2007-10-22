@@ -235,7 +235,7 @@ class CakeSession extends Object {
 /**
  * Return error description for given error number.
  *
- * @param int $errorNumber Error to set
+ * @param integer $errorNumber Error to set
  * @return string Error as string
  * @access private
  */
@@ -576,7 +576,7 @@ class CakeSession extends Object {
 /**
  * Helper method to set an internal error message.
  *
- * @param int $errorNumber Number of the error
+ * @param integer $errorNumber Number of the error
  * @param string $errorMessage Description of the error
  * @access private
  */
@@ -678,7 +678,7 @@ class CakeSession extends Object {
 /**
  * Method called on the destruction of a database session.
  *
- * @param int $key Key that uniquely identifies session in database
+ * @param integer $key Key that uniquely identifies session in database
  * @return boolean Success
  * @access private
  */
@@ -691,7 +691,7 @@ class CakeSession extends Object {
 /**
  * Helper function called on gc for database sessions.
  *
- * @param int $expires Timestamp (defaults to current time)
+ * @param integer $expires Timestamp (defaults to current time)
  * @return boolean Success
  * @access private
  */

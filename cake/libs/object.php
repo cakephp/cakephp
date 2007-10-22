@@ -115,7 +115,7 @@ class Object {
  * API for logging events.
  *
  * @param string $msg Log message
- * @param int $type Error type constant. Defined in app/config/core.php.
+ * @param integer $type Error type constant. Defined in app/config/core.php.
  * @access public
  */
 	function log($msg, $type = LOG_ERROR) {

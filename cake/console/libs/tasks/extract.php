@@ -328,7 +328,7 @@ class ExtractTask extends Shell{
  * Will parse __d(), __dc(), __n(), __dn(), __dcn()
  *
  * @param string $functionName Function name that indicates translatable string (e.g: '__')
- * @param int $shift Number of parameters to shift to find translateable string
+ * @param integer $shift Number of parameters to shift to find translateable string
  * @param bool $plural Set to true if function supports plural format, false otherwise
  * @access public
  */
@@ -478,7 +478,7 @@ class ExtractTask extends Shell{
  * @param string $file Filename
  * @param string $input What to store
  * @param array $fileList File list
- * @param int $get Set to 1 to get files to store, false to set
+ * @param integer $get Set to 1 to get files to store, false to set
  * @return mixed If $get == 1, files to store, otherwise void
  * @access private
  */
@@ -633,9 +633,9 @@ class ExtractTask extends Shell{
  * Indicate an invalid marker on a processed file
  *
  * @param string $file File where invalid marker resides
- * @param int $line Line number
+ * @param integer $line Line number
  * @param string $marker Marker found
- * @param int $count Count
+ * @param integer $count Count
  * @access private
  */
 	function __markerError($file, $line, $marker, $count) {
