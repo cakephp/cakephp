@@ -669,8 +669,17 @@ class Model extends Overloadable {
 				return $this->cakeError('missingModel', array(array('className' => $className)));
 			}
 		}
+		$duplicate = false;
 
-		if (ClassRegistry::isKeySet($colKey)) {
+		if(ClassRegistry::isKeySet($colKey)) {
+			$model = ClassRegistry::getObject($colKey);
+			if (is_a($model, $className)) {
+				$duplicate = true;
+			}
+			unset($model);
+		}
+
+		if ($duplicate === true) {
 			if (!PHP5) {
 				$this->{$assoc} =& ClassRegistry::getObject($colKey);
 				ClassRegistry::map($assoc, $colKey);

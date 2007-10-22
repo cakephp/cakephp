@@ -346,7 +346,7 @@ class NodeAfterFind extends CakeTestModel {
 	var $name = 'NodeAfterFind';
 	var $validate = array('name' => VALID_NOT_EMPTY);
 	var $useTable = 'apples';
-	var $hasOne = array('Sample');
+	var $hasOne = array('Sample' => array('className' => 'NodeAfterFindSample'));
 	var $hasMany = array('Child' => array('className' => 'NodeAfterFind', 'dependent' => true));
 	var $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 
@@ -354,11 +354,16 @@ class NodeAfterFind extends CakeTestModel {
 		return $results;
 	}
 }
+class NodeAfterFindSample extends CakeTestModel {
+	var $name = 'NodeAfterFindSample';
+	var $useTable = 'samples';
+	var $belongsTo = 'NodeAfterFind';
+}
 class NodeNoAfterFind extends CakeTestModel {
 	var $name = 'NodeAfterFind';
 	var $validate = array('name' => VALID_NOT_EMPTY);
 	var $useTable = 'apples';
-	var $hasOne = array('Sample');
+	var $hasOne = array('Sample' => array('className' => 'NodeAfterFindSample'));
 	var $hasMany = array('Child' => array( 'className' => 'NodeAfterFind', 'dependent' => true));
 	var $belongsTo = array('Parent' => array('className' => 'NodeAfterFind', 'foreignKey' => 'apple_id'));
 }
@@ -466,7 +471,8 @@ class ModelTest extends CakeTestCase {
 				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1,
 				'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0
 			),
-			'Image' => array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1'),
+			'Image' => array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
+				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')),
 			'Extra1' => array(
 				'id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
 				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')
@@ -2716,6 +2722,7 @@ class ModelTest extends CakeTestCase {
 						'Sample' => array('id' => '', 'apple_id' => '', 'name' => '')));
 		$this->assertEqual($result, $expected);
 	}
+
 	function testSelfAssociationAfterFind() {
 		$afterFindModel = new NodeAfterFind();
 		$afterFindModel->recursive = 3;
