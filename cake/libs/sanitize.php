@@ -199,7 +199,7 @@ class Sanitize{
 
 		if (is_array($data)) {
 			foreach ($data as $key => $val) {
-				$data[$key] = Sanitize::clean($val, $options['connection']);
+				$data[$key] = Sanitize::clean($val, $options);
 			}
 			return $data;
 		} else {

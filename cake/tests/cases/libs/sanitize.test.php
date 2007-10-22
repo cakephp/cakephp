@@ -77,6 +77,23 @@ class SanitizeTest extends UnitTestCase {
 		$expected = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
 		$result = Sanitize::clean($string, array('encode' => false, 'escape' => false, 'carriage' => false));
 		$this->assertEqual($result, $expected);
+		
+		$array = array(array('test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line'));
+		$expected = array(array('test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line'));
+		$result = Sanitize::clean($array);
+		$this->assertEqual($result, $expected);
+
+		$array = array(array('test & "quote" \'other\' ;.$ \\$ symbol.' . "\r" . 'another line'));
+		$expected = array(array('test & "quote" \'other\' ;.$ $ symbol.another line'));
+		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false));
+		$this->assertEqual($result, $expected);
+		
+		
+		
+		
+		
+		
+		
 	}
 }
 ?>

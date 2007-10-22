@@ -1260,6 +1260,7 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+		unset($calledFrom);
 
 		if ($return === false) {
 			echo I18n::translate($singular, null, null, 5, null, $dir);
@@ -1283,6 +1284,7 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+		unset($calledFrom);
 
 		if ($return === false) {
 			echo I18n::translate($singular, $plural, null, 5, $count, $dir);
@@ -1426,6 +1428,7 @@
 		}
 		$calledFrom = debug_backtrace();
 		$dir = dirname($calledFrom[0]['file']);
+		unset($calledFrom);
 
 		if ($return === false) {
 			echo I18n::translate($msg, null, null, $category, null, $dir);
