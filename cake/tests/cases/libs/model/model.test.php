@@ -399,6 +399,36 @@ class Syfile extends CakeTestModel {
 class Image extends CakeTestModel {
 	var $name = 'Image';
 }
+class DeviceType extends CakeTestModel {
+	var $name = 'DeviceType';
+	var $order = array('DeviceType.order' => 'ASC');
+	var $belongsTo = array(
+		'DeviceTypeCategory', 'FeatureSet', 'ExteriorTypeCategory',
+		'Image' => array('className' => 'Document'),
+		'Extra1' => array('className' => 'Document'),
+		'Extra2' => array('className' => 'Document'));
+	var $hasMany = array('Device' => array('order' => array('Device.typ' => 'ASC')));
+}
+class DeviceTypeCategory extends CakeTestModel {
+	var $name = 'DeviceTypeCategory';
+}
+class FeatureSet extends CakeTestModel {
+	var $name = 'FeatureSet';
+}
+class ExteriorTypeCategory extends CakeTestModel {
+	var $name = 'ExteriorTypeCategory';
+	var $belongsTo = array('Image' => array('className' => 'Device'));
+}
+class Document extends CakeTestModel {
+	var $name = 'Document';
+	var $belongsTo = array('DocumentDirectory');
+}
+class Device extends CakeTestModel {
+	var $name = 'Device';
+}
+class DocumentDirectory extends CakeTestModel {
+	var $name = 'DocumentDirectory';
+}
 /**
  * Short description for class.
  *
@@ -411,7 +441,9 @@ class ModelTest extends CakeTestCase {
 		'core.article_featured', 'core.articles', 'core.tag', 'core.articles_tag', 'core.comment', 'core.attachment',
 		'core.apple', 'core.sample', 'core.another_article', 'core.advertisement', 'core.home', 'core.post', 'core.author',
 		'core.project', 'core.thread', 'core.message', 'core.bid',
-		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image');
+		'core.portfolio', 'core.item', 'core.items_portfolio', 'core.syfile', 'core.image',
+		'core.device_type', 'core.device_type_category', 'core.feature_set', 'core.exterior_type_category', 'core.document', 'core.device', 'core.document_directory'
+		);
 
 	function start() {
 		parent::start();
@@ -422,6 +454,42 @@ class ModelTest extends CakeTestCase {
 	function end() {
 		parent::end();
 		Configure::write('debug', $this->debug);
+	}
+
+	function testMultipleBelongsToWithSameClass() {
+		$this->DeviceType =& new DeviceType();
+
+		$this->DeviceType->recursive = 2;
+		$result = $this->DeviceType->read(null, 1);
+		$expected = array(
+			'DeviceType' => array(
+				'id' => 1, 'device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1,
+				'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0
+			),
+			'Image' => array('id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1'),
+			'Extra1' => array(
+				'id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
+				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')
+			),
+			'Extra2' => array(
+				'id' => 1, 'document_directory_id' => 1, 'name' => 'Document 1',
+				'DocumentDirectory' => array('id' => 1, 'name' => 'DocumentDirectory 1')
+			),
+			'DeviceTypeCategory' => array('id' => 1, 'name' => 'DeviceTypeCategory 1'),
+			'FeatureSet' => array('id' => 1, 'name' => 'FeatureSet 1'),
+			'ExteriorTypeCategory' => array(
+				'id' => 1, 'image_id' => 1, 'name' => 'ExteriorTypeCategory 1',
+				'Image' => array('id' => 1, 'device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1)
+			),
+			'Device' => array(
+				array('id' => 1, 'device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
+				array('id' => 2, 'device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),
+				array('id' => 3, 'device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)
+			)
+		);
+		$this->assertEqual($result, $expected);
+
+		unset($this->DeviceType);
 	}
 
 	function testHabtmRecursiveBelongsTo() {
