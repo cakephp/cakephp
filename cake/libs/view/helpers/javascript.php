@@ -179,7 +179,7 @@ class JavascriptHelper extends AppHelper {
  * @param string $event event to observe
  * @param string $observer function to call
  * @param bool $useCapture default true
- * @return bool true on success
+ * @return boolean true on success
  */
 	function event($object, $event, $observer = null, $useCapture = false) {
 

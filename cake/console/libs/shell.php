@@ -412,7 +412,7 @@ class Shell extends Object {
  *
  * @param string $path Where to put the file.
  * @param string $contents Content to put in the file.
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function createFile ($path, $contents) {
@@ -457,7 +457,7 @@ class Shell extends Object {
 /**
  * Action to create a Unit Test
  *
- * @return bool Success
+ * @return boolean Success
  * @access protected
  */
 	function _checkUnitTest() {

@@ -239,7 +239,7 @@ class Folder extends Object{
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return bool true if windows path, false otherwise
+ * @return boolean true if windows path, false otherwise
  * @access public
  * @static
  */
@@ -265,7 +265,7 @@ class Folder extends Object{
  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
  *
  * @param string $path Path to check
- * @return bool true if path ends with slash, false otherwise
+ * @return boolean true if path ends with slash, false otherwise
  * @access public
  * @static
  */
@@ -367,7 +367,7 @@ class Folder extends Object{
  * @param int $mode octal value 0755
  * @param bool $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
- * @return bool Returns TRUE on success, FALSE on failure
+ * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */
  	function chmod($path, $mode = false, $recursive = true, $exceptions = array()) {
@@ -465,7 +465,7 @@ class Folder extends Object{
  *
  * @param string $pathname The directory structure to create
  * @param int $mode octal value 0755
- * @return bool Returns TRUE on success, FALSE on failure
+ * @return boolean Returns TRUE on success, FALSE on failure
  * @access public
  */
 	function create($pathname, $mode = false) {
@@ -535,7 +535,7 @@ class Folder extends Object{
  * Recursively Remove directories if system allow.
  *
  * @param string $path Path of directory to delete
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function delete($path) {
@@ -649,7 +649,7 @@ class Folder extends Object{
  * Recursive directory move.
  *
  * @param array $options (to, from, chmod, skip)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function move($options) {

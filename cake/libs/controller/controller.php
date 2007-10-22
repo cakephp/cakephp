@@ -607,7 +607,7 @@ class Controller extends Object {
  * @param string $action Action name to render
  * @param string $layout Layout to use
  * @param string $file File to use for rendering
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
@@ -1210,7 +1210,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called example index, edit, etc.
- * @return bool Success
+ * @return boolean Success
  * @access protected
  */
 	function _beforeScaffold($method) {
@@ -1220,7 +1220,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return bool Success
+ * @return boolean Success
  * @access protected
  */
 	function _afterScaffoldSave($method) {
@@ -1230,7 +1230,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return bool Success
+ * @return boolean Success
  * @access protected
  */
 	function _afterScaffoldSaveError($method) {
@@ -1242,7 +1242,7 @@ class Controller extends Object {
  * Method MUST return true in child classes
  *
  * @param string $method name of method called example index, edit, etc.
- * @return bool Success
+ * @return boolean Success
  * @access protected
  */
 	function _scaffoldError($method) {

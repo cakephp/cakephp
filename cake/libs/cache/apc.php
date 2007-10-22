@@ -39,7 +39,7 @@ class APCEngine extends CacheEngine {
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $setting array of setting for the engine
- * @return bool True if the engine has been successfully initialized, false if not
+ * @return boolean True if the engine has been successfully initialized, false if not
  * @see CacheEngine::__defaults
  * @access public
  */
@@ -53,7 +53,7 @@ class APCEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param int $duration How long to cache the data, in seconds
- * @return bool True if the data was succesfully cached, false on failure
+ * @return boolean True if the data was succesfully cached, false on failure
  * @access public
  */
 	function write($key, &$value, $duration) {
@@ -73,7 +73,7 @@ class APCEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return bool True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
  */
 	function delete($key) {
@@ -82,7 +82,7 @@ class APCEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @return bool True if the cache was succesfully cleared, false otherwise
+ * @return boolean True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {

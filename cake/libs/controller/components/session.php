@@ -134,7 +134,7 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->del('Controller.sessKey');
  *
  * @param string $name
- * @return bool true is session variable is set and can be deleted, false is variable was not set.
+ * @return boolean true is session variable is set and can be deleted, false is variable was not set.
  */
 	function del($name) {
 		if ($this->__active === true) {
@@ -163,7 +163,7 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->check('Controller.sessKey');
  *
  * @param string $name
- * @return bool true is session variable is set, false if not
+ * @return boolean true is session variable is set, false if not
  * @access public
  */
 	function check($name) {
@@ -220,7 +220,7 @@ class SessionComponent extends CakeSession {
  *
  * In your controller: $this->Session->valid();
  *
- * @return bool true is session is valid, false is session is invalid
+ * @return boolean true is session is valid, false is session is invalid
  * @access public
  */
 	function valid() {

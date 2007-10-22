@@ -336,7 +336,7 @@ class DataSource extends Object {
  * Returns true if the DataSource supports the given interface (method)
  *
  * @param string $interface The name of the interface (method)
- * @return bool True on success
+ * @return boolean True on success
  */
 	function isInterfaceSupported($interface) {
 		$methods = get_class_methods(get_class($this));

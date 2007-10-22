@@ -84,7 +84,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function check($aro, $aco, $action = "*") {
@@ -96,7 +96,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function allow($aro, $aco, $action = "*") {
@@ -108,7 +108,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function deny($aro, $aco, $action = "*") {
@@ -120,7 +120,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function inherit($aro, $aco, $action = "*") {
@@ -132,7 +132,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function grant($aro, $aco, $action = "*") {
@@ -144,7 +144,7 @@ class AclComponent extends Object {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $action Action (defaults to *)
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function revoke($aro, $aco, $action = "*") {
@@ -154,7 +154,7 @@ class AclComponent extends Object {
  * Sets the current ARO instance to object from getAro
  *
  * @param string $id ID of ARO
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function setAro($id) {
@@ -164,7 +164,7 @@ class AclComponent extends Object {
 * Sets the current ACO instance to object from getAco
  *
  * @param string $id ID of ACO
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function setAco($id) {
@@ -514,7 +514,7 @@ class INI_ACL extends AclBase {
  * @param string $aro ARO
  * @param string $aco ACO
  * @param string $aco_action Action
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function check($aro, $aco, $aco_action = null) {

@@ -504,7 +504,7 @@ class AjaxHelper extends AppHelper {
 /**
  * Detects Ajax requests
  *
- * @return bool True if the current request is a Prototype Ajax update call
+ * @return boolean True if the current request is a Prototype Ajax update call
  */
 	function isAjax() {
 		return (isset($this->params['isAjax']) && $this->params['isAjax'] === true);

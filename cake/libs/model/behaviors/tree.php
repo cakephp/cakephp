@@ -62,7 +62,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param bool $created indicates whether the node just saved was created or updated
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  */
 	function afterSave(&$model, $created) {
 		extract($this->settings[$model->name]);
@@ -84,7 +84,7 @@ class TreeBehavior extends ModelBehavior {
  * Will delete the current node and all children using the deleteAll method and sync the table
  *
  * @param AppModel $model
- * @return bool true to continue, false to abort the delete
+ * @return boolean true to continue, false to abort the delete
  */
 	function beforeDelete(&$model) {
 		extract($this->settings[$model->name]);
@@ -118,7 +118,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @since 1.2
  * @param AppModel $model
- * @return bool true to continue, false to abort the save
+ * @return boolean true to continue, false to abort the save
  */
 	function beforeSave(&$model) {
 		extract($this->settings[$model->name]);
@@ -359,7 +359,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node or true to move to last position
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  * @access public
  */
 	function movedown(&$model, $id = null, $number = 1) {
@@ -403,7 +403,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node, or true to move to first position
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  * @access public
  */
 	function moveup(&$model, $id = null, $number = 1) {
@@ -449,7 +449,7 @@ class TreeBehavior extends ModelBehavior {
  * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
  * @param AppModel $model
  * @param string $mode parent or tree
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  * @access public
  */
 	function recover(&$model, $mode = 'parent') {
@@ -489,7 +489,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to remove
  * @param bool $delete whether to delete the node after reparenting children (if any)
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  * @access public
  */
 	function removefromtree(&$model, $id = null, $delete = false) {
@@ -622,7 +622,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $parentId
- * @return bool true on success, false on failure
+ * @return boolean true on success, false on failure
  * @access protected
  */
 	function _setParent(&$model, $parentId = null) {

@@ -98,7 +98,7 @@ class DboSqlite extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@sqlite_close($this->connection);
@@ -205,7 +205,7 @@ class DboSqlite extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin (&$model) {
@@ -221,7 +221,7 @@ class DboSqlite extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -236,7 +236,7 @@ class DboSqlite extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

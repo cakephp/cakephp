@@ -181,7 +181,7 @@ class Object {
  *
  * @param string $name name of the class to persist
  * @param string $object the object to persist
- * @return bool Success
+ * @return boolean Success
  * @access protected
  * @todo add examples to manual
  */

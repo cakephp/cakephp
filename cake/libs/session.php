@@ -160,7 +160,7 @@ class CakeSession extends Object {
  * Returns true if given variable is set in session.
  *
  * @param string $name Variable name to check for
- * @return bool True if variable is there
+ * @return boolean True if variable is there
  * @access public
  */
 	function check($name) {
@@ -199,7 +199,7 @@ class CakeSession extends Object {
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function del($name) {
@@ -262,7 +262,7 @@ class CakeSession extends Object {
 /**
  * Returns true if session is valid.
  *
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function valid() {
@@ -350,7 +350,7 @@ class CakeSession extends Object {
  *
  * @param mixed $name Name of variable
  * @param string $value Value to write
- * @return bool True if the write was successful, false if the write failed
+ * @return boolean True if the write was successful, false if the write failed
  * @access public
  */
 	function write($name, $value) {
@@ -590,7 +590,7 @@ class CakeSession extends Object {
 /**
  * Method called on open of a database session.
  *
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __open() {
@@ -599,7 +599,7 @@ class CakeSession extends Object {
 /**
  * Method called on close of a database session.
  *
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __close() {
@@ -636,7 +636,7 @@ class CakeSession extends Object {
  *
  * @param mixed $key The name of the var
  * @param mixed $value The value of the var
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __write($key, $value) {
@@ -679,7 +679,7 @@ class CakeSession extends Object {
  * Method called on the destruction of a database session.
  *
  * @param int $key Key that uniquely identifies session in database
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __destroy($key) {
@@ -692,7 +692,7 @@ class CakeSession extends Object {
  * Helper function called on gc for database sessions.
  *
  * @param int $expires Timestamp (defaults to current time)
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __gc($expires = null) {

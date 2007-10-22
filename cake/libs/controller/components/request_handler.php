@@ -223,7 +223,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current HTTP request is Ajax, false otherwise
  *
- * @return bool True if call is Ajax
+ * @return boolean True if call is Ajax
  */
 	function isAjax() {
 		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
@@ -239,7 +239,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call accepts an XML response, false otherwise
  *
- * @return bool True if client accepts an XML response
+ * @return boolean True if client accepts an XML response
  */
 	function isXml() {
 		return $this->prefers('xml');
@@ -247,7 +247,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call accepts an RSS response, false otherwise
  *
- * @return bool True if client accepts an RSS response
+ * @return boolean True if client accepts an RSS response
  */
 	function isRss() {
 		return $this->prefers('rss');
@@ -255,7 +255,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call accepts an Atom response, false otherwise
  *
- * @return bool True if client accepts an RSS response
+ * @return boolean True if client accepts an RSS response
  */
 	function isAtom() {
 		return $this->prefers('atom');
@@ -264,7 +264,7 @@ class RequestHandlerComponent extends Object {
  * Returns true if user agent string matches a mobile web browser, or if the
  * client accepts WAP content.
  *
- * @return bool True if user agent is a mobile web browser
+ * @return boolean True if user agent is a mobile web browser
  */
 	function isMobile() {
 		preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT'), $match);
@@ -284,7 +284,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call a POST request
  *
- * @return bool True if call is a POST
+ * @return boolean True if call is a POST
  */
 	function isPost() {
 		return (strtolower(env('REQUEST_METHOD')) == 'post');
@@ -292,7 +292,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call a PUT request
  *
- * @return bool True if call is a PUT
+ * @return boolean True if call is a PUT
  */
 	function isPut() {
 		return (strtolower(env('REQUEST_METHOD')) == 'put');
@@ -300,7 +300,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call a GET request
  *
- * @return bool True if call is a GET
+ * @return boolean True if call is a GET
  */
 	function isGet() {
 		return (strtolower(env('REQUEST_METHOD')) == 'get');
@@ -308,7 +308,7 @@ class RequestHandlerComponent extends Object {
 /**
  * Returns true if the current call a DELETE request
  *
- * @return bool True if call is a DELETE
+ * @return boolean True if call is a DELETE
  */
 	function isDelete() {
 		return (strtolower(env('REQUEST_METHOD')) == 'delete');
@@ -547,7 +547,7 @@ class RequestHandlerComponent extends Object {
  * @param array $options If $type is a friendly type name that is associated with
  *                     more than one type of content, $index is used to select
  *                     which content-type to use.
- * @return bool Returns false if the friendly type name given in $type does
+ * @return boolean Returns false if the friendly type name given in $type does
  *                 not exist in the type map, or if the Content-type header has
  *                 already been set by this method.
  * @access public

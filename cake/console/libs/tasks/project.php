@@ -207,7 +207,7 @@ class ProjectTask extends Shell {
  * Writes a file with a default home page to the project.
  *
  * @param string $dir Path to project
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function createHome($dir) {
@@ -219,7 +219,7 @@ class ProjectTask extends Shell {
  * Generates and writes 'Security.salt'
  *
  * @param string $path Project path
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function securitySalt($path) {
@@ -242,7 +242,7 @@ class ProjectTask extends Shell {
  * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
  * @param string $path Project path
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function corePath($path) {
@@ -265,7 +265,7 @@ class ProjectTask extends Shell {
  * Enables Configure::read('Routing.admin') in /app/config/core.php
  *
  * @param string $name Name to use as admin routing
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function cakeAdmin($name) {

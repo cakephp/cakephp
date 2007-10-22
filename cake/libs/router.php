@@ -592,7 +592,7 @@ class Router extends Object {
  *
  * @param $which A zero-based array index representing the route to move. For example,
  *               if 3 routes have been added, the last route would be 2.
- * @return bool Retuns false if no route exists at the position specified by $which.
+ * @return boolean Retuns false if no route exists at the position specified by $which.
  * @access public
  * @static
  */

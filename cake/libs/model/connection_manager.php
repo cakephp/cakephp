@@ -144,7 +144,7 @@ class ConnectionManager extends Object {
  *
  * @param mixed $connName A string name of the connection, as defined in Connections config,
  *                        or an array containing the file and class name of the object.
- * @return bool True on success, null on failure or false if the class is already loaded
+ * @return boolean True on success, null on failure or false if the class is already loaded
  */
 	function loadDataSource($connName) {
 		$_this =& ConnectionManager::getInstance();

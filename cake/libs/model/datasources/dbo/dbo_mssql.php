@@ -97,7 +97,7 @@ class DboMssql extends DboSource {
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
  *
  * @param array $config Configuration data from app/config/databases.php
- * @return bool True if connected successfully, false on error
+ * @return boolean True if connected successfully, false on error
  */
 	function __construct($config, $autoConnect = true) {
 		if ($autoConnect) {
@@ -112,7 +112,7 @@ class DboMssql extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return bool True if the database could be connected, else false
+ * @return boolean True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -145,7 +145,7 @@ class DboMssql extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@mssql_free_result($this->results);
@@ -291,7 +291,7 @@ class DboMssql extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -307,7 +307,7 @@ class DboMssql extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -322,7 +322,7 @@ class DboMssql extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

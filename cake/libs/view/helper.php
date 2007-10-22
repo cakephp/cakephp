@@ -373,7 +373,7 @@ class Helper extends Overloadable {
  *
  * @param string $model Model name as string
  * @param string $field		Fieldname as string
- * @return bool True on errors.
+ * @return boolean True on errors.
  */
 	function tagIsInvalid($model = null, $field = null) {
 		if ($model == null) {

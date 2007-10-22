@@ -253,7 +253,7 @@ class Set extends Object {
  * Checks to see if all the values in the array are numeric
  *
  * @param array $array The array to check.  If null, the value of the current Set object
- * @return bool true if values are numeric, false otherwise
+ * @return boolean true if values are numeric, false otherwise
  * @access public
  */
 	function numeric($array = null) {
@@ -484,7 +484,7 @@ class Set extends Object {
  *
  * @param mixed $data Data to check on
  * @param mixed $path A dot-separated string.
- * @return bool true if path is found, false otherwise
+ * @return boolean true if path is found, false otherwise
  * @access public
  */
 	function check($data, $path = null) {
@@ -557,7 +557,7 @@ class Set extends Object {
  *
  * @param array $val1 First value
  * @param array $val2 Second value
- * @return bool true if they are equal, false otherwise
+ * @return boolean true if they are equal, false otherwise
  * @access public
  */
 	function isEqual($val1, $val2 = null) {
@@ -573,7 +573,7 @@ class Set extends Object {
  *
  * @param array $val1 First value
  * @param array $val2 Second value
- * @return bool true if $val1 contains $val2, false otherwise
+ * @return boolean true if $val1 contains $val2, false otherwise
  * @access public
  */
 	function contains($val1, $val2 = null) {

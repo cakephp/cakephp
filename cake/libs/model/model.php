@@ -556,7 +556,7 @@ class Model extends Overloadable {
  *
  * @param array $params
  * @param bool $reset
- * @return bool Always true
+ * @return boolean Always true
  */
 	function bindModel($params, $reset = true) {
 
@@ -593,7 +593,7 @@ class Model extends Overloadable {
  *
  * @param array $params
  * @param bool $reset
- * @return bool Always true
+ * @return boolean Always true
  */
 	function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
@@ -1031,7 +1031,7 @@ class Model extends Overloadable {
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
  * @param bool $validate Whether or not this model should validate before saving (defaults to false)
- * @return bool True on success save
+ * @return boolean True on success save
  */
 	function saveField($name, $value, $validate = false) {
 		return $this->save(array($this->name => array($name => $value)), $validate, array($name));
@@ -1043,7 +1043,7 @@ class Model extends Overloadable {
  * @param array $data Data to save.
  * @param bool $validate If set, validation will be done before the save
  * @param array $fieldList List of fields to allow to be written
- * @return bool success
+ * @return boolean success
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1241,7 +1241,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions
  * @param mixed $fields
- * @return bool True on success, false on failure
+ * @return boolean True on success, false on failure
  */
 	function updateAll($fields, $conditions = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1252,7 +1252,7 @@ class Model extends Overloadable {
  *
  * @param mixed $id
  * @see function del
- * @return bool True on success
+ * @return boolean True on success
  */
 	function remove($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1261,7 +1261,7 @@ class Model extends Overloadable {
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
  *
  * @param mixed $id Id of record to delete
- * @return bool True on success
+ * @return boolean True on success
  */
 	function del($id = null, $cascade = true) {
 		if (!empty($id)) {
@@ -1304,7 +1304,7 @@ class Model extends Overloadable {
  * Alias for del()
  *
  * @param mixed $id Id of record to delete
- * @return bool True on success
+ * @return boolean True on success
  */
 	function delete($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1371,7 +1371,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions
  * @param mixed $fields
- * @return bool True on success, false on failure
+ * @return boolean True on success, false on failure
  */
 	function deleteAll($conditions, $cascade = true) {
 		if (empty($conditions)) {
@@ -1395,7 +1395,7 @@ class Model extends Overloadable {
  * Returns true if a record with set id exists.
  *
  * @param bool $reset if true will force database query
- * @return bool True if such a record exists
+ * @return boolean True if such a record exists
  */
 	function exists($reset = false) {
 		if ($this->getID() === false) {
@@ -1410,7 +1410,7 @@ class Model extends Overloadable {
  * Returns true if a record that meets given conditions exists
  *
  * @param array $conditions SQL conditions array
- * @return bool True if such a record exists
+ * @return boolean True if such a record exists
  */
 	function hasAny($conditions = null) {
 		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
@@ -1618,7 +1618,7 @@ class Model extends Overloadable {
  *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
  * @param bool $or If false, all fields specified must match in order for a false return value
- * @return bool False if any records matching any fields are found
+ * @return boolean False if any records matching any fields are found
  */
 	function isUnique($fields, $or = true) {
 		if (!is_array($fields)) {
@@ -1729,7 +1729,7 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
- * @return bool True if there are no errors
+ * @return boolean True if there are no errors
  */
 	function validates($data = array()) {
 		if (!empty($data)) {
@@ -2024,7 +2024,7 @@ class Model extends Overloadable {
  * Sets the DataSource to which this model is bound
  *
  * @param string $dataSource The name of the DataSource, as defined in Connections.php
- * @return bool True on success
+ * @return boolean True on success
  */
 	function setDataSource($dataSource = null) {
 		if ($dataSource != null) {
@@ -2091,7 +2091,7 @@ class Model extends Overloadable {
  * Before find callback
  *
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return bool True if the operation should continue, false if it should abort
+ * @return boolean True if the operation should continue, false if it should abort
  */
 	function beforeFind($queryData) {
 		return true;
@@ -2109,7 +2109,7 @@ class Model extends Overloadable {
 /**
  * Before save callback
  *
- * @return bool True if the operation should continue, false if it should abort
+ * @return boolean True if the operation should continue, false if it should abort
  */
 	function beforeSave() {
 		return true;
@@ -2124,7 +2124,7 @@ class Model extends Overloadable {
 /**
  * Before delete callback
  *
- * @return bool True if the operation should continue, false if it should abort
+ * @return boolean True if the operation should continue, false if it should abort
  */
 	function beforeDelete() {
 		return true;
@@ -2154,7 +2154,7 @@ class Model extends Overloadable {
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *                     Will be used to allow deleting query cache also
- * @return bool true on delete
+ * @return boolean true on delete
  */
 	function _clearCache($type = null) {
 		if ($type === null) {

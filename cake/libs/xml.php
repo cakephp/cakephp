@@ -520,7 +520,7 @@ class XML extends XMLNode {
  * Initialize XML object from a given XML string. Returns false on error.
  *
  * @param string $in XML string to initialize with
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function load($in) {
@@ -554,7 +554,7 @@ class XML extends XMLNode {
 /**
  * Parses and creates XML nodes from the __rawData property.
  *
- * @return bool Success
+ * @return boolean Success
  * @access public
  * @see load()
  */

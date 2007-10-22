@@ -174,7 +174,7 @@ class DbConfigTask extends Shell {
 /**
  * Output verification message and bake if it looks good
  *
- * @return bool True if user says it looks good, false otherwise
+ * @return boolean True if user says it looks good, false otherwise
  * @access private
  */
 	function __verify($config) {
@@ -207,7 +207,7 @@ class DbConfigTask extends Shell {
  * Assembles and writes database.php
  *
  * @param array $configs Configuration settings to use
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function bake($configs) {

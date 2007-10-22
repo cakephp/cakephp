@@ -809,7 +809,7 @@ class HttpSocket extends CakeSocket {
  * the same thing partially for the request and the response property only.
  *
  * @param bool $full If set to false only HttpSocket::response and HttpSocket::request are reseted
- * @return bool True on success
+ * @return boolean True on success
  * @access public
  */
 	function reset($full = true) {

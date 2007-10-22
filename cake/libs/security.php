@@ -97,7 +97,7 @@ class Security extends Object {
  * Validate authorization hash.
  *
  * @param string $authKey Authorization hash
- * @return bool Success
+ * @return boolean Success
  * @access public
  * @static
  */

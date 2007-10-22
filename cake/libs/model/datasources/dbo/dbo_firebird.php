@@ -112,7 +112,7 @@ class DboFirebird extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return bool True if the database could be connected, else false
+ * @return boolean True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -125,7 +125,7 @@ class DboFirebird extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
 		$this->connected = false;

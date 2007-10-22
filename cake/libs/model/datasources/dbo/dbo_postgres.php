@@ -105,7 +105,7 @@ class DboPostgres extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@pg_free_result($this->results);
@@ -256,7 +256,7 @@ class DboPostgres extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -273,7 +273,7 @@ class DboPostgres extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -289,7 +289,7 @@ class DboPostgres extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -565,7 +565,7 @@ class DboPostgres extends DboSource {
  * Sets the database encoding
  *
  * @param mixed $enc Database encoding
- * @return bool True on success, false on failure
+ * @return boolean True on success, false on failure
  */
 	function setEncoding($enc) {
 		return pg_set_client_encoding($this->connection, $enc) == 0;

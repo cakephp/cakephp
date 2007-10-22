@@ -65,7 +65,7 @@ class CakeLog {
  *
  * @param string $type Type of log, becomes part of the log's filename
  * @param string $msg  Message to log
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function write($type, $msg) {

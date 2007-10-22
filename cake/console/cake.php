@@ -196,7 +196,7 @@ class ShellDispatcher {
 /**
  * Initializes the environment and loads the Cake core.
  *
- * @return bool Success.
+ * @return boolean Success.
  * @access private
  */
 	function __bootstrap() {
@@ -440,7 +440,7 @@ class ShellDispatcher {
 /**
  * Removes first argument and shifts other arguments up
  *
- * @return bool False if there are no arguments
+ * @return boolean False if there are no arguments
  * @access public
  */
 	function shiftArgs() {

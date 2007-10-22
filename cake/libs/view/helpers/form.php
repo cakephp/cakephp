@@ -334,7 +334,7 @@ class FormHelper extends AppHelper {
  * Returns true if there is an error for the given field, otherwise false
  *
  * @param string $field This should be "Modelname.fieldname", "Modelname/fieldname" is deprecated
- * @return bool If there are errors this method returns true, else false.
+ * @return boolean If there are errors this method returns true, else false.
  * @access public
  */
 	function isFieldError($field) {

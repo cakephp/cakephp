@@ -259,7 +259,7 @@ class ConsoleShell extends Shell {
  * Tells if the specified model is included in the list of available models
  *
  * @param string $modelToCheck
- * @return bool true if is an available model, false otherwise
+ * @return boolean true if is an available model, false otherwise
  * @access private
  */
 	function __isValidModel($modelToCheck) {

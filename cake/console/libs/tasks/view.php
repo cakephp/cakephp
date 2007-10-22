@@ -259,7 +259,7 @@ class ViewTask extends Shell {
  *
  * @param string $action Action to bake
  * @param string $content Content to write
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function bake($action, $content = '') {

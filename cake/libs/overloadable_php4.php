@@ -74,7 +74,7 @@ class Overloadable extends Object {
  * @param string $method Method name
  * @param array $params Parameters to send to method
  * @param mixed $return Where to store return value from method
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __call($method, $params, &$return) {
@@ -126,7 +126,7 @@ class Overloadable2 extends Object {
  * @param string $method Method name
  * @param array $params Parameters to send to method
  * @param mixed $return Where to store return value from method
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __call($method, $params, &$return) {
@@ -142,7 +142,7 @@ class Overloadable2 extends Object {
  *
  * @param mixed $name What to get
  * @param mixed $value Where to store returned value
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __get($name, &$value) {
@@ -155,7 +155,7 @@ class Overloadable2 extends Object {
  *
  * @param mixed $name What to set
  * @param mixed $value Value to set
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __set($name, $value) {

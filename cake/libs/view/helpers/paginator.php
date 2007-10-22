@@ -305,7 +305,7 @@ class PaginatorHelper extends AppHelper {
  * Returns true if the given result set is not at the first page
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
- * @return bool True if the result set is not at the first page.
+ * @return boolean True if the result set is not at the first page.
  */
 	function hasPrev($model = null) {
 		return $this->__hasPage($model, 'prev');
@@ -314,7 +314,7 @@ class PaginatorHelper extends AppHelper {
  * Returns true if the given result set is not at the last page
  *
  * @param string $model Optional model name.  Uses the default if none is specified.
- * @return bool True if the result set is not at the last page.
+ * @return boolean True if the result set is not at the last page.
  */
 	function hasNext($model = null) {
 		return $this->__hasPage($model, 'next');
@@ -324,7 +324,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
  * @param  int $page The page number - if not set defaults to 1.
- * @return bool True if the given result set has the specified page number.
+ * @return boolean True if the given result set has the specified page number.
  */
 	function hasPage($model = null, $page = 1) {
 		if (is_numeric($model)) {

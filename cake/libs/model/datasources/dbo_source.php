@@ -102,7 +102,7 @@ class DboSource extends DataSource {
  * Reconnects to database server with optional new settings
  *
  * @param array $config An array defining the new configuration settings
- * @return bool True on success, false on failure
+ * @return boolean True on success, false on failure
  */
 	function reconnect($config = null) {
 		$this->disconnect();
@@ -363,7 +363,7 @@ class DboSource extends DataSource {
 /**
  * Checks if it's connected to the database
  *
- * @return bool True if the database is connected, else false
+ * @return boolean True if the database is connected, else false
  */
 	function isConnected() {
 		return $this->connected;
@@ -470,7 +470,7 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param array $fields
  * @param array $values
- * @return bool Success
+ * @return boolean Success
  */
 	function create(&$model, $fields = null, $values = null) {
 		$fieldInsert = array();
@@ -1284,7 +1284,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param mixed $conditions
- * @return bool Success
+ * @return boolean Success
  */
 	function delete(&$model, $conditions = null) {
 		$query = $this->defaultConditions($model, $conditions);
@@ -1794,7 +1794,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model Model to search
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
- * @return bool True if the table has a matching record, else false
+ * @return boolean True if the table has a matching record, else false
  */
 	function hasAny($model, $sql) {
 		$sql = $this->conditions($sql);

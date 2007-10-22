@@ -96,7 +96,7 @@ class XmlHelper extends AppHelper {
  *
  * @param  string  $name The namespace name
  * @param  string  $url  The namespace URI; can be empty if in the default namespace map
- * @return bool False if no URL is specified, and the namespace does not exist
+ * @return boolean False if no URL is specified, and the namespace does not exist
  *                 default namespace map, otherwise true
  */
 	function addNs($name, $url = null) {

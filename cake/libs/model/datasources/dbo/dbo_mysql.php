@@ -89,7 +89,7 @@ class DboMysql extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return bool True if the database could be connected, else false
+ * @return boolean True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -115,7 +115,7 @@ class DboMysql extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@mysql_free_result($this->results);
@@ -237,7 +237,7 @@ class DboMysql extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -253,7 +253,7 @@ class DboMysql extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -268,7 +268,7 @@ class DboMysql extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

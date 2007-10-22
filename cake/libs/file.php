@@ -112,7 +112,7 @@ class File extends Object {
 /**
  * Creates the File.
  *
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function create() {
@@ -129,7 +129,7 @@ class File extends Object {
  *
  * @param string $mode A valid 'fopen' mode string (r|w|a ...)
  * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
- * @return bool True on success, false on failure
+ * @return boolean True on success, false on failure
  * @access public
  */
 	function open($mode = 'r', $force = false) {
@@ -205,7 +205,7 @@ class File extends Object {
  * @param string $data	Data to write to this File.
  * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @param string $force	force the file to open
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function write($data, $mode = 'w', $force = false) {
@@ -236,7 +236,7 @@ class File extends Object {
  *
  * @param string $data Data to write
  * @param string $force	force the file to open
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function append($data, $force = false) {
@@ -245,7 +245,7 @@ class File extends Object {
 /**
  * Closes the current file if it is opened.
  *
- * @return bool True if closing was successful or file was already closed, otherwise false
+ * @return boolean True if closing was successful or file was already closed, otherwise false
  * @access public
  */
 	function close() {
@@ -257,7 +257,7 @@ class File extends Object {
 /**
  * Deletes the File.
  *
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function delete() {
@@ -359,7 +359,7 @@ class File extends Object {
 /**
  * Returns true if the File exists.
  *
- * @return bool true if it exists, false otherwise
+ * @return boolean true if it exists, false otherwise
  * @access public
  */
 	function exists() {
@@ -394,7 +394,7 @@ class File extends Object {
 /**
  * Returns true if the File is writable.
  *
- * @return bool true if its writable, false otherwise
+ * @return boolean true if its writable, false otherwise
  * @access public
  */
 	function writable() {
@@ -403,7 +403,7 @@ class File extends Object {
 /**
  * Returns true if the File is executable.
  *
- * @return bool true if its executable, false otherwise
+ * @return boolean true if its executable, false otherwise
  * @access public
  */
 	function executable() {
@@ -412,7 +412,7 @@ class File extends Object {
 /**
  * Returns true if the File is readable.
  *
- * @return bool true if file is readable, false otherwise
+ * @return boolean true if file is readable, false otherwise
  * @access public
  */
 	function readable() {

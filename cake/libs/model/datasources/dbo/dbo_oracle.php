@@ -133,7 +133,7 @@ class DboOracle extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return bool True if the database could be connected, else false
+ * @return boolean True if the database could be connected, else false
  * @access public
  */
 	function connect() {
@@ -189,7 +189,7 @@ class DboOracle extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return bool True if the database could be disconnected, else false
+ * @return boolean True if the database could be disconnected, else false
  * @access public
  */
 	function disconnect() {
@@ -455,7 +455,7 @@ class DboOracle extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin() {
@@ -466,7 +466,7 @@ class DboOracle extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -477,7 +477,7 @@ class DboOracle extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return bool True on success, false on fail
+ * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

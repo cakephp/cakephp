@@ -392,7 +392,7 @@ class AuthComponent extends Object {
  * @param string $type Type of authorization
  * @param mixed $object object, model object, or model name
  * @param mixed $user The user to check the authorization of
- * @return bool True if $user is authorized, otherwise false
+ * @return boolean True if $user is authorized, otherwise false
  * @access public
  */
 	function isAuthorized($type = null, $object = null, $user = null) {
@@ -541,7 +541,7 @@ class AuthComponent extends Object {
  * AuthComponent::$sessionKey.
  *
  * @param mixed $data User object
- * @return bool True on login success, false on failure
+ * @return boolean True on login success, false on failure
  * @access public
  */
 	function login($data = null) {
@@ -629,7 +629,7 @@ class AuthComponent extends Object {
  *                       AuthComponent::identify().
  * @param string $action Optional. The action to validate against.
  * @see AuthComponent::identify()
- * @return bool True if the user validates, false otherwise.
+ * @return boolean True if the user validates, false otherwise.
  * @access public
  */
 	function validate($object, $user = null, $action = null) {
@@ -648,7 +648,7 @@ class AuthComponent extends Object {
  * @param string $action  Optional.  The controller/action path to validate the
  *                        user against.  The current request action is used if
  *                        none is specified.
- * @return bool ACO node path
+ * @return boolean ACO node path
  * @access public
  */
 	function action($action = ':controller/:action') {

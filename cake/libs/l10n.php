@@ -382,7 +382,7 @@ class L10n extends Object {
 /**
  * Attempts to find the locale settings based on the HTTP_ACCEPT_LANGUAGE variable
  *
- * @return bool Success
+ * @return boolean Success
  * @access private
  */
 	function __autoLanguage() {

@@ -453,7 +453,7 @@ class AclShell extends Shell {
  *
  * @param string $type Node type (ARO/ACO)
  * @param int $id Node id
- * @return bool Success
+ * @return boolean Success
  * @access public
  */
 	function nodeExists() {

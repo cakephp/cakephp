@@ -136,7 +136,7 @@
  * from a plugin, e.g: plugin.MyView
  *
  * @param string $viewClass Name of the view class to load (camelized)
- * @return bool Success
+ * @return boolean Success
  */
 	function loadView($viewClass) {
 		if (strpos($viewClass, '.') !== false) {
@@ -175,7 +175,7 @@
  * to load a model located inside a plugin folder.
  *
  * @param $name Name of model to load
- * @return bool Success
+ * @return boolean Success
  */
 	function loadModel($name = null) {
 		if (!class_exists('Model')) {
@@ -326,7 +326,7 @@
  * Loads a controller and its helper libraries.
  *
  * @param string $name Name of controller
- * @return bool Success
+ * @return boolean Success
  */
 	function loadController($name) {
 		if (!class_exists('AppController')) {
@@ -424,7 +424,7 @@
  *
  * @param string $plugin Name of plugin
  * @param string $controller Name of controller to load
- * @return bool Success
+ * @return boolean Success
  * @deprecated
  */
 	function loadPluginController($plugin, $controller) {
@@ -470,7 +470,7 @@
  * Loads a helper
  *
  * @param string $name Name of helper
- * @return bool Success
+ * @return boolean Success
  */
 	function loadHelper($name) {
 		if (!class_exists('AppHelper')) {
@@ -531,7 +531,7 @@
  *
  * @param string $plugin Name of plugin
  * @param string $helper Name of helper to load
- * @return bool Success
+ * @return boolean Success
  * @deprecated
  */
 	function loadPluginHelper($plugin, $helper) {
@@ -553,7 +553,7 @@
  * Loads a component
  *
  * @param string $name Name of component
- * @return bool Success
+ * @return boolean Success
  */
 	function loadComponent($name) {
 		if ($name === null) {
@@ -605,7 +605,7 @@
  *
  * @param string $plugin Name of plugin
  * @param string $helper Name of component to load
- * @return bool Success
+ * @return boolean Success
  * @deprecated
  */
 	function loadPluginComponent($plugin, $component) {
@@ -625,7 +625,7 @@
  * Loads a behavior
  *
  * @param string $name Name of behavior
- * @return bool Success
+ * @return boolean Success
  */
 	function loadBehavior($name) {
 		if ($name === null) {
@@ -683,7 +683,7 @@
  * config('config1', 'config2');
  * </code>
  *
- * @return bool Success
+ * @return boolean Success
  */
 	function config() {
 		$args = func_get_args();
@@ -1091,7 +1091,7 @@
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
- * @return bool Success
+ * @return boolean Success
  */
 		function file_put_contents($fileName, $data) {
 			if (is_array($data)) {
