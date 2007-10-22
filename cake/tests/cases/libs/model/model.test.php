@@ -488,7 +488,6 @@ class ModelTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
-
 		unset($this->DeviceType);
 	}
 
@@ -2737,6 +2736,10 @@ class ModelTest extends CakeTestCase {
 		}
 
 		$this->assertEqual($afterFindData, $noAfterFindData);
+	}
+
+	function endTest() {
+		ClassRegistry::flush();
 	}
 }
 /**

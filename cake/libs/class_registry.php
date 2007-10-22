@@ -182,5 +182,15 @@ class ClassRegistry {
 			return $_this->__map[$key];
 		}
 	}
+/**
+ * Flushes all objects from the ClassREgistry.
+ *
+ * @access public
+ */
+	function flush() {
+		$_this =& ClassRegistry::getInstance();
+		$_this->__objects = array();
+		$_this->__map = array();
+	}
 }
 ?>
