@@ -500,10 +500,6 @@ class Router extends Object {
 		}
 		$_this->connect('/:controller/:action/*');
 
-		if (empty($_this->__namedArgs)) {
-			$_this->connectNamed(array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'));
-		}
-
 		$_this->__defaultsMapped = true;
 	}
 /**
@@ -519,6 +515,14 @@ class Router extends Object {
 		$params[0] = am($defaults, $params[0]);
 		$params[1] = am($defaults, $params[1]);
 		list($_this->__params[], $_this->__paths[]) = $params;
+
+		if (count($_this->__paths)) {
+			if (isset($_this->__paths[0]['namedArgs'])) {
+				foreach ($_this->__paths[0]['namedArgs'] as $arg => $value) {
+					$_this->__namedArgs[$arg] = true;
+				}
+			}
+		}
 	}
 /**
  * Gets parameter information
@@ -696,7 +700,7 @@ class Router extends Object {
 				}
 			}
 			$named = $args = array();
-			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#');
+			$skip = array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', Configure::read('Routing.admin'));
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
 			$count = count($keys);
@@ -707,6 +711,8 @@ class Router extends Object {
 					$args[0] = $url[$keys[$i]];
 				} elseif (is_numeric($keys[$i]) || $keys[$i] == 'id') {
 					$args[] = $url[$keys[$i]];
+				} else {
+					$named[$keys[$i]] = $url[$keys[$i]];
 				}
 			}
 
@@ -736,6 +742,13 @@ class Router extends Object {
 				}
 				$output .= $args;
 			}
+
+			if (!empty($named)) {
+				foreach ($named as $name => $value) {
+					$output .= '/' . $name . $_this->__argSeparator . $value;
+				}
+			}
+
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (substr($url, 0, 1) == '#')) {
