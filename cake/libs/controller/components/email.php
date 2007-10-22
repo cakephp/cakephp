@@ -267,19 +267,21 @@ class EmailComponent extends Object{
  */
 	var $__smtpConnection = null;
 /**
- * Enter description here...
+ * Startup component
  *
- * @param unknown_type $controller
+ * @param object $controller Instantiating controller
  * @access public
  */
 	function startup(&$controller) {
 		$this->Controller = & $controller;
 	}
 /**
- * Enter description here...
+ * Send an email using the specified content, template and layout
  *
- * @param mixed $content
- * @return unknown
+ * @param mixed $content Either an array of text lines, or a string with contents
+ * @param string $template Template to use when sending email
+ * @param string $layout Layout to use to enclose email body
+ * @return boolean Success
  * @access public
  */
 	function send($content = null, $template = null, $layout = null) {
@@ -325,7 +327,7 @@ class EmailComponent extends Object{
 		return $this->$__method();
 	}
 /**
- * Enter description here...
+ * Reset all EmailComponent internal variables to be able to send out a new email.
  *
  * @access public
  */
@@ -344,10 +346,10 @@ class EmailComponent extends Object{
 		$this->__message = null;
 	}
 /**
- * Enter description here...
+ * Render the contents using the current layout and template.
  *
- * @param string $content
- * @return unknown
+ * @param string $content Content to render
+ * @return string Email ready to be sent
  * @access private
  */
 	function __renderTemplate($content) {
@@ -408,7 +410,7 @@ class EmailComponent extends Object{
 		return $msg;
 	}
 /**
- * Enter description here...
+ * Create unique boundary identifier
  *
  * @access private
  */
@@ -416,7 +418,8 @@ class EmailComponent extends Object{
 		$this->__boundary = md5(uniqid(time()));
 	}
 /**
- * Enter description here...
+ * Create emails headers including (but not limited to) from email address, reply to,
+ * bcc and cc.
  *
  * @access private
  */
@@ -474,9 +477,9 @@ class EmailComponent extends Object{
 		$this->__header .= 'Content-Transfer-Encoding: 7bit' . $this->_newLine;
 	}
 /**
- * Enter description here...
+ * Format the message by seeing if it has attachments.
  *
- * @param string $message
+ * @param string $message Message to format
  * @access private
  */
 	function __formatMessage($message) {
@@ -489,13 +492,16 @@ class EmailComponent extends Object{
 		$this->__message .= $message . $this->_newLine;
 	}
 /**
- * Enter description here...
+ * Attach files by adding file contents inside boundaries.
  *
  * @access private
  */
 	function __attachFiles() {
 		foreach ($this->attachments as $attachment) {
-			$files[] = $this->__findFiles($attachment);
+			$file = $this->__findFiles($attachment);
+			if (!empty($file)) {
+				$files[] = $file;
+			}
 		}
 
 		foreach ($files as $file) {
@@ -516,10 +522,10 @@ class EmailComponent extends Object{
 		}
 	}
 /**
- * Enter description here...
+ * Find the specified attachment in the list of file paths
  *
- * @param string $attachment
- * @return unknown
+ * @param string $attachment Attachment file name to find
+ * @return string Path to located file
  * @access private
  */
 	function __findFiles($attachment) {
@@ -529,12 +535,13 @@ class EmailComponent extends Object{
 				return $file;
 			}
 		}
+		return null;
 	}
 /**
- * Enter description here...
+ * Wrap the message using EmailComponet::$_lineLength
  *
- * @param string $message
- * @return unknown
+ * @param string $message Message to wrap
+ * @return string Wrapped message
  * @access private
  */
 	function __wrap($message) {
@@ -550,10 +557,10 @@ class EmailComponent extends Object{
 		return $formated;
 	}
 /**
- * Enter description here...
+ * Encode the specified string using the current charset
  *
- * @param string $subject
- * @return unknown
+ * @param string $subject String to encode
+ * @return string Encoded string
  * @access private
  */
 	function __encode($subject) {
@@ -576,10 +583,10 @@ class EmailComponent extends Object{
 		return $subject;
 	}
 /**
- * Enter description here...
+ * Format a string as an email address
  *
- * @param string $string
- * @return unknown
+ * @param string $string String representing an email address
+ * @return string Email address suitable for email headers
  * @access private
  */
 	function __formatAddress($string) {
@@ -590,11 +597,11 @@ class EmailComponent extends Object{
 		return $this->__strip($string);
 	}
 /**
- * Enter description here...
+ * Remove certain elements (such as bcc:, to:, %0a) from given value
  *
- * @param string $value
- * @param boolean $message
- * @return unknown
+ * @param string $value Value to strip
+ * @param boolean $message Set to true to indicate main message content
+ * @return string Stripped value
  * @access private
  */
 	function __strip($value, $message = false) {
@@ -608,9 +615,9 @@ class EmailComponent extends Object{
 		return preg_replace($search, '', $value);
 	}
 /**
- * wrapper form php mail function
+ * Wrapper for PHP mail function used for sending out emails
  *
- * @return bool
+ * @return bool Success
  * @access private
  */
 	function __mail() {
@@ -622,7 +629,7 @@ class EmailComponent extends Object{
 /**
  * Sends out email via SMTP
  *
- * @return bool
+ * @return bool Success
  * @access private
  */
 	function __smtp() {
@@ -654,12 +661,11 @@ class EmailComponent extends Object{
 
 		return true;
 	}
-
 /**
- * Private method for connecting to an SMTP server
+ * Connect to an SMTP server
  *
  * @param array $options SMTP connection options
- * @return array
+ * @return array Indexed array with status information: 'status', 'errno', 'errstr'
  * @access private
  */
 	function __smtpConnect() {
@@ -680,8 +686,9 @@ class EmailComponent extends Object{
 					 'errstr' => $errstr);
 	}
 /**
- * Private method for getting SMTP response
- * @return SMTP server response
+ * Get SMTP response
+ *
+ * @return string SMTP server response
  * @access private
  */
 	function __getSmtpResponse() {
@@ -693,7 +700,7 @@ class EmailComponent extends Object{
  *
  * @param string $data data to be sent to SMTP server
  * @param boolean $check check for response from server
- * @return bool
+ * @return bool Success
  * @access private
  */
 	function __sendData($data, $check = true) {
@@ -711,7 +718,7 @@ class EmailComponent extends Object{
 /**
  * SMTP authentication
  *
- * @return bool
+ * @return bool Success
  * @access private
  */
 	function __authenticate(){
@@ -741,9 +748,9 @@ class EmailComponent extends Object{
 		return true;
 	}
 /**
- * Enter description here...
+ * Set as controller flash message a debug message showing current settings in component
  *
- * @return unknown
+ * @return boolean Success
  * @access private
  */
 	function __debug() {
