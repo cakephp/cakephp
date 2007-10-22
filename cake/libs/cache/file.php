@@ -41,9 +41,9 @@ if (!class_exists('file')) {
  */
 class FileEngine extends CacheEngine {
 /**
- * instance of File class
+ * Instance of File class
  *
- * @var string
+ * @var object
  * @access private
  */
 	var $__File = null;
@@ -54,8 +54,8 @@ class FileEngine extends CacheEngine {
  * 		lock = enable file locking on write, default => false
  * 		serialize = serialize the data, default => true
  *
- * @see var __defaults
  * @var array
+ * @see CacheEngine::__defaults
  * @access public
  */
 	var $settings = array();
@@ -84,8 +84,7 @@ class FileEngine extends CacheEngine {
 		return true;
 	}
 /**
- * Garbage collection
- * Permanently remove all expired and deleted data
+ * Garbage collection. Permanently remove all expired and deleted data
  *
  * @return bool True if garbage collection was succesful, false on failure
  * @access public

@@ -119,7 +119,7 @@ class XcacheEngine extends CacheEngine {
  * (see xcache.admin configuration settings)
  *
  * @param bool Revert changes
- * @access protected
+ * @access private
  */
 	function __auth($reverse = false) {
 		static $backup = array();

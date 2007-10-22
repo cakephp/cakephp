@@ -38,9 +38,9 @@ class APCEngine extends CacheEngine {
  * Called automatically by the cache frontend
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @see var $__defaults
  * @param array $setting array of setting for the engine
  * @return bool True if the engine has been successfully initialized, false if not
+ * @see CacheEngine::__defaults
  * @access public
  */
 	function init($settings = array()) {

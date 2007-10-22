@@ -56,6 +56,7 @@ class ModelEngine extends CacheEngine {
  *
  * @param array $setting array of setting for the engine
  * @return bool True if the engine has been successfully initialized, false if not
+ * @access public
  */
 	function init($settings) {
 		parent::init($settings);
@@ -68,9 +69,7 @@ class ModelEngine extends CacheEngine {
 		}
 	}
 /**
- * Garbage collection
- *
- * Permanently remove all expired and deleted data
+ * Garbage collection. Permanently remove all expired and deleted data
  *
  * @access public
  */
@@ -82,7 +81,7 @@ class ModelEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $data Data to be cached
- * @param mixed $duration How long to cache the data, in seconds
+ * @param int $duration How long to cache the data, in seconds
  * @return bool True if the data was succesfully cached, false on failure
  * @access public
  */

@@ -62,7 +62,6 @@ class MemcacheEngine extends CacheEngine {
 		if (!class_exists('Memcache')) {
 			return false;
 		}
-
 		parent::init($settings);
 		$defaults = array('servers' => array('127.0.0.1'), 'compress'=> false);
 		$this->settings = am($this->settings, $defaults, $settings);
@@ -131,10 +130,10 @@ class MemcacheEngine extends CacheEngine {
 		return $this->__Memcache->flush();
 	}
 /**
- * connects to a server in connection pool
+ * Connects to a server in connection pool
  *
  * @param string $host host ip address or name
- * @param int $port
+ * @param int $port Server port
  * @return bool True if memcache server was connected
  * @access public
  */
