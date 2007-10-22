@@ -176,7 +176,7 @@ class Helper extends Overloadable {
  *                        or an array specifying any of the following: 'controller', 'action',
  *                        and/or 'plugin', in addition to named arguments (keyed array elements),
  *                        and standard URL arguments (indexed array elements)
- * @param boolean $full   If true, the full base URL will be prepended to the result
+ * @param bool $full   If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  */
 	function url($url = null, $full = false) {
@@ -373,7 +373,7 @@ class Helper extends Overloadable {
  *
  * @param string $model Model name as string
  * @param string $field		Fieldname as string
- * @return boolean True on errors.
+ * @return bool True on errors.
  */
 	function tagIsInvalid($model = null, $field = null) {
 		if ($model == null) {
@@ -559,28 +559,24 @@ class Helper extends Overloadable {
 /**
  * Before render callback.  Overridden in subclasses.
  *
- * @return void
  */
 	function beforeRender() {
 	}
 /**
  * After render callback.  Overridden in subclasses.
  *
- * @return void
  */
 	function afterRender() {
 	}
 /**
  * Before layout callback.  Overridden in subclasses.
  *
- * @return void
  */
 	function beforeLayout() {
 	}
 /**
  * After layout callback.  Overridden in subclasses.
  *
- * @return void
  */
 	function afterLayout() {
 	}
@@ -613,7 +609,6 @@ class Helper extends Overloadable {
 /**
  * Resets the vars used by Helper::clean() to null
  *
- * @return void
  * @access private
  */
 	function __reset() {
@@ -623,7 +618,6 @@ class Helper extends Overloadable {
 /**
  * Removes harmful content from output
  *
- * @return void
  * @access private
  */
 	function __clean() {

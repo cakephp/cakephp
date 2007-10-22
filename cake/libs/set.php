@@ -109,7 +109,7 @@ class Set extends Object {
  * Filters empty elements out of a route array, excluding '0'.
  *
  * @param mixed $var Either an array to filter, or value when in callback
- * @param boolean $isArray Force to tell $var is an array when $var is empty
+ * @param bool $isArray Force to tell $var is an array when $var is empty
  * @return mixed Either filtered array, or true/false when in callback
  * @access public
  */
@@ -253,7 +253,7 @@ class Set extends Object {
  * Checks to see if all the values in the array are numeric
  *
  * @param array $array The array to check.  If null, the value of the current Set object
- * @return boolean true if values are numeric, false otherwise
+ * @return bool true if values are numeric, false otherwise
  * @access public
  */
 	function numeric($array = null) {
@@ -484,7 +484,7 @@ class Set extends Object {
  *
  * @param mixed $data Data to check on
  * @param mixed $path A dot-separated string.
- * @return boolean true if path is found, false otherwise
+ * @return bool true if path is found, false otherwise
  * @access public
  */
 	function check($data, $path = null) {
@@ -557,7 +557,7 @@ class Set extends Object {
  *
  * @param array $val1 First value
  * @param array $val2 Second value
- * @return boolean true if they are equal, false otherwise
+ * @return bool true if they are equal, false otherwise
  * @access public
  */
 	function isEqual($val1, $val2 = null) {
@@ -573,7 +573,7 @@ class Set extends Object {
  *
  * @param array $val1 First value
  * @param array $val2 Second value
- * @return boolean true if $val1 contains $val2, false otherwise
+ * @return bool true if $val1 contains $val2, false otherwise
  * @access public
  */
 	function contains($val1, $val2 = null) {
@@ -621,9 +621,9 @@ class Set extends Object {
  * Normalizes a string or array list.
  *
  * @param mixed $list List to normalize
- * @param boolean $assoc If true, $list will be converted to an associative array
+ * @param bool $assoc If true, $list will be converted to an associative array
  * @param string $sep If $list is a string, it will be split into an array with $sep
- * @param boolean $trim If true, separated strings will be trimmed
+ * @param bool $trim If true, separated strings will be trimmed
  * @return array
  * @access public
  */

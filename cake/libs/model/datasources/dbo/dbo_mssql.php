@@ -97,7 +97,7 @@ class DboMssql extends DboSource {
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
  *
  * @param array $config Configuration data from app/config/databases.php
- * @return boolean True if connected successfully, false on error
+ * @return bool True if connected successfully, false on error
  */
 	function __construct($config, $autoConnect = true) {
 		if ($autoConnect) {
@@ -112,7 +112,7 @@ class DboMssql extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -145,7 +145,7 @@ class DboMssql extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@mssql_free_result($this->results);
@@ -221,7 +221,7 @@ class DboMssql extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {
@@ -291,7 +291,7 @@ class DboMssql extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -307,7 +307,7 @@ class DboMssql extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -322,7 +322,7 @@ class DboMssql extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -551,7 +551,7 @@ class DboMssql extends DboSource {
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param bool $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
 	function read(&$model, $queryData = array(), $recursive = null) {

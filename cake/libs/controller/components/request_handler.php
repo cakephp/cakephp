@@ -133,7 +133,6 @@ class RequestHandlerComponent extends Object {
  * HTTP_ACCEPT
  *
  * @access public
- * @return void
  */
 	function __construct() {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
@@ -154,7 +153,6 @@ class RequestHandlerComponent extends Object {
  * as the first item.
  *
  * @param object A reference to the controller
- * @return void
  * @see Router::parseExtensions()
  */
 	function initialize(&$controller) {
@@ -184,7 +182,6 @@ class RequestHandlerComponent extends Object {
  *   to the $data property of the controller, which can then be saved to a model object.
  *
  * @param object A reference to the controller
- * @return void
  */
 	function startup(&$controller) {
 
@@ -216,7 +213,6 @@ class RequestHandlerComponent extends Object {
  *
  * @param object A reference to the controller
  * @param mixed A string or array containing the redirect location
- * @return void
  */
 	function beforeRedirect(&$controller, $url) {
 		if (!$this->isAjax()) {
@@ -338,7 +334,6 @@ class RequestHandlerComponent extends Object {
  * @param string $name The name of the Content-type, i.e. "html", "xml", "css"
  * @param mixed $type The Content-type or array of Content-types assigned to the name,
  *                    i.e. "text/html", or "application/xml"
- * @return void
  * @access public
  */
 	function setContent($name, $type = null) {
@@ -514,7 +509,6 @@ class RequestHandlerComponent extends Object {
  *
  * @param object $controller A reference to a controller object
  * @param string $type
- * @return void
  * @access public
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
@@ -553,7 +547,7 @@ class RequestHandlerComponent extends Object {
  * @param array $options If $type is a friendly type name that is associated with
  *                     more than one type of content, $index is used to select
  *                     which content-type to use.
- * @return boolean Returns false if the friendly type name given in $type does
+ * @return bool Returns false if the friendly type name given in $type does
  *                 not exist in the type map, or if the Content-type header has
  *                 already been set by this method.
  * @access public

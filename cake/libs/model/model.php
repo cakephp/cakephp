@@ -333,7 +333,7 @@ class Model extends Overloadable {
 /**
  * Constructor. Binds the Model's database table to the object.
  *
- * @param integer $id
+ * @param int $id
  * @param string $table Name of database table to use.
  * @param DataSource $ds DataSource connection object.
  */
@@ -518,8 +518,7 @@ class Model extends Overloadable {
  * to the originals defined in the model
  *
  * @param array $params
- * @param boolean $permanent
- * @return void
+ * @param bool $permanent
  */
 	function bind($model, $options, $permanent = true) {
 		if (!is_array($model)) {
@@ -556,8 +555,8 @@ class Model extends Overloadable {
  * to the originals defined in the model
  *
  * @param array $params
- * @param boolean $reset
- * @return boolean Always true
+ * @param bool $reset
+ * @return bool Always true
  */
 	function bindModel($params, $reset = true) {
 
@@ -593,8 +592,8 @@ class Model extends Overloadable {
  * </code>
  *
  * @param array $params
- * @param boolean $reset
- * @return boolean Always true
+ * @param bool $reset
+ * @return bool Always true
  */
 	function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
@@ -912,7 +911,7 @@ class Model extends Overloadable {
  * Returns true if this Model has given field in its database table.
  *
  * @param string $name Name of field to look for
- * @return boolean
+ * @return bool
  */
 	function hasField($name) {
 		if (is_array($name)) {
@@ -1031,8 +1030,8 @@ class Model extends Overloadable {
  *
  * @param string $name Name of the table field
  * @param mixed $value Value of the field
- * @param boolean $validate Whether or not this model should validate before saving (defaults to false)
- * @return boolean True on success save
+ * @param bool $validate Whether or not this model should validate before saving (defaults to false)
+ * @return bool True on success save
  */
 	function saveField($name, $value, $validate = false) {
 		return $this->save(array($this->name => array($name => $value)), $validate, array($name));
@@ -1042,9 +1041,9 @@ class Model extends Overloadable {
  * By default, validation occurs before save.
  *
  * @param array $data Data to save.
- * @param boolean $validate If set, validation will be done before the save
+ * @param bool $validate If set, validation will be done before the save
  * @param array $fieldList List of fields to allow to be written
- * @return boolean success
+ * @return bool success
  */
 	function save($data = null, $validate = true, $fieldList = array()) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1242,7 +1241,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions
  * @param mixed $fields
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	function updateAll($fields, $conditions = true) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
@@ -1253,7 +1252,7 @@ class Model extends Overloadable {
  *
  * @param mixed $id
  * @see function del
- * @return boolean True on success
+ * @return bool True on success
  */
 	function remove($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1262,7 +1261,7 @@ class Model extends Overloadable {
  * Removes record for given id. If no id is given, the current id is used. Returns true on success.
  *
  * @param mixed $id Id of record to delete
- * @return boolean True on success
+ * @return bool True on success
  */
 	function del($id = null, $cascade = true) {
 		if (!empty($id)) {
@@ -1305,7 +1304,7 @@ class Model extends Overloadable {
  * Alias for del()
  *
  * @param mixed $id Id of record to delete
- * @return boolean True on success
+ * @return bool True on success
  */
 	function delete($id = null, $cascade = true) {
 		return $this->del($id, $cascade);
@@ -1372,7 +1371,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions
  * @param mixed $fields
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	function deleteAll($conditions, $cascade = true) {
 		if (empty($conditions)) {
@@ -1395,8 +1394,8 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with set id exists.
  *
- * @param boolean $reset if true will force database query
- * @return boolean True if such a record exists
+ * @param bool $reset if true will force database query
+ * @return bool True if such a record exists
  */
 	function exists($reset = false) {
 		if ($this->getID() === false) {
@@ -1411,7 +1410,7 @@ class Model extends Overloadable {
  * Returns true if a record that meets given conditions exists
  *
  * @param array $conditions SQL conditions array
- * @return boolean True if such a record exists
+ * @return bool True if such a record exists
  */
 	function hasAny($conditions = null) {
 		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
@@ -1618,8 +1617,8 @@ class Model extends Overloadable {
  * False if any fields passed match any (by default, all if $or = false) of their matching values.
  *
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
- * @param boolean $or If false, all fields specified must match in order for a false return value
- * @return boolean False if any records matching any fields are found
+ * @param bool $or If false, all fields specified must match in order for a false return value
+ * @return bool False if any records matching any fields are found
  */
 	function isUnique($fields, $or = true) {
 		if (!is_array($fields)) {
@@ -1730,7 +1729,7 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation, otherwise false.
  *
- * @return boolean True if there are no errors
+ * @return bool True if there are no errors
  */
 	function validates($data = array()) {
 		if (!empty($data)) {
@@ -1856,7 +1855,6 @@ class Model extends Overloadable {
  *
  * @param string $field The name of the field to invalidate
  * @param mixed $value
- * @return void
  */
 	function invalidate($field, $value = null) {
 		if (!is_array($this->validationErrors)) {
@@ -2000,7 +1998,6 @@ class Model extends Overloadable {
  * Sets the ID of the last record this Model inserted
  *
  * @param mixed $id
- * @return void
  */
 	function setInsertID($id) {
 		$this->__insertID = $id;
@@ -2027,7 +2024,7 @@ class Model extends Overloadable {
  * Sets the DataSource to which this model is bound
  *
  * @param string $dataSource The name of the DataSource, as defined in Connections.php
- * @return boolean True on success
+ * @return bool True on success
  */
 	function setDataSource($dataSource = null) {
 		if ($dataSource != null) {
@@ -2094,7 +2091,7 @@ class Model extends Overloadable {
  * Before find callback
  *
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return boolean True if the operation should continue, false if it should abort
+ * @return bool True if the operation should continue, false if it should abort
  */
 	function beforeFind($queryData) {
 		return true;
@@ -2103,7 +2100,7 @@ class Model extends Overloadable {
  * After find callback. Can be used to modify any results returned by find and findAll.
  *
  * @param mixed $results The results of the find operation
- * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
+ * @param bool $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed Result of the find operation
  */
 	function afterFind($results, $primary = false) {
@@ -2112,7 +2109,7 @@ class Model extends Overloadable {
 /**
  * Before save callback
  *
- * @return boolean True if the operation should continue, false if it should abort
+ * @return bool True if the operation should continue, false if it should abort
  */
 	function beforeSave() {
 		return true;
@@ -2120,15 +2117,14 @@ class Model extends Overloadable {
 /**
  * After save callback
  *
- * @param boolean $created True if this save created a new record
- * @return void
+ * @param bool $created True if this save created a new record
  */
 	function afterSave($created) {
 	}
 /**
  * Before delete callback
  *
- * @return boolean True if the operation should continue, false if it should abort
+ * @return bool True if the operation should continue, false if it should abort
  */
 	function beforeDelete() {
 		return true;
@@ -2136,7 +2132,6 @@ class Model extends Overloadable {
 /**
  * After delete callback
  *
- * @return void
  */
 	function afterDelete() {
 	}
@@ -2151,7 +2146,6 @@ class Model extends Overloadable {
 /**
  * DataSource error callback
  *
- * @return void
  */
 	function onError() {
 	}
@@ -2160,7 +2154,7 @@ class Model extends Overloadable {
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *                     Will be used to allow deleting query cache also
- * @return boolean true on delete
+ * @return bool true on delete
  */
 	function _clearCache($type = null) {
 		if ($type === null) {
@@ -2193,7 +2187,6 @@ class Model extends Overloadable {
 /**
  * Called when unserializing a model
  *
- * @return void
  */
 	function __wakeup() {
 	}

@@ -75,7 +75,7 @@ class AclComponent extends Object {
  * @param string $aro
  * @param string $aco
  * @param string $action : default = *
- * @return boolean
+ * @return bool
  */
 	function check($aro, $aco, $action = "*") {
 		return $this->_instance->check($aro, $aco, $action);
@@ -86,7 +86,7 @@ class AclComponent extends Object {
  * @param string $aro
  * @param string $aco
  * @param string $action : default = *
- * @return boolean
+ * @return bool
  */
 	function allow($aro, $aco, $action = "*") {
 		return $this->_instance->allow($aro, $aco, $action);
@@ -97,7 +97,7 @@ class AclComponent extends Object {
  * @param string $aro
  * @param string $aco
  * @param string $action : default = *
- * @return boolean
+ * @return bool
  */
 	function deny($aro, $aco, $action = "*") {
 		return $this->_instance->deny($aro, $aco, $action);
@@ -105,7 +105,7 @@ class AclComponent extends Object {
 /**
  * Pass-thru function for ACL inherit instance.
  *
- * @return boolean
+ * @return bool
  */
 	function inherit($aro, $aco, $action = "*") {
 		return $this->_instance->inherit($aro, $aco, $action);
@@ -116,7 +116,7 @@ class AclComponent extends Object {
  * @param string $aro
  * @param string $aco
  * @param string $action : default = *
- * @return boolean
+ * @return bool
  */
 	function grant($aro, $aco, $action = "*") {
 		return $this->_instance->grant($aro, $aco, $action);
@@ -127,7 +127,7 @@ class AclComponent extends Object {
  * @param string $aro
  * @param string $aco
  * @param string $action : default = *
- * @return boolean
+ * @return bool
  */
 	function revoke($aro, $aco, $action = "*") {
 		return $this->_instance->revoke($aro, $aco, $action);
@@ -136,7 +136,7 @@ class AclComponent extends Object {
  * Sets the current ARO instance to object from getAro
  *
  * @param string $id
- * @return boolean
+ * @return bool
  */
 	function setAro($id) {
 		return $this->Aro = $this->_instance->getAro($id);
@@ -145,7 +145,7 @@ class AclComponent extends Object {
 * Sets the current ACO instance to object from getAco
  *
  * @param string $id
- * @return boolean
+ * @return bool
  */
 	function setAco($id) {
 		return $this->Aco = $this->_instance->getAco($id);
@@ -229,7 +229,6 @@ class DB_ACL extends AclBase {
  * Enter description here...
  *
  * @param object $component
- * @return void
  */
 	function initialize(&$component) {
 		$component->Aro = $this->Aro;
@@ -317,7 +316,7 @@ class DB_ACL extends AclBase {
 /**
  * Allow
  *
- * @return boolean
+ * @return bool
  */
 	function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
@@ -367,7 +366,7 @@ class DB_ACL extends AclBase {
 /**
  * Deny
  *
- * @return boolean
+ * @return bool
  */
 	function deny($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, -1);
@@ -375,7 +374,7 @@ class DB_ACL extends AclBase {
 /**
  * Inherit
  *
- * @return boolean
+ * @return bool
  */
 	function inherit($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action, 0);
@@ -383,7 +382,7 @@ class DB_ACL extends AclBase {
 /**
  * Allow alias
  *
- * @return boolean
+ * @return bool
  */
 	function grant($aro, $aco, $action = "*") {
 		return $this->allow($aro, $aco, $action);
@@ -391,7 +390,7 @@ class DB_ACL extends AclBase {
 /**
  * Deny alias
  *
- * @return boolean
+ * @return bool
  */
 	function revoke($aro, $aco, $action = "*") {
 		return $this->deny($aro, $aco, $action);
@@ -482,7 +481,7 @@ class INI_ACL extends AclBase {
  *
  * @param string $aro
  * @param string $aco
- * @return boolean
+ * @return bool
  */
 	function check($aro, $aco, $aco_action = null) {
 		if ($this->config == null) {

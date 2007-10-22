@@ -69,8 +69,8 @@ class Flay extends Object{
  * Returns given text translated to HTML using the Flay syntax.
  *
  * @param string $text String to format
- * @param boolean $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
- * @param boolean $allowHtml Set this to trim whitespace and disable all HTML
+ * @param bool $bare	Set this to only do <p> transforms and > to &gt;, no typography additions.
+ * @param bool $allowHtml Set this to trim whitespace and disable all HTML
  * @return string Formatted text
  * @access public
  */
@@ -198,7 +198,7 @@ class Flay extends Object{
  *
  * @param array $words			Words to look for and markup
  * @param string $string		String to look in
- * @param integer $max_snippets	Max number of snippets to extract
+ * @param int $max_snippets	Max number of snippets to extract
  * @return string String with words marked
  * @see colorMark
  * @access public
@@ -265,7 +265,7 @@ class Flay extends Object{
  * Return a fragment of a text, up to $length characters long, with an ellipsis after it.
  *
  * @param string $text		Text to be truncated.
- * @param integer $length	Max length of text.
+ * @param int $length	Max length of text.
  * @param string $ellipsis	Sign to print after truncated text.
  * @return string Fragment
  * @access public

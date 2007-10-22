@@ -81,7 +81,7 @@ class File extends Object {
  * Constructor
  *
  * @param string $path Path to file
- * @param boolean $create Create file if it does not exist (if true)
+ * @param bool $create Create file if it does not exist (if true)
  * @param int $mode Mode to apply to the folder holding the file
  * @access private
  */
@@ -104,7 +104,6 @@ class File extends Object {
 /**
  * Closes the current file if it is opened
  *
- * @return void
  * @access private
  */
 	function __destruct() {
@@ -113,7 +112,7 @@ class File extends Object {
 /**
  * Creates the File.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function create() {
@@ -129,8 +128,8 @@ class File extends Object {
  * Opens the current file with a given $mode
  *
  * @param string $mode A valid 'fopen' mode string (r|w|a ...)
- * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
- * @return boolean True on success, false on failure
+ * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @return bool True on success, false on failure
  * @access public
  */
 	function open($mode = 'r', $force = false) {
@@ -153,7 +152,7 @@ class File extends Object {
  *
  * @param string $bytes where to start
  * @param string $mode
- * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
+ * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return mixed string on success, false on failure
  * @access public
  */
@@ -186,7 +185,7 @@ class File extends Object {
  * Sets or gets the offset for the currently opened file.
  *
  * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
- * @param integer $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
+ * @param int $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
  * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
  * @access public
  */
@@ -206,7 +205,7 @@ class File extends Object {
  * @param string $data	Data to write to this File.
  * @param string $mode	Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @param string $force	force the file to open
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function write($data, $mode = 'w', $force = false) {
@@ -237,7 +236,7 @@ class File extends Object {
  *
  * @param string $data Data to write
  * @param string $force	force the file to open
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function append($data, $force = false) {
@@ -246,7 +245,7 @@ class File extends Object {
 /**
  * Closes the current file if it is opened.
  *
- * @return boolean True if closing was successful or file was already closed, otherwise false
+ * @return bool True if closing was successful or file was already closed, otherwise false
  * @access public
  */
 	function close() {
@@ -258,7 +257,7 @@ class File extends Object {
 /**
  * Deletes the File.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function delete() {
@@ -360,7 +359,7 @@ class File extends Object {
 /**
  * Returns true if the File exists.
  *
- * @return boolean true if it exists, false otherwise
+ * @return bool true if it exists, false otherwise
  * @access public
  */
 	function exists() {
@@ -382,7 +381,7 @@ class File extends Object {
 /**
  * Returns the Filesize, either in bytes or in human-readable format.
  *
- * @param boolean $humanReadeble	Data to write to this File.
+ * @param bool $humanReadeble	Data to write to this File.
  * @return string|int filesize as int or as a human-readable string
  * @access public
  */
@@ -395,7 +394,7 @@ class File extends Object {
 /**
  * Returns true if the File is writable.
  *
- * @return boolean true if its writable, false otherwise
+ * @return bool true if its writable, false otherwise
  * @access public
  */
 	function writable() {
@@ -404,7 +403,7 @@ class File extends Object {
 /**
  * Returns true if the File is executable.
  *
- * @return boolean true if its executable, false otherwise
+ * @return bool true if its executable, false otherwise
  * @access public
  */
 	function executable() {
@@ -413,7 +412,7 @@ class File extends Object {
 /**
  * Returns true if the File is readable.
  *
- * @return boolean true if file is readable, false otherwise
+ * @return bool true if file is readable, false otherwise
  * @access public
  */
 	function readable() {

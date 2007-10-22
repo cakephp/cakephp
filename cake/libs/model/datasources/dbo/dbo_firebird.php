@@ -112,7 +112,7 @@ class DboFirebird extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -125,7 +125,7 @@ class DboFirebird extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  */
 	function disconnect() {
 		$this->connected = false;
@@ -241,7 +241,7 @@ class DboFirebird extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {

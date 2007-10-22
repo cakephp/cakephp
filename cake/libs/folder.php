@@ -93,7 +93,7 @@ class Folder extends Object{
  * Constructor.
  *
  * @param string $path Path to folder
- * @param boolean $create Create folder if not found
+ * @param bool $create Create folder if not found
  * @param mixed $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
 	function __construct($path = false, $create = false, $mode = false) {
@@ -139,7 +139,7 @@ class Folder extends Object{
  * Returns an array of the contents of the current directory, or false on failure.
  * The returned array holds two arrays: one of dirs and one of files.
  *
- * @param boolean $sort
+ * @param bool $sort
  * @param mixed $exceptions either an array or boolean true will no grab dot files
  * @return mixed Contents of current directory as an array, false on failure
  * @access public
@@ -239,7 +239,7 @@ class Folder extends Object{
  * Returns true if given $path is a Windows path.
  *
  * @param string $path Path to check
- * @return boolean true if windows path, false otherwise
+ * @return bool true if windows path, false otherwise
  * @access public
  * @static
  */
@@ -253,7 +253,7 @@ class Folder extends Object{
  * Returns true if given $path is an absolute path.
  *
  * @param string $path Path to check
- * @return boolean
+ * @return bool
  * @access public
  * @static
  */
@@ -265,7 +265,7 @@ class Folder extends Object{
  * Returns true if given $path ends in a slash (i.e. is slash-terminated).
  *
  * @param string $path Path to check
- * @return boolean true if path ends with slash, false otherwise
+ * @return bool true if path ends with slash, false otherwise
  * @access public
  * @static
  */
@@ -332,7 +332,7 @@ class Folder extends Object{
 /**
  * Returns true if the File is in a given CakePath.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function inCakePath($path = '') {
@@ -343,7 +343,7 @@ class Folder extends Object{
 /**
  * Returns true if the File is in given path.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function inPath($path = '', $reverse = false) {
@@ -365,7 +365,7 @@ class Folder extends Object{
  *
  * @param string $pathname The directory structure to create
  * @param int $mode octal value 0755
- * @param boolean $recursive chmod recursively
+ * @param bool $recursive chmod recursively
  * @param array $exceptions array of files, directories to skip
  * @return bool Returns TRUE on success, FALSE on failure
  * @access public
@@ -535,7 +535,7 @@ class Folder extends Object{
  * Recursively Remove directories if system allow.
  *
  * @param string $path Path of directory to delete
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function delete($path) {
@@ -577,7 +577,7 @@ class Folder extends Object{
  * Recursive directory copy.
  *
  * @param array $options (to, from, chmod, skip)
- * @return boolean
+ * @return bool
  * @access public
  */
 	function copy($options = array()) {
@@ -649,7 +649,7 @@ class Folder extends Object{
  * Recursive directory move.
  *
  * @param array $options (to, from, chmod, skip)
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function move($options) {

@@ -36,16 +36,19 @@ if (!class_exists('File')) {
  * @subpackage	cake.cake.console.libs.tasks
  */
 class DbConfigTask extends Shell {
-
+/**
+ * Default configuration settings to use
+ *
+ * @var array
+ * @access private
+ */
 	var $__defaultConfig = array('name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 							'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 							'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null);
-
-
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		if (empty($this->args)) {
@@ -53,12 +56,10 @@ class DbConfigTask extends Shell {
 			exit();
 		}
 	}
-
 /**
  * Interactive interface
  *
  * @access private
- * @return void
  */
 	function __interactive() {
 		$this->out('Database Configuration:');
@@ -171,11 +172,10 @@ class DbConfigTask extends Shell {
 		return true;
 	}
 /**
- * Output verification message
- * and bake if it looks good
+ * Output verification message and bake if it looks good
  *
+ * @return bool True if user says it looks good, false otherwise
  * @access private
- * @return bool
  */
 	function __verify($config) {
 		$config = am($this->__defaultConfig, $config);
@@ -206,8 +206,9 @@ class DbConfigTask extends Shell {
 /**
  * Assembles and writes database.php
  *
+ * @param array $configs Configuration settings to use
+ * @return bool Success
  * @access public
- * @return bool
  */
 	function bake($configs) {
 		if (!is_dir(CONFIGS)) {

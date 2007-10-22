@@ -31,9 +31,32 @@
  * @subpackage	cake.cake.console.libs
  */
 class ConsoleShell extends Shell {
+/**
+ * Available binding types
+ *
+ * @var array
+ * @access public
+ */
 	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
+/**
+ * Chars that describe invalid commands
+ *
+ * @var array
+ * @access public
+ */
 	var $badCommandChars = array('$', ';');
-
+/**
+ * Available models
+ *
+ * @var array
+ * @access public
+ */
+	var $models = array();
+/**
+ * Override intialize of the Shell
+ *
+ * @access public
+ */
 	function initialize() {
 		$this->models = @loadModels();
 		foreach ($this->models as $model) {
@@ -48,9 +71,12 @@ class ConsoleShell extends Shell {
 			$this->out(" - {$model}");
 		}
 	}
-
+/**
+ * Override main() to handle action
+ *
+ * @access public
+ */
 	function main() {
-
 		while (true) {
 			$command = trim($this->in(''));
 
@@ -101,7 +127,7 @@ class ConsoleShell extends Shell {
 					$association = $tmp[2];
 					$modelB = $tmp[3];
 
-					if ($this->isValidModel($modelA) && $this->isValidModel($modelB) && in_array($association, $this->associations)) {
+					if ($this->__isValidModel($modelA) && $this->__isValidModel($modelB) && in_array($association, $this->associations)) {
 						$this->{$modelA}->bindModel(array($association => array($modelB => array('className' => $modelB))), false);
 						$this->out("Created $association association between $modelA and $modelB");
 					} else {
@@ -128,7 +154,7 @@ class ConsoleShell extends Shell {
 						}
 					}
 
-					if ($this->isValidModel($modelA) && $this->isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
+					if ($this->__isValidModel($modelA) && $this->__isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
 						$this->{$modelA}->unbindModel(array($association => array($modelB)));
 						$this->out("Removed $association association between $modelA and $modelB");
 					} else {
@@ -143,7 +169,7 @@ class ConsoleShell extends Shell {
 					// Do we have a valid model?
 					list($modelToCheck, $tmp) = explode('->', $command);
 
-					if ($this->isValidModel($modelToCheck)) {
+					if ($this->__isValidModel($modelToCheck)) {
 						$findCommand = "\$data = \$this->$command;";
 						@eval($findCommand);
 
@@ -195,7 +221,7 @@ class ConsoleShell extends Shell {
 					$command = str_replace($this->badCommandChars, "", $command);
 					list($modelToSave, $tmp) = explode("->", $command);
 
-					if ($this->isValidModel($modelToSave)) {
+					if ($this->__isValidModel($modelToSave)) {
 						// Extract the array of data we are trying to build
 						list($foo, $data) = explode("->save", $command);
 						$badChars = array("(", ")");
@@ -209,7 +235,7 @@ class ConsoleShell extends Shell {
 				case (preg_match("/^(\w+) columns/", $command, $tmp) == true):
 					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
 
-					if ($this->isValidModel($modelToCheck)) {
+					if ($this->__isValidModel($modelToCheck)) {
 						// Get the column info for this model
 						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
 						@eval($fieldsCommand);
@@ -229,14 +255,15 @@ class ConsoleShell extends Shell {
 			}
 		}
 	}
-
-	function isValidModel($modelToCheck)
-	{
-		if (in_array($modelToCheck, $this->models)) {
-			return true;
-		} else {
-			return false;
-		}
+/**
+ * Tells if the specified model is included in the list of available models
+ *
+ * @param string $modelToCheck
+ * @return bool true if is an available model, false otherwise
+ * @access private
+ */
+	function __isValidModel($modelToCheck) {
+		return in_array($modelToCheck, $this->models);
 	}
 }
 ?>

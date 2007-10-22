@@ -106,7 +106,7 @@ class CakeSocket extends Object {
 /**
  * Connect the socket to the given host and port.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function connect() {
@@ -196,7 +196,7 @@ class CakeSocket extends Object {
  * Write data to the socket.
  *
  * @param string $data The data to write to the socket
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function write($data) {
@@ -233,7 +233,7 @@ class CakeSocket extends Object {
 /**
  * Abort socket operation.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function abort() {
@@ -241,7 +241,7 @@ class CakeSocket extends Object {
 /**
  * Disconnect the socket from the current connection.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function disconnect() {

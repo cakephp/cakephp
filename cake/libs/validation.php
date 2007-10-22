@@ -115,7 +115,7 @@ class Validation extends Object {
  * array('check' => 'valueToCheck');
  *
  * @param mixed $check Value to check
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function alphaNumeric($check) {
@@ -145,7 +145,7 @@ class Validation extends Object {
  * @param string $check Value to check for length
  * @param int $min Minimum value in range (inclusive)
  * @param int $max Maximum value in range (inclusive)
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function between($check, $min, $max) {
@@ -165,7 +165,7 @@ class Validation extends Object {
  * array('check' => 'valueToCheck');
  *
  * @param mixed $check Value to check
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function blank($check) {
@@ -191,9 +191,9 @@ class Validation extends Object {
  * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
  * 							if an array is used only the values of the array are checked.
  * 							Example: array('amex', 'bankcard', 'maestro')
- * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
+ * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
- * @return boolean Success
+ * @return bool Success
  * @access public
  * @see Validation::_luhn()
  */
@@ -271,7 +271,7 @@ class Validation extends Object {
  * 								is greater >, is less <, greater or equal >=
  * 								less or equal <=, is less <, equal to ==, not equal !=
  * @param int $check2 only needed if $check1 is a string
- * @return boolean
+ * @return bool
  * @access public
  */
 	function comparison($check1, $operator = null, $check2 = null) {
@@ -331,7 +331,7 @@ class Validation extends Object {
  * @param mixed $check When used as a string, $regex must also be a valid regular expression.
  *								As and array: array('check' => value, 'regex' => 'valid regular expression')
  * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function custom($check, $regex = null) {
@@ -361,7 +361,7 @@ class Validation extends Object {
  * 							My December 2006 or Dec 2006
  * 							my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function date($check, $format = 'ymd', $regex = null) {
@@ -403,10 +403,10 @@ class Validation extends Object {
  * Checks that a value is a valid decimal. If $places is null, the $check is allowed to be a scientific float
  * If no decimal point is found a false will be returned. Both the sign and exponent are optional.
  *
- * @param integer $check The value the test for decimal
- * @param integer $places if set $check value must have exactly $places after the decimal point
+ * @param int $check The value the test for decimal
+ * @param int $places if set $check value must have exactly $places after the decimal point
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function decimal($check, $places = null, $regex = null) {
@@ -430,9 +430,9 @@ class Validation extends Object {
  * Validates for an email address.
  *
  * @param string $check Value to check
- * @param boolean $deep Perform a deeper validation (if true), by also checking availability of host
+ * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
  * @param string $regex Regex to use (if none it will use built in regex)
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function email($check, $deep = false, $regex= null) {
@@ -487,7 +487,7 @@ class Validation extends Object {
  * Validation of an IPv4 address.
  *
  * @param string $check The string to test.
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function ip($check) {
@@ -508,7 +508,7 @@ class Validation extends Object {
  *
  * @param string $check The string to test
  * @param int $min The minimal string length
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function minLength($check, $min) {
@@ -520,7 +520,7 @@ class Validation extends Object {
  *
  * @param string $check The string to test
  * @param int $max The maximal string length
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function maxLength($check, $max) {
@@ -532,7 +532,7 @@ class Validation extends Object {
  *
  * @param string $check Value to check
  * @param string $symbolPosition Where symbol is located (left/right)
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
     function money($check, $symbolPosition = 'left') {
@@ -582,7 +582,7 @@ class Validation extends Object {
  * Checks if a value is numeric.
  *
  * @param string $check Value to check
- * @return boolean Succcess
+ * @return bool Succcess
  * @access public
  */
 	function numeric($check) {
@@ -594,7 +594,7 @@ class Validation extends Object {
  * @param mixed $check Value to check (string or array)
  * @param string $regex Regular expression to use
  * @param string $country Country code (defaults to 'all')
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function phone($check, $regex= null, $country = 'all') {
@@ -621,7 +621,7 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country to use for formatting
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function postal($check, $regex= null, $country = null) {
@@ -654,7 +654,7 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param string $regex Regular expression to use
  * @param string $country Country
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function ssn($check, $regex = null, $country = null) {
@@ -685,7 +685,7 @@ class Validation extends Object {
  * Checks that a value is a valid URL.
  *
  * @param string $check Value to check
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function url($check) {
@@ -711,7 +711,7 @@ class Validation extends Object {
 /**
  * Runs a regular expression match.
  *
- * @return boolean Success of match
+ * @return bool Success of match
  * @access protected
  */
 	function _check() {
@@ -753,7 +753,7 @@ class Validation extends Object {
  * Luhn algorithm
  *
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
- * @return boolean Success
+ * @return bool Success
  * @access protected
  */
 	function _luhn() {

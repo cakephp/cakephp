@@ -97,7 +97,7 @@ class I18n extends Object {
  * @param string $plural Plural string (if any)
  * @param string $domain Domain
  * @param string $category Category
- * @param integer $count Count
+ * @param int $count Count
  * @param string $directory Directory that contains the file that is requesting translation
  * @return string translated strings.
  * @access public
@@ -163,7 +163,7 @@ class I18n extends Object {
  *
  * @param string $type Type
  * @param integrer $n Number
- * @return integer plural match
+ * @return int plural match
  * @access private
  */
 	function __pluralGuess(&$type, $n) {

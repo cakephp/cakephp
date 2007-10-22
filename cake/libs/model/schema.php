@@ -100,7 +100,7 @@ class CakeSchema extends Object {
  *
  * @param array $events schema object properties
  * @access public
- * @return boolean
+ * @return bool
  */
 	function before($event = array()) {
 		return true;
@@ -110,7 +110,6 @@ class CakeSchema extends Object {
  *
  * @param array $events schema object properties
  * @access public
- * @return void
  */
 	function after($event = array()) {
 	}

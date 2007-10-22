@@ -94,7 +94,7 @@ class DboOdbc extends DboSource{
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -113,7 +113,7 @@ class DboOdbc extends DboSource{
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  */
 	function disconnect() {
 		return @odbc_close($this->connection);
@@ -261,7 +261,7 @@ class DboOdbc extends DboSource{
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -279,7 +279,7 @@ class DboOdbc extends DboSource{
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -298,7 +298,7 @@ class DboOdbc extends DboSource{
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

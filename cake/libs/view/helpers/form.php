@@ -294,7 +294,6 @@ class FormHelper extends AppHelper {
  *
  * @param string $model Model name
  * @param array $options Options
- * @return void
  * @access private
  */
 	function __secure($model = null, $options = null) {
@@ -1065,11 +1064,11 @@ class FormHelper extends AppHelper {
  * Returns a SELECT element for years
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param integer $minYear First year in sequence
- * @param integer $maxYear Last year in sequence
+ * @param int $minYear First year in sequence
+ * @param int $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
- * @param boolean $showEmpty Show/hide the empty select option
+ * @param bool $showEmpty Show/hide the empty select option
  * @return string
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1097,7 +1096,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param boolean $showEmpty Show/hide the empty select option
+ * @param bool $showEmpty Show/hide the empty select option
  * @return string
  */
 	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
@@ -1122,7 +1121,7 @@ class FormHelper extends AppHelper {
  * Returns a SELECT element for hours.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param boolean $format24Hours True for 24 hours format
+ * @param bool $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
  * @param mixed $showEmpty True to show an empty element, or a string to provide default empty element text
@@ -1388,7 +1387,6 @@ class FormHelper extends AppHelper {
 /**
  * Generates option lists for common <select /> menus
  *
- * @return void
  */
 	function __generateOptions($name, $min = null, $max = null) {
 		if (!empty($this->options[$name])) {

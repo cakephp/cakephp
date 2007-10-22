@@ -111,7 +111,6 @@ class DboPostgresTest extends UnitTestCase {
 /**
  * Skip if cannot connect to postgres
  *
- * @return void
  * @access public
  */
 	function skip() {
@@ -125,7 +124,6 @@ class DboPostgresTest extends UnitTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @return void
  * @access public
  */
 	function setUp() {
@@ -138,7 +136,6 @@ class DboPostgresTest extends UnitTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @return void
  * @access public
  */
 	function tearDown() {
@@ -147,11 +144,9 @@ class DboPostgresTest extends UnitTestCase {
 /**
  * Test Dbo value method
  *
- * @return void
  * @access public
  */
 	function testQuoting() {
-
 		$result = $this->Db->fields($this->model);
 		$expected = array(
 			'"PostgresTestModel"."id" AS "PostgresTestModel__id"',

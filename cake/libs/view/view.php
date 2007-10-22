@@ -524,7 +524,6 @@ class View extends Object {
  *
  * @param string $name
  * @param string $content
- * @return void
  * @access public
  */
 	function addScript($name, $content = null) {
@@ -869,7 +868,6 @@ class View extends Object {
  *
  * @param string $filename the cache file to include
  * @param string $timeStart the page render start time
- * @return void
  */
 	function renderCache($filename, $timeStart) {
 		ob_start();

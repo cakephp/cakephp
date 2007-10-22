@@ -105,7 +105,7 @@ class DboPostgres extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@pg_free_result($this->results);
@@ -256,7 +256,7 @@ class DboPostgres extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -273,7 +273,7 @@ class DboPostgres extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -289,7 +289,7 @@ class DboPostgres extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -542,7 +542,7 @@ class DboPostgres extends DboSource {
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
  * @param mixed $data Value to be translated
- * @param boolean $quote	True to quote value, false otherwise
+ * @param bool $quote	True to quote value, false otherwise
  * @return mixed Converted boolean value
  */
 	function boolean($data, $quote = true) {
@@ -565,7 +565,7 @@ class DboPostgres extends DboSource {
  * Sets the database encoding
  *
  * @param mixed $enc Database encoding
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	function setEncoding($enc) {
 		return pg_set_client_encoding($this->connection, $enc) == 0;

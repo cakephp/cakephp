@@ -210,7 +210,7 @@ class CookieComponent extends Object {
  *
  * @param mixed $key
  * @param mixed $value
- * @param boolean $encrypt
+ * @param bool $encrypt
  * @param string $expires
  * @access public
  */
@@ -358,7 +358,7 @@ class CookieComponent extends Object {
  * CookieComponent::write(string, string, boolean, '5 Days');
  *
  * @param mixed $expires
- * @return integer
+ * @return int
  * @access private
  */
 	function __expire($expires = null) {

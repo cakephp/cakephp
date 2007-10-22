@@ -37,18 +37,19 @@ class ControllerTask extends Shell {
  * Tasks to be loaded by this Task
  *
  * @var array
+ * @access public
  */
 	var $tasks = array('Project');
 /**
  * Override initialize
  *
- * @return void
+ * @access public
  */
 	function initialize() {}
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		if (empty($this->args)) {
@@ -81,7 +82,7 @@ class ControllerTask extends Shell {
 /**
  * Interactive
  *
- * @return void
+ * @access private
  */
 	function __interactive() {
 		$this->interactive = false;
@@ -96,11 +97,8 @@ class ControllerTask extends Shell {
 		$wannaDoAdmin = 'n';
 		$wannaUseScaffold = 'n';
 		$wannaDoScaffolding = 'y';
-
 		$controllerName = $this->getName();
-
 		$controllerPath = low(Inflector::underscore($controllerName));
-
 		$doItInteractive = $this->in("Would you like bake to build your controller interactively?\nWarning: Choosing no will overwrite {$controllerName} controller if it exist.", array('y','n'), 'y');
 
 		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
@@ -156,9 +154,9 @@ class ControllerTask extends Shell {
 		}
 
 		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-			$actions = $this->__bakeActions($controllerName, null, $wannaUseSession);
+			$actions = $this->__bakeActions($controllerName, null, in_array(low($wannaUseSession), array('y', 'yes')));
 			if ($admin) {
-				$actions .= $this->__bakeActions($controllerName, $admin, $wannaUseSession);
+				$actions .= $this->__bakeActions($controllerName, $admin, in_array(low($wannaUseSession), array('y', 'yes')));
 			}
 		}
 
@@ -226,8 +224,16 @@ class ControllerTask extends Shell {
 			}
 		}
 	}
-
-	function __bakeActions($controllerName, $admin = null, $wannaUseSession = 'y') {
+/**
+ * Bake scaffold actions
+ *
+ * @param string $controllerName Controller name
+ * @param string $admin Admin route to use
+ * @param bool $wannaUseSession Set to true to use sessions, false otherwise
+ * @return string Baked actions
+ * @access private
+ */
+	function __bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $this->_modelName($controllerName);
 		if (!loadModel($currentModelName)) {
 			$this->out('You must have a model for this class to build scaffold methods. Please try again.');
@@ -248,7 +254,7 @@ class ControllerTask extends Shell {
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}view(\$id = null) {\n";
 		$actions .= "\t\tif (!\$id) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}.');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -266,7 +272,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -274,7 +280,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\texit();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The {$singularHumanName} could not be saved. Please, try again.');\n";
 		}
 		$actions .= "\t\t\t}\n";
@@ -306,7 +312,7 @@ class ControllerTask extends Shell {
 		$compact = array();
 		$actions .= "\tfunction {$admin}edit(\$id = null) {\n";
 		$actions .= "\t\tif (!\$id && empty(\$this->data)) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid {$singularHumanName}');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -317,7 +323,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
 		$actions .= "\t\t\t\$this->cleanUpFields();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The ".$singularHumanName." has been saved');\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -325,7 +331,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\texit();\n";
 		}
 		$actions .= "\t\t\t} else {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\t\$this->Session->setFlash('The {$singularHumanName} could not be saved. Please, try again.');\n";
 		}
 		$actions .= "\t\t\t}\n";
@@ -358,7 +364,7 @@ class ControllerTask extends Shell {
 		$actions .= "\n";
 		$actions .= "\tfunction {$admin}delete(\$id = null) {\n";
 		$actions .= "\t\tif (!\$id) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('Invalid id for {$singularHumanName}');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -366,7 +372,7 @@ class ControllerTask extends Shell {
 		}
 		$actions .= "\t\t}\n";
 		$actions .= "\t\tif (\$this->{$currentModelName}->del(\$id)) {\n";
-		if (low($wannaUseSession) == 'y' || low($wannaUseSession) == 'yes') {
+		if ($wannaUseSession) {
 			$actions .= "\t\t\t\$this->Session->setFlash('".$singularHumanName." #'.\$id.' deleted');\n";
 			$actions .= "\t\t\t\$this->redirect(array('action'=>'index'), null, true);\n";
 		} else {
@@ -380,13 +386,15 @@ class ControllerTask extends Shell {
 
 
 /**
- * Assembles and writes a Controller file.
+ * Assembles and writes a Controller file
  *
- * @param string $controllerName
- * @param array $uses
- * @param array $helpers
- * @param array $components
- * @param string $actions
+ * @param string $controllerName Controller name
+ * @param string $actions Actions to add, or set the whole controller to use $scaffold (set $actions to 'scaffold')
+ * @param array $helpers Helpers to use in controller
+ * @param array $components Components to use in controller
+ * @param array $uses Models to use in controller
+ * @return string Baked controller
+ * @access private
  */
 	function __bake($controllerName, $actions = '', $helpers = null, $components = null, $uses = null) {
 		$out = "<?php\n";
@@ -396,7 +404,6 @@ class ControllerTask extends Shell {
 		if (low($actions) == 'scaffold') {
 			$out .= "\tvar \$scaffold;\n";
 		} else {
-
 			if (count($uses)) {
 				$out .= "\tvar \$uses = array('" . $this->_modelName($controllerName) . "', ";
 
@@ -442,9 +449,11 @@ class ControllerTask extends Shell {
 		return $this->createFile($filename, $out);
 	}
 /**
- * Assembles and writes a unit test file.
+ * Assembles and writes a unit test file
  *
- * @param string $className
+ * @param string $className Controller class name
+ * @return string Baked test
+ * @access private
  */
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
@@ -471,11 +480,11 @@ class ControllerTask extends Shell {
 		return false;
 	}
 /**
- * outputs the a list of possible models or controllers from database
+ * Outputs and gets the list of possible models or controllers from database
  *
- * @param string $useDbConfig
- * @param string $type = Models or Controllers
- * @return output
+ * @param string $useDbConfig Database configuration name
+ * @return array Set of controllers
+ * @access public
  */
 	function listAll($useDbConfig = 'default') {
 		$db =& ConnectionManager::getDataSource($useDbConfig);
@@ -504,12 +513,12 @@ class ControllerTask extends Shell {
 /**
  * Forces the user to specify the controller he wants to bake, and returns the selected controller name.
  *
- * @return the controller name
+ * @return string Controller name
+ * @access public
  */
 	function getName() {
 		$useDbConfig = 'default';
 		$controllers = $this->listAll($useDbConfig, 'Controllers');
-
 		$enteredController = '';
 
 		while ($enteredController == '') {
@@ -533,7 +542,7 @@ class ControllerTask extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->hr();

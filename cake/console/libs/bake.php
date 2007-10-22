@@ -35,9 +35,18 @@
  * @subpackage	cake.cake.console.libs
  */
 class BakeShell extends Shell {
-
+/**
+ * Contains tasks to load and instantiate
+ *
+ * @var array
+ * @access public
+ */
 	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View');
-
+/**
+ * Override main() to handle action
+ *
+ * @access public
+ */
 	function main() {
 
 		if (!is_dir(CONFIGS)) {
@@ -87,7 +96,7 @@ class BakeShell extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->out('CakePHP Bake:');

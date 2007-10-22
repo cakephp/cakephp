@@ -136,7 +136,7 @@
  * from a plugin, e.g: plugin.MyView
  *
  * @param string $viewClass Name of the view class to load (camelized)
- * @return boolean Success
+ * @return bool Success
  */
 	function loadView($viewClass) {
 		if (strpos($viewClass, '.') !== false) {
@@ -175,7 +175,7 @@
  * to load a model located inside a plugin folder.
  *
  * @param $name Name of model to load
- * @return boolean Success
+ * @return bool Success
  */
 	function loadModel($name = null) {
 		if (!class_exists('Model')) {
@@ -327,7 +327,7 @@
  * Loads a controller and its helper libraries.
  *
  * @param  string  $name Name of controller
- * @return boolean Success
+ * @return bool Success
  */
 	function loadController($name) {
 		if (!class_exists('AppController')) {
@@ -425,7 +425,7 @@
  *
  * @param  string  $plugin Name of plugin
  * @param  string  $controller Name of controller to load
- * @return boolean Success
+ * @return bool Success
  * @deprecated
  */
 	function loadPluginController($plugin, $controller) {
@@ -471,7 +471,7 @@
  * Loads a helper
  *
  * @param  string  $name Name of helper
- * @return boolean Success
+ * @return bool Success
  */
 	function loadHelper($name) {
 		if (!class_exists('AppHelper')) {
@@ -532,7 +532,7 @@
  *
  * @param  string  $plugin Name of plugin
  * @param  string  $helper Name of helper to load
- * @return boolean Success
+ * @return bool Success
  * @deprecated
  */
 	function loadPluginHelper($plugin, $helper) {
@@ -554,7 +554,7 @@
  * Loads a component
  *
  * @param  string  $name Name of component
- * @return boolean Success
+ * @return bool Success
  */
 	function loadComponent($name) {
 		if ($name === null) {
@@ -606,7 +606,7 @@
  *
  * @param  string  $plugin Name of plugin
  * @param  string  $helper Name of component to load
- * @return boolean Success
+ * @return bool Success
  * @deprecated
  */
 	function loadPluginComponent($plugin, $component) {
@@ -626,7 +626,7 @@
  * Loads a behavior
  *
  * @param  string  $name Name of behavior
- * @return boolean Success
+ * @return bool Success
  */
 	function loadBehavior($name) {
 		if ($name === null) {
@@ -684,7 +684,7 @@
  * config('config1', 'config2');
  * </code>
  *
- * @return boolean Success
+ * @return bool Success
  */
 	function config() {
 		$args = func_get_args();
@@ -761,9 +761,9 @@
  *
  * Only runs if debug level is non-zero.
  *
- * @param boolean $var		Variable to show debug information for.
- * @param boolean $showHtml	If set to true, the method prints the debug data in a screen-friendly way.
- * @param boolean $showFrom	If set to true, the method prints from where the function was called.
+ * @param bool $var		Variable to show debug information for.
+ * @param bool $showHtml	If set to true, the method prints the debug data in a screen-friendly way.
+ * @param bool $showFrom	If set to true, the method prints from where the function was called.
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {
@@ -799,7 +799,7 @@
  * @param array $array Array to sort
  * @param string $sortby Sort by this key
  * @param string $order  Sort order asc/desc (ascending or descending).
- * @param integer $type Type of sorting to perform
+ * @param int $type Type of sorting to perform
  * @return mixed Sorted array
  */
 	if (!function_exists('sortByKey')) {
@@ -954,7 +954,7 @@
  *
  * @see	debug()
  * @param array $var Variable to print out
- * @param boolean $showFrom If set to true, the method prints from where the function was called
+ * @param bool $showFrom If set to true, the method prints from where the function was called
  */
 	function pr($var) {
 		if (Configure::read() > 0) {
@@ -1092,7 +1092,7 @@
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
- * @return boolean Success
+ * @return bool Success
  */
 	if (!function_exists('file_put_contents')) {
 		function file_put_contents($fileName, $data) {
@@ -1255,7 +1255,7 @@
  * Returns a translated string if one is found, or the submitted message if not found.
  *
  * @param string $singular Text to translate
- * @param boolean $return Set to true to return translated string, or false to echo
+ * @param bool $return Set to true to return translated string, or false to echo
  * @return mixed translated string if $return is false string will be echoed
  */
 	function __($singular, $return = false) {
@@ -1278,8 +1278,8 @@
  *
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
- * @param integer $count Count
- * @param boolean $return true to return, false to echo
+ * @param int $count Count
+ * @param bool $return true to return, false to echo
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
 	function __n($singular, $plural, $count, $return = false) {
@@ -1324,8 +1324,8 @@
  * @param string $domain Domain
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param integer $count Count
- * @param boolean $return true to return, false to echo
+ * @param int $count Count
+ * @param bool $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dn($domain, $singular, $plural, $count, $return = false) {
@@ -1358,8 +1358,8 @@
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
- * @param integer $category Category
- * @param boolean $return true to return, false to echo
+ * @param int $category Category
+ * @param bool $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
 	function __dc($domain, $msg, $category, $return = false) {
@@ -1395,9 +1395,9 @@
  * @param string $domain Domain
  * @param string $singular Singular string to translate
  * @param string $plural Plural
- * @param integer $count Count
- * @param integer $category Category
- * @param boolean $return true to return, false to echo
+ * @param int $count Count
+ * @param int $category Category
+ * @param bool $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {
@@ -1426,7 +1426,7 @@
  * LC_ALL       6
  *
  * @param string $msg String to translate
- * @param integer $category Category
+ * @param int $category Category
  * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */

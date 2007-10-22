@@ -102,7 +102,7 @@ class DboSource extends DataSource {
  * Reconnects to database server with optional new settings
  *
  * @param array $config An array defining the new configuration settings
- * @return boolean True on success, false on failure
+ * @return bool True on success, false on failure
  */
 	function reconnect($config = null) {
 		$this->disconnect();
@@ -284,7 +284,7 @@ class DboSource extends DataSource {
  * Returns false if no rows matched.
  *
  * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param bool $cache Enables returning/storing cached query results
  * @return array Array of resultset rows, or false if no rows matched
  */
 	function fetchAll($sql, $cache = true, $modelName = null) {
@@ -363,7 +363,7 @@ class DboSource extends DataSource {
 /**
  * Checks if it's connected to the database
  *
- * @return boolean True if the database is connected, else false
+ * @return bool True if the database is connected, else false
  */
 	function isConnected() {
 		return $this->connected;
@@ -371,7 +371,7 @@ class DboSource extends DataSource {
 /**
  * Outputs the contents of the queries log.
  *
- * @param boolean $sorted
+ * @param bool $sorted
  */
 	function showLog($sorted = false) {
 		if ($sorted) {
@@ -448,7 +448,7 @@ class DboSource extends DataSource {
  * Gets full table name including prefix
  *
  * @param mixed $model
- * @param boolean $quote
+ * @param bool $quote
  * @return string Full quoted table name
  */
 	function fullTableName($model, $quote = true) {
@@ -470,7 +470,7 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param array $fields
  * @param array $values
- * @return boolean Success
+ * @return bool Success
  */
 	function create(&$model, $fields = null, $values = null) {
 		$fieldInsert = array();
@@ -519,7 +519,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param array $queryData
- * @param integer $recursive Number of levels of association
+ * @param int $recursive Number of levels of association
  * @return unknown
  */
 	function read(&$model, $queryData = array(), $recursive = null) {
@@ -661,7 +661,7 @@ class DboSource extends DataSource {
  * @param unknown_type $queryData
  * @param unknown_type $external
  * @param unknown_type $resultSet
- * @param integer $recursive Number of levels of association
+ * @param int $recursive Number of levels of association
  * @param array $stack
  */
 	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
@@ -1284,7 +1284,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model
  * @param mixed $conditions
- * @return boolean Success
+ * @return bool Success
  */
 	function delete(&$model, $conditions = null) {
 		$query = $this->defaultConditions($model, $conditions);
@@ -1362,7 +1362,7 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param string $alias Alias tablename
  * @param mixed $fields
- * @param boolean $quote If false, returns fields array unquoted
+ * @param bool $quote If false, returns fields array unquoted
  * @return array
  */
 	function fields(&$model, $alias = null, $fields = array(), $quote = true) {
@@ -1794,7 +1794,7 @@ class DboSource extends DataSource {
  *
  * @param Model $model Model to search
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
- * @return boolean True if the table has a matching record, else false
+ * @return bool True if the table has a matching record, else false
  */
 	function hasAny($model, $sql) {
 		$sql = $this->conditions($sql);

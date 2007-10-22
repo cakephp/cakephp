@@ -63,7 +63,7 @@ class CacheHelper extends AppHelper {
  *
  * @param string $file File to cache
  * @param string $out output to cache
- * @param boolean $cache
+ * @param bool $cache
  * @return view ouput
  */
 	function cache($file, $out, $cache = false) {
@@ -127,7 +127,7 @@ class CacheHelper extends AppHelper {
  * Parse file searching for no cache tags
  *
  * @param string $file
- * @param boolean $cache
+ * @param bool $cache
  * @access private
  */
 	function __parseFile($file, $cache) {

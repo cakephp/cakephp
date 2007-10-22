@@ -33,11 +33,10 @@
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ModelTask extends Shell {
-
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		if (empty($this->args)) {
@@ -57,7 +56,6 @@ class ModelTask extends Shell {
  * Handles interactive baking
  *
  * @access private
- * @return void
  */
 	function __interactive() {
 		$this->hr();
@@ -447,12 +445,13 @@ class ModelTask extends Shell {
 /**
  * Assembles and writes a Model file.
  *
- * @param string $name
- * @param object $useDbConfig
- * @param string $useTable
- * @param string $primaryKey
- * @param array $validate
- * @param array $associations
+ * @param string $name Model name
+ * @param object $useDbConfig Database configuration setting to use
+ * @param string $useTable Table to use
+ * @param string $primaryKey Primary key to use
+ * @param array $validate Validation rules
+ * @param array $associations Model bindings
+ * @access private
  */
 	function __bake($name, $useDbConfig = 'default', $useTable = null, $primaryKey = 'id', $validate = array(), $associations = array()) {
 		$out = "<?php\n";
@@ -570,10 +569,10 @@ class ModelTask extends Shell {
 	}
 
 /**
- * Assembles and writes a unit test file.
+ * Assembles and writes a unit test file
  *
- * @param string $type One of "model", and "controller".
- * @param string $className
+ * @param string $className Model class name
+ * @access private
  */
 	function __bakeTest($className) {
 		$out = '<?php '."\n\n";
@@ -599,13 +598,11 @@ class ModelTask extends Shell {
 		}
 		return false;
 	}
-
 /**
  * outputs the a list of possible models or controllers from database
  *
- * @param string $useDbConfig
- * @param string $type = Models or Controllers
- * @return output
+ * @param string $useDbConfig Database configuration name
+ * @access public
  */
 	function listAll($useDbConfig = 'default') {
 		$db =& ConnectionManager::getDataSource($useDbConfig);
@@ -629,11 +626,11 @@ class ModelTask extends Shell {
 			$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 		}
 	}
-
 /**
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
- * @return the model name
+ * @return string the model name
+ * @access public
  */
 	function getName($useDbConfig) {
 		$this->listAll($useDbConfig);
@@ -661,7 +658,7 @@ class ModelTask extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->hr();

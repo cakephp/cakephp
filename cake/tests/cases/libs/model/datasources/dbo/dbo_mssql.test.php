@@ -112,7 +112,6 @@ class DboMssqlTest extends UnitTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @return void
  * @access public
  */
 	function setUp() {
@@ -126,7 +125,6 @@ class DboMssqlTest extends UnitTestCase {
 	/**
 	 * Test Dbo value method
 	 *
-	 * @return void
 	 * @access public
 	 */
 

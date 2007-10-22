@@ -60,27 +60,78 @@
  * @subpackage  cake.cake.console.libs
  */
 class ExtractTask extends Shell{
+/**
+ * Path to use when looking for strings
+ *
+ * @var string
+ * @access public
+ */
 	var $path = null;
+/**
+ * Files from where to extract
+ *
+ * @var array
+ * @access public
+ */
 	var $files = array();
-
+/**
+ * Filename where to deposit translations
+ *
+ * @var string
+ * @access private
+ */
 	var $__filename = 'default';
+/**
+ * True if all strings should be merged into one file
+ *
+ * @var boolean
+ * @access private
+ */
 	var $__oneFile = true;
+/**
+ * Current file being processed
+ *
+ * @var string
+ * @access private
+ */
 	var $__file = null;
+/**
+ * Extracted tokens
+ *
+ * @var array
+ * @access private
+ */
 	var $__tokens = array();
+/**
+ * Extracted strings
+ *
+ * @var array
+ * @access private
+ */
 	var $__strings = array();
+/**
+ * History of file versions
+ *
+ * @var array
+ * @access private
+ */
 	var $__fileVersions = array();
+/**
+ * Destination path
+ *
+ * @var string
+ * @access private
+ */
 	var $__output = null;
-
 /**
  * Override initialize
  *
- * @return void
+ * @access public
  */
 	function initialize() {
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->files = explode(',', $this->params['files']);
 		}
-
 		if (isset($this->params['path'])) {
 			$this->path = $this->params['path'];
 		} else {
@@ -133,13 +184,14 @@ class ExtractTask extends Shell{
 /**
  * Override startup
  *
- * @return void
+ * @access public
  */
-	function startup() {}
+	function startup() {
+	}
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		$this->out('');
@@ -168,6 +220,11 @@ class ExtractTask extends Shell{
 		}
 		$this->__extractTokens();
 	}
+/**
+ * Show help options
+ *
+ * @access public
+ */
 	function help() {
 	    $this->out(__('CakePHP Language String Extraction:', true));
 		$this->hr();
@@ -188,6 +245,11 @@ class ExtractTask extends Shell{
 		$this->out(__('   -debug: Perform self test.', true));
 		$this->out('');
 	}
+/**
+ * Extract tokens out of all files to be processed
+ *
+ * @access private
+ */
 	function __extractTokens() {
 		foreach ($this->files as $file) {
 			$this->__file = $file;
@@ -230,9 +292,10 @@ class ExtractTask extends Shell{
 /**
  * Will parse  __(), __c() functions
  *
- * @param string $functionname
+ * @param string $functionName Function name that indicates translatable string (e.g: '__')
+ * @access public
  */
-	function basic($functionname = '__') {
+	function basic($functionName = '__') {
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
@@ -244,7 +307,7 @@ class ExtractTask extends Shell{
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionname) && ($parenthesis == '(')) {
+			if (($type == T_STRING) && ($string == $functionName) && ($parenthesis == '(')) {
 
 				if (in_array($right, array(')', ','))
 				&& (is_array($middle) && ($middle[0] == T_CONSTANT_ENCAPSED_STRING))) {
@@ -255,7 +318,7 @@ class ExtractTask extends Shell{
 						$this->__strings[$this->__file][$this->__formatString($middle[1])][] = $line;
 					}
 				} else {
-					$this->__markerError($this->__file, $line, $functionname, $count);
+					$this->__markerError($this->__file, $line, $functionName, $count);
 				}
 			}
 			$count++;
@@ -264,11 +327,12 @@ class ExtractTask extends Shell{
 /**
  * Will parse __d(), __dc(), __n(), __dn(), __dcn()
  *
- * @param string $functionname
- * @param integer $shift
- * @param boolean $plural
+ * @param string $functionName Function name that indicates translatable string (e.g: '__')
+ * @param int $shift Number of parameters to shift to find translateable string
+ * @param bool $plural Set to true if function supports plural format, false otherwise
+ * @access public
  */
-	function extended($functionname = '__d', $shift = 0, $plural = false) {
+	function extended($functionName = '__d', $shift = 0, $plural = false) {
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
@@ -280,7 +344,7 @@ class ExtractTask extends Shell{
 			}
 
 			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionname) && ($firstParenthesis == '(')) {
+			if (($type == T_STRING) && ($string == $functionName) && ($firstParenthesis == '(')) {
 				$position = $count;
 				$depth = 0;
 
@@ -340,12 +404,17 @@ class ExtractTask extends Shell{
 						}
 					}
 				} else {
-					$this->__markerError($this->__file, $line, $functionname, $count);
+					$this->__markerError($this->__file, $line, $functionName, $count);
 				}
 			}
 			$count++;
 		}
 	}
+/**
+ * Build the translate template file contents out of obtained strings
+ *
+ * @access private
+ */
 	function __buildFiles() {
 		$output = '';
 		foreach ($this->__strings as $str => $fileInfo) {
@@ -403,6 +472,16 @@ class ExtractTask extends Shell{
 			$this->__store($filename, $output, $fileList);
 		}
 	}
+/**
+ * Prepare a file to be stored
+ *
+ * @param string $file Filename
+ * @param string $input What to store
+ * @param array $fileList File list
+ * @param int $get Set to 1 to get files to store, false to set
+ * @return mixed If $get == 1, files to store, otherwise void
+ * @access private
+ */
 	function __store($file = 0, $input = 0, $fileList = array(), $get = 0) {
 		static $storage = array();
 
@@ -420,6 +499,11 @@ class ExtractTask extends Shell{
 			return $storage;
 		}
 	}
+/**
+ * Write the files that need to be stored
+ *
+ * @access private
+ */
 	function __writeFiles() {
 		$output = $this->__store(0, 0, array(), 1);
 		$output = $this->__mergeFiles($output);
@@ -463,6 +547,13 @@ class ExtractTask extends Shell{
 			fclose($fp);
 		}
 	}
+/**
+ * Merge output files
+ *
+ * @param array $output Output to merge
+ * @return array Merged output
+ * @access private
+ */
 	function __mergeFiles($output) {
 		foreach ($output as $file => $content) {
 			if (count($content) <= 1 && $file != $this->__filename) {
@@ -482,6 +573,12 @@ class ExtractTask extends Shell{
 		}
 		return $output;
 	}
+/**
+ * Build the translation template header
+ *
+ * @return string Translation template header
+ * @access private
+ */
 	function __writeHeader() {
 		$output  = "# LANGUAGE translation of CakePHP Application\n";
 		$output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
@@ -501,6 +598,13 @@ class ExtractTask extends Shell{
 		$output .= "\"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\\n\"\n\n";
 		return $output;
 	}
+/**
+ * Find the version number of a file looking for SVN commands
+ *
+ * @param string $code Source code of file
+ * @param string $file File
+ * @access private
+ */
 	function __findVersion($code, $file) {
 		$header = '$Id' . ':';
 		if (preg_match('/\\' . $header . ' [\\w.]* ([\\d]*)/', $code, $versionInfo)) {
@@ -508,6 +612,13 @@ class ExtractTask extends Shell{
 			$this->__fileVersions[$file] = $version;
 		}
 	}
+/**
+ * Format a string to be added as a translateable string
+ *
+ * @param string $string String to format
+ * @return string Formatted string
+ * @access private
+ */
 	function __formatString($string) {
 		$quote = substr($string, 0, 1);
 		$string = substr($string, 1, -1);
@@ -518,6 +629,15 @@ class ExtractTask extends Shell{
 		}
 		return addcslashes($string, "\0..\37\\\"");
 	}
+/**
+ * Indicate an invalid marker on a processed file
+ *
+ * @param string $file File where invalid marker resides
+ * @param int $line Line number
+ * @param string $marker Marker found
+ * @param int $count Count
+ * @access private
+ */
 	function __markerError($file, $line, $marker, $count) {
 		$this->out("Invalid marker content in $file:$line\n* $marker(", true);
 		$count += 2;
@@ -541,6 +661,13 @@ class ExtractTask extends Shell{
 		}
 		$this->out("\n", true);
 	}
+/**
+ * Search the specified path for files that may contain translateable strings
+ *
+ * @param string $path Path (or set to null to use current)
+ * @return array Files
+ * @access private
+ */
 	function __searchDirectory($path = null) {
 		if ($path === null) {
 			$path = $this->path .DS;

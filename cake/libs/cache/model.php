@@ -55,8 +55,7 @@ class ModelEngine extends CacheEngine {
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $setting array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
- * @return boolean True if the engine has been succesfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  */
 	function init($settings) {
 		parent::init($settings);
@@ -84,7 +83,7 @@ class ModelEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $data Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return bool True if the data was succesfully cached, false on failure
  * @access public
  */
 	function write($key, &$data, $duration) {
@@ -127,7 +126,7 @@ class ModelEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
  */
 	function delete($key) {
@@ -136,7 +135,7 @@ class ModelEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return bool True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {

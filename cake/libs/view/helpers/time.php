@@ -40,7 +40,7 @@ class TimeHelper extends AppHelper {
  * Returns given string trimmed to given length, adding an ending (default: "..") if necessary.
  *
  * @param string $string String to trim
- * @param integer $length Length of returned string, excluding ellipsis
+ * @param int $length Length of returned string, excluding ellipsis
  * @param string $ending Ending to be appended after trimmed string
  * @return string Trimmed string
  */
@@ -136,7 +136,7 @@ class TimeHelper extends AppHelper {
  * Returns true if given datetime string is today.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @return boolean True if datetime string is today
+ * @return bool True if datetime string is today
  */
 	function isToday($date_string) {
 		$date = $this->fromString($date_string);
@@ -146,7 +146,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns true if given datetime string is within this week
  * @param string $date_string
- * @return boolean True if datetime string is within current week
+ * @return bool True if datetime string is within current week
  */
 	function isThisWeek($date_string) {
 		$date = $this->fromString($date_string) + 86400;
@@ -155,7 +155,7 @@ class TimeHelper extends AppHelper {
 /**
  * Returns true if given datetime string is within this month
  * @param string $date_string
- * @return boolean True if datetime string is within current month
+ * @return bool True if datetime string is within current month
  */
 	function isThisMonth($date_string) {
 		$date = $this->fromString($date_string);
@@ -165,7 +165,7 @@ class TimeHelper extends AppHelper {
  * Returns true if given datetime string is within current year.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @return boolean True if datetime string is within current year
+ * @return bool True if datetime string is within current year
  */
 	function isThisYear($date_string) {
 		$date = $this->fromString($date_string);
@@ -176,7 +176,7 @@ class TimeHelper extends AppHelper {
  * Returns true if given datetime string was yesterday.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @return boolean True if datetime string was yesterday
+ * @return bool True if datetime string was yesterday
  */
 	function wasYesterday($date_string) {
 		$date = $this->fromString($date_string);
@@ -187,7 +187,7 @@ class TimeHelper extends AppHelper {
  * Returns true if given datetime string is tomorrow.
  *
  * @param string $date_string Datetime string or Unix timestamp
- * @return boolean True if datetime string was yesterday
+ * @return bool True if datetime string was yesterday
  */
 	function isTomorrow($date_string) {
 		$date = $this->fromString($date_string);
@@ -327,7 +327,7 @@ class TimeHelper extends AppHelper {
  *
  * @param mixed $timeInterval the numeric value with space then time type. Example of valid types: 6 hours, 2 days, 1 minute.
  * @param mixed $date_string the datestring or unix timestamp to compare
- * @return boolean
+ * @return bool
  */
 	function wasWithinLast($timeInterval, $date_string) {
 		$date = $this->fromString($date_string);

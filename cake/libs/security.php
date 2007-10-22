@@ -97,7 +97,7 @@ class Security extends Object {
  * Validate authorization hash.
  *
  * @param string $authKey Authorization hash
- * @return boolean Success
+ * @return bool Success
  * @access public
  * @static
  */
@@ -149,7 +149,6 @@ class Security extends Object {
  * Security::hash().
  *
  * @param string $hash Method to use (sha1/sha256/md5)
- * @return void
  * @access public
  * @static
  * @see Security::hash()

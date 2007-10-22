@@ -143,7 +143,6 @@ class SecurityComponent extends Object {
  * Sets the actions that require a POST request, or empty for all actions
  *
  * @access public
- * @return void
  */
 	function requirePost() {
 		$this->requirePost = func_get_args();
@@ -155,7 +154,6 @@ class SecurityComponent extends Object {
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @access public
- * @return void
  */
 	function requireSecure() {
 		$this->requireSecure = func_get_args();
@@ -167,7 +165,6 @@ class SecurityComponent extends Object {
  * Sets the actions that require an authenticated request, or empty for all actions
  *
  * @access public
- * @return void
  */
 	function requireAuth() {
 		$this->requireAuth = func_get_args();
@@ -179,7 +176,6 @@ class SecurityComponent extends Object {
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
  *
  * @access public
- * @return void
  */
 	function requireLogin() {
 		$args = func_get_args();
@@ -326,7 +322,7 @@ class SecurityComponent extends Object {
  * Check if post is required
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __postRequired(&$controller) {
@@ -345,7 +341,7 @@ class SecurityComponent extends Object {
  * Check if access requires secure connection
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __secureRequired(&$controller) {
@@ -364,7 +360,7 @@ class SecurityComponent extends Object {
  * Check if authentication is required
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __authRequired(&$controller) {
@@ -398,7 +394,7 @@ class SecurityComponent extends Object {
  * Check if login is required
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __loginRequired(&$controller) {
@@ -442,7 +438,7 @@ class SecurityComponent extends Object {
  * Validate submited form
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __validatePost(&$controller) {
@@ -572,7 +568,7 @@ class SecurityComponent extends Object {
  * Add authentication key for new form posts
  *
  * @param object $controller
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __generateToken(&$controller) {

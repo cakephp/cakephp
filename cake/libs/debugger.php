@@ -97,7 +97,7 @@ class Debugger extends Object {
  * @param string $file File on which error occurred
  * @param int $line Line that triggered the error
  * @param array $context Context
- * @return boolean true if error was handled
+ * @return bool true if error was handled
  * @access public
  */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {

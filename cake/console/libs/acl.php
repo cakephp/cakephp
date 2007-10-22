@@ -368,7 +368,6 @@ class AclShell extends Shell {
 
 		$this->out("\n" . __("Done.", true), true);
 	}
-
 /**
  * Show help screen.
  *
@@ -454,7 +453,7 @@ class AclShell extends Shell {
  *
  * @param string $type Node type (ARO/ACO)
  * @param int $id Node id
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function nodeExists() {

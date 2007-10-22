@@ -87,7 +87,6 @@ class PaginatorHelper extends AppHelper {
  *
  * @param  mixed $options Default options for pagination links. If a string is supplied - it
  *                        is used as the DOM id element to update. See #options for list of keys.
- * @return void
  */
 	function options($options = array()) {
 		if (is_string($options)) {
@@ -305,8 +304,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the first page
  *
- * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return boolean True if the result set is not at the first page.
+ * @param string $model Optional model name.  Uses the default if none is specified.
+ * @return bool True if the result set is not at the first page.
  */
 	function hasPrev($model = null) {
 		return $this->__hasPage($model, 'prev');
@@ -314,8 +313,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Returns true if the given result set is not at the last page
  *
- * @param  string $model Optional model name.  Uses the default if none is specified.
- * @return boolean True if the result set is not at the last page.
+ * @param string $model Optional model name.  Uses the default if none is specified.
+ * @return bool True if the result set is not at the last page.
  */
 	function hasNext($model = null) {
 		return $this->__hasPage($model, 'next');
@@ -325,7 +324,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @param  string $model Optional model name.  Uses the default if none is specified.
  * @param  int $page The page number - if not set defaults to 1.
- * @return boolean True if the given result set has the specified page number.
+ * @return bool True if the given result set has the specified page number.
  */
 	function hasPage($model = null, $page = 1) {
 		if (is_numeric($model)) {

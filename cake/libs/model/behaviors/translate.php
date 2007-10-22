@@ -320,8 +320,8 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param object instance of model
  * @param mixed string with field, or array(field1, field2=>AssocName, field3), or null for bind all original translations
- * @param boolead $reset
- * @return boolean
+ * @param bool $reset
+ * @return bool
  */
 	function bindTranslation(&$model, $fields = null, $reset = true) {
 		if (empty($fields)) {
@@ -395,7 +395,7 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param object instance of model
  * @param mixed string with field, or array(field1, field2=>AssocName, field3), or null for unbind all original translations
- * @return boolean
+ * @return bool
  */
 	function unbindTranslation(&$model, $fields = null) {
 		if (empty($fields)) {

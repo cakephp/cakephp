@@ -133,7 +133,7 @@ class DboOracle extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  * @access public
  */
 	function connect() {
@@ -162,7 +162,7 @@ class DboOracle extends DboSource {
  * Sets the encoding language of the session
  *
  * @param string $lang language constant
- * @return boolean
+ * @return bool
  */
 	function setEncoding($lang) {
 		if (!$this->execute('ALTER SESSION SET NLS_LANGUAGE='.$lang)) {
@@ -189,7 +189,7 @@ class DboOracle extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  * @access public
  */
 	function disconnect() {
@@ -345,7 +345,7 @@ class DboOracle extends DboSource {
  * Checks to see if a named sequence exists
  *
  * @param string $sequence
- * @return boolean
+ * @return bool
  * @access public
  */
 	function sequenceExists($sequence) {
@@ -359,7 +359,7 @@ class DboOracle extends DboSource {
  * Creates a database sequence
  *
  * @param string $sequence
- * @return boolean
+ * @return bool
  * @access public
  */
 	function createSequence($sequence) {
@@ -455,7 +455,7 @@ class DboOracle extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin() {
@@ -466,7 +466,7 @@ class DboOracle extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -477,7 +477,7 @@ class DboOracle extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */

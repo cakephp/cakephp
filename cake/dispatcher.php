@@ -113,7 +113,7 @@ class Dispatcher extends Object {
  * @param string $url	URL information to work on.
  * @param array $additionalParams	Settings array ("bare", "return"),
  * which is melded with the GET and POST params.
- * @return boolean		Success
+ * @return bool		Success
  * @access public
  */
 	function dispatch($url = null, $additionalParams = array()) {
@@ -255,7 +255,7 @@ class Dispatcher extends Object {
  *
  * @param object $controller Controller to invoke
  * @param array $params Parameters with at least the 'action' to invoke
- * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
+ * @param bool $missingAction Set to true if missing action should be rendered, false otherwise
  * @return string Output as sent by controller
  * @access protected
  */

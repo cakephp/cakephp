@@ -36,26 +36,26 @@ if (!class_exists('File')) {
  * @subpackage	cake.cake.console.libs.tasks
  */
 class ProjectTask extends Shell {
-
 /**
  * Override
  *
- * @return void
+ * @access public
  */
-	function initialize() {}
-
+	function initialize() {
+	}
 /**
  * Override
  *
- * @return void
+ * @access public
  */
-	function startup() {}
-
+	function startup() {
+	}
 /**
  * Checks that given project path does not already exist, and
  * finds the app directory in it. Then it calls __buildDirLayout() with that information.
  *
- * @return bool
+ * @param string $project Project path
+ * @access public
  */
 	function execute($project = null) {
 		if ($project === null) {
@@ -117,14 +117,14 @@ class ProjectTask extends Shell {
 		$this->__buildDirLayout($project);
 		exit();
 	}
-
 /**
  * Looks for a skeleton template of a Cake application,
  * and if not found asks the user for a path. When there is a path
  * this method will make a deep copy of the skeleton to the project directory.
  * A default home page will be added, and the tmp file storage will be chmod'ed to 0777.
  *
- * @param string $path
+ * @param string $path Project path
+ * @access private
  */
 	function __buildDirLayout($path) {
 		$skel = $this->params['skel'];
@@ -161,7 +161,7 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
 				$this->hr();
 
-				if ($this->createHome($path, $app)) {
+				if ($this->createHome($path)) {
 					$this->out('Welcome page created');
 				} else {
 					$this->out('The Welcome page was NOT created');
@@ -206,18 +206,21 @@ class ProjectTask extends Shell {
 /**
  * Writes a file with a default home page to the project.
  *
- * @param string $dir
- * @param string $app
+ * @param string $dir Path to project
+ * @return bool Success
+ * @access public
  */
-	function createHome($dir, $app) {
+	function createHome($dir) {
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		include(CAKE_CORE_INCLUDE_PATH.DS.'cake'.DS.'console'.DS.'libs'.DS.'templates'.DS.'views'.DS.'home.ctp');
 		return $this->createFile($path.'home.ctp', $output);
 	}
 /**
- * generates and writes 'Security.salt'
+ * Generates and writes 'Security.salt'
  *
- * @return bool
+ * @param string $path Project path
+ * @return bool Success
+ * @access public
  */
 	function securitySalt($path) {
 		$File =& new File($path . 'config' . DS . 'core.php');
@@ -236,9 +239,11 @@ class ProjectTask extends Shell {
 		}
 	}
 /**
- * generates and writes CAKE_CORE_INCLUDE_PATH
+ * Generates and writes CAKE_CORE_INCLUDE_PATH
  *
- * @return bool
+ * @param string $path Project path
+ * @return bool Success
+ * @access public
  */
 	function corePath($path) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
@@ -259,7 +264,9 @@ class ProjectTask extends Shell {
 /**
  * Enables Configure::read('Routing.admin') in /app/config/core.php
  *
- * @return bool
+ * @param string $name Name to use as admin routing
+ * @return bool Success
+ * @access public
  */
 	function cakeAdmin($name) {
 		$File =& new File(CONFIGS . 'core.php');

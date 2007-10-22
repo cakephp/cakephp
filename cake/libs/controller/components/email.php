@@ -593,7 +593,7 @@ class EmailComponent extends Object{
  * Enter description here...
  *
  * @param string $value
- * @param boolean $message
+ * @param bool $message
  * @return unknown
  * @access private
  */
@@ -610,7 +610,7 @@ class EmailComponent extends Object{
 /**
  * wrapper form php mail function
  *
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __mail() {
@@ -622,7 +622,7 @@ class EmailComponent extends Object{
 /**
  * Sends out email via SMTP
  *
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __smtp() {
@@ -692,8 +692,8 @@ class EmailComponent extends Object{
  * Private method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
- * @param boolean $check check for response from server
- * @return boolean
+ * @param bool $check check for response from server
+ * @return bool
  * @access private
  */
 	function __sendData($data, $check = true) {
@@ -711,7 +711,7 @@ class EmailComponent extends Object{
 /**
  * SMTP authentication
  *
- * @return boolean
+ * @return bool
  * @access private
  */
 	function __authenticate(){

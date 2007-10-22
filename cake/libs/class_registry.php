@@ -69,7 +69,7 @@ class ClassRegistry {
  *
  * @param string $key	Key for the object in registry
  * @param mixed $object	Object to store
- * @return boolean True if the object was written, false if $key already exists
+ * @return bool True if the object was written, false if $key already exists
  * @access public
  */
 	function addObject($key, &$object) {
@@ -98,7 +98,7 @@ class ClassRegistry {
  * Returns true if given key is present in the ClassRegistry.
  *
  * @param string $key Key to look for
- * @return boolean true if key exists in registry, false otherwise
+ * @return bool true if key exists in registry, false otherwise
  * @access public
  */
 	function isKeySet($key) {

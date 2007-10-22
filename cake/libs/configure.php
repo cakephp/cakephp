@@ -364,7 +364,7 @@ class Configure extends Object {
  *
  * @param string $content Content to write on file
  * @param string $name Name to use for cache file
- * @param boolean $write true if content should be written, false otherwise
+ * @param bool $write true if content should be written, false otherwise
  * @access private
  */
 	function __writeConfig($content, $name, $write = true) {
@@ -518,7 +518,7 @@ class Configure extends Object {
  * If the alternative paths are set in this file
  * they will be added to the paths vars
  *
- * @param boolean $boot Load application bootstrap (if true)
+ * @param bool $boot Load application bootstrap (if true)
  * @access private
  */
 	function __loadBootstrap($boot) {

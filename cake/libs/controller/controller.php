@@ -411,8 +411,8 @@ class Controller extends Object {
  *
  * @param mixed $url A string or array-based URL pointing to another location
  *                   within the app, or an absolute URL
- * @param integer $status Optional HTTP status code
- * @param boolean $exit If true, exit() will be called after the redirect
+ * @param int $status Optional HTTP status code
+ * @param bool $exit If true, exit() will be called after the redirect
  * @access public
  */
 	function redirect($url, $status = null, $exit = false) {
@@ -607,7 +607,7 @@ class Controller extends Object {
  * @param string $action Action name to render
  * @param string $layout Layout to use
  * @param string $file File to use for rendering
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
@@ -667,7 +667,7 @@ class Controller extends Object {
  * Gets the referring URL of this request
  *
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
- * @param boolean $local If true, restrict referring URLs to local server
+ * @param bool $local If true, restrict referring URLs to local server
  * @return string Referring URL
  * @access public
  */
@@ -905,7 +905,7 @@ class Controller extends Object {
  * @param array $data POST'ed data organized by model and field
  * @param mixed $op A string containing an SQL comparison operator, or an array matching operators to fields
  * @param string $bool SQL boolean operator: AND, OR, XOR, etc.
- * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
+ * @param bool $exclusive If true, and $op is an array, fields not included in $op will not be included in the returned conditions
  * @return array An array of model conditions
  * @access public
  */
@@ -1210,7 +1210,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called example index, edit, etc.
- * @return boolean Success
+ * @return bool Success
  * @access protected
  */
 	function _beforeScaffold($method) {
@@ -1220,7 +1220,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return boolean Success
+ * @return bool Success
  * @access protected
  */
 	function _afterScaffoldSave($method) {
@@ -1230,7 +1230,7 @@ class Controller extends Object {
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
- * @return boolean Success
+ * @return bool Success
  * @access protected
  */
 	function _afterScaffoldSaveError($method) {
@@ -1242,7 +1242,7 @@ class Controller extends Object {
  * Method MUST return true in child classes
  *
  * @param string $method name of method called example index, edit, etc.
- * @return boolean Success
+ * @return bool Success
  * @access protected
  */
 	function _scaffoldError($method) {

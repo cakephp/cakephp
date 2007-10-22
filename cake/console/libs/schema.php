@@ -39,7 +39,6 @@ class SchemaShell extends Shell {
  * Override initialize
  *
  * @access public
- * @return void
  */
 	function initialize() {
 		$this->out('Cake Schema Shell');
@@ -49,7 +48,6 @@ class SchemaShell extends Shell {
  * Override startup
  *
  * @access public
- * @return void
  */
 	function startup() {
 		$settings = am(array('path'=> CONFIGS .'sql'), $this->params);
@@ -59,7 +57,6 @@ class SchemaShell extends Shell {
  * Override main
  *
  * @access public
- * @return void
  */
 	function main() {
 		$this->help();
@@ -69,7 +66,6 @@ class SchemaShell extends Shell {
  * path to read as second arg
  *
  * @access public
- * @return void
  */
 	function view() {
 		$File = new File($this->Schema->path . DS .'schema.php');
@@ -86,7 +82,6 @@ class SchemaShell extends Shell {
  * accepts a connection as first arg or path to save as second arg
  *
  * @access public
- * @return void
  */
 	function generate() {
 		$this->out('Generating Schema...');
@@ -105,7 +100,6 @@ class SchemaShell extends Shell {
  * or it will output sql
  *
  * @access public
- * @return void
  */
 	function dump() {
 		$write = false;
@@ -140,11 +134,9 @@ class SchemaShell extends Shell {
  * Create database from Schema object
  *
  * @access public
- * @return void
  */
 	function create() {
 		$Schema = $this->Schema->load();
-
 		$table = null;
 		$event = array_keys($Schema->tables);
 		if(isset($this->args[0])) {
@@ -182,10 +174,8 @@ class SchemaShell extends Shell {
  * Update database with Schema object
  *
  * @access public
- * @return void
  */
 	function update() {
-
 		$this->out('Comparing Database to Schema...');
 		$Old = $this->Schema->read();
 		$Schema = $this->Schema->load();
@@ -227,7 +217,7 @@ class SchemaShell extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->out('The Schema Shell generates a schema object from the database and updates the database from the schema.');

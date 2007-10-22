@@ -223,7 +223,6 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param object $controller A reference to the instantiating controller object
- * @return void
  */
 	function initialize(&$controller) {
 		$this->params = $controller->params;
@@ -257,7 +256,6 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param object $controller A reference to the instantiating controller object
- * @return void
  */
 	function startup(&$controller) {
 		if (low($controller->name) == 'app' || (low($controller->name) == 'tests' && Configure::read() > 0)) {
@@ -365,7 +363,6 @@ class AuthComponent extends Object {
  *
  * @access private
  * @param object $controller A reference to the instantiating controller object
- * @return void
  */
 	function __setDefaults() {
 		if (empty($this->userModel)) {
@@ -398,7 +395,7 @@ class AuthComponent extends Object {
  * @param string $type
  * @param mixed $object object, model object, or model name
  * @param mixed $user  The user to check the authorization of
- * @return boolean True if $user is authorized, otherwise false
+ * @return bool True if $user is authorized, otherwise false
  */
 	function isAuthorized($type = null, $object = null, $user = null) {
 		if (empty($user) && !$this->user()) {
@@ -490,7 +487,6 @@ class AuthComponent extends Object {
  * @param string $action Controller action name
  * @param string $action Controller action name
  * @param string ... etc.
- * @return void
  */
 	function allow() {
 		$args = func_get_args();
@@ -507,7 +503,6 @@ class AuthComponent extends Object {
  * @param string $action Controller action name
  * @param string $action Controller action name
  * @param string ... etc.
- * @return void
  * @see AuthComponent::allow()
  */
 	function deny() {
@@ -525,7 +520,6 @@ class AuthComponent extends Object {
  *
  * @param array $map
  * @access public
- * @return void
  */
 	function mapActions($map = array()) {
 		$crud = array('create', 'read', 'update', 'delete');
@@ -549,7 +543,7 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param mixed $data User object
- * @return boolean True on login success, false on failure
+ * @return bool True on login success, false on failure
  */
 	function login($data = null) {
 		$this->__setDefaults();
@@ -636,7 +630,7 @@ class AuthComponent extends Object {
  *                       valid forms of identifying users, see
  *                       AuthComponent::identify().
  * @see AuthComponent::identify()
- * @return boolean True if the user validates, false otherwise.
+ * @return bool True if the user validates, false otherwise.
  */
 	function validate($object, $user = null, $action = null) {
 		if (empty($user)) {
@@ -655,7 +649,7 @@ class AuthComponent extends Object {
  * @param string $action  Optional.  The controller/action path to validate the
  *                        user against.  The current request action is used if
  *                        none is specified.
- * @return boolean ACO node path
+ * @return bool ACO node path
  */
 	function action($action = ':controller/:action') {
 		return r(
@@ -803,7 +797,6 @@ class AuthComponent extends Object {
  *
  * @access public
  * @param object $controller
- * @return void
  */
 	function shutdown(&$controller) {
 		if ($this->_loggedIn) {

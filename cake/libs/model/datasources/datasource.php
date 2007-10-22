@@ -336,7 +336,7 @@ class DataSource extends Object {
  * Returns true if the DataSource supports the given interface (method)
  *
  * @param string $interface The name of the interface (method)
- * @return boolean True on success
+ * @return bool True on success
  */
 	function isInterfaceSupported($interface) {
 		$methods = get_class_methods(get_class($this));
@@ -349,7 +349,6 @@ class DataSource extends Object {
  * Sets the configuration for the DataSource
  *
  * @param array $config The configuration array
- * @return void
  */
 	function setConfig($config) {
 		if (is_array($this->_baseConfig)) {
@@ -364,7 +363,6 @@ class DataSource extends Object {
  *
  * @param string $object The name of the object (model) to cache
  * @param mixed $data The description of the model, usually a string or array
- * @return void
  */
 	function __cacheDescription($object, $data = null) {
 		if ($this->cacheSources === false) {

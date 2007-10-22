@@ -111,7 +111,6 @@ class DboMysqlTest extends UnitTestCase {
 /**
  * Skip if cannot connect to mysql
  *
- * @return void
  * @access public
  */
 	function skip() {
@@ -124,7 +123,6 @@ class DboMysqlTest extends UnitTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @return void
  * @access public
  */
 	function setUp() {
@@ -137,7 +135,6 @@ class DboMysqlTest extends UnitTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @return void
  * @access public
  */
 	function tearDown() {
@@ -146,7 +143,6 @@ class DboMysqlTest extends UnitTestCase {
 /**
  * Test Dbo value method
  *
- * @return void
  * @access public
  */
 	function testQuoting() {

@@ -111,7 +111,6 @@ class ShellDispatcher {
  * @access public
  */
 	var $shellName = null;
-
 /**
  * Constructs this ShellDispatcher instance.
  *
@@ -120,7 +119,6 @@ class ShellDispatcher {
 	function ShellDispatcher($args = array()) {
 		$this->__construct($args);
 	}
-
 /**
  * Constructor
  *
@@ -198,7 +196,7 @@ class ShellDispatcher {
 /**
  * Initializes the environment and loads the Cake core.
  *
- * @return boolean Success.
+ * @return bool Success.
  * @access private
  */
 	function __bootstrap() {
@@ -379,7 +377,7 @@ class ShellDispatcher {
  * Outputs to the stdout filehandle.
  *
  * @param string $string String to output.
- * @param boolean $newline If true, the outputs gets an added newline.
+ * @param bool $newline If true, the outputs gets an added newline.
  * @access public
  */
 	function stdout($string, $newline = true) {
@@ -442,7 +440,7 @@ class ShellDispatcher {
 /**
  * Removes first argument and shifts other arguments up
  *
- * @return boolean False if there are no arguments
+ * @return bool False if there are no arguments
  * @access public
  */
 	function shiftArgs() {

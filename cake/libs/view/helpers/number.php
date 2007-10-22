@@ -52,7 +52,7 @@ class NumberHelper extends AppHelper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @param integer $length Size in bytes
+ * @param int $length Size in bytes
  * @return string Human readable size
  * @static
  */
@@ -78,7 +78,7 @@ class NumberHelper extends AppHelper {
  * Formats a number into a percentage string.
  *
  * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
+ * @param int $precision The precision of the returned number
  * @return string Percentage string
  * @static
  */
@@ -89,7 +89,7 @@ class NumberHelper extends AppHelper {
  * Formats a number into a currnecy format.
  *
  * @param float $number A floating point number
- * @param integer $options if int then places, if string then before, if (,.-) then use it
+ * @param int $options if int then places, if string then before, if (,.-) then use it
  * 							or array with places and before keys
  * @return string formatted number
  * @static
@@ -151,7 +151,7 @@ class NumberHelper extends AppHelper {
  * Formats a number into a currency format.
  *
  * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
+ * @param int $precision The precision of the returned number
  * @return string Percentage string
  * @static
  */

@@ -196,8 +196,8 @@ class String extends Object {
  *
  * @param multi-byte string $haystack
  * @param multi-byte string $needle
- * @param integer $offset
- * @return integer or false
+ * @param int $offset
+ * @return int|boolean
  * @access public
  * @static
  */
@@ -235,8 +235,8 @@ class String extends Object {
  *
  * @param multi-byte string $haystack
  * @param multi-byte string $needle
- * @param integer $offset
- * @return integer or false
+ * @param int $offset
+ * @return int|boolean
  * @access public
  * @static
  */
@@ -669,7 +669,7 @@ class String extends Object {
 /**
  * Find the related code folding values for $char
  *
- * @param integer $char decimal value of character
+ * @param int $char decimal value of character
  * @param string $type
  * @return array
  * @access private

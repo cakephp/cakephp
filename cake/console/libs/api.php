@@ -38,6 +38,7 @@ class ApiShell extends Shell {
  * Map between short name for paths and real paths.
  *
  * @var array
+ * @access public
  */
 	var $paths = array();
 /**

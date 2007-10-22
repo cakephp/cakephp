@@ -61,8 +61,8 @@ class TreeBehavior extends ModelBehavior {
  * parameters to be saved.
  *
  * @param AppModel $model
- * @param boolean $created indicates whether the node just saved was created or updated
- * @return boolean true on success, false on failure
+ * @param bool $created indicates whether the node just saved was created or updated
+ * @return bool true on success, false on failure
  */
 	function afterSave(&$model, $created) {
 		extract($this->settings[$model->name]);
@@ -84,7 +84,7 @@ class TreeBehavior extends ModelBehavior {
  * Will delete the current node and all children using the deleteAll method and sync the table
  *
  * @param AppModel $model
- * @return boolean true to continue, false to abort the delete
+ * @return bool true to continue, false to abort the delete
  */
 	function beforeDelete(&$model) {
 		extract($this->settings[$model->name]);
@@ -118,7 +118,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @since 1.2
  * @param AppModel $model
- * @return boolean true to continue, false to abort the save
+ * @return bool true to continue, false to abort the save
  */
 	function beforeSave(&$model) {
 		extract($this->settings[$model->name]);
@@ -182,7 +182,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to read or false to read all top level nodes
- * @param boolean $direct whether to count direct, or all, children
+ * @param bool $direct whether to count direct, or all, children
  * @return int number of child nodes
  * @access public
  */
@@ -216,7 +216,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to read
- * @param boolean $direct whether to return only the direct, or all, children
+ * @param bool $direct whether to return only the direct, or all, children
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param string $order SQL ORDER BY conditions (e.g. "price DESC" or "name ASC") defaults to the tree order
  * @param int $limit SQL LIMIT clause, for calculating items per page.
@@ -359,7 +359,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node or true to move to last position
- * @return boolean true on success, false on failure
+ * @return bool true on success, false on failure
  * @access public
  */
 	function movedown(&$model, $id = null, $number = 1) {
@@ -403,7 +403,7 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $model
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node, or true to move to first position
- * @return boolean true on success, false on failure
+ * @return bool true on success, false on failure
  * @access public
  */
 	function moveup(&$model, $id = null, $number = 1) {
@@ -449,7 +449,7 @@ class TreeBehavior extends ModelBehavior {
  * @todo Could be written to be faster, *maybe*. Ideally using a subquery and putting all the logic burden on the DB.
  * @param AppModel $model
  * @param string $mode parent or tree
- * @return boolean true on success, false on failure
+ * @return bool true on success, false on failure
  * @access public
  */
 	function recover(&$model, $mode = 'parent') {
@@ -488,8 +488,8 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $id The ID of the record to remove
- * @param boolean $delete whether to delete the node after reparenting children (if any)
- * @return boolean true on success, false on failure
+ * @param bool $delete whether to delete the node after reparenting children (if any)
+ * @return bool true on success, false on failure
  * @access public
  */
 	function removefromtree(&$model, $id = null, $delete = false) {
@@ -622,7 +622,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $model
  * @param mixed $parentId
- * @return boolean true on success, false on failure
+ * @return bool true on success, false on failure
  * @access protected
  */
 	function _setParent(&$model, $parentId = null) {

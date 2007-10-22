@@ -83,7 +83,7 @@ class Sanitize{
  * Returns given string safe for display as HTML. Renders entities.
  *
  * @param string $string String from where to strip tags
- * @param boolean $remove If true, the string is stripped of all HTML tags
+ * @param bool $remove If true, the string is stripped of all HTML tags
  * @return string Sanitized string
  * @access public
  * @static

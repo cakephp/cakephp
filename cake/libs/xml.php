@@ -314,7 +314,7 @@ class XMLNode extends Object {
 /**
  * Returns true if this structure has child nodes.
  *
- * @return boolean
+ * @return bool
  * @access public
  */
 	function hasChildren() {
@@ -398,7 +398,7 @@ class XMLNode extends Object {
  * Debug method. Deletes the parent. Also deletes this node's children,
  * if given the $recursive parameter.
  *
- * @param boolean $recursive Recursively delete elements.
+ * @param bool $recursive Recursively delete elements.
  * @access private
  */
 	function __killParent($recursive = true) {
@@ -520,7 +520,7 @@ class XML extends XMLNode {
  * Initialize XML object from a given XML string. Returns false on error.
  *
  * @param string $in XML string to initialize with
- * @return boolean Success
+ * @return bool Success
  * @access public
  */
 	function load($in) {
@@ -554,7 +554,7 @@ class XML extends XMLNode {
 /**
  * Parses and creates XML nodes from the __rawData property.
  *
- * @return boolean Success
+ * @return bool Success
  * @access public
  * @see load()
  */
@@ -618,7 +618,7 @@ class XML extends XMLNode {
 /**
  * Returns a string representation of the XML object
  *
- * @param boolean $useHeader Whether to include the XML header with the document (defaults to true)
+ * @param bool $useHeader Whether to include the XML header with the document (defaults to true)
  * @return string XML data
  * @access public
  */

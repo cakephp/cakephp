@@ -55,7 +55,7 @@ class MemcacheEngine extends CacheEngine {
  * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $setting array of setting for the engine
- * @return boolean True if the engine has been successfully initialized, false if not
+ * @return bool True if the engine has been successfully initialized, false if not
  * @access public
  */
 	function init($settings = array()) {
@@ -95,7 +95,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param int $duration How long to cache the data, in seconds
- * @return boolean True if the data was succesfully cached, false on failure
+ * @return bool True if the data was succesfully cached, false on failure
  * @access public
  */
 	function write($key, &$value, $duration) {
@@ -115,7 +115,7 @@ class MemcacheEngine extends CacheEngine {
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
- * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
+ * @return bool True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  * @access public
  */
 	function delete($key) {
@@ -124,7 +124,7 @@ class MemcacheEngine extends CacheEngine {
 /**
  * Delete all keys from the cache
  *
- * @return boolean True if the cache was succesfully cleared, false otherwise
+ * @return bool True if the cache was succesfully cleared, false otherwise
  * @access public
  */
 	function clear() {
@@ -134,8 +134,8 @@ class MemcacheEngine extends CacheEngine {
  * connects to a server in connection pool
  *
  * @param string $host host ip address or name
- * @param integer $port
- * @return boolean True if memcache server was connected
+ * @param int $port
+ * @return bool True if memcache server was connected
  * @access public
  */
 	function connect($host, $port = 11211) {

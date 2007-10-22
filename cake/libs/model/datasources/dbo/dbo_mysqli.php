@@ -85,7 +85,7 @@ class DboMysqli extends DboSource {
 /**
  * Connects to the database using options in the given configuration array.
  *
- * @return boolean True if the database could be connected, else false
+ * @return bool True if the database could be connected, else false
  */
 	function connect() {
 		$config = $this->config;
@@ -104,7 +104,7 @@ class DboMysqli extends DboSource {
 /**
  * Disconnects from database.
  *
- * @return boolean True if the database could be disconnected, else false
+ * @return bool True if the database could be disconnected, else false
  */
 	function disconnect() {
 		@mysqli_free_result($this->results);
@@ -184,7 +184,7 @@ class DboMysqli extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @param bool $safe Whether or not numeric data should be handled automagically if no column data is provided
  * @return string Quoted and escaped data
  */
 	function value($data, $column = null, $safe = false) {
@@ -223,7 +223,7 @@ class DboMysqli extends DboSource {
  * Begin a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions).
  */
 	function begin(&$model) {
@@ -239,7 +239,7 @@ class DboMysqli extends DboSource {
  * Commit a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -254,7 +254,7 @@ class DboMysqli extends DboSource {
  * Rollback a transaction
  *
  * @param unknown_type $model
- * @return boolean True on success, false on fail
+ * @return bool True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
@@ -424,7 +424,6 @@ class DboMysqli extends DboSource {
  * Sets the database encoding
  *
  * @param string $enc Database encoding
- * @return void
  */
 	function setEncoding($enc) {
 		return $this->_execute('SET NAMES ' . $enc) != false;

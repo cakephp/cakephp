@@ -531,7 +531,7 @@ class Router extends Object {
 /**
  * Gets parameter information
  *
- * @param boolean $current Get current parameter (true)
+ * @param bool $current Get current parameter (true)
  * @return array Parameter information
  * @access public
  * @static
@@ -547,7 +547,7 @@ class Router extends Object {
  * Gets URL parameter by name
  *
  * @param string $name Parameter name
- * @param boolean $current Current parameter
+ * @param bool $current Current parameter
  * @return string Parameter value
  * @access public
  * @static
@@ -563,7 +563,7 @@ class Router extends Object {
 /**
  * Gets path information
  *
- * @param boolean $current Current parameter
+ * @param bool $current Current parameter
  * @return array
  * @access public
  * @static
@@ -592,7 +592,7 @@ class Router extends Object {
  *
  * @param $which A zero-based array index representing the route to move. For example,
  *               if 3 routes have been added, the last route would be 2.
- * @return boolean Retuns false if no route exists at the position specified by $which.
+ * @return bool Retuns false if no route exists at the position specified by $which.
  * @access public
  * @static
  */
@@ -622,7 +622,7 @@ class Router extends Object {
  *                        or an array specifying any of the following: 'controller', 'action',
  *                        and/or 'plugin', in addition to named arguments (keyed array elements),
  *                        and standard URL arguments (indexed array elements)
- * @param boolean $full      If true, the full base URL will be prepended to the result
+ * @param bool $full      If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  * @access public
  * @static

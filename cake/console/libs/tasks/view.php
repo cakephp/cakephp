@@ -38,42 +38,48 @@ class ViewTask extends Shell {
  * Tasks to be loaded by this Task
  *
  * @var array
+ * @access public
  */
 	var $tasks = array('Project', 'Controller');
 /**
- * name of the controller being used
+ * Name of the controller being used
  *
  * @var string
+ * @access public
  */
 	var $controllerName = null;
 /**
- * path to controller to put views
+ * Path to controller to put views
  *
  * @var string
+ * @access public
  */
 	var $controllerPath = null;
 /**
- * the template file to use
+ * The template file to use
  *
  * @var string
+ * @access public
  */
 	var $template = null;
 /**
  * Actions to use for scaffolding
  *
  * @var array
+ * @access public
  */
 	var $scaffoldActions = array('index', 'view', 'add', 'edit');
 /**
  * Override initialize
  *
- * @return void
+ * @access public
  */
-	function initialize() {}
+	function initialize() {
+	}
 /**
  * Execution method always used for tasks
  *
- * @return void
+ * @access public
  */
 	function execute() {
 		if (empty($this->args)) {
@@ -131,7 +137,6 @@ class ViewTask extends Shell {
  * Handles interactive baking
  *
  * @access private
- * @return void
  */
 	function __interactive() {
 		$this->hr();
@@ -211,8 +216,8 @@ class ViewTask extends Shell {
  *	'singularHumanName', 'pluralHumanName', 'fields', 'foreignKeys',
  *	'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
  *
- * @access private
  * @return array Returns an variables to be made available to a view template
+ * @access private
  */
 	function __loadController() {
 		if (!$this->controllerName) {
@@ -252,9 +257,10 @@ class ViewTask extends Shell {
 /**
  * Assembles and writes bakes the view file.
  *
- * @param string $action
- * @param string $content
- * @return bool
+ * @param string $action Action to bake
+ * @param string $content Content to write
+ * @return bool Success
+ * @access public
  */
 	function bake($action, $content = '') {
 		if ($content === true) {
@@ -279,6 +285,7 @@ class ViewTask extends Shell {
  * @param string $template file to use
  * @param array $vars passed for use in templates
  * @return string content from template
+ * @access public
  */
 	function getContent($template = null, $vars = null) {
 		if (!$template) {
@@ -319,7 +326,7 @@ class ViewTask extends Shell {
 /**
  * Displays help contents
  *
- * @return void
+ * @access public
  */
 	function help() {
 		$this->hr();
