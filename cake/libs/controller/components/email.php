@@ -319,7 +319,7 @@ class EmailComponent extends Object{
 		}
 
 		if ($this->_debug) {
-			$this->delivery = 'debug';
+			return $this->__debug();
 		}
 		$__method = '__'.$this->delivery;
 		return $this->$__method();
