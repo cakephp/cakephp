@@ -341,11 +341,7 @@ class Model extends Overloadable {
 		parent::__construct();
 
 		if (is_array($id) && isset($id['name'])) {
-			$options = am(array(
-				'id' => false,
-				'table' => null,
-				'ds' => null
-			), $id);
+			$options = am(array('id' => false, 'table' => null, 'ds' => null, 'alias' => null), $id);
 			list($id, $table, $ds) = array($options['id'], $options['table'], $options['ds']);
 			$this->name = $options['name'];
 		}
@@ -358,12 +354,18 @@ class Model extends Overloadable {
 			$this->primaryKey = 'id';
 		}
 
-		$this->currentModel = Inflector::underscore($this->name);
+		if (isset($options['alias']) || !empty($options['alias'])) {
+			$this->currentModel = Inflector::underscore($options['alias']);
+			unset($options);
+		} else {
+			$this->currentModel = Inflector::underscore($this->name);
+		}
 
 		ClassRegistry::addObject($this->currentModel, $this);
 		ClassRegistry::map($this->currentModel, $this->currentModel);
 
 		$this->id = $id;
+		unset($id);
 
 		if ($table === false) {
 			$this->useTable = false;
@@ -505,9 +507,7 @@ class Model extends Overloadable {
 		$return = $db->query($method, $params, $this);
 
 		if (!PHP5) {
-			if (!empty($this->__backAssociation)) {
-				$this->__resetAssociations();
-			}
+			$this->__resetAssociations();
 		}
 		return $return;
 	}
@@ -604,6 +604,7 @@ class Model extends Overloadable {
 
 			foreach ($models as $model) {
 				$this->__backAssociation = array_merge($this->__backAssociation, $this->{$assoc});
+				unset ($this->__backAssociation[$model]);
 				unset ($this->{$assoc}[$model]);
 			}
 		}
@@ -658,8 +659,8 @@ class Model extends Overloadable {
  * 					usage: $this->ModelName->modelMethods();
  * @access private
  */
-	function __constructLinkedModel($assoc, $className = null, $id = false, $table = null, $ds = null) {
-		$colKey = Inflector::underscore($className);
+	function __constructLinkedModel($assoc, $className = null) {
+		$colKey = Inflector::underscore($assoc);
 		if (empty($className)) {
 			$className = $assoc;
 		}
@@ -679,10 +680,11 @@ class Model extends Overloadable {
 				ClassRegistry::map($assoc, $colKey);
 			}
 		} else {
+			$model = array('name' => $className, 'alias' => $assoc);
 			if (!PHP5) {
-				$this->{$assoc} =& new $className($id, $table, $ds);
+				$this->{$assoc} =& new $className($model);
 			} else {
-				$this->{$assoc} = new $className($id, $table, $ds);
+				$this->{$assoc} = new $className($model);
 			}
 		}
 
@@ -1490,10 +1492,7 @@ class Model extends Overloadable {
 			return null;
 		}
 		$results = $db->read($this, $query);
-
-		if (!empty($this->__backAssociation)) {
-			$this->__resetAssociations();
-		}
+		$this->__resetAssociations();
 
 		switch ($type) {
 			case 'all':
@@ -1562,12 +1561,22 @@ class Model extends Overloadable {
  * @access private
  */
 	function __resetAssociations() {
-		foreach ($this->__associations as $type) {
-			if (isset($this->__backAssociation[$type])) {
-				$this->{$type} = $this->__backAssociation[$type];
+		if (!empty($this->__backAssociation)) {
+			foreach ($this->__associations as $type) {
+				if (isset($this->__backAssociation[$type])) {
+					$this->{$type} = $this->__backAssociation[$type];
+				}
 			}
+			$this->__backAssociation = array();
 		}
 
+		foreach ($this->__associations as $type) {
+			foreach ($this->{$type} as $key => $name) {
+				if (!empty($this->{$key}->__backAssociation)) {
+					$this->{$key}->__resetAssociations();
+				}
+			}
+		}
 		$this->__backAssociation = array();
 		return true;
 	}
@@ -2192,5 +2201,4 @@ class Model extends Overloadable {
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	Overloadable::overload('Model');
 }
-
 ?>
