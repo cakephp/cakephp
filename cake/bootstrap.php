@@ -44,13 +44,15 @@ if (!defined('SERVER_IIS') && php_sapi_name() == 'isapi') {
 		require LIBS . 'configure.php';
 	}
 	require LIBS . 'cache.php';
-	
+
 	Configure::getInstance();
-	
-	$cache = Cache::settings();
-	if(empty($cache)) {
-		trigger_error('Cache not configured. Please use Cache::config(); in APP/config/core.php', E_USER_WARNING);
-		Cache::config('default', array('engine' => 'File'));
+
+	if(Configure::read('Cache.disable') !== true) {
+		$cache = Cache::settings();
+		if(empty($cache)) {
+			trigger_error('Cache not configured. Please use Cache::config(); in APP/config/core.php', E_USER_WARNING);
+			Cache::config('default', array('engine' => 'File'));
+		}
 	}
 
 	require LIBS . 'session.php';
