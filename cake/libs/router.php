@@ -340,6 +340,10 @@ class Router extends Object {
 		$out = array('pass' => array());
 		$r = $ext = null;
 
+		if (ini_get('magic_quotes_gpc') == 1) {
+			$url = stripslashes_deep($url);
+		}
+
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
